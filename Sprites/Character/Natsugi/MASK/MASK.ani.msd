@@ -1,0 +1,15 @@
+Define Flag (Anim);
+Define Flag (Lock);
+
+Meta:
+    name:"MASK"
+    clock:70
+Images:
+    ?ImageList(str):
+        "mask.png"
+Groups:
+    @start
+        ?content(int)<%s>{0}:
+Animation:
+    ?AnimationCode(str):
+        "PLAY_GROUP(main, 1)"
