@@ -1,0 +1,9 @@
+label start
+console display start
+console display !
+console display !
+label middle
+console display middle
+console display !
+label end
+console display end

@@ -1,0 +1,8 @@
+data store counter 0
+label start
+arithmetic add counter $data.counter 1
+console display Looped $data.counter times
+logic equal $console.rooted 1 console run loopinsidetest
+logic different $console.rooted 1 console display You need to root the console to fully test the program
+logic different $data.counter 10 goto start
+console display Loop is over !

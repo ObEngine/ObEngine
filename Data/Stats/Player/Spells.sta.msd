@@ -1,0 +1,122 @@
+Define Flag (Stats);
+Define Flag (Lock);
+
+Fireball:
+    type:"Projectile"
+    element:"Fire"
+    castable:True
+    bloodCost:10
+    cooldown:10000
+    velocity:10
+    range:200
+    damage:30
+    knockBack:5
+    multipleHit:1
+    destroyedOnHit:True
+    targetMode:"POS"
+    @giveStatus
+        @setFire
+            type:"Fire"
+            duration:10
+            damage:10
+    
+Windblade:
+    type:"Projectile"
+    element:"Wind"
+    castable:True
+    bloodCost:3
+    cooldown:1000
+    velocity:30
+    range:300
+    damage:5
+    knockBack:10
+    multipleHit:1
+    destroyedOnHit:False
+    targetMode:"POS"
+    
+Rockpeak:
+    type:"Projectile"
+    element:"Earth"
+    castable:True
+    bloodCost:15
+    cooldown:20000
+    velocity:10
+    range:100
+    damage:80
+    knockBack:20
+    multipleHit:1
+    destroyedOnHit:True
+    targetMode:"POS"
+    
+Icepeak:
+    type:"Projectile"
+    element:"Water"
+    castable:True
+    bloodCost:10
+    cooldown:20000
+    velocity:20
+    range:200
+    damage:10
+    knockBack:10
+    multipleHit:1
+    destroyedOnHit:True
+    targetMode:"POS"
+    @onHit
+        @iceCircle
+            type:"Circle"
+            amount:20
+            spell:"Iceshard"
+        
+Tsunami:
+    type:"Projectile"
+    element:"Water"
+    castable:True
+    bloodCost:30
+    cooldown:30000
+    velocity:20
+    range:100
+    damage:10
+    knockBack:10
+    multipleHit:-1
+    destroyedOnHit:False
+    targetMode:"POS"
+    
+Stinger:
+    type:"Projectile"
+    element:"Earth"
+    castable:True
+    bloodCost:15
+    cooldown:15000
+    velocity:20
+    range:100
+    damage:5
+    knockBack:5
+    multipleHit:1
+    destroyedOnHit:True
+    targetMode:"POS"
+    @giveStatus
+        @setPoison
+            type:"Poison"
+            duration:10
+            damage:10
+        
+Thunderpulse:
+    type:"Projectile"
+    element:"Wind"
+    castable:True
+    bloodCost:30
+    cooldown:30000
+    velocity:5
+    range:50
+    damage:5
+    knockBack:0
+    multipleHit:1
+    destroyedOnHit:False
+    targetMode:"POS"
+    @onTick
+        clock:80
+        @electroCircle
+            type:"Circle"
+            amount:5
+            spell:"Electrosphere"
+    

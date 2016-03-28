@@ -1,0 +1,28 @@
+logic different $run.arg.size 3 goto notenoughtparameters
+logic equal (arithmetic isnumeric $run.arg.1) 1
+data store xsize $run.arg.1
+data store ysize $run.arg.2
+data store rbase ******************
+data store rside *................*
+data store counter 0
+label buildrbase
+logic different $data.counter $data.xsize goto buildrbase
+data store max 10
+arithmetic substract roof $data.max 1
+data store counter 0
+label startloop
+data store rcase 1
+logic equal $data.counter 0 data store rcase 0
+logic equal $data.counter $data.roof data store rcase 0
+console mute 0
+logic equal $data.rcase 0 console display $data.rbase
+logic equal $data.rcase 1 console display $data.rside
+console mute 1
+arithmetic add counter $data.counter 1
+logic different $data.counter $data.max goto startloop
+console mute 0
+console display Rectangle Displayed !
+goto end
+label notenoughtparameters
+console display Not enough parameters ! Usage : console run rectangle 5 5
+label end
