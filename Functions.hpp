@@ -9,9 +9,10 @@
 #include <map>
 #include <chrono>
 #include <SFML/Graphics.hpp>
-#include <dirent.h>
 #include <random>
 #include <algorithm>
+
+#include "tinydir.h"
 
 namespace fn
 {
@@ -124,7 +125,7 @@ inline bool fn::Math::isBetween(N target, N lowerBound, N upperBound)
 
 //Functions::Vector
 template <typename V>
-inline bool fn::Vector::isInList(V term, std::vector<V>& list1)
+inline bool fn::Vector::isInList(V term, const std::vector<V>& list1)
 {
 	for (size_t k = 0; k < list1.size(); k++)
 	{

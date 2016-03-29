@@ -33,53 +33,34 @@ int fn::Coord::adaptCamY(int camY, int sizeY) {
 
 //Functions::File
 std::vector<std::string> fn::File::listDirInDir(std::string path) {
-	DIR *dir;
-	struct dirent *ent;
+	tinydir_dir dir;
+	tinydir_open(&dir, path.c_str());
+
 	std::vector<std::string> fileList;
-	dir = opendir(path.c_str());
-	if (dir != NULL)
+	while (dir.has_next)
 	{
-		while ((ent = readdir(dir)) != NULL)
-		{
-			if (ent->d_type == DT_DIR)
-			{
-				std::string cName = std::string(ent->d_name);
-				if ((cName != ".") && (cName != ".."))
-					fileList.push_back(cName);
-			}
-		}
-		closedir(dir);
+		tinydir_file file;
+		tinydir_readfile(&dir, &file);
+		if (file.is_dir) 
+		{ if (std::string(file.name) != "." && std::string(file.name) != "..") { fileList.push_back(std::string(file.name)); }}
+		tinydir_next(&dir);
 	}
-	else
-	{
-		std::cout << "Cannot open directory " << path << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	tinydir_close(&dir);
 	return fileList;
 }
 std::vector<std::string> fn::File::listFileInDir(std::string path) {
-	DIR *dir;
-	struct dirent *ent;
+	tinydir_dir dir;
+	tinydir_open(&dir, path.c_str());
+
 	std::vector<std::string> fileList;
-	dir = opendir(path.c_str());
-	if (dir != NULL)
+	while (dir.has_next)
 	{
-		while ((ent = readdir(dir)) != NULL)
-		{
-			if (ent->d_type == DT_REG)
-			{
-				std::string cName = std::string(ent->d_name);
-				if ((cName != ".") && (cName != ".."))
-					fileList.push_back(cName);
-			}
-		}
-		closedir(dir);
+		tinydir_file file;
+		tinydir_readfile(&dir, &file);
+		if (!file.is_dir) { fileList.push_back(std::string(file.name)); }
+		tinydir_next(&dir);
 	}
-	else
-	{
-		std::cout << "Cannot open directory" << path << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	tinydir_close(&dir);
 	return fileList;
 }
 

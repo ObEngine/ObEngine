@@ -17,7 +17,6 @@
 #include <functional>
 #include <typeinfo>
 #include <fstream>
-#include "dirent.h"
 #include "DataParser.hpp"
 #include "Functions.hpp"
 #if defined(WIN32) || defined(_WIN32)
