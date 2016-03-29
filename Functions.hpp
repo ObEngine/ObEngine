@@ -72,12 +72,12 @@ namespace fn
 	namespace Vector
 	{
 		template <typename V>
-		bool isInList(V item, std::vector<V>& vector);
+		bool isInList(V item, const std::vector<V>& vector);
 		std::string join(std::vector<std::string>& vector, std::string sep = "", int start = 0, int end = 0);
 		template <typename V>
-		void eraseAll(std::vector<V>* vector, V elem);
-		void joinBetween(std::vector<std::string>* vector, std::string joinValue, std::string sep = "");
-		void mergeNeighboors(std::vector<std::string>* vector, std::string n1, std::string n2, std::string sep = "", bool strict = false);
+		void eraseAll(std::vector<V>& vector, V elem);
+		void joinBetween(std::vector<std::string>& vector, std::string joinValue, std::string sep = "");
+		void mergeNeighboors(std::vector<std::string>& vector, std::string n1, std::string n2, std::string sep = "", bool strict = false);
 		template <typename V>
 		int findSubVector(std::vector<V>& vector, std::vector<V>& find);
 		template <typename V>
@@ -134,7 +134,7 @@ inline bool fn::Vector::isInList(V term, std::vector<V>& list1)
 	return false;
 }
 template <typename V>
-inline void fn::Vector::eraseAll(std::vector<V>* vector, V elem)
+inline void fn::Vector::eraseAll(std::vector<V>& vector, V elem)
 {
 	std::vector<int> toErase;
 	for (int i = 0; i < vector->size(); i++)
