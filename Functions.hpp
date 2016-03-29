@@ -14,10 +14,10 @@ namespace fn
 {
 	namespace Coord
 	{
-		extern int baseWidth = 1920;
-		extern int baseHeight = 1080;
-		extern int width = sf::VideoMode::getDesktopMode().width;
-		extern int height = sf::VideoMode::getDesktopMode().height;
+		extern int baseWidth;
+		extern int baseHeight;
+		extern int width;
+		extern int height;
 		int adaptCamX(int camX, int sizeX);
 		int adaptCamY(int camY, int sizeY);
 	}

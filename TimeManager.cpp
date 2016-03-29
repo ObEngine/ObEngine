@@ -69,7 +69,7 @@ void Chronostasis::endSummary()
 //FPS Counter
 void FPSCounter::tick()
 {
-	if (GetTickCount64() - lastTick <= 1000)
+	if (getTickSinceEpoch() - lastTick <= 1000)
 	{
 		fpsCounter++;
 	}
@@ -77,7 +77,7 @@ void FPSCounter::tick()
 	{
 		saveFPS = fpsCounter;
 		fpsCounter = 0;
-		lastTick = GetTickCount64();
+		lastTick = getTickSinceEpoch();
 		canUpdateFPS = true;
 	}
 }
@@ -125,4 +125,9 @@ bool Chronometer::limitExceeded() {
 	std::cout << "Limit : " << limit << std::endl;
 	std::cout << "Current : " << this->getTime() << std::endl;
 	return (this->getTime() > limit);
+}
+
+double getTickSinceEpoch()
+{
+	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
 }

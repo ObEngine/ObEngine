@@ -226,7 +226,7 @@ Console::Message::Message(std::string header, std::string message, sf::Color tex
 	this->message = message;
 	this->textColor = textColor;
 	this->type = type;
-	this->timestamp = GetTickCount64();
+	this->timestamp = getTickSinceEpoch();
 	this->useTimeStamp = timestamped;
 }
 

@@ -7,6 +7,7 @@
 
 #include "Functions.hpp"
 #include "DataParser.hpp"
+#include "TimeManager.hpp"
 
 namespace anim
 {

@@ -20,7 +20,7 @@
 #if defined(WIN32) || defined(_WIN32)
 #include <Windows.h>
 #endif
-#include <gl/GL.h>
+#include <GL/gl.h>
 
 
 //Finir updatePositions penser a aussi update les absolutes s'occuper de Write updatePositions et Droplist Updatepositions et les autre widget

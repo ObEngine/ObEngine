@@ -14,6 +14,7 @@
 
 #include "Functions.hpp"
 #include "DataParser.hpp"
+#include "TimeManager.hpp"
 
 class Console
 {

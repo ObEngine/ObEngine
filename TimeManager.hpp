@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <SFML/Graphics.hpp>
 
+double getTickSinceEpoch();
+
 class Chronostasis
 {
 private:
@@ -40,7 +42,7 @@ class Chronometer
 class FPSCounter
 {
 private:
-	double lastTick = GetTickCount64();
+	double lastTick = getTickSinceEpoch();
 	int fpsCounter = 0;
 	int saveFPS = 0;
 	bool canUpdateFPS = false;

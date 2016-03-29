@@ -31,11 +31,11 @@ void Caster::castSpell()
 {
 	int bloodCost;
 	spellInfos.getAttribute(currentSpell, "", "bloodCost")->getData(&bloodCost);
-	if (bloodAmount - bloodCost > 0 && cooldownTimer[currentSpell] < GetTickCount64())
+	if (bloodAmount - bloodCost > 0 && cooldownTimer[currentSpell] < getTickSinceEpoch())
 	{
 		int spCoolDown;
 		spellInfos.getAttribute(currentSpell, "", "cooldown")->getData(&spCoolDown);
-		cooldownTimer[currentSpell] = GetTickCount64() + spCoolDown;
+		cooldownTimer[currentSpell] = getTickSinceEpoch() + spCoolDown;
 		this->addBlood(-bloodCost);
 		int spellInclinaison = 0;
 		int offsetX = 0;
@@ -76,8 +76,8 @@ void Caster::castSpell()
 
 long int Caster::getSpellCooldown(std::string spellName)
 {
-	if (cooldownTimer[spellName] - GetTickCount64() >= 0)
-		return cooldownTimer[spellName] - GetTickCount64();
+	if (cooldownTimer[spellName] - getTickSinceEpoch() >= 0)
+		return cooldownTimer[spellName] - getTickSinceEpoch();
 	else
 		return 0;
 }

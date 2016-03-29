@@ -64,9 +64,9 @@ void anim::AnimationGroup::reset() {
 	loopTime = 0;
 }
 void anim::AnimationGroup::next() {
-	if (GetTickCount64() - startDelayClock > groupClock)
+	if (getTickSinceEpoch() - startDelayClock > groupClock)
 	{
-		startDelayClock = GetTickCount64();
+		startDelayClock = getTickSinceEpoch();
 		groupIndex++;
 		if (groupIndex > groupList.size() - 1)
 		{
@@ -84,9 +84,9 @@ void anim::AnimationGroup::next() {
 	}
 }
 void anim::AnimationGroup::previous() {
-	if (GetTickCount64() - startDelayClock > groupClock)
+	if (getTickSinceEpoch() - startDelayClock > groupClock)
 	{
-		startDelayClock = GetTickCount64();
+		startDelayClock = getTickSinceEpoch();
 		groupIndex--;
 		if (groupIndex < 0)
 		{
@@ -243,10 +243,10 @@ void anim::Animation::playAnimation() {
 	{
 		if (codeIndex > animationCode.size() - 1 && animationPlaymode != "ONETIME")
 			codeIndex = 0;
-		if (GetTickCount64() - lastTick > animationClock)
+		if (getTickSinceEpoch() - lastTick > animationClock)
 		{
-			lastTick = GetTickCount64();
-			if (GetTickCount64() - startDelay > currentDelay)
+			lastTick = getTickSinceEpoch();
+			if (getTickSinceEpoch() - startDelay > currentDelay)
 			{
 				if (askCommand)
 				{
@@ -256,7 +256,7 @@ void anim::Animation::playAnimation() {
 					{
 						askCommand = true;
 						currentDelay = std::stoi(currentCommand[1]);
-						startDelay = GetTickCount64();
+						startDelay = getTickSinceEpoch();
 						if (animationPlaymode != "ONETIME" && !(codeIndex >= animationCode.size() - 1))
 							codeIndex++;
 						else
