@@ -5,7 +5,7 @@
 
 namespace Collision
 {
-	void Collision::drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col)
+	void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col)
 	{
 		sf::Vertex line[] =
 		{

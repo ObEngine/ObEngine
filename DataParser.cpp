@@ -57,7 +57,11 @@ void DataParserNavigator::goBack() {
 	if (currentPath != "")
 	{
 		if (fn::String::split(currentPath, "/").size() > 1)
-			currentPath = fn::Vector::join(fn::String::split(currentPath, "/"), "/", 0, fn::String::split(currentPath, "/").size() - 2);
+		{
+			std::vector<std::string> splittedPath = fn::String::split(currentPath, "/");
+			currentPath = fn::Vector::join(splittedPath, "/", 0, splittedPath.size() - 2);
+		}
+			
 	}
 }
 
