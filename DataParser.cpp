@@ -1106,7 +1106,8 @@ void DataParser::parseFile(std::string filename, bool verbose) {
 				if (!fn::Vector::isInList(parsedLine.substr(0, 1), symbolExclusion) && fn::String::occurencesInString(parsedLine,":"))
 				{
 					std::string attributeName = fn::String::split(parsedLine, ":")[0];
-					std::string attributeValue = fn::Vector::join(fn::String::split(parsedLine, ":"), ":", 1, 0);
+					std::vector<std::string> splittedLine = fn::String::split(parsedLine, ":");
+					std::string attributeValue = fn::Vector::join(splittedLine, ":", 1, 0);
 					std::string attributeType = getVarType(attributeValue);
 					objectMap[curCat]->createBaseAttribute(addPath, attributeName, attributeType, attributeValue);
 					std::string pushIndicator;
