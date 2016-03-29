@@ -1,3 +1,6 @@
+//Author : Theo Cevaer
+//Key : 86d27c754f2ed9d671e7caf0a4cbb2ddb0c193631280bf65ffaddcb33e3949b8227c3161d8fd3326c541db064c98835f3eae6584d4bba3b8aaee57abea1448f2
+
 #include "GUI.hpp"
 
 namespace GUI
