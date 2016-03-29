@@ -302,24 +302,6 @@ void editMap(std::string mapName)
 	keybind.setActionDelay("MagnetizeDown", 30);
 	keybind.setActionDelay("MagnetizeLeft", 30);
 
-	sf::Transform b;
-	b.rotate(1, 2, 3);
-	b.translate(4, 5);
-	b.scale(6, 7);
-	for (int i = 0; i < 16; i++)
-	{
-		std::cout << "[" << i << "] : " << b.getMatrix()[i] << std::endl;
-	}
-
-	sf::Transform t3(1, 2, 3,
-					4, 5, 6,
-					7, 8, 9);
-	std::cout << "BREAK" << std::endl;
-	for (int i = 0; i < 16; i++)
-	{
-		std::cout << "[" << i << "] : " << t3.getMatrix()[i] << std::endl;
-	}
-
 	//Game Starts
 	while (window.isOpen())
 	{

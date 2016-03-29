@@ -43,7 +43,8 @@ class CoreHook
 template <typename T>
 inline void CoreHook::dropValue(std::string name, T val)
 {
-	std::string datatype = fn::Vector::join(fn::String::split(typeid(val).name(), " "), "", 1);
+	std::vector<std::string> splittedTypeName = fn::String::split(typeid(val).name(), " ");
+	std::string datatype = fn::Vector::join(splittedTypeName, "", 1);
 	containerMap[name] = std::pair<std::string, emorph::any*>(datatype, new emorph::any(val));
 }
 
