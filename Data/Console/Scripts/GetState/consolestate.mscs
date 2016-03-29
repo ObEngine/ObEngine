@@ -1,8 +1,0 @@
-console display Displaying Console State
-console display Console Mute State : $console.muted
-console display Console AutoScroll State : $console.autoscroll
-console display Console Scroll Level : $console.scroll
-console display Console Visible State : $console.visible
-console display Console Rooted State : $console.rooted
-console display Console Current Theme : $console.theme
-console display Console Content Size : $console.contentSize
