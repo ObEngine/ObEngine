@@ -1,5 +1,16 @@
 #include "Functions.hpp"
 
+namespace fn
+{
+	namespace Coord
+	{
+		int baseWidth = 1920;
+		int baseHeight = 1080;
+		int width = sf::VideoMode::getDesktopMode().width;
+		int height = sf::VideoMode::getDesktopMode().height;
+	}
+}
+
 //Functions::Coord
 int fn::Coord::adaptCamX(int camX, int sizeX) {
 	const int S_WIDTH = 1920;

@@ -17,6 +17,9 @@
 #include "dirent.h"
 #include "DataParser.hpp"
 #include "Functions.hpp"
+#if defined(WIN32) || defined(_WIN32)
+#include <Windows.h>
+#endif
 #include <gl/GL.h>
 
 

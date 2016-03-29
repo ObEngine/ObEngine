@@ -6,7 +6,6 @@
 #include <map>
 #include <chrono>
 #include <SFML/Graphics.hpp>
-#include <Windows.h>
 #include <dirent.h>
 #include <random>
 #include <algorithm>
@@ -15,10 +14,10 @@ namespace fn
 {
 	namespace Coord
 	{
-		const int baseWidth = 1920;
-		const int baseHeight = 1080;
-		const int width = sf::VideoMode::getDesktopMode().width;
-		const int height = sf::VideoMode::getDesktopMode().height;
+		extern int baseWidth = 1920;
+		extern int baseHeight = 1080;
+		extern int width = sf::VideoMode::getDesktopMode().width;
+		extern int height = sf::VideoMode::getDesktopMode().height;
 		int adaptCamX(int camX, int sizeX);
 		int adaptCamY(int camY, int sizeY);
 	}
@@ -175,8 +174,8 @@ inline int fn::Vector::findSubVector(std::vector<V>& vector, std::vector<V>& fin
 template <typename V>
 inline std::vector<V> fn::Vector::getSubVector(std::vector<V>& vector, int start, int end)
 {
-	std::vector<V>::const_iterator first = vector.begin() + start;
-	std::vector<V>::const_iterator last = vector.end() - end;
+	auto first = vector.begin() + start;
+	auto last = vector.end() - end;
 	std::vector<V> newVec(first, last);
 	return newVec;
 }

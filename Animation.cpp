@@ -478,8 +478,6 @@ void anim::Animator::loadAnimator() {
 			tempAnim->applyParameters(animationParameters[listDir[i]]);
 		else if (animationParameters.find("all") != animationParameters.end())
 			tempAnim->applyParameters(animationParameters["all"]);
-		else
-			tempAnim->loadAnimation(animationPath + "/" + listDir[i] + "/", listDir[i] + ".ani.msd");
 		fullAnimSet[tempAnim->getAnimationName()] = tempAnim;
 	}
 }
