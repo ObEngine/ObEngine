@@ -7,6 +7,8 @@
 #include <math.h>
 #include <random>
 
+#include "Functions.hpp"
+
 class Trajectory
 {
 	private:

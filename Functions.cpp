@@ -7,6 +7,7 @@ int fn::Coord::baseWidth = 1920;
 int fn::Coord::baseHeight = 1080;
 int fn::Coord::width = sf::VideoMode::getDesktopMode().width;
 int fn::Coord::height = sf::VideoMode::getDesktopMode().height;
+double fn::Math::pi = 3.14159265359;
 
 //Functions::Coord
 int fn::Coord::adaptCamX(int camX, int sizeX) {

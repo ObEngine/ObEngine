@@ -237,7 +237,7 @@ MathExp::MathExp(int polymorph, std::string file, bool strict)
 }
 void MathExp::createConstants() //Constants
 {
-	this->varBase->setVar("pi", std::_Pi);
+	this->varBase->setVar("pi", fn::Math::pi);
 	this->varBase->setVar("e", std::exp(1));
 }
 void MathExp::buildMathExp(bool verbose)

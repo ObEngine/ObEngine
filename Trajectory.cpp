@@ -54,7 +54,7 @@ void Trajectory::hookY(double* yptr)
 void Trajectory::update()
 {
 	speed += acceleration;
-	double radAngle = (std::_Pi / 180) * angle;
+	double radAngle = (fn::Math::pi / 180) * angle;
 	double addX = std::cos(radAngle) * speed;
 	double addY = std::sin(radAngle) * speed;
 	*(this->hX) += addX;

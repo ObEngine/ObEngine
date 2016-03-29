@@ -38,6 +38,7 @@ namespace fn
 	}
 	namespace Math
 	{
+		extern double pi;
 		int randint(int min, int max);
 		double randfloat();
 		template <typename N>

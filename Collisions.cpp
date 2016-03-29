@@ -310,7 +310,7 @@ namespace Collision
 		std::pair<int, int> p2coords = this->getPointCoordinates(p2);
 		int deltaX = p2coords.first - p1coords.first;
 		int deltaY = p2coords.second - p1coords.second;
-		return (std::atan2(deltaY, deltaX) * 180 / std::_Pi);
+		return (std::atan2(deltaY, deltaX) * 180 / fn::Math::pi);
 	}
 	double PolygonalCollider::getSideLength(int side)
 	{
