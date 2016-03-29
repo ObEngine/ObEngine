@@ -1,0 +1,5 @@
+data store imbcounter 0
+label sik
+console display Inside counter : $data.imbcounter
+arithmetic add imbcounter $data.imbcounter 1
+logic different $data.imbcounter 3 goto sik

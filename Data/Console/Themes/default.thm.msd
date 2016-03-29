@@ -1,0 +1,29 @@
+Define Flag (ConsoleTheme);
+
+Theme:
+    font:"arial.ttf"
+    @backgroundColor
+        red:0
+        green:0
+        blue:0
+        alpha:200
+    @firstColor
+        red:30
+        green:30
+        blue:30
+        alpha:200
+    @secondColor
+        red:50
+        green:50
+        blue:50
+        alpha:200
+    @frame
+        red:255
+        green:255
+        blue:255
+        alpha:255
+    @input
+        red:100
+        green:100
+        blue:100
+        alpha:255

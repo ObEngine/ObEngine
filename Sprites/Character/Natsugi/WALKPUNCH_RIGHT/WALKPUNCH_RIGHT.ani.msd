@@ -1,0 +1,15 @@
+Define Flag (Anim);
+Define Flag (Lock);
+
+Meta:
+    name:"WALKPUNCH_RIGHT"
+    play-mode:"FORCE"
+    clock:40
+Images:
+    ?ImageList(str)<"0%s.png">{375-380}:
+Groups:
+    @main
+        ?content(int)<%s>{0-5}:
+Animation:
+    ?AnimationCode(str):
+        "PLAY_GROUP(main, 2)"

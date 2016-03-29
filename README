@@ -1,0 +1,25 @@
+=========================================================================
+=                                                                       =
+=                                                                       =
+=                           Melting Saga Readme                         =
+=                                                                       =
+=                                                                       =
+=========================================================================
+=                                                                       =
+= Q - What do I need to compile Melting Saga ?                          =
+=                                                                       =
+= A - To compile Melting Saga, you'll need the following                =
+=     libs :                                                            =
+=             - SFML 2.3 (32 bits / 64 bits)                            =
+=               http://www.sfml-dev.org/download/sfml/2.3/index-fr.php  =
+=             - Kaguya (Lua Binding) by Satoren                         =
+=               https://github.com/satoren/kaguya                       =
+=             - Lua 5.3                                                 =
+=               http://lua-users.org/wiki/LuaBinaries                   =
+=                                                                       =
+= Q - What is the license used by Melting Saga Project ?                =
+=                                                                       =
+= A - Melting Saga uses two different licenses, MIT license for the     =
+=     source code and CC-BY-NC 2.0 license for assets (Sprites, Sounds) =
+=                                                                       =
+=========================================================================
