@@ -82,7 +82,7 @@ namespace fn
 		template <typename V>
 		int findSubVector(std::vector<V>& vector, std::vector<V>& find);
 		template <typename V>
-		std::vector<V> getSubVector(std::vector<V>& vector, int start = 0, int end = 0);
+		std::vector<V> getSubVector(const std::vector<V>& vector, int start = 0, int end = 0);
 	}
 }
 
@@ -177,7 +177,7 @@ inline int fn::Vector::findSubVector(std::vector<V>& vector, std::vector<V>& fin
 	return potentialIndex;
 }
 template <typename V>
-inline std::vector<V> fn::Vector::getSubVector(std::vector<V>& vector, int start, int end)
+inline std::vector<V> fn::Vector::getSubVector(const std::vector<V>& vector, int start, int end)
 {
 	auto first = vector.begin() + start;
 	auto last = vector.end() - end;

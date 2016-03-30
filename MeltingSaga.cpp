@@ -3,7 +3,7 @@
 
 #include "MeltingSaga.hpp"
 
-int main(int argc, char argv[])
+int main(int argc, char** argv)
 {
 	//Sauvegarde du log dans log.txt
 	std::ofstream out("log.txt");
