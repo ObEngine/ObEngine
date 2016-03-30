@@ -215,7 +215,9 @@ void anim::Animation::loadAnimation(std::string path, std::string filename) {
 			animationTextures[i] = tempTexture;
 		}
 		else
+		{
 			animationTextures[i] = animatorRsHook->getTexture(path + textureName);
+		}
 	}
 	//Groups
 	std::vector<std::string> allGroups;
