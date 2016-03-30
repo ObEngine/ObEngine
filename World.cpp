@@ -60,7 +60,6 @@ void World::loadFromFile(std::string filename)
 	{
 
 	}
-
 	creationChrono.startTick("LevelSprites");
 	std::vector<std::string> allDecos = mapParse.getAllComplex("LevelSprites", "");
 	for (unsigned int i = 0; i < allDecos.size(); i++)

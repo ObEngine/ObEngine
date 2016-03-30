@@ -143,7 +143,19 @@ sf::Texture* anim::RessourceManager::getTexture(std::string path)
 		}
 		else return textureDatabase[path];
 	}
-	else return textureDatabase[path];
+	else
+	{
+		sf::Texture* tempTexture = new sf::Texture;
+		if (tempTexture->loadFromFile(path))
+		{
+			textureDatabase[path] = tempTexture;
+			return textureDatabase[path];
+		}
+		else
+		{
+			std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+		}
+	}
 }
 
 //ANIMATION
