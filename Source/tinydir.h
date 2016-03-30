@@ -60,8 +60,15 @@ extern "C" {
 
 #ifdef _MSC_VER
 # define _TINYDIR_FUNC static __inline
-#else
+#elif !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
 # define _TINYDIR_FUNC static __inline__
+#else
+# define _TINYDIR_FUNC static inline
+#endif
+
+/* MinGW does not define readdir_r (yet); use readdir fallback */
+#ifdef __MINGW32__
+#define _TINYDIR_USE_READDIR
 #endif
 
 /* Allow user to use a custom allocator by defining _TINYDIR_MALLOC and _TINYDIR_FREE. */
@@ -102,7 +109,9 @@ typedef struct _tinydir_dir
 #else
 	DIR *_d;
 	struct dirent *_e;
+#ifndef _TINYDIR_USE_READDIR
 	struct dirent *_ep;
+#endif
 #endif
 } tinydir_dir;
 
@@ -130,8 +139,10 @@ void _tinydir_get_ext(tinydir_file *file);
 _TINYDIR_FUNC
 int _tinydir_file_cmp(const void *a, const void *b);
 #ifndef _MSC_VER
+#ifndef _TINYDIR_USE_READDIR
 _TINYDIR_FUNC
 size_t _tinydir_dirent_buf_size(DIR *dirp);
+#endif
 #endif
 
 
@@ -141,8 +152,10 @@ _TINYDIR_FUNC
 int tinydir_open(tinydir_dir *dir, const char *path)
 {
 #ifndef _MSC_VER
+#ifndef _TINYDIR_USE_READDIR
 	int error;
 	int size;	/* using int size */
+#endif
 #endif
 
 	if (dir == NULL || path == NULL || strlen(path) == 0)
@@ -162,7 +175,9 @@ int tinydir_open(tinydir_dir *dir, const char *path)
 	dir->_h = INVALID_HANDLE_VALUE;
 #else
 	dir->_d = NULL;
+#ifndef _TINYDIR_USE_READDIR
 	dir->_ep = NULL;
+#endif
 #endif
 	tinydir_close(dir);
 
@@ -185,15 +200,18 @@ int tinydir_open(tinydir_dir *dir, const char *path)
 	/* read first file */
 	dir->has_next = 1;
 #ifndef _MSC_VER
+#ifdef _TINYDIR_USE_READDIR
+	dir->_e = readdir(dir->_d);
+#else
 	/* allocate dirent buffer for readdir_r */
 	size = _tinydir_dirent_buf_size(dir->_d); /* conversion to int */
 	if (size == -1) return -1;
 	dir->_ep = (struct dirent*)_TINYDIR_MALLOC(size);
-	if (dir->_ep == NULL) return -1;	
+	if (dir->_ep == NULL) return -1;
 
 	error = readdir_r(dir->_d, dir->_ep, &dir->_e);
 	if (error != 0) return -1;
-
+#endif
 	if (dir->_e == NULL)
 	{
 		dir->has_next = 0;
@@ -296,8 +314,10 @@ void tinydir_close(tinydir_dir *dir)
 	}
 	dir->_d = NULL;
 	dir->_e = NULL;
+#ifndef _TINYDIR_USE_READDIR
 	_TINYDIR_FREE(dir->_ep);
 	dir->_ep = NULL;
+#endif
 #endif
 }
 
@@ -318,6 +338,9 @@ int tinydir_next(tinydir_dir *dir)
 #ifdef _MSC_VER
 	if (FindNextFileA(dir->_h, &dir->_f) == 0)
 #else
+#ifdef _TINYDIR_USE_READDIR
+	dir->_e = readdir(dir->_d);
+#else
 	if (dir->_ep == NULL)
 	{
 		return -1;
@@ -326,6 +349,7 @@ int tinydir_next(tinydir_dir *dir)
 	{
 		return -1;
 	}
+#endif
 	if (dir->_e == NULL)
 #endif
 	{
@@ -590,6 +614,7 @@ int _tinydir_file_cmp(const void *a, const void *b)
 }
 
 #ifndef _MSC_VER
+#ifndef _TINYDIR_USE_READDIR
 /*
 The following authored by Ben Hutchings <ben@decadent.org.uk>
 from https://womble.decadent.org.uk/readdir_r-advisory.html
@@ -633,6 +658,7 @@ size_t _tinydir_dirent_buf_size(DIR *dirp)
 	return (name_end > sizeof(struct dirent)
 		? name_end : sizeof(struct dirent));
 }
+#endif
 #endif
 
 #ifdef __cplusplus
