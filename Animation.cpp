@@ -136,7 +136,7 @@ sf::Texture* anim::RessourceManager::getTexture(std::string path)
 		}
 		else
 		{
-
+			std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
 		}
 	}
 	else
