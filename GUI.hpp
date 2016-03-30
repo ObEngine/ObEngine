@@ -28,6 +28,9 @@
 //Finir updatePositions penser a aussi update les absolutes s'occuper de Write updatePositions et Droplist Updatepositions et les autre widget
 //bien gérer le move
 
+template <typename T> std::string pointerToString(const T* obj);
+template <typename T> T* stringToPointer(std::string address);
+
 class Color
 {
 public:
@@ -855,8 +858,6 @@ namespace GUI
 int convertMousePosX(int mousePosX);
 int convertMousePosY(int mousePosY);
 DataObject* parseBind(std::string str);
-template <typename T> std::string pointerToString(const T* obj);
-template <typename T> T* stringToPointer(std::string address);
 
 template <typename T> std::string pointerToString(const T* obj)
 {
