@@ -408,9 +408,9 @@ namespace GUI
 		bool getJustClicked();
 		std::string getString();
 		bool isPressed();
-		void setTextureHover(sf::Texture& texture);
-		void setTextureIdle(sf::Texture& texture);
-		void setTexturePushed(sf::Texture& texture);
+		void setTextureHover(const sf::Texture& texture);
+		void setTextureIdle(const sf::Texture& texture);
+		void setTexturePushed(const sf::Texture& texture);
 		virtual void setDisplayed(bool displayed);
 		virtual void updatePositions();
 		void bindFunction(std::function<void(DataObject*)> function, std::string parameters);
@@ -855,13 +855,15 @@ namespace GUI
 int convertMousePosX(int mousePosX);
 int convertMousePosY(int mousePosY);
 DataObject* parseBind(std::string str);
+template <typename T> std::string pointerToString(const T* obj);
+template <typename T> T* stringToPointer(std::string address);
+
 template <typename T> std::string pointerToString(const T* obj)
 {
 	std::stringstream ss;
 	ss << obj;
 	return ss.str();
 }
-
 template <typename T> T* stringToPointer(std::string address)
 {
 	return reinterpret_cast<T*>(stol(address, NULL, 16));

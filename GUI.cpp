@@ -2849,21 +2849,21 @@ void GUI::Button::setDisplayed(bool displayed)
 	}
 }
 
-void GUI::Button::setTextureHover(sf::Texture& texture)
+void GUI::Button::setTextureHover(const sf::Texture& texture)
 {
 	widgetTextures[nameImageHover] = texture;
 	hoveringEnable = true;
 	setTexture();
 }
 
-void GUI::Button::setTextureIdle(sf::Texture& texture)
+void GUI::Button::setTextureIdle(const sf::Texture& texture)
 {
 	widgetTextures[nameImageIdle] = texture;
 	idleEnable = true;
 	setTexture();
 }
 
-void GUI::Button::setTexturePushed(sf::Texture& texture)
+void GUI::Button::setTexturePushed(const sf::Texture& texture)
 {
 	widgetTextures[nameImagePushed] = texture;
 	pushingEnable = true;

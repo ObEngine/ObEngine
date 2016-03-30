@@ -10,6 +10,8 @@
 
 namespace Light
 {
+	void initLights();
+
 	class PointLight
 	{
 		protected:
