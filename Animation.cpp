@@ -126,21 +126,24 @@ std::string anim::AnimationGroup::getGroupName() {
 //RESSOURCE MANAGER
 sf::Texture* anim::RessourceManager::getTexture(std::string path)
 {
-	if (textureDatabase.find(path) == textureDatabase.end())
+	if (textureDatabase.size() != 0)
 	{
-		sf::Texture* tempTexture = new sf::Texture;
-		if (tempTexture->loadFromFile(path))
+		if (textureDatabase.find(path) == textureDatabase.end())
 		{
-			textureDatabase[path] = tempTexture;
-			return textureDatabase[path];
+			sf::Texture* tempTexture = new sf::Texture;
+			if (tempTexture->loadFromFile(path))
+			{
+				textureDatabase[path] = tempTexture;
+				return textureDatabase[path];
+			}
+			else
+			{
+				std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+			}
 		}
-		else
-		{
-			std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
-		}
+		else return textureDatabase[path];
 	}
-	else
-		return textureDatabase[path];
+	else return textureDatabase[path];
 }
 
 //ANIMATION
