@@ -378,6 +378,11 @@ std::string GUI::Widget::getWidgetStyle()
 	return widgetStyle;
 }
 
+std::vector<sfe::RichText>* GUI::Widget::getTexts()
+{
+	return &text;
+}
+
 std::string GUI::Widget::getID()
 {
 	return ID;
@@ -457,6 +462,11 @@ void GUI::Widget::updateAbsolute()
 void GUI::Widget::addWidgetContained(Widget* widget)
 {
 	widgetsContained.push_back(widget);
+}
+
+std::vector<GUI::Widget*> GUI::Widget::getWidgetsContained()
+{
+	return widgetsContained;
 }
 
 sf::Rect<float> GUI::Widget::getRect()
@@ -587,7 +597,7 @@ GUI::WidgetContainer::WidgetContainer(std::string containerName, int posX, int p
 	this->background.setFillColor(sf::Color(0, 0, 0, 0));
 }
 
-GUI::NumericSlider* GUI::Container::createNumericSlider(std::string containerName, std::string ID, int posX, int posY, int minValue, int maxValue, int defaultValue, std::string style)
+/*GUI::NumericSlider* GUI::Container::createNumericSlider(std::string containerName, std::string ID, int posX, int posY, int minValue, int maxValue, int defaultValue, std::string style)
 {
 	if (widgetContainers.find(containerName) == widgetContainers.end())
 	{
@@ -601,7 +611,7 @@ GUI::NumericSlider* GUI::Container::createNumericSlider(std::string containerNam
 		widgetContainers[containerName]->addNewWidget(numericSlider);
 		return numericSlider;
 	}
-}
+}*/
 
 
 GUI::TextInput* GUI::Container::createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font, int fontSize, sf::Color fontColor, std::string style)
@@ -654,7 +664,7 @@ GUI::RadioButton* GUI::Container::createRadioButton(std::string containerName, s
 	}
 }
 
-GUI::NumericInput* GUI::Container::createNumericInput(std::string containerName, std::string ID, int posX, int posY, int defaultValue, std::string font, \
+/*GUI::NumericInput* GUI::Container::createNumericInput(std::string containerName, std::string ID, int posX, int posY, int defaultValue, std::string font, \
 	int fontSize, sf::Color fontColor, std::string style)
 {
 	if (widgetContainers.find(containerName) == widgetContainers.end())
@@ -685,7 +695,7 @@ GUI::NumericInput* GUI::Container::createNumericInput(std::string containerName,
 		widgetContainers[containerName]->addNewWidget(numericInput);
 		return numericInput;
 	}
-}
+}*/
 
 
 GUI::Checkbox* GUI::Container::createCheckbox(std::string containerName, std::string ID, int posX, int posY, std::string style, bool checked)
@@ -904,13 +914,12 @@ void GUI::WidgetContainer::updateAll(sf::Event& evnt)
 {
 	if (displayed)
 	{
-		for (auto ite = widgetIDContainer.rbegin(); ite != widgetIDContainer.rend(); ite++)
+		for (int i = 0; i < widgetIDContainer.size(); i++)
 		{
-			sf::Rect<float> rect = (*ite)->getRect();
-			//if ((*ite)->getDisplayed())
-			if((*ite)->getDisplayed() && !(rect.left + rect.width < posX || rect.left > posX + width || rect.top + rect.height < posY || rect.top > posY + height))
+			sf::Rect<float> rect = widgetIDContainer[i]->getRect();
+			if(widgetIDContainer[i]->getDisplayed() && !(rect.left + rect.width < posX || rect.left > posX + width || rect.top + rect.height < posY || rect.top > posY + height))
 			{
-				(*ite)->update(evnt);
+				widgetIDContainer[i]->update(evnt);
 			}
 		}
 	}
@@ -1222,9 +1231,9 @@ void GUI::LoadingBar::setTexture()
 	sprites.resize(2);
 	setTextureMap(&sprites[0], nameImageBorder);
 	if (fillingType == "Horizontal")
-		pixelsInPercent = sprites[0].getGlobalBounds().width / 100;
+		pixelsPerPercent = sprites[0].getGlobalBounds().width / 100.0;
 	else if (fillingType == "Vertical")
-		pixelsInPercent = sprites[0].getGlobalBounds().height / 100;
+		pixelsPerPercent = sprites[0].getGlobalBounds().height / 100.0;
 	setTextureMap(&sprites[1], nameImageFiller);
 }
 
@@ -1235,15 +1244,15 @@ void GUI::LoadingBar::fill(int percentage, double timeToFill)
 	{
 		if (percentage >= 100)
 		{
-			currentPixelsPerDraw = (100 * pixelsInPercent - fillingInPixels) / (this->timeToFill / delay);
+			currentPixelsPerDraw = (100 * pixelsPerPercent - fillingInPixels) / (this->timeToFill / delay);
 			fillingInPercentage = 100;
-			fillingInPixels = 100 * pixelsInPercent;
+			fillingInPixels = sprites[0].getGlobalBounds().width;
 		}
 		else
 		{
-			currentPixelsPerDraw = (percentage * pixelsInPercent - fillingInPixels) / (this->timeToFill / delay);
+			currentPixelsPerDraw = (percentage * pixelsPerPercent - fillingInPixels) / (this->timeToFill / delay);
 			fillingInPercentage = percentage;
-			fillingInPixels = percentage * pixelsInPercent;
+			fillingInPixels = percentage * pixelsPerPercent;
 		}
 	}
 }
@@ -1253,13 +1262,13 @@ void GUI::LoadingBar::addFilling(int percentageToAdd)
 	if (fillingInPercentage + percentageToAdd >= 100)
 	{
 		fillingInPercentage = 100;
-		fillingInPixels = 100 * pixelsInPercent;
+		fillingInPixels = sprites[0].getGlobalBounds().width;
 		currentFillingPixels = fillingInPixels;
 	}
 	else
 	{
 		fillingInPercentage += percentageToAdd;
-		fillingInPixels += percentageToAdd * pixelsInPercent;
+		fillingInPixels += percentageToAdd * pixelsPerPercent;
 		currentFillingPixels = fillingInPixels;
 	}
 }
@@ -1369,13 +1378,12 @@ void GUI::ScrollBar::setTexture()
 	setTextureMap(&sprites[0], nameImageBar);
 	sprites[0].scale(1, size / (float)(sprites[0].getGlobalBounds().height));
 	computeDynamicScroll();
-	scroller->setPosConstraints(posX[0], posX[0], posContainerY + posY[0], posContainerY + posY[0] + sprites[0].getGlobalBounds().height - scroller->getRect().height);
+	scroller->setPosConstraints(posContainerX + posX[0], posContainerX + posX[0], posContainerY + posY[0], posContainerY + posY[0] + sprites[0].getGlobalBounds().height - scroller->getRect().height);
 	updatePositions();
 }
 
 void GUI::ScrollBar::updatePositions()
 {
-	std::cout << "up " << posY[0]<< std::endl;
 	posX[1] = posX[0];
 
 	updateAbsolute();
@@ -1520,14 +1528,14 @@ void GUI::ScrollBar::computeDynamicScroll()
 		{
 			scrollToBottom();
 		}
-		scroller->setPosConstraints(posX[0], posX[0], posContainerY + posY[0], posContainerY + posY[0] + spriteHeight - scrollerHeight);
+		scroller->setPosConstraints(posContainerX + posX[0], posContainerX + posX[0], posContainerY + posY[0], posContainerY + posY[0] + spriteHeight - scrollerHeight);
 	}
 	else//On remet la scrollbar à sa taille normale
 	{
 		scroller->resize(scroller->getRect().width, sprites[0].getGlobalBounds().height);
 		scrollerHeight = scroller->getRect().height;
 
-		scroller->setPosConstraints(posX[0], posX[0], posContainerY + posY[0], posContainerY + posY[0] + spriteHeight - scrollerHeight);
+		scroller->setPosConstraints(posContainerX + posX[0], posContainerX + posX[0], posContainerY + posY[0], posContainerY + posY[0] + spriteHeight - scrollerHeight);
 		if (hasBeenResized)
 		{
 			scrollToTop();
@@ -1556,7 +1564,7 @@ void GUI::ScrollBar::replaceScrollerWidgets(int maxY, int spriteHeight, int spri
 			widgetsLinked[i]->move(0, distance);
 		}
 		posY[1] = posY[0] + spriteHeight  - scrollerHeight;
-		scroller->setPosition(posX[1], posY[1]);
+		scroller->setPosition(posX[0], posY[1]);
 	}
 }
 
@@ -1568,7 +1576,7 @@ void GUI::ScrollBar::scrollToBottom()
 		widgetsLinked[i]->move(0, -distance * movePerPixel);
 	}
 	posY[1] = posY[0] + sprites[0].getGlobalBounds().height - scroller->getRect().height;
-	scroller->setPosition(posX[1], posY[1]);
+	scroller->setPosition(posX[0], posY[1]);
 }
 
 void GUI::ScrollBar::scrollToTop()
@@ -1579,7 +1587,7 @@ void GUI::ScrollBar::scrollToTop()
 		widgetsLinked[i]->move(0, distance * movePerPixel);
 	}
 	posY[1] = posY[0];
-	scroller->setPosition(posX[1], posY[1]);
+	scroller->setPosition(posX[0], posY[1]);
 	updatePositions();
 }
 
@@ -1596,8 +1604,6 @@ GUI::Label::Label(std::string ID, int posX, int posY, std::string text, std::str
 {
 	this->widgetType = "Label";
 	this->fontSize = fontSize;
-	this->fontColor = color;
-	this->fontStyle = fontStyle;
 
 	this->labelText = text;
 	previousText = labelText;
@@ -1606,15 +1612,31 @@ GUI::Label::Label(std::string ID, int posX, int posY, std::string text, std::str
 		std::cout << "Error opening font while creating " << this->ID << std::endl;
 	}
 	selector.push_back(Display::Text);
+	this->text.push_back(sfe::RichText(this->font));
+	this->text[0].setCharacterSize(fontSize);
+	this->text[0] << color << fontStyle << text;
+
 	setTexture();
+}
+
+GUI::Label::Label(std::string ID, int posX, int posY, std::string font, int fontSize) : Widget(ID, posX, posY, "NONE")
+{
+	this->widgetType = "Label";
+	this->fontSize = fontSize;
+
+	this->labelText = "";
+	previousText = labelText;
+	if (!this->font.loadFromFile("Data/Fonts/" + font))
+	{
+		std::cout << "Error opening font while creating " << this->ID << std::endl;
+	}
+	selector.push_back(Display::Text);
+	this->text[0] = sfe::RichText(this->font);
 
 	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
 
 	createAttribute("text", this->labelText, "string");
 	createAttribute("font", fontString, "string");
-	createAttribute("fontColorR", this->fontColor.r, "int");
-	createAttribute("fontColorG", this->fontColor.g, "int");
-	createAttribute("fontColorB", this->fontColor.b, "int");
 	createAttribute("fontSize", this->fontSize, "int");
 }
 
@@ -1622,9 +1644,7 @@ void GUI::Label::resetFontVars(std::string text, std::string font, int fontSize,
 {
 	setFont(font);
 	setFontSize(fontSize);
-	setFontColor(color);
-	setFontStyle(fontStyle);
-	setText(text);
+	setText(text, color, fontStyle);
 	updatePositions();
 }
 
@@ -1638,29 +1658,78 @@ void GUI::Label::setFont(std::string font)
 	text[0].setFont(this->font);
 }
 
-void GUI::Label::setText(std::string text)
+void GUI::Label::setText(std::string text, sf::Color color, sf::Text::Style style)
 {
 	labelText = text;
 	previousText = text;
-	this->text[0].setString(labelText);
+	this->text[0].clear();
+	this->text[0] << color << style << text;
+}
+
+void GUI::Label::setComplexText(std::string complexText)
+{
+	text[0].clear();
+	sf::Color currColor = sf::Color::Black;
+	sf::Text::Style currStyle = sf::Text::Regular;
+	std::vector<std::string> markups = fn::String::extractBetween(complexText, '<', '>');
+	fn::String::removeCharFromString(complexText, "<");
+	std::vector<std::string> texts = fn::String::split(complexText, ">");
+
+	for (int i = 0; i < markups.size(); i++)
+	{
+		std::vector<std::string> splitMarkups = fn::String::split(markups[i], ";");
+		for (int j = 0; j < splitMarkups.size(); j++)
+		{
+			std::vector<std::string> splitProp = fn::String::split(splitMarkups[j], ":");
+			if (splitProp[0] == "color")
+			{
+				std::vector<std::string> splitColor = fn::String::split(splitProp[1], ",");
+				if (splitColor.size() == 4)
+					currColor = sf::Color(std::stoi(splitColor[0]), std::stoi(splitColor[1]), std::stoi(splitColor[2]), std::stoi(splitColor[3]));
+				else if(splitColor.size() == 3)
+					currColor = sf::Color(std::stoi(splitColor[0]), std::stoi(splitColor[1]), std::stoi(splitColor[2]));
+			}
+			else if (splitProp[0] == "style")
+			{
+				std::vector<std::string> splitProp = fn::String::split(splitMarkups[j], ":");
+				if(splitProp[1] == "regular")
+				{
+					currStyle = sf::Text::Regular;
+				}
+				else if (splitProp[1] == "underlined")
+				{
+					currStyle = sf::Text::Underlined;
+				}
+				else if (splitProp[1] == "bold")
+				{
+					currStyle = sf::Text::Bold;
+				}
+				else if (splitProp[1] == "italic")
+				{
+					currStyle = sf::Text::Italic;
+				}
+				else if(splitProp[1] == "strikeThrough")
+				{
+					currStyle = sf::Text::StrikeThrough;
+				}
+			}
+		}
+		if(texts.size() >= i + 1)
+			text[0] << currColor << currStyle << texts[i];
+	}
+}
+
+void GUI::Label::addText(std::string text, sf::Color color, sf::Text::Style style)
+{
+	labelText += text;
+	previousText = labelText;
+	this->text[0] << color << style << text;
 }
 
 void GUI::Label::setFontSize(int fontSize)
 {
 	this->fontSize = fontSize;
 	this->text[0].setCharacterSize(fontSize);
-}
-
-void GUI::Label::setFontColor(sf::Color color)
-{
-	fontColor = color;
-	this->text[0].setColor(fontColor.getSfColor());
-}
-
-void GUI::Label::setFontStyle(sf::Text::Style fontStyle)
-{
-	this->fontStyle = fontStyle;
-	this->text[0].setStyle(fontStyle);
 }
 
 std::string GUI::Label::getFontName()
@@ -1672,10 +1741,6 @@ int GUI::Label::getfontSize()
 {
 	return fontSize;
 }
-sf::Color GUI::Label::getColor()
-{
-	return fontColor.getSfColor();
-}
 
 void GUI::Label::centerInRect(sf::Rect<float> rect)
 {
@@ -1686,13 +1751,6 @@ void GUI::Label::centerInRect(sf::Rect<float> rect)
 
 void GUI::Label::setTexture()
 {
-	sf::Text returnText;
-	returnText.setFont(font);
-	returnText.setCharacterSize(fontSize);
-	returnText.setString(labelText);
-	returnText.setColor(fontColor.getSfColor());
-	returnText.setStyle(fontStyle);
-	text.push_back(returnText);
 	updatePositions();
 }
 
@@ -1700,7 +1758,7 @@ void GUI::Label::updateTexture(sf::Event& evnt)
 {
 	if (labelText != previousText)
 	{
-		text[0].setString(labelText);
+		this->text[0] << labelText;
 		previousText = labelText;
 	}
 }
@@ -1715,16 +1773,21 @@ std::string* GUI::Label::getHook()
 	return &labelText;
 }
 
+sfe::RichText * GUI::Label::getRichText()
+{
+	return &text[0];
+}
+
 void GUI::Label::updateAttributes()
 {
-	sf::Text empty;
+	/*sf::Text empty;
 	text[0] = empty;
 	setFont(fontString);
 	text[0].setString(labelText);
 	text[0].setCharacterSize(fontSize);
 	text[0].setColor(fontColor.getSfColor());
 	text[0].setStyle(sf::Text::Regular);
-	updatePositions();
+	updatePositions();*/
 }
 
 void GUI::Checkbox::setTexture()
@@ -1821,6 +1884,7 @@ bool* GUI::Checkbox::getHook()
 
 void GUI::Checkbox::setText(std::string text, std::string font, sf::Color fontColor, int fontSize, bool centered, int relativeX, int relativeY, sf::Text::Style fontStyle)
 {
+
 	if (!hasText)
 	{
 		absolutesX.resize(2);
@@ -1974,7 +2038,7 @@ GUI::Droplist::Droplist(std::string ID, int posX, int posY, bool dropListMenu, s
 
 	for (int i = 0; i < this->buttons.size(); i++)
 	{
-		buttons[i]->changeText(list[i]);
+		buttons[i]->changeText(list[i], sf::Color::Black, sf::Text::Regular);
 		addContainedItem(buttons[i]->getDataObject());
 	}
 	this->font = "arial.ttf";
@@ -2136,7 +2200,7 @@ void GUI::Droplist::updateTexture(sf::Event& evnt)
 void GUI::Droplist::changeTitle(std::string newTitle)
 {
 	list[0] = newTitle;
-	buttons[0]->changeText(newTitle);
+	buttons[0]->changeText(newTitle, this->idle, sf::Text::Regular);
 }
 
 std::string GUI::Droplist::getCurrentSelected()
@@ -2420,13 +2484,18 @@ void GUI::Movable::setTextWithPos(std::string font, std::string text, int charac
 		if (!hasText)
 		{
 			selector.resize(3);
-			selector[2] = GUI::Display::Text;
+			selector[2] = GUI::Display::WidgetContained;
+			labelText = new GUI::Label(ID + "textLabel", 0, 0, font, characSize);
+			labelText->setAbsolute(posContainerX, posContainerY);
+			widgetsContained.push_back(labelText);
 			absolutesX.resize(3);
 			absolutesY.resize(3);
 			this->posX.resize(3);
 			this->posY.resize(3);
-			text.resize(1);
 		}
+
+		labelText->setText(text, color, sf::Text::Regular);
+
 		int i = 0;
 		hasText = true;
 		fullText = text;
@@ -2434,23 +2503,17 @@ void GUI::Movable::setTextWithPos(std::string font, std::string text, int charac
 
 		this->posX[2] = this->posX[0] + posX;
 		this->posY[2] = this->posY[0] + posY;
-		if (!this->font.loadFromFile("Data/Fonts/" + font))
-		{
-			std::cout << "GUI Error: Movable: " << ID << "Impossible to load font " << font << std::endl;
-		}
-		this->text[0].setFont(this->font);
-		this->text[0].setString(text);
-		this->text[0].setCharacterSize(characSize);
-		this->text[0].setPosition(absolutesX[2], absolutesY[2]);
-		this->text[0].setColor(color);
-		sf::Rect<float> rect = this->text[0].getGlobalBounds();
+		labelText->setPosition(this->posX[2], this->posY[2]);
+
+		labelText->setSpritesPositions();
+		sf::Rect<float> rect = labelText->getRect();
 		if (isResized)
 		{
 			while (rect.left + rect.width > absolutesX[0] + width)
 			{
 				i++;
-				this->text[0].setCharacterSize(characSize - i);
-				rect = this->text[0].getGlobalBounds();
+				labelText->setFontSize(characSize - i);
+				rect = labelText->getRect();
 			}
 		}
 		else
@@ -2458,8 +2521,8 @@ void GUI::Movable::setTextWithPos(std::string font, std::string text, int charac
 			while (rect.left + rect.width > absolutesX[0] + width)
 			{
 				displayedText.erase(displayedText.end() - 1);
-				this->text[0].setString(displayedText);
-				rect = this->text[0].getGlobalBounds();
+				labelText->setText(displayedText, color, sf::Text::Regular);
+				rect = labelText->getRect();
 			}
 		}
 	}
@@ -2472,27 +2535,26 @@ void GUI::Movable::setText(std::string font, std::string text, int characSize, s
 	if (!hasText && !hasSprite)
 	{
 		selector.resize(3);
-		selector[2] = GUI::Display::Text;
+		selector[2] = GUI::Display::WidgetContained;
+		labelText = new GUI::Label(ID + "textLabel", 0, 0, font, characSize);
+		labelText->setAbsolute(posContainerX, posContainerY);
+		widgetsContained.push_back(labelText);
 		absolutesX.resize(3);
 		absolutesY.resize(3);
 		this->posX.resize(3);
 		this->posY.resize(3);
-		text.resize(1);
 	}
 	else if (!hasText)
 	{
-		selector[1] = GUI::Display::Text;
-		text.resize(1);
+		selector[1] = GUI::Display::WidgetContained;
+		labelText = new GUI::Label(ID + "textLabel", 0, 0, font, characSize);
+		labelText->setAbsolute(posContainerX, posContainerY);
+		widgetsContained.push_back(labelText);
 	}
+
+	labelText->setText(text, color, sf::Text::Regular);
 	hasText = true;
-	if (!this->font.loadFromFile("Data/Fonts/"+font))
-	{
-		std::cout << "GUI Error: Movable: " << ID << "Impossible to load font " << font << std::endl;
-	}
-	this->text[0].setFont(this->font);
-	this->text[0].setString(text);
-	this->text[0].setCharacterSize(characSize);
-	this->text[0].setColor(color);
+
 	if (hasSprite)
 	{
 		sprites[1] = sf::Sprite();
@@ -2501,13 +2563,13 @@ void GUI::Movable::setText(std::string font, std::string text, int characSize, s
 		sprites[1].setScale(static_cast<float>(height - marginTop * 2) / sprites[1].getGlobalBounds().height, static_cast<float>((height - marginTop * 2)) / sprites[1].getGlobalBounds().height);
 
 		posX[2] = posX[1] + sprites[1].getGlobalBounds().width + 5;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 		//adapter automatiquement la taille de la police..
 	}
 	else
 	{
-		posX[2] = posX[0] + width / 2 - this->text[0].getGlobalBounds().width / 2;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posX[2] = posX[0] + width / 2 - labelText->getRect().width / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 	}
 }
 
@@ -2537,7 +2599,7 @@ void GUI::Movable::setPicture(std::string texturePath, int marginLeft, int margi
 		sprites[1].setScale(static_cast<float>((height - marginLeft * 2)) / sprites[1].getGlobalBounds().height, static_cast<float>((height - marginTop * 2)) / sprites[1].getGlobalBounds().height);
 
 		posX[2] = posX[1] + sprites[1].getGlobalBounds().width + 5;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 	}
 	else
 	{
@@ -2554,12 +2616,12 @@ void GUI::Movable::resize(int width, int height)
 		sprites[1].setScale(static_cast<float>((height - marginLeft * 2)) / sprites[1].getGlobalBounds().height, static_cast<float>((height - marginTop * 2)) / sprites[1].getGlobalBounds().height);
 
 		posX[2] = posX[1] + sprites[1].getGlobalBounds().width + 5;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 	}
 	else if (hasText)
 	{
-		posX[2] = posX[0] + width / 2 - this->text[0].getGlobalBounds().width / 2;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posX[2] = posX[0] + width / 2 - labelText->getRect().width / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 	}
 	else if (hasSprite)
 	{
@@ -2622,7 +2684,7 @@ void GUI::Movable::updatePositions()
 		updateAbsolute();
 
 		posX[2] = posX[1] + sprites[1].getGlobalBounds().width + 5;
-		posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+		posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 	}
 	else if (hasText)
 	{
@@ -2633,8 +2695,8 @@ void GUI::Movable::updatePositions()
 		}
 		else
 		{
-			posX[2] = posX[0] + width / 2 - this->text[0].getGlobalBounds().width / 2;
-			posY[2] = posY[0] + height / 2 - this->text[0].getGlobalBounds().height / 2;
+			posX[2] = posX[0] + width / 2 - labelText->getRect().width / 2;
+			posY[2] = posY[0] + height / 2 - labelText->getRect().height / 2;
 		}
 	}
 	else if (hasSprite)
@@ -2650,7 +2712,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 	if (!hasVerticalConstaint)
 	{
 		int y = convertMousePosY(evnt.mouseMove.y) - currentShiftY;
-		/*if (hasPosConstraints)
+		if (hasPosConstraints)
 		{
 			if (y < posYMin)
 			{
@@ -2665,7 +2727,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 				absolutesY[0] = y;
 			}
 		}
-		else*/
+		else
 			absolutesY[0] = y;
 
 	}
@@ -2673,7 +2735,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 	if (!hasHorizontalConstraint)
 	{
 		int x = convertMousePosX(evnt.mouseMove.x) - currentShiftX;
-		/*if (hasPosConstraints)
+		if (hasPosConstraints)
 		{
 			if (x < posXMin)
 			{
@@ -2688,7 +2750,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 				absolutesX[0] = x;
 			}
 		}
-		else*/
+		else
 			absolutesX[0] = x;
 	}
 
@@ -2803,9 +2865,9 @@ void GUI::Button::setText(std::string text, std::string font, sf::Color fontColo
 	updatePositions();
 }
 
-void GUI::Button::changeText(std::string text)
+void GUI::Button::changeText(std::string text, sf::Color color, sf::Text::Style style)
 {
-	buttonLabel->setText(text);
+	buttonLabel->setText(text, color, style);
 }
 
 void GUI::Button::setLabelText(GUI::Label* text)
@@ -3050,11 +3112,13 @@ void GUI::Button::bindFunction(std::function<void()> function)
 	voidFunctionBinded = true;
 }
 
-GUI::NumericInput::NumericInput(std::string ID, int posX, int posY, int defaultValue, std::string style, std::string font, sf::Color fontColor, int fontSize) : Widget(ID, posX, posY, style)
+/*GUI::NumericInput::NumericInput(std::string ID, int posX, int posY, int defaultValue, std::string style, std::string font, sf::Color fontColor, int fontSize) : Widget(ID, posX, posY, style)
 {
 	this->widgetType = "NumericInput";
 
 	this->inputValue = std::to_string(defaultValue);
+
+	this->fontColor = fontColor;
 
 	this->posX.push_back(posX + 15);
 	this->posY.push_back(posY + 15);
@@ -3200,13 +3264,13 @@ void GUI::NumericInput::loseFocus()
 void GUI::NumericInput::setTextPosition()
 {
 	*visibleValue = inputValue;
-	labelText->setText(*visibleValue);
+	labelText->setText(*visibleValue, fontColor, sf::Text::Regular);
 	labelText->setSpritesPositions();
 	this->posX[1] = posX[0] + sprites[0].getGlobalBounds().width / 2 - labelText->getRect().width;
 	while (posX[1] < posX[0])
 	{
 		(*visibleValue).erase(0, 1);
-		labelText->setText(*visibleValue);
+		labelText->setText(*visibleValue, fontColor, sf::Text::Regular);
 		labelText->setSpritesPositions();
 		this->posX[1] = posX[0] + sprites[0].getGlobalBounds().width / 2 - labelText->getRect().width;
 	}
@@ -3302,7 +3366,7 @@ void GUI::NumericInput::updateTexture(sf::Event& evnt)
 		if (evnt.key.code == sf::Keyboard::Down)
 			arrowDownReleased = true;
 	}
-}
+}*/
 
 GUI::RadioButton::RadioButton(std::string ID, int posX, int posY, std::string value, std::string group, std::string style, bool isChecked) : Checkbox(ID, posX, posY, style, isChecked)
 {
@@ -3394,7 +3458,7 @@ void GUI::RadioButton::setUnchecked()
 	setTextureMap(&sprites[0], nameImageUnchecked);
 }
 
-GUI::NumericSlider::NumericSlider(std::string ID, int posX, int posY, int minValue, int maxValue, int defaultCursorValue, std::string style) : Widget(ID, posX, posY, style)
+/*GUI::NumericSlider::NumericSlider(std::string ID, int posX, int posY, int minValue, int maxValue, int defaultCursorValue, std::string style) : Widget(ID, posX, posY, style)
 {
 	this->widgetType = "NumericSlider";
 	selector.push_back(Display::Sprite);
@@ -3463,7 +3527,7 @@ void GUI::NumericSlider::setTexture()
 	absolutesY[2] = posY[2] + posContainerY;
 
 	text.resize(1);
-	text[0] = returnNumber;
+	text[0]  returnNumber;
 }
 
 void GUI::NumericSlider::updateTexture(sf::Event& evnt)
@@ -3508,12 +3572,12 @@ void GUI::NumericSlider::isHolding(sf::Event& evnt)
 			absolutesX[2] = posX[2] + posXContainer;
 		}
 	}
-}
+}*/
 
 GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText) : Widget(ID, posX, posY, style)
 {
 	this->widgetType = "TextInput";
-
+	this->fontColor = fontColor;
 	selector.push_back(Display::Sprite);
 	selector.push_back(Display::WidgetContained);
 	selector.push_back(Display::Sprite);
@@ -3614,17 +3678,20 @@ void GUI::TextInput::updatePositions()
 
 void GUI::TextInput::updateTextPositionX()
 {
+	if (!textLarger)
+		textWasLarger = false;
 	textLarger = false;
 	*visibleText = inputText;
-	labelText->setText(*visibleText);
+	labelText->setText(*visibleText, fontColor, sf::Text::Regular);
 	labelText->setSpritesPositions();
-	this->posX[1] = posX[0] + sprites[0].getGlobalBounds().width - labelText->getRect().width - 7;
-	while (posX[1] <= posX[0])
+	this->posX[1] = posX[0] + 5;
+	while (posX[1] + labelText->getRect().width >= posX[0] + sprites[0].getGlobalBounds().width - 5)
 	{
 		(*visibleText).erase(0, 1);
-		labelText->setText(*visibleText);
+		labelText->setText(*visibleText, fontColor, sf::Text::Regular);
 		labelText->setSpritesPositions();
-		this->posX[1] = posX[0] + sprites[0].getGlobalBounds().width - labelText->getRect().width - 7;
+		this->posX[1] = posX[0] + 5;
+		textWasLarger = true;
 		textLarger = true;
 	}
 }
@@ -3657,11 +3724,24 @@ void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 	charToMove.setString(inputText);
 	int currentWidth = charToMove.getGlobalBounds().width;
 	cursorPosition += enteredOrDeleted;
-	if (!textLarger)
+	if (!textWasLarger)
 	{
 		currentCursorOffset += (currentWidth - previousWidth);
 	}
+
 	previousWidth = currentWidth;
+}
+
+bool GUI::TextInput::checkFilters(int c)
+{
+	for (int i = 0; i < filters.size(); i++)
+	{
+		if (filters[i] == TextInputFilters::Integers)
+		{
+
+		}
+	}
+	return true;
 }
 
 void GUI::TextInput::moveCursorRight()
@@ -3804,6 +3884,11 @@ void GUI::TextInput::setText(std::string string)
 	updatePositions();
 }
 
+void GUI::TextInput::addFilter(GUI::TextInputFilters filter)
+{
+	filters.push_back(filter);
+}
+
 std::string GUI::TextInput::getText()
 {
 	return inputText;
@@ -3848,6 +3933,12 @@ GUI::WidgetContainer* GUI::Container::createWidgetContainer(std::string containe
 bool GUI::WidgetContainer::getReleased()
 {
 	return justReleased;
+}
+
+void GUI::WidgetContainer::addScrollBar()
+{
+	scroll = container->createScrollBar(containerName, containerName + "scrollbar", width, 0, height, 100, false, widgetIDContainer, "V2");
+	scroll->setPosition(width - scroll->getRect().width, 0);
 }
 
 sf::Rect<float> GUI::WidgetContainer::getRect()
@@ -3919,8 +4010,6 @@ void GUI::Container::updateAllContainer()
 	{
 		(*ite)->updateAll(*evnt);
 	}
-
-
 }
 
 void GUI::Container::setFocus(std::string widgetContainerName)
@@ -4170,13 +4259,13 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 		label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplex()[0], path + "/" + name + "/" + "containedItem", data, true));
 		this->createTextInput(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], label, style);
 	}
-	else if (getType == "NumericInput")
+	/*else if (getType == "NumericInput")
 	{
 		ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
 		Label* label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplex()[0], path + "/" + name + "/" + "containedItem", data, true));;
 
 		this->createNumericInput(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], label, style);
-	}
+	}*/
 	else if (getType == "Dropbox")
 	{
 		this->createDropbox(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], style);

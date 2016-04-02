@@ -69,11 +69,23 @@ void loadSpriteTab(DataObject* parameters)
 	hookCore.getPointer("GUI")->as<GUI::Container*>()->getContainerByContainerName("EditorSprites")->removeAllWidget();
 	std::string geid;
 	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
+	std::cout << "Load Folder : " << geid << std::endl;
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/arial.ttf");
 	std::vector<me::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
-	
+	for (unsigned int i = 0; i < spritesInCat.size(); i++)
+	{
+		int xpos = 20 + (i * 266);
+		int yiter = 0;
+		while (xpos > 1920 - 266)
+		{
+			xpos -= (1920 - 266);
+			yiter += 1;
+		}
+		int ypos = 25 + (266 * yiter);
+		gui->createButton("EditorSprites", "LS_SPR_" + spritesInCat[i]->getName(), 0, 0, true, false, "GREY");
+	}
 }
 
 void buildAddSpriteFolderList()
@@ -89,12 +101,12 @@ void buildAddSpriteFolderList()
 	std::map<std::string, std::vector<std::string>> addSprMap;
 	for (unsigned int i = 0; i < sprNameList.size(); i++)
 	{
-		if (fn::String::occurencesInString(sprNameList[i], "_") == 1 && sprNameList[i] != "." && sprNameList[i] != "..")
+		if (fn::String::occurencesInString(sprNameList[i], "_") == 1)
 		{
 			std::string currentPrefix = fn::String::split(sprNameList[i], "_")[0];
 			addSprMap[currentPrefix].push_back(fn::String::split(sprNameList[i], "_")[1]);
 		}
-		else if (sprNameList[i] != "." && sprNameList[i] != "..")
+		else
 		{
 			addSprMap["OTHR"].push_back(sprNameList[i]);
 		}
@@ -236,9 +248,7 @@ void editMap(std::string mapName)
 	bool* isGridEnabled = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableGridCB")->getHook();
 	gui->createLabel("EditorSettings", "enableGridLbl", 65, 130, "Enable Grid", "arial.ttf", 12, sf::Color(255, 255, 255));
 	gui->createLabel("EditorSettings", "gridDimensionsLbl", 40, 155, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
-	gui->createNumericInput("EditorSettings", "gridDimensionsXE", 120, 155, 32, "arial.ttf", 12, sf::Color::White, "GREY");
 	gui->createLabel("EditorSettings", "gridDimensionsMULbl", 160, 155, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
-	gui->createNumericInput("EditorSettings", "gridDimensionsYE", 168, 155, 32, "arial.ttf", 12, sf::Color::White, "GREY");
 
 	gui->createWidgetContainer("EditorSprites", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorSprites")->setBackground(sf::Color(0, 0, 0, 0));
@@ -677,6 +687,7 @@ void editMap(std::string mapName)
 		//GUI Update
 		gui->getContainerByContainerName("Editor")->setDisplayed(guiEditorEnabled);
 		gui->updateAllContainer();
+		std::cout << "CAN PASS" << std::endl;
 
 		//Events
 		keybind.update();
@@ -841,7 +852,7 @@ void editMap(std::string mapName)
 		if (showCursor)
 			window.draw(*cursor.getSprite());
 
-		std::vector<sf::RectangleShape> dapp;
+		/*std::vector<sf::RectangleShape> dapp;
 		Collision::PolygonalCollider* nik = world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 		if (nik != NULL)
 		{
@@ -850,7 +861,7 @@ void editMap(std::string mapName)
 			{
 				window.draw(dapp[k]);
 			}
-		}
+		}*/
 
 		window.display();
 	}

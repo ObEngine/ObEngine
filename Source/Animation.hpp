@@ -57,6 +57,7 @@ namespace anim
 		private:
 			std::map<std::string, sf::Texture*> textureDatabase;
 		public:
+			RessourceManager();
 			sf::Texture* getTexture(std::string path);
 	};
 

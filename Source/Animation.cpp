@@ -123,7 +123,12 @@ std::string anim::AnimationGroup::getGroupName() {
 	return groupName;
 }
 
+
 //RESSOURCE MANAGER
+anim::RessourceManager::RessourceManager()
+{
+	textureDatabase = std::map<std::string, sf::Texture*>();
+}
 sf::Texture* anim::RessourceManager::getTexture(std::string path)
 {
 	if (textureDatabase.size() != 0)

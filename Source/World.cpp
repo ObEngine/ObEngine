@@ -87,7 +87,7 @@ void World::loadFromFile(std::string filename)
 				decoAtrList.push_back(mapParse.getListItem("LevelSprites", allDecos[i], "attributeList", j)->getData(&attrBuffer));
 		}
 		LevelSprite* tempDeco = new LevelSprite(decoID);
-		if (decoType != "None") 
+		if (decoType != "None")
 		{
 			delete tempDeco;
 			tempDeco = new LevelSprite(decoType, decoID, &sprRsMan);
@@ -235,7 +235,7 @@ DataParser* World::saveData()
 			int py = collidersArray[i]->getPointCoordinates(j).second;
 			dataStore->createListItem("Collisions", collidersArray[i]->getID(), "polygonPoints", std::to_string(px) + "," + std::to_string(py));
 		}
-		
+
 	}
 	return dataStore;
 }
@@ -381,7 +381,7 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 		bool lightHooked = lightMap.find(frontSpriteArray[i]->getID()) != lightMap.end();
 		Light::PointLight* cLight = NULL;
 		if (lightHooked) cLight = lightMap[frontSpriteArray[i]->getID()];
-		
+
 		if (fn::Vector::isInList((std::string)"+FIX", frontSpriteArray[i]->getAttributes()))
 		{
 			layeredX = frontSpriteArray[i]->getX();
