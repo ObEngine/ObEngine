@@ -392,15 +392,26 @@ void anim::DirtyAnimation::loadAnimation(std::string path) {
 	for (unsigned int i = 0; i < imageList.size(); i++)
 	{
 		std::string textureName = imageList[i];
-		if (animatorRsHook == NULL)
-		{
-			sf::Texture* tempTexture = new sf::Texture;
-			tempTexture->loadFromFile(path + "/" + textureName);
-			tempTexture->setSmooth(true);
-			animationTextures.push_back(tempTexture);
+		if (textureName != "thumbnail.png")
+		{	
+			if (animatorRsHook == NULL)
+			{
+				sf::Texture* tempTexture = new sf::Texture;
+				tempTexture->loadFromFile(path + "/" + textureName);
+				tempTexture->setSmooth(true);
+				if (textureName.size() > 7 && textureName.substr(0, 6) == "normal_")
+					normalTextures[i] = tempTexture;
+				else
+					animationTextures.push_back(tempTexture);
+			}
+			else
+			{
+				if (textureName.size() > 7 && textureName.substr(0, 7) == "normal_")
+					normalTextures[i] = animatorRsHook->getTexture(path + "/" + textureName);
+				else
+					animationTextures.push_back(animatorRsHook->getTexture(path + "/" + textureName));
+			}
 		}
-		else
-			animationTextures.push_back(animatorRsHook->getTexture(path + "/" + textureName));
 	}
 }
 void anim::DirtyAnimation::update() {
@@ -422,9 +433,24 @@ sf::Texture* anim::DirtyAnimation::getTexture() {
 	noTextureReturned = false;
 	return animationTextures[textureIndex];
 }
+sf::Texture* anim::DirtyAnimation::getNormal()
+{
+	if (normalTextures.find(textureIndex) != normalTextures.end())
+		return normalTextures[textureIndex];
+	else
+		return nullptr;
+}
 sf::Texture* anim::DirtyAnimation::getTextureAtIndex(int index) {
 	noTextureReturned = false;
 	return animationTextures[index];
+}
+
+sf::Texture* anim::DirtyAnimation::getNormalAtIndex(int index)
+{
+	if (normalTextures.find(index) != normalTextures.end())
+		return normalTextures[index];
+	else
+		return nullptr;
 }
 
 //ANIMATOR

@@ -36,13 +36,12 @@ namespace me
 		private:
 			std::string name;
 			sf::Texture texture;
-			sf::Sprite sprite;
 			sf::Font font;
+			bool nar;
 		public:
-			SpriteFile(std::string name, sf::Font font);
+			SpriteFile(std::string name, sf::Font font, bool noAdditionalRender = false);
 			std::string getName();
 			void render();
-			sf::Sprite* getSprite();
 			sf::Texture getTexture();
 	};
 
@@ -66,6 +65,7 @@ namespace me
 	};
 }
 
-
-void buildAddSpriteFolderList(GUI::Container* gui, std::vector<me::SpriteFolder*>* addSprFolderList, sf::Font* font);
+void buildAddSpriteFolderList();
+void displayAddSpriteFolderList();
+void addSpriteToWorld(DataObject* parameters);
 void editMap(std::string mapName);

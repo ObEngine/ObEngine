@@ -95,6 +95,7 @@ std::vector<GameObject*> GameObjectHandler::getAllGameObject(std::vector<std::st
 		if (filters.size() == 0) returnVec.push_back(it->second);
 		else
 		{
+			
 			bool allFilters = true;
 			if (fn::Vector::isInList(std::string("Display"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
 			if (fn::Vector::isInList(std::string("Collide"), filters)) { if (!it->second->canCollide()) allFilters = false; }
@@ -125,10 +126,11 @@ GameObject* GameObjectHandler::createGameObject(std::string id, std::string type
 	this->scrHandlerMap[key]->dofile("Data/Scripts/ScrInit.lua");
 	loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key]);
 	(*this->scrHandlerMap[key])["ID"] = id;
-	(*this->scrHandlerMap[key])["Key"] = this->objHandlerMap[key]->key;
-	(*this->scrHandlerMap[key])["PKey"] = this->objHandlerMap[key]->publicKey;
+	(*this->scrHandlerMap[key])["Private"] = this->objHandlerMap[key]->key;
+	(*this->scrHandlerMap[key])["Public"] = this->objHandlerMap[key]->publicKey;
 	(*this->scrHandlerMap[key])("protect(\"ID\")");
-	(*this->scrHandlerMap[key])("protect(\"Key\")");
+	(*this->scrHandlerMap[key])("protect(\"Private\")");
+	(*this->scrHandlerMap[key])("protect(\"Public\")");
 	this->trgHandlerMap[key]->addTrigger("Init");
 	this->setTriggerState(id, "Init", true);
 	this->trgHandlerMap[key]->addTrigger("Update");
@@ -295,7 +297,48 @@ void GameObject::update()
 				}
 			}
 			std::string funcname = useGrp + "." + registeredTriggers[i]->getName();
-			(*this->scriptEngine)["cpp_param"] = registeredTriggers[i]->getParameters();
+			auto allParam = registeredTriggers[i]->getParameters();
+			(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
+			for (auto it = allParam.begin(); it != allParam.end(); it++)
+			{
+				std::cout << "rtype:" << allParam[it->first].first << std::endl;
+				if (allParam[it->first].first == "int")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<int>();
+				else if (allParam[it->first].first == "std::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::string>();
+				else if (allParam[it->first].first == "bool")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<bool>();
+				else if (allParam[it->first].first == "float")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<float>();
+				else if (allParam[it->first].first == "std::map<int,int,structstd::less<int>,classstd::allocator<structstd::pair<intconst,int>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, int>>();
+				else if (allParam[it->first].first == "std::map<int,float,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
+				else if (allParam[it->first].first == "std::map<int,bool,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
+				else if (allParam[it->first].first == "std::map<int,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"structstd::less<int>,classstd::allocator<structstd::pair<intconst,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, std::string>>();
+				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"int,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,int>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, int>>();
+				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"float,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,float>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, float>>();
+				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, bool>>();
+				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+					"structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,"
+					"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
+					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, std::string>>();
+
+			}
 			this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 		}
 	}

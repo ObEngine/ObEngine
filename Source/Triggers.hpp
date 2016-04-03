@@ -10,6 +10,7 @@
 #include <kaguya/kaguya.hpp>
 
 #include "TimeManager.hpp"
+#include "any.hpp"
 
 class Trigger
 {
@@ -17,7 +18,7 @@ class Trigger
 		std::string group;
 		std::string triggerName;
 		std::string triggerNamespace;
-		kaguya::LuaTable* triggerParameters;
+		std::map<std::string, std::pair<std::string, emorph::any*>> triggerParameters;
 		bool enabled = false;
 		bool toEnable = false;
 		bool toDisable = false;
@@ -35,7 +36,7 @@ class Trigger
 		std::string getGroup();
 		std::string getName();
 		std::string getNamespace();
-		kaguya::LuaTable* getParameters();
+		std::map<std::string, std::pair<std::string, emorph::any*>> getParameters();
 };
 
 class TriggerDelay
@@ -100,8 +101,9 @@ extern TriggerDatabase triggerDatabaseCore;
 template<typename P>
 inline void Trigger::pushParameter(std::string name, P parameter)
 {
-	(*triggerParameters)[name] = &parameter;
-	std::cout << "Didn't word.." << std::endl;
+	std::vector<std::string> splittedTypeName = fn::String::split(typeid(parameter).name(), " ");
+	std::string datatype = fn::Vector::join(splittedTypeName, "", 1);
+	triggerParameters[name] = std::pair<std::string, emorph::any*>(datatype, new emorph::any(parameter));
 }
 
 template<typename P>

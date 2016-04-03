@@ -88,8 +88,9 @@ namespace GUI
 		};
 		enum TextInputFilters
 		{
-			Integers,
-			String,
+			Integer,
+			Alphabetic,
+			AlphaNumeric,
 			Lowercase,
 			Uppercase
 		};
@@ -418,6 +419,7 @@ namespace GUI
 		bool getJustClicked();
 		std::string getString();
 		bool isPressed();
+		void setTextureAll(const sf::Texture& texture);
 		void setTextureHover(const sf::Texture& texture);
 		void setTextureIdle(const sf::Texture& texture);
 		void setTexturePushed(const sf::Texture& texture);

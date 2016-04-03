@@ -4,6 +4,8 @@
 #include "MapEditor.hpp"
 
 std::map<std::string, me::SpriteFolder*> addSprFolderMap;
+std::map<std::string, GUI::Button*> addBtnGUIMap;
+std::map<std::string, std::map<std::string, GUI::Button*>> addFileGUIMap;
 
 //SpriteFolder
 me::SpriteFolder::SpriteFolder(std::string cat, std::string name, std::string folderIcon, sf::Font font)
@@ -53,10 +55,11 @@ sf::Texture me::SpriteFolder::getTexture()
 }
 
 //SpriteFile
-me::SpriteFile::SpriteFile(std::string name, sf::Font font)
+me::SpriteFile::SpriteFile(std::string name, sf::Font font, bool noAdditionalRender)
 {
 	this->name = name;
 	this->font = font;
+	this->nar = noAdditionalRender;
 }
 
 std::string me::SpriteFile::getName()
@@ -64,27 +67,95 @@ std::string me::SpriteFile::getName()
 	return name;
 }
 
+void me::SpriteFile::render()
+{
+	texture.loadFromFile("Sprites/LevelSprites/" + name + "/thumbnail.png");
+	sf::Sprite texSpr;
+	texSpr.setTexture(texture);
+	texSpr.setPosition(sf::Vector2f(128 - (texSpr.getGlobalBounds().width / 2), 128 - (texSpr.getGlobalBounds().height / 2)));
+	sf::RenderTexture rtexture;
+	rtexture.create(256, 256);
+	rtexture.clear(sf::Color(0, 0, 0, 0));
+	if (!nar)
+	{
+		sf::RectangleShape sprRec(sf::Vector2f(256, 256));
+		sprRec.setFillColor(sf::Color(100, 100, 100));
+		sprRec.setPosition(0, 0);
+		rtexture.draw(sprRec);
+	}
+	rtexture.draw(texSpr);
+	if (!nar)
+	{
+		sf::RectangleShape titleRec(sf::Vector2f(256, 20));
+		titleRec.setPosition(0, 0);
+		titleRec.setFillColor(sf::Color(0, 0, 0, 200));
+		rtexture.draw(titleRec);
+		sf::Text sprNameText;
+		sprNameText.setFont(this->font);
+		sprNameText.setString(this->name);
+		sprNameText.setCharacterSize(16);
+		sprNameText.setColor(sf::Color(255, 255, 255));
+		rtexture.draw(sprNameText);
+	}
+	rtexture.display();
+	texture = rtexture.getTexture();
+}
+
+sf::Texture me::SpriteFile::getTexture()
+{
+	return texture;
+}
+
 void loadSpriteTab(DataObject* parameters)
 {
-	hookCore.getPointer("GUI")->as<GUI::Container*>()->getContainerByContainerName("EditorSprites")->removeAllWidget();
+	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
+	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
 	std::string geid;
 	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
-	std::cout << "Load Folder : " << geid << std::endl;
-	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
-	sf::Font font;
-	font.loadFromFile("Data/Fonts/arial.ttf");
-	std::vector<me::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
-	for (unsigned int i = 0; i < spritesInCat.size(); i++)
+	if (addFileGUIMap.find(geid) == addFileGUIMap.end())
 	{
-		int xpos = 20 + (i * 266);
-		int yiter = 0;
-		while (xpos > 1920 - 266)
+		addFileGUIMap[geid] = std::map<std::string, GUI::Button*>();
+		std::cout << "Load Folder : " << geid << std::endl;
+		GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
+		sf::Font font;
+		font.loadFromFile("Data/Fonts/arial.ttf");
+		std::vector<me::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
+		spritesInCat.insert(spritesInCat.begin(), new me::SpriteFile("SprBack", font, true));
+		spritesInCat[0]->render();
+		const int sprSize = 256;
+		const int sprOff = 10;
+		const int xOff = 15;
+		const int yOff = 40;
+		for (unsigned int i = 0; i < spritesInCat.size(); i++)
 		{
-			xpos -= (1920 - 266);
-			yiter += 1;
+			int xpos = (i * (sprSize + sprOff));
+			int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+			while (xpos >(1920 - (sprSize + sprOff)))
+			{
+				xpos -= (1920 - (sprSize + sprOff));
+			}
+			xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
+			xpos += xOff;
+			ypos += yOff;
+			gui->createButton("EditorSprites", "LS_SPR_" + spritesInCat[i]->getName(), xpos, ypos, true, false, "GREY");
+			if (i == 0)
+			{
+				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(&displayAddSpriteFolderList);
+			}
+			else
+			{
+				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(&addSpriteToWorld, "string id = '" + spritesInCat[i]->getName() + "'");
+			}
+			GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->setTextureAll(spritesInCat[i]->getTexture());
+			addFileGUIMap[geid]["LS_SPR_" + spritesInCat[i]->getName()] = GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName());
 		}
-		int ypos = 25 + (266 * yiter);
-		gui->createButton("EditorSprites", "LS_SPR_" + spritesInCat[i]->getName(), 0, 0, true, false, "GREY");
+	}
+	else
+	{
+		for (auto it = addFileGUIMap[geid].begin(); it != addFileGUIMap[geid].end(); it++)
+		{
+			gui->getContainerByContainerName("EditorSprites")->addWidget(it->second);
+		}
 	}
 }
 
@@ -133,14 +204,46 @@ void buildAddSpriteFolderList()
 		for (unsigned int i = 0; i < iterator->second.size(); i++)
 		{
 			tempFolder->pushSprite(new me::SpriteFile(iterator->first + "_" + iterator->second[i], font));
+			tempFolder->getSpriteList()->at(i)->render();
 		}
 		tempFolder->render();
-		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureIdle(tempFolder->getTexture());
-		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTexturePushed(tempFolder->getTexture());
-		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureHover(tempFolder->getTexture());
+		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureAll(tempFolder->getTexture());
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->bindFunction(&loadSpriteTab, "string id = '" + iterator->first + "'");
 		addSprFolderMap[iterator->first] = tempFolder;
+		addBtnGUIMap["LS_CTG_" + iterator->first] = GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first);
 	}
+}
+
+void displayAddSpriteFolderList()
+{
+	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
+	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
+	for (auto it = addBtnGUIMap.begin(); it != addBtnGUIMap.end(); it++)
+	{
+		gui->getContainerByContainerName("EditorSprites")->addWidget(it->second);
+	}
+}
+
+void addSpriteToWorld(DataObject* parameters)
+{
+	std::string geid;
+	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
+	std::cout << "Loading : " << geid << std::endl;
+	World* world = hookCore.getPointer("World")->as<World*>();
+	std::string key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);;
+	while (world->getSpriteByID(key) != NULL)
+	{
+		key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
+	}
+	LevelSprite* sprToAdd = new LevelSprite(geid, key, world->getRessourceManager());
+	sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());
+	sprToAdd->setRotation(1);
+	sprToAdd->setScale(1);
+	sprToAdd->setAtr(std::vector<std::string>());
+	sprToAdd->setLayer(1);
+	sprToAdd->setZDepth(1);
+	sprToAdd->textureUpdate();
+	world->addLevelSprite(sprToAdd);
 }
 
 void editMap(std::string mapName)
@@ -188,6 +291,7 @@ void editMap(std::string mapName)
 	//Cursor
 	Cursor cursor;
 	cursor.initialize(resX, resY);
+	hookCore.dropValue("Cursor", &cursor);
 
 	//Character Initialisation
 	Character character("Natsugi");
@@ -322,11 +426,6 @@ void editMap(std::string mapName)
 		sfDeltaTime = deltaClock.restart();
 		deltaTime = std::min(1.0 / 30.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
 		gameSpeed = deltaTime * speedCoeff;
-
-		if (keybind.isActionToggled("AddSprite"))
-		{
-			gui->getContainerByContainerName("EditorSprites")->removeAllWidget();
-		}
 
 		//GUI Actions
 		keybind.setEnabled(!gameConsole.isConsoleVisible());
@@ -559,6 +658,17 @@ void editMap(std::string mapName)
 				selectedSpriteOffsetX = 0;
 				selectedSpriteOffsetY = 0;
 			}
+
+			//Sprite Delete
+			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("DeleteSprite"))
+			{
+				world.deleteSprite(selectedSprite);
+				selectedSprite = NULL;
+				sprInfo.setString("");
+				hoveredSprite = NULL;
+				selectedSpriteOffsetX = 0;
+				selectedSpriteOffsetY = 0;
+			}
 		}
 		//Collision Edition
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
@@ -687,7 +797,6 @@ void editMap(std::string mapName)
 		//GUI Update
 		gui->getContainerByContainerName("Editor")->setDisplayed(guiEditorEnabled);
 		gui->updateAllContainer();
-		std::cout << "CAN PASS" << std::endl;
 
 		//Events
 		keybind.update();
@@ -851,17 +960,6 @@ void editMap(std::string mapName)
 		//Cursor
 		if (showCursor)
 			window.draw(*cursor.getSprite());
-
-		/*std::vector<sf::RectangleShape> dapp;
-		Collision::PolygonalCollider* nik = world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
-		if (nik != NULL)
-		{
-			dapp = world.getCharacter(0)->getEntityCollider()->returnCollisionSolution(nik);
-			for (int k = 0; k < dapp.size(); k++)
-			{
-				window.draw(dapp[k]);
-			}
-		}*/
 
 		window.display();
 	}

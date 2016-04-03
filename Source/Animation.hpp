@@ -116,9 +116,10 @@ namespace anim
 			signed long long int lastTick = 0;
 			unsigned int textureIndex = 0;
 			int oldTextureIndex = -1;
-			int animationClock;
+			int animationClock = 80;
 			bool noTextureReturned = true;
 			std::vector<sf::Texture*> animationTextures;
+			std::map<int, sf::Texture*> normalTextures;
 			sf::Texture* currentTexture;
 			RessourceManager* animatorRsHook;
 
@@ -133,7 +134,9 @@ namespace anim
 			int getIndex();
 			bool indexChanged();
 			sf::Texture* getTexture();
+			sf::Texture* getNormal();
 			sf::Texture* getTextureAtIndex(int index);
+			sf::Texture* getNormalAtIndex(int index);
 	};
 
 	class Animator //A set of animations

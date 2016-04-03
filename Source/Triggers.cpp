@@ -13,7 +13,7 @@ Trigger::Trigger(std::string group, std::string triggerName, bool startState, bo
 	this->triggerName = triggerName;
 	this->permanent = permanent;
 	this->enabled = startState;
-	this->triggerParameters = new kaguya::LuaTable;
+	this->triggerParameters = std::map<std::string, std::pair<std::string, emorph::any*>>();
 }
 Trigger::Trigger(std::string nsp, std::string group, std::string triggerName, bool startState, bool permanent)
 {
@@ -22,7 +22,7 @@ Trigger::Trigger(std::string nsp, std::string group, std::string triggerName, bo
 	this->triggerName = triggerName;
 	this->permanent = permanent;
 	this->enabled = startState;
-	this->triggerParameters = new kaguya::LuaTable;
+	this->triggerParameters = std::map<std::string, std::pair<std::string, emorph::any*>>();
 }
 bool Trigger::getState()
 {
@@ -44,14 +44,17 @@ std::string Trigger::getNamespace()
 {
 	return triggerNamespace;
 }
-kaguya::LuaTable* Trigger::getParameters()
+std::map<std::string, std::pair<std::string, emorph::any*>> Trigger::getParameters()
 {
 	return triggerParameters;
 }
 void Trigger::clearParameters()
 {
-	delete triggerParameters;
-	triggerParameters = new kaguya::LuaTable;
+	for (auto i = triggerParameters.begin(); i != triggerParameters.end(); i++)
+	{
+		delete triggerParameters[i->first].second;
+	}
+	triggerParameters.clear();
 }
 
 

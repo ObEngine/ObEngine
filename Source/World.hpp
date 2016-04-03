@@ -41,6 +41,7 @@ private:
 	double blurMul = 0.0003;
 	sf::Shader blurShader;
 	sf::Shader lightShader;
+	sf::Shader normalShader;
 	int width = fn::Coord::width;
 	int height = fn::Coord::height;
 	int startX = 0;
@@ -55,6 +56,7 @@ public:
 	void addLevelSprite(LevelSprite* spr);
 	void addCollider(Collision::PolygonalCollider* col);
 	void addLight(Light::PointLight* lgt);
+	anim::RessourceManager* getRessourceManager();
 	Character* getCharacter(int index);
 	void loadFromFile(std::string filename);
 	DataParser* saveData();
@@ -81,7 +83,7 @@ public:
 	std::vector<LevelSprite*> getSpritesByLayer(int layer);
 	LevelSprite* getSpriteByPos(int x, int y, int layer);
 	LevelSprite* getSpriteByID(std::string ID);
-	void deleteSprite(LevelSprite* sprToDelete);
+	void deleteSprite(LevelSprite* sprToDelete, bool freeMemory = true);
 	std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
 	Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
 	Collision::PolygonalCollider* getCollisionByID(std::string id);

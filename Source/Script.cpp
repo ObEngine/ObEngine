@@ -299,8 +299,16 @@ void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getAllTriggers", &TriggerGroup::getAllTriggers)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<int>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<float>)
-			.addMember("pushParameter", &TriggerGroup::pushParameter<double>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<std::string>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<bool>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, int>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, float>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, std::string>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, bool>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, int>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, float>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, std::string>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, bool>>)
 		);
 		foundPart = true;
 	}

@@ -29,6 +29,11 @@ void World::addLight(Light::PointLight* lgt)
 	lightMap[lgt->getID()] = lgt;
 }
 
+anim::RessourceManager* World::getRessourceManager()
+{
+	return &sprRsMan;
+}
+
 Character* World::getCharacter(int index)
 {
 	return charArray[index];
@@ -445,6 +450,7 @@ void World::init()
 	showCollisionModes["drawMasterPoint"] = false;
 	showCollisionModes["drawSkel"] = false;
 	blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
+	normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
 	for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 	{
 		backSpriteArray[i]->textureUpdate(true);
@@ -689,14 +695,17 @@ LevelSprite* World::getSpriteByID(std::string ID)
 	return NULL;
 }
 
-void World::deleteSprite(LevelSprite* decoToDelete)
+void World::deleteSprite(LevelSprite* decoToDelete, bool freeMemory)
 {
 	if (decoToDelete->getLayer() > 0)
 	{
 		for (int i = 0; i < backSpriteArray.size(); i++)
 		{
 			if (backSpriteArray[i]->getID() == decoToDelete->getID())
+			{
+				if (freeMemory) delete backSpriteArray[i];
 				backSpriteArray.erase(backSpriteArray.begin() + i);
+			}
 		}
 	}
 	else
@@ -704,7 +713,10 @@ void World::deleteSprite(LevelSprite* decoToDelete)
 		for (int i = 0; i < frontSpriteArray.size(); i++)
 		{
 			if (frontSpriteArray[i]->getID() == decoToDelete->getID())
+			{
+				if (freeMemory) delete frontSpriteArray[i];
 				frontSpriteArray.erase(frontSpriteArray.begin() + i);
+			}
 		}
 	}
 }
