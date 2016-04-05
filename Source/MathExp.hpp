@@ -76,6 +76,7 @@ class MathExp
 	public:
 		MathExp(std::string mathexp, bool strict = true);
 		MathExp(int polymorph, std::string file, bool strict = true);
+		void setExpr(std::string mathexp);
 		void buildMathExp(bool verbose = false);
 		void setVar(std::string varName, double value);
 		double getResult();

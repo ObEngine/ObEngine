@@ -23,25 +23,23 @@ std::vector<me::SpriteFile*>* me::SpriteFolder::getSpriteList()
 {
 	return &sprList;
 }
-void me::SpriteFolder::render()
+void me::SpriteFolder::render(sf::RenderTexture* rtexture)
 {
 	sf::Texture baseTexture;
 	baseTexture.loadFromFile("Sprites/MapEditor/FolderIcons/" + folderIcon);
 	sf::Sprite baseSpr;
 	baseSpr.setTexture(baseTexture);
 	baseSpr.setPosition(0, 0);
-	sf::RenderTexture rendText;
-	rendText.create(256, 256);
-	rendText.clear(sf::Color(0, 0, 0, 0));
-	rendText.draw(baseSpr);
+	rtexture->clear(sf::Color(0, 0, 0, 0));
+	rtexture->draw(baseSpr);
 	sf::Text folderText;
 	folderText.setFont(font);
 	folderText.setCharacterSize(16);
 	folderText.setString(name);
 	folderText.setPosition(10, 50);
-	rendText.draw(folderText);
-	rendText.display();
-	texture = rendText.getTexture();
+	rtexture->draw(folderText);
+	rtexture->display();
+	texture = rtexture->getTexture();
 	sprite.setTexture(texture);
 }
 sf::Sprite* me::SpriteFolder::getSprite()
@@ -67,38 +65,33 @@ std::string me::SpriteFile::getName()
 	return name;
 }
 
-void me::SpriteFile::render()
+void me::SpriteFile::render(sf::RenderTexture* rtexture)
 {
 	texture.loadFromFile("Sprites/LevelSprites/" + name + "/thumbnail.png");
 	sf::Sprite texSpr;
 	texSpr.setTexture(texture);
-	texSpr.setPosition(sf::Vector2f(128 - (texSpr.getGlobalBounds().width / 2), 128 - (texSpr.getGlobalBounds().height / 2)));
-	sf::RenderTexture rtexture;
-	rtexture.create(256, 256);
-	rtexture.clear(sf::Color(0, 0, 0, 0));
+	texSpr.setPosition(sf::Vector2f(128 - (texSpr.getGlobalBounds().width / 2), 128 - (texSpr.getGlobalBounds().height / 2)));	
 	if (!nar)
 	{
+		rtexture->clear(sf::Color(0, 0, 0, 0));
 		sf::RectangleShape sprRec(sf::Vector2f(256, 256));
 		sprRec.setFillColor(sf::Color(100, 100, 100));
 		sprRec.setPosition(0, 0);
-		rtexture.draw(sprRec);
-	}
-	rtexture.draw(texSpr);
-	if (!nar)
-	{
+		rtexture->draw(sprRec);
+		rtexture->draw(texSpr);
 		sf::RectangleShape titleRec(sf::Vector2f(256, 20));
 		titleRec.setPosition(0, 0);
 		titleRec.setFillColor(sf::Color(0, 0, 0, 200));
-		rtexture.draw(titleRec);
+		rtexture->draw(titleRec);
 		sf::Text sprNameText;
 		sprNameText.setFont(this->font);
 		sprNameText.setString(this->name);
 		sprNameText.setCharacterSize(16);
 		sprNameText.setColor(sf::Color(255, 255, 255));
-		rtexture.draw(sprNameText);
+		rtexture->draw(sprNameText);
+		rtexture->display();
+		texture = rtexture->getTexture();
 	}
-	rtexture.display();
-	texture = rtexture.getTexture();
 }
 
 sf::Texture me::SpriteFile::getTexture()
@@ -121,7 +114,7 @@ void loadSpriteTab(DataObject* parameters)
 		font.loadFromFile("Data/Fonts/arial.ttf");
 		std::vector<me::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
 		spritesInCat.insert(spritesInCat.begin(), new me::SpriteFile("SprBack", font, true));
-		spritesInCat[0]->render();
+		spritesInCat[0]->render(nullptr);
 		const int sprSize = 256;
 		const int sprOff = 10;
 		const int xOff = 15;
@@ -188,6 +181,8 @@ void buildAddSpriteFolderList()
 		gui->createButton("EditorSprites", "LS_CTG_" + folderConfigList[i], 20 + (i * 266), 25, true, false, "GREY");
 	}
 	typedef std::map<std::string, std::vector<std::string>>::iterator it_type;
+	sf::RenderTexture rtexture;
+	rtexture.create(256, 256);
 	for (it_type iterator = addSprMap.begin(); iterator != addSprMap.end(); iterator++)
 	{
 		std::string prefixEquivalent;
@@ -204,9 +199,9 @@ void buildAddSpriteFolderList()
 		for (unsigned int i = 0; i < iterator->second.size(); i++)
 		{
 			tempFolder->pushSprite(new me::SpriteFile(iterator->first + "_" + iterator->second[i], font));
-			tempFolder->getSpriteList()->at(i)->render();
+			tempFolder->getSpriteList()->at(i)->render(&rtexture);
 		}
-		tempFolder->render();
+		tempFolder->render(&rtexture);
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureAll(tempFolder->getTexture());
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->bindFunction(&loadSpriteTab, "string id = '" + iterator->first + "'");
 		addSprFolderMap[iterator->first] = tempFolder;
@@ -248,31 +243,41 @@ void addSpriteToWorld(DataObject* parameters)
 
 void editMap(std::string mapName)
 {
-	funtest();
+	double startLoadTime = getTickSinceEpoch();
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
+	hookCore.dropValue("GameObjectHandler", &gameObjectHandlerCore);
+	mainGameObject = gameObjectHandlerCore.createGameObject("Main", "", "Main");
+	loadScrGameObjectHandlerLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"));
+	loadLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"), "Core.Console");
 	TextRenderer textDisplay;
 	hookCore.dropValue("TextDisplay", &textDisplay);
 	textDisplay.setPos(0, 0);
+	std::cout << "Creation Chrono : " << "[Start]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Console
 	Console gameConsole;
 	hookCore.dropValue("Console", &gameConsole);
 	Console::Stream* charStream = gameConsole.createStream("CharStream");
+	(*gameObjectHandlerCore.getLuaStateOfGameObject("Main"))["stream"] = gameConsole.createStream("LuaConsole", true);
+	std::cout << "Creation Chrono : " << "[Console]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Font
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/arial.ttf");
+	std::cout << "Creation Chrono : " << "[Font]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Resolution
 	const int S_WIDTH = fn::Coord::baseWidth;
 	const int S_HEIGHT = fn::Coord::baseHeight;
 	int resX = fn::Coord::width;
 	int resY = fn::Coord::height;
+	std::cout << "Creation Chrono : " << "[Resolution]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Creating Window / Camera / RenderTexture
 	sf::RenderWindow window(sf::VideoMode(resX, resY), "Melting Saga", sf::Style::Fullscreen);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
+	std::cout << "Creation Chrono : " << "[Window]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Config
 	DataParser configFile;
@@ -287,15 +292,18 @@ void editMap(std::string mapName)
 	configFile.getAttribute("Developpement", "", "showCursor")->getData(&showCursor);
 	configFile.getAttribute("Developpement", "", "showFPS")->getData(&showFPS);
 	bool drawFPS = true;
+	std::cout << "Creation Chrono : " << "[Config]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Cursor
 	Cursor cursor;
 	cursor.initialize(resX, resY);
 	hookCore.dropValue("Cursor", &cursor);
+	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Character Initialisation
 	Character character("Natsugi");
 	character.setStreamLink(charStream);
+	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//World Creation / Loading
 	World world;
@@ -307,18 +315,21 @@ void editMap(std::string mapName)
 	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
 	if (!depthOfFieldEnabled)
 		world.setBlurMul(0.0);
+	std::cout << "Creation Chrono : " << "[World]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//CastSystem
 	Caster castSystem;
 	castSystem.hookToChar(&character);
 	castSystem.hookToCurs(&cursor);
 	castSystem.hookToWorld(&world);
+	std::cout << "Creation Chrono : " << "[CastSystem]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Keybinding
 	KeyBinder keybind = KeyBinder();
 	keybind.loadFromFile(&configFile);
 	std::cout << "Gamepad Connected : " << sf::Joystick::isConnected(0) << std::endl;
 	std::cout << "Gamepad has : " << sf::Joystick::getButtonCount(0) << " buttons" << std::endl;
+	std::cout << "Creation Chrono : " << "[Keybind]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//GUI
 	sf::Event event;
@@ -363,6 +374,7 @@ void editMap(std::string mapName)
 	std::vector<std::string> tabList = { "Settings", "LevelSprites", "Collisions" };
 	std::vector<GUI::WidgetContainer*> tabPtrList = { gui->getContainerByContainerName("EditorSettings"), gui->getContainerByContainerName("EditorSprites"), gui->getContainerByContainerName("EditorCollisions") };
 	gui->createTab("Editor", "editorTab", 0, 0, 16, sf::Color(255, 255, 255), "arial.ttf", tabList, tabPtrList, "GREY");
+	std::cout << "Creation Chrono : " << "[GUI]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 
 	//Map Editor
@@ -388,36 +400,28 @@ void editMap(std::string mapName)
 	std::vector<std::string> allSprites;
 	allSprites = fn::File::listDirInDir("Sprites/LevelSprites/");
 	buildAddSpriteFolderList();
+	std::cout << "Creation Chrono : " << "[MapEditor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Framerate / DeltaTime
 	FPSCounter fps;
 	fps.loadFont(font);
-
 	sf::Clock deltaClock;
 	sf::Time sfDeltaTime;
 	double deltaTime;
 	float speedCoeff = 60.0;
 	double gameSpeed = 0.0;
 	Chronostasis gameClock;
+	std::cout << "Creation Chrono : " << "[Framerate]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	Light::initLights();
-
-	gameObjectHandlerCore.createGameObject("switch", "LevelObjects", "Switch");
-	gameObjectHandlerCore.createGameObject("light", "LevelObjects", "Light");
-	gameObjectHandlerCore.createGameObject("button", "LevelObjects", "Button");
-	gameObjectHandlerCore.sendRequireArgument<std::string>("light", "switchKey", gameObjectHandlerCore.getGameObject("switch")->getPublicKey());
-	gameObjectHandlerCore.sendRequireArgument<std::string>("light", "buttonKey", gameObjectHandlerCore.getGameObject("button")->getPublicKey());
-	world.addLevelSprite(gameObjectHandlerCore.getGameObject("switch")->getLevelSprite());
-	world.addLevelSprite(gameObjectHandlerCore.getGameObject("light")->getLevelSprite());
-	world.addLevelSprite(gameObjectHandlerCore.getGameObject("button")->getLevelSprite());
-	world.addCollider(gameObjectHandlerCore.getGameObject("switch")->getCollider());
-	world.addCollider(gameObjectHandlerCore.getGameObject("button")->getCollider());
+	std::cout << "Creation Chrono : " << "[Lights]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	EditorGrid editorGrid(32, 32);
 	keybind.setActionDelay("MagnetizeUp", 30);
 	keybind.setActionDelay("MagnetizeRight", 30);
 	keybind.setActionDelay("MagnetizeDown", 30);
 	keybind.setActionDelay("MagnetizeLeft", 30);
+	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Game Starts
 	while (window.isOpen())
@@ -803,6 +807,12 @@ void editMap(std::string mapName)
 		cursor.update();
 		triggerDatabaseCore.update();
 		gameObjectHandlerCore.update();
+
+		//Console Command Handle
+		if (gameConsole.hasCommand())
+		{
+			gameObjectHandlerCore.executeLine("Main", gameConsole.getCommand());
+		}
 
 		//Click Trigger
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")

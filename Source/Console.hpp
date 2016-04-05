@@ -51,11 +51,12 @@ class Console
 			private:
 				std::string streamName;
 				Console* consolePointer;
-				sf::Color streamColor;
+				sf::Color streamColor = sf::Color(255, 255, 255);
 				std::vector<std::string> queryList;
 			public:
 				Stream(std::string streamName, Console* consolePointer);
-				Console::Message* streamPush(std::string message, int r = 255, int g = 255, int b = 255, int a = 255);
+				Console::Message* streamPush(std::string message, int r, int g, int b, int a);
+				Console::Message* streamPush(std::string message);
 				void setColor(int r, int g, int b, int a = 255);
 				sf::Color getColor();
 				int getR();

@@ -41,16 +41,16 @@ Character* World::getCharacter(int index)
 
 void World::loadFromFile(std::string filename)
 {
-	Chronostasis creationChrono;
+	double startLoadTime = getTickSinceEpoch();
 	int arrayLoad = 0;
 	int arrayLoadFrontDeco = 0;
 	int arrayLoadBackDeco = 0;
 	int indexInFile = 0;
 	DataParser mapParse;
-	creationChrono.startTick("FileParse");
-	mapParse.parseFile("Data/Maps/"+filename, true);
-	creationChrono.endTick("FileParse");
-	creationChrono.startTick("Attributes");
+	std::cout << "Creation Chrono : " << "[WorldStart]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+	mapParse.parseFile("Data/Maps/"+filename);
+	std::cout << "Creation Chrono : " << "[WorldParse]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
 	mapParse.getAttribute("Meta", "", "Level")->getData(&levelName);
 	mapParse.getAttribute("Meta", "", "SizeX")->getData(&sizeX);
 	mapParse.getAttribute("Meta", "", "SizeY")->getData(&sizeY);
@@ -58,145 +58,188 @@ void World::loadFromFile(std::string filename)
 		mapParse.getAttribute("Meta", "", "StartX")->getData(&startX);
 	if (mapParse.attributeExists("Meta", "", "StartY"))
 		mapParse.getAttribute("Meta", "", "StartY")->getData(&startY);
-	creationChrono.endTick("Attributes");
 
-	std::vector<std::string> allObjects = mapParse.getAllComplex("Objects", "");
-	for (unsigned int i = 0; i < allObjects.size(); i++)
-	{
+	std::cout << "Creation Chrono : " << "[WorldMeta]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	}
-	creationChrono.startTick("LevelSprites");
-	std::vector<std::string> allDecos = mapParse.getAllComplex("LevelSprites", "");
-	for (unsigned int i = 0; i < allDecos.size(); i++)
+	if (mapParse.dataObjectExists("LevelSprites"))
 	{
-		std::string decoID, decoType;
-		int decoPosX, decoPosY;
-		int decoRot = 0;
-		double decoSca = 1.0;
-		std::vector<std::string> decoAtrList;
-		std::string attrBuffer;
-		int layer;
-		int zdepth;
-		decoID = allDecos[i];
-		mapParse.getAttribute("LevelSprites", allDecos[i], "type")->getData(&decoType);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "posX")->getData(&decoPosX);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "posY")->getData(&decoPosY);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "rotation")->getData(&decoRot);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "scale")->getData(&decoSca);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "layer")->getData(&layer);
-		mapParse.getAttribute("LevelSprites", allDecos[i], "z-depth")->getData(&zdepth);
-		if (mapParse.listExists("LevelSprites", allDecos[i], "attributeList"))
+		std::vector<std::string> allDecos = mapParse.getAllComplex("LevelSprites", "");
+		for (unsigned int i = 0; i < allDecos.size(); i++)
 		{
-			int atrListSize = mapParse.getListSize("LevelSprites", allDecos[i], "attributeList");
-			for (int j = 0; j < atrListSize; j++)
-				decoAtrList.push_back(mapParse.getListItem("LevelSprites", allDecos[i], "attributeList", j)->getData(&attrBuffer));
+			std::string decoID, decoType;
+			int decoPosX, decoPosY;
+			int decoRot = 0;
+			double decoSca = 1.0;
+			std::vector<std::string> decoAtrList;
+			std::string attrBuffer;
+			int layer;
+			int zdepth;
+			decoID = allDecos[i];
+			mapParse.getAttribute("LevelSprites", allDecos[i], "type")->getData(&decoType);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "posX")->getData(&decoPosX);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "posY")->getData(&decoPosY);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "rotation")->getData(&decoRot);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "scale")->getData(&decoSca);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "layer")->getData(&layer);
+			mapParse.getAttribute("LevelSprites", allDecos[i], "z-depth")->getData(&zdepth);
+			if (mapParse.listExists("LevelSprites", allDecos[i], "attributeList"))
+			{
+				int atrListSize = mapParse.getListSize("LevelSprites", allDecos[i], "attributeList");
+				for (int j = 0; j < atrListSize; j++)
+					decoAtrList.push_back(mapParse.getListItem("LevelSprites", allDecos[i], "attributeList", j)->getData(&attrBuffer));
+			}
+			LevelSprite* tempDeco = new LevelSprite(decoID);
+			if (decoType != "None")
+			{
+				delete tempDeco;
+				tempDeco = new LevelSprite(decoType, decoID, &sprRsMan);
+			}
+			tempDeco->move(decoPosX, decoPosY);
+			tempDeco->setRotation(decoRot);
+			tempDeco->setScale(decoSca);
+			tempDeco->setAtr(decoAtrList);
+			tempDeco->setLayer(layer);
+			tempDeco->setZDepth(zdepth);
+			tempDeco->textureUpdate();
+			if (layer >= 1)
+				backSpriteArray.push_back(tempDeco);
+			else if (layer <= -2)
+				frontSpriteArray.push_back(tempDeco);
 		}
-		LevelSprite* tempDeco = new LevelSprite(decoID);
-		if (decoType != "None")
-		{
-			delete tempDeco;
-			tempDeco = new LevelSprite(decoType, decoID, &sprRsMan);
-		}
-		tempDeco->move(decoPosX, decoPosY);
-		tempDeco->setRotation(decoRot);
-		tempDeco->setScale(decoSca);
-		tempDeco->setAtr(decoAtrList);
-		tempDeco->setLayer(layer);
-		tempDeco->setZDepth(zdepth);
-		tempDeco->textureUpdate();
-		if (layer >= 1)
-			backSpriteArray.push_back(tempDeco);
-		else if (layer <= -2)
-			frontSpriteArray.push_back(tempDeco);
 	}
-	creationChrono.endTick("LevelSprites");
-	creationChrono.startTick("Reorganize");
+	std::cout << "Creation Chrono : " << "[WorldLevelSprites]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+
 	this->reorganizeLayers();
-	creationChrono.endTick("Reorganize");
+	std::cout << "Creation Chrono : " << "[WorldReorganize]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	creationChrono.startTick("Lights");
-	std::vector<std::string> allLights = mapParse.getAllComplex("Lights", "");
-	for (int i = 0; i < allLights.size(); i++)
+
+	if (mapParse.dataObjectExists("Lights"))
 	{
-		std::string ltype;
-		mapParse.getAttribute("Lights", allLights[i], "type")->getData(&ltype);
-		if (ltype == "Static")
+		std::vector<std::string> allLights = mapParse.getAllComplex("Lights", "");
+		for (int i = 0; i < allLights.size(); i++)
 		{
-			double lsize;
-			double lr, lg, lb, la;
-			std::string lsBind;
-			bool lbehind;
-			double loffX = 0;
-			double loffY = 0;
-			mapParse.getAttribute("Lights", allLights[i], "size")->getData(&lsize);
-			mapParse.getAttribute("Lights", allLights[i], "r")->getData(&lr);
-			mapParse.getAttribute("Lights", allLights[i], "g")->getData(&lg);
-			mapParse.getAttribute("Lights", allLights[i], "b")->getData(&lb);
-			mapParse.getAttribute("Lights", allLights[i], "a")->getData(&la);
-			mapParse.getAttribute("Lights", allLights[i], "bind")->getData(&lsBind);
-			mapParse.getAttribute("Lights", allLights[i], "behind")->getData(&lbehind);
-			if (mapParse.attributeExists("Lights", allLights[i], "offsetX")) mapParse.getAttribute("Lights", allLights[i], "offsetX")->getData(&loffX);
-			if (mapParse.attributeExists("Lights", allLights[i], "offsetY")) mapParse.getAttribute("Lights", allLights[i], "offsetY")->getData(&loffY);
-			if (getSpriteByID(lsBind) != NULL)
+			std::string ltype;
+			mapParse.getAttribute("Lights", allLights[i], "type")->getData(&ltype);
+			if (ltype == "Static")
 			{
-				lightMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
-				lightMap[lsBind]->setOffset(loffX, loffY);
+				double lsize;
+				double lr, lg, lb, la;
+				std::string lsBind;
+				bool lbehind;
+				double loffX = 0;
+				double loffY = 0;
+				mapParse.getAttribute("Lights", allLights[i], "size")->getData(&lsize);
+				mapParse.getAttribute("Lights", allLights[i], "r")->getData(&lr);
+				mapParse.getAttribute("Lights", allLights[i], "g")->getData(&lg);
+				mapParse.getAttribute("Lights", allLights[i], "b")->getData(&lb);
+				mapParse.getAttribute("Lights", allLights[i], "a")->getData(&la);
+				mapParse.getAttribute("Lights", allLights[i], "bind")->getData(&lsBind);
+				mapParse.getAttribute("Lights", allLights[i], "behind")->getData(&lbehind);
+				if (mapParse.attributeExists("Lights", allLights[i], "offsetX")) mapParse.getAttribute("Lights", allLights[i], "offsetX")->getData(&loffX);
+				if (mapParse.attributeExists("Lights", allLights[i], "offsetY")) mapParse.getAttribute("Lights", allLights[i], "offsetY")->getData(&loffY);
+				if (getSpriteByID(lsBind) != NULL)
+				{
+					lightMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
+					lightMap[lsBind]->setOffset(loffX, loffY);
+				}
 			}
-		}
-		else if (ltype == "Dynamic")
-		{
-			double lprecision;
-			std::string lsize;
-			std::string lr, lg, lb, la;
-			std::string lsBind;
-			bool lbehind;
-			std::string loffX = "0";
-			std::string loffY = "0";
-
-			mapParse.getAttribute("Lights", allLights[i], "precision")->getData(&lprecision);
-			mapParse.getAttribute("Lights", allLights[i], "size")->getData(&lsize);
-			mapParse.getAttribute("Lights", allLights[i], "r")->getData(&lr);
-			mapParse.getAttribute("Lights", allLights[i], "g")->getData(&lg);
-			mapParse.getAttribute("Lights", allLights[i], "b")->getData(&lb);
-			mapParse.getAttribute("Lights", allLights[i], "a")->getData(&la);
-			mapParse.getAttribute("Lights", allLights[i], "bind")->getData(&lsBind);
-			mapParse.getAttribute("Lights", allLights[i], "behind")->getData(&lbehind);
-			if (mapParse.attributeExists("Lights", allLights[i], "offsetX")) mapParse.getAttribute("Lights", allLights[i], "offsetX")->getData(&loffX);
-			if (mapParse.attributeExists("Lights", allLights[i], "offsetY")) mapParse.getAttribute("Lights", allLights[i], "offsetY")->getData(&loffY);
-			if (getSpriteByID(lsBind) != NULL)
+			else if (ltype == "Dynamic")
 			{
-				Light::DynamicPointLight* tdpl = new Light::DynamicPointLight(allLights[i], sf::Vector2f(1920, 1080), lprecision);
-				tdpl->setSizeExp(lsize);
-				tdpl->setRExp(lr); tdpl->setGExp(lg); tdpl->setBExp(lb);
-				tdpl->setOffsetXExp(loffX);
-				tdpl->setOffsetYExp(loffY);
-				lightMap[lsBind] = tdpl;
+				double lprecision;
+				std::string lsize;
+				std::string lr, lg, lb, la;
+				std::string lsBind;
+				bool lbehind;
+				std::string loffX = "0";
+				std::string loffY = "0";
+
+				mapParse.getAttribute("Lights", allLights[i], "precision")->getData(&lprecision);
+				mapParse.getAttribute("Lights", allLights[i], "size")->getData(&lsize);
+				mapParse.getAttribute("Lights", allLights[i], "r")->getData(&lr);
+				mapParse.getAttribute("Lights", allLights[i], "g")->getData(&lg);
+				mapParse.getAttribute("Lights", allLights[i], "b")->getData(&lb);
+				mapParse.getAttribute("Lights", allLights[i], "a")->getData(&la);
+				mapParse.getAttribute("Lights", allLights[i], "bind")->getData(&lsBind);
+				mapParse.getAttribute("Lights", allLights[i], "behind")->getData(&lbehind);
+				if (mapParse.attributeExists("Lights", allLights[i], "offsetX")) mapParse.getAttribute("Lights", allLights[i], "offsetX")->getData(&loffX);
+				if (mapParse.attributeExists("Lights", allLights[i], "offsetY")) mapParse.getAttribute("Lights", allLights[i], "offsetY")->getData(&loffY);
+				if (getSpriteByID(lsBind) != NULL)
+				{
+					Light::DynamicPointLight* tdpl = new Light::DynamicPointLight(allLights[i], sf::Vector2f(1920, 1080), lprecision);
+					tdpl->setSizeExp(lsize);
+					tdpl->setRExp(lr); tdpl->setGExp(lg); tdpl->setBExp(lb);
+					tdpl->setOffsetXExp(loffX);
+					tdpl->setOffsetYExp(loffY);
+					lightMap[lsBind] = tdpl;
+				}
 			}
 		}
 	}
-	creationChrono.endTick("Lights");
+	std::cout << "Creation Chrono : " << "[WorldLights]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	creationChrono.startTick("Collision");
-	std::vector<std::string> allCol = mapParse.getAllComplex("Collisions", "");
-	for (unsigned int i = 0; i < allCol.size(); i++)
+	if (mapParse.dataObjectExists("Collisions"))
 	{
-		std::string colID, colType;
-		std::vector<std::string> colAtrList;
-		std::string attrBuffer;
-		colID = allCol[i];
-		Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(colID);
-		for (unsigned int j = 0; j < mapParse.getListSize("Collisions", colID, "polygonPoints"); j++)
+		std::vector<std::string> allCol = mapParse.getAllComplex("Collisions", "");
+		for (unsigned int i = 0; i < allCol.size(); i++)
 		{
-			std::string getPt;
-			mapParse.getListItem("Collisions", colID, "polygonPoints", j)->getData(&getPt);
-			std::vector<std::string> tPoint = fn::String::split(getPt, ",");
-			tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
+			std::string colID = allCol[i];
+			Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(colID);
+			for (unsigned int j = 0; j < mapParse.getListSize("Collisions", colID, "polygonPoints"); j++)
+			{
+				std::string getPt;
+				mapParse.getListItem("Collisions", colID, "polygonPoints", j)->getData(&getPt);
+				std::vector<std::string> tPoint = fn::String::split(getPt, ",");
+				tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
+			}
+			this->collidersArray.push_back(tempCollider);
 		}
-		this->collidersArray.push_back(tempCollider);
 	}
-	creationChrono.endTick("Collision");
-	creationChrono.summary();
-	creationChrono.endSummary();
+	std::cout << "Creation Chrono : " << "[WorldCollisions]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+
+	if (mapParse.dataObjectExists("LevelObjects"))
+	{
+		std::vector<std::string> allObjects = mapParse.getAllComplex("LevelObjects", "");
+		for (unsigned int i = 0; i < allObjects.size(); i++)
+		{
+			std::string levelObjectType;
+			mapParse.getAttribute("LevelObjects", allObjects[i], "type")->getData(&levelObjectType);
+			gameObjectHandlerCore.createGameObject(allObjects[i], "LevelObjects", levelObjectType);
+			bool hasSpr = false;
+			int objX = 0;
+			int objY = 0;
+			if (gameObjectHandlerCore.getGameObject(allObjects[i])->canDisplay())
+			{
+				this->addLevelSprite(gameObjectHandlerCore.getGameObject(allObjects[i])->getLevelSprite());
+				hasSpr = true;
+				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posX"))
+					mapParse.getAttribute("LevelObjects", allObjects[i], "posX")->getData(&objX);
+				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posY"))
+					mapParse.getAttribute("LevelObjects", allObjects[i], "posY")->getData(&objY);
+				gameObjectHandlerCore.getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
+			}
+			if (gameObjectHandlerCore.getGameObject(allObjects[i])->canCollide() || gameObjectHandlerCore.getGameObject(allObjects[i])->canClick())
+			{
+				this->addCollider(gameObjectHandlerCore.getGameObject(allObjects[i])->getCollider());
+				if (hasSpr && gameObjectHandlerCore.getGameObject(allObjects[i])->isColliderRelative())
+					gameObjectHandlerCore.getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
+			}
+		}
+	}
+	std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+	if (mapParse.dataObjectExists("Script"))
+	{
+		int scriptAmt = mapParse.getListAttribute("Script", "", "gameScripts")->getSize();
+		for (int i = 0; i < scriptAmt; i++)
+		{
+			std::string scriptName;
+			mapParse.getListAttribute("Script", "", "gameScripts")->getElement(i)->getData(&scriptName);
+			gameObjectHandlerCore.executeFile("Main", scriptName);
+		}
+	}
+	std::cout << "Creation Chrono : " << "[WorldScript]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 }
 
 DataParser* World::saveData()
@@ -445,6 +488,7 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 
 void World::init()
 {
+	triggerDatabaseCore.createCustomNamespace("Map");
 	showCollisionModes["drawLines"] = false;
 	showCollisionModes["drawPoints"] = false;
 	showCollisionModes["drawMasterPoint"] = false;
@@ -560,7 +604,7 @@ void World::reorganizeLayers()
 			{
 				if (backSpriteArray[i]->getLayer() == backSpriteArray[i + 1]->getLayer())
 				{
-					if (backSpriteArray[i]->getZDepth() > backSpriteArray[i + 1]->getZDepth())
+					if (backSpriteArray[i]->getZDepth() < backSpriteArray[i + 1]->getZDepth())
 					{
 						LevelSprite* saveLayer = backSpriteArray[i];
 						backSpriteArray[i] = backSpriteArray[i + 1];
@@ -601,7 +645,7 @@ void World::reorganizeLayers()
 			{
 				if (frontSpriteArray[i]->getLayer() == frontSpriteArray[i + 1]->getLayer())
 				{
-					if (frontSpriteArray[i]->getZDepth() > frontSpriteArray[i + 1]->getZDepth())
+					if (frontSpriteArray[i]->getZDepth() < frontSpriteArray[i + 1]->getZDepth())
 					{
 						LevelSprite* saveLayer = frontSpriteArray[i];
 						frontSpriteArray[i] = frontSpriteArray[i + 1];

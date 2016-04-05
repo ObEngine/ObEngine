@@ -864,6 +864,13 @@ void DataParser::pushDataObject(DataObject* object) {
 	objectList.push_back(object->getName());
 	if (checkNavigator()) dpNav->setCurrentDataObject(object->getName());
 }
+bool DataParser::dataObjectExists(std::string objectName)
+{
+	if (objectMap.find(objectName) != objectMap.end())
+		return true;
+	else
+		return false;
+}
 void DataParser::createSpecialAttribute(std::string object, std::string name, std::string type, std::string data) {
 	this->accessDataObject(object)->createSpecialAttribute(name, type, data);
 }

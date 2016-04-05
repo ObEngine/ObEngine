@@ -322,9 +322,14 @@ Console::Stream::Stream(std::string streamName, Console* consolePointer)
 	streamColor = sf::Color(255, 255, 255);
 }
 
-Console::Message * Console::Stream::streamPush(std::string message, int r, int g, int b, int a)
+Console::Message* Console::Stream::streamPush(std::string message, int r, int g, int b, int a)
 {
 	return consolePointer->pushMessage(streamName, message, r, g, b, a, "DEFAULT");;
+}
+
+Console::Message* Console::Stream::streamPush(std::string message)
+{
+	return consolePointer->pushMessage(streamName, message, streamColor.r, streamColor.g, streamColor.b, streamColor.a, "DEFAULT");;
 }
 
 void Console::Stream::setColor(int r, int g, int b, int a)

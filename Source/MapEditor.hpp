@@ -41,7 +41,7 @@ namespace me
 		public:
 			SpriteFile(std::string name, sf::Font font, bool noAdditionalRender = false);
 			std::string getName();
-			void render();
+			void render(sf::RenderTexture* rtexture);
 			sf::Texture getTexture();
 	};
 
@@ -59,7 +59,7 @@ namespace me
 			SpriteFolder(std::string cat, std::string name, std::string folderIcon, sf::Font font);
 			void pushSprite(me::SpriteFile* spr);
 			std::vector<SpriteFile*>* getSpriteList();
-			void render();
+			void render(sf::RenderTexture* rtexture);
 			sf::Sprite* getSprite();
 			sf::Texture getTexture();
 	};

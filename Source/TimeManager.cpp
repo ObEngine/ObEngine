@@ -20,8 +20,7 @@ void Chronostasis::summary()
 	std::string key;
 	std::chrono::microseconds value;
 	std::chrono::microseconds totalSec;
-	typedef std::map<std::string, std::chrono::microseconds>::iterator it_type;
-	for (it_type iterator = chronoRMap.begin(); iterator != chronoRMap.end(); iterator++) {
+	for (auto iterator = chronoRMap.begin(); iterator != chronoRMap.end(); iterator++) {
 		key = iterator->first;
 		value = iterator->second;
 		std::cout << "     #> " << key << " took " << value.count() << " microseconds to execute" << std::endl;
@@ -52,8 +51,7 @@ void Chronostasis::endSummary()
 	std::string key;
 	std::chrono::microseconds value;
 	std::chrono::microseconds totalSec;
-	typedef std::map<std::string, std::chrono::microseconds>::iterator it_type;
-	for (it_type iterator = chronoCMap.begin(); iterator != chronoCMap.end(); iterator++) {
+	for (auto iterator = chronoCMap.begin(); iterator != chronoCMap.end(); iterator++) {
 		key = iterator->first;
 		value = iterator->second;
 		std::cout << "    #> " << key << " took " << value.count() << " microseconds in total and has been called " << chronoOMap[key] << " times" << std::endl;
@@ -133,4 +131,9 @@ bool Chronometer::limitExceeded() {
 double getTickSinceEpoch()
 {
 	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+}
+
+double getTickSinceEpochMicro()
+{
+	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1);
 }

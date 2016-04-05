@@ -197,6 +197,7 @@ class DataParser
 		void createFlag(std::string flag);
 		void createDataObject(std::string objectName);
 		void pushDataObject(DataObject* object);
+		bool dataObjectExists(std::string objectName);
 		void createSpecialAttribute(std::string object, std::string name, std::string type, std::string data);
 		void createSpecialAttribute(std::string name, std::string type, std::string data);
 		void createBaseAttribute(std::string object, std::string attributePath, std::string name, std::string data);

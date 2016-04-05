@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 double getTickSinceEpoch();
+double getTickSinceEpochMicro();
 
 class Chronostasis
 {

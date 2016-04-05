@@ -235,6 +235,14 @@ MathExp::MathExp(int polymorph, std::string file, bool strict)
 	this->expProcessed = false;
 	this->createConstants();
 }
+void MathExp::setExpr(std::string mathexp)
+{
+	this->mathexp = mathexp;
+	delete this->varBase;
+	this->varBase = new VarDatabase;
+	this->varBase->setStrict(true);
+	this->expProcessed = false;
+}
 void MathExp::createConstants() //Constants
 {
 	this->varBase->setVar("pi", fn::Math::pi);
@@ -243,155 +251,158 @@ void MathExp::createConstants() //Constants
 void MathExp::buildMathExp(bool verbose)
 {
 	if (verbose) std::cout << "Building MathExp" << std::endl;
-	std::vector<std::string> expOperators = { "+", "-", "*", "/", "%", "^", "(", ")", "@" };
-	std::vector<std::string> parsedMathExp = fn::String::multiSplit(fn::String::replaceString(mathexp, " ", ""), expOperators);
-	blocVec.clear();
-	for (unsigned int i = 0; i < parsedMathExp.size(); i++)
-		blocVec.push_back(new ExpBloc(parsedMathExp[i]));
-	int currentPriority = 0;
-	for (unsigned int i = 0; i < blocVec.size(); i++) //Parenthesis Priority
+	if (mathexp != "")
 	{
-		blocVec[i]->priority = currentPriority;
-		if (blocVec[i]->content == "(")
-			currentPriority++;
-		else if (blocVec[i]->content == ")")
-			currentPriority--;
-	}
-	if (currentPriority != 0 && verbose)
-		std::cout << "[MathExp] Warning : Priority Problem : Parenthesis : " << currentPriority << std::endl;
-	int i = 0;
-	while (i < blocVec.size()) //Negative Numbers
-	{
-		if (blocVec[i]->content == "-" && i == 0)
+		std::vector<std::string> expOperators = { "+", "-", "*", "/", "%", "^", "(", ")", "@" };
+		std::vector<std::string> parsedMathExp = fn::String::multiSplit(fn::String::replaceString(mathexp, " ", ""), expOperators);
+		blocVec.clear();
+		for (unsigned int i = 0; i < parsedMathExp.size(); i++)
+			blocVec.push_back(new ExpBloc(parsedMathExp[i]));
+		int currentPriority = 0;
+		for (unsigned int i = 0; i < blocVec.size(); i++) //Parenthesis Priority
 		{
-			blocVec.insert(blocVec.begin(), new ExpBloc("0", 0));
-			i += 2;
+			blocVec[i]->priority = currentPriority;
+			if (blocVec[i]->content == "(")
+				currentPriority++;
+			else if (blocVec[i]->content == ")")
+				currentPriority--;
 		}
-		else if (blocVec[i]->content == "-" && blocVec[i - 1]->content == "(")
+		if (currentPriority != 0 && verbose)
+			std::cout << "[MathExp] Warning : Priority Problem : Parenthesis : " << currentPriority << std::endl;
+		int i = 0;
+		while (i < blocVec.size()) //Negative Numbers
 		{
-			blocVec.insert(blocVec.begin() + i, new ExpBloc("0", 0));
-			i += 2;
-		}
-		else
-			i++;
-	}
-	i = 0;
-	while(i < blocVec.size()) //Parenthesis removal
-	{
-		if (blocVec[i]->content == "(" || blocVec[i]->content == ")")
-			blocVec.erase(blocVec.begin() + i);
-		else
-			i++;
-	}
-	for (unsigned int i = 0; i < blocVec.size(); i++) //Pow / Func Priority
-	{
-		if (blocVec[i]->content == "^" || blocVec[i]->content == "@")
-		{
-			if (blocVec[i + 1]->priority == blocVec[i]->priority)
+			if (blocVec[i]->content == "-" && i == 0)
 			{
-				blocVec[i]->priority++;
-				blocVec[i + 1]->priority++;
+				blocVec.insert(blocVec.begin(), new ExpBloc("0", 0));
+				i += 2;
 			}
-			else if (blocVec[i + 1]->priority > blocVec[i]->priority)
+			else if (blocVec[i]->content == "-" && blocVec[i - 1]->content == "(")
 			{
-				int offset = 1;
-				while (blocVec[i + offset]->priority > blocVec[i]->priority)
-				{
-					if (i + offset > blocVec.size() - 1)
-						break;
-					blocVec[i + offset]->priority++;
-					offset++;
-				}
-				blocVec[i]->priority++;
+				blocVec.insert(blocVec.begin() + i, new ExpBloc("0", 0));
+				i += 2;
 			}
-				
-				
-		}
-		else if ((blocVec[i]->content == "*" || blocVec[i]->content == "/")) //Multiplication / Division Priority
-		{
-			int priorityLevel = blocVec[i]->priority;
-			blocVec[i]->priority++;
-			int j = i;
-			bool continuePriority = true;
-			while (continuePriority)
-			{
-				if (j > 0)
-				{
-					j--;
-					if (blocVec[j]->priority > priorityLevel)
-						blocVec[j]->priority++;
-					else if (blocVec[j]->content != "+" && blocVec[j]->content != "-" && blocVec[j]->priority == priorityLevel)
-						blocVec[j]->priority++;
-					else
-						continuePriority = false;
-				}
-				else
-					continuePriority = false;
-			}
-			j = i;
-			continuePriority = true;
-			while (continuePriority)
-			{
-				if (j < blocVec.size() - 1)
-				{
-					j++;
-					if (blocVec[j]->priority > priorityLevel)
-						blocVec[j]->priority++;
-					else if (blocVec[j]->content != "+" && blocVec[j]->content != "-" && blocVec[j]->priority == priorityLevel)
-						blocVec[j]->priority++;
-					else
-						continuePriority = false;
-				}
-				else
-					continuePriority = false;
-			}
-		}
-	}
-	if (verbose) std::cout << "Building Tree" << std::endl;
-	std::vector<std::string> expSearchOp = { "+", "-", "*", "/", "%", "^", "@" };
-	int treeID = 0;
-	while (blocVec.size() != 1)
-	{
-		int greatestPriority = -1;
-		int greatestPriorityIndex = -1;
-		for (unsigned int i = 0; i < blocVec.size(); i++)
-		{
-			if (blocVec[i]->priority > greatestPriority && fn::Vector::isInList(blocVec[i]->content, expSearchOp))
-			{
-				greatestPriority = blocVec[i]->priority;
-				greatestPriorityIndex = i;
-			}
-		}
-		ExpOperator* tempOperation = new ExpOperator(std::to_string(treeID), blocVec[greatestPriorityIndex] , varBase);
-		if (blocVec[greatestPriorityIndex - 1]->content.substr(0, 1) == "$")
-		{
-			if (blocVec[greatestPriorityIndex + 1]->content.substr(0, 1) == "$")
-				tempOperation->setMembers(expTree[blocVec[greatestPriorityIndex - 1]->content], expTree[blocVec[greatestPriorityIndex + 1]->content]);
 			else
-				tempOperation->setMembers(expTree[blocVec[greatestPriorityIndex - 1]->content], blocVec[greatestPriorityIndex + 1]);
+				i++;
 		}
-		else if (blocVec[greatestPriorityIndex + 1]->content.substr(0, 1) == "$")
-			tempOperation->setMembers(blocVec[greatestPriorityIndex - 1], expTree[blocVec[greatestPriorityIndex + 1]->content]);
-		else
-			tempOperation->setMembers(blocVec[greatestPriorityIndex - 1], blocVec[greatestPriorityIndex + 1]);
-		blocVec[greatestPriorityIndex] = new ExpBloc("$" + std::to_string(treeID));
-		blocVec[greatestPriorityIndex]->priority = greatestPriority;
-		expTree["$" + std::to_string(treeID)] = tempOperation;
-		blocVec.erase(blocVec.begin() + greatestPriorityIndex - 1);
-		blocVec.erase(blocVec.begin() + greatestPriorityIndex);
-		treeID++;
-		if (verbose) std::cout << "Building Tree State : " << std::endl;
-		for (unsigned int i = 0; i < blocVec.size(); i++)
-			if (verbose) std::cout << "[{" + std::to_string(blocVec[i]->priority) + "}" + blocVec[i]->content + "]";
-		if (verbose) std::cout << std::endl;
-	}
-	expProcessed = true;
-	if (blocVec[0]->content.substr(0, 1) != "$")
-	{
-		if (fn::String::isStringNumeric(blocVec[0]->content))
+		i = 0;
+		while (i < blocVec.size()) //Parenthesis removal
 		{
-			isResultStatic = true;
- 			staticResult = std::stod(blocVec[0]->content);
+			if (blocVec[i]->content == "(" || blocVec[i]->content == ")")
+				blocVec.erase(blocVec.begin() + i);
+			else
+				i++;
+		}
+		for (unsigned int i = 0; i < blocVec.size(); i++) //Pow / Func Priority
+		{
+			if (blocVec[i]->content == "^" || blocVec[i]->content == "@")
+			{
+				if (blocVec[i + 1]->priority == blocVec[i]->priority)
+				{
+					blocVec[i]->priority++;
+					blocVec[i + 1]->priority++;
+				}
+				else if (blocVec[i + 1]->priority > blocVec[i]->priority)
+				{
+					int offset = 1;
+					while (blocVec[i + offset]->priority > blocVec[i]->priority)
+					{
+						if (i + offset > blocVec.size() - 1)
+							break;
+						blocVec[i + offset]->priority++;
+						offset++;
+					}
+					blocVec[i]->priority++;
+				}
+
+
+			}
+			else if ((blocVec[i]->content == "*" || blocVec[i]->content == "/")) //Multiplication / Division Priority
+			{
+				int priorityLevel = blocVec[i]->priority;
+				blocVec[i]->priority++;
+				int j = i;
+				bool continuePriority = true;
+				while (continuePriority)
+				{
+					if (j > 0)
+					{
+						j--;
+						if (blocVec[j]->priority > priorityLevel)
+							blocVec[j]->priority++;
+						else if (blocVec[j]->content != "+" && blocVec[j]->content != "-" && blocVec[j]->priority == priorityLevel)
+							blocVec[j]->priority++;
+						else
+							continuePriority = false;
+					}
+					else
+						continuePriority = false;
+				}
+				j = i;
+				continuePriority = true;
+				while (continuePriority)
+				{
+					if (j < blocVec.size() - 1)
+					{
+						j++;
+						if (blocVec[j]->priority > priorityLevel)
+							blocVec[j]->priority++;
+						else if (blocVec[j]->content != "+" && blocVec[j]->content != "-" && blocVec[j]->priority == priorityLevel)
+							blocVec[j]->priority++;
+						else
+							continuePriority = false;
+					}
+					else
+						continuePriority = false;
+				}
+			}
+		}
+		if (verbose) std::cout << "Building Tree" << std::endl;
+		std::vector<std::string> expSearchOp = { "+", "-", "*", "/", "%", "^", "@" };
+		int treeID = 0;
+		while (blocVec.size() != 1)
+		{
+			int greatestPriority = -1;
+			int greatestPriorityIndex = -1;
+			for (unsigned int i = 0; i < blocVec.size(); i++)
+			{
+				if (blocVec[i]->priority > greatestPriority && fn::Vector::isInList(blocVec[i]->content, expSearchOp))
+				{
+					greatestPriority = blocVec[i]->priority;
+					greatestPriorityIndex = i;
+				}
+			}
+			ExpOperator* tempOperation = new ExpOperator(std::to_string(treeID), blocVec[greatestPriorityIndex], varBase);
+			if (blocVec[greatestPriorityIndex - 1]->content.substr(0, 1) == "$")
+			{
+				if (blocVec[greatestPriorityIndex + 1]->content.substr(0, 1) == "$")
+					tempOperation->setMembers(expTree[blocVec[greatestPriorityIndex - 1]->content], expTree[blocVec[greatestPriorityIndex + 1]->content]);
+				else
+					tempOperation->setMembers(expTree[blocVec[greatestPriorityIndex - 1]->content], blocVec[greatestPriorityIndex + 1]);
+			}
+			else if (blocVec[greatestPriorityIndex + 1]->content.substr(0, 1) == "$")
+				tempOperation->setMembers(blocVec[greatestPriorityIndex - 1], expTree[blocVec[greatestPriorityIndex + 1]->content]);
+			else
+				tempOperation->setMembers(blocVec[greatestPriorityIndex - 1], blocVec[greatestPriorityIndex + 1]);
+			blocVec[greatestPriorityIndex] = new ExpBloc("$" + std::to_string(treeID));
+			blocVec[greatestPriorityIndex]->priority = greatestPriority;
+			expTree["$" + std::to_string(treeID)] = tempOperation;
+			blocVec.erase(blocVec.begin() + greatestPriorityIndex - 1);
+			blocVec.erase(blocVec.begin() + greatestPriorityIndex);
+			treeID++;
+			if (verbose) std::cout << "Building Tree State : " << std::endl;
+			for (unsigned int i = 0; i < blocVec.size(); i++)
+				if (verbose) std::cout << "[{" + std::to_string(blocVec[i]->priority) + "}" + blocVec[i]->content + "]";
+			if (verbose) std::cout << std::endl;
+		}
+		expProcessed = true;
+		if (blocVec[0]->content.substr(0, 1) != "$")
+		{
+			if (fn::String::isStringNumeric(blocVec[0]->content))
+			{
+				isResultStatic = true;
+				staticResult = std::stod(blocVec[0]->content);
+			}
 		}
 	}
 }

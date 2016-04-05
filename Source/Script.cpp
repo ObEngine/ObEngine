@@ -11,12 +11,15 @@ void CoreHook::getValue(kaguya::State* lua, std::string name)
 	if (containerMap.find(name) != containerMap.end())
 	{
 		std::string gt = containerMap[name].first;
-		if (gt == "Console*")          (*lua)["Hook"][name] = containerMap[name].second->as<Console*>();
-		if (gt == "TextRenderer*")           (*lua)["Hook"][name] = containerMap[name].second->as<TextRenderer*>();
-		if (gt == "MathExp*")          (*lua)["Hook"][name] = containerMap[name].second->as<MathExp*>();
-		if (gt == "TriggerDatabase*")  (*lua)["Hook"][name] = containerMap[name].second->as<TriggerDatabase*>();
-		if (gt == "TriggerGroup*")     (*lua)["Hook"][name] = containerMap[name].second->as<TriggerGroup*>();
-		if (gt == "World*")            (*lua)["Hook"][name] = containerMap[name].second->as<World*>();
+		if      (gt == "Console*")            (*lua)["Hook"][name] = containerMap[name].second->as<Console*>();
+		else if (gt == "Cursor*")			 (*lua)["Hook"][name] = containerMap[name].second->as<Cursor*>();
+		else if (gt == "GameObjectHandler*")  (*lua)["Hook"][name] = containerMap[name].second->as<GameObjectHandler*>();
+		else if (gt == "MathExp*")            (*lua)["Hook"][name] = containerMap[name].second->as<MathExp*>();
+		else if (gt == "TextRenderer*")       (*lua)["Hook"][name] = containerMap[name].second->as<TextRenderer*>();
+		else if (gt == "TriggerDatabase*")    (*lua)["Hook"][name] = containerMap[name].second->as<TriggerDatabase*>();
+		else if (gt == "TriggerGroup*")       (*lua)["Hook"][name] = containerMap[name].second->as<TriggerGroup*>();
+		else if (gt == "World*")              (*lua)["Hook"][name] = containerMap[name].second->as<World*>();
+		else std::cout << "<Error:Script:CoreHook>[getValue] : Unknown type : '" << gt << "' for " << name << std::endl;
 	}
 	else
 	{
@@ -36,20 +39,6 @@ emorph::any* CoreHook::getPointer(std::string name)
 	}
 }
 
-void funtest()
-{
-	kaguya::State lol;
-	lol["Core"] = kaguya::NewTable();
-	lol["Core"]["ImportedLibs"] = kaguya::NewTable();
-	lol["Hook"] = kaguya::NewTable();
-	/*CoreLib::loadMathExp(&lol);
-	MathExp* yolo = new MathExp("2*2");
-	yolo->buildMathExp();
-	hookCore.dropValue("yolo", yolo);
-	hookCore.getValue(&lol, "yolo");
-	lol("print(Hook.yolo:getResult())");*/
-}
-
 void loadLib(kaguya::State* lua, std::string lib)
 {
 	if (fn::String::occurencesInString(lib, ".") >= 1)
@@ -58,6 +47,12 @@ void loadLib(kaguya::State* lua, std::string lib)
 	}
 	else std::cout << "<Error:Script:*>[loadLib] : Please provide a namespace" << std::endl;
 }
+
+void loadHook(kaguya::State* lua, std::string hookname)
+{
+	hookCore.getValue(lua, hookname);
+}
+
 void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 {
 	std::vector<std::string> importedLibs = (*lua)["Core"]["ImportedLibs"];
@@ -79,13 +74,15 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 	}
 	if (!alreadyImported)
 	{
-		if       (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
-		else if    (lib[0] == "Dialog")      CoreLib::loadDialog(lua, lib);
-		else if    (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
-		else if  (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
-		else if  (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
-		else if    (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
-		else if    (lib[0] == "World")        CoreLib::loadWorld(lua, lib);
+		if        (lib[0] == "Animation")    CoreLib::loadAnimation(lua, lib);
+		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
+		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
+		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
+		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
+		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
+		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
+		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
+		else if   (lib[0] == "World")        CoreLib::loadWorld(lua, lib);
 		else
 		{
 			std::cout << "<Error:Script:*>[loadCoreLib] : Can't find Core.";
@@ -114,6 +111,71 @@ void registerLib(kaguya::State* lua, std::string lib)
 	(*lua)(frag);
 }
 
+void loadBaseLib(kaguya::State* lua)
+{
+	(*lua)["CPP_Import"] = &loadLib;
+	(*lua)["CPP_Hook"] = &loadHook;
+}
+
+void CoreLib::loadAnimation(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Animation"])) (*lua)["Core"]["Animation"] = kaguya::NewTable();
+	if (importAll || args[1] == "AnimationGroup")
+	{
+		(*lua)["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::ClassMetatable<anim::AnimationGroup>()
+			.addMember("setGroupClock", &anim::AnimationGroup::setGroupClock)
+			.addMember("setGroupLoop", &anim::AnimationGroup::setGroupLoop)
+			.addMember("getGroupName", &anim::AnimationGroup::getGroupName)
+			.addMember("getGroupClock", &anim::AnimationGroup::getGroupClock)
+			.addMember("getGroupIndex", &anim::AnimationGroup::getGroupIndex)
+			.addMember("isGroupOver", &anim::AnimationGroup::isGroupOver)
+			.addMember("pushTexture", &anim::AnimationGroup::pushTexture)
+			.addMember("removeTextureByIndex", &anim::AnimationGroup::removeTextureByIndex)
+			.addMember("reset", &anim::AnimationGroup::reset)
+			.addMember("next", &anim::AnimationGroup::next)
+			.addMember("previous", &anim::AnimationGroup::previous)
+			.addMember("forceNext", &anim::AnimationGroup::forceNext)
+			.addMember("forcePrevious", &anim::AnimationGroup::forcePrevious)
+		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Animation")
+	{
+		(*lua)["Core"]["Animation"]["Animation"].setClass(kaguya::ClassMetatable<anim::Animation>()
+			.addMember("getAnimationName", &anim::Animation::getAnimationName)
+			.addMember("getAnimationClock", &anim::Animation::getAnimationClock)
+			.addMember("getAnimationGroup", &anim::Animation::getAnimationGroup)
+			.addMember("getCurrentAnimationGroup", &anim::Animation::getCurrentAnimationGroup)
+			.addMember("getAllAnimationGroupName", &anim::Animation::getAllAnimationGroupName)
+			.addMember("getAnimationPlayMode", &anim::Animation::getAnimationPlayMode)
+			.addMember("getAnimationStatus", &anim::Animation::getAnimationStatus)
+			.addMember("isAnimationOver", &anim::Animation::isAnimationOver)
+			.addMember("canSkipAnimation", &anim::Animation::canSkipAnimation)
+			.addMember("getSpriteOffsetX", &anim::Animation::getSpriteOffsetX)
+			.addMember("getSpriteOffsetY", &anim::Animation::getSpriteOffsetY)
+			.addMember("getPriority", &anim::Animation::getPriority)
+		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Animator")
+	{
+		(*lua)["Core"]["Animation"]["Animator"].setClass(kaguya::ClassMetatable<anim::Animator>()
+			.addMember("setPath", &anim::Animator::setPath)
+			.addMember("getAnimation", &anim::Animator::getAnimation)
+			.addMember("getAllAnimationName", &anim::Animator::getAllAnimationName)
+			.addMember("getKey", &anim::Animator::getKey)
+			.addMember("setKey", &anim::Animator::setKey)
+			.addMember("textureChanged", &anim::Animator::textureChanged)
+			.addMember("getSpriteOffsetX", &anim::Animator::getSpriteOffsetX)
+			.addMember("getSpriteOffsetY", &anim::Animator::getSpriteOffsetY)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
 void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
@@ -136,7 +198,8 @@ void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "Stream")
 	{
 		(*lua)["Core"]["Console"]["Stream"].setClass(kaguya::ClassMetatable<Console::Stream>()
-			.addMember("write", &Console::Stream::streamPush)
+			.addMember("write", static_cast<Console::Message* (Console::Stream::*)(std::string)>(&Console::Stream::streamPush))
+			.addMember("write", static_cast<Console::Message* (Console::Stream::*)(std::string, int, int, int, int)>(&Console::Stream::streamPush))
 			.addMember("setColor", &Console::Stream::setColor)
 			.addMember("getR", &Console::Stream::getR)
 			.addMember("getG", &Console::Stream::getG)
@@ -163,6 +226,30 @@ void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
+void CoreLib::loadCursor(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Cursor"])) (*lua)["Core"]["Cursor"] = kaguya::NewTable();
+	if (importAll || args[1] == "Cursor")
+	{
+		(*lua)["Core"]["Cursor"]["Cursor"].setClass(kaguya::ClassMetatable<Cursor>()
+			.addMember("getClicked", &Cursor::getClicked)
+			.addMember("getPressed", &Cursor::getPressed)
+			.addMember("getReleased", &Cursor::getReleased)
+			.addMember("getX", &Cursor::getX)
+			.addMember("getY", &Cursor::getY)
+			.addMember("selectCursor", &Cursor::selectCursor)
+			.addMember("selectKey", &Cursor::selectKey)
+			.addMember("setPosition", &Cursor::setPosition)
+			.addMember("setX", &Cursor::setX)
+			.addMember("setY", &Cursor::setY)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCursor] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
 void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
@@ -179,6 +266,7 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 		);
 		foundPart = true;
 	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadLight(kaguya::State* lua, std::vector<std::string> args)
 {
@@ -212,6 +300,7 @@ void CoreLib::loadLight(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getB", &Light::PointLight::getB)
 			.addMember("getA", &Light::PointLight::getA)
 			.addMember("isBehind", &Light::PointLight::isBehind)
+			.addMember("getType", &Light::PointLight::getType)
 		);
 		foundPart = true;
 	}
@@ -227,7 +316,6 @@ void CoreLib::loadLight(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setOffsetXExp", &Light::DynamicPointLight::setOffsetXExp)
 			.addMember("setOffsetYExp", &Light::DynamicPointLight::setOffsetYExp)
 			.addMember("getType", &Light::DynamicPointLight::getType)
-			.addMember("updateLight", &Light::DynamicPointLight::updateLight)
 		);
 		foundPart = true;
 	}
@@ -248,6 +336,7 @@ void CoreLib::loadMathExp(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getResult", &MathExp::getResult)
 			.addMember("isStatic", &MathExp::isStatic)
 			.addMember("setVar", &MathExp::setVar)
+			.addMember("setExpr", &MathExp::setExpr)
 		);
 		foundPart = true;
 	}
@@ -261,7 +350,6 @@ void CoreLib::loadMathExp(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("registerOutputVar", &MathExpObject::registerOutputVar)
 			.addMember("setGlobalVar", &MathExpObject::setGlobalVar)
 			.addMember("setLocalVar", &MathExpObject::setLocalVar)
-			.addMember("setGlobalVar", &MathExpObject::setGlobalVar)
 			.addMember("setPrecision", &MathExpObject::setPrecision)
 			.addMember("getPrecision", &MathExpObject::getPrecision)
 		);
@@ -281,6 +369,8 @@ void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getTrigger", &TriggerDatabase::getTrigger)
 			.addMember("getCustomTrigger", &TriggerDatabase::getCustomTrigger)
 			.addMember("createTriggerGroup", &TriggerDatabase::createTriggerGroup)
+			.addMember("joinTriggerGroup", &TriggerDatabase::joinTriggerGroup)
+			.addMember("doesTriggerGroupExists", &TriggerDatabase::doesTriggerGroupExists)
 		);
 		foundPart = true;
 	}
@@ -363,7 +453,8 @@ void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("addCharacter", &World::addCharacter)
 			.addMember("addLevelSprite", &World::addLevelSprite)
 			.addMember("addLight", &World::addLight)
-			.addMember("addLight", &World::addLight)
+			.addMember("getCamX", &World::getCamX)
+			.addMember("getCamY", &World::getCamY)
 		);
 		foundPart = true;
 	}

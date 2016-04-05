@@ -190,13 +190,20 @@ void TriggerDatabase::setTriggerState(std::string name, bool state)
 
 void TriggerDatabase::createCustomNamespace(std::string groupNamespace)
 {
-	if (customTriggers.find(groupNamespace) == customTriggers.end())
+	if (customTriggers.size() == 0)
 	{
 		customTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
 	}
 	else
 	{
-		std::cout << "<Error:Triggers:TriggerDatabase>[createCustomNamespace] : Custom Group Namespace : " << groupNamespace << " already exists" << std::endl;
+		if (customTriggers.find(groupNamespace) == customTriggers.end())
+		{
+			customTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
+		}
+		else
+		{
+			std::cout << "<Error:Triggers:TriggerDatabase>[createCustomNamespace] : Custom Group Namespace : " << groupNamespace << " already exists" << std::endl;
+		}
 	}
 }
 
@@ -221,6 +228,33 @@ TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, st
 		std::cout << "<Error:Triggers:TriggerDatabase>[createTriggerGroup] : Custom Group Namespace : " << groupNamespace << " does not exists" << std::endl;
 	}
 	return nullptr;
+}
+TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
+{
+	std::cout << "Trying to join TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
+	if (customTriggers.find(groupNamespace) != customTriggers.end())
+	{
+		if (customTriggers[groupNamespace].find(triggerGroupName) == customTriggers[groupNamespace].end())
+		{
+			std::cout << "<Error:Triggers:TriggerDatabase>[joinTriggerGroup] : Custom Trigger Group : " << triggerGroupName << " does not exists in Group Namespace : " << groupNamespace << std::endl;
+		}
+		else
+		{
+			return customTriggers[groupNamespace][triggerGroupName];
+		}
+	}
+	else
+	{
+		std::cout << "<Error:Triggers:TriggerDatabase>[joinTriggerGroup] : Custom Group Namespace : " << groupNamespace << " does not exists" << std::endl;
+	}
+	return nullptr;
+}
+bool TriggerDatabase::doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName)
+{
+	if (customTriggers[groupNamespace].find(triggerGroupName) == customTriggers[groupNamespace].end())
+		return false;
+	else
+		return true;
 }
 std::vector<std::string> TriggerDatabase::getAllTriggersNameFromCustomGroup(std::string groupNamespace, std::string triggerGroupName)
 {

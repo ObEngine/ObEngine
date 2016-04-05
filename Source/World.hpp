@@ -18,6 +18,7 @@
 #include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "Particle.hpp"
+#include "GameObject.hpp"
 
 class World
 {

@@ -8,22 +8,26 @@
 #include <kaguya/kaguya.hpp>
 
 #include "any.hpp"
+#include "Animation.hpp"
 #include "Console.hpp"
+#include "Cursor.hpp"
 #include "Dialog.hpp"
 #include "Triggers.hpp"
 #include "Light.hpp"
 #include "MathExp.hpp"
 #include "World.hpp"
 
-void funtest(); //To Remove
-
 void loadLib(kaguya::State* lua, std::string lib);
+void loadHook(kaguya::State* lua, std::string hookname);
 void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib);
 void registerLib(kaguya::State* lua, std::string lib);
+void loadBaseLib(kaguya::State* lua);
 
 namespace CoreLib
 {
+	void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
 	void loadConsole(kaguya::State* lua, std::vector<std::string> args);
+	void loadCursor(kaguya::State* lua, std::vector<std::string> args);
 	void loadDialog(kaguya::State* lua, std::vector<std::string> args);
 	void loadLight(kaguya::State* lua, std::vector<std::string> args);
 	void loadMathExp(kaguya::State* lua, std::vector<std::string> args);

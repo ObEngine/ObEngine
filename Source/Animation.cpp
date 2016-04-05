@@ -8,31 +8,39 @@ anim::AnimationGroup::AnimationGroup(std::string pgroupname) {
 	this->groupName = pgroupname;
 }
 void anim::AnimationGroup::build() {
-	sf::RenderTexture buildTex;
-	int highestHeight = 0;
-	int totalWidth = 0;
-	for (int i = 0; i < groupList.size(); i++)
+	if (groupList.size() == 1)
 	{
-		if (groupList[i]->getSize().y > highestHeight)
-			highestHeight = groupList[i]->getSize().y;
-		texturePos.push_back(new sf::IntRect(totalWidth, 0, groupList[i]->getSize().x, groupList[i]->getSize().y));
-		totalWidth += groupList[i]->getSize().x;
+		spriteSheet = *groupList[0];
+		texturePos.push_back(new sf::IntRect(0, 0, spriteSheet.getSize().x, spriteSheet.getSize().y));
+		currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
 	}
-	buildTex.create(totalWidth, highestHeight);
-	buildTex.clear(sf::Color(0, 0, 0, 0));
-	int currentXblit = 0;
-	for (int i = 0; i < groupList.size(); i++)
+	else if (groupList.size() > 1)
 	{
-		sf::Sprite sprBuffer;
-		sprBuffer.setTexture(*groupList[i]);
-		sprBuffer.setPosition(currentXblit, 0);
-		buildTex.draw(sprBuffer);
+		sf::RenderTexture buildTex;
+		int highestHeight = 0;
+		int totalWidth = 0;
+		for (int i = 0; i < groupList.size(); i++)
+		{
+			if (groupList[i]->getSize().y > highestHeight)
+				highestHeight = groupList[i]->getSize().y;
+			texturePos.push_back(new sf::IntRect(totalWidth, 0, groupList[i]->getSize().x, groupList[i]->getSize().y));
+			totalWidth += groupList[i]->getSize().x;
+		}
+		buildTex.create(totalWidth, highestHeight);
+		buildTex.clear(sf::Color(0, 0, 0, 0));
+		int currentXblit = 0;
+		for (int i = 0; i < groupList.size(); i++)
+		{
+			sf::Sprite sprBuffer;
+			sprBuffer.setTexture(*groupList[i]);
+			sprBuffer.setPosition(currentXblit, 0);
+			buildTex.draw(sprBuffer);
+			currentXblit += groupList[i]->getSize().x;
+		}
 		buildTex.display();
-		currentXblit += groupList[i]->getSize().x;
+		spriteSheet = buildTex.getTexture();
+		currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
 	}
-	buildTex.display();
-	spriteSheet = buildTex.getTexture();
-	currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
 }
 void anim::AnimationGroup::setGroupClock(int clock) {
 	this->groupClock = clock;
@@ -122,6 +130,10 @@ int anim::AnimationGroup::getGroupSize(){
 std::string anim::AnimationGroup::getGroupName() {
 	return groupName;
 }
+int anim::AnimationGroup::getGroupClock()
+{
+	return groupClock;
+}
 
 
 //RESSOURCE MANAGER
@@ -176,8 +188,25 @@ void anim::Animation::deleteRessourceManager() {
 float anim::Animation::getAnimationClock() {
 	return animationClock;
 }
+anim::AnimationGroup* anim::Animation::getAnimationGroup(std::string groupname)
+{
+	if (animationGroupMap.find(groupname) != animationGroupMap.end())
+		return animationGroupMap[groupname];
+	else
+		std::cout << "<Error:Animation:Animation>[getAnimationGroup] : Can't find AnimationGroup : " << groupname << std::endl;
+	return nullptr;
+}
 std::string anim::Animation::getCurrentAnimationGroup() {
 	return currentGroupName;
+}
+std::vector<std::string> anim::Animation::getAllAnimationGroupName()
+{
+	std::vector<std::string> rname;
+	for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); it++)
+	{
+		rname.push_back(it->first);
+	}
+	return rname;
 }
 std::string anim::Animation::getAnimationPlayMode() {
 	return animationPlaymode;
@@ -193,7 +222,7 @@ bool anim::Animation::isAnimationOver() {
 }
 void anim::Animation::loadAnimation(std::string path, std::string filename) {
 	DataParser animFile;
-	animFile.parseFile(path + filename, true);
+	animFile.parseFile(path + filename);
 	//Meta
 	animFile.getAttribute("Meta", "", "name")->getData(&animationName);
 	if (animFile.attributeExists("Meta", "", "clock"))
@@ -243,6 +272,10 @@ void anim::Animation::loadAnimation(std::string path, std::string filename) {
 			animFile.getAttribute("Groups", allGroups[i], "clock")->getData(&curClock);
 			animationGroupMap[allGroups[i]]->setGroupClock(curClock);
 		}
+		else
+		{
+			animationGroupMap[allGroups[i]]->setGroupClock(animationClock);
+		}
 		animationGroupMap[allGroups[i]]->build();
 	}
 	//Animation Code
@@ -268,77 +301,73 @@ void anim::Animation::playAnimation() {
 	{
 		if (codeIndex > animationCode.size() - 1 && animationPlaymode != "ONETIME")
 			codeIndex = 0;
-		if (getTickSinceEpoch() - lastTick > animationClock)
+		if (getTickSinceEpoch() - startDelay > currentDelay)
 		{
-			lastTick = getTickSinceEpoch();
-			if (getTickSinceEpoch() - startDelay > currentDelay)
+			if (askCommand)
 			{
-				if (askCommand)
+				std::vector<std::string> currentCommand;
+				currentCommand = animationCode[codeIndex];
+				if (currentCommand[0] == "DELAY")
 				{
-					std::vector<std::string> currentCommand;
-					currentCommand = animationCode[codeIndex];
-					if (currentCommand[0] == "DELAY")
+					askCommand = true;
+					currentDelay = std::stoi(currentCommand[1]);
+					startDelay = getTickSinceEpoch();
+					if (animationPlaymode != "ONETIME" && !(codeIndex >= animationCode.size() - 1))
+						codeIndex++;
+					else
+						isOver = true;
+				}
+				else if (currentCommand[0] == "PLAY_GROUP")
+				{
+					if (currentGroupName != "NONE")
+						animationGroupMap[currentGroupName]->reset();
+					askCommand = false;
+					currentGroupName = currentCommand[1];
+					if (currentCommand.size() == 3)
+					{
+						loopTime = stoi(currentCommand[2]);
+						animationGroupMap[currentGroupName]->setGroupLoop(loopTime);
+					}
+					else
+						animationGroupMap[currentGroupName]->setGroupLoop(1);
+				}
+				else if (currentCommand[0] == "CALL")
+				{
+					askCommand = false;
+					std::string callGroup;
+					callGroup = currentCommand[1];
+					fn::String::replaceStringInPlace(callGroup, "'", "");
+					currentStatus = "CALL:" + callGroup;
+				}
+			}
+			if (currentGroupName != "NONE")
+			{
+				animationGroupMap[currentGroupName]->next();
+				if (animationGroupMap[currentGroupName]->isGroupOver())
+				{
+					if (animationPlaymode != "ONETIME")
 					{
 						askCommand = true;
-						currentDelay = std::stoi(currentCommand[1]);
-						startDelay = getTickSinceEpoch();
-						if (animationPlaymode != "ONETIME" && !(codeIndex >= animationCode.size() - 1))
-							codeIndex++;
-						else
-							isOver = true;
+						animationGroupMap[currentGroupName]->reset();
+						codeIndex++;
 					}
-					else if (currentCommand[0] == "PLAY_GROUP")
+					else if (animationPlaymode == "ONETIME")
 					{
-						if (currentGroupName != "NONE")
-							animationGroupMap[currentGroupName]->reset();
-						askCommand = false;
-						currentGroupName = currentCommand[1];
-						if (currentCommand.size() == 3)
-						{
-							loopTime = stoi(currentCommand[2]);
-							animationGroupMap[currentGroupName]->setGroupLoop(loopTime);
-						}
-						else
-							animationGroupMap[currentGroupName]->setGroupLoop(1);
-					}
-					else if (currentCommand[0] == "CALL")
-					{
-						askCommand = false;
-						std::string callGroup;
-						callGroup = currentCommand[1];
-						fn::String::replaceStringInPlace(callGroup, "'", "");
-						currentStatus = "CALL:" + callGroup;
-					}
-				}
-				if (currentGroupName != "NONE")
-				{
-					animationGroupMap[currentGroupName]->next();
-					if (animationGroupMap[currentGroupName]->isGroupOver())
-					{
-						if (animationPlaymode != "ONETIME")
+						if (codeIndex < animationCode.size() - 1)
 						{
 							askCommand = true;
 							animationGroupMap[currentGroupName]->reset();
 							codeIndex++;
 						}
-						else if (animationPlaymode == "ONETIME")
+						else
 						{
-							if (codeIndex < animationCode.size() - 1)
-							{
-								askCommand = true;
-								animationGroupMap[currentGroupName]->reset();
-								codeIndex++;
-							}
-							else
-							{
-								animationGroupMap[currentGroupName]->forcePrevious();
-								isOver = true;
-							}
-						}	
-					}
-					else
-						animationGroupMap[currentGroupName]->updateSprite();
+							animationGroupMap[currentGroupName]->forcePrevious();
+							isOver = true;
+						}
+					}	
 				}
+				else
+					animationGroupMap[currentGroupName]->updateSprite();
 			}
 		}
 	}
@@ -347,8 +376,6 @@ void anim::Animation::resetAnimation() {
 	for (std::map<std::string, AnimationGroup*>::iterator it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it) {
 		it->second->reset();
 	}
-	startDelay = 0;
-	currentDelay = 0;
 	loopTime = 0;
 	currentStatus = "PLAY";
 	codeIndex = 0;
@@ -457,6 +484,18 @@ sf::Texture* anim::DirtyAnimation::getNormalAtIndex(int index)
 void anim::Animator::setPath(std::string path) {
 	animationPath = path;
 }
+anim::Animation* anim::Animator::getAnimation(std::string animationName)
+{
+	if (fullAnimSet.find(animationName) != fullAnimSet.end())
+		return fullAnimSet[animationName];
+	else
+		std::cout << "<Error:Animation:Animator>[getAnimation] : Can't find Animation : " << animationName << std::endl;
+	return nullptr;
+}
+std::vector<std::string> anim::Animator::getAllAnimationName()
+{
+	return allAnimationNames;
+}
 std::string anim::Animator::getKey() {
 	return currentAnimationName;
 }
@@ -500,6 +539,7 @@ void anim::Animator::setKey(std::string key) {
 	}
 }
 void anim::Animator::loadAnimator() {
+	
 	std::vector<std::string> listDir = fn::File::listDirInDir(animationPath);
 	std::vector<std::string> allFiles = fn::File::listFileInDir(animationPath);
 	std::map<std::string, ComplexAttribute*> animationParameters;

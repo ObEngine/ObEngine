@@ -36,7 +36,7 @@ namespace anim
 		void setGroupClock(int clock); //Set the clock of the group
 		void setGroupLoop(int loops); //Set the number of times the group will repeat
 		std::string getGroupName(); //Return the group name
-		float getGroupClock(); //Return clock of the group
+		int getGroupClock(); //Return clock of the group
 		int getGroupIndex(); //Return current group index
 		int getGroupSize(); //Return group size (number of images)
 		bool isGroupOver(); //Return true if all images have been displayed
@@ -92,7 +92,9 @@ namespace anim
 		void attachRessourceManager(RessourceManager* rsMan); //Hook a RessourceManager
 		void deleteRessourceManager(); //Delete the RessourceManager
 		float getAnimationClock(); //Return Animation Clock
+		AnimationGroup* getAnimationGroup(std::string groupname);
 		std::string getCurrentAnimationGroup(); //Return current AnimationGroup
+		std::vector<std::string> getAllAnimationGroupName();
 		std::string getAnimationPlayMode(); //Return PlayMode
 		std::string getAnimationStatus(); //Return AnimationStatus
 		void loadAnimation(std::string path, std::string filename); //Load Code File
@@ -156,6 +158,8 @@ namespace anim
 
 		public:
 			void setPath(std::string path); //Set Animator's path
+			Animation* getAnimation(std::string animationName);
+			std::vector<std::string> getAllAnimationName();
 			void attachRessourceManager(RessourceManager* rsMan); //Hook a RessourceManager
 			void deleteRessourceManager(); //Delete the RessourceManager
 			std::string getKey(); //Return current Animation name

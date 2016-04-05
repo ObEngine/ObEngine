@@ -36,11 +36,12 @@ class GameObject
 		int scrPriority = 0;
 		double currentDeltaTime = 0.0;
 
-		bool hasAnimator = true;
-		bool hasCollider = true;
+		bool hasAnimator = false;
+		bool hasCollider = false;
 		bool colliderSolid = false;
 		bool colliderClick = false;
-		bool hasLevelSprite = true;
+		bool colliderRelative = true;
+		bool hasLevelSprite = false;
 
 		kaguya::State* scriptEngine;
 
@@ -53,7 +54,7 @@ class GameObject
 		friend void useLocalTrigger(std::string scrKey, std::string trName);
 		friend void useGlobalTrigger(std::string scrKey, std::string trName);
 		friend void useCustomTrigger(std::string scrKey, std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
-		friend void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
+		friend void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad);
 		friend class GameObjectHandler;
 	public:
 		std::string getID();
@@ -64,11 +65,13 @@ class GameObject
 		bool canDisplay();
 		bool canCollide();
 		bool canClick();
+		bool isColliderRelative();
 		LevelSprite* getLevelSprite();
 		Collision::PolygonalCollider* getCollider();
 };
 
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
+void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad = false);
+void loadScrGameObjectHandlerLib(kaguya::State* lua);
 bool orderScrPriority(GameObject* g1, GameObject* g2);
 	
 class GameObjectHandler
@@ -95,6 +98,7 @@ class GameObjectHandler
 		void sendRequireArgument(std::string object, std::string argName, U value);
 		void executeFile(std::string object, std::string path);
 		void executeLine(std::string object, std::string line);
+		kaguya::State* getLuaStateOfGameObject(std::string object);
 		void setTriggerState(std::string object, std::string trigger, bool state);
 		void setGlobalTriggerState(std::string trigger, bool state);
 		void update();
@@ -109,3 +113,4 @@ void GameObjectHandler::sendRequireArgument(std::string object, std::string argN
 
 
 extern GameObjectHandler gameObjectHandlerCore;
+extern GameObject* mainGameObject;

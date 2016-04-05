@@ -92,6 +92,8 @@ class TriggerDatabase
 		void setTriggerState(std::string name, bool state);
 		void createCustomNamespace(std::string groupNamespace);
 		TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+		TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+		bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
 		std::vector<std::string> getAllTriggersNameFromCustomGroup(std::string groupNamespace, std::string triggerGroupName);
 		void update();
 };

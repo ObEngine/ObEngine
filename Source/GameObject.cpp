@@ -4,9 +4,12 @@
 #include "GameObject.hpp"
 
 GameObjectHandler gameObjectHandlerCore;
+GameObject* mainGameObject;
 
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
+void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad)
 {
+	(*lua)["CPP_Import"] = &loadLibBridge;
+	(*lua)["CPP_Hook"] = &loadHookBridge;
 	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
 		.addMember("getDeltaTime", &GameObject::getDeltaTime)
 		.addMember("getLevelSprite", &GameObject::getLevelSprite)
@@ -16,13 +19,32 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("canDisplay", &GameObject::canDisplay)
 		.addMember("getPriority", &GameObject::getPriority)
 		.addMember("setAnimationKey", &GameObject::setAnimationKey)
+		.addMember("getPublicKey", &GameObject::getPublicKey)
 		);
 	(*lua)["This"] = obj;
-	(*lua)["CPP_Import"] = &loadLibBridge;
-	(*lua)["CPP_Hook"] = &loadHookBridge;
-	(*lua)["CPP_UseLocalTrigger"] = &useLocalTrigger;
-	(*lua)["CPP_UseGlobalTrigger"] = &useGlobalTrigger;
-	(*lua)["CPP_UseCustomTrigger"] = &useCustomTrigger;
+	if (fullLoad)
+	{
+		(*lua)["CPP_UseLocalTrigger"] = &useLocalTrigger;
+		(*lua)["CPP_UseGlobalTrigger"] = &useGlobalTrigger;
+		(*lua)["CPP_UseCustomTrigger"] = &useCustomTrigger;
+	}
+}
+
+void loadScrGameObjectHandlerLib(kaguya::State* lua)
+{
+	(*lua)["CPP_GameObjectHandler"].setClass(kaguya::ClassMetatable<GameObjectHandler>()
+		.addMember("createGameObject", &GameObjectHandler::createGameObject)
+		.addMember("executeFile", &GameObjectHandler::executeFile)
+		.addMember("executeLine", &GameObjectHandler::executeLine)
+		.addMember("getAllGameObject", &GameObjectHandler::getAllGameObject)
+		.addMember("getGameObject", &GameObjectHandler::getGameObject)
+		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<int>)
+		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<std::string>)
+		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<bool>)
+		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<float>)
+		.addMember("setTriggerState", &GameObjectHandler::setTriggerState)
+		.addMember("setGlobalTriggerState", &GameObjectHandler::setGlobalTriggerState)
+	);
 }
 
 void useLocalTrigger(std::string scrKey, std::string trName)
@@ -108,10 +130,14 @@ std::vector<GameObject*> GameObjectHandler::getAllGameObject(std::vector<std::st
 GameObject* GameObjectHandler::createGameObject(std::string id, std::string type, std::string obj)
 {
 	GameObject* newGameObject = new GameObject(id);
-	DataParser getGameObjectFile;
-	getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd", true);
-	DataObject* gameObjectData = getGameObjectFile.accessDataObject(obj);
-	newGameObject->loadGameObject(gameObjectData);
+	DataObject* gameObjectData = new DataObject("None");
+	if (type == "LevelObjects")
+	{
+		DataParser getGameObjectFile;
+		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd");
+		gameObjectData = getGameObjectFile.accessDataObject(obj);
+		newGameObject->loadGameObject(gameObjectData);
+	}
 	kaguya::State* newLuaState = new kaguya::State;
 	std::string key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
 	std::cout << "Create GameObject : " << id << "/" << obj << " with key : " << key << std::endl;
@@ -123,8 +149,10 @@ GameObject* GameObjectHandler::createGameObject(std::string id, std::string type
 	triggerDatabaseCore.createCustomNamespace(this->objHandlerMap[key]->publicKey);
 	this->trgHandlerMap[key] = triggerDatabaseCore.createTriggerGroup(key, "Local");
 	//Script Loading
-	this->scrHandlerMap[key]->dofile("Data/Scripts/ScrInit.lua");
-	loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key]);
+	this->scrHandlerMap[key]->dofile("Data/GameScripts/ScrInit.lua");
+	if (type == "LevelObjects") this->scrHandlerMap[key]->dofile("Data/GameScripts/LOInit.lua");
+	if (type == "LevelObjects") loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key], true);
+	else loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key], false);
 	(*this->scrHandlerMap[key])["ID"] = id;
 	(*this->scrHandlerMap[key])["Private"] = this->objHandlerMap[key]->key;
 	(*this->scrHandlerMap[key])["Public"] = this->objHandlerMap[key]->publicKey;
@@ -141,26 +169,34 @@ GameObject* GameObjectHandler::createGameObject(std::string id, std::string type
 	this->trgHandlerMap[key]->addTrigger("Press");
 	this->trgHandlerMap[key]->addTrigger("Delete");
 	this->objHandlerMap[key]->hookLuaState(this->scrHandlerMap[key]);
-	if (gameObjectData->listExists(convertPath("Script"), "scriptList"))
+	if (type == "LevelObjects")
 	{
-		int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
-		for (int i = 0; i < scriptListSize; i++)
+		if (gameObjectData->listExists(convertPath("Script"), "scriptList"))
 		{
-			std::string getScrName;
-			gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
-			this->executeFile(id, getScrName);
+			int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
+			for (int i = 0; i < scriptListSize; i++)
+			{
+				std::string getScrName;
+				gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
+				this->executeFile(id, getScrName);
+			}
 		}
+		this->orderUpdateScrArray();
 	}
-	this->orderUpdateScrArray();
 	return objHandlerMap[key];
 }
 void GameObjectHandler::executeFile(std::string object, std::string path)
 {
+	std::cout << "Errkan:" << path << std::endl;
 	this->scrHandlerMap[getGameObject(object)->key]->dofile(path);
 }
 void GameObjectHandler::executeLine(std::string object, std::string line)
 {
 	this->scrHandlerMap[getGameObject(object)->key]->dostring(line);
+}
+kaguya::State* GameObjectHandler::getLuaStateOfGameObject(std::string object)
+{
+	return this->scrHandlerMap[getGameObject(object)->key];
 }
 void GameObjectHandler::setTriggerState(std::string object, std::string trigger, bool state)
 {
@@ -210,14 +246,13 @@ void GameObject::loadGameObject(DataObject* obj)
 		obj->getAttribute(convertPath("Animator"), "path")->getData(&animatorPath);
 		this->objectAnimator.setPath(animatorPath);
 		this->objectAnimator.loadAnimator();
-	}
-	else
-	{
-		hasAnimator = false;
+		hasAnimator = true;
 	}
 	//Collider
 	if (obj->complexExists(convertPath(""), "Collider"))
 	{
+		std::string colliderRel;
+		colliderRelative = (obj->getAttribute(convertPath("Collider"), "position")->getData(&colliderRel) == "relative") ? true : false;
 		obj->getAttribute(convertPath("Collider"), "solid")->getData(&colliderSolid);
 		obj->getAttribute(convertPath("Collider"), "click")->getData(&colliderClick);
 		objectCollider.setSolid(colliderSolid);
@@ -230,23 +265,17 @@ void GameObject::loadGameObject(DataObject* obj)
 			std::vector<std::string> tPoint = fn::String::split(getPt, ",");
 			objectCollider.addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
 		}
-	}
-	else
-	{
-		hasCollider = false;
+		hasCollider = true;
 	}
 	//LevelSprite
 	if (obj->complexExists(convertPath(""), "LevelSprite"))
 	{
-		int decoPosX, decoPosY;
 		int decoRot = 0;
 		double decoSca = 1.0;
 		std::vector<std::string> decoAtrList;
 		std::string attrBuffer;
 		int layer;
 		int zdepth;
-		obj->getAttribute(convertPath("LevelSprite"), "posX")->getData(&decoPosX);
-		obj->getAttribute(convertPath("LevelSprite"), "posY")->getData(&decoPosY);
 		obj->getAttribute(convertPath("LevelSprite"), "rotation")->getData(&decoRot);
 		obj->getAttribute(convertPath("LevelSprite"), "scale")->getData(&decoSca);
 		obj->getAttribute(convertPath("LevelSprite"), "layer")->getData(&layer);
@@ -257,16 +286,12 @@ void GameObject::loadGameObject(DataObject* obj)
 			for (int j = 0; j < atrListSize; j++)
 				decoAtrList.push_back(obj->getListAttribute(convertPath("LevelSprite"), "attributeList")->getElement(j)->getData(&attrBuffer));
 		}
-		objectLevelSprite.move(decoPosX, decoPosY);
 		objectLevelSprite.setRotation(decoRot);
 		objectLevelSprite.setScale(decoSca);
 		objectLevelSprite.setAtr(decoAtrList);
 		objectLevelSprite.setLayer(layer);
 		objectLevelSprite.setZDepth(zdepth);
-	}
-	else
-	{
-		hasLevelSprite = false;
+		hasLevelSprite = true;
 	}
 	//Script
 	if (obj->complexExists(convertPath(""), "Script"))
@@ -301,7 +326,6 @@ void GameObject::update()
 			(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
 			for (auto it = allParam.begin(); it != allParam.end(); it++)
 			{
-				std::cout << "rtype:" << allParam[it->first].first << std::endl;
 				if (allParam[it->first].first == "int")
 					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<int>();
 				else if (allParam[it->first].first == "std::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>")
@@ -392,6 +416,11 @@ bool GameObject::canCollide()
 bool GameObject::canClick()
 {
 	return (hasCollider && colliderClick);
+}
+
+bool GameObject::isColliderRelative()
+{
+	return colliderRelative;
 }
 
 LevelSprite* GameObject::getLevelSprite()
