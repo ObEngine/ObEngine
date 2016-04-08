@@ -69,5 +69,5 @@ namespace Collision
 		void clearHighlights(bool points = true, bool lines = true);
 	};
 	
-	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy);
+	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy, bool opt = false);
 }

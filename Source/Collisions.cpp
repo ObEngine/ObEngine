@@ -452,11 +452,15 @@ namespace Collision
 		if (lines) highlightedLines.clear();
 	}
 
-	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy)
+	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy, bool opt)
 	{
 		for (int i = 0; i < collidersList->size(); i++)
 		{
-			if (collider->doesCollide(collidersList->at(i), offx, offy)) return true;
+			if (collider->doesCollide(collidersList->at(i), offx, offy))
+			{
+				if (opt && i != 0) std::swap(collidersList->at(0), collidersList->at(i));
+				return true;
+			}
 		}
 		return false;
 	}

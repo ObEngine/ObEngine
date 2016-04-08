@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "DataParser.hpp"
+#include "TimeManager.hpp"
 
 class KeyClass
 {
@@ -39,7 +40,7 @@ class KeyBinder
 		std::map<std::string, KeyClass*> keyMap;
 		std::map<std::string, bool> previousActionMap;
 		std::map<std::string, int> baseActionDelayer;
-		std::map<std::string, int> actionDelayer;
+		std::map<std::string, unsigned long long int> actionDelayer;
 		bool binderEnabled = true;
 	public:
 		KeyBinder();

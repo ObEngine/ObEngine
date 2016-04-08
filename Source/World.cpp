@@ -338,10 +338,13 @@ void World::display(sf::RenderWindow* surf)
 		particleArray[i]->draw(surf);
 	}
 	visualDisplayFront(surf);
-	for (unsigned int i = 0; i < collidersArray.size(); i++)
+	if (showCollisionModes["drawLines"] || showCollisionModes["drawPoints"] || showCollisionModes["drawMasterPoint"] || showCollisionModes["drawSkel"])
 	{
-		collidersArray[i]->setDrawOffset(-camX, -camY);
-		collidersArray[i]->draw(surf, showCollisionModes["drawLines"], showCollisionModes["drawPoints"], showCollisionModes["drawMasterPoint"], showCollisionModes["drawSkel"]);
+		for (unsigned int i = 0; i < collidersArray.size(); i++)
+		{
+			collidersArray[i]->setDrawOffset(-camX, -camY);
+			collidersArray[i]->draw(surf, showCollisionModes["drawLines"], showCollisionModes["drawPoints"], showCollisionModes["drawMasterPoint"], showCollisionModes["drawSkel"]);
+		}
 	}
 }
 

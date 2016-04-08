@@ -176,9 +176,22 @@ void buildAddSpriteFolderList()
 		}
 	}
 	std::vector<std::string> folderConfigList = addSprFolderConfigFile.getAllComplex("SpritePrefix", "");
+	const int sprSize = 256;
+	const int sprOff = 10;
+	const int xOff = 15;
+	const int yOff = 40;
 	for (int i = 0; i < folderConfigList.size(); i++)
 	{
-		gui->createButton("EditorSprites", "LS_CTG_" + folderConfigList[i], 20 + (i * 266), 25, true, false, "GREY");
+		int xpos = (i * (sprSize + sprOff));
+		int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+		while (xpos >(1920 - (sprSize + sprOff)))
+		{
+			xpos -= (1920 - (sprSize + sprOff));
+		}
+		xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
+		xpos += xOff;
+		ypos += yOff;
+		gui->createButton("EditorSprites", "LS_CTG_" + folderConfigList[i], xpos, ypos, true, false, "GREY");
 	}
 	typedef std::map<std::string, std::vector<std::string>>::iterator it_type;
 	sf::RenderTexture rtexture;
@@ -232,7 +245,7 @@ void addSpriteToWorld(DataObject* parameters)
 	}
 	LevelSprite* sprToAdd = new LevelSprite(geid, key, world->getRessourceManager());
 	sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());
-	sprToAdd->setRotation(1);
+	sprToAdd->setRotation(0);
 	sprToAdd->setScale(1);
 	sprToAdd->setAtr(std::vector<std::string>());
 	sprToAdd->setLayer(1);
@@ -387,6 +400,7 @@ void editMap(std::string mapName)
 	bool addSpriteMode = false;
 	int editMode = 0;
 	int cameraSpeed = 30;
+	int currentLayer = 1;
 	Collision::PolygonalCollider* selectedMasterCollider = NULL;
 	int colliderPtGrabbed = -1;
 	bool masterColliderGrabbed = false;
@@ -394,7 +408,7 @@ void editMap(std::string mapName)
 	sprInfo.setFont(font);
 	sprInfo.setCharacterSize(16);
 	sprInfo.setColor(sf::Color::White);
-	sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 120));
+	sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
 	sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
 	//Build Sprite List
 	std::vector<std::string> allSprites;
@@ -410,18 +424,18 @@ void editMap(std::string mapName)
 	double deltaTime;
 	float speedCoeff = 60.0;
 	double gameSpeed = 0.0;
-	Chronostasis gameClock;
 	std::cout << "Creation Chrono : " << "[Framerate]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	Light::initLights();
 	std::cout << "Creation Chrono : " << "[Lights]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	EditorGrid editorGrid(32, 32);
-	keybind.setActionDelay("MagnetizeUp", 30);
-	keybind.setActionDelay("MagnetizeRight", 30);
-	keybind.setActionDelay("MagnetizeDown", 30);
-	keybind.setActionDelay("MagnetizeLeft", 30);
+	keybind.setActionDelay("MagnetizeUp", 200);
+	keybind.setActionDelay("MagnetizeRight", 200);
+	keybind.setActionDelay("MagnetizeDown", 200);
+	keybind.setActionDelay("MagnetizeLeft", 200);
 	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
 
 	//Game Starts
 	while (window.isOpen())
@@ -559,7 +573,7 @@ void editMap(std::string mapName)
 			{
 				if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), 1) != NULL)
 				{
-					hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), 1);
+					hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
 					sdBoundingRect = hoveredSprite->getRect();
 					hoveredSprite->setSpriteColor(sf::Color(0, 60, 255));
 					std::string sprInfoStr;
@@ -569,6 +583,7 @@ void editMap(std::string mapName)
 					sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
 					sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getW()) + "," + std::to_string(hoveredSprite->getH()) + "\n";
 					sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
+					sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
 					sprInfo.setString(sprInfoStr);
 					sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
 				}
@@ -582,7 +597,7 @@ void editMap(std::string mapName)
 					outHover = true;
 				if (cursor.getY() + world.getCamY() < hoveredSprite->getY() || cursor.getY() + world.getCamY() > hoveredSprite->getY() + hoveredSprite->getH())
 					outHover = true;
-				LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), 1);
+				LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
 				if (testHoverSprite != NULL && testHoverSprite != hoveredSprite)
 					outHover = true;
 				if (outHover)
@@ -619,6 +634,7 @@ void editMap(std::string mapName)
 				sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
 				sprInfoStr += "    Size : " + std::to_string(selectedSprite->getW()) + "," + std::to_string(selectedSprite->getH()) + "\n";
 				sprInfoStr += "    Rot : " + std::to_string(selectedSprite->getRotation()) + "\n";
+				sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
 				sprInfo.setString(sprInfoStr);
 				sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
 				sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
@@ -656,6 +672,30 @@ void editMap(std::string mapName)
 				selectedSpriteOffsetY = 0;
 			}
 
+			//Sprite Layer / Z-Depth
+			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("ZInc"))
+			{
+				selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
+				world.reorganizeLayers();
+			}
+			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("ZDec")) 
+			{
+				selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
+				world.reorganizeLayers();
+			}
+			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("LayerInc"))
+			{
+				selectedSprite->setLayer(selectedSprite->getLayer() + 1);
+				currentLayer += 1;
+				world.reorganizeLayers();
+			}
+			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("LayerDec"))
+			{
+				selectedSprite->setLayer(selectedSprite->getLayer() - 1);
+				currentLayer -= 1;
+				world.reorganizeLayers();
+			}
+				
 			//Sprite Cancel Offset
 			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("CancelOffset"))
 			{
@@ -674,6 +714,7 @@ void editMap(std::string mapName)
 				selectedSpriteOffsetY = 0;
 			}
 		}
+
 		//Collision Edition
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
 		{
@@ -857,7 +898,7 @@ void editMap(std::string mapName)
 				}
 			}
 		}
-		
+
 		while (window.pollEvent(event))
 		{
 			switch (event.type)
@@ -875,7 +916,7 @@ void editMap(std::string mapName)
 				}
 				if (event.key.code == sf::Keyboard::RShift)
 				{
-					world.saveData()->writeFile("Data/Maps/poly2.map.msd", true);
+					world.saveData()->writeFile("Data/Maps/wg.map.msd", true);
 				}
 				if (event.key.code == sf::Keyboard::F1)
 					gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
@@ -902,7 +943,6 @@ void editMap(std::string mapName)
 				break;
 			}
 		}
-
 		window.clear();
 		world.display(&window);
 

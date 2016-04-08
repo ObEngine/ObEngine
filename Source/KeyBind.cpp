@@ -134,6 +134,13 @@ void KeyBinder::update()
 	{
 		typedef std::map<std::string, std::string>::iterator it_type;
 		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) {
+			if (!sf::Keyboard::isKeyPressed(keyMap[actionMap[iterator->first]]->getKey()) && previousActionMap[iterator->first])
+			{
+				if (fn::Map::keyInMap(iterator->first, actionDelayer))
+				{
+					actionDelayer[iterator->first] = 0;
+				}
+			}
 			previousActionMap[iterator->first] = sf::Keyboard::isKeyPressed(keyMap[iterator->second]->getKey());
 		}
 	}
@@ -160,15 +167,14 @@ bool KeyBinder::isActionEnabled(std::string action)
 		{
 			if (fn::Map::keyInMap(action, actionDelayer))
 			{
-				if (actionDelayer[action] > 0)
+				if (getTickSinceEpoch() - actionDelayer[action] > baseActionDelayer[action])
 				{
-					actionDelayer[action]--;
-					return false;
+					actionDelayer[action] = getTickSinceEpoch();
+					return true;
 				}
 				else
 				{
-					actionDelayer[action] = baseActionDelayer[action];
-					return true;
+					return false;
 				}
 			}
 			else
@@ -199,7 +205,7 @@ bool KeyBinder::isActionDisabled(std::string action)
 void KeyBinder::setActionDelay(std::string action, int delay)
 {
 	baseActionDelayer[action] = delay;
-	actionDelayer[action] = delay;
+	actionDelayer[action] = 0;
 }
 
 void KeyBinder::connectAction(std::string action, std::string key) {
