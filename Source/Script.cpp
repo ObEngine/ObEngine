@@ -453,6 +453,7 @@ void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("addCharacter", &World::addCharacter)
 			.addMember("addLevelSprite", &World::addLevelSprite)
 			.addMember("addLight", &World::addLight)
+			.addMember("loadFromFile", &World::loadFromFile)
 			.addMember("getCamX", &World::getCamX)
 			.addMember("getCamY", &World::getCamY)
 		);

@@ -68,6 +68,7 @@ class GameObject
 		bool isColliderRelative();
 		LevelSprite* getLevelSprite();
 		Collision::PolygonalCollider* getCollider();
+		anim::Animator* getAnimator();
 };
 
 void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad = false);

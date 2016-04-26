@@ -7,6 +7,9 @@ TextRenderer::TextRenderer()
 {
 	absoluteX = 0;
 	absoluteY = 0;
+	circleAnim.loadAnimation("Sprites/Dialog/Loader/", "Loader.ani.msd");
+	circleAnim.playAnimation();
+	circleAnim.getSprite()->setPosition(fn::Coord::width - 64 - 16, fn::Coord::height - 64 - 16);
 	dialogLine.loadFromFile("Sprites/Dialog/textbox.png");
 	arrowTex.loadFromFile("Sprites/Dialog/arrow.png");
 	dialogLineSpr.setTexture(dialogLine);
@@ -69,13 +72,12 @@ void TextRenderer::render(sf::RenderWindow* surf)
 			renTex.draw(dialogLineSpr);
 			std::string speaker = textList[0][0];
 			std::string textToSay = textList[0][1];
-			speakerText.setString(speaker);
+			speakerText.setString(sf::String(speaker));
 			speakerText.setPosition((90 + (12 * (11 - speaker.size()))), 760);
 			renTex.draw(speakerText);
-			int letterCounter = 0;
 			int indexCounter = 0;
-			int letterMax = 109;
 			int lignAlign = 0;
+			int borderSize = 30;
 			std::string currentPhr;
 			std::vector<std::string> currentTextList;
 			if (fn::String::occurencesInString(textToSay, " ") >= 1)
@@ -84,19 +86,20 @@ void TextRenderer::render(sf::RenderWindow* surf)
 				currentTextList = { textToSay };
 			for (unsigned int i = 0; i < currentTextList.size(); i++)
 			{
+				std::string testPhr = currentPhr + currentTextList[i] + " ";
+				fn::String::regenerateEncoding(testPhr);
+				dialogText.setString(sf::String(testPhr));
+				if (dialogText.getGlobalBounds().width > fn::Coord::width - (borderSize * 2))
+					currentPhr += "\n";
 				currentPhr += currentTextList[i] + " ";
-				letterCounter += currentTextList[i].size();
-				if (letterCounter >= letterMax || indexCounter == currentTextList.size() - 1)
-				{
-					dialogText.setPosition(30, 840 + (lignAlign * 50));
-					dialogText.setString(currentPhr);
-					currentPhr = "";
-					letterCounter += currentTextList[i].size() + 1;
-					lignAlign++;
-					renTex.draw(dialogText);
-				}
+				fn::String::regenerateEncoding(currentPhr);
+				dialogText.setString(sf::String(currentPhr));
 				indexCounter++;
 			}
+			fn::String::regenerateEncoding(currentPhr);
+			dialogText.setString(sf::String(currentPhr));
+			dialogText.setPosition(borderSize, 840);
+			renTex.draw(dialogText);
 			needToRender = false;
 
 			renTex.display();
@@ -108,6 +111,8 @@ void TextRenderer::render(sf::RenderWindow* surf)
 		else
 		{
 			surf->draw(dispSpr);
+			circleAnim.playAnimation();
+			surf->draw(*circleAnim.getSprite());
 		}
 	}
 }

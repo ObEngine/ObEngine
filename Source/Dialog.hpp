@@ -10,12 +10,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "Functions.hpp"
+#include "Animation.hpp"
 
 class TextRenderer
 {
 	private:
 		int absoluteX = 0;
 		int absoluteY = 0;
+		anim::Animation circleAnim;
 		std::vector<std::vector<std::string>> textList;
 		sf::Texture dialogLine;
 		sf::Sprite dialogLineSpr;
