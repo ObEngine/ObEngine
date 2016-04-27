@@ -42,6 +42,8 @@ class KeyBinder
 		std::map<std::string, int> baseActionDelayer;
 		std::map<std::string, unsigned long long int> actionDelayer;
 		bool binderEnabled = true;
+		std::string getActionKey(std::string action);
+		KeyClass* getKey(std::string key);
 	public:
 		KeyBinder();
 		void setEnabled(bool state);

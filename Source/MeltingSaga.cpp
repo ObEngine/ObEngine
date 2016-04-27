@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	std::cout.rdbuf(out.rdbuf());
 
 	//startGame();
-	editMap("wg.map.msd");
+	editMap("poly2.map.msd");
 
 	return 0;
 }

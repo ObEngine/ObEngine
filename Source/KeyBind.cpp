@@ -16,6 +16,30 @@ sf::Keyboard::Key KeyClass::getKey()
 	return this->key;
 }
 
+std::string KeyBinder::getActionKey(std::string action)
+{
+	if (actionMap.find(action) != actionMap.end())
+	{
+		return actionMap[action];
+	}
+	else
+	{
+		std::cout << "<Error:KeyBind:KeyBinder>[getActionKey] : Can't find key for action : " << action << std::endl;
+	}
+}
+
+KeyClass* KeyBinder::getKey(std::string key)
+{
+	if (keyMap.find(key) != keyMap.end())
+	{
+		return keyMap[key];
+	}
+	else
+	{
+		std::cout << "<Error:KeyBind:KeyBinder>[getKey] : Can't find KeyClass for key : " << key << std::endl;
+	}
+}
+
 KeyBinder::KeyBinder()
 {
 	//Alpha
@@ -134,14 +158,14 @@ void KeyBinder::update()
 	{
 		typedef std::map<std::string, std::string>::iterator it_type;
 		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) {
-			if (!sf::Keyboard::isKeyPressed(keyMap[actionMap[iterator->first]]->getKey()) && previousActionMap[iterator->first])
+			if (!sf::Keyboard::isKeyPressed(getKey(getActionKey(iterator->first))->getKey()) && previousActionMap[iterator->first])
 			{
 				if (fn::Map::keyInMap(iterator->first, actionDelayer))
 				{
 					actionDelayer[iterator->first] = 0;
 				}
 			}
-			previousActionMap[iterator->first] = sf::Keyboard::isKeyPressed(keyMap[iterator->second]->getKey());
+			previousActionMap[iterator->first] = sf::Keyboard::isKeyPressed(getKey(iterator->second)->getKey());
 		}
 	}
 }
@@ -150,7 +174,7 @@ bool KeyBinder::isActionReleased(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (!sf::Keyboard::isKeyPressed(keyMap[actionMap[action]]->getKey()) && previousActionMap[action])
+		if (!sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()) && previousActionMap[action])
 			return true;
 		else
 			return false;
@@ -163,7 +187,7 @@ bool KeyBinder::isActionEnabled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(keyMap[actionMap[action]]->getKey()))
+		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()))
 		{
 			if (fn::Map::keyInMap(action, actionDelayer))
 			{
@@ -193,7 +217,7 @@ bool KeyBinder::isActionDisabled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(keyMap[actionMap[action]]->getKey()))
+		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()))
 			return false;
 		else
 			return true;
@@ -216,7 +240,7 @@ bool KeyBinder::isActionToggled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(keyMap[actionMap[action]]->getKey()) && !previousActionMap[action])
+		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()) && !previousActionMap[action])
 			return true;
 		else
 			return false;
