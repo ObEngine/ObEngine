@@ -75,6 +75,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 	if (!alreadyImported)
 	{
 		if        (lib[0] == "Animation")    CoreLib::loadAnimation(lua, lib);
+		else if   (lib[0] == "Collision")    CoreLib::loadCollision(lua, lib);
 		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
 		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
 		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
@@ -175,6 +176,33 @@ void CoreLib::loadAnimation(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Collision"])) (*lua)["Core"]["Collision"] = kaguya::NewTable();
+	if (importAll || args[1] == "PolygonalCollider")
+	{
+		(*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(kaguya::ClassMetatable<Collision::PolygonalCollider>()
+			.addMember("addPoint", &Collision::PolygonalCollider::addPoint)
+			.addMember("clearHighlights", &Collision::PolygonalCollider::clearHighlights)
+			.addMember("deletePoint", &Collision::PolygonalCollider::deletePoint)
+			.addMember("doesCollide", &Collision::PolygonalCollider::doesCollide)
+			.addMember("findClosestNode", &Collision::PolygonalCollider::findClosestNode)
+			.addMember("getID", &Collision::PolygonalCollider::getID)
+			.addMember("getMasterPointCoordinates", &Collision::PolygonalCollider::getMasterPointCoordinates)
+			.addMember("getNodeDistance", &Collision::PolygonalCollider::getNodeDistance)
+			.addMember("getPath", &Collision::PolygonalCollider::getPath)
+			.addMember("getPointCoordinates", &Collision::PolygonalCollider::getPointCoordinates)
+			.addMember("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
+			.addMember("getSelected", &Collision::PolygonalCollider::getSelected)
+			.addMember("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCollision] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 {
