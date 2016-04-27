@@ -227,6 +227,15 @@ std::string fn::String::getRandomKey(std::string set, int len)
 	for (int i = 0; i < len; i++) r.push_back(set.at(size_t(fn::Math::randint(0, 100000) % set.size())));
 	return r;
 }
+void fn::String::regenerateEncoding(std::string& str)
+{
+	std::vector<int> data(str.begin(), str.end());
+	//for (int i = 0; i < data.size(); i++) { std::cout << data[i] << " "; }
+	//std::cout << std::endl;
+	int i = 0; char ch; str = "";
+	while (i < data.size()) { if (data[i] == -61) { if (i < data.size() - 1) { data[i] = data[i + 1] + 64; } data.erase(data.begin() + i + 1); } i++; }
+	for (int i = 0; i < data.size(); i++) { ch = data[i]; str += ch; }
+}
 
 //Functions::Vector
 std::string fn::Vector::join(std::vector<std::string>& vector, std::string sep, int start, int end)

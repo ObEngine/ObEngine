@@ -12,13 +12,13 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad)
 	(*lua)["CPP_Hook"] = &loadHookBridge;
 	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
 		.addMember("getDeltaTime", &GameObject::getDeltaTime)
-		.addMember("getLevelSprite", &GameObject::getLevelSprite)
-		.addMember("getCollider", &GameObject::getCollider)
+		.addMember("LevelSprite", &GameObject::getLevelSprite)
+		.addMember("Collider", &GameObject::getCollider)
+		.addMember("Animator", &GameObject::getAnimator)
 		.addMember("canCollide", &GameObject::canCollide)
 		.addMember("canClick", &GameObject::canClick)
 		.addMember("canDisplay", &GameObject::canDisplay)
 		.addMember("getPriority", &GameObject::getPriority)
-		.addMember("setAnimationKey", &GameObject::setAnimationKey)
 		.addMember("getPublicKey", &GameObject::getPublicKey)
 		);
 	(*lua)["This"] = obj;
@@ -432,4 +432,9 @@ Collision::PolygonalCollider* GameObject::getCollider()
 {
 	if (hasCollider) return &objectCollider;
 	else std::cout << "<Error:GameObject:GameObject>[getCollider] : GameObject " << id << " has no Collider" << std::endl;
+}
+
+anim::Animator * GameObject::getAnimator()
+{
+	return &objectAnimator;
 }

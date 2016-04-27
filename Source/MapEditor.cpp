@@ -387,6 +387,12 @@ void editMap(std::string mapName)
 	std::vector<std::string> tabList = { "Settings", "LevelSprites", "Collisions" };
 	std::vector<GUI::WidgetContainer*> tabPtrList = { gui->getContainerByContainerName("EditorSettings"), gui->getContainerByContainerName("EditorSprites"), gui->getContainerByContainerName("EditorCollisions") };
 	gui->createTab("Editor", "editorTab", 0, 0, 16, sf::Color(255, 255, 255), "arial.ttf", tabList, tabPtrList, "GREY");
+
+	gui->createWidgetContainer("EditorInfos", 3, 0, 0, 1350, 30, GUI::ContainerMovement::Fixed);
+	gui->getContainerByContainerName("EditorInfos")->setBackground(sf::Color(0, 0, 0, 200));
+	gui->createLabel("EditorInfos", "cursorPos", 150, 5, "Cursor : (0,0)", "arial.ttf", 16, sf::Color::White);
+	gui->createLabel("EditorInfos", "camPos", 300, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
+	gui->createLabel("EditorInfos", "currentLayer", 450, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
 	std::cout << "Creation Chrono : " << "[GUI]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 
@@ -840,6 +846,11 @@ void editMap(std::string mapName)
 		}
 
 		//GUI Update
+		GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
+			",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
+		GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamX()) + "<color:255,255,255>"
+			",<color:0,255,0>" + std::to_string((int)world.getCamY()) + "<color:255,255,255>)");
+		GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));
 		gui->getContainerByContainerName("Editor")->setDisplayed(guiEditorEnabled);
 		gui->updateAllContainer();
 
@@ -991,13 +1002,13 @@ void editMap(std::string mapName)
 			window.draw(sprInfo);
 		}
 
+		gui->drawAllContainer(&window);
+
 		if (drawFPS)
 		{
 			fps.tick();
 			window.draw(fps.getFPS());
 		}
-
-		gui->drawAllContainer(&window);
 
 		if (textDisplay.textRemaining())
 			textDisplay.render(&window);

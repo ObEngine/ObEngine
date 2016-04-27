@@ -69,6 +69,7 @@ namespace fn
 		std::string extract(const std::string& base, int start, int end);
 		std::vector<std::string> extractBetween(std::string &str, char delimiter1, char delimiter2);
 		std::string getRandomKey(std::string set, int len);
+		void regenerateEncoding(std::string& str);
 	}
 	namespace Vector
 	{
