@@ -30,6 +30,7 @@ namespace CoreLib
 	void loadConsole(kaguya::State* lua, std::vector<std::string> args);
 	void loadCursor(kaguya::State* lua, std::vector<std::string> args);
 	void loadDialog(kaguya::State* lua, std::vector<std::string> args);
+	void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
 	void loadLight(kaguya::State* lua, std::vector<std::string> args);
 	void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
 	void loadTrigger(kaguya::State* lua, std::vector<std::string> args);

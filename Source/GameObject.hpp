@@ -34,7 +34,6 @@ class GameObject
 		std::string key;
 		std::string publicKey;
 		int scrPriority = 0;
-		double currentDeltaTime = 0.0;
 
 		bool hasAnimator = false;
 		bool hasCollider = false;
@@ -49,8 +48,7 @@ class GameObject
 		void registerTrigger(Trigger* trg);
 		void loadGameObject(DataObject* obj);
 		void hookLuaState(kaguya::State* lua);
-		void update();
-		void setDeltaTime(double dt);
+		void update(double dt);
 		friend void useLocalTrigger(std::string scrKey, std::string trName);
 		friend void useGlobalTrigger(std::string scrKey, std::string trName);
 		friend void useCustomTrigger(std::string scrKey, std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
@@ -59,7 +57,6 @@ class GameObject
 	public:
 		std::string getID();
 		std::string getPublicKey();
-		double getDeltaTime();
 		void setAnimationKey(std::string key);
 		int getPriority();
 		bool canDisplay();
@@ -102,7 +99,7 @@ class GameObjectHandler
 		kaguya::State* getLuaStateOfGameObject(std::string object);
 		void setTriggerState(std::string object, std::string trigger, bool state);
 		void setGlobalTriggerState(std::string trigger, bool state);
-		void update();
+		void update(double dt);
 };
 
 template<typename U>

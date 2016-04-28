@@ -1,21 +1,21 @@
-Switch:
+Door:
     @Animator
-        path:"Sprites/LevelObjects/Switch"
+        path:"Sprites/LevelObjects/Door"
     @Collider
         position:"relative"
-        solid:False
+        solid:True
         click:True
         ?polygonPoints(str):
             "0,0"
-            "40,0"
-            "40,60"
-            "0,60"
+            "11,0"
+            "11,100"
+            "0,100"
     @LevelSprite
         rotation:0
         scale:1.0
         layer:1
         z-depth:20
     @Script
-        priority:1
+        priority:0
         ?scriptList(str):
-            "Data/LevelObjects/Switch/Switch.lua"
+            "Data/LevelObjects/Door/Door.lua"

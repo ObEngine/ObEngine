@@ -1,7 +1,0 @@
-store muted $console.muted
-console mute 1
-store getStateCategory $run.arg.1
-console mute 0
-console display Displaying Category : $run.arg.1
-logic equal $console.rooted 1 console run GetState/getstate
-logic equal $console.rooted 0 console display Can't run script, need root permission

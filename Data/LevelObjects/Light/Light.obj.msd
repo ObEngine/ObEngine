@@ -2,8 +2,6 @@ Light:
     @Animator
         path:"Sprites/LevelObjects/Light"
     @LevelSprite
-        posX:400
-        posY:200
         rotation:0
         scale:1.0
         layer:1

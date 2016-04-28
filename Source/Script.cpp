@@ -79,6 +79,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
 		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
 		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
+		else if   (lib[0] == "LevelSprite")  CoreLib::loadLevelSprite(lua, lib);
 		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
@@ -199,6 +200,26 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
 			.addMember("getSelected", &Collision::PolygonalCollider::getSelected)
 			.addMember("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
+			.addMember("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)
+			.addMember("getSideLength", &Collision::PolygonalCollider::getSideLength)
+			.addMember("getSidesAmount", &Collision::PolygonalCollider::getSidesAmount)
+			.addMember("getSolid", &Collision::PolygonalCollider::getSolid)
+			.addMember("getSortedNodesByDistance", &Collision::PolygonalCollider::getSortedNodesByDistance)
+			.addMember("hasMasterPoint", &Collision::PolygonalCollider::hasMasterPoint)
+			.addMember("hasPoint", &Collision::PolygonalCollider::hasPoint)
+			.addMember("highlightLine", &Collision::PolygonalCollider::highlightLine)
+			.addMember("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
+			.addMember("isPointInBoundingBox", &Collision::PolygonalCollider::isPointInBoundingBox)
+			.addMember("move", &Collision::PolygonalCollider::move)
+			.addMember("movePoint", &Collision::PolygonalCollider::movePoint)
+			.addMember("setDrawOffset", &Collision::PolygonalCollider::setDrawOffset)
+			.addMember("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
+			.addMember("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
+			.addMember("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
+			.addMember("setPosition", &Collision::PolygonalCollider::setPosition)
+			.addMember("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
+			.addMember("setSelected", &Collision::PolygonalCollider::setSelected)
+			.addMember("setSolid", &Collision::PolygonalCollider::setSolid)
 		);
 		foundPart = true;
 	}
@@ -295,6 +316,47 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["LevelSprite"])) (*lua)["Core"]["LevelSprite"] = kaguya::NewTable();
+	if (importAll || args[1] == "LevelSprite")
+	{
+		(*lua)["Core"]["LevelSprite"]["LevelSprite"].setClass(kaguya::ClassMetatable<LevelSprite>()
+			.addMember("addAtr", &LevelSprite::addAtr)
+			.addMember("addRotation", &LevelSprite::addRotation)
+			.addMember("calculateRealCoordinates", &LevelSprite::calculateRealCoordinates)
+			.addMember("getAttributes", &LevelSprite::getAttributes)
+			.addMember("getH", &LevelSprite::getH)
+			.addMember("getW", &LevelSprite::getW)
+			.addMember("getID", &LevelSprite::getID)
+			.addMember("getLayer", &LevelSprite::getLayer)
+			.addMember("getName", &LevelSprite::getName)
+			.addMember("getRect", &LevelSprite::getRect)
+			.addMember("getRotation", &LevelSprite::getRotation)
+			.addMember("getScale", &LevelSprite::getScale)
+			.addMember("getX", &LevelSprite::getX)
+			.addMember("getY", &LevelSprite::getY)
+			.addMember("getZDepth", &LevelSprite::getZDepth)
+			.addMember("isDrawable", &LevelSprite::isDrawable)
+			.addMember("move", &LevelSprite::move)
+			.addMember("removeAtrByIndex", &LevelSprite::removeAtrByIndex)
+			.addMember("removeAtrByName", &LevelSprite::removeAtrByName)
+			.addMember("setAtr", &LevelSprite::setAtr)
+			.addMember("setLayer", &LevelSprite::setLayer)
+			.addMember("setPosition", &LevelSprite::setPosition)
+			.addMember("setRotation", &LevelSprite::setRotation)
+			.addMember("setRotationOrigin", &LevelSprite::setRotationOrigin)
+			.addMember("setScale", &LevelSprite::setScale)
+			.addMember("setTranslationOrigin", &LevelSprite::setTranslationOrigin)
+			.addMember("setZDepth", &LevelSprite::setZDepth)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadLevelSprite] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadLight(kaguya::State* lua, std::vector<std::string> args)
 {

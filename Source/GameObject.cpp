@@ -11,7 +11,6 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad)
 	(*lua)["CPP_Import"] = &loadLibBridge;
 	(*lua)["CPP_Hook"] = &loadHookBridge;
 	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
-		.addMember("getDeltaTime", &GameObject::getDeltaTime)
 		.addMember("LevelSprite", &GameObject::getLevelSprite)
 		.addMember("Collider", &GameObject::getCollider)
 		.addMember("Animator", &GameObject::getAnimator)
@@ -216,11 +215,11 @@ void GameObjectHandler::setGlobalTriggerState(std::string trigger, bool state)
 		it->second->setTriggerState(trigger, state);
 	}
 }
-void GameObjectHandler::update()
+void GameObjectHandler::update(double dt)
 {
 	for (int i = 0; i < updateObjArray.size(); i++)
 	{
-		updateObjArray[i]->update();
+		updateObjArray[i]->update(dt);
 	}
 }
 
@@ -305,7 +304,7 @@ void GameObject::hookLuaState(kaguya::State* lua)
 	this->scriptEngine = lua;
 }
 
-void GameObject::update()
+void GameObject::update(double dt)
 {
 	for (int i = 0; i < registeredTriggers.size(); i++)
 	{
@@ -324,6 +323,7 @@ void GameObject::update()
 			std::string funcname = useGrp + "." + registeredTriggers[i]->getName();
 			auto allParam = registeredTriggers[i]->getParameters();
 			(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
+			(*this->scriptEngine)["cpp_param"]["dt"] = dt;
 			for (auto it = allParam.begin(); it != allParam.end(); it++)
 			{
 				if (allParam[it->first].first == "int")
@@ -373,11 +373,6 @@ void GameObject::update()
 	}
 }
 
-void GameObject::setDeltaTime(double dt)
-{
-	this->currentDeltaTime = dt;
-}
-
 std::string GameObject::getID()
 {
 	return this->id;
@@ -386,11 +381,6 @@ std::string GameObject::getID()
 std::string GameObject::getPublicKey()
 {
 	return publicKey;
-}
-
-double GameObject::getDeltaTime()
-{
-	return this->currentDeltaTime;
 }
 
 void GameObject::setAnimationKey(std::string key)

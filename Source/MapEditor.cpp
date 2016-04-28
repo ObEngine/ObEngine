@@ -757,7 +757,7 @@ void editMap(std::string mapName)
 			//Collision Point Move
 			if (cursor.getPressed("Left") && selectedMasterCollider != NULL && !masterColliderGrabbed && colliderPtGrabbed != -1)
 			{
-				selectedMasterCollider->movePoint(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+				selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 			}
 			//Collision Point Release
 			if (cursor.getReleased("Left"))
@@ -858,7 +858,7 @@ void editMap(std::string mapName)
 		keybind.update();
 		cursor.update();
 		triggerDatabaseCore.update();
-		gameObjectHandlerCore.update();
+		gameObjectHandlerCore.update(gameSpeed);
 
 		//Console Command Handle
 		if (gameConsole.hasCommand())

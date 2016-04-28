@@ -1,9 +1,0 @@
-(TimeStamp:3664993) [UserInput] : Stream List (1) : 
-(TimeStamp:3664993) [UserInput] :     > CharStream
-(TimeStamp:3664993) [UserInput] <SUCCESS> : Stream CharStream has been successfully disabled
-(TimeStamp:3664993) [UserInput] : Stream List (1) : 
-(TimeStamp:3664993) [UserInput] :     > CharStream
-(TimeStamp:3664993) [UserInput] <SUCCESS> : Stream CharStream has been successfully enabled
-(TimeStamp:3664993) [CharStream] : Stream Color Changed !
-(TimeStamp:3664993) [UserInput] : Script Execution is Successful ! 
-(TimeStamp:3664993) [UserInput] <SUCCESS> : Script test has been successfully executed

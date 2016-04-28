@@ -157,7 +157,7 @@ namespace Collision
 	}
 	std::vector<int> PolygonalCollider::getSortedNodesByDistance(int x, int y, bool neighboor)
 	{
-
+		return std::vector<int>();
 	}
 	bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY, bool mustBeSolid)
 	{
@@ -289,8 +289,26 @@ namespace Collision
 	}
 	void PolygonalCollider::movePoint(int index, int x, int y)
 	{
+		pPath[index].X += x;
+		pPath[index].Y += y;
+		calculateMasterPoint();
+	}
+	void PolygonalCollider::setPointPosition(int index, int x, int y)
+	{
 		pPath[index].X = x;
 		pPath[index].Y = y;
+		calculateMasterPoint();
+	}
+	void PolygonalCollider::setPointRelativePosition(int index, int x, int y)
+	{
+		pPath[index].X = x + pPath[0].X;
+		pPath[index].Y = y + pPath[0].Y;
+		calculateMasterPoint();
+	}
+	void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y)
+	{
+		pPath[index].X = x + masterPoint.X;
+		pPath[index].Y = y + masterPoint.Y;
 		calculateMasterPoint();
 	}
 	void PolygonalCollider::setDrawOffset(int offx, int offy)
@@ -403,7 +421,7 @@ namespace Collision
 	{
 		masterPoint.X += x;
 		masterPoint.Y += y;
-		for (int i = 1; i < pPath.size(); i++)
+		for (int i = 0; i < pPath.size(); i++)
 		{
 			pPath.at(i).X += x; pPath.at(i).Y += y;
 		}

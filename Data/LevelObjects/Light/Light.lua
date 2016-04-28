@@ -4,6 +4,7 @@ ColorButton = {};
 Import("Core.Light");
 Import("Core.World");
 Import("Core.Utils.Math");
+Import("Core.Animation.Animator");
 
 GetHook("World");
 
@@ -14,7 +15,7 @@ function Local.Init()
     buttonKey = Require("buttonKey");
     UseCustomTrigger(switchKey, "Switch", "*", "PowerSwitch");
     UseCustomTrigger(buttonKey, "Button", "Click", "ColorButton");
-    This:setAnimationKey("Off");
+    This:Animator():setKey("Off");
     state = false;
     light = Core.Light.PointLight.new("light", 1920, 1080, 400, 200, 20, 255, 255, 50, 255, false);
     light:setOffset(25, 25);
@@ -26,14 +27,17 @@ end
 function PowerSwitch.Off()
     state = false;
     light:hide();
-    This:setAnimationKey("Off");
+    This:Animator():setKey("Off");
 end
 
 function PowerSwitch.On(param)
-    print(param.lolz);
+    print("RCV:",param.lolz);
+    for k, v in pairs( param.lolz ) do
+       print(k, v)
+    end
     state = true;
     light:show();
-    This:setAnimationKey("On");
+    This:Animator():setKey("On");
 end
 
 function ColorButton.Click()

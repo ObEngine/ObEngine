@@ -1,4 +1,0 @@
-store muted $console.muted
-console mute 0
-console display >>>>>>>>>>>>>>>>>>>>>>>>> DEBUG MARK <<<<<<<<<<<<<<<<<<<<<<<<<
-logic equal $data.muted 1 console mute 1

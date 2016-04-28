@@ -59,6 +59,9 @@ namespace Collision
 		int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 		bool hasMasterPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 		void movePoint(int index, int x, int y);
+		void PolygonalCollider::setPointPosition(int index, int x, int y);
+		void PolygonalCollider::setPointRelativePosition(int index, int x, int y);
+		void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y);
 		ClipperLib::Path* getPath();
 		void setDrawOffset(int offx, int offy);
 		double getSideAngle(int side);

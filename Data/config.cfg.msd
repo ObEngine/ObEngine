@@ -1,7 +1,7 @@
 Define Flag (Settings);
 
 GameConfig:
-    mapName:"fisland.map.msd"
+    mapName:"poly2.map.msd"
 	antiAliasing:True
     depthOfField:True
     scrollSensibility:1
@@ -23,6 +23,8 @@ KeyBinding:
         Spell7:"C"
         Spell8:"V"
         Reset:"R"
+    @controller
+        A:"Jump"
     @mapEditor
         SpriteMode:"W"
         ObjectMode:"X"
@@ -39,14 +41,18 @@ KeyBinding:
         RotateRight:"Multiply"
         ScaleInc:"Add"
         ScaleDec:"Substract"
+        ZInc:"NumPad8"
+        ZDec:"NumPad2"
+        LayerInc:"NumPad6"
+        LayerDec:"NumPad4"
+        CancelOffset:"O"
+        DeleteSprite:"Delete"
         GetCursorPos:"N"
-        AddSprite:"A"
         MagnetizeCursor:"M"
         MagnetizeUp:"Up"
         MagnetizeRight:"Right"
         MagnetizeDown:"Down"
         MagnetizeLeft:"Left"
-        CancelOffset:"O"
     
 Developpement:
     showCharacter:True
