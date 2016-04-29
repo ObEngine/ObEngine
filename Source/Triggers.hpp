@@ -11,6 +11,7 @@
 
 #include "TimeManager.hpp"
 #include "any.hpp"
+#include "Functions.hpp"
 
 class Trigger
 {
@@ -57,7 +58,7 @@ class TriggerGroup
 		std::map<std::string, Trigger*> triggerMap;
 		std::vector<TriggerDelay*> delayedTriggers;
 		friend class TriggerDatabase;
-		
+
 	public:
 		TriggerGroup(std::string triggerGroupName);
 		TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);

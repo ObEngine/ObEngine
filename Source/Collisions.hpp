@@ -59,9 +59,9 @@ namespace Collision
 		int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 		bool hasMasterPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 		void movePoint(int index, int x, int y);
-		void PolygonalCollider::setPointPosition(int index, int x, int y);
-		void PolygonalCollider::setPointRelativePosition(int index, int x, int y);
-		void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y);
+		void setPointPosition(int index, int x, int y);
+		void setPointRelativePosition(int index, int x, int y);
+		void setPointPositionFromMaster(int index, int x, int y);
 		ClipperLib::Path* getPath();
 		void setDrawOffset(int offx, int offy);
 		double getSideAngle(int side);
@@ -71,6 +71,6 @@ namespace Collision
 		void highlightLine(int pointIndex);
 		void clearHighlights(bool points = true, bool lines = true);
 	};
-	
+
 	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy, bool opt = false);
 }

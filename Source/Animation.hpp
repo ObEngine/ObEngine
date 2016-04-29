@@ -170,6 +170,6 @@ namespace anim
 			sf::Texture* getTextureAtKey(std::string key, int index); //Return specific texture in specific animation
 			bool textureChanged(); //Return true if texture have changed since last call of getTexture()
 			int getSpriteOffsetX();
-			int getSpriteOffsetY();	
+			int getSpriteOffsetY();
 	};
 }
