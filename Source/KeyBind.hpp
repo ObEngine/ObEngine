@@ -38,6 +38,7 @@ class KeyBinder
 	private:
 		std::map<std::string, std::string> actionMap;
 		std::map<std::string, KeyClass*> keyMap;
+		std::map<std::string, bool> currentActionMap;
 		std::map<std::string, bool> previousActionMap;
 		std::map<std::string, int> baseActionDelayer;
 		std::map<std::string, unsigned long long int> actionDelayer;

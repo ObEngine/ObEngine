@@ -8,6 +8,7 @@ void World::addCharacter(Character* character)
 	charArray.push_back(character);
 	character->setColliders(&this->collidersArray);
 	character->setPos(this->getStartX(), this->getStartY());
+	character->update();
 }
 
 void World::addLevelSprite(LevelSprite* spr)
@@ -331,7 +332,7 @@ void World::display(sf::RenderWindow* surf)
 	{
 		charArray[i]->setColliderDrawOffset(-camX, -camY);
 		charArray[i]->draw(surf);
-		charArray[i]->getEntityCollider()->draw(surf);
+		if (showCollisionModes["drawLines"]) charArray[i]->getEntityCollider()->draw(surf);
 	}
 	for (unsigned int i = 0; i < particleArray.size(); i++)
 	{

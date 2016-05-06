@@ -3,57 +3,57 @@
 
 #include "HUD.hpp"
 
-intBar::intBar(std::string barFilename)
+IntBar::IntBar(std::string barFilename, int x, int y, int w)
 {
 	barTexture.loadFromFile("Sprites/HUD/" + barFilename);
 	barSprite = sprFunc::getCleanSprite(barTexture);
 	barSprite.setTexture(barTexture);
+	this->x = x;
+	this->y = y;
+	this->w = w;
 }
-
-void intBar::setPercent(int percent)
+void IntBar::setPosition(int x, int y)
+{
+	this->x = x; this->y = y;
+}
+void IntBar::setWidth(int w)
+{
+	this->w = w;
+}
+int IntBar::getX()
+{
+	return x;
+}
+int IntBar::getY()
+{
+	return y;
+}
+int IntBar::getW()
+{
+	return w;
+}
+void IntBar::setPercent(int percent)
 {
 	barPercent = percent;
 }
-
-void intBar::addPercent(int percent)
+void IntBar::addPercent(int percent)
 {
 	barPercent += percent;
 }
-
-void intBar::draw(sf::RenderWindow* surf, int x, int y, int w, double dt)
+int IntBar::getPercent()
 {
-	float widthModifier = w / 100.0;
-	float barModifier = 1.0 * dt;
-	if (abs(oldPercent - barPercent) >= 80)
-	{
-		barModifier = 5 * dt;
-	}
-	else if (abs(oldPercent - barPercent) >= 60 && abs(oldPercent - barPercent) < 80)
-	{
-		barModifier = 4 * dt;
-	}
-	else if (abs(oldPercent - barPercent) >= 40 && abs(oldPercent - barPercent) < 60)
-	{
-		barModifier = 3 * dt;
-	}
-	else if (abs(oldPercent - barPercent) >= 20 && abs(oldPercent - barPercent) < 40)
-	{
-		barModifier = 2 * dt;
-	}
-	else if (abs(oldPercent - barPercent) >= 1 && abs(oldPercent - barPercent) < 20)
-	{
-		barModifier = 1 * dt;
-	}
-	else
-	{
-		barModifier = 0;
-	}
+	return barPercent;
+}
+void IntBar::update(double dt)
+{
+	float barModifier = std::floor((double)abs(oldPercent - barPercent) / (double)20.0) * dt;
 	if (oldPercent > barPercent)
-	{
 		barModifier *= -1;
-	}
 	oldPercent += barModifier;
-	for (unsigned int i = 0; i < oldPercent*widthModifier; i++)
+}
+void IntBar::draw(sf::RenderWindow* surf)
+{
+	for (unsigned int i = 0; i < oldPercent * ((double)w / 100.0); i++)
 	{
 		barSprite.setPosition(x + i, y);
 		surf->draw(barSprite);
@@ -62,7 +62,6 @@ void intBar::draw(sf::RenderWindow* surf, int x, int y, int w, double dt)
 
 HUDOverlay::HUDOverlay()
 {
-	std::cout << "HUD OVERLAY LOADING" << std::endl;
 	font.loadFromFile("Data/Fonts/DarkSka.ttf");
 	textCD.setFont(font);
 	textCD.setCharacterSize(36);
@@ -92,8 +91,8 @@ HUDOverlay::HUDOverlay()
 	elemMap["Earth"] = new sf::Sprite;
 	elemMap["Earth"]->setTexture(*elemTexture["Earth"]);
 	elemMap["Earth"]->setPosition(-15, 5);
-	lifeBar = new intBar("life.png");
-	manaBar = new intBar("mana.png");
+	lifeBar = new IntBar("life.png", 124, 16, 700);
+	manaBar = new IntBar("mana.png", 124, 41, 700);
 	lifeBar->setPercent(0);
 	manaBar->setPercent(0);
 	casterOverlay.loadFromFile("Sprites/HUD/overlay.png");
@@ -108,15 +107,18 @@ HUDOverlay::HUDOverlay()
 		spellIconTextureMap[spellFolderIcon[i]] = tempIcon;
 	}
 }
-
-void HUDOverlay::draw(sf::RenderWindow* surf, double dt)
+void HUDOverlay::update(double dt)
 {
 	int lifePercent = ((float)entityHook->getLife() / (float)entityHook->getMaxLife()) * 100;
 	int manaPercent = ((float)castHook->getBloodAmount() / (float)castHook->getMaxBloodAmount()) * 100;
-	lifeBar->setPercent(lifePercent);
-	manaBar->setPercent(manaPercent);
-	lifeBar->draw(surf, 124, 16, 546, dt);
-	manaBar->draw(surf, 124, 41, 546, dt);
+	lifeBar->setPercent(lifePercent); manaBar->setPercent(manaPercent);
+	lifeBar->update(dt); manaBar->update(dt);
+	selectTexSpr.rotate(1 * dt);
+}
+void HUDOverlay::draw(sf::RenderWindow* surf)
+{
+	lifeBar->draw(surf);
+	manaBar->draw(surf);
 	std::vector<std::string> spellIconToDraw = castHook->getSpellList(castHook->getCurrentElement());
 	sf::Sprite blitIcon;
 	for (unsigned int i = 0; i < spellIconToDraw.size(); i++)
@@ -142,7 +144,6 @@ void HUDOverlay::draw(sf::RenderWindow* surf, double dt)
 		{
 
 			selectTexSpr.setPosition(142 + 70 * i, 102);
-			selectTexSpr.rotate(1*dt);
 			surf->draw(selectTexSpr);
 		}
 	}

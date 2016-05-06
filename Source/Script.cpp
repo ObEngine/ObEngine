@@ -308,8 +308,8 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "TextRenderer")
 	{
 		(*lua)["Core"]["Dialog"]["TextRenderer"].setClass(kaguya::ClassMetatable<TextRenderer>()
-			.addMember("setPos", &TextRenderer::setPos)
-			.addMember("appendText", &TextRenderer::appendText)
+			.addMember("createRenderer", &TextRenderer::createRenderer)
+			.addMember("sendToRenderer", &TextRenderer::sendToRenderer)
 			.addMember("textRemaining", &TextRenderer::textRemaining)
 			.addMember("next", &TextRenderer::next)
 		);

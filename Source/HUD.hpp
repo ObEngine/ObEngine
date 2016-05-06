@@ -13,25 +13,35 @@
 #include "Functions.hpp"
 #include "SpriteFunc.hpp"
 
-class intBar
+class IntBar
 {
 	private:
 		int barPercent = 0;
 		double oldPercent = 0;
 		sf::Texture barTexture;
 		sf::Sprite barSprite;
+		int x;
+		int y;
+		int w;
 	public:
-		intBar(std::string barFilename);
+		IntBar(std::string barFilename, int x, int y, int w);
+		void setPosition(int x, int y);
+		void setWidth(int w);
+		int getX();
+		int getY();
+		int getW();
 		void setPercent(int percent);
 		void addPercent(int percent);
-		void draw(sf::RenderWindow* surf, int x, int y, int w, double dt);
+		int getPercent();
+		void update(double dt);
+		void draw(sf::RenderWindow* surf);
 };
 
 class HUDOverlay
 {
 	private:
-		intBar* lifeBar;
-		intBar* manaBar;
+		IntBar* lifeBar;
+		IntBar* manaBar;
 		sf::Font font;
 		sf::Text textCD;
 		std::map<std::string, sf::Texture*> elemTexture;
@@ -46,7 +56,8 @@ class HUDOverlay
 		sf::Sprite selectTexSpr;
 	public:
 		HUDOverlay();
-		void draw(sf::RenderWindow* surf, double dt);
+		void draw(sf::RenderWindow* surf);
+		void update(double dt);
 		void hookToCaster(Caster* castHook);
 		void hookToCharacter(Entity* entityHook);
 		void loadIconForElement(std::string element);

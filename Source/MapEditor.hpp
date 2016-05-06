@@ -29,7 +29,7 @@
 #include "GameObject.hpp"
 #include "EditorGrid.hpp"
 
-namespace me
+namespace MapEditor
 {
 	class SpriteFile
 	{
@@ -37,9 +37,8 @@ namespace me
 			std::string name;
 			sf::Texture texture;
 			sf::Font font;
-			bool nar;
 		public:
-			SpriteFile(std::string name, sf::Font font, bool noAdditionalRender = false);
+			SpriteFile(std::string name, sf::Font font);
 			std::string getName();
 			void render(sf::RenderTexture* rtexture);
 			sf::Texture getTexture();
@@ -48,7 +47,7 @@ namespace me
 	class SpriteFolder
 	{
 		private:
-			std::string cat;
+			std::string category;
 			std::string name;
 			std::string folderIcon;
 			sf::Texture texture;
@@ -56,16 +55,17 @@ namespace me
 			sf::Font font;
 			std::vector<SpriteFile*> sprList;
 		public:
-			SpriteFolder(std::string cat, std::string name, std::string folderIcon, sf::Font font);
-			void pushSprite(me::SpriteFile* spr);
+			SpriteFolder(std::string category, std::string name, std::string folderIcon, sf::Font font);
+			void pushSprite(SpriteFile* spr);
 			std::vector<SpriteFile*>* getSpriteList();
 			void render(sf::RenderTexture* rtexture);
 			sf::Sprite* getSprite();
 			sf::Texture getTexture();
 	};
-}
 
-void buildAddSpriteFolderList();
-void displayAddSpriteFolderList();
-void addSpriteToWorld(DataObject* parameters);
-void editMap(std::string mapName);
+	void loadSpriteTab(DataObject* parameters);
+	void buildAddSpriteFolderList();
+	void displayAddSpriteFolderList();
+	void addSpriteToWorld(DataObject* parameters);
+	void editMap(std::string mapName);
+}

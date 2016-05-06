@@ -158,14 +158,15 @@ void KeyBinder::update()
 	{
 		typedef std::map<std::string, std::string>::iterator it_type;
 		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) {
-			if (!sf::Keyboard::isKeyPressed(getKey(getActionKey(iterator->first))->getKey()) && previousActionMap[iterator->first])
+			previousActionMap[iterator->first] = currentActionMap[iterator->first];
+			currentActionMap[iterator->first] = sf::Keyboard::isKeyPressed(getKey(iterator->second)->getKey());
+			if (!currentActionMap[iterator->first] && previousActionMap[iterator->first])
 			{
 				if (fn::Map::keyInMap(iterator->first, actionDelayer))
 				{
 					actionDelayer[iterator->first] = 0;
 				}
 			}
-			previousActionMap[iterator->first] = sf::Keyboard::isKeyPressed(getKey(iterator->second)->getKey());
 		}
 	}
 }
@@ -174,7 +175,7 @@ bool KeyBinder::isActionReleased(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (!sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()) && previousActionMap[action])
+		if (!currentActionMap[action] && previousActionMap[action])
 			return true;
 		else
 			return false;
@@ -187,7 +188,7 @@ bool KeyBinder::isActionEnabled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()))
+		if (currentActionMap[action])
 		{
 			if (fn::Map::keyInMap(action, actionDelayer))
 			{
@@ -197,14 +198,10 @@ bool KeyBinder::isActionEnabled(std::string action)
 					return true;
 				}
 				else
-				{
 					return false;
-				}
 			}
 			else
-			{
 				return true;
-			}
 		}
 		else
 			return false;
@@ -217,7 +214,7 @@ bool KeyBinder::isActionDisabled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()))
+		if (currentActionMap[action])
 			return false;
 		else
 			return true;
@@ -240,7 +237,7 @@ bool KeyBinder::isActionToggled(std::string action)
 {
 	if (binderEnabled)
 	{
-		if (sf::Keyboard::isKeyPressed(getKey(getActionKey(action))->getKey()) && !previousActionMap[action])
+		if (currentActionMap[action] && !previousActionMap[action])
 			return true;
 		else
 			return false;

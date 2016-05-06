@@ -3,27 +3,27 @@
 
 #include "MapEditor.hpp"
 
-std::map<std::string, me::SpriteFolder*> addSprFolderMap;
+std::map<std::string, MapEditor::SpriteFolder*> addSprFolderMap;
 std::map<std::string, GUI::Button*> addBtnGUIMap;
 std::map<std::string, std::map<std::string, GUI::Button*>> addFileGUIMap;
 
 //SpriteFolder
-me::SpriteFolder::SpriteFolder(std::string cat, std::string name, std::string folderIcon, sf::Font font)
+MapEditor::SpriteFolder::SpriteFolder(std::string category, std::string name, std::string folderIcon, sf::Font font)
 {
-	this->cat = cat;
+	this->category = category;
 	this->name = name;
 	this->folderIcon = folderIcon;
 	this->font = font;
 }
-void me::SpriteFolder::pushSprite(me::SpriteFile* spr)
+void MapEditor::SpriteFolder::pushSprite(MapEditor::SpriteFile* spr)
 {
 	sprList.push_back(spr);
 }
-std::vector<me::SpriteFile*>* me::SpriteFolder::getSpriteList()
+std::vector<MapEditor::SpriteFile*>* MapEditor::SpriteFolder::getSpriteList()
 {
 	return &sprList;
 }
-void me::SpriteFolder::render(sf::RenderTexture* rtexture)
+void MapEditor::SpriteFolder::render(sf::RenderTexture* rtexture)
 {
 	sf::Texture baseTexture;
 	baseTexture.loadFromFile("Sprites/MapEditor/FolderIcons/" + folderIcon);
@@ -42,36 +42,38 @@ void me::SpriteFolder::render(sf::RenderTexture* rtexture)
 	texture = rtexture->getTexture();
 	sprite.setTexture(texture);
 }
-sf::Sprite* me::SpriteFolder::getSprite()
+sf::Sprite* MapEditor::SpriteFolder::getSprite()
 {
 	return &sprite;
 }
 
-sf::Texture me::SpriteFolder::getTexture()
+sf::Texture MapEditor::SpriteFolder::getTexture()
 {
 	return texture;
 }
 
 //SpriteFile
-me::SpriteFile::SpriteFile(std::string name, sf::Font font, bool noAdditionalRender)
+MapEditor::SpriteFile::SpriteFile(std::string name, sf::Font font)
 {
 	this->name = name;
 	this->font = font;
-	this->nar = noAdditionalRender;
 }
 
-std::string me::SpriteFile::getName()
+std::string MapEditor::SpriteFile::getName()
 {
-	return name;
+	if (name.substr(0, 1) == "@") return name.substr(1, name.size() - 1);
+	else return name;
 }
 
-void me::SpriteFile::render(sf::RenderTexture* rtexture)
+void MapEditor::SpriteFile::render(sf::RenderTexture* rtexture)
 {
-	texture.loadFromFile("Sprites/LevelSprites/" + name + "/thumbnail.png");
+	std::string rname = name;
+	if (name.substr(0, 1) == "@") rname = name.substr(1, name.size() - 1);
+	texture.loadFromFile("Sprites/LevelSprites/" + rname + "/thumbnail.png");
 	sf::Sprite texSpr;
 	texSpr.setTexture(texture);
 	texSpr.setPosition(sf::Vector2f(128 - (texSpr.getGlobalBounds().width / 2), 128 - (texSpr.getGlobalBounds().height / 2)));	
-	if (!nar)
+	if (name.substr(0, 1) != "@")
 	{
 		rtexture->clear(sf::Color(0, 0, 0, 0));
 		sf::RectangleShape sprRec(sf::Vector2f(256, 256));
@@ -85,7 +87,7 @@ void me::SpriteFile::render(sf::RenderTexture* rtexture)
 		rtexture->draw(titleRec);
 		sf::Text sprNameText;
 		sprNameText.setFont(this->font);
-		sprNameText.setString(this->name);
+		sprNameText.setString(rname);
 		sprNameText.setCharacterSize(16);
 		sprNameText.setColor(sf::Color(255, 255, 255));
 		rtexture->draw(sprNameText);
@@ -94,12 +96,12 @@ void me::SpriteFile::render(sf::RenderTexture* rtexture)
 	}
 }
 
-sf::Texture me::SpriteFile::getTexture()
+sf::Texture MapEditor::SpriteFile::getTexture()
 {
 	return texture;
 }
 
-void loadSpriteTab(DataObject* parameters)
+void MapEditor::loadSpriteTab(DataObject* parameters)
 {
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
@@ -112,8 +114,8 @@ void loadSpriteTab(DataObject* parameters)
 		GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 		sf::Font font;
 		font.loadFromFile("Data/Fonts/arial.ttf");
-		std::vector<me::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
-		spritesInCat.insert(spritesInCat.begin(), new me::SpriteFile("SprBack", font, true));
+		std::vector<MapEditor::SpriteFile*> spritesInCat = *addSprFolderMap[geid]->getSpriteList();
+		spritesInCat.insert(spritesInCat.begin(), new MapEditor::SpriteFile("@SprBack", font));
 		spritesInCat[0]->render(nullptr);
 		const int sprSize = 256;
 		const int sprOff = 10;
@@ -137,10 +139,12 @@ void loadSpriteTab(DataObject* parameters)
 			}
 			else
 			{
-				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(&addSpriteToWorld, "string id = '" + spritesInCat[i]->getName() + "'");
+				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(
+					&addSpriteToWorld, "string id = '" + spritesInCat[i]->getName() + "'");
 			}
 			GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->setTextureAll(spritesInCat[i]->getTexture());
-			addFileGUIMap[geid]["LS_SPR_" + spritesInCat[i]->getName()] = GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName());
+			addFileGUIMap[geid]["LS_SPR_" + spritesInCat[i]->getName()] = 
+				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName());
 		}
 	}
 	else
@@ -152,7 +156,7 @@ void loadSpriteTab(DataObject* parameters)
 	}
 }
 
-void buildAddSpriteFolderList()
+void MapEditor::buildAddSpriteFolderList()
 {
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	sf::Font font;
@@ -208,21 +212,22 @@ void buildAddSpriteFolderList()
 		}
 		else
 			prefixEquivalent = iterator->first;
-		me::SpriteFolder* tempFolder = new me::SpriteFolder(iterator->first, prefixEquivalent, "default.png", font);
+		MapEditor::SpriteFolder* tempFolder = new MapEditor::SpriteFolder(iterator->first, prefixEquivalent, "default.png", font);
 		for (unsigned int i = 0; i < iterator->second.size(); i++)
 		{
-			tempFolder->pushSprite(new me::SpriteFile(iterator->first + "_" + iterator->second[i], font));
+			tempFolder->pushSprite(new MapEditor::SpriteFile(iterator->first + "_" + iterator->second[i], font));
 			tempFolder->getSpriteList()->at(i)->render(&rtexture);
 		}
 		tempFolder->render(&rtexture);
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureAll(tempFolder->getTexture());
-		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->bindFunction(&loadSpriteTab, "string id = '" + iterator->first + "'");
+		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->bindFunction(
+			&MapEditor::loadSpriteTab, "string id = '" + iterator->first + "'");
 		addSprFolderMap[iterator->first] = tempFolder;
 		addBtnGUIMap["LS_CTG_" + iterator->first] = GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first);
 	}
 }
 
-void displayAddSpriteFolderList()
+void MapEditor::displayAddSpriteFolderList()
 {
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
@@ -232,17 +237,14 @@ void displayAddSpriteFolderList()
 	}
 }
 
-void addSpriteToWorld(DataObject* parameters)
+void MapEditor::addSpriteToWorld(DataObject* parameters)
 {
 	std::string geid;
 	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
-	std::cout << "Loading : " << geid << std::endl;
 	World* world = hookCore.getPointer("World")->as<World*>();
 	std::string key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);;
 	while (world->getSpriteByID(key) != NULL)
-	{
 		key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-	}
 	LevelSprite* sprToAdd = new LevelSprite(geid, key, world->getRessourceManager());
 	sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());
 	sprToAdd->setRotation(0);
@@ -254,7 +256,7 @@ void addSpriteToWorld(DataObject* parameters)
 	world->addLevelSprite(sprToAdd);
 }
 
-void editMap(std::string mapName)
+void MapEditor::editMap(std::string mapName)
 {
 	double startLoadTime = getTickSinceEpoch();
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
@@ -263,8 +265,8 @@ void editMap(std::string mapName)
 	loadScrGameObjectHandlerLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"));
 	loadLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"), "Core.Console");
 	TextRenderer textDisplay;
+	//textDisplay.setRenderClass(new Renderers::Shade());
 	hookCore.dropValue("TextDisplay", &textDisplay);
-	textDisplay.setPos(0, 0);
 	std::cout << "Creation Chrono : " << "[Start]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Console
@@ -286,7 +288,7 @@ void editMap(std::string mapName)
 	int resY = fn::Coord::height;
 	std::cout << "Creation Chrono : " << "[Resolution]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	//Creating Window / Camera / RenderTexture
+	//Creating Window
 	sf::RenderWindow window(sf::VideoMode(resX, resY), "Melting Saga", sf::Style::Fullscreen);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
@@ -416,10 +418,11 @@ void editMap(std::string mapName)
 	sprInfo.setColor(sf::Color::White);
 	sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
 	sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
+	
 	//Build Sprite List
 	std::vector<std::string> allSprites;
 	allSprites = fn::File::listDirInDir("Sprites/LevelSprites/");
-	buildAddSpriteFolderList();
+	MapEditor::buildAddSpriteFolderList();
 	std::cout << "Creation Chrono : " << "[MapEditor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Framerate / DeltaTime
@@ -428,8 +431,24 @@ void editMap(std::string mapName)
 	sf::Clock deltaClock;
 	sf::Time sfDeltaTime;
 	double deltaTime;
-	float speedCoeff = 60.0;
+	double speedCoeff = 60.0;
 	double gameSpeed = 0.0;
+	double frameLimiterClock = getTickSinceEpoch();
+	bool limitFPS = true;
+	if (configFile.attributeExists("GameConfig", "", "framerateLimit"))
+		configFile.getAttribute("GameConfig", "", "framerateLimit")->getData(&limitFPS);
+	int framerateTarget = 60;
+	if (configFile.attributeExists("GameConfig", "", "framerateTarget"))
+		configFile.getAttribute("GameConfig", "", "framerateTarget")->getData(&framerateTarget);
+	double reqFramerateInterval = 1.0 / (double)framerateTarget;
+	int currentFrame = 0;
+	int frameProgression = 0;
+	bool needToRender = false;
+	bool vsyncEnabled = false;
+	if (configFile.attributeExists("GameConfig", "", "vsync"))
+		configFile.getAttribute("GameConfig", "", "vsync")->getData(&vsyncEnabled);
+	window.setVerticalSyncEnabled(vsyncEnabled);
+
 	std::cout << "Creation Chrono : " << "[Framerate]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	Light::initLights();
@@ -442,14 +461,28 @@ void editMap(std::string mapName)
 	keybind.setActionDelay("MagnetizeLeft", 200);
 	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-
 	//Game Starts
 	while (window.isOpen())
 	{
 		//DeltaTime
 		sfDeltaTime = deltaClock.restart();
-		deltaTime = std::min(1.0 / 30.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
+		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
 		gameSpeed = deltaTime * speedCoeff;
+		if (limitFPS)
+		{
+			if (getTickSinceEpoch() - frameLimiterClock > 1000)
+			{
+				frameLimiterClock = getTickSinceEpoch();
+				currentFrame = 0;
+			}
+			frameProgression = std::round((getTickSinceEpoch() - frameLimiterClock) / (reqFramerateInterval * 1000));
+			needToRender = false;
+			if (frameProgression > currentFrame)
+			{
+				currentFrame = frameProgression;
+				needToRender = true;
+			}
+		}
 
 		//GUI Actions
 		keybind.setEnabled(!gameConsole.isConsoleVisible());
@@ -859,6 +892,20 @@ void editMap(std::string mapName)
 		cursor.update();
 		triggerDatabaseCore.update();
 		gameObjectHandlerCore.update(gameSpeed);
+		gameConsole.update();
+		if (drawFPS) fps.tick();
+		if (*isGridEnabled)
+		{
+			editorGrid.setOffsetX(-world.getCamX());
+			editorGrid.setOffsetY(-world.getCamY());
+			editorGrid.sendCursorPosition(cursor.getX(), cursor.getY());
+			if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(&cursor, 0, -1);
+			if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(&cursor, 1, 0);
+			if (keybind.isActionEnabled("MagnetizeDown")) editorGrid.moveMagnet(&cursor, 0, 1);
+			if (keybind.isActionEnabled("MagnetizeLeft")) editorGrid.moveMagnet(&cursor, -1, 0);
+			if (keybind.isActionEnabled("MagnetizeCursor"))
+				editorGrid.magnetize(&cursor);
+		}
 
 		//Console Command Handle
 		if (gameConsole.hasCommand())
@@ -866,45 +913,26 @@ void editMap(std::string mapName)
 			gameObjectHandlerCore.executeLine("Main", gameConsole.getCommand());
 		}
 
-		//Click Trigger
+		//Click&Press Trigger
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
 		{
-			if (cursor.getClicked("Left"))
+			if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 			{
-				std::vector<GameObject*> clickableGameObjects;
-				std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor;
-				clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
-				elementsCollidedByCursor = world.getAllCollidersByCollision(cursor.getCollider(), -world.getCamX(), -world.getCamY());
+				std::vector<GameObject*> clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
+				std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
+					cursor.getCollider(), -world.getCamX(), -world.getCamY());
 				for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 				{
 					for (int j = 0; j < clickableGameObjects.size(); j++)
 					{
 						if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
 						{
-							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Click", true);
+							if (cursor.getClicked("Left"))
+								gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Click", true);
+							if (cursor.getPressed("Left"))
+								gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Press", true);
 						}
-					}
-				}
-			}
-		}
 
-		//Press Trigger
-		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
-		{
-			if (cursor.getPressed("Left"))
-			{
-				std::vector<GameObject*> clickableGameObjects;
-				std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor;
-				clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
-				elementsCollidedByCursor = world.getAllCollidersByCollision(cursor.getCollider(), -world.getCamX(), -world.getCamY());
-				for (int i = 0; i < elementsCollidedByCursor.size(); i++)
-				{
-					for (int j = 0; j < clickableGameObjects.size(); j++)
-					{
-						if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
-						{
-							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Press", true);
-						}
 					}
 				}
 			}
@@ -954,74 +982,50 @@ void editMap(std::string mapName)
 				break;
 			}
 		}
-		window.clear();
-		world.display(&window);
-
-		//Show Collision
-		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
+		//Draw Everything Here
+		if (!limitFPS || needToRender)
 		{
-			world.enableShowCollision(true);
-		}
-		else
-		{
-			world.enableShowCollision(false);
-		}
-
-		//Game Display
-		if (hoveredSprite != NULL)
-		{
-			sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
-			sprBorder.setPosition(sdBoundingRect.left - world.getCamX(), sdBoundingRect.top - world.getCamY());
-			sprBorder.setFillColor(sf::Color(0, 0, 0, 0));
-			sprBorder.setOutlineColor(sf::Color(255, 0, 0));
-			sprBorder.setOutlineThickness(2);
-			window.draw(sprBorder);
-		}
-
-		//EditorGrid
-		editorGrid.setOffsetX(-world.getCamX());
-		editorGrid.setOffsetY(-world.getCamY());
-		if (*isGridEnabled)
-		{
-			editorGrid.sendCursorPosition(cursor.getX(), cursor.getY());
-			editorGrid.draw(&window);
-			if (keybind.isActionEnabled("MagnetizeCursor"))
+			window.clear();
+			world.display(&window);
+			//Show Collision
+			if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
+				world.enableShowCollision(true);
+			else
+				world.enableShowCollision(false);
+			//Game Display
+			if (hoveredSprite != NULL)
 			{
-				editorGrid.magnetize(&cursor);
+				sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
+				sprBorder.setPosition(sdBoundingRect.left - world.getCamX(), sdBoundingRect.top - world.getCamY());
+				sprBorder.setFillColor(sf::Color(0, 0, 0, 0));
+				sprBorder.setOutlineColor(sf::Color(255, 0, 0));
+				sprBorder.setOutlineThickness(2);
+				window.draw(sprBorder);
 			}
-			if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(&cursor, 0, -1);
-			if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(&cursor, 1, 0);
-			if (keybind.isActionEnabled("MagnetizeDown")) editorGrid.moveMagnet(&cursor, 0, 1);
-			if (keybind.isActionEnabled("MagnetizeLeft")) editorGrid.moveMagnet(&cursor, -1, 0);
+			if (*isGridEnabled)
+				editorGrid.draw(&window);
+			//HUD & GUI
+			if (sprInfo.getString() != "")
+			{
+				window.draw(sprInfoBackground);
+				window.draw(sprInfo);
+			}
+			gui->drawAllContainer(&window);
+			if (drawFPS)
+				window.draw(fps.getFPS());
+
+			if (textDisplay.textRemaining())
+				textDisplay.render(&window);
+
+			//Console
+			if (gameConsole.isConsoleVisible())
+				gameConsole.display(&window);
+
+			//Cursor
+			if (showCursor)
+				window.draw(*cursor.getSprite());
+
+			window.display();
 		}
-
-		//HUD & GUI
-		if (sprInfo.getString() != "")
-		{
-			window.draw(sprInfoBackground);
-			window.draw(sprInfo);
-		}
-
-		gui->drawAllContainer(&window);
-
-		if (drawFPS)
-		{
-			fps.tick();
-			window.draw(fps.getFPS());
-		}
-
-		if (textDisplay.textRemaining())
-			textDisplay.render(&window);
-
-		//Console
-		gameConsole.update();
-		if (gameConsole.isConsoleVisible())
-			gameConsole.display(&window);
-
-		//Cursor
-		if (showCursor)
-			window.draw(*cursor.getSprite());
-
-		window.display();
 	}
 }

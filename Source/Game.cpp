@@ -3,78 +3,64 @@
 
 #include "Game.hpp"
 
-void startGame()
+void startGame(std::string mapName)
 {
+	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
+	hookCore.dropValue("GameObjectHandler", &gameObjectHandlerCore);
+	mainGameObject = gameObjectHandlerCore.createGameObject("Main", "", "Main");
+	loadScrGameObjectHandlerLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"));
+	loadLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"), "Core.Console");
+	TextRenderer textDisplay;
+	hookCore.dropValue("TextDisplay", &textDisplay);
+
 	//Console
 	Console gameConsole;
-	Console::Stream* charStream = gameConsole.createStream("CharStream");
+	hookCore.dropValue("Console", &gameConsole);
+	(*gameObjectHandlerCore.getLuaStateOfGameObject("Main"))["stream"] = gameConsole.createStream("LuaConsole", true);
 
-	//Resolution
-	const int S_WIDTH = fn::Coord::baseWidth;
-	const int S_HEIGHT = fn::Coord::baseHeight;
-	int resX = fn::Coord::width;
-	int resY = fn::Coord::height;
+	//Font
+	sf::Font font;
+	font.loadFromFile("Data/Fonts/arial.ttf");
 
-	//Creation fenetre / camera / RenderTexture
-	sf::RenderWindow window(sf::VideoMode(resX, resY), "Melting Saga", sf::Style::Fullscreen);
+	//Creating Window
+	sf::RenderWindow window(sf::VideoMode(fn::Coord::width, fn::Coord::height), "Melting Saga", sf::Style::Fullscreen);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
+	sf::Event event;
 
 	//Config
 	DataParser configFile;
 	configFile.parseFile("Data/config.cfg.msd");
-	std::string mapName;
-	configFile.getAttribute("GameConfig", "", "mapName")->getData(&mapName);
-	int scrollSensitive;
-	configFile.getAttribute("GameConfig", "", "scrollSensibility")->getData(&scrollSensitive);
-	bool showChar, showCol, showDeco, showOverlay, showCursor, showFPS;
-	configFile.getAttribute("Developpement", "", "showCharacter")->getData(&showChar);
-	configFile.getAttribute("Developpement", "", "showCollisions")->getData(&showCol);
-	configFile.getAttribute("Developpement", "", "showLevelSprites")->getData(&showDeco);
-	configFile.getAttribute("Developpement", "", "showOverlay")->getData(&showOverlay);
-	configFile.getAttribute("Developpement", "", "showCursor")->getData(&showCursor);
-	configFile.getAttribute("Developpement", "", "showFPS")->getData(&showFPS);
 	bool drawFPS = true;
+	bool showCursor = true;
 
 	//Cursor
-	Cursor curs;
-	curs.initialize(resX, resY);
+	Cursor cursor;
+	cursor.initialize(fn::Coord::width, fn::Coord::height);
 
-	//Creation personnage
+	//Character Initialisation
 	Character character("Natsugi");
-	character.setStreamLink(charStream);
 
-	//Creation et chargement du monde
+	//World Creation / Loading
 	World world;
+	hookCore.dropValue("World", &world);
 	world.loadFromFile(mapName);
 	world.addCharacter(&character);
 	world.init();
 	bool depthOfFieldEnabled;
 	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
 	if (!depthOfFieldEnabled)
-		world.setBlurMul(0);
-	bool dofEnabled = depthOfFieldEnabled;
+		world.setBlurMul(0.0);
 
 	//CastSystem
 	Caster castSystem;
 	castSystem.hookToChar(&character);
-	castSystem.hookToCurs(&curs);
+	castSystem.hookToCurs(&cursor);
 	castSystem.hookToWorld(&world);
 
 	//Keybinding
 	KeyBinder keybind = KeyBinder();
 	keybind.loadFromFile(&configFile);
-
-	//GUI
-	bool drawDEV = false;
-	sf::Event event;
-	/*GUI::Container gui(&event);
-	gui.createWidgetContainer("Menu", 1, 0, 0, resX, resY, GUI::ContainerMovement::Fixed);
-	gui.createLabel("Menu", "title", 1475, 0, "Melting Saga", "LeviBrush.ttf", 64, sf::Color(255, 255, 255));
-	gui.createCheckbox("Menu", "showFPSCB", 1550, 107, "GREY", showFPS);
-	gui.createLabel("Menu", "showFPSLbl", 1580, 100, "Show FPS Counter", "arial.ttf", 24, sf::Color::White);
-	gui.createCheckbox("Menu", "useDOFCB", 1550, 137, "GREY", showFPS);
-	gui.createLabel("Menu", "useDOFLbl", 1580, 130, "Depth of Field", "arial.ttf", 24, sf::Color::White);*/
 
 	//Overlay
 	HUDOverlay hudOver = HUDOverlay();
@@ -84,76 +70,82 @@ void startGame()
 
 	//Framerate / DeltaTime
 	FPSCounter fps;
-	sf::Font font;
-	font.loadFromFile("Data/Fonts/arial.ttf");
 	fps.loadFont(font);
-
 	sf::Clock deltaClock;
 	sf::Time sfDeltaTime;
 	double deltaTime;
-	float speedCoeff = 60.0;
+	double speedCoeff = 60.0;
 	double gameSpeed = 0.0;
-	Chronostasis gameClock;
+	double frameLimiterClock = getTickSinceEpoch();
+	bool limitFPS = true;
+	if (configFile.attributeExists("GameConfig", "", "framerateLimit"))
+		configFile.getAttribute("GameConfig", "", "framerateLimit")->getData(&limitFPS);
+	int framerateTarget = 60;
+	if (configFile.attributeExists("GameConfig", "", "framerateTarget"))
+		configFile.getAttribute("GameConfig", "", "framerateTarget")->getData(&framerateTarget);
+	double reqFramerateInterval = 1.0 / (double)framerateTarget;
+	int currentFrame = 0;
+	int frameProgression = 0;
+	bool needToRender = false;
+	bool vsyncEnabled = false;
+	if (configFile.attributeExists("GameConfig", "", "vsync"))
+		configFile.getAttribute("GameConfig", "", "vsync")->getData(&vsyncEnabled);
+	window.setVerticalSyncEnabled(vsyncEnabled);
 
 	//Lancement du jeu
 	while (window.isOpen())
 	{
+		//DeltaTime
 		sfDeltaTime = deltaClock.restart();
-		deltaTime = std::min(1.0 / 30.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
+		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
 		gameSpeed = deltaTime * speedCoeff;
-
-		world.setCameraPosition(world.getCharacter(0)->getX() - (resX / 2), world.getCharacter(0)->getY() - (resY / 2), "FOLLOW");
-
-		/*if (GUI::Checkbox::getCheckboxById("showFPSCB")->getToggled())
-			drawFPS = GUI::Checkbox::getCheckboxById("showFPSCB")->isChecked();
-		if (GUI::Checkbox::getCheckboxById("useDOFCB")->getToggled())
+		if (limitFPS)
 		{
-			dofEnabled = GUI::Checkbox::getCheckboxById("useDOFCB")->isChecked();
-			if (dofEnabled)
-				world.setBlurMul(0.0003);
-			else
-				world.setBlurMul(0);
-		}*/
+			if (getTickSinceEpoch() - frameLimiterClock > 1000)
+			{
+				frameLimiterClock = getTickSinceEpoch();
+				currentFrame = 0;
+			}
+			frameProgression = std::round((getTickSinceEpoch() - frameLimiterClock) / (reqFramerateInterval * 1000));
+			needToRender = false;
+			if (frameProgression > currentFrame)
+			{
+				currentFrame = frameProgression;
+				needToRender = true;
+			}
+		}
+
+		world.setCameraPosition(world.getCharacter(0)->getX() - (fn::Coord::width / 2) + 128,
+			world.getCharacter(0)->getY() - (fn::Coord::height / 2) + 152, "FOLLOW");
 
 		//Updates
 		world.update(gameSpeed);
 
 		//Cursor Actions
-		if (curs.getClicked("Left"))
-		{
-			world.getCharacter(0)->melee(curs.getX(), curs.getY());
-		}
-		if (curs.getClicked("Right"))
-		{
+		if (cursor.getClicked("Left"))
+			world.getCharacter(0)->melee(cursor.getX(), cursor.getY());
+		if (cursor.getClicked("Right"))
 			castSystem.castSpell();
-		}
 
 		//Keybinds
-		if (keybind.isActionToggled("Left") && keybind.isActionToggled("Right"))
-		{
-
-		}
-		else if (keybind.isActionToggled("Left"))
+		if (keybind.isActionEnabled("Left") && keybind.isActionEnabled("Right")) {}
+		else if (keybind.isActionEnabled("Left"))
 			world.getCharacter(0)->move("Left");
-		else if (keybind.isActionToggled("Right"))
+		else if (keybind.isActionEnabled("Right"))
 			world.getCharacter(0)->move("Right");
 
 
 		if (keybind.isActionToggled("Crouch"))
-		{
 			world.getCharacter(0)->triggerCrouch(true);
-		}
 		if (keybind.isActionReleased("Crouch"))
-		{
 			world.getCharacter(0)->triggerCrouch(false);
-		}
 
 
 		if (keybind.isActionToggled("Jump"))
 			world.getCharacter(0)->jump();
 		if (keybind.isActionToggled("Sprint"))
 			world.getCharacter(0)->sprint(true);
-		else
+		else if (keybind.isActionReleased("Sprint"))
 			world.getCharacter(0)->sprint(false);
 
 		for (int k = 1; k <= 8; k++)
@@ -162,10 +154,35 @@ void startGame()
 				castSystem.selectSpell(k - 1);
 		}
 
+		//Updates
 		keybind.update();
-		curs.update();
+		cursor.update();
+		triggerDatabaseCore.update();
+		gameObjectHandlerCore.update(gameSpeed);
+		gameConsole.update();
+		hudOver.update(gameSpeed);
+		if (drawFPS) fps.tick();
 
-		//gui.updateAllContainer();
+		if (cursor.getClicked("Left") || cursor.getPressed("Left"))
+		{
+			std::vector<GameObject*> clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
+			std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
+				cursor.getCollider(), -world.getCamX(), -world.getCamY());
+			for (int i = 0; i < elementsCollidedByCursor.size(); i++)
+			{
+				for (int j = 0; j < clickableGameObjects.size(); j++)
+				{
+					if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
+					{
+						if (cursor.getClicked("Left"))
+							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Click", true);
+						if (cursor.getPressed("Left"))
+							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Press", true);
+					}
+						
+				}
+			}
+		}
 
 		while (window.pollEvent(event))
 		{
@@ -178,8 +195,6 @@ void startGame()
 			case sf::Event::KeyPressed:
 				if (event.key.code == sf::Keyboard::Escape)
 					window.close();
-				if (event.key.code == sf::Keyboard::F)
-					drawDEV = !drawDEV;
 				if (event.key.code == sf::Keyboard::A)
 					castSystem.switchElement("Up");
 				if (event.key.code == sf::Keyboard::E)
@@ -189,18 +204,13 @@ void startGame()
 					castSystem.setBlood(100);
 					castSystem.resetCooldown("ALL");
 				}
-				if (event.key.code == sf::Keyboard::R)
-				{
-					world.getCharacter(0)->setPos(world.getStartX(), world.getStartY());
-					world.getCharacter(0)->cancelMoves();
-				}
 				break;
 			case sf::Event::MouseWheelMoved:
-				if (event.mouseWheel.delta >= scrollSensitive)
+				if (event.mouseWheel.delta >= 1)
 				{
 					castSystem.switchElement("Up");
 				}
-				else if (event.mouseWheel.delta <= -scrollSensitive)
+				else if (event.mouseWheel.delta <= -1)
 				{
 					castSystem.switchElement("Down");
 				}
@@ -208,39 +218,30 @@ void startGame()
 			}
 		}
 
-		window.clear();
-		world.display(&window);
-
-		if (showCol)
+		//Draw Everything Here
+		if (!limitFPS || needToRender)
 		{
-			std::vector<sf::Sprite*> colDebug;
-			sf::Sprite tempDrawSpr;
-			for (unsigned int cdbug = 0; cdbug < colDebug.size(); cdbug++)
-			{
-				sf::Sprite tempDrawSpr;
-				tempDrawSpr = *colDebug[cdbug];
-				tempDrawSpr.move(-world.getCamX(), -world.getCamY());
-				window.draw(tempDrawSpr);
-			}
+			window.clear();
+			world.display(&window);
+
+			//HUD
+			hudOver.draw(&window);
+
+			if (drawFPS)
+				window.draw(fps.getFPS());
+
+			if (textDisplay.textRemaining())
+				textDisplay.render(&window);
+
+			//Console
+			if (gameConsole.isConsoleVisible())
+				gameConsole.display(&window);
+
+			//Cursor
+			if (showCursor)
+				window.draw(*cursor.getSprite());
+
+			window.display();
 		}
-
-		//HUD
-		if (showOverlay)
-			hudOver.draw(&window, gameSpeed);
-		if (drawFPS)
-		{
-			fps.tick();
-			window.draw(fps.getFPS());
-		}
-
-		if (drawDEV)
-		{
-			//gui.drawContainer("Menu", &window);
-		}
-
-		if (showCursor)
-			window.draw(*curs.getSprite());
-
-		window.display();
 	}
 }

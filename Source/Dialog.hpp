@@ -8,34 +8,48 @@
 #include <vector>
 #include <map>
 #include <SFML/Graphics.hpp>
+#include <functional>
 
+#include "any.hpp"
 #include "Functions.hpp"
 #include "Animation.hpp"
+#include "TimeManager.hpp"
+
+extern sf::RenderTexture renTex;
+
+class Renderer
+{
+	protected:
+		std::map<std::string, emorph::any> locals;
+		std::vector<std::map<std::string, std::string>> vtdb;
+	public:
+		std::string name;
+		virtual void load() = 0;
+		virtual void unload() = 0;
+		virtual void render() = 0;
+		virtual void draw(sf::RenderWindow* surf) = 0;
+		void addTDB(std::map<std::string, std::string> tdb);
+};
 
 class TextRenderer
 {
 	private:
-		int absoluteX = 0;
-		int absoluteY = 0;
-		anim::Animation circleAnim;
-		std::vector<std::vector<std::string>> textList;
-		sf::Texture dialogLine;
-		sf::Sprite dialogLineSpr;
-		sf::Texture arrowTex;
-		sf::Sprite arrowSpr;
-		sf::Font dialogFont;
-		sf::Text speakerText;
-		sf::Text dialogText;
-		sf::RenderTexture renTex;
-		sf::Texture renGetTex;
-		sf::Sprite dispSpr;
+		std::map<std::string, Renderer*> rendererDB;
+		std::vector<std::string> rendererCalls;
+		Renderer* currentRenderer;
 		bool needToRender = true;
 
 	public:
 		TextRenderer();
-		void setPos(int x, int y);
-		void appendText(std::string speaker, std::string text);
+		void createRenderer(std::string rendererType, std::string id);
+		void sendToRenderer(std::string id, std::map<std::string, std::string> tdb);
 		bool textRemaining();
 		void next();
 		void render(sf::RenderWindow* surf);
 };
+
+namespace Renderers
+{
+	class VisualNovel : public Renderer { void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); };
+	class Shade : public Renderer { void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); };
+}

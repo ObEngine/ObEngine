@@ -21,4 +21,4 @@
 #include "Console.hpp"
 #include "TimeManager.hpp"
 
-void startGame();
+void startGame(std::string mapName);
