@@ -73,5 +73,5 @@ void loadHookBridge(GameObject* object, std::string hookname);
 template<typename U>
 inline void GameObject::sendRequireArgument(std::string object, std::string argName, U value)
 {
-	this->scriptEngine["Lua_ReqList"][argName] = value;
+	(*this->scriptEngine)["Lua_ReqList"][argName] = value;
 }

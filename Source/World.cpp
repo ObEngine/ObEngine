@@ -7,6 +7,7 @@ World::World()
 {
 	worldScriptEngine = new kaguya::State();
 	loadWorldScriptEngineBaseLib(worldScriptEngine);
+	(*worldScriptEngine)["World"] = this;
 	worldScriptEngine->dofile("Data/GameScripts/WScrInit.lua");
 	loadLib(worldScriptEngine, "Core.Console");
 	triggerDatabaseCore.createCustomNamespace("Map");
@@ -944,5 +945,17 @@ void loadWorldScriptEngineBaseLib(kaguya::State* lua)
 {
 	(*lua)["CPP_Import"] = &loadLib;
 	(*lua)["CPP_Hook"] = &loadHook;
+	(*lua)["Core"] = kaguya::NewTable();
+	(*lua)["Core"]["World"] = kaguya::NewTable();
+	(*lua)["Core"]["World"]["World"].setClass(kaguya::ClassMetatable<World>()
+		.addMember("addCharacter", &World::addCharacter)
+		.addMember("addLevelSprite", &World::addLevelSprite)
+		.addMember("addLight", &World::addLight)
+		.addMember("loadFromFile", &World::loadFromFile)
+		.addMember("getCamX", &World::getCamX)
+		.addMember("getCamY", &World::getCamY)
+		.addMember("getGameObject", &World::getGameObject)
+	);
 	(*lua)["This"] = lua;
+	printf("world fully loaded");
 }

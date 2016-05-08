@@ -21,6 +21,18 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("useLocalTrigger", &GameObject::useLocalTrigger)
 		.addMember("useGlobalTrigger", &GameObject::useGlobalTrigger)
 		.addMember("useCustomTrigger", &GameObject::useCustomTrigger)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<int>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<float>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::string>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<bool>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, int>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, float>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, std::string>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, bool>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, int>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, float>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, std::string>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, bool>>)
 	);
 	(*lua)["This"] = obj;
 }
