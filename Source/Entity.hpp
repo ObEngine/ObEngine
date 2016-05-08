@@ -32,7 +32,6 @@ class Entity
 		int life = 100;
 		int maxLife = 100;
 		double currentDeltaTime = 0.0;
-		Console::Stream* streamLink;
 
 	public:
 		Entity();
@@ -54,5 +53,4 @@ class Entity
 		void setPos(double newx, double newy);
 		void addPos(double addx, double addy);
 		void addDtPos(double addx, double addy);
-		void setStreamLink(Console::Stream* link);
 };

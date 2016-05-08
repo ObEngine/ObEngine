@@ -10,8 +10,8 @@ int main(int argc, char** argv)
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
-	startGame("poly2.map.msd");
-	//MapEditor::editMap("poly2.map.msd");
+	//startGame("poly2.map.msd");
+	MapEditor::editMap("poly2.map.msd");
 
 	return 0;
 }

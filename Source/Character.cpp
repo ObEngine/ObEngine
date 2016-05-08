@@ -458,7 +458,6 @@ void Character::specialUpdate()
 
 void Character::cancelMoves()
 {
-	streamLink->streamPush(std::string("Character Moves Cancelled"));
 	speedFall = 0;
 	fallIterate = 0;
 	fallCounter = 0;

@@ -19,6 +19,7 @@
 #include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "Particle.hpp"
+#include "Script.hpp"
 #include "GameObject.hpp"
 
 void loadWorldScriptEngineBaseLib(kaguya::State* lua);

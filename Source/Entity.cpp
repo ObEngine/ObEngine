@@ -103,10 +103,6 @@ void Entity::addDtPos(double addx, double addy)
 	y += addy * currentDeltaTime;
 	entityCollider->setPosition(x, y);
 }
-void Entity::setStreamLink(Console::Stream* link)
-{
-	streamLink = link;
-}
 void Entity::setColliderDrawOffset(int x, int y)
 {
 	entityCollider->setDrawOffset(x, y);

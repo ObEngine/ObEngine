@@ -526,7 +526,6 @@ void MapEditor::editMap(std::string mapName)
 		//Updates
 		if (!gameConsole.isConsoleVisible())
 		{
-			world.update(gameSpeed);
 			//Keybinds
 			if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() != "Fixed Camera")
 			{
@@ -881,9 +880,10 @@ void MapEditor::editMap(std::string mapName)
 		gui->updateAllContainer();
 
 		//Events
+		triggerDatabaseCore.update();
+		world.update(gameSpeed);
 		keybind.update();
 		cursor.update();
-		triggerDatabaseCore.update();
 		gameConsole.update();
 		if (drawFPS) fps.tick();
 		if (*isGridEnabled)
