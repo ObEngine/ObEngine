@@ -80,6 +80,7 @@ class GameObjectHandler
 		std::map<std::string, TriggerGroup*> trgHandlerMap;
 		std::vector<GameObject*> updateObjArray;
 		std::vector<std::pair<std::string, std::string>*> triggerToDisable;
+		int yolo;
 
 		void orderUpdateScrArray();
 
