@@ -14,11 +14,8 @@
 #include "LevelSprite.hpp"
 #include "Script.hpp"
 
-void useLocalTrigger(std::string scrKey, std::string trName);
-void useGlobalTrigger(std::string scrKey, std::string trName);
-void useCustomTrigger(std::string scrKey, std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
-void loadLibBridge(std::string scrKey, std::string lib);
-void loadHookBridge(std::string scrKey, std::string hookname);
+void loadLibBridge(GameObject* object, std::string lib);
+void loadHookBridge(GameObject* object, std::string hookname);
 
 class GameObject
 {
@@ -26,12 +23,13 @@ class GameObject
 		anim::Animator objectAnimator;
 		LevelSprite objectLevelSprite;
 		Collision::PolygonalCollider objectCollider;
+		kaguya::State* scriptEngine;
+
 		std::vector<Trigger*> registeredTriggers;
 		std::vector<std::tuple<std::string, std::string, std::string>> registeredAliases;
-		std::vector<std::string> a;
-		DataObject* objFile;
+
 		std::string id;
-		std::string key;
+		std::string privateKey;
 		std::string publicKey;
 		int scrPriority = 0;
 
@@ -42,18 +40,13 @@ class GameObject
 		bool colliderRelative = true;
 		bool hasLevelSprite = false;
 
-		kaguya::State* scriptEngine;
-
 		GameObject(std::string id);
 		void registerTrigger(Trigger* trg);
 		void loadGameObject(DataObject* obj);
 		void hookLuaState(kaguya::State* lua);
 		void update(double dt);
-		friend void useLocalTrigger(std::string scrKey, std::string trName);
-		friend void useGlobalTrigger(std::string scrKey, std::string trName);
-		friend void useCustomTrigger(std::string scrKey, std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
-		friend void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad);
 		friend class GameObjectHandler;
+		friend class World;
 	public:
 		std::string getID();
 		std::string getPublicKey();
@@ -66,10 +59,13 @@ class GameObject
 		LevelSprite* getLevelSprite();
 		Collision::PolygonalCollider* getCollider();
 		anim::Animator* getAnimator();
+		kaguya::State* getScriptEngine();
+		void useLocalTrigger(std::string trName);
+		void useGlobalTrigger(std::string trName);
+		void useCustomTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
 };
 
 void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad = false);
-void loadScrGameObjectHandlerLib(kaguya::State* lua);
 bool orderScrPriority(GameObject* g1, GameObject* g2);
 	
 class GameObjectHandler
@@ -80,15 +76,9 @@ class GameObjectHandler
 		std::map<std::string, TriggerGroup*> trgHandlerMap;
 		std::vector<GameObject*> updateObjArray;
 		std::vector<std::pair<std::string, std::string>*> triggerToDisable;
-		int yolo;
 
 		void orderUpdateScrArray();
 
-		friend void useLocalTrigger(std::string scrKey, std::string trName);
-		friend void useGlobalTrigger(std::string scrKey, std::string trName);
-		friend void useCustomTrigger(std::string scrKey, std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
-		friend void loadLibBridge(std::string scrKey, std::string lib);
-		friend void loadHookBridge(std::string scrKey, std::string hookname);
 	public:
 		GameObject* getGameObject(std::string id);
 		std::vector<GameObject*> getAllGameObject(std::vector<std::string> filters = std::vector<std::string>());

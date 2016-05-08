@@ -27,7 +27,7 @@ void World::addCollider(Collision::PolygonalCollider* col)
 
 void World::addLight(Light::PointLight* lgt)
 {
-	lightMap[lgt->getID()] = lgt;
+	lightsMap[lgt->getID()] = lgt;
 }
 
 anim::RessourceManager* World::getRessourceManager()
@@ -141,8 +141,8 @@ void World::loadFromFile(std::string filename)
 				if (mapParse.attributeExists("Lights", allLights[i], "offsetY")) mapParse.getAttribute("Lights", allLights[i], "offsetY")->getData(&loffY);
 				if (getSpriteByID(lsBind) != NULL)
 				{
-					lightMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
-					lightMap[lsBind]->setOffset(loffX, loffY);
+					lightsMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
+					lightsMap[lsBind]->setOffset(loffX, loffY);
 				}
 			}
 			else if (ltype == "Dynamic")
@@ -172,7 +172,7 @@ void World::loadFromFile(std::string filename)
 					tdpl->setRExp(lr); tdpl->setGExp(lg); tdpl->setBExp(lb);
 					tdpl->setOffsetXExp(loffX);
 					tdpl->setOffsetYExp(loffY);
-					lightMap[lsBind] = tdpl;
+					lightsMap[lsBind] = tdpl;
 				}
 			}
 		}
@@ -289,16 +289,15 @@ DataParser* World::saveData()
 	return dataStore;
 }
 
-void World::castSpell(Spells::Projectile* spellToCast)
-{
-	spellArray.push_back(spellToCast);
-}
-
 void World::update(double dt)
 {
 	this->gameSpeed = dt;
+	for (int i = 0; i < updateObjArray.size(); i++)
+	{
+		updateObjArray[i]->update(dt);
+	}
 	typedef std::map<std::string, Light::PointLight*>::iterator it_mspl;
-	for (it_mspl iterator = lightMap.begin(); iterator != lightMap.end(); iterator++)
+	for (it_mspl iterator = lightsMap.begin(); iterator != lightsMap.end(); iterator++)
 	{
 		if (iterator->second->getType() == "Dynamic")
 		{
@@ -314,14 +313,6 @@ void World::update(double dt)
 	for (unsigned int i = 0; i < particleArray.size(); i++)
 	{
 		particleArray[i]->update();
-	}
-	for (unsigned int i = 0; i < spellArray.size(); i++)
-	{
-		spellArray[i]->update(gameSpeed);
-		if (!spellArray[i]->isSpellAlive())
-		{
-			spellArray.erase(spellArray.begin()+i);
-		}
 	}
 }
 
@@ -356,9 +347,9 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 		int layeredX = 0;
 		int layeredY = 0;
 
-		bool lightHooked = lightMap.find(backSpriteArray[i]->getID()) != lightMap.end();
+		bool lightHooked = lightsMap.find(backSpriteArray[i]->getID()) != lightsMap.end();
 		Light::PointLight* cLight = NULL;
-		if (lightHooked) cLight = lightMap[backSpriteArray[i]->getID()];
+		if (lightHooked) cLight = lightsMap[backSpriteArray[i]->getID()];
 
 		if (fn::Vector::isInList((std::string)"+FIX", backSpriteArray[i]->getAttributes()))
 		{
@@ -407,19 +398,11 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
-				if (lightHooked) { if (cLight->isBehind()) lightMap[backSpriteArray[i]->getID()]->draw(surf); }
+				if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 				surf->draw(tAffSpr, &blurShader);
-				if (lightHooked) { if (!cLight->isBehind()) lightMap[backSpriteArray[i]->getID()]->draw(surf); }
+				if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
-	}
-	for (unsigned int i = 0; i < spellArray.size(); i++)
-	{
-		int blitSpellX = spellArray[i]->getX() - camX;
-		int blitSpellY = spellArray[i]->getY() - camY;
-		sf::Sprite tSpellSpr = *spellArray[i]->getSprite();
-		tSpellSpr.setPosition(blitSpellX, blitSpellY);
-		surf->draw(tSpellSpr);
 	}
 }
 
@@ -430,9 +413,9 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 		int layeredX = 0;
 		int layeredY = 0;
 
-		bool lightHooked = lightMap.find(frontSpriteArray[i]->getID()) != lightMap.end();
+		bool lightHooked = lightsMap.find(frontSpriteArray[i]->getID()) != lightsMap.end();
 		Light::PointLight* cLight = NULL;
-		if (lightHooked) cLight = lightMap[frontSpriteArray[i]->getID()];
+		if (lightHooked) cLight = lightsMap[frontSpriteArray[i]->getID()];
 
 		if (fn::Vector::isInList((std::string)"+FIX", frontSpriteArray[i]->getAttributes()))
 		{
@@ -482,9 +465,9 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
-				if (lightHooked) { if (cLight->isBehind()) lightMap[frontSpriteArray[i]->getID()]->draw(surf); }
+				if (lightHooked) { if (cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 				surf->draw(tAffSpr, &blurShader);
-				if (lightHooked) { if (!cLight->isBehind()) lightMap[frontSpriteArray[i]->getID()]->draw(surf); }
+				if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
 	}

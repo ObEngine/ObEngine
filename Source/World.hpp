@@ -26,18 +26,17 @@ private:
 	std::string levelName = "";
 	int sizeX = 0;
 	int sizeY = 0;
-	//vector<Object> objArray;
 	std::vector<LevelSprite*> backSpriteArray;
 	std::vector<LevelSprite*> frontSpriteArray;
-	std::vector<Spells::Projectile*> spellArray;
 	std::vector<Collision::PolygonalCollider*> collidersArray;
-	std::map<std::string, Light::PointLight*> lightMap;
+	std::map<std::string, GameObject*> gameObjectsMap;
+	std::vector<GameObject*> updateObjArray;
+	std::map<std::string, Light::PointLight*> lightsMap;
 	std::vector<MathParticle*> particleArray;
 	double camX = 0;
 	double camY = 0;
 	sf::Sprite backSprBlit;
 	sf::RenderTexture renderTex;
-	//LightSystem liSys;
 	std::vector<Character*> charArray;
 	double blurMul = 0.0003;
 	sf::Shader blurShader;
@@ -77,6 +76,8 @@ public:
 	void addParticle(MathParticle* particle);
 	void reorganizeLayers();
 	void setBlurMul(double newBlur);
+	template<typename U>
+	void sendRequireArgument(std::string object, std::string argName, U value);
 	//Map Editor
 	LevelSprite* getSpriteByIndex(std::string backOrFront, int index);
 	int getSpriteArraySize(std::string backOrFront);
@@ -93,3 +94,9 @@ public:
 	void createCollisionAtPos(int x, int y);
 	void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
 };
+
+template<typename U>
+void World::sendRequireArgument(std::string object, std::string argName, U value)
+{
+	(*this->scrHandlerMap[this->getGameObject(object)->key])["Lua_ReqList"][argName] = value;
+}
