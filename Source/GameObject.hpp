@@ -13,9 +13,6 @@
 #include "Script.hpp"
 #include "Triggers.hpp"
 
-void loadLibBridge(GameObject* object, std::string lib);
-void loadHookBridge(GameObject* object, std::string hookname);
-
 class GameObject
 {
 	private:
@@ -70,6 +67,8 @@ class GameObject
 
 void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
 bool orderScrPriority(GameObject* g1, GameObject* g2);
+void loadLibBridge(GameObject* object, std::string lib);
+void loadHookBridge(GameObject* object, std::string hookname);
 
 template<typename U>
 inline void GameObject::sendRequireArgument(std::string object, std::string argName, U value)

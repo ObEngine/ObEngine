@@ -315,7 +315,7 @@ void MapEditor::editMap(std::string mapName)
 
 	//World Creation / Loading
 	World world;
-	(*world.getScriptEngine)["stream"] = gameConsole.createStream("World", true);
+	(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
 	hookCore.dropValue("World", &world);
 	world.loadFromFile(mapName);
 	world.addCharacter(&character);

@@ -6,6 +6,7 @@
 World::World()
 {
 	worldScriptEngine = new kaguya::State();
+	loadWorldScriptEngineBaseLib(worldScriptEngine);
 	worldScriptEngine->dofile("Data/GameScripts/WScrInit.lua");
 	loadLib(worldScriptEngine, "Core.Console");
 	triggerDatabaseCore.createCustomNamespace("Map");
