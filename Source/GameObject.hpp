@@ -28,8 +28,7 @@ class GameObject
 		Collision::PolygonalCollider objectCollider;
 		std::vector<Trigger*> registeredTriggers;
 		std::vector<std::tuple<std::string, std::string, std::string>> registeredAliases;
-		std::vector<std::string> a;
-		DataObject* objFile;
+
 		std::string id;
 		std::string key;
 		std::string publicKey;

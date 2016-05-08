@@ -29,14 +29,11 @@ private:
 	//vector<Object> objArray;
 	std::vector<LevelSprite*> backSpriteArray;
 	std::vector<LevelSprite*> frontSpriteArray;
-	std::vector<Spells::Projectile*> spellArray;
 	std::vector<Collision::PolygonalCollider*> collidersArray;
 	std::map<std::string, Light::PointLight*> lightMap;
 	std::vector<MathParticle*> particleArray;
 	double camX = 0;
 	double camY = 0;
-	sf::Sprite backSprBlit;
-	sf::RenderTexture renderTex;
 	//LightSystem liSys;
 	std::vector<Character*> charArray;
 	double blurMul = 0.0003;
@@ -60,6 +57,7 @@ public:
 	anim::RessourceManager* getRessourceManager();
 	Character* getCharacter(int index);
 	void loadFromFile(std::string filename);
+	void clearWorld(bool clearMemory = true);
 	DataParser* saveData();
 	std::vector<Collision::PolygonalCollider*> getColliders();
 	void update(double dt);
@@ -71,7 +69,6 @@ public:
 	void setCameraPosition(double tX, double tY, std::string setMode = "SET");
 	double getCamX();
 	double getCamY();
-	void castSpell(Spells::Projectile* spellToCast);
 	int getStartX();
 	int getStartY();
 	void addParticle(MathParticle* particle);

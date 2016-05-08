@@ -237,7 +237,6 @@ void GameObject::registerTrigger(Trigger* trg)
 
 void GameObject::loadGameObject(DataObject* obj)
 {
-	this->objFile = obj;
 	std::string animatorPath;
 	//Animator
 	if (obj->complexExists(convertPath(""), "Animator"))

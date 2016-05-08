@@ -8,7 +8,6 @@
 #include <vector>
 #include <map>
 #include <SFML/Graphics.hpp>
-#include <functional>
 
 #include "any.hpp"
 #include "Functions.hpp"
@@ -17,17 +16,31 @@
 
 extern sf::RenderTexture renTex;
 
+enum RendererState
+{
+	FadeIn = 0x001,
+	Draw = 0x002,
+	FadeOut = 0x003,
+	End = 0x004
+};
+
 class Renderer
 {
 	protected:
 		std::map<std::string, emorph::any> locals;
 		std::vector<std::map<std::string, std::string>> vtdb;
+		int fadeState = 0;
 	public:
 		std::string name;
 		virtual void load() = 0;
 		virtual void unload() = 0;
 		virtual void render() = 0;
 		virtual void draw(sf::RenderWindow* surf) = 0;
+		virtual void fadeIn(sf::RenderWindow* surf);
+		virtual void fadeOut(sf::RenderWindow* surf);
+		virtual void update(double dt);
+		void setFadeState(int state);
+		int getFadeState();
 		void addTDB(std::map<std::string, std::string> tdb);
 };
 
@@ -45,11 +58,17 @@ class TextRenderer
 		void sendToRenderer(std::string id, std::map<std::string, std::string> tdb);
 		bool textRemaining();
 		void next();
+		void update(double dt);
 		void render(sf::RenderWindow* surf);
 };
 
 namespace Renderers
 {
-	class VisualNovel : public Renderer { void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); };
-	class Shade : public Renderer { void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); };
+	class VisualNovel : public Renderer { 
+		void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); 
+	};
+	class Shade : public Renderer { 
+		void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); 
+		void fadeOut(sf::RenderWindow* surf); void update(double dt); 
+	};
 }

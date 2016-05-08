@@ -893,6 +893,7 @@ void MapEditor::editMap(std::string mapName)
 		triggerDatabaseCore.update();
 		gameObjectHandlerCore.update(gameSpeed);
 		gameConsole.update();
+		textDisplay.update(gameSpeed);
 		if (drawFPS) fps.tick();
 		if (*isGridEnabled)
 		{

@@ -198,7 +198,6 @@ void World::loadFromFile(std::string filename)
 	}
 	std::cout << "Creation Chrono : " << "[WorldCollisions]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-
 	if (mapParse.dataObjectExists("LevelObjects"))
 	{
 		std::vector<std::string> allObjects = mapParse.getAllComplex("LevelObjects", "");
@@ -241,6 +240,22 @@ void World::loadFromFile(std::string filename)
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldScript]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+}
+
+void World::clearWorld(bool clearMemory)
+{
+	for (int i = 0; i < backSpriteArray.size(); i++)
+		delete backSpriteArray[i];
+	backSpriteArray.clear();
+	for (int i = 0; i < frontSpriteArray.size(); i++)
+		delete frontSpriteArray[i];
+	frontSpriteArray.clear();
+	for (int i = 0; i < collidersArray.size(); i++)
+		delete collidersArray[i];
+	collidersArray.clear();
+	for (auto it = lightMap.begin(); it != lightMap.end(); it++)
+		delete it->second;
+	lightMap.clear();
 }
 
 DataParser* World::saveData()
@@ -289,11 +304,6 @@ DataParser* World::saveData()
 	return dataStore;
 }
 
-void World::castSpell(Spells::Projectile* spellToCast)
-{
-	spellArray.push_back(spellToCast);
-}
-
 void World::update(double dt)
 {
 	this->gameSpeed = dt;
@@ -314,14 +324,6 @@ void World::update(double dt)
 	for (unsigned int i = 0; i < particleArray.size(); i++)
 	{
 		particleArray[i]->update();
-	}
-	for (unsigned int i = 0; i < spellArray.size(); i++)
-	{
-		spellArray[i]->update(gameSpeed);
-		if (!spellArray[i]->isSpellAlive())
-		{
-			spellArray.erase(spellArray.begin()+i);
-		}
 	}
 }
 
@@ -412,14 +414,6 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 				if (lightHooked) { if (!cLight->isBehind()) lightMap[backSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
-	}
-	for (unsigned int i = 0; i < spellArray.size(); i++)
-	{
-		int blitSpellX = spellArray[i]->getX() - camX;
-		int blitSpellY = spellArray[i]->getY() - camY;
-		sf::Sprite tSpellSpr = *spellArray[i]->getSprite();
-		tSpellSpr.setPosition(blitSpellX, blitSpellY);
-		surf->draw(tSpellSpr);
 	}
 }
 

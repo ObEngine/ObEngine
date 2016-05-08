@@ -43,10 +43,12 @@ class KeyBinder
 		std::map<std::string, int> baseActionDelayer;
 		std::map<std::string, unsigned long long int> actionDelayer;
 		bool binderEnabled = true;
+		bool focusState;
 		std::string getActionKey(std::string action);
 		KeyClass* getKey(std::string key);
 	public:
 		KeyBinder();
+		void setFocusState(bool state);
 		void setEnabled(bool state);
 		void loadFromFile(DataParser* configFile);
 		void connectAction(std::string action, std::string key);
