@@ -13,12 +13,11 @@ void CoreHook::getValue(kaguya::State* lua, std::string name)
 		std::string gt = containerMap[name].first;
 		if      (gt == "Console*")            (*lua)["Hook"][name] = containerMap[name].second->as<Console*>();
 		else if (gt == "Cursor*")			 (*lua)["Hook"][name] = containerMap[name].second->as<Cursor*>();
-		else if (gt == "GameObjectHandler*")  (*lua)["Hook"][name] = containerMap[name].second->as<GameObjectHandler*>();
 		else if (gt == "MathExp*")            (*lua)["Hook"][name] = containerMap[name].second->as<MathExp*>();
 		else if (gt == "TextRenderer*")       (*lua)["Hook"][name] = containerMap[name].second->as<TextRenderer*>();
 		else if (gt == "TriggerDatabase*")    (*lua)["Hook"][name] = containerMap[name].second->as<TriggerDatabase*>();
 		else if (gt == "TriggerGroup*")       (*lua)["Hook"][name] = containerMap[name].second->as<TriggerGroup*>();
-		else if (gt == "World*")              (*lua)["Hook"][name] = containerMap[name].second->as<World*>();
+		//else if (gt == "World*")              (*lua)["Hook"][name] = containerMap[name].second->as<World*>();
 		else std::cout << "<Error:Script:CoreHook>[getValue] : Unknown type : '" << gt << "' for " << name << std::endl;
 	}
 	else
@@ -84,7 +83,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
 		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
-		else if   (lib[0] == "World")        CoreLib::loadWorld(lua, lib);
+		//else if   (lib[0] == "World")        CoreLib::loadWorld(lua, lib);
 		else
 		{
 			std::cout << "<Error:Script:*>[loadCoreLib] : Can't find Core.";
@@ -531,7 +530,7 @@ void CoreLib::loadUtils(kaguya::State* lua, std::vector<std::string> args)
 	}
 	//Add Others
 }
-void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
+/*void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
 	bool importAll = args.size() == 1;
@@ -550,4 +549,4 @@ void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadWorld] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
-}
+}*/

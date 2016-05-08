@@ -260,10 +260,6 @@ void MapEditor::editMap(std::string mapName)
 {
 	double startLoadTime = getTickSinceEpoch();
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
-	hookCore.dropValue("GameObjectHandler", &gameObjectHandlerCore);
-	mainGameObject = gameObjectHandlerCore.createGameObject("Main", "", "Main");
-	loadScrGameObjectHandlerLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"));
-	loadLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"), "Core.Console");
 	TextRenderer textDisplay;
 	//textDisplay.setRenderClass(new Renderers::Shade());
 	hookCore.dropValue("TextDisplay", &textDisplay);
@@ -272,8 +268,6 @@ void MapEditor::editMap(std::string mapName)
 	//Console
 	Console gameConsole;
 	hookCore.dropValue("Console", &gameConsole);
-	Console::Stream* charStream = gameConsole.createStream("CharStream");
-	(*gameObjectHandlerCore.getLuaStateOfGameObject("Main"))["stream"] = gameConsole.createStream("LuaConsole", true);
 	std::cout << "Creation Chrono : " << "[Console]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Font
@@ -317,15 +311,14 @@ void MapEditor::editMap(std::string mapName)
 
 	//Character Initialisation
 	Character character("Natsugi");
-	character.setStreamLink(charStream);
 	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//World Creation / Loading
 	World world;
+	(*world.getScriptEngine)["stream"] = gameConsole.createStream("World", true);
 	hookCore.dropValue("World", &world);
 	world.loadFromFile(mapName);
 	world.addCharacter(&character);
-	world.init();
 	bool depthOfFieldEnabled;
 	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
 	if (!depthOfFieldEnabled)
@@ -891,7 +884,6 @@ void MapEditor::editMap(std::string mapName)
 		keybind.update();
 		cursor.update();
 		triggerDatabaseCore.update();
-		gameObjectHandlerCore.update(gameSpeed);
 		gameConsole.update();
 		if (drawFPS) fps.tick();
 		if (*isGridEnabled)
@@ -909,16 +901,14 @@ void MapEditor::editMap(std::string mapName)
 
 		//Console Command Handle
 		if (gameConsole.hasCommand())
-		{
-			gameObjectHandlerCore.executeLine("Main", gameConsole.getCommand());
-		}
+			world.getScriptEngine()->dostring(gameConsole.getCommand());
 
 		//Click&Press Trigger
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
 		{
 			if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 			{
-				std::vector<GameObject*> clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
+				std::vector<GameObject*> clickableGameObjects = world.getAllGameObject({ "Click" });
 				std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
 					cursor.getCollider(), -world.getCamX(), -world.getCamY());
 				for (int i = 0; i < elementsCollidedByCursor.size(); i++)
@@ -928,9 +918,9 @@ void MapEditor::editMap(std::string mapName)
 						if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
 						{
 							if (cursor.getClicked("Left"))
-								gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Click", true);
+								world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Click", true);
 							if (cursor.getPressed("Left"))
-								gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Press", true);
+								world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Press", true);
 						}
 
 					}

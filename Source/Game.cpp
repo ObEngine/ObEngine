@@ -6,17 +6,12 @@
 void startGame(std::string mapName)
 {
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
-	hookCore.dropValue("GameObjectHandler", &gameObjectHandlerCore);
-	mainGameObject = gameObjectHandlerCore.createGameObject("Main", "", "Main");
-	loadScrGameObjectHandlerLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"));
-	loadLib(gameObjectHandlerCore.getLuaStateOfGameObject("Main"), "Core.Console");
 	TextRenderer textDisplay;
 	hookCore.dropValue("TextDisplay", &textDisplay);
 
 	//Console
 	Console gameConsole;
 	hookCore.dropValue("Console", &gameConsole);
-	(*gameObjectHandlerCore.getLuaStateOfGameObject("Main"))["stream"] = gameConsole.createStream("LuaConsole", true);
 
 	//Font
 	sf::Font font;
@@ -46,7 +41,6 @@ void startGame(std::string mapName)
 	hookCore.dropValue("World", &world);
 	world.loadFromFile(mapName);
 	world.addCharacter(&character);
-	world.init();
 	bool depthOfFieldEnabled;
 	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
 	if (!depthOfFieldEnabled)
@@ -158,32 +152,11 @@ void startGame(std::string mapName)
 		keybind.update();
 		cursor.update();
 		triggerDatabaseCore.update();
-		gameObjectHandlerCore.update(gameSpeed);
 		gameConsole.update();
 		hudOver.update(gameSpeed);
 		if (drawFPS) fps.tick();
 
-		if (cursor.getClicked("Left") || cursor.getPressed("Left"))
-		{
-			std::vector<GameObject*> clickableGameObjects = gameObjectHandlerCore.getAllGameObject({ "Click" });
-			std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-				cursor.getCollider(), -world.getCamX(), -world.getCamY());
-			for (int i = 0; i < elementsCollidedByCursor.size(); i++)
-			{
-				for (int j = 0; j < clickableGameObjects.size(); j++)
-				{
-					if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
-					{
-						if (cursor.getClicked("Left"))
-							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Click", true);
-						if (cursor.getPressed("Left"))
-							gameObjectHandlerCore.setTriggerState(clickableGameObjects[j]->getID(), "Press", true);
-					}
-						
-				}
-			}
-		}
-
+	
 		while (window.pollEvent(event))
 		{
 			switch (event.type)

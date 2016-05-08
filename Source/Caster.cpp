@@ -69,7 +69,6 @@ void Caster::castSpell()
 		tempSpell->setX(startSpX+realOffsetX);
 		tempSpell->setY(startSpY+realOffsetY);
 		tempSpell->setPosTarget(endSpX+realOffsetX, endSpY+realOffsetY);
-		worldHook->castSpell(tempSpell);
 		if (charHook->getX() - worldHook->getCamX() + 120 > cursHook->getX())
 			charHook->setKey("CAST_LEFT");
 		else

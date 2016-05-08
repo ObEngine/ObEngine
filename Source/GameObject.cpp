@@ -3,10 +3,9 @@
 
 #include "GameObject.hpp"
 
-GameObjectHandler gameObjectHandlerCore;
 GameObject* mainGameObject;
 
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad)
+void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 {
 	(*lua)["CPP_Import"] = &loadLibBridge;
 	(*lua)["CPP_Hook"] = &loadHookBridge;
@@ -24,29 +23,6 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad)
 		.addMember("useCustomTrigger", &GameObject::useCustomTrigger)
 	);
 	(*lua)["This"] = obj;
-	if (fullLoad)
-	{
-		(*lua)["CPP_UseLocalTrigger"] = &useLocalTrigger;
-		(*lua)["CPP_UseGlobalTrigger"] = &useGlobalTrigger;
-		(*lua)["CPP_UseCustomTrigger"] = &useCustomTrigger;
-	}
-}
-
-void loadScrGameObjectHandlerLib(kaguya::State* lua)
-{
-	(*lua)["CPP_GameObjectHandler"].setClass(kaguya::ClassMetatable<GameObjectHandler>()
-		.addMember("createGameObject", &GameObjectHandler::createGameObject)
-		.addMember("executeFile", &GameObjectHandler::executeFile)
-		.addMember("executeLine", &GameObjectHandler::executeLine)
-		.addMember("getAllGameObject", &GameObjectHandler::getAllGameObject)
-		.addMember("getGameObject", &GameObjectHandler::getGameObject)
-		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<int>)
-		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<std::string>)
-		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<bool>)
-		.addMember("sendRequireArgument", &GameObjectHandler::sendRequireArgument<float>)
-		.addMember("setTriggerState", &GameObjectHandler::setTriggerState)
-		.addMember("setGlobalTriggerState", &GameObjectHandler::setGlobalTriggerState)
-	);
 }
 
 void loadLibBridge(GameObject* object, std::string lib)
@@ -56,147 +32,12 @@ void loadLibBridge(GameObject* object, std::string lib)
 
 void loadHookBridge(GameObject* object, std::string hookname)
 {
-	hookCore.getValue(object->getScriptEngine(), hookname);
+	loadHook(object->getScriptEngine(), hookname);
 }
 
 bool orderScrPriority(GameObject* g1, GameObject* g2)
 {
 	return (g1->getPriority() > g2->getPriority());
-}
-
-void GameObjectHandler::orderUpdateScrArray()
-{
-	updateObjArray.clear();
-	for (auto it = objHandlerMap.begin(); it != objHandlerMap.end(); it++)
-	{
-		updateObjArray.push_back(it->second);
-	}
-	std::sort(updateObjArray.begin(), updateObjArray.end(), orderScrPriority);
-}
-
-//GameObjectHandler
-GameObject* GameObjectHandler::getGameObject(std::string id)
-{
-	for (auto it = objHandlerMap.begin(); it != objHandlerMap.end(); it++)
-	{
-		if (it->second->id == id) return it->second;
-	}
-	std::cout << "<Error:GameObject:GameObjectHandler>[getGameObject] : GameObject : " << id << " does not exists" << std::endl;
-	return nullptr;
-}
-std::vector<GameObject*> GameObjectHandler::getAllGameObject(std::vector<std::string> filters)
-{
-	std::vector<GameObject*> returnVec;
-	for (auto it = objHandlerMap.begin(); it != objHandlerMap.end(); it++)
-	{
-		if (filters.size() == 0) returnVec.push_back(it->second);
-		else
-		{
-			
-			bool allFilters = true;
-			if (fn::Vector::isInList(std::string("Display"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
-			if (fn::Vector::isInList(std::string("Collide"), filters)) { if (!it->second->canCollide()) allFilters = false; }
-			if (fn::Vector::isInList(std::string("Click"), filters)) { if (!it->second->canClick()) allFilters = false; }
-			if (allFilters) returnVec.push_back(it->second);
-		}
-	}
-	return returnVec;
-}
-GameObject* GameObjectHandler::createGameObject(std::string id, std::string type, std::string obj)
-{
-	GameObject* newGameObject = new GameObject(id);
-	DataObject* gameObjectData = new DataObject("None");
-	if (type == "LevelObjects")
-	{
-		DataParser getGameObjectFile;
-		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd");
-		gameObjectData = getGameObjectFile.accessDataObject(obj);
-		newGameObject->loadGameObject(gameObjectData);
-	}
-	kaguya::State* newLuaState = new kaguya::State;
-	std::string key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
-	std::cout << "Create GameObject : " << id << "/" << obj << " with key : " << key << std::endl;
-	this->objHandlerMap[key] = newGameObject;
-	this->objHandlerMap[key]->privateKey = key;
-	this->objHandlerMap[key]->publicKey = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
-	this->scrHandlerMap[key] = newLuaState;
-	triggerDatabaseCore.createCustomNamespace(key);
-	triggerDatabaseCore.createCustomNamespace(this->objHandlerMap[key]->publicKey);
-	this->trgHandlerMap[key] = triggerDatabaseCore.createTriggerGroup(key, "Local");
-	//Script Loading
-	this->scrHandlerMap[key]->dofile("Data/GameScripts/ScrInit.lua");
-	if (type == "LevelObjects") this->scrHandlerMap[key]->dofile("Data/GameScripts/LOInit.lua");
-	if (type == "LevelObjects") loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key], true);
-	else loadScrGameObjectLib(this->objHandlerMap[key], this->scrHandlerMap[key], false);
-	(*this->scrHandlerMap[key])["ID"] = id;
-	(*this->scrHandlerMap[key])["Private"] = this->objHandlerMap[key]->privateKey;
-	(*this->scrHandlerMap[key])["Public"] = this->objHandlerMap[key]->publicKey;
-	(*this->scrHandlerMap[key])("protect(\"ID\")");
-	(*this->scrHandlerMap[key])("protect(\"Private\")");
-	(*this->scrHandlerMap[key])("protect(\"Public\")");
-	this->trgHandlerMap[key]->addTrigger("Init");
-	this->setTriggerState(id, "Init", true);
-	this->trgHandlerMap[key]->addTrigger("Update");
-	this->trgHandlerMap[key]->setPermanent("Update", true);
-	this->setTriggerState(id, "Update", true);
-	this->trgHandlerMap[key]->addTrigger("Collide");
-	this->trgHandlerMap[key]->addTrigger("Click");
-	this->trgHandlerMap[key]->addTrigger("Press");
-	this->trgHandlerMap[key]->addTrigger("Delete");
-	this->objHandlerMap[key]->hookLuaState(this->scrHandlerMap[key]);
-	if (type == "LevelObjects")
-	{
-		if (gameObjectData->listExists(convertPath("Script"), "scriptList"))
-		{
-			int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
-			for (int i = 0; i < scriptListSize; i++)
-			{
-				std::string getScrName;
-				gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
-				this->executeFile(id, getScrName);
-			}
-		}
-		this->orderUpdateScrArray();
-	}
-	return objHandlerMap[key];
-}
-void GameObjectHandler::executeFile(std::string object, std::string path)
-{
-	std::cout << "Errkan:" << path << std::endl;
-	this->scrHandlerMap[getGameObject(object)->privateKey]->dofile(path);
-}
-void GameObjectHandler::executeLine(std::string object, std::string line)
-{
-	this->scrHandlerMap[getGameObject(object)->privateKey]->dostring(line);
-}
-kaguya::State* GameObjectHandler::getLuaStateOfGameObject(std::string object)
-{
-	return this->scrHandlerMap[getGameObject(object)->privateKey];
-}
-void GameObjectHandler::setTriggerState(std::string object, std::string trigger, bool state)
-{
-	this->trgHandlerMap[getGameObject(object)->privateKey]->setTriggerState(trigger, state);
-	if (state)
-	{
-		if (!this->trgHandlerMap[getGameObject(object)->privateKey]->getTrigger(trigger)->isPermanent())
-		{
-			triggerToDisable.push_back(new std::pair<std::string, std::string>(getGameObject(object)->privateKey, trigger));
-		}
-	}
-}
-void GameObjectHandler::setGlobalTriggerState(std::string trigger, bool state)
-{
-	for (auto it = trgHandlerMap.begin(); it != trgHandlerMap.end(); it++)
-	{
-		it->second->setTriggerState(trigger, state);
-	}
-}
-void GameObjectHandler::update(double dt)
-{
-	for (int i = 0; i < updateObjArray.size(); i++)
-	{
-		updateObjArray[i]->update(dt);
-	}
 }
 
 //GameObject
@@ -391,6 +232,10 @@ anim::Animator* GameObject::getAnimator()
 kaguya::State* GameObject::getScriptEngine()
 {
 	return this->scriptEngine;
+}
+TriggerGroup * GameObject::getLocalTriggers()
+{
+	return localTriggers;
 }
 void GameObject::useLocalTrigger(std::string trName)
 {

@@ -12,10 +12,10 @@
 #include "Console.hpp"
 #include "Cursor.hpp"
 #include "Dialog.hpp"
-#include "Triggers.hpp"
+#include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "MathExp.hpp"
-#include "World.hpp"
+#include "Triggers.hpp"
 
 void loadLib(kaguya::State* lua, std::string lib);
 void loadHook(kaguya::State* lua, std::string hookname);
@@ -35,7 +35,7 @@ namespace CoreLib
 	void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
 	void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 	void loadUtils(kaguya::State* lua, std::vector<std::string> args);
-	void loadWorld(kaguya::State* lua, std::vector<std::string> args);
+	//void loadWorld(kaguya::State* lua, std::vector<std::string> args);
 }
 
 class CoreHook

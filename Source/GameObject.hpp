@@ -8,11 +8,10 @@
 
 #include "Animation.hpp"
 #include "Collisions.hpp"
-#include "Console.hpp"
 #include "DataParser.hpp"
-#include "Triggers.hpp"
 #include "LevelSprite.hpp"
 #include "Script.hpp"
+#include "Triggers.hpp"
 
 void loadLibBridge(GameObject* object, std::string lib);
 void loadHookBridge(GameObject* object, std::string hookname);
@@ -26,6 +25,7 @@ class GameObject
 		kaguya::State* scriptEngine;
 
 		std::vector<Trigger*> registeredTriggers;
+		TriggerGroup* localTriggers;
 		std::vector<std::tuple<std::string, std::string, std::string>> registeredAliases;
 
 		std::string id;
@@ -60,46 +60,19 @@ class GameObject
 		Collision::PolygonalCollider* getCollider();
 		anim::Animator* getAnimator();
 		kaguya::State* getScriptEngine();
+		TriggerGroup* getLocalTriggers();
 		void useLocalTrigger(std::string trName);
 		void useGlobalTrigger(std::string trName);
 		void useCustomTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
-};
-
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua, bool fullLoad = false);
-bool orderScrPriority(GameObject* g1, GameObject* g2);
-	
-class GameObjectHandler
-{
-	private:
-		std::map<std::string, GameObject*> objHandlerMap;
-		std::map<std::string, kaguya::State*> scrHandlerMap;
-		std::map<std::string, TriggerGroup*> trgHandlerMap;
-		std::vector<GameObject*> updateObjArray;
-		std::vector<std::pair<std::string, std::string>*> triggerToDisable;
-
-		void orderUpdateScrArray();
-
-	public:
-		GameObject* getGameObject(std::string id);
-		std::vector<GameObject*> getAllGameObject(std::vector<std::string> filters = std::vector<std::string>());
-		GameObject* createGameObject(std::string id, std::string type, std::string obj);
 		template <typename U>
 		void sendRequireArgument(std::string object, std::string argName, U value);
-		void executeFile(std::string object, std::string path);
-		void executeLine(std::string object, std::string line);
-		kaguya::State* getLuaStateOfGameObject(std::string object);
-		void setTriggerState(std::string object, std::string trigger, bool state);
-		void setGlobalTriggerState(std::string trigger, bool state);
-		void update(double dt);
 };
 
+void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
+bool orderScrPriority(GameObject* g1, GameObject* g2);
+
 template<typename U>
-void GameObjectHandler::sendRequireArgument(std::string object, std::string argName, U value)
+inline void GameObject::sendRequireArgument(std::string object, std::string argName, U value)
 {
-	std::cout << "Adding Parameter : " << argName << std::endl;
-	(*this->scrHandlerMap[this->getGameObject(object)->key])["Lua_ReqList"][argName] = value;
+	this->scriptEngine["Lua_ReqList"][argName] = value;
 }
-
-
-extern GameObjectHandler gameObjectHandlerCore;
-extern GameObject* mainGameObject;

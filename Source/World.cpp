@@ -3,6 +3,28 @@
 
 #include "World.hpp"
 
+World::World()
+{
+	worldScriptEngine = new kaguya::State();
+	worldScriptEngine->dofile("Data/GameScripts/WScrInit.lua");
+	loadLib(worldScriptEngine, "Core.Console");
+	triggerDatabaseCore.createCustomNamespace("Map");
+	showCollisionModes["drawLines"] = false;
+	showCollisionModes["drawPoints"] = false;
+	showCollisionModes["drawMasterPoint"] = false;
+	showCollisionModes["drawSkel"] = false;
+	blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
+	normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
+	/*for (unsigned int i = 0; i < backSpriteArray.size(); i++)
+	{
+		backSpriteArray[i]->textureUpdate(true);
+	}
+	for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
+	{
+		frontSpriteArray[i]->textureUpdate(true);
+	}*/
+}
+
 void World::addCharacter(Character* character)
 {
 	charArray.push_back(character);
@@ -33,6 +55,11 @@ void World::addLight(Light::PointLight* lgt)
 anim::RessourceManager* World::getRessourceManager()
 {
 	return &sprRsMan;
+}
+
+kaguya::State * World::getScriptEngine()
+{
+	return worldScriptEngine;
 }
 
 Character* World::getCharacter(int index)
@@ -206,25 +233,25 @@ void World::loadFromFile(std::string filename)
 		{
 			std::string levelObjectType;
 			mapParse.getAttribute("LevelObjects", allObjects[i], "type")->getData(&levelObjectType);
-			gameObjectHandlerCore.createGameObject(allObjects[i], "LevelObjects", levelObjectType);
+			this->createGameObject(allObjects[i], "LevelObjects", levelObjectType);
 			bool hasSpr = false;
 			int objX = 0;
 			int objY = 0;
-			if (gameObjectHandlerCore.getGameObject(allObjects[i])->canDisplay())
+			if (this->getGameObject(allObjects[i])->canDisplay())
 			{
-				this->addLevelSprite(gameObjectHandlerCore.getGameObject(allObjects[i])->getLevelSprite());
+				this->addLevelSprite(this->getGameObject(allObjects[i])->getLevelSprite());
 				hasSpr = true;
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posX"))
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posX")->getData(&objX);
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posY"))
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posY")->getData(&objY);
-				gameObjectHandlerCore.getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
+				this->getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
 			}
-			if (gameObjectHandlerCore.getGameObject(allObjects[i])->canCollide() || gameObjectHandlerCore.getGameObject(allObjects[i])->canClick())
+			if (this->getGameObject(allObjects[i])->canCollide() || this->getGameObject(allObjects[i])->canClick())
 			{
-				this->addCollider(gameObjectHandlerCore.getGameObject(allObjects[i])->getCollider());
-				if (hasSpr && gameObjectHandlerCore.getGameObject(allObjects[i])->isColliderRelative())
-					gameObjectHandlerCore.getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
+				this->addCollider(this->getGameObject(allObjects[i])->getCollider());
+				if (hasSpr && this->getGameObject(allObjects[i])->isColliderRelative())
+					this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
 			}
 		}
 	}
@@ -237,7 +264,7 @@ void World::loadFromFile(std::string filename)
 		{
 			std::string scriptName;
 			mapParse.getListAttribute("Script", "", "gameScripts")->getElement(i)->getData(&scriptName);
-			gameObjectHandlerCore.executeFile("Main", scriptName);
+			worldScriptEngine->dofile(scriptName);
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldScript]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
@@ -389,7 +416,7 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 		backSpriteArray[i]->textureUpdate();
 		if (layeredX + backSpriteArray[i]->getW() > 0 && layeredY + backSpriteArray[i]->getH() > 0)
 		{
-			if (layeredX < width && layeredY < height)
+			if (layeredX < fn::Coord::width && layeredY < fn::Coord::height)
 			{
 				sfe::ComplexSprite tAffSpr;
 				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
@@ -456,7 +483,7 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 		frontSpriteArray[i]->textureUpdate();
 		if (layeredX + backSpriteArray[i]->getW() > 0 && layeredY + backSpriteArray[i]->getH() > 0)
 		{
-			if (layeredX < width && layeredY < height)
+			if (layeredX < fn::Coord::width && layeredY < fn::Coord::height)
 			{
 				sfe::ComplexSprite tAffSpr;
 				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
@@ -470,25 +497,6 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 				if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
-	}
-}
-
-void World::init()
-{
-	triggerDatabaseCore.createCustomNamespace("Map");
-	showCollisionModes["drawLines"] = false;
-	showCollisionModes["drawPoints"] = false;
-	showCollisionModes["drawMasterPoint"] = false;
-	showCollisionModes["drawSkel"] = false;
-	blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
-	normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
-	for (unsigned int i = 0; i < backSpriteArray.size(); i++)
-	{
-		backSpriteArray[i]->textureUpdate(true);
-	}
-	for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
-	{
-		frontSpriteArray[i]->textureUpdate(true);
 	}
 }
 
@@ -523,12 +531,12 @@ void World::setCameraPosition(double tX, double tY, std::string setMode)
 
 	if (camX < 0)
 		camX = 0;
-	if (camX + width > sizeX)
-		camX = sizeX - width;
+	if (camX + fn::Coord::width > sizeX)
+		camX = sizeX - fn::Coord::width;
 	if (camY <= 0)
 		camY = 0;
-	if (camY + height > sizeY)
-		camY = sizeY - height;
+	if (camY + fn::Coord::height > sizeY)
+		camY = sizeY - fn::Coord::height;
 }
 
 double World::getCamX()
@@ -554,6 +562,97 @@ int World::getStartX()
 int World::getStartY()
 {
 	return startY;
+}
+
+GameObject* World::getGameObject(std::string id)
+{
+	if (gameObjectsMap.find(id) != gameObjectsMap.end())
+		return gameObjectsMap[id];
+	else
+		std::cout << "<Error:World:World>[getGameObject] : Can't find GameObject : " << id << std::endl;
+}
+
+std::vector<GameObject*> World::getAllGameObject(std::vector<std::string> filters)
+{
+	std::vector<GameObject*> returnVec;
+	for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
+	{
+		if (filters.size() == 0) returnVec.push_back(it->second);
+		else
+		{
+
+			bool allFilters = true;
+			if (fn::Vector::isInList(std::string("Display"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
+			if (fn::Vector::isInList(std::string("Collide"), filters)) { if (!it->second->canCollide()) allFilters = false; }
+			if (fn::Vector::isInList(std::string("Click"), filters)) { if (!it->second->canClick()) allFilters = false; }
+			if (allFilters) returnVec.push_back(it->second);
+		}
+	}
+	return returnVec;
+}
+
+GameObject * World::createGameObject(std::string id, std::string type, std::string obj)
+{
+	GameObject* newGameObject = new GameObject(id);
+	DataObject* gameObjectData = new DataObject("None");
+	if (type == "LevelObjects")
+	{
+		DataParser getGameObjectFile;
+		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd");
+		gameObjectData = getGameObjectFile.accessDataObject(obj);
+		newGameObject->loadGameObject(gameObjectData);
+	}
+	newGameObject->scriptEngine = new kaguya::State;
+	this->gameObjectsMap[id] = newGameObject;
+	newGameObject->privateKey = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
+	newGameObject->publicKey = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
+	triggerDatabaseCore.createCustomNamespace(newGameObject->privateKey);
+	triggerDatabaseCore.createCustomNamespace(newGameObject->publicKey);
+	newGameObject->localTriggers = triggerDatabaseCore.createTriggerGroup(newGameObject->privateKey, "Local");
+	//Script Loading
+	newGameObject->scriptEngine->dofile("Data/GameScripts/ScrInit.lua");
+	if (type == "LevelObjects") newGameObject->scriptEngine->dofile("Data/GameScripts/LOInit.lua");
+	loadScrGameObjectLib(newGameObject, newGameObject->scriptEngine);
+	(*newGameObject->scriptEngine)["ID"] = id;
+	(*newGameObject->scriptEngine)["Private"] = newGameObject->privateKey;
+	(*newGameObject->scriptEngine)["Public"] = newGameObject->publicKey;
+	(*newGameObject->scriptEngine)("protect(\"ID\")");
+	(*newGameObject->scriptEngine)("protect(\"Private\")");
+	(*newGameObject->scriptEngine)("protect(\"Public\")");
+	newGameObject->localTriggers->addTrigger("Init");
+	newGameObject->localTriggers->setTriggerState("Init", true);
+	newGameObject->localTriggers->addTrigger("Update");
+	newGameObject->localTriggers->setPermanent("Update", true);
+	newGameObject->localTriggers->setTriggerState("Update", true);
+	newGameObject->localTriggers->addTrigger("Collide");
+	newGameObject->localTriggers->addTrigger("Click");
+	newGameObject->localTriggers->addTrigger("Press");
+	newGameObject->localTriggers->addTrigger("Delete");
+	if (type == "LevelObjects")
+	{
+		if (gameObjectData->listExists(convertPath("Script"), "scriptList"))
+		{
+			int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
+			for (int i = 0; i < scriptListSize; i++)
+			{
+				std::string getScrName;
+				gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
+				newGameObject->scriptEngine->dofile(getScrName);
+			}
+		}
+		this->orderUpdateScrArray();
+	}
+	return newGameObject;
+}
+
+void World::orderUpdateScrArray()
+{
+	updateObjArray.clear();
+	for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
+	{
+		updateObjArray.push_back(it->second);
+	}
+	std::sort(updateObjArray.begin(), updateObjArray.end(), orderScrPriority);
 }
 
 void World::addParticle(MathParticle* particle)
@@ -838,4 +937,11 @@ void World::createCollisionAtPos(int x, int y)
 	newCollider->addPoint(100, 50);
 	newCollider->setPositionFromMaster(x, y);
 	collidersArray.push_back(newCollider);
+}
+
+void loadWorldScriptEngineBaseLib(kaguya::State* lua)
+{
+	(*lua)["CPP_Import"] = &loadLib;
+	(*lua)["CPP_Hook"] = &loadHook;
+	(*lua)["This"] = lua;
 }

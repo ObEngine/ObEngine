@@ -14,89 +14,95 @@
 #include "Character.hpp"
 #include "Spells.hpp"
 #include "DataParser.hpp"
+#include "GameObject.hpp"
 #include "TimeManager.hpp"
 #include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "Particle.hpp"
 #include "GameObject.hpp"
 
+void loadWorldScriptEngineBaseLib(kaguya::State* lua);
+
 class World
 {
-private:
-	std::string levelName = "";
-	int sizeX = 0;
-	int sizeY = 0;
-	std::vector<LevelSprite*> backSpriteArray;
-	std::vector<LevelSprite*> frontSpriteArray;
-	std::vector<Collision::PolygonalCollider*> collidersArray;
-	std::map<std::string, GameObject*> gameObjectsMap;
-	std::vector<GameObject*> updateObjArray;
-	std::map<std::string, Light::PointLight*> lightsMap;
-	std::vector<MathParticle*> particleArray;
-	double camX = 0;
-	double camY = 0;
-	sf::Sprite backSprBlit;
-	sf::RenderTexture renderTex;
-	std::vector<Character*> charArray;
-	double blurMul = 0.0003;
-	sf::Shader blurShader;
-	sf::Shader lightShader;
-	sf::Shader normalShader;
-	int width = fn::Coord::width;
-	int height = fn::Coord::height;
-	int startX = 0;
-	int startY = 0;
-	anim::RessourceManager sprRsMan;
-	double gameSpeed;
-	std::map<std::string, bool> showCollisionModes;
+	private:
+		std::string levelName = "";
+		int sizeX = 0;
+		int sizeY = 0;
+		double camX = 0;
+		double camY = 0;
+		int startX = 0;
+		int startY = 0;
+		kaguya::State* worldScriptEngine;
 
-public:
-	void init();
-	void addCharacter(Character* character);
-	void addLevelSprite(LevelSprite* spr);
-	void addCollider(Collision::PolygonalCollider* col);
-	void addLight(Light::PointLight* lgt);
-	anim::RessourceManager* getRessourceManager();
-	Character* getCharacter(int index);
-	void loadFromFile(std::string filename);
-	DataParser* saveData();
-	std::vector<Collision::PolygonalCollider*> getColliders();
-	void update(double dt);
-	void display(sf::RenderWindow* surf);
-	void visualDisplayBack(sf::RenderWindow* surf);
-	void visualDisplayFront(sf::RenderWindow* surf);
-	int getSizeX();
-	int getSizeY();
-	void setCameraPosition(double tX, double tY, std::string setMode = "SET");
-	double getCamX();
-	double getCamY();
-	void castSpell(Spells::Projectile* spellToCast);
-	int getStartX();
-	int getStartY();
-	void addParticle(MathParticle* particle);
-	void reorganizeLayers();
-	void setBlurMul(double newBlur);
-	template<typename U>
-	void sendRequireArgument(std::string object, std::string argName, U value);
-	//Map Editor
-	LevelSprite* getSpriteByIndex(std::string backOrFront, int index);
-	int getSpriteArraySize(std::string backOrFront);
-	std::vector<LevelSprite*> getAllSprites();
-	std::vector<LevelSprite*> getSpritesByLayer(int layer);
-	LevelSprite* getSpriteByPos(int x, int y, int layer);
-	LevelSprite* getSpriteByID(std::string ID);
-	void deleteSprite(LevelSprite* sprToDelete, bool freeMemory = true);
-	std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
-	Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
-	Collision::PolygonalCollider* getCollisionByID(std::string id);
-	std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
-	void deleteCollisionByID(std::string id);
-	void createCollisionAtPos(int x, int y);
-	void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+		std::vector<LevelSprite*> backSpriteArray;
+		std::vector<LevelSprite*> frontSpriteArray;
+		std::vector<Collision::PolygonalCollider*> collidersArray;
+		std::map<std::string, GameObject*> gameObjectsMap;
+		std::vector<GameObject*> updateObjArray;
+		std::map<std::string, Light::PointLight*> lightsMap;
+		std::vector<MathParticle*> particleArray;
+		std::vector<Character*> charArray;
+		
+		double blurMul = 0.0003;
+		sf::Shader blurShader;
+		sf::Shader lightShader;
+		sf::Shader normalShader;
+		
+		anim::RessourceManager sprRsMan;
+		double gameSpeed;
+		std::map<std::string, bool> showCollisionModes;
+
+	public:
+		//World
+		World();
+		void loadFromFile(std::string filename);
+		DataParser* saveData();
+		void update(double dt);
+		void display(sf::RenderWindow* surf);
+		int getSizeX();
+		int getSizeY();
+		int getStartX();
+		int getStartY();
+		//GameObjects
+		GameObject* getGameObject(std::string id);
+		std::vector<GameObject*> getAllGameObject(std::vector<std::string> filters = std::vector<std::string>());
+		GameObject* createGameObject(std::string id, std::string type, std::string obj);
+		void orderUpdateScrArray();
+		//Camera
+		void setCameraPosition(double tX, double tY, std::string setMode = "SET");
+		double getCamX();
+		double getCamY();
+		//Lights
+		void addLight(Light::PointLight* lgt);
+		//Character
+		void addCharacter(Character* character);
+		Character* getCharacter(int index);
+		//LevelSprites
+		void addLevelSprite(LevelSprite* spr);
+		void reorganizeLayers();
+		void setBlurMul(double newBlur);
+		void visualDisplayBack(sf::RenderWindow* surf);
+		void visualDisplayFront(sf::RenderWindow* surf);
+		LevelSprite* getSpriteByIndex(std::string backOrFront, int index);
+		int getSpriteArraySize(std::string backOrFront);
+		std::vector<LevelSprite*> getAllSprites();
+		std::vector<LevelSprite*> getSpritesByLayer(int layer);
+		LevelSprite* getSpriteByPos(int x, int y, int layer);
+		LevelSprite* getSpriteByID(std::string ID);
+		void deleteSprite(LevelSprite* sprToDelete, bool freeMemory = true);
+		//Colliders
+		std::vector<Collision::PolygonalCollider*> getColliders();
+		void addCollider(Collision::PolygonalCollider* col);
+		std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
+		Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
+		Collision::PolygonalCollider* getCollisionByID(std::string id);
+		std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
+		void deleteCollisionByID(std::string id);
+		void createCollisionAtPos(int x, int y);
+		void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+		//Other
+		void addParticle(MathParticle* particle);
+		anim::RessourceManager* getRessourceManager();
+		kaguya::State* getScriptEngine();
 };
-
-template<typename U>
-void World::sendRequireArgument(std::string object, std::string argName, U value)
-{
-	(*this->scrHandlerMap[this->getGameObject(object)->key])["Lua_ReqList"][argName] = value;
-}
