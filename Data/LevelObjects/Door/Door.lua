@@ -4,8 +4,8 @@ Door = {}
 Import("Core.Animation.Animator");
 Import("Core.Collision");
 
-UseLocalTrigger("Init");
-UseLocalTrigger("Click");
+This:useLocalTrigger("Init");
+This:useLocalTrigger("Click");
 
 function Local.Init()
     This:Collider():move(9, 0);
@@ -15,7 +15,7 @@ function Local.Init()
         doorControlled = true;
         doorUnlocked = false;
         doorControllerKey = Require("DoorControllerKey");
-        UseCustomTrigger(doorControllerKey, "Output", "*", "DoorController");
+        This:useCustomTrigger(doorControllerKey, "Output", "*", "DoorController");
     end
     This:Animator():setKey("Close");
     opened = false;

@@ -5,23 +5,29 @@ Import("Core.Collision");
 Import("Core.MathExp");
 Import("Core.LevelSprite");
 
-UseLocalTrigger("Init");
-UseLocalTrigger("Update");
+This:useLocalTrigger("Init");
+This:useLocalTrigger("Update");
 
 function Local.Init()
     This:Animator():setKey("Left");
-    xMovement = Core.MathExp.MathExp.new("cos@(t/10) * 250 + 550");
+    local basePosX = This:LevelSprite():getX();
+    local basePosY = This:LevelSprite():getY();
+    xMovement = Core.MathExp.MathExp.new("cos@(t/10) * 250 + bx");
     xMovement:buildMathExp();
-    yMovement = Core.MathExp.MathExp.new("cos@(t) * 30 + 750");
+    xMovement:setVar("bx", basePosX);
+    yMovement = Core.MathExp.MathExp.new("cos@(t) * 30 + by");
     yMovement:buildMathExp();
+    yMovement:setVar("by", basePosY);
     dMovement = Core.MathExp.MathExp.new("cos@(t/10)");
     dMovement:buildMathExp();
     t = 0;
 end
 
 function Local.Update(param)
-    This:LevelSprite():setPosition(xMovement:getResult(), yMovement:getResult());
-    This:Collider():setPosition(math.floor(xMovement:getResult()), math.floor(yMovement:getResult()));
+    local x = xMovement:getResult();
+    local y = yMovement:getResult();
+    This:LevelSprite():setPosition(x, y);
+    This:Collider():setPosition(math.floor(x), math.floor(y));
     t = t + (param.dt / 10);
     xMovement:setVar("t", t);
     yMovement:setVar("t", t);

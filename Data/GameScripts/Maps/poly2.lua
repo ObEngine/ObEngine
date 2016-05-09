@@ -1,6 +1,2 @@
-Import("Core.Trigger");
-
-GetHook("GameObjectHandler");
-GetHook("TriggerDatabase");
-
-Hook.GameObjectHandler:sendRequireArgument("door", "DoorControllerKey", Hook.GameObjectHandler:getGameObject("button"):getPublicKey());
+World:getGameObject("door"):sendRequireArgument("DoorControllerKey", World:getGameObject("button"):getPublicKey());
+print("Hello from poly2.map.msd");

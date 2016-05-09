@@ -5,6 +5,9 @@ GameConfig:
 	antiAliasing:True
     depthOfField:True
     scrollSensibility:1
+    framerateLimit:True
+    framerateTarget:60
+    vsync:True
     
 KeyBinding:
     @game

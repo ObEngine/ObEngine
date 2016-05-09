@@ -1,19 +1,17 @@
 Button = {}
 
 Import("Core.Trigger");
-Import("Core.Dialog");
 Import("Core.Animation.Animator");
 
 GetHook("TriggerDatabase");
-GetHook("TextDisplay");
 
-UseLocalTrigger("Init");
-UseLocalTrigger("Click");
+This:useLocalTrigger("Init");
+This:useLocalTrigger("Click");
 
 function Local.Init()
     selfTrGrp = Hook.TriggerDatabase:createTriggerGroup(Private, "Button")
             :addTrigger("Back");
-    UseCustomTrigger(Private, "Button", "Back");
+    This:useCustomTrigger(Private, "Button", "Back");
     buttonTrigger = Hook.TriggerDatabase:createTriggerGroup(Public, "Output")
         :addTrigger("On")
         :addTrigger("Off");

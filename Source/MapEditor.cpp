@@ -261,7 +261,6 @@ void MapEditor::editMap(std::string mapName)
 	double startLoadTime = getTickSinceEpoch();
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
 	TextRenderer textDisplay;
-	//textDisplay.setRenderClass(new Renderers::Shade());
 	hookCore.dropValue("TextDisplay", &textDisplay);
 	std::cout << "Creation Chrono : " << "[Start]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
@@ -334,6 +333,7 @@ void MapEditor::editMap(std::string mapName)
 
 	//Keybinding
 	KeyBinder keybind = KeyBinder();
+	hookCore.dropValue("KeyBinder", &keybind);
 	keybind.loadFromFile(&configFile);
 	std::cout << "Gamepad Connected : " << sf::Joystick::isConnected(0) << std::endl;
 	std::cout << "Gamepad has : " << sf::Joystick::getButtonCount(0) << " buttons" << std::endl;

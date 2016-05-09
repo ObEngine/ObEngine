@@ -28,9 +28,9 @@ local meta = {
 setmetatable(_G, meta)
 
 function Import(lib)
-    CPP_Import(Private, lib);
+    CPP_Import(This, lib);
 end
 
 function GetHook(hook)
-    CPP_Hook(Private, hook);
+    CPP_Hook(This, hook);
 end

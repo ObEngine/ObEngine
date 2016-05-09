@@ -451,7 +451,7 @@ LevelObjects:
        
     @enemy
         type:"EnemyTest"
-        posX:400
+        posX:550
         posY:800
         
 Script:

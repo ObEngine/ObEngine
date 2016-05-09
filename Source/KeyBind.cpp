@@ -19,25 +19,17 @@ sf::Keyboard::Key KeyClass::getKey()
 std::string KeyBinder::getActionKey(std::string action)
 {
 	if (actionMap.find(action) != actionMap.end())
-	{
 		return actionMap[action];
-	}
 	else
-	{
 		std::cout << "<Error:KeyBind:KeyBinder>[getActionKey] : Can't find key for action : " << action << std::endl;
-	}
 }
 
 KeyClass* KeyBinder::getKey(std::string key)
 {
 	if (keyMap.find(key) != keyMap.end())
-	{
 		return keyMap[key];
-	}
 	else
-	{
 		std::cout << "<Error:KeyBind:KeyBinder>[getKey] : Can't find KeyClass for key : " << key << std::endl;
-	}
 }
 
 KeyBinder::KeyBinder()
@@ -227,6 +219,11 @@ void KeyBinder::setActionDelay(std::string action, int delay)
 {
 	baseActionDelayer[action] = delay;
 	actionDelayer[action] = 0;
+}
+
+bool KeyBinder::isKeyPressed(std::string key)
+{
+	return sf::Keyboard::isKeyPressed(getKey(key)->getKey());;
 }
 
 void KeyBinder::connectAction(std::string action, std::string key) {

@@ -18,18 +18,6 @@ function IsArgumentInRequireList(paramName)
     end
 end
 
-function UseLocalTrigger(trName)
-    CPP_UseLocalTrigger(Private, trName);
-end
-
-function UseGlobalTrigger(trName)
-    CPP_UseGlobalTrigger(Private, trName);
-end
-
-function UseCustomTrigger(trNsp, trGrp, trName, useAs)
-    CPP_UseCustomTrigger(Private, trNsp, trGrp, trName, useAs);
-end
-
 function Local.Init()
 end
 function Local.Update()
