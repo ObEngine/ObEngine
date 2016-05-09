@@ -257,7 +257,7 @@ bool GUI::Widget::isRectClicked(sf::Event& evnt, sf::Rect<float> rect, bool left
 	{
 		if (!LeftClickReleased || !rightClickReleased)
 		{
-			if (convertMousePosX(evnt.mouseButton.x) > rect.left && convertMousePosX(evnt.mouseButton.x) < rect.left + rect.width && convertMousePosY(evnt.mouseButton.y) > rect.top && convertMousePosY(evnt.mouseButton.y) < rect.top + rect.height)
+			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && convertByHeight(evnt.mouseButton.y) > rect.top && convertByHeight(evnt.mouseButton.y) < rect.top + rect.height)
 			{
 				GUI::container->setAlreadyClicked(true);
 				if (evnt.mouseButton.button == sf::Mouse::Left)
@@ -283,7 +283,7 @@ bool GUI::Widget::isRectClicked(sf::Event& evnt, sf::Rect<float> rect, bool left
 		}
 		else if (!GUI::container->getAlreadyClicked())
 		{
-			if (convertMousePosX(evnt.mouseButton.x) > rect.left && convertMousePosX(evnt.mouseButton.x) < rect.left + rect.width && convertMousePosY(evnt.mouseButton.y) > rect.top && convertMousePosY(evnt.mouseButton.y) < rect.top + rect.height)
+			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && convertByHeight(evnt.mouseButton.y) > rect.top && convertByHeight(evnt.mouseButton.y) < rect.top + rect.height)
 			{
 				GUI::container->setAlreadyClicked(true);
 				if (evnt.mouseButton.button == sf::Mouse::Left)
@@ -326,7 +326,7 @@ bool GUI::Widget::isRectClickedOutside(sf::Event& evnt, sf::Rect<float> rect, bo
 bool GUI::Widget::isRectHovering(sf::Event& evnt, sf::Rect<float> rect)
 {
 	sf::Vector2i pos = sf::Mouse::getPosition(*GUI::window);
-	if (convertMousePosX(pos.x) > rect.left && convertMousePosX(pos.x)  < rect.left + rect.width && convertMousePosY(pos.y)  > rect.top && convertMousePosY(pos.y)  < rect.top + rect.height)
+	if (convertByWidth(pos.x) > rect.left && convertByWidth(pos.x)  < rect.left + rect.width && convertByHeight(pos.y)  > rect.top && convertByHeight(pos.y)  < rect.top + rect.height)
 	{
 		return true;
 	}
@@ -1015,7 +1015,7 @@ void GUI::WidgetContainer::autoMove()
 	}
 	if (holding && evnt->type == sf::Event::MouseMoved)
 	{
-		move(convertMousePosX(evnt->mouseMove.x) - posX - currentShiftX, convertMousePosX(evnt->mouseMove.y) - posY - currentShiftY);
+		move(convertByWidth(evnt->mouseMove.x) - posX - currentShiftX, convertByWidth(evnt->mouseMove.y) - posY - currentShiftY);
 	}
 }
 
@@ -1163,7 +1163,8 @@ void GUI::WidgetContainer::drawAll(sf::RenderWindow * GUI)
 	{
 		GUI->draw(background);
 		glEnable(GL_SCISSOR_TEST);
-		glScissor(posX, windowHeight - posY - height, width, height);
+
+		glScissor(posX, windowHeight - posY - height, convertByWidth(width), convertByHeight(height));
 		if (decoTextures.size() > 0)
 		{
 			for (std::vector<std::tuple<sf::Texture, int, int>>::reverse_iterator ite = decoTextures.rbegin(); ite != decoTextures.rend(); ite++)
@@ -1241,37 +1242,44 @@ void GUI::LoadingBar::setTexture()
 
 void GUI::LoadingBar::fill(int percentage, double timeToFill)
 {
-	this->timeToFill = timeToFill;
+	if (timeToFill < delay)
+		this->timeToFill = delay;
+	else
+		this->timeToFill = timeToFill;
 	if (percentage > fillingInPercentage)
 	{
 		if (percentage >= 100)
 		{
-			currentPixelsPerDraw = (100 * pixelsPerPercent - fillingInPixels) / (this->timeToFill / delay);
+			currentPixelsPerDraw = (100 * pixelsPerPercent - fillingInPixels) / std::round(this->timeToFill / delay);
 			fillingInPercentage = 100;
 			fillingInPixels = sprites[0].getGlobalBounds().width;
 		}
 		else
 		{
-			currentPixelsPerDraw = (percentage * pixelsPerPercent - fillingInPixels) / (this->timeToFill / delay);
+			currentPixelsPerDraw = (percentage * pixelsPerPercent - fillingInPixels) / std::round(this->timeToFill / delay);
 			fillingInPercentage = percentage;
 			fillingInPixels = percentage * pixelsPerPercent;
 		}
 	}
 }
 
-void GUI::LoadingBar::addFilling(int percentageToAdd)
+void GUI::LoadingBar::addFilling(int percentageToAdd, double timeToFill)
 {
+	if (timeToFill < delay)
+		this->timeToFill = delay;
+	else
+		this->timeToFill = timeToFill;
 	if (fillingInPercentage + percentageToAdd >= 100)
 	{
+		currentPixelsPerDraw = (100 * pixelsPerPercent) / std::round(this->timeToFill / delay);
 		fillingInPercentage = 100;
 		fillingInPixels = sprites[0].getGlobalBounds().width;
-		currentFillingPixels = fillingInPixels;
 	}
 	else
 	{
+		currentPixelsPerDraw = (percentageToAdd * pixelsPerPercent) / std::round(this->timeToFill / delay);
 		fillingInPercentage += percentageToAdd;
 		fillingInPixels += percentageToAdd * pixelsPerPercent;
-		currentFillingPixels = fillingInPixels;
 	}
 }
 
@@ -1290,21 +1298,19 @@ int GUI::LoadingBar::getFilling()
 
 void GUI::LoadingBar::draw(sf::RenderWindow* GUI)
 {
-
-	if (double(std::clock()) / CLOCKS_PER_SEC - timeBefore > delay && currentFillingPixels < fillingInPixels)
+	if (double(std::clock()) / CLOCKS_PER_SEC - timeBefore > delay && (int)(std::round(currentFillingPixels)) < fillingInPixels)
 	{
 		currentFillingPixels += currentPixelsPerDraw;
 		timeBefore = double(std::clock()) / CLOCKS_PER_SEC;
 	}
 	if (fillingType == "Horizontal")
 	{
-		absolutesX[1] = absolutesX[0] + sideBordersWidth;
+		absolutesX[1] = absolutesX[0];
 		absolutesY[1] = absolutesY[0] + TopBotBordersHeight;
-		for (int i = 0; i < currentFillingPixels; i++)
+		for (int i = 0; i < currentFillingPixels - 1; i++)
 		{
-			sprites[1].setPosition(absolutesX[1], absolutesY[1]);
+			sprites[1].setPosition(absolutesX[1] + i, absolutesY[1]);
 			GUI->draw(sprites[1]);
-			absolutesX[1] += 1;
 		}
 	}
 	else if (fillingType == "Vertical")
@@ -1314,9 +1320,8 @@ void GUI::LoadingBar::draw(sf::RenderWindow* GUI)
 
 		for (int i = 0; i < currentFillingPixels; i++)
 		{
-			sprites[1].setPosition(absolutesX[1], absolutesY[1]);
+			sprites[1].setPosition(absolutesX[1], absolutesY[1] - i);
 			GUI->draw(sprites[1]);
-			absolutesY[1] -= 1;
 		}
 	}
 
@@ -2638,8 +2643,8 @@ void GUI::Movable::updateTexture(sf::Event& evnt)
 		if (LeftClickReleased && isRectClicked(evnt, sprites[0].getGlobalBounds(), true, false))
 		{
 			isHolding = true;
-			currentShiftX = (convertMousePosX(evnt.mouseButton.x) - absolutesX[0]);
-			currentShiftY = (convertMousePosY(evnt.mouseButton.y) - absolutesY[0]);
+			currentShiftX = (convertByWidth(evnt.mouseButton.x) - absolutesX[0]);
+			currentShiftY = (convertByHeight(evnt.mouseButton.y) - absolutesY[0]);
 		}
 
 		if (isHolding && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -2713,7 +2718,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 {
 	if (!hasVerticalConstaint)
 	{
-		int y = convertMousePosY(evnt.mouseMove.y) - currentShiftY;
+		int y = convertByHeight(evnt.mouseMove.y) - currentShiftY;
 		if (hasPosConstraints)
 		{
 			if (y < posYMin)
@@ -2736,7 +2741,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 
 	if (!hasHorizontalConstraint)
 	{
-		int x = convertMousePosX(evnt.mouseMove.x) - currentShiftX;
+		int x = convertByWidth(evnt.mouseMove.x) - currentShiftX;
 		if (hasPosConstraints)
 		{
 			if (x < posXMin)
@@ -2951,11 +2956,8 @@ void GUI::Button::setPushed()
 	}
 	if (functionBinded)
 	{
-		function(parameters);
-	}
-	if (voidFunctionBinded)
-	{
-		voidFunction();
+		std::cout << "Function executed" << std::endl;
+		futureFunction();
 	}
 
 }
@@ -3108,18 +3110,27 @@ void GUI::Button::setTexture()
 	setTextureMap(&sprites[0], nameImageIdle);
 }
 
-void GUI::Button::bindFunction(std::function<void(DataObject*)> function, std::string parameters)
+void GUI::Button::bindFunction(std::function<void()> func)
+{
+	std::cout << "Function binded Koin" << std::endl;
+	futureFunction = func;
+	functionBinded = true;
+}
+
+/*void GUI::Button::bindFunction(std::function<void(DataObject*)> function, std::string parameters)
 {
 	this->parameters = parseBind(parameters);
 	this->function = function;
 	functionBinded = true;
-}
+}*/
 
-void GUI::Button::bindFunction(std::function<void()> function)
+/*void GUI::
+
+(std::function<void()> function)
 {
 	this->voidFunction = function;
 	voidFunctionBinded = true;
-}
+}*/
 
 /*GUI::NumericInput::NumericInput(std::string ID, int posX, int posY, int defaultValue, std::string style, std::string font, sf::Color fontColor, int fontSize) : Widget(ID, posX, posY, style)
 {
@@ -3544,7 +3555,7 @@ void GUI::NumericSlider::updateTexture(sf::Event& evnt)
 	if (LeftClickReleased && isRectClicked(evnt, sprites[1].getGlobalBounds(), true, false))
 	{
 		isHoldingCursor = true;
-		currentShift = convertMousePosX(evnt.mouseButton.x) - posX[1];
+		currentShift = convertByWidth(evnt.mouseButton.x) - posX[1];
 	}
 
 	if (isHoldingCursor && !LeftClickReleased)
@@ -3570,9 +3581,9 @@ void GUI::NumericSlider::isHolding(sf::Event& evnt)
 	{
 		int previousPos = posX[1];
 		int posXContainer = absolutesX[1] - posX[1];
-		if (convertMousePosX(evnt.mouseMove.x) - currentShift <= posX[0] + sprites[0].getGlobalBounds().width && convertMousePosX(evnt.mouseMove.x) - currentShift >= posX[0])
+		if (convertByWidth(evnt.mouseMove.x) - currentShift <= posX[0] + sprites[0].getGlobalBounds().width && convertByWidth(evnt.mouseMove.x) - currentShift >= posX[0])
 		{
-			posX[1] = convertMousePosX(evnt.mouseMove.x) - currentShift;
+			posX[1] = convertByWidth(evnt.mouseMove.x) - currentShift;
 			if (posX[1] - previousPos != 0)
 				number = (posX[1] - posX[0]) * valuePerMove + min;
 			text[0].setString(std::to_string(number));
@@ -3795,6 +3806,10 @@ void GUI::TextInput::moveCursorLeft()
 		{
 			cursorPosition--;
 			currentCursorOffset -= charToMove.getGlobalBounds().width;
+		}
+		else
+		{
+			//Change the substring displayed
 		}
 	}
 	updatePositions();
@@ -4351,14 +4366,14 @@ void GUI::Container::loadWidContFromFileInWidCont(std::string filename, std::str
 	}
 }
 
-int convertMousePosX(int mousePosX)
+int convertByWidth(int value)
 {
-	return static_cast<double>(fn::Coord::baseWidth) / GUI::windowWidth * mousePosX;
+	return static_cast<double>(fn::Coord::baseWidth) / GUI::windowWidth * value;
 }
 
-int convertMousePosY(int mousePosY)
+int convertByHeight(int value)
 {
-	return static_cast<double>(fn::Coord::baseHeight) / GUI::windowHeight * mousePosY;
+	return static_cast<double>(fn::Coord::baseHeight) / GUI::windowHeight * value;
 }
 
 Color::Color(sf::Color color)
