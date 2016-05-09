@@ -2956,7 +2956,6 @@ void GUI::Button::setPushed()
 	}
 	if (functionBinded)
 	{
-		std::cout << "Function executed" << std::endl;
 		futureFunction();
 	}
 
@@ -3112,7 +3111,6 @@ void GUI::Button::setTexture()
 
 void GUI::Button::bindFunction(std::function<void()> func)
 {
-	std::cout << "Function binded Koin" << std::endl;
 	futureFunction = func;
 	functionBinded = true;
 }
