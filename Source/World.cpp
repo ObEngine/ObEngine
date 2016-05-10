@@ -597,7 +597,7 @@ std::vector<GameObject*> World::getAllGameObject(std::vector<std::string> filter
 	return returnVec;
 }
 
-GameObject * World::createGameObject(std::string id, std::string type, std::string obj)
+GameObject* World::createGameObject(std::string id, std::string type, std::string obj)
 {
 	GameObject* newGameObject = new GameObject(id);
 	DataObject* gameObjectData = new DataObject("None");

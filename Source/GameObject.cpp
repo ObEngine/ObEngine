@@ -65,6 +65,7 @@ void GameObject::registerTrigger(Trigger* trg)
 void GameObject::loadGameObject(DataObject* obj)
 {
 	std::string animatorPath;
+	std::cout << "Error is : " << id << std::endl;
 	//Animator
 	if (obj->complexExists(convertPath(""), "Animator"))
 	{
