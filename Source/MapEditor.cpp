@@ -101,12 +101,11 @@ sf::Texture MapEditor::SpriteFile::getTexture()
 	return texture;
 }
 
-void MapEditor::loadSpriteTab(DataObject* parameters)
+void MapEditor::loadSpriteTab(std::string geid)
 {
+	std::cout << "Recv geid from LST : " << geid << std::endl;
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
-	std::string geid;
-	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
 	if (addFileGUIMap.find(geid) == addFileGUIMap.end())
 	{
 		addFileGUIMap[geid] = std::map<std::string, GUI::Button*>();
@@ -135,12 +134,13 @@ void MapEditor::loadSpriteTab(DataObject* parameters)
 			gui->createButton("EditorSprites", "LS_SPR_" + spritesInCat[i]->getName(), xpos, ypos, true, false, "GREY");
 			if (i == 0)
 			{
-				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(&displayAddSpriteFolderList);
+				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(
+					[] {displayAddSpriteFolderList();});
 			}
 			else
 			{
 				GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->bindFunction(
-					&addSpriteToWorld, "string id = '" + spritesInCat[i]->getName() + "'");
+					[spritesInCat, i] {addSpriteToWorld(spritesInCat[i]->getName());});
 			}
 			GUI::Widget::getWidgetByID<GUI::Button>("LS_SPR_" + spritesInCat[i]->getName())->setTextureAll(spritesInCat[i]->getTexture());
 			addFileGUIMap[geid]["LS_SPR_" + spritesInCat[i]->getName()] = 
@@ -220,8 +220,9 @@ void MapEditor::buildAddSpriteFolderList()
 		}
 		tempFolder->render(&rtexture);
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->setTextureAll(tempFolder->getTexture());
+		std::string sendFolderName = iterator->first;
 		GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first)->bindFunction(
-			&MapEditor::loadSpriteTab, "string id = '" + iterator->first + "'");
+			[sendFolderName] {std::cout << sendFolderName << std::endl; MapEditor::loadSpriteTab(sendFolderName); });
 		addSprFolderMap[iterator->first] = tempFolder;
 		addBtnGUIMap["LS_CTG_" + iterator->first] = GUI::Widget::getWidgetByID<GUI::Button>("LS_CTG_" + iterator->first);
 	}
@@ -237,10 +238,9 @@ void MapEditor::displayAddSpriteFolderList()
 	}
 }
 
-void MapEditor::addSpriteToWorld(DataObject* parameters)
+void MapEditor::addSpriteToWorld(std::string geid)
 {
-	std::string geid;
-	parameters->getAttribute(convertPath(""), "id")->getData(&geid);
+	std::cout << "Recv geid : " << geid << std::endl;
 	World* world = hookCore.getPointer("World")->as<World*>();
 	std::string key = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);;
 	while (world->getSpriteByID(key) != NULL)

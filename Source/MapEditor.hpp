@@ -63,9 +63,9 @@ namespace MapEditor
 			sf::Texture getTexture();
 	};
 
-	void loadSpriteTab(DataObject* parameters);
+	void loadSpriteTab(std::string geid);
 	void buildAddSpriteFolderList();
 	void displayAddSpriteFolderList();
-	void addSpriteToWorld(DataObject* parameters);
+	void addSpriteToWorld(std::string geid);
 	void editMap(std::string mapName);
 }
