@@ -12,6 +12,7 @@
 #include "Console.hpp"
 #include "Cursor.hpp"
 #include "Dialog.hpp"
+#include "GUI.hpp"
 #include "KeyBind.hpp"
 #include "LevelSprite.hpp"
 #include "Light.hpp"
@@ -31,6 +32,7 @@ namespace CoreLib
 	void loadConsole(kaguya::State* lua, std::vector<std::string> args);
 	void loadCursor(kaguya::State* lua, std::vector<std::string> args);
 	void loadDialog(kaguya::State* lua, std::vector<std::string> args);
+	void loadGUI(kaguya::State* lua, std::vector<std::string> args);
 	void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
 	void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
 	void loadLight(kaguya::State* lua, std::vector<std::string> args);

@@ -11,8 +11,9 @@ void CoreHook::getValue(kaguya::State* lua, std::string name)
 	if (containerMap.find(name) != containerMap.end())
 	{
 		std::string gt = containerMap[name].first;
-		if      (gt == "Console*")            (*lua)["Hook"][name] = containerMap[name].second->as<Console*>();
+		if (gt == "Console*")                 (*lua)["Hook"][name] = containerMap[name].second->as<Console*>();
 		else if (gt == "Cursor*")			  (*lua)["Hook"][name] = containerMap[name].second->as<Cursor*>();
+		else if (gt == "GUI::Container*")     (*lua)["Hook"][name] = containerMap[name].second->as<GUI::Container*>();
 		else if (gt == "KeyBinder*")          (*lua)["Hook"][name] = containerMap[name].second->as<KeyBinder*>();
 		else if (gt == "MathExp*")            (*lua)["Hook"][name] = containerMap[name].second->as<MathExp*>();
 		else if (gt == "TextRenderer*")       (*lua)["Hook"][name] = containerMap[name].second->as<TextRenderer*>();
@@ -79,6 +80,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
 		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
 		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
+		else if   (lib[0] == "GUI")          CoreLib::loadGUI(lua, lib);
 		else if   (lib[0] == "KeyBind")      CoreLib::loadKeyBind(lua, lib);
 		else if   (lib[0] == "LevelSprite")  CoreLib::loadLevelSprite(lua, lib);
 		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
@@ -317,6 +319,32 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["GUI"])) (*lua)["Core"]["GUI"] = kaguya::NewTable();
+	if (importAll || args[1] == "Container")
+	{
+		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::Container>()
+			);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Widget")
+	{
+		(*lua)["Core"]["GUI"]["Widget"].setClass(kaguya::ClassMetatable<GUI::Widget>()
+			);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "TextInput")
+	{
+		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
+			);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadGUI] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
 {

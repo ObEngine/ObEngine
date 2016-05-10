@@ -341,10 +341,10 @@ void MapEditor::editMap(std::string mapName)
 
 	//GUI
 	sf::Event event;
-	GUI::Container* gui = new GUI::Container(&event, &window, 1920, 1080);
+	GUI::Container* gui = new GUI::Container(&event, &window, fn::Coord::baseWidth, fn::Coord::baseHeight);
 	std::cout << "Pointer to (init) : " << gui << std::endl;
 	hookCore.dropValue("GUI", gui);
-	gui->createWidgetContainer("Main", 1, 0, 0, fn::Coord::width, fn::Coord::height, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("Main", 1, 0, 0, fn::Coord::baseWidth, fn::Coord::baseHeight, GUI::ContainerMovement::Fixed);
 	gui->createLabel("Main", "title", resX - 800, 5, "Melting Saga Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
 	gui->createButton("Main", "editorMenuBtn", resX - 570, 0, true, true, "GREY");
 	GUI::ButtonEvent* menuOpened = GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->getHook();
@@ -354,10 +354,10 @@ void MapEditor::editMap(std::string mapName)
 	std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
 	gui->createDroplist("Main", "editModeList", resX - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
 	GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
-	gui->createWidgetContainer("Editor", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("Editor", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("Editor")->setBackground(sf::Color(0, 0, 0, 200));
 
-	gui->createWidgetContainer("EditorSettings", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("EditorSettings", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorSettings")->setBackground(sf::Color(0, 0, 0, 0));
 	gui->createLabel("EditorSettings", "displayCatLbl", 25, 40, "Display Options", "arial.ttf", 25, sf::Color(255, 255, 255));
 	gui->createLabel("EditorSettings", "editorCatLbl", 400, 40, "Editor Options", "arial.ttf", 25, sf::Color(255, 255, 255));
@@ -373,10 +373,10 @@ void MapEditor::editMap(std::string mapName)
 	gui->createLabel("EditorSettings", "gridDimensionsLbl", 40, 155, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
 	gui->createLabel("EditorSettings", "gridDimensionsMULbl", 160, 155, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
 
-	gui->createWidgetContainer("EditorSprites", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("EditorSprites", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseWidth - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorSprites")->setBackground(sf::Color(0, 0, 0, 0));
 
-	gui->createWidgetContainer("EditorCollisions", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("EditorCollisions", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorCollisions")->setBackground(sf::Color(0, 0, 0, 0));
 
 	std::vector<std::string> tabList = { "Settings", "LevelSprites", "Collisions" };
