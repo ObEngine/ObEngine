@@ -574,7 +574,7 @@ namespace GUI
 
 		std::vector<Button*> arrows;
 		Movable* scroller;
-		std::vector<Widget*> widgetsLinked;
+		std::vector<Widget*>* widgetsLinked;
 		WidgetContainer* containerLinked;
 		bool hasContainer = false;
 
@@ -585,7 +585,7 @@ namespace GUI
 		void replaceScroller(int maxY);//
 		void replaceScrollerWidgets(int maxY, int spriteHeight, int spriteTop, int scrollerHeight);
 	public:
-		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsToMove, std::string style);
+		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsToMove, std::string style);
 		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLinked, std::string style);
 
 		void computeDynamicScroll();//Compute the size and the speed of the scrollbar in function of the widgets linked
@@ -790,6 +790,7 @@ namespace GUI
 		bool getClicked();
 		bool getReleased();
 		std::vector<Widget*> getWidgets();
+		std::vector<Widget*>* getVectWidgets();
 		sf::Rect<float> getRect();
 		void setHolding();
 		void move(int x, int y);
@@ -839,7 +840,7 @@ namespace GUI
 		void setWindowSize(int windowWidth, int windowHeight);
 
 		Label* createLabel(std::string containerName, std::string ID, int posX, int posY, std::string text, std::string font, int fontSize, sf::Color color, sf::Text::Style style = sf::Text::Regular);
-		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsLinked, std::string style = "DEFAULT");
+		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsLinked, std::string style = "DEFAULT");
 		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLink, std::string style = "DEFAULT");
 
 		LoadingBar* createLoadingBar(std::string containerName, std::string ID, int posX, int posY, std::string style = "DEFAULT", std::string fillingType = "Horizontal", \
@@ -871,7 +872,10 @@ namespace GUI
 }
 
 int convertByWidth(int value);
+int convertByWidthDecrease(int value);
 int convertByHeight(int value);
+int convertByHeightDecrease(int value);
+
 DataObject* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)

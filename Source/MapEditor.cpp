@@ -106,6 +106,7 @@ void MapEditor::loadSpriteTab(std::string geid)
 	std::cout << "Recv geid from LST : " << geid << std::endl;
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
+	gui->getContainerByContainerName("EditorSprites")->addScrollBar();
 	if (addFileGUIMap.find(geid) == addFileGUIMap.end())
 	{
 		addFileGUIMap[geid] = std::map<std::string, GUI::Button*>();
@@ -232,6 +233,7 @@ void MapEditor::displayAddSpriteFolderList()
 {
 	GUI::Container* gui = hookCore.getPointer("GUI")->as<GUI::Container*>();
 	gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
+	gui->getContainerByContainerName("EditorSprites")->addScrollBar();
 	for (auto it = addBtnGUIMap.begin(); it != addBtnGUIMap.end(); it++)
 	{
 		gui->getContainerByContainerName("EditorSprites")->addWidget(it->second);
@@ -341,7 +343,7 @@ void MapEditor::editMap(std::string mapName)
 
 	//GUI
 	sf::Event event;
-	GUI::Container* gui = new GUI::Container(&event, &window, fn::Coord::baseWidth, fn::Coord::baseHeight);
+	GUI::Container* gui = new GUI::Container(&event, &window, resX, resY);
 	std::cout << "Pointer to (init) : " << gui << std::endl;
 	hookCore.dropValue("GUI", gui);
 	gui->createWidgetContainer("Main", 1, 0, 0, fn::Coord::baseWidth, fn::Coord::baseHeight, GUI::ContainerMovement::Fixed);
@@ -373,8 +375,9 @@ void MapEditor::editMap(std::string mapName)
 	gui->createLabel("EditorSettings", "gridDimensionsLbl", 40, 155, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
 	gui->createLabel("EditorSettings", "gridDimensionsMULbl", 160, 155, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
 
-	gui->createWidgetContainer("EditorSprites", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseWidth - 80, GUI::ContainerMovement::Fixed);
-	gui->getContainerByContainerName("EditorSprites")->setBackground(sf::Color(0, 0, 0, 0));
+	GUI::WidgetContainer* editorSprite = gui->createWidgetContainer("EditorSprites", 2, 20, 40, fn::Coord::baseWidth - 20, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
+	editorSprite->setBackground(sf::Color(0, 0, 0, 0));
+	editorSprite->addScrollBar();
 
 	gui->createWidgetContainer("EditorCollisions", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorCollisions")->setBackground(sf::Color(0, 0, 0, 0));
@@ -383,7 +386,7 @@ void MapEditor::editMap(std::string mapName)
 	std::vector<GUI::WidgetContainer*> tabPtrList = { gui->getContainerByContainerName("EditorSettings"), gui->getContainerByContainerName("EditorSprites"), gui->getContainerByContainerName("EditorCollisions") };
 	gui->createTab("Editor", "editorTab", 0, 0, 16, sf::Color(255, 255, 255), "arial.ttf", tabList, tabPtrList, "GREY");
 
-	gui->createWidgetContainer("EditorInfos", 3, 0, 0, 1350, 30, GUI::ContainerMovement::Fixed);
+	gui->createWidgetContainer("EditorInfos", 3, 0, 0, 1350, 42, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("EditorInfos")->setBackground(sf::Color(0, 0, 0, 200));
 	gui->createLabel("EditorInfos", "cursorPos", 150, 5, "Cursor : (0,0)", "arial.ttf", 16, sf::Color::White);
 	gui->createLabel("EditorInfos", "camPos", 300, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
