@@ -491,14 +491,9 @@ void MapEditor::editMap(std::string mapName)
 			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(0);
 			editMode = 0;
 		}
-		else if (keybind.isActionToggled("ObjectMode"))
-		{
-			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(1);
-			editMode = 1;
-		}
 		else if (keybind.isActionToggled("CollisionMode"))
 		{
-			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(2);
+			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(1);
 			editMode = 2;
 		}
 
@@ -518,7 +513,7 @@ void MapEditor::editMap(std::string mapName)
 			drawFPS = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableFPSCB")->isChecked();
 
 		if (guiEditorEnabled)
-			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(4);
+			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(3);
 
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() == "Following Camera")
 			world.setCameraPosition(world.getCharacter(0)->getX() - (resX / 2) + 128, world.getCharacter(0)->getY() - (resY / 2) + 152, "FOLLOW");
