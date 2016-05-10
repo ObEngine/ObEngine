@@ -335,9 +335,10 @@ namespace GUI
 	class TextInput : public Widget
 	{
 	protected:
-		Label* labelText;
+		std::vector<Label*> labelText;
 		sf::Color fontColor;
 		std::string inputText;
+		std::vector<std::string> lines;
 		std::string *visibleText = &inputText;
 		std::string nameImageBackground = "background.png";
 		std::string nameImageBackgroundFocus = "backgroundfocus.png";
@@ -351,6 +352,7 @@ namespace GUI
 		sf::Text charToMove;
 		int currentCursorOffset = 0;
 		int cursorPosition = 0;
+		int cursorLine = 0;
 		int timeCursorDiplayed = 900;
 		bool cursorKeyReleased = true;
 		sf::Clock cursorElapsedTime;
@@ -358,6 +360,7 @@ namespace GUI
 		int previousWidth;
 		bool hasStartTimer = false;
 		bool unlockKeyRepeater = true;
+		bool isMultiLine;
 
 		std::vector<TextInputFilters> filters;
 
@@ -373,7 +376,7 @@ namespace GUI
 		bool checkFilters(int c);
 
 	public:
-		TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText);
+		TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText, bool multiLine);
 		TextInput(std::string ID, int posX, int posY, std::string style, GUI::Label* text);
 
 		void addFilter(GUI::TextInputFilters filter);
@@ -853,7 +856,7 @@ namespace GUI
 		//NumericInput* createNumericInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 		
 		RadioButton* createRadioButton(std::string containerName, std::string ID, int posX, int posY, std::string value, std::string group, bool checked = false, std::string style = "DEFAULT");
-		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, std::string style = "DEFAULT");
+		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, bool multiLine = false, std::string style = "DEFAULT");
 		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 
 		//NumericSlider* createNumericSlider(std::string containerName, std::string ID, int posX, int posY, int minValue, int maxValue, int defaultValue = 0, std::string style = "DEFAULT");
