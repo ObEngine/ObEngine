@@ -322,10 +322,6 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 }
 void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 {
-
-}
-void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
-{
 	registerLib(lua, fn::Vector::join(args, "."));
 	bool importAll = args.size() == 1;
 	bool foundPart = false;
@@ -333,22 +329,45 @@ void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "Container")
 	{
 		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::Container>()
-		);
+			);
 		foundPart = true;
 	}
 	if (importAll || args[1] == "Widget")
 	{
 		(*lua)["Core"]["GUI"]["Widget"].setClass(kaguya::ClassMetatable<GUI::Widget>()
-		);
+			);
 		foundPart = true;
 	}
 	if (importAll || args[1] == "TextInput")
 	{
 		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
-		);
+			);
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadGUI] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["KeyBind"])) (*lua)["Core"]["KeyBind"] = kaguya::NewTable();
+	if (importAll || args[1] == "KeyBinder")
+	{
+		(*lua)["Core"]["Cursor"]["KeyBinder"].setClass(kaguya::ClassMetatable<KeyBinder>()
+			.addMember("connectAction", &KeyBinder::connectAction)
+			.addMember("isActionDisabled", &KeyBinder::isActionDisabled)
+			.addMember("isActionEnabled", &KeyBinder::isActionEnabled)
+			.addMember("isActionReleased", &KeyBinder::isActionReleased)
+			.addMember("isActionToggled", &KeyBinder::isActionToggled)
+			.addMember("isKeyPressed", &KeyBinder::isKeyPressed)
+			.addMember("loadFromFile", &KeyBinder::loadFromFile)
+			.addMember("setActionDelay", &KeyBinder::setActionDelay)
+			.addMember("setEnabled", &KeyBinder::setEnabled)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadKeyBind] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 {
