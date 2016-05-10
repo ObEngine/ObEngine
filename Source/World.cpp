@@ -239,6 +239,8 @@ void World::loadFromFile(std::string filename)
 			bool hasSpr = false;
 			int objX = 0;
 			int objY = 0;
+			int colOffX = 0;
+			int colOffY = 0;
 			if (this->getGameObject(allObjects[i])->canDisplay())
 			{
 				this->addLevelSprite(this->getGameObject(allObjects[i])->getLevelSprite());
@@ -253,8 +255,10 @@ void World::loadFromFile(std::string filename)
 			{
 				this->addCollider(this->getGameObject(allObjects[i])->getCollider());
 				if (hasSpr && this->getGameObject(allObjects[i])->isColliderRelative())
-					this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
+					this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY, 1);
 			}
+			this->getGameObject(allObjects[i])->getLevelSprite()->hookToCollision(
+				this->getGameObject(allObjects[i])->getCollider());
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();

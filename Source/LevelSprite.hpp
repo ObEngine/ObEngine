@@ -14,6 +14,7 @@
 #include "Functions.hpp"
 #include "Animation.hpp"
 #include "ComplexSprite.hpp"
+#include "Collisions.hpp"
 
 class LevelSprite
 {
@@ -44,7 +45,7 @@ class LevelSprite
 		sfe::ComplexSprite* returnSprite;
 		sf::Color spriteColor = sf::Color(255,255,255);
 		int textureIndex = 0;
-
+		Collision::PolygonalCollider* collisionHook = nullptr;
 
 	public:
 		LevelSprite(std::string sprName, std::string sprID, anim::RessourceManager* rsMan = NULL);
@@ -82,4 +83,6 @@ class LevelSprite
 		void calculateRealCoordinates();
 		sf::FloatRect getRect();
 		bool isDrawable();
+		Collision::PolygonalCollider* getCollisionHook();
+		void hookToCollision(Collision::PolygonalCollider* hook);
 };

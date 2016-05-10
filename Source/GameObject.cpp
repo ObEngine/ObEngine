@@ -77,10 +77,17 @@ void GameObject::loadGameObject(DataObject* obj)
 	if (obj->complexExists(convertPath(""), "Collider"))
 	{
 		std::string colliderRel;
+		int colOffX = 0;
+		int colOffY = 0;
 		colliderRelative = (obj->getAttribute(convertPath("Collider"), "position")->getData(&colliderRel) == "relative") ? true : false;
 		obj->getAttribute(convertPath("Collider"), "solid")->getData(&colliderSolid);
 		obj->getAttribute(convertPath("Collider"), "click")->getData(&colliderClick);
+		if (obj->attributeExists(convertPath("Collider"), "offsetX"))
+			obj->getAttribute(convertPath("Collider"), "offsetX")->getData(&colOffX);
+		if (obj->attributeExists(convertPath("Collider"), "offsetY"))
+			obj->getAttribute(convertPath("Collider"), "offsetY")->getData(&colOffY);
 		objectCollider.setSolid(colliderSolid);
+		objectCollider.setPositionOffset(colOffX, colOffY);
 		int colliderPointSize;
 		colliderPointSize = obj->getListAttribute(convertPath("Collider"), "polygonPoints")->getSize();
 		for (int i = 0; i < colliderPointSize; i++)

@@ -200,3 +200,13 @@ bool LevelSprite::isDrawable()
 {
 	return drawable;
 }
+
+Collision::PolygonalCollider * LevelSprite::getCollisionHook()
+{
+	return collisionHook;
+}
+
+void LevelSprite::hookToCollision(Collision::PolygonalCollider* hook)
+{
+	collisionHook = hook;
+}

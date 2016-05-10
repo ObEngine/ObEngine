@@ -62,7 +62,7 @@ class GameObject
 		void useGlobalTrigger(std::string trName);
 		void useCustomTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
 		template <typename U>
-		void sendRequireArgument(std::string object, std::string argName, U value);
+		void sendRequireArgument(std::string argName, U value);
 };
 
 void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
@@ -71,7 +71,7 @@ void loadLibBridge(GameObject* object, std::string lib);
 void loadHookBridge(GameObject* object, std::string hookname);
 
 template<typename U>
-inline void GameObject::sendRequireArgument(std::string object, std::string argName, U value)
+inline void GameObject::sendRequireArgument(std::string argName, U value)
 {
 	(*this->scriptEngine)["Lua_ReqList"][argName] = value;
 }

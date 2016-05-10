@@ -313,8 +313,21 @@ namespace Collision
 	}
 	void PolygonalCollider::setDrawOffset(int offx, int offy)
 	{
-		offxd = offx;
-		offyd = offy;
+		drOffX = offx;
+		drOffY = offy;
+	}
+	void PolygonalCollider::setPositionOffset(int offx, int offy)
+	{
+		pOffX = offx;
+		pOffY = offy;
+	}
+	int PolygonalCollider::getPositionOffsetX()
+	{
+		return pOffX;
+	}
+	int PolygonalCollider::getPositionOffsetY()
+	{
+		return pOffY;
 	}
 	double PolygonalCollider::getSideAngle(int side)
 	{
@@ -358,27 +371,27 @@ namespace Collision
 			if (selected) polyPt.setFillColor(sf::Color(0, 150, 255));
 			if (drawMasterPoint)
 			{
-				polyPt.setPosition(sf::Vector2f(masterPoint.X + offxd - r, masterPoint.Y + offyd - r));
+				polyPt.setPosition(sf::Vector2f(masterPoint.X + drOffX - r, masterPoint.Y + drOffY - r));
 				surf->draw(polyPt);
 			}
 			polyPt.setFillColor(sf::Color(255, 255, 255));
 			for (int i = 0; i < pPath.size() - 1; i++)
 			{
-				int x1 = pPath[i].X + offxd;
-				int y1 = pPath[i].Y + offyd;
+				int x1 = pPath[i].X + drOffX;
+				int y1 = pPath[i].Y + drOffY;
 				if (drawSkel)
 				{
-					if (!selected) Collision::drawLine(surf, x1, y1, masterPoint.X + offxd, masterPoint.Y + offyd, 2, sf::Color(255, 200, 0));
-					if (selected) Collision::drawLine(surf, x1, y1, masterPoint.X + offxd, masterPoint.Y + offyd, 2, sf::Color(0, 200, 255));
+					if (!selected) Collision::drawLine(surf, x1, y1, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(255, 200, 0));
+					if (selected) Collision::drawLine(surf, x1, y1, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(0, 200, 255));
 				}
 				if (drawLines)
 				{
-					if (!fn::Vector::isInList(i, highlightedLines)) Collision::drawLine(surf, pPath[i].X + offxd, pPath[i].Y + offyd, pPath[i + 1].X + offxd, pPath[i + 1].Y + offyd);
-					else Collision::drawLine(surf, pPath[i].X + offxd, pPath[i].Y + offyd, pPath[i + 1].X + offxd, pPath[i + 1].Y + offyd, 2, sf::Color(0, 255, 0));
+					if (!fn::Vector::isInList(i, highlightedLines)) Collision::drawLine(surf, pPath[i].X + drOffX, pPath[i].Y + drOffY, pPath[i + 1].X + drOffX, pPath[i + 1].Y + drOffY);
+					else Collision::drawLine(surf, pPath[i].X + drOffX, pPath[i].Y + drOffY, pPath[i + 1].X + drOffX, pPath[i + 1].Y + drOffY, 2, sf::Color(0, 255, 0));
 				}
 				if (drawPoints)
 				{
-					polyPt.setPosition(sf::Vector2f(pPath[i].X + offxd - r, pPath[i].Y + offyd - r));
+					polyPt.setPosition(sf::Vector2f(pPath[i].X + drOffX - r, pPath[i].Y + drOffY - r));
 					if (fn::Vector::isInList(i, highlightedPoints))
 					{
 						polyPt.setFillColor(sf::Color(255, 0, 0));
@@ -392,13 +405,13 @@ namespace Collision
 			}
 			if (drawPoints)
 			{
-				int x1 = pPath[pPath.size() - 1].X + offxd - r;
-				int y1 = pPath[pPath.size() - 1].Y + offyd - r;
+				int x1 = pPath[pPath.size() - 1].X + drOffX - r;
+				int y1 = pPath[pPath.size() - 1].Y + drOffY - r;
 				polyPt.setPosition(sf::Vector2f(x1, y1));
 				if (drawSkel)
 				{
-					if (!selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + offxd, masterPoint.Y + offyd, 2, sf::Color(255, 200, 0));
-					if (selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + offxd, masterPoint.Y + offyd, 2, sf::Color(0, 200, 255));
+					if (!selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(255, 200, 0));
+					if (selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(0, 200, 255));
 				}
 				if (fn::Vector::isInList((int)(pPath.size() - 1), highlightedPoints))
 				{
@@ -412,8 +425,8 @@ namespace Collision
 			}
 			if (drawLines)
 			{
-				if (!fn::Vector::isInList((int)pPath.size() - 1, highlightedLines)) Collision::drawLine(surf, pPath[pPath.size() - 1].X + offxd, pPath[pPath.size() - 1].Y + offyd, pPath[0].X + offxd, pPath[0].Y + offyd);
-				else Collision::drawLine(surf, pPath[pPath.size() - 1].X + offxd, pPath[pPath.size() - 1].Y + offyd, pPath[0].X + offxd, pPath[0].Y + offyd, 2, sf::Color(0, 255, 0));
+				if (!fn::Vector::isInList((int)pPath.size() - 1, highlightedLines)) Collision::drawLine(surf, pPath[pPath.size() - 1].X + drOffX, pPath[pPath.size() - 1].Y + drOffY, pPath[0].X + drOffX, pPath[0].Y + drOffY);
+				else Collision::drawLine(surf, pPath[pPath.size() - 1].X + drOffX, pPath[pPath.size() - 1].Y + drOffY, pPath[0].X + drOffX, pPath[0].Y + drOffY, 2, sf::Color(0, 255, 0));
 			}
 		}
 	}
@@ -426,33 +439,43 @@ namespace Collision
 			pPath.at(i).X += x; pPath.at(i).Y += y;
 		}
 	}
-	void PolygonalCollider::setPosition(int x, int y)
+	void PolygonalCollider::setPosition(int x, int y, int offsetMode)
 	{
 		if (pPath.size() > 0)
 		{
-			int addX = x - pPath[0].X;
-			int addY = y - pPath[0].Y;
+			int addX = x - pPath[0].X + (offsetMode == 1 ? pOffX : 0);
+			int addY = y - pPath[0].Y + (offsetMode == 1 ? pOffY : 0);
 			masterPoint.X += addX;
 			masterPoint.Y += addY;
-			pPath[0].X = x;
-			pPath[0].Y = y;
+			pPath[0].X = x + (offsetMode == 1 ? pOffX : 0);
+			pPath[0].Y = y + (offsetMode == 1 ? pOffY : 0);
 			for (int i = 1; i < pPath.size(); i++)
 			{
 				pPath.at(i).X += addX; pPath.at(i).Y += addY;
 			}
+			if (offsetMode == 2)
+			{
+				pOffX = addX;
+				pOffY = addY;
+			}
 		}
 	}
-	void PolygonalCollider::setPositionFromMaster(int x, int y)
+	void PolygonalCollider::setPositionFromMaster(int x, int y, int offsetMode)
 	{
 		if (pPath.size() > 0)
 		{
-			int addX = x - masterPoint.X;
-			int addY = y - masterPoint.Y;
-			masterPoint.X = x;
-			masterPoint.Y = y;
+			int addX = x - masterPoint.X + (offsetMode == 1 ? pOffX : 0);
+			int addY = y - masterPoint.Y + (offsetMode == 1 ? pOffY : 0);
+			masterPoint.X = x + (offsetMode == 1 ? pOffX : 0);
+			masterPoint.Y = y + (offsetMode == 1 ? pOffY : 0);
 			for (int i = 0; i < pPath.size(); i++)
 			{
 				pPath.at(i).X += addX; pPath.at(i).Y += addY;
+			}
+			if (offsetMode == 2)
+			{
+				pOffX = addX;
+				pOffY = addY;
 			}
 		}
 	}

@@ -351,7 +351,7 @@ void MapEditor::editMap(std::string mapName)
 	GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->setText("Menu Editeur", "arial.ttf", sf::Color(255, 255, 255), 14, true);
 	std::vector<std::string> cameraMenuList = { "Fixed Camera", "Following Camera", "Zone Camera" };
 	gui->createDroplist("Main", "cameraMenuList", resX - 190, 0, 12, "", false, "arial.ttf", "GREY", cameraMenuList);
-	std::vector<std::string> editModeList = { "LevelSprites", "Objects", "Collisions", "Play", "None" };
+	std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
 	gui->createDroplist("Main", "editModeList", resX - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
 	GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
 	gui->createWidgetContainer("Editor", 2, 20, 40, resX - 40, resY - 80, GUI::ContainerMovement::Fixed);
@@ -656,7 +656,14 @@ void MapEditor::editMap(std::string mapName)
 			//Sprite Move
 			if (cursor.getPressed("Left") && selectedSprite != NULL)
 			{
-				selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX, cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
+				selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
+					cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
+				if (selectedSprite->getCollisionHook() != nullptr)
+				{
+					selectedSprite->getCollisionHook()->setPosition(
+						cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
+						cursor.getY() + world.getCamY() - selectedSpriteOffsetY, 1);
+				}
 				sdBoundingRect = selectedSprite->getRect();
 				std::string sprInfoStr;
 				sprInfoStr = "Hovered Sprite : \n";
@@ -807,7 +814,9 @@ void MapEditor::editMap(std::string mapName)
 			//Collision Master Move
 			if (cursor.getPressed("Left") && selectedMasterCollider != NULL && masterColliderGrabbed)
 			{
-				selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+				selectedMasterCollider->setPositionFromMaster(
+					cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(),
+					2);
 			}
 			//Collision Master Release
 			if (cursor.getReleased("Left") && masterColliderGrabbed)

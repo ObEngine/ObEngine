@@ -18,8 +18,10 @@ namespace Collision
 	{
 	private:
 		std::string id;
-		int offxd;
-		int offyd;
+		int drOffX;
+		int drOffY;
+		int pOffX;
+		int pOffY;
 		long long int tX = 0;
 		long long int tY = 0;
 		long long int bX = 0;
@@ -53,8 +55,8 @@ namespace Collision
 		std::vector<sf::RectangleShape> returnCollisionSolution(PolygonalCollider* other, int offsetX = 0, int offsetY = 0);
 		int getSideContainingPoint(int x, int y);
 		void move(int x, int y);
-		void setPosition(int x, int y);
-		void setPositionFromMaster(int x, int y);
+		void setPosition(int x, int y, int offsetMode = 0);
+		void setPositionFromMaster(int x, int y, int offsetMode = 0);
 		bool isPointInBoundingBox(int x, int y);
 		int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 		bool hasMasterPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
@@ -64,6 +66,9 @@ namespace Collision
 		void setPointPositionFromMaster(int index, int x, int y);
 		ClipperLib::Path* getPath();
 		void setDrawOffset(int offx, int offy);
+		void setPositionOffset(int offx, int offy);
+		int getPositionOffsetX();
+		int getPositionOffsetY();
 		double getSideAngle(int side);
 		double getSideLength(int side);
 		void draw(sf::RenderWindow* surf, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
