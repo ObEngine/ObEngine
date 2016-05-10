@@ -17,13 +17,16 @@
 #include <functional>
 #include <typeinfo>
 #include <fstream>
+#include <future>
 
 #include "RichText.hpp"
 #include "DataParser.hpp"
+
 #include "Functions.hpp"
 #if defined(WIN32) || defined(_WIN32)
 #include <Windows.h>
 #endif
+
 #include <GL/gl.h>
 
 
@@ -385,9 +388,7 @@ namespace GUI
 	class Button : public Widget
 	{
 	protected:
-		std::function<void(DataObject*)> function;
-		std::function<void()> voidFunction;
-		DataObject* parameters;
+		std::function<void()> futureFunction;
 		Label* buttonLabel = NULL;
 		GUI::ButtonEvent prevState = GUI::ButtonEvent::None;
 		GUI::ButtonEvent currState = GUI::ButtonEvent::None;
@@ -425,8 +426,7 @@ namespace GUI
 		void setTexturePushed(const sf::Texture& texture);
 		virtual void setDisplayed(bool displayed);
 		virtual void updatePositions();
-		void bindFunction(std::function<void(DataObject*)> function, std::string parameters);
-		void bindFunction(std::function<void()> function);
+		void bindFunction(std::function<void()> func);
 		void updateAttributes();
 		Label* getLabel();//Return Label's button if the button has text, return NULL if not.
 		GUI::ButtonEvent* getHook();
@@ -613,7 +613,7 @@ namespace GUI
 		LoadingBar(std::string ID, int posX, int posY, std::string fillingType, std::string style, int sideBordersWidth, int TopBotBordersHeight);
 		void fill(int percentage, double timeToFill = 0.5);//permet de remplir la barre jusqu'a un certain pourcentage
 		virtual void draw(sf::RenderWindow* GUI);
-		void addFilling(int percentageToAdd);//Permet d'ajouter un certain pourcentage au remplissage actuel de la barre
+		void addFilling(int percentageToAdd, double timeToFill);//Permet d'ajouter un certain pourcentage au remplissage actuel de la barre
 		int getFilling();
 		bool isFilled();
 	};
@@ -867,8 +867,8 @@ namespace GUI
 	};
 }
 
-int convertMousePosX(int mousePosX);
-int convertMousePosY(int mousePosY);
+int convertByWidth(int value);
+int convertByHeight(int value);
 DataObject* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)
