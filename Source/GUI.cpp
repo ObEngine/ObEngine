@@ -1402,7 +1402,6 @@ void GUI::ScrollBar::updatePositions()
 
 void GUI::ScrollBar::updateTexture(sf::Event& evnt)
 {
-	std::cout << "POS" << posX[0] << " " << posY[0] << std::endl;
 	minY = widgetsLinked->at(0)->getRect().top;
 	maxY = widgetsLinked->at(0)->getRect().top;
 	minX = widgetsLinked->at(0)->getRect().left;
@@ -1413,7 +1412,7 @@ void GUI::ScrollBar::updateTexture(sf::Event& evnt)
 	int currXPlusWidth;
 	for (int i = 0; i < widgetsLinked->size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
 	{
-		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getID() != ID)
 		{
 			currY = widgetsLinked->at(i)->getRect().top;
 			currYPlusHeight = currY + widgetsLinked->at(i)->getRect().height;
@@ -1473,14 +1472,13 @@ void GUI::ScrollBar::updateTexture(sf::Event& evnt)
 		{
 			for (int i = 0; i < widgetsLinked->size(); i++)
 			{
-				if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+				if(widgetsLinked->at(i)->getID() != ID)
 					widgetsLinked->at(i)->move(0, (-scroller->getRelativePosY() + posY[1]) * movePerPixel);
 			}
 		}
 		posY[1] = scroller->getRelativePosY();
 	}
 
-	std::cout << "POS" << absolutesX[0] << "  " << absolutesY[0] << std::endl;
 }
 
 void GUI::ScrollBar::computeDynamicScroll()
@@ -1496,7 +1494,7 @@ void GUI::ScrollBar::computeDynamicScroll()
 
 	for (int i = 0; i < widgetsLinked->size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
 	{
-		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getID() != ID)
 		{
 			currY = widgetsLinked->at(i)->getRect().top;
 			currYPlusHeight = currY + widgetsLinked->at(i)->getRect().height;
@@ -1512,6 +1510,13 @@ void GUI::ScrollBar::computeDynamicScroll()
 			}
 		}
 	}
+	/*if (maxY - minY != previousMaxY - previousMinY)
+	{
+		coeffChanged = false;
+		previousMaxY = maxY;
+		previousMinY = minY;
+	}*/
+
 	if (maxY - minY > spriteHeight)//Si la taille totale des widget linked est plus grande que la taille de la scrollbar, il faut la redimensionner
 	{
 		if (spriteHeight - (maxY - minY - spriteHeight) < minHeightBar)//Si on atteint la taille minimale on modifie aussi le nombre de déplacements par pixels
@@ -1519,9 +1524,10 @@ void GUI::ScrollBar::computeDynamicScroll()
 			scroller->resize(scroller->getRect().width, minHeightBar);
 			scrollerHeight = scroller->getRect().height;
 			movePerPixel = float(((maxY - minY) - spriteHeight)) / (spriteHeight - scrollerHeight);
+			coeffChanged = true;
 			hasBeenResized = true;
 
-			replaceScroller(maxY);
+			//replaceScroller(maxY);
 			replaceScrollerWidgets(maxY, spriteHeight, spriteTop, scrollerHeight);
 		}
 		else//On redimensionne juste la scrollbar
@@ -1576,7 +1582,7 @@ void GUI::ScrollBar::replaceScrollerWidgets(int maxY, int spriteHeight, int spri
 		int distance = spriteHeight + spriteTop - maxY;
 		for (int i = 0; i < widgetsLinked->size(); i++)
 		{
-			if (widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+			if (widgetsLinked->at(i)->getID() != ID)
 			{
 				widgetsLinked->at(i)->move(0, distance);
 			}
@@ -1591,7 +1597,7 @@ void GUI::ScrollBar::scrollToBottom()
 	int distance = sprites[0].getGlobalBounds().top + sprites[0].getGlobalBounds().height - (scroller->getRect().top + scroller->getRect().height);
 	for (int i = 0; i < widgetsLinked->size(); i++)
 	{
-		if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+		if(widgetsLinked->at(i)->getID() != ID)
 			widgetsLinked->at(i)->move(0, -distance * movePerPixel);
 	}
 	posY[1] = posY[0] + sprites[0].getGlobalBounds().height - scroller->getRect().height;
@@ -1603,8 +1609,8 @@ void GUI::ScrollBar::scrollToTop()
 	int distance = scroller->getRect().top - sprites[0].getGlobalBounds().top;
 	for (int i = 0; i < widgetsLinked->size(); i++)
 	{
-		if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
-		widgetsLinked->at(i)->move(0, distance * movePerPixel);
+		if(widgetsLinked->at(i)->getID() != ID)
+			widgetsLinked->at(i)->move(0, distance * movePerPixel);
 	}
 	posY[1] = posY[0];
 	scroller->setPosition(posX[0], posY[1]);
@@ -3696,8 +3702,9 @@ void GUI::TextInput::setTexture()
 	shapes.resize(1);
 	shapes[0] = new sf::RectangleShape(sf::Vector2f(1, labelText[0]->getfontSize() + 2));
 	shapes[0]->setFillColor(sf::Color::Red);
-	currentCursorOffset = labelText[0]->getRect().width - 1;
-	cursorPosition = inputText.size();
+	currentCursorOffsetX = 0;
+	currentCursorOffsetY = 0;
+	cursorPosition = 0;
 
 	setTextureMap(&sprites[0], nameImageBackground);
 	setTextureMap(&sprites[1], nameImageOutline);
@@ -3730,8 +3737,8 @@ void GUI::TextInput::updatePositions()
 		}
 	}
 	//set Cursor position
-	posX[1 + labelText.size() + 1] = posX[1] + currentCursorOffset;
-	posY[1 + labelText.size() + 1] = posY[1];
+	posX[1 + labelText.size() + 1] = posX[1] + currentCursorOffsetX;
+	posY[1 + labelText.size() + 1] = posY[1] + currentCursorOffsetY;
 
 
 
@@ -3823,7 +3830,7 @@ void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 	cursorPosition += enteredOrDeleted;
 	if (!textWasLarger)
 	{
-		currentCursorOffset += (currentWidth - previousWidth);
+		currentCursorOffsetX += (currentWidth - previousWidth);
 	}
 
 	previousWidth = currentWidth;
@@ -3869,35 +3876,128 @@ void GUI::TextInput::moveCursorRight()
 
 			cursorPosition++;
 
-			currentCursorOffset += charToMove.getGlobalBounds().width;
+			currentCursorOffsetX += charToMove.getGlobalBounds().width;
 		}
 	}
 	else
 	{
-		//if(lines[cursorLine][cursorPosition] == "\n")
+		if (cursorPosition < lines[cursorLine].size())
+		{
+			if (lines[cursorLine][cursorPosition] == '\n')
+			{
+				currentCursorOffsetX = 0;
+				currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
+				cursorPosition++;
+				currentInterline++;
+			}
+			else
+			{
+				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
+				std::string charMoved;
+				if (currentInterline >= 1)
+					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - offsetStr[currentInterline - 1].size());
+				else
+					charMoved = offsetStr[0].substr(0, cursorPosition + 1);
+
+				charToMove.setString(charMoved);
+
+				cursorPosition++;
+				currentCursorOffsetX = charToMove.getGlobalBounds().width;
+			}
+		}
+		else if (cursorLine < lines.size() - 1)
+		{
+			currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
+			currentCursorOffsetX = 0;
+			cursorPosition = 0;
+			cursorLine++;
+			currentInterline = 0;
+		}
 	}
 	updatePositions();
 }
 
 void GUI::TextInput::moveCursorLeft()
 {
-	if (cursorPosition > 0)
+	if (!isMultiLine)
 	{
-		std::string charMoved(1, inputText[cursorPosition - 1]);
-		charToMove.setString(charMoved);
+		if (cursorPosition > 0)
+		{
+			std::string charMoved(1, inputText[cursorPosition - 1]);
+			charToMove.setString(charMoved);
 
-		if (!(currentCursorOffset + posX[1] - charToMove.getGlobalBounds().width < posX[0]))
-		{
-			cursorPosition--;
-			currentCursorOffset -= charToMove.getGlobalBounds().width;
+			if (!(currentCursorOffsetX + posX[1] - charToMove.getGlobalBounds().width < posX[0]))
+			{
+				cursorPosition--;
+				currentCursorOffsetX -= charToMove.getGlobalBounds().width;
+			}
+			else
+			{
+				//Change the substring displayed
+			}
 		}
-		else
+	}
+	else
+	{
+		if (cursorPosition > 0)
 		{
-			//Change the substring displayed
+			if (lines[cursorLine][cursorPosition - 1] == '\n')
+			{
+				std::vector<std::string> offX = fn::String::split(lines[cursorLine], "\n");
+				charToMove.setString(offX[currentInterline - 1]);
+				currentCursorOffsetX = charToMove.getGlobalBounds().width;
+				currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
+				cursorPosition--;
+				currentInterline--;
+			}
+			else
+			{
+				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
+				std::string charMoved;
+				if (currentInterline >= 1)
+					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - offsetStr[currentInterline - 1].size() - 2);
+				else
+					charMoved = offsetStr[0].substr(0, cursorPosition - 1);
+
+				charToMove.setString(charMoved);
+
+				cursorPosition--;
+				currentCursorOffsetX = charToMove.getGlobalBounds().width;
+			}
+		}
+		else if (cursorLine > 0)
+		{
+			currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
+			std::vector<std::string> offsetX = fn::String::split(lines[cursorLine - 1], "\n");
+			charToMove.setString(offsetX[offsetX.size() - 1]);
+			currentCursorOffsetX = charToMove.getGlobalBounds().width;
+			cursorPosition = lines[cursorLine - 1].size();
+			cursorLine--;
+			currentInterline = offsetX.size() - 1;
 		}
 	}
 	updatePositions();
 }
+
+void GUI::TextInput::moveCursorTop()
+{
+	if (isMultiLine)
+	{
+		if (cursorLine > 0)
+		{
+			currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
+			if (lines[cursorLine - 1].size() < lines[cursorLine].size())
+			{
+				charToMove.setString(lines[cursorLine - 1]);
+				currentCursorOffsetX = charToMove.getGlobalBounds().width;
+				cursorPosition = lines[cursorLine - 1].size() - 1;
+			}
+			cursorLine--;
+		}
+	}
+}
+
+void moveCursorBot();
 
 void GUI::TextInput::updateTexture(sf::Event& evnt)
 {

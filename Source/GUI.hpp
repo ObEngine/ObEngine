@@ -350,9 +350,11 @@ namespace GUI
 		clock_t timeBefore;
 		sf::Font fontCharMove;
 		sf::Text charToMove;
-		int currentCursorOffset = 0;
+		int currentCursorOffsetX = 0;
+		int currentCursorOffsetY = 0;
 		int cursorPosition = 0;
 		int cursorLine = 0;
+		int currentInterline = 0;
 		int timeCursorDiplayed = 900;
 		bool cursorKeyReleased = true;
 		sf::Clock cursorElapsedTime;
@@ -372,6 +374,8 @@ namespace GUI
 		virtual void updatePositions();
 		void moveCursorRight();
 		void moveCursorLeft();
+		void moveCursorTop();
+		void moveCursorBot();
 		void moveCursorTextChanged(int enteredOrDeleted);
 		bool checkFilters(int c);
 
@@ -566,10 +570,14 @@ namespace GUI
 		float movePerPixel = 1;
 		int minHeightBar;
 		bool hasBeenResized = false;
+		bool coeffChanged = false;
 
 		int minY;
+		int previousMinY = 0;
 		int maxY;
+		int previousMaxY = 0;
 		int minX;
+		int previousMinX = 0;
 		int maxX;
 
 		std::vector<Button*> arrows;
