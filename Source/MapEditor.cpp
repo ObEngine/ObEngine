@@ -189,9 +189,9 @@ void MapEditor::buildAddSpriteFolderList()
 	{
 		int xpos = (i * (sprSize + sprOff));
 		int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
-		while (xpos >(1920 - (sprSize + sprOff)))
+		while (xpos > (1920 - (sprSize + sprOff + xOff)))
 		{
-			xpos -= (1920 - (sprSize + sprOff));
+			xpos -= (1920 - (sprSize + sprOff + xOff));
 		}
 		xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
 		xpos += xOff;
@@ -200,7 +200,7 @@ void MapEditor::buildAddSpriteFolderList()
 	}
 	typedef std::map<std::string, std::vector<std::string>>::iterator it_type;
 	sf::RenderTexture rtexture;
-	rtexture.create(256, 256);
+	rtexture.create(256.0 * fn::Coord::width / fn::Coord::baseWidth, 256.0 * fn::Coord::height / fn::Coord::baseHeight);
 	for (it_type iterator = addSprMap.begin(); iterator != addSprMap.end(); iterator++)
 	{
 		std::string prefixEquivalent;
@@ -890,10 +890,12 @@ void MapEditor::editMap(std::string mapName)
 		//Events
 		triggerDatabaseCore.update();
 		world.update(gameSpeed);
+		textDisplay.update(gameSpeed);
 		keybind.update();
 		cursor.update();
 		gameConsole.update();
 		if (drawFPS) fps.tick();
+
 		if (*isGridEnabled)
 		{
 			editorGrid.setOffsetX(-world.getCamX());
@@ -953,7 +955,7 @@ void MapEditor::editMap(std::string mapName)
 				}
 				if (event.key.code == sf::Keyboard::RShift)
 				{
-					world.saveData()->writeFile(mapName, true);
+					world.saveData()->writeFile("Data/Maps/" + mapName, true);
 					textDisplay.sendToRenderer("MapSaver", { {"text", "File <" + mapName + "> Saved !" } });
 				}
 				if (event.key.code == sf::Keyboard::F1)

@@ -53,8 +53,9 @@ bool orderScrPriority(GameObject* g1, GameObject* g2)
 }
 
 //GameObject
-GameObject::GameObject(std::string id) : objectCollider(id), objectLevelSprite(id)
+GameObject::GameObject(std::string type, std::string id) : objectCollider(id), objectLevelSprite(id)
 {
+	this->type = type;
 	this->id = id;
 	objectLevelSprite.useDirtyAnimation(false, true);
 }
@@ -207,6 +208,10 @@ void GameObject::update(double dt)
 std::string GameObject::getID()
 {
 	return this->id;
+}
+std::string GameObject::getType()
+{
+	return type;
 }
 std::string GameObject::getPublicKey()
 {

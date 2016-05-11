@@ -44,6 +44,7 @@ class World
 		std::map<std::string, Light::PointLight*> lightsMap;
 		std::vector<MathParticle*> particleArray;
 		std::vector<Character*> charArray;
+		std::vector<std::string> scriptArray;
 		
 		double blurMul = 0.0003;
 		sf::Shader blurShader;

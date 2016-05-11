@@ -26,6 +26,7 @@ class GameObject
 		std::vector<std::tuple<std::string, std::string, std::string>> registeredAliases;
 
 		std::string id;
+		std::string type;
 		std::string privateKey;
 		std::string publicKey;
 		int scrPriority = 0;
@@ -37,7 +38,7 @@ class GameObject
 		bool colliderRelative = true;
 		bool hasLevelSprite = false;
 
-		GameObject(std::string id);
+		GameObject(std::string type, std::string id);
 		void registerTrigger(Trigger* trg);
 		void loadGameObject(DataObject* obj);
 		void hookLuaState(kaguya::State* lua);
@@ -46,6 +47,7 @@ class GameObject
 		friend class World;
 	public:
 		std::string getID();
+		std::string getType();
 		std::string getPublicKey();
 		void setAnimationKey(std::string key);
 		int getPriority();

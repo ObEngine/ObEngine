@@ -259,6 +259,7 @@ void World::loadFromFile(std::string filename)
 			}
 			this->getGameObject(allObjects[i])->getLevelSprite()->hookToCollision(
 				this->getGameObject(allObjects[i])->getCollider());
+			this->getGameObject(allObjects[i])->getCollider()->setFromGameObject(true);
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
@@ -271,6 +272,7 @@ void World::loadFromFile(std::string filename)
 			std::string scriptName;
 			mapParse.getListAttribute("Script", "", "gameScripts")->getElement(i)->getData(&scriptName);
 			worldScriptEngine->dofile(scriptName);
+			scriptArray.push_back(scriptName);
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldScript]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
@@ -291,33 +293,75 @@ DataParser* World::saveData()
 	dataStore->createDataObject("LevelSprites");
 	for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 	{
-		dataStore->createComplexAttribute("LevelSprites", "", backSpriteArray[i]->getID());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "type", backSpriteArray[i]->getName());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posX", (int)backSpriteArray[i]->getX());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posY", (int)backSpriteArray[i]->getY());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "rotation", (int)backSpriteArray[i]->getRotation());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "scale", backSpriteArray[i]->getScaleX());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "layer", (int)backSpriteArray[i]->getLayer());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "z-depth", (int)backSpriteArray[i]->getZDepth());
-		if (backSpriteArray[i]->getAttributes().size() != 0)
+		if (backSpriteArray[i]->getCollisionHook() == nullptr)
 		{
-			dataStore->createListAttribute("LevelSprites", backSpriteArray[i]->getID(), "attributeList", "str");
-			for (unsigned int j = 0; j < backSpriteArray[i]->getAttributes().size(); j++)
-				dataStore->createListItem("LevelSprites", backSpriteArray[i]->getID(), "attributeList", backSpriteArray[i]->getAttributes()[j]);
+			dataStore->createComplexAttribute("LevelSprites", "", backSpriteArray[i]->getID());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "type", backSpriteArray[i]->getName());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posX", (int)backSpriteArray[i]->getX());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posY", (int)backSpriteArray[i]->getY());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "rotation", (int)backSpriteArray[i]->getRotation());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "scale", backSpriteArray[i]->getScaleX());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "layer", (int)backSpriteArray[i]->getLayer());
+			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "z-depth", (int)backSpriteArray[i]->getZDepth());
+			if (backSpriteArray[i]->getAttributes().size() != 0)
+			{
+				dataStore->createListAttribute("LevelSprites", backSpriteArray[i]->getID(), "attributeList", "str");
+				for (unsigned int j = 0; j < backSpriteArray[i]->getAttributes().size(); j++)
+					dataStore->createListItem("LevelSprites", backSpriteArray[i]->getID(), "attributeList", backSpriteArray[i]->getAttributes()[j]);
+			}
+		}
+	}
+	for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
+	{
+		if (frontSpriteArray[i]->getCollisionHook() == nullptr)
+		{
+			dataStore->createComplexAttribute("LevelSprites", "", frontSpriteArray[i]->getID());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "type", frontSpriteArray[i]->getName());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "posX", (int)frontSpriteArray[i]->getX());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "posY", (int)frontSpriteArray[i]->getY());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "rotation", (int)frontSpriteArray[i]->getRotation());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "scale", frontSpriteArray[i]->getScaleX());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "layer", (int)frontSpriteArray[i]->getLayer());
+			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "z-depth", (int)frontSpriteArray[i]->getZDepth());
+			if (frontSpriteArray[i]->getAttributes().size() != 0)
+			{
+				dataStore->createListAttribute("LevelSprites", frontSpriteArray[i]->getID(), "attributeList", "str");
+				for (unsigned int j = 0; j < frontSpriteArray[i]->getAttributes().size(); j++)
+					dataStore->createListItem("LevelSprites", frontSpriteArray[i]->getID(), "attributeList", frontSpriteArray[i]->getAttributes()[j]);
+			}
 		}
 	}
 	dataStore->createDataObject("Collisions");
 	for (unsigned int i = 0; i < collidersArray.size(); i++)
 	{
-		dataStore->createComplexAttribute("Collisions", "", collidersArray[i]->getID());
-		dataStore->createListAttribute("Collisions", collidersArray[i]->getID(), "polygonPoints", "str");
-		for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
+		if (!collidersArray[i]->isFromGameObject())
 		{
-			int px = collidersArray[i]->getPointCoordinates(j).first;
-			int py = collidersArray[i]->getPointCoordinates(j).second;
-			dataStore->createListItem("Collisions", collidersArray[i]->getID(), "polygonPoints", std::to_string(px) + "," + std::to_string(py));
+			dataStore->createComplexAttribute("Collisions", "", collidersArray[i]->getID());
+			dataStore->createListAttribute("Collisions", collidersArray[i]->getID(), "polygonPoints", "str");
+			for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
+			{
+				int px = collidersArray[i]->getPointCoordinates(j).first;
+				int py = collidersArray[i]->getPointCoordinates(j).second;
+				dataStore->createListItem("Collisions", collidersArray[i]->getID(), "polygonPoints", std::to_string(px) + "," + std::to_string(py));
+			}
 		}
-
+	}
+	dataStore->createDataObject("LevelObjects");
+	for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
+	{
+		dataStore->createComplexAttribute("LevelObjects", "", it->first);
+		dataStore->createBaseAttribute("LevelObjects", it->first, "type", it->second->getType());
+		dataStore->createBaseAttribute("LevelObjects", it->first, "posX", (int)it->second->getLevelSprite()->getX());
+		dataStore->createBaseAttribute("LevelObjects", it->first, "posY", (int)it->second->getLevelSprite()->getY());
+	}
+	if (scriptArray.size() > 0)
+	{
+		dataStore->createDataObject("Script");
+		dataStore->createListAttribute("Script", "", "gameScripts", "str");
+		for (int i = 0; i < scriptArray.size(); i++)
+		{
+			dataStore->createListItem("Script", "", "gameScripts", scriptArray[i]);
+		}
 	}
 	return dataStore;
 }
@@ -601,7 +645,7 @@ std::vector<GameObject*> World::getAllGameObject(std::vector<std::string> filter
 
 GameObject* World::createGameObject(std::string id, std::string type, std::string obj)
 {
-	GameObject* newGameObject = new GameObject(id);
+	GameObject* newGameObject = new GameObject(obj, id);
 	DataObject* gameObjectData = new DataObject("None");
 	if (type == "LevelObjects")
 	{

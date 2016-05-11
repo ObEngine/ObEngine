@@ -5,12 +5,12 @@
 
 sf::RenderTexture renTex;
 
+//TextRenderer
 TextRenderer::TextRenderer()
 {
 	currentRenderer = nullptr;
 	renTex.create(1920, 1080);
 }
-
 void TextRenderer::createRenderer(std::string rendererType, std::string id)
 {
 	Renderer* returnRenderer = nullptr;
@@ -21,9 +21,9 @@ void TextRenderer::createRenderer(std::string rendererType, std::string id)
 	else
 		std::cout << "<Error:Dialog:TextRenderer>[createRenderer] : Failed to create Renderer of type : " << rendererType << std::endl;
 	returnRenderer->load();
+	returnRenderer->setFadeState(RendererState::FadeIn);
 	rendererDB[id] = returnRenderer;
 }
-
 void TextRenderer::sendToRenderer(std::string id, std::map<std::string, std::string> tdb)
 {
 	if (rendererDB.find(id) != rendererDB.end())
@@ -39,38 +39,51 @@ void TextRenderer::sendToRenderer(std::string id, std::map<std::string, std::str
 	else
 		std::cout << "<Error:Dialog:TextRenderer>[sendToRenderer] : Can't find Renderer with id : " << id << std::endl;
 }
-
 bool TextRenderer::textRemaining()
 {
 	return rendererCalls.size() > 0;
 }
-
 void TextRenderer::next()
 {
-	if (rendererCalls.size() > 1)
+	if (rendererCalls.size() >= 1 && currentRenderer->getFadeState() != RendererState::FadeOut)
+		currentRenderer->setFadeState(RendererState::FadeOut);
+}
+void TextRenderer::update(double dt)
+{
+	if (currentRenderer != nullptr)
 	{
-		rendererCalls.erase(rendererCalls.begin());
-		needToRender = true;
-		currentRenderer = rendererDB[rendererCalls[0]];
-	}
-	else if (rendererCalls.size() == 1)
-	{
-		rendererCalls.erase(rendererCalls.begin());
-		currentRenderer = nullptr;
+		currentRenderer->update(dt);
+		if (currentRenderer->getFadeState() == RendererState::End && rendererCalls.size() > 1)
+		{
+			rendererCalls.erase(rendererCalls.begin());
+			needToRender = true;
+			currentRenderer->setFadeState(RendererState::FadeIn);
+			currentRenderer = rendererDB[rendererCalls[0]];
+		}
+		else if (currentRenderer->getFadeState() == RendererState::End && rendererCalls.size() == 1)
+		{
+			rendererCalls.erase(rendererCalls.begin());
+			currentRenderer->setFadeState(RendererState::FadeIn);
+			currentRenderer = nullptr;
+		}
 	}
 }
-
 void TextRenderer::render(sf::RenderWindow* surf)
 {
 	if (needToRender && currentRenderer != nullptr)
 	{
 		currentRenderer->render();
-		currentRenderer->draw(surf);
+		currentRenderer->fadeIn(surf);
 		needToRender = false;
 	}	
 	else if (currentRenderer != nullptr)
 	{
-		currentRenderer->draw(surf);
+		if (currentRenderer->getFadeState() == RendererState::FadeIn)
+			currentRenderer->fadeIn(surf);
+		else if (currentRenderer->getFadeState() == RendererState::Draw)
+			currentRenderer->draw(surf);
+		else if (currentRenderer->getFadeState() == RendererState::FadeOut)
+			currentRenderer->fadeOut(surf);
 	}
 	else
 	{
@@ -78,6 +91,7 @@ void TextRenderer::render(sf::RenderWindow* surf)
 	}
 }
 
+//VisualNovel
 void Renderers::VisualNovel::load()
 {
 	name = "VisualNovel";
@@ -112,7 +126,6 @@ void Renderers::VisualNovel::load()
 	this->locals["dialogLine"] = dialogLine;
 	this->locals["dialogFont"] = dialogFont;
 }
-
 void Renderers::VisualNovel::unload()
 {
 	delete this->locals["circleAnim"].as<anim::Animation*>();
@@ -126,7 +139,6 @@ void Renderers::VisualNovel::unload()
 	if (this->locals.find("dispSpr") != locals.end())
 		delete this->locals["dispSpr"].as<sf::Sprite*>();
 }
-
 void Renderers::VisualNovel::render()
 {
 	sf::Sprite* dialogLineSpr = this->locals["dialogLineSpr"].as<sf::Sprite*>();
@@ -176,7 +188,6 @@ void Renderers::VisualNovel::render()
 	this->locals["dispSpr"] = dispSpr;
 	this->vtdb.erase(this->vtdb.begin());
 }
-
 void Renderers::VisualNovel::draw(sf::RenderWindow* surf)
 {
 	sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
@@ -187,12 +198,14 @@ void Renderers::VisualNovel::draw(sf::RenderWindow* surf)
 	surf->draw(*circleAnim->getSprite());
 }
 
+//Shade
 void Renderers::Shade::load()
 {
 	name = "Shade";
 
 	sf::Font* dialogFont = new sf::Font;
 	sf::Text* dialogText = new sf::Text;
+	double* textAlpha = new double(255);
 
 	dialogFont->loadFromFile("Data/Fonts/TravelingTypewriter.ttf");
 
@@ -202,8 +215,8 @@ void Renderers::Shade::load()
 
 	this->locals["dialogFont"] = dialogFont;
 	this->locals["dialogText"] = dialogText;
+	this->locals["textAlpha"] = textAlpha;
 }
-
 void Renderers::Shade::unload()
 {
 	delete this->locals["dialogFont"].as<sf::Font*>();
@@ -213,13 +226,12 @@ void Renderers::Shade::unload()
 	if (this->locals.find("dispSpr") != locals.end())
 		delete this->locals["dispSpr"].as<sf::Sprite*>();
 }
-
 void Renderers::Shade::render()
 {
 	sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
 	sf::Texture* dispTex = new sf::Texture;
 	sf::Sprite* dispSpr = new sf::Sprite;
-
+	
 	renTex.clear(sf::Color(0, 0, 0, 200));
 
 	std::string textToSay = vtdb[0]["text"];
@@ -247,20 +259,69 @@ void Renderers::Shade::render()
 	fn::String::regenerateEncoding(currentPhr);
 	dialogText->setString(sf::String(currentPhr));
 	dialogText->setPosition(borderSize, 540 * fn::Coord::height / fn::Coord::baseHeight);
-	renTex.draw(*dialogText);
+	dialogText->setColor(sf::Color(255, 255, 255, 255));
 
 	renTex.display();
 	*dispTex = renTex.getTexture();
 	dispSpr->setTexture(*dispTex);
 	this->locals["dispTex"] = dispTex;
+	this->locals["dialogText"] = dialogText;
 	this->locals["dispSpr"] = dispSpr;
 	this->vtdb.erase(this->vtdb.begin());
 }
-
 void Renderers::Shade::draw(sf::RenderWindow* surf)
 {
 	sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
+	sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
+	
 	surf->draw(*dispSpr);
+	surf->draw(*dialogText);
+}
+void Renderers::Shade::fadeOut(sf::RenderWindow* surf)
+{
+	sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
+	sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
+	double* textAlpha = this->locals["textAlpha"].as<double*>();
+	dialogText->setColor(sf::Color(255, 255, 255, *textAlpha));
+
+	surf->draw(*dispSpr);
+	surf->draw(*dialogText);
+}
+void Renderers::Shade::update(double dt)
+{
+	if (fadeState == RendererState::FadeOut)
+	{
+		double* textAlpha = this->locals["textAlpha"].as<double*>();
+		*textAlpha -= 5 * dt;
+		if (*textAlpha < 1)
+		{
+			fadeState = RendererState::End;
+			*textAlpha = 255;
+		}
+	}
+}
+
+//Renderer
+void Renderer::fadeIn(sf::RenderWindow* surf)
+{
+	this->draw(surf);
+	fadeState = RendererState::Draw;
+}
+void Renderer::fadeOut(sf::RenderWindow* surf)
+{
+	this->draw(surf);
+	fadeState = RendererState::End;
+}
+void Renderer::update(double dt)
+{
+}
+void Renderer::setFadeState(int state)
+{
+	fadeState = state;
+}
+int Renderer::getFadeState()
+{
+	return fadeState;
 }
 
 void Renderer::addTDB(std::map<std::string, std::string> tdb)

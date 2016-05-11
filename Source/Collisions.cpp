@@ -493,6 +493,16 @@ namespace Collision
 		if (lines) highlightedLines.clear();
 	}
 
+	bool PolygonalCollider::isFromGameObject()
+	{
+		return fromGameObject;
+	}
+
+	void PolygonalCollider::setFromGameObject(bool state)
+	{
+		fromGameObject = state;
+	}
+
 	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy, bool opt)
 	{
 		for (int i = 0; i < collidersList->size(); i++)
