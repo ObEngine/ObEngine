@@ -1,12 +1,8 @@
-//Author : Sygmei
-//Key : 976938ef7d46c286a2027d73f3a99467bcfa8ff0c1e10bd0016139744ef5404f4eb4d069709f9831f6de74a094944bf0f1c5bf89109e9855290336a66420376f
-
 #include "Cursor.hpp"
 
-void Cursor::initialize(int screenSizeX, int screenSizeY)
+void Cursor::initialize(sf::RenderWindow* window)
 {
-	this->screenSizeX = screenSizeX;
-	this->screenSizeY = screenSizeY;
+	this->window = window;
 	cursorAnim.setPath("Sprites/Cursors/Round");
 	cursorAnim.loadAnimator();
 	cursorAnim.setKey("IDLE");
@@ -20,9 +16,12 @@ void Cursor::initialize(int screenSizeX, int screenSizeY)
 
 void Cursor::selectCursor(std::string cursor)
 {
+	cursorAnim = anim::Animator();
 	cursorAnim.setPath("Sprites/Cursors/" + cursor);
 	cursorAnim.loadAnimator();
 	cursorAnim.setKey("IDLE");
+	cursorAnim.update();
+	cursorSprite = cursorAnim.getSprite();
 }
 
 void Cursor::selectKey(std::string key)
@@ -32,12 +31,12 @@ void Cursor::selectKey(std::string key)
 
 int Cursor::getX()
 {
-	return (x * 1920) / fn::Coord::baseWidth;
+	return x;
 }
 
 int Cursor::getY()
 {
-	return (y * 1080) / fn::Coord::baseHeight;
+	return y;
 }
 
 void Cursor::setX(int newx)
@@ -106,10 +105,37 @@ void Cursor::update()
 	{
 		cursorSprite = cursorAnim.getSprite();
 	}
-	x = sf::Mouse::getPosition().x;
-	y = sf::Mouse::getPosition().y;
+	if (doesUpdateOutsideWindow)
+	{
+		x = sf::Mouse::getPosition().x - window->getPosition().x;
+		y = sf::Mouse::getPosition().y - window->getPosition().y;
+		if (x < 0) x = 0;
+		if (x > window->getSize().x) x = window->getSize().x;
+		if (y < 0) y = 0;
+		if (y > window->getSize().y) y = window->getSize().y;
+	}
+	else
+	{
+		if (sf::Mouse::getPosition().x - window->getPosition().x > 0 && sf::Mouse::getPosition().y - window->getPosition().y > 0)
+		{
+			if (sf::Mouse::getPosition().x - window->getPosition().x < window->getSize().x && sf::Mouse::getPosition().y - window->getPosition().y < window->getSize().y)
+			{
+				x = sf::Mouse::getPosition().x - window->getPosition().x;
+				y = sf::Mouse::getPosition().y - window->getPosition().y;
+				if (x < 0) x = 0;
+				if (x > window->getSize().x) x = window->getSize().x;
+				if (y < 0) y = 0;
+				if (y > window->getSize().y) y = window->getSize().y;
+			}
+		}
+	}
 	cursorSprite->setPosition(x, y);
 	cursorCollider->setPositionFromMaster(this->x, this->y);
+}
+
+void Cursor::updateOutsideWindow(bool state)
+{
+	doesUpdateOutsideWindow = state;
 }
 
 bool Cursor::getPressed(std::string clic)
@@ -142,12 +168,12 @@ bool Cursor::getReleased(std::string clic)
 		return false;
 }
 
-Collision::PolygonalCollider* Cursor::getCollider()
-{
-	return cursorCollider;
-}
-
 sf::Sprite* Cursor::getSprite()
 {
 	return cursorSprite;
+}
+
+Collision::PolygonalCollider* Cursor::getCollider()
+{
+	return cursorCollider;
 }

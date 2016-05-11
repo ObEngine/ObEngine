@@ -10,8 +10,14 @@ int main(int argc, char** argv)
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
+	fn::Coord::width = 640; fn::Coord::height = 480;
+	fn::Coord::baseWidth = 640; fn::Coord::baseHeight = 480;
+	std::string editMapName = chooseMapMenu();
+	fn::Coord::width = sf::VideoMode::getDesktopMode().width;  fn::Coord::height = sf::VideoMode::getDesktopMode().height;
+	fn::Coord::baseWidth = 1920; fn::Coord::baseHeight = 1080;
+
 	//startGame("poly2.map.msd");
-	MapEditor::editMap("poly2.map.msd");
+	MapEditor::editMap(editMapName);
 
 	return 0;
 }

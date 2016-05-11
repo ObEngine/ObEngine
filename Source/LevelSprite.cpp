@@ -58,22 +58,30 @@ void LevelSprite::removeAtrByName(std::string name) {
 	currentAtr.erase(remove(currentAtr.begin(), currentAtr.end(), name), currentAtr.end());
 }
 
-void LevelSprite::setRotation(float rotate) {
+void LevelSprite::setRotation(double rotate) {
 	rotation = rotate;
 	returnSprite->setRotation(rotation);
 	calculateRealCoordinates();
 }
 
-void LevelSprite::addRotation(float addRotate) {
+void LevelSprite::rotate(double addRotate) {
 	rotation += addRotate;
 	if (rotation < 0) rotation += 360;
 	rotation = ((int)rotation % 360) + (rotation - std::floor(rotation));
 	returnSprite->setRotation(rotation);
 	calculateRealCoordinates();
 }
-void LevelSprite::setScale(float scale) {
-	this->scale = scale;
-	returnSprite->setScale(scale, scale);
+void LevelSprite::scale(double scaleX, double scaleY) {
+	this->scaleX += scaleX;
+	this->scaleY += scaleY;
+	returnSprite->setScale(this->scaleX, this->scaleY);
+	calculateRealCoordinates();
+}
+void LevelSprite::setScale(double scaleX, double scaleY)
+{
+	this->scaleX = scaleX;
+	this->scaleY = scaleY;
+	returnSprite->setScale(scaleX, scaleY);
 	calculateRealCoordinates();
 }
 void LevelSprite::setTranslationOrigin(int x, int y) {
@@ -103,7 +111,7 @@ void LevelSprite::textureUpdate(bool forceUpdate)
 				returnSprite->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i((int)actualTexture.getSize().x, (int)actualTexture.getSize().y)));
 				returnSprite->setPosition(absoluteX, absoluteY);
 				returnSprite->setRotation(rotation);
-				returnSprite->setScale(scale, scale);
+				returnSprite->setScale(scaleX, scaleY);
 				returnSprite->setColor(spriteColor);
 				calculateRealCoordinates();
 			}
@@ -113,7 +121,7 @@ void LevelSprite::textureUpdate(bool forceUpdate)
 	{
 		returnSprite->setPosition(absoluteX, absoluteY);
 		returnSprite->setRotation(rotation);
-		returnSprite->setScale(scale, scale);
+		returnSprite->setScale(scaleX, scaleY);
 		returnSprite->setColor(spriteColor);
 		calculateRealCoordinates();
 	}
@@ -151,8 +159,11 @@ double LevelSprite::getX() {
 double LevelSprite::getY() {
 	return absoluteY;
 }
-float LevelSprite::getScale() {
-	return scale;
+double LevelSprite::getScaleX() {
+	return scaleX;
+}
+double LevelSprite::getScaleY() {
+	return scaleY;
 }
 float LevelSprite::getRotation() {
 	return rotation;
@@ -199,6 +210,16 @@ sf::FloatRect LevelSprite::getRect()
 bool LevelSprite::isDrawable()
 {
 	return drawable;
+}
+
+void LevelSprite::setVisible(bool visible)
+{
+	this->visible = visible;
+}
+
+bool LevelSprite::isVisible()
+{
+	return this->visible;
 }
 
 Collision::PolygonalCollider * LevelSprite::getCollisionHook()

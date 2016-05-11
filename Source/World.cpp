@@ -126,7 +126,7 @@ void World::loadFromFile(std::string filename)
 			}
 			tempDeco->move(decoPosX, decoPosY);
 			tempDeco->setRotation(decoRot);
-			tempDeco->setScale(decoSca);
+			tempDeco->setScale(decoSca, decoSca);
 			tempDeco->setAtr(decoAtrList);
 			tempDeco->setLayer(layer);
 			tempDeco->setZDepth(zdepth);
@@ -296,7 +296,7 @@ DataParser* World::saveData()
 		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posX", (int)backSpriteArray[i]->getX());
 		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posY", (int)backSpriteArray[i]->getY());
 		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "rotation", (int)backSpriteArray[i]->getRotation());
-		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "scale", backSpriteArray[i]->getScale());
+		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "scale", backSpriteArray[i]->getScaleX());
 		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "layer", (int)backSpriteArray[i]->getLayer());
 		dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "z-depth", (int)backSpriteArray[i]->getZDepth());
 		if (backSpriteArray[i]->getAttributes().size() != 0)
@@ -432,7 +432,8 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
 				if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
-				surf->draw(tAffSpr, &blurShader);
+				if (backSpriteArray[i]->isVisible())
+					surf->draw(tAffSpr, &blurShader);
 				if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
@@ -499,7 +500,8 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
 				if (lightHooked) { if (cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
-				surf->draw(tAffSpr, &blurShader);
+				if (frontSpriteArray[i]->isVisible())
+					surf->draw(tAffSpr, &blurShader);
 				if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
@@ -636,15 +638,12 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	newGameObject->localTriggers->addTrigger("Delete");
 	if (type == "LevelObjects")
 	{
-		if (gameObjectData->listExists(convertPath("Script"), "scriptList"))
+		int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
+		for (int i = 0; i < scriptListSize; i++)
 		{
-			int scriptListSize = gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getSize();
-			for (int i = 0; i < scriptListSize; i++)
-			{
-				std::string getScrName;
-				gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
-				newGameObject->scriptEngine->dofile(getScrName);
-			}
+			std::string getScrName;
+			gameObjectData->getListAttribute(convertPath("Script"), "scriptList")->getElement(i)->getData(&getScrName);
+			newGameObject->scriptEngine->dofile(getScrName);
 		}
 		this->orderUpdateScrArray();
 	}

@@ -120,7 +120,7 @@ void GameObject::loadGameObject(DataObject* obj)
 				decoAtrList.push_back(obj->getListAttribute(convertPath("LevelSprite"), "attributeList")->getElement(j)->getData(&attrBuffer));
 		}
 		objectLevelSprite.setRotation(decoRot);
-		objectLevelSprite.setScale(decoSca);
+		objectLevelSprite.setScale(decoSca, decoSca);
 		objectLevelSprite.setAtr(decoAtrList);
 		objectLevelSprite.setLayer(layer);
 		objectLevelSprite.setZDepth(zdepth);

@@ -24,12 +24,14 @@ class LevelSprite
 		double absoluteX = 0;
 		double absoluteY = 0;
 		bool drawable = true;
+		bool visible = true;
 		int lAbsX = 0;
 		int lAbsY = 0;
 		int width = 0;
 		int height = 0;
-		float rotation = 0;
-		float scale = 1;
+		double rotation = 0;
+		double scaleX = 1;
+		double scaleY = 1;
 		int originTraX = 0;
 		int originTraY = 0;
 		int originRotX = 0;
@@ -55,9 +57,10 @@ class LevelSprite
 		void setSprite(sf::Sprite* spr);
 		void setLayer(int layer); //Change le layer
 		void setZDepth(int zdepth);
-		void addRotation(float addRotate); //Ajoute une rotation
-		void setRotation(float rotate); //Change la rotation
-		void setScale(float scale); //Change le scale (ordre de grandeur)
+		void rotate(double addRotate); //Ajoute une rotation
+		void setRotation(double rotate); //Change la rotation
+		void scale(double scaleX, double scaleY);
+		void setScale(double scaleX, double scaleY);
 		void setTranslationOrigin(int x, int y);
 		void setRotationOrigin(int x, int y);
 		void setAtr(std::vector<std::string> atrList); //Remplace une liste d'attributs
@@ -72,7 +75,8 @@ class LevelSprite
 		double getY(); //Renvoie absoluteY
 		void setPosition(double x, double y);
 		void move(double x, double y);
-		float getScale();
+		double getScaleX();
+		double getScaleY();
 		float getRotation();
 		int getLayer(); //Renvoie le layer de la Sprite
 		int getZDepth();
@@ -83,6 +87,8 @@ class LevelSprite
 		void calculateRealCoordinates();
 		sf::FloatRect getRect();
 		bool isDrawable();
+		void setVisible(bool visible);
+		bool isVisible();
 		Collision::PolygonalCollider* getCollisionHook();
 		void hookToCollision(Collision::PolygonalCollider* hook);
 };
