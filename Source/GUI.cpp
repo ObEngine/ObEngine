@@ -3794,6 +3794,7 @@ void GUI::TextInput::updateTextPositionX()
 			if (textLarger)
 			{
 				labelText[i]->setText(lines[i] + "\n" + toKeep, fontColor);
+				lines[i] = lines[i] + "\n" + toKeep;
 			}
 			textLarger = false;
 		}
@@ -3997,7 +3998,38 @@ void GUI::TextInput::moveCursorTop()
 	}
 }
 
-void moveCursorBot();
+void GUI::TextInput::moveCursorBot()
+{
+	if (isMultiLine)
+	{
+		currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
+		std::vector<std::string> split = fn::String::split(lines[cursorLine], "\n");
+		if (split.size() > currentInterline + 1)
+			{
+				currentInterline++;
+				if (cursorPosition > split[currentInterline + 1].size())
+				{
+					cursorPosition = split[currentInterline + 1].size() - 1;
+					charToMove.setString(split[currentInterline + 1]);
+					currentCursorOffsetX = charToMove.getGlobalBounds().width;
+				}
+			}
+			else
+			{
+				if (cursorLine + 1 < lines.size())
+				{
+					if (cursorPosition > lines[cursorLine + 1].size())
+					{
+						cursorPosition = lines[cursorLine + 1].size() - 1;
+						charToMove.setString(lines[cursorLine + 1]);
+						currentCursorOffsetX = charToMove.getGlobalBounds().width;
+					}
+					currentInterline = 0;
+					cursorLine++;
+				}
+			}
+	}
+}
 
 void GUI::TextInput::updateTexture(sf::Event& evnt)
 {
@@ -4026,10 +4058,20 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 				moveCursorLeft();
 				cursorKeyReleased = false;
 			}
+			else if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Down)
+			{
+				moveCursorBot();
+				cursorKeyReleased = false;
+			}
+			else if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Up)
+			{
+				moveCursorTop();
+				cursorKeyReleased = false;
+			}
 		}
 		if (evnt.type == sf::Event::KeyReleased)
 		{
-			if (evnt.key.code == sf::Keyboard::Right || evnt.key.code == sf::Keyboard::Left)
+			if (evnt.key.code == sf::Keyboard::Right || evnt.key.code == sf::Keyboard::Left || evnt.key.code == sf::Keyboard::Down || evnt.key.code == sf::Keyboard::Up)
 				cursorKeyReleased = true;
 		}
 	}
@@ -4163,7 +4205,7 @@ bool GUI::WidgetContainer::getReleased()
 void GUI::WidgetContainer::addScrollBar()
 {
 	scroll = container->createScrollBar(containerName, containerName + "scrollbar", width, 0, height, 100, false, &widgetIDContainer, "V2");
-	scroll->setPosition(width - scroll->getRect().width - 10, 0);
+	scroll->setPosition(width - scroll->getRect().width, 0);
 }
 
 sf::Rect<float> GUI::WidgetContainer::getRect()
