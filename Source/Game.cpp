@@ -31,7 +31,7 @@ void startGame(std::string mapName)
 
 	//Cursor
 	Cursor cursor;
-	cursor.initialize(fn::Coord::width, fn::Coord::height);
+	cursor.initialize(&window);
 
 	//Character Initialisation
 	Character character("Natsugi");

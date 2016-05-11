@@ -250,7 +250,7 @@ void MapEditor::addSpriteToWorld(std::string geid)
 	LevelSprite* sprToAdd = new LevelSprite(geid, key, world->getRessourceManager());
 	sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());
 	sprToAdd->setRotation(0);
-	sprToAdd->setScale(1);
+	sprToAdd->setScale(1, 1);
 	sprToAdd->setAtr(std::vector<std::string>());
 	sprToAdd->setLayer(1);
 	sprToAdd->setZDepth(1);
@@ -263,6 +263,7 @@ void MapEditor::editMap(std::string mapName)
 	double startLoadTime = getTickSinceEpoch();
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
 	TextRenderer textDisplay;
+	textDisplay.createRenderer("Shade", "MapSaver");
 	hookCore.dropValue("TextDisplay", &textDisplay);
 	std::cout << "Creation Chrono : " << "[Start]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
@@ -306,7 +307,7 @@ void MapEditor::editMap(std::string mapName)
 
 	//Cursor
 	Cursor cursor;
-	cursor.initialize(resX, resY);
+	cursor.initialize(&window);
 	hookCore.dropValue("Cursor", &cursor);
 	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
@@ -682,18 +683,18 @@ void MapEditor::editMap(std::string mapName)
 			{
 				//selectedDecoration->setOrigin(sdBoundingRect.width / 2, sdBoundingRect.height / 2);
 				if (keybind.isActionEnabled("RotateLeft") && selectedSprite != NULL)
-					selectedSprite->addRotation(-1 * gameSpeed);
+					selectedSprite->rotate(-1 * gameSpeed);
 				if (keybind.isActionEnabled("RotateRight") && selectedSprite != NULL)
-					selectedSprite->addRotation(1 * gameSpeed);
+					selectedSprite->rotate(1 * gameSpeed);
 			}
 
 			//Sprite Scale
 			if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != NULL)
 			{
 				if (keybind.isActionEnabled("ScaleDec"))
-					selectedSprite->setScale(selectedSprite->getScale() + (-0.05 * gameSpeed * (selectedSprite->getScale() / 2)));
+					selectedSprite->scale(-0.05 * gameSpeed * selectedSprite->getScaleX(), -0.05 * gameSpeed * selectedSprite->getScaleY());
 				if (keybind.isActionEnabled("ScaleInc"))
-					selectedSprite->setScale(selectedSprite->getScale() + (0.05 * gameSpeed * (selectedSprite->getScale() / 2)));
+					selectedSprite->scale(0.05 * gameSpeed  * selectedSprite->getScaleX(), 0.05 * gameSpeed * selectedSprite->getScaleY());
 			}
 
 			//Sprite Drop
@@ -952,7 +953,8 @@ void MapEditor::editMap(std::string mapName)
 				}
 				if (event.key.code == sf::Keyboard::RShift)
 				{
-					world.saveData()->writeFile("Data/Maps/wg.map.msd", true);
+					world.saveData()->writeFile(mapName, true);
+					textDisplay.sendToRenderer("MapSaver", { {"text", "File <" + mapName + "> Saved !" } });
 				}
 				if (event.key.code == sf::Keyboard::F1)
 					gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());

@@ -12,3 +12,4 @@
 
 #include "Game.hpp"
 #include "MapEditor.hpp"
+#include "Menu.hpp"

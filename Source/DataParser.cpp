@@ -223,6 +223,7 @@ ListAttribute* ComplexAttribute::getListAttribute(std::string id) {
 		if (it->second->getID() == id)
 			return it->second;
 	}
+	std::cout << "<Error:DataParser:ComplexAttribute>[getListAttribute] : Can't find ListAttribute " << id << " in " << this->getID() << std::endl;
 }
 ComplexAttribute* ComplexAttribute::getComplexAttribute(std::string id) {
 	for (std::map<std::string, ComplexAttribute*>::iterator it = complexAttributes.begin(); it != complexAttributes.end(); ++it) {
@@ -277,7 +278,7 @@ void ComplexAttribute::pushListAttribute(ListAttribute* attr) {
 	listAttributeList.push_back(attr->getID());
 }
 void ComplexAttribute::createListItem(std::string listID, std::string value) {
-	listAttributes[listID]->createElement(value);
+	this->getListAttribute(listID)->createElement(value);
 }
 void ComplexAttribute::createListGenerator(std::string gtarget, std::string gtype, std::string regex) {
 	if (listAttributes.find(gtarget) != listAttributes.end())
@@ -1068,7 +1069,7 @@ void DataParser::parseFile(std::string filename, bool verbose) {
 		if (verbose) std::cout << "Start Parsing File : " << filename << std::endl;
 		while (getline(useFile, currentLine))
 		{
-			parsedLine = currentLine;
+			parsedLine = fn::String::replaceString(currentLine, "	", "    ");
 			currentIndent = fn::String::occurencesInString(parsedLine, "    ");
 			while (currentIndent < addPath.size() + 1 && addPath.size() > 0)
 			{
@@ -1116,6 +1117,7 @@ void DataParser::parseFile(std::string filename, bool verbose) {
 					std::vector<std::string> splittedLine = fn::String::split(parsedLine, ":");
 					std::string attributeValue = fn::Vector::join(splittedLine, ":", 1, 0);
 					std::string attributeType = getVarType(attributeValue);
+					if (attributeType == "unknown") std::cout << "<Warning:DataParser:DataParser>[parseFile] : " << attributeName << " is unknown type" << std::endl;
 					objectMap[curCat]->createBaseAttribute(addPath, attributeName, attributeType, attributeValue);
 					std::string pushIndicator;
 					if (addPath.size() == 0) {pushIndicator = curCat+":Root";}
