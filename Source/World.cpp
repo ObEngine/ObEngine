@@ -624,7 +624,7 @@ GameObject* World::getGameObject(std::string id)
 		std::cout << "<Error:World:World>[getGameObject] : Can't find GameObject : " << id << std::endl;
 }
 
-std::vector<GameObject*> World::getAllGameObject(std::vector<std::string> filters)
+std::vector<GameObject*> World::getAllGameObjects(std::vector<std::string> filters)
 {
 	std::vector<GameObject*> returnVec;
 	for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
@@ -671,6 +671,8 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	(*newGameObject->scriptEngine)("protect(\"ID\")");
 	(*newGameObject->scriptEngine)("protect(\"Private\")");
 	(*newGameObject->scriptEngine)("protect(\"Public\")");
+	(*newGameObject->scriptEngine)["World"] = this;
+	loadWorldLib(newGameObject->scriptEngine);
 	newGameObject->localTriggers->addTrigger("Init");
 	newGameObject->localTriggers->setTriggerState("Init", true);
 	newGameObject->localTriggers->addTrigger("Update");
@@ -988,21 +990,57 @@ void World::createCollisionAtPos(int x, int y)
 	collidersArray.push_back(newCollider);
 }
 
-void loadWorldScriptEngineBaseLib(kaguya::State* lua)
+void loadWorldLib(kaguya::State* lua)
 {
-	(*lua)["CPP_Import"] = &loadLib;
-	(*lua)["CPP_Hook"] = &loadHook;
-	(*lua)["Core"] = kaguya::NewTable();
+	if (!(bool)((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
 	(*lua)["Core"]["World"] = kaguya::NewTable();
 	(*lua)["Core"]["World"]["World"].setClass(kaguya::ClassMetatable<World>()
 		.addMember("addCharacter", &World::addCharacter)
 		.addMember("addLevelSprite", &World::addLevelSprite)
 		.addMember("addLight", &World::addLight)
-		.addMember("loadFromFile", &World::loadFromFile)
+		.addMember("addCollider", &World::addCollider)
+		.addMember("addParticle", &World::addParticle)
+		.addMember("createCollisionAtPos", &World::createCollisionAtPos)
+		.addMember("createGameObject", &World::createGameObject)
+		.addMember("deleteCollisionByID", &World::deleteCollisionByID)
+		.addMember("deleteSprite", &World::deleteSprite)
+		.addMember("enableShowCollision", &World::enableShowCollision)
+		.addMember("getAllCollidersByCollision", &World::getAllCollidersByCollision)
+		.addMember("getAllGameObjects", &World::getAllGameObjects)
+		.addMember("getAllSprites", &World::getAllSprites)
 		.addMember("getCamX", &World::getCamX)
 		.addMember("getCamY", &World::getCamY)
+		.addMember("getCharacter", &World::getCharacter)
+		.addMember("getColliders", &World::getColliders)
+		.addMember("getCollisionByID", &World::getCollisionByID)
+		.addMember("getCollisionMasterByPos", &World::getCollisionMasterByPos)
+		.addMember("getCollisionPointByPos", &World::getCollisionPointByPos)
 		.addMember("getGameObject", &World::getGameObject)
+		.addMember("getRessourceManager", &World::getRessourceManager)
+		.addMember("getScriptEngine", &World::getScriptEngine)
+		.addMember("getSizeX", &World::getSizeX)
+		.addMember("getSizeY", &World::getSizeY)
+		.addMember("getSpriteArraySize", &World::getSpriteArraySize)
+		.addMember("getSpriteByID", &World::getSpriteByID)
+		.addMember("getSpriteByIndex", &World::getSpriteByIndex)
+		.addMember("getSpriteByPos", &World::getSpriteByPos)
+		.addMember("getSpritesByLayer", &World::getSpritesByLayer)
+		.addMember("getStartX", &World::getStartX)
+		.addMember("getStartY", &World::getStartY)
+		.addMember("loadFromFile", &World::loadFromFile)
+		.addMember("orderUpdateScrArray", &World::orderUpdateScrArray)
+		.addMember("reorganizeLayers", &World::reorganizeLayers)
+		.addMember("saveData", &World::saveData)
+		.addMember("setBlurMul", &World::setBlurMul)
+		.addMember("setCameraPosition", &World::setCameraPosition)
 	);
+}
+
+void loadWorldScriptEngineBaseLib(kaguya::State* lua)
+{
+	(*lua)["CPP_Import"] = &loadLib;
+	(*lua)["CPP_Hook"] = &loadHook;
+	loadWorldLib(lua);
 	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
 		.addMember("LevelSprite", &GameObject::getLevelSprite)
 		.addMember("Collider", &GameObject::getCollider)

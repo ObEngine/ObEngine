@@ -69,7 +69,13 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if (cLibComp.size() < lib.size())
 		{
 			bool sVecLibAF = true;
-			for (int j = 0; j < cLibComp.size(); j++) { if (cLibComp[j] != lib[j]) sVecLibAF = false; }
+			if (cLibComp.size() > 0)
+			{
+				for (int j = 0; j < cLibComp.size(); j++)
+					if (cLibComp[j] != lib[j]) { sVecLibAF = false; }
+			}
+			else
+				sVecLibAF = false;
 			if (sVecLibAF) { alreadyImported = true; break; }
 		}
 	}
@@ -80,6 +86,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
 		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
 		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
+		else if   (lib[0] == "Entity")       CoreLib::loadEntity(lua, lib);
 		else if   (lib[0] == "GUI")          CoreLib::loadGUI(lua, lib);
 		else if   (lib[0] == "KeyBind")      CoreLib::loadKeyBind(lua, lib);
 		else if   (lib[0] == "LevelSprite")  CoreLib::loadLevelSprite(lua, lib);
@@ -87,7 +94,6 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
 		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
-		//else if   (lib[0] == "World")        CoreLib::loadWorld(lua, lib);
 		else
 		{
 			std::cout << "<Error:Script:*>[loadCoreLib] : Can't find Core.";
@@ -319,6 +325,55 @@ void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadEntity(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Entity"])) (*lua)["Core"]["Entity"] = kaguya::NewTable();
+	if (importAll || args[1] == "Entity")
+	{
+		(*lua)["Core"]["Entity"]["Entity"].setClass(kaguya::ClassMetatable<Entity>()
+			.addMember("addDtPos", &Entity::addDtPos)
+			.addMember("addPos", &Entity::addPos)
+			.addMember("collide", &Entity::collide)
+			.addMember("getCamPos", &Entity::getCamPos)
+			.addMember("getEntityCollider", &Entity::getEntityCollider)
+			.addMember("getLife", &Entity::getLife)
+			.addMember("getMaxLife", &Entity::getMaxLife)
+			.addMember("getX", &Entity::getX)
+			.addMember("getY", &Entity::getY)
+			.addMember("setColliderDrawOffset", &Entity::setColliderDrawOffset)
+			.addMember("setColliders", &Entity::setColliders)
+			.addMember("setDeltaTime", &Entity::setDeltaTime)
+			.addMember("setKey", &Entity::setKey)
+			.addMember("setPos", &Entity::setPos)
+		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Character")
+	{
+		(*lua)["Core"]["Entity"]["Character"].setClass(kaguya::ClassMetatable<Character, Entity>()
+			.addMember("addVelocity", &Character::addVelocity)
+			.addMember("applyMove", &Character::applyMove)
+			.addMember("cancelMoves", &Character::cancelMoves)
+			.addMember("getDirection", &Character::getDirection)
+			.addMember("getHSpeed", &Character::getHSpeed)
+			.addMember("getVelocity", &Character::getVelocity)
+			.addMember("getVSpeed", &Character::getVSpeed)
+			.addMember("jump", &Character::jump)
+			.addMember("melee", &Character::melee)
+			.addMember("move", &Character::move)
+			.addMember("setDirectionAnimation", &Character::setDirectionAnimation)
+			.addMember("setVelocity", &Character::setVelocity)
+			.addMember("sprint", &Character::sprint)
+			.addMember("textureUpdate", &Character::textureUpdate)
+			.addMember("triggerCrouch", &Character::triggerCrouch)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadEntity] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 {
@@ -587,23 +642,3 @@ void CoreLib::loadUtils(kaguya::State* lua, std::vector<std::string> args)
 	}
 	//Add Others
 }
-/*void CoreLib::loadWorld(kaguya::State* lua, std::vector<std::string> args)
-{
-	registerLib(lua, fn::Vector::join(args, "."));
-	bool importAll = args.size() == 1;
-	bool foundPart = false;
-	if (!(bool)((*lua)["Core"]["World"])) (*lua)["Core"]["World"] = kaguya::NewTable();
-	if (importAll)
-	{
-		(*lua)["Core"]["World"]["World"].setClass(kaguya::ClassMetatable<World>()
-			.addMember("addCharacter", &World::addCharacter)
-			.addMember("addLevelSprite", &World::addLevelSprite)
-			.addMember("addLight", &World::addLight)
-			.addMember("loadFromFile", &World::loadFromFile)
-			.addMember("getCamX", &World::getCamX)
-			.addMember("getCamY", &World::getCamY)
-		);
-		foundPart = true;
-	}
-	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadWorld] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
-}*/

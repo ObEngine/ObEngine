@@ -22,6 +22,7 @@
 #include "Script.hpp"
 #include "GameObject.hpp"
 
+void loadWorldLib(kaguya::State* lua);
 void loadWorldScriptEngineBaseLib(kaguya::State* lua);
 
 class World
@@ -68,7 +69,7 @@ class World
 		int getStartY();
 		//GameObjects
 		GameObject* getGameObject(std::string id);
-		std::vector<GameObject*> getAllGameObject(std::vector<std::string> filters = std::vector<std::string>());
+		std::vector<GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
 		GameObject* createGameObject(std::string id, std::string type, std::string obj);
 		void orderUpdateScrArray();
 		//Camera

@@ -918,7 +918,7 @@ void MapEditor::editMap(std::string mapName)
 		{
 			if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 			{
-				std::vector<GameObject*> clickableGameObjects = world.getAllGameObject({ "Click" });
+				std::vector<GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
 				std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
 					cursor.getCollider(), -world.getCamX(), -world.getCamY());
 				for (int i = 0; i < elementsCollidedByCursor.size(); i++)
