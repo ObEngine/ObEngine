@@ -3624,9 +3624,11 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	this->posX.push_back(posX);
 	this->posY.push_back(posY);
 
-	this->inputText = defaultText;
 
 	this->isMultiLine = multiLine;
+
+	this->font = font;
+	this->charSize = fontSize;
 
 	fontCharMove.loadFromFile("Data/Fonts/" + font);
 	charToMove.setFont(fontCharMove);
@@ -3636,10 +3638,11 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 
 	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
 
-	createAttribute("Text", this->inputText, "string");
+	//createAttribute("Text", this->inputText, "string");
 
 	if (!multiLine)
 	{
+		this->lines.push_back(defaultText);
 		labelText.push_back(new Label(ID + "text", 0, 0, defaultText, font, fontSize, fontColor, sf::Text::Regular));
 		labelText[0]->setAbsolute(posContainerX, posContainerY);
 		widgetsContained.push_back(labelText[0]);
@@ -3678,17 +3681,17 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string style,
 	this->posX.push_back(posX);
 	this->posY.push_back(posY);
 
-	this->inputText = text->getString();
+	//this->inputText = text->getString();
 
 	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
-	createAttribute("Text", this->inputText, "string");
+	//createAttribute("Text", this->inputText, "string");
 
 	labelText.push_back(text);
 	labelText[0]->setAbsolute(posContainerX, posContainerY);
 	widgetsContained.push_back(labelText[0]);
 	addContainedItem(labelText[0]->getDataObject());
 
-	visibleText = labelText[0]->getHook();
+	//visibleText = labelText[0]->getHook();
 }
 
 void GUI::TextInput::setTexture()
@@ -3755,7 +3758,7 @@ void GUI::TextInput::updateTextPositionX()
 		if (!textLarger)
 			textWasLarger = false;
 		textLarger = false;
-		*visibleText = inputText;
+		*visibleText = lines[0];
 		labelText[0]->setText(*visibleText, fontColor, sf::Text::Regular);
 		labelText[0]->setSpritesPositions();
 		this->posX[1] = posX[0] + 5;
@@ -3774,31 +3777,39 @@ void GUI::TextInput::updateTextPositionX()
 		textLarger = false;
 		for (int i = 0; i < labelText.size(); i++)
 		{
-			lines[i] = labelText[i]->getString();
-			//std::cout << "String: " + labelText[i]->getString() << std::endl;
+			fn::String::replaceStringInPlace(lines[i], "\n", "");
+			labelText[i]->setText(lines[i], fontColor);
+
 			std::string toKeep = "";
 			posX[1 + i] = posX[0] + 5;
 
-			while (posX[1] + labelText[i]->getRect().width >= posX[0] + sprites[0].getGlobalBounds().width - 10)
-			{
-				//std::cout << "SIZE:" << toKeep.size() << "text:"+  lines[i] << std::endl;
-				toKeep.insert(0, lines[i].substr(lines[i].size() - 1, lines[i].size()));
-				lines[i].erase(lines[i].size() - 1, lines[i].size());
-				//std::cout << toKeep.size() << "Koin:" + toKeep << "fin"<< std::endl;
-				//std::cout << "SUBSTR" << lines[i].substr(0, lines[i].size() - toKeep.size())<< "size:"<< toKeep.size() << std::endl;
-				labelText[i]->setText(lines[i] + "\n" + toKeep, fontColor);
-				//std::cout << "Debut:" + lines[i] + "\n" + toKeep + "fin" << std::endl;
-				textLarger = true;
-				labelText[i]->setSpritesPositions();
-			}
-			if (textLarger)
-			{
-				labelText[i]->setText(lines[i] + "\n" + toKeep, fontColor);
-				lines[i] = lines[i] + "\n" + toKeep;
-			}
-			textLarger = false;
+			lines[i] = splitLine(lines[i]);
+
+			labelText[i]->setText(lines[i], fontColor);
 		}
 	}
+}
+
+std::string GUI::TextInput::splitLine(std::string str)
+{
+	charToMove.setString(str);
+	std::string toKeep = "";
+	while (charToMove.getGlobalBounds().width > sprites[0].getGlobalBounds().width - 10)
+	{
+		toKeep.insert(0, str.substr(str.size() - 1, str.size()));
+		str.erase(str.size() - 1, str.size());
+
+		charToMove.setString(str);
+	}
+
+	charToMove.setString(toKeep);
+	if (charToMove.getGlobalBounds().width > sprites[0].getGlobalBounds().width - 10)
+	{
+		toKeep = splitLine(toKeep);
+	}
+	if(toKeep != "")
+		str += "\n" + toKeep;
+	return str;
 }
 
 void GUI::TextInput::setFocus()
@@ -3826,7 +3837,7 @@ void GUI::TextInput::loseFocus()
 void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 {
 	updateTextPositionX();
-	charToMove.setString(inputText);
+	charToMove.setString(lines[0]);
 	int currentWidth = charToMove.getGlobalBounds().width;
 	cursorPosition += enteredOrDeleted;
 	if (!textWasLarger)
@@ -3835,6 +3846,17 @@ void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 	}
 
 	previousWidth = currentWidth;
+}
+
+int GUI::TextInput::interlineSum(int interline, int line)
+{
+	std::vector<std::string> splittedLines = fn::String::split(lines[line], "\n");
+	int sum = 0;
+	for (int i = 0; i < interline; i++)
+	{
+		sum += splittedLines[i].size();
+	}
+	return sum;
 }
 
 bool GUI::TextInput::checkFilters(int c)
@@ -3868,63 +3890,68 @@ bool GUI::TextInput::checkFilters(int c)
 
 void GUI::TextInput::moveCursorRight()
 {
+	std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+
 	if (!isMultiLine)
 	{
-		if (cursorPosition < inputText.size() && inputText.size() >= 1)
+		if (cursorPosition < lines[0].size() && lines[0].size() >= 1)
 		{
-			std::string charMoved(1, inputText[cursorPosition]);
-			charToMove.setString(charMoved);
-
+			//charToMove.setString((*visibleText).substr(0, ));
+			currentCursorOffsetX = charToMove.getGlobalBounds().width;
 			cursorPosition++;
-
-			currentCursorOffsetX += charToMove.getGlobalBounds().width;
 		}
 	}
 	else
 	{
-		if (cursorPosition < lines[cursorLine].size())
+		if (cursorPosition < lines[cursorLine].size() - (fn::String::split(lines[cursorLine]).size() - 1))
 		{
-			if (lines[cursorLine][cursorPosition] == '\n')
+			std::cout << "oui" << lines[cursorLine][cursorPosition + currentInterline] << "oui" << fn::String::split(lines[cursorLine], "\n").size() << " " << lines[cursorLine] << std::endl;
+			if (lines[cursorLine][cursorPosition + currentInterline] == '\n' && currentInterline < fn::String::split(lines[cursorLine], "\n").size() - 1)
 			{
-				currentCursorOffsetX = 0;
-				currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
 				cursorPosition++;
 				currentInterline++;
+				std::cout << "Changing interline(right)" << std::endl;
+
 			}
 			else
 			{
 				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
-					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - offsetStr[currentInterline - 1].size());
+					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
 				else
 					charMoved = offsetStr[0].substr(0, cursorPosition + 1);
 
 				charToMove.setString(charMoved);
-
+				std::cout << "moving right" << std::endl;
 				cursorPosition++;
-				currentCursorOffsetX = charToMove.getGlobalBounds().width;
+
 			}
 		}
 		else if (cursorLine < lines.size() - 1)
 		{
-			currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
-			currentCursorOffsetX = 0;
 			cursorPosition = 0;
 			cursorLine++;
 			currentInterline = 0;
+			std::cout << "changing line (right)" << std::endl;
 		}
 	}
+	computeOffsetX();
+	computeOffsetY();
 	updatePositions();
+	std::cout << "AFTER -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+
 }
 
 void GUI::TextInput::moveCursorLeft()
 {
+	std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+
 	if (!isMultiLine)
 	{
 		if (cursorPosition > 0)
 		{
-			std::string charMoved(1, inputText[cursorPosition - 1]);
+			std::string charMoved(1, lines[0][cursorPosition - 1]);
 			charToMove.setString(charMoved);
 
 			if (!(currentCursorOffsetX + posX[1] - charToMove.getGlobalBounds().width < posX[0]))
@@ -3942,12 +3969,11 @@ void GUI::TextInput::moveCursorLeft()
 	{
 		if (cursorPosition > 0)
 		{
-			if (lines[cursorLine][cursorPosition - 1] == '\n')
+			if (lines[cursorLine][cursorPosition] == '\n' && currentInterline > 0)//pb ici avec le \n
 			{
 				std::vector<std::string> offX = fn::String::split(lines[cursorLine], "\n");
 				charToMove.setString(offX[currentInterline - 1]);
-				currentCursorOffsetX = charToMove.getGlobalBounds().width;
-				currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
+				std::cout << "changing interline (left)" << std::endl;
 				cursorPosition--;
 				currentInterline--;
 			}
@@ -3956,79 +3982,150 @@ void GUI::TextInput::moveCursorLeft()
 				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
-					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - offsetStr[currentInterline - 1].size() - 2);
+				{
+					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - static_cast<int>(offsetStr[currentInterline - 1].size()) - 2);
+					std::cout << "moving left (on interline)" << std::endl;
+
+				}
 				else
+				{
 					charMoved = offsetStr[0].substr(0, cursorPosition - 1);
+					std::cout << "moving left (on main line)" << std::endl;
+				}
+				
 
 				charToMove.setString(charMoved);
-
 				cursorPosition--;
-				currentCursorOffsetX = charToMove.getGlobalBounds().width;
 			}
 		}
 		else if (cursorLine > 0)
 		{
-			currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
 			std::vector<std::string> offsetX = fn::String::split(lines[cursorLine - 1], "\n");
-			charToMove.setString(offsetX[offsetX.size() - 1]);
-			currentCursorOffsetX = charToMove.getGlobalBounds().width;
-			cursorPosition = lines[cursorLine - 1].size();
+			cursorPosition = lines[cursorLine - 1].size() - (offsetX.size() - 1);
 			cursorLine--;
 			currentInterline = offsetX.size() - 1;
+			std::cout << "changing line (left)" << std::endl;
+
 		}
 	}
+	computeOffsetX();
+	computeOffsetY();
 	updatePositions();
+	std::cout << "AFTER -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+
 }
 
 void GUI::TextInput::moveCursorTop()
 {
 	if (isMultiLine)
 	{
+		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+		std::vector<std::string> split = fn::String::split(lines[cursorLine], "\n");
+
+		if(currentInterline > 0)
+		{
+			cursorPosition -= split[0].size();
+			currentInterline--;
+			std::cout << "going on top interline" << std::endl;
+
+		}
 		if (cursorLine > 0)
 		{
-			currentCursorOffsetY -= shapes[0]->getGlobalBounds().height;
 			if (lines[cursorLine - 1].size() < lines[cursorLine].size())
 			{
 				charToMove.setString(lines[cursorLine - 1]);
-				currentCursorOffsetX = charToMove.getGlobalBounds().width;
 				cursorPosition = lines[cursorLine - 1].size() - 1;
+				std::cout << "going on previous interline and i'm longer" << std::endl;
+
 			}
+			std::cout << "going on previous interline (was maybe longer)" << std::endl;
+
+			currentInterline = static_cast<int>(fn::String::split(lines[cursorLine - 1], "\n").size()) - 1;
+			cursorPosition += interlineSum(currentInterline, cursorLine - 1);
 			cursorLine--;
 		}
 	}
+	computeOffsetX();
+	computeOffsetY();
+	std::cout << "AFTER -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition<< std::endl;
+
 }
 
 void GUI::TextInput::moveCursorBot()
 {
 	if (isMultiLine)
 	{
-		currentCursorOffsetY += shapes[0]->getGlobalBounds().height;
+		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
 		std::vector<std::string> split = fn::String::split(lines[cursorLine], "\n");
 		if (split.size() > currentInterline + 1)
 			{
-				currentInterline++;
-				if (cursorPosition > split[currentInterline + 1].size())
+				if (cursorPosition - interlineSum(currentInterline, cursorLine) > split[currentInterline + 1].size())
 				{
-					cursorPosition = split[currentInterline + 1].size() - 1;
-					charToMove.setString(split[currentInterline + 1]);
-					currentCursorOffsetX = charToMove.getGlobalBounds().width;
+					cursorPosition = 1;
+					for (int i = 0; i <= currentInterline + 1; i++)
+					{
+						cursorPosition += split[i].size();
+					}
+					currentInterline++;
+					std::cout << "going on bottom interline and longer" << std::endl;
+
+				}
+				else
+				{
+					int previous = cursorPosition - interlineSum(currentInterline, cursorLine);
+					cursorPosition = 0;
+					for (int i = 0; i < currentInterline + 1; i++)
+					{
+						std::cout << "add " << split[i].size() << std::endl;
+						cursorPosition += split[i].size();
+					}
+					cursorPosition += previous;
+					currentInterline++;
+					std::cout << "going on bottom interline and not longer" << std::endl;
+
 				}
 			}
 			else
 			{
 				if (cursorLine + 1 < lines.size())
 				{
+					cursorPosition = cursorPosition - interlineSum(currentInterline, cursorLine);
 					if (cursorPosition > lines[cursorLine + 1].size())
 					{
-						cursorPosition = lines[cursorLine + 1].size() - 1;
+						cursorPosition = lines[cursorLine + 1].size();
 						charToMove.setString(lines[cursorLine + 1]);
-						currentCursorOffsetX = charToMove.getGlobalBounds().width;
+						std::cout << "i'm longer and" << std::endl;
+
 					}
+					std::cout << "going on bottom line" << std::endl;
+
 					currentInterline = 0;
 					cursorLine++;
 				}
 			}
 	}
+	computeOffsetX();
+	computeOffsetY();
+	std::cout << "AFTER -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
+
+}
+
+void GUI::TextInput::computeOffsetX()
+{
+	std::vector<std::string> str = fn::String::split(lines[cursorLine], "\n");
+	std::string s = str[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
+	charToMove.setString(s);
+	currentCursorOffsetX = charToMove.getGlobalBounds().width;
+}
+
+void GUI::TextInput::computeOffsetY()
+{
+	int countInterlines = 0;
+	for (int i = 0; i < cursorLine; i++)
+	{
+		countInterlines += fn::String::split(lines[i], "\n").size() - 1;
+	}
+	currentCursorOffsetY = (currentInterline + countInterlines + cursorLine) * shapes[0]->getGlobalBounds().height;
 }
 
 void GUI::TextInput::updateTexture(sf::Event& evnt)
@@ -4117,11 +4214,12 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 					hasStartTimer = false;
 				if (evnt.text.unicode == 8)
 				{
-					if (inputText.size() > 0 && cursorPosition - 1 >= 0)
+					if (lines[0].size() > 0 && cursorPosition - 1 >= 0)
 					{
 						timeBefore = static_cast<float>(clock());
-						inputText.erase(cursorPosition - 1, 1);
-						moveCursorTextChanged(-1);
+						//inputText.erase(cursorPosition - 1, 1);
+						//moveCursorTextChanged(-1);
+						eraseCharacter();
 						updatePositions();
 					}
 				}
@@ -4129,14 +4227,35 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 				{
 					timeBefore = static_cast<float>(clock());
 					std::string s(1, static_cast<char>(evnt.text.unicode));
-					inputText.insert(cursorPosition, s);
-					moveCursorTextChanged(1);
+					//inputText.insert(cursorPosition, s);
+					addCharacter(s);
+					//moveCursorTextChanged(1);
 					updatePositions();
 				}
 				previousChar = evnt.text.unicode;
 
 			}
 		}
+	}
+}
+
+void GUI::TextInput::addCharacter(std::string c)
+{
+	//if(currentInterline < fn::String::split(lines[cursorLine], "\n").size())
+	std::cout << "insertB "<< lines[cursorLine].size() << " " << cursorPosition + currentInterline << std::endl;
+
+	lines[cursorLine].insert(cursorPosition + currentInterline, c);
+	std::cout << "insertOK" << std::endl;
+	updatePositions();
+	moveCursorRight();
+}
+
+void GUI::TextInput::eraseCharacter()
+{
+	if (cursorPosition >= 1)
+	{
+		lines[cursorLine].erase(cursorPosition - 1, 1);
+		moveCursorLeft();
 	}
 }
 
@@ -4147,7 +4266,32 @@ bool GUI::TextInput::getEnterPressed()
 
 void GUI::TextInput::setText(std::string string)
 {
-	inputText = string;
+	if (isMultiLine)
+	{
+		std::vector<std::string> split = fn::String::split(string, "\n");
+
+		for (int i = 0; i <= labelText.size(); i++)
+		{
+			if (labelText.size() == i)
+			{
+				labelText.push_back(new Label(ID + "text" + std::to_string(i), 0, 0, split[i], font, charSize, fontColor, sf::Text::Regular));
+				labelText[i]->setAbsolute(posContainerX, posContainerY);
+				widgetsContained.push_back(labelText[i]);
+				selector.push_back(Display::WidgetContained);
+				lines.push_back(split[i]);
+			}
+			else
+			{
+				labelText[i]->setText(split[i], fontColor);
+				lines[i] = split[i];
+			}
+		}
+
+	}
+	else
+	{
+		lines[0] = string;
+	}
 	updatePositions();
 }
 
@@ -4158,7 +4302,18 @@ void GUI::TextInput::addFilter(GUI::TextInputFilters filter)
 
 std::string GUI::TextInput::getText()
 {
-	return inputText;
+	if (isMultiLine)
+	{
+		std::string str = "";
+		std::vector<std::string> vectStr = lines;
+		for (int i = 0; i < lines.size(); i++)
+		{
+			fn::String::replaceStringInPlace(vectStr[i], "\n", "");
+			str += vectStr[i] + "\n";
+		}
+		return str;
+	}
+	return lines[0];
 }
 
 void GUI::Widget::clicked()

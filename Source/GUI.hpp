@@ -337,9 +337,8 @@ namespace GUI
 	protected:
 		std::vector<Label*> labelText;
 		sf::Color fontColor;
-		std::string inputText;
 		std::vector<std::string> lines;
-		std::string *visibleText = &inputText;
+		std::string* visibleText;
 		std::string nameImageBackground = "background.png";
 		std::string nameImageBackgroundFocus = "backgroundfocus.png";
 		std::string nameImageOutline = "outline.png";
@@ -349,6 +348,8 @@ namespace GUI
 		bool enterJustPressed = false;
 		clock_t timeBefore;
 		sf::Font fontCharMove;
+		std::string font;
+		int charSize;
 		sf::Text charToMove;
 		int currentCursorOffsetX = 0;
 		int currentCursorOffsetY = 0;
@@ -371,7 +372,13 @@ namespace GUI
 		void setFocus();
 		void loseFocus();
 		void updateTextPositionX();
+		std::string splitLine(std::string str);
+		int interlineSum(int interline, int line);
+		void computeOffsetX();
+		void computeOffsetY();
 		virtual void updatePositions();
+		void addCharacter(std::string c);
+		void eraseCharacter();
 		void moveCursorRight();
 		void moveCursorLeft();
 		void moveCursorTop();
@@ -381,7 +388,7 @@ namespace GUI
 
 	public:
 		TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText, bool multiLine);
-		TextInput(std::string ID, int posX, int posY, std::string style, GUI::Label* text);
+		TextInput(std::string ID, int posX, int posY, std::string style, GUI::Label* text);//Outdated (since multiline)
 
 		void addFilter(GUI::TextInputFilters filter);
 		std::string getText();
