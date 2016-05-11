@@ -257,7 +257,7 @@ bool GUI::Widget::isRectClicked(sf::Event& evnt, sf::Rect<float> rect, bool left
 	{
 		if (!LeftClickReleased || !rightClickReleased)
 		{
-			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && convertByHeight(evnt.mouseButton.y) > rect.top && convertByHeight(evnt.mouseButton.y) < rect.top + rect.height)
+			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && evnt.mouseButton.y > rect.top && evnt.mouseButton.y < rect.top + rect.height)
 			{
 				GUI::container->setAlreadyClicked(true);
 				if (evnt.mouseButton.button == sf::Mouse::Left)
@@ -283,7 +283,7 @@ bool GUI::Widget::isRectClicked(sf::Event& evnt, sf::Rect<float> rect, bool left
 		}
 		else if (!GUI::container->getAlreadyClicked())
 		{
-			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && convertByHeight(evnt.mouseButton.y) > rect.top && convertByHeight(evnt.mouseButton.y) < rect.top + rect.height)
+			if (convertByWidth(evnt.mouseButton.x) > rect.left && convertByWidth(evnt.mouseButton.x) < rect.left + rect.width && evnt.mouseButton.y > rect.top && evnt.mouseButton.y < rect.top + rect.height)
 			{
 				GUI::container->setAlreadyClicked(true);
 				if (evnt.mouseButton.button == sf::Mouse::Left)
@@ -326,7 +326,7 @@ bool GUI::Widget::isRectClickedOutside(sf::Event& evnt, sf::Rect<float> rect, bo
 bool GUI::Widget::isRectHovering(sf::Event& evnt, sf::Rect<float> rect)
 {
 	sf::Vector2i pos = sf::Mouse::getPosition(*GUI::window);
-	if (convertByWidth(pos.x) > rect.left && convertByWidth(pos.x)  < rect.left + rect.width && convertByHeight(pos.y)  > rect.top && convertByHeight(pos.y)  < rect.top + rect.height)
+	if (convertByWidth(pos.x) > rect.left && convertByWidth(pos.x)  < rect.left + rect.width && pos.y  > rect.top && pos.y  < rect.top + rect.height)
 	{
 		return true;
 	}
@@ -588,8 +588,8 @@ GUI::WidgetContainer::WidgetContainer(std::string containerName, int posX, int p
 	this->containerName = containerName;
 	this->posX = posX;
 	this->posY = posY;
-	this->width = width;
-	this->height = height;
+	this->width = convertByWidthDecrease(width);
+	this->height = convertByHeightDecrease(height);
 	this->widthControlBar = widthControlBar;
 	this->heightControleBar = heightControleBar;
 	this->movable = movable;
@@ -614,7 +614,7 @@ GUI::WidgetContainer::WidgetContainer(std::string containerName, int posX, int p
 }*/
 
 
-GUI::TextInput* GUI::Container::createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font, int fontSize, sf::Color fontColor, std::string style)
+GUI::TextInput* GUI::Container::createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font, int fontSize, sf::Color fontColor, bool multiLine, std::string style)
 {
 	if (widgetContainers.find(containerName) == widgetContainers.end())
 	{
@@ -623,7 +623,7 @@ GUI::TextInput* GUI::Container::createTextInput(std::string containerName, std::
 	}
 	else
 	{
-		TextInput* textInput = new TextInput(ID, posX, posY, font, fontSize, fontColor, style, defaultText);
+		TextInput* textInput = new TextInput(ID, posX, posY, font, fontSize, fontColor, style, defaultText, multiLine);
 		textInput->autoLoad();
 		widgetContainers[containerName]->addNewWidget(textInput);
 		return textInput;
@@ -843,7 +843,7 @@ GUI::ScrollBar* GUI::Container::createScrollBar(std::string containerName, std::
 	}
 }
 
-GUI::ScrollBar* GUI::Container::createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsLinked, std::string style)
+GUI::ScrollBar* GUI::Container::createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsLinked, std::string style)
 {
 	if (widgetContainers.find(containerName) == widgetContainers.end())
 	{
@@ -1039,6 +1039,11 @@ std::vector<GUI::Widget*> GUI::WidgetContainer::getWidgets()
 	return widgetIDContainer;
 }
 
+std::vector<GUI::Widget*>* GUI::WidgetContainer::getVectWidgets()
+{
+	return &widgetIDContainer;
+}
+
 void GUI::WidgetContainer::addNewWidget(Widget* widget)
 {
 	widgetIDContainer.push_back(widget);
@@ -1163,8 +1168,7 @@ void GUI::WidgetContainer::drawAll(sf::RenderWindow * GUI)
 	{
 		GUI->draw(background);
 		glEnable(GL_SCISSOR_TEST);
-
-		glScissor(posX, windowHeight - posY - height, convertByWidth(width), convertByHeight(height));
+		glScissor(posX, windowHeight - posY - height, width, height);
 		if (decoTextures.size() > 0)
 		{
 			for (std::vector<std::tuple<sf::Texture, int, int>>::reverse_iterator ite = decoTextures.rbegin(); ite != decoTextures.rend(); ite++)
@@ -1178,7 +1182,7 @@ void GUI::WidgetContainer::drawAll(sf::RenderWindow * GUI)
 		for (int i = 0; i < widgetIDContainer.size(); i++)
 		{
 			sf::Rect<float> rect = widgetIDContainer[i]->getRect();
-			if (widgetIDContainer[i]->getDisplayed()&& !(rect.left + rect.width < posX || rect.left > posX + width || rect.top + rect.height < posY || rect.top > posY + height))
+			if (widgetIDContainer[i]->getDisplayed() && !(rect.left + rect.width < posX || rect.left > posX + width || rect.top + rect.height < posY || rect.top > posY + height))
 			{
 				widgetIDContainer[i]->draw(GUI);
 			}
@@ -1329,7 +1333,7 @@ void GUI::LoadingBar::draw(sf::RenderWindow* GUI)
 	GUI->draw(sprites[0]);
 }
 
-GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsToMove, std::string style) : Widget(ID, posX, posY, style)
+GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsToMove, std::string style) : Widget(ID, posX, posY, style)
 {
 	this->widgetType = "ScrollBar";
 	this->size = size;
@@ -1356,7 +1360,7 @@ GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minH
 	this->widgetType = "ScrollBar";
 	this->size = size;
 	this->containerLinked = widgetContainerLinked;
-	widgetsLinked = widgetContainerLinked->getWidgets();
+	widgetsLinked = widgetContainerLinked->getVectWidgets();
 	hasContainer = true;
 	previousScrollerX = posX;
 	previousScrollerY = posY;
@@ -1398,23 +1402,24 @@ void GUI::ScrollBar::updatePositions()
 
 void GUI::ScrollBar::updateTexture(sf::Event& evnt)
 {
-	minY = widgetsLinked[0]->getRect().top;
-	maxY = widgetsLinked[0]->getRect().top;
-	minX = widgetsLinked[0]->getRect().left;
-	maxX = widgetsLinked[0]->getRect().left;
+	std::cout << "POS" << posX[0] << " " << posY[0] << std::endl;
+	minY = widgetsLinked->at(0)->getRect().top;
+	maxY = widgetsLinked->at(0)->getRect().top;
+	minX = widgetsLinked->at(0)->getRect().left;
+	maxX = widgetsLinked->at(0)->getRect().left;
 	int currY;
 	int currYPlusHeight;
 	int currX;
 	int currXPlusWidth;
-	for (int i = 0; i < widgetsLinked.size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
+	for (int i = 0; i < widgetsLinked->size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
 	{
-		if (widgetsLinked[i]->getDisplayed())
+		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
 		{
-			currY = widgetsLinked[i]->getRect().top;
-			currYPlusHeight = currY + widgetsLinked[i]->getRect().height;
+			currY = widgetsLinked->at(i)->getRect().top;
+			currYPlusHeight = currY + widgetsLinked->at(i)->getRect().height;
 
-			currX = widgetsLinked[i]->getRect().left;
-			currXPlusWidth = currX + widgetsLinked[i]->getRect().width;
+			currX = widgetsLinked->at(i)->getRect().left;
+			currXPlusWidth = currX + widgetsLinked->at(i)->getRect().width;
 
 			if (currY < minY)
 			{
@@ -1466,13 +1471,16 @@ void GUI::ScrollBar::updateTexture(sf::Event& evnt)
 		}
 		else
 		{
-			for (int i = 0; i < widgetsLinked.size(); i++)
+			for (int i = 0; i < widgetsLinked->size(); i++)
 			{
-				widgetsLinked[i]->move(0, (-scroller->getRelativePosY() + posY[1]) * movePerPixel);
+				if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+					widgetsLinked->at(i)->move(0, (-scroller->getRelativePosY() + posY[1]) * movePerPixel);
 			}
 		}
 		posY[1] = scroller->getRelativePosY();
 	}
+
+	std::cout << "POS" << absolutesX[0] << "  " << absolutesY[0] << std::endl;
 }
 
 void GUI::ScrollBar::computeDynamicScroll()
@@ -1481,17 +1489,17 @@ void GUI::ScrollBar::computeDynamicScroll()
 	int spriteTop = sprites[0].getGlobalBounds().top;
 	int scrollerHeight = scroller->getRect().height;
 	int scrollerTop = scroller->getRect().top;
-	minY = widgetsLinked[0]->getRect().top;
-	maxY = widgetsLinked[0]->getRect().top;
+	minY = widgetsLinked->at(0)->getRect().top;
+	maxY = widgetsLinked->at(0)->getRect().top;
 	int currY;
 	int currYPlusHeight;
 
-	for (int i = 0; i < widgetsLinked.size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
+	for (int i = 0; i < widgetsLinked->size(); i++)//Cette boucle calcul la position absolue minimale et maximale des widgets qui sont liés à la scrollBar
 	{
-		if (widgetsLinked[i]->getDisplayed())
+		if (widgetsLinked->at(i)->getDisplayed() && widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
 		{
-			currY = widgetsLinked[i]->getRect().top;
-			currYPlusHeight = currY + widgetsLinked[i]->getRect().height;
+			currY = widgetsLinked->at(i)->getRect().top;
+			currYPlusHeight = currY + widgetsLinked->at(i)->getRect().height;
 
 			if (currY < minY)
 			{
@@ -1566,9 +1574,12 @@ void GUI::ScrollBar::replaceScrollerWidgets(int maxY, int spriteHeight, int spri
 	if (maxY < spriteHeight + spriteTop)
 	{
 		int distance = spriteHeight + spriteTop - maxY;
-		for (int i = 0; i < widgetsLinked.size(); i++)
+		for (int i = 0; i < widgetsLinked->size(); i++)
 		{
-			widgetsLinked[i]->move(0, distance);
+			if (widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+			{
+				widgetsLinked->at(i)->move(0, distance);
+			}
 		}
 		posY[1] = posY[0] + spriteHeight  - scrollerHeight;
 		scroller->setPosition(posX[0], posY[1]);
@@ -1578,9 +1589,10 @@ void GUI::ScrollBar::replaceScrollerWidgets(int maxY, int spriteHeight, int spri
 void GUI::ScrollBar::scrollToBottom()
 {
 	int distance = sprites[0].getGlobalBounds().top + sprites[0].getGlobalBounds().height - (scroller->getRect().top + scroller->getRect().height);
-	for (int i = 0; i < widgetsLinked.size(); i++)
+	for (int i = 0; i < widgetsLinked->size(); i++)
 	{
-		widgetsLinked[i]->move(0, -distance * movePerPixel);
+		if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+			widgetsLinked->at(i)->move(0, -distance * movePerPixel);
 	}
 	posY[1] = posY[0] + sprites[0].getGlobalBounds().height - scroller->getRect().height;
 	scroller->setPosition(posX[0], posY[1]);
@@ -1589,9 +1601,10 @@ void GUI::ScrollBar::scrollToBottom()
 void GUI::ScrollBar::scrollToTop()
 {
 	int distance = scroller->getRect().top - sprites[0].getGlobalBounds().top;
-	for (int i = 0; i < widgetsLinked.size(); i++)
+	for (int i = 0; i < widgetsLinked->size(); i++)
 	{
-		widgetsLinked[i]->move(0, distance * movePerPixel);
+		if(widgetsLinked->at(i)->getWidgetType() != "ScrollBar")
+		widgetsLinked->at(i)->move(0, distance * movePerPixel);
 	}
 	posY[1] = posY[0];
 	scroller->setPosition(posX[0], posY[1]);
@@ -2643,8 +2656,8 @@ void GUI::Movable::updateTexture(sf::Event& evnt)
 		if (LeftClickReleased && isRectClicked(evnt, sprites[0].getGlobalBounds(), true, false))
 		{
 			isHolding = true;
-			currentShiftX = (convertByWidth(evnt.mouseButton.x) - absolutesX[0]);
-			currentShiftY = (convertByHeight(evnt.mouseButton.y) - absolutesY[0]);
+			currentShiftX = (evnt.mouseButton.x - absolutesX[0]);
+			currentShiftY = (evnt.mouseButton.y - absolutesY[0]);
 		}
 
 		if (isHolding && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -2718,7 +2731,7 @@ void GUI::Movable::holding(sf::Event& evnt)
 {
 	if (!hasVerticalConstaint)
 	{
-		int y = convertByHeight(evnt.mouseMove.y) - currentShiftY;
+		int y = evnt.mouseMove.y - currentShiftY;
 		if (hasPosConstraints)
 		{
 			if (y < posYMin)
@@ -3592,14 +3605,12 @@ void GUI::NumericSlider::isHolding(sf::Event& evnt)
 	}
 }*/
 
-GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText) : Widget(ID, posX, posY, style)
+GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText, bool multiLine) : Widget(ID, posX, posY, style)
 {
 	this->widgetType = "TextInput";
 	this->fontColor = fontColor;
 	selector.push_back(Display::Sprite);
-	selector.push_back(Display::WidgetContained);
-	selector.push_back(Display::Sprite);
-	selector.push_back(Display::Shape);
+
 
 	this->posX.push_back(posX);
 	this->posY.push_back(posY);
@@ -3608,6 +3619,8 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	this->posY.push_back(posY);
 
 	this->inputText = defaultText;
+
+	this->isMultiLine = multiLine;
 
 	fontCharMove.loadFromFile("Data/Fonts/" + font);
 	charToMove.setFont(fontCharMove);
@@ -3619,12 +3632,29 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 
 	createAttribute("Text", this->inputText, "string");
 
-	labelText = new Label(ID + "text", 0, 0, defaultText, font, fontSize, fontColor, sf::Text::Regular);
-	labelText->setAbsolute(posContainerX, posContainerY);
-	widgetsContained.push_back(labelText);
-	addContainedItem(labelText->getDataObject());
-
-	visibleText = labelText->getHook();
+	if (!multiLine)
+	{
+		labelText.push_back(new Label(ID + "text", 0, 0, defaultText, font, fontSize, fontColor, sf::Text::Regular));
+		labelText[0]->setAbsolute(posContainerX, posContainerY);
+		widgetsContained.push_back(labelText[0]);
+		addContainedItem(labelText[0]->getDataObject());
+		selector.push_back(Display::WidgetContained);
+	}
+	else
+	{
+		std::vector<std::string> stringSplit = fn::String::split(defaultText, "\n");
+		for (int i = 0; i < stringSplit.size(); i++)
+		{
+			labelText.push_back(new Label(ID + "text" + std::to_string(i), 0, 0, stringSplit[i], font, fontSize, fontColor, sf::Text::Regular));
+			labelText[i]->setAbsolute(posContainerX, posContainerY);
+			widgetsContained.push_back(labelText[i]);
+			selector.push_back(Display::WidgetContained);
+			lines.push_back(stringSplit[i]);
+		}
+	}
+	selector.push_back(Display::Sprite);
+	selector.push_back(Display::Shape);
+	visibleText = labelText[0]->getHook();
 }
 
 GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string style, GUI::Label* text) : Widget(ID, posX, posY, style)
@@ -3647,47 +3677,64 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string style,
 	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
 	createAttribute("Text", this->inputText, "string");
 
-	labelText = text;
-	labelText->setAbsolute(posContainerX, posContainerY);
-	widgetsContained.push_back(labelText);
-	addContainedItem(labelText->getDataObject());
+	labelText.push_back(text);
+	labelText[0]->setAbsolute(posContainerX, posContainerY);
+	widgetsContained.push_back(labelText[0]);
+	addContainedItem(labelText[0]->getDataObject());
 
-	visibleText = labelText->getHook();
+	visibleText = labelText[0]->getHook();
 }
 
 void GUI::TextInput::setTexture()
 {
 	sprites.resize(2);
-	posX.resize(4);
-	posY.resize(4);
-	absolutesX.resize(4);
-	absolutesY.resize(4);
+	posX.resize(3 + labelText.size());
+	posY.resize(3 + labelText.size());
+	absolutesX.resize(3 + labelText.size());
+	absolutesY.resize(3 + labelText.size());
 
 	shapes.resize(1);
-	shapes[0] = new sf::RectangleShape(sf::Vector2f(1, labelText->getfontSize() + 2));
+	shapes[0] = new sf::RectangleShape(sf::Vector2f(1, labelText[0]->getfontSize() + 2));
 	shapes[0]->setFillColor(sf::Color::Red);
-	currentCursorOffset = labelText->getRect().width - 1;
+	currentCursorOffset = labelText[0]->getRect().width - 1;
 	cursorPosition = inputText.size();
 
 	setTextureMap(&sprites[0], nameImageBackground);
 	setTextureMap(&sprites[1], nameImageOutline);
 
 	updatePositions();
-	previousWidth = labelText->getRect().width;
+	previousWidth = labelText[0]->getRect().width;
 }
 
 void GUI::TextInput::updatePositions()
 {
-	posX[2] = posX[0];
-	posY[2] = posY[0];
+	//set Outline position
+	posX[1 + labelText.size()] = posX[0];
+	posY[1 + labelText.size()] = posY[0];
+
 	setSpritesPositions();
 	//set text position
 	updateTextPositionX();
-	posY[1] = posY[0] + sprites[0].getGlobalBounds().height / 2 - labelText->getRect().height / 2;
-
+	if (!isMultiLine)
+	{
+		posY[1] = posY[0] + sprites[0].getGlobalBounds().height / 2 - labelText[0]->getRect().height / 2;
+	}
+	else
+	{
+		int currHeight = 0;
+		posY[1] = posY[0] + 5;
+		for (int i = 1; i < labelText.size(); i++)
+		{
+			currHeight += labelText[i - 1]->getRect().height;
+			posY[1 + i] = posY[1] + currHeight;
+		}
+	}
 	//set Cursor position
-	posX[3] = posX[1] + currentCursorOffset;
-	posY[3] = posY[1];
+	posX[1 + labelText.size() + 1] = posX[1] + currentCursorOffset;
+	posY[1 + labelText.size() + 1] = posY[1];
+
+
+
 	//std::cout << posY[3] << " " << posX[3] << std::endl;
 	//labelText->updatePositions();
 
@@ -3696,21 +3743,53 @@ void GUI::TextInput::updatePositions()
 
 void GUI::TextInput::updateTextPositionX()
 {
-	if (!textLarger)
-		textWasLarger = false;
-	textLarger = false;
-	*visibleText = inputText;
-	labelText->setText(*visibleText, fontColor, sf::Text::Regular);
-	labelText->setSpritesPositions();
-	this->posX[1] = posX[0] + 5;
-	while (posX[1] + labelText->getRect().width >= posX[0] + sprites[0].getGlobalBounds().width - 5)
+	if (!isMultiLine)
 	{
-		(*visibleText).erase(0, 1);
-		labelText->setText(*visibleText, fontColor, sf::Text::Regular);
-		labelText->setSpritesPositions();
+		if (!textLarger)
+			textWasLarger = false;
+		textLarger = false;
+		*visibleText = inputText;
+		labelText[0]->setText(*visibleText, fontColor, sf::Text::Regular);
+		labelText[0]->setSpritesPositions();
 		this->posX[1] = posX[0] + 5;
-		textWasLarger = true;
-		textLarger = true;
+		while (posX[1] + labelText[0]->getRect().width >= posX[0] + sprites[0].getGlobalBounds().width - 5)
+		{
+			(*visibleText).erase(0, 1);
+			labelText[0]->setText(*visibleText, fontColor, sf::Text::Regular);
+			labelText[0]->setSpritesPositions();
+			this->posX[1] = posX[0] + 5;
+			textWasLarger = true;
+			textLarger = true;
+		}
+	}
+	else
+	{
+		textLarger = false;
+		for (int i = 0; i < labelText.size(); i++)
+		{
+			lines[i] = labelText[i]->getString();
+			//std::cout << "String: " + labelText[i]->getString() << std::endl;
+			std::string toKeep = "";
+			posX[1 + i] = posX[0] + 5;
+
+			while (posX[1] + labelText[i]->getRect().width >= posX[0] + sprites[0].getGlobalBounds().width - 10)
+			{
+				//std::cout << "SIZE:" << toKeep.size() << "text:"+  lines[i] << std::endl;
+				toKeep.insert(0, lines[i].substr(lines[i].size() - 1, lines[i].size()));
+				lines[i].erase(lines[i].size() - 1, lines[i].size());
+				//std::cout << toKeep.size() << "Koin:" + toKeep << "fin"<< std::endl;
+				//std::cout << "SUBSTR" << lines[i].substr(0, lines[i].size() - toKeep.size())<< "size:"<< toKeep.size() << std::endl;
+				labelText[i]->setText(lines[i] + "\n" + toKeep, fontColor);
+				//std::cout << "Debut:" + lines[i] + "\n" + toKeep + "fin" << std::endl;
+				textLarger = true;
+				labelText[i]->setSpritesPositions();
+			}
+			if (textLarger)
+			{
+				labelText[i]->setText(lines[i] + "\n" + toKeep, fontColor);
+			}
+			textLarger = false;
+		}
 	}
 }
 
@@ -3727,7 +3806,7 @@ bool GUI::TextInput::getHasFocus()
 
 GUI::Label* GUI::TextInput::getLabel()
 {
-	return labelText;
+	return labelText[0];
 }
 
 void GUI::TextInput::loseFocus()
@@ -3781,14 +3860,21 @@ bool GUI::TextInput::checkFilters(int c)
 
 void GUI::TextInput::moveCursorRight()
 {
-	if (cursorPosition < inputText.size() && inputText.size() >= 1)
+	if (!isMultiLine)
 	{
-		std::string charMoved(1, inputText[cursorPosition]);
-		charToMove.setString(charMoved);
+		if (cursorPosition < inputText.size() && inputText.size() >= 1)
+		{
+			std::string charMoved(1, inputText[cursorPosition]);
+			charToMove.setString(charMoved);
 
-		cursorPosition++;
+			cursorPosition++;
 
-		currentCursorOffset += charToMove.getGlobalBounds().width;
+			currentCursorOffset += charToMove.getGlobalBounds().width;
+		}
+	}
+	else
+	{
+		//if(lines[cursorLine][cursorPosition] == "\n")
 	}
 	updatePositions();
 }
@@ -3976,8 +4062,8 @@ bool GUI::WidgetContainer::getReleased()
 
 void GUI::WidgetContainer::addScrollBar()
 {
-	scroll = container->createScrollBar(containerName, containerName + "scrollbar", width, 0, height, 100, false, widgetIDContainer, "V2");
-	scroll->setPosition(width - scroll->getRect().width, 0);
+	scroll = container->createScrollBar(containerName, containerName + "scrollbar", width, 0, height, 100, false, &widgetIDContainer, "V2");
+	scroll->setPosition(width - scroll->getRect().width - 10, 0);
 }
 
 sf::Rect<float> GUI::WidgetContainer::getRect()
@@ -4366,12 +4452,26 @@ void GUI::Container::loadWidContFromFileInWidCont(std::string filename, std::str
 
 int convertByWidth(int value)
 {
-	return static_cast<double>(fn::Coord::baseWidth) / GUI::windowWidth * value;
+	return value;//static_cast<double>(GUI::windowWidth) / (fn::Coord::baseWidth) * value;
+
+	//return static_cast<double>(fn::Coord::baseWidth) / GUI::windowWidth * value;
+}
+
+int convertByWidthDecrease(int value)
+{
+	return static_cast<double>(GUI::windowWidth) / (fn::Coord::baseWidth) * value;
 }
 
 int convertByHeight(int value)
 {
-	return static_cast<double>(fn::Coord::baseHeight) / GUI::windowHeight * value;
+	return value;//static_cast<double>(GUI::windowHeight) / (fn::Coord::baseHeight) * value;
+
+	//return static_cast<double>(fn::Coord::baseHeight) / GUI::windowHeight * value;
+}
+
+int convertByHeightDecrease(int value)
+{
+	return static_cast<double>(GUI::windowHeight) / (fn::Coord::baseHeight) * value;
 }
 
 Color::Color(sf::Color color)

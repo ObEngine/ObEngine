@@ -335,9 +335,10 @@ namespace GUI
 	class TextInput : public Widget
 	{
 	protected:
-		Label* labelText;
+		std::vector<Label*> labelText;
 		sf::Color fontColor;
 		std::string inputText;
+		std::vector<std::string> lines;
 		std::string *visibleText = &inputText;
 		std::string nameImageBackground = "background.png";
 		std::string nameImageBackgroundFocus = "backgroundfocus.png";
@@ -351,6 +352,7 @@ namespace GUI
 		sf::Text charToMove;
 		int currentCursorOffset = 0;
 		int cursorPosition = 0;
+		int cursorLine = 0;
 		int timeCursorDiplayed = 900;
 		bool cursorKeyReleased = true;
 		sf::Clock cursorElapsedTime;
@@ -358,6 +360,7 @@ namespace GUI
 		int previousWidth;
 		bool hasStartTimer = false;
 		bool unlockKeyRepeater = true;
+		bool isMultiLine;
 
 		std::vector<TextInputFilters> filters;
 
@@ -373,7 +376,7 @@ namespace GUI
 		bool checkFilters(int c);
 
 	public:
-		TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText);
+		TextInput(std::string ID, int posX, int posY, std::string font, int fontSize, sf::Color fontColor, std::string style, std::string defaultText, bool multiLine);
 		TextInput(std::string ID, int posX, int posY, std::string style, GUI::Label* text);
 
 		void addFilter(GUI::TextInputFilters filter);
@@ -571,7 +574,7 @@ namespace GUI
 
 		std::vector<Button*> arrows;
 		Movable* scroller;
-		std::vector<Widget*> widgetsLinked;
+		std::vector<Widget*>* widgetsLinked;
 		WidgetContainer* containerLinked;
 		bool hasContainer = false;
 
@@ -582,7 +585,7 @@ namespace GUI
 		void replaceScroller(int maxY);//
 		void replaceScrollerWidgets(int maxY, int spriteHeight, int spriteTop, int scrollerHeight);
 	public:
-		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsToMove, std::string style);
+		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsToMove, std::string style);
 		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLinked, std::string style);
 
 		void computeDynamicScroll();//Compute the size and the speed of the scrollbar in function of the widgets linked
@@ -787,6 +790,7 @@ namespace GUI
 		bool getClicked();
 		bool getReleased();
 		std::vector<Widget*> getWidgets();
+		std::vector<Widget*>* getVectWidgets();
 		sf::Rect<float> getRect();
 		void setHolding();
 		void move(int x, int y);
@@ -836,7 +840,7 @@ namespace GUI
 		void setWindowSize(int windowWidth, int windowHeight);
 
 		Label* createLabel(std::string containerName, std::string ID, int posX, int posY, std::string text, std::string font, int fontSize, sf::Color color, sf::Text::Style style = sf::Text::Regular);
-		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*> widgetsLinked, std::string style = "DEFAULT");
+		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsLinked, std::string style = "DEFAULT");
 		ScrollBar* createScrollBar(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLink, std::string style = "DEFAULT");
 
 		LoadingBar* createLoadingBar(std::string containerName, std::string ID, int posX, int posY, std::string style = "DEFAULT", std::string fillingType = "Horizontal", \
@@ -853,7 +857,7 @@ namespace GUI
 		//NumericInput* createNumericInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 		
 		RadioButton* createRadioButton(std::string containerName, std::string ID, int posX, int posY, std::string value, std::string group, bool checked = false, std::string style = "DEFAULT");
-		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, std::string style = "DEFAULT");
+		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, bool multiLine = false, std::string style = "DEFAULT");
 		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 
 		//NumericSlider* createNumericSlider(std::string containerName, std::string ID, int posX, int posY, int minValue, int maxValue, int defaultValue = 0, std::string style = "DEFAULT");
@@ -868,7 +872,10 @@ namespace GUI
 }
 
 int convertByWidth(int value);
+int convertByWidthDecrease(int value);
 int convertByHeight(int value);
+int convertByHeightDecrease(int value);
+
 DataObject* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)
