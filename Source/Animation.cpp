@@ -502,7 +502,7 @@ std::string anim::Animator::getKey() {
 void anim::Animator::setKey(std::string key) {
 	bool canChange = true;
 	if (fullAnimSet.find(key) == fullAnimSet.end())
-		std::cout << "Can't find key : " << key << std::endl;
+		std::cout << "<Error:Animation:Animator>[setKey] : Can't find key : " << key << " for Animator : " << animationPath << std::endl;
 	else
 	{
 		/*if (currentAnimationName != "NONE")

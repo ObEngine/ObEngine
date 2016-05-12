@@ -40,7 +40,9 @@ namespace CoreLib
 	void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
 	void loadLight(kaguya::State* lua, std::vector<std::string> args);
 	void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
+	void loadParticle(kaguya::State* lua, std::vector<std::string> args);
 	void loadSerial(kaguya::State* lua, std::vector<std::string> args);
+	void loadSFML(kaguya::State* lua, std::vector<std::string> args);
 	void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 	void loadUtils(kaguya::State* lua, std::vector<std::string> args);
 	//void loadWorld(kaguya::State* lua, std::vector<std::string> args);

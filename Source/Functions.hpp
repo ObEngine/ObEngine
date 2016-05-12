@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <map>
 #include <chrono>
 #include <SFML/Graphics.hpp>

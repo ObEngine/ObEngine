@@ -250,11 +250,15 @@ std::string fn::String::cutBeforeAsciiCode(std::string & str, int asciiCode)
 	std::vector<std::string> dataStr;
 	for (int i = 0; i < data.size(); i++)
 	{
-		std::cout << "cur : " << data[i] << std::endl;
 		if (data[i] != asciiCode)
 		{
 			char a = data[i];
-			dataStr.push_back(&a);
+			std::string strbuf;
+			std::stringstream strbridge;
+			strbridge << a;
+			strbridge >> strbuf;
+			//std::cout << "Trsf : " << strbuf << std::endl;
+			dataStr.push_back(strbuf);
 		}
 		else
 			break;

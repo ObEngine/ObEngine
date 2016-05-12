@@ -94,6 +94,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
 		else if   (lib[0] == "Serial")       CoreLib::loadSerial(lua, lib);
+		else if   (lib[0] == "SFML")         CoreLib::loadSFML(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
 		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
 		else
@@ -444,7 +445,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "TextInput")
 	{
-		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
+		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput, GUI::Widget>()
 			.addMember("addFilter", &GUI::TextInput::addFilter)
 			.addMember("getText", &GUI::TextInput::getText)
 			.addMember("setText", &GUI::TextInput::setText)
@@ -456,7 +457,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "Label")
 	{
-		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label>()
+		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label, GUI::Widget>()
 			.addMember("resetFontVars", &GUI::Label::resetFontVars)
 			.addMember("setFont", &GUI::Label::setFont)
 			.addMember("setText", &GUI::Label::setText)
@@ -649,6 +650,23 @@ void CoreLib::loadSerial(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSerial] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["SFML"])) (*lua)["Core"]["SFML"] = kaguya::NewTable();
+	if (importAll || args[1] == "SFML")
+	{
+		(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::ClassMetatable<sf::Color>()
+			.addConstructor<UINT8, UINT8, UINT8, UINT8>()
+			.addConstructor<int, int, int, int>()
+			);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+
 }
 void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 {

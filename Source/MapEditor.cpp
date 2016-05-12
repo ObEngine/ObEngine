@@ -304,6 +304,34 @@ void MapEditor::editMap(std::string mapName)
 	configFile.getAttribute("Developpement", "", "showFPS")->getData(&showFPS);
 	bool drawFPS = true;
 	std::cout << "Creation Chrono : " << "[Config]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+	
+	//Cursor
+	Cursor cursor;
+	cursor.initialize(&window);
+	hookCore.dropValue("Cursor", &cursor);
+	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+	//Character Initialisation
+	Character character("Robot");
+	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+	//CastSystem
+	Caster castSystem;
+	castSystem.hookToChar(&character);
+	castSystem.hookToCurs(&cursor);
+	std::cout << "Creation Chrono : " << "[CastSystem]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
+	//World Creation / Loading
+	World world;
+	(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
+	hookCore.dropValue("World", &world);
+	world.addCharacter(&character);
+	castSystem.hookToWorld(&world);
+	bool depthOfFieldEnabled;
+	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
+	if (!depthOfFieldEnabled)
+		world.setBlurMul(0.0);
+	std::cout << "Creation Chrono : " << "[World]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Serial (TO DELETE)
 	std::string serialPort = "";
@@ -315,37 +343,14 @@ void MapEditor::editMap(std::string mapName)
 		char *serialPortChr = new char[serialPort.length() + 1];
 		strcpy(serialPortChr, serialPort.c_str());
 		serial = new Serial(serialPortChr);
-		hookCore.dropValue("Serial", serial);
 	}
-	
-	//Cursor
-	Cursor cursor;
-	cursor.initialize(&window);
-	hookCore.dropValue("Cursor", &cursor);
-	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	//Character Initialisation
-	Character character("Natsugi");
-	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	//World Creation / Loading
-	World world;
-	(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
-	hookCore.dropValue("World", &world);
-	world.loadFromFile(mapName);
-	world.addCharacter(&character);
-	bool depthOfFieldEnabled;
-	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
-	if (!depthOfFieldEnabled)
-		world.setBlurMul(0.0);
-	std::cout << "Creation Chrono : " << "[World]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	//CastSystem
-	Caster castSystem;
-	castSystem.hookToChar(&character);
-	castSystem.hookToCurs(&cursor);
-	castSystem.hookToWorld(&world);
-	std::cout << "Creation Chrono : " << "[CastSystem]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+	char charArduinoBuffer[10] = "";
+	int dataLength = 10;
+	std::string arduinoBuffer;
+	std::string currentArduinoBuffer;
+	int arduinoBufferSignal = 0;
+	TriggerGroup* arduinoTriggers = triggerDatabaseCore.createTriggerGroup("Map", "Arduino")
+		->addTrigger("SignalChanged");
 
 	//Keybinding
 	KeyBinder keybind = KeyBinder();
@@ -470,21 +475,22 @@ void MapEditor::editMap(std::string mapName)
 	keybind.setActionDelay("MagnetizeDown", 200);
 	keybind.setActionDelay("MagnetizeLeft", 200);
 	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	char bufbuf[10] = "";
-	int dataLength = 10;
-	int loulz = 0;
+	
+	world.loadFromFile(mapName);
 
 	//Game Starts
 	while (window.isOpen())
 	{
-		loulz = serial->ReadData(bufbuf, dataLength);
-		std::string arduinoBuffer = fn::String::replaceString(std::string(bufbuf), "\n", "");
-		/*if (arduinoBuffer.size() > 0)
-			arduinoBuffer = arduinoBuffer.substr(0, 1);*/
-		arduinoBuffer = fn::String::cutBeforeAsciiCode(arduinoBuffer, 13);
-		if (loulz != 0 && arduinoBuffer != "" && arduinoBuffer != "0")
-			std::cout << arduinoBuffer << "/" << fn::String::stringToAsciiCode(arduinoBuffer) << std::endl;
+		arduinoBufferSignal = serial->ReadData(charArduinoBuffer, dataLength);
+		std::string currentArduinoBuffer = fn::String::replaceString(std::string(charArduinoBuffer), "\n", "");
+		currentArduinoBuffer = fn::String::cutBeforeAsciiCode(currentArduinoBuffer, 13);
+		if (arduinoBufferSignal != 0 && currentArduinoBuffer != "" && currentArduinoBuffer != arduinoBuffer)
+		{
+			arduinoBuffer = currentArduinoBuffer;
+			std::cout << "Trigg : " << arduinoBuffer << std::endl;
+			arduinoTriggers->pushParameter("SignalChanged", "value", arduinoBuffer);
+			arduinoTriggers->enableTrigger("SignalChanged");
+		}
 		//DeltaTime
 		sfDeltaTime = deltaClock.restart();
 		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
