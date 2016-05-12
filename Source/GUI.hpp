@@ -361,8 +361,9 @@ namespace GUI
 		sf::Clock cursorElapsedTime;
 		int previousChar = 0;
 		int previousWidth;
+		int previousKey;
 		bool hasStartTimer = false;
-		bool unlockKeyRepeater = true;
+		bool unlockKeyRepeater = false;
 		bool isMultiLine;
 
 		std::vector<TextInputFilters> filters;

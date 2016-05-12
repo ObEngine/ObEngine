@@ -4178,29 +4178,57 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 		}
 		if (evnt.type == sf::Event::KeyPressed)
 		{
-			if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Right)
+			if (evnt.key.code == previousKey && !hasStartTimer && unlockKeyRepeater)
 			{
+				timeBefore = static_cast<float>(clock());
+				hasStartTimer = true;
+				unlockKeyRepeater = false;
+			}
+			else if (!unlockKeyRepeater && evnt.key.code == previousKey && static_cast<double>(clock()) / CLOCKS_PER_SEC - static_cast<double>(timeBefore) / CLOCKS_PER_SEC > 0.45)
+			{
+				unlockKeyRepeater = true;
+			}
+
+			if ((cursorKeyReleased || unlockKeyRepeater) && evnt.key.code == sf::Keyboard::Right)
+			{
+				timeBefore = static_cast<float>(clock());
+
 				moveCursorRight();
+				previousKey = evnt.key.code;
+
 				cursorKeyReleased = false;
 			}
-			else if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Left)
+			else if ((cursorKeyReleased || unlockKeyRepeater) && evnt.key.code == sf::Keyboard::Left)
 			{
+				timeBefore = static_cast<float>(clock());
+
 				moveCursorLeft();
 				cursorKeyReleased = false;
+				previousKey = evnt.key.code;
+
 			}
-			else if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Down)
+			else if ((cursorKeyReleased || unlockKeyRepeater) && evnt.key.code == sf::Keyboard::Down)
 			{
+				timeBefore = static_cast<float>(clock());
+
 				moveCursorBot();
 				cursorKeyReleased = false;
+				previousKey = evnt.key.code;
+
 			}
-			else if (cursorKeyReleased && evnt.key.code == sf::Keyboard::Up)
+			else if ((cursorKeyReleased || unlockKeyRepeater) && evnt.key.code == sf::Keyboard::Up)
 			{
+				timeBefore = static_cast<float>(clock());
+
 				moveCursorTop();
 				cursorKeyReleased = false;
+				previousKey = evnt.key.code;
+
 			}
 		}
 		if (evnt.type == sf::Event::KeyReleased)
 		{
+			unlockKeyRepeater = false;
 			if (evnt.key.code == sf::Keyboard::Right || evnt.key.code == sf::Keyboard::Left || evnt.key.code == sf::Keyboard::Down || evnt.key.code == sf::Keyboard::Up)
 				cursorKeyReleased = true;
 		}
@@ -4229,6 +4257,7 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 		{
 			loseFocus();
 		}
+
 		if (evnt.type == sf::Event::TextEntered)
 		{
 			if (evnt.text.unicode == previousChar && !hasStartTimer && unlockKeyRepeater)
@@ -4241,6 +4270,7 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 			{
 				unlockKeyRepeater = true;
 			}
+			
 			if (unlockKeyRepeater)
 			{
 				if (unlockKeyRepeater && previousChar != evnt.text.unicode)
@@ -4295,7 +4325,7 @@ void GUI::TextInput::eraseCharacter()
 {
 		if (cursorPosition > 1)
 		{	
-			lines[cursorLine].erase(cursorPosition - 1 + currentInterline, 1);
+			lines[cursorLine].erase(cursorPosition - 1+ currentInterline, 1);
 			moveCursorLeft();
 		}
 		else if (cursorPosition == 1)
@@ -4321,7 +4351,11 @@ void GUI::TextInput::eraseCharacter()
 
 void GUI::TextInput::deleteLine(int line)
 {
-	lines.erase(lines.begin() + line);
+	std::cout << "line" << line << std::endl;
+	if (line > 0)
+	{
+		lines.erase(lines.begin() + line);
+	}
 }
 
 bool GUI::TextInput::getEnterPressed()
