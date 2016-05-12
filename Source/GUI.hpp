@@ -376,9 +376,11 @@ namespace GUI
 		int interlineSum(int interline, int line);
 		void computeOffsetX();
 		void computeOffsetY();
+		bool isEndInterline();
 		virtual void updatePositions();
 		void addCharacter(std::string c);
 		void eraseCharacter();
+		void deleteLine(int line);
 		void moveCursorRight();
 		void moveCursorLeft();
 		void moveCursorTop();

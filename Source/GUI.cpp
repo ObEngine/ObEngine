@@ -3969,7 +3969,7 @@ void GUI::TextInput::moveCursorLeft()
 	{
 		if (cursorPosition > 0)
 		{
-			if (lines[cursorLine][cursorPosition] == '\n' && currentInterline > 0)//pb ici avec le \n
+			if (lines[cursorLine][cursorPosition] == '\n' && currentInterline > 0 && !isEndInterline())//pb ici avec le \n
 			{
 				std::vector<std::string> offX = fn::String::split(lines[cursorLine], "\n");
 				charToMove.setString(offX[currentInterline - 1]);
@@ -3983,8 +3983,19 @@ void GUI::TextInput::moveCursorLeft()
 				std::string charMoved;
 				if (currentInterline >= 1)
 				{
-					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - static_cast<int>(offsetStr[currentInterline - 1].size()) - 2);
-					std::cout << "moving left (on interline)" << std::endl;
+					if (offsetStr.size() <= currentInterline)
+					{
+						currentInterline--;
+					}
+	
+						//std::cout << cursorPosition <<" " << static_cast<int>(offsetStr[currentInterline - 1].size()) - 2 << " " << cursorPosition - static_cast<int>(offsetStr[currentInterline - 1].size()) - 2 << std::endl;
+						std::cout << currentInterline << std::endl;
+						std::cout << offsetStr[currentInterline] << std::endl;
+						//charMoved = offsetStr[currentInterline].substr(0, cursorPosition - static_cast<int>(offsetStr[currentInterline - 1].size()) - 2);
+						charMoved = offsetStr[currentInterline].substr(0, cursorPosition - (interlineSum(currentInterline, cursorLine) - currentInterline));
+
+						std::cout << "moving left (on interline)" << std::endl;
+					
 
 				}
 				else
@@ -4113,9 +4124,19 @@ void GUI::TextInput::moveCursorBot()
 void GUI::TextInput::computeOffsetX()
 {
 	std::vector<std::string> str = fn::String::split(lines[cursorLine], "\n");
-	std::string s = str[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
-	charToMove.setString(s);
-	currentCursorOffsetX = charToMove.getGlobalBounds().width;
+	std::cout << "K°DICJN " << interlineSum(currentInterline, cursorLine) << std::endl;
+	std::string s;
+	if (cursorPosition == 0 && cursorLine == 0 && currentInterline == 0)
+	{
+		currentCursorOffsetX = 5;
+	}
+	else
+	{
+		s = str[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
+		charToMove.setString(s);
+		currentCursorOffsetX = charToMove.getGlobalBounds().width;
+	}
+
 }
 
 void GUI::TextInput::computeOffsetY()
@@ -4126,6 +4147,18 @@ void GUI::TextInput::computeOffsetY()
 		countInterlines += fn::String::split(lines[i], "\n").size() - 1;
 	}
 	currentCursorOffsetY = (currentInterline + countInterlines + cursorLine) * shapes[0]->getGlobalBounds().height;
+}
+
+bool GUI::TextInput::isEndInterline()
+{
+	int sum = interlineSum(currentInterline, cursorLine);//Somme des interlignes précedentes
+	int pos = cursorPosition - sum - currentInterline;
+	std::cout << "sum " << sum << std::endl;
+	std::cout << "cursorPos " << pos << std::endl;
+	int lineSize = fn::String::split(lines[cursorLine], "\n")[currentInterline].size();
+	std::cout << "lineSize " << lineSize << std::endl;
+
+	return pos == lineSize;
 }
 
 void GUI::TextInput::updateTexture(sf::Event& evnt)
@@ -4244,7 +4277,15 @@ void GUI::TextInput::addCharacter(std::string c)
 	//if(currentInterline < fn::String::split(lines[cursorLine], "\n").size())
 	std::cout << "insertB "<< lines[cursorLine].size() << " " << cursorPosition + currentInterline << std::endl;
 
-	lines[cursorLine].insert(cursorPosition + currentInterline, c);
+	if (cursorPosition + currentInterline >= lines[cursorLine].size())
+	{
+		lines[cursorLine].push_back(c[0]);
+
+	}
+	else
+	{
+		lines[cursorLine].insert(cursorPosition + currentInterline, c);
+	}
 	std::cout << "insertOK" << std::endl;
 	updatePositions();
 	moveCursorRight();
@@ -4252,11 +4293,35 @@ void GUI::TextInput::addCharacter(std::string c)
 
 void GUI::TextInput::eraseCharacter()
 {
-	if (cursorPosition >= 1)
-	{
-		lines[cursorLine].erase(cursorPosition - 1, 1);
-		moveCursorLeft();
-	}
+		if (cursorPosition > 1)
+		{	
+			lines[cursorLine].erase(cursorPosition - 1 + currentInterline, 1);
+			moveCursorLeft();
+		}
+		else if (cursorPosition == 1)
+		{
+			if (!(lines[cursorLine][cursorPosition] == '\n'))
+			{
+				lines[cursorLine].erase(cursorPosition, 1);
+				moveCursorLeft();
+			}
+			else
+			{
+				lines[cursorLine].erase(cursorPosition - 1, 1);
+				moveCursorLeft();
+			}
+		}
+		if (cursorPosition == 0)
+		{
+			lines[cursorLine].erase(cursorPosition, 1);
+			deleteLine(cursorLine);
+			moveCursorLeft();
+		}
+}
+
+void GUI::TextInput::deleteLine(int line)
+{
+	lines.erase(lines.begin() + line);
 }
 
 bool GUI::TextInput::getEnterPressed()
