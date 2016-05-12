@@ -260,6 +260,7 @@ void World::loadFromFile(std::string filename)
 			this->getGameObject(allObjects[i])->getLevelSprite()->hookToCollision(
 				this->getGameObject(allObjects[i])->getCollider());
 			this->getGameObject(allObjects[i])->getCollider()->setFromGameObject(true);
+			(*this->getGameObject(allObjects[i])->scriptEngine)["World"] = this;
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
@@ -671,7 +672,6 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	(*newGameObject->scriptEngine)("protect(\"ID\")");
 	(*newGameObject->scriptEngine)("protect(\"Private\")");
 	(*newGameObject->scriptEngine)("protect(\"Public\")");
-	(*newGameObject->scriptEngine)["World"] = this;
 	loadWorldLib(newGameObject->scriptEngine);
 	newGameObject->localTriggers->addTrigger("Init");
 	newGameObject->localTriggers->setTriggerState("Init", true);
@@ -1034,6 +1034,7 @@ void loadWorldLib(kaguya::State* lua)
 		.addMember("setBlurMul", &World::setBlurMul)
 		.addMember("setCameraPosition", &World::setCameraPosition)
 	);
+	std::cout << "World Lib Loaded" << std::endl;
 }
 
 void loadWorldScriptEngineBaseLib(kaguya::State* lua)

@@ -3,6 +3,7 @@
 Serial::Serial(char *portName)
 {
 	//We're not yet connected
+	this->portName = portName;
 	this->connected = false;
 
 	//Try to connect to the given port throuh CreateFile
@@ -82,6 +83,11 @@ Serial::~Serial()
 	}
 }
 
+std::string Serial::getPortName()
+{
+	return portName;
+}
+
 int Serial::ReadData(char *buffer, unsigned int nbChar)
 {
 	//Number of bytes we'll have read
@@ -118,6 +124,22 @@ int Serial::ReadData(char *buffer, unsigned int nbChar)
 	//If nothing has been read, or that an error was detected return 0
 	return 0;
 
+}
+
+std::string Serial::readData()
+{
+	DWORD bytesRead;
+	char* buffer = "";
+
+	ClearCommError(this->hSerial, &this->errors, &this->status);
+
+	if (this->status.cbInQue>0)
+	{
+		if (ReadFile(this->hSerial, buffer, this->status.cbInQue, &bytesRead, NULL))
+		{
+		}
+	}
+	return std::string(buffer);
 }
 
 

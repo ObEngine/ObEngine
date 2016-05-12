@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	fn::Coord::baseWidth = 1920; fn::Coord::baseHeight = 1080;
 
 	//startGame("poly2.map.msd");
-	MapEditor::editMap(editMapName);
-
+	if (editMapName != "")
+		MapEditor::editMap(editMapName);
 	return 0;
 }

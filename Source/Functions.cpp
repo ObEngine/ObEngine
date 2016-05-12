@@ -236,6 +236,31 @@ void fn::String::regenerateEncoding(std::string& str)
 	while (i < data.size()) { if (data[i] == -61) { if (i < data.size() - 1) { data[i] = data[i + 1] + 64; } data.erase(data.begin() + i + 1); } i++; }
 	for (int i = 0; i < data.size(); i++) { ch = data[i]; str += ch; }
 }
+std::string fn::String::stringToAsciiCode(std::string & str)
+{
+	std::vector<int> data(str.begin(), str.end());
+	std::vector<std::string> dataStr;
+	std::transform(data.begin(), data.end(), std::back_inserter(dataStr), [](const int& idata) { return std::to_string(idata); });
+	return fn::Vector::join(dataStr, ",");
+}
+
+std::string fn::String::cutBeforeAsciiCode(std::string & str, int asciiCode)
+{
+	std::vector<int> data(str.begin(), str.end());
+	std::vector<std::string> dataStr;
+	for (int i = 0; i < data.size(); i++)
+	{
+		std::cout << "cur : " << data[i] << std::endl;
+		if (data[i] != asciiCode)
+		{
+			char a = data[i];
+			dataStr.push_back(&a);
+		}
+		else
+			break;
+	}
+	return fn::Vector::join(dataStr, ",");
+}
 
 //Functions::Vector
 std::string fn::Vector::join(std::vector<std::string>& vector, std::string sep, int start, int end)

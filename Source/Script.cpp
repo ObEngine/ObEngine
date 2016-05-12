@@ -16,6 +16,7 @@ void CoreHook::getValue(kaguya::State* lua, std::string name)
 		else if (gt == "GUI::Container*")     (*lua)["Hook"][name] = containerMap[name].second->as<GUI::Container*>();
 		else if (gt == "KeyBinder*")          (*lua)["Hook"][name] = containerMap[name].second->as<KeyBinder*>();
 		else if (gt == "MathExp*")            (*lua)["Hook"][name] = containerMap[name].second->as<MathExp*>();
+		else if (gt == "Serial*")             (*lua)["Hook"][name] = containerMap[name].second->as<Serial*>();
 		else if (gt == "TextRenderer*")       (*lua)["Hook"][name] = containerMap[name].second->as<TextRenderer*>();
 		else if (gt == "TriggerDatabase*")    (*lua)["Hook"][name] = containerMap[name].second->as<TriggerDatabase*>();
 		else if (gt == "TriggerGroup*")       (*lua)["Hook"][name] = containerMap[name].second->as<TriggerGroup*>();
@@ -92,6 +93,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "LevelSprite")  CoreLib::loadLevelSprite(lua, lib);
 		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
+		else if   (lib[0] == "Serial")       CoreLib::loadSerial(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
 		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
 		else
@@ -384,18 +386,89 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "Container")
 	{
 		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::Container>()
+			.addMember("createWidgetContainer", &GUI::Container::createWidgetContainer)
+			.addMember("getContainerByContainerName", &GUI::Container::getContainerByContainerName)
+			.addMember("resizeWidgetContainer", &GUI::Container::resizeWidgetContainer)
+			.addMember("setFocus", static_cast<void (GUI::Container::*)(std::string)>(&GUI::Container::setFocus))
+			.addMember("setLayer", &GUI::Container::setLayer)
+			.addMember("setAlreadyClicked", &GUI::Container::setAlreadyClicked)
+			.addMember("hasFocus", static_cast<bool (GUI::Container::*)(std::string)>(&GUI::Container::hasFocus))
+			.addMember("getAlreadyClicked", &GUI::Container::getAlreadyClicked)
+			.addMember("autoFocus", &GUI::Container::autoFocus)
+			.addMember("autoMove", &GUI::Container::autoMove)
+			.addMember("setWindowSize", &GUI::Container::setWindowSize)
+			.addMember("createLabel", &GUI::Container::createLabel)
+			.addMember("createScrollBar", static_cast<GUI::ScrollBar* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<GUI::Widget*>* widgetsLinked, std::string style)> (&GUI::Container::createScrollBar))
+			.addMember("createLoadingBar", &GUI::Container::createLoadingBar)
+			.addMember("createCheckbox", &GUI::Container::createCheckbox)
+			.addMember("createButton", &GUI::Container::createButton)
+			.addMember("createDroplist", static_cast<GUI::Droplist* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, int charSize, std::string titleOrDefaultValue, bool dropListMenu, std::string font, std::string style, \
+				std::vector<std::string> list, sf::Color fontColorIdle, sf::Color fontColorHover)> (&GUI::Container::createDroplist))
+			.addMember("createTab", &GUI::Container::createTab)
+			.addMember("createDropbox", &GUI::Container::createDropbox)
+			.addMember("createRadioButton", &GUI::Container::createRadioButton)
+			.addMember("createTextInput", static_cast<GUI::TextInput* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font, int fontSize, sf::Color fontColor, bool multiLine, std::string style)> (&GUI::Container::createTextInput))
+			.addMember("createMovable", static_cast<GUI::Movable* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, std::string style)> (&GUI::Container::createMovable))
+			.addMember("loadWidgetContainerFromFile", &GUI::Container::loadWidgetContainerFromFile)
+			.addMember("loadWidContFromFileInWidCont", &GUI::Container::loadWidContFromFileInWidCont)
+			.addMember("removeWidget", &GUI::Container::removeWidget)
+			.addMember("removeWidgetContainer", &GUI::Container::removeWidgetContainer)
 			);
 		foundPart = true;
 	}
 	if (importAll || args[1] == "Widget")
 	{
 		(*lua)["Core"]["GUI"]["Widget"].setClass(kaguya::ClassMetatable<GUI::Widget>()
+			.addMember("isClicked", &GUI::Widget::isClicked)
+			.addMember("isClickedOutside", &GUI::Widget::isClickedOutside)
+			.addMember("isRectClicked", &GUI::Widget::isRectClicked)
+			.addMember("isRectClickedOutside", &GUI::Widget::isRectClickedOutside)
+			.addMember("isRectHovering", &GUI::Widget::isRectHovering)
+			.addMember("isHovering", &GUI::Widget::isHovering)
+			.addMember("setPosition", &GUI::Widget::setPosition)
+			.addMember("move", &GUI::Widget::move)
+			.addMember("getID", &GUI::Widget::getID)
+			.addMember("getWidgetType", &GUI::Widget::getWidgetType)
+			.addMember("getWidgetStyle", &GUI::Widget::getWidgetStyle)
+			.addMember("getTexts", &GUI::Widget::getTexts)
+			.addMember("getRect", &GUI::Widget::getRect)
+			.addMember("getRelativePosX", &GUI::Widget::getRelativePosX)
+			.addMember("getRelativePosY", &GUI::Widget::getRelativePosY)
+			.addMember("getDisplayed", &GUI::Widget::getDisplayed)
+			.addMember("setDisplayed", &GUI::Widget::setDisplayed)
+			.addMember("setAbsolute", &GUI::Widget::setAbsolute)
+			.addMember("containerChangePos", &GUI::Widget::containerChangePos)
+			.addMember("removeWidget", &GUI::Widget::removeWidget)
 			);
 		foundPart = true;
 	}
 	if (importAll || args[1] == "TextInput")
 	{
-		(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
+		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
+			.addMember("addFilter", &GUI::TextInput::addFilter)
+			.addMember("getText", &GUI::TextInput::getText)
+			.addMember("setText", &GUI::TextInput::setText)
+			.addMember("getEnterPressed", &GUI::TextInput::getEnterPressed)
+			.addMember("getHasFocus", &GUI::TextInput::getHasFocus)
+			.addMember("getLabel", &GUI::TextInput::getLabel)
+			);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Label")
+	{
+		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label>()
+			.addMember("resetFontVars", &GUI::Label::resetFontVars)
+			.addMember("setFont", &GUI::Label::setFont)
+			.addMember("setText", &GUI::Label::setText)
+			.addMember("setComplexText", &GUI::Label::setComplexText)
+			.addMember("addText", &GUI::Label::addText)
+			.addMember("setFontSize", &GUI::Label::setFontSize)
+			.addMember("centerInRect", &GUI::Label::centerInRect)
+			.addMember("getFontName", &GUI::Label::getFontName)
+			.addMember("getString", &GUI::Label::getString)
+			.addMember("getFontSize", &GUI::Label::getfontSize)
+			.addMember("getHook", &GUI::Label::getHook)
+			.addMember("getRichText", &GUI::Label::getRichText)
 			);
 		foundPart = true;
 	}
@@ -409,7 +482,7 @@ void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
 	if (!(bool)((*lua)["Core"]["KeyBind"])) (*lua)["Core"]["KeyBind"] = kaguya::NewTable();
 	if (importAll || args[1] == "KeyBinder")
 	{
-		(*lua)["Core"]["Cursor"]["KeyBinder"].setClass(kaguya::ClassMetatable<KeyBinder>()
+		(*lua)["Core"]["KeyBind"]["KeyBinder"].setClass(kaguya::ClassMetatable<KeyBinder>()
 			.addMember("connectAction", &KeyBinder::connectAction)
 			.addMember("isActionDisabled", &KeyBinder::isActionDisabled)
 			.addMember("isActionEnabled", &KeyBinder::isActionEnabled)
@@ -557,6 +630,25 @@ void CoreLib::loadMathExp(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadMathExp] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadSerial(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Serial"])) (*lua)["Core"]["Serial"] = kaguya::NewTable();
+	if (importAll || args[1] == "Serial")
+	{
+		(*lua)["Core"]["Serial"]["Serial"].setClass(kaguya::ClassMetatable<Serial>()
+			.addMember("IsConnected", &Serial::IsConnected)
+			.addMember("readData", &Serial::readData)
+			.addMember("getPortName", &Serial::getPortName)
+			.addMember("ReadData", &Serial::ReadData)
+			.addMember("WriteData", &Serial::WriteData)
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSerial] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 {

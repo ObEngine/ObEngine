@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <algorithm>
+#include <iterator>
 
 #include "tinydir.h"
 
@@ -70,6 +71,8 @@ namespace fn
 		std::vector<std::string> extractBetween(std::string &str, char delimiter1, char delimiter2);
 		std::string getRandomKey(std::string set, int len);
 		void regenerateEncoding(std::string& str);
+		std::string stringToAsciiCode(std::string& str);
+		std::string cutBeforeAsciiCode(std::string& str, int asciiCode);
 	}
 	namespace Vector
 	{

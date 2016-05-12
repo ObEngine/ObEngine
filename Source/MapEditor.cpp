@@ -305,6 +305,19 @@ void MapEditor::editMap(std::string mapName)
 	bool drawFPS = true;
 	std::cout << "Creation Chrono : " << "[Config]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
+	//Serial (TO DELETE)
+	std::string serialPort = "";
+	Serial* serial = nullptr;
+	if (configFile.attributeExists("Developpement", "", "COMM"))
+		configFile.getAttribute("Developpement", "", "COMM")->getData(&serialPort);
+	if (serialPort != "")
+	{
+		char *serialPortChr = new char[serialPort.length() + 1];
+		strcpy(serialPortChr, serialPort.c_str());
+		serial = new Serial(serialPortChr);
+		hookCore.dropValue("Serial", serial);
+	}
+	
 	//Cursor
 	Cursor cursor;
 	cursor.initialize(&window);
@@ -458,9 +471,20 @@ void MapEditor::editMap(std::string mapName)
 	keybind.setActionDelay("MagnetizeLeft", 200);
 	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
+	char bufbuf[10] = "";
+	int dataLength = 10;
+	int loulz = 0;
+
 	//Game Starts
 	while (window.isOpen())
 	{
+		loulz = serial->ReadData(bufbuf, dataLength);
+		std::string arduinoBuffer = fn::String::replaceString(std::string(bufbuf), "\n", "");
+		/*if (arduinoBuffer.size() > 0)
+			arduinoBuffer = arduinoBuffer.substr(0, 1);*/
+		arduinoBuffer = fn::String::cutBeforeAsciiCode(arduinoBuffer, 13);
+		if (loulz != 0 && arduinoBuffer != "" && arduinoBuffer != "0")
+			std::cout << arduinoBuffer << "/" << fn::String::stringToAsciiCode(arduinoBuffer) << std::endl;
 		//DeltaTime
 		sfDeltaTime = deltaClock.restart();
 		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
@@ -598,10 +622,15 @@ void MapEditor::editMap(std::string mapName)
 		{
 			world.enableShowCollision(true, true, false, false);
 
+			//Layer Change
+			if (selectedSprite == NULL && keybind.isActionToggled("LayerInc"))
+				currentLayer += 1;
+			if (selectedSprite == NULL && keybind.isActionToggled("LayerDec"))
+				currentLayer -= 1;
 			//Sprite Hover
 			if (hoveredSprite == NULL && selectedSprite == NULL)
 			{
-				if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), 1) != NULL)
+				if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer) != NULL)
 				{
 					hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
 					sdBoundingRect = hoveredSprite->getRect();
@@ -678,10 +707,9 @@ void MapEditor::editMap(std::string mapName)
 				sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
 			}
 
-			//Decoration Rotate (Non-fonctionnal)
+			//Sprite Rotate (Non-fonctionnal)
 			if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != NULL)
 			{
-				//selectedDecoration->setOrigin(sdBoundingRect.width / 2, sdBoundingRect.height / 2);
 				if (keybind.isActionEnabled("RotateLeft") && selectedSprite != NULL)
 					selectedSprite->rotate(-1 * gameSpeed);
 				if (keybind.isActionEnabled("RotateRight") && selectedSprite != NULL)

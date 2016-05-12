@@ -28,6 +28,7 @@
 #include "Light.hpp"
 #include "GameObject.hpp"
 #include "EditorGrid.hpp"
+#include "Serial.hpp"
 
 namespace MapEditor
 {
