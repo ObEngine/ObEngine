@@ -37,6 +37,7 @@ class GameObject
 		bool colliderClick = false;
 		bool colliderRelative = true;
 		bool hasLevelSprite = false;
+		bool initialised = false;
 
 		GameObject(std::string type, std::string id);
 		void registerTrigger(Trigger* trg);
@@ -61,8 +62,9 @@ class GameObject
 		kaguya::State* getScriptEngine();
 		TriggerGroup* getLocalTriggers();
 		void useLocalTrigger(std::string trName);
-		void useGlobalTrigger(std::string trName);
-		void useCustomTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
+		void useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs);
+		void setInitialised(bool init);
+		bool getInitialised();
 		template <typename U>
 		void sendRequireArgument(std::string argName, U value);
 };

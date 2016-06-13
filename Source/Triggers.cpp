@@ -147,32 +147,21 @@ std::string TriggerGroup::getNamespace()
 //TriggerDatabase
 TriggerDatabase::TriggerDatabase()
 {
-	coreTriggers["Start"] = new Trigger("Global", "Start");
+	this->createNamespace("Character");
+	this->createNamespace("GUI");
 	databaseChrono.start();
 }
-Trigger* TriggerDatabase::getTrigger(std::string triggerName)
+Trigger* TriggerDatabase::getTrigger(std::string groupNamespace, std::string triggerGroup, std::string triggerName)
 {
-	if (this->coreTriggers.find(triggerName) != this->coreTriggers.end())
+	if (allTriggers.find(groupNamespace) != allTriggers.end())
 	{
-		return this->coreTriggers[triggerName];
-	}
-	else
-	{
-		std::cout << "<Error:Triggers:TriggerDatabase>[getTrigger] : Core Trigger : " << triggerName << " does not exists" << std::endl;
-		return nullptr;
-	}
-}
-Trigger* TriggerDatabase::getCustomTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName)
-{
-	if (customTriggers.find(groupNamespace) != customTriggers.end())
-	{
-		if (customTriggers[groupNamespace].find(triggerGroupName) != customTriggers[groupNamespace].end())
+		if (allTriggers[groupNamespace].find(triggerGroup) != allTriggers[groupNamespace].end())
 		{
-			return customTriggers[groupNamespace][triggerGroupName]->getTrigger(triggerName);
+			return allTriggers[groupNamespace][triggerGroup]->getTrigger(triggerName);
 		}
 		else
 		{
-			std::cout << "<Error:Triggers:TriggerDatabase>[getCustomTrigger] : Custom Trigger Group : " << triggerGroupName << " does not exists in Group Namespace : " << groupNamespace << std::endl;
+			std::cout << "<Error:Triggers:TriggerDatabase>[getCustomTrigger] : Custom Trigger Group : " << triggerGroup << " does not exists in Group Namespace : " << groupNamespace << std::endl;
 		}
 	}
 	else
@@ -181,28 +170,21 @@ Trigger* TriggerDatabase::getCustomTrigger(std::string groupNamespace, std::stri
 	}
 	return nullptr;
 }
-
-void TriggerDatabase::setTriggerState(std::string name, bool state)
+void TriggerDatabase::createNamespace(std::string groupNamespace)
 {
-	if (state) this->getTrigger(name)->toEnable = true;
-	else this->getTrigger(name)->toDisable = true;
-}
-
-void TriggerDatabase::createCustomNamespace(std::string groupNamespace)
-{
-	if (customTriggers.size() == 0)
+	if (allTriggers.size() == 0)
 	{
-		customTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
+		allTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
 	}
 	else
 	{
-		if (customTriggers.find(groupNamespace) == customTriggers.end())
+		if (allTriggers.find(groupNamespace) == allTriggers.end())
 		{
-			customTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
+			allTriggers[groupNamespace] = std::map<std::string, TriggerGroup*>();
 		}
 		else
 		{
-			std::cout << "<Error:Triggers:TriggerDatabase>[createCustomNamespace] : Custom Group Namespace : " << groupNamespace << " already exists" << std::endl;
+			std::cout << "<Error:Triggers:TriggerDatabase>[createNamespace] : Group Namespace : " << groupNamespace << " already exists" << std::endl;
 		}
 	}
 }
@@ -210,17 +192,17 @@ void TriggerDatabase::createCustomNamespace(std::string groupNamespace)
 TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
 {
 	std::cout << "Trying to create TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
-	if (customTriggers.find(groupNamespace) != customTriggers.end())
+	if (allTriggers.find(groupNamespace) != allTriggers.end())
 	{
-		if (customTriggers[groupNamespace].find(triggerGroupName) == customTriggers[groupNamespace].end())
+		if (allTriggers[groupNamespace].find(triggerGroupName) == allTriggers[groupNamespace].end())
 		{
 			std::cout << "Success !" << std::endl;
-			customTriggers[groupNamespace][triggerGroupName] = new TriggerGroup(groupNamespace, triggerGroupName);
-			return customTriggers[groupNamespace][triggerGroupName];
+			allTriggers[groupNamespace][triggerGroupName] = new TriggerGroup(groupNamespace, triggerGroupName);
+			return allTriggers[groupNamespace][triggerGroupName];
 		}
 		else
 		{
-			std::cout << "<Error:Triggers:TriggerDatabase>[createTriggerGroup] : Custom Trigger Group : " << triggerGroupName << " already exists in Group Namespace : " << groupNamespace << std::endl;
+			std::cout << "<Error:Triggers:TriggerDatabase>[createTriggerGroup] : Trigger Group : " << triggerGroupName << " already exists in Group Namespace : " << groupNamespace << std::endl;
 		}
 	}
 	else
@@ -232,15 +214,15 @@ TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, st
 TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
 {
 	std::cout << "Trying to join TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
-	if (customTriggers.find(groupNamespace) != customTriggers.end())
+	if (allTriggers.find(groupNamespace) != allTriggers.end())
 	{
-		if (customTriggers[groupNamespace].find(triggerGroupName) == customTriggers[groupNamespace].end())
+		if (allTriggers[groupNamespace].find(triggerGroupName) == allTriggers[groupNamespace].end())
 		{
 			std::cout << "<Error:Triggers:TriggerDatabase>[joinTriggerGroup] : Custom Trigger Group : " << triggerGroupName << " does not exists in Group Namespace : " << groupNamespace << std::endl;
 		}
 		else
 		{
-			return customTriggers[groupNamespace][triggerGroupName];
+			return allTriggers[groupNamespace][triggerGroupName];
 		}
 	}
 	else
@@ -251,22 +233,22 @@ TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std:
 }
 bool TriggerDatabase::doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName)
 {
-	if (customTriggers[groupNamespace].find(triggerGroupName) == customTriggers[groupNamespace].end())
+	if (allTriggers[groupNamespace].find(triggerGroupName) == allTriggers[groupNamespace].end())
 		return false;
 	else
 		return true;
 }
-std::vector<std::string> TriggerDatabase::getAllTriggersNameFromCustomGroup(std::string groupNamespace, std::string triggerGroupName)
+std::vector<std::string> TriggerDatabase::getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
 {
-	if (customTriggers.find(groupNamespace) != customTriggers.end())
+	if (allTriggers.find(groupNamespace) != allTriggers.end())
 	{
-		if (customTriggers[groupNamespace].find(triggerGroupName) != customTriggers[groupNamespace].end())
+		if (allTriggers[groupNamespace].find(triggerGroupName) != allTriggers[groupNamespace].end())
 		{
-			return customTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
+			return allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
 		}
 		else
 		{
-			std::cout << "<Error:Triggers:TriggerDatabase>[getAllTriggersNameFromCustomGroup] : Custom Trigger Group : " << triggerGroupName << " does not exists in Group Namespace : " << groupNamespace << std::endl;
+			std::cout << "<Error:Triggers:TriggerDatabase>[getAllTriggersNameFromGroup] : Custom Trigger Group : " << triggerGroupName << " does not exists in Group Namespace : " << groupNamespace << std::endl;
 		}
 	}
 	else
@@ -277,21 +259,7 @@ std::vector<std::string> TriggerDatabase::getAllTriggersNameFromCustomGroup(std:
 }
 void TriggerDatabase::update()
 {
-	for (auto it = coreTriggers.begin(); it != coreTriggers.end(); it++)
-	{
-		if (!it->second->isPermanent()) it->second->enabled = false;
-		if (it->second->toDisable)
-		{
-			it->second->enabled = false;
-			it->second->toDisable = false;
-		}
-		if (it->second->toEnable) 
-		{
-			it->second->enabled = true; 
-			it->second->toEnable = false;
-		}
-	}
-	for (auto it = customTriggers.begin(); it != customTriggers.end(); it++)
+	for (auto it = allTriggers.begin(); it != allTriggers.end(); it++)
 	{
 		for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
 		{

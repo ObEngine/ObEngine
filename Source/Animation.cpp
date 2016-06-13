@@ -4,10 +4,12 @@
 #include "Animation.hpp"
 
 //ANIMATION GROUP
-anim::AnimationGroup::AnimationGroup(std::string pgroupname) {
+anim::AnimationGroup::AnimationGroup(std::string pgroupname) 
+{
 	this->groupName = pgroupname;
 }
-void anim::AnimationGroup::build() {
+void anim::AnimationGroup::build() 
+{
 	if (groupList.size() == 1)
 	{
 		spriteSheet = *groupList[0];
@@ -42,39 +44,48 @@ void anim::AnimationGroup::build() {
 		currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
 	}
 }
-void anim::AnimationGroup::setGroupClock(int clock) {
+void anim::AnimationGroup::setGroupClock(int clock) 
+{
 	this->groupClock = clock;
 }
-void anim::AnimationGroup::setGroupLoop(int loops) {
+void anim::AnimationGroup::setGroupLoop(int loops)
+{
 	this->loopTime = loops;
 }
-void anim::AnimationGroup::pushTexture(sf::Texture* texture) {
+void anim::AnimationGroup::pushTexture(sf::Texture* texture) 
+{
 	groupList.push_back(texture);
 	groupSize++;
 }
-void anim::AnimationGroup::removeTextureByIndex(int index) {
+void anim::AnimationGroup::removeTextureByIndex(int index) 
+{
 	if (groupSize > 0)
 	{
 		groupList.erase(groupList.begin() + index);
 		groupSize--;
 	}
 }
-sf::Sprite* anim::AnimationGroup::returnSprite() {
+sf::Sprite* anim::AnimationGroup::returnSprite() 
+{
 	return &currentSprite;
 }
-sf::IntRect* anim::AnimationGroup::getSpriteRect() {
+sf::IntRect* anim::AnimationGroup::getSpriteRect() 
+{
 	return texturePos[groupIndex];
 }
-void anim::AnimationGroup::updateSprite() {
+void anim::AnimationGroup::updateSprite()
+{
 	currentSprite.setTextureRect(*texturePos[groupIndex]);
 }
-void anim::AnimationGroup::reset() {
+void anim::AnimationGroup::reset() 
+{
 	groupIndex = 0;
 	groupOver = false;
 	currentLoop = 0;
 	loopTime = 0;
 }
-void anim::AnimationGroup::next() {
+void anim::AnimationGroup::next() 
+{
 	if (getTickSinceEpoch() - startDelayClock > groupClock)
 	{
 		startDelayClock = getTickSinceEpoch();
@@ -94,7 +105,8 @@ void anim::AnimationGroup::next() {
 		}
 	}
 }
-void anim::AnimationGroup::previous() {
+void anim::AnimationGroup::previous()
+{
 	if (getTickSinceEpoch() - startDelayClock > groupClock)
 	{
 		startDelayClock = getTickSinceEpoch();
@@ -112,22 +124,27 @@ void anim::AnimationGroup::previous() {
 	}
 	this->updateSprite();
 }
-void anim::AnimationGroup::forcePrevious() {
+void anim::AnimationGroup::forcePrevious()
+{
 	groupIndex--;
 }
-void anim::AnimationGroup::forceNext() {
+void anim::AnimationGroup::forceNext()
+{
 	groupIndex++;
 }
-bool anim::AnimationGroup::isGroupOver() {
+bool anim::AnimationGroup::isGroupOver()
+{
 	return groupOver;
 }
-int anim::AnimationGroup::getGroupIndex() {
+int anim::AnimationGroup::getGroupIndex() 
+{
 	return groupIndex;
 }
 int anim::AnimationGroup::getGroupSize(){
 	return groupList.size();
 }
-std::string anim::AnimationGroup::getGroupName() {
+std::string anim::AnimationGroup::getGroupName() 
+{
 	return groupName;
 }
 int anim::AnimationGroup::getGroupClock()
@@ -150,6 +167,7 @@ sf::Texture* anim::RessourceManager::getTexture(std::string path)
 			sf::Texture* tempTexture = new sf::Texture;
 			if (tempTexture->loadFromFile(path))
 			{
+				tempTexture->setSmooth(true);
 				textureDatabase[path] = tempTexture;
 				return textureDatabase[path];
 			}
@@ -158,13 +176,17 @@ sf::Texture* anim::RessourceManager::getTexture(std::string path)
 				std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
 			}
 		}
-		else return textureDatabase[path];
+		else
+		{
+			return textureDatabase[path];
+		}
 	}
 	else
 	{
 		sf::Texture* tempTexture = new sf::Texture;
 		if (tempTexture->loadFromFile(path))
 		{
+			tempTexture->setSmooth(true);
 			textureDatabase[path] = tempTexture;
 			return textureDatabase[path];
 		}
@@ -176,16 +198,20 @@ sf::Texture* anim::RessourceManager::getTexture(std::string path)
 }
 
 //ANIMATION
-std::string anim::Animation::getAnimationName() {
+std::string anim::Animation::getAnimationName() 
+{
 	return animationName;
 }
-void anim::Animation::attachRessourceManager(RessourceManager* rsMan) {
+void anim::Animation::attachRessourceManager(RessourceManager* rsMan)
+{
 	animatorRsHook = rsMan;
 }
-void anim::Animation::deleteRessourceManager() {
+void anim::Animation::deleteRessourceManager()
+{
 	animatorRsHook = NULL;
 }
-float anim::Animation::getAnimationClock() {
+float anim::Animation::getAnimationClock() 
+{
 	return animationClock;
 }
 anim::AnimationGroup* anim::Animation::getAnimationGroup(std::string groupname)
@@ -196,7 +222,8 @@ anim::AnimationGroup* anim::Animation::getAnimationGroup(std::string groupname)
 		std::cout << "<Error:Animation:Animation>[getAnimationGroup] : Can't find AnimationGroup : " << groupname << std::endl;
 	return nullptr;
 }
-std::string anim::Animation::getCurrentAnimationGroup() {
+std::string anim::Animation::getCurrentAnimationGroup() 
+{
 	return currentGroupName;
 }
 std::vector<std::string> anim::Animation::getAllAnimationGroupName()
@@ -208,19 +235,20 @@ std::vector<std::string> anim::Animation::getAllAnimationGroupName()
 	}
 	return rname;
 }
-std::string anim::Animation::getAnimationPlayMode() {
+std::string anim::Animation::getAnimationPlayMode() 
+{
 	return animationPlaymode;
 }
-std::string anim::Animation::getAnimationStatus() {
+std::string anim::Animation::getAnimationStatus() 
+{
 	return currentStatus;
 }
-bool anim::Animation::canSkipAnimation() {
-	return canSkip;
-}
-bool anim::Animation::isAnimationOver() {
+bool anim::Animation::isAnimationOver() 
+{
 	return isOver;
 }
-void anim::Animation::loadAnimation(std::string path, std::string filename) {
+void anim::Animation::loadAnimation(std::string path, std::string filename) 
+{
 	DataParser animFile;
 	animFile.parseFile(path + filename);
 	//Meta
@@ -230,11 +258,6 @@ void anim::Animation::loadAnimation(std::string path, std::string filename) {
 	if (animFile.attributeExists("Meta", "", "play-mode"))
 	{
 		animFile.getAttribute("Meta", "", "play-mode")->getData(&animationPlaymode);
-		if (animationPlaymode == "FORCE")
-		{
-			canSkip = false;
-			animationPlaymode = "ONETIME";
-		}
 	}
 	//Images
 	for (unsigned int i = 0; i < animFile.getListSize("Images", "", "ImageList"); i++)
@@ -291,12 +314,14 @@ void anim::Animation::loadAnimation(std::string path, std::string filename) {
 		animationCode.push_back(vecCurCom);
 	}
 }
-void anim::Animation::applyParameters(ComplexAttribute* parameters) {
+void anim::Animation::applyParameters(ComplexAttribute* parameters) 
+{
 	if (parameters->attributeExists("spriteOffsetX")) parameters->getAttribute("spriteOffsetX")->getData(&sprOffsetX);
 	if (parameters->attributeExists("spriteOffsetY")) parameters->getAttribute("spriteOffsetY")->getData(&sprOffsetY);
 	if (parameters->attributeExists("priority")) parameters->getAttribute("priority")->getData(&priority);
 }
-void anim::Animation::playAnimation() {
+void anim::Animation::playAnimation() 
+{
 	if (animationCode.size() > 0)
 	{
 		if (codeIndex > animationCode.size() - 1 && animationPlaymode != "ONETIME")
@@ -372,7 +397,8 @@ void anim::Animation::playAnimation() {
 		}
 	}
 }
-void anim::Animation::resetAnimation() {
+void anim::Animation::resetAnimation() 
+{
 	for (std::map<std::string, AnimationGroup*>::iterator it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it) {
 		it->second->reset();
 	}
@@ -382,39 +408,50 @@ void anim::Animation::resetAnimation() {
 	askCommand = true;
 	isOver = false;
 }
-sf::Texture* anim::Animation::getTextureAtIndex(int index) {
+sf::Texture* anim::Animation::getTextureAtIndex(int index) 
+{
 	return animationTextures[index];
 }
-sf::Sprite* anim::Animation::getSprite() {
+sf::Sprite* anim::Animation::getSprite() 
+{
 	return animationGroupMap[currentGroupName]->returnSprite();
 }
-sf::IntRect* anim::Animation::getSpriteRect() {
+sf::IntRect* anim::Animation::getSpriteRect() 
+{
 	return animationGroupMap[currentGroupName]->getSpriteRect();
 }
-int anim::Animation::getSpriteOffsetX() {
+int anim::Animation::getSpriteOffsetX() 
+{
 	return sprOffsetX;
 }
-int anim::Animation::getSpriteOffsetY() {
+int anim::Animation::getSpriteOffsetY() 
+{
 	return sprOffsetY;
 }
-int anim::Animation::getPriority() {
+int anim::Animation::getPriority() 
+{
 	return priority;
 }
 
 //DIRTY ANIMATION
-void anim::DirtyAnimation::attachRessourceManager(anim::RessourceManager* rsMan) {
+void anim::DirtyAnimation::attachRessourceManager(anim::RessourceManager* rsMan) 
+{
 	animatorRsHook = rsMan;
 }
-void anim::DirtyAnimation::deleteRessourceManager() {
+void anim::DirtyAnimation::deleteRessourceManager() 
+{
 	animatorRsHook = NULL;
 }
-void anim::DirtyAnimation::setAnimationClock(int animClock) {
+void anim::DirtyAnimation::setAnimationClock(int animClock) 
+{
 	animationClock = animClock;
 }
-float anim::DirtyAnimation::getAnimationClock() {
+float anim::DirtyAnimation::getAnimationClock() 
+{
 	return animationClock;
 }
-void anim::DirtyAnimation::loadAnimation(std::string path) {
+void anim::DirtyAnimation::loadAnimation(std::string path) 
+{
 	std::vector<std::string> imageList = fn::File::listFileInDir(path);
 	for (unsigned int i = 0; i < imageList.size(); i++)
 	{
@@ -441,22 +478,27 @@ void anim::DirtyAnimation::loadAnimation(std::string path) {
 		}
 	}
 }
-void anim::DirtyAnimation::update() {
+void anim::DirtyAnimation::update() 
+{
 	oldTextureIndex = textureIndex;
 	textureIndex++;
 	if (textureIndex >= animationTextures.size())
 		textureIndex = 0;
 }
-void anim::DirtyAnimation::setIndex(int index) {
+void anim::DirtyAnimation::setIndex(int index) 
+{
 	textureIndex = index;
 }
-int anim::DirtyAnimation::getIndex() {
+int anim::DirtyAnimation::getIndex() 
+{
 	return textureIndex;
 }
-bool anim::DirtyAnimation::indexChanged() {
+bool anim::DirtyAnimation::indexChanged() 
+{
 	return (oldTextureIndex != textureIndex || noTextureReturned);
 }
-sf::Texture* anim::DirtyAnimation::getTexture() {
+sf::Texture* anim::DirtyAnimation::getTexture() 
+{
 	noTextureReturned = false;
 	return animationTextures[textureIndex];
 }
@@ -467,7 +509,8 @@ sf::Texture* anim::DirtyAnimation::getNormal()
 	else
 		return nullptr;
 }
-sf::Texture* anim::DirtyAnimation::getTextureAtIndex(int index) {
+sf::Texture* anim::DirtyAnimation::getTextureAtIndex(int index) 
+{
 	noTextureReturned = false;
 	return animationTextures[index];
 }
@@ -481,7 +524,25 @@ sf::Texture* anim::DirtyAnimation::getNormalAtIndex(int index)
 }
 
 //ANIMATOR
-void anim::Animator::setPath(std::string path) {
+void anim::Animator::clear(bool clearMemory)
+{
+	if (clearMemory)
+	{
+		for (auto it = fullAnimSet.begin(); it != fullAnimSet.end(); it++)
+			delete it->second;
+	}
+	fullAnimSet.clear();
+	currentAnimation = nullptr;
+	allAnimationNames.clear();
+	globalClock = 0;
+	currentAnimationName = "NONE";
+	animationBehaviour = "";
+	animationPath = "";
+	currentNameIndex = 0;
+	lastSpriteAddress = nullptr;
+}
+void anim::Animator::setPath(std::string path) 
+{
 	animationPath = path;
 }
 anim::Animation* anim::Animator::getAnimation(std::string animationName)
@@ -496,23 +557,17 @@ std::vector<std::string> anim::Animator::getAllAnimationName()
 {
 	return allAnimationNames;
 }
-std::string anim::Animator::getKey() {
+std::string anim::Animator::getKey() 
+{
 	return currentAnimationName;
 }
-void anim::Animator::setKey(std::string key) {
-	bool canChange = true;
+void anim::Animator::setKey(std::string key) 
+{
 	if (fullAnimSet.find(key) == fullAnimSet.end())
 		std::cout << "<Error:Animation:Animator>[setKey] : Can't find key : " << key << " for Animator : " << animationPath << std::endl;
 	else
 	{
-		/*if (currentAnimationName != "NONE")
-		{
-			if (!fullAnimSet[currentAnimationName]->canSkipAnimation() && !fullAnimSet[currentAnimationName]->isAnimationOver())
-			{
-				canChange = false;
-			}
-		}*/
-		if (key != currentAnimationName && canChange)
+		if (key != currentAnimationName)
 		{
 			bool changeAnim = false;
 			if (currentAnimation != NULL)
@@ -538,16 +593,16 @@ void anim::Animator::setKey(std::string key) {
 		}
 	}
 }
-void anim::Animator::loadAnimator() {
-	
+void anim::Animator::loadAnimator() 
+{	
 	std::vector<std::string> listDir = fn::File::listDirInDir(animationPath);
 	std::vector<std::string> allFiles = fn::File::listFileInDir(animationPath);
+	DataParser animatorCfgFile;
 	std::map<std::string, ComplexAttribute*> animationParameters;
 	bool hasCfgFile;
 	if (fn::Vector::isInList(std::string("animator.cfg.msd"), allFiles))
 	{
 		hasCfgFile = true;
-		DataParser animatorCfgFile;
 		animatorCfgFile.parseFile(animationPath + "/" + "animator.cfg.msd");
 		std::vector<std::string> allParamAnim = animatorCfgFile.getAllComplex("Animator", "");
 		for (unsigned int i = 0; i < allParamAnim.size(); i++)
@@ -572,9 +627,13 @@ void anim::Animator::loadAnimator() {
 		fullAnimSet[tempAnim->getAnimationName()] = tempAnim;
 	}
 }
-void anim::Animator::update() {
+void anim::Animator::update() 
+{
 	std::vector<std::string> animStatusCommand;
-	animStatusCommand = fn::String::split(currentAnimation->getAnimationStatus(), ":");
+	if (currentAnimation != nullptr)
+		animStatusCommand = fn::String::split(currentAnimation->getAnimationStatus(), ":");
+	else
+		std::cout << "<Error:Animation:Animator>[update] : Current Animation of Animator : " << animationPath << " is NULL" << std::endl;
 	if (animStatusCommand[0] == "CALL")
 	{
 		currentAnimation->resetAnimation();
@@ -585,26 +644,33 @@ void anim::Animator::update() {
 	if (animStatusCommand[0] == "PLAY")
 		currentAnimation->playAnimation();
 }
-sf::Sprite* anim::Animator::getSprite() {
+sf::Sprite* anim::Animator::getSprite() 
+{
 	lastSpriteAddress = currentAnimation->getSprite();
 	lastRect = *currentAnimation->getSpriteRect();
 	return currentAnimation->getSprite();
 }
-sf::Texture* anim::Animator::getTextureAtKey(std::string key, int index) {
+sf::Texture* anim::Animator::getTextureAtKey(std::string key, int index) 
+{
 	return fullAnimSet[key]->getTextureAtIndex(index);
 }
-bool anim::Animator::textureChanged() {
+bool anim::Animator::textureChanged() 
+{
 	return (currentAnimation->getSprite() != lastSpriteAddress || lastRect != *currentAnimation->getSpriteRect());
 }
-void anim::Animator::attachRessourceManager(RessourceManager* rsman) {
+void anim::Animator::attachRessourceManager(RessourceManager* rsman)
+{
 	ressourceManagerHook = rsman;
 }
-void anim::Animator::deleteRessourceManager() {
+void anim::Animator::deleteRessourceManager() 
+{
 	ressourceManagerHook = NULL;
 }
-int anim::Animator::getSpriteOffsetX() {
+int anim::Animator::getSpriteOffsetX() 
+{
 	return currentAnimation->getSpriteOffsetX();
 }
-int anim::Animator::getSpriteOffsetY() {
+int anim::Animator::getSpriteOffsetY()
+{
 	return currentAnimation->getSpriteOffsetY();
 }

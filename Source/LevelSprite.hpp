@@ -70,7 +70,7 @@ class LevelSprite
 		void removeAtrByName(std::string name); //Supprime un attribut par nom
 		void textureUpdate(bool forceUpdate = false); //Update la texture
 		sfe::ComplexSprite* getSprite(); //Renvoie la Sprite de la Sprite
-		void setSpriteColor(sf::Color newColor);
+		void setColor(sf::Color newColor);
 		double getX(); //Renvoie absoluteX
 		double getY(); //Renvoie absoluteY
 		void setPosition(double x, double y);

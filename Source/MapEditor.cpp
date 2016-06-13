@@ -261,6 +261,28 @@ void MapEditor::addSpriteToWorld(std::string geid)
 void MapEditor::editMap(std::string mapName)
 {
 	double startLoadTime = getTickSinceEpoch();
+
+	//Creating Window
+	sf::RenderWindow window(sf::VideoMode(fn::Coord::width, fn::Coord::height), "Melting Saga", sf::Style::Fullscreen);
+	window.setKeyRepeatEnabled(false);
+	window.setMouseCursorVisible(false);
+	sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
+	sf::Sprite loadingSprite; loadingSprite.setTexture(loadingTexture); 
+	loadingSprite.setScale((double)fn::Coord::width / (double)fn::Coord::baseWidth,
+		(double)fn::Coord::height / (double)fn::Coord::baseHeight);
+	sf::Font loadingFont; loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
+	sf::Text loadingText; loadingText.setFont(loadingFont); 
+	loadingText.setCharacterSize(70.0 * (double)fn::Coord::height / (double)fn::Coord::baseHeight); 
+	loadingText.setPosition(348.0 * (double)fn::Coord::width / (double)fn::Coord::baseWidth, 
+		595.0 * (double)fn::Coord::height / (double)fn::Coord::baseHeight);
+	DataParser loadingStrDP; loadingStrDP.parseFile("Sprites/Menus/loading.dat.msd");
+	std::string loadingRandomStr; 
+	loadingStrDP.getListAttribute("Loading", "", "loadingStr")->getElement(
+		fn::Math::randint(0, loadingStrDP.getListSize("Loading", "", "loadingStr") - 1))->getData(&loadingRandomStr);
+	loadingText.setString(loadingRandomStr);
+	window.draw(loadingSprite); window.draw(loadingText); window.display();
+	std::cout << "Creation Chrono : " << "[Window]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+
 	hookCore.dropValue("TriggerDatabase", &triggerDatabaseCore);
 	TextRenderer textDisplay;
 	textDisplay.createRenderer("Shade", "MapSaver");
@@ -276,19 +298,6 @@ void MapEditor::editMap(std::string mapName)
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/arial.ttf");
 	std::cout << "Creation Chrono : " << "[Font]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	//Resolution
-	const int S_WIDTH = fn::Coord::baseWidth;
-	const int S_HEIGHT = fn::Coord::baseHeight;
-	int resX = fn::Coord::width;
-	int resY = fn::Coord::height;
-	std::cout << "Creation Chrono : " << "[Resolution]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
-	//Creating Window
-	sf::RenderWindow window(sf::VideoMode(resX, resY), "Melting Saga", sf::Style::Fullscreen);
-	window.setKeyRepeatEnabled(false);
-	window.setMouseCursorVisible(false);
-	std::cout << "Creation Chrono : " << "[Window]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Config
 	DataParser configFile;
@@ -315,18 +324,14 @@ void MapEditor::editMap(std::string mapName)
 	Character character("Robot");
 	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	//CastSystem
-	Caster castSystem;
-	castSystem.hookToChar(&character);
-	castSystem.hookToCurs(&cursor);
-	std::cout << "Creation Chrono : " << "[CastSystem]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
 	//World Creation / Loading
 	World world;
 	(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
+	world.getScriptEngine()->setErrorHandler([&gameConsole](int statuscode, const char* message) {
+		gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, 255, 0, 0);
+		std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
+	});
 	hookCore.dropValue("World", &world);
-	world.addCharacter(&character);
-	castSystem.hookToWorld(&world);
 	bool depthOfFieldEnabled;
 	configFile.getAttribute("GameConfig", "", "depthOfField")->getData(&depthOfFieldEnabled);
 	if (!depthOfFieldEnabled)
@@ -339,11 +344,7 @@ void MapEditor::editMap(std::string mapName)
 	if (configFile.attributeExists("Developpement", "", "COMM"))
 		configFile.getAttribute("Developpement", "", "COMM")->getData(&serialPort);
 	if (serialPort != "")
-	{
-		char *serialPortChr = new char[serialPort.length() + 1];
-		strcpy(serialPortChr, serialPort.c_str());
-		serial = new Serial(serialPortChr);
-	}
+		serial = new Serial(serialPort.c_str());
 	char charArduinoBuffer[10] = "";
 	int dataLength = 10;
 	std::string arduinoBuffer;
@@ -362,18 +363,18 @@ void MapEditor::editMap(std::string mapName)
 
 	//GUI
 	sf::Event event;
-	GUI::Container* gui = new GUI::Container(&event, &window, resX, resY);
+	GUI::Container* gui = new GUI::Container(&event, &window, fn::Coord::width, fn::Coord::height);
 	std::cout << "Pointer to (init) : " << gui << std::endl;
 	hookCore.dropValue("GUI", gui);
 	gui->createWidgetContainer("Main", 1, 0, 0, fn::Coord::baseWidth, fn::Coord::baseHeight, GUI::ContainerMovement::Fixed);
-	gui->createLabel("Main", "title", resX - 800, 5, "Melting Saga Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
-	gui->createButton("Main", "editorMenuBtn", resX - 570, 0, true, true, "GREY");
+	gui->createLabel("Main", "title", fn::Coord::width - 800, 5, "Melting Saga Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
+	gui->createButton("Main", "editorMenuBtn", fn::Coord::width - 570, 0, true, true, "GREY");
 	GUI::ButtonEvent* menuOpened = GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->getHook();
 	GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->setText("Menu Editeur", "arial.ttf", sf::Color(255, 255, 255), 14, true);
 	std::vector<std::string> cameraMenuList = { "Fixed Camera", "Following Camera", "Zone Camera" };
-	gui->createDroplist("Main", "cameraMenuList", resX - 190, 0, 12, "", false, "arial.ttf", "GREY", cameraMenuList);
+	gui->createDroplist("Main", "cameraMenuList", fn::Coord::width - 190, 0, 12, "", false, "arial.ttf", "GREY", cameraMenuList);
 	std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
-	gui->createDroplist("Main", "editModeList", resX - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
+	gui->createDroplist("Main", "editModeList", fn::Coord::width - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
 	GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
 	gui->createWidgetContainer("Editor", 2, 20, 40, fn::Coord::baseWidth - 40, fn::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 	gui->getContainerByContainerName("Editor")->setBackground(sf::Color(0, 0, 0, 200));
@@ -388,7 +389,7 @@ void MapEditor::editMap(std::string mapName)
 	gui->createLabel("EditorSettings", "enableDOFLbl", 65, 80, "Enable Depth Of Field", "arial.ttf", 12, sf::Color(255, 255, 255));
 	gui->createCheckbox("EditorSettings", "enableFPSCB", 40, 105, "GREY", true);
 	gui->createLabel("EditorSettings", "enableFPSLbl", 65, 105, "Enable FPS Counter", "arial.ttf", 12, sf::Color(255, 255, 255));
-	gui->createCheckbox("EditorSettings", "enableGridCB", 40, 130, "GREY", true);
+	gui->createCheckbox("EditorSettings", "enableGridCB", 40, 130, "GREY", false);
 	bool* isGridEnabled = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableGridCB")->getHook();
 	gui->createLabel("EditorSettings", "enableGridLbl", 65, 130, "Enable Grid", "arial.ttf", 12, sf::Color(255, 255, 255));
 	gui->createLabel("EditorSettings", "gridDimensionsLbl", 40, 155, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
@@ -411,7 +412,6 @@ void MapEditor::editMap(std::string mapName)
 	gui->createLabel("EditorInfos", "camPos", 300, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
 	gui->createLabel("EditorInfos", "currentLayer", 450, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
 	std::cout << "Creation Chrono : " << "[GUI]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
-
 
 	//Map Editor
 	LevelSprite* hoveredSprite = NULL;
@@ -476,6 +476,7 @@ void MapEditor::editMap(std::string mapName)
 	keybind.setActionDelay("MagnetizeLeft", 200);
 	std::cout << "Creation Chrono : " << "[Grid]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 	
+	world.addCharacter(&character);
 	world.loadFromFile(mapName);
 
 	//Game Starts
@@ -487,7 +488,6 @@ void MapEditor::editMap(std::string mapName)
 		if (arduinoBufferSignal != 0 && currentArduinoBuffer != "" && currentArduinoBuffer != arduinoBuffer)
 		{
 			arduinoBuffer = currentArduinoBuffer;
-			std::cout << "Trigg : " << arduinoBuffer << std::endl;
 			arduinoTriggers->pushParameter("SignalChanged", "value", arduinoBuffer);
 			arduinoTriggers->enableTrigger("SignalChanged");
 		}
@@ -550,7 +550,7 @@ void MapEditor::editMap(std::string mapName)
 			GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(3);
 
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() == "Following Camera")
-			world.setCameraPosition(world.getCharacter(0)->getX() - (resX / 2) + 128, world.getCharacter(0)->getY() - (resY / 2) + 152, "FOLLOW");
+			world.setCameraPosition(world.getCharacter(0)->getX() - (fn::Coord::width / 2) + 128, world.getCharacter(0)->getY() - (fn::Coord::height / 2) + 152, "FOLLOW");
 
 		//Updates
 		if (!gameConsole.isConsoleVisible())
@@ -615,7 +615,7 @@ void MapEditor::editMap(std::string mapName)
 
 		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() != "LevelSprites" && selectedSprite != NULL)
 		{
-			selectedSprite->setSpriteColor(sf::Color::White);
+			selectedSprite->setColor(sf::Color::White);
 			selectedSprite = NULL;
 			hoveredSprite = NULL;
 			selectedSpriteOffsetX = 0;
@@ -630,9 +630,25 @@ void MapEditor::editMap(std::string mapName)
 
 			//Layer Change
 			if (selectedSprite == NULL && keybind.isActionToggled("LayerInc"))
+			{
 				currentLayer += 1;
+				if (hoveredSprite != nullptr)
+				{
+					hoveredSprite->setColor(sf::Color::White);
+					hoveredSprite = NULL;
+					sprInfo.setString("");
+				}
+			}
 			if (selectedSprite == NULL && keybind.isActionToggled("LayerDec"))
+			{
 				currentLayer -= 1;
+				if (hoveredSprite != nullptr)
+				{
+					hoveredSprite->setColor(sf::Color::White);
+					hoveredSprite = NULL;
+					sprInfo.setString("");
+				}
+			}
 			//Sprite Hover
 			if (hoveredSprite == NULL && selectedSprite == NULL)
 			{
@@ -640,7 +656,7 @@ void MapEditor::editMap(std::string mapName)
 				{
 					hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
 					sdBoundingRect = hoveredSprite->getRect();
-					hoveredSprite->setSpriteColor(sf::Color(0, 60, 255));
+					hoveredSprite->setColor(sf::Color(0, 60, 255));
 					std::string sprInfoStr;
 					sprInfoStr = "Hovered Sprite : \n";
 					sprInfoStr += "    ID : " + hoveredSprite->getID() + "\n";
@@ -658,16 +674,12 @@ void MapEditor::editMap(std::string mapName)
 				sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
 				sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
 				bool outHover = false;
-				if (cursor.getX() + world.getCamX() < hoveredSprite->getX() || cursor.getX() + world.getCamX() > hoveredSprite->getX() + hoveredSprite->getW())
-					outHover = true;
-				if (cursor.getY() + world.getCamY() < hoveredSprite->getY() || cursor.getY() + world.getCamY() > hoveredSprite->getY() + hoveredSprite->getH())
-					outHover = true;
 				LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
-				if (testHoverSprite != NULL && testHoverSprite != hoveredSprite)
+				if (testHoverSprite != hoveredSprite)
 					outHover = true;
 				if (outHover)
 				{
-					hoveredSprite->setSpriteColor(sf::Color::White);
+					hoveredSprite->setColor(sf::Color::White);
 					hoveredSprite = NULL;
 					sprInfo.setString("");
 				}
@@ -676,19 +688,18 @@ void MapEditor::editMap(std::string mapName)
 			//Sprite Pick
 			if (cursor.getClicked("Left"))
 			{
-				if (hoveredSprite != NULL)
+				if (hoveredSprite != nullptr)
 				{
 					selectedSprite = hoveredSprite;
 					selectedSpriteOffsetX = (cursor.getX() + world.getCamX()) - selectedSprite->getX();
 					selectedSpriteOffsetY = (cursor.getY() + world.getCamY()) - selectedSprite->getY();
 					sdBoundingRect = selectedSprite->getRect();
-					selectedSprite->setRotationOrigin(selectedSpriteOffsetX, selectedSpriteOffsetY);
-					selectedSprite->setSpriteColor(sf::Color(255, 0, 0));
+					selectedSprite->setColor(sf::Color(255, 0, 0));
 				}
 			}
 
 			//Sprite Move
-			if (cursor.getPressed("Left") && selectedSprite != NULL)
+			if (cursor.getPressed("Left") && selectedSprite != nullptr)
 			{
 				selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
 					cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
@@ -714,16 +725,16 @@ void MapEditor::editMap(std::string mapName)
 			}
 
 			//Sprite Rotate (Non-fonctionnal)
-			if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != NULL)
+			if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
 			{
-				if (keybind.isActionEnabled("RotateLeft") && selectedSprite != NULL)
+				if (keybind.isActionEnabled("RotateLeft") && selectedSprite != nullptr)
 					selectedSprite->rotate(-1 * gameSpeed);
-				if (keybind.isActionEnabled("RotateRight") && selectedSprite != NULL)
+				if (keybind.isActionEnabled("RotateRight") && selectedSprite != nullptr)
 					selectedSprite->rotate(1 * gameSpeed);
 			}
 
 			//Sprite Scale
-			if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != NULL)
+			if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
 			{
 				if (keybind.isActionEnabled("ScaleDec"))
 					selectedSprite->scale(-0.05 * gameSpeed * selectedSprite->getScaleX(), -0.05 * gameSpeed * selectedSprite->getScaleY());
@@ -732,35 +743,34 @@ void MapEditor::editMap(std::string mapName)
 			}
 
 			//Sprite Drop
-			if (cursor.getReleased("Left") && selectedSprite != NULL)
+			if (cursor.getReleased("Left") && selectedSprite != nullptr)
 			{
-				selectedSprite->setSpriteColor(sf::Color::White);
+				selectedSprite->setColor(sf::Color::White);
 				sprInfo.setString("");
-				selectedSprite->setRotationOrigin(0, 0);
-				selectedSprite = NULL;
-				hoveredSprite = NULL;
+				selectedSprite = nullptr;
+				hoveredSprite = nullptr;
 				selectedSpriteOffsetX = 0;
 				selectedSpriteOffsetY = 0;
 			}
 
 			//Sprite Layer / Z-Depth
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("ZInc"))
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
 			{
 				selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
 				world.reorganizeLayers();
 			}
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("ZDec")) 
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("ZDec")) 
 			{
 				selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
 				world.reorganizeLayers();
 			}
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("LayerInc"))
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("LayerInc"))
 			{
 				selectedSprite->setLayer(selectedSprite->getLayer() + 1);
 				currentLayer += 1;
 				world.reorganizeLayers();
 			}
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("LayerDec"))
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("LayerDec"))
 			{
 				selectedSprite->setLayer(selectedSprite->getLayer() - 1);
 				currentLayer -= 1;
@@ -768,19 +778,19 @@ void MapEditor::editMap(std::string mapName)
 			}
 				
 			//Sprite Cancel Offset
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("CancelOffset"))
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("CancelOffset"))
 			{
 				selectedSpriteOffsetX = 0;
 				selectedSpriteOffsetY = 0;
 			}
 
 			//Sprite Delete
-			if (cursor.getPressed("Left") && selectedSprite != NULL && keybind.isActionToggled("DeleteSprite"))
+			if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("DeleteSprite"))
 			{
 				world.deleteSprite(selectedSprite);
-				selectedSprite = NULL;
+				selectedSprite = nullptr;
 				sprInfo.setString("");
-				hoveredSprite = NULL;
+				hoveredSprite = nullptr;
 				selectedSpriteOffsetX = 0;
 				selectedSpriteOffsetY = 0;
 			}
@@ -791,7 +801,7 @@ void MapEditor::editMap(std::string mapName)
 		{
 			bool deletedCollision = false;
 			world.enableShowCollision(true, true, true, true);
-			if (selectedMasterCollider != NULL)
+			if (selectedMasterCollider != nullptr)
 			{
 				selectedMasterCollider->clearHighlights();
 				int cursCoordX = cursor.getX() + world.getCamX();
@@ -804,14 +814,14 @@ void MapEditor::editMap(std::string mapName)
 				selectedMasterCollider->highlightPoint(secondClosestNode);
 			}
 			//Collision Point Grab
-			if (cursor.getClicked("Left") && colliderPtGrabbed == -1 && world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first != NULL)
+			if (cursor.getClicked("Left") && colliderPtGrabbed == -1 && world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first != nullptr)
 			{
 				std::pair<Collision::PolygonalCollider*, int> selectedPtCollider;
 				selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
-				if (selectedMasterCollider != NULL && selectedMasterCollider != selectedPtCollider.first)
+				if (selectedMasterCollider != nullptr && selectedMasterCollider != selectedPtCollider.first)
 				{
 					selectedMasterCollider->setSelected(false);
-					selectedMasterCollider = NULL;
+					selectedMasterCollider = nullptr;
 					masterColliderGrabbed = false;
 					colliderPtGrabbed = -1;
 				}
@@ -820,7 +830,7 @@ void MapEditor::editMap(std::string mapName)
 				colliderPtGrabbed = selectedPtCollider.second;
 			}
 			//Collision Point Move
-			if (cursor.getPressed("Left") && selectedMasterCollider != NULL && !masterColliderGrabbed && colliderPtGrabbed != -1)
+			if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
 			{
 				selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 			}
@@ -830,13 +840,13 @@ void MapEditor::editMap(std::string mapName)
 				colliderPtGrabbed = -1;
 			}
 			//Collision Master Grab
-			if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) != NULL)
+			if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) != nullptr)
 			{
 				Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
-				if (selectedMasterCollider != NULL && selectedMasterCollider != tempCol)
+				if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
 				{
 					selectedMasterCollider->setSelected(false);
-					selectedMasterCollider = NULL;
+					selectedMasterCollider = nullptr;
 					masterColliderGrabbed = false;
 					colliderPtGrabbed = -1;
 				}
@@ -845,7 +855,7 @@ void MapEditor::editMap(std::string mapName)
 				masterColliderGrabbed = true;
 			}
 			//Collision Master Move
-			if (cursor.getPressed("Left") && selectedMasterCollider != NULL && masterColliderGrabbed)
+			if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 			{
 				selectedMasterCollider->setPositionFromMaster(
 					cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(),
@@ -856,7 +866,7 @@ void MapEditor::editMap(std::string mapName)
 			{
 				masterColliderGrabbed = false;
 			}
-			if (cursor.getClicked("Right") && selectedMasterCollider != NULL && !masterColliderGrabbed)
+			if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && !masterColliderGrabbed)
 			{
 				int crPtX = cursor.getX() + world.getCamX();
 				int crPtY = cursor.getY() + world.getCamY();
@@ -874,7 +884,7 @@ void MapEditor::editMap(std::string mapName)
 					{
 						selectedMasterCollider->setSelected(false);
 						world.deleteCollisionByID(selectedMasterCollider->getID());
-						selectedMasterCollider = NULL;
+						selectedMasterCollider = nullptr;
 						masterColliderGrabbed = false;
 						colliderPtGrabbed = -1;
 						deletedCollision = true;
@@ -882,33 +892,42 @@ void MapEditor::editMap(std::string mapName)
 				}
 			}
 			//Collision Release
-			if (cursor.getClicked("Left") && selectedMasterCollider != NULL)
+			if (cursor.getClicked("Left") && selectedMasterCollider != nullptr)
 			{
-				if (world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) == NULL)
+				if (world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) == nullptr)
 				{
-					if (world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first == NULL)
+					if (world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first == nullptr)
 					{
 						selectedMasterCollider->setSelected(false);
-						selectedMasterCollider = NULL;
+						selectedMasterCollider = nullptr;
 						masterColliderGrabbed = false;
 						colliderPtGrabbed = -1;
 					}
 				}
 			}
 			//Collision Delete
-			if (cursor.getClicked("Right") && selectedMasterCollider != NULL && masterColliderGrabbed)
+			if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 			{
 				selectedMasterCollider->setSelected(false);
 				world.deleteCollisionByID(selectedMasterCollider->getID());
-				selectedMasterCollider = NULL;
+				selectedMasterCollider = nullptr;
 				masterColliderGrabbed = false;
 				colliderPtGrabbed = -1;
 				deletedCollision = true;
 			}
 			//Collision Create
-			if (cursor.getClicked("Right") && selectedMasterCollider == NULL && !deletedCollision)
+			if (cursor.getClicked("Right") && selectedMasterCollider == nullptr && !deletedCollision)
 			{
 				world.createCollisionAtPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+			}
+		}
+		//Play Edition
+		if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
+		{
+			if (cursor.getClicked("Right"))
+			{
+				character.cancelMoves();
+				character.setPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 			}
 		}
 
@@ -987,10 +1006,22 @@ void MapEditor::editMap(std::string mapName)
 				{
 					if (textDisplay.textRemaining() && !gameConsole.isConsoleVisible()) textDisplay.next();
 				}
-				if (event.key.code == sf::Keyboard::RShift)
+				if (event.key.code == sf::Keyboard::S)
 				{
-					world.saveData()->writeFile("Data/Maps/" + mapName, true);
-					textDisplay.sendToRenderer("MapSaver", { {"text", "File <" + mapName + "> Saved !" } });
+					if (event.key.control)
+					{
+						world.saveData()->writeFile("Data/Maps/" + mapName, true);
+						textDisplay.sendToRenderer("MapSaver", { { "text", "File <" + mapName + "> Saved !" } });
+					}
+				}
+				if (event.key.code == sf::Keyboard::V)
+				{
+					if (event.key.control)
+					{
+						std::string clipboard_content;
+						clip::get_text(clipboard_content);
+						gameConsole.insertInputBufferContent(clipboard_content);
+					}
 				}
 				if (event.key.code == sf::Keyboard::F1)
 					gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
@@ -1028,7 +1059,7 @@ void MapEditor::editMap(std::string mapName)
 			else
 				world.enableShowCollision(false);
 			//Game Display
-			if (hoveredSprite != NULL)
+			if (hoveredSprite != nullptr)
 			{
 				sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
 				sprBorder.setPosition(sdBoundingRect.left - world.getCamX(), sdBoundingRect.top - world.getCamY());
@@ -1063,4 +1094,7 @@ void MapEditor::editMap(std::string mapName)
 			window.display();
 		}
 	}
+	delete serial;
+	delete gui;
+	window.close();
 }

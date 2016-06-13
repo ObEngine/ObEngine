@@ -1,10 +1,11 @@
 #include "Serial.hpp"
 
-Serial::Serial(char *portName)
+Serial::Serial(const char *portName)
 {
 	//We're not yet connected
 	this->portName = portName;
 	this->connected = false;
+	const char* lol = portName;
 
 	//Try to connect to the given port throuh CreateFile
 	this->hSerial = CreateFile(portName,

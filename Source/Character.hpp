@@ -45,6 +45,7 @@ class Character : public Entity
 
 	public:
 		Character(std::string name);
+		void setJumpHeight(int height);
 		void setDirectionAnimation(std::string animation);
 		void melee(int x, int y);
 		void verticalUpdate();

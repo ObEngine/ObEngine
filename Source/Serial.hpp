@@ -12,7 +12,7 @@ extern std::string arduinoBuffer;
 class Serial
 {
 private:
-	char* portName;
+	const char* portName;
 	//Serial comm handler
 	HANDLE hSerial;
 	//Connection status
@@ -24,7 +24,7 @@ private:
 
 public:
 	//Initialize Serial communication with the given COM port
-	Serial(char *portName);
+	Serial(const char *portName);
 	//Close the connection
 	~Serial();
 	std::string getPortName();

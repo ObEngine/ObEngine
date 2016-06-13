@@ -432,11 +432,14 @@ namespace Collision
 	}
 	void PolygonalCollider::move(int x, int y)
 	{
-		masterPoint.X += x;
-		masterPoint.Y += y;
-		for (int i = 0; i < pPath.size(); i++)
+		if (pPath.size() > 0)
 		{
-			pPath.at(i).X += x; pPath.at(i).Y += y;
+			masterPoint.X += x;
+			masterPoint.Y += y;
+			for (int i = 0; i < pPath.size(); i++)
+			{
+				pPath.at(i).X += x; pPath.at(i).Y += y;
+			}
 		}
 	}
 	void PolygonalCollider::setPosition(int x, int y, int offsetMode)

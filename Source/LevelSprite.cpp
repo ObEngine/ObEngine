@@ -31,11 +31,17 @@ void LevelSprite::useDirtyAnimation(bool state, bool candraw)
 void LevelSprite::setSprite(sfe::ComplexSprite* spr)
 {
 	returnSprite = spr;
+	int rotOrigX = (double)this->getW() / 2.0;
+	int rotOrigY = (double)this->getH() / 2.0;
+	this->setRotationOrigin(rotOrigX, rotOrigY);
 }
 
 void LevelSprite::setSprite(sf::Sprite* spr)
 {
 	returnSprite->copyFromSprite(*spr);
+	int rotOrigX = (double)this->getW() / 2.0;
+	int rotOrigY = (double)this->getH() / 2.0;
+	this->setRotationOrigin(rotOrigX, rotOrigY);
 }
 
 void LevelSprite::setLayer(int layer){
@@ -113,6 +119,9 @@ void LevelSprite::textureUpdate(bool forceUpdate)
 				returnSprite->setRotation(rotation);
 				returnSprite->setScale(scaleX, scaleY);
 				returnSprite->setColor(spriteColor);
+				int rotOrigX = (double)this->getW() / 2.0;
+				int rotOrigY = (double)this->getH() / 2.0;
+				this->setRotationOrigin(rotOrigX, rotOrigY);
 				calculateRealCoordinates();
 			}
 		}
@@ -127,7 +136,7 @@ void LevelSprite::textureUpdate(bool forceUpdate)
 	}
 }
 
-void LevelSprite::setSpriteColor(sf::Color newColor)
+void LevelSprite::setColor(sf::Color newColor)
 {
 	spriteColor = newColor;
 	returnSprite->setColor(spriteColor);
@@ -198,12 +207,9 @@ void LevelSprite::calculateRealCoordinates()
 
 sf::FloatRect LevelSprite::getRect()
 {
-	sf::FloatRect mrect = returnSprite->getGlobalBounds();
-	/*sf::Transform transform = this->returnSprite->getTransform();
-	sf::Vector2f ncoords;
-	ncoords = transform.getInverse().transformPoint(sf::Vector2f(transform.transformPoint(sf::Vector2f(mrect.left, mrect.top))));
-	mrect.left = ncoords.x;
-	mrect.top = ncoords.y;*/
+	sf::FloatRect mrect = sf::FloatRect(this->absoluteX, this->absoluteY, this->width, this->height);
+	mrect.left = this->returnSprite->getGlobalBounds().left;
+	mrect.top = this->returnSprite->getGlobalBounds().top;
 	return mrect;
 }
 

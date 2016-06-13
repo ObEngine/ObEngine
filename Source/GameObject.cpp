@@ -16,11 +16,11 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("canCollide", &GameObject::canCollide)
 		.addMember("canClick", &GameObject::canClick)
 		.addMember("canDisplay", &GameObject::canDisplay)
+		.addMember("getInitialised", &GameObject::getInitialised)
 		.addMember("getPriority", &GameObject::getPriority)
 		.addMember("getPublicKey", &GameObject::getPublicKey)
 		.addMember("useLocalTrigger", &GameObject::useLocalTrigger)
-		.addMember("useGlobalTrigger", &GameObject::useGlobalTrigger)
-		.addMember("useCustomTrigger", &GameObject::useCustomTrigger)
+		.addMember("useExternalTrigger", &GameObject::useExternalTrigger)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<int>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<float>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::string>)
@@ -33,6 +33,7 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, float>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, std::string>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, bool>>)
+		.addMember("setInitialised", &GameObject::setInitialised)
 	);
 	(*lua)["This"] = obj;
 }
@@ -199,10 +200,13 @@ void GameObject::update(double dt)
 			this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 		}
 	}
-	if (hasAnimator)
+	if (initialised)
 	{
-		this->objectAnimator.update();
-		if (hasLevelSprite) this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
+		{
+		if (hasAnimator)
+			this->objectAnimator.update();
+			if (hasLevelSprite) this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
+		}
 	}
 }
 std::string GameObject::getID()
@@ -264,25 +268,31 @@ TriggerGroup * GameObject::getLocalTriggers()
 }
 void GameObject::useLocalTrigger(std::string trName)
 {
-	this->registerTrigger(triggerDatabaseCore.getCustomTrigger(this->privateKey, "Local", trName));
+	this->registerTrigger(triggerDatabaseCore.getTrigger(this->privateKey, "Local", trName));
 }
-void GameObject::useGlobalTrigger(std::string trName)
-{
-	this->registerTrigger(triggerDatabaseCore.getTrigger(trName));
-}
-void GameObject::useCustomTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs)
+void GameObject::useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs)
 {
 	if (trName == "*")
 	{
-		std::vector<std::string> allEv = triggerDatabaseCore.getAllTriggersNameFromCustomGroup(trNsp, trGrp);
+		std::vector<std::string> allEv = triggerDatabaseCore.getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
 		for (int i = 0; i < allEv.size(); i++)
 		{
-			this->registerTrigger(triggerDatabaseCore.getCustomTrigger(trNsp, trGrp, allEv[i]));
+			this->registerTrigger(triggerDatabaseCore.getTrigger(trNsp, trGrp, allEv[i]));
 		}
 	}
-	else this->registerTrigger(triggerDatabaseCore.getCustomTrigger(trNsp, trGrp, trName));
+	else this->registerTrigger(triggerDatabaseCore.getTrigger(trNsp, trGrp, trName));
 	if (useAs != "")
 	{
 		this->registeredAliases.push_back(std::tuple<std::string, std::string, std::string>(trNsp, trGrp, useAs));
 	}
+}
+
+void GameObject::setInitialised(bool init)
+{
+	initialised = init;
+}
+
+bool GameObject::getInitialised()
+{
+	return initialised;
 }

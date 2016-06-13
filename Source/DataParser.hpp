@@ -60,6 +60,7 @@ private:
 	std::vector<BaseAttribute*> dataList;
 public:
 	ListAttribute(std::string lId, std::string dataType);
+	~ListAttribute();
 	unsigned int getSize();
 	std::string getID();
 	std::string getType();
@@ -98,11 +99,10 @@ class ComplexAttribute
 		std::vector<std::string> listGeneratorsList;
 	public:
 		ComplexAttribute(std::string attrID);
-		ComplexAttribute(const ComplexAttribute& lol);
 		ComplexAttribute(std::string attrID, ComplexAttribute* herit);
 		ComplexAttribute(std::string attrID, std::vector<ComplexAttribute*>* multipleHerit);
+		~ComplexAttribute();
 		void heritage(ComplexAttribute* heritTarget);
-		unsigned int getClass();
 		std::string getID();
 		BaseAttribute* getAttribute(std::string attributeName);
 		ComplexAttribute* getComplexAttribute(std::string id);
@@ -147,6 +147,7 @@ class DataObject
 		std::vector<std::string> listGeneratorsList;
 	public:
 		DataObject(std::string objectname);
+		~DataObject();
 		std::string getName();
 		ComplexAttribute* getPath(std::vector<std::string> attributePath);
 		BaseAttribute* getAttribute(std::vector<std::string> attributePath, std::string attributeName);
@@ -160,6 +161,10 @@ class DataObject
 		bool listExists(std::vector<std::string> attributePath, std::string attributeName);
 		void createSpecialAttribute(std::string name, std::string type, std::string data);
 		void createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string type, std::string data);
+		void createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string data);
+		void createBaseAttribute(std::vector<std::string> attributePath, std::string name, bool data);
+		void createBaseAttribute(std::vector<std::string> attributePath, std::string name, int data);
+		void createBaseAttribute(std::vector<std::string> attributePath, std::string name, double data);
 		void pushBaseAttribute(std::vector<std::string> attributePath, BaseAttribute* attr);
 		void createListAttribute(std::vector<std::string> attributePath, std::string id, std::string type);
 		void pushListAttribute(std::vector<std::string> attributePath, ListAttribute* attr);
@@ -187,10 +192,12 @@ class DataParser
 		std::ifstream useFile;
 		std::ofstream outFile;
 		std::string getVarType(std::string line);
+		bool autoMemory = true;
 		DataParserNavigator* dpNav = NULL;
 		bool checkNavigator();
 	public:
-		DataParser();
+		DataParser(bool autoMemoryManagement = true);
+		~DataParser();
 		void hookNavigator(DataParserNavigator* dpNav);
 		DataParserNavigator* accessNavigator();
 		DataObject* accessDataObject(std::string name);

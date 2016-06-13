@@ -36,6 +36,7 @@ class World
 		int startX = 0;
 		int startY = 0;
 		kaguya::State* worldScriptEngine;
+		bool updateState = true;
 
 		std::vector<LevelSprite*> backSpriteArray;
 		std::vector<LevelSprite*> frontSpriteArray;
@@ -60,6 +61,7 @@ class World
 		//World
 		World();
 		void loadFromFile(std::string filename);
+		void clearWorld();
 		DataParser* saveData();
 		void update(double dt);
 		void display(sf::RenderWindow* surf);
@@ -67,6 +69,7 @@ class World
 		int getSizeY();
 		int getStartX();
 		int getStartY();
+		void setUpdateState(bool state);
 		//GameObjects
 		GameObject* getGameObject(std::string id);
 		std::vector<GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());

@@ -52,6 +52,19 @@ namespace fn
 		bool isBetween(N target, N lowerBound, N upperBound);
 		bool isDoubleInt(double& value);
 	}
+	namespace Run
+	{
+		class Parser
+		{
+			private:
+				char** start;
+				int size;
+			public:
+				Parser(char** start, int size);
+				bool argumentExists(std::string arg);
+				std::string getArgumentValue(std::string arg);
+		};
+	}
 	namespace String
 	{
 		std::vector<std::string> split(const std::string &str, const std::string &delimiters = " ");

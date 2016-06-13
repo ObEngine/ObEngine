@@ -82,6 +82,26 @@ bool fn::Math::isDoubleInt(double& value)
 	return (std::trunc(value) == value);
 }
 
+//Functions::Run
+fn::Run::Parser::Parser(char** start, int size)
+{
+	this->start = start;
+	this->size = size;
+}
+bool fn::Run::Parser::argumentExists(std::string arg)
+{
+	return std::find(start, start + size, arg) != (start + size);
+}
+std::string fn::Run::Parser::getArgumentValue(std::string arg)
+{
+	char ** itr = std::find(start, start + size, arg);
+	if (itr != (start + size) && ++itr != (start + size))
+	{
+		return std::string(*itr);
+	}
+	return "";
+}
+
 //Functions::String
 void fn::String::removeCharFromString(std::string &str, std::string charToRemove) {
 	str.erase(remove(str.begin(), str.end(), charToRemove.c_str()[0]), str.end());

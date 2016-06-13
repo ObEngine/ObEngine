@@ -16,6 +16,11 @@ Character::Character(std::string name)
 	characterMoves.getAttribute("BasicMoves", "", "jumpHeight")->getData(&maxJumpHeight);
 }
 
+void Character::setJumpHeight(int height)
+{
+	maxJumpHeight = height;
+}
+
 void Character::setDirectionAnimation(std::string animation)
 {
 	if (direction == "Left")

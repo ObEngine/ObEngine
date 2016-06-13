@@ -85,6 +85,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		if        (lib[0] == "Animation")    CoreLib::loadAnimation(lua, lib);
 		else if   (lib[0] == "Collision")    CoreLib::loadCollision(lua, lib);
 		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
+		else if   (lib[0] == "Constants")     CoreLib::loadConstants(lua, lib);
 		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
 		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
 		else if   (lib[0] == "Entity")       CoreLib::loadEntity(lua, lib);
@@ -167,7 +168,6 @@ void CoreLib::loadAnimation(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getAnimationPlayMode", &anim::Animation::getAnimationPlayMode)
 			.addMember("getAnimationStatus", &anim::Animation::getAnimationStatus)
 			.addMember("isAnimationOver", &anim::Animation::isAnimationOver)
-			.addMember("canSkipAnimation", &anim::Animation::canSkipAnimation)
 			.addMember("getSpriteOffsetX", &anim::Animation::getSpriteOffsetX)
 			.addMember("getSpriteOffsetY", &anim::Animation::getSpriteOffsetY)
 			.addMember("getPriority", &anim::Animation::getPriority)
@@ -228,6 +228,7 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
 			.addMember("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
 			.addMember("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
+			.addMember("setPositionOffset", &Collision::PolygonalCollider::setPositionOffset)
 			.addMember("setPosition", &Collision::PolygonalCollider::setPosition)
 			.addMember("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
 			.addMember("setSelected", &Collision::PolygonalCollider::setSelected)
@@ -249,7 +250,9 @@ void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getCommand", &Console::getCommand)
 			.addMember("hasCommand", &Console::hasCommand)
 			.addMember("scroll", &Console::scroll)
-			.addMember("getInputBuffer", &Console::getInputBuffer)
+			.addMember("getInputBufferContent", &Console::getInputBufferContent)
+			.addMember("setInputBufferContent", &Console::setInputBufferContent)
+			.addMember("insertInputBufferContent", &Console::insertInputBufferContent)
 			.addMember("createStream", &Console::createStream)
 			.addMember("isConsoleVisible", &Console::isConsoleVisible)
 			.addMember("setConsoleVisibility", &Console::setConsoleVisibility)
@@ -287,6 +290,21 @@ void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
+void CoreLib::loadConstants(kaguya::State* lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["Constants"])) (*lua)["Core"]["Constants"] = kaguya::NewTable();
+	if (importAll)
+	{
+		(*lua)["Core"]["Constants"]["ResX"] = fn::Coord::width;
+		(*lua)["Core"]["Constants"]["ResY"] = fn::Coord::height;
+		(*lua)["Core"]["Constants"]["BaseResX"] = fn::Coord::baseWidth;
+		(*lua)["Core"]["Constants"]["BaseResY"] = fn::Coord::baseHeight;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConstants] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
 void CoreLib::loadCursor(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
@@ -310,6 +328,42 @@ void CoreLib::loadCursor(kaguya::State* lua, std::vector<std::string> args)
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCursor] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
+void CoreLib::loadDataParser(kaguya::State * lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["DataParser"])) (*lua)["Core"]["DataParser"] = kaguya::NewTable();
+	if (importAll || args[1] == "DataParser")
+	{
+		(*lua)["Core"]["DataParser"]["DataParser"].setClass(kaguya::ClassMetatable<DataParser>()
+			.addMember("accessDataObject", &DataParser::accessDataObject)
+			.addMember("accessNavigator", &DataParser::accessNavigator)
+			.addMember("attributeExists", static_cast<bool (DataParser::*)(std::string)>(&DataParser::attributeExists))
+			.addMember("attributeExists", static_cast<bool (DataParser::*)(std::string, std::string, std::string)>(&DataParser::attributeExists))
+			.addMember("complexExists", static_cast<bool (DataParser::*)(std::string)>(&DataParser::complexExists))
+			.addMember("complexExists", static_cast<bool (DataParser::*)(std::string, std::string, std::string)>(&DataParser::complexExists))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, double)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, int)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, bool)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, std::string)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string, double)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string, int)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string, bool)>(&DataParser::createBaseAttribute))
+			.addMember("createBaseAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string, std::string)>(&DataParser::createBaseAttribute))
+			.addMember("createComplexAttribute", static_cast<void (DataParser::*)(std::string)>(&DataParser::createComplexAttribute))
+			.addMember("createComplexAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string)>(&DataParser::createComplexAttribute))
+			.addMember("createDataObject", &DataParser::createDataObject)
+			.addMember("createFlag", &DataParser::createFlag)
+			.addMember("createHeritComplexAttribute", static_cast<void (DataParser::*)(std::string)>(&DataParser::createHeritComplexAttribute))
+			.addMember("createHeritComplexAttribute", static_cast<void (DataParser::*)(std::string, std::string)>(&DataParser::createHeritComplexAttribute))
+			.addMember("createListAttribute", static_cast<void (DataParser::*)(std::string, std::string)>(&DataParser::createListAttribute))
+			.addMember("createListAttribute", static_cast<void (DataParser::*)(std::string, std::string, std::string, std::string)>(&DataParser::createListAttribute))
+		);
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDataParser] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 {
@@ -369,6 +423,7 @@ void CoreLib::loadEntity(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("melee", &Character::melee)
 			.addMember("move", &Character::move)
 			.addMember("setDirectionAnimation", &Character::setDirectionAnimation)
+			.addMember("setJumpHeight", &Character::setJumpHeight)
 			.addMember("setVelocity", &Character::setVelocity)
 			.addMember("sprint", &Character::sprint)
 			.addMember("textureUpdate", &Character::textureUpdate)
@@ -529,6 +584,7 @@ void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("rotate", &LevelSprite::rotate)
 			.addMember("scale", &LevelSprite::scale)
 			.addMember("setAtr", &LevelSprite::setAtr)
+			.addMember("setColor", &LevelSprite::setColor)
 			.addMember("setLayer", &LevelSprite::setLayer)
 			.addMember("setPosition", &LevelSprite::setPosition)
 			.addMember("setRotation", &LevelSprite::setRotation)
@@ -662,7 +718,30 @@ void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 		(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::ClassMetatable<sf::Color>()
 			.addConstructor<UINT8, UINT8, UINT8, UINT8>()
 			.addConstructor<int, int, int, int>()
-			);
+			.addMember("a", &sf::Color::a)
+			.addMember("r", &sf::Color::r)
+			.addMember("g", &sf::Color::b)
+			.addMember("b", &sf::Color::b)
+		);
+		(*lua)["Core"]["SFML"]["Drawable"].setClass(kaguya::ClassMetatable<sf::Drawable>()
+		);
+		(*lua)["Core"]["SFML"]["Transformable"].setClass(kaguya::ClassMetatable<sf::Transformable>()
+			.addMember("getInverseTransform", &sf::Transformable::getInverseTransform)
+			.addMember("getOrigin", &sf::Transformable::getOrigin)
+			.addMember("getPosition", &sf::Transformable::getPosition)
+			.addMember("getRotation", &sf::Transformable::getRotation)
+			.addMember("getScale", &sf::Transformable::getScale)
+			.addMember("getTransform", &sf::Transformable::getTransform)
+			.addMember("move", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::move))
+			.addMember("move", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::move))
+			.addMember("rotate", &sf::Transformable::rotate)
+			.addMember("scale", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::scale))
+			.addMember("scale", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::scale))
+			.addMember("setOrigin", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::setOrigin))
+			.addMember("setOrigin", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::setOrigin))
+		);
+		(*lua)["Core"]["SFML"]["Sprite"].setClass(kaguya::ClassMetatable<sf::Sprite, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
+		);
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
@@ -678,7 +757,6 @@ void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 	{
 		(*lua)["Core"]["Trigger"]["TriggerDatabase"].setClass(kaguya::ClassMetatable<TriggerDatabase>()
 			.addMember("getTrigger", &TriggerDatabase::getTrigger)
-			.addMember("getCustomTrigger", &TriggerDatabase::getCustomTrigger)
 			.addMember("createTriggerGroup", &TriggerDatabase::createTriggerGroup)
 			.addMember("joinTriggerGroup", &TriggerDatabase::joinTriggerGroup)
 			.addMember("doesTriggerGroupExists", &TriggerDatabase::doesTriggerGroupExists)

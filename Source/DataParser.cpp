@@ -161,6 +161,11 @@ ListAttribute::ListAttribute(std::string id, std::string type) {
 	this->listId = id;
 	this->dataType = type;
 }
+ListAttribute::~ListAttribute()
+{
+	for (int i = 0; i < dataList.size(); i++)
+		delete dataList[i];
+}
 unsigned int ListAttribute::getSize() {
 	return dataList.size();
 }
@@ -195,6 +200,17 @@ ComplexAttribute::ComplexAttribute(std::string attrID, std::vector<ComplexAttrib
 	id = attrID;
 	for (unsigned int i = 0; i < multipleHerit->size(); i++)
 		this->heritage(multipleHerit->at(i));
+}
+ComplexAttribute::~ComplexAttribute()
+{
+	for (auto it = baseAttributes.begin(); it != baseAttributes.end(); it++)
+		delete it->second;
+	for (auto it = listAttributes.begin(); it != listAttributes.end(); it++)
+		delete it->second;
+	for (auto it = complexAttributes.begin(); it != complexAttributes.end(); it++)
+		delete it->second;
+	for (auto it = listGenerators.begin(); it != listGenerators.end(); it++)
+		delete it->second;
 }
 void ComplexAttribute::heritage(ComplexAttribute* heritTarget) {
 	for (unsigned int i = 0; i < heritTarget->getAllAttributes().size(); i++)
@@ -478,6 +494,19 @@ void ListGenerator::generate() {
 DataObject::DataObject(std::string objectname) {
 	this->objectName = objectname;
 }
+DataObject::~DataObject()
+{
+	for (auto it = specialAttributes.begin(); it != specialAttributes.end(); it++)
+		delete it->second;
+	for (auto it = baseAttributes.begin(); it != baseAttributes.end(); it++)
+		delete it->second;
+	for (auto it = listAttributes.begin(); it != listAttributes.end(); it++)
+		delete it->second;
+	for (auto it = complexAttributes.begin(); it != complexAttributes.end(); it++)
+		delete it->second;
+	for (auto it = listGenerators.begin(); it != listGenerators.end(); it++)
+		delete it->second;
+}
 std::string DataObject::getName() {
 	return objectName;
 }
@@ -587,8 +616,53 @@ void DataObject::createSpecialAttribute(std::string name, std::string type, std:
 	specialAttributes[name] = tempAttr;
 	specialAttributeList.push_back(name);
 }
-void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string type, std::string data) {
+void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string type, std::string data)
+{
 	BaseAttribute* tempAttr = new BaseAttribute(name, type, data);
+	if (attributePath.size() == 0)
+	{
+		baseAttributes[name] = tempAttr;
+		baseAttributeList.push_back(name);
+	}
+	else
+		getPath(attributePath)->pushBaseAttribute(tempAttr);
+}
+void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string data)
+{
+	BaseAttribute* tempAttr = new BaseAttribute(name, "str", data);
+	if (attributePath.size() == 0)
+	{
+		baseAttributes[name] = tempAttr;
+		baseAttributeList.push_back(name);
+	}
+	else
+		getPath(attributePath)->pushBaseAttribute(tempAttr);
+}
+void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, bool data)
+{
+	BaseAttribute* tempAttr = new BaseAttribute(name, "bool", (data == true ? "True" : "False"));
+	if (attributePath.size() == 0)
+	{
+		baseAttributes[name] = tempAttr;
+		baseAttributeList.push_back(name);
+	}
+	else
+		getPath(attributePath)->pushBaseAttribute(tempAttr);
+}
+void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, int data)
+{
+	BaseAttribute* tempAttr = new BaseAttribute(name, "int", std::to_string(data));
+	if (attributePath.size() == 0)
+	{
+		baseAttributes[name] = tempAttr;
+		baseAttributeList.push_back(name);
+	}
+	else
+		getPath(attributePath)->pushBaseAttribute(tempAttr);
+}
+void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, double data)
+{
+	BaseAttribute* tempAttr = new BaseAttribute(name, "float", std::to_string(data));
 	if (attributePath.size() == 0)
 	{
 		baseAttributes[name] = tempAttr;
@@ -824,8 +898,18 @@ void DataObject::deleteListAttribute(std::vector<std::string> attributePath, std
 
 
 //DataParser
-DataParser::DataParser() {
-
+DataParser::DataParser(bool autoMemoryManagement) 
+{
+	this->autoMemory = autoMemoryManagement;
+}
+DataParser::~DataParser()
+{
+	if (autoMemory)
+	{
+		if (dpNav != nullptr) delete dpNav;
+		for (auto it = objectMap.begin(); it != objectMap.end(); it++)
+			delete it->second;
+	}
 }
 void DataParser::hookNavigator(DataParserNavigator* dpNav) {
 	this->dpNav = dpNav;

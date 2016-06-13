@@ -12,4 +12,5 @@
 
 #include "Game.hpp"
 #include "MapEditor.hpp"
+#include "DebugMode.hpp"
 #include "Menu.hpp"

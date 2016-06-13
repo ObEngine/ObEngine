@@ -72,10 +72,14 @@ class Console
 		Message* pushMessage(std::string headerName, std::string message, int r = 255, int g = 255, int b = 255, int a = 255, std::string type = "DEFAULT", bool disableTimestamp = false);
 		void inputKey(int keyCode);
 		void clearInputBuffer();
-		std::string getInputBuffer();
+		std::string getInputBufferContent();
+		void setInputBufferContent(std::string content);
+		void insertInputBufferContent(std::string content);
 		void update();
 		Stream* createStream(std::string streamName, bool enabled = true);
 		Stream* getStream(std::string streamName);
+		void downHistory();
+		void upHistory();
 		void display(sf::RenderWindow* surf);
 		bool isConsoleVisible();
 		void setConsoleVisibility(bool enabled);
@@ -90,6 +94,8 @@ class Console
 		bool consoleAutoScroll = true;
 		bool consoleMuted = false;
 		bool commandReady = false;
+		int consoleHistoryIndex = 0;
+		std::vector<std::string> consoleHistory;
 		std::string currentCommand;
 		std::string currentTheme;
 		sf::Font font;

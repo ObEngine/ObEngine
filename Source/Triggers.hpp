@@ -80,22 +80,19 @@ class TriggerGroup
 class TriggerDatabase
 {
 	private:
-		std::map<std::string, Trigger*> coreTriggers;
-		std::map<std::string, std::map<std::string, TriggerGroup*>> customTriggers;
+		std::map<std::string, std::map<std::string, TriggerGroup*>> allTriggers;
 		std::vector<std::string> toEnable;
 		std::vector<std::string> toDisable;
 		Chronometer databaseChrono;
 		std::vector<TriggerDelay*> delayedTriggers;
 	public:
 		TriggerDatabase();
-		Trigger* getTrigger(std::string triggerName);
-		Trigger* getCustomTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
-		void setTriggerState(std::string name, bool state);
-		void createCustomNamespace(std::string groupNamespace);
+		Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
+		void createNamespace(std::string groupNamespace);
 		TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
 		TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
 		bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
-		std::vector<std::string> getAllTriggersNameFromCustomGroup(std::string groupNamespace, std::string triggerGroupName);
+		std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
 		void update();
 };
 

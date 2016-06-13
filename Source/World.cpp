@@ -9,8 +9,22 @@ World::World()
 	loadWorldScriptEngineBaseLib(worldScriptEngine);
 	(*worldScriptEngine)["World"] = this;
 	worldScriptEngine->dofile("Data/GameScripts/WScrInit.lua");
+	loadLib(worldScriptEngine, "Core.Animation");
+	loadLib(worldScriptEngine, "Core.Collision");
 	loadLib(worldScriptEngine, "Core.Console");
-	triggerDatabaseCore.createCustomNamespace("Map");
+	loadLib(worldScriptEngine, "Core.Cursor");
+	loadLib(worldScriptEngine, "Core.Dialog");
+	loadLib(worldScriptEngine, "Core.Entity");
+	loadLib(worldScriptEngine, "Core.GUI");
+	loadLib(worldScriptEngine, "Core.KeyBind");
+	loadLib(worldScriptEngine, "Core.LevelSprite");
+	loadLib(worldScriptEngine, "Core.Light");
+	loadLib(worldScriptEngine, "Core.MathExp");
+	loadLib(worldScriptEngine, "Core.Serial");
+	loadLib(worldScriptEngine, "Core.SFML");
+	loadLib(worldScriptEngine, "Core.Trigger");
+	loadLib(worldScriptEngine, "Core.Utils");
+	triggerDatabaseCore.createNamespace("Map");
 	showCollisionModes["drawLines"] = false;
 	showCollisionModes["drawPoints"] = false;
 	showCollisionModes["drawMasterPoint"] = false;
@@ -71,6 +85,7 @@ Character* World::getCharacter(int index)
 
 void World::loadFromFile(std::string filename)
 {
+	this->clearWorld();
 	double startLoadTime = getTickSinceEpoch();
 	int arrayLoad = 0;
 	int arrayLoadFrontDeco = 0;
@@ -236,7 +251,6 @@ void World::loadFromFile(std::string filename)
 			std::string levelObjectType;
 			mapParse.getAttribute("LevelObjects", allObjects[i], "type")->getData(&levelObjectType);
 			this->createGameObject(allObjects[i], "LevelObjects", levelObjectType);
-			bool hasSpr = false;
 			int objX = 0;
 			int objY = 0;
 			int colOffX = 0;
@@ -244,7 +258,6 @@ void World::loadFromFile(std::string filename)
 			if (this->getGameObject(allObjects[i])->canDisplay())
 			{
 				this->addLevelSprite(this->getGameObject(allObjects[i])->getLevelSprite());
-				hasSpr = true;
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posX"))
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posX")->getData(&objX);
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posY"))
@@ -254,13 +267,9 @@ void World::loadFromFile(std::string filename)
 			if (this->getGameObject(allObjects[i])->canCollide() || this->getGameObject(allObjects[i])->canClick())
 			{
 				this->addCollider(this->getGameObject(allObjects[i])->getCollider());
-				if (hasSpr && this->getGameObject(allObjects[i])->isColliderRelative())
+				if (this->getGameObject(allObjects[i])->canDisplay() && this->getGameObject(allObjects[i])->isColliderRelative())
 					this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY, 1);
 			}
-			this->getGameObject(allObjects[i])->getLevelSprite()->hookToCollision(
-				this->getGameObject(allObjects[i])->getCollider());
-			this->getGameObject(allObjects[i])->getCollider()->setFromGameObject(true);
-			(*this->getGameObject(allObjects[i])->scriptEngine)["World"] = this;
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
@@ -277,6 +286,43 @@ void World::loadFromFile(std::string filename)
 		}
 	}
 	std::cout << "Creation Chrono : " << "[WorldScript]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
+	triggerDatabaseCore.update();
+	for (int i = 0; i < updateObjArray.size(); i++)
+	{
+		updateObjArray[i]->update(gameSpeed);
+	}
+}
+
+void World::clearWorld()
+{
+	std::cout << "Clearing World" << std::endl;
+	/*for (int i = 0; i < backSpriteArray.size(); i++)
+		delete backSpriteArray[i];*/
+	std::cout << "Clearing bSpriteArray [Done]" << std::endl;
+	backSpriteArray.clear();
+	/*for (int i = 0; i < frontSpriteArray.size(); i++)
+		delete frontSpriteArray[i];*/
+	frontSpriteArray.clear();
+	std::cout << "Clearing fSpriteArray [Done]" << std::endl;
+	/*for (int i = 0; i < collidersArray.size(); i++)
+		delete collidersArray[i];*/
+	collidersArray.clear();
+	std::cout << "Clearing collidersArray [Done]" << std::endl;
+	/*for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
+		delete it->second;*/
+	gameObjectsMap.clear();
+	updateObjArray.clear();
+	std::cout << "Clearing gameObjectsMap [Done]" << std::endl;
+	/*for (auto it = lightsMap.begin(); it != lightsMap.end(); it++)
+		delete it->second;*/
+	lightsMap.clear();
+	std::cout << "Clearing lightsMapArray [Done]" << std::endl;
+	/*for (int i = 0; i < particleArray.size(); i++)
+		delete particleArray[i];*/
+	particleArray.clear();
+	std::cout << "Clearing particlesArray [Done]" << std::endl;
+	scriptArray.clear();
+	std::cout << "Clearing scriptArray [Done]" << std::endl;
 }
 
 DataParser* World::saveData()
@@ -369,28 +415,31 @@ DataParser* World::saveData()
 
 void World::update(double dt)
 {
-	this->gameSpeed = dt;
-	for (int i = 0; i < updateObjArray.size(); i++)
+	if (updateState)
 	{
-		updateObjArray[i]->update(dt);
-	}
-	typedef std::map<std::string, Light::PointLight*>::iterator it_mspl;
-	for (it_mspl iterator = lightsMap.begin(); iterator != lightsMap.end(); iterator++)
-	{
-		if (iterator->second->getType() == "Dynamic")
+		this->gameSpeed = dt;
+		for (int i = 0; i < updateObjArray.size(); i++)
 		{
-			dynamic_cast<Light::DynamicPointLight*>(iterator->second)->updateLight();
+			updateObjArray[i]->update(dt);
 		}
-	}
-	for (unsigned int i = 0; i < charArray.size(); i++)
-	{
-		charArray[i]->setDeltaTime(gameSpeed);
-		charArray[i]->getCamPos(camX, camY);
-		charArray[i]->update();
-	}
-	for (unsigned int i = 0; i < particleArray.size(); i++)
-	{
-		particleArray[i]->update();
+		typedef std::map<std::string, Light::PointLight*>::iterator it_mspl;
+		for (it_mspl iterator = lightsMap.begin(); iterator != lightsMap.end(); iterator++)
+		{
+			if (iterator->second->getType() == "Dynamic")
+			{
+				dynamic_cast<Light::DynamicPointLight*>(iterator->second)->updateLight();
+			}
+		}
+		for (unsigned int i = 0; i < charArray.size(); i++)
+		{
+			charArray[i]->setDeltaTime(gameSpeed);
+			charArray[i]->getCamPos(camX, camY);
+			charArray[i]->update();
+		}
+		for (unsigned int i = 0; i < particleArray.size(); i++)
+		{
+			particleArray[i]->update();
+		}
 	}
 }
 
@@ -431,7 +480,7 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 
 		if (fn::Vector::isInList((std::string)"+FIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = backSpriteArray[i]->getX();
+			layeredX = backSpriteArray[i]->getRect().left;
 			layeredY = backSpriteArray[i]->getY();
 		}
 		else if (fn::Vector::isInList((std::string)"+VFIX", backSpriteArray[i]->getAttributes()))
@@ -465,23 +514,17 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 			layeredY = ((backSpriteArray[i]->getY()*(backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
 		}
 		backSpriteArray[i]->textureUpdate();
-		if (layeredX + backSpriteArray[i]->getW() > 0 && layeredY + backSpriteArray[i]->getH() > 0)
-		{
-			if (layeredX < fn::Coord::width && layeredY < fn::Coord::height)
-			{
-				sfe::ComplexSprite tAffSpr;
-				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
-				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
-				tAffSpr = *backSpriteArray[i]->getSprite();
+		sfe::ComplexSprite tAffSpr;
+		blurShader.setParameter("texture", sf::Shader::CurrentTexture);
+		blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
+		tAffSpr = *backSpriteArray[i]->getSprite();
 
-				if (lightHooked) cLight->setPosition(layeredX, layeredY);
-				tAffSpr.setPosition(layeredX, layeredY);
-				if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
-				if (backSpriteArray[i]->isVisible())
-					surf->draw(tAffSpr, &blurShader);
-				if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
-			}
-		}
+		if (lightHooked) cLight->setPosition(layeredX, layeredY);
+		tAffSpr.setPosition(layeredX, layeredY);
+		if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
+		if (backSpriteArray[i]->isVisible())
+			surf->draw(tAffSpr, &blurShader);
+		if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 	}
 }
 
@@ -533,23 +576,17 @@ void World::visualDisplayFront(sf::RenderWindow* surf)
 		}
 
 		frontSpriteArray[i]->textureUpdate();
-		if (layeredX + backSpriteArray[i]->getW() > 0 && layeredY + backSpriteArray[i]->getH() > 0)
-		{
-			if (layeredX < fn::Coord::width && layeredY < fn::Coord::height)
-			{
-				sfe::ComplexSprite tAffSpr;
-				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
-				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
-				tAffSpr = *frontSpriteArray[i]->getSprite();
+		sfe::ComplexSprite tAffSpr;
+		blurShader.setParameter("texture", sf::Shader::CurrentTexture);
+		blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
+		tAffSpr = *frontSpriteArray[i]->getSprite();
 
-				if (lightHooked) cLight->setPosition(layeredX, layeredY);
-				tAffSpr.setPosition(layeredX, layeredY);
-				if (lightHooked) { if (cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
-				if (frontSpriteArray[i]->isVisible())
-					surf->draw(tAffSpr, &blurShader);
-				if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
-			}
-		}
+		if (lightHooked) cLight->setPosition(layeredX, layeredY);
+		tAffSpr.setPosition(layeredX, layeredY);
+		if (lightHooked) { if (cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
+		if (frontSpriteArray[i]->isVisible())
+			surf->draw(tAffSpr, &blurShader);
+		if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 	}
 }
 
@@ -617,6 +654,11 @@ int World::getStartY()
 	return startY;
 }
 
+void World::setUpdateState(bool state)
+{
+	updateState = state;
+}
+
 GameObject* World::getGameObject(std::string id)
 {
 	if (gameObjectsMap.find(id) != gameObjectsMap.end())
@@ -647,10 +689,10 @@ std::vector<GameObject*> World::getAllGameObjects(std::vector<std::string> filte
 GameObject* World::createGameObject(std::string id, std::string type, std::string obj)
 {
 	GameObject* newGameObject = new GameObject(obj, id);
+	DataParser getGameObjectFile;
 	DataObject* gameObjectData = new DataObject("None");
 	if (type == "LevelObjects")
 	{
-		DataParser getGameObjectFile;
 		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd");
 		gameObjectData = getGameObjectFile.accessDataObject(obj);
 		newGameObject->loadGameObject(gameObjectData);
@@ -659,8 +701,8 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	this->gameObjectsMap[id] = newGameObject;
 	newGameObject->privateKey = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
 	newGameObject->publicKey = fn::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
-	triggerDatabaseCore.createCustomNamespace(newGameObject->privateKey);
-	triggerDatabaseCore.createCustomNamespace(newGameObject->publicKey);
+	triggerDatabaseCore.createNamespace(newGameObject->privateKey);
+	triggerDatabaseCore.createNamespace(newGameObject->publicKey);
 	newGameObject->localTriggers = triggerDatabaseCore.createTriggerGroup(newGameObject->privateKey, "Local");
 	//Script Loading
 	newGameObject->scriptEngine->dofile("Data/GameScripts/ScrInit.lua");
@@ -693,6 +735,20 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 		}
 		this->orderUpdateScrArray();
 	}
+	if (newGameObject->canDisplay())
+	{
+		this->addLevelSprite(newGameObject->getLevelSprite());
+		newGameObject->getLevelSprite()->setPosition(0, 0);
+	}
+	if (newGameObject->canCollide() || newGameObject->canClick())
+	{
+		this->addCollider(newGameObject->getCollider());
+		if (newGameObject->canDisplay() && newGameObject->isColliderRelative())
+			newGameObject->getCollider()->setPosition(0, 0, 1);
+	}
+	newGameObject->getLevelSprite()->hookToCollision(newGameObject->getCollider());
+	newGameObject->getCollider()->setFromGameObject(true);
+	(*newGameObject->scriptEngine)["World"] = this;
 	return newGameObject;
 }
 
@@ -847,17 +903,17 @@ std::vector<LevelSprite*> World::getSpritesByLayer(int layer)
 
 LevelSprite* World::getSpriteByPos(int x, int y, int layer)
 {
-	LevelSprite* returnDeco = NULL;
+	LevelSprite* returnSpr = nullptr;
 	std::vector<LevelSprite*> getDecoVec = getSpritesByLayer(layer);
 	for (unsigned int i = 0; i < getDecoVec.size(); i++)
 	{
 		if (x > getDecoVec[i]->getRect().left && x < getDecoVec[i]->getRect().left + getDecoVec[i]->getW())
 		{
 			if (y > getDecoVec[i]->getRect().top && y < getDecoVec[i]->getRect().top + getDecoVec[i]->getH())
-				returnDeco = getDecoVec[i];
+				returnSpr = getDecoVec[i];
 		}
 	}
-	return returnDeco;
+	return returnSpr;
 }
 
 LevelSprite* World::getSpriteByID(std::string ID)
@@ -1000,6 +1056,7 @@ void loadWorldLib(kaguya::State* lua)
 		.addMember("addLight", &World::addLight)
 		.addMember("addCollider", &World::addCollider)
 		.addMember("addParticle", &World::addParticle)
+		.addMember("clearWorld", &World::clearWorld)
 		.addMember("createCollisionAtPos", &World::createCollisionAtPos)
 		.addMember("createGameObject", &World::createGameObject)
 		.addMember("deleteCollisionByID", &World::deleteCollisionByID)
@@ -1033,6 +1090,7 @@ void loadWorldLib(kaguya::State* lua)
 		.addMember("saveData", &World::saveData)
 		.addMember("setBlurMul", &World::setBlurMul)
 		.addMember("setCameraPosition", &World::setCameraPosition)
+		.addMember("setUpdateState", &World::setUpdateState)
 	);
 	std::cout << "World Lib Loaded" << std::endl;
 }
@@ -1049,11 +1107,11 @@ void loadWorldScriptEngineBaseLib(kaguya::State* lua)
 		.addMember("canCollide", &GameObject::canCollide)
 		.addMember("canClick", &GameObject::canClick)
 		.addMember("canDisplay", &GameObject::canDisplay)
+		.addMember("getInitialised", &GameObject::getInitialised)
 		.addMember("getPriority", &GameObject::getPriority)
 		.addMember("getPublicKey", &GameObject::getPublicKey)
 		.addMember("useLocalTrigger", &GameObject::useLocalTrigger)
-		.addMember("useGlobalTrigger", &GameObject::useGlobalTrigger)
-		.addMember("useCustomTrigger", &GameObject::useCustomTrigger)
+		.addMember("useExternalTrigger", &GameObject::useExternalTrigger)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<int>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<float>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::string>)
@@ -1066,6 +1124,7 @@ void loadWorldScriptEngineBaseLib(kaguya::State* lua)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, float>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, std::string>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, bool>>)
+		.addMember("setInitialised", &GameObject::setInitialised)
 	);
 	(*lua)["This"] = lua;
 }

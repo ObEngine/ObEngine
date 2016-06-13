@@ -16,7 +16,7 @@ void Cursor::initialize(sf::RenderWindow* window)
 
 void Cursor::selectCursor(std::string cursor)
 {
-	cursorAnim = anim::Animator();
+	cursorAnim.clear();
 	cursorAnim.setPath("Sprites/Cursors/" + cursor);
 	cursorAnim.loadAnimator();
 	cursorAnim.setKey("IDLE");

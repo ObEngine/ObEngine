@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <clip.h>
 
 #include "Character.hpp"
 #include "World.hpp"

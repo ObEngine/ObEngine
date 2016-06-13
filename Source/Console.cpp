@@ -51,6 +51,32 @@ Console::Stream* Console::getStream(std::string streamName)
 	}
 }
 
+void Console::downHistory()
+{
+	if (consoleHistoryIndex < consoleHistory.size() - 1)
+		consoleHistoryIndex++;
+	else
+		consoleHistoryIndex = consoleHistory.size() - 1;
+	if (consoleHistory.size() != 0)
+	{
+		inputBuffer = consoleHistory[consoleHistoryIndex];
+		virtualCursor = consoleHistory[consoleHistoryIndex].size();
+	}
+}
+
+void Console::upHistory()
+{
+	if (consoleHistoryIndex > 0)
+		consoleHistoryIndex--;
+	else
+		consoleHistoryIndex = 0;
+	if (consoleHistory.size() != 0)
+	{
+		inputBuffer = consoleHistory[consoleHistoryIndex];
+		virtualCursor = consoleHistory[consoleHistoryIndex].size();
+	}
+}
+
 Console::Message* Console::pushMessage(std::string headerName, std::string message, int r, int g, int b, int a, std::string type, bool disableTimestamp)
 {
 	Message* forgeMessage = new Message("", "", sf::Color(0,0,0), "", false);
@@ -69,7 +95,7 @@ Console::Message* Console::pushMessage(std::string headerName, std::string messa
 	{
 		if (!fn::Vector::isInList(headerName, disabledStreams))
 		{
-			free(forgeMessage);
+			delete forgeMessage;
 			forgeMessage = new Message(headerName, message, sf::Color(r, g, b, a), type, !disableTimestamp);
 			consoleText.push_back(forgeMessage);
 		}
@@ -89,6 +115,9 @@ void Console::handleCommands(std::string text)
 	this->pushMessage("UserInput", text, 0, 255, 255);
 	commandReady = true;
 	currentCommand = text;
+	if (consoleHistory.size() == 0 || currentCommand != consoleHistory[consoleHistory.size() - 1])
+		consoleHistory.push_back(currentCommand);
+	consoleHistoryIndex = consoleHistory.size();
 }
 
 std::string Console::getCommand()
@@ -104,6 +133,7 @@ bool Console::hasCommand()
 
 void Console::inputKey(int keyCode)
 {
+	std::cout << "Current Key : " << keyCode << std::endl;
 	switch (keyCode)
 	{
 		case 8:
@@ -117,6 +147,9 @@ void Console::inputKey(int keyCode)
 			this->handleCommands(inputBuffer);
 			this->clearInputBuffer();
 			virtualCursor = 0;
+			break;
+		case 22:
+			std::cout << "PASTE" << std::endl;
 			break;
 		default:
 			inputBuffer.insert(inputBuffer.begin() + virtualCursor, static_cast<char>(keyCode));
@@ -136,7 +169,19 @@ void Console::clearInputBuffer()
 	inputBuffer = "";
 }
 
-std::string Console::getInputBuffer()
+void Console::insertInputBufferContent(std::string content)
+{
+	inputBuffer.insert(virtualCursor, content);
+	virtualCursor += content.size();
+}
+
+void Console::setInputBufferContent(std::string content)
+{
+	inputBuffer = content;
+	inputBuffer = content.size();
+}
+
+std::string Console::getInputBufferContent()
 {
 	return inputBuffer;
 }

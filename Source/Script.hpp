@@ -32,7 +32,9 @@ namespace CoreLib
 	void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
 	void loadCollision(kaguya::State* lua, std::vector<std::string> args);
 	void loadConsole(kaguya::State* lua, std::vector<std::string> args);
+	void loadConstants(kaguya::State* lua, std::vector<std::string> args);
 	void loadCursor(kaguya::State* lua, std::vector<std::string> args);
+	void loadDataParser(kaguya::State* lua, std::vector<std::string> args);
 	void loadDialog(kaguya::State* lua, std::vector<std::string> args);
 	void loadEntity(kaguya::State* lua, std::vector<std::string> args);
 	void loadGUI(kaguya::State* lua, std::vector<std::string> args);

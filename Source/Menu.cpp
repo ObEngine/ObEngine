@@ -16,7 +16,7 @@ void chooseMapAddMaps(GUI::Container* gui)
 		std::string mapFile = allMaps[i];
 		DataParser mapInfoParser;
 		std::string filename = (allMaps[i].size() <= 16) ? allMaps[i].substr(0, allMapsTemp[i].size() - 8) :
-			allMaps[i].substr(0, 8) + "...";
+			allMaps[i].substr(0, 8) + "..";
 		std::string levelName = "???";
 		int mapSizeX = 0;
 		int mapSizeY = 0;
@@ -43,6 +43,9 @@ std::string chooseMapMenu()
 	windowBorder.setOutlineColor(sf::Color::White); 
 	windowBorder.setOutlineThickness(1);
 	sf::Vertex linetop[] = { sf::Vertex(sf::Vector2f(0, 60)), sf::Vertex(sf::Vector2f(640, 60)) };
+	window.clear(sf::Color(40, 40, 40));
+	window.display();
+	std::cout << "Map Selector Initialisation.." << std::endl;
 
 	sf::Event sfevent;
 	GUI::Container gui(&sfevent, &window, 640, 480);
@@ -51,19 +54,24 @@ std::string chooseMapMenu()
 	gui.createLabel("main", "titleLbl", 10, 10, "Melting Saga", "weblysleekuil.ttf", 32, sf::Color::White);
 	gui.createLabel("main", "titleLbl", 200, 25, "Map Editor", "weblysleekuil.ttf", 16, sf::Color::White);
 	gui.createButton("main", "quitBtn", 590, 15, true, true, "QUIT");
+	std::cout << "Map Selector GUI Initialisation..." << std::endl;
 	chooseMapAddMaps(&gui);
 	mapsContainer->addScrollBar();
+	std::cout << "All maps Added" << std::endl;
 
 	Cursor curs;
 	curs.initialize(&window);
 	curs.selectCursor("RoundWhite");
+	std::cout << "Cursor Init" << std::endl;
 
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/weblysleekuil.ttf");
+	std::cout << "Font init" << std::endl;
 
 	GUI::ButtonEvent* appQuitBool = GUI::Widget::getWidgetByID<GUI::Button>("quitBtn")->getHook();
 	sf::Vector2i grabbedOffset;
 	bool grabbedWindow = false;
+	std::cout << "Start loop" << std::endl;
 
 	while (window.isOpen() && currentChosenMap == "")
 	{
@@ -110,5 +118,7 @@ std::string chooseMapMenu()
 		window.draw(*curs.getSprite());
 		window.display();
 	}
+	std::cout << currentChosenMap << std::endl;
+	window.close();
 	return currentChosenMap;
 }

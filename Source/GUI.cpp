@@ -3794,9 +3794,10 @@ std::string GUI::TextInput::splitLine(std::string str)
 {
 	charToMove.setString(str);
 	std::string toKeep = "";
+
 	while (charToMove.getGlobalBounds().width > sprites[0].getGlobalBounds().width - 10)
 	{
-		toKeep.insert(0, str.substr(str.size() - 1, str.size()));
+		toKeep.insert(0, str.substr(str.size() - 1));
 		str.erase(str.size() - 1, str.size());
 
 		charToMove.setString(str);
@@ -4446,7 +4447,10 @@ GUI::WidgetContainer* GUI::Container::createWidgetContainer(std::string containe
 	WidgetContainer* newWidgetContainer = new WidgetContainer(containerName, posX, posY, width, height, movable, widthControlBar, heightControleBar, this->evnt);
 	widgetContainers[containerName] = newWidgetContainer;
 
-	widContainers.insert(widContainers.begin() + layer - 1, newWidgetContainer);
+	if (layer - 1 == 0)
+		widContainers.push_back(newWidgetContainer);
+	else
+		widContainers.insert(widContainers.begin() + layer - 1, newWidgetContainer);
 
 	return newWidgetContainer;
 }

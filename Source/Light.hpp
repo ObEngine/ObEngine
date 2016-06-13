@@ -10,7 +10,7 @@
 
 namespace Light
 {
-	void initLights(); //A
+	void initLights();
 
 	class PointLight
 	{
