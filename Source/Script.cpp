@@ -95,7 +95,7 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
 		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
 		else if   (lib[0] == "Serial")       CoreLib::loadSerial(lua, lib);
-		else if   (lib[0] == "SFML")         CoreLib::loadSFML(lua, lib);
+		else if	  (lib[0] == "SFML")		 CoreLib::loadSFML(lua, lib);
 		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
 		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
 		else
@@ -500,7 +500,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "TextInput")
 	{
-		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput, GUI::Widget>()
+		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
 			.addMember("addFilter", &GUI::TextInput::addFilter)
 			.addMember("getText", &GUI::TextInput::getText)
 			.addMember("setText", &GUI::TextInput::setText)
@@ -512,7 +512,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "Label")
 	{
-		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label, GUI::Widget>()
+		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label>()
 			.addMember("resetFontVars", &GUI::Label::resetFontVars)
 			.addMember("setFont", &GUI::Label::setFont)
 			.addMember("setText", &GUI::Label::setText)
@@ -527,6 +527,20 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getRichText", &GUI::Label::getRichText)
 			);
 		foundPart = true;
+	}
+	if (importAll || args[1] == "WidgetContainer")
+	{
+		(*lua)["Core"]["GUI"]["WidgetContainer"].setClass(kaguya::ClassMetatable<GUI::WidgetContainer>()
+			.addMember("addWidget", &GUI::WidgetContainer::addWidget)
+			.addMember("resize", &GUI::WidgetContainer::resize)
+			.addMember("getRect", &GUI::WidgetContainer::getRect)
+			.addMember("move", &GUI::WidgetContainer::move)
+			.addMember("setPosition", &GUI::WidgetContainer::setPosition)
+			.addMember("setBackground", &GUI::WidgetContainer::setBackground)
+			.addMember("setDisplayed", &GUI::WidgetContainer::setDisplayed)
+			.addMember("getDisplayed", &GUI::WidgetContainer::getDisplayed)
+			.addMember("addScrollBar", &GUI::WidgetContainer::addScrollBar)
+			);
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadGUI] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
@@ -707,6 +721,7 @@ void CoreLib::loadSerial(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSerial] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
+
 void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
@@ -747,6 +762,7 @@ void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 
 }
+
 void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 {
 	registerLib(lua, fn::Vector::join(args, "."));
