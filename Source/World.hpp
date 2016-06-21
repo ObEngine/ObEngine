@@ -21,6 +21,7 @@
 #include "Particle.hpp"
 #include "Script.hpp"
 #include "GameObject.hpp"
+#include "Trajectory.hpp"
 
 void loadWorldLib(kaguya::State* lua);
 void loadWorldScriptEngineBaseLib(kaguya::State* lua);

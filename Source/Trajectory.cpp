@@ -51,6 +51,33 @@ void Trajectory::hookY(double* yptr)
 	this->hY = yptr;
 }
 
+void Trajectory::setConstraint(std::string id, std::string constraint)
+{
+	luaConstraints[id] = constraint;
+}
+
+void Trajectory::removeConstraint(std::string id)
+{
+	auto remIt = luaConstraints.find(id);
+	if (remIt != luaConstraints.end())
+		luaConstraints.erase(remIt);
+	else
+		std::cout << "<Warning:Trajectory:Trajectory>[removeConstraint] : Can't remove inexistant Constraint : " << id << std::endl;
+}
+
+void Trajectory::removeAllConstraints()
+{
+	luaConstraints.clear();
+}
+
+std::vector<std::string> Trajectory::getAllConstraints()
+{
+	std::vector<std::string> allConstraints;
+	std::transform(luaConstraints.begin(), luaConstraints.end(), std::back_inserter(allConstraints),
+		[](const std::map<std::string, std::string>::value_type &pair) {return pair.first; });
+	return allConstraints;
+}
+
 void Trajectory::update()
 {
 	speed += acceleration;

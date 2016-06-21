@@ -16,6 +16,8 @@
 #include "ComplexSprite.hpp"
 #include "Collisions.hpp"
 
+class GameObject;
+
 class LevelSprite
 {
 	private:
@@ -23,6 +25,8 @@ class LevelSprite
 		std::string sprID;
 		double absoluteX = 0;
 		double absoluteY = 0;
+		double offsetX = 0;
+		double offsetY = 0;
 		bool drawable = true;
 		bool visible = true;
 		int lAbsX = 0;
@@ -47,7 +51,7 @@ class LevelSprite
 		sfe::ComplexSprite* returnSprite;
 		sf::Color spriteColor = sf::Color(255,255,255);
 		int textureIndex = 0;
-		Collision::PolygonalCollider* collisionHook = nullptr;
+		GameObject* parent = nullptr;
 
 	public:
 		LevelSprite(std::string sprName, std::string sprID, anim::RessourceManager* rsMan = NULL);
@@ -55,33 +59,36 @@ class LevelSprite
 		void useDirtyAnimation(bool state, bool candraw = true);
 		void setSprite(sfe::ComplexSprite* spr);
 		void setSprite(sf::Sprite* spr);
-		void setLayer(int layer); //Change le layer
+		void setLayer(int layer);
 		void setZDepth(int zdepth);
-		void rotate(double addRotate); //Ajoute une rotation
-		void setRotation(double rotate); //Change la rotation
+		void rotate(double addRotate);
+		void setRotation(double rotate);
 		void scale(double scaleX, double scaleY);
 		void setScale(double scaleX, double scaleY);
 		void setTranslationOrigin(int x, int y);
 		void setRotationOrigin(int x, int y);
-		void setAtr(std::vector<std::string> atrList); //Remplace une liste d'attributs
-		void addAtr(std::string atr); //Ajoute un attribut
-		std::vector<std::string> getAttributes(); //Retourne la liste des attributs
-		void removeAtrByIndex(int index); //Supprime un attribut par index
-		void removeAtrByName(std::string name); //Supprime un attribut par nom
-		void textureUpdate(bool forceUpdate = false); //Update la texture
-		sfe::ComplexSprite* getSprite(); //Renvoie la Sprite de la Sprite
-		void setColor(sf::Color newColor);
-		double getX(); //Renvoie absoluteX
-		double getY(); //Renvoie absoluteY
 		void setPosition(double x, double y);
+		void setOffset(double offx, double offy);
+		double getX();
+		double getY();
+		double getOffsetX();
+		double getOffsetY();
+		void setAtr(std::vector<std::string> atrList);
+		void addAtr(std::string atr);
+		std::vector<std::string> getAttributes();
+		void removeAtrByIndex(int index);
+		void removeAtrByName(std::string name);
+		void textureUpdate(bool forceUpdate = false);
+		sfe::ComplexSprite* getSprite();
+		void setColor(sf::Color newColor);	
 		void move(double x, double y);
 		double getScaleX();
 		double getScaleY();
 		float getRotation();
-		int getLayer(); //Renvoie le layer de la Sprite
+		int getLayer();
 		int getZDepth();
-		std::string getID(); //Renvoie l'ID de la Sprite
-		std::string getName(); //Renvoie le nom (type) de la Sprite
+		std::string getID();
+		std::string getName();
 		int getW();
 		int getH();
 		void calculateRealCoordinates();
@@ -89,6 +96,6 @@ class LevelSprite
 		bool isDrawable();
 		void setVisible(bool visible);
 		bool isVisible();
-		Collision::PolygonalCollider* getCollisionHook();
-		void hookToCollision(Collision::PolygonalCollider* hook);
+		GameObject* getParent();
+		void setParent(GameObject* parent);
 };

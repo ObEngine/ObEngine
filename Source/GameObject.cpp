@@ -66,9 +66,9 @@ void GameObject::registerTrigger(Trigger* trg)
 }
 void GameObject::loadGameObject(DataObject* obj)
 {
-	std::string animatorPath;
-	std::cout << "Error is : " << id << std::endl;
+	std::cout << "Currently Loading GameObject : " << id << std::endl;
 	//Animator
+	std::string animatorPath;
 	if (obj->complexExists(convertPath(""), "Animator"))
 	{
 		obj->getAttribute(convertPath("Animator"), "path")->getData(&animatorPath);
@@ -79,18 +79,10 @@ void GameObject::loadGameObject(DataObject* obj)
 	//Collider
 	if (obj->complexExists(convertPath(""), "Collider"))
 	{
-		std::string colliderRel;
-		int colOffX = 0;
-		int colOffY = 0;
-		colliderRelative = (obj->getAttribute(convertPath("Collider"), "position")->getData(&colliderRel) == "relative") ? true : false;
 		obj->getAttribute(convertPath("Collider"), "solid")->getData(&colliderSolid);
 		obj->getAttribute(convertPath("Collider"), "click")->getData(&colliderClick);
-		if (obj->attributeExists(convertPath("Collider"), "offsetX"))
-			obj->getAttribute(convertPath("Collider"), "offsetX")->getData(&colOffX);
-		if (obj->attributeExists(convertPath("Collider"), "offsetY"))
-			obj->getAttribute(convertPath("Collider"), "offsetY")->getData(&colOffY);
+
 		objectCollider.setSolid(colliderSolid);
-		objectCollider.setPositionOffset(colOffX, colOffY);
 		int colliderPointSize;
 		colliderPointSize = obj->getListAttribute(convertPath("Collider"), "polygonPoints")->getSize();
 		for (int i = 0; i < colliderPointSize; i++)
@@ -105,7 +97,11 @@ void GameObject::loadGameObject(DataObject* obj)
 	//LevelSprite
 	if (obj->complexExists(convertPath(""), "LevelSprite"))
 	{
+		std::string sprRel;
+		levelSpriteRelative = (obj->getAttribute(convertPath("LevelSprite"), "position")->getData(&sprRel) == "relative") ? true : false;
 		int decoRot = 0;
+		int sprOffX = 0;
+		int sprOffY = 0;
 		double decoSca = 1.0;
 		std::vector<std::string> decoAtrList;
 		std::string attrBuffer;
@@ -115,6 +111,10 @@ void GameObject::loadGameObject(DataObject* obj)
 		obj->getAttribute(convertPath("LevelSprite"), "scale")->getData(&decoSca);
 		obj->getAttribute(convertPath("LevelSprite"), "layer")->getData(&layer);
 		obj->getAttribute(convertPath("LevelSprite"), "z-depth")->getData(&zdepth);
+		if (obj->attributeExists(convertPath("LevelSprite"), "offsetX"))
+			obj->getAttribute(convertPath("LevelSprite"), "offsetX")->getData(&sprOffX);
+		if (obj->attributeExists(convertPath("LevelSprite"), "offsetY"))
+			obj->getAttribute(convertPath("LevelSprite"), "offsetY")->getData(&sprOffY);
 		if (obj->listExists(convertPath("LevelSprite"), "attributeList"))
 		{
 			int atrListSize = obj->getListAttribute(convertPath("LevelSprite"), "attributeList")->getSize();
@@ -126,6 +126,7 @@ void GameObject::loadGameObject(DataObject* obj)
 		objectLevelSprite.setAtr(decoAtrList);
 		objectLevelSprite.setLayer(layer);
 		objectLevelSprite.setZDepth(zdepth);
+		objectLevelSprite.setOffset(sprOffX, sprOffY);
 		hasLevelSprite = true;
 	}
 	//Script
@@ -140,72 +141,85 @@ void GameObject::hookLuaState(kaguya::State* lua)
 }
 void GameObject::update(double dt)
 {
-	for (int i = 0; i < registeredTriggers.size(); i++)
+	if (updated)
 	{
-		if (registeredTriggers[i]->getState())
+		for (int i = 0; i < registeredTriggers.size(); i++)
 		{
-			std::string useGrp = registeredTriggers[i]->getGroup();
-			for (int j = 0; j < registeredAliases.size(); j++)
+			if (registeredTriggers[i]->getState())
 			{
-				std::string alNsp, alGrp, alRep;
-				std::tie(alNsp, alGrp, alRep) = registeredAliases[j];
-				if (alNsp == registeredTriggers[i]->getNamespace() && alGrp == registeredTriggers[i]->getGroup())
+				std::string useGrp = registeredTriggers[i]->getGroup();
+				for (int j = 0; j < registeredAliases.size(); j++)
 				{
-					useGrp = alRep;
+					std::string alNsp, alGrp, alRep;
+					std::tie(alNsp, alGrp, alRep) = registeredAliases[j];
+					if (alNsp == registeredTriggers[i]->getNamespace() && alGrp == registeredTriggers[i]->getGroup())
+					{
+						useGrp = alRep;
+					}
 				}
-			}
-			std::string funcname = useGrp + "." + registeredTriggers[i]->getName();
-			auto allParam = registeredTriggers[i]->getParameters();
-			(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
-			(*this->scriptEngine)["cpp_param"]["dt"] = dt;
-			for (auto it = allParam.begin(); it != allParam.end(); it++)
-			{
-				if (allParam[it->first].first == "int")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<int>();
-				else if (allParam[it->first].first == "std::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::string>();
-				else if (allParam[it->first].first == "bool")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<bool>();
-				else if (allParam[it->first].first == "float")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<float>();
-				else if (allParam[it->first].first == "std::map<int,int,structstd::less<int>,classstd::allocator<structstd::pair<intconst,int>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, int>>();
-				else if (allParam[it->first].first == "std::map<int,float,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
-				else if (allParam[it->first].first == "std::map<int,bool,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
-				else if (allParam[it->first].first == "std::map<int,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"structstd::less<int>,classstd::allocator<structstd::pair<intconst,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, std::string>>();
-				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"int,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
-					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,int>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, int>>();
-				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"float,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
-					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,float>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, float>>();
-				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
-					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, bool>>();
-				else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
-					"structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
-					"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,"
-					"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
-					(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, std::string>>();
+				std::string funcname = useGrp + "." + registeredTriggers[i]->getName();
+				auto allParam = registeredTriggers[i]->getParameters();
+				(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
+				(*this->scriptEngine)["cpp_param"]["dt"] = dt;
+				for (auto it = allParam.begin(); it != allParam.end(); it++)
+				{
+					if (allParam[it->first].first == "int")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<int>();
+					else if (allParam[it->first].first == "std::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::string>();
+					else if (allParam[it->first].first == "bool")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<bool>();
+					else if (allParam[it->first].first == "float")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<float>();
+					else if (allParam[it->first].first == "std::vector<bool,classstd::allocator<int>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::vector<int>>();
+					else if (allParam[it->first].first == "std::vector<bool,classstd::allocator<float>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::vector<float>>();
+					else if (allParam[it->first].first == "std::vector<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"classstd::allocator<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::vector<std::string>>();
+					else if (allParam[it->first].first == "std::vector<bool,classstd::allocator<bool>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::vector<bool>>();
+					else if (allParam[it->first].first == "std::map<int,int,structstd::less<int>,classstd::allocator<structstd::pair<intconst,int>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, int>>();
+					else if (allParam[it->first].first == "std::map<int,float,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
+					else if (allParam[it->first].first == "std::map<int,bool,structstd::less<int>,classstd::allocator<structstd::pair<intconst,float>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, float>>();
+					else if (allParam[it->first].first == "std::map<int,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"structstd::less<int>,classstd::allocator<structstd::pair<intconst,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<int, std::string>>();
+					else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"int,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+						"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,int>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, int>>();
+					else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"float,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+						"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,float>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, float>>();
+					else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+						"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, bool>>();
+					else if (allParam[it->first].first == "std::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,"
+						"structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,"
+						"classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,"
+						"classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>>>")
+						(*this->scriptEngine)["cpp_param"][it->first] = allParam[it->first].second->as<std::map<std::string, std::string>>();
+					else
+						std::cout << "<Error:GameObject:GameObject>[update] Unknown Type for Parameter : " << it->first << "(" << allParam[it->first].first << ")" << std::endl;
 
+				}
+				this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 			}
-			this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 		}
-	}
-	if (initialised)
-	{
+		if (initialised)
 		{
-		if (hasAnimator)
-			this->objectAnimator.update();
-			if (hasLevelSprite) this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
+			if (hasAnimator)
+				this->objectAnimator.update();
+			if (hasLevelSprite)
+				this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
 		}
 	}
 }
@@ -241,9 +255,18 @@ bool GameObject::canClick()
 {
 	return (hasCollider && colliderClick);
 }
-bool GameObject::isColliderRelative()
+bool GameObject::isLevelSpriteRelative()
 {
-	return colliderRelative;
+	return levelSpriteRelative;
+}
+bool GameObject::getUpdateState()
+{
+	return this->updated;
+}
+void GameObject::setUpdateState(bool state)
+{
+	std::cout << "@@Setting State : " << state << std::endl;
+	this->updated = state;
 }
 LevelSprite* GameObject::getLevelSprite()
 {

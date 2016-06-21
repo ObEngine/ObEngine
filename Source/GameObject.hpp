@@ -35,9 +35,10 @@ class GameObject
 		bool hasCollider = false;
 		bool colliderSolid = false;
 		bool colliderClick = false;
-		bool colliderRelative = true;
+		bool levelSpriteRelative = true;
 		bool hasLevelSprite = false;
 		bool initialised = false;
+		bool updated = true;
 
 		GameObject(std::string type, std::string id);
 		void registerTrigger(Trigger* trg);
@@ -55,7 +56,9 @@ class GameObject
 		bool canDisplay();
 		bool canCollide();
 		bool canClick();
-		bool isColliderRelative();
+		bool isLevelSpriteRelative();
+		bool getUpdateState();
+		void setUpdateState(bool state);
 		LevelSprite* getLevelSprite();
 		Collision::PolygonalCollider* getCollider();
 		anim::Animator* getAnimator();

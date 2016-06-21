@@ -34,6 +34,10 @@ KeyClass* KeyBinder::getKey(std::string key)
 
 KeyBinder::KeyBinder()
 {
+	keysTriggers = triggerDatabaseCore.createTriggerGroup("Global", "Keys")
+		->addTrigger("ActionReleased")
+		->addTrigger("ActionToggled");
+
 	//Alpha
 	keyMap["A"] = new KeyClass(sf::Keyboard::A, "A", "A", "Alpha");
 	keyMap["Z"] = new KeyClass(sf::Keyboard::Z, "Z", "Z", "Alpha");
@@ -146,10 +150,13 @@ void KeyBinder::setEnabled(bool state)
 
 void KeyBinder::update()
 {
+	std::vector<std::string> releasedAction;
+	std::vector<std::string> toggledAction;
 	if (binderEnabled)
 	{
 		typedef std::map<std::string, std::string>::iterator it_type;
-		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) {
+		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) 
+		{
 			previousActionMap[iterator->first] = currentActionMap[iterator->first];
 			currentActionMap[iterator->first] = sf::Keyboard::isKeyPressed(getKey(iterator->second)->getKey());
 			if (!currentActionMap[iterator->first] && previousActionMap[iterator->first])
@@ -160,6 +167,25 @@ void KeyBinder::update()
 				}
 			}
 		}
+		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++)
+		{
+			if (isActionToggled(iterator->first))
+				toggledAction.push_back(iterator->first);
+			if (isActionReleased(iterator->first))
+				releasedAction.push_back(iterator->first);
+		}
+		
+		if (releasedAction.size() >= 1)
+		{
+			keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedAction);
+			keysTriggers->enableTrigger("ActionReleased");
+		}
+		if (toggledAction.size() >= 1)
+		{
+			keysTriggers->pushParameter("ActionToggled", "ToggledActions", toggledAction);
+			keysTriggers->enableTrigger("ActionToggled");
+		}
+			
 	}
 }
 

@@ -15,6 +15,58 @@ namespace Collision
 		surf->draw(line, w, sf::Lines);
 	}
 
+	bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt)
+	{
+		if (firstPt->X < secondPt->X)
+			return true;
+		else if (firstPt->X == secondPt->X)
+		{
+			if (firstPt->Y <= secondPt->Y)
+				return false;
+			else
+				return true;
+		}
+		else
+			return false;
+	}
+
+	double pointsDistance(const ClipperLib::IntPoint * firstPt, const ClipperLib::IntPoint * secondPt)
+	{
+		return std::sqrt(std::pow(secondPt->X - firstPt->X, 2) + std::pow(secondPt->Y - firstPt->Y, 2));
+	}
+
+	std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points)
+	{
+		std::sort(points.begin(), points.end(), pointsCompare);
+		if (points.size() <= 1)
+			return points;
+		std::vector<ClipperLib::IntPoint*> lowerHull;
+		for (int i = 0; i < points.size(); i++)
+		{
+			while (lowerHull.size() >= 2 && cross(lowerHull[lowerHull.size() - 2], lowerHull[lowerHull.size() - 1], points[i]) <= 0)
+				lowerHull.pop_back();
+			lowerHull.push_back(points[i]);
+		}
+		std::reverse(points.begin(), points.end());
+		std::vector<ClipperLib::IntPoint*> upperHull;
+		for (int i = 0; i < points.size(); i++)
+		{
+			while (upperHull.size() >= 2 && cross(upperHull[upperHull.size() - 2], upperHull[upperHull.size() - 1], points[i]) <= 0)
+				upperHull.pop_back();
+			upperHull.push_back(points[i]);
+		}
+		std::vector<ClipperLib::IntPoint*> fullHull;
+		fullHull.reserve(lowerHull.size() + upperHull.size() - 2);
+		fullHull.insert(fullHull.end(), lowerHull.begin(), lowerHull.end() - 1);
+		fullHull.insert(fullHull.end(), upperHull.begin(), upperHull.end() - 1);
+		return fullHull;
+	}
+
+	int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B)
+	{
+		return (A->X - O->X) * (B->Y - O->Y) - (A->Y - O->Y) * (B->X - O->X);
+	}
+
 	PolygonalCollider::PolygonalCollider(std::string id)
 	{
 		this->id = id;
@@ -33,7 +85,7 @@ namespace Collision
 	}
 	int PolygonalCollider::getPointsAmount()
 	{
-		return pPath.size();
+		return allPoints.size();
 	}
 	void PolygonalCollider::setSelected(bool sel)
 	{
@@ -43,18 +95,18 @@ namespace Collision
 	{
 		return selected;
 	}
-	std::pair<int, int> PolygonalCollider::getPointCoordinates(int index)
+	std::pair<double, double> PolygonalCollider::getPointCoordinates(int index)
 	{
-		return std::pair<int, int>(pPath[index].X, pPath[index].Y);
+		return allPoints[index];
 	}
-	std::pair<int, int> PolygonalCollider::getMasterPointCoordinates(int index)
+	std::pair<double, double> PolygonalCollider::getMasterPointCoordinates()
 	{
-		return std::pair<int, int>(masterPoint.X, masterPoint.Y);
+		return masterPoint;
 	}
 	void PolygonalCollider::calculateMasterPoint()
 	{
-		masterPoint.X = 0;
-		masterPoint.Y = 0;
+		masterPoint.first = 0;
+		masterPoint.second = 0;
 		double signedArea = 0.0;
 		double x0 = 0.0;
 		double y0 = 0.0;
@@ -63,71 +115,57 @@ namespace Collision
 		double a = 0.0;
 
 		int i;
-		for (i = 0; i < pPath.size() - 1; ++i)
+		for (i = 0; i < allPoints.size() - 1; ++i)
 		{
-			x0 = pPath[i].X;
-			y0 = pPath[i].Y;
-			x1 = pPath[i + 1].X;
-			y1 = pPath[i + 1].Y;
+			x0 = allPoints[i].first;
+			y0 = allPoints[i].second;
+			x1 = allPoints[i + 1].first;
+			y1 = allPoints[i + 1].second;
 			a = x0 * y1 - x1 * y0;
 			signedArea += a;
-			masterPoint.X += (x0 + x1) * a;
-			masterPoint.Y += (y0 + y1) * a;
+			masterPoint.first += (x0 + x1) * a;
+			masterPoint.second += (y0 + y1) * a;
 		}
 
-		x0 = pPath[i].X;
-		y0 = pPath[i].Y;
-		x1 = pPath[0].X;
-		y1 = pPath[0].Y;
+		x0 = allPoints[i].first;
+		y0 = allPoints[i].second;
+		x1 = allPoints[0].first;
+		y1 = allPoints[0].second;
 		a = x0 * y1 - x1 * y0;
 		signedArea += a;
-		masterPoint.X += (x0 + x1) * a;
-		masterPoint.Y += (y0 + y1) * a;
+		masterPoint.first += (x0 + x1) * a;
+		masterPoint.second += (y0 + y1) * a;
 
 		signedArea *= 0.5;
-		masterPoint.X /= (6.0*signedArea);
-		masterPoint.Y /= (6.0*signedArea);
+		masterPoint.first /= (6.0*signedArea);
+		masterPoint.second /= (6.0*signedArea);
 	}
-	void PolygonalCollider::addPoint(int x, int y, int pointIndex)
+	void PolygonalCollider::addPoint(double x, double y, int pointIndex)
 	{
-		if (pointIndex == -1 || pointIndex == pPath.size())
-		{
-			pPath << ClipperLib::IntPoint(x, y);
-		}
-		else if (pointIndex >= 0 && pointIndex < pPath.size())
-		{
-			ClipperLib::Path nPath;
-			for (unsigned int i = 0; i < pointIndex; i++)
-			{
-				nPath << pPath[i];
-			}
-			nPath << ClipperLib::IntPoint(x, y);
-			for (unsigned int i = pointIndex; i < pPath.size(); i++)
-			{
-				nPath << pPath[i];
-			}
-			pPath = nPath;
-		}
-		if (pPath.size() >= 3) { calculateMasterPoint(); }
+		if (pointIndex == -1 || pointIndex == allPoints.size())
+			allPoints.push_back(std::pair<double, double>(x, y));
+		else if (pointIndex >= 0 && pointIndex < allPoints.size())
+			allPoints.insert(allPoints.begin() + pointIndex, std::pair<double, double>(x, y));
+		if (allPoints.size() >= 3) { calculateMasterPoint(); }
 	}
 	void PolygonalCollider::deletePoint(int pointIndex)
 	{
-		pPath.erase(pPath.begin() + pointIndex);
+		allPoints.erase(allPoints.begin() + pointIndex);
 	}
-	double PolygonalCollider::getNodeDistance(int nodeIndex, int x, int y)
+	double PolygonalCollider::getDistanceFromPoint(int nodeIndex, double x, double y)
 	{
-		return std::sqrt(std::pow((x - pPath[nodeIndex].X), 2) + std::pow((y - pPath[nodeIndex].Y), 2));
+		return std::sqrt(std::pow((x - allPoints[nodeIndex].first), 2) + std::pow((y - allPoints[nodeIndex].second), 2));
 	}
-	int PolygonalCollider::findClosestNode(int x, int y, bool neighboor, std::vector<int> excludedNodes)
+	int PolygonalCollider::findClosestPoint(double x, double y, bool neighboor, std::vector<int> excludedNodes)
 	{
-		if (pPath.size() > 0)
+		if (allPoints.size() > 0)
 		{
 			int clNode = 0;
 			double ndDist = 0;
 			double tnDist = -1;
-			for (unsigned int i = 0; i < pPath.size(); i++)
+			for (unsigned int i = 0; i < allPoints.size(); i++)
 			{
-				ndDist = this->getNodeDistance(i, x, y);
+				ndDist = this->getDistanceFromPoint(i, x, y);
 				if ((tnDist == -1 || tnDist > ndDist) && !fn::Vector::isInList((int)i, excludedNodes))
 				{
 					clNode = i;
@@ -138,14 +176,14 @@ namespace Collision
 			{
 				int lnghb = clNode - 1;
 				int rnghb = clNode + 1;
-				if (lnghb < 0) { lnghb = pPath.size() - 1; }
-				if (rnghb >= pPath.size()) { rnghb = 0; }
-				int lnghbDist = std::sqrt(std::pow((x - pPath[lnghb].X), 2) + std::pow((y - pPath[lnghb].Y), 2));
-				int rnghbDist = std::sqrt(std::pow((x - pPath[rnghb].X), 2) + std::pow((y - pPath[rnghb].Y), 2));
+				if (lnghb < 0) { lnghb = allPoints.size() - 1; }
+				if (rnghb >= allPoints.size()) { rnghb = 0; }
+				int lnghbDist = std::sqrt(std::pow((x - allPoints[lnghb].first), 2) + std::pow((y - allPoints[lnghb].second), 2));
+				int rnghbDist = std::sqrt(std::pow((x - allPoints[rnghb].first), 2) + std::pow((y - allPoints[rnghb].second), 2));
 				if (lnghbDist > rnghbDist)
 				{
 					clNode++;
-					if (clNode >= pPath.size())
+					if (clNode >= allPoints.size())
 					{
 						clNode = 0;
 					}
@@ -155,38 +193,24 @@ namespace Collision
 		}
 		return -1;
 	}
-	std::vector<int> PolygonalCollider::getSortedNodesByDistance(int x, int y, bool neighboor)
-	{
-		return std::vector<int>();
-	}
-	bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY, bool mustBeSolid)
+	bool PolygonalCollider::doesCollide(PolygonalCollider* other, double offsetX, double offsetY, bool mustBeSolid)
 	{
 		if (mustBeSolid)
 		{
 			if (!solid) return false;
 			if (!other->getSolid()) return false;
 		}
-		if (offsetX != 0 || offsetY != 0)
+		ClipperLib::Path pPath = this->getPath();
+		for (int i = 0; i < allPoints.size(); i++)
 		{
-			for (int i = 0; i < pPath.size(); i++)
-			{
-				pPath.at(i).X += offsetX; pPath.at(i).Y += offsetY;
-			}
-				
+			pPath.at(i).X += offsetX; pPath.at(i).Y += offsetY;
 		}
 		ClipperLib::Clipper clipper;
-		clipper.AddPath(this->pPath, ClipperLib::ptSubject, true);
-		clipper.AddPath(*other->getPath(), ClipperLib::ptClip, true);
+		clipper.AddPath(pPath, ClipperLib::ptSubject, true);
+		clipper.AddPath(other->getPath(), ClipperLib::ptClip, true);
 		ClipperLib::Paths solution;
 		clipper.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
-		
-		if (offsetX != 0 || offsetY != 0)
-		{
-			for (int i = 0; i < pPath.size(); i++)
-			{
-				pPath.at(i).X -= offsetX; pPath.at(i).Y -= offsetY;
-			}
-		}
+
 		other->clearHighlights(false, true);
 		if (solution.size() >= 1)
 		{
@@ -199,52 +223,48 @@ namespace Collision
 				}
 			}
 		}
+		
 		return (solution.size() >= 1);
 	}
-	std::vector<sf::RectangleShape> PolygonalCollider::returnCollisionSolution(PolygonalCollider* other, int offsetX, int offsetY)
+	bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX, int offsetY, bool mustBeSolid)
 	{
-		if (offsetX != 0 || offsetY != 0)
+		if (mustBeSolid)
 		{
-			for (int i = 0; i < pPath.size(); i++)
+			if (!solid) return false;
+			bool allImmaterial = true;
+			for (int i = 0; i < others.size(); i++)
 			{
-				pPath.at(i).X += offsetX; pPath.at(i).Y += offsetY;
+				if (others[i]->getSolid())
+					allImmaterial = false;
 			}
-
+			if (allImmaterial) return false;
 		}
+		Collision::PolygonalCollider projection(this->id + "_proj");
+		for (int i = 0; i < allPoints.size(); i++)
+			projection.addPoint(allPoints[i].first + offsetX, allPoints[i].second + offsetY);
+		Collision::PolygonalCollider fullPath = this->joinPolygonalColliders(this->id + "_path", &projection);
+
 		ClipperLib::Clipper clipper;
-		clipper.AddPath(this->pPath, ClipperLib::ptSubject, true);
-		clipper.AddPath(*other->getPath(), ClipperLib::ptClip, true);
+		clipper.AddPath(fullPath.getPath(), ClipperLib::ptSubject, true);
+		for (int i = 0; i < others.size(); i++)
+		{
+			if (others[i] != this)
+				clipper.AddPath(others[i]->getPath(), ClipperLib::ptClip, true);
+		}
+			
 		ClipperLib::Paths solution;
 		clipper.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
 
-		if (offsetX != 0 || offsetY != 0)
-		{
-			for (int i = 0; i < pPath.size(); i++)
-			{
-				pPath.at(i).X -= offsetX; pPath.at(i).Y -= offsetY;
-			}
-		}
-		std::vector<sf::RectangleShape> rvector;
-		for (int j = 0; j < solution.size(); j++)
-		{
-			for (int k = 0; k < solution[j].size(); k++)
-			{
-				sf::RectangleShape trs = sf::RectangleShape(sf::Vector2f(5, 5));
-				trs.setFillColor(sf::Color::Red);
-				trs.setPosition(solution[j][k].X, solution[j][k].Y);
-				rvector.push_back(trs);
-			}
-		}
-		return rvector;
+		return (solution.size() >= 1);
 	}
 	int PolygonalCollider::getSideContainingPoint(int x, int y)
 	{
-		for (int i = 0; i < pPath.size(); i++)
+		for (int i = 0; i < allPoints.size(); i++)
 		{
-			int nextNode = (i != pPath.size() - 1) ? i + 1 : 0;
-			double lineLgt = this->getNodeDistance(i, this->getPointCoordinates(nextNode).first, this->getPointCoordinates(nextNode).second);
-			double frstLgt = this->getNodeDistance(i, x, y);
-			double scndLgt = this->getNodeDistance(nextNode, x, y);
+			int nextNode = (i != allPoints.size() - 1) ? i + 1 : 0;
+			double lineLgt = this->getDistanceFromPoint(i, this->getPointCoordinates(nextNode).first, this->getPointCoordinates(nextNode).second);
+			double frstLgt = this->getDistanceFromPoint(i, x, y);
+			double scndLgt = this->getDistanceFromPoint(nextNode, x, y);
 			if (fn::Math::isBetween(lineLgt, frstLgt + scndLgt - 0.01, frstLgt + scndLgt + 0.01))
 			{
 				return i;
@@ -252,17 +272,24 @@ namespace Collision
 		}
 		return -1;
 	}
-	ClipperLib::Path* PolygonalCollider::getPath()
+	ClipperLib::Path PolygonalCollider::getPath()
 	{
-		return &pPath;
+		ClipperLib::Path buildPath;
+		for (int i = 0; i < allPoints.size(); i++)
+			buildPath << ClipperLib::IntPoint(allPoints[i].first, allPoints[i].second);
+		return buildPath;
+	}
+	std::vector<std::pair<double, double>> PolygonalCollider::getAllPoints()
+	{
+		return allPoints;
 	}
 	int PolygonalCollider::hasPoint(int x, int y, int toleranceX, int toleranceY)
 	{
-		for (unsigned int i = 0; i < pPath.size(); i++)
+		for (unsigned int i = 0; i < allPoints.size(); i++)
 		{
-			if (fn::Math::isBetween(x, (int)pPath[i].X - toleranceX, (int)pPath[i].X + toleranceX))
+			if (fn::Math::isBetween(x, (int)allPoints[i].first - toleranceX, (int)allPoints[i].first + toleranceX))
 			{
-				if (fn::Math::isBetween(y, (int)pPath[i].Y - toleranceY, (int)pPath[i].Y + toleranceY))
+				if (fn::Math::isBetween(y, (int)allPoints[i].second - toleranceY, (int)allPoints[i].second + toleranceY))
 				{
 					return i;
 				}
@@ -273,9 +300,9 @@ namespace Collision
 	}
 	bool PolygonalCollider::hasMasterPoint(int x, int y, int toleranceX, int toleranceY)
 	{
-		if (fn::Math::isBetween(x, (int)masterPoint.X - toleranceX, (int)masterPoint.X + toleranceX))
+		if (fn::Math::isBetween(x, (int)masterPoint.first - toleranceX, (int)masterPoint.first + toleranceX))
 		{
-			if (fn::Math::isBetween(y, (int)masterPoint.Y - toleranceY, (int)masterPoint.Y + toleranceY))
+			if (fn::Math::isBetween(y, (int)masterPoint.second - toleranceY, (int)masterPoint.second + toleranceY))
 			{
 				return true;
 			}
@@ -287,28 +314,28 @@ namespace Collision
 	{
 		return (x >= tX && x <= bX && y >= tY && y <= bY);
 	}
-	void PolygonalCollider::movePoint(int index, int x, int y)
+	void PolygonalCollider::movePoint(int index, double x, double y)
 	{
-		pPath[index].X += x;
-		pPath[index].Y += y;
+		allPoints[index].first += x;
+		allPoints[index].second += y;
 		calculateMasterPoint();
 	}
-	void PolygonalCollider::setPointPosition(int index, int x, int y)
+	void PolygonalCollider::setPointPosition(int index, double x, double y)
 	{
-		pPath[index].X = x;
-		pPath[index].Y = y;
+		allPoints[index].first = x;
+		allPoints[index].second = y;
 		calculateMasterPoint();
 	}
-	void PolygonalCollider::setPointRelativePosition(int index, int x, int y)
+	void PolygonalCollider::setPointRelativePosition(int index, double x, double y)
 	{
-		pPath[index].X = x + pPath[0].X;
-		pPath[index].Y = y + pPath[0].Y;
+		allPoints[index].first = x + allPoints[0].first;
+		allPoints[index].second = y + allPoints[0].second;
 		calculateMasterPoint();
 	}
-	void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y)
+	void PolygonalCollider::setPointPositionFromMaster(int index, double x, double y)
 	{
-		pPath[index].X = x + masterPoint.X;
-		pPath[index].Y = y + masterPoint.Y;
+		allPoints[index].first = x + masterPoint.first;
+		allPoints[index].second = y + masterPoint.second;
 		calculateMasterPoint();
 	}
 	void PolygonalCollider::setDrawOffset(int offx, int offy)
@@ -316,24 +343,11 @@ namespace Collision
 		drOffX = offx;
 		drOffY = offy;
 	}
-	void PolygonalCollider::setPositionOffset(int offx, int offy)
-	{
-		pOffX = offx;
-		pOffY = offy;
-	}
-	int PolygonalCollider::getPositionOffsetX()
-	{
-		return pOffX;
-	}
-	int PolygonalCollider::getPositionOffsetY()
-	{
-		return pOffY;
-	}
 	double PolygonalCollider::getSideAngle(int side)
 	{
 		int p1 = side;
 		int p2 = side + 1;
-		if (p1 == pPath.size() - 1)
+		if (p1 == allPoints.size() - 1)
 		{
 			p2 = 0;
 		}
@@ -347,7 +361,7 @@ namespace Collision
 	{
 		int p1 = side;
 		int p2 = side + 1;
-		if (p1 == pPath.size() - 1)
+		if (p1 == allPoints.size() - 1)
 		{
 			p2 = 0;
 		}
@@ -355,13 +369,9 @@ namespace Collision
 		std::pair<int, int> p2coords = this->getPointCoordinates(p2);
 		return std::sqrt(std::pow(p1coords.first - p2coords.first, 2) + std::pow(p1coords.second - p2coords.second, 2));
 	}
-	int PolygonalCollider::getSidesAmount()
-	{
-		return pPath.size();
-	}
 	void PolygonalCollider::draw(sf::RenderWindow* surf, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
 	{
-		if (pPath.size() >= 1)
+		if (allPoints.size() >= 1)
 		{
 			sf::CircleShape polyPt;
 			int r = 6;
@@ -371,28 +381,38 @@ namespace Collision
 			if (selected) polyPt.setFillColor(sf::Color(0, 150, 255));
 			if (drawMasterPoint)
 			{
-				polyPt.setPosition(sf::Vector2f(masterPoint.X + drOffX - r, masterPoint.Y + drOffY - r));
+				polyPt.setPosition(sf::Vector2f(masterPoint.first + drOffX - r, masterPoint.second + drOffY - r));
 				surf->draw(polyPt);
 			}
 			polyPt.setFillColor(sf::Color(255, 255, 255));
-			for (int i = 0; i < pPath.size() - 1; i++)
+			for (int i = 0; i < allPoints.size() - 1; i++)
 			{
-				int x1 = pPath[i].X + drOffX;
-				int y1 = pPath[i].Y + drOffY;
+				int x1 = allPoints[i].first + drOffX;
+				int y1 = allPoints[i].second + drOffY;
 				if (drawSkel)
 				{
-					if (!selected) Collision::drawLine(surf, x1, y1, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(255, 200, 0));
-					if (selected) Collision::drawLine(surf, x1, y1, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(0, 200, 255));
+					if (!selected) Collision::drawLine(surf, x1, y1, masterPoint.first + drOffX, masterPoint.second + drOffY, 2, sf::Color(255, 200, 0));
+					if (selected) Collision::drawLine(surf, x1, y1, masterPoint.first + drOffX, masterPoint.second + drOffY, 2, sf::Color(0, 200, 255));
 				}
 				if (drawLines)
 				{
-					if (!fn::Vector::isInList(i, highlightedLines)) Collision::drawLine(surf, pPath[i].X + drOffX, pPath[i].Y + drOffY, pPath[i + 1].X + drOffX, pPath[i + 1].Y + drOffY);
-					else Collision::drawLine(surf, pPath[i].X + drOffX, pPath[i].Y + drOffY, pPath[i + 1].X + drOffX, pPath[i + 1].Y + drOffY, 2, sf::Color(0, 255, 0));
+					if (!fn::Vector::isInList(i, highlightedLines)) 
+						Collision::drawLine(surf, allPoints[i].first + drOffX, allPoints[i].second + drOffY, allPoints[i + 1].first + drOffX, allPoints[i + 1].second + drOffY);
+					else 
+						Collision::drawLine(surf, allPoints[i].first + drOffX, allPoints[i].second + drOffY, allPoints[i + 1].first + drOffX, allPoints[i + 1].second + drOffY, 2, sf::Color(0, 255, 0));
 				}
 				if (drawPoints)
 				{
-					polyPt.setPosition(sf::Vector2f(pPath[i].X + drOffX - r, pPath[i].Y + drOffY - r));
-					if (fn::Vector::isInList(i, highlightedPoints))
+					polyPt.setPosition(sf::Vector2f(allPoints[i].first + drOffX - r, allPoints[i].second + drOffY - r));
+					if (i == 0 && fn::Vector::isInList(i, highlightedPoints) && selected)
+					{
+						polyPt.setFillColor(sf::Color(255, 255, 0));
+					}
+					else if (i == 0 && selected)
+					{
+						polyPt.setFillColor(sf::Color(0, 255, 0));
+					}
+					else if (fn::Vector::isInList(i, highlightedPoints) && selected)
 					{
 						polyPt.setFillColor(sf::Color(255, 0, 0));
 					}
@@ -405,15 +425,15 @@ namespace Collision
 			}
 			if (drawPoints)
 			{
-				int x1 = pPath[pPath.size() - 1].X + drOffX - r;
-				int y1 = pPath[pPath.size() - 1].Y + drOffY - r;
+				int x1 = allPoints[allPoints.size() - 1].first + drOffX - r;
+				int y1 = allPoints[allPoints.size() - 1].second + drOffY - r;
 				polyPt.setPosition(sf::Vector2f(x1, y1));
 				if (drawSkel)
 				{
-					if (!selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(255, 200, 0));
-					if (selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.X + drOffX, masterPoint.Y + drOffY, 2, sf::Color(0, 200, 255));
+					if (!selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.first + drOffX, masterPoint.second + drOffY, 2, sf::Color(255, 200, 0));
+					if (selected) Collision::drawLine(surf, x1 + r, y1 + r, masterPoint.first + drOffX, masterPoint.second + drOffY, 2, sf::Color(0, 200, 255));
 				}
-				if (fn::Vector::isInList((int)(pPath.size() - 1), highlightedPoints))
+				if (fn::Vector::isInList((int)(allPoints.size() - 1), highlightedPoints))
 				{
 					polyPt.setFillColor(sf::Color(255, 0, 0));
 				}
@@ -425,60 +445,56 @@ namespace Collision
 			}
 			if (drawLines)
 			{
-				if (!fn::Vector::isInList((int)pPath.size() - 1, highlightedLines)) Collision::drawLine(surf, pPath[pPath.size() - 1].X + drOffX, pPath[pPath.size() - 1].Y + drOffY, pPath[0].X + drOffX, pPath[0].Y + drOffY);
-				else Collision::drawLine(surf, pPath[pPath.size() - 1].X + drOffX, pPath[pPath.size() - 1].Y + drOffY, pPath[0].X + drOffX, pPath[0].Y + drOffY, 2, sf::Color(0, 255, 0));
+				if (!fn::Vector::isInList((int)allPoints.size() - 1, highlightedLines)) 
+					Collision::drawLine(surf, allPoints[allPoints.size() - 1].first + drOffX, allPoints[allPoints.size() - 1].second + drOffY, allPoints[0].first + drOffX, allPoints[0].second + drOffY);
+				else 
+					Collision::drawLine(surf, allPoints[allPoints.size() - 1].first + drOffX, allPoints[allPoints.size() - 1].second + drOffY, allPoints[0].first + drOffX, allPoints[0].second + drOffY, 2, sf::Color(0, 255, 0));
 			}
 		}
 	}
-	void PolygonalCollider::move(int x, int y)
+	std::pair<double, double> PolygonalCollider::getPosition()
 	{
-		if (pPath.size() > 0)
+		return allPoints[0];
+	}
+	void PolygonalCollider::move(double x, double y)
+	{
+		if (allPoints.size() > 0)
 		{
-			masterPoint.X += x;
-			masterPoint.Y += y;
-			for (int i = 0; i < pPath.size(); i++)
+			masterPoint.first += x;
+			masterPoint.second += y;
+			for (int i = 0; i < allPoints.size(); i++)
 			{
-				pPath.at(i).X += x; pPath.at(i).Y += y;
+				allPoints.at(i).first += x; allPoints.at(i).second += y;
 			}
 		}
 	}
-	void PolygonalCollider::setPosition(int x, int y, int offsetMode)
+	void PolygonalCollider::setPosition(double x, double y)
 	{
-		if (pPath.size() > 0)
+		if (allPoints.size() > 0)
 		{
-			int addX = x - pPath[0].X + (offsetMode == 1 ? pOffX : 0);
-			int addY = y - pPath[0].Y + (offsetMode == 1 ? pOffY : 0);
-			masterPoint.X += addX;
-			masterPoint.Y += addY;
-			pPath[0].X = x + (offsetMode == 1 ? pOffX : 0);
-			pPath[0].Y = y + (offsetMode == 1 ? pOffY : 0);
-			for (int i = 1; i < pPath.size(); i++)
+			double addX = x - allPoints[0].first;
+			double addY = y - allPoints[0].second;
+			masterPoint.first += addX;
+			masterPoint.second += addY;
+			allPoints[0].first = x;
+			allPoints[0].second = y;
+			for (int i = 1; i < allPoints.size(); i++)
 			{
-				pPath.at(i).X += addX; pPath.at(i).Y += addY;
-			}
-			if (offsetMode == 2)
-			{
-				pOffX = addX;
-				pOffY = addY;
+				allPoints.at(i).first += addX; allPoints.at(i).second += addY;
 			}
 		}
 	}
-	void PolygonalCollider::setPositionFromMaster(int x, int y, int offsetMode)
+	void PolygonalCollider::setPositionFromMaster(double x, double y)
 	{
-		if (pPath.size() > 0)
+		if (allPoints.size() > 0)
 		{
-			int addX = x - masterPoint.X + (offsetMode == 1 ? pOffX : 0);
-			int addY = y - masterPoint.Y + (offsetMode == 1 ? pOffY : 0);
-			masterPoint.X = x + (offsetMode == 1 ? pOffX : 0);
-			masterPoint.Y = y + (offsetMode == 1 ? pOffY : 0);
-			for (int i = 0; i < pPath.size(); i++)
+			double addX = x - masterPoint.first;
+			double addY = y - masterPoint.second;
+			masterPoint.first = x;
+			masterPoint.second = y;
+			for (int i = 0; i < allPoints.size(); i++)
 			{
-				pPath.at(i).X += addX; pPath.at(i).Y += addY;
-			}
-			if (offsetMode == 2)
-			{
-				pOffX = addX;
-				pOffY = addY;
+				allPoints.at(i).first += addX; allPoints.at(i).second += addY;
 			}
 		}
 	}
@@ -496,27 +512,83 @@ namespace Collision
 		if (lines) highlightedLines.clear();
 	}
 
-	bool PolygonalCollider::isFromGameObject()
+	GameObject* PolygonalCollider::getParent()
 	{
-		return fromGameObject;
+		return parent;
 	}
 
-	void PolygonalCollider::setFromGameObject(bool state)
+	void PolygonalCollider::setParent(GameObject* parent)
 	{
-		fromGameObject = state;
+		this->parent = parent;
 	}
 
-	bool testAllColliders(Collision::PolygonalCollider* collider, std::vector<Collision::PolygonalCollider*>* collidersList, int offx, int offy, bool opt)
+	Collision::PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other)
 	{
-		for (int i = 0; i < collidersList->size(); i++)
-		{
-			if (collider->doesCollide(collidersList->at(i), offx, offy))
+		ClipperLib::Path polyAPath = this->getPath();
+		std::vector<ClipperLib::IntPoint*> polyA;
+		for (int i = 0; i < polyAPath.size(); i++)
+			polyA.push_back(&polyAPath.at(i));
+		ClipperLib::Path polyBPath = other->getPath();
+		std::vector<ClipperLib::IntPoint*> polyB;
+		for (int i = 0; i < polyBPath.size(); i++)
+			polyB.push_back(&polyBPath.at(i));
+		std::vector<std::vector<ClipperLib::IntPoint*>> polys = { polyA, polyB };
+		auto findFromAddress = [polyA, polyB](ClipperLib::IntPoint* addr) -> int {
+			for (int i = 0; i < polyA.size(); i++)
 			{
-				if (opt && i != 0) std::swap(collidersList->at(0), collidersList->at(i));
-				return true;
+				if (addr == polyA[i])
+					return i;
+			}
+			for (int i = 0; i < polyB.size(); i++)
+			{
+				if (addr == polyB[i])
+					return i;
+			}
+			return -1;
+		};
+		std::vector<ClipperLib::IntPoint*> allPoints;
+		allPoints.reserve(polyA.size() + polyB.size());
+		allPoints.insert(allPoints.end(), polyA.begin(), polyA.end());
+		allPoints.insert(allPoints.end(), polyB.begin(), polyB.end());
+		std::vector<ClipperLib::IntPoint*> conv = convexHull(allPoints);
+		Collision::PolygonalCollider result(joinID);
+		for (int i = 0; i < conv.size(); i++)
+		{
+			ClipperLib::IntPoint *a, *b;
+			a = conv[i]; b = conv[(i + 1) % conv.size()];
+			result.addPoint(a->X, a->Y);
+			for (int poly = 0; poly < polys.size(); poly++)
+			{
+				if (fn::Vector::isInList(a, polys[poly]) && fn::Vector::isInList(b, polys[poly]))
+				{
+					int iA = findFromAddress(a);
+					int iB = findFromAddress(b);
+					int counter = 0;
+					while ((iA + counter) % polys[poly].size() != iB)
+					{
+						int index = (iA + counter) % polys[poly].size();
+						result.addPoint(polys[poly][index]->X, polys[poly][index]->Y);
+						counter++;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	bool Collision::PolygonalCollider::testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, int offx, int offy, bool opt)
+	{
+		for (int i = 0; i < collidersList.size(); i++)
+		{
+			if (this != collidersList.at(i))
+			{
+				if (this->doesCollide(collidersList.at(i), offx, offy, true))
+				{
+					if (opt && i != 0) std::swap(collidersList.at(0), collidersList.at(i));
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 }
-

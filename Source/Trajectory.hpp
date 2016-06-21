@@ -6,6 +6,7 @@
 #include <string>
 #include <math.h>
 #include <random>
+#include <vector>
 
 #include "Functions.hpp"
 
@@ -18,6 +19,7 @@ class Trajectory
 		double acceleration = 0;
 		double* hX = nullptr;
 		double* hY = nullptr;
+		std::map<std::string, std::string> luaConstraints;
 	public:
 		Trajectory(std::string id, double angle, double speed, double acceleration);
 		void setAngle(double angle);
@@ -28,5 +30,9 @@ class Trajectory
 		double getAcceleration();
 		void hookX(double* xptr);
 		void hookY(double* yptr);
+		void setConstraint(std::string id, std::string constraint);
+		void removeConstraint(std::string id);
+		void removeAllConstraints();
+		std::vector<std::string> getAllConstraints();
 		void update();
 };

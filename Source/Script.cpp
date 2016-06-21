@@ -82,23 +82,27 @@ void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
 	}
 	if (!alreadyImported)
 	{
-		if        (lib[0] == "Animation")    CoreLib::loadAnimation(lua, lib);
-		else if   (lib[0] == "Collision")    CoreLib::loadCollision(lua, lib);
-		else if   (lib[0] == "Console")      CoreLib::loadConsole(lua, lib);
-		else if   (lib[0] == "Constants")     CoreLib::loadConstants(lua, lib);
-		else if   (lib[0] == "Cursor")		 CoreLib::loadCursor(lua, lib);
-		else if   (lib[0] == "Dialog")       CoreLib::loadDialog(lua, lib);
-		else if   (lib[0] == "Entity")       CoreLib::loadEntity(lua, lib);
-		else if   (lib[0] == "GUI")          CoreLib::loadGUI(lua, lib);
-		else if   (lib[0] == "KeyBind")      CoreLib::loadKeyBind(lua, lib);
-		else if   (lib[0] == "LevelSprite")  CoreLib::loadLevelSprite(lua, lib);
-		else if   (lib[0] == "Light")        CoreLib::loadLight(lua, lib);
-		else if   (lib[0] == "MathExp")      CoreLib::loadMathExp(lua, lib);
-		else if   (lib[0] == "Serial")       CoreLib::loadSerial(lua, lib);
-		else if	  (lib[0] == "SFML")		 CoreLib::loadSFML(lua, lib);
-		else if   (lib[0] == "Trigger")      CoreLib::loadTrigger(lua, lib);
-		else if   (lib[0] == "Utils")        CoreLib::loadUtils(lua, lib);
-		else
+		bool all = lib[0] == "*";
+		if (all) { lib.clear(); lib.push_back("*"); }
+		bool found = false;
+		if (lib[0] == "Animation" || all)        { CoreLib::loadAnimation(lua,   (all) ? std::vector<std::string>{"Animation"}   : lib);    found = true; }
+		if   (lib[0] == "Collision" || all)      { CoreLib::loadCollision(lua,   (all) ? std::vector<std::string>{"Collision"}   : lib);    found = true; }
+		if   (lib[0] == "Console" || all)        { CoreLib::loadConsole(lua,     (all) ? std::vector<std::string>{"Console"}     : lib);    found = true; }
+		if   (lib[0] == "Constants" || all)      { CoreLib::loadConstants(lua,   (all) ? std::vector<std::string>{"Constants"}   : lib);    found = true; }
+		if   (lib[0] == "Cursor" || all)         { CoreLib::loadCursor(lua,      (all) ? std::vector<std::string>{"Cursor"}      : lib);    found = true; }
+		if   (lib[0] == "Dialog" || all)         { CoreLib::loadDialog(lua,      (all) ? std::vector<std::string>{"Dialog"}      : lib);    found = true; }
+		if   (lib[0] == "Entity" || all)         { CoreLib::loadEntity(lua,      (all) ? std::vector<std::string>{"Entity"}      : lib);    found = true; }
+		if   (lib[0] == "GUI" || all)            { CoreLib::loadGUI(lua,         (all) ? std::vector<std::string>{"GUI"}         : lib);    found = true; }
+		if   (lib[0] == "KeyBind" || all)        { CoreLib::loadKeyBind(lua,     (all) ? std::vector<std::string>{"KeyBind"}     : lib);    found = true; }
+		if   (lib[0] == "LevelSprite" || all)    { CoreLib::loadLevelSprite(lua, (all) ? std::vector<std::string>{"LevelSprite"} : lib);    found = true; }
+		if   (lib[0] == "Light" || all)          { CoreLib::loadLight(lua,       (all) ? std::vector<std::string>{"Light"}       : lib);    found = true; }
+		if   (lib[0] == "MathExp" || all)        { CoreLib::loadMathExp(lua,     (all) ? std::vector<std::string>{"MathExp"}     : lib);    found = true; }
+		if   (lib[0] == "Serial" || all)         { CoreLib::loadSerial(lua,      (all) ? std::vector<std::string>{"Serial"}      : lib);    found = true; }
+		if	 (lib[0] == "SFML" || all)		     { CoreLib::loadSFML(lua,        (all) ? std::vector<std::string>{"SFML"}        : lib);    found = true; }
+		if   (lib[0] == "STD" || all)            { CoreLib::loadSTD(lua,         (all) ? std::vector<std::string>{"STD"}         : lib);    found = true; }
+		if   (lib[0] == "Trigger" || all)        { CoreLib::loadTrigger(lua,     (all) ? std::vector<std::string>{"Trigger"}     : lib);    found = true; }
+		if   (lib[0] == "Utils" || all)          { CoreLib::loadUtils(lua,       (all) ? std::vector<std::string>{"Utils"}       : lib);    found = true; }
+		if (!found)
 		{
 			std::cout << "<Error:Script:*>[loadCoreLib] : Can't find Core.";
 			for (int i = 0; i < lib.size(); i++)
@@ -199,14 +203,16 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "PolygonalCollider")
 	{
 		(*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(kaguya::ClassMetatable<Collision::PolygonalCollider>()
+			.addConstructor<std::string>()
 			.addMember("addPoint", &Collision::PolygonalCollider::addPoint)
 			.addMember("clearHighlights", &Collision::PolygonalCollider::clearHighlights)
 			.addMember("deletePoint", &Collision::PolygonalCollider::deletePoint)
 			.addMember("doesCollide", &Collision::PolygonalCollider::doesCollide)
-			.addMember("findClosestNode", &Collision::PolygonalCollider::findClosestNode)
+			.addMember("doesPathCollide", &Collision::PolygonalCollider::doesPathCollide)
+			.addMember("findClosestNode", &Collision::PolygonalCollider::findClosestPoint)
 			.addMember("getID", &Collision::PolygonalCollider::getID)
 			.addMember("getMasterPointCoordinates", &Collision::PolygonalCollider::getMasterPointCoordinates)
-			.addMember("getNodeDistance", &Collision::PolygonalCollider::getNodeDistance)
+			.addMember("getNodeDistance", &Collision::PolygonalCollider::getDistanceFromPoint)
 			.addMember("getPath", &Collision::PolygonalCollider::getPath)
 			.addMember("getPointCoordinates", &Collision::PolygonalCollider::getPointCoordinates)
 			.addMember("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
@@ -214,9 +220,7 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
 			.addMember("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)
 			.addMember("getSideLength", &Collision::PolygonalCollider::getSideLength)
-			.addMember("getSidesAmount", &Collision::PolygonalCollider::getSidesAmount)
 			.addMember("getSolid", &Collision::PolygonalCollider::getSolid)
-			.addMember("getSortedNodesByDistance", &Collision::PolygonalCollider::getSortedNodesByDistance)
 			.addMember("hasMasterPoint", &Collision::PolygonalCollider::hasMasterPoint)
 			.addMember("hasPoint", &Collision::PolygonalCollider::hasPoint)
 			.addMember("highlightLine", &Collision::PolygonalCollider::highlightLine)
@@ -228,11 +232,17 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
 			.addMember("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
 			.addMember("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
-			.addMember("setPositionOffset", &Collision::PolygonalCollider::setPositionOffset)
 			.addMember("setPosition", &Collision::PolygonalCollider::setPosition)
 			.addMember("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
 			.addMember("setSelected", &Collision::PolygonalCollider::setSelected)
 			.addMember("setSolid", &Collision::PolygonalCollider::setSolid)
+			.addMember("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
+		);
+		(*lua)["Core"]["Collision"]["Testy"].setClass(kaguya::ClassMetatable<Collision::Testy>()
+			.addConstructor<std::string>()
+			.addMember("getID", &Collision::Testy::getID)
+			.addMember("getRandomTesty", &Collision::Testy::getRandomTesty)
+			.addMember("printAll", &Collision::Testy::printAll)
 		);
 		foundPart = true;
 	}
@@ -302,6 +312,7 @@ void CoreLib::loadConstants(kaguya::State* lua, std::vector<std::string> args)
 		(*lua)["Core"]["Constants"]["ResY"] = fn::Coord::height;
 		(*lua)["Core"]["Constants"]["BaseResX"] = fn::Coord::baseWidth;
 		(*lua)["Core"]["Constants"]["BaseResY"] = fn::Coord::baseHeight;
+		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConstants] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
@@ -576,6 +587,7 @@ void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "LevelSprite")
 	{
 		(*lua)["Core"]["LevelSprite"]["LevelSprite"].setClass(kaguya::ClassMetatable<LevelSprite>()
+			.addConstructor<std::string>()
 			.addMember("addAtr", &LevelSprite::addAtr)
 			.addMember("calculateRealCoordinates", &LevelSprite::calculateRealCoordinates)
 			.addMember("getAttributes", &LevelSprite::getAttributes)
@@ -584,6 +596,8 @@ void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getID", &LevelSprite::getID)
 			.addMember("getLayer", &LevelSprite::getLayer)
 			.addMember("getName", &LevelSprite::getName)
+			.addMember("getOffsetX", &LevelSprite::getOffsetX)
+			.addMember("getOffsetY", &LevelSprite::getOffsetY)
 			.addMember("getRect", &LevelSprite::getRect)
 			.addMember("getRotation", &LevelSprite::getRotation)
 			.addMember("getScaleX", &LevelSprite::getScaleX)
@@ -600,6 +614,7 @@ void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setAtr", &LevelSprite::setAtr)
 			.addMember("setColor", &LevelSprite::setColor)
 			.addMember("setLayer", &LevelSprite::setLayer)
+			.addMember("setOffset", &LevelSprite::setOffset)
 			.addMember("setPosition", &LevelSprite::setPosition)
 			.addMember("setRotation", &LevelSprite::setRotation)
 			.addMember("setRotationOrigin", &LevelSprite::setRotationOrigin)
@@ -728,7 +743,7 @@ void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 	bool importAll = args.size() == 1;
 	bool foundPart = false;
 	if (!(bool)((*lua)["Core"]["SFML"])) (*lua)["Core"]["SFML"] = kaguya::NewTable();
-	if (importAll || args[1] == "SFML")
+	if (importAll || args[1] == "Color")
 	{
 		(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::ClassMetatable<sf::Color>()
 			.addConstructor<UINT8, UINT8, UINT8, UINT8>()
@@ -738,8 +753,16 @@ void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("g", &sf::Color::b)
 			.addMember("b", &sf::Color::b)
 		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Drawable")
+	{
 		(*lua)["Core"]["SFML"]["Drawable"].setClass(kaguya::ClassMetatable<sf::Drawable>()
 		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Transformable")
+	{
 		(*lua)["Core"]["SFML"]["Transformable"].setClass(kaguya::ClassMetatable<sf::Transformable>()
 			.addMember("getInverseTransform", &sf::Transformable::getInverseTransform)
 			.addMember("getOrigin", &sf::Transformable::getOrigin)
@@ -755,12 +778,45 @@ void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setOrigin", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::setOrigin))
 			.addMember("setOrigin", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::setOrigin))
 		);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Sprite")
+	{
 		(*lua)["Core"]["SFML"]["Sprite"].setClass(kaguya::ClassMetatable<sf::Sprite, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
 		);
 		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
+}
 
+void CoreLib::loadSTD(kaguya::State * lua, std::vector<std::string> args)
+{
+	registerLib(lua, fn::Vector::join(args, "."));
+	bool importAll = args.size() == 1;
+	bool foundPart = false;
+	if (!(bool)((*lua)["Core"]["STD"])) (*lua)["Core"]["STD"] = kaguya::NewTable();
+	if (importAll || args[1] == "Pair")
+	{
+		(*lua)["Core"]["STD"]["IntPair"].setClass(kaguya::ClassMetatable<std::pair<int, int>>()
+			.addConstructor<int, int>()
+			.addMember("first", &std::pair<int, int>::first)
+			.addMember("second", &std::pair<int, int>::second)
+			.addMember("swap", &std::pair<int, int>::swap)
+		);
+		(*lua)["Core"]["STD"]["DoublePair"].setClass(kaguya::ClassMetatable<std::pair<double, double>>()
+			.addConstructor<double, double>()
+			.addMember("first", &std::pair<double, double>::first)
+			.addMember("second", &std::pair<double, double>::second)
+			.addMember("swap", &std::pair<double, double>::swap)
+			);
+		foundPart = true;
+	}
+	if (importAll || args[1] == "Print")
+	{
+		(*lua)["Core"]["STD"]["Print"] = kaguya::function([](std::string disp) { std::cout << "[Lua] : " << disp << std::endl; });
+		foundPart = true;
+	}
+	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSTD] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }
 
 void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
@@ -796,6 +852,10 @@ void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<float>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<std::string>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<bool>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<int>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<float>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<std::string>>)
+			.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<bool>>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, int>>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, float>>)
 			.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, std::string>>)

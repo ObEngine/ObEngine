@@ -11,6 +11,7 @@
 
 #include "DataParser.hpp"
 #include "TimeManager.hpp"
+#include "Triggers.hpp"
 
 class KeyClass
 {
@@ -45,6 +46,7 @@ class KeyBinder
 		bool binderEnabled = true;
 		std::string getActionKey(std::string action);
 		KeyClass* getKey(std::string key);
+		TriggerGroup* keysTriggers;
 	public:
 		KeyBinder();
 		void setEnabled(bool state);

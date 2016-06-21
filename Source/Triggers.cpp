@@ -147,8 +147,7 @@ std::string TriggerGroup::getNamespace()
 //TriggerDatabase
 TriggerDatabase::TriggerDatabase()
 {
-	this->createNamespace("Character");
-	this->createNamespace("GUI");
+	this->createNamespace("Global");
 	databaseChrono.start();
 }
 Trigger* TriggerDatabase::getTrigger(std::string groupNamespace, std::string triggerGroup, std::string triggerName)

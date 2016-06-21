@@ -47,7 +47,7 @@ void Entity::setColliders(std::vector<Collision::PolygonalCollider*>* collideLis
 
 bool Entity::collide(int tx, int ty)
 {
-	return Collision::testAllColliders(entityCollider, collidersList, tx, ty, true);
+	return entityCollider->testAllColliders(*collidersList, tx, ty, true);
 }
 
 void Entity::getCamPos(int camX, int camY)

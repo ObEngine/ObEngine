@@ -45,9 +45,9 @@ namespace CoreLib
 	void loadParticle(kaguya::State* lua, std::vector<std::string> args);
 	void loadSerial(kaguya::State* lua, std::vector<std::string> args);
 	void loadSFML(kaguya::State* lua, std::vector<std::string> args);
+	void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 	void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 	void loadUtils(kaguya::State* lua, std::vector<std::string> args);
-	//void loadWorld(kaguya::State* lua, std::vector<std::string> args);
 }
 
 class CoreHook

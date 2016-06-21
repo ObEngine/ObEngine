@@ -9,21 +9,7 @@ World::World()
 	loadWorldScriptEngineBaseLib(worldScriptEngine);
 	(*worldScriptEngine)["World"] = this;
 	worldScriptEngine->dofile("Data/GameScripts/WScrInit.lua");
-	loadLib(worldScriptEngine, "Core.Animation");
-	loadLib(worldScriptEngine, "Core.Collision");
-	loadLib(worldScriptEngine, "Core.Console");
-	loadLib(worldScriptEngine, "Core.Cursor");
-	loadLib(worldScriptEngine, "Core.Dialog");
-	loadLib(worldScriptEngine, "Core.Entity");
-	loadLib(worldScriptEngine, "Core.GUI");
-	loadLib(worldScriptEngine, "Core.KeyBind");
-	loadLib(worldScriptEngine, "Core.LevelSprite");
-	loadLib(worldScriptEngine, "Core.Light");
-	loadLib(worldScriptEngine, "Core.MathExp");
-	loadLib(worldScriptEngine, "Core.Serial");
-	loadLib(worldScriptEngine, "Core.SFML");
-	loadLib(worldScriptEngine, "Core.Trigger");
-	loadLib(worldScriptEngine, "Core.Utils");
+	loadLib(worldScriptEngine, "Core.*");
 	triggerDatabaseCore.createNamespace("Map");
 	showCollisionModes["drawLines"] = false;
 	showCollisionModes["drawPoints"] = false;
@@ -31,6 +17,7 @@ World::World()
 	showCollisionModes["drawSkel"] = false;
 	blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
 	normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
+	worldScriptEngine->dofile("boot.lua");
 	/*for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 	{
 		backSpriteArray[i]->textureUpdate(true);
@@ -257,18 +244,15 @@ void World::loadFromFile(std::string filename)
 			int colOffY = 0;
 			if (this->getGameObject(allObjects[i])->canDisplay())
 			{
-				this->addLevelSprite(this->getGameObject(allObjects[i])->getLevelSprite());
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posX"))
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posX")->getData(&objX);
 				if (mapParse.attributeExists("LevelObjects", allObjects[i], "posY"))
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posY")->getData(&objY);
 				this->getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
 			}
-			if (this->getGameObject(allObjects[i])->canCollide() || this->getGameObject(allObjects[i])->canClick())
+			if (this->getGameObject(allObjects[i])->getCollider() != nullptr)
 			{
-				this->addCollider(this->getGameObject(allObjects[i])->getCollider());
-				if (this->getGameObject(allObjects[i])->canDisplay() && this->getGameObject(allObjects[i])->isColliderRelative())
-					this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY, 1);
+				this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
 			}
 		}
 	}
@@ -340,7 +324,7 @@ DataParser* World::saveData()
 	dataStore->createDataObject("LevelSprites");
 	for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 	{
-		if (backSpriteArray[i]->getCollisionHook() == nullptr)
+		if (backSpriteArray[i]->getParent() == nullptr)
 		{
 			dataStore->createComplexAttribute("LevelSprites", "", backSpriteArray[i]->getID());
 			dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "type", backSpriteArray[i]->getName());
@@ -360,7 +344,7 @@ DataParser* World::saveData()
 	}
 	for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
 	{
-		if (frontSpriteArray[i]->getCollisionHook() == nullptr)
+		if (frontSpriteArray[i]->getParent() == nullptr)
 		{
 			dataStore->createComplexAttribute("LevelSprites", "", frontSpriteArray[i]->getID());
 			dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "type", frontSpriteArray[i]->getName());
@@ -381,7 +365,7 @@ DataParser* World::saveData()
 	dataStore->createDataObject("Collisions");
 	for (unsigned int i = 0; i < collidersArray.size(); i++)
 	{
-		if (!collidersArray[i]->isFromGameObject())
+		if (collidersArray[i]->getParent() != nullptr)
 		{
 			dataStore->createComplexAttribute("Collisions", "", collidersArray[i]->getID());
 			dataStore->createListAttribute("Collisions", collidersArray[i]->getID(), "polygonPoints", "str");
@@ -478,40 +462,33 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 		Light::PointLight* cLight = NULL;
 		if (lightHooked) cLight = lightsMap[backSpriteArray[i]->getID()];
 
+		layeredX = (((backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX()) * (backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
+		layeredY = (((backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY()) * (backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
 		if (fn::Vector::isInList((std::string)"+FIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = backSpriteArray[i]->getRect().left;
-			layeredY = backSpriteArray[i]->getY();
-		}
-		else if (fn::Vector::isInList((std::string)"+VFIX", backSpriteArray[i]->getAttributes()))
-		{
-			layeredX = ((backSpriteArray[i]->getX()*(backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
-			layeredY = backSpriteArray[i]->getY();
+			layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX();
+			layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY();
 		}
 		else if (fn::Vector::isInList((std::string)"+HFIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = backSpriteArray[i]->getX();
-			layeredY = ((backSpriteArray[i]->getY()*(backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
+			layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX();
+		}
+		else if (fn::Vector::isInList((std::string)"+VFIX", backSpriteArray[i]->getAttributes()))
+		{
+			layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY();
 		}
 		else if (fn::Vector::isInList((std::string)"+PHFIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = backSpriteArray[i]->getX() - camX;
-			layeredY = ((backSpriteArray[i]->getY()*(backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
+			layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camX;
 		}
 		else if (fn::Vector::isInList((std::string)"+PVFIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = ((backSpriteArray[i]->getX()*(backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
-			layeredY = backSpriteArray[i]->getY() - camY;
+			layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
 		}
 		else if (fn::Vector::isInList((std::string)"+PFIX", backSpriteArray[i]->getAttributes()))
 		{
-			layeredX = backSpriteArray[i]->getX() - camX;
-			layeredY = backSpriteArray[i]->getY() - camY;
-		}
-		else
-		{
-			layeredX = ((backSpriteArray[i]->getX()*(backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
-			layeredY = ((backSpriteArray[i]->getY()*(backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
+			layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camX;
+			layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
 		}
 		backSpriteArray[i]->textureUpdate();
 		sfe::ComplexSprite tAffSpr;
@@ -523,7 +500,10 @@ void World::visualDisplayBack(sf::RenderWindow* surf)
 		tAffSpr.setPosition(layeredX, layeredY);
 		if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 		if (backSpriteArray[i]->isVisible())
+		{
+			//std::cout << "Displaying : " << backSpriteArray[i]->getID() << " at " << layeredX << "," << layeredY << " >> " << tAffSpr.getGlobalBounds().width << "," << tAffSpr.getGlobalBounds().height << std::endl;
 			surf->draw(tAffSpr, &blurShader);
+		}
 		if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 	}
 }
@@ -738,16 +718,16 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	if (newGameObject->canDisplay())
 	{
 		this->addLevelSprite(newGameObject->getLevelSprite());
-		newGameObject->getLevelSprite()->setPosition(0, 0);
+		if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
+			newGameObject->getLevelSprite()->setPosition(0, 0);
 	}
 	if (newGameObject->canCollide() || newGameObject->canClick())
 	{
 		this->addCollider(newGameObject->getCollider());
-		if (newGameObject->canDisplay() && newGameObject->isColliderRelative())
-			newGameObject->getCollider()->setPosition(0, 0, 1);
+		newGameObject->getCollider()->setPosition(0, 0);
 	}
-	newGameObject->getLevelSprite()->hookToCollision(newGameObject->getCollider());
-	newGameObject->getCollider()->setFromGameObject(true);
+	newGameObject->getLevelSprite()->setParent(newGameObject);
+	newGameObject->getCollider()->setParent(newGameObject);
 	(*newGameObject->scriptEngine)["World"] = this;
 	return newGameObject;
 }
@@ -907,6 +887,7 @@ LevelSprite* World::getSpriteByPos(int x, int y, int layer)
 	std::vector<LevelSprite*> getDecoVec = getSpritesByLayer(layer);
 	for (unsigned int i = 0; i < getDecoVec.size(); i++)
 	{
+		//std::cout << "Testing : " << getDecoVec[i]->getID() << " : " << getDecoVec[i]->getRect().left << "," << getDecoVec[i]->getRect().top << getDecoVec[i]->getRect().width << "," << getDecoVec[i]->getRect().height << std::endl;
 		if (x > getDecoVec[i]->getRect().left && x < getDecoVec[i]->getRect().left + getDecoVec[i]->getW())
 		{
 			if (y > getDecoVec[i]->getRect().top && y < getDecoVec[i]->getRect().top + getDecoVec[i]->getH())

@@ -321,7 +321,7 @@ void MapEditor::editMap(std::string mapName)
 	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//Character Initialisation
-	Character character("Robot");
+	Character character("Natsugi");
 	std::cout << "Creation Chrono : " << "[Character]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
 	//World Creation / Loading
@@ -419,6 +419,8 @@ void MapEditor::editMap(std::string mapName)
 	sf::FloatRect sdBoundingRect;
 	int selectedSpriteOffsetX = 0;
 	int selectedSpriteOffsetY = 0;
+	int selectedSpritePickPosX = 0;
+	int selectedSpritePickPosY = 0;
 	bool guiEditorEnabled = false;
 	bool addSpriteMode = false;
 	int editMode = 0;
@@ -693,6 +695,9 @@ void MapEditor::editMap(std::string mapName)
 					selectedSprite = hoveredSprite;
 					selectedSpriteOffsetX = (cursor.getX() + world.getCamX()) - selectedSprite->getX();
 					selectedSpriteOffsetY = (cursor.getY() + world.getCamY()) - selectedSprite->getY();
+					selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffsetX();
+					selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffsetY();
+
 					sdBoundingRect = selectedSprite->getRect();
 					selectedSprite->setColor(sf::Color(255, 0, 0));
 				}
@@ -701,13 +706,15 @@ void MapEditor::editMap(std::string mapName)
 			//Sprite Move
 			if (cursor.getPressed("Left") && selectedSprite != nullptr)
 			{
-				selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
-					cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
-				if (selectedSprite->getCollisionHook() != nullptr)
+				if (selectedSprite->getParent() == nullptr)
 				{
-					selectedSprite->getCollisionHook()->setPosition(
-						cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
-						cursor.getY() + world.getCamY() - selectedSpriteOffsetY, 1);
+					selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
+						cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
+				}
+				else
+				{
+					selectedSprite->setOffset(cursor.getX() + world.getCamX() - selectedSpriteOffsetX - selectedSpritePickPosX,
+						cursor.getY() + world.getCamY() - selectedSpriteOffsetY - selectedSpritePickPosY);
 				}
 				sdBoundingRect = selectedSprite->getRect();
 				std::string sprInfoStr;
@@ -806,11 +813,11 @@ void MapEditor::editMap(std::string mapName)
 				selectedMasterCollider->clearHighlights();
 				int cursCoordX = cursor.getX() + world.getCamX();
 				int cursCoordY = cursor.getY() + world.getCamY();
-				int clNode = selectedMasterCollider->findClosestNode(cursCoordX, cursCoordY);
+				int clNode = selectedMasterCollider->findClosestPoint(cursCoordX, cursCoordY);
 				selectedMasterCollider->highlightPoint(clNode);
 				int gLeftNode = ((clNode - 1 != -1) ? clNode - 1 : selectedMasterCollider->getPointsAmount() - 1);
 				int gRghtNode = ((clNode + 1 != selectedMasterCollider->getPointsAmount()) ? clNode + 1 : 0);
-				int secondClosestNode = (selectedMasterCollider->getNodeDistance(gLeftNode, cursCoordX, cursCoordY) >= selectedMasterCollider->getNodeDistance(gRghtNode, cursCoordX, cursCoordY)) ? gRghtNode : gLeftNode;
+				int secondClosestNode = (selectedMasterCollider->getDistanceFromPoint(gLeftNode, cursCoordX, cursCoordY) >= selectedMasterCollider->getDistanceFromPoint(gRghtNode, cursCoordX, cursCoordY)) ? gRghtNode : gLeftNode;
 				selectedMasterCollider->highlightPoint(secondClosestNode);
 			}
 			//Collision Point Grab
@@ -833,6 +840,12 @@ void MapEditor::editMap(std::string mapName)
 			if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
 			{
 				selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+				if (colliderPtGrabbed == 0 && selectedMasterCollider->getParent() != nullptr && selectedMasterCollider->getParent()->canDisplay())
+				{
+					selectedMasterCollider->getParent()->getLevelSprite()->setPosition(
+						cursor.getX() + world.getCamX(),
+						cursor.getY() + world.getCamY());
+				}
 			}
 			//Collision Point Release
 			if (cursor.getReleased("Left"))
@@ -852,19 +865,27 @@ void MapEditor::editMap(std::string mapName)
 				}
 				selectedMasterCollider = tempCol;
 				selectedMasterCollider->setSelected(true);
+				if (selectedMasterCollider->getParent() != nullptr) selectedMasterCollider->getParent()->setUpdateState(false);
 				masterColliderGrabbed = true;
 			}
 			//Collision Master Move
 			if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 			{
-				selectedMasterCollider->setPositionFromMaster(
-					cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(),
-					2);
+				selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+				if (selectedMasterCollider->getParent() != nullptr && selectedMasterCollider->getParent()->canDisplay())
+				{
+					std::pair<int, int> zeroCoords = selectedMasterCollider->getPointCoordinates(0);
+					std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointCoordinates();
+					selectedMasterCollider->getParent()->getLevelSprite()->setPosition(
+						cursor.getX() + world.getCamX() + zeroCoords.first - masterCoords.first,
+						cursor.getY() + world.getCamY() + zeroCoords.second - masterCoords.second);
+				}
 			}
 			//Collision Master Release
 			if (cursor.getReleased("Left") && masterColliderGrabbed)
 			{
 				masterColliderGrabbed = false;
+				if (selectedMasterCollider->getParent() != nullptr) selectedMasterCollider->getParent()->setUpdateState(true);
 			}
 			if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && !masterColliderGrabbed)
 			{
@@ -874,7 +895,7 @@ void MapEditor::editMap(std::string mapName)
 				//Collision Point Create
 				if (rqPtRes == -1)
 				{
-					selectedMasterCollider->addPoint(crPtX, crPtY, selectedMasterCollider->findClosestNode(crPtX, crPtY, true));
+					selectedMasterCollider->addPoint(crPtX, crPtY, selectedMasterCollider->findClosestPoint(crPtX, crPtY, true));
 				}
 				//Collision Point Delete
 				else
@@ -1004,7 +1025,8 @@ void MapEditor::editMap(std::string mapName)
 					window.close();
 				if (event.key.code == sf::Keyboard::Return)
 				{
-					if (textDisplay.textRemaining() && !gameConsole.isConsoleVisible()) textDisplay.next();
+					if (textDisplay.textRemaining() && !gameConsole.isConsoleVisible()) 
+						textDisplay.next();
 				}
 				if (event.key.code == sf::Keyboard::S)
 				{
@@ -1025,6 +1047,10 @@ void MapEditor::editMap(std::string mapName)
 				}
 				if (event.key.code == sf::Keyboard::F1)
 					gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
+				if (event.key.code == sf::Keyboard::Up)
+					gameConsole.upHistory();
+				if (event.key.code == sf::Keyboard::Down)
+					gameConsole.downHistory();
 				if (event.key.code == sf::Keyboard::Left && gameConsole.isConsoleVisible())
 					gameConsole.moveCursor(-1);
 				if (event.key.code == sf::Keyboard::Right && gameConsole.isConsoleVisible())

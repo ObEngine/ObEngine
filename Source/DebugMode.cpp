@@ -107,6 +107,15 @@ void startDebugMode()
 						gameConsole.moveCursor(-1);
 					if (event.key.code == sf::Keyboard::Right)
 						gameConsole.moveCursor(1);
+					if (event.key.code == sf::Keyboard::V)
+					{
+						if (event.key.control)
+						{
+							std::string clipboard_content;
+							clip::get_text(clipboard_content);
+							gameConsole.insertInputBufferContent(clipboard_content);
+						}
+					}
 					break;
 				case sf::Event::TextEntered:
 					gameConsole.inputKey(event.text.unicode);
