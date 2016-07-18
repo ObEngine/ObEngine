@@ -50,5 +50,19 @@ function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
+### Hello-World is game console
+Does exactly the same thing than the first one except that it prints "Hello World" is the game console (F1 to open console)
+```lua
+Import("Core.Console") -- Import Console API from C++
+
+GetHook("Console"); -- Place the Game's Console pointer in Hook.Console
+
+This:useLocalTrigger("Init");
+
+function Local.Init()
+  local consoleStream = Hook.Console:createStream("HelloWorld", true); -- Create a new stream for the console named "HelloWorld"
+  consoleStream:write("Hello World", 255, 0, 0, 255); -- Write "Hello World" in the game console in red using the stream
+end
+```
 
 Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
