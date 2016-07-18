@@ -39,4 +39,16 @@ Here you go :
 - Serial and Network events support
 - Trajectory system (and you can even create your owns)
 
+## Right, can I have several object examples now ?
+Sure, here are some simple objects :
+### Hello-World object
+This one is really simple, it just prints "Hello World" in the console (not the game console)
+```lua
+This:useLocalTrigger("Init"); -- Tells the engine that this object will execute Local.Init when created
+
+function Local.Init() -- Called when object is created
+  print("Hello World");
+end
+```
+
 Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
