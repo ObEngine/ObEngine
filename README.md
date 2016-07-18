@@ -52,8 +52,8 @@ function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
-#### Hello-World is game console
-Does exactly the same thing than the first one except that it prints "Hello World" is the game console (F1 to open console)
+#### Hello-World in game console
+Does exactly the same thing than the first one except that it prints "Hello World" in the game console (F1 to open console)
 ```lua
 Import("Core.Console") -- Import Console API from C++
 
@@ -113,6 +113,47 @@ end
 
 function Local.Update(P) -- P is a table that contains every events parameters (here parameters for update)
   This:LevelSprite():rotate(P.dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
+end
+```
+
+### Examples with Colliders
+Every LevelObject can also have a Collider (solid or not).
+
+#### A simple door
+This is a simple door that you can open or close when you click it
+
+```lua
+Door = {} -- You create a table to place Door's function in
+
+Import("Core.Animation.Animator");
+Import("Core.Collision");
+
+This:useLocalTrigger("Init");
+-- Tells the engine that this object will execute Local.Click everytime the Collider is clicked
+This:useLocalTrigger("Click");
+
+function Local.Init()
+    This:Animator():setKey("Close");
+    opened = false;
+    This:setInitialised(true);
+end
+
+function Door.Open()
+    This:Animator():setKey("Open");
+    This:Collider():setSolid(false); -- Makes the character able to pass through the door
+    opened = true;
+end
+
+function Door.Close()
+    This:Animator():setKey("Close");
+    This:Collider():setSolid(true); -- Makes the collider solid (no one can pass through)
+    opened = false;
+end
+
+function Local.Click() -- Called when the object's collider is clicked
+    if opened then Door.Close();
+    else Door.Open();
+    end
 end
 ```
 
