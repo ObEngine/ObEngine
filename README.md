@@ -41,7 +41,8 @@ Here you go :
 
 ## Right, can I have several object examples now ?
 Sure, here are some simple objects :
-### Hello-World object
+### Examples using console :
+#### Hello-World object
 This one is really simple, it just prints "Hello World" in the console (not the game console)
 ```lua
 This:useLocalTrigger("Init"); -- Tells the engine that this object will execute Local.Init when created
@@ -50,7 +51,7 @@ function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
-### Hello-World is game console
+#### Hello-World is game console
 Does exactly the same thing than the first one except that it prints "Hello World" is the game console (F1 to open console)
 ```lua
 Import("Core.Console") -- Import Console API from C++
@@ -60,9 +61,14 @@ GetHook("Console"); -- Place the Game's Console pointer in Hook.Console
 This:useLocalTrigger("Init");
 
 function Local.Init()
-  local consoleStream = Hook.Console:createStream("HelloWorld", true); -- Create a new stream for the console named "HelloWorld"
-  consoleStream:write("Hello World", 255, 0, 0, 255); -- Write "Hello World" in the game console in red using the stream
+  -- Create a new stream for the console named "HelloWorld"
+  local consoleStream = Hook.Console:createStream("HelloWorld", true);
+  -- Write "Hello World" in the game console in red using the stream
+  consoleStream:write("Hello World", 255, 0, 0, 255);
 end
 ```
+
+#### Rainbow Hello-World
+
 
 Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
