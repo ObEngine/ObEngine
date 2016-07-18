@@ -7,7 +7,36 @@ Melting Saga Engine (MSE is shorter) is a 2D Game Engine made on the top of SFML
 You will need several libs :
 - [SFML 2.3](http://www.sfml-dev.org/download/sfml/2.3/index-fr.php) (Display, Keys, Network, and much more)
 - [Kaguya](https://github.com/satoren/kaguya) (Lua Binding)
-- [Lua 5.3](http://lua-users.org/wiki/LuaBinaries)
-- [ClipperLib](https://sourceforge.net/projects/polyclipping/files/)
+- [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (Scripting language)
+- [ClipperLib](https://sourceforge.net/projects/polyclipping/files/) (Polygonal Intersection Resolution)
+
+## Could you give an example of what I can do with your engine ?
+Well, you can do approximatively everything with it as long as it's in 2D. MSE doesn't handle 3D.
+You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
+
+## Is it free ?
+Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
+You can also modify the sources.
+There's no need to write somewhere that your game is made with MSE (but it's nice if you do it !)
+
+## Give me some interesting features
+Here you go :
+- Neat map editor (With a grid for precise map edition)
+- Spritesheet animations (with tiny animation language)
+- Skeletal animations (Planned)
+- Light system
+- Particles
+- Normal maps (Planned)
+- Lua scripting (Object oriented with a full events system)
+- Object-oriented
+- VisualNovel system included
+- Infinite amount of layers with optional parallax
+- Mathematical expressions parsing
+- Home-made data language
+- Polygonal Collisions with full collision detection support
+- Developpement console with coloration and scripting support
+- Customizable cursor (whoa)
+- Serial and Network events support
+- Trajectory system (and you can even create your owns)
 
 Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
