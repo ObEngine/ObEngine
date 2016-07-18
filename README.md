@@ -38,8 +38,9 @@ Here you go :
 - Customizable cursor (whoa)
 - Serial and Network events support
 - Trajectory system (and you can even create your owns)
+- DeltaTime handling
 
-## Right, can I have several object examples now ?
+## Right, can I have several object scripting examples now ?
 Sure, here are some simple objects :
 ### Examples using console :
 #### Hello-World object
@@ -61,14 +62,58 @@ GetHook("Console"); -- Place the Game's Console pointer in Hook.Console
 This:useLocalTrigger("Init");
 
 function Local.Init()
-  -- Create a new stream for the console named "HelloWorld"
+  -- Create a new stream for the console named "HelloWorld", the "true" means the stream is directly enabled
   local consoleStream = Hook.Console:createStream("HelloWorld", true);
-  -- Write "Hello World" in the game console in red using the stream
+  -- Write "Hello World" in the game console in red using the stream (5th parameter is alpha)
   consoleStream:write("Hello World", 255, 0, 0, 255);
 end
 ```
 
 #### Rainbow Hello-World
+Same thing that the one before except that we will change the color of the text at every frame !
+```lua
+Import("Core.Console");
 
+GetHook("Console");
+
+math.randomseed(os.time()); -- Random seed for when we'll use math.random()
+
+This:useLocalTrigger("Init");
+This:useLocalTrigger("Update"); Tells the engine that this object will execute Local.Update every frame
+
+function Local.Init()
+  local consoleStream = Hook.Console:createStream("HelloWorld", true);
+  -- We start with the white color (255, 255, 255), the line is stored in helloWorldMessage
+  helloWorldMessage = consoleStream:write("Hello World Rainbow !", 255, 255, 255, 255);
+end
+
+function Local.Update() -- This will be called at every frame
+  local r = math.random(0, 255); -- Red composant
+  local g = math.random(0, 255); -- Green composant
+  local b = math.random(0, 255); -- Blue composant
+  helloWorldMessage:setColor(r, g, b); -- Change the color of the whole line
+end
+```
+### Examples with LevelSprites
+Every LevelObject can have a LevelSprite associated (it's cooler when your object appears in the game right ?).
+#### Rotating goat
+Let's imagine you want to create a rotating goat in your game, no problem :
+```lua
+Import("Core.LevelSprite"); -- C++ API for LevelSprites
+Import("Core.Animation.Animator"); -- C++ API for Animations (but just the Animator)
+
+This:useLocalTrigger("Init");
+This:useLocalTrigger("Update");
+
+function Local.Init()
+  -- Set the animation for when the goat is flying to the right (You can imagine it already right ?)
+  This:Animator():setKey("GOAT_FLYING_LEFT");
+  This:setInitialised(true); -- You need this line for every object that is visible in-game
+end
+
+function Local.Update(P) -- P is a table that contains every events parameters (here parameters for update)
+  This:LevelSprite():rotate(P.dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
+end
+```
 
 Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
