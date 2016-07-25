@@ -1,3 +1,4 @@
+#include <sfe/RichText.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
@@ -6,6 +7,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
 #include <Bindings/Bindings.hpp>
@@ -20,7 +22,7 @@ namespace obe
             void LoadSfColor(kaguya::State* lua)
             {
                 (*lua)["SFML"]["Color"].setClass(kaguya::UserdataMetatable<sf::Color>()
-                    .setConstructors<sf::Color(int, int, int, int), sf::Color(int, int, int)>()
+                    .setConstructors<sf::Color(), sf::Color(int, int, int), sf::Color(int, int, int, int)>()
                     .addProperty("r", &sf::Color::r)
                     .addProperty("g", &sf::Color::g)
                     .addProperty("b", &sf::Color::b)
@@ -129,6 +131,51 @@ namespace obe
                 );
             }
 
+            void LoadSfText(kaguya::State* lua)
+            {
+                Load(lua, "SFML.Transformable");
+
+                (*lua)["SFML"]["String"].setClass(kaguya::UserdataMetatable<sf::String>()
+                    .setConstructors<sf::String(), sf::String(const std::string&)>()
+                    .addFunction("toAnsiString", &sf::String::toAnsiString)
+                );
+
+                (*lua)["SFML"]["Text"].setClass(kaguya::UserdataMetatable<sf::Text, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
+                    .setConstructors<sf::Text(), 
+                                     sf::Text(const sf::String&, const sf::Font&), 
+                                     sf::Text(const sf::String&, const sf::Font&, unsigned int characterSize)>()
+                    .addFunction("setString", &sf::Text::setString)
+                    .addFunction("setFont", &sf::Text::setFont)
+                    .addFunction("setCharacterSize", &sf::Text::setCharacterSize)
+                    .addFunction("setStyle", &sf::Text::setStyle)
+                    .addFunction("setFillColor", &sf::Text::setFillColor)
+                    .addFunction("setOutlineColor", &sf::Text::setOutlineColor)
+                    .addFunction("setOutlineThickness", &sf::Text::setOutlineThickness)
+                    .addFunction("getString", &sf::Text::getString)
+                    .addFunction("getFont", &sf::Text::getFont)
+                    .addFunction("getCharacterSize", &sf::Text::getCharacterSize)
+                    .addFunction("getStyle", &sf::Text::getStyle)
+                    .addFunction("getFillColor", &sf::Text::getFillColor)
+                    .addFunction("getOutlineColor", &sf::Text::getOutlineColor)
+                    .addFunction("getOutlineThickness", &sf::Text::getOutlineThickness)
+                    .addFunction("findCharacterPos", &sf::Text::findCharacterPos)
+                );
+
+                (*lua)["SFML"]["RichText"].setClass(kaguya::UserdataMetatable<sfe::RichText, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
+                    .setConstructors<sfe::RichText(), sfe::RichText(const sf::Font&)>()
+                    .addFunction("pushColor", static_cast<sfe::RichText&(sfe::RichText::*)(const sf::Color&)>(&sfe::RichText::operator<<))
+                    .addFunction("pushString", static_cast<sfe::RichText&(sfe::RichText::*)(const sf::String&)>(&sfe::RichText::operator<<))
+                    .addFunction("pushStyle", static_cast<sfe::RichText&(sfe::RichText::*)(sf::Text::Style)>(&sfe::RichText::operator<<))
+                    .addFunction("setCharacterSize", &sfe::RichText::setCharacterSize)
+                    .addFunction("getCharacterSize", &sfe::RichText::getCharacterSize)
+                    .addFunction("setFont", &sfe::RichText::setFont)
+                    .addFunction("getFont", &sfe::RichText::getFont)
+                    .addFunction("clear", &sfe::RichText::clear)
+                    .addFunction("getLocalBounds", &sfe::RichText::getLocalBounds)
+                    .addFunction("getGlobalBounds", &sfe::RichText::getGlobalBounds)
+                );
+            }
+
             void LoadSfTransformable(kaguya::State* lua)
             {
                 (*lua)["SFML"]["Transformable"].setClass(kaguya::UserdataMetatable<sf::Transformable>()
@@ -160,6 +207,15 @@ namespace obe
                         static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::setScale),
                         static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::setScale)
                     )
+                );
+            }
+
+            void LoadSfVector(kaguya::State* lua)
+            {
+                (*lua)["SFML"]["Vector2f"].setClass(kaguya::UserdataMetatable<sf::Vector2f>()
+                    .setConstructors<sf::Vector2f(), sf::Vector2f(float, float)>()
+                    .addProperty("x", &sf::Vector2f::x)
+                    .addProperty("y", &sf::Vector2f::y)
                 );
             }
         }

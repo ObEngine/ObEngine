@@ -9,31 +9,14 @@ namespace obe
     namespace Graphics
     {
         namespace Canvas
-        {
-            Element::Element(const std::string& id)
+        {            
+            CanvasElement::CanvasElement(const std::string& id)
             {
                 this->id = id;
             }
     
-            Drawable::Drawable(const std::string& id) : Element(id)
-            {
-            }
     
-            Colorable::Colorable(const std::string& id) : Drawable(id), Element(id)
-            {
-            }
-    
-            Transformable::Transformable(const std::string& id) : Element(id)
-            {
-            }
-    
-            
-            CanvasElement::CanvasElement(const std::string& id) : Drawable(id), Element(id)
-            {
-            }
-    
-    
-            Line::Line(const std::string& id) : CanvasElement(id), Colorable(id), Drawable(id), Element(id)
+            Line::Line(const std::string& id) : CanvasElement(id)
             {
             }
     
@@ -49,7 +32,7 @@ namespace obe
                 target.draw(line, 2, sf::Lines);
             }
     
-            Rectangle::Rectangle(const std::string& id) : CanvasElement(id), Transformable(id), Colorable(id), Drawable(id), Element(id)
+            Rectangle::Rectangle(const std::string& id) : CanvasElement(id)
             {
             }
     
@@ -58,7 +41,7 @@ namespace obe
                 target.draw(shape);
             }
     
-            Text::Text(const std::string& id) : CanvasElement(id), Transformable(id), Colorable(id), Drawable(id), Element(id)
+            Text::Text(const std::string& id) : CanvasElement(id)
             {
             }
     
@@ -67,7 +50,7 @@ namespace obe
                 target.draw(text);
             }
     
-            Circle::Circle(const std::string& id) : CanvasElement(id), Transformable(id), Colorable(id), Drawable(id), Element(id)
+            Circle::Circle(const std::string& id) : CanvasElement(id)
             {
             }
     
@@ -76,7 +59,7 @@ namespace obe
                 target.draw(shape);
             }
     
-            Sprite::Sprite(const std::string& id) : CanvasElement(id), Transformable(id), Colorable(id), Drawable(id), Element(id)
+            Sprite::Sprite(const std::string& id) : CanvasElement(id)
             {
             }
     

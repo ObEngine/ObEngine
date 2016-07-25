@@ -16,7 +16,9 @@ namespace obe
             void LoadSfFont(kaguya::State* lua);
             void LoadSfShape(kaguya::State* lua);
             void LoadSfSprite(kaguya::State* lua);
+            void LoadSfText(kaguya::State* lua);
             void LoadSfTransformable(kaguya::State* lua);
+            void LoadSfVector(kaguya::State* lua);
         }
     }
 }

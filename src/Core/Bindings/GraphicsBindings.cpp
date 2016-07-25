@@ -81,51 +81,39 @@ namespace obe
                 Load(lua, "obe.UnitVector");
                 Load(lua, "SFML.Color");
                 (*lua)["obe"]["Canvas"] = kaguya::NewTable();
-                (*lua)["obe"]["Canvas"]["RequirePair"].setClass(kaguya::UserdataMetatable<std::pair<std::string, std::string>>()
-                    .addFunction("first", &std::pair<std::string, std::string>::first)
-                    .addFunction("second", &std::pair<std::string, std::string>::second)
-                );
-                (*lua)["obe"]["Canvas"]["Element"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Element>());
-                (*lua)["obe"]["Canvas"]["Drawable"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Drawable, Graphics::Canvas::Element>()
-                        .addProperty("layer", &Graphics::Canvas::Drawable::layer)
-                );
-                (*lua)["obe"]["Canvas"]["Colorable"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Colorable, Graphics::Canvas::Drawable>()
-                        .addProperty("color", &Graphics::Canvas::Colorable::color)
-                );
-                (*lua)["obe"]["Canvas"]["Transformable"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Transformable, Graphics::Canvas::Element>()
-                );
                 (*lua)["obe"]["Canvas"]["CanvasElement"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement, Graphics::Canvas::Drawable>()
+                    kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement>()
+                    .addProperty("layer", &Graphics::Canvas::CanvasElement::layer)
+                    .addProperty("visible", &Graphics::Canvas::CanvasElement::visible)
+                    .addProperty("id", &Graphics::Canvas::CanvasElement::id)
                 );
                 (*lua)["obe"]["Canvas"]["Line"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Line, 
-                    kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable>>()
+                    kaguya::UserdataMetatable<Graphics::Canvas::Line, Graphics::Canvas::CanvasElement>()
                         .addProperty("p1", &Graphics::Canvas::Line::p1)
                         .addProperty("p2", &Graphics::Canvas::Line::p2)
                         .addProperty("thickness", &Graphics::Canvas::Line::thickness)
+                        .addProperty("color", &Graphics::Canvas::Line::color)
                 );
                 (*lua)["obe"]["Canvas"]["Rectangle"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, 
-                        kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable, Graphics::Canvas::Transformable>
-                    >()
+                    kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, Graphics::Canvas::CanvasElement>()
+                        .addProperty("shape", &Graphics::Canvas::Rectangle::shape)
                 );
                 (*lua)["obe"]["Canvas"]["Text"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Text, 
-                        kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable, Graphics::Canvas::Transformable>
-                    >()
+                    kaguya::UserdataMetatable<Graphics::Canvas::Text, Graphics::Canvas::CanvasElement>()
+                        .addProperty("text", &Graphics::Canvas::Text::text)
+                        .addProperty("font", &Graphics::Canvas::Text::font)
+                        .addProperty("h_align", &Graphics::Canvas::Text::h_align)
+                        .addProperty("v_align", &Graphics::Canvas::Text::v_align)
                 );
                 (*lua)["obe"]["Canvas"]["Circle"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Circle, 
-                        kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable, Graphics::Canvas::Transformable>
-                    >()
+                    kaguya::UserdataMetatable<Graphics::Canvas::Circle, Graphics::Canvas::CanvasElement>()
+                        .addProperty("shape", &Graphics::Canvas::Circle::shape)
+                        .addProperty("radius", &Graphics::Canvas::Circle::radius)
                 );
                 (*lua)["obe"]["Canvas"]["Sprite"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Sprite, 
-                        kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable, Graphics::Canvas::Transformable>
-                    >()
+                    kaguya::UserdataMetatable<Graphics::Canvas::Sprite, Graphics::Canvas::CanvasElement>()
+                        .addProperty("path", &Graphics::Canvas::Sprite::path)
+                        .addProperty("sprite", &Graphics::Canvas::Sprite::sprite)
                 );
                 (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()

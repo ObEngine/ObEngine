@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <kaguya/kaguya.hpp>
+#include <sfe/RichText.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include <Graphics/LevelSprite.hpp>
@@ -15,36 +16,20 @@ namespace obe
             namespace Canvas
             {
             /**
-             * \brief Basic class for CanvasElement
+             * \brief A Drawable Canvas Element
              */
-            class Element
+            class CanvasElement
             {
             public:
                 std::string id;
-                /**
-                 * \brief Creates a new Canvas Element
-                 * \param id Id of the new Element
-                 */
-                explicit Element(const std::string& id);
-                /**
-                 * \brief Default destructor of Element
-                 */
-                virtual ~Element() = default;
-            };
-
-
-            /**
-             * \brief A Drawable Canvas Element
-             */
-            class Drawable : public virtual Element
-            {
-            public:
                 unsigned int layer;
+                bool visible;
+
                 /**
-                 * \brief Creates a new Drawable
-                 * \param id Id of the new Drawable
+                 * \brief Creates a new CanvasElement
+                 * \param id Id of the new CanvasElement
                  */
-                explicit Drawable(const std::string& id);
+                explicit CanvasElement(const std::string& id);
                 /**
                  * \brief Abstract draw method
                  * \param target Target where to render the result
@@ -53,70 +38,16 @@ namespace obe
             };
 
             /**
-             * \brief A Colorable Canvas Element
-             */
-            class Colorable : public virtual Drawable
-            {
-            public:
-                sf::Color color;
-                /**
-                 * \brief Creates a new Colorable
-                 * \param id Id of the new Colorable
-                 */
-                explicit Colorable(const std::string& id);
-                /**
-                 * \brief Abstracts draw method
-                 * \param target Target where to render the result
-                 */
-                void draw(sf::RenderTexture& target) const override = 0;
-            };
-
-            /**
-             * \brief A Transformable Canvas Element
-             */
-            class Transformable : public virtual Element
-            {
-            public:
-                Transform::UnitVector position;
-                Transform::UnitVector size;
-                float angle;
-                Transform::UnitVector translationOrigin;
-                Transform::UnitVector rotationOrigin;
-                Transform::UnitVector scaleOrigin;
-                /**
-                 * \brief Creates a new Transformable
-                 * \param id Id of the new Transformable
-                 */
-                explicit Transformable(const std::string& id);
-            };
-
-            /**
-             * \brief A CanvasElement (Base class for all real CanvasElements)
-             */
-            class CanvasElement : public virtual Drawable
-            {
-            public:
-                /**
-                 * \brief Creates a new CanvasElement
-                 * \param id Id of the new CanvasElement
-                 */
-                explicit CanvasElement(const std::string& id);
-                /**
-                 * \brief Abstract draw method
-                 * \param target Target where to draw the result to
-                 */
-                void draw(sf::RenderTexture& target) const override = 0;
-            };
-
-            /**
              * \brief A Canvas Line
              */
-            class Line : public CanvasElement, public Colorable
+            class Line : public CanvasElement
             {
             public:
                 Transform::UnitVector p1;
                 Transform::UnitVector p2;
                 unsigned int thickness;
+                sf::Color color;
+
                 /**
                  * \brief Creates a new Line
                  * \param id 
@@ -132,7 +63,7 @@ namespace obe
             /**
              * \brief A Canvas Rectangle
              */
-            class Rectangle : public CanvasElement, public Colorable, public Transformable
+            class Rectangle : public CanvasElement
             {
             public:
                 sf::RectangleShape shape;
@@ -165,12 +96,11 @@ namespace obe
             /**
              * \brief A Canvas Text
              */
-            class Text : public CanvasElement, public Colorable, public Transformable
+            class Text : public CanvasElement
             {
             public:
-                int characterSize;
-                std::string content;
-                sf::Text text;
+                std::string fontPath;
+                sfe::RichText text;
                 sf::Font font;
                 TextHorizontalAlign h_align;
                 TextVerticalAlign v_align;
@@ -189,7 +119,7 @@ namespace obe
             /**
              * \brief A Canvas Circle
              */
-            class Circle : public CanvasElement, public Colorable, public Transformable
+            class Circle : public CanvasElement
             {
             public:
                 sf::CircleShape shape;
@@ -209,10 +139,10 @@ namespace obe
             /*
             * \brief A Canvas Sprite
             */
-            class Sprite : public CanvasElement, public Colorable, public Transformable
+            class Sprite : public CanvasElement
             {
             public:
-                sf::Texture texture;
+                std::string path;
                 sfe::ComplexSprite sprite;
                 explicit Sprite(const std::string& id);
                 /**

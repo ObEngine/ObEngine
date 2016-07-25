@@ -117,7 +117,12 @@ namespace obe
             // SFML Binding
             BindTree.add("SFML", InitTreeNodeAsTable("SFML"));
             BindTree["SFML"]
-                .add("Color", SFMLBindings::LoadSfColor);
+                .add("Color", SFMLBindings::LoadSfColor)
+                .add("Drawable", SFMLBindings::LoadSfDrawable)
+                .add("Shape", SFMLBindings::LoadSfShape)
+                .add("Text", SFMLBindings::LoadSfText)
+                .add("Transformable", SFMLBindings::LoadSfTransformable)
+                .add("Vector", SFMLBindings::LoadSfVector);
 
             // Vili Binding
             BindTree.add("Vili", InitTreeNodeAsTable("Vili"));
