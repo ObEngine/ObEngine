@@ -157,4 +157,4 @@ function Local.Click() -- Called when the object's collider is clicked
 end
 ```
 
-Please check https://www.meltingsaga.xyz/doc/doc.php for some documentation.
+Please check https://www.meltingsaga.xyz/doc for some documentation.
