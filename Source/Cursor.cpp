@@ -1,6 +1,6 @@
 #include "Cursor.hpp"
 
-void Cursor::initialize(sf::RenderWindow* window)
+Cursor::Cursor(sf::RenderWindow* window)
 {
 	this->window = window;
 	cursorAnim.setPath("Sprites/Cursors/Round");
@@ -12,6 +12,16 @@ void Cursor::initialize(sf::RenderWindow* window)
 	cursorCollider->addPoint(2, 2);
 	cursorCollider->addPoint(0, 2);
 	cursorCollider->setPositionFromMaster(this->x, this->y);
+
+	cursorTriggers = triggerDatabaseCore.createTriggerGroup("Global", "Cursor")
+		->addTrigger("Clicked")
+		->addTrigger("Pressed")
+		->addTrigger("Released");
+}
+
+Cursor::~Cursor()
+{
+	triggerDatabaseCore.removeTriggerGroup(cursorTriggers);
 }
 
 void Cursor::selectCursor(std::string cursor)
@@ -131,6 +141,52 @@ void Cursor::update()
 	}
 	cursorSprite->setPosition(x, y);
 	cursorCollider->setPositionFromMaster(this->x, this->y);
+}
+
+void Cursor::handleTriggers()
+{
+	if (this->getClicked("Left"))
+	{
+		cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
+		cursorTriggers->pushParameter("Clicked", "X", this->x);
+		cursorTriggers->pushParameter("Clicked", "Y", this->y);
+		cursorTriggers->enableTrigger("Clicked");
+	}
+	if (this->getClicked("Right"))
+	{
+		cursorTriggers->pushParameter("Clicked", "Key", std::string("Right"));
+		cursorTriggers->pushParameter("Clicked", "X", this->x);
+		cursorTriggers->pushParameter("Clicked", "Y", this->y);
+		cursorTriggers->enableTrigger("Clicked");
+	}
+	if (this->getPressed("Left"))
+	{
+		cursorTriggers->pushParameter("Pressed", "Key", std::string("Left"));
+		cursorTriggers->pushParameter("Pressed", "X", this->x);
+		cursorTriggers->pushParameter("Pressed", "Y", this->y);
+		cursorTriggers->enableTrigger("Pressed");
+	}
+	if (this->getPressed("Right"))
+	{
+		cursorTriggers->pushParameter("Pressed", "Key", std::string("Right"));
+		cursorTriggers->pushParameter("Pressed", "X", this->x);
+		cursorTriggers->pushParameter("Pressed", "Y", this->y);
+		cursorTriggers->enableTrigger("Pressed");
+	}
+	if (this->getReleased("Left"))
+	{
+		cursorTriggers->pushParameter("Released", "Key", std::string("Left"));
+		cursorTriggers->pushParameter("Released", "X", this->x);
+		cursorTriggers->pushParameter("Released", "Y", this->y);
+		cursorTriggers->enableTrigger("Released");
+	}
+	if (this->getReleased("Right"))
+	{
+		cursorTriggers->pushParameter("Released", "Key", std::string("Right"));
+		cursorTriggers->pushParameter("Released", "X", this->x);
+		cursorTriggers->pushParameter("Released", "Y", this->y);
+		cursorTriggers->enableTrigger("Released");
+	}
 }
 
 void Cursor::updateOutsideWindow(bool state)

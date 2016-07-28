@@ -2,6 +2,9 @@
 
 Serial::Serial(const char *portName)
 {
+	triggerDatabaseCore.createTriggerGroup("Global", "Serial")
+		->addTrigger("SignalChanged");
+
 	//We're not yet connected
 	this->portName = portName;
 	this->connected = false;
@@ -164,4 +167,17 @@ bool Serial::IsConnected()
 {
 	//Simply return the connection status
 	return this->connected;
+}
+
+void Serial::handleTriggers()
+{
+	serialBufferSignal = this->ReadData(charSerialBuffer, dataLength);
+	std::string currentArduinoBuffer = fn::String::replaceString(std::string(charSerialBuffer), "\n", "");
+	currentArduinoBuffer = fn::String::cutBeforeAsciiCode(currentArduinoBuffer, 13);
+	if (serialBufferSignal != 0 && currentSerialBuffer != "" && currentSerialBuffer != serialBuffer)
+	{
+		serialBuffer = currentSerialBuffer;
+		serialTriggers->pushParameter("SignalChanged", "value", serialBuffer);
+		serialTriggers->enableTrigger("SignalChanged");
+	}
 }

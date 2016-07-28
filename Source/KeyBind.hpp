@@ -59,4 +59,5 @@ class KeyBinder
 		void setActionDelay(std::string action, int delay);
 		bool isKeyPressed(std::string key);
 		void update();
+		void handleTriggers();
 };

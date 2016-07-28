@@ -29,6 +29,8 @@ int main(int argc, char** argv)
 		startGame("poly2.map.msd");
 	else if (runParser.getArgumentValue("-mode") == "console")
 		startDebugMode();
+	else if (runParser.getArgumentValue("-mode") == "toolkit")
+		startToolkitMode();
 	
 	return 0;
 }

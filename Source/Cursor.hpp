@@ -7,6 +7,7 @@
 #include "Animation.hpp"
 #include "Collisions.hpp"
 #include "Functions.hpp"
+#include "Triggers.hpp"
 
 class Cursor
 {
@@ -21,12 +22,14 @@ class Cursor
 		bool leftReleased = false;
 		bool rightReleased = false;
 		bool doesUpdateOutsideWindow = false;
+		TriggerGroup* cursorTriggers;
 		anim::Animator cursorAnim;
 		Collision::PolygonalCollider* cursorCollider;
 		sf::Sprite* cursorSprite;
 		
 	public:
-		void initialize(sf::RenderWindow* window);
+		Cursor(sf::RenderWindow* window);
+		~Cursor();
 		void selectCursor(std::string cursor);
 		void selectKey(std::string key);
 		int getX();
@@ -35,6 +38,7 @@ class Cursor
 		void setY(int newy);
 		void setPosition(int newx, int newy);
 		void update();
+		void handleTriggers();
 		void updateOutsideWindow(bool state);
 		bool getPressed(std::string clic);
 		bool getClicked(std::string clic);

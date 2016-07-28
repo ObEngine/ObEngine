@@ -158,6 +158,11 @@ anim::RessourceManager::RessourceManager()
 {
 	textureDatabase = std::map<std::string, sf::Texture*>();
 }
+anim::RessourceManager::~RessourceManager()
+{
+	for (auto it = textureDatabase.begin(); it != textureDatabase.end(); it++)
+		delete it->second;
+}
 sf::Texture* anim::RessourceManager::getTexture(std::string path)
 {
 	if (textureDatabase.size() != 0)
@@ -434,6 +439,9 @@ int anim::Animation::getPriority()
 }
 
 //DIRTY ANIMATION
+anim::DirtyAnimation::~DirtyAnimation()
+{
+}
 void anim::DirtyAnimation::attachRessourceManager(anim::RessourceManager* rsMan) 
 {
 	animatorRsHook = rsMan;
@@ -463,16 +471,16 @@ void anim::DirtyAnimation::loadAnimation(std::string path)
 				sf::Texture* tempTexture = new sf::Texture;
 				tempTexture->loadFromFile(path + "/" + textureName);
 				tempTexture->setSmooth(true);
-				if (textureName.size() > 7 && textureName.substr(0, 6) == "normal_")
-					normalTextures[i] = tempTexture;
-				else
+				//if (textureName.size() > 7 && textureName.substr(0, 6) == "normal_")
+					//normalTextures[i] = tempTexture;
+				if (1)//else
 					animationTextures.push_back(tempTexture);
 			}
 			else
 			{
-				if (textureName.size() > 7 && textureName.substr(0, 7) == "normal_")
-					normalTextures[i] = animatorRsHook->getTexture(path + "/" + textureName);
-				else
+				//if (textureName.size() > 7 && textureName.substr(0, 7) == "normal_")
+					//normalTextures[i] = animatorRsHook->getTexture(path + "/" + textureName);
+				if (1) //else
 					animationTextures.push_back(animatorRsHook->getTexture(path + "/" + textureName));
 			}
 		}
@@ -504,10 +512,11 @@ sf::Texture* anim::DirtyAnimation::getTexture()
 }
 sf::Texture* anim::DirtyAnimation::getNormal()
 {
-	if (normalTextures.find(textureIndex) != normalTextures.end())
+	/*if (normalTextures.find(textureIndex) != normalTextures.end())
 		return normalTextures[textureIndex];
 	else
-		return nullptr;
+		return nullptr;*/
+	return nullptr;
 }
 sf::Texture* anim::DirtyAnimation::getTextureAtIndex(int index) 
 {
@@ -517,10 +526,11 @@ sf::Texture* anim::DirtyAnimation::getTextureAtIndex(int index)
 
 sf::Texture* anim::DirtyAnimation::getNormalAtIndex(int index)
 {
-	if (normalTextures.find(index) != normalTextures.end())
+	/*if (normalTextures.find(index) != normalTextures.end())
 		return normalTextures[index];
 	else
-		return nullptr;
+		return nullptr;*/
+	return nullptr;
 }
 
 //ANIMATOR

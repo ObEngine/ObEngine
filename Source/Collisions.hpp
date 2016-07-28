@@ -15,37 +15,12 @@ class GameObject;
 
 namespace Collision
 {
-	class Testy
-	{
-	private:
-		std::string id;
-	public:
-		Testy(std::string id)
-		{
-			this->id = id;
-		}
-		std::string getID()
-		{
-			return this->id;
-		}
-		void printAll(std::vector<Testy*> all, std::string suffix)
-		{
-			for (int i = 0; i < all.size(); i++)
-				std::cout << all[i]->getID() << suffix << std::endl;
-		}
-		std::vector<Testy*> getRandomTesty()
-		{
-			std::vector<Testy*> randoms;
-			for (int i = 0; i < 10; i++)
-				randoms.push_back(new Testy(std::to_string(i)));
-			return randoms;
-		}
-	};
 	void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w = 2, sf::Color col1 = sf::Color(255, 255, 255));
 	bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
 	double pointsDistance(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
 	std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points);
 	int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B);
+
 
 	class PolygonalCollider
 	{
@@ -81,7 +56,7 @@ namespace Collision
 			double getDistanceFromPoint(int nodeIndex, double x, double y);
 			int findClosestPoint(double x, double y, bool neighboor = false, std::vector<int> excludedNodes = std::vector<int>());
 			bool doesCollide(PolygonalCollider* other, double offsetX = 0, double offsetY = 0, bool mustBeSolid = true);
-			bool doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX = 0, int offsetY = 0, bool mustBeSolid = true);
+			bool doesPathCollide(std::vector<PolygonalCollider*> others, double offsetX = 0, double offsetY = 0, double toX = 0, double toY = 0, bool mustBeSolid = true);
 			int getSideContainingPoint(int x, int y);
 			bool isPointInBoundingBox(int x, int y);
 			int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
@@ -101,7 +76,7 @@ namespace Collision
 			GameObject* getParent();
 			void setParent(GameObject* parent);
 			Collision::PolygonalCollider joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other);
-			bool testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, int offx, int offy, bool opt = false);
+			bool testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy, bool opt = false);
 			//Debug
 			void draw(sf::RenderWindow* surf, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
 			void highlightPoint(int pointIndex);

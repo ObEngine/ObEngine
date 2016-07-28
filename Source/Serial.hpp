@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string>
 
+#include "Triggers.hpp"
+
 extern std::string arduinoBuffer;
 
 class Serial
@@ -18,6 +20,13 @@ class Serial
 		COMSTAT status;
 		DWORD errors;
 
+		char charSerialBuffer[4096] = "";
+		int dataLength = 4096;
+		std::string serialBuffer;
+		std::string currentSerialBuffer;
+		int serialBufferSignal = 0;
+		TriggerGroup* serialTriggers;
+
 	public:
 		Serial(const char *portName);
 		~Serial();
@@ -26,4 +35,5 @@ class Serial
 		std::string readData();
 		bool WriteData(char *buffer, unsigned int nbChar);
 		bool IsConnected();
+		void handleTriggers();
 };

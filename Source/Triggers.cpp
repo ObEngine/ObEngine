@@ -144,6 +144,11 @@ std::string TriggerGroup::getNamespace()
 	return fromNsp;
 }
 
+std::string TriggerGroup::getName()
+{
+	return triggerGroupName;
+}
+
 //TriggerDatabase
 TriggerDatabase::TriggerDatabase()
 {
@@ -229,6 +234,13 @@ TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std:
 		std::cout << "<Error:Triggers:TriggerDatabase>[joinTriggerGroup] : Custom Group Namespace : " << groupNamespace << " does not exists" << std::endl;
 	}
 	return nullptr;
+}
+void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
+{
+	std::cout << "Deleting : " << trgGroup->getNamespace() << "::" << trgGroup->getName() << std::endl;
+	allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());
+	delete trgGroup;
+	//If crash, fix it by removing delete Triggers from delayedTriggers
 }
 bool TriggerDatabase::doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName)
 {

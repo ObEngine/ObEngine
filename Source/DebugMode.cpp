@@ -22,8 +22,7 @@ void startDebugMode()
 	configFile.getAttribute("GameConfig", "", "scrollSensibility")->getData(&scrollSensitive);
 
 	//Cursor
-	Cursor cursor;
-	cursor.initialize(&window);
+	Cursor cursor(&window);
 	hookCore.dropValue("Cursor", &cursor);
 
 	//World Creation / Loading

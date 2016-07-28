@@ -59,10 +59,6 @@ void Character::verticalUpdate()
 		{
 			if (!collide( 0, -jumpInc*currentDeltaTime - 1))
 			{
-				std::cout << "Begin C++ Cycle" << std::endl;
-				std::cout << "Speed : " << -jumpInc << std::endl;
-				std::cout << "Dt : " << this->currentDeltaTime << std::endl;;
-				std::cout << "Adds : " << 0 << ", " << -jumpInc * currentDeltaTime << std::endl;
 				addDtPos(0, -jumpInc);
 				jumpInc -= currentDeltaTime;
 				jumpIterate++;

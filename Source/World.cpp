@@ -250,7 +250,7 @@ void World::loadFromFile(std::string filename)
 					mapParse.getAttribute("LevelObjects", allObjects[i], "posY")->getData(&objY);
 				this->getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
 			}
-			if (this->getGameObject(allObjects[i])->getCollider() != nullptr)
+			if (getGameObject(allObjects[i])->hasCollider)
 			{
 				this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
 			}
@@ -320,7 +320,6 @@ DataParser* World::saveData()
 	dataStore->createBaseAttribute("Meta", "", "SizeY", sizeY);
 	dataStore->createBaseAttribute("Meta", "", "StartX", startX);
 	dataStore->createBaseAttribute("Meta", "", "StartY", startY);
-	dataStore->createDataObject("Objects");
 	dataStore->createDataObject("LevelSprites");
 	for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 	{
@@ -365,7 +364,7 @@ DataParser* World::saveData()
 	dataStore->createDataObject("Collisions");
 	for (unsigned int i = 0; i < collidersArray.size(); i++)
 	{
-		if (collidersArray[i]->getParent() != nullptr)
+		if (collidersArray[i]->getParent() == nullptr)
 		{
 			dataStore->createComplexAttribute("Collisions", "", collidersArray[i]->getID());
 			dataStore->createListAttribute("Collisions", collidersArray[i]->getID(), "polygonPoints", "str");
@@ -404,7 +403,10 @@ void World::update(double dt)
 		this->gameSpeed = dt;
 		for (int i = 0; i < updateObjArray.size(); i++)
 		{
-			updateObjArray[i]->update(dt);
+			if (!updateObjArray[i]->deletable)
+				updateObjArray[i]->update(dt);
+			else
+				delete updateObjArray[i];
 		}
 		typedef std::map<std::string, Light::PointLight*>::iterator it_mspl;
 		for (it_mspl iterator = lightsMap.begin(); iterator != lightsMap.end(); iterator++)
@@ -673,7 +675,10 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	DataObject* gameObjectData = new DataObject("None");
 	if (type == "LevelObjects")
 	{
-		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd");
+		getGameObjectFile.parseFile("Data/" + type + "/" + obj + "/" + obj + ".obj.msd", true);
+		std::vector<std::string> alllll = getGameObjectFile.getAllDataObjects();
+		for (int i = 0; i < alllll.size(); i++)
+			std::cout << "Got DO : " << alllll[i] << std::endl;
 		gameObjectData = getGameObjectFile.accessDataObject(obj);
 		newGameObject->loadGameObject(gameObjectData);
 	}
@@ -687,7 +692,7 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	//Script Loading
 	newGameObject->scriptEngine->dofile("Data/GameScripts/ScrInit.lua");
 	if (type == "LevelObjects") newGameObject->scriptEngine->dofile("Data/GameScripts/LOInit.lua");
-	loadScrGameObjectLib(newGameObject, newGameObject->scriptEngine);
+	loadScrGameObject(newGameObject, newGameObject->scriptEngine);
 	(*newGameObject->scriptEngine)["ID"] = id;
 	(*newGameObject->scriptEngine)["Private"] = newGameObject->privateKey;
 	(*newGameObject->scriptEngine)["Public"] = newGameObject->publicKey;
@@ -700,6 +705,7 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 	newGameObject->localTriggers->addTrigger("Update");
 	newGameObject->localTriggers->setPermanent("Update", true);
 	newGameObject->localTriggers->setTriggerState("Update", true);
+	newGameObject->localTriggers->addTrigger("Query");
 	newGameObject->localTriggers->addTrigger("Collide");
 	newGameObject->localTriggers->addTrigger("Click");
 	newGameObject->localTriggers->addTrigger("Press");
@@ -721,10 +727,9 @@ GameObject* World::createGameObject(std::string id, std::string type, std::strin
 		if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
 			newGameObject->getLevelSprite()->setPosition(0, 0);
 	}
-	if (newGameObject->canCollide() || newGameObject->canClick())
+	if (newGameObject->hasCollider)
 	{
 		this->addCollider(newGameObject->getCollider());
-		newGameObject->getCollider()->setPosition(0, 0);
 	}
 	newGameObject->getLevelSprite()->setParent(newGameObject);
 	newGameObject->getCollider()->setParent(newGameObject);
@@ -1081,31 +1086,6 @@ void loadWorldScriptEngineBaseLib(kaguya::State* lua)
 	(*lua)["CPP_Import"] = &loadLib;
 	(*lua)["CPP_Hook"] = &loadHook;
 	loadWorldLib(lua);
-	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
-		.addMember("LevelSprite", &GameObject::getLevelSprite)
-		.addMember("Collider", &GameObject::getCollider)
-		.addMember("Animator", &GameObject::getAnimator)
-		.addMember("canCollide", &GameObject::canCollide)
-		.addMember("canClick", &GameObject::canClick)
-		.addMember("canDisplay", &GameObject::canDisplay)
-		.addMember("getInitialised", &GameObject::getInitialised)
-		.addMember("getPriority", &GameObject::getPriority)
-		.addMember("getPublicKey", &GameObject::getPublicKey)
-		.addMember("useLocalTrigger", &GameObject::useLocalTrigger)
-		.addMember("useExternalTrigger", &GameObject::useExternalTrigger)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<int>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<float>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::string>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<bool>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, int>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, float>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, std::string>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, bool>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, int>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, float>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, std::string>>)
-		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, bool>>)
-		.addMember("setInitialised", &GameObject::setInitialised)
-	);
+	loadScrGameObjectLib(lua);
 	(*lua)["This"] = lua;
 }

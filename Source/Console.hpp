@@ -18,6 +18,7 @@
 #include "Functions.hpp"
 #include "DataParser.hpp"
 #include "TimeManager.hpp"
+#include "Triggers.hpp"
 
 class Console
 {
@@ -106,4 +107,5 @@ class Console
 		std::vector<std::string> streamList;
 		std::vector<std::string> disabledStreams;
 		std::vector<Message*> consoleText;
+		TriggerGroup* consoleTriggers;
 };

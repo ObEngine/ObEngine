@@ -45,9 +45,9 @@ namespace fn
 		int randint(int min, int max);
 		double randfloat();
 		template <typename N>
-		int getMin(N min1, N min2);
+		N getMin(N min1, N min2);
 		template <typename N>
-		int getMax(N max1, N max2);
+		N getMax(N max1, N max2);
 		template <typename N>
 		bool isBetween(N target, N lowerBound, N upperBound);
 		bool isDoubleInt(double& value);
@@ -125,11 +125,11 @@ inline bool fn::Map::keyInMap(T item, std::map<T, U>& map) {
 
 //Functions::Math
 template <typename N>
-inline int fn::Math::getMin(N min1, N min2) {
+inline N fn::Math::getMin(N min1, N min2) {
 	return (min1 < min2) ? min1 : min2;
 }
 template <typename N>
-inline int fn::Math::getMax(N max1, N max2) {
+inline N fn::Math::getMax(N max1, N max2) {
 	return (max1 > max2) ? max1 : max2;
 }
 template <typename N>

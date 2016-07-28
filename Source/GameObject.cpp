@@ -5,10 +5,16 @@
 
 GameObject* mainGameObject;
 
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
+void loadScrGameObject(GameObject* obj, kaguya::State* lua)
 {
 	(*lua)["CPP_Import"] = &loadLibBridge;
 	(*lua)["CPP_Hook"] = &loadHookBridge;
+	loadScrGameObjectLib(lua);
+	(*lua)["This"] = obj;
+}
+
+void loadScrGameObjectLib(kaguya::State* lua)
+{
 	(*lua)["CPP_GameObject"].setClass(kaguya::ClassMetatable<GameObject>()
 		.addMember("LevelSprite", &GameObject::getLevelSprite)
 		.addMember("Collider", &GameObject::getCollider)
@@ -16,15 +22,37 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("canCollide", &GameObject::canCollide)
 		.addMember("canClick", &GameObject::canClick)
 		.addMember("canDisplay", &GameObject::canDisplay)
+		.addMember("delete", &GameObject::deleteObject)
+		.addMember("getID", &GameObject::getID)
 		.addMember("getInitialised", &GameObject::getInitialised)
 		.addMember("getPriority", &GameObject::getPriority)
 		.addMember("getPublicKey", &GameObject::getPublicKey)
 		.addMember("useLocalTrigger", &GameObject::useLocalTrigger)
 		.addMember("useExternalTrigger", &GameObject::useExternalTrigger)
+		.addMember("sendQuery", &GameObject::sendQuery<int>)
+		.addMember("sendQuery", &GameObject::sendQuery<float>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::string>)
+		.addMember("sendQuery", &GameObject::sendQuery<bool>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::vector<int>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::vector<float>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::vector<std::string>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::vector<bool>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<int, int>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<int, float>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<int, std::string>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<int, bool>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<std::string, int>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<std::string, float>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<std::string, std::string>>)
+		.addMember("sendQuery", &GameObject::sendQuery<std::map<std::string, bool>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<int>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<float>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::string>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<bool>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::vector<int>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::vector<float>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::vector<std::string>>)
+		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::vector<bool>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, int>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, float>>)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<int, std::string>>)
@@ -35,7 +63,6 @@ void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua)
 		.addMember("sendRequireArgument", &GameObject::sendRequireArgument<std::map<std::string, bool>>)
 		.addMember("setInitialised", &GameObject::setInitialised)
 	);
-	(*lua)["This"] = obj;
 }
 
 void loadLibBridge(GameObject* object, std::string lib)
@@ -159,6 +186,7 @@ void GameObject::update(double dt)
 				}
 				std::string funcname = useGrp + "." + registeredTriggers[i]->getName();
 				auto allParam = registeredTriggers[i]->getParameters();
+				queryCounter = 0;
 				(*this->scriptEngine)["cpp_param"] = kaguya::NewTable();
 				(*this->scriptEngine)["cpp_param"]["dt"] = dt;
 				for (auto it = allParam.begin(); it != allParam.end(); it++)
@@ -318,4 +346,9 @@ void GameObject::setInitialised(bool init)
 bool GameObject::getInitialised()
 {
 	return initialised;
+}
+
+void GameObject::deleteObject()
+{
+	this->deletable = true;
 }

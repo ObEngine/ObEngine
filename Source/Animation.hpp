@@ -58,6 +58,7 @@ namespace anim
 			std::map<std::string, sf::Texture*> textureDatabase;
 		public:
 			RessourceManager();
+			~RessourceManager();
 			sf::Texture* getTexture(std::string path);
 	};
 
@@ -119,11 +120,11 @@ namespace anim
 			int animationClock = 80;
 			bool noTextureReturned = true;
 			std::vector<sf::Texture*> animationTextures;
-			std::map<int, sf::Texture*> normalTextures;
 			sf::Texture* currentTexture;
 			RessourceManager* animatorRsHook;
 
 		public:
+			~DirtyAnimation();
 			void attachRessourceManager(RessourceManager* rsMan);
 			void deleteRessourceManager();
 			void setAnimationClock(int animClock);

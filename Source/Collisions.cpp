@@ -226,7 +226,7 @@ namespace Collision
 		
 		return (solution.size() >= 1);
 	}
-	bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX, int offsetY, bool mustBeSolid)
+	bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, double offsetX, double offsetY, double toX, double toY, bool mustBeSolid)
 	{
 		if (mustBeSolid)
 		{
@@ -239,10 +239,13 @@ namespace Collision
 			}
 			if (allImmaterial) return false;
 		}
+		std::cout << "Recv : Path Collider With AddTOXY : " << toX << "," << toY << std::endl;
 		Collision::PolygonalCollider projection(this->id + "_proj");
 		for (int i = 0; i < allPoints.size(); i++)
-			projection.addPoint(allPoints[i].first + offsetX, allPoints[i].second + offsetY);
+			projection.addPoint(allPoints[i].first + toX, allPoints[i].second + toY);
+		this->move(offsetX, offsetY);
 		Collision::PolygonalCollider fullPath = this->joinPolygonalColliders(this->id + "_path", &projection);
+		this->move(-offsetX, -offsetY);
 
 		ClipperLib::Clipper clipper;
 		clipper.AddPath(fullPath.getPath(), ClipperLib::ptSubject, true);
@@ -576,7 +579,7 @@ namespace Collision
 		return result;
 	}
 
-	bool Collision::PolygonalCollider::testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, int offx, int offy, bool opt)
+	bool Collision::PolygonalCollider::testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy, bool opt)
 	{
 		for (int i = 0; i < collidersList.size(); i++)
 		{

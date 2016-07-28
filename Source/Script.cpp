@@ -209,10 +209,10 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("deletePoint", &Collision::PolygonalCollider::deletePoint)
 			.addMember("doesCollide", &Collision::PolygonalCollider::doesCollide)
 			.addMember("doesPathCollide", &Collision::PolygonalCollider::doesPathCollide)
-			.addMember("findClosestNode", &Collision::PolygonalCollider::findClosestPoint)
+			.addMember("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
+			.addMember("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
 			.addMember("getID", &Collision::PolygonalCollider::getID)
 			.addMember("getMasterPointCoordinates", &Collision::PolygonalCollider::getMasterPointCoordinates)
-			.addMember("getNodeDistance", &Collision::PolygonalCollider::getDistanceFromPoint)
 			.addMember("getPath", &Collision::PolygonalCollider::getPath)
 			.addMember("getPointCoordinates", &Collision::PolygonalCollider::getPointCoordinates)
 			.addMember("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
@@ -237,12 +237,6 @@ void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("setSelected", &Collision::PolygonalCollider::setSelected)
 			.addMember("setSolid", &Collision::PolygonalCollider::setSolid)
 			.addMember("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
-		);
-		(*lua)["Core"]["Collision"]["Testy"].setClass(kaguya::ClassMetatable<Collision::Testy>()
-			.addConstructor<std::string>()
-			.addMember("getID", &Collision::Testy::getID)
-			.addMember("getRandomTesty", &Collision::Testy::getRandomTesty)
-			.addMember("printAll", &Collision::Testy::printAll)
 		);
 		foundPart = true;
 	}
@@ -285,7 +279,7 @@ void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 	if (importAll || args[1] == "Message")
 	{
 		(*lua)["Core"]["Console"]["Message"].setClass(kaguya::ClassMetatable<Console::Message>()
-			.addMember("getFormattedMessage", &Console::Message::getFormatedMessage)
+			.addMember("getFormatedMessage", &Console::Message::getFormatedMessage)
 			.addMember("getHeader", &Console::Message::getHeader)
 			.addMember("getMessage", &Console::Message::getMessage)
 			.addMember("getR", &Console::Message::getR)
@@ -511,7 +505,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "TextInput")
 	{
-		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput>()
+		(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::ClassMetatable<GUI::TextInput, GUI::Widget>()
 			.addMember("addFilter", &GUI::TextInput::addFilter)
 			.addMember("getText", &GUI::TextInput::getText)
 			.addMember("setText", &GUI::TextInput::setText)
@@ -523,7 +517,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 	}
 	if (importAll || args[1] == "Label")
 	{
-		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label>()
+		(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::ClassMetatable<GUI::Label, GUI::Widget>()
 			.addMember("resetFontVars", &GUI::Label::resetFontVars)
 			.addMember("setFont", &GUI::Label::setFont)
 			.addMember("setText", &GUI::Label::setText)
@@ -552,6 +546,7 @@ void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 			.addMember("getDisplayed", &GUI::WidgetContainer::getDisplayed)
 			.addMember("addScrollBar", &GUI::WidgetContainer::addScrollBar)
 			);
+		foundPart = true;
 	}
 	if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadGUI] : Can't import : " << fn::Vector::join(args, ".") << std::endl;
 }

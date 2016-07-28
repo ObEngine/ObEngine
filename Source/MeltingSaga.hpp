@@ -14,3 +14,4 @@
 #include "MapEditor.hpp"
 #include "DebugMode.hpp"
 #include "Menu.hpp"
+#include "Toolkit.hpp"

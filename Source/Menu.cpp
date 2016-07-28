@@ -59,9 +59,8 @@ std::string chooseMapMenu()
 	mapsContainer->addScrollBar();
 	std::cout << "All maps Added" << std::endl;
 
-	Cursor curs;
-	curs.initialize(&window);
-	curs.selectCursor("RoundWhite");
+	Cursor cursor(&window);
+	cursor.selectCursor("RoundWhite");
 	std::cout << "Cursor Init" << std::endl;
 
 	sf::Font font;
@@ -108,14 +107,14 @@ std::string chooseMapMenu()
 		}
 
 		gui.updateAllContainer();
-		curs.update();
+		cursor.update();
 		if (*appQuitBool == GUI::ButtonEvent::Pressed) { window.close(); }
 
 		window.clear(sf::Color(40, 40, 40));
 		window.draw(windowBorder);
 		gui.drawAllContainer(&window);
 		window.draw(linetop, 2, sf::Lines);
-		window.draw(*curs.getSprite());
+		window.draw(*cursor.getSprite());
 		window.display();
 	}
 	std::cout << currentChosenMap << std::endl;

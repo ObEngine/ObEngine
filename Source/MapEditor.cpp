@@ -315,8 +315,8 @@ void MapEditor::editMap(std::string mapName)
 	std::cout << "Creation Chrono : " << "[Config]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 	
 	//Cursor
-	Cursor cursor;
-	cursor.initialize(&window);
+	Cursor cursor(&window);
+	cursor.updateOutsideWindow(true);
 	hookCore.dropValue("Cursor", &cursor);
 	std::cout << "Creation Chrono : " << "[Cursor]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
@@ -338,20 +338,14 @@ void MapEditor::editMap(std::string mapName)
 		world.setBlurMul(0.0);
 	std::cout << "Creation Chrono : " << "[World]" << getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = getTickSinceEpoch();
 
-	//Serial (TO DELETE)
+	//Serial
 	std::string serialPort = "";
-	Serial* serial = nullptr;
 	if (configFile.attributeExists("Developpement", "", "COMM"))
 		configFile.getAttribute("Developpement", "", "COMM")->getData(&serialPort);
-	if (serialPort != "")
-		serial = new Serial(serialPort.c_str());
-	char charArduinoBuffer[10] = "";
-	int dataLength = 10;
-	std::string arduinoBuffer;
-	std::string currentArduinoBuffer;
-	int arduinoBufferSignal = 0;
-	TriggerGroup* arduinoTriggers = triggerDatabaseCore.createTriggerGroup("Map", "Arduino")
-		->addTrigger("SignalChanged");
+	Serial serial(serialPort.c_str());
+
+	//Socket
+	NetworkHandler networkHandler;
 
 	//Keybinding
 	KeyBinder keybind = KeyBinder();
@@ -484,15 +478,6 @@ void MapEditor::editMap(std::string mapName)
 	//Game Starts
 	while (window.isOpen())
 	{
-		arduinoBufferSignal = serial->ReadData(charArduinoBuffer, dataLength);
-		std::string currentArduinoBuffer = fn::String::replaceString(std::string(charArduinoBuffer), "\n", "");
-		currentArduinoBuffer = fn::String::cutBeforeAsciiCode(currentArduinoBuffer, 13);
-		if (arduinoBufferSignal != 0 && currentArduinoBuffer != "" && currentArduinoBuffer != arduinoBuffer)
-		{
-			arduinoBuffer = currentArduinoBuffer;
-			arduinoTriggers->pushParameter("SignalChanged", "value", arduinoBuffer);
-			arduinoTriggers->enableTrigger("SignalChanged");
-		}
 		//DeltaTime
 		sfDeltaTime = deltaClock.restart();
 		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
@@ -970,6 +955,12 @@ void MapEditor::editMap(std::string mapName)
 		gameConsole.update();
 		if (drawFPS) fps.tick();
 
+		//Triggers Handling
+		networkHandler.handleTriggers();
+		serial.handleTriggers();
+		cursor.handleTriggers();
+		keybind.handleTriggers();
+
 		if (*isGridEnabled)
 		{
 			editorGrid.setOffsetX(-world.getCamX());
@@ -1120,7 +1111,6 @@ void MapEditor::editMap(std::string mapName)
 			window.display();
 		}
 	}
-	delete serial;
 	delete gui;
 	window.close();
 }

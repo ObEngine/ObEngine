@@ -150,8 +150,6 @@ void KeyBinder::setEnabled(bool state)
 
 void KeyBinder::update()
 {
-	std::vector<std::string> releasedAction;
-	std::vector<std::string> toggledAction;
 	if (binderEnabled)
 	{
 		typedef std::map<std::string, std::string>::iterator it_type;
@@ -166,7 +164,17 @@ void KeyBinder::update()
 					actionDelayer[iterator->first] = 0;
 				}
 			}
-		}
+		}	
+	}
+}
+
+void KeyBinder::handleTriggers()
+{
+	if (binderEnabled)
+	{
+		typedef std::map<std::string, std::string>::iterator it_type;
+		std::vector<std::string> releasedAction;
+		std::vector<std::string> toggledAction;
 		for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++)
 		{
 			if (isActionToggled(iterator->first))
@@ -174,7 +182,7 @@ void KeyBinder::update()
 			if (isActionReleased(iterator->first))
 				releasedAction.push_back(iterator->first);
 		}
-		
+
 		if (releasedAction.size() >= 1)
 		{
 			keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedAction);
@@ -185,7 +193,6 @@ void KeyBinder::update()
 			keysTriggers->pushParameter("ActionToggled", "ToggledActions", toggledAction);
 			keysTriggers->enableTrigger("ActionToggled");
 		}
-			
 	}
 }
 

@@ -40,6 +40,8 @@ class GameObject
 		bool initialised = false;
 		bool updated = true;
 
+		int queryCounter = 0;
+
 		GameObject(std::string type, std::string id);
 		void registerTrigger(Trigger* trg);
 		void loadGameObject(DataObject* obj);
@@ -69,10 +71,16 @@ class GameObject
 		void setInitialised(bool init);
 		bool getInitialised();
 		template <typename U>
+		void sendQuery(U query);
+		template <typename U>
 		void sendRequireArgument(std::string argName, U value);
+
+		void deleteObject();
+		bool deletable = false;
 };
 
-void loadScrGameObjectLib(GameObject* obj, kaguya::State* lua);
+void loadScrGameObject(GameObject* obj, kaguya::State* lua);
+void loadScrGameObjectLib(kaguya::State* lua);
 bool orderScrPriority(GameObject* g1, GameObject* g2);
 void loadLibBridge(GameObject* object, std::string lib);
 void loadHookBridge(GameObject* object, std::string hookname);
@@ -81,4 +89,15 @@ template<typename U>
 inline void GameObject::sendRequireArgument(std::string argName, U value)
 {
 	(*this->scriptEngine)["Lua_ReqList"][argName] = value;
+}
+
+template<typename U>
+inline void GameObject::sendQuery(U query)
+{
+	if (fn::Vector::isInList(localTriggers->getTrigger("Query"), registeredTriggers))
+	{
+		localTriggers->pushParameter("Query", std::to_string(queryCounter), query);
+		localTriggers->setTriggerState("Query", true);
+		queryCounter++;
+	}
 }

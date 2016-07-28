@@ -10,6 +10,13 @@ Console::Console()
 	scrEngineStream = this->createStream("ScriptEngine", true);
 	scrErrorStream = this->createStream("ScriptError", true);
 	scrErrorStream->setColor(255, 0, 0);
+	consoleTriggers = triggerDatabaseCore.createTriggerGroup("Global", "Console")
+		->addTrigger("UserInput")
+		->addTrigger("CursorMoved")
+		->addTrigger("ConsoleScrolled")
+		->addTrigger("NewMessage")
+		->addTrigger("ConsoleToggled")
+		->addTrigger("NewStream");
 }
 
 void Console::scroll(int power)
@@ -36,6 +43,8 @@ Console::Stream* Console::createStream(std::string streamName, bool enabled)
 	streamList.push_back(streamName);
 	if (!enabled)
 		disabledStreams.push_back(streamName);
+	/*consoleTriggers->pushParameter("NewStream", "StreamName", streamName);
+	consoleTriggers->pushParameter("NewStream", "Enabled", enabled);*/
 	return streamMap[streamName];
 }
 
