@@ -406,7 +406,13 @@ void World::update(double dt)
 			if (!updateObjArray[i]->deletable)
 				updateObjArray[i]->update(dt);
 			else
-				delete updateObjArray[i];
+			{
+				if (updateObjArray[i]->hasAnimator)
+					this->deleteCollision(updateObjArray[i]->getCollider(), false);
+				if (updateObjArray[i]->hasLevelSprite)
+					this->deleteSprite(updateObjArray[i]->getLevelSprite(), false);
+				updateObjArray.erase(updateObjArray.begin() + i);
+			}
 		}
 		typedef std::map<std::string, Light::PointLight*>::iterator it_mspl;
 		for (it_mspl iterator = lightsMap.begin(); iterator != lightsMap.end(); iterator++)
@@ -918,6 +924,11 @@ LevelSprite* World::getSpriteByID(std::string ID)
 	return NULL;
 }
 
+void World::deleteSpriteByID(std::string sprID, bool freeMemory)
+{
+	this->deleteSprite(this->getSpriteByID(sprID), freeMemory);
+}
+
 void World::deleteSprite(LevelSprite* decoToDelete, bool freeMemory)
 {
 	if (decoToDelete->getLayer() > 0)
@@ -1001,17 +1012,21 @@ std::vector<Collision::PolygonalCollider*> World::getAllCollidersByCollision(Col
 	return returnVec;
 }
 
-void World::deleteCollisionByID(std::string id)
+void World::deleteCollisionByID(std::string id, bool freeMemory)
+{
+	this->deleteCollision(this->getCollisionByID(id), freeMemory);
+}
+
+void World::deleteCollision(Collision::PolygonalCollider* colToDelete, bool freeMemory)
 {
 	int indexToDelete;
 	for (unsigned int i = 0; i < collidersArray.size(); i++)
 	{
-		if (id == collidersArray[i]->getID())
-		{
+		if (colToDelete == collidersArray[i])
 			indexToDelete = i;
-		}
 	}
-	delete(collidersArray[indexToDelete]);
+	if (freeMemory)
+		delete(collidersArray[indexToDelete]);
 	collidersArray.erase(collidersArray.begin() + indexToDelete);
 }
 

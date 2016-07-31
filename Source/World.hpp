@@ -97,6 +97,7 @@ class World
 		std::vector<LevelSprite*> getSpritesByLayer(int layer);
 		LevelSprite* getSpriteByPos(int x, int y, int layer);
 		LevelSprite* getSpriteByID(std::string ID);
+		void deleteSpriteByID(std::string sprID, bool freeMemory = true);
 		void deleteSprite(LevelSprite* sprToDelete, bool freeMemory = true);
 		//Colliders
 		std::vector<Collision::PolygonalCollider*> getColliders();
@@ -105,7 +106,8 @@ class World
 		Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
 		Collision::PolygonalCollider* getCollisionByID(std::string id);
 		std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
-		void deleteCollisionByID(std::string id);
+		void deleteCollisionByID(std::string id, bool freeMemory = true);
+		void deleteCollision(Collision::PolygonalCollider* colToDelete, bool freeMemory = true);
 		void createCollisionAtPos(int x, int y);
 		void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
 		//Other
