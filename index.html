@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>MeltingSagaEngine by Mizugola</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">MeltingSagaEngine</h1>
+      <h2 class="project-tagline">2D Platformer with a lot of RPG elements made with C++ and SFML !</h2>
+      <a href="https://github.com/Mizugola/MeltingSagaEngine" class="btn">View on GitHub</a>
+      <a href="https://github.com/Mizugola/MeltingSagaEngine/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Mizugola/MeltingSagaEngine/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="melting-saga-engine" class="anchor" href="#melting-saga-engine" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Melting Saga Engine</h1>
+
+<h2>
+<a id="what-the-hell-is-melting-saga-engine-" class="anchor" href="#what-the-hell-is-melting-saga-engine-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What the hell is Melting Saga Engine ?</h2>
+
+<p>Melting Saga Engine (MSE is shorter) is a 2D Game Engine made on the top of SFML !</p>
+
+<h2>
+<a id="what-do-i-need-to-build-it-" class="anchor" href="#what-do-i-need-to-build-it-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What do I need to build it ?</h2>
+
+<p>You will need several libs :</p>
+
+<ul>
+<li>
+<a href="http://www.sfml-dev.org/download/sfml/2.3/index-fr.php">SFML 2.3</a> (Display, Keys, Network, and much more)</li>
+<li>
+<a href="https://github.com/satoren/kaguya">Kaguya</a> (Lua Binding)</li>
+<li>
+<a href="http://lua-users.org/wiki/LuaBinaries">Lua 5.3</a> (Scripting language)</li>
+<li>
+<a href="https://sourceforge.net/projects/polyclipping/files/">ClipperLib</a> (Polygonal Intersection Resolution)</li>
+</ul>
+
+<h2>
+<a id="could-you-give-an-example-of-what-i-can-do-with-your-engine-" class="anchor" href="#could-you-give-an-example-of-what-i-can-do-with-your-engine-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Could you give an example of what I can do with your engine ?</h2>
+
+<p>Well, you can do approximatively everything with it as long as it's in 2D. MSE doesn't handle 3D.
+You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..</p>
+
+<h2>
+<a id="is-it-free-" class="anchor" href="#is-it-free-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Is it free ?</h2>
+
+<p>Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
+You can also modify the sources.
+There's no need to write somewhere that your game is made with MSE (but it's nice if you do it !)</p>
+
+<h2>
+<a id="give-me-some-interesting-features" class="anchor" href="#give-me-some-interesting-features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Give me some interesting features</h2>
+
+<p>Here you go :</p>
+
+<ul>
+<li>Neat map editor (With a grid for precise map edition)</li>
+<li>Spritesheet animations (with tiny animation language)</li>
+<li>Skeletal animations (Planned)</li>
+<li>Light system</li>
+<li>Particles</li>
+<li>Normal maps (Planned)</li>
+<li>Lua scripting (Object oriented with a full events system)</li>
+<li>Object-oriented</li>
+<li>VisualNovel system included</li>
+<li>Infinite amount of layers with optional parallax</li>
+<li>Mathematical expressions parsing</li>
+<li>Home-made data language</li>
+<li>Polygonal Collisions with full collision detection support</li>
+<li>Developpement console with coloration and scripting support</li>
+<li>Customizable cursor (whoa)</li>
+<li>Serial and Network events support</li>
+<li>Trajectory system (and you can even create your owns)</li>
+<li>DeltaTime handling</li>
+</ul>
+
+<h2>
+<a id="right-can-i-have-several-object-scripting-examples-now-" class="anchor" href="#right-can-i-have-several-object-scripting-examples-now-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Right, can I have several object scripting examples now ?</h2>
+
+<p>Sure, here are some simple objects :</p>
+
+<h3>
+<a id="examples-using-console-" class="anchor" href="#examples-using-console-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples using console :</h3>
+
+<h4>
+<a id="hello-world-object" class="anchor" href="#hello-world-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hello-World object</h4>
+
+<p>This one is really simple, it just prints "Hello World" in the console (not the game console)</p>
+
+<div class="highlight highlight-source-lua"><pre>This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Init<span class="pl-pds">"</span></span>); <span class="pl-c">-- Tells the engine that this object will execute Local.Init when created</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Init</span>() <span class="pl-c">-- Called when object is created</span>
+  <span class="pl-c1">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World<span class="pl-pds">"</span></span>);
+<span class="pl-k">end</span></pre></div>
+
+<h4>
+<a id="hello-world-in-game-console" class="anchor" href="#hello-world-in-game-console" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hello-World in game console</h4>
+
+<p>Does exactly the same thing than the first one except that it prints "Hello World" in the game console (F1 to open console)</p>
+
+<div class="highlight highlight-source-lua"><pre><span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.Console<span class="pl-pds">"</span></span>) <span class="pl-c">-- Import Console API from C++</span>
+
+<span class="pl-c1">GetHook</span>(<span class="pl-s"><span class="pl-pds">"</span>Console<span class="pl-pds">"</span></span>); <span class="pl-c">-- Place the Game's Console pointer in Hook.Console</span>
+
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Init<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Init</span>()
+  <span class="pl-c">-- Create a new stream for the console named "HelloWorld", the "true" means the stream is directly enabled</span>
+  <span class="pl-k">local</span> consoleStream <span class="pl-k">=</span> Hook.<span class="pl-smi">Console</span>:<span class="pl-c1">createStream</span>(<span class="pl-s"><span class="pl-pds">"</span>HelloWorld<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>);
+  <span class="pl-c">-- Write "Hello World" in the game console in red using the stream (5th parameter is alpha)</span>
+  consoleStream:<span class="pl-c1">write</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World<span class="pl-pds">"</span></span>, <span class="pl-c1">255</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">255</span>);
+<span class="pl-k">end</span></pre></div>
+
+<h4>
+<a id="rainbow-hello-world" class="anchor" href="#rainbow-hello-world" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rainbow Hello-World</h4>
+
+<p>Same thing that the one before except that we will change the color of the text at every frame !</p>
+
+<div class="highlight highlight-source-lua"><pre><span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.Console<span class="pl-pds">"</span></span>);
+
+<span class="pl-c1">GetHook</span>(<span class="pl-s"><span class="pl-pds">"</span>Console<span class="pl-pds">"</span></span>);
+
+<span class="pl-c1">math.randomseed</span>(<span class="pl-c1">os.time</span>()); <span class="pl-c">-- Random seed for when we'll use math.random()</span>
+
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Init<span class="pl-pds">"</span></span>);
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Update<span class="pl-pds">"</span></span>); Tells the engine that this object will execute Local.<span class="pl-smi">Update</span> every frame
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Init</span>()
+  <span class="pl-k">local</span> consoleStream <span class="pl-k">=</span> Hook.<span class="pl-smi">Console</span>:<span class="pl-c1">createStream</span>(<span class="pl-s"><span class="pl-pds">"</span>HelloWorld<span class="pl-pds">"</span></span>, <span class="pl-c1">true</span>);
+  <span class="pl-c">-- We start with the white color (255, 255, 255), the line is stored in helloWorldMessage</span>
+  helloWorldMessage <span class="pl-k">=</span> consoleStream:<span class="pl-c1">write</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World Rainbow !<span class="pl-pds">"</span></span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>);
+<span class="pl-k">end</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Update</span>() <span class="pl-c">-- This will be called at every frame</span>
+  <span class="pl-k">local</span> r <span class="pl-k">=</span> <span class="pl-c1">math.random</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>); <span class="pl-c">-- Red composant</span>
+  <span class="pl-k">local</span> g <span class="pl-k">=</span> <span class="pl-c1">math.random</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>); <span class="pl-c">-- Green composant</span>
+  <span class="pl-k">local</span> b <span class="pl-k">=</span> <span class="pl-c1">math.random</span>(<span class="pl-c1">0</span>, <span class="pl-c1">255</span>); <span class="pl-c">-- Blue composant</span>
+  helloWorldMessage:<span class="pl-c1">setColor</span>(r, g, b); <span class="pl-c">-- Change the color of the whole line</span>
+<span class="pl-k">end</span></pre></div>
+
+<h3>
+<a id="examples-with-levelsprites" class="anchor" href="#examples-with-levelsprites" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples with LevelSprites</h3>
+
+<p>Every LevelObject can have a LevelSprite associated (it's cooler when your object appears in the game right ?).</p>
+
+<h4>
+<a id="rotating-goat" class="anchor" href="#rotating-goat" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rotating goat</h4>
+
+<p>Let's imagine you want to create a rotating goat in your game, no problem :</p>
+
+<div class="highlight highlight-source-lua"><pre><span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.LevelSprite<span class="pl-pds">"</span></span>); <span class="pl-c">-- C++ API for LevelSprites</span>
+<span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.Animation.Animator<span class="pl-pds">"</span></span>); <span class="pl-c">-- C++ API for Animations (but just the Animator)</span>
+
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Init<span class="pl-pds">"</span></span>);
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Update<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Init</span>()
+  <span class="pl-c">-- Set the animation for when the goat is flying to the right (You can imagine it already right ?)</span>
+  This:<span class="pl-c1">Animator</span>():<span class="pl-c1">setKey</span>(<span class="pl-s"><span class="pl-pds">"</span>GOAT_FLYING_LEFT<span class="pl-pds">"</span></span>);
+  This:<span class="pl-c1">setInitialised</span>(<span class="pl-c1">true</span>); <span class="pl-c">-- You need this line for every object that is visible in-game</span>
+<span class="pl-k">end</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Update</span>(<span class="pl-smi">P</span>) <span class="pl-c">-- P is a table that contains every events parameters (here parameters for update)</span>
+  This:<span class="pl-c1">LevelSprite</span>():<span class="pl-c1">rotate</span>(P.<span class="pl-smi">dt</span> <span class="pl-k">*</span> <span class="pl-c1">45</span>); <span class="pl-c">-- Rotate of 45 degrees each second (You multiply with the DeltaTime here)</span>
+<span class="pl-k">end</span></pre></div>
+
+<h3>
+<a id="examples-with-colliders" class="anchor" href="#examples-with-colliders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples with Colliders</h3>
+
+<p>Every LevelObject can also have a Collider (solid or not).</p>
+
+<h4>
+<a id="a-simple-door" class="anchor" href="#a-simple-door" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A simple door</h4>
+
+<p>This is a simple door that you can open or close when you click it</p>
+
+<div class="highlight highlight-source-lua"><pre>Door <span class="pl-k">=</span> {} <span class="pl-c">-- You create a table to place Door's function in</span>
+
+<span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.Animation.Animator<span class="pl-pds">"</span></span>);
+<span class="pl-c1">Import</span>(<span class="pl-s"><span class="pl-pds">"</span>Core.Collision<span class="pl-pds">"</span></span>);
+
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Init<span class="pl-pds">"</span></span>);
+<span class="pl-c">-- Tells the engine that this object will execute Local.Click everytime the Collider is clicked</span>
+This:<span class="pl-c1">useLocalTrigger</span>(<span class="pl-s"><span class="pl-pds">"</span>Click<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Init</span>()
+    This:<span class="pl-c1">Animator</span>():<span class="pl-c1">setKey</span>(<span class="pl-s"><span class="pl-pds">"</span>Close<span class="pl-pds">"</span></span>);
+    opened <span class="pl-k">=</span> <span class="pl-c1">false</span>;
+    This:<span class="pl-c1">setInitialised</span>(<span class="pl-c1">true</span>);
+<span class="pl-k">end</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Door.</span><span class="pl-en">Open</span>()
+    This:<span class="pl-c1">Animator</span>():<span class="pl-c1">setKey</span>(<span class="pl-s"><span class="pl-pds">"</span>Open<span class="pl-pds">"</span></span>);
+    This:<span class="pl-c1">Collider</span>():<span class="pl-c1">setSolid</span>(<span class="pl-c1">false</span>); <span class="pl-c">-- Makes the character able to pass through the door</span>
+    opened <span class="pl-k">=</span> <span class="pl-c1">true</span>;
+<span class="pl-k">end</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Door.</span><span class="pl-en">Close</span>()
+    This:<span class="pl-c1">Animator</span>():<span class="pl-c1">setKey</span>(<span class="pl-s"><span class="pl-pds">"</span>Close<span class="pl-pds">"</span></span>);
+    This:<span class="pl-c1">Collider</span>():<span class="pl-c1">setSolid</span>(<span class="pl-c1">true</span>); <span class="pl-c">-- Makes the collider solid (no one can pass through)</span>
+    opened <span class="pl-k">=</span> <span class="pl-c1">false</span>;
+<span class="pl-k">end</span>
+
+<span class="pl-k">function</span> <span class="pl-en">Local.</span><span class="pl-en">Click</span>() <span class="pl-c">-- Called when the object's collider is clicked</span>
+    <span class="pl-k">if</span> opened <span class="pl-k">then</span> Door.<span class="pl-c1">Close</span>();
+    <span class="pl-k">else</span> Door.<span class="pl-c1">Open</span>();
+    <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>Official website : <a href="https://www.meltingsaga.xyz">https://www.meltingsaga.xyz</a>
+Please check <a href="https://www.meltingsaga.xyz/doc">https://www.meltingsaga.xyz/doc</a> for some documentation.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Mizugola/MeltingSagaEngine">MeltingSagaEngine</a> is maintained by <a href="https://github.com/Mizugola">Mizugola</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
