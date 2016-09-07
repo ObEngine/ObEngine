@@ -79,7 +79,7 @@ GetHook("Console");
 math.randomseed(os.time()); -- Random seed for when we'll use math.random()
 
 This:useLocalTrigger("Init");
-This:useLocalTrigger("Update"); Tells the engine that this object will execute Local.Update every frame
+This:useLocalTrigger("Update"); -- Tells the engine that this object will execute Local.Update every frame
 
 function Local.Init()
   local consoleStream = Hook.Console:createStream("HelloWorld", true);
