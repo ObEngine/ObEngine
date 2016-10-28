@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv)
 {
-	fn::Run::Parser runParser(argv, argc);
+	mse::Functions::Run::Parser runParser(argv, argc);
 	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
 
 	//Sauvegarde du log dans log.txt
@@ -13,24 +13,62 @@ int main(int argc, char** argv)
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
-	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
+	mse::Data::DataParser workspaceConfig;
+	workspaceConfig.parseFile("Workspace/workspace.cfg.msd");
+	workspaceConfig.hookNavigator(new mse::Data::DataParserNavigator())->setCurrentDataObject("Workspace");
+	if (workspaceConfig.attributeExists("current"))
+	{
+		if (workspaceConfig.complexExists(workspaceConfig.getAttribute("current")->get<std::string>()))
+		{
+			workspaceConfig.accessNavigator()->setCurrentPath(workspaceConfig.getAttribute("current")->get<std::string>());
+			if (workspaceConfig.attributeExists("path"))
+			{
+				std::string workspacePath = workspaceConfig.getAttribute("path")->get<std::string>();
+				mse::System::Path::basePaths.push_back("Workspace/" + workspacePath);
+				workspaceConfig.accessNavigator()->setCurrentDataObject("Workspace");
+				std::cout << "<System> Mounting Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << " : " << workspacePath << std::endl;
+			}
+			else
+			{
+				workspaceConfig.accessNavigator()->setCurrentDataObject("Workspace");
+				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << " doesn't have a path defined" << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << "doesn't exists" << std::endl;
+		}
+	}
+	std::cout << "<System> Mounting Path : /" << std::endl;
+	mse::System::Path::basePaths.push_back("");
 
 	if (runParser.getArgumentValue("-mode") == "edit")
 	{
-		fn::Coord::width = 640; fn::Coord::height = 480;
-		fn::Coord::baseWidth = 640; fn::Coord::baseHeight = 480;
-		std::string editMapName = chooseMapMenu();
-		fn::Coord::width = sf::VideoMode::getDesktopMode().width;  fn::Coord::height = sf::VideoMode::getDesktopMode().height;
-		fn::Coord::baseWidth = 1920; fn::Coord::baseHeight = 1080;
+		mse::Functions::Coord::width = 640; mse::Functions::Coord::height = 480;
+		mse::Functions::Coord::baseWidth = 640; mse::Functions::Coord::baseHeight = 480;
+		std::string editMapName = mse::Modes::chooseMapMenu();
+		mse::Functions::Coord::width = sf::VideoMode::getDesktopMode().width;  mse::Functions::Coord::height = sf::VideoMode::getDesktopMode().height;
+		mse::Functions::Coord::baseWidth = 1920; mse::Functions::Coord::baseHeight = 1080;
+		std::cout << "Editing : " << editMapName << std::endl;
 		if (editMapName != "")
-			MapEditor::editMap(editMapName);
+			mse::Editor::editMap(editMapName);
 	}
 	else if (runParser.getArgumentValue("-mode") == "play")
-		startGame("poly2.map.msd");
+		mse::Modes::startGame("poly2.map.msd");
 	else if (runParser.getArgumentValue("-mode") == "console")
-		startDebugMode();
+		mse::Modes::startDebugMode();
 	else if (runParser.getArgumentValue("-mode") == "toolkit")
-		startToolkitMode();
+		mse::Modes::startToolkitMode();
+	else
+	{
+		mse::Functions::Coord::width = 640; mse::Functions::Coord::height = 480;
+		mse::Functions::Coord::baseWidth = 640; mse::Functions::Coord::baseHeight = 480;
+		std::string editMapName = mse::Modes::chooseMapMenu();
+		mse::Functions::Coord::width = sf::VideoMode::getDesktopMode().width;  mse::Functions::Coord::height = sf::VideoMode::getDesktopMode().height;
+		mse::Functions::Coord::baseWidth = 1920; mse::Functions::Coord::baseHeight = 1080;
+		if (editMapName != "")
+			mse::Editor::editMap(editMapName);
+	}
 	
 	return 0;
 }

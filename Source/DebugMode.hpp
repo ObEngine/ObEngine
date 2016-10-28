@@ -6,4 +6,10 @@
 #include "Console.hpp"
 #include "World.hpp"
 
-void startDebugMode();
+namespace mse
+{
+	namespace Modes
+	{
+		void startDebugMode();
+	}
+}

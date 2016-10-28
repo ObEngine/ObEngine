@@ -19,7 +19,6 @@
 #include "Cursor.hpp"
 #include "KeyBind.hpp"
 #include "GUI.hpp"
-#include "HUD.hpp"
 #include "Dialog.hpp"
 #include "Particle.hpp"
 #include "Console.hpp"
@@ -32,44 +31,12 @@
 #include "EditorGrid.hpp"
 #include "Serial.hpp"
 #include "Network.hpp"
+#include "MapEditorTools.hpp"
 
-namespace MapEditor
+namespace mse
 {
-	class SpriteFile
+	namespace Editor
 	{
-		private:
-			std::string name;
-			sf::Texture texture;
-			sf::Font font;
-		public:
-			SpriteFile(std::string name, sf::Font font);
-			std::string getName();
-			void render(sf::RenderTexture* rtexture);
-			sf::Texture getTexture();
-	};
-
-	class SpriteFolder
-	{
-		private:
-			std::string category;
-			std::string name;
-			std::string folderIcon;
-			sf::Texture texture;
-			sf::Sprite sprite;
-			sf::Font font;
-			std::vector<SpriteFile*> sprList;
-		public:
-			SpriteFolder(std::string category, std::string name, std::string folderIcon, sf::Font font);
-			void pushSprite(SpriteFile* spr);
-			std::vector<SpriteFile*>* getSpriteList();
-			void render(sf::RenderTexture* rtexture);
-			sf::Sprite* getSprite();
-			sf::Texture getTexture();
-	};
-
-	void loadSpriteTab(std::string geid);
-	void buildAddSpriteFolderList();
-	void displayAddSpriteFolderList();
-	void addSpriteToWorld(std::string geid);
-	void editMap(std::string mapName);
+		void editMap(std::string mapName);
+	}
 }

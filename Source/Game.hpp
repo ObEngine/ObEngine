@@ -17,8 +17,13 @@
 #include "Cursor.hpp"
 #include "KeyBind.hpp"
 #include "GUI.hpp"
-#include "HUD.hpp"
 #include "Console.hpp"
 #include "TimeManager.hpp"
 
-void startGame(std::string mapName);
+namespace mse
+{
+	namespace Modes
+	{
+		void startGame(std::string mapName);
+	}
+}

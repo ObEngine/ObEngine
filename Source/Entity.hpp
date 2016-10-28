@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <Windows.h>
 
 #include "Functions.hpp"
 #include "Animation.hpp"
@@ -23,10 +22,10 @@ class Entity
 		std::string entityType;
 		double x;
 		double y;
-		anim::Animator entityAnimator;
+		mse::Animation::Animator entityAnimator;
 		sf::Sprite* entitySprite;
-		Collision::PolygonalCollider* entityCollider;
-		std::vector<Collision::PolygonalCollider*>* collidersList;
+		mse::Collision::PolygonalCollider* entityCollider;
+		std::vector<mse::Collision::PolygonalCollider*>* collidersList;
 		int worldCamX = 0;
 		int worldCamY = 0;
 		int life = 100;
@@ -39,8 +38,8 @@ class Entity
 		double getY(); //Renvoie absoluteY
 		void draw(sf::RenderWindow* surf);
 		void update(); //Mise a jour de l'Entity
-		Collision::PolygonalCollider* getEntityCollider();
-		void setColliders(std::vector<Collision::PolygonalCollider*>* collideList); //Modifie les colliders internes
+		mse::Collision::PolygonalCollider* getEntityCollider();
+		void setColliders(std::vector<mse::Collision::PolygonalCollider*>* collideList); //Modifie les colliders internes
 		void setColliderDrawOffset(int x, int y);
 		bool collide(int tx, int ty);
 		void getCamPos(int camX, int camY);

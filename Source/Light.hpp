@@ -8,91 +8,94 @@
 
 #include "MathExp.hpp"
 
-namespace Light
+namespace mse
 {
-	void initLights();
-
-	class PointLight
+	namespace Light
 	{
-		protected:
-			std::string id;
-			static sf::RectangleShape rtTex;
-			sf::Shader* shader;
-			sf::RenderStates states;
-			double offX, offY;
-			double x, y;
-			double size;
-			double r, g, b, a;
-			bool behind = true;
-			bool visible = true;
+		void initLights();
 
-			void checkColors();
-		public:
-			PointLight(std::string id, sf::Vector2f screenSize, sf::Vector2f position, double size, sf::Color color, bool behind = false);
-			PointLight(std::string id, int screenSizeX, int screenSizeY, int x, int y, double size, int r, int g, int b, int a, bool behind = false);
+		class PointLight
+		{
+			protected:
+				std::string id;
+				static sf::RectangleShape rtTex;
+				sf::Shader* shader;
+				sf::RenderStates states;
+				double offX, offY;
+				double x, y;
+				double size;
+				double r, g, b, a;
+				bool behind = true;
+				bool visible = true;
 
-			std::string getID();
-			void draw(sf::RenderWindow* surf);
-			void setPosition(double x, double y);
-			void move(double x, double y);
-			void setOffset(double x, double y);
-			void setSize(double size);
-			void scale(double size);
-			void setColor(int r, int g, int b, int a);
-			void addColor(int r, int g, int b, int a);
-			void subColor(int r, int g, int b, int a);
-			void blendColor(double rB, double gB, double bB, double aB);
-			void setBehind(bool behind);
-			
-			void show();
-			void hide();
-			void setVisible(bool state);
-			bool isVisible();
+				void checkColors();
+			public:
+				PointLight(std::string id, sf::Vector2f screenSize, sf::Vector2f position, double size, sf::Color color, bool behind = false);
+				PointLight(std::string id, int screenSizeX, int screenSizeY, int x, int y, double size, int r, int g, int b, int a, bool behind = false);
 
-			sf::Vector2f getPosition();
-			double getX();
-			double getY();
-			double getSize();
+				std::string getID();
+				void draw(sf::RenderWindow* surf);
+				void setPosition(double x, double y);
+				void move(double x, double y);
+				void setOffset(double x, double y);
+				void setSize(double size);
+				void scale(double size);
+				void setColor(int r, int g, int b, int a);
+				void addColor(int r, int g, int b, int a);
+				void subColor(int r, int g, int b, int a);
+				void blendColor(double rB, double gB, double bB, double aB);
+				void setBehind(bool behind);
 
-			sf::Color getColor();
-			double getR();
-			double getG();
-			double getB();
-			double getA();
-			bool isBehind();
+				void show();
+				void hide();
+				void setVisible(bool state);
+				bool isVisible();
 
-			double* getX_p();
-			double* getY_p();
-			double* getSize_P();
-			double* getR_P();
-			double* getG_P();
-			double* getB_P();
-			double* getA_P();
+				sf::Vector2f getPosition();
+				double getX();
+				double getY();
+				double getSize();
 
-			virtual std::string getType();
+				sf::Color getColor();
+				double getR();
+				double getG();
+				double getB();
+				double getA();
+				bool isBehind();
 
-			void updateShader();
+				double* getX_p();
+				double* getY_p();
+				double* getSize_P();
+				double* getR_P();
+				double* getG_P();
+				double* getB_P();
+				double* getA_P();
 
-			friend void initLights();
-	};
+				virtual std::string getType();
 
-	class DynamicPointLight : public MathExpObject, public PointLight
-	{
-		public:
-			DynamicPointLight(std::string id, sf::Vector2f screenSize, double precision);
-			DynamicPointLight(std::string id, int screenSizeX, int screenSizeY, double precision);
-			void setSizeExp(std::string size);
-			void setRExp(std::string r);
-			void setGExp(std::string g);
-			void setBExp(std::string b);
-			void setAExp(std::string a);
-			void setOffsetXExp(std::string x);
-			void setOffsetYExp(std::string y);
+				void updateShader();
 
-			virtual std::string getType();
+				friend void initLights();
+		};
 
-			void updateLight();
+		class DynamicPointLight : public Math::MathExpObject, public PointLight
+		{
+			public:
+				DynamicPointLight(std::string id, sf::Vector2f screenSize, double precision);
+				DynamicPointLight(std::string id, int screenSizeX, int screenSizeY, double precision);
+				void setSizeExp(std::string size);
+				void setRExp(std::string r);
+				void setGExp(std::string g);
+				void setBExp(std::string b);
+				void setAExp(std::string a);
+				void setOffsetXExp(std::string x);
+				void setOffsetYExp(std::string y);
 
-			friend void initLights();
-	};
+				virtual std::string getType();
+
+				void updateLight();
+
+				friend void initLights();
+		};
+	}
 }

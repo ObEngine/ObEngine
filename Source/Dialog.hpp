@@ -13,62 +13,69 @@
 #include "Functions.hpp"
 #include "Animation.hpp"
 #include "TimeManager.hpp"
+#include "PathResolver.hpp"
 
-extern sf::RenderTexture renTex;
-
-enum RendererState
+namespace mse
 {
-	FadeIn = 0x001,
-	Draw = 0x002,
-	FadeOut = 0x003,
-	End = 0x004
-};
+	namespace Graphics
+	{
+		extern sf::RenderTexture renTex;
 
-class Renderer
-{
-	protected:
-		std::map<std::string, emorph::any> locals;
-		std::vector<std::map<std::string, std::string>> vtdb;
-		int fadeState = 0;
-	public:
-		std::string name;
-		virtual void load() = 0;
-		virtual void unload() = 0;
-		virtual void render() = 0;
-		virtual void draw(sf::RenderWindow* surf) = 0;
-		virtual void fadeIn(sf::RenderWindow* surf);
-		virtual void fadeOut(sf::RenderWindow* surf);
-		virtual void update(double dt);
-		void setFadeState(int state);
-		int getFadeState();
-		void addTDB(std::map<std::string, std::string> tdb);
-};
+		enum RendererState
+		{
+			FadeIn = 0x001,
+			Draw = 0x002,
+			FadeOut = 0x003,
+			End = 0x004
+		};
 
-class TextRenderer
-{
-	private:
-		std::map<std::string, Renderer*> rendererDB;
-		std::vector<std::string> rendererCalls;
-		Renderer* currentRenderer;
-		bool needToRender = true;
+		class Renderer
+		{
+			protected:
+				std::map<std::string, Types::any> locals;
+				std::vector<std::map<std::string, std::string>> vtdb;
+				int fadeState = 0;
+			public:
+				std::string name;
+				virtual void load() = 0;
+				virtual void unload() = 0;
+				virtual void render() = 0;
+				virtual void draw(sf::RenderWindow* surf) = 0;
+				virtual void fadeIn(sf::RenderWindow* surf);
+				virtual void fadeOut(sf::RenderWindow* surf);
+				virtual void update(double dt);
+				void setFadeState(int state);
+				int getFadeState();
+				void addTDB(std::map<std::string, std::string> tdb);
+		};
 
-	public:
-		TextRenderer();
-		void createRenderer(std::string rendererType, std::string id);
-		void sendToRenderer(std::string id, std::map<std::string, std::string> tdb);
-		bool textRemaining();
-		void next();
-		void update(double dt);
-		void render(sf::RenderWindow* surf);
-};
+		class TextRenderer
+		{
+			private:
+				std::map<std::string, Renderer*> rendererDB;
+				std::vector<std::string> rendererCalls;
+				Renderer* currentRenderer;
+				bool needToRender = true;
 
-namespace Renderers
-{
-	class VisualNovel : public Renderer { 
-		void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); 
-	};
-	class Shade : public Renderer { 
-		void load(); void unload(); void render(); void draw(sf::RenderWindow* surf); 
-		void fadeOut(sf::RenderWindow* surf); void update(double dt); 
-	};
+			public:
+				TextRenderer();
+				void createRenderer(std::string rendererType, std::string id);
+				void sendToRenderer(std::string id, std::map<std::string, std::string> tdb);
+				bool textRemaining();
+				void next();
+				void update(double dt);
+				void render(sf::RenderWindow* surf);
+		};
+
+		namespace Renderers
+		{
+			class VisualNovel : public Renderer {
+				void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
+			};
+			class Shade : public Renderer {
+				void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
+				void fadeOut(sf::RenderWindow* surf); void update(double dt);
+			};
+		}
+	}
 }

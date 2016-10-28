@@ -24,7 +24,7 @@ void GUI::Widget::autoLoad()
 	{
 		std::string textureGUIPath = "Sprites/GUI/" + widgetType + "/" + widgetStyle;
 		std::cout << "Loading textures : " << textureGUIPath << std::endl;
-		std::vector<std::string> listFile = fn::File::listFileInDir(textureGUIPath);
+		std::vector<std::string> listFile = mse::Functions::File::listFileInDir(textureGUIPath);
 		for (int i = 0; i < listFile.size(); i++)
 		{
 			if (!texture.loadFromFile(textureGUIPath + "/" + listFile[i]))
@@ -63,9 +63,9 @@ GUI::Widget::Widget(std::string ID, int posX, int posY, std::string style)
 	this->mapWidgets[ID] = this;
 	this->vectWidgets.push_back(this);
 
-	this->attributes = new DataObject(ID);
-	attributes->createComplexAttribute(convertPath(""), this->ID);
-	attributes->createBaseAttribute(convertPath(ID), "style", "str", this->widgetStyle);
+	this->attributes = new mse::Data::DataObject(ID);
+	attributes->createComplexAttribute(mse::Data::convertPath(""), this->ID);
+	attributes->createBaseAttribute(mse::Data::convertPath(ID), "style", "str", this->widgetStyle);
 	createAttribute("posX", (this->posX[0]), "float");
 	createAttribute("posY", (this->posY[0]), "float");
 	createAttribute("displayed", displayed, "bool");
@@ -388,7 +388,7 @@ std::string GUI::Widget::getID()
 	return ID;
 }
 
-DataObject* GUI::Widget::getDataObject()
+mse::Data::DataObject* GUI::Widget::getDataObject()
 {
 	return attributes;
 }
@@ -1230,7 +1230,7 @@ GUI::LoadingBar::LoadingBar(std::string ID, int posX, int posY, std::string fill
 	this->TopBotBordersHeight = TopBotBordersHeight;
 	selector.push_back(Display::Sprite);
 	selector.push_back(Display::Sprite);
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 void GUI::LoadingBar::setTexture()
@@ -1352,7 +1352,7 @@ GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minH
 	scroller->setMovementConstraints(false, true);
 	
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLinked, std::string style) : Widget(ID, posX, posY, style)
@@ -1376,7 +1376,7 @@ GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minH
 	scroller->setMovementConstraints(false, true);
 
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 void GUI::ScrollBar::setTexture()
@@ -1659,7 +1659,7 @@ GUI::Label::Label(std::string ID, int posX, int posY, std::string font, int font
 	selector.push_back(Display::Text);
 	this->text[0] = sfe::RichText(this->font);
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 
 	createAttribute("text", this->labelText, "string");
 	createAttribute("font", fontString, "string");
@@ -1697,19 +1697,19 @@ void GUI::Label::setComplexText(std::string complexText)
 	text[0].clear();
 	sf::Color currColor = sf::Color::Black;
 	sf::Text::Style currStyle = sf::Text::Regular;
-	std::vector<std::string> markups = fn::String::extractBetween(complexText, '<', '>');
-	fn::String::removeCharFromString(complexText, "<");
-	std::vector<std::string> texts = fn::String::split(complexText, ">");
+	std::vector<std::string> markups = mse::Functions::String::extractBetween(complexText, '<', '>');
+	mse::Functions::String::removeCharFromString(complexText, "<");
+	std::vector<std::string> texts = mse::Functions::String::split(complexText, ">");
 
 	for (int i = 0; i < markups.size(); i++)
 	{
-		std::vector<std::string> splitMarkups = fn::String::split(markups[i], ";");
+		std::vector<std::string> splitMarkups = mse::Functions::String::split(markups[i], ";");
 		for (int j = 0; j < splitMarkups.size(); j++)
 		{
-			std::vector<std::string> splitProp = fn::String::split(splitMarkups[j], ":");
+			std::vector<std::string> splitProp = mse::Functions::String::split(splitMarkups[j], ":");
 			if (splitProp[0] == "color")
 			{
-				std::vector<std::string> splitColor = fn::String::split(splitProp[1], ",");
+				std::vector<std::string> splitColor = mse::Functions::String::split(splitProp[1], ",");
 				if (splitColor.size() == 4)
 					currColor = sf::Color(std::stoi(splitColor[0]), std::stoi(splitColor[1]), std::stoi(splitColor[2]), std::stoi(splitColor[3]));
 				else if(splitColor.size() == 3)
@@ -1717,7 +1717,7 @@ void GUI::Label::setComplexText(std::string complexText)
 			}
 			else if (splitProp[0] == "style")
 			{
-				std::vector<std::string> splitProp = fn::String::split(splitMarkups[j], ":");
+				std::vector<std::string> splitProp = mse::Functions::String::split(splitMarkups[j], ":");
 				if(splitProp[1] == "regular")
 				{
 					currStyle = sf::Text::Regular;
@@ -1972,7 +1972,7 @@ GUI::Checkbox::Checkbox(std::string ID, int posX, int posY, std::string style, b
 	previousValue = checked;
 	selector.push_back(Display::Sprite);
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 	createAttribute("checked", this->checked, "bool");
 }
 
@@ -2003,7 +2003,7 @@ GUI::Droplist::Droplist(std::string ID, int posX, int posY, int charSize, bool d
 	this->hover = fontColorHover;
 	this->charSize = charSize;
 
-	attributes->createBaseAttribute(convertPath(ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(ID), "type", "str", widgetType);
 
 	buttons.resize(this->list.size());
 
@@ -2028,7 +2028,7 @@ GUI::Droplist::Droplist(std::string ID, int posX, int posY, bool dropListMenu, s
 	this->widgetType = "Droplist";
 	this->droplistMenu = droplistMenu;
 	this->buttons = buttons;
-	attributes->createBaseAttribute(convertPath(ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(ID), "type", "str", widgetType);
 	for (int i = 0; i < this->buttons.size(); i++)
 	{
 		buttons[i]->updatePosContainer(posContainerX, posContainerY);
@@ -2398,7 +2398,7 @@ GUI::Dropbox::Dropbox(std::string ID, int posX, int posY, std::string style) : W
 {
 	this->widgetType = "Dropbox";
 	selector.push_back(GUI::Display::Sprite);
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 void GUI::Dropbox::setTexture()
@@ -2455,7 +2455,7 @@ GUI::Movable::Movable(std::string ID, int posX, int posY, std::string style) : W
 	this->needContainer = false;
 	selector.push_back(GUI::Display::Sprite);
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 GUI::Movable::Movable(std::string ID, Dropbox* container, int marginLeftContainer, int marginTopContainer, std::string style) : Widget(ID, container->getRelativePosX() + marginLeftContainer, container->getRelativePosY() + marginTopContainer, style)
@@ -2468,7 +2468,7 @@ GUI::Movable::Movable(std::string ID, Dropbox* container, int marginLeftContaine
 	this->currentContainer = container;
 	selector.push_back(GUI::Display::Sprite);
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 }
 
 
@@ -2846,7 +2846,7 @@ GUI::Button::Button(std::string ID, int posX, int posY, std::string style, bool 
 	this->nameImageIdle = "idle.png";
 	this->nameImageHover = "hover.png";
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 	createAttribute("pushingEnable", this->pushingEnable, "bool");
 	createAttribute("hoveringEnable", this->hoveringEnable, "bool");
 
@@ -2901,7 +2901,7 @@ void GUI::Button::setLabelText(GUI::Label* text)
 	if (hasText)
 	{
 		buttonLabel->removeWidget();
-		attributes->deleteComplexAttribute(convertPath(ID), "containedItem", true);
+		attributes->deleteComplexAttribute(mse::Data::convertPath(ID), "containedItem", true);
 	}
 
 	buttonLabel = text;
@@ -3412,7 +3412,7 @@ GUI::RadioButton::RadioButton(std::string ID, int posX, int posY, std::string va
 	this->group = group;
 	this->value = value;
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 
 	createAttribute("value", this->value, "string");
 	createAttribute("group", this->group, "string");
@@ -3636,7 +3636,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	charToMove.setStyle(sf::Text::Regular);
 	charToMove.setPosition(0, 0);
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 
 	//createAttribute("Text", this->inputText, "string");
 
@@ -3651,7 +3651,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	}
 	else
 	{
-		std::vector<std::string> stringSplit = fn::String::split(defaultText, "\n");
+		std::vector<std::string> stringSplit = mse::Functions::String::split(defaultText, "\n");
 		for (int i = 0; i < stringSplit.size(); i++)
 		{
 			labelText.push_back(new Label(ID + "text" + std::to_string(i), 0, 0, stringSplit[i], font, fontSize, fontColor, sf::Text::Regular));
@@ -3683,7 +3683,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string style,
 
 	//this->inputText = text->getString();
 
-	attributes->createBaseAttribute(convertPath(this->ID), "type", "str", widgetType);
+	attributes->createBaseAttribute(mse::Data::convertPath(this->ID), "type", "str", widgetType);
 	//createAttribute("Text", this->inputText, "string");
 
 	labelText.push_back(text);
@@ -3777,7 +3777,7 @@ void GUI::TextInput::updateTextPositionX()
 		textLarger = false;
 		for (int i = 0; i < labelText.size(); i++)
 		{
-			fn::String::replaceStringInPlace(lines[i], "\n", "");
+			mse::Functions::String::replaceStringInPlace(lines[i], "\n", "");
 			labelText[i]->setText(lines[i], fontColor);
 
 			std::string toKeep = "";
@@ -3851,7 +3851,7 @@ void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 
 int GUI::TextInput::interlineSum(int interline, int line)
 {
-	std::vector<std::string> splittedLines = fn::String::split(lines[line], "\n");
+	std::vector<std::string> splittedLines = mse::Functions::String::split(lines[line], "\n");
 	int sum = 0;
 	for (int i = 0; i < interline; i++)
 	{
@@ -3891,8 +3891,6 @@ bool GUI::TextInput::checkFilters(int c)
 
 void GUI::TextInput::moveCursorRight()
 {
-	std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
-
 	if (!isMultiLine)
 	{
 		if (cursorPosition < lines[0].size() && lines[0].size() >= 1)
@@ -3904,10 +3902,10 @@ void GUI::TextInput::moveCursorRight()
 	}
 	else
 	{
-		if (cursorPosition < lines[cursorLine].size() - (fn::String::split(lines[cursorLine]).size() - 1))
+		if (cursorPosition < lines[cursorLine].size() - (mse::Functions::String::split(lines[cursorLine]).size() - 1))
 		{
-			std::cout << "oui" << lines[cursorLine][cursorPosition + currentInterline] << "oui" << fn::String::split(lines[cursorLine], "\n").size() << " " << lines[cursorLine] << std::endl;
-			if (lines[cursorLine][cursorPosition + currentInterline] == '\n' && currentInterline < fn::String::split(lines[cursorLine], "\n").size() - 1)
+			std::cout << "oui" << lines[cursorLine][cursorPosition + currentInterline] << "oui" << mse::Functions::String::split(lines[cursorLine], "\n").size() << " " << lines[cursorLine] << std::endl;
+			if (lines[cursorLine][cursorPosition + currentInterline] == '\n' && currentInterline < mse::Functions::String::split(lines[cursorLine], "\n").size() - 1)
 			{
 				cursorPosition++;
 				currentInterline++;
@@ -3916,7 +3914,7 @@ void GUI::TextInput::moveCursorRight()
 			}
 			else
 			{
-				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offsetStr = mse::Functions::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
 					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
@@ -3972,7 +3970,7 @@ void GUI::TextInput::moveCursorLeft()
 		{
 			if (lines[cursorLine][cursorPosition] == '\n' && currentInterline > 0 && !isEndInterline())//pb ici avec le \n
 			{
-				std::vector<std::string> offX = fn::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offX = mse::Functions::String::split(lines[cursorLine], "\n");
 				charToMove.setString(offX[currentInterline - 1]);
 				std::cout << "changing interline (left)" << std::endl;
 				cursorPosition--;
@@ -3980,7 +3978,7 @@ void GUI::TextInput::moveCursorLeft()
 			}
 			else
 			{
-				std::vector<std::string> offsetStr = fn::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offsetStr = mse::Functions::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
 				{
@@ -4012,7 +4010,7 @@ void GUI::TextInput::moveCursorLeft()
 		}
 		else if (cursorLine > 0)
 		{
-			std::vector<std::string> offsetX = fn::String::split(lines[cursorLine - 1], "\n");
+			std::vector<std::string> offsetX = mse::Functions::String::split(lines[cursorLine - 1], "\n");
 			cursorPosition = lines[cursorLine - 1].size() - (offsetX.size() - 1);
 			cursorLine--;
 			currentInterline = offsetX.size() - 1;
@@ -4032,7 +4030,7 @@ void GUI::TextInput::moveCursorTop()
 	if (isMultiLine)
 	{
 		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
-		std::vector<std::string> split = fn::String::split(lines[cursorLine], "\n");
+		std::vector<std::string> split = mse::Functions::String::split(lines[cursorLine], "\n");
 
 		if(currentInterline > 0)
 		{
@@ -4052,7 +4050,7 @@ void GUI::TextInput::moveCursorTop()
 			}
 			std::cout << "going on previous interline (was maybe longer)" << std::endl;
 
-			currentInterline = static_cast<int>(fn::String::split(lines[cursorLine - 1], "\n").size()) - 1;
+			currentInterline = static_cast<int>(mse::Functions::String::split(lines[cursorLine - 1], "\n").size()) - 1;
 			cursorPosition += interlineSum(currentInterline, cursorLine - 1);
 			cursorLine--;
 		}
@@ -4068,7 +4066,7 @@ void GUI::TextInput::moveCursorBot()
 	if (isMultiLine)
 	{
 		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
-		std::vector<std::string> split = fn::String::split(lines[cursorLine], "\n");
+		std::vector<std::string> split = mse::Functions::String::split(lines[cursorLine], "\n");
 		if (split.size() > currentInterline + 1)
 			{
 				if (cursorPosition - interlineSum(currentInterline, cursorLine) > split[currentInterline + 1].size())
@@ -4124,7 +4122,7 @@ void GUI::TextInput::moveCursorBot()
 
 void GUI::TextInput::computeOffsetX()
 {
-	std::vector<std::string> str = fn::String::split(lines[cursorLine], "\n");
+	std::vector<std::string> str = mse::Functions::String::split(lines[cursorLine], "\n");
 	std::cout << "K°DICJN " << interlineSum(currentInterline, cursorLine) << std::endl;
 	std::string s;
 	if (cursorPosition == 0 && cursorLine == 0 && currentInterline == 0)
@@ -4145,7 +4143,7 @@ void GUI::TextInput::computeOffsetY()
 	int countInterlines = 0;
 	for (int i = 0; i < cursorLine; i++)
 	{
-		countInterlines += fn::String::split(lines[i], "\n").size() - 1;
+		countInterlines += mse::Functions::String::split(lines[i], "\n").size() - 1;
 	}
 	currentCursorOffsetY = (currentInterline + countInterlines + cursorLine) * shapes[0]->getGlobalBounds().height;
 }
@@ -4156,7 +4154,7 @@ bool GUI::TextInput::isEndInterline()
 	int pos = cursorPosition - sum - currentInterline;
 	std::cout << "sum " << sum << std::endl;
 	std::cout << "cursorPos " << pos << std::endl;
-	int lineSize = fn::String::split(lines[cursorLine], "\n")[currentInterline].size();
+	int lineSize = mse::Functions::String::split(lines[cursorLine], "\n")[currentInterline].size();
 	std::cout << "lineSize " << lineSize << std::endl;
 
 	return pos == lineSize;
@@ -4305,7 +4303,7 @@ void GUI::TextInput::updateTexture(sf::Event& evnt)
 
 void GUI::TextInput::addCharacter(std::string c)
 {
-	//if(currentInterline < fn::String::split(lines[cursorLine], "\n").size())
+	//if(currentInterline < Functions::String::split(lines[cursorLine], "\n").size())
 	std::cout << "insertB "<< lines[cursorLine].size() << " " << cursorPosition + currentInterline << std::endl;
 
 	if (cursorPosition + currentInterline >= lines[cursorLine].size())
@@ -4368,7 +4366,7 @@ void GUI::TextInput::setText(std::string string)
 {
 	if (isMultiLine)
 	{
-		std::vector<std::string> split = fn::String::split(string, "\n");
+		std::vector<std::string> split = mse::Functions::String::split(string, "\n");
 
 		for (int i = 0; i <= labelText.size(); i++)
 		{
@@ -4408,7 +4406,7 @@ std::string GUI::TextInput::getText()
 		std::vector<std::string> vectStr = lines;
 		for (int i = 0; i < lines.size(); i++)
 		{
-			fn::String::replaceStringInPlace(vectStr[i], "\n", "");
+			mse::Functions::String::replaceStringInPlace(vectStr[i], "\n", "");
 			str += vectStr[i] + "\n";
 		}
 		return str;
@@ -4432,7 +4430,7 @@ GUI::Container::Container(sf::Event* evnt, sf::RenderWindow* window, int windowW
 GUI::WidgetContainer* GUI::Container::createWidgetContainer(std::string containerName, int layer, int posX, int posY, int width,\
 	int height, GUI::ContainerMovement movable, int widthControlBar, int heightControleBar)
 {
-	if (layer > widContainers.size() && widContainers.size() != 0)
+	/*if (layer > widContainers.size() && widContainers.size() != 0)
 	{
 		layer = widContainers.size() + 1;
 	}
@@ -4443,14 +4441,17 @@ GUI::WidgetContainer* GUI::Container::createWidgetContainer(std::string containe
 	else if (layer < 1)
 	{
 		layer = 1;
-	}
+	}*/
 	WidgetContainer* newWidgetContainer = new WidgetContainer(containerName, posX, posY, width, height, movable, widthControlBar, heightControleBar, this->evnt);
+	newWidgetContainer->setLayer(layer);
 	widgetContainers[containerName] = newWidgetContainer;
 
-	if (layer - 1 == 0)
+	/*if (layer - 1 == 0)
 		widContainers.push_back(newWidgetContainer);
 	else
-		widContainers.insert(widContainers.begin() + layer - 1, newWidgetContainer);
+		widContainers.insert(widContainers.begin() + layer - 1, newWidgetContainer);*/
+	widContainers.push_back(newWidgetContainer);
+	this->reorganizeContainers();
 
 	return newWidgetContainer;
 }
@@ -4466,6 +4467,16 @@ void GUI::WidgetContainer::addScrollBar()
 	scroll->setPosition(width - scroll->getRect().width, 0);
 }
 
+int GUI::WidgetContainer::getLayer()
+{
+	return layer;
+}
+
+void GUI::WidgetContainer::setLayer(int layer)
+{
+	this->layer = layer;
+}
+
 sf::Rect<float> GUI::WidgetContainer::getRect()
 {
 	sf::Rect<float> rect = sf::Rect<float>(posX, posY, width, height);
@@ -4479,7 +4490,10 @@ bool GUI::WidgetContainer::getDisplayed()
 
 GUI::WidgetContainer* GUI::Container::getContainerByContainerName(std::string containerName)
 {
-	return widgetContainers[containerName];
+	if (widgetContainers.find(containerName) != widgetContainers.end())
+		return widgetContainers[containerName];
+	else
+		return nullptr;
 }
 
 void GUI::Container::drawContainer(std::string containerName, sf::RenderWindow *GUI)
@@ -4673,7 +4687,7 @@ void GUI::Container::setWindowSize(int windowWidth, int windowHeight)
 void GUI::Container::loadWidgetContainerFromFile(std::string filename, int posX, int posY)
 {
 	WidgetContainer* newWContainer = createWidgetContainer(filename, 1, posX, posY, 0, 0, GUI::ContainerMovement::Fixed);
-	DataParser data;
+	mse::Data::DataParser data;
 
 	data.parseFile(filename);
 	std::vector<std::string> dataObj = data.getAllDataObjects();
@@ -4683,14 +4697,12 @@ void GUI::Container::loadWidgetContainerFromFile(std::string filename, int posX,
 	}
 }
 
-GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, DataParser* data, bool isContained)
+GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, mse::Data::DataParser* data, bool isContained)
 {
-	std::string getType;
-	ComplexAttribute* widget = data->accessDataObject(dataObject)->getComplexAttribute(convertPath(path), name);
+	mse::Data::ComplexAttribute* widget = data->accessDataObject(dataObject)->getComplexAttribute(mse::Data::convertPath(path), name);
 	int posX, posY;
 	bool displayed;
-	std::string style;
-	widget->getAttribute("style")->getData(&style);
+	std::string style = widget->getAttribute("style")->get<std::string>();
 
 	std::map<std::string, float> attributesFloat;
 	std::map<std::string, int> attributesInt;
@@ -4698,7 +4710,7 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	std::map<std::string, bool> attributesBool;
 
 	loadAttributes(widget, attributesInt, attributesFloat, attributesString, attributesBool);
-	widget->getAttribute("type")->getData(&getType);
+	std::string getType = widget->getAttribute("type")->get<std::string>();
 	if (getType == "Checkbox")
 	{
 		this->createCheckbox(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], style, attributesBool["checked"]);
@@ -4735,7 +4747,7 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 		Label* label = NULL;
 		if (widget->complexExists("containedItem"))
 		{
-			ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+			mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
 			label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplex()[0], path + "/" + name + "/" + "containedItem", data, true));
 			hasText = true;
 		}
@@ -4766,7 +4778,7 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	{
 		if (widget->complexExists("containedItem"))
 		{
-			ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+			mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
 			std::vector<std::string> buttonsComplex = containedItems->getAllComplex();
 			std::vector<Button*> buttons;
 			for (int i = 0; i < buttonsComplex.size(); i++)
@@ -4780,7 +4792,7 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	else if (getType == "TextInput")
 	{
 		Label* label;
-		ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+		mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
 		label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplex()[0], path + "/" + name + "/" + "containedItem", data, true));
 		this->createTextInput(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], label, style);
 	}
@@ -4798,50 +4810,58 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	return NULL;
 }
 
+void GUI::Container::reorganizeContainers()
+{
+	bool noChange = false;
+	while (noChange == false)
+	{
+		noChange = true;
+		for (unsigned int i = 0; i < widContainers.size(); i++)
+		{
+			if (i != widContainers.size() - 1)
+			{
+				if (widContainers[i]->getLayer() < widContainers[i + 1]->getLayer())
+				{
+					std::swap(widContainers[i], widContainers[i + 1]);
+					noChange = false;
+				}
+			}
+		}
+	}
+}
 
-void GUI::Container::loadAttributes(ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool)
+void GUI::Container::loadAttributes(mse::Data::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool)
 {
 	std::vector<std::string> attributes = widget->getAllComplex();
 	for (std::vector<std::string>::iterator ite = attributes.begin(); ite != attributes.end(); ite++)
 	{
 		if (*ite != "containedItem")
 		{
-			std::string type;
-			ComplexAttribute* attribute = widget->getComplexAttribute(*ite);
-			attribute->getAttribute("type")->getData(&type);
+			mse::Data::ComplexAttribute* attribute = widget->getComplexAttribute(*ite);
+			std::string type = attribute->getAttribute("type")->get<std::string>();
 			if (type == "int")
-			{
-				attribute->getAttribute("value")->getData(&attributesInt[*ite]);
-			}
+				attributesInt[*ite] = attribute->getAttribute("value")->get<int>();
 			else if (type == "float")
-			{
-				double inter;
-				attribute->getAttribute("value")->getData(&inter);
-				attributesFloat[*ite] = inter;
-			}
+				attributesFloat[*ite] = attribute->getAttribute("value")->get<double>();
 			else if (type == "bool")
-			{
-				attribute->getAttribute("value")->getData(&attributesBool[*ite]);
-			}
+				attributesBool[*ite] = attribute->getAttribute("value")->get<bool>();
 			else if (type == "string")
-			{
-				attribute->getAttribute("value")->getData(&attributesString[*ite]);
-			}
+				attributesString[*ite] = attribute->getAttribute("value")->get<std::string>();
 		}
 	}
 }
 
-void GUI::Container::loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, ComplexAttribute* widget)
+void GUI::Container::loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, mse::Data::ComplexAttribute* widget)
 {
-	widget->getAttribute("style")->getData(style);
-	widget->getComplexAttribute("posX")->getAttribute("value")->getData(posX);
-	widget->getComplexAttribute("posY")->getAttribute("value")->getData(posY);
-	widget->getComplexAttribute("displayed")->getAttribute("value")->getData(displayed);
+	*style = widget->getAttribute("style")->get<std::string>();
+	*posX = widget->getComplexAttribute("posX")->getAttribute("value")->get<double>();
+	*posY = widget->getComplexAttribute("posY")->getAttribute("value")->get<double>();
+	*displayed = widget->getComplexAttribute("displayed")->getAttribute("value")->get<bool>();
 }
 
 void GUI::Container::loadWidContFromFileInWidCont(std::string filename, std::string widgetContainer)
 {
-	DataParser data;
+	mse::Data::DataParser data;
 	data.parseFile(filename);
 	std::vector<std::string> dataObj = data.getAllDataObjects();
 	for (auto ite = dataObj.begin(); ite != dataObj.end(); ite++)
@@ -4852,26 +4872,26 @@ void GUI::Container::loadWidContFromFileInWidCont(std::string filename, std::str
 
 int convertByWidth(int value)
 {
-	return value;//static_cast<double>(GUI::windowWidth) / (fn::Coord::baseWidth) * value;
+	return value;//static_cast<double>(GUI::windowWidth) / (Functions::Coord::baseWidth) * value;
 
-	//return static_cast<double>(fn::Coord::baseWidth) / GUI::windowWidth * value;
+	//return static_cast<double>(Functions::Coord::baseWidth) / GUI::windowWidth * value;
 }
 
 int convertByWidthDecrease(int value)
 {
-	return static_cast<double>(GUI::windowWidth) / (fn::Coord::baseWidth) * value;
+	return static_cast<double>(GUI::windowWidth) / (mse::Functions::Coord::baseWidth) * value;
 }
 
 int convertByHeight(int value)
 {
-	return value;//static_cast<double>(GUI::windowHeight) / (fn::Coord::baseHeight) * value;
+	return value;//static_cast<double>(GUI::windowHeight) / (Coord::baseHeight) * value;
 
-	//return static_cast<double>(fn::Coord::baseHeight) / GUI::windowHeight * value;
+	//return static_cast<double>(Coord::baseHeight) / GUI::windowHeight * value;
 }
 
 int convertByHeightDecrease(int value)
 {
-	return static_cast<double>(GUI::windowHeight) / (fn::Coord::baseHeight) * value;
+	return static_cast<double>(GUI::windowHeight) / (mse::Functions::Coord::baseHeight) * value;
 }
 
 Color::Color(sf::Color color)
@@ -4906,41 +4926,41 @@ Color::Color()
 
 }
 
-DataObject* parseBind(std::string str)
+mse::Data::DataObject* parseBind(std::string str)
 {
 	int k = 0;
-	DataObject* parameters = new DataObject("parameters");
-	std::vector<std::string> strings = fn::String::extractBetween(str, '\'', '\'');
-	std::vector<std::string> splitParameters = fn::String::split(str, ",");
+	mse::Data::DataObject* parameters = new mse::Data::DataObject("parameters");
+	std::vector<std::string> strings = mse::Functions::String::extractBetween(str, '\'', '\'');
+	std::vector<std::string> splitParameters = mse::Functions::String::split(str, ",");
 	std::map<std::string, std::string> vars;
 	for (int i = 0; i < splitParameters.size(); i++)
 	{
-		std::vector<std::string> splitVars = fn::String::split(splitParameters[i], "=");
-		std::vector<std::string> typeAndName = fn::String::split(splitVars[0], " ");
+		std::vector<std::string> splitVars = mse::Functions::String::split(splitParameters[i], "=");
+		std::vector<std::string> typeAndName = mse::Functions::String::split(splitVars[0], " ");
 		if (splitVars[1][0] == ' ')
 			splitVars[1].erase(splitVars[1].begin());
-		fn::String::replaceStringInPlace(splitVars[1], "'", "");
+		mse::Functions::String::replaceStringInPlace(splitVars[1], "'", "");
 		if (typeAndName[0] == "string" || typeAndName[0] == "std::string")
 		{
 			typeAndName[0] = "str";
 			splitVars[1] = strings[k];
 			k++;
 		}
-		parameters->createBaseAttribute(convertPath(""), typeAndName[1], typeAndName[0], splitVars[1]);
+		parameters->createBaseAttribute(mse::Data::convertPath(""), typeAndName[1], typeAndName[0], splitVars[1]);
 	}
 	return parameters;
 }
 
-void GUI::Widget::addContainedItem(DataObject* containedItem)
+void GUI::Widget::addContainedItem(mse::Data::DataObject* containedItem)
 {
-	std::vector<std::string> complexAttributesID = containedItem->getAllComplex(convertPath(""));
-	if (!attributes->complexExists(convertPath(ID), "containedItem"))
+	std::vector<std::string> complexAttributesID = containedItem->getAllComplex(mse::Data::convertPath(""));
+	if (!attributes->complexExists(mse::Data::convertPath(ID), "containedItem"))
 	{
-		attributes->createComplexAttribute(convertPath(ID), "containedItem");
+		attributes->createComplexAttribute(mse::Data::convertPath(ID), "containedItem");
 	}
 
 	for (std::vector<std::string>::iterator ite = complexAttributesID.begin(); ite != complexAttributesID.end(); ite++)
 	{
-		attributes->pushComplexAttribute(convertPath(ID + "/containedItem"), containedItem->getComplexAttribute(convertPath(""), *ite));
+		attributes->pushComplexAttribute(mse::Data::convertPath(ID + "/containedItem"), containedItem->getComplexAttribute(mse::Data::convertPath(""), *ite));
 	}
 }

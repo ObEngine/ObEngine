@@ -15,3 +15,5 @@
 #include "DebugMode.hpp"
 #include "Menu.hpp"
 #include "Toolkit.hpp"
+#include "PathResolver.hpp"
+#include "DataParser.hpp"

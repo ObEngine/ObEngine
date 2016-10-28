@@ -101,7 +101,7 @@ namespace GUI
 	class Widget
 	{
 	protected:
-		DataObject* attributes;
+		mse::Data::DataObject* attributes;
 		static std::vector<Widget*> vectWidgets;
 		static std::map<std::string, Widget*> mapWidgets;
 		std::string ID;
@@ -132,14 +132,14 @@ namespace GUI
 		~Widget();
 		virtual void setTexture();
 
-		void addContainedItem(DataObject* containedItem);
+		void addContainedItem(mse::Data::DataObject* containedItem);
 
 		template <typename T> void createAttribute(std::string name, T& attribute, std::string type)
 		{
-			attributes->createComplexAttribute(convertPath(ID), name);
-			attributes->createBaseAttribute(convertPath(ID + "/" + name), "address", pointerToString(&attribute));
-			attributes->createBaseAttribute(convertPath(ID + "/" + name), "type", type);
-			attributes->createBaseAttribute(convertPath(ID + "/" + name), "value", (attribute));
+			attributes->createComplexAttribute(mse::Data::convertPath(ID), name);
+			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "address", pointerToString(&attribute));
+			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "type", type);
+			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "value", (attribute));
 		}
 
 		virtual void updatePositions();//Update sprite's positions
@@ -202,7 +202,7 @@ namespace GUI
 		virtual void updateAttributes();//This function is called when attributes edited through pointers need an update
 
 		virtual std::map<std::string, std::function<void()>> getFunctions();
-		virtual DataObject* getDataObject();
+		virtual mse::Data::DataObject* getDataObject();
 
 		void addWidgetContained(Widget* widget);
 		std::vector<GUI::Widget*> getWidgetsContained();
@@ -778,6 +778,7 @@ namespace GUI
 		bool holding = false;
 		bool justReleased = false;
 		bool displayed = true;
+		int layer = 0;
 		std::vector<Widget*> widgetIDContainer;
 		GUI::ContainerMovement movable;
 		std::string containerName;
@@ -816,10 +817,14 @@ namespace GUI
 		void setDisplayed(bool set);
 		bool getDisplayed();
 		void addScrollBar();
+		int getLayer();
+		void setLayer(int layer);
 	};
 
 	class Container
 	{
+	private:
+		void reorganizeContainers();
 	protected:
 		std::vector<WidgetContainer*> widContainers;
 		std::map<std::string, WidgetContainer*> widgetContainers;
@@ -829,9 +834,9 @@ namespace GUI
 		bool leftClickReleased = true;
 		bool rightClickReleased = true;
 
-		void loadAttributes(ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool);
-		void loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, ComplexAttribute* widget);
-        GUI::Widget* loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, DataParser* data, bool isContained);
+		void loadAttributes(mse::Data::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool);
+		void loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, mse::Data::ComplexAttribute* widget);
+        GUI::Widget* loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, mse::Data::DataParser* data, bool isContained);
 
 	public:
 		Container(sf::Event* evnt, sf::RenderWindow* window, int windowWidth = 1920, int windowHeight = 1080);
@@ -891,7 +896,7 @@ int convertByWidthDecrease(int value);
 int convertByHeight(int value);
 int convertByHeightDecrease(int value);
 
-DataObject* parseBind(std::string str);
+mse::Data::DataObject* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)
 {

@@ -6,14 +6,12 @@
 Character::Character(std::string name)
 {
 	entityType = "Character";
-	entityAnimator.setPath("Sprites/Character/" + name);
+	entityAnimator = mse::Animation::Animator(mse::System::Path("Sprites/Character/").add(name));
 	entityAnimator.loadAnimator();
 	entityAnimator.setKey("IDLE_RIGHT");
-	DataParser characterMoves;
-	characterMoves.parseFile("Data/Stats/Player/Moves.sta.msd");
-	characterMoves.getAttribute("BasicMoves", "", "walkSpeed")->getData(&maxWalkSpeed);
-	characterMoves.getAttribute("BasicMoves", "", "runSpeed")->getData(&maxRunSpeed);
-	characterMoves.getAttribute("BasicMoves", "", "jumpHeight")->getData(&maxJumpHeight);
+	maxWalkSpeed = 7;
+	maxRunSpeed = 18;
+	maxJumpHeight = 18;
 }
 
 void Character::setJumpHeight(int height)

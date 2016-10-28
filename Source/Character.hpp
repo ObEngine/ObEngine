@@ -8,10 +8,10 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <Windows.h>
 
 #include "Functions.hpp"
 #include "Entity.hpp"
+#include "PathResolver.hpp"
 
 class Character : public Entity
 {

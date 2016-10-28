@@ -6,5 +6,12 @@
 #include "Cursor.hpp"
 #include "Functions.hpp"
 #include "GUI.hpp"
+#include "PathResolver.hpp"
 
-std::string chooseMapMenu();
+namespace mse
+{
+	namespace Modes
+	{
+		std::string chooseMapMenu();
+	}
+}

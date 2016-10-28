@@ -13,101 +13,107 @@
 #include "any.hpp"
 #include "Functions.hpp"
 
-class Trigger
+namespace mse
 {
-	private:
-		std::string group;
-		std::string triggerName;
-		std::string triggerNamespace;
-		std::map<std::string, std::pair<std::string, emorph::any*>> triggerParameters;
-		bool enabled = false;
-		bool toEnable = false;
-		bool toDisable = false;
-		bool permanent;
-		void clearParameters();
-		template <typename P>
-		void pushParameter(std::string name, P parameter);
-		friend class TriggerGroup;
-		friend class TriggerDatabase;
-	public:
-		Trigger(std::string group, std::string triggerName, bool startState = false, bool permanent = false);
-		Trigger(std::string nsp, std::string group, std::string triggerName, bool startState = false, bool permanent = false);
-		bool getState();
-		bool isPermanent();
-		std::string getGroup();
-		std::string getName();
-		std::string getNamespace();
-		std::map<std::string, std::pair<std::string, emorph::any*>> getParameters();
-};
+	namespace Script
+	{
+		class Trigger
+		{
+			private:
+				std::string group;
+				std::string triggerName;
+				std::string triggerNamespace;
+				std::map<std::string, std::pair<std::string, Types::any>> triggerParameters;
+				bool enabled = false;
+				bool toEnable = false;
+				bool toDisable = false;
+				bool permanent;
+				void clearParameters();
+				template <typename P>
+				void pushParameter(std::string name, P parameter);
+				friend class TriggerGroup;
+				friend class TriggerDatabase;
+			public:
+				Trigger(std::string group, std::string triggerName, bool startState = false, bool permanent = false);
+				Trigger(std::string nsp, std::string group, std::string triggerName, bool startState = false, bool permanent = false);
+				bool getState();
+				bool isPermanent();
+				std::string getGroup();
+				std::string getName();
+				std::string getNamespace();
+				std::map<std::string, std::pair<std::string, Types::any>>* getParameters();
+		};
 
-class TriggerDelay
-{
-	public:
-		TriggerDelay(Trigger* trg, int del, bool sta);
-		Trigger* trigger;
-		int delay;
-		bool state;
-		int delaytarget;
-};
+		class TriggerDelay
+		{
+			public:
+				TriggerDelay(Trigger* trg, int del, bool sta);
+				Trigger* trigger;
+				int delay;
+				bool state;
+				int delaytarget;
+		};
 
-class TriggerGroup
-{
-	private:
-		std::string triggerGroupName;
-		std::string fromNsp;
-		std::map<std::string, Trigger*> triggerMap;
-		std::vector<TriggerDelay*> delayedTriggers;
-		friend class TriggerDatabase;
+		class TriggerGroup
+		{
+			private:
+				std::string triggerGroupName;
+				std::string fromNsp;
+				std::map<std::string, Trigger*> triggerMap;
+				std::vector<TriggerDelay*> delayedTriggers;
+				friend class TriggerDatabase;
 
-	public:
-		TriggerGroup(std::string triggerGroupName);
-		TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);
-		Trigger* getTrigger(std::string triggerName);
-		TriggerGroup* addTrigger(std::string triggerName);
-		void delayTriggerState(std::string triggerName, int delay, bool state);
-		void enableTrigger(std::string triggerName);
-		void disableTrigger(std::string triggerName);
-		void setTriggerState(std::string triggerName, bool state);
-		bool getState(std::string triggerName);
-		void setPermanent(std::string triggerName, bool permanent);
-		template <typename P>
-		void pushParameter(std::string triggerName, std::string parameterName, P parameter);
-		std::vector<std::string> getAllTriggersName();
-		std::vector<Trigger*> getAllTriggers();
-		std::string getNamespace();
-		std::string getName();
-};
+			public:
+				TriggerGroup(std::string triggerGroupName);
+				TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);
+				Trigger* getTrigger(std::string triggerName);
+				TriggerGroup* addTrigger(std::string triggerName);
+				void delayTriggerState(std::string triggerName, int delay, bool state);
+				void enableTrigger(std::string triggerName);
+				void disableTrigger(std::string triggerName);
+				void setTriggerState(std::string triggerName, bool state);
+				bool getState(std::string triggerName);
+				void setPermanent(std::string triggerName, bool permanent);
+				template <typename P>
+				void pushParameter(std::string triggerName, std::string parameterName, P parameter);
+				std::vector<std::string> getAllTriggersName();
+				std::vector<Trigger*> getAllTriggers();
+				std::string getNamespace();
+				std::string getName();
+		};
 
-class TriggerDatabase
-{
-	private:
-		std::map<std::string, std::map<std::string, TriggerGroup*>> allTriggers;
-		Chronometer databaseChrono;
-		std::vector<TriggerDelay*> delayedTriggers;
-	public:
-		TriggerDatabase();
-		Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
-		void createNamespace(std::string groupNamespace);
-		TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-		TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-		void removeTriggerGroup(TriggerGroup* trgGroup);
-		bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
-		std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-		void update();
-};
+		class TriggerDatabase
+		{
+			private:
+				TriggerDatabase();
+				std::map<std::string, std::map<std::string, TriggerGroup*>> allTriggers;
+				Time::Chronometer databaseChrono;
+				std::vector<TriggerDelay*> delayedTriggers;
+				static TriggerDatabase* instance;
+			public:
+				static TriggerDatabase* GetInstance();
+				Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
+				void createNamespace(std::string groupNamespace);
+				TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+				TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+				void removeTriggerGroup(TriggerGroup* trgGroup);
+				bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
+				std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+				void update();
+		};
 
-extern TriggerDatabase triggerDatabaseCore;
+		template<typename P>
+		inline void Trigger::pushParameter(std::string name, P parameter)
+		{
+			std::vector<std::string> splittedTypeName = Functions::String::split(typeid(parameter).name(), " ");
+			std::string datatype = Functions::Vector::join(splittedTypeName, "", 1);
+			triggerParameters[name] = std::pair<std::string, Types::any>(datatype, Types::any(parameter));
+		}
 
-template<typename P>
-inline void Trigger::pushParameter(std::string name, P parameter)
-{
-	std::vector<std::string> splittedTypeName = fn::String::split(typeid(parameter).name(), " ");
-	std::string datatype = fn::Vector::join(splittedTypeName, "", 1);
-	triggerParameters[name] = std::pair<std::string, emorph::any*>(datatype, new emorph::any(parameter));
-}
-
-template<typename P>
-inline void TriggerGroup::pushParameter(std::string triggerName, std::string parameterName, P parameter)
-{
-	getTrigger(triggerName)->pushParameter(parameterName, parameter);
+		template<typename P>
+		inline void TriggerGroup::pushParameter(std::string triggerName, std::string parameterName, P parameter)
+		{
+			getTrigger(triggerName)->pushParameter(parameterName, parameter);
+		}
+	}
 }

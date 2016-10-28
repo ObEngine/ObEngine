@@ -4,16 +4,23 @@
 
 #include "Triggers.hpp"
 
-class NetworkHandler
+namespace mse
 {
-	private:
-		sf::TcpSocket client;
-		sf::TcpListener listener;
-		std::size_t received;
-		sf::Socket::Status status;
-		char data[4096];
-		TriggerGroup* socketTriggers;
-	public:
-		NetworkHandler();
-		void handleTriggers();
-};
+	namespace Input
+	{
+		class NetworkHandler
+		{
+			private:
+				sf::TcpSocket client;
+				sf::TcpListener listener;
+				std::size_t received;
+				sf::Socket::Status status;
+				char data[4096];
+				Script::TriggerGroup* socketTriggers;
+			public:
+				NetworkHandler();
+				void handleTriggers();
+		};
+	}
+}
+

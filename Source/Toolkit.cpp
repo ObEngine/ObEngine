@@ -24,20 +24,27 @@ std::string colorConsole(std::string color)
 	return "";
 }
 
-void startToolkitMode()
+namespace mse
 {
-	bool continueToolkit = true;
-
-	while (continueToolkit)
+	namespace Modes
 	{
-		kaguya::State toolkitEngine;
-		toolkitEngine.dofile("Data/GameScripts/WScrInit.lua");
-		loadLib(&toolkitEngine, "Core.*");
-		loadBaseLib(&toolkitEngine);
-		toolkitEngine["color"] = kaguya::function(colorConsole);
-		toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
-		continueToolkit = toolkitEngine["reload"];
-		printf("Press Enter to Continue");
-		std::cin.ignore();
+		void startToolkitMode()
+		{
+			bool continueToolkit = true;
+
+			while (continueToolkit)
+			{
+				kaguya::State toolkitEngine;
+				toolkitEngine["This"] = &toolkitEngine;
+				toolkitEngine.dofile("Lib/GameLib/WScrInit.lua");
+				Script::loadLib(&toolkitEngine, "Core.*");
+				Script::loadBaseLib(&toolkitEngine);
+				toolkitEngine["color"] = kaguya::function(colorConsole);
+				toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
+				continueToolkit = toolkitEngine["reload"];
+				printf("Press Enter to Continue");
+				std::cin.ignore();
+			}
+		}
 	}
 }

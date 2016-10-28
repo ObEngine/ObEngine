@@ -4,4 +4,10 @@
 
 #include "Script.hpp"
 
-void startToolkitMode();
+namespace mse
+{
+	namespace Modes
+	{
+		void startToolkitMode();
+	}
+}

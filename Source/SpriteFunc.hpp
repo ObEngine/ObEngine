@@ -5,7 +5,10 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace sprFunc
+namespace mse
 {
-	sf::Sprite getCleanSprite(sf::Texture texture);
+	namespace Graphics
+	{
+		sf::Sprite getCleanSprite(sf::Texture texture);
+	}
 }

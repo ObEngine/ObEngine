@@ -5,7 +5,7 @@
 
 Entity::Entity()
 {
-	entityCollider = new Collision::PolygonalCollider("EntityCollider");
+	entityCollider = new mse::Collision::PolygonalCollider("EntityCollider");
 	entityCollider->addPoint(0, 0);
 	entityCollider->addPoint(36, 0);
 	entityCollider->addPoint(36, 89);
@@ -36,11 +36,11 @@ void Entity::update()
 	if (entityAnimator.textureChanged())
 		entitySprite = entityAnimator.getSprite();
 }
-Collision::PolygonalCollider* Entity::getEntityCollider()
+mse::Collision::PolygonalCollider* Entity::getEntityCollider()
 {
 	return entityCollider;
 }
-void Entity::setColliders(std::vector<Collision::PolygonalCollider*>* collideList)
+void Entity::setColliders(std::vector<mse::Collision::PolygonalCollider*>* collideList)
 {
 	this->collidersList = collideList;
 }

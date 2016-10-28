@@ -11,11 +11,14 @@
 #include "Functions.hpp"
 #include "DataParser.hpp"
 #include "TimeManager.hpp"
+#include "PathResolver.hpp"
 
-namespace anim
+namespace mse
 {
-	class AnimationGroup //A group containing an Image List
+	namespace Animation
 	{
+		class AnimationGroup //A group containing an Image List
+		{
 		private:
 			std::string groupName;
 			int groupClock;
@@ -50,20 +53,22 @@ namespace anim
 			void previous(); //Decrement index and go back to groupSize if < 0
 			void forcePrevious(); //Force index decrement (ignoring clock)
 			void forceNext(); //Force index increment (ignoring clock)
-	};
+		};
 
-	class RessourceManager
-	{
+		class RessourceManager
+		{
 		private:
 			std::map<std::string, sf::Texture*> textureDatabase;
-		public:
+			static RessourceManager* instance;
 			RessourceManager();
+		public:
+			static RessourceManager* GetInstance();
 			~RessourceManager();
 			sf::Texture* getTexture(std::string path);
-	};
+		};
 
-	class Animation //An animation containing an AnimationGroup list
-	{
+		class Animation //An animation containing an AnimationGroup list
+		{
 		private:
 			std::string animationName;
 			unsigned long long int lastTick = 0;
@@ -97,8 +102,8 @@ namespace anim
 			std::vector<std::string> getAllAnimationGroupName();
 			std::string getAnimationPlayMode(); //Return PlayMode
 			std::string getAnimationStatus(); //Return AnimationStatus
-			void loadAnimation(std::string path, std::string filename); //Load Code File
-			void applyParameters(ComplexAttribute* parameters);
+			void loadAnimation(System::Path path, std::string filename); //Load Code File
+			void applyParameters(Data::ComplexAttribute* parameters);
 			void playAnimation(); //Execute next line
 			void resetAnimation(); //Unselect group and restart code execution
 			sf::IntRect* getSpriteRect();
@@ -108,10 +113,10 @@ namespace anim
 			int getSpriteOffsetX();
 			int getSpriteOffsetY();
 			int getPriority();
-	};
+		};
 
-	class DirtyAnimation //Same as Animation but without any code
-	{
+		class DirtyAnimation //Same as Animation but without any code
+		{
 		private:
 			std::string animationName;
 			signed long long int lastTick = 0;
@@ -129,7 +134,7 @@ namespace anim
 			void deleteRessourceManager();
 			void setAnimationClock(int animClock);
 			float getAnimationClock();
-			void loadAnimation(std::string path);
+			void loadAnimation(System::Path path);
 			void update();
 			void setIndex(int index);
 			int getIndex();
@@ -138,17 +143,17 @@ namespace anim
 			sf::Texture* getNormal();
 			sf::Texture* getTextureAtIndex(int index);
 			sf::Texture* getNormalAtIndex(int index);
-	};
+		};
 
-	class Animator //A set of animations
-	{
+		class Animator //A set of animations
+		{
 		private:
 			std::map<std::string, Animation*> fullAnimSet;
 			float globalClock;
 			Animation* currentAnimation = nullptr;
 			std::string currentAnimationName = "NONE";
 			std::string animationBehaviour;
-			std::string animationPath;
+			System::Path animationPath;
 			std::vector<std::string> allAnimationNames;
 			int currentNameIndex = 0;
 			sf::Sprite* lastSpriteAddress = nullptr;
@@ -156,8 +161,11 @@ namespace anim
 			RessourceManager* ressourceManagerHook = nullptr;
 
 		public:
+			Animator();
+			Animator(System::Path path);
+			void setPath(System::Path path);
+			void setPath(std::string path);
 			void clear(bool clearMemory = true);
-			void setPath(std::string path); //Set Animator's path
 			Animation* getAnimation(std::string animationName);
 			std::vector<std::string> getAllAnimationName();
 			void attachRessourceManager(RessourceManager* rsMan); //Hook a RessourceManager
@@ -171,5 +179,6 @@ namespace anim
 			bool textureChanged(); //Return true if texture have changed since last call of getTexture()
 			int getSpriteOffsetX();
 			int getSpriteOffsetY();
-	};
+		};
+	}
 }
