@@ -101,7 +101,7 @@ namespace GUI
 	class Widget
 	{
 	protected:
-		mse::Data::DataObject* attributes;
+		mse::Data::ComplexAttribute* attributes;
 		static std::vector<Widget*> vectWidgets;
 		static std::map<std::string, Widget*> mapWidgets;
 		std::string ID;
@@ -132,14 +132,14 @@ namespace GUI
 		~Widget();
 		virtual void setTexture();
 
-		void addContainedItem(mse::Data::DataObject* containedItem);
+		void addContainedItem(mse::Data::ComplexAttribute* containedItem);
 
 		template <typename T> void createAttribute(std::string name, T& attribute, std::string type)
 		{
-			attributes->createComplexAttribute(mse::Data::convertPath(ID), name);
-			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "address", pointerToString(&attribute));
-			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "type", type);
-			attributes->createBaseAttribute(mse::Data::convertPath(ID + "/" + name), "value", (attribute));
+			attributes->getPath(ID)->createComplexAttribute(name);
+			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("address", pointerToString(&attribute));
+			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("type", type);
+			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("value", (attribute));
 		}
 
 		virtual void updatePositions();//Update sprite's positions
@@ -202,7 +202,7 @@ namespace GUI
 		virtual void updateAttributes();//This function is called when attributes edited through pointers need an update
 
 		virtual std::map<std::string, std::function<void()>> getFunctions();
-		virtual mse::Data::DataObject* getDataObject();
+		virtual mse::Data::ComplexAttribute* getDataObject();
 
 		void addWidgetContained(Widget* widget);
 		std::vector<GUI::Widget*> getWidgetsContained();
@@ -896,7 +896,7 @@ int convertByWidthDecrease(int value);
 int convertByHeight(int value);
 int convertByHeightDecrease(int value);
 
-mse::Data::DataObject* parseBind(std::string str);
+mse::Data::ComplexAttribute* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)
 {

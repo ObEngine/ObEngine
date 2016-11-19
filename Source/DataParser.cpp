@@ -20,11 +20,50 @@ namespace mse
 			return vecPath;
 		}
 
-		std::string reverseConvertPath(std::vector<std::string> path)
+		std::string getDefaultValueForType(std::string type)
+		{
+			std::string value = "";
+			if (type == "string") value = "";
+			if (type == "int") value = "0";
+			if (type == "float") value = "0.0";
+			if (type == "bool") value = "False";
+			return value;
+		}
+
+		std::string getVarType(std::string var)
+		{
+			std::string attributeType;
+			std::vector<std::string> boolType = { "True", "False" };
+			if (Functions::Vector::isInList(var, boolType))
+				attributeType = "bool";
+			else if (var.substr(0, 1) == "\"" && var.substr(var.size() - 1, 1) == "\"")
+				attributeType = "string";
+			else if (Functions::String::isStringFloat(var))
+				attributeType = "float";
+			else if (Functions::String::isStringInt(var))
+				attributeType = "int";
+			else
+				attributeType = "unknown";
+			return attributeType;
+		}
+
+		std::string Path()
+		{
+			return "";
+		}
+
+		std::string Path(std::string cPath)
+		{
+			std::cout << "Returns Path : " << cPath << std::endl;
+			if (cPath.size() > 0 && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
+				cPath = Functions::String::extract(cPath, 0, 1);
+			return cPath;
+		}
+
+		std::string Path(std::vector<std::string> path)
 		{
 			std::string strPath = "";
-			for (unsigned int i = 0; i < path.size(); i++)
-			{
+			for (unsigned int i = 0; i < path.size(); i++) {
 				strPath += path[i];
 				if (i != path.size() - 1)
 					strPath += "/";
@@ -34,18 +73,22 @@ namespace mse
 
 
 		//DataParserNavigator
-		std::string DataParserNavigator::getCurrentDataObject() {
-			return currentDataObject;
+		std::string DataParserNavigator::getCurrentRootAttribute() {
+			return currentRootAttribute;
 		}
 		std::string DataParserNavigator::getCurrentPath() {
 			return currentPath;
 		}
-		void DataParserNavigator::setCurrentDataObject(std::string object) {
-			currentDataObject = object;
+		std::string DataParserNavigator::getFullPath() {
+			std::cout << "FullPath : " << Path(currentRootAttribute, currentPath) << std::endl;
+			return Path(currentRootAttribute, currentPath);
+		}
+		void DataParserNavigator::setCurrentRootAttribute(std::string object) {
+			currentRootAttribute = object;
 			goRoot();
 		}
-		void DataParserNavigator::setCurrentDataObject(std::string object, std::string path) {
-			currentDataObject = object;
+		void DataParserNavigator::setCurrentRootAttribute(std::string object, std::string path) {
+			currentRootAttribute = object;
 			currentPath = path;
 		}
 		void DataParserNavigator::setCurrentPath(std::string path) {
@@ -69,84 +112,118 @@ namespace mse
 			}
 		}
 
+		//Attribute
+		Attribute::Attribute(ContainerAttribute* parent, std::string id, Types::AttributeType type)
+		{
+			this->id = id;
+			this->type = type;
+			this->parent = parent;
+		}
+		void Attribute::removeParent(ContainerAttribute* currentParent)
+		{
+			if (currentParent == parent) {
+				parent = nullptr;
+			}
+		}
+		void Attribute::setAnnotation(std::string annotation)
+		{
+			this->annotation = annotation;
+		}
+		std::string Attribute::getAnnotation()
+		{
+			return annotation;
+		}
+		std::string Attribute::getID()
+		{
+			return id;
+		}
+		Types::AttributeType Attribute::getType()
+		{
+			return type;
+		}
+		ContainerAttribute* Attribute::getParent()
+		{
+			return parent;
+		}
+		void Attribute::setParent(ContainerAttribute* parent)
+		{
+			if (this->parent != nullptr) {
+				this->parent = parent;
+			}
+			else {
+				std::cout << "<Error:DataParser:Attribute>[setParent] : Attribute " << getNodePath() << " already has a parent" << std::endl;
+			}
+		}
+
+		std::string Attribute::getNodePath()
+		{
+			std::vector<std::string> parentChain;
+			ContainerAttribute* currentParent = this->getParent();
+			while (currentParent != nullptr) {
+				parentChain.push_back(currentParent->getID() + 
+					((currentParent->getAnnotation() != "") ? "<" + currentParent->getAnnotation() + ">" : ""));
+				currentParent = currentParent->getParent();
+			}
+			std::reverse(parentChain.begin(), parentChain.end());
+			parentChain.push_back(this->getID() + ((this->getAnnotation() != "") ? "<" + this->getAnnotation() + ">" : ""));
+			return Functions::Vector::join(parentChain, "/");
+		}
+
+		void Attribute::setID(std::string id)
+		{
+			if (parent == nullptr) {
+				std::cout << "<Error:DataParser:Attribute>[setID] : Can't change ID of " << getNodePath() << " when it has a parent" << std::endl;
+			}
+		}
+
+		ContainerAttribute::ContainerAttribute(ContainerAttribute* parent, std::string id, Types::AttributeType type) : Attribute(parent, id, type)
+		{
+		}
+		Attribute* ContainerAttribute::removeOwnership(Attribute* element)
+		{
+			element->removeParent(this);
+			return element;
+		}
+
 		//BaseAttribute
-		BaseAttribute::BaseAttribute(std::string bname, std::string btype, std::string bdata) {
-			name = bname;
+		BaseAttribute::BaseAttribute(ContainerAttribute* parent, std::string id, std::string btype, std::string bdata) : Attribute(parent, id, Types::BaseAttribute) {
 			dtype = btype;
 			data = bdata;
-			if (dtype == "str")
+			this->parent = parent;
+			if (dtype == "string")
 				Functions::String::replaceStringInPlace(data, "\"", "");
 		}
-		std::string BaseAttribute::getName() {
-			return name;
+		BaseAttribute::BaseAttribute(std::string id, std::string btype, std::string bdata) : Attribute(nullptr, id, Types::BaseAttribute)
+		{
+			dtype = btype;
+			data = bdata;
+			this->parent = parent;
+			if (dtype == "string")
+				Functions::String::replaceStringInPlace(data, "\"", "");
 		}
-		std::string BaseAttribute::returnData() {
-			if (dtype != "str")
-				return data;
-			else
-				return "\"" + data + "\"";
-		}
-		/*int BaseAttribute::getData(int* var) {
-			if (dtype == "int")
-				return *var = std::stoi(data);
-			else
-				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
-		}
-		double BaseAttribute::getData(double* var) {
-			if (dtype == "float")
-				return *var = std::stod(data);
-			else
-				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
-		}
-		std::string BaseAttribute::getData(std::string* var) {
-			if (dtype == "str")
-			{
-				*var = data;
-				return data;
-			}
-			else
-				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <str> BaseAttribute (" << dtype << ")" << std::endl;
-		}
-		bool BaseAttribute::getData(bool* var) {
-			if (dtype == "bool")
-			{
-				if (data == "True")
-					*var = true;
-				else
-					*var = false;
-				return *var;
-			}
-			else
-				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
-		}*/
 		void BaseAttribute::set(int var) {
 			if (dtype == "int")
 				data = std::to_string(var);
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[setData] : " \
-				<< name << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		void BaseAttribute::set(double var) {
 			if (dtype == "float")
 				data = std::to_string(var);
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[setData] : " \
-				<< name << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		void BaseAttribute::set(std::string var) {
-			if (dtype == "str")
+			if (dtype == "string")
 				data = var;
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[setData] : " \
-				<< name << " is not a <str> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <string> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		void BaseAttribute::set(bool var) {
-			if (dtype == "bool")
-			{
+			if (dtype == "bool") {
 				if (var)
 					data = "True";
 				else
@@ -154,16 +231,25 @@ namespace mse
 			}
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[setData] : " \
-				<< name << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
 		}
-		std::string BaseAttribute::getType() {
+		std::string BaseAttribute::returnData() {
+			if (dtype != "string")
+				return data;
+			else
+				return "\"" + data + "\"";
+		}
+		std::string BaseAttribute::getDataType() {
 			return dtype;
 		}
 
 		//ListAttribute
-		ListAttribute::ListAttribute(std::string id, std::string type) {
-			this->listId = id;
+		ListAttribute::ListAttribute(ContainerAttribute* parent, std::string id, std::string type) : ContainerAttribute(parent, id, Types::ListAttribute) {
 			this->dataType = type;
+		}
+		ListAttribute::ListAttribute(std::string id, std::string dataType) : ContainerAttribute(nullptr, id, Types::ListAttribute)
+		{
+			this->dataType = dataType;
 		}
 		ListAttribute::~ListAttribute()
 		{
@@ -173,10 +259,7 @@ namespace mse
 		unsigned int ListAttribute::getSize() {
 			return dataList.size();
 		}
-		std::string ListAttribute::getID() {
-			return listId;
-		}
-		std::string ListAttribute::getType() {
+		std::string ListAttribute::getDataType() {
 			return dataType;
 		}
 		BaseAttribute* ListAttribute::getElement(unsigned int index) {
@@ -184,145 +267,252 @@ namespace mse
 				return dataList[index];
 			else
 				std::cout << "<Error:DataParser:ListAttribute> : Can't access index " << index << " of " \
-				<< this->getID() << " (Size:" << dataList.size() << ")" << std::endl;
+				<< getNodePath() << " (Size:" << dataList.size() << ")" << std::endl;
 		}
 		void ListAttribute::createElement(std::string element) {
-			BaseAttribute* tempElem = new BaseAttribute("None", dataType, element);
+			BaseAttribute* tempElem = new BaseAttribute(this, "#" + std::to_string(dataList.size()), dataType, element);
 			dataList.push_back(tempElem);
+		}
+		Attribute* ListAttribute::extractElement(Attribute* element)
+		{
+			if (Functions::Vector::isInList(dynamic_cast<BaseAttribute*>(element), dataList)) {
+				this->removeOwnership(element);
+				Functions::Vector::eraseAll(dataList, dynamic_cast<BaseAttribute*>(element));
+			}
+			return element;
 		}
 
 
 		//ComplexAttribute
-		ComplexAttribute::ComplexAttribute(std::string attrID) {
-			id = attrID;
+		ComplexAttribute::ComplexAttribute(ComplexAttribute* parent, std::string id) : ContainerAttribute(parent, id, Types::ComplexAttribute) {
+			this->parent = parent;
 		}
-		ComplexAttribute::ComplexAttribute(std::string attrID, ComplexAttribute* herit) {
-			id = attrID;
+		ComplexAttribute::ComplexAttribute(ComplexAttribute* parent, std::string id, ComplexAttribute* herit)
+			: ContainerAttribute(parent, id, Types::ComplexAttribute) {
+			this->parent = parent;
 			this->heritage(herit);
 		}
-		ComplexAttribute::ComplexAttribute(std::string attrID, std::vector<ComplexAttribute*>* multipleHerit) {
-			id = attrID;
+		ComplexAttribute::ComplexAttribute(ComplexAttribute* parent, std::string id, std::vector<ComplexAttribute*>* multipleHerit) 
+			: ContainerAttribute(parent, id, Types::ComplexAttribute) {
+			this->parent = parent;
+			for (unsigned int i = 0; i < multipleHerit->size(); i++)
+				this->heritage(multipleHerit->at(i));
+		}
+		ComplexAttribute::ComplexAttribute(std::string id) : ContainerAttribute(nullptr, id, Types::ComplexAttribute)
+		{
+		}
+		ComplexAttribute::ComplexAttribute(std::string id, ComplexAttribute* herit) : ContainerAttribute(nullptr, id, Types::ComplexAttribute)
+		{
+			this->heritage(herit);
+		}
+		ComplexAttribute::ComplexAttribute(std::string id, std::vector<ComplexAttribute*>* multipleHerit)
+			: ContainerAttribute(nullptr, id, Types::ComplexAttribute)
+		{
 			for (unsigned int i = 0; i < multipleHerit->size(); i++)
 				this->heritage(multipleHerit->at(i));
 		}
 		ComplexAttribute::~ComplexAttribute()
 		{
-			for (auto it = baseAttributes.begin(); it != baseAttributes.end(); it++)
+			for (auto it = childAttributes.begin(); it != childAttributes.end(); it++)
 				delete it->second;
-			for (auto it = listAttributes.begin(); it != listAttributes.end(); it++)
-				delete it->second;
-			for (auto it = complexAttributes.begin(); it != complexAttributes.end(); it++)
-				delete it->second;
-			for (auto it = listGenerators.begin(); it != listGenerators.end(); it++)
-				delete it->second;
+		}
+		Attribute* ComplexAttribute::extractElement(Attribute* element)
+		{
+			if (Functions::Map::isInMap(element, childAttributes)) {
+				this->removeOwnership(element);
+				childAttributes.erase(element->getID());
+				Functions::Vector::eraseAll(childAttributesNames, element->getID());
+			}
+			return element;
 		}
 		void ComplexAttribute::heritage(ComplexAttribute* heritTarget) {
-			for (unsigned int i = 0; i < heritTarget->getAllAttributes().size(); i++)
+			for (unsigned int i = 0; i < heritTarget->getAllBaseAttributes().size(); i++)
 			{
-				BaseAttribute* currentBaseAttr = heritTarget->getAttribute(heritTarget->getAllAttributes()[i]);
-				this->createBaseAttribute(currentBaseAttr->getName(), currentBaseAttr->getType(), currentBaseAttr->returnData());
+				BaseAttribute* currentBaseAttr = heritTarget->getBaseAttribute(heritTarget->getAllBaseAttributes()[i]);
+				this->createBaseAttribute(currentBaseAttr->getDataType(), currentBaseAttr->returnData());
 			}
-			for (unsigned int i = 0; i < heritTarget->getAllComplex().size(); i++)
+			for (unsigned int i = 0; i < heritTarget->getAllComplexAttributes().size(); i++)
 			{
-				ComplexAttribute* currentCmplxAttr = heritTarget->getComplexAttribute(heritTarget->getAllComplex()[i]);
+				ComplexAttribute* currentCmplxAttr = heritTarget->getComplexAttribute(heritTarget->getAllComplexAttributes()[i]);
 				this->createComplexAttribute(currentCmplxAttr->getID());
-				this->getComplexAttribute(heritTarget->getAllComplex()[i])->heritage(currentCmplxAttr);
+				this->getComplexAttribute(heritTarget->getAllComplexAttributes()[i])->heritage(currentCmplxAttr);
 			}
 		}
-		std::string ComplexAttribute::getID() {
-			return id;
+		ComplexAttribute* ComplexAttribute::getPath(std::string attributePath)
+		{
+			std::cout << "Trying to access Path :: " << attributePath << std::endl;
+			if (attributePath.size() > 0 && Functions::String::extract(attributePath, attributePath.size() - 1, 0) == "/")
+				attributePath = Functions::String::extract(attributePath, 0, 1);
+			std::vector<std::string> sPath = convertPath(attributePath);
+			if (sPath.size() > 0) {
+				int pathIndex = 1;
+				ComplexAttribute* getToPath;
+				getToPath = this->getComplexAttribute(sPath[0]);
+				while (pathIndex != sPath.size()) {
+					getToPath = getToPath->getComplexAttribute(sPath[pathIndex]);
+					pathIndex++;
+				}
+				return getToPath;
+			}
+			else {
+				return this;
+			}
 		}
-		BaseAttribute* ComplexAttribute::getAttribute(std::string attributeName) {
-			if (baseAttributes.find(attributeName) != baseAttributes.end())
-				return baseAttributes[attributeName];
-			else
-				std::cout << "<Error:DataParser:ComplexAttribute>[getAttribute] : Can't find BaseAttribute " << attributeName << " in " << this->getID() << std::endl;
+		BaseAttribute* ComplexAttribute::getBaseAttribute(std::string id) {
+			if (childAttributes.find(id) != childAttributes.end() && childAttributes[id]->getType() == Types::BaseAttribute)
+				return dynamic_cast<BaseAttribute*>(childAttributes[id]);
+			else {
+				std::cout << "<Error:DataParser:ComplexAttribute>[getAttribute] : Can't find BaseAttribute "
+					<< id << " in " << getNodePath() << std::endl;
+			}
 		}
 		ListAttribute* ComplexAttribute::getListAttribute(std::string id) {
-			for (std::map<std::string, ListAttribute*>::iterator it = listAttributes.begin(); it != listAttributes.end(); ++it) {
-				if (it->second->getID() == id)
-					return it->second;
+			if (childAttributes.find(id) != childAttributes.end() && childAttributes[id]->getType() == Types::ListAttribute)
+				return dynamic_cast<ListAttribute*>(childAttributes[id]);
+			else {
+				std::cout << "<Error:DataParser:ComplexAttribute>[getListAttribute] : Can't find ListAttribute "
+					<< id << " in " << getNodePath() << std::endl;
 			}
-			std::cout << "<Error:DataParser:ComplexAttribute>[getListAttribute] : Can't find ListAttribute " << id << " in " << this->getID() << std::endl;
 		}
 		ComplexAttribute* ComplexAttribute::getComplexAttribute(std::string id) {
-			for (std::map<std::string, ComplexAttribute*>::iterator it = complexAttributes.begin(); it != complexAttributes.end(); ++it) {
-				if (it->second->getID() == id)
-					return it->second;
+			if (childAttributes.find(id) != childAttributes.end() && childAttributes[id]->getType() == Types::ComplexAttribute) {
+				return dynamic_cast<ComplexAttribute*>(childAttributes[id]);
 			}
-			std::cout << "<Error:DataParser:ComplexAttribute>[getComplexAttribute] : Can't find ComplexAttribute " << id << " in " << this->getID() << std::endl;
+			else {
+				std::cout << "<Error:DataParser:ComplexAttribute>[getComplexAttribute] : Can't find ComplexAttribute "
+					<< id << " in " << getNodePath() << std::endl;
+			}
 		}
-		std::vector<std::string> ComplexAttribute::getAllComplex() {
-			return complexAttributeList;
+		std::vector<std::string> ComplexAttribute::getAllComplexAttributes() {
+			std::vector<std::string> allComplexAttributes;
+			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
+				if (attribute.second->getType() == Types::ComplexAttribute) {
+					allComplexAttributes.push_back(attribute.second->getID());
+				}
+			}
+			return allComplexAttributes;
 		}
-		std::vector<std::string> ComplexAttribute::getAllAttributes() {
-			return baseAttributeList;
+		std::vector<std::string> ComplexAttribute::getAllBaseAttributes() {
+			std::vector<std::string> allBaseAttributes;
+			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
+				if (attribute.second->getType() == Types::BaseAttribute) {
+					allBaseAttributes.push_back(attribute.second->getID());
+				}
+			}
+			return allBaseAttributes;
 		}
-		std::vector<std::string> ComplexAttribute::getAllLists() {
-			return listAttributeList;
+		std::vector<std::string> ComplexAttribute::getAllListAttributes() {
+			std::vector<std::string> allListAttributes;
+			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
+				if (attribute.second->getType() == Types::ListAttribute) {
+					allListAttributes.push_back(attribute.second->getID());
+				}
+			}
+			return allListAttributes;
 		}
-		bool ComplexAttribute::attributeExists(std::string attributeName) {
-			if (baseAttributes.find(attributeName) == baseAttributes.end())
-				return false;
-			else
+		bool ComplexAttribute::containsAttribute(std::string attributeName)
+		{
+			if (childAttributes.find(attributeName) != childAttributes.end())
 				return true;
-		}
-		bool ComplexAttribute::complexExists(std::string attributeName) {
-			if (complexAttributes.find(attributeName) == complexAttributes.end())
-				return false;
 			else
-				return true;
-		}
-		bool ComplexAttribute::listExists(std::string attributeName) {
-			if (listAttributes.find(attributeName) == listAttributes.end())
 				return false;
-			else
-				return true;
 		}
-		void ComplexAttribute::createBaseAttribute(std::string name, std::string type, std::string data) {
-			BaseAttribute* tempAttr = new BaseAttribute(name, type, data);
-			baseAttributes[name] = tempAttr;
-			baseAttributeList.push_back(name);
+		bool ComplexAttribute::containsBaseAttribute(std::string attributeName) {
+			if (childAttributes.find(attributeName) != childAttributes.end() && childAttributes[attributeName]->getType() == Types::BaseAttribute)
+				return true;
+			else
+				return false;
+		}
+		bool ComplexAttribute::containsComplexAttribute(std::string attributeName) {
+			std::cout << "Searching for ComplexAttribute : " << attributeName << std::endl;
+			if (childAttributes.find(attributeName) != childAttributes.end() && childAttributes[attributeName]->getType() == Types::ComplexAttribute)
+				return true;
+			else {
+				return false;
+			}
+		}
+		bool ComplexAttribute::containsListAttribute(std::string attributeName) {
+			if (childAttributes.find(attributeName) != childAttributes.end() && childAttributes[attributeName]->getType() == Types::ListAttribute)
+				return true;
+			else
+				return false;
+		}
+		void ComplexAttribute::createBaseAttribute(std::string name, std::string type, std::string data)
+		{
+			BaseAttribute* tempAttr = new BaseAttribute(this, name, type, data);
+			childAttributes[name] = tempAttr;
+			childAttributesNames.push_back(name);
+		}
+		void ComplexAttribute::createBaseAttribute(std::string name, std::string data)
+		{
+			BaseAttribute* tempAttr = new BaseAttribute(this, name, "string", data);
+			childAttributes[name] = tempAttr;
+			childAttributesNames.push_back(name);
+		}
+		void ComplexAttribute::createBaseAttribute(std::string name, bool data)
+		{
+			BaseAttribute* tempAttr = new BaseAttribute(this, name, "bool", (data == true ? "True" : "False"));
+			childAttributes[name] = tempAttr;
+			childAttributesNames.push_back(name);
+		}
+		void ComplexAttribute::createBaseAttribute(std::string name, int data)
+		{
+			BaseAttribute* tempAttr = new BaseAttribute(this, name, "int", std::to_string(data));
+			childAttributes[name] = tempAttr;
+			childAttributesNames.push_back(name);
+		}
+		void ComplexAttribute::createBaseAttribute(std::string name, double data)
+		{
+			BaseAttribute* tempAttr = new BaseAttribute(this, name, "float", std::to_string(data));
+			childAttributes[name] = tempAttr;
+			childAttributesNames.push_back(name);
 		}
 		void ComplexAttribute::pushBaseAttribute(BaseAttribute* attr) {
-			baseAttributes[attr->getName()] = attr;
-			baseAttributeList.push_back(attr->getName());
+			//Memory Leak on replace
+			childAttributes[attr->getID()] = attr;
+			childAttributesNames.push_back(attr->getID());
 		}
 		void ComplexAttribute::createListAttribute(std::string id, std::string type) {
-			ListAttribute* tempAttr = new ListAttribute(id, type);
-			listAttributes[id] = tempAttr;
-			listAttributeList.push_back(id);
+			ListAttribute* tempAttr = new ListAttribute(this, id, type);
+			childAttributes[id] = tempAttr;
+			childAttributesNames.push_back(id);
 		}
 		void ComplexAttribute::pushListAttribute(ListAttribute* attr) {
-			listAttributes[attr->getID()] = attr;
-			listAttributeList.push_back(attr->getID());
+			childAttributes[attr->getID()] = attr;
+			childAttributesNames.push_back(attr->getID());
 		}
 		void ComplexAttribute::createListItem(std::string listID, std::string value) {
 			this->getListAttribute(listID)->createElement(value);
 		}
 		void ComplexAttribute::createListGenerator(std::string gtarget, std::string gtype, std::string regex) {
-			if (listAttributes.find(gtarget) != listAttributes.end())
+			if (childAttributes.find(gtarget) != childAttributes.end() && childAttributes[gtarget]->getType() == Types::ListAttribute)
 			{
-				ListGenerator* lGen = new ListGenerator(gtype, regex, listAttributes[gtarget]);
+				ListGenerator* lGen = new ListGenerator(gtype, regex, dynamic_cast<ListAttribute*>(childAttributes[gtarget]));
 				listGenerators[gtarget] = lGen;
 				listGeneratorsList.push_back(gtarget);
 			}
-			else
-				std::cout << "<Error:DataParser:ComplexAttribute>[createListGenerator] : ListAttribute <" << gtarget << "> does not exists" << std::endl;
+			else {
+				std::cout << "<Error:DataParser:ComplexAttribute>[createListGenerator] : ListAttribute <" 
+					<< gtarget << "> does not exists in " << getNodePath() << std::endl;
+			}
 		}
 		void ComplexAttribute::addBoundToListGenerator(std::string listID, int gstart, int gend) {
 			if (listGenerators.find(listID) != listGenerators.end())
 				listGenerators[listID]->addBound(gstart, gend);
 			else
 			{
-				if (listAttributes.find(listID) != listAttributes.end())
-					std::cout << "<Error:DataParser:ComplexAttribute>[addBoundToListGenerator] : ListAttribute <" << listID << "> has no ListGenerator" << std::endl;
-				else
-					std::cout << "<Error:DataParser:ComplexAttribute>[addBoundToListGenerator] : ListAttribute <" << listID << "> does not exists" << std::endl;
+				if (childAttributes.find(listID) != childAttributes.end() && childAttributes[listID]->getType() == Types::ListAttribute) {
+					std::cout << "<Error:DataParser:ComplexAttribute>[addBoundToListGenerator] : ListAttribute <"
+						<< listID << "> has no ListGenerator in " << getNodePath() << std::endl;
+				}
+				else {
+					std::cout << "<Error:DataParser:ComplexAttribute>[addBoundToListGenerator] : ListAttribute <"
+						<< listID << "> does not exists in " << getNodePath() << std::endl;
+				}	
 			}
 		}
 		void ComplexAttribute::generateInList(std::string listID) {
-			if (listAttributes.find(listID) != listAttributes.end())
+			if (childAttributes.find(listID) != childAttributes.end() && childAttributes[listID]->getType() == Types::ListAttribute)
 			{
 				if (listGenerators.find(listID) != listGenerators.end())
 				{
@@ -331,40 +521,44 @@ namespace mse
 					listGenerators.erase(listID);
 					listGeneratorsList.erase(std::remove(listGeneratorsList.begin(), listGeneratorsList.end(), listID), listGeneratorsList.end());
 				}
-				else
-					std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" << listID << "> has no ListGenerator" << std::endl;
+				else {
+					std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" << listID
+						<< "> has no ListGenerator in " << getNodePath() << std::endl;
+				}
 			}
-			else
-				std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" << listID << "> does not exists" << std::endl;
+			else {
+				std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" <<
+					listID << "> does not exists in " << getNodePath() << std::endl;
+			}
 		}
 		void ComplexAttribute::createComplexAttribute(std::string id) {
-			ComplexAttribute* tempAttr = new ComplexAttribute(id);
-			complexAttributes[id] = tempAttr;
-			complexAttributeList.push_back(id);
+			ComplexAttribute* tempAttr = new ComplexAttribute(this, id);
+			childAttributes[id] = tempAttr;
+			childAttributesNames.push_back(id);
 		}
 		void ComplexAttribute::pushComplexAttribute(ComplexAttribute* cmplx) {
-			complexAttributes[cmplx->getID()] = cmplx;
-			complexAttributeList.push_back(cmplx->getID());
+			childAttributes[cmplx->getID()] = cmplx;
+			childAttributesNames.push_back(cmplx->getID());
 		}
 		void ComplexAttribute::writeAttributes(std::ofstream* file, unsigned int depth) {
 			for (unsigned int i = 0; i < depth; i++)
 				(*file) << "    ";
-			(*file) << "@" << this->id << std::endl;
-			for (unsigned int i = 0; i < baseAttributeList.size(); i++)
+			(*file) << "@" << id << std::endl;
+			for (unsigned int i = 0; i < this->getAllBaseAttributes().size(); i++)
 			{
 				for (unsigned int j = 0; j < depth + 1; j++)
 					(*file) << "    ";
-				(*file) << baseAttributeList[i] << ":" << this->getAttribute(baseAttributeList[i])->returnData() << std::endl;
+				(*file) << this->getAllBaseAttributes()[i] << ":" << this->getBaseAttribute(getAllBaseAttributes()[i])->returnData() << std::endl;
 			}
-			for (unsigned int i = 0; i < listAttributeList.size(); i++)
+			for (unsigned int i = 0; i < this->getAllListAttributes().size(); i++)
 			{
 				for (unsigned int j = 0; j < depth + 1; j++)
 					(*file) << "    ";
-				if (listGenerators.find(listAttributeList[i]) != listGenerators.end())
+				if (listGenerators.find(this->getAllListAttributes()[i]) != listGenerators.end())
 				{
-					std::vector<std::pair<int, int>> allBounds = listGenerators[listAttributeList[i]]->getAllBounds();
-					(*file) << "?" << listAttributeList[i] << "(" << this->getListAttribute(listAttributeList[i])->getType() \
-						<< ")<" << listGenerators[listAttributeList[i]]->getRegex() << ">{";
+					std::vector<std::pair<int, int>> allBounds = listGenerators[this->getAllListAttributes()[i]]->getAllBounds();
+					(*file) << "?" << this->getAllListAttributes()[i] << "(" << this->getListAttribute(this->getAllListAttributes()[i])->getType()
+						<< ")<" << listGenerators[this->getAllListAttributes()[i]]->getRegex() << ">{";
 					for (unsigned int j = 0; j < allBounds.size(); j++)
 					{
 						(*file) << allBounds[j].first << "-" << allBounds[j].second;
@@ -372,72 +566,56 @@ namespace mse
 					}
 					(*file) << "}:" << std::endl;
 				}
-				else
-					(*file) << "?" << listAttributeList[i] << "(" << this->getListAttribute(listAttributeList[i])->getType() << "):" << std::endl;
-				for (unsigned int k = 0; k < this->getListAttribute(listAttributeList[i])->getSize(); k++)
+				else {
+					(*file) << "?" << this->getAllListAttributes()[i] << "("
+						<< this->getListAttribute(this->getAllListAttributes()[i])->getType() << "):" << std::endl;
+				}
+				for (unsigned int k = 0; k < this->getListAttribute(this->getAllListAttributes()[i])->getSize(); k++)
 				{
 					for (unsigned int l = 0; l < depth + 2; l++)
 						(*file) << "    ";
-					(*file) << this->getListAttribute(listAttributeList[i])->getElement(k)->returnData() << std::endl;
+					(*file) << this->getListAttribute(this->getAllListAttributes()[i])->getElement(k)->returnData() << std::endl;
 				}
 			}
-			for (unsigned int i = 0; i < complexAttributeList.size(); i++)
-				this->getComplexAttribute(complexAttributeList[i])->writeAttributes(file, depth + 1);
+			for (unsigned int i = 0; i < this->getAllComplexAttributes().size(); i++)
+				this->getComplexAttribute(this->getAllComplexAttributes()[i])->writeAttributes(file, depth + 1);
 			if (depth == 1)
 				(*file) << std::endl;
 		}
-		void ComplexAttribute::deleteAttribute(std::string id, bool freeMemory) {
-			for (int i = 0; i < baseAttributeList.size(); i++)
-			{
-				if (baseAttributeList[i] == id)
-				{
-					baseAttributeList.erase(baseAttributeList.begin() + i);
-					break;
-				}
+		void ComplexAttribute::deleteBaseAttribute(std::string id, bool freeMemory) {
+			if (Functions::Vector::isInList(id, this->getAllBaseAttributes())) {
+				childAttributesNames.erase(childAttributesNames.begin() + Functions::Vector::indexOfElement(id, this->getAllBaseAttributes()));
 			}
-			typedef std::map<std::string, BaseAttribute*>::iterator it_type;
-			it_type itDel = baseAttributes.find(id);
-			if (itDel != baseAttributes.end())
-			{
+			typedef std::map<std::string, Attribute*>::iterator it_type;
+			it_type itDel = childAttributes.find(id);
+			if (itDel != childAttributes.end() && childAttributes[id]->getType() == Types::BaseAttribute) {
 				if (freeMemory)
-					free(baseAttributes[id]);
-				baseAttributes.erase(itDel);
+					delete childAttributes[id];
+				childAttributes.erase(itDel);
 			}
 		}
 		void ComplexAttribute::deleteComplexAttribute(std::string id, bool freeMemory) {
-			for (int i = 0; i < complexAttributeList.size(); i++)
-			{
-				if (complexAttributeList[i] == id)
-				{
-					complexAttributeList.erase(complexAttributeList.begin() + i);
-					break;
-				}
+			if (Functions::Vector::isInList(id, this->getAllComplexAttributes())) {
+				childAttributesNames.erase(childAttributesNames.begin() + Functions::Vector::indexOfElement(id, this->getAllComplexAttributes()));
 			}
-			typedef std::map<std::string, ComplexAttribute*>::iterator it_type;
-			it_type itDel = complexAttributes.find(id);
-			if (itDel != complexAttributes.end())
-			{
+			typedef std::map<std::string, Attribute*>::iterator it_type;
+			it_type itDel = childAttributes.find(id);
+			if (itDel != childAttributes.end() && childAttributes[id]->getType() == Types::ComplexAttribute) {
 				if (freeMemory)
-					free(complexAttributes[id]);
-				complexAttributes.erase(itDel);
+					delete childAttributes[id];
+				childAttributes.erase(itDel);
 			}
 		}
 		void ComplexAttribute::deleteListAttribute(std::string id, bool freeMemory) {
-			for (int i = 0; i < listAttributeList.size(); i++)
-			{
-				if (listAttributeList[i] == id)
-				{
-					listAttributeList.erase(listAttributeList.begin() + i);
-					break;
-				}
+			if (Functions::Vector::isInList(id, this->getAllListAttributes())) {
+				childAttributesNames.erase(childAttributesNames.begin() + Functions::Vector::indexOfElement(id, this->getAllListAttributes()));
 			}
-			typedef std::map<std::string, ListAttribute*>::iterator it_type;
-			it_type itDel = listAttributes.find(id);
-			if (itDel != listAttributes.end())
-			{
+			typedef std::map<std::string, Attribute*>::iterator it_type;
+			it_type itDel = childAttributes.find(id);
+			if (itDel != childAttributes.end() && childAttributes[id]->getType() == Types::ListAttribute) {
 				if (freeMemory)
-					free(listAttributes[id]);
-				listAttributes.erase(itDel);
+					delete childAttributes[id];
+				childAttributes.erase(itDel);
 			}
 		}
 
@@ -468,7 +646,7 @@ namespace mse
 					for (int j = start; j <= stop; j++)
 					{
 						std::string elemToCreate = std::to_string(j);
-						if (genType == "str")
+						if (genType == "string")
 						{
 							elemToCreate = genRegex;
 							Functions::String::replaceStringInPlace(elemToCreate, "%s", std::to_string(j));
@@ -482,7 +660,7 @@ namespace mse
 					for (int j = start; j >= stop; j--)
 					{
 						std::string elemToCreate = std::to_string(j);
-						if (genType == "str")
+						if (genType == "string")
 						{
 							elemToCreate = genRegex;
 							Functions::String::replaceStringInPlace(elemToCreate, "%s", std::to_string(j));
@@ -494,426 +672,82 @@ namespace mse
 			}
 		}
 
-		//DataObject
-		DataObject::DataObject(std::string objectname) {
-			this->objectName = objectname;
-		}
-		DataObject::~DataObject()
+		//ModelObject
+		std::map<std::string, ObjectModel*> ObjectModel::modelMap = std::map<std::string, ObjectModel*>();
+		ObjectModel::ObjectModel(std::string modelName, std::string objectSignature) : signature("ModelSignature"), body("ModelBody")
 		{
-			for (auto it = specialAttributes.begin(); it != specialAttributes.end(); it++)
-				delete it->second;
-			for (auto it = baseAttributes.begin(); it != baseAttributes.end(); it++)
-				delete it->second;
-			for (auto it = listAttributes.begin(); it != listAttributes.end(); it++)
-				delete it->second;
-			for (auto it = complexAttributes.begin(); it != complexAttributes.end(); it++)
-				delete it->second;
-			for (auto it = listGenerators.begin(); it != listGenerators.end(); it++)
-				delete it->second;
-		}
-		void DataObject::extractFromDataParser()
-		{
-			if (parent != nullptr)
-			{
-				parent->deleteDataObject(this->getName(), false);
-				parent = nullptr;
+			name = modelName;
+			Functions::String::StringExtractor signatureRes = Functions::String::extractAllStrings(objectSignature);
+			std::string signatureWithoutStrings = Functions::Vector::join(std::get<1>(signatureRes), "&string");
+			std::vector<std::string> allParameters = Functions::String::split(signatureWithoutStrings, ",");
+			for (int i = 0; i < allParameters.size(); i++) {
+				std::vector<std::string> splittedParameter = Functions::String::split(allParameters[i], ":");
+				std::string parameterType = Functions::String::replaceString(splittedParameter[0], " ", "");
+				std::vector<std::string> parameterRightPart = Functions::String::split(Functions::String::replaceString(splittedParameter[1], " ", ""), "=");
+				std::string parameterName = parameterRightPart[0];
+				std::string defaultValue = (parameterRightPart.size() == 2) ? parameterRightPart[1] : getDefaultValueForType(parameterType);
+				signature.createBaseAttribute(parameterName, parameterType, defaultValue);
 			}
-			else
-				std::cout << "<Error:DataParser:DataObject>[extractFromDataParser] : Can't extract DataObject " << objectName << " if it doesn't have any parent" << std::endl;
 		}
-		std::string DataObject::getName() {
-			return objectName;
-		}
-		void DataObject::setName(std::string name)
+		ComplexAttribute ObjectModel::buildModel(std::string objectName, std::string buildSignature)
 		{
-			if (parent == nullptr)
-				this->objectName = name;
-			else
-				std::cout << "<Error:DataParser:DataObject>[setName] : Can't change name if DataObject is not extracted (" << objectName << ")" << std::endl;
-		}
-		ComplexAttribute* DataObject::getPath(std::vector<std::string> attributePath) {
-			if (attributePath.size() > 0)
-			{
-				int pathIndex = 1;
-				ComplexAttribute* getToPath;
-				getToPath = this->getComplexAttribute({}, attributePath[0]);
-				while (pathIndex != attributePath.size())
-				{
-					getToPath = getToPath->getComplexAttribute(attributePath[pathIndex]);
-					pathIndex++;
+			Functions::String::StringExtractor signatureRes = Functions::String::extractAllStrings(buildSignature);
+			std::string signatureWithoutStrings = Functions::Vector::join(std::get<1>(signatureRes), "&string");
+			std::vector<std::string> allParameters = Functions::String::split(signatureWithoutStrings, ",");
+			std::vector<std::string> parameterList;
+			int stringIndex = 0;
+			for (std::string parameter : allParameters) {
+				Functions::String::replaceStringInPlace(parameter, " ", "");
+				if (parameter == "&string") {
+					parameterList.push_back("\"" + std::get<0>(signatureRes)[stringIndex] + "\"");
+					stringIndex++;
 				}
-				return getToPath;
-			}
-			else
-			{
-				ComplexAttribute* tempCmplx = new ComplexAttribute("Root");
-				return tempCmplx;
-			}
-		}
-		BaseAttribute* DataObject::getAttribute(std::vector<std::string> attributePath, std::string attributeName) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->getAttribute(attributeName);
-			else
-			{
-				if (baseAttributes.find(attributeName) != baseAttributes.end())
-					return baseAttributes[attributeName];
-				else
-					std::cout << "<Error:DataParser:DataObject>[getAttribute] : Can't find attribute " << attributeName << \
-					" inside " << objectName << std::endl;
-			}
-		}
-		ListAttribute* DataObject::getListAttribute(std::vector<std::string> attributePath, std::string id) {
-			if (attributePath.size() == 0)
-				return listAttributes[id];
-			else
-				return getPath(attributePath)->getListAttribute(id);
-		}
-		ComplexAttribute* DataObject::getComplexAttribute(std::vector<std::string> attributePath, std::string id) {
-			if (attributePath.size() == 0)
-			{
-				if (complexAttributes.find(id) != complexAttributes.end())
-					return complexAttributes[id];
-				else if (heritComplexAttributes.find(id) != heritComplexAttributes.end())
-					return heritComplexAttributes[id];
-				else
-					std::cout << "<Error:DataParser:DataObject>[getComplexAttribute] : Can't find " << id << " in " << objectName << "::" << reverseConvertPath(attributePath) << std::endl;
-			}
-			else
-				return getPath(attributePath)->getComplexAttribute(id);
-		}
-		std::vector<std::string> DataObject::getAllComplex(std::vector<std::string> attributePath) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->getAllComplex();
-			else
-				return complexAttributeList;
-		}
-		std::vector<std::string> DataObject::getAllAttributes(std::vector<std::string> attributePath) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->getAllAttributes();
-			else
-				return baseAttributeList;
-		}
-		std::vector<std::string> DataObject::getAllLists(std::vector<std::string> attributePath) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->getAllLists();
-			else
-				return listAttributeList;
-		}
-		bool DataObject::attributeExists(std::vector<std::string> attributePath, std::string attributeName) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->attributeExists(attributeName);
-			else
-			{
-				if (baseAttributes.find(attributeName) == baseAttributes.end())
-					return false;
-				else
-					return true;
-			}
-		}
-		bool DataObject::complexExists(std::vector<std::string> attributePath, std::string attributeName) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->complexExists(attributeName);
-			else
-			{
-				if (complexAttributes.find(attributeName) == complexAttributes.end())
-					return false;
-				else
-					return true;
-			}
-		}
-		bool DataObject::listExists(std::vector<std::string> attributePath, std::string attributeName) {
-			if (attributePath.size() > 0)
-				return getPath(attributePath)->listExists(attributeName);
-			else
-			{
-				if (listAttributes.find(attributeName) == listAttributes.end())
-					return false;
-				else
-					return true;
-			}
-		}
-		void DataObject::createSpecialAttribute(std::string name, std::string type, std::string data) {
-			BaseAttribute* tempAttr = new BaseAttribute(name, type, data);
-			specialAttributes[name] = tempAttr;
-			specialAttributeList.push_back(name);
-		}
-		void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string type, std::string data)
-		{
-			BaseAttribute* tempAttr = new BaseAttribute(name, type, data);
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[name] = tempAttr;
-				baseAttributeList.push_back(name);
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(tempAttr);
-		}
-		void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string data)
-		{
-			BaseAttribute* tempAttr = new BaseAttribute(name, "str", data);
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[name] = tempAttr;
-				baseAttributeList.push_back(name);
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(tempAttr);
-		}
-		void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, bool data)
-		{
-			BaseAttribute* tempAttr = new BaseAttribute(name, "bool", (data == true ? "True" : "False"));
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[name] = tempAttr;
-				baseAttributeList.push_back(name);
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(tempAttr);
-		}
-		void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, int data)
-		{
-			BaseAttribute* tempAttr = new BaseAttribute(name, "int", std::to_string(data));
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[name] = tempAttr;
-				baseAttributeList.push_back(name);
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(tempAttr);
-		}
-		void DataObject::createBaseAttribute(std::vector<std::string> attributePath, std::string name, double data)
-		{
-			BaseAttribute* tempAttr = new BaseAttribute(name, "float", std::to_string(data));
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[name] = tempAttr;
-				baseAttributeList.push_back(name);
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(tempAttr);
-		}
-		void DataObject::pushBaseAttribute(std::vector<std::string> attributePath, BaseAttribute* attr) {
-			if (attributePath.size() == 0)
-			{
-				baseAttributes[attr->getName()] = attr;
-				baseAttributeList.push_back(attr->getName());
-			}
-			else
-				getPath(attributePath)->pushBaseAttribute(attr);
-		}
-		void DataObject::createListAttribute(std::vector<std::string> attributePath, std::string id, std::string type) {
-			ListAttribute* tempAttr = new ListAttribute(id, type);
-			if (attributePath.size() == 0)
-			{
-				listAttributes[id] = tempAttr;
-				listAttributeList.push_back(id);
-			}
-			else
-				getPath(attributePath)->pushListAttribute(tempAttr);
-		}
-		void DataObject::pushListAttribute(std::vector<std::string> attributePath, ListAttribute* attr) {
-			if (attributePath.size() == 0)
-			{
-				listAttributes[attr->getID()] = attr;
-				listAttributeList.push_back(attr->getID());
-			}
-			else
-				getPath(attributePath)->pushListAttribute(attr);
-		}
-		void DataObject::createListItem(std::vector<std::string> attributePath, std::string listID, std::string value) {
-			if (attributePath.size() == 0)
-			{
-				listAttributes[listID]->createElement(value);
-			}
-			else
-				getPath(attributePath)->createListItem(listID, value);
-		}
-		void DataObject::createListGenerator(std::vector<std::string> attributePath, std::string gtarget, std::string gtype, std::string regex) {
-			if (attributePath.size() == 0)
-			{
-				if (listAttributes.find(gtarget) != listAttributes.end())
-				{
-					ListGenerator* lGen = new ListGenerator(gtype, regex, listAttributes[gtarget]);
-					listGenerators[gtarget] = lGen;
-					listGeneratorsList.push_back(gtarget);
-				}
-				else
-					std::cout << "<Error:DataParser:DataObject>[createListGenerator] : ListAttribute <" << gtarget << "> does not exists" << std::endl;
-			}
-			else
-				getPath(attributePath)->createListGenerator(gtarget, gtype, regex);
-		}
-		void DataObject::addBoundToListGenerator(std::vector<std::string> attributePath, std::string listID, int gstart, int gend) {
-			if (attributePath.size() == 0)
-			{
-				if (listGenerators.find(listID) != listGenerators.end())
-					listGenerators[listID]->addBound(gstart, gend);
-				else
-				{
-					if (listAttributes.find(listID) != listAttributes.end())
-						std::cout << "<Error:DataParser:DataObject>[addBoundToListGenerator] : ListAttribute <" << listID << "> has no ListGenerator" << std::endl;
-					else
-						std::cout << "<Error:DataParser:DataObject>[addBoundToListGenerator] : ListAttribute <" << listID << "> does not exists" << std::endl;
+				else {
+					parameterList.push_back(parameter);
 				}
 			}
-			else
-				getPath(attributePath)->addBoundToListGenerator(listID, gstart, gend);
-		}
-		void DataObject::generateInList(std::vector<std::string> attributePath, std::string listID) {
-			if (attributePath.size() == 0)
-			{
-				if (listAttributes.find(listID) != listAttributes.end())
-				{
-					if (listGenerators.find(listID) != listGenerators.end())
-					{
-						listGenerators[listID]->generate();
-						free(listGenerators[listID]);
-						listGenerators.erase(listID);
-						listGeneratorsList.erase(std::remove(listGeneratorsList.begin(), listGeneratorsList.end(), listID), listGeneratorsList.end());
+			ComplexAttribute objectParameters(objectName);
+			std::vector<std::string> signatureAttributes = signature.getAllBaseAttributes();
+			if (parameterList.size() > signatureAttributes.size()) {
+				std::cout << "<Error:DataParser:ObjectModel>[buildModel] : Too many parameters provided for Model : " 
+					<< name << " (" << signatureAttributes.size() << " parameters maximum)" << std::endl;
+				return nullptr;
+			}
+			for (int i = 0; i < signatureAttributes.size(); i++) {
+				BaseAttribute* currentSignatureParameter =  signature.getBaseAttribute(signatureAttributes[i]);
+				if (i < parameterList.size()) {
+					if (getVarType(parameterList[i]) == currentSignatureParameter->getDataType()) {
+						objectParameters.createBaseAttribute(currentSignatureParameter->getID(), 
+							currentSignatureParameter->getDataType(), parameterList[i]);
 					}
-					else
-						std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" << listID << "> has no ListGenerator" << std::endl;
-				}
-				else
-					std::cout << "<Error:DataParser:ComplexAttribute>[generateInList] : ListAttribute <" << listID << "> does not exists" << std::endl;
-			}
-			else
-				getPath(attributePath)->generateInList(listID);
-		}
-		void DataObject::createComplexAttribute(std::vector<std::string> attributePath, std::string id) {
-			if (attributePath.size() == 0)
-			{
-				ComplexAttribute* tempAttr = new ComplexAttribute(id);
-				complexAttributes[id] = tempAttr;
-				complexAttributeList.push_back(id);
-			}
-			else if (attributePath.size() > 0)
-			{
-				ComplexAttribute* tempAttr = new ComplexAttribute(id);
-				getPath(attributePath)->pushComplexAttribute(tempAttr);
-			}
-		}
-		void DataObject::pushComplexAttribute(std::vector<std::string> attributePath, ComplexAttribute* cmplx) {
-			if (attributePath.size() == 0)
-			{
-				complexAttributes[cmplx->getID()] = cmplx;
-				complexAttributeList.push_back(cmplx->getID());
-			}
-			else if (attributePath.size() > 0)
-				getPath(attributePath)->pushComplexAttribute(cmplx);
-		}
-
-		void DataObject::createHeritComplexAttribute(std::string id) {
-			ComplexAttribute* tempAttr = new ComplexAttribute(id);
-			heritComplexAttributes[id] = tempAttr;
-			heritComplexAttributeList.push_back(id);
-		}
-
-		void DataObject::pushHeritComplexAttribute(ComplexAttribute* cmplx) {
-			complexAttributes[cmplx->getID()] = cmplx;
-			complexAttributeList.push_back(cmplx->getID());
-		}
-		void DataObject::writeAttributes(std::ofstream* file) {
-			(*file) << objectName << ":" << std::endl;
-			for (unsigned int i = 0; i < this->getAllAttributes({}).size(); i++)
-			{
-				std::string attributeName = this->getAllAttributes({})[i];
-				std::string attributeValue = this->getAttribute({}, attributeName)->returnData();
-				(*file) << "    ";
-				(*file) << attributeName << ":" << attributeValue << std::endl;
-			}
-			for (unsigned int i = 0; i < this->getAllLists({}).size(); i++)
-			{
-				ListAttribute* cList = this->getListAttribute(convertPath(""), this->getAllLists({})[i]);
-				(*file) << "    ";
-				(*file) << "?" << this->getAllLists({})[i] << "(" << cList->getType() << "):" << std::endl;
-				for (unsigned int k = 0; k < cList->getSize(); k++)
-				{
-					(*file) << "        ";
-					(*file) << cList->getElement(k)->returnData() << std::endl;
-				}
-				(*file) << "    ";
-			}
-			std::string currentPath = "";
-			for (unsigned int i = 0; i < this->getAllComplex(convertPath(currentPath)).size(); i++)
-			{
-				this->getComplexAttribute({}, this->getAllComplex({})[i])->writeAttributes(file);
-			}
-			(*file) << std::endl;
-		}
-		void DataObject::deleteAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory) {
-			if (attributePath.size() == 0)
-			{
-				for (int i = 0; i < baseAttributeList.size(); i++)
-				{
-					if (baseAttributeList[i] == id)
-					{
-						baseAttributeList.erase(baseAttributeList.begin() + i);
-						break;
+					else {
+						std::cout << "<Error:DataParser:ObjectModel>[buildModel] : Type mismatch at parameter "
+							<< currentSignatureParameter->getID() << " for Model " << name << std::endl;
+						return nullptr;
 					}
 				}
-				typedef std::map<std::string, BaseAttribute*>::iterator it_type;
-				it_type itDel = baseAttributes.find(id);
-				if (itDel != baseAttributes.end())
-				{
-					if (freeMemory)
-						free(baseAttributes[id]);
-					baseAttributes.erase(itDel);
+				else {
+					objectParameters.createBaseAttribute(currentSignatureParameter->getID(),
+						currentSignatureParameter->getDataType(), currentSignatureParameter->returnData());
 				}
 			}
-			else if (attributePath.size() > 0)
-			{
-				getPath(attributePath)->deleteAttribute(id, freeMemory);
-			}
+			ComplexAttribute linkedBody = body;
+			//linkedBody.resolveLinking(&objectParameters);
 		}
-		void DataObject::deleteComplexAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory) {
-			if (attributePath.size() == 0)
-			{
-				for (int i = 0; i < complexAttributeList.size(); i++)
-				{
-					if (complexAttributeList[i] == id)
-					{
-						complexAttributeList.erase(complexAttributeList.begin() + i);
-						break;
-					}
-				}
-				typedef std::map<std::string, ComplexAttribute*>::iterator it_type;
-				it_type itDel = complexAttributes.find(id);
-				if (itDel != complexAttributes.end())
-				{
-					if (freeMemory)
-						free(complexAttributes[id]);
-					complexAttributes.erase(itDel);
-				}
+		void ObjectModel::CreateModel(std::string modelName, std::string objectSignature)
+		{
+			if (modelMap.find(modelName) != modelMap.end()) {
+				delete modelMap[modelName];
 			}
-			else if (attributePath.size() > 0)
-			{
-				getPath(attributePath)->deleteComplexAttribute(id, freeMemory);
-			}
+			modelMap[modelName] = new ObjectModel(modelName, objectSignature);
 		}
-		void DataObject::deleteListAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory) {
-			if (attributePath.size() == 0)
-			{
-				for (int i = 0; i < listAttributeList.size(); i++)
-				{
-					if (listAttributeList[i] == id)
-					{
-						listAttributeList.erase(listAttributeList.begin() + i);
-						break;
-					}
-				}
-				typedef std::map<std::string, ListAttribute*>::iterator it_type;
-				it_type itDel = listAttributes.find(id);
-				if (itDel != listAttributes.end())
-				{
-					if (freeMemory)
-						free(listAttributes[id]);
-					listAttributes.erase(itDel);
-				}
+		ComplexAttribute ObjectModel::BuildObjectFromModel(std::string modelName, std::string objectName, std::string buildSignature)
+		{
+			if (modelMap.find(modelName) != modelMap.end()) {
+				return modelMap[modelName]->buildModel(objectName, buildSignature);
 			}
-			else if (attributePath.size() > 0)
-			{
-				getPath(attributePath)->deleteListAttribute(id, freeMemory);
+			else {
+				std::cout << "<Error:DataParser:ObjectModel>[BuildObjectFromModel] : Can't find ObjectModel : " << modelName << std::endl;
 			}
 		}
 
@@ -921,18 +755,20 @@ namespace mse
 		DataParser::DataParser()
 		{
 			this->autoMemory = false;
+			root = new ComplexAttribute("root");
+			root->setAnnotation("NoFile");
 		}
 		DataParser::DataParser(bool autoMemoryManagement)
 		{
 			this->autoMemory = autoMemoryManagement;
+			root = new ComplexAttribute("root");
+			root->setAnnotation("NoFile");
 		}
 		DataParser::~DataParser()
 		{
-			if (autoMemory)
-			{
+			if (autoMemory) {
 				if (dpNav != nullptr) delete dpNav;
-				for (auto it = objectMap.begin(); it != objectMap.end(); it++)
-					delete it->second;
+				delete root;
 			}
 		}
 		DataParserNavigator* DataParser::hookNavigator(DataParserNavigator* dpNav) {
@@ -943,12 +779,6 @@ namespace mse
 		}
 		bool DataParser::checkNavigator() {
 			return dpNav != NULL;
-		}
-		DataObject* DataParser::accessDataObject(std::string name) {
-			if (objectMap.find(name) != objectMap.end())
-				return objectMap[name];
-			else
-				std::cout << "<Error:DataParser:DataParser>[accessDataObject] : Can't find \"" << name << "\" DataObject" << std::endl;
 		}
 		void DataParser::createFlag(std::string flag) {
 			flagList.push_back(flag);
@@ -962,212 +792,231 @@ namespace mse
 		std::string DataParser::getFlagAtIndex(int index) {
 			return flagList[index];
 		}
-		void DataParser::createDataObject(std::string objectName) {
-			DataObject* tempObject = new DataObject(objectName);
-			tempObject->parent = this;
-			objectMap[objectName] = tempObject;
-			objectList.push_back(objectName);
-			if (checkNavigator()) dpNav->setCurrentDataObject(objectName);
-		}
-		void DataParser::pushDataObject(DataObject* object, bool shared) {
-			objectMap[object->getName()] = object;
-			if (!shared && object->parent != nullptr)
-			{
-				object->extractFromDataParser();
-				object->parent = this;
-			}
-			else if (object->parent == nullptr)
-				object->parent = this;
-			objectList.push_back(object->getName());
-			if (checkNavigator()) dpNav->setCurrentDataObject(object->getName());
-		}
-		bool DataParser::dataObjectExists(std::string objectName)
+		void DataParser::createRootAttribute(std::string id)
 		{
-			if (objectMap.find(objectName) != objectMap.end())
-				return true;
-			else
-				return false;
+			// Memory Leak on Replace
+			root->createComplexAttribute(id);
 		}
-		void DataParser::createSpecialAttribute(std::string object, std::string name, std::string type, std::string data) {
-			this->accessDataObject(object)->createSpecialAttribute(name, type, data);
+		bool DataParser::containsRootAttribute(std::string objectName)
+		{
+			return (root->containsComplexAttribute(objectName));
 		}
-		void DataParser::createSpecialAttribute(std::string name, std::string type, std::string data) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createSpecialAttribute(name, type, data);
+		ComplexAttribute* DataParser::extractRootAttribute(std::string rootAttributeName)
+		{
+			ComplexAttribute* returnAttribute = this->getRootAttribute(rootAttributeName);
+			root->extractElement(this->getRootAttribute(rootAttributeName));
+			return returnAttribute;
 		}
-		void DataParser::createBaseAttribute(std::string object, std::string attributePath, std::string name, std::string data) {
-			this->accessDataObject(object)->pushBaseAttribute(convertPath(attributePath), new BaseAttribute(name, "str", data));
+		ComplexAttribute* DataParser::getRootAttribute(std::string id)
+		{
+			std::cout << "Root equals to : " << root << std::endl;
+			if (containsRootAttribute(id)) {
+				return root->getComplexAttribute(id);
+			}
+			else {
+				std::cout << "<Error:DataParser:DataParser>[getRootAttribute] : Can't find RootAttribute : " 
+					<< id << " on "<< root->getAnnotation() << std::endl;
+			}
+		}
+		ComplexAttribute* DataParser::getPath(std::string path)
+		{
+			std::cout << "DAPATH IS / " << path << std::endl;
+			if (path.size() > 0 && Functions::String::extract(path, path.size() - 1, 0) == "/")
+				path = Functions::String::extract(path, 0, 1);
+			if (Functions::String::occurencesInString(path, "/") > 0) {
+				std::string subPath = Functions::Vector::join(Functions::String::split(path, "/"), "/", 1);
+				std::cout << "Go to : " << Functions::String::split(path, "/")[0] << " then " << subPath << std::endl;
+				return getRootAttribute(Functions::String::split(path, "/")[0])->getPath(subPath);
+			}
+			else {
+				return getRootAttribute(path);
+			}
+		}
+		void DataParser::createBaseAttribute(std::string attributePath, std::string name, std::string data) {
+			this->getPath(attributePath)->createBaseAttribute(name, "string", data);
 		}
 		void DataParser::createBaseAttribute(std::string name, std::string data) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushBaseAttribute(convertPath(dpNav->getCurrentPath()), new BaseAttribute(name, "str", data));
+			if (checkNavigator()) {
+				this->getRootAttribute(dpNav->getCurrentRootAttribute())
+					->getPath(dpNav->getCurrentPath())->createBaseAttribute(name, "string", data);
+			}
 		}
-		void DataParser::createBaseAttribute(std::string object, std::string attributePath, std::string name, bool data) {
-			this->accessDataObject(object)->pushBaseAttribute(convertPath(attributePath), new BaseAttribute(name, "int", data ? "True" : "False"));
+		void DataParser::createBaseAttribute(std::string attributePath, std::string name, bool data) {
+			this->getPath(attributePath)->createBaseAttribute(name, "int", data ? "True" : "False");
 		}
 		void DataParser::createBaseAttribute(std::string name, bool data) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushBaseAttribute(convertPath(dpNav->getCurrentPath()), new BaseAttribute(name, "bool", data ? "True" : "False"));
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createBaseAttribute(name, "bool", data ? "True" : "False");
+			}
 		}
-		void DataParser::createBaseAttribute(std::string object, std::string attributePath, std::string name, int data) {
-			this->accessDataObject(object)->pushBaseAttribute(convertPath(attributePath), new BaseAttribute(name, "int", std::to_string(data)));
+		void DataParser::createBaseAttribute(std::string attributePath, std::string name, int data) {
+			this->getPath(attributePath)->createBaseAttribute("int", std::to_string(data));
 		}
 		void DataParser::createBaseAttribute(std::string name, int data) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushBaseAttribute(convertPath(dpNav->getCurrentPath()), new BaseAttribute(name, "int", std::to_string(data)));
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createBaseAttribute(name, "int", std::to_string(data));
+			}
 		}
-		void DataParser::createBaseAttribute(std::string object, std::string attributePath, std::string name, double data) {
-			this->accessDataObject(object)->pushBaseAttribute(convertPath(attributePath), new BaseAttribute(name, "float", std::to_string(data)));
+		void DataParser::createBaseAttribute(std::string attributePath, std::string name, double data) {
+			this->getPath(attributePath)->createBaseAttribute("float", std::to_string(data));
 		}
 		void DataParser::createBaseAttribute(std::string name, double data) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushBaseAttribute(convertPath(dpNav->getCurrentPath()), new BaseAttribute(name, "float", std::to_string(data)));
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createBaseAttribute(name, "float", std::to_string(data));
+			}
 		}
-		void DataParser::pushBaseAttribute(std::string object, std::string attributePath, BaseAttribute* attr) {
-			this->accessDataObject(object)->pushBaseAttribute(convertPath(attributePath), attr);
+		void DataParser::pushBaseAttribute(std::string attributePath, BaseAttribute* attr) {
+			this->getPath(attributePath)->pushBaseAttribute(attr);
 		}
 		void DataParser::pushBaseAttribute(BaseAttribute* attr) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushBaseAttribute(convertPath(dpNav->getCurrentPath()), attr);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->pushBaseAttribute(attr);
+			}
 		}
-		void DataParser::createListAttribute(std::string object, std::string attributePath, std::string id, std::string type) {
-			this->accessDataObject(object)->createListAttribute(convertPath(attributePath), id, type);
+		void DataParser::createListAttribute(std::string attributePath, std::string id, std::string type) {
+			this->getPath(attributePath)->createListAttribute(id, type);
 		}
 		void DataParser::createListAttribute(std::string id, std::string type) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createListAttribute(convertPath(dpNav->getCurrentPath()), id, type);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createListAttribute(id, type);
+			}
 		}
-		void DataParser::pushListAttribute(std::string object, std::string attributePath, ListAttribute* attr) {
-			this->accessDataObject(object)->pushListAttribute(convertPath(attributePath), attr);
+		void DataParser::pushListAttribute(std::string attributePath, ListAttribute* attr) {
+			this->getPath(attributePath)->pushListAttribute(attr);
 		}
 		void DataParser::pushListAttribute(ListAttribute* attr) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushListAttribute(convertPath(dpNav->getCurrentPath()), attr);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->pushListAttribute(attr);
+			}
 		}
-		void DataParser::createListItem(std::string object, std::string attributePath, std::string listID, std::string value) {
-			this->accessDataObject(object)->createListItem(convertPath(attributePath), listID, value);
+		void DataParser::createListItem(std::string attributePath, std::string listID, std::string value) {
+			this->getPath(attributePath)->createListItem(listID, value);
 		}
 		void DataParser::createListItem(std::string listID, std::string value) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createListItem(convertPath(dpNav->getCurrentPath()), listID, value);
+			if (checkNavigator()) this->getPath(dpNav->getFullPath())->createListItem(listID, value);
 		}
-		void DataParser::createListGenerator(std::string object, std::string attributePath, std::string gtarget, std::string gtype, std::string regex) {
-			this->accessDataObject(object)->createListGenerator(convertPath(attributePath), gtarget, gtype, regex);
+		void DataParser::createListGenerator(std::string attributePath, std::string gtarget, std::string gtype, std::string regex) {
+			this->getPath(attributePath)->createListGenerator(gtarget, gtype, regex);
 		}
 		void DataParser::createListGenerator(std::string gtarget, std::string gtype, std::string regex) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createListGenerator(convertPath(dpNav->getCurrentPath()), gtarget, gtype, regex);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createListGenerator(gtarget, gtype, regex);
+			}
 		}
-		void DataParser::addBoundToListGenerator(std::string object, std::string attributePath, std::string listID, int gstart, int gend) {
-			this->accessDataObject(object)->addBoundToListGenerator(convertPath(attributePath), listID, gstart, gend);
+		void DataParser::addBoundToListGenerator(std::string attributePath, std::string listID, int gstart, int gend) {
+			this->getPath(attributePath)->addBoundToListGenerator(listID, gstart, gend);
 		}
 		void DataParser::addBoundToListGenerator(std::string listID, int gstart, int gend) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->addBoundToListGenerator(convertPath(dpNav->getCurrentPath()), listID, gstart, gend);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->addBoundToListGenerator(listID, gstart, gend);
+			}
 		}
-		void DataParser::generateInList(std::string object, std::string attributePath, std::string listID) {
-			this->accessDataObject(object)->generateInList(convertPath(attributePath), listID);
+		void DataParser::generateInList(std::string attributePath, std::string listID) {
+			this->getPath(attributePath)->generateInList(listID);
 		}
 		void DataParser::generateInList(std::string listID) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->generateInList(convertPath(dpNav->getCurrentPath()), listID);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->generateInList(listID);
+			}
 		}
-		void DataParser::createComplexAttribute(std::string object, std::string attributePath, std::string id) {
-			this->accessDataObject(object)->createComplexAttribute(convertPath(attributePath), id);
+		void DataParser::createComplexAttribute(std::string attributePath, std::string id) {
+			this->getPath(attributePath)->createComplexAttribute(id);
 		}
 		void DataParser::createComplexAttribute(std::string id) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createComplexAttribute(convertPath(dpNav->getCurrentPath()), id);
-			if (checkNavigator()) dpNav->goTo(id);
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->createComplexAttribute(id);
+				dpNav->goTo(id);
+			}
 		}
-		void DataParser::pushComplexAttribute(std::string object, std::string attributePath, ComplexAttribute* cmplx) {
-			this->accessDataObject(object)->pushComplexAttribute(convertPath(attributePath), cmplx);
+		void DataParser::pushComplexAttribute(std::string attributePath, ComplexAttribute* cmplx) {
+			this->getPath(attributePath)->pushComplexAttribute(cmplx);
 		}
 		void DataParser::pushComplexAttribute(ComplexAttribute* cmplx) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushComplexAttribute(convertPath(dpNav->getCurrentPath()), cmplx);
-			if (checkNavigator()) dpNav->goTo(cmplx->getID());
+			if (checkNavigator()) {
+				this->getPath(dpNav->getFullPath())->pushComplexAttribute(cmplx);
+				dpNav->goTo(cmplx->getID());
+			}
 		}
-		void DataParser::createHeritComplexAttribute(std::string object, std::string id) {
-			this->accessDataObject(object)->createHeritComplexAttribute(id);
-		}
-		void DataParser::createHeritComplexAttribute(std::string id) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->createHeritComplexAttribute(id);
-			if (checkNavigator()) dpNav->goTo(id);
-		}
-		void DataParser::pushHeritComplexAttribute(std::string object, ComplexAttribute* cmplx) {
-			this->accessDataObject(object)->pushHeritComplexAttribute(cmplx);
-		}
-		void DataParser::pushHeritComplexAttribute(ComplexAttribute* cmplx) {
-			if (checkNavigator()) this->accessDataObject(dpNav->getCurrentDataObject())->pushHeritComplexAttribute(cmplx);
-			if (checkNavigator()) dpNav->goTo(cmplx->getID());
-		}
-		unsigned int DataParser::getListSize(std::string object, std::string attributePath, std::string listName) {
-			return this->accessDataObject(object)->getListAttribute(convertPath(attributePath), listName)->getSize();
+		unsigned int DataParser::getListSize(std::string attributePath, std::string listName) {
+			return this->getPath(attributePath)->getListAttribute(listName)->getSize();
 		}
 		unsigned int DataParser::getListSize(std::string listName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getListAttribute(convertPath(dpNav->getCurrentPath()), listName)->getSize();
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->getListAttribute(listName)->getSize();
+			}
 		}
-		std::vector<std::string> DataParser::getAllComplex(std::string object, std::string attributePath) {
-			return this->accessDataObject(object)->getAllComplex(convertPath(attributePath));
+		std::vector<std::string> DataParser::getAllComplexAttributes(std::string attributePath) {
+			return this->getPath(attributePath)->getAllComplexAttributes();
 		}
-		std::vector<std::string> DataParser::getAllComplex() {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getAllComplex(convertPath(dpNav->getCurrentPath()));
+		std::vector<std::string> DataParser::getAllComplexAttributes() {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->getAllComplexAttributes();
+			}
 		}
-		std::vector<std::string> DataParser::getAllAttributes(std::string object, std::string attributePath) {
-			return this->accessDataObject(object)->getAllAttributes(convertPath(attributePath));
+		std::vector<std::string> DataParser::getAllBaseAttributes(std::string attributePath) {
+			return this->getPath(attributePath)->getAllBaseAttributes();
 		}
-		std::vector<std::string> DataParser::getAllAttributes() {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getAllAttributes(convertPath(dpNav->getCurrentPath()));
+		std::vector<std::string> DataParser::getAllBaseAttributes() {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->getAllBaseAttributes();
+			}
 		}
-		std::vector<std::string> DataParser::getAllLists(std::string object, std::string attributePath) {
-			return this->accessDataObject(object)->getAllLists(convertPath(attributePath));
+		std::vector<std::string> DataParser::getAllListAttributes(std::string attributePath) {
+			return this->getPath(attributePath)->getAllListAttributes();
 		}
-		std::vector<std::string> DataParser::getAllLists() {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getAllLists(convertPath(dpNav->getCurrentPath()));
+		std::vector<std::string> DataParser::getAllListAttributes() {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->getAllListAttributes();
+			}
 		}
-		bool DataParser::attributeExists(std::string object, std::string attributePath, std::string attributeName) {
-			return this->accessDataObject(object)->attributeExists(convertPath(attributePath), attributeName);
+		bool DataParser::containsBaseAttribute(std::string attributePath, std::string attributeName) {
+			std::cout << "Searching for : " << attributeName << " on path " << attributePath << std::endl;
+			return this->getPath(attributePath)->containsBaseAttribute(attributeName);
 		}
-		bool DataParser::attributeExists(std::string attributeName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->attributeExists(convertPath(dpNav->getCurrentPath()), attributeName);
+		bool DataParser::containsBaseAttribute(std::string attributeName) {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->containsBaseAttribute(attributeName);
+			}
 		}
-		bool DataParser::complexExists(std::string object, std::string attributePath, std::string attributeName) {
-			return this->accessDataObject(object)->complexExists(convertPath(attributePath), attributeName);
+		bool DataParser::containsComplexAttribute(std::string attributePath, std::string attributeName) {
+			return this->getPath(attributePath)->containsComplexAttribute(attributeName);
 		}
-		bool DataParser::complexExists(std::string attributeName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->complexExists(convertPath(dpNav->getCurrentPath()), attributeName);
+		bool DataParser::containsComplexAttribute(std::string attributeName) {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->containsComplexAttribute(attributeName);
+			}
 		}
-		bool DataParser::listExists(std::string object, std::string attributePath, std::string attributeName) {
-			return this->accessDataObject(object)->listExists(convertPath(attributePath), attributeName);
+		bool DataParser::containsListAttribute(std::string attributePath, std::string attributeName) {
+			return this->getPath(attributePath)->containsListAttribute(attributeName);
 		}
-		bool DataParser::listExists(std::string attributeName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->listExists(convertPath(dpNav->getCurrentPath()), attributeName);
+		bool DataParser::containsListAttribute(std::string attributeName) {
+			if (checkNavigator()) {
+				return this->getPath(dpNav->getFullPath())->containsListAttribute(attributeName);
+			}
 		}
-		BaseAttribute* DataParser::getAttribute(std::string object, std::string attributePath, std::string attributeName) {
-			return this->accessDataObject(object)->getAttribute(convertPath(attributePath), attributeName);
+		BaseAttribute* DataParser::getBaseAttribute(std::string attributePath, std::string attributeName) {
+			return this->getPath(attributePath)->getBaseAttribute(attributeName);
 		}
-		BaseAttribute* DataParser::getAttribute(std::string attributeName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getAttribute(convertPath(dpNav->getCurrentPath()), attributeName);
+		BaseAttribute* DataParser::getBaseAttribute(std::string attributeName) {
+			if (checkNavigator()) return this->getPath(dpNav->getFullPath())->getBaseAttribute(attributeName);
 		}
-		BaseAttribute* DataParser::getListItem(std::string object, std::string attributePath, std::string listName, int listItem) {
-			return this->accessDataObject(object)->getListAttribute(convertPath(attributePath), listName)->getElement(listItem);
+		BaseAttribute* DataParser::getListItem(std::string attributePath, std::string listName, int listItem) {
+			return this->getPath(attributePath)->getListAttribute(listName)->getElement(listItem);
 		}
 		BaseAttribute* DataParser::getListItem(std::string listName, int listItem) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getListAttribute(convertPath(dpNav->getCurrentPath()), listName)->getElement(listItem);
+			if (checkNavigator()) return this->getPath(dpNav->getFullPath())->getListAttribute(listName)->getElement(listItem);
 		}
-		ComplexAttribute* DataParser::getComplexAttribute(std::string object, std::string attributePath, std::string id) {
-			return this->accessDataObject(object)->getComplexAttribute(convertPath(attributePath), id);
+		ComplexAttribute* DataParser::getComplexAttribute(std::string attributePath, std::string id) {
+			return this->getPath(attributePath)->getComplexAttribute(id);
 		}
 		ComplexAttribute* DataParser::getComplexAttribute(std::string id) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getComplexAttribute(convertPath(dpNav->getCurrentPath()), id);
+			if (checkNavigator()) return this->getPath(dpNav->getFullPath())->getComplexAttribute(id);
 		}
-		ListAttribute* DataParser::getListAttribute(std::string object, std::string attributePath, std::string listName) {
-			return this->accessDataObject(object)->getListAttribute(convertPath(attributePath), listName);
+		ListAttribute* DataParser::getListAttribute(std::string attributePath, std::string listName) {
+			return this->getPath(attributePath)->getListAttribute(listName);
 		}
 		ListAttribute* DataParser::getListAttribute(std::string listName) {
-			if (checkNavigator()) return this->accessDataObject(dpNav->getCurrentDataObject())->getListAttribute(convertPath(dpNav->getCurrentPath()), listName);
-		}
-		std::string DataParser::getVarType(std::string line) {
-			std::string attributeType;
-			std::vector<std::string> boolType = { "True", "False" };
-			if (Functions::Vector::isInList(line, boolType))
-				attributeType = "bool";
-			else if (line.substr(0, 1) == "\"" && line.substr(line.size() - 1, 1) == "\"")
-				attributeType = "str";
-			else if (Functions::String::isStringFloat(line))
-				attributeType = "float";
-			else if (Functions::String::isStringInt(line))
-				attributeType = "int";
-			else
-				attributeType = "unknown";
-			return attributeType;
+			if (checkNavigator()) return this->getPath(dpNav->getFullPath())->getListAttribute(listName);
 		}
 		bool DataParser::parseFile(std::string filename, bool verbose) {
 			useFile.open(filename);
@@ -1203,9 +1052,9 @@ namespace mse
 					{
 						if (parsedLine.substr(parsedLine.size() - 1, 1) == ":")
 						{
-							if (verbose) std::cout << "    Create new DataObject : " << parsedLine.substr(0, parsedLine.size() - 1) << std::endl;
+							if (verbose) std::cout << "    Create new RootAttribute : " << parsedLine.substr(0, parsedLine.size() - 1) << std::endl;
 							curCat = parsedLine.substr(0, parsedLine.size() - 1);
-							this->createDataObject(curCat);
+							this->createRootAttribute(curCat);
 						}
 						else if (parsedLine.substr(0, 6) == "Define" && parsedLine.substr(parsedLine.size() - 1, 1) == ";")
 						{
@@ -1222,7 +1071,7 @@ namespace mse
 					}
 					else if (curCat != "None" && parsedLine != "" && currentIndent > 0)
 					{
-						std::vector<std::string> symbolExclusion = { "@", "?" ,"\"", "&", "{" };
+						std::vector<std::string> symbolExclusion = { "@", "?" ,"\"", "#", "{" };
 						for (unsigned int p = 0; p <= currentIndent; p++)
 						{
 							if (verbose) std::cout << "    ";
@@ -1234,20 +1083,11 @@ namespace mse
 							std::string attributeValue = Functions::Vector::join(splittedLine, ":", 1, 0);
 							std::string attributeType = getVarType(attributeValue);
 							if (attributeType == "unknown") std::cout << "<Warning:DataParser:DataParser>[parseFile] : " << attributeName << " is unknown type" << std::endl;
-							objectMap[curCat]->createBaseAttribute(addPath, attributeName, attributeType, attributeValue);
+							getRootAttribute(curCat)->getPath(Path(addPath))->createBaseAttribute(attributeName, attributeType, attributeValue);
 							std::string pushIndicator;
 							if (addPath.size() == 0) { pushIndicator = curCat + ":Root"; }
 							else { pushIndicator = addPath[addPath.size() - 1]; }
 							if (verbose) std::cout << "Create base attribute " << attributeName << "(" << attributeValue << ") inside " << pushIndicator << " (Type:" << attributeType << ")" << std::endl;
-						}
-						else if (parsedLine.substr(0, 1) == "&" && currentIndent == 1)
-						{
-							std::string specialElement = parsedLine.substr(1);
-							std::string attributeName = Functions::String::split(specialElement, ":")[0];
-							std::string attributeValue = Functions::String::split(specialElement, ":")[1];
-							std::string attributeType = getVarType(attributeValue);
-							objectMap[curCat]->createSpecialAttribute(attributeName, attributeType, attributeValue);
-							if (verbose) std::cout << "Create special attribute &" << attributeName << " inside " << curCat << std::endl;
 						}
 						else if (parsedLine.substr(0, 1) == "@")
 						{
@@ -1261,34 +1101,22 @@ namespace mse
 								complexElementID = Functions::String::split(complexElementID, ":")[0];
 								complexToHeritIDList = Functions::String::split(complexToHeritID, ",");
 
-								for (unsigned int i = 0; i < complexToHeritIDList.size(); i++)
-								{
-									complexToHerit.push_back(objectMap[curCat]->getComplexAttribute(convertPath(""), complexToHeritIDList[i]));
+								for (unsigned int i = 0; i < complexToHeritIDList.size(); i++) {
+									complexToHerit.push_back(getRootAttribute(curCat)->getComplexAttribute(complexToHeritIDList[i]));
 								}
 							}
-							objectMap[curCat]->createComplexAttribute(addPath, complexElementID);
+							getRootAttribute(curCat)->getPath(Path(addPath))->createComplexAttribute(complexElementID);
 							if (verbose) std::cout << "Create cmplx attribute @" << complexElementID << " inside " << curCat + ":" \
-								+ objectMap[curCat]->getPath(addPath)->getID() << " (&" << \
-								objectMap[curCat]->getPath(addPath) << ")" << std::endl;
-							for (unsigned int i = 0; i < complexToHerit.size(); i++)
-							{
-								for (unsigned int p = 0; p <= currentIndent + 1; p++)
-								{
+								+ getRootAttribute(curCat)->getPath(Path(addPath))->getID() << " (&" << \
+								getRootAttribute(curCat)->getPath(Path(addPath)) << ")" << std::endl;
+							for (unsigned int i = 0; i < complexToHerit.size(); i++) {
+								for (unsigned int p = 0; p <= currentIndent + 1; p++) {
 									if (verbose) std::cout << "    ";
 								}
 								if (verbose) std::cout << "{Herit from : " << complexToHeritIDList[i] << "}" << std::endl;
-								objectMap[curCat]->getComplexAttribute(addPath, complexElementID)->heritage(complexToHerit[i]);
+								getRootAttribute(curCat)->getPath(Path(addPath))->getComplexAttribute(complexElementID)->heritage(complexToHerit[i]);
 							}
 
-							addPath.push_back(complexElementID);
-						}
-						else if (parsedLine.substr(0, 3) == "{@}")
-						{
-							std::string complexElementID = parsedLine.substr(3);
-							objectMap[curCat]->createHeritComplexAttribute(complexElementID);
-							if (verbose) std::cout << "Create h_cmplx attribute {@}" << complexElementID << " inside " << curCat + ":" \
-								+ objectMap[curCat]->getPath(addPath)->getID() << " (&" << \
-								objectMap[curCat]->getPath(addPath) << ")" << std::endl;
 							addPath.push_back(complexElementID);
 						}
 						else if (parsedLine.substr(0, 1) == "?")
@@ -1297,28 +1125,28 @@ namespace mse
 							listElementID = Functions::String::split(listElementID, "(")[0];
 							std::string listElementType = parsedLine.substr(1);
 							listElementType = Functions::String::split(Functions::String::split(listElementType, ")")[0], "(")[1];
-							objectMap[curCat]->createListAttribute(addPath, listElementID, listElementType);
+							getRootAttribute(curCat)->getPath(Path(addPath))->createListAttribute(listElementID, listElementType);
 							curList = listElementID;
 							curListIndent = currentIndent;
-							if (verbose) std::cout << "Create list attribute ?" << curList << " inside " << curCat + ":" + objectMap[curCat]->getPath(addPath)->getID() << std::endl;
-							if (Functions::String::occurencesInString(Functions::String::split(parsedLine.substr(1), ")")[1], "<") == 1)
-							{
+							if (verbose) {
+								std::cout << "Create list attribute ?" << curList << " inside " 
+									<< curCat + ":" + getRootAttribute(curCat)->getPath(Path(addPath))->getID() << std::endl;
+							}
+							if (Functions::String::occurencesInString(Functions::String::split(parsedLine.substr(1), ")")[1], "<") == 1) {
 								std::string generatorRegex = Functions::String::split(parsedLine.substr(1), "<")[1];
 								std::string genIt = Functions::String::split(generatorRegex, "{")[1];
 								genIt = Functions::String::split(genIt, "}")[0];
 								generatorRegex = Functions::String::split(generatorRegex, ">")[0];
-								for (unsigned int p = 0; p <= currentIndent + 1; p++)
-								{
+								for (unsigned int p = 0; p <= currentIndent + 1; p++) {
 									if (verbose) std::cout << "    ";
 								}
 								if (verbose) std::cout << "Generator of type " << listElementType << " hooked to " << listElementID << " with pattern " << generatorRegex << " and iterator " << genIt << std::endl;
-								ListGenerator gen(listElementType, generatorRegex, objectMap[curCat]->getListAttribute(addPath, listElementID));
+								ListGenerator gen(listElementType, generatorRegex, 
+									getRootAttribute(curCat)->getPath(Path(addPath))->getListAttribute(listElementID));
 								std::vector<std::string> listOfBounds;
 								listOfBounds = Functions::String::split(genIt, ",");
-								for (unsigned int i = 0; i < listOfBounds.size(); i++)
-								{
-									if (Functions::String::occurencesInString(listOfBounds[i], "-") == 1)
-									{
+								for (unsigned int i = 0; i < listOfBounds.size(); i++) {
+									if (Functions::String::occurencesInString(listOfBounds[i], "-") == 1) {
 										int startBound = std::stoi(Functions::String::split(listOfBounds[i], "-")[0]);
 										int endBound = std::stoi(Functions::String::split(listOfBounds[i], "-")[1]);
 										gen.addBound(startBound, endBound);
@@ -1333,23 +1161,26 @@ namespace mse
 						{
 							std::string attributeValue = parsedLine;
 							std::string attributeType = getVarType(attributeValue);
-							if (attributeType == objectMap[curCat]->getListAttribute(addPath, curList)->getType())
+							if (attributeType == getRootAttribute(curCat)->getPath(Path(addPath))->getListAttribute(curList)->getDataType())
 							{
-								objectMap[curCat]->getListAttribute(addPath, curList)->createElement(attributeValue);
+								getRootAttribute(curCat)->getPath(Path(addPath))->getListAttribute(curList)->createElement(attributeValue);
 								if (verbose) std::cout << "Push element " << attributeValue << " inside " << curList << std::endl;
 							}
 							else
 							{
-								if (verbose) std::cout << "Error ! Can't push " << attributeType << " inside " << curList << " which is ";
-								if (verbose) std::cout << objectMap[curCat]->getListAttribute(addPath, curList)->getType() << " type " << std::endl;
+								if (verbose) {
+									std::cout << "Error ! Can't push " << attributeType << " inside " << curList << " which is "
+										<< getRootAttribute(curCat)->getPath(Path(addPath))->getListAttribute(curList)->getType() << " type " << std::endl;
+								}
 							}
 						}
 					}
 					currentIndex++;
 				}
 				useFile.close();
-				return true;
+				root->setAnnotation(filename);
 				if (verbose) std::cout << "Parsed over.." << std::endl;
+				return true;
 			}
 			else
 			{
@@ -1359,26 +1190,22 @@ namespace mse
 		}
 		void DataParser::writeFile(std::string filename, bool verbose) {
 			outFile.open(filename);
-			std::vector<DataObject*> orderedDataObjects;
 			if (verbose) std::cout << "Displaying data table" << std::endl;
 			unsigned int currentDeepness = 1;
 			for (unsigned int i = 0; i < this->getAmountOfFlags(); i++)
 				outFile << "Define Flag (" << this->getFlagAtIndex(i) << ");" << std::endl;
 			if (this->getAmountOfFlags() > 0) outFile << std::endl;
-			for (unsigned int objIt = 0; objIt < objectList.size(); objIt++) {
-				objectMap[objectList[objIt]]->writeAttributes(&outFile);
+			for (unsigned int objIt = 0; objIt < root->getAllComplexAttributes().size(); objIt++) {
+				getRootAttribute(root->getAllComplexAttributes()[objIt])->writeAttributes(&outFile);
 			}
 			outFile.close();
 		}
-		std::vector<std::string> DataParser::getAllDataObjects() {
-			return objectList;
+		std::vector<std::string> DataParser::getAllRootAttributes() {
+			return root->getAllComplexAttributes();
 		}
-		void DataParser::deleteDataObject(std::string name, bool freeMemory)
+		void DataParser::deleteRootAttribute(std::string name, bool freeMemory)
 		{
-			if (freeMemory)
-				delete this->objectMap[name];
-			objectList.erase(std::remove(objectList.begin(), objectList.end(), name), objectList.end());
-			this->objectMap.erase(name);
+			root->deleteComplexAttribute(name, freeMemory);
 		}
 	}
 }

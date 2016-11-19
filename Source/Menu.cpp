@@ -28,9 +28,12 @@ namespace mse
 				int mapSizeX = 0;
 				int mapSizeY = 0;
 				mapInfoParser.parseFile("Data/Maps/" + allMaps[i]);
-				if (mapInfoParser.attributeExists("Meta", "", "Level")) levelName = mapInfoParser.getAttribute("Meta", "", "Level")->get<std::string>();
-				if (mapInfoParser.attributeExists("Meta", "", "SizeX")) mapSizeX = mapInfoParser.getAttribute("Meta", "", "SizeX")->get<int>();
-				if (mapInfoParser.attributeExists("Meta", "", "SizeY")) mapSizeY = mapInfoParser.getAttribute("Meta", "", "SizeY")->get<int>();
+				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("Level")) 
+					levelName = mapInfoParser.getPath("Meta")->getBaseAttribute("Level")->get<std::string>();
+				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeX")) 
+					mapSizeX = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeX")->get<int>();
+				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeY")) 
+					mapSizeY = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeY")->get<int>();
 				GUI::Button* btn = gui->createButton("maps", "map_gbtn_" + std::to_string(i), 0, i * 100, true, true, "MAPSELECT");
 				gui->createLabel("maps", "map_glbl_" + std::to_string(i), 30, i * 100 + 10, filename, "weblysleekuil.ttf", 64, sf::Color::White);
 				gui->createLabel("maps", "map_gname_" + std::to_string(i), 320, i * 100 + 10, levelName, "weblysleekuil.ttf", 24, sf::Color::White);
@@ -53,7 +56,7 @@ namespace mse
 					newFileParser.hookNavigator(new Data::DataParserNavigator());
 					newFileParser.createFlag("Map");
 					newFileParser.createFlag("Lock");
-					newFileParser.createDataObject("Meta");
+					newFileParser.createRootAttribute("Meta");
 					newFileParser.createBaseAttribute("Level", newLevelName);
 					newFileParser.createBaseAttribute("SizeX", 1920);
 					newFileParser.createBaseAttribute("SizeY", 1080);

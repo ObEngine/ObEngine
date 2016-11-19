@@ -1,7 +1,6 @@
 Define Flag (Settings);
 
 GameConfig:
-    mapName:"poly2.map.msd"
 	antiAliasing:True
     depthOfField:True
     scrollSensibility:1
@@ -64,3 +63,4 @@ Developpement:
     showCursor:True
     showCollisions:False
     showFPS:True
+    COMM:"COM9"

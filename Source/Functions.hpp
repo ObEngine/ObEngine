@@ -98,6 +98,9 @@ namespace mse
 			void regenerateEncoding(std::string& str);
 			std::string stringToAsciiCode(std::string& str);
 			std::string cutBeforeAsciiCode(std::string& str, int asciiCode);
+			typedef std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::pair<int, int>>> StringExtractor;
+			StringExtractor extractAllStrings(std::string);
+			bool contains(const std::string& string, const std::string& search);
 		}
 		namespace Type
 		{
@@ -110,6 +113,8 @@ namespace mse
 		{
 			template <typename V>
 			bool isInList(V item, const std::vector<V>& vector);
+			template <typename V>
+			int indexOfElement(V item, const std::vector<V>& vector);
 			std::string join(std::vector<std::string>& vector, std::string sep = "", int start = 0, int end = 0);
 			template <typename V>
 			void eraseAll(std::vector<V>& vector, V elem);
@@ -204,6 +209,16 @@ namespace mse
 					return true;
 			}
 			return false;
+		}
+		template<typename V>
+		int Vector::indexOfElement(V item, const std::vector<V>& vector)
+		{
+			for (size_t k = 0; k < vector.size(); k++)
+			{
+				if (item == vector[k])
+					return k;
+			}
+			return -1;
 		}
 		template <typename V>
 		inline void Vector::eraseAll(std::vector<V>& vector, V elem)

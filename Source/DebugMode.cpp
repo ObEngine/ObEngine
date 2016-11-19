@@ -23,8 +23,8 @@ namespace mse
 			Data::DataParser configFile;
 			configFile.parseFile("Data/config.cfg.msd");
 			configFile.hookNavigator(new Data::DataParserNavigator());
-			configFile.accessNavigator()->setCurrentDataObject("GameConfig");
-			int scrollSensitive = configFile.getAttribute("scrollSensibility")->get<int>();
+			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
+			int scrollSensitive = configFile.getBaseAttribute("scrollSensibility")->get<int>();
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
@@ -46,9 +46,9 @@ namespace mse
 			double speedCoeff = 60.0;
 			double gameSpeed = 0.0;
 			double frameLimiterClock = Time::getTickSinceEpoch();
-			bool limitFPS = (configFile.attributeExists("framerateLimit")) ? configFile.getAttribute("framerateLimit")->get<bool>() : true;
-			int framerateTarget = (configFile.attributeExists("framerateTarget")) ? configFile.getAttribute("framerateTarget")->get<int>() : 60;
-			bool vsyncEnabled = (configFile.attributeExists("vsync")) ? configFile.getAttribute("vsync")->get<bool>() : false;
+			bool limitFPS = (configFile.containsBaseAttribute("framerateLimit")) ? configFile.getBaseAttribute("framerateLimit")->get<bool>() : true;
+			int framerateTarget = (configFile.containsBaseAttribute("framerateTarget")) ? configFile.getBaseAttribute("framerateTarget")->get<int>() : 60;
+			bool vsyncEnabled = (configFile.containsBaseAttribute("vsync")) ? configFile.getBaseAttribute("vsync")->get<bool>() : false;
 			double reqFramerateInterval = 1.0 / (double)framerateTarget;
 			int currentFrame = 0;
 			int frameProgression = 0;

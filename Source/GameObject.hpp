@@ -28,7 +28,7 @@ namespace mse
 				Data::DataParser allRequires;
 			public:
 				static GameObjectRequires* getInstance();
-				Data::DataObject* getRequiresForObjectType(std::string type);
+				Data::ComplexAttribute* getRequiresForObjectType(std::string type);
 		};
 
 		class GameObject
@@ -62,7 +62,7 @@ namespace mse
 
 				GameObject(std::string type, std::string id);
 				void registerTrigger(Script::Trigger* trg);
-				void loadGameObject(Data::DataObject* obj);
+				void loadGameObject(Data::ComplexAttribute* obj);
 				void hookLuaState(kaguya::State* lua);
 				void update(double dt);
 

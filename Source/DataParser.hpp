@@ -16,67 +16,119 @@ namespace mse
 {
 	namespace Data
 	{
-		std::string reverseConvertPath(std::vector<std::string> path);
 		std::vector<std::string> convertPath(std::string path);
+		std::string getDefaultValueForType(std::string type);
+		std::string getVarType(std::string var);
+		std::string Path();
+		std::string Path(std::vector<std::string> path);
+		std::string Path(std::string cPath);
+		template <class ... Args>
+		std::string Path(std::string cPath, Args ... pathParts);
+
+		namespace Types
+		{
+			enum AttributeType
+			{
+				Attribute = 0x0,
+				ContainerAttribute = 0x1,
+				BaseAttribute = 0x2,
+				ListAttribute = 0x3,
+				ComplexAttribute = 0x4,
+				LinkAttribute = 0x5
+			};
+		}
 
 		class DataParserNavigator
 		{
 			private:
-				std::string currentDataObject;
+				std::string currentRootAttribute;
 				std::string currentPath;
 			public:
-				std::string getCurrentDataObject();
+				std::string getFullPath();
+				std::string getCurrentRootAttribute();
 				std::string getCurrentPath();
-				void setCurrentDataObject(std::string object);
-				void setCurrentDataObject(std::string object, std::string path);
+				void setCurrentRootAttribute(std::string object);
+				void setCurrentRootAttribute(std::string object, std::string path);
 				void setCurrentPath(std::string path);
 				void goTo(std::string path);
 				void goRoot();
 				void goBack();
 		};
 
-		class BaseAttribute
+		class ContainerAttribute;
+		class Attribute
+		{
+			protected:
+				std::string id;
+				Types::AttributeType type = Types::Attribute;
+				std::string annotation = "";
+				ContainerAttribute* parent = nullptr;
+				virtual void removeParent(ContainerAttribute* currentParent);
+				virtual ContainerAttribute* getParent();
+				friend class ContainerAttribute;
+			public:
+				Attribute(ContainerAttribute* parent, std::string id, Types::AttributeType type);
+				virtual void setAnnotation(std::string annotation);
+				virtual std::string getAnnotation();
+				virtual std::string getID();
+				virtual Types::AttributeType getType();
+				virtual void setParent(ContainerAttribute* parent);
+				virtual std::string getNodePath();
+				virtual void setID(std::string id);
+		};
+
+		class ContainerAttribute : public Attribute
+		{
+			protected:
+			public:
+				ContainerAttribute(ContainerAttribute* parent, std::string id, Types::AttributeType type);
+				virtual Attribute* removeOwnership(Attribute* element);
+				virtual Attribute* extractElement(Attribute* element) = 0;
+		};
+
+		class LinkAttribute : public Attribute
 		{
 			private:
-				std::string name;
+				std::string path;
+			public:
+				LinkAttribute(std::string id, std::string path);
+				void copy();
+				template <class A>
+				A* get();
+		};
+
+		class BaseAttribute : public Attribute
+		{
+			private:
 				std::string data;
 				std::string dtype;
+				ContainerAttribute* parent;
 			public:
-				BaseAttribute(std::string bname, std::string btype, std::string bdata);
-				std::string getName();
+				BaseAttribute(ContainerAttribute* parent, std::string id, std::string btype, std::string bdata);
+				BaseAttribute(std::string id, std::string btype, std::string bdata);
 				std::string returnData();
 				void set(int var);
 				void set(double var);
 				void set(std::string var);
 				void set(bool var);
-				std::string getType();
-				template <class T> T get() {
-					std::string typeOfData = Functions::Type::getClassType<T>();
-					if (typeOfData == Functions::Type::getClassType<int>())
-						return std::stoi(data);
-					if (typeOfData == Functions::Type::getClassType<double>())
-						return std::stod(data);
-					if (typeOfData == Functions::Type::getClassType<bool>())
-						return (data == "True") ? true : false;
-					if (typeOfData == Functions::Type::getClassType<std::string>())
-						return data;
-				}
+				std::string getDataType();
+				template <class T> T get() {}
 		};
 
-		class ListAttribute
+		class ListAttribute : public ContainerAttribute
 		{
 			private:
-				std::string listId;
 				std::string dataType;
 				std::vector<BaseAttribute*> dataList;
 			public:
-				ListAttribute(std::string lId, std::string dataType);
+				ListAttribute(ContainerAttribute* parent, std::string id, std::string dataType);
+				ListAttribute(std::string id, std::string dataType);
 				~ListAttribute();
 				unsigned int getSize();
-				std::string getID();
-				std::string getType();
+				std::string getDataType();
 				BaseAttribute* getElement(unsigned int index);
 				void createElement(std::string element);
+				Attribute* extractElement(Attribute* element);
 		};
 
 		class ListGenerator
@@ -95,36 +147,41 @@ namespace mse
 				void generate();
 		};
 
-
-		class ComplexAttribute
+		class ComplexAttribute : public ContainerAttribute
 		{
 			private:
-				std::string id;
-				std::map<std::string, BaseAttribute*> baseAttributes;
-				std::vector<std::string> baseAttributeList;
-				std::map<std::string, ListAttribute*> listAttributes;
-				std::vector<std::string> listAttributeList;
-				std::map<std::string, ComplexAttribute*> complexAttributes;
-				std::vector<std::string> complexAttributeList;
+				ComplexAttribute* parent = nullptr;
+			protected:
+				std::map<std::string, Attribute*> childAttributes;
+				std::vector<std::string> childAttributesNames;
 				std::map<std::string, ListGenerator*> listGenerators;
 				std::vector<std::string> listGeneratorsList;
 			public:
-				ComplexAttribute(std::string attrID);
-				ComplexAttribute(std::string attrID, ComplexAttribute* herit);
-				ComplexAttribute(std::string attrID, std::vector<ComplexAttribute*>* multipleHerit);
+				ComplexAttribute(ComplexAttribute* parent, std::string id);
+				ComplexAttribute(ComplexAttribute* parent, std::string id, ComplexAttribute* herit);
+				ComplexAttribute(ComplexAttribute* parent, std::string id, std::vector<ComplexAttribute*>* multipleHerit);
+				ComplexAttribute(std::string id);
+				ComplexAttribute(std::string id, ComplexAttribute* herit);
+				ComplexAttribute(std::string id, std::vector<ComplexAttribute*>* multipleHerit);
 				~ComplexAttribute();
+				Attribute* extractElement(Attribute* element);
 				void heritage(ComplexAttribute* heritTarget);
-				std::string getID();
-				BaseAttribute* getAttribute(std::string attributeName);
+				ComplexAttribute* getPath(std::string attributePath);
+				BaseAttribute* getBaseAttribute(std::string attributeName);
 				ComplexAttribute* getComplexAttribute(std::string id);
 				ListAttribute* getListAttribute(std::string id);
-				std::vector<std::string> getAllComplex();
-				std::vector<std::string> getAllAttributes();
-				std::vector<std::string> getAllLists();
-				bool attributeExists(std::string attributeName);
-				bool complexExists(std::string attributeName);
-				bool listExists(std::string attributeName);
+				std::vector<std::string> getAllComplexAttributes();
+				std::vector<std::string> getAllBaseAttributes();
+				std::vector<std::string> getAllListAttributes();
+				bool containsAttribute(std::string attributeName);
+				bool containsBaseAttribute(std::string attributeName);
+				bool containsComplexAttribute(std::string attributeName);
+				bool containsListAttribute(std::string attributeName);
 				void createBaseAttribute(std::string name, std::string type, std::string data);
+				void createBaseAttribute(std::string name, std::string data);
+				void createBaseAttribute(std::string name, bool data);
+				void createBaseAttribute(std::string name, int data);
+				void createBaseAttribute(std::string name, double data);
 				void pushBaseAttribute(BaseAttribute* attr);
 				void createListAttribute(std::string id, std::string type);
 				void pushListAttribute(ListAttribute* attr);
@@ -135,79 +192,34 @@ namespace mse
 				void createComplexAttribute(std::string id);
 				void pushComplexAttribute(ComplexAttribute* cmplx);
 				void writeAttributes(std::ofstream* file, unsigned int depth = 1);
-				void deleteAttribute(std::string id, bool freeMemory = false);
+				void deleteBaseAttribute(std::string id, bool freeMemory = false);
 				void deleteComplexAttribute(std::string id, bool freeMemory = false);
 				void deleteListAttribute(std::string id, bool freeMemory = false);
 		};
 
-		class DataParser;
-		class DataObject
+		class ObjectModel
 		{
 			private:
-				DataParser* parent = nullptr;
-				std::map<std::string, BaseAttribute*> specialAttributes;
-				std::vector<std::string> specialAttributeList;
-				std::string objectName;
-				std::map<std::string, BaseAttribute*> baseAttributes;
-				std::vector<std::string> baseAttributeList;
-				std::map<std::string, ListAttribute*> listAttributes;
-				std::vector<std::string> listAttributeList;
-				std::map<std::string, ComplexAttribute*> complexAttributes;
-				std::vector<std::string> complexAttributeList;
-				std::map<std::string, ComplexAttribute*> heritComplexAttributes;
-				std::vector<std::string> heritComplexAttributeList;
-				std::map<std::string, ListGenerator*> listGenerators;
-				std::vector<std::string> listGeneratorsList;
-				friend class DataParser;
+				std::string name;
+				ComplexAttribute signature;
+				ComplexAttribute body;
+			protected:
+				static std::map<std::string, ObjectModel*> modelMap;
+				ObjectModel(std::string modelName, std::string modelSignature);
+				ComplexAttribute buildModel(std::string objectName, std::string buildSignature);
 			public:
-				DataObject(std::string objectname);
-				~DataObject();
-				void extractFromDataParser();
-				std::string getName();
-				void setName(std::string name);
-				ComplexAttribute* getPath(std::vector<std::string> attributePath);
-				BaseAttribute* getAttribute(std::vector<std::string> attributePath, std::string attributeName);
-				ComplexAttribute* getComplexAttribute(std::vector<std::string> attributePath, std::string id);
-				ListAttribute* getListAttribute(std::vector<std::string> attributePath, std::string id);
-				std::vector<std::string> getAllComplex(std::vector<std::string> attributePath);
-				std::vector<std::string> getAllAttributes(std::vector<std::string> attributePath);
-				std::vector<std::string> getAllLists(std::vector<std::string> attributePath);
-				bool attributeExists(std::vector<std::string> attributePath, std::string attributeName);
-				bool complexExists(std::vector<std::string> attributePath, std::string attributeName);
-				bool listExists(std::vector<std::string> attributePath, std::string attributeName);
-				void createSpecialAttribute(std::string name, std::string type, std::string data);
-				void createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string type, std::string data);
-				void createBaseAttribute(std::vector<std::string> attributePath, std::string name, std::string data);
-				void createBaseAttribute(std::vector<std::string> attributePath, std::string name, bool data);
-				void createBaseAttribute(std::vector<std::string> attributePath, std::string name, int data);
-				void createBaseAttribute(std::vector<std::string> attributePath, std::string name, double data);
-				void pushBaseAttribute(std::vector<std::string> attributePath, BaseAttribute* attr);
-				void createListAttribute(std::vector<std::string> attributePath, std::string id, std::string type);
-				void pushListAttribute(std::vector<std::string> attributePath, ListAttribute* attr);
-				void createListItem(std::vector<std::string> attributePath, std::string listID, std::string value);
-				void createListGenerator(std::vector<std::string> attributePath, std::string gtarget, std::string gtype, std::string regex);
-				void addBoundToListGenerator(std::vector<std::string> attributePath, std::string listID, int gstart, int gend);
-				void generateInList(std::vector<std::string> attributePath, std::string listID);
-				void createComplexAttribute(std::vector<std::string> attributePath, std::string id);
-				void pushComplexAttribute(std::vector<std::string> attributePath, ComplexAttribute* cmplx);
-				void createHeritComplexAttribute(std::string id);
-				void pushHeritComplexAttribute(ComplexAttribute* cmplx);
-				void writeAttributes(std::ofstream* file);
-				void deleteAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory = false);
-				void deleteComplexAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory = false);
-				void deleteListAttribute(std::vector<std::string> attributePath, std::string id, bool freeMemory = false);
+				static void CreateModel(std::string modelName, std::string objectSignature);
+				static ComplexAttribute BuildObjectFromModel(std::string modelName, std::string objectName, std::string buildSignature);
 		};
 
 		class DataParser
 		{
 			private:
 				std::string fileName;
-				std::map<std::string, DataObject*> objectMap;
-				std::vector<std::string> objectList;
+				ComplexAttribute* root = nullptr;
 				std::vector<std::string> flagList;
 				std::ifstream useFile;
 				std::ofstream outFile;
-				std::string getVarType(std::string line);
 				bool autoMemory = true;
 				DataParserNavigator* dpNav = NULL;
 				bool checkNavigator();
@@ -217,72 +229,67 @@ namespace mse
 				~DataParser();
 				DataParserNavigator* hookNavigator(DataParserNavigator* dpNav);
 				DataParserNavigator* accessNavigator();
-				DataObject* accessDataObject(std::string name);
 				void createFlag(std::string flag);
-				void createDataObject(std::string objectName);
-				void pushDataObject(DataObject* object, bool shared = false);
-				bool dataObjectExists(std::string objectName);
-				void createSpecialAttribute(std::string object, std::string name, std::string type, std::string data);
-				void createSpecialAttribute(std::string name, std::string type, std::string data);
-				void createBaseAttribute(std::string object, std::string attributePath, std::string name, std::string data);
-				void createBaseAttribute(std::string object, std::string attributePath, std::string name, bool data);
-				void createBaseAttribute(std::string object, std::string attributePath, std::string name, int data);
-				void createBaseAttribute(std::string object, std::string attributePath, std::string name, double data);
+				void createRootAttribute(std::string id);
+				bool containsRootAttribute(std::string objectName);
+				ComplexAttribute* extractRootAttribute(std::string rootAttributeName);
+				ComplexAttribute* getRootAttribute(std::string id);
+				ComplexAttribute* getPath(std::string path);
+				void createBaseAttribute(std::string attributePath, std::string name, std::string data);
+				void createBaseAttribute(std::string attributePath, std::string name, bool data);
+				void createBaseAttribute(std::string attributePath, std::string name, int data);
+				void createBaseAttribute(std::string attributePath, std::string name, double data);
 				void createBaseAttribute(std::string name, std::string data);
 				void createBaseAttribute(std::string name, bool data);
 				void createBaseAttribute(std::string name, int data);
 				void createBaseAttribute(std::string name, double data);
-				void pushBaseAttribute(std::string object, std::string attributePath, BaseAttribute* attr);
+				void pushBaseAttribute(std::string attributePath, BaseAttribute* attr);
 				void pushBaseAttribute(BaseAttribute* attr);
-				void createListAttribute(std::string object, std::string attributePath, std::string id, std::string type);
+				void createListAttribute(std::string attributePath, std::string id, std::string type);
 				void createListAttribute(std::string id, std::string type);
-				void pushListAttribute(std::string object, std::string attributePath, ListAttribute* attr);
+				void pushListAttribute(std::string attributePath, ListAttribute* attr);
 				void pushListAttribute(ListAttribute* attr);
-				void createListItem(std::string object, std::string attributePath, std::string listID, std::string value);
+				void createListItem(std::string attributePath, std::string listID, std::string value);
 				void createListItem(std::string listID, std::string value);
-				void createListGenerator(std::string object, std::string attributePath, std::string gtarget, std::string gtype, std::string regex);
+				void createListGenerator(std::string attributePath, std::string gtarget, std::string gtype, std::string regex);
 				void createListGenerator(std::string gtarget, std::string gtype, std::string regex);
-				void addBoundToListGenerator(std::string object, std::string attributePath, std::string listID, int gstart, int gend);
+				void addBoundToListGenerator(std::string attributePath, std::string listID, int gstart, int gend);
 				void addBoundToListGenerator(std::string listID, int gstart, int gend);
-				void generateInList(std::string object, std::string attributePath, std::string listID);
+				void generateInList(std::string attributePath, std::string listID);
 				void generateInList(std::string listID);
-				void createComplexAttribute(std::string object, std::string attributePath, std::string id);
+				void createComplexAttribute(std::string attributePath, std::string id);
 				void createComplexAttribute(std::string id);
-				void pushComplexAttribute(std::string object, std::string attributePath, ComplexAttribute* cmplx);
+				void pushComplexAttribute(std::string attributePath, ComplexAttribute* cmplx);
 				void pushComplexAttribute(ComplexAttribute* cmplx);
-				void createHeritComplexAttribute(std::string object, std::string id);
-				void createHeritComplexAttribute(std::string id);
-				void pushHeritComplexAttribute(std::string object, ComplexAttribute* cmplx);
-				void pushHeritComplexAttribute(ComplexAttribute* cmplx);
 				bool parseFile(std::string filename, bool verbose = false);
 				void writeFile(std::string filename, bool verbose = false);
 				bool hasFlag(std::string flagName);
 				unsigned int getAmountOfFlags();
 				std::string getFlagAtIndex(int index);
-				std::vector<std::string> getAllComplex(std::string object, std::string attributePath);
-				std::vector<std::string> getAllComplex();
-				std::vector<std::string> getAllAttributes(std::string object, std::string attributePath);
-				std::vector<std::string> getAllAttributes();
-				std::vector<std::string> getAllLists(std::string object, std::string attributePath);
-				std::vector<std::string> getAllLists();
-				bool attributeExists(std::string object, std::string attributePath, std::string attributeName);
-				bool attributeExists(std::string attributeName);
-				bool complexExists(std::string object, std::string attributePath, std::string attributeName);
-				bool complexExists(std::string attributeName);
-				bool listExists(std::string object, std::string attributePath, std::string attributeName);
-				bool listExists(std::string attributeName);
-				BaseAttribute* getAttribute(std::string object, std::string attributePath, std::string attributeName);
-				BaseAttribute* getAttribute(std::string attributeName);
-				ComplexAttribute* getComplexAttribute(std::string object, std::string attributePath, std::string id);
+				std::vector<std::string> getAllComplexAttributes(std::string attributePath);
+				std::vector<std::string> getAllComplexAttributes();
+				std::vector<std::string> getAllBaseAttributes(std::string attributePath);
+				std::vector<std::string> getAllBaseAttributes();
+				std::vector<std::string> getAllListAttributes(std::string attributePath);
+				std::vector<std::string> getAllListAttributes();
+				bool containsBaseAttribute(std::string attributePath, std::string attributeName);
+				bool containsBaseAttribute(std::string attributeName);
+				bool containsComplexAttribute(std::string attributePath, std::string attributeName);
+				bool containsComplexAttribute(std::string attributeName);
+				bool containsListAttribute(std::string attributePath, std::string attributeName);
+				bool containsListAttribute(std::string attributeName);
+				BaseAttribute* getBaseAttribute(std::string attributePath, std::string attributeName);
+				BaseAttribute* getBaseAttribute(std::string attributeName);
+				ComplexAttribute* getComplexAttribute(std::string attributePath, std::string id);
 				ComplexAttribute* getComplexAttribute(std::string id);
-				ListAttribute* getListAttribute(std::string object, std::string attributePath, std::string listName);
+				ListAttribute* getListAttribute(std::string attributePath, std::string listName);
 				ListAttribute* getListAttribute(std::string listName);
-				unsigned int getListSize(std::string object, std::string attributePath, std::string listName);
+				unsigned int getListSize(std::string attributePath, std::string listName);
 				unsigned int getListSize(std::string listName);
-				BaseAttribute* getListItem(std::string object, std::string attributePath, std::string listName, int listItem);
+				BaseAttribute* getListItem(std::string attributePath, std::string listName, int listItem);
 				BaseAttribute* getListItem(std::string listName, int listItem);
-				std::vector<std::string> getAllDataObjects();
-				void deleteDataObject(std::string name, bool freeMemory = false);
+				std::vector<std::string> getAllRootAttributes();
+				void deleteRootAttribute(std::string name, bool freeMemory = false);
 		};
 	}
 }
@@ -296,28 +303,33 @@ namespace mse
 				return std::stoi(data);
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		template <> inline double BaseAttribute::get() {
 			if (dtype == "float")
 				return std::stod(data);
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		template <> inline bool BaseAttribute::get() {
 			if (dtype == "bool")
 				return (data == "True") ? true : false;
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
 		}
 		template <> inline std::string BaseAttribute::get() {
-			if (dtype == "str")
+			if (dtype == "string")
 				return data;
 			else
 				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
-				<< name << " is not a <str> BaseAttribute (" << dtype << ")" << std::endl;
+				<< getNodePath() << " is not a <string> BaseAttribute (" << dtype << ")" << std::endl;
+		}
+		template<class ...Args>
+		std::string Path(std::string cPath, Args ...pathParts)
+		{
+			return cPath + "/" + Path(pathParts...);
 		}
 	}
 }

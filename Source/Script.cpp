@@ -373,188 +373,147 @@ namespace mse
 			{
 				(*lua)["Core"]["DataParser"]["DataParser"].setClass(kaguya::UserdataMetatable<Data::DataParser>()
 					.setConstructors<Data::DataParser(), Data::DataParser(bool)>()
-					.addFunction("accessDataObject", &Data::DataParser::accessDataObject)
+					.addFunction("getRootAttribute", &Data::DataParser::getRootAttribute)
 					.addFunction("accessNavigator", &Data::DataParser::accessNavigator)
-					.addOverloadedFunctions("attributeExists",
-						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::attributeExists),
-						static_cast<bool (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::attributeExists)
+					.addOverloadedFunctions("containsBaseAttribute",
+						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::containsBaseAttribute),
+						static_cast<bool (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::containsBaseAttribute)
 						)
-					.addOverloadedFunctions("complexExists",
-						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::complexExists),
-						static_cast<bool (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::complexExists)
+					.addOverloadedFunctions("containsComplexAttribute",
+						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::containsComplexAttribute),
+						static_cast<bool (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::containsComplexAttribute)
 						)
 					.addOverloadedFunctions("createBaseAttribute",
 						static_cast<void (Data::DataParser::*)(std::string, double)>(&Data::DataParser::createBaseAttribute),
 						static_cast<void (Data::DataParser::*)(std::string, int)>(&Data::DataParser::createBaseAttribute),
 						static_cast<void (Data::DataParser::*)(std::string, bool)>(&Data::DataParser::createBaseAttribute),
 						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createBaseAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, double)>(&Data::DataParser::createBaseAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, int)>(&Data::DataParser::createBaseAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, bool)>(&Data::DataParser::createBaseAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string)>(&Data::DataParser::createBaseAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, std::string, double)>(&Data::DataParser::createBaseAttribute),
+						static_cast<void (Data::DataParser::*)(std::string, std::string, int)>(&Data::DataParser::createBaseAttribute),
+						static_cast<void (Data::DataParser::*)(std::string, std::string, bool)>(&Data::DataParser::createBaseAttribute),
+						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createBaseAttribute)
 						)
 					.addOverloadedFunctions("createComplexAttribute",
 						static_cast<void (Data::DataParser::*)(std::string)>(&Data::DataParser::createComplexAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createComplexAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createComplexAttribute)
 						)
-					.addFunction("createDataObject", &Data::DataParser::createDataObject)
+					.addFunction("createDataObject", &Data::DataParser::createRootAttribute)
 					.addFunction("createFlag", &Data::DataParser::createFlag)
-					.addOverloadedFunctions("createHeritComplexAttribute",
-						static_cast<void (Data::DataParser::*)(std::string)>(&Data::DataParser::createHeritComplexAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createHeritComplexAttribute)
-						)
 					.addOverloadedFunctions("createListAttribute",
 						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createListAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string)>(&Data::DataParser::createListAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createListAttribute)
 						)
 					.addOverloadedFunctions("createListGenerator",
 						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createListGenerator),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string, std::string)>(&Data::DataParser::createListGenerator)
+						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string)>(&Data::DataParser::createListGenerator)
 					)
 					.addOverloadedFunctions("createListItem", 
 						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createListItem),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string)>(&Data::DataParser::createListItem)
+						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createListItem)
 					)
-					.addOverloadedFunctions("createSpecialAttribute",
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::createSpecialAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string, std::string)>(&Data::DataParser::createSpecialAttribute)
-					)
-					.addFunction("dataObjectExists", &Data::DataParser::dataObjectExists)
+					.addFunction("containsRootAttribute", &Data::DataParser::containsRootAttribute)
 					.addOverloadedFunctions("generateInList",
 						static_cast<void (Data::DataParser::*)(std::string)>(&Data::DataParser::generateInList),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::generateInList)
+						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::generateInList)
 					)
-					.addOverloadedFunctions("getAllAttributes", 
-						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllAttributes),
-						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getAllAttributes)
+					.addOverloadedFunctions("getAllBaseAttributes", 
+						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllBaseAttributes),
+						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string)>(&Data::DataParser::getAllBaseAttributes)
 					)
-					.addOverloadedFunctions("getAllComplex",
-						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllComplex),
-						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getAllComplex)
+					.addOverloadedFunctions("getAllComplexAttributes",
+						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllComplexAttributes),
+						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string)>(&Data::DataParser::getAllComplexAttributes)
 					)
-					.addFunction("getAllDataObjects", &Data::DataParser::getAllDataObjects)
-					.addOverloadedFunctions("getAllLists",
-						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllLists),
-						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getAllLists)
+					.addFunction("getAllRootAttributes", &Data::DataParser::getAllRootAttributes)
+					.addOverloadedFunctions("getAllListAttributes",
+						static_cast<std::vector<std::string>(Data::DataParser::*)()>(&Data::DataParser::getAllListAttributes),
+						static_cast<std::vector<std::string>(Data::DataParser::*)(std::string)>(&Data::DataParser::getAllListAttributes)
 					)
 					.addFunction("getAmountOfFlags", &Data::DataParser::getAmountOfFlags)
-					.addOverloadedFunctions("getAttribute", 
-						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string)>(&Data::DataParser::getAttribute),
-						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::getAttribute)
+					.addOverloadedFunctions("getBaseAttribute", 
+						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string)>(&Data::DataParser::getBaseAttribute),
+						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getBaseAttribute)
 					)
 					.addOverloadedFunctions("getComplexAttribute", 
 						static_cast<Data::ComplexAttribute* (Data::DataParser::*)(std::string)>(&Data::DataParser::getComplexAttribute),
-						static_cast<Data::ComplexAttribute* (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::getComplexAttribute)
+						static_cast<Data::ComplexAttribute* (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getComplexAttribute)
 					)
 					.addFunction("getFlagAtIndex", &Data::DataParser::getFlagAtIndex)
 					.addOverloadedFunctions("getListAttribute",
 						static_cast<Data::ListAttribute* (Data::DataParser::*)(std::string)>(&Data::DataParser::getListAttribute),
-						static_cast<Data::ListAttribute* (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::getListAttribute)
+						static_cast<Data::ListAttribute* (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getListAttribute)
 					)
 					.addOverloadedFunctions("getListItem",
 						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string, int)>(&Data::DataParser::getListItem),
-						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string, std::string, std::string, int)>(&Data::DataParser::getListItem)
+						static_cast<Data::BaseAttribute* (Data::DataParser::*)(std::string, std::string, int)>(&Data::DataParser::getListItem)
 					)
 					.addOverloadedFunctions("getListSize",
 						static_cast<unsigned int (Data::DataParser::*)(std::string)>(&Data::DataParser::getListSize),
-						static_cast<unsigned int (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::getListSize)
+						static_cast<unsigned int (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getListSize)
 					)
 					.addFunction("hasFlag", &Data::DataParser::hasFlag)
 					.addFunction("hookNavigator", &Data::DataParser::hookNavigator)
-					.addOverloadedFunctions("listExists",
-						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::listExists),
-						static_cast<bool (Data::DataParser::*)(std::string, std::string, std::string)>(&Data::DataParser::listExists)
+					.addOverloadedFunctions("containsListAttribute",
+						static_cast<bool (Data::DataParser::*)(std::string)>(&Data::DataParser::containsListAttribute),
+						static_cast<bool (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::containsListAttribute)
 					)
 					.addFunction("parseFile", &Data::DataParser::parseFile)
 					.addOverloadedFunctions("pushBaseAttribute", 
 						static_cast<void (Data::DataParser::*)(Data::BaseAttribute*)>(&Data::DataParser::pushBaseAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, Data::BaseAttribute*)>(&Data::DataParser::pushBaseAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, Data::BaseAttribute*)>(&Data::DataParser::pushBaseAttribute)
 					)
 					.addOverloadedFunctions("pushComplexAttribute",
 						static_cast<void (Data::DataParser::*)(Data::ComplexAttribute*)>(&Data::DataParser::pushComplexAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, Data::ComplexAttribute*)>(&Data::DataParser::pushComplexAttribute)
-					)
-					.addFunction("pushDataObject", &Data::DataParser::pushDataObject)
-					.addOverloadedFunctions("pushHeritComplexAttribute",
-						static_cast<void (Data::DataParser::*)(Data::ComplexAttribute*)>(&Data::DataParser::pushHeritComplexAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, Data::ComplexAttribute*)>(&Data::DataParser::pushHeritComplexAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, Data::ComplexAttribute*)>(&Data::DataParser::pushComplexAttribute)
 					)
 					.addOverloadedFunctions("pushListAttribute",
 						static_cast<void (Data::DataParser::*)(Data::ListAttribute*)>(&Data::DataParser::pushListAttribute),
-						static_cast<void (Data::DataParser::*)(std::string, std::string, Data::ListAttribute*)>(&Data::DataParser::pushListAttribute)
+						static_cast<void (Data::DataParser::*)(std::string, Data::ListAttribute*)>(&Data::DataParser::pushListAttribute)
 					)
 					.addFunction("writeFile", &Data::DataParser::writeFile)
 				);
 				foundPart = true;
 			}
-			if (importAll || args[1] == "DataObject")
-			{
-				(*lua)["Core"]["DataParser"]["DataObject"].setClass(kaguya::UserdataMetatable<Data::DataObject>()
-					.setConstructors<Data::DataObject(std::string)>()
-					.addFunction("addBoundToListGenerator", &Data::DataObject::addBoundToListGenerator)
-					.addFunction("attributeExists", &Data::DataObject::attributeExists)
-					.addFunction("complexExists", &Data::DataObject::complexExists)
-					.addOverloadedFunctions("createBaseAttribute",
-						static_cast<void (Data::DataObject::*)(std::vector<std::string>, std::string, double)>(&Data::DataObject::createBaseAttribute),
-						static_cast<void (Data::DataObject::*)(std::vector<std::string>, std::string, int)>(&Data::DataObject::createBaseAttribute),
-						static_cast<void (Data::DataObject::*)(std::vector<std::string>, std::string, bool)>(&Data::DataObject::createBaseAttribute),
-						static_cast<void (Data::DataObject::*)(std::vector<std::string>, std::string, std::string)>(&Data::DataObject::createBaseAttribute)
-					)
-					.addFunction("createComplexAttribute", &Data::DataObject::createComplexAttribute)
-					.addFunction("createHeritComplexAttribute", &Data::DataObject::createHeritComplexAttribute)
-					.addFunction("createListAttribute", &Data::DataObject::createListAttribute)
-					.addFunction("createListGenerator", &Data::DataObject::createListGenerator)
-					.addFunction("createListItem", &Data::DataObject::createListItem)
-					.addFunction("createSpecialAttribute", &Data::DataObject::createSpecialAttribute)
-					.addFunction("deleteAttribute", &Data::DataObject::deleteAttribute)
-					.addFunction("deleteComplexAttribute", &Data::DataObject::deleteComplexAttribute)
-					.addFunction("deleteListAttribute", &Data::DataObject::deleteListAttribute)
-					.addFunction("generateInList", &Data::DataObject::generateInList)
-					.addFunction("getAllAttributes", &Data::DataObject::getAllAttributes)
-					.addFunction("getAllComplex", &Data::DataObject::getAllComplex)
-					.addFunction("getAllLists", &Data::DataObject::getAllLists)
-					.addFunction("getAttribute", &Data::DataObject::getAttribute)
-					.addFunction("getComplexAttribute", &Data::DataObject::getComplexAttribute)
-					.addFunction("getListAttribute", &Data::DataObject::getListAttribute)
-					.addFunction("getName", &Data::DataObject::getName)
-					.addFunction("getPath", &Data::DataObject::getPath)
-					.addFunction("listExists", &Data::DataObject::listExists)
-					.addFunction("pushBaseAttribute", &Data::DataObject::pushBaseAttribute)
-					.addFunction("pushComplexAttribute", &Data::DataObject::pushComplexAttribute)
-					.addFunction("pushHeritComplexAttribute", &Data::DataObject::pushHeritComplexAttribute)
-					.addFunction("pushListAttribute", &Data::DataObject::pushListAttribute)
-					.addFunction("writeAttributes", &Data::DataObject::writeAttributes)
+			if (importAll || Functions::String::contains(args[1], "Attribute")) {
+				(*lua)["Core"]["DataParser"]["Attribute"].setClass(kaguya::UserdataMetatable<Data::Attribute>()
+					.addFunction("getID", &Data::Attribute::getID)
+					.addFunction("getType", &Data::Attribute::getType)
 				);
-				foundPart = true;
 			}
 			if (importAll || args[1] == "ComplexAttribute")
 			{
-				(*lua)["Core"]["DataParser"]["ComplexAttribute"].setClass(kaguya::UserdataMetatable<Data::ComplexAttribute>()
+				(*lua)["Core"]["DataParser"]["ComplexAttribute"].setClass(kaguya::UserdataMetatable<Data::ComplexAttribute, Data::Attribute>()
 					.setConstructors<
 						Data::ComplexAttribute(std::string), 
 						Data::ComplexAttribute(std::string, Data::ComplexAttribute*),
 						Data::ComplexAttribute(std::string, std::vector<Data::ComplexAttribute*>*)>()
 					.addFunction("addBoundToListGenerator", &Data::ComplexAttribute::addBoundToListGenerator)
-					.addFunction("attributeExists", &Data::ComplexAttribute::attributeExists)
-					.addFunction("complexExists", &Data::ComplexAttribute::complexExists)
-					.addFunction("createBaseAttribute", &Data::ComplexAttribute::createBaseAttribute)
+					.addFunction("containsBaseAttribute", &Data::ComplexAttribute::containsBaseAttribute)
+					.addFunction("containsComplexAttribute", &Data::ComplexAttribute::containsComplexAttribute)
+					.addOverloadedFunctions("createBaseAttribute",
+						static_cast<void (Data::ComplexAttribute::*)(std::string, std::string, std::string)>(&Data::ComplexAttribute::createBaseAttribute),
+						static_cast<void (Data::ComplexAttribute::*)(std::string, int)>(&Data::ComplexAttribute::createBaseAttribute),
+						static_cast<void (Data::ComplexAttribute::*)(std::string, double)>(&Data::ComplexAttribute::createBaseAttribute),
+						static_cast<void (Data::ComplexAttribute::*)(std::string, bool)>(&Data::ComplexAttribute::createBaseAttribute),
+						static_cast<void (Data::ComplexAttribute::*)(std::string, std::string)>(&Data::ComplexAttribute::createBaseAttribute)
+					)
 					.addFunction("createComplexAttribute", &Data::ComplexAttribute::createComplexAttribute)
 					.addFunction("createListAttribute", &Data::ComplexAttribute::createListAttribute)
 					.addFunction("createListGenerator", &Data::ComplexAttribute::createListGenerator)
 					.addFunction("createListItem", &Data::ComplexAttribute::createListItem)
-					.addFunction("deleteAttribute", &Data::ComplexAttribute::deleteAttribute)
+					.addFunction("deleteBaseAttribute", &Data::ComplexAttribute::deleteBaseAttribute)
 					.addFunction("deleteComplexAttribute", &Data::ComplexAttribute::deleteComplexAttribute)
 					.addFunction("deletelistAttribute", &Data::ComplexAttribute::deleteListAttribute)
 					.addFunction("generateInList", &Data::ComplexAttribute::generateInList)
-					.addFunction("getAllAttributes", &Data::ComplexAttribute::getAllAttributes)
-					.addFunction("getAllComplex", &Data::ComplexAttribute::getAllComplex)
-					.addFunction("getAllLists", &Data::ComplexAttribute::getAllLists)
-					.addFunction("getAttribute", &Data::ComplexAttribute::getAttribute)
+					.addFunction("getAllBaseAttributes", &Data::ComplexAttribute::getAllBaseAttributes)
+					.addFunction("getAllComplexAttributes", &Data::ComplexAttribute::getAllComplexAttributes)
+					.addFunction("getAllListAttributes", &Data::ComplexAttribute::getAllListAttributes)
+					.addFunction("getBaseAttribute", &Data::ComplexAttribute::getBaseAttribute)
 					.addFunction("getComplexAttribute", &Data::ComplexAttribute::getComplexAttribute)
 					.addFunction("getID", &Data::ComplexAttribute::getID)
 					.addFunction("getListAttribute", &Data::ComplexAttribute::getListAttribute)
 					.addFunction("heritage", &Data::ComplexAttribute::heritage)
-					.addFunction("listExists", &Data::ComplexAttribute::listExists)
+					.addFunction("containsListAttribute", &Data::ComplexAttribute::containsListAttribute)
 					.addFunction("pushBaseAttribute", &Data::ComplexAttribute::pushBaseAttribute)
 					.addFunction("pushComplexAttribute", &Data::ComplexAttribute::pushComplexAttribute)
 					.addFunction("pushListAttribute", &Data::ComplexAttribute::pushListAttribute)
@@ -564,26 +523,25 @@ namespace mse
 			}
 			if (importAll || args[1] == "ListAttribute")
 			{
-				(*lua)["Core"]["DataParser"]["ListAttribute"].setClass(kaguya::UserdataMetatable<Data::ListAttribute>()
+				(*lua)["Core"]["DataParser"]["ListAttribute"].setClass(kaguya::UserdataMetatable<Data::ListAttribute, Data::Attribute>()
 					.setConstructors<Data::ListAttribute(std::string, std::string)>()
 					.addFunction("createElement", &Data::ListAttribute::createElement)
 					.addFunction("getElement", &Data::ListAttribute::getElement)
 					.addFunction("getID", &Data::ListAttribute::getID)
 					.addFunction("getSize", &Data::ListAttribute::getSize)
-					.addFunction("getType", &Data::ListAttribute::getType)
+					.addFunction("getDataType", &Data::ListAttribute::getDataType)
 				);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "BaseAttribute")
 			{
-				(*lua)["Core"]["DataParser"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<Data::BaseAttribute>()
+				(*lua)["Core"]["DataParser"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<Data::BaseAttribute, Data::Attribute>()
 					.setConstructors<Data::BaseAttribute(std::string, std::string, std::string)>()
 					.addFunction("get_int", static_cast<int(Data::BaseAttribute::*)()>(&Data::BaseAttribute::get))
 					.addFunction("get_float", static_cast<double(Data::BaseAttribute::*)()>(&Data::BaseAttribute::get))
 					.addFunction("get_bool", static_cast<bool(Data::BaseAttribute::*)()>(&Data::BaseAttribute::get))
 					.addFunction("get_string", static_cast<std::string(Data::BaseAttribute::*)()>(&Data::BaseAttribute::get))
-					.addFunction("getName", &Data::BaseAttribute::getName)
-					.addFunction("getType", &Data::BaseAttribute::getType)
+					.addFunction("getDataType", &Data::BaseAttribute::getDataType)
 					.addFunction("returnData", &Data::BaseAttribute::returnData)
 					.addOverloadedFunctions("set",
 						static_cast<void (Data::BaseAttribute::*)(int)>(&Data::BaseAttribute::set),
@@ -597,14 +555,14 @@ namespace mse
 			if (importAll || args[1] == "DataParserNavigator")
 			{
 				(*lua)["Core"]["DataParser"]["DataParserNavigator"].setClass(kaguya::UserdataMetatable<Data::DataParserNavigator>()
-					.addFunction("getCurrentDataObject", &Data::DataParserNavigator::getCurrentDataObject)
+					.addFunction("getCurrentRootAttribute", &Data::DataParserNavigator::getCurrentRootAttribute)
 					.addFunction("getCurrentPath", &Data::DataParserNavigator::getCurrentPath)
 					.addFunction("goBack", &Data::DataParserNavigator::goBack)
 					.addFunction("goRoot", &Data::DataParserNavigator::goRoot)
 					.addFunction("goTo", &Data::DataParserNavigator::goTo)
-					.addOverloadedFunctions("setCurrentDataObject",
-						static_cast<void (Data::DataParserNavigator::*)(std::string)>(&Data::DataParserNavigator::setCurrentDataObject),
-						static_cast<void (Data::DataParserNavigator::*)(std::string, std::string)>(&Data::DataParserNavigator::setCurrentDataObject)
+					.addOverloadedFunctions("setCurrentRootAttribute",
+						static_cast<void (Data::DataParserNavigator::*)(std::string)>(&Data::DataParserNavigator::setCurrentRootAttribute),
+						static_cast<void (Data::DataParserNavigator::*)(std::string, std::string)>(&Data::DataParserNavigator::setCurrentRootAttribute)
 					)
 					.addFunction("setCurrentPath", &Data::DataParserNavigator::setCurrentPath)
 				);

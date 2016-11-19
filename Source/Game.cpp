@@ -30,7 +30,7 @@ namespace mse
 			//Config
 			Data::DataParser configFile;
 			System::Path("Data").add("config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
-			configFile.hookNavigator(new Data::DataParserNavigator)->setCurrentDataObject("GameConfig");
+			configFile.hookNavigator(new Data::DataParserNavigator)->setCurrentRootAttribute("GameConfig");
 			bool drawFPS = true;
 			bool showCursor = true;
 
@@ -45,7 +45,7 @@ namespace mse
 			Script::hookCore.dropValue("World", &world);
 			world.loadFromFile(mapName);
 			world.addCharacter(&character);
-			bool depthOfFieldEnabled = configFile.getAttribute("depthOfField")->get<bool>();
+			bool depthOfFieldEnabled = configFile.getBaseAttribute("depthOfField")->get<bool>();
 			if (!depthOfFieldEnabled)
 				world.setBlurMul(0.0);
 
@@ -62,9 +62,9 @@ namespace mse
 			double speedCoeff = 60.0;
 			double gameSpeed = 0.0;
 			double frameLimiterClock = Time::getTickSinceEpoch();
-			bool limitFPS = (configFile.attributeExists("framerateLimit")) ? configFile.getAttribute("framerateLimit")->get<bool>() : true;
-			int framerateTarget = (configFile.attributeExists("framerateTarget")) ? configFile.getAttribute("framerateTarget")->get<int>() : 60;
-			bool vsyncEnabled = (configFile.attributeExists("vsync")) ? configFile.getAttribute("vsync")->get<bool>() : false;
+			bool limitFPS = (configFile.containsBaseAttribute("framerateLimit")) ? configFile.getBaseAttribute("framerateLimit")->get<bool>() : true;
+			int framerateTarget = (configFile.containsBaseAttribute("framerateTarget")) ? configFile.getBaseAttribute("framerateTarget")->get<int>() : 60;
+			bool vsyncEnabled = (configFile.containsBaseAttribute("vsync")) ? configFile.getBaseAttribute("vsync")->get<bool>() : false;
 			double reqFramerateInterval = 1.0 / (double)framerateTarget;
 			int currentFrame = 0;
 			int frameProgression = 0;

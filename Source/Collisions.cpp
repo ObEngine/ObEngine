@@ -196,8 +196,8 @@ namespace mse
 			other->clearHighlights(false, true);
 			if (solution.size() >= 1) {
 				std::vector<int> sidesToHL;
-				for (ClipperLib::Path path : solution) {
-					for (ClipperLib::IntPoint point : path)
+				for (ClipperLib::Path& path : solution) {
+					for (ClipperLib::IntPoint& point : path)
 						other->highlightLine(other->getSideContainingPoint(point.X, point.Y));
 				}
 			}
@@ -205,26 +205,26 @@ namespace mse
 		}
 		bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, double offsetX, double offsetY, double toX, double toY)
 		{
-			for (int i = 0; i < others.size(); i++) {
+			for (PolygonalCollider* other : others) {
 				std::vector<PolygonalCollider*> toExclude;
-				if (isATagExcluded(others[i]->getAllTags()))
-					toExclude.push_back(others[i]);
+				if (isATagExcluded(other->getAllTags()))
+					toExclude.push_back(other);
 				for (PolygonalCollider* exclCol : toExclude)
 					Functions::Vector::eraseAll(others, exclCol);
 			}
 
 			Collision::PolygonalCollider projection(this->id + "_proj");
-			for (int i = 0; i < allPoints.size(); i++)
-				projection.addPoint(allPoints[i].first + toX, allPoints[i].second + toY);
+			for (DoublePoint point : allPoints)
+				projection.addPoint(point.first + toX, point.second + toY);
 			this->move(offsetX, offsetY);
 			Collision::PolygonalCollider fullPath = this->joinPolygonalColliders(this->id + "_path", &projection);
 			this->move(-offsetX, -offsetY);
 
 			ClipperLib::Clipper clipper;
 			clipper.AddPath(fullPath.getPath(), ClipperLib::ptSubject, true);
-			for (int i = 0; i < others.size(); i++) {
-				if (others[i] != this)
-					clipper.AddPath(others[i]->getPath(), ClipperLib::ptClip, true);
+			for (PolygonalCollider* other : others) {
+				if (other != this)
+					clipper.AddPath(other->getPath(), ClipperLib::ptClip, true);
 			}
 
 			ClipperLib::Paths solution;
@@ -384,7 +384,7 @@ namespace mse
 		}
 		void PolygonalCollider::move(double x, double y)
 		{
-			if (allPoints.size() > 2) {
+			if (allPoints.size() > 0) {
 				masterPoint.first += x;
 				masterPoint.second += y;
 				for (DoublePoint& point : allPoints) {
@@ -395,22 +395,22 @@ namespace mse
 		}
 		void PolygonalCollider::setPosition(double x, double y)
 		{
-			if (allPoints.size() > 2) {
+			if (allPoints.size() > 0) {
 				double addX = x - allPoints[0].first;
 				double addY = y - allPoints[0].second;
 				masterPoint.first += addX;
 				masterPoint.second += addY;
 				allPoints[0].first = x;
 				allPoints[0].second = y;
-				for (DoublePoint& point : allPoints) {
-					point.first += addX; 
-					point.second += addY;
+				for (int i = 1; i < allPoints.size(); i++) {
+					allPoints[i].first += addX; 
+					allPoints[i].second += addY;
 				}
 			}
 		}
 		void PolygonalCollider::setPositionFromMaster(double x, double y)
 		{
-			if (allPoints.size() > 2) {
+			if (allPoints.size() > 0) {
 				double addX = x - masterPoint.first;
 				double addY = y - masterPoint.second;
 				masterPoint.first = x;

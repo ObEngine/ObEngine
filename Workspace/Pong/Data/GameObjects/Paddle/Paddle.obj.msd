@@ -1,0 +1,21 @@
+Paddle:
+    @Animator
+        path:"Sprites/GameObjects/Paddle"
+    @Collider
+        solid:True
+        click:False
+        ?polygonPoints(string):
+            "0,0"
+            "32,0"
+            "32,128"
+            "0,128"
+    @LevelSprite
+        position:"relative"
+        rotation:0
+        scale:1.0
+        layer:1
+        z-depth:0
+    @Script
+        priority:0
+        ?scriptList(string):
+            "Data/GameObjects/Paddle/Paddle.lua"

@@ -99,25 +99,24 @@ namespace mse
 				instance = new GameObjectRequires();
 			return instance;
 		}
-		Data::DataObject* GameObjectRequires::getRequiresForObjectType(std::string type)
+		Data::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type)
 		{
-			if (!Functions::Vector::isInList(type, allRequires.getAllDataObjects()))
+			if (!Functions::Vector::isInList(type, allRequires.getAllRootAttributes()))
 			{
 				Data::DataParser getGameObjectFile;
 				System::Path("Data/GameObjects/").add(type).add(type + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-				if (getGameObjectFile.dataObjectExists("Requires"))
+				if (getGameObjectFile.containsRootAttribute("Requires"))
 				{
-					Data::DataObject* requiresData = getGameObjectFile.accessDataObject("Requires");
-					requiresData->extractFromDataParser();
-					requiresData->setName(type);
-					allRequires.pushDataObject(requiresData);
+					Data::ComplexAttribute* requiresData = getGameObjectFile.extractRootAttribute("Requires");
+					requiresData->setID(type);
+					allRequires.pushComplexAttribute(requiresData);
 					return requiresData;
 				}
 				else
 					return nullptr;
 			}
 			else
-				return allRequires.accessDataObject(type);
+				return allRequires.getRootAttribute(type);
 		}
 
 		//GameObject
@@ -131,14 +130,14 @@ namespace mse
 		{
 			this->registeredTriggers.push_back(trg);
 		}
-		void GameObject::loadGameObject(Data::DataObject* obj)
+		void GameObject::loadGameObject(Data::ComplexAttribute* obj)
 		{
 			std::cout << "Currently Loading GameObject : " << id << std::endl;
 			//Animator
 			std::string animatorPath;
-			if (obj->complexExists(Data::convertPath(""), "Animator"))
+			if (obj->containsComplexAttribute("Animator"))
 			{
-				animatorPath = obj->getAttribute(Data::convertPath("Animator"), "path")->get<std::string>();
+				animatorPath = obj->getPath("Animator")->getBaseAttribute("path")->get<std::string>();
 				if (animatorPath != "")
 				{
 					this->objectAnimator.attachRessourceManager(Animation::RessourceManager::GetInstance());
@@ -148,26 +147,26 @@ namespace mse
 				hasAnimator = true;
 			}
 			//Collider
-			if (obj->complexExists(Data::convertPath(""), "Collider"))
+			if (obj->containsComplexAttribute("Collider"))
 			{
-				colliderSolid = obj->getAttribute(Data::convertPath("Collider"), "solid")->get<bool>();
-				colliderClick = obj->getAttribute(Data::convertPath("Collider"), "click")->get<bool>();
+				colliderSolid = obj->getPath("Collider")->getBaseAttribute("solid")->get<bool>();
+				colliderClick = obj->getPath("Collider")->getBaseAttribute("click")->get<bool>();
 
 				if (colliderSolid) objectCollider.addTag("Solid");
 				int colliderPointSize;
-				colliderPointSize = obj->getListAttribute(Data::convertPath("Collider"), "polygonPoints")->getSize();
+				colliderPointSize = obj->getPath("Collider")->getListAttribute("polygonPoints")->getSize();
 				for (int i = 0; i < colliderPointSize; i++)
 				{
-					std::string getPt = obj->getListAttribute(Data::convertPath("Collider"), "polygonPoints")->getElement(i)->get<std::string>();
+					std::string getPt = obj->getPath("Collider")->getListAttribute("polygonPoints")->getElement(i)->get<std::string>();
 					std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 					objectCollider.addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
 				}
 				hasCollider = true;
 			}
 			//LevelSprite
-			if (obj->complexExists(Data::convertPath(""), "LevelSprite"))
+			if (obj->containsComplexAttribute("LevelSprite"))
 			{
-				levelSpriteRelative = (obj->getAttribute(Data::convertPath("LevelSprite"), "position")->get<std::string>() == "relative") ? true : false;
+				levelSpriteRelative = (obj->getPath("LevelSprite")->getBaseAttribute("position")->get<std::string>() == "relative") ? true : false;
 				int decoRot = 0;
 				int sprOffX = 0;
 				int sprOffY = 0;
@@ -175,19 +174,19 @@ namespace mse
 				std::vector<std::string> decoAtrList;
 				int layer;
 				int zdepth;
-				decoRot = obj->getAttribute(Data::convertPath("LevelSprite"), "rotation")->get<int>();
-				decoSca = obj->getAttribute(Data::convertPath("LevelSprite"), "scale")->get<double>();
-				layer = obj->getAttribute(Data::convertPath("LevelSprite"), "layer")->get<int>();
-				zdepth = obj->getAttribute(Data::convertPath("LevelSprite"), "z-depth")->get<int>();
-				if (obj->attributeExists(Data::convertPath("LevelSprite"), "offsetX"))
-					sprOffX = obj->getAttribute(Data::convertPath("LevelSprite"), "offsetX")->get<int>();
-				if (obj->attributeExists(Data::convertPath("LevelSprite"), "offsetY"))
-					sprOffY = obj->getAttribute(Data::convertPath("LevelSprite"), "offsetY")->get<int>();
-				if (obj->listExists(Data::convertPath("LevelSprite"), "attributeList"))
+				decoRot = obj->getPath("LevelSprite")->getBaseAttribute("rotation")->get<int>();
+				decoSca = obj->getPath("LevelSprite")->getBaseAttribute("scale")->get<double>();
+				layer = obj->getPath("LevelSprite")->getBaseAttribute("layer")->get<int>();
+				zdepth = obj->getPath("LevelSprite")->getBaseAttribute("z-depth")->get<int>();
+				if (obj->getPath("LevelSprite")->containsBaseAttribute("offsetX"))
+					sprOffX = obj->getPath("LevelSprite")->getBaseAttribute("offsetX")->get<int>();
+				if (obj->getPath("LevelSprite")->containsBaseAttribute("offsetY"))
+					sprOffY = obj->getPath("LevelSprite")->getBaseAttribute("offsetY")->get<int>();
+				if (obj->getPath("LevelSprite")->containsListAttribute("attributeList"))
 				{
-					int atrListSize = obj->getListAttribute(Data::convertPath("LevelSprite"), "attributeList")->getSize();
+					int atrListSize = obj->getListAttribute("attributeList")->getSize();
 					for (int j = 0; j < atrListSize; j++)
-						decoAtrList.push_back(obj->getListAttribute(Data::convertPath("LevelSprite"), "attributeList")->getElement(j)->get<std::string>());
+						decoAtrList.push_back(obj->getPath("LevelSprite")->getListAttribute("attributeList")->getElement(j)->get<std::string>());
 				}
 				objectLevelSprite.setRotation(decoRot);
 				objectLevelSprite.setScale(decoSca, decoSca);
@@ -198,8 +197,9 @@ namespace mse
 				hasLevelSprite = true;
 			}
 			//Script
-			if (obj->complexExists(Data::convertPath(""), "Script"))
-				if (obj->attributeExists(Data::convertPath("Script"), "priority")) scrPriority = obj->getAttribute(Data::convertPath("Script"), "priority")->get<int>();
+			if (obj->containsComplexAttribute("Script"))
+				if (obj->getPath("Script")->containsBaseAttribute("priority")) 
+					scrPriority = obj->getPath("Script")->getBaseAttribute("priority")->get<int>();
 		}
 		void GameObject::hookLuaState(kaguya::State* lua)
 		{

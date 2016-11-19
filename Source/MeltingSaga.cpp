@@ -13,30 +13,46 @@ int main(int argc, char** argv)
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
+	std::cout << "GetMeResults" << std::endl;
+	mse::Functions::String::StringExtractor result = mse::Functions::String::extractAllStrings("~Color(int -> value, string -> me = \"Killian dit Miam\")");
+	for (std::string ex : std::get<0>(result)) {
+		std::cout << ex << std::endl;
+	}
+	for (std::string ex : std::get<1>(result)) {
+		std::cout << ex << std::endl;
+	}
+	for (std::pair<int, int> index : std::get<2>(result)) {
+		std::cout << index.first << ", " << index.second << std::endl;
+	}
+	std::cout << "StopResults" << std::endl;
+
 	mse::Data::DataParser workspaceConfig;
 	workspaceConfig.parseFile("Workspace/workspace.cfg.msd");
-	workspaceConfig.hookNavigator(new mse::Data::DataParserNavigator())->setCurrentDataObject("Workspace");
-	if (workspaceConfig.attributeExists("current"))
+	workspaceConfig.hookNavigator(new mse::Data::DataParserNavigator())->setCurrentRootAttribute("Workspace");
+	if (workspaceConfig.containsBaseAttribute("current"))
 	{
-		if (workspaceConfig.complexExists(workspaceConfig.getAttribute("current")->get<std::string>()))
+		if (workspaceConfig.containsComplexAttribute(workspaceConfig.getBaseAttribute("current")->get<std::string>()))
 		{
-			workspaceConfig.accessNavigator()->setCurrentPath(workspaceConfig.getAttribute("current")->get<std::string>());
-			if (workspaceConfig.attributeExists("path"))
+			workspaceConfig.accessNavigator()->setCurrentPath(workspaceConfig.getBaseAttribute("current")->get<std::string>());
+			if (workspaceConfig.containsBaseAttribute("path"))
 			{
-				std::string workspacePath = workspaceConfig.getAttribute("path")->get<std::string>();
+				std::string workspacePath = workspaceConfig.getBaseAttribute("path")->get<std::string>();
 				mse::System::Path::basePaths.push_back("Workspace/" + workspacePath);
-				workspaceConfig.accessNavigator()->setCurrentDataObject("Workspace");
-				std::cout << "<System> Mounting Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << " : " << workspacePath << std::endl;
+				workspaceConfig.accessNavigator()->setCurrentRootAttribute("Workspace");
+				std::cout << "<System> Mounting Workspace : " << workspaceConfig.getBaseAttribute("current")->get<std::string>() 
+					<< " : " << workspacePath << std::endl;
 			}
 			else
 			{
-				workspaceConfig.accessNavigator()->setCurrentDataObject("Workspace");
-				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << " doesn't have a path defined" << std::endl;
+				workspaceConfig.accessNavigator()->setCurrentRootAttribute("Workspace");
+				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << 
+					workspaceConfig.getBaseAttribute("current")->get<std::string>() << " doesn't have a path defined" << std::endl;
 			}
 		}
 		else
 		{
-			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << workspaceConfig.getAttribute("current")->get<std::string>() << "doesn't exists" << std::endl;
+			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << 
+				workspaceConfig.getBaseAttribute("current")->get<std::string>() << "doesn't exists" << std::endl;
 		}
 	}
 	std::cout << "<System> Mounting Path : /" << std::endl;

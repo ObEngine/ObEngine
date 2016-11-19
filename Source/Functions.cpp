@@ -298,6 +298,43 @@ namespace mse
 			return Vector::join(dataStr, ",");
 		}
 
+		String::StringExtractor String::extractAllStrings(std::string string)
+		{
+			bool readingString = false;
+			std::vector<std::string> extractedStrings;
+			std::vector<std::string> otherComponents;
+			std::vector<std::pair<int, int>> indexes;
+			std::string currentStack = "";
+			for (char chr : string) {
+				std::string currentChar = &chr;
+				std::cout << currentChar << std::endl;
+				if (currentChar == "\"") {
+					if (currentStack.size() > 0) {
+						if (readingString) {
+							std::cout << "Pushing : " << currentStack << " in extractedStrings" << std::endl;
+							extractedStrings.push_back(currentStack);
+							indexes.push_back(std::pair<int, int>(0, extractedStrings.size() - 1));
+						}
+						else {
+							std::cout << "Pushing : " << currentStack << " in otherComponents" << std::endl;
+							otherComponents.push_back(currentStack);
+							indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
+						}
+					}
+					readingString = !readingString;
+					currentStack.clear();
+				}
+				else {
+					currentStack += currentChar;
+				}
+			}
+			return std::make_tuple(extractedStrings, otherComponents, indexes);
+		}
+		bool String::contains(const std::string& string, const std::string& search)
+		{
+			return (string.find(search) != std::string::npos);
+		}
+
 		//Functions::Vector
 		std::string Vector::join(std::vector<std::string>& vector, std::string sep, int start, int end)
 		{

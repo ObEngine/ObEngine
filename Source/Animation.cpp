@@ -269,14 +269,14 @@ namespace mse
 			animFile.hookNavigator(new Data::DataParserNavigator());
 			path.add(filename).loadResource(&animFile, System::Loaders::dataLoader);
 			//Meta
-			animFile.accessNavigator()->setCurrentDataObject("Meta");
-			animationName = animFile.getAttribute("name")->get<std::string>();
-			if (animFile.attributeExists("clock"))
-				animationClock = animFile.getAttribute("clock")->get<int>();
-			if (animFile.attributeExists("play-mode"))
-				animationPlaymode = animFile.getAttribute("play-mode")->get<std::string>();
+			animFile.accessNavigator()->setCurrentRootAttribute("Meta");
+			animationName = animFile.getBaseAttribute("name")->get<std::string>();
+			if (animFile.containsBaseAttribute("clock"))
+				animationClock = animFile.getBaseAttribute("clock")->get<int>();
+			if (animFile.containsBaseAttribute("play-mode"))
+				animationPlaymode = animFile.getBaseAttribute("play-mode")->get<std::string>();
 			//Images
-			animFile.accessNavigator()->setCurrentDataObject("Images");
+			animFile.accessNavigator()->setCurrentRootAttribute("Images");
 			for (unsigned int i = 0; i < animFile.getListSize("ImageList"); i++)
 			{
 				std::string textureName;
@@ -296,8 +296,8 @@ namespace mse
 					animationTextures[i] = animatorRsHook->getTexture(path.add(textureName).toString());
 			}
 			//Groups
-			animFile.accessNavigator()->setCurrentDataObject("Groups");
-			std::vector<std::string> allGroups = animFile.getAllComplex();
+			animFile.accessNavigator()->setCurrentRootAttribute("Groups");
+			std::vector<std::string> allGroups = animFile.getAllComplexAttributes();
 			for (unsigned int i = 0; i < allGroups.size(); i++)
 			{
 				AnimationGroup* tempGroup = new AnimationGroup(allGroups[i]);
@@ -305,14 +305,14 @@ namespace mse
 				animFile.accessNavigator()->setCurrentPath(allGroups[i]);
 				for (unsigned int j = 0; j < animFile.getListSize("content"); j++)
 					animationGroupMap[allGroups[i]]->pushTexture(animationTextures[animFile.getListItem("content", j)->get<int>()]);
-				if (animFile.attributeExists("Groups", allGroups[i], "clock"))
-					animationGroupMap[allGroups[i]]->setGroupClock(animFile.getAttribute("clock")->get<int>());
+				if (animFile.containsBaseAttribute("clock"))
+					animationGroupMap[allGroups[i]]->setGroupClock(animFile.getBaseAttribute("clock")->get<int>());
 				else
 					animationGroupMap[allGroups[i]]->setGroupClock(animationClock);
 				animationGroupMap[allGroups[i]]->build();
 			}
 			//Animation Code
-			animFile.accessNavigator()->setCurrentDataObject("Animation");
+			animFile.accessNavigator()->setCurrentRootAttribute("Animation");
 			for (unsigned int i = 0; i < animFile.getListSize("AnimationCode"); i++)
 			{
 				std::string curCom = animFile.getListItem("AnimationCode", i)->get<std::string>();
@@ -326,9 +326,9 @@ namespace mse
 		}
 		void Animation::Animation::applyParameters(Data::ComplexAttribute* parameters)
 		{
-			if (parameters->attributeExists("spriteOffsetX")) sprOffsetX = parameters->getAttribute("spriteOffsetX")->get<int>();
-			if (parameters->attributeExists("spriteOffsetY")) sprOffsetY = parameters->getAttribute("spriteOffsetY")->get<int>();
-			if (parameters->attributeExists("priority")) priority = parameters->getAttribute("priority")->get<int>();
+			if (parameters->containsBaseAttribute("spriteOffsetX")) sprOffsetX = parameters->getBaseAttribute("spriteOffsetX")->get<int>();
+			if (parameters->containsBaseAttribute("spriteOffsetY")) sprOffsetY = parameters->getBaseAttribute("spriteOffsetY")->get<int>();
+			if (parameters->containsBaseAttribute("priority")) priority = parameters->getBaseAttribute("priority")->get<int>();
 		}
 		void Animation::Animation::playAnimation()
 		{
@@ -633,9 +633,9 @@ namespace mse
 			{
 				hasCfgFile = true;
 				animatorCfgFile.parseFile(animationPath.toString() + "/" + "animator.cfg.msd");
-				std::vector<std::string> allParamAnim = animatorCfgFile.getAllComplex("Animator", "");
+				std::vector<std::string> allParamAnim = animatorCfgFile.getAllComplexAttributes("Animator");
 				for (unsigned int i = 0; i < allParamAnim.size(); i++)
-					animationParameters[allParamAnim[i]] = animatorCfgFile.getComplexAttribute("Animator", "", allParamAnim[i]);
+					animationParameters[allParamAnim[i]] = animatorCfgFile.getComplexAttribute("Animator", allParamAnim[i]);
 			}
 			for (unsigned int i = 0; i < listDir.size(); i++)
 			{

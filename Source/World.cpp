@@ -86,24 +86,24 @@ namespace mse
 			std::cout << "Creation Chrono : " << "[WorldStart]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 			baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
 			std::cout << "Creation Chrono : " << "[WorldParse]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-			mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentDataObject("Meta");
+			mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("Meta");
 
-			levelName = mapParse.getAttribute("Level")->get<std::string>();
-			sizeX = mapParse.getAttribute("SizeX")->get<int>();
-			sizeY = mapParse.getAttribute("SizeY")->get<int>();
-			if (mapParse.attributeExists("StartX"))
-				startX = mapParse.getAttribute("StartX")->get<int>();
-			if (mapParse.attributeExists("StartY"))
-				startY = mapParse.getAttribute("StartY")->get<int>();
+			levelName = mapParse.getBaseAttribute("Level")->get<std::string>();
+			sizeX = mapParse.getBaseAttribute("SizeX")->get<int>();
+			sizeY = mapParse.getBaseAttribute("SizeY")->get<int>();
+			if (mapParse.containsBaseAttribute("StartX"))
+				startX = mapParse.getBaseAttribute("StartX")->get<int>();
+			if (mapParse.containsBaseAttribute("StartY"))
+				startY = mapParse.getBaseAttribute("StartY")->get<int>();
 
 			std::cout << "Creation Chrono : " << "[WorldMeta]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-			if (mapParse.dataObjectExists("LevelSprites"))
+			if (mapParse.containsRootAttribute("LevelSprites"))
 			{
-				std::vector<std::string> allDecos = mapParse.getAllComplex("LevelSprites", "");
+				std::vector<std::string> allDecos = mapParse.getPath("LevelSprites")->getAllComplexAttributes();
 				for (unsigned int i = 0; i < allDecos.size(); i++)
 				{
-					mapParse.accessNavigator()->setCurrentDataObject("LevelSprites", allDecos[i]);
+					mapParse.accessNavigator()->setCurrentRootAttribute("LevelSprites", allDecos[i]);
 					std::string decoID, decoType;
 					int decoPosX, decoPosY;
 					int decoRot = 0;
@@ -112,14 +112,14 @@ namespace mse
 					int layer;
 					int zdepth;
 					decoID = allDecos[i];
-					decoType = mapParse.getAttribute("type")->get<std::string>();
-					decoPosX = mapParse.getAttribute("posX")->get<int>();
-					decoPosY = mapParse.getAttribute("posY")->get<int>();
-					decoRot = mapParse.getAttribute("rotation")->get<int>();
-					decoSca = mapParse.getAttribute("scale")->get<double>();
-					layer = mapParse.getAttribute("layer")->get<int>();
-					zdepth = mapParse.getAttribute("z-depth")->get<int>();
-					if (mapParse.listExists("attributeList"))
+					decoType = mapParse.getBaseAttribute("type")->get<std::string>();
+					decoPosX = mapParse.getBaseAttribute("posX")->get<int>();
+					decoPosY = mapParse.getBaseAttribute("posY")->get<int>();
+					decoRot = mapParse.getBaseAttribute("rotation")->get<int>();
+					decoSca = mapParse.getBaseAttribute("scale")->get<double>();
+					layer = mapParse.getBaseAttribute("layer")->get<int>();
+					zdepth = mapParse.getBaseAttribute("z-depth")->get<int>();
+					if (mapParse.containsListAttribute("attributeList"))
 					{
 						int atrListSize = mapParse.getListSize("attributeList");
 						for (int j = 0; j < atrListSize; j++)
@@ -151,14 +151,14 @@ namespace mse
 			std::cout << "Creation Chrono : " << "[WorldReorganize]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 
-			if (mapParse.dataObjectExists("Lights"))
+			if (mapParse.containsRootAttribute("Lights"))
 			{
-				mapParse.accessNavigator()->setCurrentDataObject("Lights");
-				std::vector<std::string> allLights = mapParse.getAllComplex();
+				mapParse.accessNavigator()->setCurrentRootAttribute("Lights");
+				std::vector<std::string> allLights = mapParse.getAllComplexAttributes();
 				for (int i = 0; i < allLights.size(); i++)
 				{
-					mapParse.accessNavigator()->setCurrentDataObject("Lights", allLights[i]);
-					std::string ltype = mapParse.getAttribute("type")->get<std::string>();
+					mapParse.accessNavigator()->setCurrentRootAttribute("Lights", allLights[i]);
+					std::string ltype = mapParse.getBaseAttribute("type")->get<std::string>();
 					if (ltype == "Static")
 					{
 						double lsize;
@@ -167,15 +167,15 @@ namespace mse
 						bool lbehind;
 						double loffX = 0;
 						double loffY = 0;
-						lsize = mapParse.getAttribute("size")->get<double>();
-						lr = mapParse.getAttribute("r")->get<double>();
-						lg = mapParse.getAttribute("g")->get<double>();
-						lb = mapParse.getAttribute("b")->get<double>();
-						la = mapParse.getAttribute("a")->get<double>();
-						lsBind = mapParse.getAttribute("bind")->get<std::string>();
-						lbehind = mapParse.getAttribute("behind")->get<bool>();
-						if (mapParse.attributeExists("offsetX")) loffX = mapParse.getAttribute("offsetX")->get<double>();
-						if (mapParse.attributeExists("offsetY")) loffY = mapParse.getAttribute("offsetY")->get<double>();
+						lsize = mapParse.getBaseAttribute("size")->get<double>();
+						lr = mapParse.getBaseAttribute("r")->get<double>();
+						lg = mapParse.getBaseAttribute("g")->get<double>();
+						lb = mapParse.getBaseAttribute("b")->get<double>();
+						la = mapParse.getBaseAttribute("a")->get<double>();
+						lsBind = mapParse.getBaseAttribute("bind")->get<std::string>();
+						lbehind = mapParse.getBaseAttribute("behind")->get<bool>();
+						if (mapParse.containsBaseAttribute("offsetX")) loffX = mapParse.getBaseAttribute("offsetX")->get<double>();
+						if (mapParse.containsBaseAttribute("offsetY")) loffY = mapParse.getBaseAttribute("offsetY")->get<double>();
 						if (getSpriteByID(lsBind) != NULL)
 						{
 							lightsMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
@@ -192,16 +192,16 @@ namespace mse
 						std::string loffX = "0";
 						std::string loffY = "0";
 
-						lprecision = mapParse.getAttribute("precision")->get<double>();
-						lsize = mapParse.getAttribute("size")->get<std::string>();
-						lr = mapParse.getAttribute("r")->get<std::string>();
-						lg = mapParse.getAttribute("g")->get<std::string>();
-						lb = mapParse.getAttribute("b")->get<std::string>();
-						la = mapParse.getAttribute("a")->get<std::string>();
-						lsBind = mapParse.getAttribute("bind")->get<std::string>();
-						lbehind = mapParse.getAttribute("behind")->get<bool>();
-						if (mapParse.attributeExists("offsetX")) loffX = mapParse.getAttribute("offsetX")->get<std::string>();
-						if (mapParse.attributeExists("offsetY")) loffY = mapParse.getAttribute("offsetY")->get<std::string>();
+						lprecision = mapParse.getBaseAttribute("precision")->get<double>();
+						lsize = mapParse.getBaseAttribute("size")->get<std::string>();
+						lr = mapParse.getBaseAttribute("r")->get<std::string>();
+						lg = mapParse.getBaseAttribute("g")->get<std::string>();
+						lb = mapParse.getBaseAttribute("b")->get<std::string>();
+						la = mapParse.getBaseAttribute("a")->get<std::string>();
+						lsBind = mapParse.getBaseAttribute("bind")->get<std::string>();
+						lbehind = mapParse.getBaseAttribute("behind")->get<bool>();
+						if (mapParse.containsBaseAttribute("offsetX")) loffX = mapParse.getBaseAttribute("offsetX")->get<std::string>();
+						if (mapParse.containsBaseAttribute("offsetY")) loffY = mapParse.getBaseAttribute("offsetY")->get<std::string>();
 						if (getSpriteByID(lsBind) != NULL)
 						{
 							Light::DynamicPointLight* tdpl = new Light::DynamicPointLight(allLights[i], sf::Vector2f(1920, 1080), lprecision);
@@ -216,13 +216,13 @@ namespace mse
 			}
 			std::cout << "Creation Chrono : " << "[WorldLights]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-			if (mapParse.dataObjectExists("Collisions"))
+			if (mapParse.containsRootAttribute("Collisions"))
 			{
-				mapParse.accessNavigator()->setCurrentDataObject("Collisions");
-				std::vector<std::string> allCol = mapParse.getAllComplex();
+				mapParse.accessNavigator()->setCurrentRootAttribute("Collisions");
+				std::vector<std::string> allCol = mapParse.getAllComplexAttributes();
 				for (unsigned int i = 0; i < allCol.size(); i++)
 				{
-					mapParse.accessNavigator()->setCurrentDataObject("Collisions", allCol[i]);
+					mapParse.accessNavigator()->setCurrentRootAttribute("Collisions", allCol[i]);
 					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(allCol[i]);
 					for (unsigned int j = 0; j < mapParse.getListSize("polygonPoints"); j++)
 					{
@@ -236,14 +236,14 @@ namespace mse
 			std::cout << "Creation Chrono : " << "[WorldCollisions]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 
-			if (mapParse.dataObjectExists("LevelObjects"))
+			if (mapParse.containsRootAttribute("LevelObjects"))
 			{
-				mapParse.accessNavigator()->setCurrentDataObject("LevelObjects");
-				std::vector<std::string> allObjects = mapParse.getAllComplex();
+				mapParse.accessNavigator()->setCurrentRootAttribute("LevelObjects");
+				std::vector<std::string> allObjects = mapParse.getAllComplexAttributes();
 				for (unsigned int i = 0; i < allObjects.size(); i++)
 				{
-					mapParse.accessNavigator()->setCurrentDataObject("LevelObjects", allObjects[i]);
-					std::string levelObjectType = mapParse.getAttribute("type")->get<std::string>();
+					mapParse.accessNavigator()->setCurrentRootAttribute("LevelObjects", allObjects[i]);
+					std::string levelObjectType = mapParse.getBaseAttribute("type")->get<std::string>();
 					this->createGameObject(allObjects[i], levelObjectType);
 					int objX = 0;
 					int objY = 0;
@@ -251,10 +251,10 @@ namespace mse
 					int colOffY = 0;
 					if (this->getGameObject(allObjects[i])->canDisplay())
 					{
-						if (mapParse.attributeExists("posX"))
-							objX = mapParse.getAttribute("posX")->get<int>();
-						if (mapParse.attributeExists("posY"))
-							objY = mapParse.getAttribute("posY")->get<int>();
+						if (mapParse.containsBaseAttribute("posX"))
+							objX = mapParse.getBaseAttribute("posX")->get<int>();
+						if (mapParse.containsBaseAttribute("posY"))
+							objY = mapParse.getBaseAttribute("posY")->get<int>();
 						this->getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
 					}
 					if (getGameObject(allObjects[i])->hasCollider)
@@ -265,9 +265,9 @@ namespace mse
 			}
 			std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-			if (mapParse.dataObjectExists("Script"))
+			if (mapParse.containsRootAttribute("Script"))
 			{
-				mapParse.accessNavigator()->setCurrentDataObject("Script");
+				mapParse.accessNavigator()->setCurrentRootAttribute("Script");
 				int scriptAmt = mapParse.getListAttribute("gameScripts")->getSize();
 				for (int i = 0; i < scriptAmt; i++)
 				{
@@ -321,30 +321,30 @@ namespace mse
 			Data::DataParser* dataStore = new Data::DataParser;
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
-			dataStore->createDataObject("Meta");
-			dataStore->createBaseAttribute("Meta", "", "Level", levelName);
-			dataStore->createBaseAttribute("Meta", "", "SizeX", sizeX);
-			dataStore->createBaseAttribute("Meta", "", "SizeY", sizeY);
-			dataStore->createBaseAttribute("Meta", "", "StartX", startX);
-			dataStore->createBaseAttribute("Meta", "", "StartY", startY);
-			dataStore->createDataObject("LevelSprites");
+			dataStore->createRootAttribute("Meta");
+			dataStore->getPath("Meta")->createBaseAttribute("Level", levelName);
+			dataStore->getPath("Meta")->createBaseAttribute("SizeX", sizeX);
+			dataStore->getPath("Meta")->createBaseAttribute("SizeY", sizeY);
+			dataStore->getPath("Meta")->createBaseAttribute("StartX", startX);
+			dataStore->getPath("Meta")->createBaseAttribute("StartY", startY);
+			dataStore->createRootAttribute("LevelSprites");
 			for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 			{
 				if (backSpriteArray[i]->getParent() == nullptr)
 				{
-					dataStore->createComplexAttribute("LevelSprites", "", backSpriteArray[i]->getID());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "type", backSpriteArray[i]->getName());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posX", (int)backSpriteArray[i]->getX());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "posY", (int)backSpriteArray[i]->getY());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "rotation", (int)backSpriteArray[i]->getRotation());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "scale", backSpriteArray[i]->getScaleX());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "layer", (int)backSpriteArray[i]->getLayer());
-					dataStore->createBaseAttribute("LevelSprites", backSpriteArray[i]->getID(), "z-depth", (int)backSpriteArray[i]->getZDepth());
+					dataStore->getPath("LevelSprites")->createComplexAttribute(backSpriteArray[i]->getID());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("type", backSpriteArray[i]->getName());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("posX", (int)backSpriteArray[i]->getX());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("posY", (int)backSpriteArray[i]->getY());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("rotation", (int)backSpriteArray[i]->getRotation());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("scale", backSpriteArray[i]->getScaleX());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("layer", (int)backSpriteArray[i]->getLayer());
+					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("z-depth", (int)backSpriteArray[i]->getZDepth());
 					if (backSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->createListAttribute("LevelSprites", backSpriteArray[i]->getID(), "attributeList", "str");
+						dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createListAttribute("attributeList", "string");
 						for (unsigned int j = 0; j < backSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->createListItem("LevelSprites", backSpriteArray[i]->getID(), "attributeList", backSpriteArray[i]->getAttributes()[j]);
+							dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createListItem("attributeList", backSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
@@ -352,52 +352,52 @@ namespace mse
 			{
 				if (frontSpriteArray[i]->getParent() == nullptr)
 				{
-					dataStore->createComplexAttribute("LevelSprites", "", frontSpriteArray[i]->getID());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "type", frontSpriteArray[i]->getName());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "posX", (int)frontSpriteArray[i]->getX());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "posY", (int)frontSpriteArray[i]->getY());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "rotation", (int)frontSpriteArray[i]->getRotation());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "scale", frontSpriteArray[i]->getScaleX());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "layer", (int)frontSpriteArray[i]->getLayer());
-					dataStore->createBaseAttribute("LevelSprites", frontSpriteArray[i]->getID(), "z-depth", (int)frontSpriteArray[i]->getZDepth());
+					dataStore->getPath("LevelSprites")->createComplexAttribute(frontSpriteArray[i]->getID());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("type", frontSpriteArray[i]->getName());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("posX", (int)frontSpriteArray[i]->getX());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("posY", (int)frontSpriteArray[i]->getY());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("rotation", (int)frontSpriteArray[i]->getRotation());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("scale", frontSpriteArray[i]->getScaleX());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("layer", (int)frontSpriteArray[i]->getLayer());
+					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("z-depth", (int)frontSpriteArray[i]->getZDepth());
 					if (frontSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->createListAttribute("LevelSprites", frontSpriteArray[i]->getID(), "attributeList", "str");
+						dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createListAttribute("attributeList", "string");
 						for (unsigned int j = 0; j < frontSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->createListItem("LevelSprites", frontSpriteArray[i]->getID(), "attributeList", frontSpriteArray[i]->getAttributes()[j]);
+							dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createListItem("attributeList", frontSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
-			dataStore->createDataObject("Collisions");
+			dataStore->createRootAttribute("Collisions");
 			for (unsigned int i = 0; i < collidersArray.size(); i++)
 			{
 				if (collidersArray[i]->getParent() == nullptr)
 				{
-					dataStore->createComplexAttribute("Collisions", "", collidersArray[i]->getID());
-					dataStore->createListAttribute("Collisions", collidersArray[i]->getID(), "polygonPoints", "str");
+					dataStore->getPath("Collisions")->createComplexAttribute(collidersArray[i]->getID());
+					dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListAttribute("polygonPoints", "string");
 					for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
 					{
 						int px = collidersArray[i]->getPointCoordinates(j).first;
 						int py = collidersArray[i]->getPointCoordinates(j).second;
-						dataStore->createListItem("Collisions", collidersArray[i]->getID(), "polygonPoints", std::to_string(px) + "," + std::to_string(py));
+						dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListItem("polygonPoints", std::to_string(px) + "," + std::to_string(py));
 					}
 				}
 			}
-			dataStore->createDataObject("LevelObjects");
+			dataStore->createRootAttribute("LevelObjects");
 			for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
 			{
-				dataStore->createComplexAttribute("LevelObjects", "", it->first);
-				dataStore->createBaseAttribute("LevelObjects", it->first, "type", it->second->getType());
-				dataStore->createBaseAttribute("LevelObjects", it->first, "posX", (int)it->second->getLevelSprite()->getX());
-				dataStore->createBaseAttribute("LevelObjects", it->first, "posY", (int)it->second->getLevelSprite()->getY());
+				dataStore->getPath("LevelObjects")->createComplexAttribute(it->first);
+				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("type", it->second->getType());
+				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
+				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
 			}
 			if (scriptArray.size() > 0)
 			{
-				dataStore->createDataObject("Script");
-				dataStore->createListAttribute("Script", "", "gameScripts", "str");
+				dataStore->createRootAttribute("Script");
+				dataStore->getPath("Script")->createListAttribute("gameScripts", "string");
 				for (int i = 0; i < scriptArray.size(); i++)
 				{
-					dataStore->createListItem("Script", "", "gameScripts", scriptArray[i]);
+					dataStore->getPath("Script")->createListItem("gameScripts", scriptArray[i]);
 				}
 			}
 			return dataStore;
@@ -692,7 +692,7 @@ namespace mse
 			Script::GameObject* newGameObject = new Script::GameObject(obj, id);
 			Data::DataParser getGameObjectFile;
 			System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-			Data::DataObject* gameObjectData = getGameObjectFile.accessDataObject(obj);
+			Data::ComplexAttribute* gameObjectData = getGameObjectFile.getRootAttribute(obj);
 			newGameObject->loadGameObject(gameObjectData);
 			newGameObject->scriptEngine = new kaguya::State;
 			this->gameObjectsMap[id] = newGameObject;
@@ -722,10 +722,10 @@ namespace mse
 			newGameObject->localTriggers->addTrigger("Click");
 			newGameObject->localTriggers->addTrigger("Press");
 			newGameObject->localTriggers->addTrigger("Delete");
-			int scriptListSize = gameObjectData->getListAttribute(Data::convertPath("Script"), "scriptList")->getSize();
+			int scriptListSize = gameObjectData->getPath("Script")->getListAttribute("scriptList")->getSize();
 			for (int i = 0; i < scriptListSize; i++)
 			{
-				std::string getScrName = gameObjectData->getListAttribute(Data::convertPath("Script"), "scriptList")->getElement(i)->get<std::string>();
+				std::string getScrName = gameObjectData->getPath("Script")->getListAttribute("scriptList")->getElement(i)->get<std::string>();
 				System::Path(getScrName).loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
 			}
 			this->orderUpdateScrArray();

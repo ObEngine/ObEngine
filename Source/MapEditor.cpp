@@ -27,9 +27,9 @@ namespace mse
 			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
 				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
 			Data::DataParser loadingStrDP; loadingStrDP.parseFile("Sprites/Menus/loading.dat.msd");
-			loadingStrDP.hookNavigator(new Data::DataParserNavigator)->setCurrentDataObject("Loading");
+			loadingStrDP.hookNavigator(new Data::DataParserNavigator)->setCurrentRootAttribute("Loading");
 			std::string loadingRandomStr = loadingStrDP.getListAttribute("loadingStr")->getElement(
-				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "", "loadingStr") - 1))->get<std::string>();
+				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "loadingStr") - 1))->get<std::string>();
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();
 			std::cout << "Creation Chrono : " << "[Window]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
@@ -54,15 +54,15 @@ namespace mse
 			Data::DataParser configFile;
 			System::Path("Data/config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
 			//configFile.parseFile("Data/config.cfg.msd");
-			configFile.hookNavigator(new Data::DataParserNavigator())->setCurrentDataObject("GameConfig");
-			int scrollSensitive = configFile.getAttribute("scrollSensibility")->get<int>();
-			configFile.accessNavigator()->setCurrentDataObject("Developpement");
-			bool showChar = configFile.getAttribute("showCharacter")->get<bool>();
-			bool showCol = configFile.getAttribute("showCollisions")->get<bool>();
-			bool showLSpr = configFile.getAttribute("showLevelSprites")->get<bool>();
-			bool showOverlay = configFile.getAttribute("showOverlay")->get<bool>();
-			bool showCursor = configFile.getAttribute("showCursor")->get<bool>();
-			bool drawFPS = configFile.getAttribute("showFPS")->get<bool>();
+			configFile.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("GameConfig");
+			int scrollSensitive = configFile.getBaseAttribute("scrollSensibility")->get<int>();
+			configFile.accessNavigator()->setCurrentRootAttribute("Developpement");
+			bool showChar = configFile.getBaseAttribute("showCharacter")->get<bool>();
+			bool showCol = configFile.getBaseAttribute("showCollisions")->get<bool>();
+			bool showLSpr = configFile.getBaseAttribute("showLevelSprites")->get<bool>();
+			bool showOverlay = configFile.getBaseAttribute("showOverlay")->get<bool>();
+			bool showCursor = configFile.getBaseAttribute("showCursor")->get<bool>();
+			bool drawFPS = configFile.getBaseAttribute("showFPS")->get<bool>();
 			std::cout << "Creation Chrono : " << "[Config]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Cursor
@@ -76,7 +76,7 @@ namespace mse
 			std::cout << "Creation Chrono : " << "[Character]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//World Creation / Loading
-			configFile.accessNavigator()->setCurrentDataObject("GameConfig");
+			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
 			World::World world;
 			(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
 			world.getScriptEngine()->setErrorHandler([&gameConsole](int statuscode, const char* message) {
@@ -84,13 +84,13 @@ namespace mse
 				std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
 			});
 			Script::hookCore.dropValue("World", &world);
-			bool depthOfFieldEnabled = configFile.getAttribute("depthOfField")->get<bool>();
+			bool depthOfFieldEnabled = configFile.getBaseAttribute("depthOfField")->get<bool>();
 			if (!depthOfFieldEnabled) world.setBlurMul(0.0);
 			std::cout << "Creation Chrono : " << "[World]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Serial
-			configFile.accessNavigator()->setCurrentDataObject("Developpement");
-			std::string serialPort = (configFile.attributeExists("COMM")) ? configFile.getAttribute("COMM")->get<std::string>() : "";
+			configFile.accessNavigator()->setCurrentRootAttribute("Developpement");
+			std::string serialPort = (configFile.containsBaseAttribute("COMM")) ? configFile.getBaseAttribute("COMM")->get<std::string>() : "";
 			Input::Serial serial(serialPort.c_str());
 
 			//Socket
@@ -224,10 +224,10 @@ namespace mse
 			double speedCoeff = 60.0;
 			double gameSpeed = 0.0;
 			double frameLimiterClock = Time::getTickSinceEpoch();
-			configFile.accessNavigator()->setCurrentDataObject("GameConfig", "");
-			bool limitFPS = (configFile.attributeExists("framerateLimit")) ? configFile.getAttribute("framerateLimit")->get<bool>() : true;
-			int framerateTarget = (configFile.attributeExists("framerateTarget")) ? configFile.getAttribute("framerateTarget")->get<int>() : 60;
-			bool vsyncEnabled = (configFile.attributeExists("vsync")) ? configFile.getAttribute("vsync")->get<bool>() : false;
+			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig", "");
+			bool limitFPS = (configFile.containsBaseAttribute("framerateLimit")) ? configFile.getBaseAttribute("framerateLimit")->get<bool>() : true;
+			int framerateTarget = (configFile.containsBaseAttribute("framerateTarget")) ? configFile.getBaseAttribute("framerateTarget")->get<int>() : 60;
+			bool vsyncEnabled = (configFile.containsBaseAttribute("vsync")) ? configFile.getBaseAttribute("vsync")->get<bool>() : false;
 			double reqFramerateInterval = 1.0 / (double)framerateTarget;
 			int currentFrame = 0;
 			int frameProgression = 0;

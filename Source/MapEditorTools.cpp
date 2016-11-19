@@ -156,7 +156,7 @@ namespace mse
 		void buildRequiresObjectTab(std::string objName)
 		{
 			std::cout << "Call Require Creation for : " << objName << std::endl;
-			Data::DataObject* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+			Data::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			if (requires != nullptr)
 			{
 				GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
@@ -178,22 +178,24 @@ namespace mse
 				gui->getContainerByContainerName(containerName + "_Frame")->setBackground(sf::Color(0, 0, 0, 200));
 				gui->getContainerByContainerName(containerName)->addScrollBar();
 				int widgetVerticalPosition = 0;
-				for (std::string& requireItem : requires->getAllComplex({}))
+				for (std::string& requireItem : requires->getAllComplexAttributes())
 				{
-					std::string lblName = requires->getAttribute(Data::convertPath(requireItem), "name")->get<std::string>();
+					std::cout << "Require item is : " << requireItem << std::endl;
+					std::cout << requires->containsComplexAttribute("Color") << std::endl;
+					std::string lblName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
 					gui->createLabel(containerName, objName + "_" + requireItem + "_Lbl", 50, widgetVerticalPosition, lblName, "weblysleekuil.ttf", 24, sf::Color::White);
-					if (requires->attributeExists(Data::convertPath(requireItem), "type")) {
+					if (requires->getPath(requireItem)->containsBaseAttribute("type")) {
 						gui->createTextInput(containerName, objName + "_" + requireItem + "_Input", 200, 
 							widgetVerticalPosition + 5, "", "weblysleekuil.ttf", 16, sf::Color::White, false, "GREY");
-						std::string reqType = requires->getAttribute(Data::convertPath(requireItem), "type")->get<std::string>();
+						std::string reqType = requires->getPath(requireItem)->getBaseAttribute("type")->get<std::string>();
 						if (reqType == "int")
 							GUI::Widget::getWidgetByID<GUI::TextInput>(objName + "_" + requireItem + "_Input")->addFilter(GUI::TextInputFilters::Integer);
 					}
-					else if (requires->listExists(Data::convertPath(requireItem), "choices"))
+					else if (requires->getPath(requireItem)->containsListAttribute("choices"))
 					{
 						std::vector<std::string> requireChoices;
-						for (int reqI = 0; reqI < requires->getListAttribute(Data::convertPath(requireItem), "choices")->getSize(); reqI++)
-							requireChoices.push_back(requires->getListAttribute(Data::convertPath(requireItem), "choices")->getElement(reqI)->get<std::string>());
+						for (int reqI = 0; reqI < requires->getPath(requireItem)->getListAttribute("choices")->getSize(); reqI++)
+							requireChoices.push_back(requires->getPath(requireItem)->getListAttribute("choices")->getElement(reqI)->get<std::string>());
 						gui->createDroplist(containerName, objName + "_" + requireItem + "_Input", 200, 
 							widgetVerticalPosition, 16, "", false, "weblysleekuil.ttf", "GREY", requireChoices);
 					}
@@ -221,20 +223,20 @@ namespace mse
 
 		void buildObjectThroughRequire(std::string objName)
 		{
-			Data::DataObject* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+			Data::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
 			GUI::WidgetContainer* requireGUI = gui->getContainerByContainerName("Requires");
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			Script::GameObject* newGameObject = Script::hookCore.getPointer("World")->as<World::World*>()->createGameObject(key, objName);
-			for (std::string& requireItem : requires->getAllComplex({}))
+			for (std::string& requireItem : requires->getAllComplexAttributes())
 			{
-				std::string requirementName = requires->getAttribute(Data::convertPath(requireItem), "name")->get<std::string>();
-				bool optionalRequirement = requires->attributeExists(Data::convertPath(requireItem), "optional");
+				std::string requirementName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
+				bool optionalRequirement = requires->getPath(requireItem)->containsBaseAttribute("optional");
 				if (optionalRequirement)
-					optionalRequirement = requires->getAttribute(Data::convertPath(requireItem), "optional")->get<bool>();
+					optionalRequirement = requires->getPath(requireItem)->getBaseAttribute("optional")->get<bool>();
 				if (objName + "_" + requireItem + "_Input" != "" || optionalRequirement)
 				{
-					if (requires->listExists(Data::convertPath(requireItem), "choices"))
+					if (requires->getPath(requireItem)->containsListAttribute("choices"))
 						newGameObject->sendRequireArgument(requirementName, GUI::Widget::getWidgetByID<GUI::Droplist>(objName + "_" + requireItem + "_Input")->getCurrentSelected());
 				}
 					
@@ -319,7 +321,7 @@ namespace mse
 					addSprMap["OTHR"].push_back(sprNameList[i]);
 				}
 			}
-			std::vector<std::string> folderConfigList = addSprFolderConfigFile.getAllComplex("SpritePrefix", "");
+			std::vector<std::string> folderConfigList = addSprFolderConfigFile.getPath("SpritePrefix")->getAllComplexAttributes();
 			const int sprSize = 256;
 			const int sprOff = 10;
 			const int xOff = 15;
@@ -345,8 +347,8 @@ namespace mse
 				std::string prefixEquivalent;
 				if (Functions::Vector::isInList(iterator->first, folderConfigList))
 				{
-					if (addSprFolderConfigFile.attributeExists("SpritePrefix", iterator->first, "name"))
-						prefixEquivalent = addSprFolderConfigFile.getAttribute("SpritePrefix", iterator->first, "name")->get<std::string>();
+					if (addSprFolderConfigFile.getPath(Data::Path("SpritePrefix", iterator->first))->containsBaseAttribute("name"))
+						prefixEquivalent = addSprFolderConfigFile.getPath(Data::Path("SpritePrefix", iterator->first))->getBaseAttribute("name")->get<std::string>();
 					else
 						prefixEquivalent = iterator->first;
 				}
