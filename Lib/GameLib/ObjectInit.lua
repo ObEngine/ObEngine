@@ -10,8 +10,20 @@ function Require(param)
     end
 end
 
-function RequireInjection()
-
+function Local.InitMirrorInjector()
+    local Lua_LocalInit_Unpack = function(t, i)
+        i = i or 1
+        if t[i] ~= nil then
+            return t[i], unpack(t, i + 1)
+        end
+    end
+    local Lua_LocalInit_ArgMirror = require('Lib/StdLib/ArgMirror');
+    local Lua_LocalInit_ArgList = Lua_LocalInit_ArgMirror(Local.Init);
+    local Lua_LocalInit_CallArgs = {};
+    for _, i in pairs(Lua_LocalInit_ArgList) do
+        table.insert(Lua_LocalInit_CallArgs, Lua_ReqList[i]);
+    end
+    Local.Init(unpack(Lua_LocalInit_CallArgs));
 end
 
 function IsArgumentInRequireList(paramName)

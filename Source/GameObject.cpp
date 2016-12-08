@@ -255,6 +255,9 @@ namespace mse
 								std::cout << "<Error:GameObject:GameObject>[update] Unknown Type for Parameter : " << it->first << "(" << allParam->at(it->first).first << ")" << std::endl;
 
 						}
+						if (funcname == "Local.Init") {
+							std::cout << "INITIALISATION MIRROR INJECTION" << std::endl;
+						}
 						this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 						(*this->scriptEngine)["cpp_param"] = nullptr;
 					}

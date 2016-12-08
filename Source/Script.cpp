@@ -897,16 +897,15 @@ namespace mse
 			}
 			if (importAll || args[1] == "MathExpObject")
 			{
-				(*lua)["Core"]["MathExp"]["MathExpObject"].setClass(kaguya::ClassMetatable<Math::MathExpObject>()
-					.addConstructor<double>()
-					.addConstructor<double, std::string, std::string>()
-					.addMember("processAllExp", &Math::MathExpObject::processAllExp)
-					.addMember("registerMathExp", &Math::MathExpObject::registerMathExp)
-					.addMember("registerOutputVar", &Math::MathExpObject::registerOutputVar)
-					.addMember("setGlobalVar", &Math::MathExpObject::setGlobalVar)
-					.addMember("setLocalVar", &Math::MathExpObject::setLocalVar)
-					.addMember("setPrecision", &Math::MathExpObject::setPrecision)
-					.addMember("getPrecision", &Math::MathExpObject::getPrecision)
+				(*lua)["Core"]["MathExp"]["MathExpObject"].setClass(kaguya::UserdataMetatable<Math::MathExpObject>()
+					.setConstructors<Math::MathExpObject(double), Math::MathExpObject(double, std::string, std::string)>()
+					.addFunction("processAllExp", &Math::MathExpObject::processAllExp)
+					.addFunction("registerMathExp", &Math::MathExpObject::registerMathExp)
+					.addFunction("registerOutputVar", &Math::MathExpObject::registerOutputVar)
+					.addFunction("setGlobalVar", &Math::MathExpObject::setGlobalVar)
+					.addFunction("setLocalVar", &Math::MathExpObject::setLocalVar)
+					.addFunction("setPrecision", &Math::MathExpObject::setPrecision)
+					.addFunction("getPrecision", &Math::MathExpObject::getPrecision)
 					);
 				foundPart = true;
 			}
@@ -920,30 +919,30 @@ namespace mse
 			if (!(bool)((*lua)["Core"]["Particle"])) (*lua)["Core"]["Particle"] = kaguya::NewTable();
 			if (importAll || args[1] == "Particle")
 			{
-				(*lua)["Core"]["Particle"]["Particle"].setClass(kaguya::ClassMetatable<Graphics::Particle>()
-					.addMember("getAngle", &Graphics::Particle::getAngle)
-					.addMember("getLifetime", &Graphics::Particle::getLifetime)
-					.addMember("getParticle", &Graphics::Particle::getParticle)
-					.addMember("getVelocity", &Graphics::Particle::getVelocity)
-					.addMember("init", &Graphics::Particle::init)
-					.addMember("isDead", &Graphics::Particle::isDead)
-					.addMember("setAngle", &Graphics::Particle::setAngle)
-					.addMember("setEndColor", &Graphics::Particle::setEndColor)
-					.addMember("setLifetime", &Graphics::Particle::setLifetime)
-					.addMember("setStartColor", &Graphics::Particle::setStartColor)
-					.addMember("setVelocity", &Graphics::Particle::setVelocity)
-					.addMember("shapeInit", &Graphics::Particle::shapeInit)
-					.addMember("update", &Graphics::Particle::update)
+				(*lua)["Core"]["Particle"]["Particle"].setClass(kaguya::UserdataMetatable<Graphics::Particle>()
+					.addFunction("getAngle", &Graphics::Particle::getAngle)
+					.addFunction("getLifetime", &Graphics::Particle::getLifetime)
+					.addFunction("getParticle", &Graphics::Particle::getParticle)
+					.addFunction("getVelocity", &Graphics::Particle::getVelocity)
+					.addFunction("init", &Graphics::Particle::init)
+					.addFunction("isDead", &Graphics::Particle::isDead)
+					.addFunction("setAngle", &Graphics::Particle::setAngle)
+					.addFunction("setEndColor", &Graphics::Particle::setEndColor)
+					.addFunction("setLifetime", &Graphics::Particle::setLifetime)
+					.addFunction("setStartColor", &Graphics::Particle::setStartColor)
+					.addFunction("setVelocity", &Graphics::Particle::setVelocity)
+					.addFunction("shapeInit", &Graphics::Particle::shapeInit)
+					.addFunction("update", &Graphics::Particle::update)
 				);
 			}
 			if (importAll || args[1] == "MathParticle")
 			{
-				(*lua)["Core"]["Particle"]["MathParticle"].setClass(kaguya::ClassMetatable<Graphics::MathParticle, Math::MathExpObject>()
-					.addConstructor()
-					.addConstructor<std::string, std::string, std::string, std::string, std::string, std::string, std::string, double>()
-					.addConstructor<std::string>()
-					.addMember("setExp", &Graphics::MathParticle::setExp)
-					.addMember("update", &Graphics::MathParticle::update)
+				(*lua)["Core"]["Particle"]["MathParticle"].setClass(kaguya::UserdataMetatable<Graphics::MathParticle, Math::MathExpObject>()
+					.setConstructors<Graphics::MathParticle(), 
+					Graphics::MathParticle(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double),
+					Graphics::MathParticle(std::string)>()
+					.addFunction("setExp", &Graphics::MathParticle::setExp)
+					.addFunction("update", &Graphics::MathParticle::update)
 				);
 			}
 		}
@@ -955,12 +954,12 @@ namespace mse
 			if (!(bool)((*lua)["Core"]["Serial"])) (*lua)["Core"]["Serial"] = kaguya::NewTable();
 			if (importAll || args[1] == "Serial")
 			{
-				(*lua)["Core"]["Serial"]["Serial"].setClass(kaguya::ClassMetatable<Input::Serial>()
-					.addMember("IsConnected", &Input::Serial::IsConnected)
-					.addMember("readData", &Input::Serial::readData)
-					.addMember("getPortName", &Input::Serial::getPortName)
-					.addMember("ReadData", &Input::Serial::ReadData)
-					.addMember("WriteData", &Input::Serial::WriteData)
+				(*lua)["Core"]["Serial"]["Serial"].setClass(kaguya::UserdataMetatable<Input::Serial>()
+					.addFunction("IsConnected", &Input::Serial::IsConnected)
+					.addFunction("readData", &Input::Serial::readData)
+					.addFunction("getPortName", &Input::Serial::getPortName)
+					.addFunction("ReadData", &Input::Serial::ReadData)
+					.addFunction("WriteData", &Input::Serial::WriteData)
 					);
 				foundPart = true;
 			}
@@ -975,44 +974,49 @@ namespace mse
 			if (!(bool)((*lua)["Core"]["SFML"])) (*lua)["Core"]["SFML"] = kaguya::NewTable();
 			if (importAll || args[1] == "Color")
 			{
-				(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::ClassMetatable<sf::Color>()
-					.addConstructor<UINT8, UINT8, UINT8, UINT8>()
-					.addConstructor<int, int, int, int>()
-					.addMember("a", &sf::Color::a)
-					.addMember("r", &sf::Color::r)
-					.addMember("g", &sf::Color::b)
-					.addMember("b", &sf::Color::b)
+				(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::UserdataMetatable<sf::Color>()
+					.setConstructors<sf::Color(int, int, int, int)>()
+					.addFunction("a", &sf::Color::a)
+					.addFunction("r", &sf::Color::r)
+					.addFunction("g", &sf::Color::b)
+					.addFunction("b", &sf::Color::b)
 					);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "Drawable")
 			{
-				(*lua)["Core"]["SFML"]["Drawable"].setClass(kaguya::ClassMetatable<sf::Drawable>()
+				(*lua)["Core"]["SFML"]["Drawable"].setClass(kaguya::UserdataMetatable<sf::Drawable>()
 					);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "Transformable")
 			{
-				(*lua)["Core"]["SFML"]["Transformable"].setClass(kaguya::ClassMetatable<sf::Transformable>()
-					.addMember("getInverseTransform", &sf::Transformable::getInverseTransform)
-					.addMember("getOrigin", &sf::Transformable::getOrigin)
-					.addMember("getPosition", &sf::Transformable::getPosition)
-					.addMember("getRotation", &sf::Transformable::getRotation)
-					.addMember("getScale", &sf::Transformable::getScale)
-					.addMember("getTransform", &sf::Transformable::getTransform)
-					.addMember("move", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::move))
-					.addMember("move", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::move))
-					.addMember("rotate", &sf::Transformable::rotate)
-					.addMember("scale", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::scale))
-					.addMember("scale", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::scale))
-					.addMember("setOrigin", static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::setOrigin))
-					.addMember("setOrigin", static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::setOrigin))
+				(*lua)["Core"]["SFML"]["Transformable"].setClass(kaguya::UserdataMetatable<sf::Transformable>()
+					.addFunction("getInverseTransform", &sf::Transformable::getInverseTransform)
+					.addFunction("getOrigin", &sf::Transformable::getOrigin)
+					.addFunction("getPosition", &sf::Transformable::getPosition)
+					.addFunction("getRotation", &sf::Transformable::getRotation)
+					.addFunction("getScale", &sf::Transformable::getScale)
+					.addFunction("getTransform", &sf::Transformable::getTransform)
+					.addOverloadedFunctions("move",
+						static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::move),
+						static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::move)
+					)
+					.addFunction("rotate", &sf::Transformable::rotate)
+					.addOverloadedFunctions("scale",
+						static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::scale),
+						static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::scale)
+					)
+					.addOverloadedFunctions("setOrigin", 
+						static_cast<void (sf::Transformable::*)(float, float)>(&sf::Transformable::setOrigin),
+						static_cast<void (sf::Transformable::*)(const sf::Vector2f&)>(&sf::Transformable::setOrigin)
+					)
 					);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "Sprite")
 			{
-				(*lua)["Core"]["SFML"]["Sprite"].setClass(kaguya::ClassMetatable<sf::Sprite, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
+				(*lua)["Core"]["SFML"]["Sprite"].setClass(kaguya::UserdataMetatable<sf::Sprite, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
 					);
 				foundPart = true;
 			}
@@ -1027,17 +1031,17 @@ namespace mse
 			if (!(bool)((*lua)["Core"]["STD"])) (*lua)["Core"]["STD"] = kaguya::NewTable();
 			if (importAll || args[1] == "Pair")
 			{
-				(*lua)["Core"]["STD"]["IntPair"].setClass(kaguya::ClassMetatable<std::pair<int, int>>()
-					.addConstructor<int, int>()
-					.addMember("first", &std::pair<int, int>::first)
-					.addMember("second", &std::pair<int, int>::second)
-					.addMember("swap", &std::pair<int, int>::swap)
+				(*lua)["Core"]["STD"]["IntPair"].setClass(kaguya::UserdataMetatable<std::pair<int, int>>()
+					.setConstructors<std::pair<int, int>(int, int)>()
+					.addFunction("first", &std::pair<int, int>::first)
+					.addFunction("second", &std::pair<int, int>::second)
+					.addFunction("swap", &std::pair<int, int>::swap)
 					);
-				(*lua)["Core"]["STD"]["DoublePair"].setClass(kaguya::ClassMetatable<std::pair<double, double>>()
-					.addConstructor<double, double>()
-					.addMember("first", &std::pair<double, double>::first)
-					.addMember("second", &std::pair<double, double>::second)
-					.addMember("swap", &std::pair<double, double>::swap)
+				(*lua)["Core"]["STD"]["DoublePair"].setClass(kaguya::UserdataMetatable<std::pair<double, double>>()
+					.setConstructors<std::pair<double, double>(double, double)>()
+					.addFunction("first", &std::pair<double, double>::first)
+					.addFunction("second", &std::pair<double, double>::second)
+					.addFunction("swap", &std::pair<double, double>::swap)
 					);
 				foundPart = true;
 			}
@@ -1057,54 +1061,56 @@ namespace mse
 			if (!(bool)((*lua)["Core"]["Trigger"])) (*lua)["Core"]["Trigger"] = kaguya::NewTable();
 			if (importAll || args[1] == "TriggerDatabase")
 			{
-				(*lua)["Core"]["Trigger"]["TriggerDatabase"].setClass(kaguya::ClassMetatable<TriggerDatabase>()
-					.addMember("getTrigger", &TriggerDatabase::getTrigger)
-					.addMember("createTriggerGroup", &TriggerDatabase::createTriggerGroup)
-					.addMember("joinTriggerGroup", &TriggerDatabase::joinTriggerGroup)
-					.addMember("doesTriggerGroupExists", &TriggerDatabase::doesTriggerGroupExists)
+				(*lua)["Core"]["Trigger"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<TriggerDatabase>()
+					.addFunction("getTrigger", &TriggerDatabase::getTrigger)
+					.addFunction("createTriggerGroup", &TriggerDatabase::createTriggerGroup)
+					.addFunction("joinTriggerGroup", &TriggerDatabase::joinTriggerGroup)
+					.addFunction("doesTriggerGroupExists", &TriggerDatabase::doesTriggerGroupExists)
 					);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "TriggerGroup")
 			{
-				(*lua)["Core"]["Trigger"]["TriggerGroup"].setClass(kaguya::ClassMetatable<TriggerGroup>()
-					.addMember("getTrigger", &TriggerGroup::getTrigger)
-					.addMember("addTrigger", &TriggerGroup::addTrigger)
-					.addMember("delayTriggerState", &TriggerGroup::delayTriggerState)
-					.addMember("enableTrigger", &TriggerGroup::enableTrigger)
-					.addMember("disableTrigger", &TriggerGroup::disableTrigger)
-					.addMember("setTriggerState", &TriggerGroup::setTriggerState)
-					.addMember("getState", &TriggerGroup::getState)
-					.addMember("setPermanent", &TriggerGroup::setPermanent)
-					.addMember("getAllTriggersName", &TriggerGroup::getAllTriggersName)
-					.addMember("getAllTriggers", &TriggerGroup::getAllTriggers)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<int>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<float>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::string>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<bool>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<int>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<float>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<std::string>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::vector<bool>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, int>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, float>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, std::string>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<int, bool>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, int>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, float>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, std::string>>)
-					.addMember("pushParameter", &TriggerGroup::pushParameter<std::map<std::string, bool>>)
-					);
+				(*lua)["Core"]["Trigger"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<TriggerGroup>()
+					.addFunction("getTrigger", &TriggerGroup::getTrigger)
+					.addFunction("addTrigger", &TriggerGroup::addTrigger)
+					.addFunction("delayTriggerState", &TriggerGroup::delayTriggerState)
+					.addFunction("enableTrigger", &TriggerGroup::enableTrigger)
+					.addFunction("disableTrigger", &TriggerGroup::disableTrigger)
+					.addFunction("setTriggerState", &TriggerGroup::setTriggerState)
+					.addFunction("getState", &TriggerGroup::getState)
+					.addFunction("setPermanent", &TriggerGroup::setPermanent)
+					.addFunction("getAllTriggersName", &TriggerGroup::getAllTriggersName)
+					.addFunction("getAllTriggers", &TriggerGroup::getAllTriggers)
+					.addOverloadedFunctions("pushParameter",
+						&TriggerGroup::pushParameter<int>,
+						&TriggerGroup::pushParameter<float>,
+						&TriggerGroup::pushParameter<std::string>,
+						&TriggerGroup::pushParameter<bool>,
+						&TriggerGroup::pushParameter<std::vector<int>>,
+						&TriggerGroup::pushParameter<std::vector<float>>,
+						&TriggerGroup::pushParameter<std::vector<std::string>>,
+						&TriggerGroup::pushParameter<std::vector<bool>>,
+						&TriggerGroup::pushParameter<std::map<int, int>>,
+						&TriggerGroup::pushParameter<std::map<int, float>>,
+						&TriggerGroup::pushParameter<std::map<int, std::string>>,
+						&TriggerGroup::pushParameter<std::map<int, bool>>,
+						&TriggerGroup::pushParameter<std::map<std::string, int>>,
+						&TriggerGroup::pushParameter<std::map<std::string, float>>,
+						&TriggerGroup::pushParameter<std::map<std::string, std::string>>,
+						&TriggerGroup::pushParameter<std::map<std::string, bool>>
+					)
+				);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "Trigger")
 			{
-				(*lua)["Core"]["Trigger"]["Trigger"].setClass(kaguya::ClassMetatable<Trigger>()
-					.addMember("getState", &Trigger::getState)
-					.addMember("isPermanent", &Trigger::isPermanent)
-					.addMember("getGroup", &Trigger::getGroup)
-					.addMember("getName", &Trigger::getName)
-					.addMember("getNamespace", &Trigger::getNamespace)
+				(*lua)["Core"]["Trigger"]["Trigger"].setClass(kaguya::UserdataMetatable<Trigger>()
+					.addFunction("getState", &Trigger::getState)
+					.addFunction("isPermanent", &Trigger::isPermanent)
+					.addFunction("getGroup", &Trigger::getGroup)
+					.addFunction("getName", &Trigger::getName)
+					.addFunction("getNamespace", &Trigger::getNamespace)
 					);
 				foundPart = true;
 			}
