@@ -385,27 +385,27 @@ namespace mse
 		}
 		std::vector<std::string> ComplexAttribute::getAllComplexAttributes() {
 			std::vector<std::string> allComplexAttributes;
-			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
-				if (attribute.second->getType() == Types::ComplexAttribute) {
-					allComplexAttributes.push_back(attribute.second->getID());
+			for (std::string attributeName : this->childAttributesNames) {
+				if (this->childAttributes[attributeName]->getType() == Types::ComplexAttribute) {
+					allComplexAttributes.push_back(attributeName);
 				}
 			}
 			return allComplexAttributes;
 		}
 		std::vector<std::string> ComplexAttribute::getAllBaseAttributes() {
 			std::vector<std::string> allBaseAttributes;
-			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
-				if (attribute.second->getType() == Types::BaseAttribute) {
-					allBaseAttributes.push_back(attribute.second->getID());
+			for (std::string attributeName : this->childAttributesNames) {
+				if (this->childAttributes[attributeName]->getType() == Types::BaseAttribute) {
+					allBaseAttributes.push_back(attributeName);
 				}
 			}
 			return allBaseAttributes;
 		}
 		std::vector<std::string> ComplexAttribute::getAllListAttributes() {
 			std::vector<std::string> allListAttributes;
-			for (std::pair<std::string, Attribute*> attribute : childAttributes) {
-				if (attribute.second->getType() == Types::ListAttribute) {
-					allListAttributes.push_back(attribute.second->getID());
+			for (std::string attributeName : this->childAttributesNames) {
+				if (this->childAttributes[attributeName]->getType() == Types::ListAttribute) {
+					allListAttributes.push_back(attributeName);
 				}
 			}
 			return allListAttributes;
@@ -543,7 +543,10 @@ namespace mse
 		void ComplexAttribute::writeAttributes(std::ofstream* file, unsigned int depth) {
 			for (unsigned int i = 0; i < depth; i++)
 				(*file) << "    ";
-			(*file) << "@" << id << std::endl;
+			if (depth)
+				(*file) << "@" << id << std::endl;
+			else
+				(*file) << id << ":" << std::endl;
 			for (unsigned int i = 0; i < this->getAllBaseAttributes().size(); i++)
 			{
 				for (unsigned int j = 0; j < depth + 1; j++)
@@ -579,7 +582,7 @@ namespace mse
 			}
 			for (unsigned int i = 0; i < this->getAllComplexAttributes().size(); i++)
 				this->getComplexAttribute(this->getAllComplexAttributes()[i])->writeAttributes(file, depth + 1);
-			if (depth == 1)
+			if (depth == 0)
 				(*file) << std::endl;
 		}
 		void ComplexAttribute::deleteBaseAttribute(std::string id, bool freeMemory) {

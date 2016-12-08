@@ -37,6 +37,7 @@ namespace mse
 				int fadeState = 0;
 			public:
 				std::string name;
+				Renderer(std::string name);
 				virtual void load() = 0;
 				virtual void unload() = 0;
 				virtual void render() = 0;
@@ -70,11 +71,17 @@ namespace mse
 		namespace Renderers
 		{
 			class VisualNovel : public Renderer {
-				void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
+				public: VisualNovel();
+				private: void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
 			};
 			class Shade : public Renderer {
-				void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
+				public: Shade();
+				private: void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
 				void fadeOut(sf::RenderWindow* surf); void update(double dt);
+			};
+			class Choice : public Renderer {
+			public: Choice();
+			private: void load(); void unload(); void render(); void draw(sf::RenderWindow* surf);
 			};
 		}
 	}

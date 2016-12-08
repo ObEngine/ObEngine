@@ -3,10 +3,27 @@
 
 #include "MeltingSaga.hpp"
 
+void testLua(kaguya::State* obj, kaguya::LuaRef me) {
+	(*obj)["t"]["me"] = me;
+}
+
 int main(int argc, char** argv)
 {
 	mse::Functions::Run::Parser runParser(argv, argc);
 	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
+
+	kaguya::State bruh;
+	bruh["test"] = kaguya::function([](kaguya::State* obj, kaguya::LuaRef me) {
+		(*obj)["t"]["me"] = me;
+	});
+	bruh["t"] = kaguya::NewTable();
+	bruh["this"] = &bruh;
+	bruh("inspect = require('Lib/StdLib/Inspect');");
+
+	bruh("test(this, { a = { b = { c = 3, d = 4, e = 5}, f = { g = 6}, h = 1}, i = 'bonjour', j = {'je', 'suis', 'ici'}, k = true});");
+	bruh("print('KK');");
+	bruh("print(inspect(t.me));");
+	std::cout << "Done" << std::endl;
 
 	//Sauvegarde du log dans log.txt
 	std::ofstream out("log.txt");

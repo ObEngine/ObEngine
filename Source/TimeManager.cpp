@@ -90,7 +90,7 @@ namespace mse
 		{
 			text.setFont(font);
 			text.setCharacterSize(24);
-			text.setColor(sf::Color::White);
+			text.setFillColor(sf::Color::White);
 		}
 		sf::Text FPSCounter::getFPS()
 		{

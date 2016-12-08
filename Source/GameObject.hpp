@@ -29,6 +29,7 @@ namespace mse
 			public:
 				static GameObjectRequires* getInstance();
 				Data::ComplexAttribute* getRequiresForObjectType(std::string type);
+				void applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires);
 		};
 
 		class GameObject
@@ -76,6 +77,8 @@ namespace mse
 				bool canDisplay();
 				bool canCollide();
 				bool canClick();
+				bool doesHaveCollider();
+				bool doesHaveLevelSprite();
 				bool isLevelSpriteRelative();
 				bool getUpdateState();
 				void setUpdateState(bool state);
@@ -92,7 +95,8 @@ namespace mse
 				template <typename U>
 				void sendQuery(U query);
 				template <typename U>
-				void sendRequireArgument(std::string argName, U value);
+				void sendRequireArgumentFromCPP(std::string argName, U value);
+				void sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value);
 
 				void deleteObject();
 				bool deletable = false;
@@ -105,7 +109,7 @@ namespace mse
 		void loadHookBridge(GameObject* object, std::string hookname);
 
 		template<typename U>
-		inline void GameObject::sendRequireArgument(std::string argName, U value)
+		inline void GameObject::sendRequireArgumentFromCPP(std::string argName, U value)
 		{
 			(*this->scriptEngine)["Lua_ReqList"][argName] = value;
 		}

@@ -154,17 +154,13 @@ namespace mse
 
 		void KeyBinder::update()
 		{
-			if (binderEnabled)
-			{
+			if (binderEnabled) {
 				typedef std::map<std::string, std::string>::iterator it_type;
-				for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++)
-				{
+				for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++) {
 					previousActionMap[iterator->first] = currentActionMap[iterator->first];
 					currentActionMap[iterator->first] = sf::Keyboard::isKeyPressed(getKey(iterator->second)->getKey());
-					if (!currentActionMap[iterator->first] && previousActionMap[iterator->first])
-					{
-						if (Functions::Map::keyInMap(iterator->first, actionDelayer))
-						{
+					if (!currentActionMap[iterator->first] && previousActionMap[iterator->first]) {
+						if (Functions::Map::keyInMap(iterator->first, actionDelayer)) {
 							actionDelayer[iterator->first] = 0;
 						}
 					}
@@ -187,13 +183,11 @@ namespace mse
 						releasedAction.push_back(iterator->first);
 				}
 
-				if (releasedAction.size() >= 1)
-				{
+				if (releasedAction.size() >= 1) {
 					keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedAction);
 					keysTriggers->enableTrigger("ActionReleased");
 				}
-				if (toggledAction.size() >= 1)
-				{
+				if (toggledAction.size() >= 1) {
 					keysTriggers->pushParameter("ActionToggled", "ToggledActions", toggledAction);
 					keysTriggers->enableTrigger("ActionToggled");
 				}
@@ -202,47 +196,30 @@ namespace mse
 
 		bool KeyBinder::isActionReleased(std::string action)
 		{
-			if (binderEnabled)
-			{
-				if (!currentActionMap[action] && previousActionMap[action])
-					return true;
-				else
-					return false;
+			if (binderEnabled && !currentActionMap[action] && previousActionMap[action]) {
+				return true;
 			}
-			else
-				return false;
+			return false;
 		}
 
 		bool KeyBinder::isActionEnabled(std::string action)
 		{
-			if (binderEnabled)
-			{
-				if (currentActionMap[action])
-				{
-					if (Functions::Map::keyInMap(action, actionDelayer))
-					{
-						if (Time::getTickSinceEpoch() - actionDelayer[action] > baseActionDelayer[action])
-						{
-							actionDelayer[action] = Time::getTickSinceEpoch();
-							return true;
-						}
-						else
-							return false;
-					}
-					else
+			if (binderEnabled && currentActionMap[action]) {
+				if (Functions::Map::keyInMap(action, actionDelayer)) {
+					if (Time::getTickSinceEpoch() - actionDelayer[action] > baseActionDelayer[action]) {
+						actionDelayer[action] = Time::getTickSinceEpoch();
 						return true;
+					}
 				}
 				else
-					return false;
+					return true;
 			}
-			else
-				return false;
+			return false;
 		}
 
 		bool KeyBinder::isActionDisabled(std::string action)
 		{
-			if (binderEnabled)
-			{
+			if (binderEnabled) {
 				if (currentActionMap[action])
 					return false;
 				else
@@ -269,8 +246,7 @@ namespace mse
 
 		bool KeyBinder::isActionToggled(std::string action)
 		{
-			if (binderEnabled)
-			{
+			if (binderEnabled) {
 				if (currentActionMap[action] && !previousActionMap[action])
 					return true;
 				else

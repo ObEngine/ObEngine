@@ -19,9 +19,11 @@ namespace mse
 		{
 			Renderer* returnRenderer = nullptr;
 			if (rendererType == "VisualNovel")
-				returnRenderer = new Renderers::VisualNovel;
+				returnRenderer = new Renderers::VisualNovel();
 			else if (rendererType == "Shade")
-				returnRenderer = new Renderers::Shade;
+				returnRenderer = new Renderers::Shade();
+			else if (rendererType == "Choice")
+				returnRenderer = new Renderers::Choice();
 			else
 				std::cout << "<Error:Dialog:TextRenderer>[createRenderer] : Failed to create Renderer of type : " << rendererType << std::endl;
 			returnRenderer->load();
@@ -96,10 +98,11 @@ namespace mse
 		}
 
 		//VisualNovel
+		Renderers::VisualNovel::VisualNovel() : Renderer("VisualNovel")
+		{
+		}
 		void Renderers::VisualNovel::load()
 		{
-			name = "VisualNovel";
-
 			sf::Texture* dialogLine = new sf::Texture;
 			sf::Font* dialogFont = new sf::Font;
 			Animation::Animation* circleAnim = new Animation::Animation;
@@ -203,10 +206,11 @@ namespace mse
 		}
 
 		//Shade
+		Renderers::Shade::Shade() : Renderer("Shade")
+		{
+		}
 		void Renderers::Shade::load()
 		{
-			name = "Shade";
-
 			sf::Font* dialogFont = new sf::Font;
 			sf::Text* dialogText = new sf::Text;
 			double* textAlpha = new double(255);
@@ -305,7 +309,119 @@ namespace mse
 			}
 		}
 
+
+		//Choice
+		Renderers::Choice::Choice() : Renderer("Choice")
+		{
+		}
+		void Renderers::Choice::load()
+		{
+			sf::Font* dialogFont = new sf::Font;
+			sf::Text* dialogText = new sf::Text;
+			sf::Text* fAnswer = new sf::Text;
+			sf::Text* sAnswer = new sf::Text;
+			double* textAlpha = new double(255);
+
+			dialogFont->loadFromFile("Data/Fonts/arial.ttf");
+
+			dialogText->setFont(*dialogFont);
+			dialogText->setCharacterSize(40);
+			dialogText->setColor(sf::Color(255, 255, 255, 255));
+
+			fAnswer->setFont(*dialogFont);
+			dialogText->setCharacterSize(30);
+			dialogText->setColor(sf::Color(255, 255, 255, 255));
+
+			sAnswer->setFont(*dialogFont);
+			sAnswer->setCharacterSize(30);
+			sAnswer->setColor(sf::Color(255, 255, 255, 255));
+
+			this->locals["dialogFont"] = dialogFont;
+			this->locals["dialogText"] = dialogText;
+			this->locals["fAnswer"] = fAnswer;
+			this->locals["sAnswer"] = sAnswer;
+			this->locals["textAlpha"] = textAlpha;
+		}
+		void Renderers::Choice::unload()
+		{
+			delete this->locals["dialogFont"].as<sf::Font*>();
+			delete this->locals["dialogText"].as<sf::Text*>();
+			delete this->locals["fAnswer"].as<sf::Text*>();
+			delete this->locals["sAnswer"].as<sf::Text*>();
+			if (this->locals.find("dispTex") != locals.end())
+				delete this->locals["dispTex"].as<sf::Texture*>();
+			if (this->locals.find("dispSpr") != locals.end())
+				delete this->locals["dispSpr"].as<sf::Sprite*>();
+		}
+		void Renderers::Choice::render()
+		{
+			sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
+			sf::Text* fAnswer = this->locals["fAnswer"].as<sf::Text*>();
+			sf::Text* sAnswer = this->locals["sAnswer"].as<sf::Text*>();
+
+			sf::Texture* dispTex = new sf::Texture;
+			sf::Sprite* dispSpr = new sf::Sprite;
+
+			renTex.clear(sf::Color(0, 0, 0, 200));
+
+			std::string textToSay = vtdb[0]["text"];
+			std::string fAnswerText = vtdb[0]["fAnswer"];
+			std::string sAnswerText = vtdb[0]["sAnswer"];
+			int selectedAnswer = std::stoi(vtdb[0]["selectedAnswer"]);
+			std::cout << "Set Answer : " << textToSay << "," << fAnswerText << "," << sAnswerText << "," << selectedAnswer << std::endl;
+
+			Functions::String::regenerateEncoding(textToSay);
+			Functions::String::regenerateEncoding(fAnswerText);
+			Functions::String::regenerateEncoding(sAnswerText);
+
+			dialogText->setString(sf::String(textToSay));
+			dialogText->setPosition(Functions::Coord::transformX(960 - (dialogText->getGlobalBounds().width / 2)), Functions::Coord::transformY(200));
+			dialogText->setColor(sf::Color(255, 255, 255, 255));
+
+			fAnswer->setString(sf::String(fAnswerText));
+			fAnswer->setPosition(Functions::Coord::transformX(200), Functions::Coord::transformY(640));
+			if (selectedAnswer == 0)
+				fAnswer->setColor(sf::Color(100, 255, 100, 255));
+			else
+				fAnswer->setColor(sf::Color(255, 255, 255, 255));
+
+			sAnswer->setString(sf::String(sAnswerText));
+			sAnswer->setPosition(Functions::Coord::transformX(1200), Functions::Coord::transformY(640));
+			std::cout << "SecondAnswer : " << sAnswer->getPosition().x << std::endl;
+			if (selectedAnswer == 1)
+				sAnswer->setColor(sf::Color(100, 255, 100, 255));
+			else
+				sAnswer->setColor(sf::Color(255, 255, 255, 255));
+
+			renTex.draw(*dialogText);
+			renTex.draw(*fAnswer);
+			renTex.draw(*sAnswer);
+
+			renTex.display();
+			*dispTex = renTex.getTexture();
+			dispSpr->setTexture(*dispTex);
+			this->locals["dispTex"] = dispTex;
+			this->locals["dialogText"] = dialogText;
+			this->locals["fAnswer"] = fAnswer;
+			this->locals["sAnswer"] = sAnswer;
+			this->locals["dispSpr"] = dispSpr;
+			this->vtdb.erase(this->vtdb.begin());
+		}
+		void Renderers::Choice::draw(sf::RenderWindow* surf)
+		{
+			sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
+			sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
+
+			surf->draw(*dispSpr);
+			surf->draw(*dialogText);
+		}
+
+
 		//Renderer
+		Renderer::Renderer(std::string name)
+		{
+			this->name = name;
+		}
 		void Renderer::fadeIn(sf::RenderWindow* surf)
 		{
 			this->draw(surf);
@@ -327,7 +443,6 @@ namespace mse
 		{
 			return fadeState;
 		}
-
 		void Renderer::addTDB(std::map<std::string, std::string> tdb)
 		{
 			vtdb.push_back(tdb);

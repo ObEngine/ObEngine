@@ -22,14 +22,6 @@ namespace mse
 			blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
 			normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
 			worldScriptEngine->dofile("boot.lua");
-			/*for (unsigned int i = 0; i < backSpriteArray.size(); i++)
-			{
-			backSpriteArray[i]->textureUpdate(true);
-			}
-			for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
-			{
-			frontSpriteArray[i]->textureUpdate(true);
-			}*/
 		}
 
 		void World::addCharacter(Character* character)
@@ -85,6 +77,7 @@ namespace mse
 			Data::DataParser mapParse;
 			std::cout << "Creation Chrono : " << "[WorldStart]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 			baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
+			mapParse.writeFile("rewrite.msd");
 			std::cout << "Creation Chrono : " << "[WorldParse]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 			mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("Meta");
 
@@ -224,11 +217,13 @@ namespace mse
 				{
 					mapParse.accessNavigator()->setCurrentRootAttribute("Collisions", allCol[i]);
 					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(allCol[i]);
+					std::cout << "[World] Creating Collider : " << allCol[i] << std::endl;
 					for (unsigned int j = 0; j < mapParse.getListSize("polygonPoints"); j++)
 					{
 						std::string getPt = mapParse.getListItem("polygonPoints", j)->get<std::string>();
 						std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 						tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
+						std::cout << "[World::Collider] Add Point : " << tPoint[0] << " ," << tPoint[1] << std::endl;
 					}
 					this->collidersArray.push_back(tempCollider);
 				}
@@ -388,15 +383,18 @@ namespace mse
 			{
 				dataStore->getPath("LevelObjects")->createComplexAttribute(it->first);
 				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("type", it->second->getType());
-				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
-				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
+				dataStore->getPath(Data::Path("LevelObjects", it->first))->createComplexAttribute("Requires");
+				(*it->second->getScriptEngine())("inspect = require('Lib/StdLib/Inspect');");
+				(*it->second->getScriptEngine())("print(inspect(Lua_ReqList));");
+				//(*it->second->getScriptEngine())["Lua_ReqList"];
+				dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
+				dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
 			}
 			if (scriptArray.size() > 0)
 			{
 				dataStore->createRootAttribute("Script");
 				dataStore->getPath("Script")->createListAttribute("gameScripts", "string");
-				for (int i = 0; i < scriptArray.size(); i++)
-				{
+				for (int i = 0; i < scriptArray.size(); i++) {
 					dataStore->getPath("Script")->createListItem("gameScripts", scriptArray[i]);
 				}
 			}
@@ -703,7 +701,7 @@ namespace mse
 			newGameObject->localTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup(newGameObject->privateKey, "Local");
 			//Script Loading
 			System::Path("Lib/GameLib/ScrInit.lua").loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
-			System::Path("Lib/GameLib/LOInit.lua").loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
+			System::Path("Lib/GameLib/ObjectInit.lua").loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
 			loadScrGameObject(newGameObject, newGameObject->scriptEngine);
 			(*newGameObject->scriptEngine)["ID"] = id;
 			(*newGameObject->scriptEngine)["Private"] = newGameObject->privateKey;

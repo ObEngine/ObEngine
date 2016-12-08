@@ -53,24 +53,7 @@ namespace mse
 					&GameObject::sendQuery<std::map<std::string, std::string>>,
 					&GameObject::sendQuery<std::map<std::string, bool>>
 				)
-				.addOverloadedFunctions("sendRequireArgument", 
-					&GameObject::sendRequireArgument<int>,
-					&GameObject::sendRequireArgument<float>,
-					&GameObject::sendRequireArgument<std::string>,
-					&GameObject::sendRequireArgument<bool>,
-					&GameObject::sendRequireArgument<std::vector<int>>,
-					&GameObject::sendRequireArgument<std::vector<float>>,
-					&GameObject::sendRequireArgument<std::vector<std::string>>,
-					&GameObject::sendRequireArgument<std::vector<bool>>,
-					&GameObject::sendRequireArgument<std::map<int, int>>,
-					&GameObject::sendRequireArgument<std::map<int, float>>,
-					&GameObject::sendRequireArgument<std::map<int, std::string>>,
-					&GameObject::sendRequireArgument<std::map<int, bool>>,
-					&GameObject::sendRequireArgument<std::map<std::string, int>>,
-					&GameObject::sendRequireArgument<std::map<std::string, float>>,
-					&GameObject::sendRequireArgument<std::map<std::string, std::string>>,
-					&GameObject::sendRequireArgument<std::map<std::string, bool>>
-				)
+				.addFunction("sendRequireArgument", &GameObject::sendRequireArgumentFromLua)
 				.addFunction("setInitialised", &GameObject::setInitialised)
 			);
 		}
@@ -117,6 +100,12 @@ namespace mse
 			}
 			else
 				return allRequires.getRootAttribute(type);
+		}
+		void GameObjectRequires::applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires) {
+			for (std::string currentRequirement : requires.getAllComplexAttributes()) {
+				std::cout << "Current Requirement : " << currentRequirement << std::endl;
+
+			}
 		}
 
 		//GameObject
@@ -311,6 +300,14 @@ namespace mse
 		{
 			return (hasCollider && colliderClick);
 		}
+		bool GameObject::doesHaveCollider()
+		{
+			return hasCollider;
+		}
+		bool GameObject::doesHaveLevelSprite()
+		{
+			return hasLevelSprite;
+		}
 		bool GameObject::isLevelSpriteRelative()
 		{
 			return levelSpriteRelative;
@@ -380,9 +377,14 @@ namespace mse
 			scriptEngine->dostring(query);
 		}
 
+		void GameObject::sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value)
+		{
+			(*this->scriptEngine)["Lua_ReqList"][argName] = value;
+		}
+
 		void GameObject::deleteObject()
 		{
 			this->deletable = true;
 		}
-}
+	}
 }

@@ -6,8 +6,12 @@ function Require(param)
     if (Lua_ReqList[param] ~= nil) then
         return Lua_ReqList[param];
     else
-        error("can't find requirement : " .. param);
+        error("Can't find requirement : " .. param);
     end
+end
+
+function RequireInjection()
+
 end
 
 function IsArgumentInRequireList(paramName)

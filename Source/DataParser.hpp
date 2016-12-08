@@ -191,7 +191,7 @@ namespace mse
 				void generateInList(std::string listID);
 				void createComplexAttribute(std::string id);
 				void pushComplexAttribute(ComplexAttribute* cmplx);
-				void writeAttributes(std::ofstream* file, unsigned int depth = 1);
+				void writeAttributes(std::ofstream* file, unsigned int depth = 0);
 				void deleteBaseAttribute(std::string id, bool freeMemory = false);
 				void deleteComplexAttribute(std::string id, bool freeMemory = false);
 				void deleteListAttribute(std::string id, bool freeMemory = false);

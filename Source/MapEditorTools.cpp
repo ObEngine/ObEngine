@@ -225,9 +225,12 @@ namespace mse
 		{
 			Data::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
+			Cursor::Cursor* cursor = Script::hookCore.getPointer("Cursor")->as<Cursor::Cursor*>();
+			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
 			GUI::WidgetContainer* requireGUI = gui->getContainerByContainerName("Requires");
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			Script::GameObject* newGameObject = Script::hookCore.getPointer("World")->as<World::World*>()->createGameObject(key, objName);
+			Script::GameObject* newGameObject = world->createGameObject(key, objName);
+				
 			for (std::string& requireItem : requires->getAllComplexAttributes())
 			{
 				std::string requirementName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
@@ -237,9 +240,17 @@ namespace mse
 				if (objName + "_" + requireItem + "_Input" != "" || optionalRequirement)
 				{
 					if (requires->getPath(requireItem)->containsListAttribute("choices"))
-						newGameObject->sendRequireArgument(requirementName, GUI::Widget::getWidgetByID<GUI::Droplist>(objName + "_" + requireItem + "_Input")->getCurrentSelected());
+						newGameObject->sendRequireArgumentFromCPP(requirementName, GUI::Widget::getWidgetByID<GUI::Droplist>(objName + "_" + requireItem + "_Input")->getCurrentSelected());
 				}
-					
+			}
+			if (newGameObject->doesHaveCollider()) {
+				std::cout << "Position of GO set !" << std::endl;
+				newGameObject->getCollider()->setPositionFromMaster(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
+				newGameObject->getLevelSprite()->setPosition(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
+			}
+			else if (newGameObject->doesHaveLevelSprite()) {
+				std::cout << "Position of GO::LS set !" << std::endl;
+				newGameObject->getLevelSprite()->setPosition(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
 			}
 		}
 

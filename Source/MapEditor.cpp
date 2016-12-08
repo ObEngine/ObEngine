@@ -7,8 +7,6 @@ namespace mse
 {
 	namespace Editor
 	{
-		
-
 		void editMap(std::string mapName)
 		{
 			double startLoadTime = Time::getTickSinceEpoch();

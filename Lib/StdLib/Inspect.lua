@@ -27,7 +27,7 @@ local inspect ={
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   ]]
 }
-print("Nique tout");
+
 local tostring = tostring
 
 inspect.KEY       = setmetatable({}, {__tostring = function() return 'inspect.KEY' end})
