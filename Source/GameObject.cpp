@@ -257,8 +257,11 @@ namespace mse
 						}
 						if (funcname == "Local.Init") {
 							std::cout << "INITIALISATION MIRROR INJECTION" << std::endl;
+							this->scriptEngine->dostring("Local.InitMirrorInjector()");
 						}
-						this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
+						else {
+							this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
+						}
 						(*this->scriptEngine)["cpp_param"] = nullptr;
 					}
 				}
@@ -353,14 +356,12 @@ namespace mse
 			if (trName == "*")
 			{
 				std::vector<std::string> allEv = TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
-				for (int i = 0; i < allEv.size(); i++)
-				{
+				for (int i = 0; i < allEv.size(); i++) {
 					this->registerTrigger(TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]));
 				}
 			}
 			else this->registerTrigger(TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName));
-			if (useAs != "")
-			{
+			if (useAs != "") {
 				this->registeredAliases.push_back(std::tuple<std::string, std::string, std::string>(trNsp, trGrp, useAs));
 			}
 		}
