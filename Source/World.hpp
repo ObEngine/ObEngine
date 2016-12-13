@@ -13,6 +13,7 @@
 #include "Functions.hpp"
 #include "Character.hpp"
 #include "DataParser.hpp"
+#include "DataParserLuaBridge.hpp"
 #include "GameObject.hpp"
 #include "TimeManager.hpp"
 #include "LevelSprite.hpp"

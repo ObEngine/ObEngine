@@ -1,4 +1,4 @@
-function Class(name, base, init)
+local function Class(name, base, init)
     local c = {};
     c.__name = name;
     

@@ -1,4 +1,4 @@
-function overloaded()
+local function overloaded()
     local fns = {};
     local mt = {};
     

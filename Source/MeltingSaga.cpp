@@ -4,6 +4,9 @@
 #include "MeltingSaga.hpp"
 
 void testLua(kaguya::State* obj, kaguya::LuaRef me) {
+	std::cout << "Karkar0 " << std::endl;
+	std::cout << "OfType " << me.type() << std::endl;
+	std::cout << "MEMEMEMEME" << std::endl;
 	(*obj)["t"]["me"] = me;
 }
 
@@ -13,6 +16,16 @@ int main(int argc, char** argv)
 	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
 
 	kaguya::State bruh;
+	bruh("function hehe() return {posX = 2 + 2, posY = 290} end");
+	std::map<std::string, int> res = bruh["hehe"]();
+	for (std::pair<std::string, int> tres : res) {
+		std::cout << tres.first << "/" << tres.second * 3 << std::endl;
+	}
+	bruh("makmak = {1,2,3,a = 4, b = {4, 5, g = {t = 33055}}}");
+	kaguya::LuaRef bsmakmak = bruh["makmak"];
+	mse::Data::ComplexAttribute* tomakmak = mse::Data::DataBridge::luaTableToComplexAttribute("makmak", bsmakmak);
+	std::cout << "OSN : " << tomakmak->getPath("b/g")->getBaseAttribute("t")->get<int>() << std::endl;
+	std::cout << "LE BON GROS TYPE " << bruh["makmak"].type() << std::endl;
 	bruh["test"] = kaguya::function([](kaguya::State* obj, kaguya::LuaRef me) {
 		(*obj)["t"]["me"] = me;
 	});

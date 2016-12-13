@@ -822,7 +822,7 @@ namespace mse
 						{
 							if (event.key.control)
 							{
-								world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+								world.saveData();// ->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
 								textDisplay.sendToRenderer("MapSaver", { { "text", "File <" + mapName + "> Saved !" } });
 							}
 						}

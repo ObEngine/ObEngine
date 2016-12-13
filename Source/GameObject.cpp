@@ -107,6 +107,27 @@ namespace mse
 
 			}
 		}
+		void GameObjectRequires::ApplyRequirements(GameObject* obj, Data::ComplexAttribute& requires)
+		{
+			for (std::string currentRequirement : requires.getAllAttributes()) {
+				std::cout << "Current Requirement : " << currentRequirement << std::endl;
+				//TODO : Expand to LIST / TABLE
+				if (requires.getAttributeType(currentRequirement) == Data::Types::BaseAttribute) {
+					if (requires.getBaseAttribute(currentRequirement)->getDataType() == "int") {
+						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<int>();
+					}
+					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "string") {
+						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<std::string>();
+					}
+					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "bool") {
+						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<bool>();
+					}
+					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "float") {
+						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<double>();
+					}
+				}
+			}
+		}
 
 		//GameObject
 		GameObject::GameObject(std::string type, std::string id) : objectCollider(id), objectLevelSprite(id)
@@ -253,11 +274,11 @@ namespace mse
 								(*this->scriptEngine)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, std::string>>();
 							else
 								std::cout << "<Error:GameObject:GameObject>[update] Unknown Type for Parameter : " << it->first << "(" << allParam->at(it->first).first << ")" << std::endl;
-
 						}
+
 						if (funcname == "Local.Init") {
 							std::cout << "INITIALISATION MIRROR INJECTION" << std::endl;
-							this->scriptEngine->dostring("Local.InitMirrorInjector()");
+							this->scriptEngine->dostring("LuaCore.LocalInitMirrorInjector()");
 						}
 						else {
 							this->scriptEngine->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
@@ -383,7 +404,7 @@ namespace mse
 
 		void GameObject::sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value)
 		{
-			(*this->scriptEngine)["Lua_ReqList"][argName] = value;
+			(*this->scriptEngine)["LuaCore"]["Lua_ReqList"][argName] = value;
 		}
 
 		void GameObject::deleteObject()

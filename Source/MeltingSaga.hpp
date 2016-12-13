@@ -17,3 +17,4 @@
 #include "Toolkit.hpp"
 #include "PathResolver.hpp"
 #include "DataParser.hpp"
+#include "DataParserLuaBridge.hpp"

@@ -30,6 +30,7 @@ namespace mse
 				static GameObjectRequires* getInstance();
 				Data::ComplexAttribute* getRequiresForObjectType(std::string type);
 				void applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires);
+				static void ApplyRequirements(GameObject* obj, Data::ComplexAttribute& requires);
 		};
 
 		class GameObject
@@ -111,7 +112,7 @@ namespace mse
 		template<typename U>
 		inline void GameObject::sendRequireArgumentFromCPP(std::string argName, U value)
 		{
-			(*this->scriptEngine)["Lua_ReqList"][argName] = value;
+			(*this->scriptEngine)["LuaCore"]["Lua_ReqList"][argName] = value;
 		}
 
 		template<typename U>

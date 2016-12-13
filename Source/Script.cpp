@@ -243,6 +243,7 @@ namespace mse
 					.addFunction("getPath", &Collision::PolygonalCollider::getPath)
 					.addFunction("getPointCoordinates", &Collision::PolygonalCollider::getPointCoordinates)
 					.addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
+					.addFunction("getPosition", &Collision::PolygonalCollider::getPosition)
 					.addFunction("getSelected", &Collision::PolygonalCollider::getSelected)
 					.addFunction("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
 					.addFunction("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)

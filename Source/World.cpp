@@ -244,7 +244,9 @@ namespace mse
 					int objY = 0;
 					int colOffX = 0;
 					int colOffY = 0;
-					if (this->getGameObject(allObjects[i])->canDisplay())
+					if (mapParse.containsComplexAttribute("Requires"))
+						Script::GameObjectRequires::ApplyRequirements(this->getGameObject(allObjects[i]), *mapParse.getComplexAttribute("Requires"));
+					/*if (this->getGameObject(allObjects[i])->canDisplay())
 					{
 						if (mapParse.containsBaseAttribute("posX"))
 							objX = mapParse.getBaseAttribute("posX")->get<int>();
@@ -255,7 +257,7 @@ namespace mse
 					if (getGameObject(allObjects[i])->hasCollider)
 					{
 						this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
-					}
+					}*/
 				}
 			}
 			std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
@@ -383,12 +385,18 @@ namespace mse
 			{
 				dataStore->getPath("LevelObjects")->createComplexAttribute(it->first);
 				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("type", it->second->getType());
-				dataStore->getPath(Data::Path("LevelObjects", it->first))->createComplexAttribute("Requires");
 				(*it->second->getScriptEngine())("inspect = require('Lib/StdLib/Inspect');");
-				(*it->second->getScriptEngine())("print(inspect(Lua_ReqList));");
+				kaguya::LuaTable saveTable = (*it->second->getScriptEngine())["Local.Save"]();
+				(*it->second->getScriptEngine())("tnt = Local.Save()");
+				kaguya::LuaRef saveTableRef = (*it->second->getScriptEngine())["tnt"];
+				std::cout << "GNGN Type : " << saveTable.type() << std::endl;
+				(*it->second->getScriptEngine())("print(inspect(Local.Save()));");
+				Data::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
+					"Requires", saveTableRef);
+				dataStore->getPath(Data::Path("LevelObjects", it->first))->pushComplexAttribute(saveRequirements);
 				//(*it->second->getScriptEngine())["Lua_ReqList"];
-				dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
-				dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
+				//dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
+				//dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
 			}
 			if (scriptArray.size() > 0)
 			{
@@ -1103,6 +1111,5 @@ namespace mse
 			Script::loadScrGameObjectLib(lua);
 			(*lua)["This"] = lua;
 		}
-
 	};
 };

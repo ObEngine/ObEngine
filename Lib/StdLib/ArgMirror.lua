@@ -1,4 +1,4 @@
-function getArgs(fun)
+local function getArgs(fun)
     local args = {}
     local hook = debug.gethook()
 

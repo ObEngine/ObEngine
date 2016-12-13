@@ -170,6 +170,8 @@ namespace mse
 				BaseAttribute* getBaseAttribute(std::string attributeName);
 				ComplexAttribute* getComplexAttribute(std::string id);
 				ListAttribute* getListAttribute(std::string id);
+				Types::AttributeType getAttributeType(std::string id);
+				std::vector<std::string> getAllAttributes();
 				std::vector<std::string> getAllComplexAttributes();
 				std::vector<std::string> getAllBaseAttributes();
 				std::vector<std::string> getAllListAttributes();
