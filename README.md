@@ -1,7 +1,7 @@
-# Melting Saga Engine
+# ÖbEngine
 
-## What the hell is Melting Saga Engine ?
-Melting Saga Engine (MSE is shorter) is a 2D Game Engine made on the top of SFML !
+## What the hell is ÖbEngine ?
+ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on the top of SFML !
 
 ## What do I need to build it ?
 You will need several libs :
