@@ -24,9 +24,9 @@ end
 function Local.Update(P)
     PaddleTrajectory:setDeltaTime(P.dt);
     PaddleTrajectory:update(); 
-    if This:Collider():getPointPosition(0):second() < 1 then
+    if This:Collider():getPointCoordinates(0):second() < 1 then
         PaddleTrajectory:setSpeed(0);
-    elseif This:Collider():getPointPosition(2):second() > 1079 then
+    elseif This:Collider():getPointCoordinates(2):second() > 1079 then
         PaddleTrajectory:setSpeed(0);
     end
 end

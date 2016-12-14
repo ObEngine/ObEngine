@@ -85,11 +85,15 @@ namespace mse
 		{
 			return selected;
 		}
-		DoublePoint PolygonalCollider::getPointCoordinates(int index)
+		DoublePoint PolygonalCollider::getPointPosition(int index)
 		{
 			return allPoints[index];
 		}
-		DoublePoint PolygonalCollider::getMasterPointCoordinates()
+		DoublePoint PolygonalCollider::getPointRelativePosition(int index)
+		{
+			return DoublePoint(allPoints[index].first - allPoints[0].first, allPoints[index].second - allPoints[0].second);
+		}
+		DoublePoint PolygonalCollider::getMasterPointPosition()
 		{
 			return masterPoint;
 		}
@@ -235,7 +239,7 @@ namespace mse
 		int PolygonalCollider::getSideContainingPoint(int x, int y) {
 			for (int i = 0; i < allPoints.size(); i++) {
 				int nextNode = (i != allPoints.size() - 1) ? i + 1 : 0;
-				double lineLength = this->getDistanceFromPoint(i, this->getPointCoordinates(nextNode).first, this->getPointCoordinates(nextNode).second);
+				double lineLength = this->getDistanceFromPoint(i, this->getPointPosition(nextNode).first, this->getPointPosition(nextNode).second);
 				double firstLength = this->getDistanceFromPoint(i, x, y);
 				double secondLength = this->getDistanceFromPoint(nextNode, x, y);
 				if (Functions::Math::isBetween(lineLength, firstLength + secondLength - 0.01, firstLength + secondLength + 0.01))
@@ -309,8 +313,8 @@ namespace mse
 			int p2 = side + 1;
 			if (p1 == allPoints.size() - 1)
 				p2 = 0;
-			std::pair<int, int> p1coords = this->getPointCoordinates(p1);
-			std::pair<int, int> p2coords = this->getPointCoordinates(p2);
+			std::pair<int, int> p1coords = this->getPointPosition(p1);
+			std::pair<int, int> p2coords = this->getPointPosition(p2);
 			int deltaX = p2coords.first - p1coords.first;
 			int deltaY = p2coords.second - p1coords.second;
 			return (std::atan2(deltaY, deltaX) * 180 / Functions::Math::pi);
@@ -321,8 +325,8 @@ namespace mse
 			int p2 = side + 1;
 			if (p1 == allPoints.size() - 1)
 				p2 = 0;
-			std::pair<int, int> p1coords = this->getPointCoordinates(p1);
-			std::pair<int, int> p2coords = this->getPointCoordinates(p2);
+			std::pair<int, int> p1coords = this->getPointPosition(p1);
+			std::pair<int, int> p2coords = this->getPointPosition(p2);
 			return std::sqrt(std::pow(p1coords.first - p2coords.first, 2) + std::pow(p1coords.second - p2coords.second, 2));
 		}
 		void PolygonalCollider::draw(sf::RenderWindow* surf, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)

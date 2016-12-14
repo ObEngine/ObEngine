@@ -17,7 +17,7 @@ end);
 Trajectory.bind = Overload();
 function Trajectory.bind.Trajectory.mse__Collision__PolygonalCollider(self, col, offset)
     table.insert(self.bindingList, {col, offset
-    , function(item) return item:getPointPosition(0):first(), item:getPointPosition(0):second(); end
+    , function(item) return item:getPointCoordinates(0):first(), item:getPointCoordinates(0):second(); end
     , function(item, x, y) item:setPosition(x, y, 0); end});
 end
 function Trajectory.bind.Trajectory.mse__Graphics__LevelSprite(self, spr, offset)
@@ -27,7 +27,7 @@ function Trajectory.bind.Trajectory.mse__Graphics__LevelSprite(self, spr, offset
 end
 function Trajectory.bind.Trajectory.mse__Script__GameObject(self, obj, offset)
     table.insert(self.bindingList, {obj, offset
-    , function(item) return item:Collider():getPointPosition(0):first(), item:Collider():getPointPosition(0):second(); end
+    , function(item) return item:Collider():getPointCoordinates(0):first(), item:Collider():getPointCoordinates(0):second(); end
     , function(item, x, y) item:LevelSprite():setPosition(x, y); item:Collider():setPosition(x, y, 0); end});
 end
 

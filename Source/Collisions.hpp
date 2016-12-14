@@ -44,8 +44,8 @@ namespace mse
 				long long int tY = 0;
 				long long int bX = 0;
 				long long int bY = 0;
-				std::pair<double, double> masterPoint;
-				std::vector<std::pair<double, double>> allPoints;
+				DoublePoint masterPoint;
+				std::vector<DoublePoint> allPoints;
 				sf::ConvexShape drawShape;
 				void calculateMasterPoint();
 				bool selected;
@@ -56,8 +56,9 @@ namespace mse
 				PolygonalCollider(std::string id);
 				std::string getID();
 				int getPointsAmount();
-				std::pair<double, double> getPointCoordinates(int index);
-				std::pair<double, double> getMasterPointCoordinates();
+				DoublePoint getPointPosition(int index);
+				DoublePoint getPointRelativePosition(int index);
+				DoublePoint getMasterPointPosition();
 				void setSelected(bool sel);
 				bool getSelected();
 				void addPoint(double x, double y, int pointIndex = -1);
@@ -70,7 +71,7 @@ namespace mse
 				bool isPointInBoundingBox(int x, int y);
 				int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
 				bool hasMasterPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
-				std::pair<double, double> getPosition();
+				DoublePoint getPosition();
 				void move(double x, double y);
 				void setPosition(double x, double y);
 				void setPositionFromMaster(double x, double y);
@@ -79,7 +80,7 @@ namespace mse
 				void setPointRelativePosition(int index, double x, double y);
 				void setPointPositionFromMaster(int index, double x, double y);
 				ClipperLib::Path getPath();
-				std::vector<std::pair<double, double>> getAllPoints();
+				std::vector<DoublePoint> getAllPoints();
 				double getSideAngle(int side);
 				double getSideLength(int side);
 				Script::GameObject* getParent();

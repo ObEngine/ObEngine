@@ -42,7 +42,7 @@ end
 function Local.Update(P)
     -- Position
     BallTrajectory:updatePosition();
-    local selfPoint = This:Collider():getMasterPointPosition();
+    local selfPoint = This:Collider():getMasterPointCoordinates();
     local bx, by = selfPoint:first(), selfPoint:second();
 
     -- Trail Update
@@ -62,7 +62,7 @@ function Local.Update(P)
             currentPaddle = World:getGameObject("rightPaddle");
             orientAngle = 270;
         end
-        local currentPaddlePoint = currentPaddle:Collider():getMasterPointPosition();
+        local currentPaddlePoint = currentPaddle:Collider():getMasterPointCoordinates();
         local px, py = currentPaddlePoint:first(), currentPaddlePoint:second();
         local adj, opo = math.abs(px - bx), math.abs(py - by);
         local orientTraj;

@@ -658,8 +658,8 @@ namespace mse
 						selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 						if (selectedMasterCollider->getParent() != nullptr && selectedMasterCollider->getParent()->canDisplay())
 						{
-							std::pair<int, int> zeroCoords = selectedMasterCollider->getPointCoordinates(0);
-							std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointCoordinates();
+							std::pair<int, int> zeroCoords = selectedMasterCollider->getPointPosition(0);
+							std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointPosition();
 							selectedMasterCollider->getParent()->getLevelSprite()->setPosition(
 								cursor.getX() + world.getCamX() + zeroCoords.first - masterCoords.first,
 								cursor.getY() + world.getCamY() + zeroCoords.second - masterCoords.second);
@@ -822,7 +822,7 @@ namespace mse
 						{
 							if (event.key.control)
 							{
-								world.saveData();// ->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+								world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
 								textDisplay.sendToRenderer("MapSaver", { { "text", "File <" + mapName + "> Saved !" } });
 							}
 						}

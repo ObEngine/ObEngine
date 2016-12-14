@@ -374,8 +374,8 @@ namespace mse
 					dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListAttribute("polygonPoints", "string");
 					for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
 					{
-						int px = collidersArray[i]->getPointCoordinates(j).first;
-						int py = collidersArray[i]->getPointCoordinates(j).second;
+						int px = collidersArray[i]->getPointPosition(j).first;
+						int py = collidersArray[i]->getPointPosition(j).second;
 						dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListItem("polygonPoints", std::to_string(px) + "," + std::to_string(py));
 					}
 				}
