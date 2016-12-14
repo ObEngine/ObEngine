@@ -12,8 +12,8 @@ namespace mse
 			this->sprName = decoName;
 			this->sprID = decoID;
 			this->returnSprite = new sfe::ComplexSprite;
-			sprAnim.attachRessourceManager(Animation::RessourceManager::GetInstance());
-			sprAnim.loadAnimation("Sprites/LevelSprites/" + decoName);
+			System::Path("Sprites/LevelSprites/" + decoName).loadResource(&this->texture, System::Loaders::textureLoader);
+			this->returnSprite->setTexture(this->texture);
 		}
 
 		LevelSprite::LevelSprite(std::string decoID)
@@ -21,12 +21,6 @@ namespace mse
 			this->sprID = decoID;
 			this->drawable = false;
 			this->returnSprite = new sfe::ComplexSprite;
-		}
-
-		void LevelSprite::useDirtyAnimation(bool state, bool candraw)
-		{
-			useDefaultAnimationSystem = state;
-			drawable = candraw;
 		}
 
 		void LevelSprite::setSprite(sfe::ComplexSprite* spr)
@@ -109,37 +103,13 @@ namespace mse
 			originRotY = y;
 			returnSprite->setRotationOrigin(originRotX, originRotY);
 		}
-		void LevelSprite::textureUpdate(bool forceUpdate)
+		void LevelSprite::update()
 		{
-			if (useDefaultAnimationSystem)
-			{
-				if (drawable)
-				{
-					sprAnim.update();
-					if (sprAnim.indexChanged() || forceUpdate)
-					{
-						actualTexture = *(sprAnim.getTexture());
-						returnSprite->setTexture(actualTexture);
-						returnSprite->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i((int)actualTexture.getSize().x, (int)actualTexture.getSize().y)));
-						returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
-						returnSprite->setRotation(rotation);
-						returnSprite->setScale(scaleX, scaleY);
-						returnSprite->setColor(spriteColor);
-						int rotOrigX = (double)this->getW() / 2.0;
-						int rotOrigY = (double)this->getH() / 2.0;
-						this->setRotationOrigin(rotOrigX, rotOrigY);
-						calculateRealCoordinates();
-					}
-				}
-			}
-			else
-			{
-				returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
-				returnSprite->setRotation(rotation);
-				returnSprite->setScale(scaleX, scaleY);
-				returnSprite->setColor(spriteColor);
-				calculateRealCoordinates();
-			}
+			returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
+			returnSprite->setRotation(rotation);
+			returnSprite->setScale(scaleX, scaleY);
+			returnSprite->setColor(spriteColor);
+			calculateRealCoordinates();
 		}
 		void LevelSprite::setColor(sf::Color newColor)
 		{
@@ -148,6 +118,7 @@ namespace mse
 		}
 		sfe::ComplexSprite* LevelSprite::getSprite()
 		{
+			this->update();
 			return returnSprite;
 		}
 		void LevelSprite::setPosition(double x, double y)
@@ -261,6 +232,5 @@ namespace mse
 		{
 			this->parent = parent;
 		}
-
 	}
 }

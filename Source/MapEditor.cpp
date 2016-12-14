@@ -179,8 +179,9 @@ namespace mse
 			gui->createWidgetContainer("EditorInfos", 1, 0, 0, 1350, 30, GUI::ContainerMovement::Fixed);
 			gui->getContainerByContainerName("EditorInfos")->setBackground(sf::Color(0, 0, 0, 200));
 			gui->createLabel("EditorInfos", "cursorPos", 150, 5, "Cursor : (0,0)", "arial.ttf", 16, sf::Color::White);
-			gui->createLabel("EditorInfos", "camPos", 300, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
-			gui->createLabel("EditorInfos", "currentLayer", 450, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
+			gui->createLabel("EditorInfos", "camPos", 350, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
+			gui->createLabel("EditorInfos", "sumPos", 550, 5, "Sum : (0,0)", "arial.ttf", 16, sf::Color::White);
+			gui->createLabel("EditorInfos", "currentLayer", 750, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
 			std::cout << "Creation Chrono : " << "[GUI]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Map Editor
@@ -207,7 +208,7 @@ namespace mse
 			sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
 
 			//Build Tabs
-			EditorTools::buildAddSpriteFolderList();
+			EditorTools::loadSpriteFolder("");
 			EditorTools::buildObjectTab();
 			std::cout << "Creation Chrono : " << "[MapEditor]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
@@ -270,8 +271,6 @@ namespace mse
 				int dimY = std::stoi(dimSY != "" ? dimSY : "1080");
 				world.setSize(dimX, dimY);
 			});
-
-			mse::EditorTools::loadEgFolder("");
 
 			//Game Starts
 			while (window.isOpen())
@@ -741,6 +740,9 @@ namespace mse
 					",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string((int)world.getCamY()) + "<color:255,255,255>)");
+				GUI::Widget::getWidgetByID<GUI::Label>("sumPos")->setComplexText("<color:255,255,255>Sum : (<color:0,255,0>" + 
+					std::to_string((int)world.getCamX() + (int)cursor.getX()) + "<color:255,255,255>"
+					",<color:0,255,0>" + std::to_string((int)world.getCamY() + (int)cursor.getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));
 				gui->getContainerByContainerName("Editor")->setDisplayed(guiEditorEnabled);
 				gui->updateAllContainer();

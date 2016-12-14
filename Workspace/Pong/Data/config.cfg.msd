@@ -6,7 +6,7 @@ GameConfig:
     depthOfField:True
     scrollSensibility:1
     framerateLimit:True
-    framerateTarget:60
+    framerateTarget:144
     vsync:True
     
 KeyBinding:

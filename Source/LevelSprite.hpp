@@ -48,20 +48,15 @@ namespace mse
 				std::vector<std::string> currentAtr = {};
 				int layer = 1;
 				int zdepth = 0;
-				bool useDefaultAnimationSystem = true;
-				Animation::DirtyAnimation sprAnim;
-				std::string textureGroup = "DEFAULT";
-				std::string lastTextureGroup = "NONE";
-				sf::Texture actualTexture;
+				sf::Texture texture;
 				sfe::ComplexSprite* returnSprite;
 				sf::Color spriteColor = sf::Color(255, 255, 255);
-				int textureIndex = 0;
 				Script::GameObject* parent = nullptr;
+				void update();
 
 			public:
 				LevelSprite(std::string sprName, std::string sprID);
 				LevelSprite(std::string sprID);
-				void useDirtyAnimation(bool state, bool candraw = true);
 				void setSprite(sfe::ComplexSprite* spr);
 				void setSprite(sf::Sprite* spr);
 				void setLayer(int layer);
@@ -83,7 +78,6 @@ namespace mse
 				std::vector<std::string> getAttributes();
 				void removeAtrByIndex(int index);
 				void removeAtrByName(std::string name);
-				void textureUpdate(bool forceUpdate = false);
 				sfe::ComplexSprite* getSprite();
 				void setColor(sf::Color newColor);
 				void move(double x, double y);

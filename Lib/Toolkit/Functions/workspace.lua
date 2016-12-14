@@ -29,11 +29,11 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "desc" and wsname ~= nil then
-        if (parser:containsComplexAttribute("Workspace", "", wsname)) then
+        if (parser:containsComplexAttribute("Workspace", wsname)) then
             Color.print({
                 {color = "cyan", text = wsname},
                 {color = "white", text = "'s description : "},
-                {color = "grey", text = parser:getBaseAttribute("Workspace", wsname, "description"):get_string() .. "\n"}
+                {color = "grey", text = parser:getBaseAttribute("Workspace/" .. wsname, "description"):get_string() .. "\n"}
             }, 2);
         else
             Color.print({
@@ -52,7 +52,7 @@ function workspace(argtable)
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\GameObjects");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\LevelSprites");
         parser:createComplexAttribute("Workspace", wsname);
-        parser:at("Workspace", wsname).createBaseAttribute("Workspace", wsname, "path", wsname);
+        parser:getPath("Workspace/" .. wsname):createBaseAttribute("path", wsname);
         parser:writeFile("Workspace/workspace.cfg.msd", true);
         Color.print({
             {color = "green", text = "Workspace "},

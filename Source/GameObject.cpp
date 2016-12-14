@@ -134,7 +134,6 @@ namespace mse
 		{
 			this->type = type;
 			this->id = id;
-			objectLevelSprite.useDirtyAnimation(false, true);
 		}
 		void GameObject::registerTrigger(Trigger* trg)
 		{

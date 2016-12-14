@@ -2,7 +2,7 @@ Define Flag (Settings);
 
 Workspace:
     current:"Pong"
-    @Foo
+    @Pong
         path:"Pong"
         icon:"icon.png"
         description:"A pong game"

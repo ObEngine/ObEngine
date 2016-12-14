@@ -1,4 +1,5 @@
 Import("Core.Animation");
+Import("Core.Collision");
 Import("Core.STD");
 Import("Core.MathExp");
 Import("Core.Particle");
@@ -14,8 +15,9 @@ This:useLocalTrigger("Init");
 This:useLocalTrigger("Update");
 
 
-function Local.Init()
+function Local.Init(posX, posY)
     score1, score2 = 0, 0;
+    This:Collider():setPosition(posX, posY);
     score1Lbl = Hook.GUI:createLabel("Score", "score1Lbl", 650, 35, "0", "arial.ttf", 48, Core.SFML.Color.new(255,255,255,255));
     score2Lbl = Hook.GUI:createLabel("Score", "score2Lbl", 1250, 35, "0", "arial.ttf", 48, Core.SFML.Color.new(255,255,255,255));
     trail = Core.Particle.MathParticle.new("bx", "by", "(sin@(t))^2 * 255", "(sin@(t+pi/2))^2 * 255", "(sin@(t+pi/4))^2 * 255", "255", "-1", 0.0001);

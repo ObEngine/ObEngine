@@ -10,7 +10,7 @@ Meta:
 
 LevelSprites:
     @g2V27QPw
-        type:"PONG_Background"
+        path:"background.png"
         posX:0
         posY:0
         rotation:0
@@ -24,18 +24,26 @@ Collisions:
 LevelObjects:
     @rightPaddle
         type:"Paddle"
-        posX:1872
-        posY:480
+        @Requires
+            upAction:"RPaddleUp"
+            downAction:"RPaddleDown"
+            posX:1872
+            posY:480
 
     @leftPaddle
         type:"Paddle"
-        posX:16
-        posY:480
+        @Requires
+            upAction:"LPaddleUp"
+            downAction:"LPaddleDown"
+            posX:16
+            posY:480
+        
 
     @ball
         type:"Ball"
-        posX:928
-        posY:512
+        @Requires
+            posX:928
+            posY:512
 
 
 Script:

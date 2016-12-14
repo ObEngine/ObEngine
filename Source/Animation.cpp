@@ -443,101 +443,6 @@ namespace mse
 			return priority;
 		}
 
-		//DIRTY ANIMATION
-		DirtyAnimation::~DirtyAnimation()
-		{
-		}
-		void DirtyAnimation::attachRessourceManager(RessourceManager* rsMan)
-		{
-			animatorRsHook = rsMan;
-		}
-		void DirtyAnimation::deleteRessourceManager()
-		{
-			animatorRsHook = NULL;
-		}
-		void DirtyAnimation::setAnimationClock(int animClock)
-		{
-			animationClock = animClock;
-		}
-		float DirtyAnimation::getAnimationClock()
-		{
-			return animationClock;
-		}
-		void DirtyAnimation::loadAnimation(System::Path path)
-		{
-			std::cout << "LOADING ANIMATION" << std::endl;
-			std::vector<std::string> imageList;
-			path.loadResource(&imageList, System::Loaders::filePathLoader);
-			for (unsigned int i = 0; i < imageList.size(); i++)
-			{
-				std::string textureName = imageList[i];
-				if (textureName != "thumbnail.png")
-				{
-					if (animatorRsHook == NULL)
-					{
-						std::cout << "Without RSHook" << std::endl;
-						sf::Texture* tempTexture = new sf::Texture(); path.add(textureName).loadResource(tempTexture, System::Loaders::textureLoader);
-						if (tempTexture != nullptr)
-						{
-							tempTexture->setSmooth(true);
-							animationTextures.push_back(tempTexture);
-						}
-					}
-					else
-					{
-						std::cout << "With RSHook" << std::endl;
-						animationTextures.push_back(animatorRsHook->getTexture(path.add(textureName).toString()));
-					}
-				}
-			}
-		}
-		void DirtyAnimation::update()
-		{
-			oldTextureIndex = textureIndex;
-			textureIndex++;
-			if (textureIndex >= animationTextures.size())
-				textureIndex = 0;
-		}
-		void DirtyAnimation::setIndex(int index)
-		{
-			textureIndex = index;
-		}
-		int DirtyAnimation::getIndex()
-		{
-			return textureIndex;
-		}
-		bool DirtyAnimation::indexChanged()
-		{
-			return (oldTextureIndex != textureIndex || noTextureReturned);
-		}
-		sf::Texture* DirtyAnimation::getTexture()
-		{
-			noTextureReturned = false;
-			return animationTextures[textureIndex];
-		}
-		sf::Texture* DirtyAnimation::getNormal()
-		{
-			/*if (normalTextures.find(textureIndex) != normalTextures.end())
-			return normalTextures[textureIndex];
-			else
-			return nullptr;*/
-			return nullptr;
-		}
-		sf::Texture* DirtyAnimation::getTextureAtIndex(int index)
-		{
-			noTextureReturned = false;
-			return animationTextures[index];
-		}
-
-		sf::Texture* DirtyAnimation::getNormalAtIndex(int index)
-		{
-			/*if (normalTextures.find(index) != normalTextures.end())
-			return normalTextures[index];
-			else
-			return nullptr;*/
-			return nullptr;
-		}
-
 		//ANIMATOR
 		Animator::Animator()
 		{
@@ -556,8 +461,7 @@ namespace mse
 		}
 		void Animator::clear(bool clearMemory)
 		{
-			if (clearMemory)
-			{
+			if (clearMemory) {
 				for (auto it = fullAnimSet.begin(); it != fullAnimSet.end(); it++)
 					delete it->second;
 			}

@@ -70,9 +70,6 @@ namespace mse
 		{
 			this->clearWorld();
 			double startLoadTime = Time::getTickSinceEpoch();
-			int arrayLoad = 0;
-			int arrayLoadFrontDeco = 0;
-			int arrayLoadBackDeco = 0;
 			int indexInFile = 0;
 			Data::DataParser mapParse;
 			std::cout << "Creation Chrono : " << "[WorldStart]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
@@ -93,48 +90,46 @@ namespace mse
 
 			if (mapParse.containsRootAttribute("LevelSprites"))
 			{
-				std::vector<std::string> allDecos = mapParse["LevelSprites"]->getAllComplexAttributes();
-				for (unsigned int i = 0; i < allDecos.size(); i++)
+				std::vector<std::string> allSprites = mapParse["LevelSprites"]->getAllComplexAttributes();
+				for (unsigned int i = 0; i < allSprites.size(); i++)
 				{
-					mapParse.accessNavigator()->setCurrentRootAttribute("LevelSprites", allDecos[i]);
-					std::string decoID, decoType;
-					int decoPosX, decoPosY;
-					int decoRot = 0;
-					double decoSca = 1.0;
-					std::vector<std::string> decoAtrList;
+					mapParse.accessNavigator()->setCurrentRootAttribute("LevelSprites", allSprites[i]);
+					std::string spriteID, spritePath;
+					int spritePosX, spritePosY;
+					int spriteRot = 0;
+					double spriteSca = 1.0;
+					std::vector<std::string> spriteAtrList;
 					int layer;
 					int zdepth;
-					decoID = allDecos[i];
-					decoType = mapParse.getBaseAttribute("type")->get<std::string>();
-					decoPosX = mapParse.getBaseAttribute("posX")->get<int>();
-					decoPosY = mapParse.getBaseAttribute("posY")->get<int>();
-					decoRot = mapParse.getBaseAttribute("rotation")->get<int>();
-					decoSca = mapParse.getBaseAttribute("scale")->get<double>();
+					spriteID = allSprites[i];
+					spritePath = mapParse.getBaseAttribute("path")->get<std::string>();
+					spritePosX = mapParse.getBaseAttribute("posX")->get<int>();
+					spritePosY = mapParse.getBaseAttribute("posY")->get<int>();
+					spriteRot = mapParse.getBaseAttribute("rotation")->get<int>();
+					spriteSca = mapParse.getBaseAttribute("scale")->get<double>();
 					layer = mapParse.getBaseAttribute("layer")->get<int>();
 					zdepth = mapParse.getBaseAttribute("z-depth")->get<int>();
 					if (mapParse.containsListAttribute("attributeList"))
 					{
 						int atrListSize = mapParse.getListSize("attributeList");
 						for (int j = 0; j < atrListSize; j++)
-							decoAtrList.push_back(mapParse.getListItem("attributeList", j)->get<std::string>());
+							spriteAtrList.push_back(mapParse.getListItem("attributeList", j)->get<std::string>());
 					}
-					Graphics::LevelSprite* tempDeco = new Graphics::LevelSprite(decoID);
-					if (decoType != "None")
-					{
-						delete tempDeco;
-						tempDeco = new Graphics::LevelSprite(decoType, decoID);
-					}
-					tempDeco->move(decoPosX, decoPosY);
-					tempDeco->setRotation(decoRot);
-					tempDeco->setScale(decoSca, decoSca);
-					tempDeco->setAtr(decoAtrList);
-					tempDeco->setLayer(layer);
-					tempDeco->setZDepth(zdepth);
-					tempDeco->textureUpdate();
+					Graphics::LevelSprite* tempSprite;
+					if (spritePath != "None")
+						tempSprite = new Graphics::LevelSprite(spritePath, spriteID);
+					else
+						tempSprite = new Graphics::LevelSprite(spriteID);
+					tempSprite->move(spritePosX, spritePosY);
+					tempSprite->setRotation(spriteRot);
+					tempSprite->setScale(spriteSca, spriteSca);
+					tempSprite->setAtr(spriteAtrList);
+					tempSprite->setLayer(layer);
+					tempSprite->setZDepth(zdepth);
 					if (layer >= 1)
-						backSpriteArray.push_back(tempDeco);
+						backSpriteArray.push_back(tempSprite);
 					else if (layer <= -1)
-						frontSpriteArray.push_back(tempDeco);
+						frontSpriteArray.push_back(tempSprite);
 				}
 			}
 			std::cout << "Creation Chrono : " << "[WorldLevelSprites]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
@@ -351,7 +346,7 @@ namespace mse
 				if (frontSpriteArray[i]->getParent() == nullptr)
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(frontSpriteArray[i]->getID());
-					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("type", frontSpriteArray[i]->getName());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("path", frontSpriteArray[i]->getName());
 					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("posX", (int)frontSpriteArray[i]->getX());
 					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("posY", (int)frontSpriteArray[i]->getY());
 					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("rotation", (int)frontSpriteArray[i]->getRotation());
@@ -509,7 +504,6 @@ namespace mse
 					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camX;
 					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
 				}
-				backSpriteArray[i]->textureUpdate();
 				sfe::ComplexSprite tAffSpr;
 				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
 				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
@@ -574,7 +568,6 @@ namespace mse
 					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camY) * frontSpriteArray[i]->getLayer());
 				}
 
-				frontSpriteArray[i]->textureUpdate();
 				sfe::ComplexSprite tAffSpr;
 				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
 				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
@@ -902,13 +895,13 @@ namespace mse
 		Graphics::LevelSprite* World::getSpriteByPos(int x, int y, int layer)
 		{
 			Graphics::LevelSprite* returnSpr = nullptr;
-			std::vector<Graphics::LevelSprite*> getDecoVec = getSpritesByLayer(layer);
-			for (unsigned int i = 0; i < getDecoVec.size(); i++)
+			std::vector<Graphics::LevelSprite*> getSpriteVec = getSpritesByLayer(layer);
+			for (unsigned int i = 0; i < getSpriteVec.size(); i++)
 			{
-				if (x > getDecoVec[i]->getRect().left && x < getDecoVec[i]->getRect().left + getDecoVec[i]->getW())
+				if (x > getSpriteVec[i]->getRect().left && x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getW())
 				{
-					if (y > getDecoVec[i]->getRect().top && y < getDecoVec[i]->getRect().top + getDecoVec[i]->getH())
-						returnSpr = getDecoVec[i];
+					if (y > getSpriteVec[i]->getRect().top && y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getH())
+						returnSpr = getSpriteVec[i];
 				}
 			}
 			return returnSpr;
@@ -926,7 +919,7 @@ namespace mse
 				if (frontSpriteArray[i]->getID() == ID)
 					return frontSpriteArray[i];
 			}
-			std::cout << "<Error:World:World>[getDecoByID] : Can't find Decoration : " << ID << std::endl;
+			std::cout << "<Error:World:World>[getSpriteByID] : Can't find Sprite : " << ID << std::endl;
 			return NULL;
 		}
 
@@ -935,13 +928,13 @@ namespace mse
 			this->deleteSprite(this->getSpriteByID(sprID), freeMemory);
 		}
 
-		void World::deleteSprite(Graphics::LevelSprite* decoToDelete, bool freeMemory)
+		void World::deleteSprite(Graphics::LevelSprite* spriteToDelete, bool freeMemory)
 		{
-			if (decoToDelete->getLayer() > 0)
+			if (spriteToDelete->getLayer() > 0)
 			{
 				for (int i = 0; i < backSpriteArray.size(); i++)
 				{
-					if (backSpriteArray[i]->getID() == decoToDelete->getID())
+					if (backSpriteArray[i]->getID() == spriteToDelete->getID())
 					{
 						if (freeMemory) delete backSpriteArray[i];
 						backSpriteArray.erase(backSpriteArray.begin() + i);
@@ -952,7 +945,7 @@ namespace mse
 			{
 				for (int i = 0; i < frontSpriteArray.size(); i++)
 				{
-					if (frontSpriteArray[i]->getID() == decoToDelete->getID())
+					if (frontSpriteArray[i]->getID() == spriteToDelete->getID())
 					{
 						if (freeMemory) delete frontSpriteArray[i];
 						frontSpriteArray.erase(frontSpriteArray.begin() + i);

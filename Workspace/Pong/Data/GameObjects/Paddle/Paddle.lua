@@ -1,6 +1,7 @@
 Keys = {};
 
 Import("Core.Animation");
+Import("Core.Collision");
 
 inspect = require("Lib/StdLib/Inspect");
 contains = require("Lib/StdLib/Contains");
@@ -10,9 +11,10 @@ This:useLocalTrigger("Init");
 This:useLocalTrigger("Update");
 This:useExternalTrigger("Global", "Keys", "*");
 
-function Local.Init()
-    upAction = Require("UpAction");
-    downAction = Require("DownAction");
+function Local.Init(upAction, downAction, posX, posY)
+    Keys.upAction = upAction;
+    Keys.downAction = downAction;
+    This:Collider():setPosition(posX, posY);
     print("PaddleInitialised");
     This:Animator():setKey("Paddle");
     PaddleTrajectory = Linear(0, 0, 180);
@@ -32,17 +34,17 @@ function Local.Update(P)
 end
 
 function Keys.ActionToggled(P)
-    if contains(P.ToggledActions, upAction) then
+    if contains(P.ToggledActions, Keys.upAction) then
         PaddleTrajectory:setSpeed(-speed);
-    elseif contains(P.ToggledActions, downAction) then
+    elseif contains(P.ToggledActions, Keys.downAction) then
         PaddleTrajectory:setSpeed(speed);
     end
 end
 
 function Keys.ActionReleased(P)
-    if contains(P.ReleasedActions, upAction) then
+    if contains(P.ReleasedActions, Keys.upAction) then
         PaddleTrajectory:setSpeed(0);
-    elseif contains(P.ReleasedActions, downAction) then
+    elseif contains(P.ReleasedActions, Keys.downAction) then
         PaddleTrajectory:setSpeed(0);
     end
 end

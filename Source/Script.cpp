@@ -10,6 +10,7 @@ namespace mse
 	{
 		KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(container_createLabelProxy, GUI::Container, createLabel, 8, 9,
 			GUI::Label*(GUI::Container::*)(std::string, std::string, int, int, std::string, std::string, int, sf::Color, sf::Text::Style));
+		KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(label_setTextProxy, GUI::Label, setText, 2, 3, void(GUI::Label::*)(std::string, sf::Color, sf::Text::Style));
 
 		CoreHook hookCore;
 
@@ -453,6 +454,7 @@ namespace mse
 						static_cast<unsigned int (Data::DataParser::*)(std::string)>(&Data::DataParser::getListSize),
 						static_cast<unsigned int (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::getListSize)
 					)
+					.addFunction("getPath", &Data::DataParser::getPath)
 					.addFunction("hasFlag", &Data::DataParser::hasFlag)
 					.addFunction("hookNavigator", &Data::DataParser::hookNavigator)
 					.addOverloadedFunctions("containsListAttribute",
@@ -514,6 +516,7 @@ namespace mse
 					.addFunction("getComplexAttribute", &Data::ComplexAttribute::getComplexAttribute)
 					.addFunction("getID", &Data::ComplexAttribute::getID)
 					.addFunction("getListAttribute", &Data::ComplexAttribute::getListAttribute)
+					.addFunction("getPath", &Data::ComplexAttribute::getPath)
 					.addFunction("heritage", &Data::ComplexAttribute::heritage)
 					.addFunction("containsListAttribute", &Data::ComplexAttribute::containsListAttribute)
 					.addFunction("pushBaseAttribute", &Data::ComplexAttribute::pushBaseAttribute)
@@ -722,7 +725,7 @@ namespace mse
 				(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::UserdataMetatable<GUI::Label, GUI::Widget>()
 					.addFunction("resetFontVars", &GUI::Label::resetFontVars)
 					.addFunction("setFont", &GUI::Label::setFont)
-					.addFunction("setText", &GUI::Label::setText)
+					.addFunction("setText", label_setTextProxy())
 					.addFunction("setComplexText", &GUI::Label::setComplexText)
 					.addFunction("addText", &GUI::Label::addText)
 					.addFunction("setFontSize", &GUI::Label::setFontSize)
