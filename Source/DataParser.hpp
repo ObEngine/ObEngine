@@ -19,11 +19,6 @@ namespace mse
 		std::vector<std::string> convertPath(std::string path);
 		std::string getDefaultValueForType(std::string type);
 		std::string getVarType(std::string var);
-		std::string Path();
-		std::string Path(std::vector<std::string> path);
-		std::string Path(std::string cPath);
-		template <class ... Args>
-		std::string Path(std::string cPath, Args ... pathParts);
 
 		namespace Types
 		{
@@ -167,6 +162,10 @@ namespace mse
 			Attribute* extractElement(Attribute* element);
 			void heritage(ComplexAttribute* heritTarget);
 			ComplexAttribute* getPath(std::string attributePath);
+			ComplexAttribute* operator[](std::string cPath);
+			ComplexAttribute* at(std::string cPath);
+			template<class ...Args>
+			ComplexAttribute* at(std::string cPath, Args ...pathParts);
 			BaseAttribute* getBaseAttribute(std::string attributeName);
 			ComplexAttribute* getComplexAttribute(std::string id);
 			ListAttribute* getListAttribute(std::string id);
@@ -237,6 +236,10 @@ namespace mse
 			ComplexAttribute* extractRootAttribute(std::string rootAttributeName);
 			ComplexAttribute* getRootAttribute(std::string id);
 			ComplexAttribute* getPath(std::string path);
+			ComplexAttribute* operator[](std::string cPath);
+			ComplexAttribute* at(std::string cPath);
+			template<class ...Args>
+			ComplexAttribute* at(std::string cPath, Args ...pathParts);
 			void createBaseAttribute(std::string attributePath, std::string name, std::string data);
 			void createBaseAttribute(std::string attributePath, std::string name, bool data);
 			void createBaseAttribute(std::string attributePath, std::string name, int data);
@@ -328,10 +331,16 @@ namespace mse
 				std::cout << "<Error:DataParser:BaseAttribute>[getData] : " \
 				<< getNodePath() << " is not a <string> BaseAttribute (" << dtype << ")" << std::endl;
 		}
+
 		template<class ...Args>
-		std::string Path(std::string cPath, Args ...pathParts)
+		inline ComplexAttribute* ComplexAttribute::at(std::string cPath, Args ...pathParts)
 		{
-			return cPath + "/" + Path(pathParts...);
+			return getPath(cPath)->at(pathParts...);
+		}
+		template<class ...Args>
+		inline ComplexAttribute* DataParser::at(std::string cPath, Args ...pathParts)
+		{
+			return getPath(cPath)->at(pathParts...);
 		}
 	}
 }

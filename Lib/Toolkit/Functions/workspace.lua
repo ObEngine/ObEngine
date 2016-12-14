@@ -8,14 +8,14 @@ function workspace(argtable)
     local parser = Core.DataParser.DataParser.new();
     parser:parseFile("Workspace/workspace.cfg.msd", true);
     if action == "get" then
-        local currentWs = parser:getAttribute("Workspace", "", "current"):get_string();
+        local currentWs = parser:getBaseAttribute("Workspace", "current"):get_string();
         Color.print({
             {color = "white", text = "Current Workspace : "}, 
             {color = "cyan", text = currentWs .. "\n"}
         }, 2);
     elseif action == "use" and wsname ~= nil then
-        if (parser:complexExists("Workspace", "", wsname)) then
-            parser:getAttribute("Workspace", "", "current"):set(wsname);
+        if (parser:containsComplexAttribute("Workspace", wsname)) then
+            parser:getBaseAttribute("Workspace", "current"):set(wsname);
             parser:writeFile("Workspace/workspace.cfg.msd", true);
             Color.print({
                 {color = "green", text = "Current workspace has been successfully switched to "},
@@ -29,11 +29,11 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "desc" and wsname ~= nil then
-        if (parser:complexExists("Workspace", "", wsname)) then
+        if (parser:containsComplexAttribute("Workspace", "", wsname)) then
             Color.print({
                 {color = "cyan", text = wsname},
                 {color = "white", text = "'s description : "},
-                {color = "grey", text = parser:getAttribute("Workspace", wsname, "description"):get_string() .. "\n"}
+                {color = "grey", text = parser:getBaseAttribute("Workspace", wsname, "description"):get_string() .. "\n"}
             }, 2);
         else
             Color.print({
@@ -51,8 +51,8 @@ function workspace(argtable)
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\GameObjects");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\LevelSprites");
-        parser:createComplexAttribute("Workspace", "", wsname);
-        parser:createBaseAttribute("Workspace", wsname, "path", wsname);
+        parser:createComplexAttribute("Workspace", wsname);
+        parser:at("Workspace", wsname).createBaseAttribute("Workspace", wsname, "path", wsname);
         parser:writeFile("Workspace/workspace.cfg.msd", true);
         Color.print({
             {color = "green", text = "Workspace "},

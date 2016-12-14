@@ -169,9 +169,9 @@ namespace mse
 			particleSet.parseFile("Data/Particles/particleSet.ptc.msd");
 			std::vector<std::string> attributeList = { "size", "x", "y", "lowerBound", "upperBound", "r", "g", "b"\
 				, "a", "lifetime","trailLength", "trailAlpha" };
-			this->setPrecision(particleSet.getPath(Data::Path("Particles", id))->getBaseAttribute("precision")->get<double>());
+			this->setPrecision(particleSet.at("Particles", id)->getBaseAttribute("precision")->get<double>());
 			for (unsigned int i = 0; i < attributeList.size(); i++)
-				this->registerMathExp(attributeList[i], particleSet.getPath(Data::Path("Particles", id))->getBaseAttribute(attributeList[i])->get<std::string>());
+				this->registerMathExp(attributeList[i], particleSet.at("Particles", id)->getBaseAttribute(attributeList[i])->get<std::string>());
 			this->registerOutputVar("x", &this->x);
 			this->registerOutputVar("y", &this->y);
 			this->registerOutputVar("r", &this->r);

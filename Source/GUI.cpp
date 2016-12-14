@@ -65,7 +65,7 @@ GUI::Widget::Widget(std::string ID, int posX, int posY, std::string style)
 
 	this->attributes = new mse::Data::ComplexAttribute(ID);
 	attributes->createComplexAttribute(this->ID);
-	attributes->getPath(ID)->createBaseAttribute("style", this->widgetStyle);
+	attributes->at(ID)->createBaseAttribute("style", this->widgetStyle);
 	createAttribute("posX", (this->posX[0]), "float");
 	createAttribute("posY", (this->posY[0]), "float");
 	createAttribute("displayed", displayed, "bool");
@@ -1230,7 +1230,7 @@ GUI::LoadingBar::LoadingBar(std::string ID, int posX, int posY, std::string fill
 	this->TopBotBordersHeight = TopBotBordersHeight;
 	selector.push_back(Display::Sprite);
 	selector.push_back(Display::Sprite);
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 void GUI::LoadingBar::setTexture()
@@ -1352,7 +1352,7 @@ GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minH
 	scroller->setMovementConstraints(false, true);
 	
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLinked, std::string style) : Widget(ID, posX, posY, style)
@@ -1376,7 +1376,7 @@ GUI::ScrollBar::ScrollBar(std::string ID, int posX, int posY, int size, int minH
 	scroller->setMovementConstraints(false, true);
 
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 void GUI::ScrollBar::setTexture()
@@ -1659,7 +1659,7 @@ GUI::Label::Label(std::string ID, int posX, int posY, std::string font, int font
 	selector.push_back(Display::Text);
 	this->text[0] = sfe::RichText(this->font);
 	
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 
 	createAttribute("text", this->labelText, "string");
 	createAttribute("font", fontString, "string");
@@ -1972,7 +1972,7 @@ GUI::Checkbox::Checkbox(std::string ID, int posX, int posY, std::string style, b
 	previousValue = checked;
 	selector.push_back(Display::Sprite);
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 	createAttribute("checked", this->checked, "bool");
 }
 
@@ -2003,7 +2003,7 @@ GUI::Droplist::Droplist(std::string ID, int posX, int posY, int charSize, bool d
 	this->hover = fontColorHover;
 	this->charSize = charSize;
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 
 	buttons.resize(this->list.size());
 
@@ -2028,7 +2028,7 @@ GUI::Droplist::Droplist(std::string ID, int posX, int posY, bool dropListMenu, s
 	this->widgetType = "Droplist";
 	this->droplistMenu = droplistMenu;
 	this->buttons = buttons;
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 	for (int i = 0; i < this->buttons.size(); i++)
 	{
 		buttons[i]->updatePosContainer(posContainerX, posContainerY);
@@ -2398,7 +2398,7 @@ GUI::Dropbox::Dropbox(std::string ID, int posX, int posY, std::string style) : W
 {
 	this->widgetType = "Dropbox";
 	selector.push_back(GUI::Display::Sprite);
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 void GUI::Dropbox::setTexture()
@@ -2455,7 +2455,7 @@ GUI::Movable::Movable(std::string ID, int posX, int posY, std::string style) : W
 	this->needContainer = false;
 	selector.push_back(GUI::Display::Sprite);
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 GUI::Movable::Movable(std::string ID, Dropbox* container, int marginLeftContainer, int marginTopContainer, std::string style) : Widget(ID, container->getRelativePosX() + marginLeftContainer, container->getRelativePosY() + marginTopContainer, style)
@@ -2468,7 +2468,7 @@ GUI::Movable::Movable(std::string ID, Dropbox* container, int marginLeftContaine
 	this->currentContainer = container;
 	selector.push_back(GUI::Display::Sprite);
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 }
 
 
@@ -2846,7 +2846,7 @@ GUI::Button::Button(std::string ID, int posX, int posY, std::string style, bool 
 	this->nameImageIdle = "idle.png";
 	this->nameImageHover = "hover.png";
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 	createAttribute("pushingEnable", this->pushingEnable, "bool");
 	createAttribute("hoveringEnable", this->hoveringEnable, "bool");
 
@@ -2901,7 +2901,7 @@ void GUI::Button::setLabelText(GUI::Label* text)
 	if (hasText)
 	{
 		buttonLabel->removeWidget();
-		attributes->getPath(this->ID)->deleteComplexAttribute("containedItem", true);
+		attributes->at(this->ID)->deleteComplexAttribute("containedItem", true);
 	}
 
 	buttonLabel = text;
@@ -3412,7 +3412,7 @@ GUI::RadioButton::RadioButton(std::string ID, int posX, int posY, std::string va
 	this->group = group;
 	this->value = value;
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 
 	createAttribute("value", this->value, "string");
 	createAttribute("group", this->group, "string");
@@ -3636,7 +3636,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	charToMove.setStyle(sf::Text::Regular);
 	charToMove.setPosition(0, 0);
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 
 	//createAttribute("Text", this->inputText, "string");
 
@@ -3683,7 +3683,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string style,
 
 	//this->inputText = text->getString();
 
-	attributes->getPath(this->ID)->createBaseAttribute("type", widgetType);
+	attributes->at(this->ID)->createBaseAttribute("type", widgetType);
 	//createAttribute("Text", this->inputText, "string");
 
 	labelText.push_back(text);
@@ -4699,7 +4699,7 @@ void GUI::Container::loadWidgetContainerFromFile(std::string filename, int posX,
 
 GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, mse::Data::DataParser* data, bool isContained)
 {
-	mse::Data::ComplexAttribute* widget = data->getRootAttribute(dataObject)->getPath(path)->getComplexAttribute(name);
+	mse::Data::ComplexAttribute* widget = data->getRootAttribute(dataObject)->at(path)->getComplexAttribute(name);
 	int posX, posY;
 	bool displayed;
 	std::string style = widget->getBaseAttribute("style")->get<std::string>();
@@ -4956,13 +4956,13 @@ mse::Data::ComplexAttribute* parseBind(std::string str)
 void GUI::Widget::addContainedItem(mse::Data::ComplexAttribute* containedItem)
 {
 	std::vector<std::string> complexAttributesID = containedItem->getAllComplexAttributes();
-	if (!attributes->getPath(this->ID)->containsComplexAttribute("containedItem"))
+	if (!attributes->at(this->ID)->containsComplexAttribute("containedItem"))
 	{
-		attributes->getPath(ID)->createComplexAttribute("containedItem");
+		attributes->at(ID)->createComplexAttribute("containedItem");
 	}
 
 	for (std::vector<std::string>::iterator ite = complexAttributesID.begin(); ite != complexAttributesID.end(); ite++)
 	{
-		attributes->getPath(mse::Data::Path(ID, "containedItem"))->pushComplexAttribute(containedItem->getComplexAttribute(*ite));
+		attributes->at(ID, "containedItem")->pushComplexAttribute(containedItem->getComplexAttribute(*ite));
 	}
 }

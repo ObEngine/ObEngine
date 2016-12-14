@@ -49,6 +49,7 @@ namespace mse
 		void buildObjectTab();
 		void buildRequiresObjectTab(std::string objName);
 		void buildObjectThroughRequire(std::string objName);
+		void loadEgFolder(std::string path);
 		void loadSpriteFolder(std::string geid);
 		void buildAddSpriteFolderList();
 		void displayAddSpriteFolderList();

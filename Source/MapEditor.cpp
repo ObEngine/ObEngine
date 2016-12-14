@@ -211,8 +211,6 @@ namespace mse
 			EditorTools::buildObjectTab();
 			std::cout << "Creation Chrono : " << "[MapEditor]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-
-
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
 			fps.loadFont(font);
@@ -272,6 +270,8 @@ namespace mse
 				int dimY = std::stoi(dimSY != "" ? dimSY : "1080");
 				world.setSize(dimX, dimY);
 			});
+
+			mse::EditorTools::loadEgFolder("");
 
 			//Game Starts
 			while (window.isOpen())

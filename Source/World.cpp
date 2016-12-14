@@ -93,7 +93,7 @@ namespace mse
 
 			if (mapParse.containsRootAttribute("LevelSprites"))
 			{
-				std::vector<std::string> allDecos = mapParse.getPath("LevelSprites")->getAllComplexAttributes();
+				std::vector<std::string> allDecos = mapParse["LevelSprites"]->getAllComplexAttributes();
 				for (unsigned int i = 0; i < allDecos.size(); i++)
 				{
 					mapParse.accessNavigator()->setCurrentRootAttribute("LevelSprites", allDecos[i]);
@@ -319,29 +319,30 @@ namespace mse
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
 			dataStore->createRootAttribute("Meta");
-			dataStore->getPath("Meta")->createBaseAttribute("Level", levelName);
-			dataStore->getPath("Meta")->createBaseAttribute("SizeX", sizeX);
-			dataStore->getPath("Meta")->createBaseAttribute("SizeY", sizeY);
-			dataStore->getPath("Meta")->createBaseAttribute("StartX", startX);
-			dataStore->getPath("Meta")->createBaseAttribute("StartY", startY);
+			dataStore->at("Meta")->createBaseAttribute("Level", levelName);
+			dataStore->at("Meta")->createBaseAttribute("SizeX", sizeX);
+			dataStore->at("Meta")->createBaseAttribute("SizeY", sizeY);
+			dataStore->at("Meta")->createBaseAttribute("StartX", startX);
+			dataStore->at("Meta")->createBaseAttribute("StartY", startY);
 			dataStore->createRootAttribute("LevelSprites");
 			for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 			{
 				if (backSpriteArray[i]->getParent() == nullptr)
 				{
-					dataStore->getPath("LevelSprites")->createComplexAttribute(backSpriteArray[i]->getID());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("type", backSpriteArray[i]->getName());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("posX", (int)backSpriteArray[i]->getX());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("posY", (int)backSpriteArray[i]->getY());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("rotation", (int)backSpriteArray[i]->getRotation());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("scale", backSpriteArray[i]->getScaleX());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("layer", (int)backSpriteArray[i]->getLayer());
-					dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createBaseAttribute("z-depth", (int)backSpriteArray[i]->getZDepth());
+					dataStore->at("LevelSprites")->createComplexAttribute(backSpriteArray[i]->getID());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("type", backSpriteArray[i]->getName());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("posX", (int)backSpriteArray[i]->getX());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("posY", (int)backSpriteArray[i]->getY());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("rotation", (int)backSpriteArray[i]->getRotation());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("scale", backSpriteArray[i]->getScaleX());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("layer", (int)backSpriteArray[i]->getLayer());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("z-depth", (int)backSpriteArray[i]->getZDepth());
 					if (backSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createListAttribute("attributeList", "string");
+						dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createListAttribute("attributeList", "string");
 						for (unsigned int j = 0; j < backSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->getPath(Data::Path("LevelSprites", backSpriteArray[i]->getID()))->createListItem("attributeList", backSpriteArray[i]->getAttributes()[j]);
+							dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createListItem(
+								"attributeList", backSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
@@ -349,19 +350,19 @@ namespace mse
 			{
 				if (frontSpriteArray[i]->getParent() == nullptr)
 				{
-					dataStore->getPath("LevelSprites")->createComplexAttribute(frontSpriteArray[i]->getID());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("type", frontSpriteArray[i]->getName());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("posX", (int)frontSpriteArray[i]->getX());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("posY", (int)frontSpriteArray[i]->getY());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("rotation", (int)frontSpriteArray[i]->getRotation());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("scale", frontSpriteArray[i]->getScaleX());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("layer", (int)frontSpriteArray[i]->getLayer());
-					dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createBaseAttribute("z-depth", (int)frontSpriteArray[i]->getZDepth());
+					dataStore->at("LevelSprites")->createComplexAttribute(frontSpriteArray[i]->getID());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("type", frontSpriteArray[i]->getName());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("posX", (int)frontSpriteArray[i]->getX());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("posY", (int)frontSpriteArray[i]->getY());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("rotation", (int)frontSpriteArray[i]->getRotation());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("scale", frontSpriteArray[i]->getScaleX());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("layer", (int)frontSpriteArray[i]->getLayer());
+					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("z-depth", (int)frontSpriteArray[i]->getZDepth());
 					if (frontSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createListAttribute("attributeList", "string");
+						dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createListAttribute("attributeList", "string");
 						for (unsigned int j = 0; j < frontSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->getPath(Data::Path("LevelSprites", frontSpriteArray[i]->getID()))->createListItem("attributeList", frontSpriteArray[i]->getAttributes()[j]);
+							dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createListItem("attributeList", frontSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
@@ -370,21 +371,21 @@ namespace mse
 			{
 				if (collidersArray[i]->getParent() == nullptr)
 				{
-					dataStore->getPath("Collisions")->createComplexAttribute(collidersArray[i]->getID());
-					dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListAttribute("polygonPoints", "string");
+					dataStore->at("Collisions")->createComplexAttribute(collidersArray[i]->getID());
+					dataStore->at("Collisions", collidersArray[i]->getID())->createListAttribute("polygonPoints", "string");
 					for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
 					{
 						int px = collidersArray[i]->getPointPosition(j).first;
 						int py = collidersArray[i]->getPointPosition(j).second;
-						dataStore->getPath(Data::Path("Collisions", collidersArray[i]->getID()))->createListItem("polygonPoints", std::to_string(px) + "," + std::to_string(py));
+						dataStore->at("Collisions", collidersArray[i]->getID())->createListItem("polygonPoints", std::to_string(px) + "," + std::to_string(py));
 					}
 				}
 			}
 			dataStore->createRootAttribute("LevelObjects");
 			for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
 			{
-				dataStore->getPath("LevelObjects")->createComplexAttribute(it->first);
-				dataStore->getPath(Data::Path("LevelObjects", it->first))->createBaseAttribute("type", it->second->getType());
+				dataStore->at("LevelObjects")->createComplexAttribute(it->first);
+				dataStore->at("LevelObjects", it->first)->createBaseAttribute("type", it->second->getType());
 				(*it->second->getScriptEngine())("inspect = require('Lib/StdLib/Inspect');");
 				kaguya::LuaTable saveTable = (*it->second->getScriptEngine())["Local.Save"]();
 				(*it->second->getScriptEngine())("tnt = Local.Save()");
@@ -393,17 +394,14 @@ namespace mse
 				(*it->second->getScriptEngine())("print(inspect(Local.Save()));");
 				Data::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);
-				dataStore->getPath(Data::Path("LevelObjects", it->first))->pushComplexAttribute(saveRequirements);
-				//(*it->second->getScriptEngine())["Lua_ReqList"];
-				//dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posX", (int)it->second->getLevelSprite()->getX());
-				//dataStore->getPath(Data::Path("LevelObjects", it->first, "Requires"))->createBaseAttribute("posY", (int)it->second->getLevelSprite()->getY());
+				dataStore->at("LevelObjects", it->first)->pushComplexAttribute(saveRequirements);
 			}
 			if (scriptArray.size() > 0)
 			{
 				dataStore->createRootAttribute("Script");
-				dataStore->getPath("Script")->createListAttribute("gameScripts", "string");
+				dataStore->at("Script")->createListAttribute("gameScripts", "string");
 				for (int i = 0; i < scriptArray.size(); i++) {
-					dataStore->getPath("Script")->createListItem("gameScripts", scriptArray[i]);
+					dataStore->at("Script")->createListItem("gameScripts", scriptArray[i]);
 				}
 			}
 			return dataStore;
@@ -728,10 +726,10 @@ namespace mse
 			newGameObject->localTriggers->addTrigger("Click");
 			newGameObject->localTriggers->addTrigger("Press");
 			newGameObject->localTriggers->addTrigger("Delete");
-			int scriptListSize = gameObjectData->getPath("Script")->getListAttribute("scriptList")->getSize();
+			int scriptListSize = gameObjectData->at("Script")->getListAttribute("scriptList")->getSize();
 			for (int i = 0; i < scriptListSize; i++)
 			{
-				std::string getScrName = gameObjectData->getPath("Script")->getListAttribute("scriptList")->getElement(i)->get<std::string>();
+				std::string getScrName = gameObjectData->at("Script")->getListAttribute("scriptList")->getElement(i)->get<std::string>();
 				System::Path(getScrName).loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
 			}
 			this->orderUpdateScrArray();

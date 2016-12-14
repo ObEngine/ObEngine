@@ -15,29 +15,6 @@ int main(int argc, char** argv)
 	mse::Functions::Run::Parser runParser(argv, argc);
 	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
 
-	kaguya::State bruh;
-	bruh("function hehe() return {posX = 2 + 2, posY = 290} end");
-	std::map<std::string, int> res = bruh["hehe"]();
-	for (std::pair<std::string, int> tres : res) {
-		std::cout << tres.first << "/" << tres.second * 3 << std::endl;
-	}
-	bruh("makmak = {1,2,3,a = 4, b = {4, 5, g = {t = 33055}}}");
-	kaguya::LuaRef bsmakmak = bruh["makmak"];
-	mse::Data::ComplexAttribute* tomakmak = mse::Data::DataBridge::luaTableToComplexAttribute("makmak", bsmakmak);
-	std::cout << "OSN : " << tomakmak->getPath("b/g")->getBaseAttribute("t")->get<int>() << std::endl;
-	std::cout << "LE BON GROS TYPE " << bruh["makmak"].type() << std::endl;
-	bruh["test"] = kaguya::function([](kaguya::State* obj, kaguya::LuaRef me) {
-		(*obj)["t"]["me"] = me;
-	});
-	bruh["t"] = kaguya::NewTable();
-	bruh["this"] = &bruh;
-	bruh("inspect = require('Lib/StdLib/Inspect');");
-
-	bruh("test(this, { a = { b = { c = 3, d = 4, e = 5}, f = { g = 6}, h = 1}, i = 'bonjour', j = {'je', 'suis', 'ici'}, k = true});");
-	bruh("print('KK');");
-	bruh("print(inspect(t.me));");
-	std::cout << "Done" << std::endl;
-
 	//Sauvegarde du log dans log.txt
 	std::ofstream out("log.txt");
 	std::streambuf *coutbuf = std::cout.rdbuf();

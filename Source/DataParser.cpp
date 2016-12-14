@@ -73,15 +73,15 @@ namespace mse
 
 
 		//DataParserNavigator
+		std::string DataParserNavigator::getFullPath()
+		{
+			return currentRootAttribute + ((currentPath != "") ? "/" : "") + currentPath;
+		}
 		std::string DataParserNavigator::getCurrentRootAttribute() {
 			return currentRootAttribute;
 		}
 		std::string DataParserNavigator::getCurrentPath() {
 			return currentPath;
-		}
-		std::string DataParserNavigator::getFullPath() {
-			std::cout << "FullPath : " << Path(currentRootAttribute, currentPath) << std::endl;
-			return Path(currentRootAttribute, currentPath);
 		}
 		void DataParserNavigator::setCurrentRootAttribute(std::string object) {
 			currentRootAttribute = object;
@@ -337,6 +337,16 @@ namespace mse
 				this->createComplexAttribute(currentCmplxAttr->getID());
 				this->getComplexAttribute(heritTarget->getAllComplexAttributes()[i])->heritage(currentCmplxAttr);
 			}
+		}
+		ComplexAttribute* ComplexAttribute::operator[](std::string cPath)
+		{
+			return getPath(cPath);
+		}
+		ComplexAttribute* ComplexAttribute::at(std::string cPath)
+		{
+			if (cPath.size() > 0 && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
+				cPath = Functions::String::extract(cPath, 0, 1);
+			return getPath(cPath);
 		}
 		ComplexAttribute* ComplexAttribute::getPath(std::string attributePath)
 		{
@@ -813,6 +823,9 @@ namespace mse
 		{
 			// Memory Leak on Replace
 			root->createComplexAttribute(id);
+			if (checkNavigator()) {
+				dpNav->setCurrentRootAttribute(id);
+			}
 		}
 		bool DataParser::containsRootAttribute(std::string objectName)
 		{
@@ -843,11 +856,20 @@ namespace mse
 			if (Functions::String::occurencesInString(path, "/") > 0) {
 				std::string subPath = Functions::Vector::join(Functions::String::split(path, "/"), "/", 1);
 				std::cout << "Go to : " << Functions::String::split(path, "/")[0] << " then " << subPath << std::endl;
-				return getRootAttribute(Functions::String::split(path, "/")[0])->getPath(subPath);
+				return getRootAttribute(Functions::String::split(path, "/")[0])->at(subPath);
 			}
 			else {
 				return getRootAttribute(path);
 			}
+		}
+		ComplexAttribute* DataParser::operator[](std::string cPath)
+		{
+			return getPath(cPath);
+		}
+		ComplexAttribute* DataParser::at(std::string cPath)
+		{
+			//HERE
+			return nullptr;
 		}
 		void DataParser::createBaseAttribute(std::string attributePath, std::string name, std::string data) {
 			this->getPath(attributePath)->createBaseAttribute(name, "string", data);

@@ -136,10 +136,10 @@ namespace GUI
 
 		template <typename T> void createAttribute(std::string name, T& attribute, std::string type)
 		{
-			attributes->getPath(ID)->createComplexAttribute(name);
-			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("address", pointerToString(&attribute));
-			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("type", type);
-			attributes->getPath(mse::Data::Path(ID, name))->createBaseAttribute("value", (attribute));
+			attributes->at(ID)->createComplexAttribute(name);
+			attributes->at(ID, name)->createBaseAttribute("address", pointerToString(&attribute));
+			attributes->at(ID, name)->createBaseAttribute("type", type);
+			attributes->at(ID, name)->createBaseAttribute("value", (attribute));
 		}
 
 		virtual void updatePositions();//Update sprite's positions

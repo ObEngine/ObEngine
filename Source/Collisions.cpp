@@ -209,13 +209,14 @@ namespace mse
 		}
 		bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, double offsetX, double offsetY, double toX, double toY)
 		{
+			std::vector<PolygonalCollider*> toExclude;
 			for (PolygonalCollider* other : others) {
-				std::vector<PolygonalCollider*> toExclude;
-				if (isATagExcluded(other->getAllTags()))
+				if (isATagExcluded(other->getAllTags())) {
 					toExclude.push_back(other);
-				for (PolygonalCollider* exclCol : toExclude)
-					Functions::Vector::eraseAll(others, exclCol);
+				}
 			}
+			for (PolygonalCollider* exclCol : toExclude)
+				Functions::Vector::eraseAll(others, exclCol);
 
 			Collision::PolygonalCollider projection(this->id + "_proj");
 			for (DoublePoint point : allPoints)

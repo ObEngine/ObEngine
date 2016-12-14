@@ -254,6 +254,21 @@ namespace mse
 			}
 		}
 
+		void loadEgFolder(std::string path) 
+		{
+			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
+			gui->getContainerByContainerName("EditorSprites")->removeAllWidget(false);
+			gui->getContainerByContainerName("EditorSprites")->addScrollBar();
+			std::vector<std::string> fileList;
+			std::vector<std::string> folderList;
+			System::Path("Sprites/LevelSprites/" + path).loadResource(&folderList, System::Loaders::dirPathLoader);
+			System::Path("Sprites/LevelSprites/" + path).loadResource(&fileList, System::Loaders::filePathLoader);
+			
+			for (std::string element : folderList) {
+				std::cout << "NOPNOP::" << element << std::endl;
+			}
+		}
+
 		void loadSpriteFolder(std::string geid)
 		{
 			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
@@ -358,8 +373,8 @@ namespace mse
 				std::string prefixEquivalent;
 				if (Functions::Vector::isInList(iterator->first, folderConfigList))
 				{
-					if (addSprFolderConfigFile.getPath(Data::Path("SpritePrefix", iterator->first))->containsBaseAttribute("name"))
-						prefixEquivalent = addSprFolderConfigFile.getPath(Data::Path("SpritePrefix", iterator->first))->getBaseAttribute("name")->get<std::string>();
+					if (addSprFolderConfigFile.at("SpritePrefix", iterator->first)->containsBaseAttribute("name"))
+						prefixEquivalent = addSprFolderConfigFile.at("SpritePrefix", iterator->first)->getBaseAttribute("name")->get<std::string>();
 					else
 						prefixEquivalent = iterator->first;
 				}

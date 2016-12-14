@@ -258,12 +258,12 @@ namespace mse
 
 		void KeyBinder::loadFromFile(Data::DataParser* configFile)
 		{
-			std::vector<std::string> allGameKeys = configFile->getPath(Data::Path("KeyBinding", "game"))->getAllBaseAttributes();
+			std::vector<std::string> allGameKeys = configFile->at("KeyBinding", "game")->getAllBaseAttributes();
 			for (unsigned int i = 0; i < allGameKeys.size(); i++)
-				actionMap[allGameKeys[i]] = configFile->getPath(Data::Path("KeyBinding", "game"))->getBaseAttribute(allGameKeys[i])->get<std::string>();
-			std::vector<std::string> allMapEditorKeys = configFile->getPath(Data::Path("KeyBinding", "mapEditor"))->getAllBaseAttributes();
+				actionMap[allGameKeys[i]] = configFile->at("KeyBinding", "game")->getBaseAttribute(allGameKeys[i])->get<std::string>();
+			std::vector<std::string> allMapEditorKeys = configFile->at("KeyBinding", "mapEditor")->getAllBaseAttributes();
 			for (unsigned int i = 0; i < allMapEditorKeys.size(); i++)
-				actionMap[allMapEditorKeys[i]] = configFile->getPath(Data::Path("KeyBinding", "mapEditor"))->getBaseAttribute(allMapEditorKeys[i])->get<std::string>();
+				actionMap[allMapEditorKeys[i]] = configFile->at("KeyBinding", "mapEditor")->getBaseAttribute(allMapEditorKeys[i])->get<std::string>();
 		}
 	}
 }
