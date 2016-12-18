@@ -22,6 +22,14 @@ Toolkit.commands.exit = {
 Toolkit.commands.help = {
     shortcuts = {"h", "help", "?"}
 };
+Toolkit.commands.object = {
+    shortcuts = {"o", "obj", "object"},
+    args = {
+        {name = "action", type = "string"},
+        {name = "objname", type = "string", optional = true},
+        {name = "attributes", type = "string", optional = true}
+    }
+}
 Toolkit.commands.package = {
     shortcuts = {"p", "pkg", "package"}, 
     args = {

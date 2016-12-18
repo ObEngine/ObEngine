@@ -7,12 +7,12 @@ namespace mse
 {
 	namespace Graphics
 	{
-		LevelSprite::LevelSprite(std::string decoName, std::string decoID)
+		LevelSprite::LevelSprite(std::string path, std::string decoID)
 		{
-			this->sprName = decoName;
+			this->sprName = path;
 			this->sprID = decoID;
 			this->returnSprite = new sfe::ComplexSprite;
-			System::Path("Sprites/LevelSprites/" + decoName).loadResource(&this->texture, System::Loaders::textureLoader);
+			System::Path(path).loadResource(&this->texture, System::Loaders::textureLoader);
 			this->returnSprite->setTexture(this->texture);
 		}
 
@@ -21,6 +21,14 @@ namespace mse
 			this->sprID = decoID;
 			this->drawable = false;
 			this->returnSprite = new sfe::ComplexSprite;
+		}
+
+		void LevelSprite::load(std::string path)
+		{
+			this->sprName = path;
+			this->returnSprite = new sfe::ComplexSprite;
+			System::Path(path).loadResource(&this->texture, System::Loaders::textureLoader);
+			this->returnSprite->setTexture(this->texture);
 		}
 
 		void LevelSprite::setSprite(sfe::ComplexSprite* spr)

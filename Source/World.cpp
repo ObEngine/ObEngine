@@ -117,7 +117,7 @@ namespace mse
 					}
 					Graphics::LevelSprite* tempSprite;
 					if (spritePath != "None")
-						tempSprite = new Graphics::LevelSprite(spritePath, spriteID);
+						tempSprite = new Graphics::LevelSprite("Sprites/LevelSprites/" + spritePath, spriteID);
 					else
 						tempSprite = new Graphics::LevelSprite(spriteID);
 					tempSprite->move(spritePosX, spritePosY);

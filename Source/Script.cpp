@@ -400,7 +400,7 @@ namespace mse
 						static_cast<void (Data::DataParser::*)(std::string)>(&Data::DataParser::createComplexAttribute),
 						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createComplexAttribute)
 						)
-					.addFunction("createDataObject", &Data::DataParser::createRootAttribute)
+					.addFunction("createRootAttribute", &Data::DataParser::createRootAttribute)
 					.addFunction("createFlag", &Data::DataParser::createFlag)
 					.addOverloadedFunctions("createListAttribute",
 						static_cast<void (Data::DataParser::*)(std::string, std::string)>(&Data::DataParser::createListAttribute),

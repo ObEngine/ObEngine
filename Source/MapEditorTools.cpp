@@ -200,12 +200,10 @@ namespace mse
 			}
 			if (newGameObject->doesHaveCollider()) {
 				std::cout << "Position of GO set !" << std::endl;
-				newGameObject->getCollider()->setPositionFromMaster(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
-				newGameObject->getLevelSprite()->setPosition(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
+				//FIX CURSOR POS
 			}
 			else if (newGameObject->doesHaveLevelSprite()) {
 				std::cout << "Position of GO::LS set !" << std::endl;
-				newGameObject->getLevelSprite()->setPosition(cursor->getX() + world->getCamX(), cursor->getY() + world->getCamY());
 			}
 		}
 
@@ -266,7 +264,7 @@ namespace mse
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			while (world->getSpriteByID(key) != NULL)
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			Graphics::LevelSprite* sprToAdd = new Graphics::LevelSprite(geid, key);
+			Graphics::LevelSprite* sprToAdd = new Graphics::LevelSprite("Sprites/LevelSprites/" + geid, key);
 			sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());
 			sprToAdd->setRotation(0);
 			sprToAdd->setScale(1, 1);

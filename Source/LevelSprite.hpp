@@ -55,8 +55,10 @@ namespace mse
 				void update();
 
 			public:
-				LevelSprite(std::string sprName, std::string sprID);
+				LevelSprite(std::string path, std::string sprID);
 				LevelSprite(std::string sprID);
+				void load(std::string path);
+
 				void setSprite(sfe::ComplexSprite* spr);
 				void setSprite(sf::Sprite* spr);
 				void setLayer(int layer);

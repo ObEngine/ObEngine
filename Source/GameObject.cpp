@@ -183,6 +183,10 @@ namespace mse
 				std::vector<std::string> decoAtrList;
 				int layer;
 				int zdepth;
+				if (obj->at("LevelSprite")->containsBaseAttribute("path")) {
+					std::cout << "Loading Sprite at : " << obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>() << std::endl;
+					objectLevelSprite.load(obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>());
+				}
 				decoRot = obj->at("LevelSprite")->getBaseAttribute("rotation")->get<int>();
 				decoSca = obj->at("LevelSprite")->getBaseAttribute("scale")->get<double>();
 				layer = obj->at("LevelSprite")->getBaseAttribute("layer")->get<int>();
@@ -289,7 +293,7 @@ namespace mse
 				{
 					if (hasAnimator)
 						this->objectAnimator.update();
-					if (hasLevelSprite)
+					if (hasLevelSprite && hasAnimator)
 						this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
 				}
 			}

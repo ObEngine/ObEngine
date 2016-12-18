@@ -350,7 +350,6 @@ namespace mse
 		}
 		ComplexAttribute* ComplexAttribute::getPath(std::string attributePath)
 		{
-			std::cout << "Trying to access Path :: " << attributePath << std::endl;
 			if (attributePath.size() > 0 && Functions::String::extract(attributePath, attributePath.size() - 1, 0) == "/")
 				attributePath = Functions::String::extract(attributePath, 0, 1);
 			std::vector<std::string> sPath = convertPath(attributePath);
