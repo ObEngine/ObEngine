@@ -108,7 +108,6 @@ This:useLocalTrigger("Update");
 function Local.Init()
   -- Set the animation for when the goat is flying to the right (You can imagine it already right ?)
   This:Animator():setKey("GOAT_FLYING_LEFT");
-  This:setInitialised(true); -- You need this line for every object that is visible in-game
 end
 
 function Local.Update(P) -- P is a table that contains every events parameters (here parameters for update)
@@ -135,7 +134,6 @@ This:useLocalTrigger("Click");
 function Local.Init()
     This:Animator():setKey("Close");
     opened = false;
-    This:setInitialised(true);
 end
 
 function Door.Open()
