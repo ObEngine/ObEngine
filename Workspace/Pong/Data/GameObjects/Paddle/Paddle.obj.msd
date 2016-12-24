@@ -1,6 +1,4 @@
 Paddle:
-    @Animator
-        path:"Sprites/GameObjects/Paddle"
     @Collider
         solid:True
         click:False
@@ -10,6 +8,7 @@ Paddle:
             "32,128"
             "0,128"
     @LevelSprite
+        path:"Sprites/GameObjects/Paddle/paddle.png"
         position:"relative"
         rotation:0
         scale:1.0

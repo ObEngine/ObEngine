@@ -1,6 +1,4 @@
 Ball:
-    @Animator
-        path:"Sprites/GameObjects/Ball"
     @Collider
         solid:True
         click:False
@@ -10,6 +8,7 @@ Ball:
             "64,64"
             "0,64"
     @LevelSprite
+        path:"Sprites/GameObjects/Ball/ball.png"
         position:"relative"
         offsetX:-16
         offsetY:-16

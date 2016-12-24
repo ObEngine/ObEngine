@@ -289,12 +289,13 @@ namespace mse
 						(*this->scriptEngine)["cpp_param"] = nullptr;
 					}
 				}
-				if (initialised)
-				{
-					if (hasAnimator)
+				if (initialised) {
+					if (hasAnimator) {
 						this->objectAnimator.update();
-					if (hasLevelSprite && hasAnimator)
-						this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
+						if (hasLevelSprite) {
+							this->objectLevelSprite.setSprite(this->objectAnimator.getSprite());
+						}
+					}		
 				}
 			}
 		}
@@ -320,7 +321,7 @@ namespace mse
 		}
 		bool GameObject::canDisplay()
 		{
-			return (hasAnimator && hasLevelSprite);
+			return hasLevelSprite;
 		}
 		bool GameObject::canCollide()
 		{
