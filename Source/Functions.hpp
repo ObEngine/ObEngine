@@ -213,12 +213,19 @@ namespace mse
 		template<typename V>
 		int Vector::indexOfElement(V item, const std::vector<V>& vector)
 		{
-			for (size_t k = 0; k < vector.size(); k++)
-			{
-				if (item == vector[k])
-					return k;
+			for (int k = 0; k < vector.size(); k++) {
+				std::cout << k << " >> : " << vector[k] << std::endl;
 			}
-			return -1;
+			for (unsigned int k = 0; k < vector.size(); k++) {
+				std::cout << "Compare : " << k << " : " << item << " / " << vector[k] << std::endl;
+				if (item == vector[k])
+				{
+					std::cout << "FoundItem -> Returning : " << k << std::endl;
+					return k;
+				}
+					
+			}
+			std::cout << "<Error:Functions:Vector>[indexOfElement] : Can't find element : " << item << " in vector" << std::endl;
 		}
 		template <typename V>
 		inline void Vector::eraseAll(std::vector<V>& vector, V elem)

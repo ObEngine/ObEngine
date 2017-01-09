@@ -9,6 +9,7 @@
 #include "Animation.hpp"
 #include "Collisions.hpp"
 #include "DataParser.hpp"
+#include "DataParserLuaBridge.hpp"
 #include "LevelSprite.hpp"
 #include "Script.hpp"
 #include "Triggers.hpp"
@@ -57,6 +58,7 @@ namespace mse
 				bool colliderClick = false;
 				bool levelSpriteRelative = true;
 				bool hasLevelSprite = false;
+				bool hasScriptEngine = false;
 				bool initialised = false;
 				bool updated = true;
 
@@ -80,6 +82,7 @@ namespace mse
 				bool canClick();
 				bool doesHaveCollider();
 				bool doesHaveLevelSprite();
+				bool doesHaveScriptEngine();
 				bool isLevelSpriteRelative();
 				bool getUpdateState();
 				void setUpdateState(bool state);

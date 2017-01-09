@@ -100,6 +100,7 @@ namespace mse
 				bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
 				std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
 				void update();
+				void clear();
 		};
 
 		template<typename P>

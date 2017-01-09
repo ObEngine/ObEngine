@@ -121,8 +121,11 @@ namespace mse
 			~ListAttribute();
 			unsigned int getSize();
 			std::string getDataType();
-			BaseAttribute* getElement(unsigned int index);
-			void createElement(std::string element);
+			BaseAttribute* get(unsigned int index);
+			void push(std::string element);
+			void insert(unsigned int index, std::string element);
+			void clear();
+			void erase(unsigned int index);
 			Attribute* extractElement(Attribute* element);
 		};
 

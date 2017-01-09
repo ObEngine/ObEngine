@@ -26,7 +26,7 @@ namespace mse
 				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
 			Data::DataParser loadingStrDP; loadingStrDP.parseFile("Sprites/Menus/loading.dat.msd");
 			loadingStrDP.hookNavigator(new Data::DataParserNavigator)->setCurrentRootAttribute("Loading");
-			std::string loadingRandomStr = loadingStrDP.getListAttribute("loadingStr")->getElement(
+			std::string loadingRandomStr = loadingStrDP.getListAttribute("loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "loadingStr") - 1))->get<std::string>();
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();

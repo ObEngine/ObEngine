@@ -150,7 +150,7 @@ namespace mse
 					{
 						std::vector<std::string> requireChoices;
 						for (int reqI = 0; reqI < requires->getPath(requireItem)->getListAttribute("choices")->getSize(); reqI++)
-							requireChoices.push_back(requires->getPath(requireItem)->getListAttribute("choices")->getElement(reqI)->get<std::string>());
+							requireChoices.push_back(requires->getPath(requireItem)->getListAttribute("choices")->get(reqI)->get<std::string>());
 						gui->createDroplist(containerName, objName + "_" + requireItem + "_Input", 200, 
 							widgetVerticalPosition, 16, "", false, "weblysleekuil.ttf", "GREY", requireChoices);
 					}

@@ -111,21 +111,9 @@ namespace mse
 		{
 			for (std::string currentRequirement : requires.getAllAttributes()) {
 				std::cout << "Current Requirement : " << currentRequirement << std::endl;
-				//TODO : Expand to LIST / TABLE
-				if (requires.getAttributeType(currentRequirement) == Data::Types::BaseAttribute) {
-					if (requires.getBaseAttribute(currentRequirement)->getDataType() == "int") {
-						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<int>();
-					}
-					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "string") {
-						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<std::string>();
-					}
-					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "bool") {
-						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<bool>();
-					}
-					else if (requires.getBaseAttribute(currentRequirement)->getDataType() == "float") {
-						(*obj->getScriptEngine())["LuaCore"]["Lua_ReqList"][currentRequirement] = requires.getBaseAttribute(currentRequirement)->get<double>();
-					}
-				}
+				requires.setID("Lua_ReqList");
+				kaguya::LuaTable requireTable = ((*obj->getScriptEngine())["LuaCore"]);
+				Data::DataBridge::complexAttributeToLuaTable(requireTable, requires);
 			}
 		}
 
@@ -153,6 +141,9 @@ namespace mse
 					this->objectAnimator.setPath(animatorPath);
 					this->objectAnimator.loadAnimator();
 				}
+				if (obj->at("Animator")->containsBaseAttribute("anim")) {
+					this->objectAnimator.setKey(obj->at("Animator")->getBaseAttribute("anim")->get<std::string>());
+				}
 				hasAnimator = true;
 			}
 			//Collider
@@ -166,7 +157,7 @@ namespace mse
 				colliderPointSize = obj->at("Collider")->getListAttribute("polygonPoints")->getSize();
 				for (int i = 0; i < colliderPointSize; i++)
 				{
-					std::string getPt = obj->at("Collider")->getListAttribute("polygonPoints")->getElement(i)->get<std::string>();
+					std::string getPt = obj->at("Collider")->getListAttribute("polygonPoints")->get(i)->get<std::string>();
 					std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 					objectCollider.addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
 				}
@@ -197,9 +188,9 @@ namespace mse
 					sprOffY = obj->at("LevelSprite")->getBaseAttribute("offsetY")->get<int>();
 				if (obj->at("LevelSprite")->containsListAttribute("attributeList"))
 				{
-					int atrListSize = obj->getListAttribute("attributeList")->getSize();
+					int atrListSize = obj->at("LevelSprite")->getListAttribute("attributeList")->getSize();
 					for (int j = 0; j < atrListSize; j++)
-						decoAtrList.push_back(obj->at("LevelSprite")->getListAttribute("attributeList")->getElement(j)->get<std::string>());
+						decoAtrList.push_back(obj->at("LevelSprite")->getListAttribute("attributeList")->get(j)->get<std::string>());
 				}
 				objectLevelSprite.setRotation(decoRot);
 				objectLevelSprite.setScale(decoSca, decoSca);
@@ -210,9 +201,45 @@ namespace mse
 				hasLevelSprite = true;
 			}
 			//Script
-			if (obj->containsComplexAttribute("Script"))
-				if (obj->at("Script")->containsBaseAttribute("priority")) 
+			if (obj->containsComplexAttribute("Script")) {
+				hasScriptEngine = true;
+				this->scriptEngine = new kaguya::State;
+				this->privateKey = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
+				this->publicKey = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
+				Script::TriggerDatabase::GetInstance()->createNamespace(this->privateKey);
+				Script::TriggerDatabase::GetInstance()->createNamespace(this->publicKey);
+				this->localTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup(this->privateKey, "Local");
+
+				System::Path("Lib/GameLib/ScrInit.lua").loadResource(this->scriptEngine, System::Loaders::luaLoader);
+				System::Path("Lib/GameLib/ObjectInit.lua").loadResource(this->scriptEngine, System::Loaders::luaLoader);
+				loadScrGameObject(this, this->scriptEngine);
+				(*this->scriptEngine)["ID"] = id;
+				(*this->scriptEngine)["Private"] = this->privateKey;
+				(*this->scriptEngine)["Public"] = this->publicKey;
+				(*this->scriptEngine)("protect(\"ID\")");
+				(*this->scriptEngine)("protect(\"Private\")");
+				(*this->scriptEngine)("protect(\"Public\")");
+
+				this->localTriggers->addTrigger("Init");
+				this->localTriggers->setTriggerState("Init", true); // Supposed to be triggered by UseLocalTrigger ??
+				this->localTriggers->addTrigger("Update");
+				this->localTriggers->setPermanent("Update", true);
+				this->localTriggers->setTriggerState("Update", true);
+				this->localTriggers->addTrigger("Query");
+				this->localTriggers->addTrigger("Collide");
+				this->localTriggers->addTrigger("Click");
+				this->localTriggers->addTrigger("Press");
+				this->localTriggers->addTrigger("Delete");
+				if (obj->at("Script")->containsListAttribute("scriptList")) {
+					int scriptListSize = obj->at("Script")->getListAttribute("scriptList")->getSize();
+					for (int i = 0; i < scriptListSize; i++) {
+						std::string getScrName = obj->at("Script")->getListAttribute("scriptList")->get(i)->get<std::string>();
+						System::Path(getScrName).loadResource(this->scriptEngine, System::Loaders::luaLoader);
+					}
+				}
+				if (obj->at("Script")->containsBaseAttribute("priority"))
 					scrPriority = obj->at("Script")->getBaseAttribute("priority")->get<int>();
+			}
 		}
 		void GameObject::hookLuaState(kaguya::State* lua)
 		{
@@ -338,6 +365,10 @@ namespace mse
 		bool GameObject::doesHaveLevelSprite()
 		{
 			return hasLevelSprite;
+		}
+		bool GameObject::doesHaveScriptEngine()
+		{
+			return hasScriptEngine;
 		}
 		bool GameObject::isLevelSpriteRelative()
 		{

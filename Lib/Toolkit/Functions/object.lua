@@ -35,6 +35,10 @@ function object(argtable)
                 objSaveFile:getPath(argtable.objname):createComplexAttribute("Animator");
                 objSaveFile:getPath(argtable.objname .. "/" .. "Animator"):createBaseAttribute("path",
                 "Sprites/GameObjects/" .. argtable.objname);
+                Color.print({
+                    {color = "green", text = "+ Using component : "},
+                    {color = "cyan", text = "(A)nimator\n"}
+                }, 2);
             end
             if (string.find(argtable.attributes, "L") ~= nil) then
                 haveLevelSprite = true;

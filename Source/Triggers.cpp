@@ -316,5 +316,13 @@ namespace mse
 				delayedTriggers.erase(delayedTriggers.begin() + triggeredDelayedTriggers[i]);
 			}
 		}
+		void TriggerDatabase::clear()
+		{
+			delayedTriggers.clear();
+			databaseChrono.stop();
+			allTriggers.clear();
+			databaseChrono.start();
+			//Need to delete Map-only stuff !!
+		}
 	}
 }

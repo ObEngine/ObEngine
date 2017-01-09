@@ -116,8 +116,9 @@ namespace mse
 							spriteAtrList.push_back(mapParse.getListItem("attributeList", j)->get<std::string>());
 					}
 					Graphics::LevelSprite* tempSprite;
-					if (spritePath != "None")
-						tempSprite = new Graphics::LevelSprite("Sprites/LevelSprites/" + spritePath, spriteID);
+					if (spritePath != "None") {
+						tempSprite = new Graphics::LevelSprite(spritePath, spriteID);
+					}
 					else
 						tempSprite = new Graphics::LevelSprite(spriteID);
 					tempSprite->move(spritePosX, spritePosY);
@@ -239,8 +240,13 @@ namespace mse
 					int objY = 0;
 					int colOffX = 0;
 					int colOffY = 0;
-					if (mapParse.containsComplexAttribute("Requires"))
+					if (mapParse.containsComplexAttribute("Requires")) {
+						Data::ComplexAttribute* objectRequirements = mapParse[mapParse.accessNavigator()->getFullPath()]->at("Requires");
+						mapParse[mapParse.accessNavigator()->getFullPath()]->removeOwnership(objectRequirements);
 						Script::GameObjectRequires::ApplyRequirements(this->getGameObject(allObjects[i]), *mapParse.getComplexAttribute("Requires"));
+						objectRequirements->setParent(mapParse[mapParse.accessNavigator()->getFullPath()]);
+					}
+						
 					/*if (this->getGameObject(allObjects[i])->canDisplay())
 					{
 						if (mapParse.containsBaseAttribute("posX"))
@@ -263,7 +269,7 @@ namespace mse
 				int scriptAmt = mapParse.getListAttribute("gameScripts")->getSize();
 				for (int i = 0; i < scriptAmt; i++)
 				{
-					std::string scriptName = mapParse.getListAttribute("gameScripts")->getElement(i)->get<std::string>();
+					std::string scriptName = mapParse.getListAttribute("gameScripts")->get(i)->get<std::string>();
 					System::Path(scriptName).loadResource(worldScriptEngine, System::Loaders::luaLoader);
 					scriptArray.push_back(scriptName);
 				}
@@ -325,7 +331,7 @@ namespace mse
 				if (backSpriteArray[i]->getParent() == nullptr)
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(backSpriteArray[i]->getID());
-					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("type", backSpriteArray[i]->getName());
+					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("path", backSpriteArray[i]->getName());
 					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("posX", (int)backSpriteArray[i]->getX());
 					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("posY", (int)backSpriteArray[i]->getY());
 					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("rotation", (int)backSpriteArray[i]->getRotation());
@@ -691,40 +697,12 @@ namespace mse
 			System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
 			Data::ComplexAttribute* gameObjectData = getGameObjectFile.getRootAttribute(obj);
 			newGameObject->loadGameObject(gameObjectData);
-			newGameObject->scriptEngine = new kaguya::State;
 			this->gameObjectsMap[id] = newGameObject;
-			newGameObject->privateKey = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
-			newGameObject->publicKey = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
-			Script::TriggerDatabase::GetInstance()->createNamespace(newGameObject->privateKey);
-			Script::TriggerDatabase::GetInstance()->createNamespace(newGameObject->publicKey);
-			newGameObject->localTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup(newGameObject->privateKey, "Local");
-			//Script Loading
-			System::Path("Lib/GameLib/ScrInit.lua").loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
-			System::Path("Lib/GameLib/ObjectInit.lua").loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
-			loadScrGameObject(newGameObject, newGameObject->scriptEngine);
-			(*newGameObject->scriptEngine)["ID"] = id;
-			(*newGameObject->scriptEngine)["Private"] = newGameObject->privateKey;
-			(*newGameObject->scriptEngine)["Public"] = newGameObject->publicKey;
-			(*newGameObject->scriptEngine)("protect(\"ID\")");
-			(*newGameObject->scriptEngine)("protect(\"Private\")");
-			(*newGameObject->scriptEngine)("protect(\"Public\")");
-			loadWorldLib(newGameObject->scriptEngine);
-			newGameObject->localTriggers->addTrigger("Init");
-			newGameObject->localTriggers->setTriggerState("Init", true); // Supposed to be triggered by UseLocalTrigger ??
-			newGameObject->localTriggers->addTrigger("Update");
-			newGameObject->localTriggers->setPermanent("Update", true);
-			newGameObject->localTriggers->setTriggerState("Update", true);
-			newGameObject->localTriggers->addTrigger("Query");
-			newGameObject->localTriggers->addTrigger("Collide");
-			newGameObject->localTriggers->addTrigger("Click");
-			newGameObject->localTriggers->addTrigger("Press");
-			newGameObject->localTriggers->addTrigger("Delete");
-			int scriptListSize = gameObjectData->at("Script")->getListAttribute("scriptList")->getSize();
-			for (int i = 0; i < scriptListSize; i++)
-			{
-				std::string getScrName = gameObjectData->at("Script")->getListAttribute("scriptList")->getElement(i)->get<std::string>();
-				System::Path(getScrName).loadResource(newGameObject->scriptEngine, System::Loaders::luaLoader);
+			if (newGameObject->hasScriptEngine) {
+				loadWorldLib(newGameObject->scriptEngine);
+				(*newGameObject->scriptEngine)["World"] = this;
 			}
+				
 			this->orderUpdateScrArray();
 			if (newGameObject->canDisplay())
 			{
@@ -738,7 +716,6 @@ namespace mse
 			}
 			newGameObject->getLevelSprite()->setParent(newGameObject);
 			newGameObject->getCollider()->setParent(newGameObject);
-			(*newGameObject->scriptEngine)["World"] = this;
 			delete gameObjectData;
 			return newGameObject;
 		}
