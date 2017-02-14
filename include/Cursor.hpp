@@ -29,7 +29,6 @@ namespace mse
 				bool doesUpdateOutsideWindow = false;
 				Script::TriggerGroup* cursorTriggers;
 				Animation::Animator cursorAnim;
-				Collision::PolygonalCollider* cursorCollider;
 				sf::Sprite* cursorSprite;
 				friend class CoreHook;
 
@@ -50,7 +49,6 @@ namespace mse
 				bool getClicked(std::string clic);
 				bool getReleased(std::string clic);
 				sf::Sprite* getSprite();
-				Collision::PolygonalCollider* getCollider();
 		};
 	}
 }

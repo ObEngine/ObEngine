@@ -65,6 +65,8 @@ namespace mse
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
+			Collision::PolygonalCollider cursorCollider("cursor");
+			cursorCollider.addPoint(0, 0); cursorCollider.addPoint(1, 0); cursorCollider.addPoint(1, 1); cursorCollider.addPoint(0, 1);
 			cursor.updateOutsideWindow(true);
 			Script::hookCore.dropValue("Cursor", &cursor);
 			std::cout << "Creation Chrono : " << "[Cursor]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
@@ -748,7 +750,7 @@ namespace mse
 					{
 						std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
 						std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-							cursor.getCollider(), -world.getCamX(), -world.getCamY());
+							&cursorCollider, -world.getCamX(), -world.getCamY());
 						for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 						{
 							for (int j = 0; j < clickableGameObjects.size(); j++)

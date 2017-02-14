@@ -47,6 +47,8 @@ namespace mse
 			//Cursor
 			Cursor::Cursor cursor(&window);
 			cursor.updateOutsideWindow(true);
+			Collision::PolygonalCollider cursorCollider("cursor");
+			cursorCollider.addPoint(0, 0); cursorCollider.addPoint(1, 0); cursorCollider.addPoint(1, 1); cursorCollider.addPoint(0, 1);
 			Script::hookCore.dropValue("Cursor", &cursor);
 
 			//World Creation / Loading
@@ -111,9 +113,10 @@ namespace mse
 
 				if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 				{
+					cursorCollider.setPosition(cursor.getX(), cursor.getY());
 					std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
 					std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-						cursor.getCollider(), -world.getCamX(), -world.getCamY());
+						&cursorCollider, -world.getCamX(), -world.getCamY());
 					for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 					{
 						for (int j = 0; j < clickableGameObjects.size(); j++)

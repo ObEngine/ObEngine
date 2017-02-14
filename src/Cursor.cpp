@@ -12,12 +12,6 @@ namespace mse
 			this->window = window;
 			cursorAnim.loadAnimator();
 			cursorAnim.setKey("IDLE");
-			cursorCollider = new Collision::PolygonalCollider("Cursor");
-			cursorCollider->addPoint(0, 0);
-			cursorCollider->addPoint(2, 0);
-			cursorCollider->addPoint(2, 2);
-			cursorCollider->addPoint(0, 2);
-			cursorCollider->setPositionFromMaster(this->x, this->y);
 
 			cursorTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")
 				->addTrigger("Clicked")
@@ -146,7 +140,6 @@ namespace mse
 				}
 			}
 			cursorSprite->setPosition(x, y);
-			cursorCollider->setPositionFromMaster(this->x, this->y);
 		}
 
 		void Cursor::handleTriggers()
@@ -233,11 +226,6 @@ namespace mse
 		sf::Sprite* Cursor::getSprite()
 		{
 			return cursorSprite;
-		}
-
-		Collision::PolygonalCollider* Cursor::getCollider()
-		{
-			return cursorCollider;
 		}
 	}
 }
