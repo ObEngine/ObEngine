@@ -235,13 +235,13 @@ namespace mse
 		{
 			return this->visible;
 		}
-		Script::GameObject* LevelSprite::getParent()
+		std::string LevelSprite::getParentID()
 		{
-			return parent;
+			return parentID;
 		}
-		void LevelSprite::setParent(Script::GameObject* parent)
+		void LevelSprite::setParentID(std::string parent)
 		{
-			this->parent = parent;
+			this->parentID = parent;
 		}
 	}
 }

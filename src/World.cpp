@@ -315,7 +315,7 @@ namespace mse
 			dataStore->createRootAttribute("LevelSprites");
 			for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 			{
-				if (backSpriteArray[i]->getParent() == nullptr)
+				if (backSpriteArray[i]->getParentID() == "")
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(backSpriteArray[i]->getID());
 					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("path", backSpriteArray[i]->getName());
@@ -336,7 +336,7 @@ namespace mse
 			}
 			for (unsigned int i = 0; i < frontSpriteArray.size(); i++)
 			{
-				if (frontSpriteArray[i]->getParent() == nullptr)
+				if (frontSpriteArray[i]->getParentID() == "")
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(frontSpriteArray[i]->getID());
 					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("path", frontSpriteArray[i]->getName());
@@ -357,7 +357,7 @@ namespace mse
 			dataStore->createRootAttribute("Collisions");
 			for (unsigned int i = 0; i < collidersArray.size(); i++)
 			{
-				if (collidersArray[i]->getParent() == nullptr)
+				if (collidersArray[i]->getParentID() == "")
 				{
 					dataStore->at("Collisions")->createComplexAttribute(collidersArray[i]->getID());
 					dataStore->at("Collisions", collidersArray[i]->getID())->createListAttribute("polygonPoints", "string");
@@ -690,8 +690,8 @@ namespace mse
 			{
 				this->addCollider(newGameObject->getCollider());
 			}
-			newGameObject->getLevelSprite()->setParent(newGameObject);
-			newGameObject->getCollider()->setParent(newGameObject);
+			newGameObject->getLevelSprite()->setParentID(id);
+			newGameObject->getCollider()->setParentID(id);
 			delete gameObjectData;
 			return newGameObject;
 		}

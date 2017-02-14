@@ -362,7 +362,7 @@ namespace mse
 					}
 					if (drawLines) {
 						if (!Functions::Vector::isInList(i, highlightedLines)) {
-							if (parent == nullptr)
+							if (parentID == "")
 								Collision::drawLine(surf, allPoints[i].first + drOffX, allPoints[i].second + drOffY, 
 									allPoints[nextIndex].first + drOffX, allPoints[nextIndex].second + drOffY);
 							else
@@ -451,14 +451,14 @@ namespace mse
 			if (lines) highlightedLines.clear();
 		}
 
-		Script::GameObject* PolygonalCollider::getParent()
+		std::string PolygonalCollider::getParentID()
 		{
-			return parent;
+			return parentID;
 		}
 
-		void PolygonalCollider::setParent(Script::GameObject* parent)
+		void PolygonalCollider::setParentID(std::string parent)
 		{
-			this->parent = parent;
+			this->parentID = parent;
 		}
 
 		Collision::PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other)

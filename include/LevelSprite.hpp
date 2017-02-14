@@ -16,10 +16,6 @@
 
 namespace mse
 {
-	namespace Script
-	{
-		class GameObject;
-	}
 	namespace Graphics
 	{
 		class LevelSprite
@@ -50,7 +46,7 @@ namespace mse
 				sf::Texture texture;
 				sfe::ComplexSprite* returnSprite;
 				sf::Color spriteColor = sf::Color(255, 255, 255);
-				Script::GameObject* parent = nullptr;
+				std::string parentID = "";
 				void update();
 
 			public:
@@ -96,8 +92,8 @@ namespace mse
 				bool isDrawable();
 				void setVisible(bool visible);
 				bool isVisible();
-				Script::GameObject* getParent();
-				void setParent(Script::GameObject* parent);
+				std::string getParentID();
+				void setParentID(std::string parent);
 		};
 	}
 }

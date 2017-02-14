@@ -454,7 +454,7 @@ namespace mse
 					//Sprite Move
 					if (cursor.getPressed("Left") && selectedSprite != nullptr)
 					{
-						if (selectedSprite->getParent() == nullptr)
+						if (selectedSprite->getParentID() == "")
 						{
 							selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
 								cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
@@ -588,9 +588,9 @@ namespace mse
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
 					{
 						selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
-						if (colliderPtGrabbed == 0 && selectedMasterCollider->getParent() != nullptr && selectedMasterCollider->getParent()->canDisplay())
+						if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
-							selectedMasterCollider->getParent()->getLevelSprite()->setPosition(
+							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
 								cursor.getX() + world.getCamX(),
 								cursor.getY() + world.getCamY());
 						}
@@ -613,18 +613,18 @@ namespace mse
 						}
 						selectedMasterCollider = tempCol;
 						selectedMasterCollider->setSelected(true);
-						if (selectedMasterCollider->getParent() != nullptr) selectedMasterCollider->getParent()->setUpdateState(false);
+						if (selectedMasterCollider->getParentID() != "") world.getGameObject(selectedMasterCollider->getParentID())->setUpdateState(false);
 						masterColliderGrabbed = true;
 					}
 					//Collision Master Move
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 					{
 						selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
-						if (selectedMasterCollider->getParent() != nullptr && selectedMasterCollider->getParent()->canDisplay())
+						if (selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
 							std::pair<int, int> zeroCoords = selectedMasterCollider->getPointPosition(0);
 							std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointPosition();
-							selectedMasterCollider->getParent()->getLevelSprite()->setPosition(
+							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
 								cursor.getX() + world.getCamX() + zeroCoords.first - masterCoords.first,
 								cursor.getY() + world.getCamY() + zeroCoords.second - masterCoords.second);
 						}
@@ -633,7 +633,7 @@ namespace mse
 					if (cursor.getReleased("Left") && masterColliderGrabbed)
 					{
 						masterColliderGrabbed = false;
-						if (selectedMasterCollider->getParent() != nullptr) selectedMasterCollider->getParent()->setUpdateState(true);
+						if (selectedMasterCollider->getParentID() != "") world.getGameObject(selectedMasterCollider->getParentID())->setUpdateState(true);
 					}
 					if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && !masterColliderGrabbed)
 					{

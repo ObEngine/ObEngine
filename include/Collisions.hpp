@@ -13,10 +13,6 @@
 
 namespace mse
 {
-	namespace Script
-	{
-		class GameObject;
-	}
 	namespace Collision
 	{
 		void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w = 2, sf::Color col1 = sf::Color(255, 255, 255));
@@ -54,7 +50,7 @@ namespace mse
 
 				std::vector<PolygonalCollider*> originChildren;
 				PolygonalCollider* origin = nullptr;
-				Script::GameObject* parent = nullptr;
+				std::string parentID = "";
 			public:
 				PolygonalCollider(std::string id);
 				~PolygonalCollider();
@@ -87,8 +83,8 @@ namespace mse
 				std::vector<DoublePoint> getAllPoints();
 				double getSideAngle(int side);
 				double getSideLength(int side);
-				Script::GameObject* getParent();
-				void setParent(Script::GameObject* parent);
+				std::string getParentID();
+				void setParentID(std::string parent);
 				Collision::PolygonalCollider joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other);
 				bool testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy, bool opt = false);
 				std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy);
