@@ -535,7 +535,6 @@ namespace mse
 					.addFunction("clear", &Data::ListAttribute::clear)
 					.addFunction("insert", &Data::ListAttribute::insert)
 					.addFunction("erase", &Data::ListAttribute::erase)
-					.addFunction("getID", &Data::ListAttribute::getID)
 					.addFunction("getSize", &Data::ListAttribute::getSize)
 					.addFunction("getDataType", &Data::ListAttribute::getDataType)
 				);
