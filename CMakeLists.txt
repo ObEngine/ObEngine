@@ -27,10 +27,8 @@ include_directories(extlibs/include/)
 include_directories(${LUA53_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
 
-target_link_libraries(mse 
-  ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclip.so
-  ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclipper.so
-)
+target_link_libraries(mse "${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclip.so")
+target_link_libraries(mse "${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclipper.so")
 
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
