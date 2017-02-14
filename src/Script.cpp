@@ -29,8 +29,6 @@ namespace mse
 					(*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyBinder*>();
 				else if (gt == Functions::Type::getClassType<Math::MathExp*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Math::MathExp*>();
-				else if (gt == Functions::Type::getClassType<Input::Serial*>())
-					(*lua)["Hook"][name] = containerMap[name].second->as<Input::Serial*>();
 				else if (gt == Functions::Type::getClassType<Graphics::TextRenderer*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Graphics::TextRenderer*>();
 				else if (gt == Functions::Type::getClassType<Script::TriggerDatabase*>())
@@ -115,7 +113,6 @@ namespace mse
 				if (lib[0] == "Light" || all) { CoreLib::loadLight(lua, (all) ? std::vector<std::string>{"Light"} : lib);    found = true; }
 				if (lib[0] == "MathExp" || all) { CoreLib::loadMathExp(lua, (all) ? std::vector<std::string>{"MathExp"} : lib);    found = true; }
 				if (lib[0] == "Particle" || all) { CoreLib::loadParticle(lua, (all) ? std::vector<std::string>{"Particle"} : lib);    found = true; }
-				if (lib[0] == "Serial" || all) { CoreLib::loadSerial(lua, (all) ? std::vector<std::string>{"Serial"} : lib);    found = true; }
 				if (lib[0] == "SFML" || all) { CoreLib::loadSFML(lua, (all) ? std::vector<std::string>{"SFML"} : lib);    found = true; }
 				if (lib[0] == "STD" || all) { CoreLib::loadSTD(lua, (all) ? std::vector<std::string>{"STD"} : lib);    found = true; }
 				if (lib[0] == "Trigger" || all) { CoreLib::loadTrigger(lua, (all) ? std::vector<std::string>{"Trigger"} : lib);    found = true; }
@@ -910,26 +907,6 @@ namespace mse
 				);
 			}
 		}
-		void CoreLib::loadSerial(kaguya::State* lua, std::vector<std::string> args)
-		{
-			registerLib(lua, Functions::Vector::join(args, "."));
-			bool importAll = args.size() == 1;
-			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Serial"])) (*lua)["Core"]["Serial"] = kaguya::NewTable();
-			if (importAll || args[1] == "Serial")
-			{
-				(*lua)["Core"]["Serial"]["Serial"].setClass(kaguya::UserdataMetatable<Input::Serial>()
-					.addFunction("IsConnected", &Input::Serial::IsConnected)
-					.addFunction("readData", &Input::Serial::readData)
-					.addFunction("getPortName", &Input::Serial::getPortName)
-					.addFunction("ReadData", &Input::Serial::ReadData)
-					.addFunction("WriteData", &Input::Serial::WriteData)
-					);
-				foundPart = true;
-			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSerial] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
-		}
-
 		void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 		{
 			registerLib(lua, Functions::Vector::join(args, "."));

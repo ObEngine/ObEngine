@@ -28,7 +28,6 @@
 #include "Light.hpp"
 #include "GameObject.hpp"
 #include "EditorGrid.hpp"
-#include "Serial.hpp"
 #include "Network.hpp"
 #include "MapEditorTools.hpp"
 #include "FramerateManager.hpp"

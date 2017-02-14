@@ -17,7 +17,6 @@
 #include "Light.hpp"
 #include "MathExp.hpp"
 #include "Particle.hpp"
-#include "Serial.hpp"
 #include "Triggers.hpp"
 
 namespace mse
@@ -45,7 +44,6 @@ namespace mse
 			void loadLight(kaguya::State* lua, std::vector<std::string> args);
 			void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
 			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
-			void loadSerial(kaguya::State* lua, std::vector<std::string> args);
 			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);

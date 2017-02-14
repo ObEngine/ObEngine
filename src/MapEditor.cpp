@@ -86,11 +86,6 @@ namespace mse
 			if (!depthOfFieldEnabled) world.setBlurMul(0.0);
 			std::cout << "Creation Chrono : " << "[World]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-			//Serial
-			configFile.accessNavigator()->setCurrentRootAttribute("Developpement");
-			std::string serialPort = (configFile.containsBaseAttribute("COMM")) ? configFile.getBaseAttribute("COMM")->get<std::string>() : "";
-			Input::Serial serial(serialPort.c_str());
-
 			//Socket
 			Input::NetworkHandler networkHandler;
 
@@ -726,7 +721,6 @@ namespace mse
 
 				//Triggers Handling
 				networkHandler.handleTriggers();
-				serial.handleTriggers();
 				cursor.handleTriggers();
 				keybind.handleTriggers();
 
