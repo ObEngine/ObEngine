@@ -8,8 +8,8 @@
 #include <vector>
 #include <map>
 #include <SFML/Graphics.hpp>
+#include <any/any.hpp>
 
-#include "any.hpp"
 #include "Functions.hpp"
 #include "Animation.hpp"
 #include "TimeManager.hpp"

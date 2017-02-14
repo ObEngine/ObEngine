@@ -6,8 +6,8 @@
 #include <string>
 #include <iostream>
 #include <kaguya/kaguya.hpp>
+#include <any/any.hpp>
 
-#include "any.hpp"
 #include "Console.hpp"
 #include "Cursor.hpp"
 #include "Dialog.hpp"

@@ -6,8 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <iostream>
+#include <clipper/clipper.hpp>
 
-#include "clipper.hpp"
 #include "Functions.hpp"
 
 
