@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <clip.h>
+#include <clip/clip.h>
 
 #include "World.hpp"
 #include "DataParser.hpp"
