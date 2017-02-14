@@ -20,7 +20,7 @@ add_executable(mse ${PG_MSE} ${HD_MSE})
 
 include_directories("include/")
 include_directories("extlibs/include/")
-target_link_libraries(mse ${EXECUTABLE_NAME} "extlibs/lib/")
+link_directories("extlibs/lib")
 
 include_directories(${LUA53_INCLUDE_DIR})
 include_directories("extlibs/include")
