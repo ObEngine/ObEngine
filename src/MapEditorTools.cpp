@@ -47,7 +47,7 @@ namespace mse
 				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
 				sprNameText.setString(splittedPath[splittedPath.size() - 1]);
 				sprNameText.setCharacterSize(16);
-				sprNameText.setColor(sf::Color(255, 255, 255));
+				sprNameText.setFillColor(sf::Color(255, 255, 255));
 				_instance->renderer.draw(sprNameText);
 				_instance->renderer.display();
 				_instance->cache[path] = new sf::Texture(_instance->renderer.getTexture());

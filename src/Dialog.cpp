@@ -121,10 +121,10 @@ namespace mse
 
 			dialogText->setFont(*dialogFont);
 			dialogText->setCharacterSize(32);
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 			speakerText->setFont(*dialogFont);
 			speakerText->setCharacterSize(48);
-			speakerText->setColor(sf::Color(255, 255, 255, 255));
+			speakerText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			this->locals["circleAnim"] = circleAnim;
 			this->locals["dialogLineSpr"] = dialogLineSpr;
@@ -219,7 +219,7 @@ namespace mse
 
 			dialogText->setFont(*dialogFont);
 			dialogText->setCharacterSize(32);
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			this->locals["dialogFont"] = dialogFont;
 			this->locals["dialogText"] = dialogText;
@@ -267,7 +267,7 @@ namespace mse
 			Functions::String::regenerateEncoding(currentPhr);
 			dialogText->setString(sf::String(currentPhr));
 			dialogText->setPosition(borderSize, Functions::Coord::transformY(540));
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			renTex.display();
 			*dispTex = renTex.getTexture();
@@ -290,7 +290,7 @@ namespace mse
 			sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
 			sf::Text* dialogText = this->locals["dialogText"].as<sf::Text*>();
 			double* textAlpha = this->locals["textAlpha"].as<double*>();
-			dialogText->setColor(sf::Color(255, 255, 255, *textAlpha));
+			dialogText->setFillColor(sf::Color(255, 255, 255, *textAlpha));
 
 			surf->draw(*dispSpr);
 			surf->draw(*dialogText);
@@ -326,15 +326,15 @@ namespace mse
 
 			dialogText->setFont(*dialogFont);
 			dialogText->setCharacterSize(40);
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			fAnswer->setFont(*dialogFont);
 			dialogText->setCharacterSize(30);
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			sAnswer->setFont(*dialogFont);
 			sAnswer->setCharacterSize(30);
-			sAnswer->setColor(sf::Color(255, 255, 255, 255));
+			sAnswer->setFillColor(sf::Color(255, 255, 255, 255));
 
 			this->locals["dialogFont"] = dialogFont;
 			this->locals["dialogText"] = dialogText;
@@ -376,22 +376,22 @@ namespace mse
 
 			dialogText->setString(sf::String(textToSay));
 			dialogText->setPosition(Functions::Coord::transformX(960 - (dialogText->getGlobalBounds().width / 2)), Functions::Coord::transformY(200));
-			dialogText->setColor(sf::Color(255, 255, 255, 255));
+			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			fAnswer->setString(sf::String(fAnswerText));
 			fAnswer->setPosition(Functions::Coord::transformX(200), Functions::Coord::transformY(640));
 			if (selectedAnswer == 0)
-				fAnswer->setColor(sf::Color(100, 255, 100, 255));
+				fAnswer->setFillColor(sf::Color(100, 255, 100, 255));
 			else
-				fAnswer->setColor(sf::Color(255, 255, 255, 255));
+				fAnswer->setFillColor(sf::Color(255, 255, 255, 255));
 
 			sAnswer->setString(sf::String(sAnswerText));
 			sAnswer->setPosition(Functions::Coord::transformX(1200), Functions::Coord::transformY(640));
 			std::cout << "SecondAnswer : " << sAnswer->getPosition().x << std::endl;
 			if (selectedAnswer == 1)
-				sAnswer->setColor(sf::Color(100, 255, 100, 255));
+				sAnswer->setFillColor(sf::Color(100, 255, 100, 255));
 			else
-				sAnswer->setColor(sf::Color(255, 255, 255, 255));
+				sAnswer->setFillColor(sf::Color(255, 255, 255, 255));
 
 			renTex.draw(*dialogText);
 			renTex.draw(*fAnswer);

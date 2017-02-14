@@ -200,7 +200,7 @@ namespace mse
 			sf::Text sprInfo;
 			sprInfo.setFont(font);
 			sprInfo.setCharacterSize(16);
-			sprInfo.setColor(sf::Color::White);
+			sprInfo.setFillColor(sf::Color::White);
 			sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
 			sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
 
