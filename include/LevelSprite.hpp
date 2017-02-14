@@ -13,7 +13,6 @@
 #include "Functions.hpp"
 #include "Animation.hpp"
 #include "ComplexSprite.hpp"
-#include "Collisions.hpp"
 
 namespace mse
 {

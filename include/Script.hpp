@@ -8,6 +8,7 @@
 #include <kaguya/kaguya.hpp>
 #include <any/any.hpp>
 
+#include "Collisions.hpp"
 #include "Console.hpp"
 #include "Cursor.hpp"
 #include "Dialog.hpp"
