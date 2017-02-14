@@ -215,7 +215,7 @@ namespace mse
 			surf->clear(sf::Color(0, 0, 0, 200));
 			sf::Text textOutput;
 			textOutput.setFont(font);
-			textOutput.setColor(sf::Color(255, 255, 255));
+			textOutput.setFillColor(sf::Color(255, 255, 255));
 			textOutput.setCharacterSize(13);
 			bool alternBackground = false;
 			sf::Color backgroundColor = sf::Color(30, 30, 30, 200);
@@ -240,7 +240,7 @@ namespace mse
 			for (unsigned int i = 0 + consoleScroll; i < consoleText.size(); i++)
 			{
 				textOutput.setString(consoleText[i]->getFormatedMessage());
-				textOutput.setColor(consoleText[i]->getColor());
+				textOutput.setFillColor(consoleText[i]->getColor());
 				textOutput.setPosition(sf::Vector2f(textX, textY));
 				surf->draw(textOutput);
 				textY += 20;
@@ -272,7 +272,7 @@ namespace mse
 			//TEXT
 			sf::Text textInput;
 			textInput.setFont(font);
-			textInput.setColor(sf::Color(255, 255, 255));
+			textInput.setFillColor(sf::Color(255, 255, 255));
 			textInput.setCharacterSize(26);
 			textInput.setPosition(2, Functions::Coord::height - 40);
 			textInput.setString(inputBuffer);
