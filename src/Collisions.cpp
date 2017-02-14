@@ -69,6 +69,11 @@ namespace mse
 		{
 			this->id = id;
 		}
+		PolygonalCollider::~PolygonalCollider()
+		{
+			this->clearOriginChildren();
+			this->removeOrigin();
+		}
 		std::string PolygonalCollider::getID()
 		{
 			return id;
@@ -389,6 +394,8 @@ namespace mse
 		}
 		void PolygonalCollider::move(double x, double y)
 		{
+			for (PolygonalCollider* child : originChildren)
+				child->move(x, y);
 			if (allPoints.size() > 0) {
 				masterPoint.first += x;
 				masterPoint.second += y;
@@ -403,6 +410,8 @@ namespace mse
 			if (allPoints.size() > 0) {
 				double addX = x - allPoints[0].first;
 				double addY = y - allPoints[0].second;
+				for (PolygonalCollider* child : originChildren)
+					child->move(addX, addY);
 				masterPoint.first += addX;
 				masterPoint.second += addY;
 				allPoints[0].first = x;
@@ -418,6 +427,8 @@ namespace mse
 			if (allPoints.size() > 0) {
 				double addX = x - masterPoint.first;
 				double addY = y - masterPoint.second;
+				for (PolygonalCollider* child : originChildren)
+					child->move(addX, addY);
 				masterPoint.first = x;
 				masterPoint.second = y;
 				for (DoublePoint& point : allPoints) {
@@ -509,6 +520,61 @@ namespace mse
 				}
 			}
 			return false;
+		}
+		std::vector<PolygonalCollider*> PolygonalCollider::getAllCollidedColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy)
+		{
+			std::vector<PolygonalCollider*> collided;
+			for (PolygonalCollider* collider : collidersList) {
+				if (collider != this) {
+					if (this->doesCollide(collider, offx, offy)) {
+						//if (opt && i != 0) std::swap(collidersList->at(0), collidersList->at(i)); //Won't work if sent by copy
+						collided.push_back(collider);
+					}
+				}
+			}
+			return collided;
+		}
+		void PolygonalCollider::addOriginChild(PolygonalCollider* child)
+		{
+			originChildren.push_back(child);
+		}
+		void PolygonalCollider::removeOriginChild(PolygonalCollider* child, bool trigger)
+		{
+			if (Functions::Vector::isInList(child, originChildren)) {
+				for (int i = 0; i < originChildren.size(); i++) {
+					if (child == originChildren[i]) {
+						if (trigger) originChildren[i]->removeOrigin();
+						originChildren.erase(originChildren.begin() + i);
+						break;
+					}
+				}
+			}
+		}
+		void PolygonalCollider::clearOriginChildren()
+		{
+			for (int i = 0; i < originChildren.size(); i++) {
+				originChildren[i]->removeOrigin();
+			}
+			originChildren.clear();
+		}
+		void PolygonalCollider::setOrigin(PolygonalCollider* origin)
+		{
+			if (this->origin != nullptr)
+				this->origin->removeOriginChild(this, false);
+			this->origin = origin;
+			this->origin->addOriginChild(this);
+		}
+		PolygonalCollider* PolygonalCollider::getOrigin()
+		{
+			return origin;
+		}
+		void PolygonalCollider::removeOrigin()
+		{
+			if (origin != nullptr) {
+				std::cout << "As " << id << " I don't want origin " << origin->getID() << " anymore" << std::endl;
+				this->origin->removeOriginChild(this, false);
+			}
+			origin = nullptr;
 		}
 		void PolygonalCollider::addTag(std::string tag)
 		{
@@ -619,6 +685,17 @@ namespace mse
 			acceptedTags = acceptedTagsBuffer;
 			excludedTags = excludedTagsBuffer;
 			return result;
+		}
+		std::vector<PolygonalCollider*> PolygonalCollider::getCollidedCollidersWithTags(std::vector<Collision::PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy)
+		{
+			std::vector<std::string> acceptedTagsBuffer = acceptedTags;
+			std::vector<std::string> excludedTagsBuffer = excludedTags;
+			clearExcludedTags();
+			acceptedTags = tags;
+			std::vector<PolygonalCollider*> collided = getAllCollidedColliders(collidersList, offx, offy);
+			acceptedTags = acceptedTagsBuffer;
+			excludedTags = excludedTagsBuffer;
+			return collided;
 		}
 	}
 }

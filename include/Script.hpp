@@ -8,8 +8,6 @@
 #include <kaguya/kaguya.hpp>
 
 #include "any.hpp"
-#include "Animation.hpp"
-#include "Character.hpp"
 #include "Console.hpp"
 #include "Cursor.hpp"
 #include "Dialog.hpp"
@@ -41,7 +39,6 @@ namespace mse
 			void loadCursor(kaguya::State* lua, std::vector<std::string> args);
 			void loadDataParser(kaguya::State* lua, std::vector<std::string> args);
 			void loadDialog(kaguya::State* lua, std::vector<std::string> args);
-			void loadEntity(kaguya::State* lua, std::vector<std::string> args);
 			void loadGUI(kaguya::State* lua, std::vector<std::string> args);
 			void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
 			void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);

@@ -11,7 +11,6 @@
 #include <fstream>
 
 #include "Functions.hpp"
-#include "Character.hpp"
 #include "DataParser.hpp"
 #include "DataParserLuaBridge.hpp"
 #include "GameObject.hpp"
@@ -49,7 +48,6 @@ namespace mse
 				std::vector<mse::Script::GameObject*> updateObjArray;
 				std::map<std::string, Light::PointLight*> lightsMap;
 				std::vector<Graphics::MathParticle*> particleArray;
-				std::vector<Character*> charArray;
 				std::vector<std::string> scriptArray;
 
 				double blurMul = 0.0003;
@@ -85,9 +83,6 @@ namespace mse
 				double getCamY();
 				//Lights
 				void addLight(Light::PointLight* lgt);
-				//Character
-				void addCharacter(Character* character);
-				Character* getCharacter(int index);
 				//LevelSprites
 				void addLevelSprite(Graphics::LevelSprite* spr);
 				void reorganizeLayers();

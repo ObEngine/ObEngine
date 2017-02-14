@@ -14,39 +14,7 @@ namespace mse
 		}
 		void AnimationGroup::build()
 		{
-			if (groupList.size() == 1)
-			{
-				spriteSheet = *groupList[0];
-				texturePos.push_back(new sf::IntRect(0, 0, spriteSheet.getSize().x, spriteSheet.getSize().y));
-				currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
-			}
-			else if (groupList.size() > 1)
-			{
-				sf::RenderTexture buildTex;
-				int highestHeight = 0;
-				int totalWidth = 0;
-				for (int i = 0; i < groupList.size(); i++)
-				{
-					if (groupList[i]->getSize().y > highestHeight)
-						highestHeight = groupList[i]->getSize().y;
-					texturePos.push_back(new sf::IntRect(totalWidth, 0, groupList[i]->getSize().x, groupList[i]->getSize().y));
-					totalWidth += groupList[i]->getSize().x;
-				}
-				buildTex.create(totalWidth, highestHeight);
-				buildTex.clear(sf::Color(0, 0, 0, 0));
-				int currentXblit = 0;
-				for (int i = 0; i < groupList.size(); i++)
-				{
-					sf::Sprite sprBuffer;
-					sprBuffer.setTexture(*groupList[i]);
-					sprBuffer.setPosition(currentXblit, 0);
-					buildTex.draw(sprBuffer);
-					currentXblit += groupList[i]->getSize().x;
-				}
-				buildTex.display();
-				spriteSheet = buildTex.getTexture();
-				currentSprite = sf::Sprite(spriteSheet, *texturePos[0]);
-			}
+			currentSprite = sf::Sprite(*groupList[0]);
 		}
 		void AnimationGroup::setGroupClock(int clock)
 		{
@@ -73,13 +41,10 @@ namespace mse
 		{
 			return &currentSprite;
 		}
-		sf::IntRect* AnimationGroup::getSpriteRect()
-		{
-			return texturePos[groupIndex];
-		}
 		void AnimationGroup::updateSprite()
 		{
-			currentSprite.setTextureRect(*texturePos[groupIndex]);
+			std::cout << "Updating texture << [" << groupIndex << "] : " << groupList[groupIndex]->getSize().x << "," << groupList[groupIndex]->getSize().y << std::endl;
+			currentSprite.setTexture(*groupList[groupIndex], true);
 		}
 		void AnimationGroup::reset()
 		{
@@ -338,6 +303,7 @@ namespace mse
 					codeIndex = 0;
 				if (Time::getTickSinceEpoch() - startDelay > currentDelay)
 				{
+					std::cout << "Play animation : " << animationName << std::endl;
 					if (askCommand)
 					{
 						std::vector<std::string> currentCommand;
@@ -426,10 +392,6 @@ namespace mse
 		{
 			return animationGroupMap[currentGroupName]->returnSprite();
 		}
-		sf::IntRect* Animation::Animation::getSpriteRect()
-		{
-			return animationGroupMap[currentGroupName]->getSpriteRect();
-		}
 		int Animation::Animation::getSpriteOffsetX()
 		{
 			return sprOffsetX;
@@ -500,6 +462,7 @@ namespace mse
 			{
 				if (key != currentAnimationName)
 				{
+					std::cout << "Animation switch" << std::endl;
 					bool changeAnim = false;
 					if (currentAnimation != NULL)
 					{
@@ -536,7 +499,7 @@ namespace mse
 			if (Functions::Vector::isInList(std::string("animator.cfg.msd"), allFiles))
 			{
 				hasCfgFile = true;
-				animatorCfgFile.parseFile(animationPath.toString() + "/" + "animator.cfg.msd");
+				System::Path(animationPath.toString() + "/" + "animator.cfg.msd").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
 				std::vector<std::string> allParamAnim = animatorCfgFile.getAllComplexAttributes("Animator");
 				for (unsigned int i = 0; i < allParamAnim.size(); i++)
 					animationParameters[allParamAnim[i]] = animatorCfgFile.getComplexAttribute("Animator", allParamAnim[i]);
@@ -581,7 +544,7 @@ namespace mse
 		sf::Sprite* Animator::getSprite()
 		{
 			lastSpriteAddress = currentAnimation->getSprite();
-			lastRect = *currentAnimation->getSpriteRect();
+			//lastRect = *currentAnimation->getSpriteRect();
 			return currentAnimation->getSprite();
 		}
 		sf::Texture* Animator::getTextureAtKey(std::string key, int index)
@@ -590,7 +553,7 @@ namespace mse
 		}
 		bool Animator::textureChanged()
 		{
-			return (currentAnimation->getSprite() != lastSpriteAddress || lastRect != *currentAnimation->getSpriteRect());
+			return (currentAnimation->getSprite() != lastSpriteAddress);
 		}
 		void Animator::attachRessourceManager(RessourceManager* rsman)
 		{

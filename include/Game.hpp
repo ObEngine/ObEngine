@@ -11,7 +11,6 @@
 #include <vector>
 #include <fstream>
 
-#include "Character.hpp"
 #include "World.hpp"
 #include "DataParser.hpp"
 #include "Cursor.hpp"
@@ -19,6 +18,7 @@
 #include "GUI.hpp"
 #include "Console.hpp"
 #include "TimeManager.hpp"
+#include "FramerateManager.hpp"
 
 namespace mse
 {

@@ -51,9 +51,13 @@ namespace mse
 				bool selected;
 				std::vector<int> highlightedPoints;
 				std::vector<int> highlightedLines;
+
+				std::vector<PolygonalCollider*> originChildren;
+				PolygonalCollider* origin = nullptr;
 				Script::GameObject* parent = nullptr;
 			public:
 				PolygonalCollider(std::string id);
+				~PolygonalCollider();
 				std::string getID();
 				int getPointsAmount();
 				DoublePoint getPointPosition(int index);
@@ -87,6 +91,14 @@ namespace mse
 				void setParent(Script::GameObject* parent);
 				Collision::PolygonalCollider joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other);
 				bool testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy, bool opt = false);
+				std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy);
+				//Origin
+				void addOriginChild(PolygonalCollider* child);
+				void removeOriginChild(PolygonalCollider* child, bool trigger = true);
+				void clearOriginChildren();
+				void setOrigin(PolygonalCollider* origin);
+				PolygonalCollider* getOrigin();
+				void removeOrigin();
 				//Tags
 				void addTag(std::string tag);
 				void addExcludedTag(std::string tag);
@@ -107,6 +119,7 @@ namespace mse
 				std::vector<std::string>* getAllExcludedTags();
 				std::vector<std::string>* getAllAcceptedTags();
 				bool doesCollideWithTags(std::vector<Collision::PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
+				std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<Collision::PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
 				//Debug
 				void draw(sf::RenderWindow* surf, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
 				void highlightPoint(int pointIndex);

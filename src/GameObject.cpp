@@ -150,7 +150,7 @@ namespace mse
 			if (obj->containsComplexAttribute("Collider"))
 			{
 				colliderSolid = obj->at("Collider")->getBaseAttribute("solid")->get<bool>();
-				colliderClick = obj->at("Collider")->getBaseAttribute("click")->get<bool>();
+				colliderClick = true;
 
 				if (colliderSolid) objectCollider.addTag("Solid");
 				int colliderPointSize;

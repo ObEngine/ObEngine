@@ -24,14 +24,6 @@ namespace mse
 			worldScriptEngine->dofile("boot.lua");
 		}
 
-		void World::addCharacter(Character* character)
-		{
-			charArray.push_back(character);
-			character->setColliders(&this->collidersArray);
-			character->setPos(this->getStartX(), this->getStartY());
-			character->update();
-		}
-
 		void World::addLevelSprite(Graphics::LevelSprite* spr)
 		{
 			if (spr->getLayer() >= 1)
@@ -59,11 +51,6 @@ namespace mse
 		std::string World::getBaseFolder()
 		{
 			return baseFolder;
-		}
-
-		Character* World::getCharacter(int index)
-		{
-			return charArray[index];
 		}
 
 		void World::loadFromFile(std::string filename)
@@ -419,8 +406,9 @@ namespace mse
 						updateObjArray[i]->update(dt);
 					else
 					{
-						if (updateObjArray[i]->hasAnimator)
-							this->deleteCollision(updateObjArray[i]->getCollider(), false);
+						//BUGGY
+						/*if (updateObjArray[i]->hasCollider)
+							this->deleteCollision(updateObjArray[i]->getCollider(), false);*/
 						if (updateObjArray[i]->hasLevelSprite)
 							this->deleteSprite(updateObjArray[i]->getLevelSprite(), false);
 						updateObjArray.erase(updateObjArray.begin() + i);
@@ -434,12 +422,6 @@ namespace mse
 						dynamic_cast<Light::DynamicPointLight*>(iterator->second)->updateLight();
 					}
 				}
-				for (unsigned int i = 0; i < charArray.size(); i++)
-				{
-					charArray[i]->setDeltaTime(gameSpeed);
-					charArray[i]->getCamPos(camX, camY);
-					charArray[i]->update();
-				}
 				for (unsigned int i = 0; i < particleArray.size(); i++)
 				{
 					particleArray[i]->update();
@@ -450,12 +432,6 @@ namespace mse
 		void World::display(sf::RenderWindow* surf)
 		{
 			visualDisplayBack(surf);
-			for (unsigned int i = 0; i < charArray.size(); i++)
-			{
-				charArray[i]->setColliderDrawOffset(-camX, -camY);
-				charArray[i]->draw(surf);
-				if (showCollisionModes["drawLines"]) charArray[i]->getEntityCollider()->draw(surf);
-			}
 			for (unsigned int i = 0; i < particleArray.size(); i++)
 			{
 				particleArray[i]->draw(surf);
@@ -1028,7 +1004,6 @@ namespace mse
 			if (!(bool)((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
 			(*lua)["Core"]["World"] = kaguya::NewTable();
 			(*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<World>()
-				.addFunction("addCharacter", &World::addCharacter)
 				.addFunction("addLevelSprite", &World::addLevelSprite)
 				.addFunction("addLight", &World::addLight)
 				.addFunction("addCollider", &World::addCollider)
@@ -1044,7 +1019,6 @@ namespace mse
 				.addFunction("getAllSprites", &World::getAllSprites)
 				.addFunction("getCamX", &World::getCamX)
 				.addFunction("getCamY", &World::getCamY)
-				.addFunction("getCharacter", &World::getCharacter)
 				.addFunction("getColliders", &World::getColliders)
 				.addFunction("getCollisionByID", &World::getCollisionByID)
 				.addFunction("getCollisionMasterByPos", &World::getCollisionMasterByPos)

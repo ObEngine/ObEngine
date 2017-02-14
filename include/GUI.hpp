@@ -29,10 +29,6 @@
 
 #include <GL/gl.h>
 
-
-//Finir updatePositions penser a aussi update les absolutes s'occuper de Write updatePositions et Droplist Updatepositions et les autre widget
-//bien gérer le move
-
 template <typename T> std::string pointerToString(const T* obj);
 template <typename T> T* stringToPointer(std::string address);
 
@@ -150,56 +146,42 @@ namespace GUI
 
 
 	public:
-		void autoLoad();//Loads widget's pictures
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-		//CLICK & HOVER EVENTS FUNCTIONS
+		void autoLoad();
 		bool isClicked(sf::Event& evnt, bool leftClick, bool rightClick);
 		bool isClickedOutside(sf::Event& evnt, bool leftClick, bool rightClick);
 		bool isRectClicked(sf::Event& evnt, sf::Rect<float> rect, bool leftClick, bool rightClick);
 		bool isRectClickedOutside(sf::Event& evnt, sf::Rect<float> rect, bool leftClick, bool righClick);
 		bool isRectHovering(sf::Event& evnt, sf::Rect<float> rect);
 		bool isHovering(sf::Event& evnt);
-/////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual void setPosition(int x, int y);
+		virtual void move(float x, float y);
 
-		virtual void setPosition(int x, int y);//Set the widget's position to an x and y
-		virtual void move(float x, float y);//Move the widget from its current position
+		std::string getID();
+		std::string getWidgetType();
+		std::string getWidgetStyle();
+		std::vector<sfe::RichText>* getTexts();
 
-		std::string getID();//Return widget ID
-		std::string getWidgetType();//Return widget type
-		std::string getWidgetStyle();//Return widget Style (Label, Button, ...)
-		std::vector<sfe::RichText>* getTexts();//Return the vector of richTexts
+		virtual void update(sf::Event& evnt);
 
-		virtual void update(sf::Event& evnt);//update the widget's position, manage events.. This function is called in WidgetContainer::update(...)
+		void updateAbsolute();
+		void setSpritesPositions();
 
-		void updateAbsolute();//Update absolute postions
-		void setSpritesPositions();//Apply positions changes
+		virtual void clicked();
+		sf::Rect<float> getRect();
 
-		virtual void clicked();//a supprimer
-		sf::Rect<float> getRect();//Return the global bounds of the widget
-
-		//////////////////////////////
-		//Return the positions relative to the parent WidgetContainer
 		int getRelativePosX();
 		int getRelativePosY();
-		/////////////////////////////
 
-		bool getDisplayed();//Says if the widget is displayed
+		bool getDisplayed();
+		virtual void setDisplayed(bool set);
 
-		virtual void setDisplayed(bool set);//Set the widget display
-
-		virtual void setAbsolute(int X, int Y);//Set the widget's absolute position. This function has to be called only once per widget (usually automatically called by widgetContainer)
-
-		////////////////////////////////////////////////////////////////////////
-		//Functions used by WidgetContainer's when they move
+		virtual void setAbsolute(int X, int Y);
 		void containerChangePos(int x, int y);
 		void updatePosContainer(int widgetContainerX, int widgetContainerY);
-		////////////////////////////////////////////////////////////////////////
 
-		virtual void draw(sf::RenderWindow *GUI);//Draw the widget
+		virtual void draw(sf::RenderWindow *GUI);
 
-		virtual void updateAttributes();//This function is called when attributes edited through pointers need an update
+		virtual void updateAttributes();
 
 		virtual std::map<std::string, std::function<void()>> getFunctions();
 		virtual mse::Data::ComplexAttribute* getDataObject();
@@ -302,32 +284,6 @@ namespace GUI
 		std::string* getHook();
 		sfe::RichText* getRichText();
 	};
-
-	/*class NumericSlider : public Widget
-	{
-	protected:
-		sf::Font font;
-		std::string fontString;
-		int number;
-		int min;
-		int max;
-		int range;
-		int currentShift;
-		float valuePerMove;
-		std::string nameImageSlider = "slider.png";
-		std::string nameImageCursor = "cursor.png";
-		int defaultCursorValue;
-		bool isHoldingCursor = false;
-
-		virtual void setTexture();
-		virtual void updateTexture(sf::Event& evnt);
-		virtual void updatePositions();
-		void isHolding(sf::Event& evnt);
-
-	public:
-		NumericSlider(std::string ID, int posX, int posY, int minValue, int maxValue, int defaultCursorValue, std::string style);
-		int getValue();
-	};*/
 
 	class TextInput : public Widget
 	{
@@ -442,51 +398,13 @@ namespace GUI
 		virtual void updatePositions();
 		void bindFunction(std::function<void()> func);
 		void updateAttributes();
-		Label* getLabel();//Return Label's button if the button has text, return NULL if not.
+		Label* getLabel();
 		GUI::ButtonEvent* getHook();
 		virtual std::map<std::string, std::function<void()>> getFunctions();
 	};
 
-	/*class NumericInput : public TextInput
-	{
-	protected:
-		std::string inputValue;
-		std::string* visibleValue = &inputValue;
-		Label* labelText;
-		Button* arrowTop;
-		Button* arrowBot;
-		int value;
-
-		std::string nameImageBackground = "background.png";
-		std::string nameImageArrowTop = "arrowTop.png";
-		std::string nameImageArrowBot = "arrowBot.png";
-		std::string nameImageOutline = "outline.png";
-		std::string nameImageCursor = "cursor.png";
-		std::string nameImageBackgroundFocus = "backgroundfocus.png";
-		bool hasFocus = false;
-		clock_t timeBefore;
-		bool arrowUpReleased = true;
-		bool arrowDownReleased = true;
-
-		virtual void setTexture();
-		virtual void updateTexture(sf::Event& evnt);
-		virtual void updatePositions();
-		void setFocus();
-		void loseFocus();
-		void checkArrowPressed(sf::Event& evnt);
-		void setTextPosition();
-
-	public:
-		NumericInput(std::string ID, int posX, int posY, int defaultValue, std::string style, std::string font, sf::Color fontColor, int fontSize);
-		NumericInput(std::string ID, int posX, int posY, Label* text, std::string style);
-
-		int getValue();
-		void setValue(int value);
-	};*/
-
 	class Checkbox : public Widget
-{
-
+	{
 	protected:
 		GUI::Label* checkboxLabel = NULL;
 		std::string nameImageChecked = "selected.png";
@@ -515,10 +433,9 @@ namespace GUI
 		virtual void updateTexture(sf::Event& evnt);
 		virtual void updateAttributes();
 		void setText(std::string text, std::string font, sf::Color fontColor, int fontSize, bool centered, int relativeX = 0, int relativeY = 0, sf::Text::Style fontStyle = sf::Text::Regular);
-
 	};
 
-	class RadioButton : public Checkbox // Correction: deux radios du même groupe ne peuvent pas être initialement cochés
+	class RadioButton : public Checkbox
 	{
 	protected:
 		std::string value;
@@ -527,11 +444,11 @@ namespace GUI
 
 	public:
 		RadioButton(std::string ID, int posX, int posY, std::string value, std::string group, std::string style, bool isChecked);
-		void setValue(std::string newValue);//à faire
+		void setValue(std::string newValue);
 		void setChecked();
 		void setUnchecked();
 		std::string getGroup();
-		std::string getValue(); //à faire
+		std::string getValue();
 		static std::string getCurrentSelected(std::string group);
 		static bool getGroupToggled(std::string group);
 		static std::vector<RadioButton*> getRadioButtonGroup(std::string group);
@@ -567,8 +484,6 @@ namespace GUI
 
 	class ScrollBar : public Widget
 	{
-		//Compose au de deux fl�che, une haut une bas, et d'une barre dans laquelle peut glisser un rectangle
-		//Gerer la taille du scroller en fonction de la taille du scrolling
 	protected:
 		std::string nameImageBar = "bar.png";
 		int size;
@@ -597,19 +512,19 @@ namespace GUI
 		virtual void updateTexture(sf::Event& evnt);
 		
 		virtual void updatePositions();
-		void replaceScroller(int maxY);//
+		void replaceScroller(int maxY);
 		void replaceScrollerWidgets(int maxY, int spriteHeight, int spriteTop, int scrollerHeight);
 	public:
 		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<Widget*>* widgetsToMove, std::string style);
 		ScrollBar(std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, WidgetContainer* widgetContainerLinked, std::string style);
 
-		void computeDynamicScroll();//Compute the size and the speed of the scrollbar in function of the widgets linked
-		void scrollToBottom();//Scrolls to bottom
-		void scrollToTop();//Scrolls to Top
+		void computeDynamicScroll();
+		void scrollToBottom();
+		void scrollToTop();
 		bool isMaxBot();
 	};
 
-	class LoadingBar : public Widget //Am�liorations possibles -> coins arrondis, d�grad�...
+	class LoadingBar : public Widget
 	{
 	protected:
 		std::string nameImageBorder = "border.png";
@@ -629,9 +544,9 @@ namespace GUI
 
 	public:
 		LoadingBar(std::string ID, int posX, int posY, std::string fillingType, std::string style, int sideBordersWidth, int TopBotBordersHeight);
-		void fill(int percentage, double timeToFill = 0.5);//permet de remplir la barre jusqu'a un certain pourcentage
+		void fill(int percentage, double timeToFill = 0.5);
 		virtual void draw(sf::RenderWindow* GUI);
-		void addFilling(int percentageToAdd, double timeToFill);//Permet d'ajouter un certain pourcentage au remplissage actuel de la barre
+		void addFilling(int percentageToAdd, double timeToFill);
 		int getFilling();
 		bool isFilled();
 	};
@@ -717,9 +632,6 @@ namespace GUI
 		std::string displayedText;
 
 		sf::Font font;
-		//sf::Text text;
-		//sf::RectangleShape rectangle;
-		//sf::Color backgroundColor = sf::Color::White;
 		virtual void updatePositions();
 
 		virtual void setTexture();
@@ -737,7 +649,6 @@ namespace GUI
 		void setCurrentDropboxContainer(Dropbox* dropbox);
 		void containerMove(int x, int y);
 		bool getHolding();
-		//void scaleSprite(float scaleX, float scaleY);
 
 		virtual void updateTexture(sf::Event& evnt);
 		void holding(sf::Event& evnt);
@@ -873,14 +784,11 @@ namespace GUI
 
 		Tab* createTab(std::string containerName, std::string ID, int posX, int posY, int fontSize, sf::Color fontColor, std::string font, std::vector<std::string> tabsNames, std::vector<WidgetContainer*> tabs, std::string style = "DEFAULT");
 		Dropbox* createDropbox(std::string containerName, std::string ID, int posX, int posY, std::string style = "DEFAULT");
-		//NumericInput* createNumericInput(std::string containerName, std::string ID, int posX, int posY, int defaultValue = 0, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, std::string style = "DEFAULT");
-		//NumericInput* createNumericInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 		
 		RadioButton* createRadioButton(std::string containerName, std::string ID, int posX, int posY, std::string value, std::string group, bool checked = false, std::string style = "DEFAULT");
 		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font = "arial.ttf", int fontSize = 15, sf::Color fontColor = sf::Color::White, bool multiLine = false, std::string style = "DEFAULT");
 		TextInput* createTextInput(std::string containerName, std::string ID, int posX, int posY, Label* text, std::string style = "DEFAULT");
 
-		//NumericSlider* createNumericSlider(std::string containerName, std::string ID, int posX, int posY, int minValue, int maxValue, int defaultValue = 0, std::string style = "DEFAULT");
 		Movable* createMovable(std::string containerName, std::string ID, int posX, int posY, std::string style);
 		Movable* createMovable(std::string containerName, std::string ID, Dropbox* container, int marginLeft, int marginTop, std::string style);
 

@@ -13,7 +13,6 @@
 #include <fstream>
 #include <clip.h>
 
-#include "Character.hpp"
 #include "World.hpp"
 #include "DataParser.hpp"
 #include "Cursor.hpp"
@@ -32,6 +31,7 @@
 #include "Serial.hpp"
 #include "Network.hpp"
 #include "MapEditorTools.hpp"
+#include "FramerateManager.hpp"
 
 namespace mse
 {

@@ -24,8 +24,6 @@ namespace mse
 			int groupClock;
 			signed long long int startDelayClock = 0;
 			std::vector<sf::Texture*> groupList;
-			sf::Texture spriteSheet;
-			std::vector<sf::IntRect*> texturePos;
 			sf::Sprite currentSprite;
 			unsigned int groupIndex = 0;
 			int groupSize = 0;
@@ -46,7 +44,6 @@ namespace mse
 			void pushTexture(sf::Texture* texture); //Add image to the groupe
 			void removeTextureByIndex(int index); //Delete an image from the group with the given Index
 			sf::Sprite* returnSprite(); //Return Total Sprite
-			sf::IntRect* getSpriteRect();
 			void updateSprite(); //Update the Sprite
 			void reset(); //Reset the group
 			void next(); //Increment index and go back to 0 if > groupSize
@@ -106,7 +103,6 @@ namespace mse
 			void applyParameters(Data::ComplexAttribute* parameters);
 			void playAnimation(); //Execute next line
 			void resetAnimation(); //Unselect group and restart code execution
-			sf::IntRect* getSpriteRect();
 			sf::Sprite* getSprite(); //Return actual texture
 			sf::Texture* getTextureAtIndex(int index); //Return a specific texture
 			bool isAnimationOver(); //Is animation over ?

@@ -215,22 +215,8 @@ namespace mse
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
 			fps.loadFont(font);
-			sf::Clock deltaClock;
-			sf::Time sfDeltaTime;
-			double deltaTime;
-			double speedCoeff = 60.0;
-			double gameSpeed = 0.0;
-			double frameLimiterClock = Time::getTickSinceEpoch();
-			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig", "");
-			bool limitFPS = (configFile.containsBaseAttribute("framerateLimit")) ? configFile.getBaseAttribute("framerateLimit")->get<bool>() : true;
-			int framerateTarget = (configFile.containsBaseAttribute("framerateTarget")) ? configFile.getBaseAttribute("framerateTarget")->get<int>() : 60;
-			bool vsyncEnabled = (configFile.containsBaseAttribute("vsync")) ? configFile.getBaseAttribute("vsync")->get<bool>() : false;
-			double reqFramerateInterval = 1.0 / (double)framerateTarget;
-			int currentFrame = 0;
-			int frameProgression = 0;
-			bool needToRender = false;
-			window.setVerticalSyncEnabled(vsyncEnabled);
-			std::cout << "Framerate Settings : " << "(Limit /" << limitFPS << " /" << framerateTarget << ")" << (vsyncEnabled ? " /vsync" : "") << std::endl;
+			FramerateManager framerateManager(*configFile.getRootAttribute("GameConfig"));
+			window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
 			std::cout << "Creation Chrono : " << "[Framerate]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
@@ -275,25 +261,7 @@ namespace mse
 			//Game Starts
 			while (window.isOpen())
 			{
-				//DeltaTime
-				sfDeltaTime = deltaClock.restart();
-				deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
-				gameSpeed = deltaTime * speedCoeff;
-				if (limitFPS)
-				{
-					if (Time::getTickSinceEpoch() - frameLimiterClock > 1000)
-					{
-						frameLimiterClock = Time::getTickSinceEpoch();
-						currentFrame = 0;
-					}
-					frameProgression = std::round((Time::getTickSinceEpoch() - frameLimiterClock) / (reqFramerateInterval * 1000));
-					needToRender = false;
-					if (frameProgression > currentFrame)
-					{
-						currentFrame = frameProgression;
-						needToRender = true;
-					}
-				}
+				framerateManager.update();
 
 				//GUI Actions
 				keybind.setEnabled(!gameConsole.isConsoleVisible());
@@ -373,17 +341,17 @@ namespace mse
 						{
 						}
 						else if (keybind.isActionEnabled("CamLeft"))
-							world.setCameraPosition(world.getCamX() - (cameraSpeed * gameSpeed), world.getCamY());
+							world.setCameraPosition(world.getCamX() - (cameraSpeed * framerateManager.getGameSpeed()), world.getCamY());
 						else if (keybind.isActionEnabled("CamRight"))
-							world.setCameraPosition(world.getCamX() + (cameraSpeed * gameSpeed), world.getCamY());
+							world.setCameraPosition(world.getCamX() + (cameraSpeed * framerateManager.getGameSpeed()), world.getCamY());
 
 						if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
 						{
 						}
 						else if (keybind.isActionEnabled("CamUp"))
-							world.setCameraPosition(world.getCamX(), world.getCamY() - (cameraSpeed * gameSpeed));
+							world.setCameraPosition(world.getCamX(), world.getCamY() - (cameraSpeed * framerateManager.getGameSpeed()));
 						else if (keybind.isActionEnabled("CamDown"))
-							world.setCameraPosition(world.getCamX(), world.getCamY() + (cameraSpeed * gameSpeed));
+							world.setCameraPosition(world.getCamX(), world.getCamY() + (cameraSpeed * framerateManager.getGameSpeed()));
 
 						if (keybind.isActionEnabled("CamDash"))
 							cameraSpeed = 60;
@@ -518,18 +486,18 @@ namespace mse
 					if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
 					{
 						if (keybind.isActionEnabled("RotateLeft") && selectedSprite != nullptr)
-							selectedSprite->rotate(-1 * gameSpeed);
+							selectedSprite->rotate(-1 * framerateManager.getGameSpeed());
 						if (keybind.isActionEnabled("RotateRight") && selectedSprite != nullptr)
-							selectedSprite->rotate(1 * gameSpeed);
+							selectedSprite->rotate(1 * framerateManager.getGameSpeed());
 					}
 
 					//Sprite Scale
 					if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
 					{
 						if (keybind.isActionEnabled("ScaleDec"))
-							selectedSprite->scale(-0.05 * gameSpeed * selectedSprite->getScaleX(), -0.05 * gameSpeed * selectedSprite->getScaleY());
+							selectedSprite->scale(-0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), -0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
 						if (keybind.isActionEnabled("ScaleInc"))
-							selectedSprite->scale(0.05 * gameSpeed  * selectedSprite->getScaleX(), 0.05 * gameSpeed * selectedSprite->getScaleY());
+							selectedSprite->scale(0.05 * framerateManager.getGameSpeed()  * selectedSprite->getScaleX(), 0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
 					}
 
 					//Sprite Drop
@@ -749,8 +717,8 @@ namespace mse
 
 				//Events
 				Script::TriggerDatabase::GetInstance()->update();
-				world.update(gameSpeed);
-				textDisplay.update(gameSpeed);
+				world.update(framerateManager.getGameSpeed());
+				textDisplay.update(framerateManager.getGameSpeed());
 				keybind.update();
 				cursor.update();
 				gameConsole.update();
@@ -867,7 +835,7 @@ namespace mse
 					}
 				}
 				//Draw Everything Here
-				if (!limitFPS || needToRender)
+				if (framerateManager.doRender())
 				{
 					window.clear();
 					world.display(&window);

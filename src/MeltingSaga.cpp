@@ -77,12 +77,14 @@ int main(int argc, char** argv)
 			mse::Editor::editMap(editMapName);
 	}
 	else if (runParser.getArgumentValue("-mode") == "play")
-		mse::Modes::startGame("poly2.map.msd");
+		mse::Modes::startGame("Main.map.msd");
 	else if (runParser.getArgumentValue("-mode") == "console")
 		mse::Modes::startDebugMode();
 	else if (runParser.getArgumentValue("-mode") == "toolkit")
 		mse::Modes::startToolkitMode();
 	else
+		mse::Modes::startGame("Main.map.msd");
+	/*else
 	{
 		mse::Functions::Coord::width = 640; mse::Functions::Coord::height = 480;
 		mse::Functions::Coord::baseWidth = 640; mse::Functions::Coord::baseHeight = 480;
@@ -91,7 +93,7 @@ int main(int argc, char** argv)
 		mse::Functions::Coord::baseWidth = 1920; mse::Functions::Coord::baseHeight = 1080;
 		if (editMapName != "")
 			mse::Editor::editMap(editMapName);
-	}
+	}*/
 	
 	return 0;
 }

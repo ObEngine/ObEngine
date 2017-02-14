@@ -109,7 +109,6 @@ namespace mse
 				if (lib[0] == "Cursor" || all) { CoreLib::loadCursor(lua, (all) ? std::vector<std::string>{"Cursor"} : lib);    found = true; }
 				if (lib[0] == "DataParser" || all) { CoreLib::loadDataParser(lua, (all) ? std::vector<std::string>{"DataParser"} : lib); found = true; }
 				if (lib[0] == "Dialog" || all) { CoreLib::loadDialog(lua, (all) ? std::vector<std::string>{"Dialog"} : lib);    found = true; }
-				if (lib[0] == "Entity" || all) { CoreLib::loadEntity(lua, (all) ? std::vector<std::string>{"Entity"} : lib);    found = true; }
 				if (lib[0] == "GUI" || all) { CoreLib::loadGUI(lua, (all) ? std::vector<std::string>{"GUI"} : lib);    found = true; }
 				if (lib[0] == "KeyBind" || all) { CoreLib::loadKeyBind(lua, (all) ? std::vector<std::string>{"KeyBind"} : lib);    found = true; }
 				if (lib[0] == "LevelSprite" || all) { CoreLib::loadLevelSprite(lua, (all) ? std::vector<std::string>{"LevelSprite"} : lib);    found = true; }
@@ -237,9 +236,11 @@ namespace mse
 					.addFunction("doesHaveTag", &Collision::PolygonalCollider::doesHaveTag)
 					.addFunction("doesPathCollide", &Collision::PolygonalCollider::doesPathCollide)
 					.addFunction("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
+					.addFunction("getCollidedCollidersWithTags", &Collision::PolygonalCollider::getCollidedCollidersWithTags)
 					.addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
 					.addFunction("getID", &Collision::PolygonalCollider::getID)
 					.addFunction("getMasterPointPosition", &Collision::PolygonalCollider::getMasterPointPosition)
+					.addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
 					.addFunction("getParent", &Collision::PolygonalCollider::getParent)
 					.addFunction("getPath", &Collision::PolygonalCollider::getPath)
 					.addFunction("getPointPosition", &Collision::PolygonalCollider::getPointPosition)
@@ -257,7 +258,10 @@ namespace mse
 					.addFunction("isPointInBoundingBox", &Collision::PolygonalCollider::isPointInBoundingBox)
 					.addFunction("move", &Collision::PolygonalCollider::move)
 					.addFunction("movePoint", &Collision::PolygonalCollider::movePoint)
+					.addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
+					.addFunction("removeTag", &Collision::PolygonalCollider::removeTag)
 					.addFunction("setDrawOffset", &Collision::PolygonalCollider::setDrawOffset)
+					.addFunction("setOrigin", &Collision::PolygonalCollider::setOrigin)
 					.addFunction("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
 					.addFunction("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
 					.addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
@@ -595,56 +599,6 @@ namespace mse
 				foundPart = true;
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
-		}
-		void CoreLib::loadEntity(kaguya::State* lua, std::vector<std::string> args)
-		{
-			registerLib(lua, Functions::Vector::join(args, "."));
-			bool importAll = args.size() == 1;
-			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Entity"])) (*lua)["Core"]["Entity"] = kaguya::NewTable();
-			if (importAll || args[1] == "Entity")
-			{
-				(*lua)["Core"]["Entity"]["Entity"].setClass(kaguya::UserdataMetatable<Entity>()
-					.addFunction("addDtPos", &Entity::addDtPos)
-					.addFunction("addPos", &Entity::addPos)
-					.addFunction("collide", &Entity::collide)
-					.addFunction("getCamPos", &Entity::getCamPos)
-					.addFunction("getEntityCollider", &Entity::getEntityCollider)
-					.addFunction("getLife", &Entity::getLife)
-					.addFunction("getMaxLife", &Entity::getMaxLife)
-					.addFunction("getX", &Entity::getX)
-					.addFunction("getY", &Entity::getY)
-					.addFunction("setColliderDrawOffset", &Entity::setColliderDrawOffset)
-					.addFunction("setColliders", &Entity::setColliders)
-					.addFunction("setDeltaTime", &Entity::setDeltaTime)
-					.addFunction("setKey", &Entity::setKey)
-					.addFunction("setPos", &Entity::setPos)
-					);
-				foundPart = true;
-			}
-			if (importAll || args[1] == "Character")
-			{
-				(*lua)["Core"]["Entity"]["Character"].setClass(kaguya::UserdataMetatable<Character, Entity>()
-					.addFunction("addVelocity", &Character::addVelocity)
-					.addFunction("applyMove", &Character::applyMove)
-					.addFunction("cancelMoves", &Character::cancelMoves)
-					.addFunction("getDirection", &Character::getDirection)
-					.addFunction("getHSpeed", &Character::getHSpeed)
-					.addFunction("getVelocity", &Character::getVelocity)
-					.addFunction("getVSpeed", &Character::getVSpeed)
-					.addFunction("jump", &Character::jump)
-					.addFunction("melee", &Character::melee)
-					.addFunction("move", &Character::move)
-					.addFunction("setDirectionAnimation", &Character::setDirectionAnimation)
-					.addFunction("setJumpHeight", &Character::setJumpHeight)
-					.addFunction("setVelocity", &Character::setVelocity)
-					.addFunction("sprint", &Character::sprint)
-					.addFunction("textureUpdate", &Character::textureUpdate)
-					.addFunction("triggerCrouch", &Character::triggerCrouch)
-					);
-				foundPart = true;
-			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadEntity] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
 		void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
 		{
