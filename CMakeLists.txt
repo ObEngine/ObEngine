@@ -12,7 +12,9 @@ set(CMAKE_MODULE_PATH build-scripts/ ${CMAKE_MODULE_PATH})
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 endif()
-set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall )
+
+set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
+
 find_package(SFML 2 REQUIRED system window graphics network audio)
 find_package(OpenGL REQUIRED)
 find_package(Lua53 REQUIRED) 
@@ -21,11 +23,15 @@ add_executable(mse ${PG_MSE} ${HD_MSE})
 
 include_directories(include/)
 include_directories(extlibs/include/)
-link_directories(extlibs/lib)
 
 include_directories(${LUA53_INCLUDE_DIR})
-include_directories(extlibs/include)
 include_directories(${OPENGL_INCLUDE_DIR})
+
+target_link_libraries(mse 
+  ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclip.so
+  ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/lib/linux/libclipper.so
+)
+
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
   target_link_libraries(mse ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
