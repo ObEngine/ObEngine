@@ -11,35 +11,35 @@ function workspace(argtable)
         local currentWs = parser:getBaseAttribute("Workspace", "current"):get_string();
         Color.print({
             {color = "white", text = "Current Workspace : "}, 
-            {color = "cyan", text = currentWs .. "\n"}
+            {color = "lightcyan", text = currentWs .. "\n"}
         }, 2);
     elseif action == "use" and wsname ~= nil then
         if (parser:containsComplexAttribute("Workspace", wsname)) then
             parser:getBaseAttribute("Workspace", "current"):set(wsname);
             parser:writeFile("Workspace/workspace.cfg.msd", true);
             Color.print({
-                {color = "green", text = "Current workspace has been successfully switched to "},
-                {color = "cyan", text = wsname .. "\n"}
+                {color = "lightgreen", text = "Current workspace has been successfully switched to "},
+                {color = "lightcyan", text = wsname .. "\n"}
             }, 2);
         else
             Color.print({
-                {color = "red", text = "Workspace "},
-                {color = "cyan", text = wsname},
-                {color = "red", text = " doesn't exists\n"}
+                {color = "lightred", text = "Workspace "},
+                {color = "lightcyan", text = wsname},
+                {color = "lightred", text = " doesn't exists\n"}
             }, 2);
         end
     elseif action == "desc" and wsname ~= nil then
         if (parser:containsComplexAttribute("Workspace", wsname)) then
             Color.print({
-                {color = "cyan", text = wsname},
+                {color = "lightcyan", text = wsname},
                 {color = "white", text = "'s description : "},
-                {color = "grey", text = parser:getBaseAttribute("Workspace/" .. wsname, "description"):get_string() .. "\n"}
+                {color = "darkgrey", text = parser:getBaseAttribute("Workspace/" .. wsname, "description"):get_string() .. "\n"}
             }, 2);
         else
             Color.print({
-                {color = "red", text = "Workspace "},
-                {color = "cyan", text = wsname},
-                {color = "red", text = " doesn't exists\n"}
+                {color = "lightred", text = "Workspace "},
+                {color = "lightcyan", text = wsname},
+                {color = "lightred", text = " doesn't exists\n"}
             }, 2);
         end
     elseif action == "create" and wsname ~= nil then
@@ -55,12 +55,12 @@ function workspace(argtable)
         parser:getPath("Workspace/" .. wsname):createBaseAttribute("path", wsname);
         parser:writeFile("Workspace/workspace.cfg.msd", true);
         Color.print({
-            {color = "green", text = "Workspace "},
-            {color = "cyan", text = wsname},
-            {color = "green", text = " has been successfully created\n"}
+            {color = "lightgreen", text = "Workspace "},
+            {color = "lightcyan", text = wsname},
+            {color = "lightgreen", text = " has been successfully created\n"}
         }, 2);
     else
-        Color.print({{color = "red", text = "Invalid action / parameters\n"}}, 2);
+        Color.print({{color = "lightred", text = "Invalid action / parameters\n"}}, 2);
     end
 end
 

@@ -1,26 +1,23 @@
 #include "Toolkit.hpp"
 
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
 std::string colorConsole(std::string color)
 {
-	int code = 15;
-	if (color == "darkblue") code = 1;
-	else if (color == "darkgreen") code = 2;
-	else if (color == "teal") code = 3;
-	else if (color == "darkred") code = 4;
-	else if (color == "purple") code = 5;
-	else if (color == "gold") code = 6;
-	else if (color == "darkwhite") code = 7;
-	else if (color == "grey") code = 8;
-	else if (color == "blue") code = 9;
-	else if (color == "green") code = 10;
-	else if (color == "cyan") code = 11;
-	else if (color == "red") code = 12;
-	else if (color == "magenta") code = 13;
-	else if (color == "yellow") code = 14;
-	else if (color == "white") code = 15;
-	SetConsoleTextAttribute(hConsole, code);
+	if (color == "black") rlutil::setColor(rlutil::BLACK);
+	else if (color == "blue") rlutil::setColor(rlutil::BLUE);
+	else if (color == "brown") rlutil::setColor(rlutil::BROWN);
+	else if (color == "cyan") rlutil::setColor(rlutil::CYAN);
+	else if (color == "darkgrey") rlutil::setColor(rlutil::DARKGREY);
+	else if (color == "green") rlutil::setColor(rlutil::GREEN);
+	else if (color == "grey") rlutil::setColor(rlutil::GREY);
+	else if (color == "lightblue") rlutil::setColor(rlutil::LIGHTBLUE);
+	else if (color == "lightcyan") rlutil::setColor(rlutil::LIGHTCYAN);
+	else if (color == "lightgreen") rlutil::setColor(rlutil::LIGHTGREEN);
+	else if (color == "lightmagenta") rlutil::setColor(rlutil::LIGHTMAGENTA);
+	else if (color == "lightred") rlutil::setColor(rlutil::LIGHTRED);
+	else if (color == "magenta") rlutil::setColor(rlutil::MAGENTA);
+	else if (color == "red") rlutil::setColor(rlutil::RED);
+	else if (color == "white") rlutil::setColor(rlutil::WHITE);
+	else if (color == "yellow") rlutil::setColor(rlutil::YELLOW);
 	return "";
 }
 

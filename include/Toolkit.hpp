@@ -1,6 +1,7 @@
 #pragma once
 
 #include <kaguya/kaguya.hpp>
+#include <rlutil/rlutil.h>
 
 #include "Script.hpp"
 

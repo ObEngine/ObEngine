@@ -26,7 +26,7 @@ end
 
 -- Input / Main
 while continue do
-    Color.print({{color = "darkgreen", text = "MSE"}, {color = "cyan", text = "@"}, {color = "teal", text = promptType}, {color = "white", text = " >> "}});
+    Color.print({{color = "lightgreen", text = "MSE"}, {color = "lightcyan", text = "@"}, {color = "cyan", text = promptType}, {color = "white", text = " >> "}});
     local argv = io.read();
     if #argv > 0 then
         local shortcut = String.split(argv, " ")[1];
@@ -62,31 +62,31 @@ while continue do
                             if Toolkit.commands[k].args[carg_i].type ~= type(cargs[carg_i]) and not Toolkit.commands[k].args[carg_i].optional then 
                                 correctUsage = false; 
                                 Color.print({
-                                    {color = "red", text = "- "}, 
-                                    {color = "cyan", text = Toolkit.commands[k].args[carg_i].name}, 
-                                    {color = "red", text = " is not a " .. type(cargs[carg_i]) .. " (expected " .. Toolkit.commands[k].args[carg_i].type .. ")\n"},
+                                    {color = "lightred", text = "- "}, 
+                                    {color = "lightcyan", text = Toolkit.commands[k].args[carg_i].name}, 
+                                    {color = "lightred", text = " is not a " .. type(cargs[carg_i]) .. " (expected " .. Toolkit.commands[k].args[carg_i].type .. ")\n"},
                                 }, 1);
                             elseif Toolkit.commands[k].args[carg_i].type ~= type(cargs[carg_i]) then
                                 Color.print({
                                     {color = "yellow", text = "- "}, 
-                                    {color = "cyan", text = Toolkit.commands[k].args[carg_i].name}, 
+                                    {color = "lightcyan", text = Toolkit.commands[k].args[carg_i].name}, 
                                     {color = "yellow", text = " is not a " .. type(cargs[carg_i]) .. " (expected " .. Toolkit.commands[k].args[carg_i].type .. ") [Optional]\n"},
                                 }, 1);
                             else 
                                 argTable[Toolkit.commands[k].args[carg_i].name] = cargs[carg_i]; 
                             end
                         end
-                        if correctUsage then Color.print({{color = "magenta", text = "Command " .. k .. " : \n"}}, 1); Toolkit.functions[k](argTable);
-                        else Color.print({{color = "grey", text = "Command usage : " .. correctUsageStr .. "\n"}}, 1);
+                        if correctUsage then Color.print({{color = "lightmagenta", text = "Command " .. k .. " : \n"}}, 1); Toolkit.functions[k](argTable);
+                        else Color.print({{color = "darkgrey", text = "Command usage : " .. correctUsageStr .. "\n"}}, 1);
                         end
                     elseif Table.size(cargs) == 0 then Color.print({{color = "magenta", text = "Command " .. k .. " : \n"}}, 1); Toolkit.functions[k]();
-                    else Color.print({{color = "grey", text = "Command usage : " .. shortcut .. "\n"}}, 1);
+                    else Color.print({{color = "darkgrey", text = "Command usage : " .. shortcut .. "\n"}}, 1);
                     end
                 end
             end
         end
         if not foundCommand then
-            Color.print({{color = "red", text = "Error : Can't find command \"" .. shortcut .. "\"\n"}}, 1);
+            Color.print({{color = "lightred", text = "Error : Can't find command \"" .. shortcut .. "\"\n"}}, 1);
         end
     end 
 end

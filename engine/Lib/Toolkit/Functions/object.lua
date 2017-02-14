@@ -18,8 +18,8 @@ function object(argtable)
             if (string.find(argtable.attributes, "C") ~= nil) then
                 haveCollider = true;
                 Color.print({
-                    {color = "green", text = "+ Using component : "},
-                    {color = "cyan", text = "(C)ollider\n"}
+                    {color = "lightgreen", text = "+ Using component : "},
+                    {color = "lightcyan", text = "(C)ollider\n"}
                 }, 2);
                 objSaveFile:getPath(argtable.objname):createComplexAttribute("Collider");
                 objCollider = objSaveFile:getPath(argtable.objname .. "/Collider");
@@ -36,16 +36,16 @@ function object(argtable)
                 objSaveFile:getPath(argtable.objname .. "/" .. "Animator"):createBaseAttribute("path",
                 "Sprites/GameObjects/" .. argtable.objname);
                 Color.print({
-                    {color = "green", text = "+ Using component : "},
-                    {color = "cyan", text = "(A)nimator\n"}
+                    {color = "lightgreen", text = "+ Using component : "},
+                    {color = "lightcyan", text = "(A)nimator\n"}
                 }, 2);
             end
             if (string.find(argtable.attributes, "L") ~= nil) then
                 haveLevelSprite = true;
                 os.execute("mkdir Workspace\\" .. currentWs .. "\\Sprites\\GameObjects\\" .. argtable.objname);
                 Color.print({
-                    {color = "green", text = "+ Using component : "},
-                    {color = "cyan", text = "(L)evelSprite\n"}
+                    {color = "lightgreen", text = "+ Using component : "},
+                    {color = "lightcyan", text = "(L)evelSprite\n"}
                 }, 2);
                 objSaveFile:getPath(argtable.objname):createComplexAttribute("LevelSprite");
                 local objLevelSprite = objSaveFile:getPath(argtable.objname .. "/" .. "LevelSprite");
@@ -68,8 +68,8 @@ function object(argtable)
                 scriptFile:write("function Local.Init()\n    print(\"Hello World\");\nend")
                 scriptFile:close()
                 Color.print({
-                    {color = "green", text = "+ Using component : "},
-                    {color = "cyan", text = "(S)cript\n"}
+                    {color = "lightgreen", text = "+ Using component : "},
+                    {color = "lightcyan", text = "(S)cript\n"}
                 }, 2);
                 objSaveFile:getPath(argtable.objname):createComplexAttribute("Script");
                 objSaveFile:getPath(argtable.objname .. "/Script"):createBaseAttribute("priority", 0);
@@ -81,9 +81,9 @@ function object(argtable)
         objSaveFile:writeFile("Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" ..
          argtable.objname .. "\\" .. argtable.objname .. ".obj.msd");
         Color.print({
-            {color = "green", text = "Object "},
-            {color = "cyan", text = argtable.objname},
-            {color = "green", text = " has been successfully created\n"}
+            {color = "lightgreen", text = "Object "},
+            {color = "lightcyan", text = argtable.objname},
+            {color = "lightgreen", text = " has been successfully created\n"}
         }, 2);
     end
 end
