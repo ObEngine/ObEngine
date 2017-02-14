@@ -757,7 +757,6 @@ namespace mse
 			if (parameterList.size() > signatureAttributes.size()) {
 				std::cout << "<Error:DataParser:ObjectModel>[buildModel] : Too many parameters provided for Model : "
 					<< name << " (" << signatureAttributes.size() << " parameters maximum)" << std::endl;
-				return nullptr;
 			}
 			for (int i = 0; i < signatureAttributes.size(); i++) {
 				BaseAttribute* currentSignatureParameter = signature.getBaseAttribute(signatureAttributes[i]);
@@ -769,7 +768,6 @@ namespace mse
 					else {
 						std::cout << "<Error:DataParser:ObjectModel>[buildModel] : Type mismatch at parameter "
 							<< currentSignatureParameter->getID() << " for Model " << name << std::endl;
-						return nullptr;
 					}
 				}
 				else {
@@ -873,7 +871,8 @@ namespace mse
 			if (path.size() > 0 && Functions::String::extract(path, path.size() - 1, 0) == "/")
 				path = Functions::String::extract(path, 0, 1);
 			if (Functions::String::occurencesInString(path, "/") > 0) {
-				std::string subPath = Functions::Vector::join(Functions::String::split(path, "/"), "/", 1);
+				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
+				std::string subPath = Functions::Vector::join(splittedPath, "/", 1);
 				std::cout << "Go to : " << Functions::String::split(path, "/")[0] << " then " << subPath << std::endl;
 				return getRootAttribute(Functions::String::split(path, "/")[0])->at(subPath);
 			}
