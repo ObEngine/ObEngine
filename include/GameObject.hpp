@@ -22,6 +22,7 @@ namespace mse
 	}
 	namespace Script
 	{
+		class GameObject;
 		class GameObjectRequires
 		{
 			private:
