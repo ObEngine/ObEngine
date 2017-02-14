@@ -13,6 +13,7 @@
 #include <random>
 #include <algorithm>
 #include <iterator>
+#include <typeinfo>
 
 #include "tinydir.h"
 

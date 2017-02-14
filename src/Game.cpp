@@ -33,12 +33,6 @@ namespace mse
 			textDisplay.createRenderer("Shade", "MapSaver");
 			Script::hookCore.dropValue("TextDisplay", &textDisplay);
 
-			//TO DELETE
-			sf::Music music;
-			music.openFromFile("Music/battle.ogg");
-			music.setLoop(true);
-			music.play();
-
 			//Font
 			sf::Font font;
 			font.loadFromFile("Data/Fonts/arial.ttf");
@@ -54,9 +48,6 @@ namespace mse
 			Cursor::Cursor cursor(&window);
 			cursor.updateOutsideWindow(true);
 			Script::hookCore.dropValue("Cursor", &cursor);
-
-			//Character Initialisation
-			//Character character("Natsugi");
 
 			//World Creation / Loading
 			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
@@ -80,7 +71,6 @@ namespace mse
 
 			Light::initLights();
 
-			//world.addCharacter(&character);
 			world.loadFromFile(mapName);
 
 			//Game Starts

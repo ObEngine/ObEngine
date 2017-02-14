@@ -33,6 +33,8 @@ namespace mse
 				Path add(std::string path);
 				std::string getPath(int index);
 				std::string toString() const;
+				template<typename R>
+				bool Path::checkType(R type, std::string expectedType);
 				template <typename R, typename F>
 				std::string loadResource(R* resource, F lambda, bool silent = false);
 				static std::vector<std::string> basePaths;
