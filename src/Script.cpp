@@ -515,7 +515,6 @@ namespace mse
 					.addFunction("getAllListAttributes", &Data::ComplexAttribute::getAllListAttributes)
 					.addFunction("getBaseAttribute", &Data::ComplexAttribute::getBaseAttribute)
 					.addFunction("getComplexAttribute", &Data::ComplexAttribute::getComplexAttribute)
-					.addFunction("getID", &Data::ComplexAttribute::getID)
 					.addFunction("getListAttribute", &Data::ComplexAttribute::getListAttribute)
 					.addFunction("getPath", &Data::ComplexAttribute::getPath)
 					.addFunction("heritage", &Data::ComplexAttribute::heritage)
