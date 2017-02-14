@@ -225,7 +225,10 @@ namespace mse
 			int xpos = (0 * (sprSize + sprOff)) + xOff;
 			int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
 			GUI::Button* backButton = gui->createButton("EditorSprites", "LS_ELEM_BACK", xpos, ypos, true, false, "GREY");
-			backButton->bindFunction([path] {loadSpriteFolder(Functions::Vector::join(Functions::String::split(path, "/"), "/", 0, 1)); });
+			backButton->bindFunction([path] {
+				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
+				loadSpriteFolder(Functions::Vector::join(splittedPath, "/", 0, 1)); 
+			});
 			sf::Texture sprback; sprback.loadFromFile("Sprites/Others/back.png");
 			
 			backButton->setTextureAll(sprback);
