@@ -18,6 +18,8 @@ find_package(Lua53 REQUIRED)
 
 add_executable(mse ${PG_MSE} ${HD_MSE})
 
+include_directories("include/")
+
 include_directories(${LUA53_INCLUDE_DIR})
 include_directories("build/libs/kaguya/include")
 include_directories(${OPENGL_INCLUDE_DIR})
