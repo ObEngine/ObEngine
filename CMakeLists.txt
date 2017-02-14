@@ -7,7 +7,7 @@ file(GLOB HD_MSE Source/*.cpp)
 
 ADD_DEFINITIONS(-std=c++14)
 
-set(CMAKE_MODULE_PATH "/root/C++Lib" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "build/linux" ${CMAKE_MODULE_PATH})
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 endif()
@@ -19,7 +19,7 @@ find_package(Lua53 REQUIRED)
 add_executable(mse ${PG_MSE} ${HD_MSE})
 
 include_directories(${LUA53_INCLUDE_DIR})
-include_directories("/root/C++Lib/Kaguya/include")
+include_directories("build/libs/kaguya/include")
 include_directories(${OPENGL_INCLUDE_DIR})
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
