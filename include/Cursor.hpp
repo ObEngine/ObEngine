@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "Animation.hpp"
-#include "Collisions.hpp"
 #include "Functions.hpp"
 #include "Triggers.hpp"
 
