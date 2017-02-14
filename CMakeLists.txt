@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(mse)
 
-file(GLOB PG_MSE Source/*.hpp)
-file(GLOB HD_MSE Source/*.cpp)
+file(GLOB PG_MSE include/*.hpp)
+file(GLOB HD_MSE src/*.cpp)
 
 ADD_DEFINITIONS(-std=c++14)
 
