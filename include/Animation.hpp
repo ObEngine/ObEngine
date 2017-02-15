@@ -78,7 +78,7 @@ namespace mse
 			std::vector<std::vector<std::string>> animationCode;
 			std::string currentGroupName = "NONE";
 			std::string currentStatus = "PLAY";
-			RessourceManager* animatorRsHook;
+			RessourceManager* animatorRsHook = nullptr;
 			bool askCommand = true;
 			unsigned int codeIndex = 0;
 			int loopTime = 0;

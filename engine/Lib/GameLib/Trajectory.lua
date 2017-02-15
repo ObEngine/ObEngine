@@ -1,6 +1,6 @@
 local Class = require("Lib/StdLib/Class");
 local Overload = require("Lib/StdLib/Overload");
-local inspect = require("Lib/StdLib/inspect");
+local inspect = require("Lib/StdLib/Inspect");
 
 Import("Core.Collision");
 Import("Core.LevelSprite");
