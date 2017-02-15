@@ -50,10 +50,7 @@ namespace mse
 				std::vector<Graphics::MathParticle*> particleArray;
 				std::vector<std::string> scriptArray;
 
-				double blurMul = 0.0003;
-				sf::Shader blurShader;
 				sf::Shader lightShader;
-				sf::Shader normalShader;
 
 				double gameSpeed;
 				std::map<std::string, bool> showCollisionModes;
@@ -86,7 +83,6 @@ namespace mse
 				//LevelSprites
 				void addLevelSprite(Graphics::LevelSprite* spr);
 				void reorganizeLayers();
-				void setBlurMul(double newBlur);
 				void visualDisplayBack(sf::RenderWindow* surf);
 				void visualDisplayFront(sf::RenderWindow* surf);
 				Graphics::LevelSprite* getSpriteByIndex(std::string backOrFront, int index);

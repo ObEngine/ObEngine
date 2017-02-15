@@ -84,8 +84,6 @@ namespace mse
 				std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
 			});
 			Script::hookCore.dropValue("World", &world);
-			bool depthOfFieldEnabled = configFile.getBaseAttribute("depthOfField")->get<bool>();
-			if (!depthOfFieldEnabled) world.setBlurMul(0.0);
 			std::cout << "Creation Chrono : " << "[World]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Socket
@@ -125,8 +123,6 @@ namespace mse
 			gui->createLabel("EditorSettings", "mapCatLbl", 775, 40, "Map Options", "arial.ttf", 25, sf::Color(255, 255, 255));
 			gui->createCheckbox("EditorSettings", "enableCharacterCB", 425, 80, "GREY", true);
 			gui->createLabel("EditorSettings", "enableCharacterLbl", 450, 80, "Enable Character in Edit Mode", "arial.ttf", 12, sf::Color(255, 255, 255));
-			gui->createCheckbox("EditorSettings", "enableDOFCB", 40, 80, "GREY", true);
-			gui->createLabel("EditorSettings", "enableDOFLbl", 65, 80, "Enable Depth Of Field", "arial.ttf", 12, sf::Color(255, 255, 255));
 			gui->createCheckbox("EditorSettings", "enableFPSCB", 40, 105, "GREY", true);
 			gui->createLabel("EditorSettings", "enableFPSLbl", 65, 105, "Enable FPS Counter", "arial.ttf", 12, sf::Color(255, 255, 255));
 			gui->createCheckbox("EditorSettings", "enableGridCB", 425, 105, "GREY", false);
@@ -241,7 +237,6 @@ namespace mse
 			});
 			std::cout << "Creation Chrono : " << "[Grid]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
-			//world.addCharacter(&character);
 			world.loadFromFile(mapName);
 
 			guiMapDimX->setText(std::to_string(world.getSizeX()));
@@ -285,13 +280,6 @@ namespace mse
 					guiEditorEnabled = !guiEditorEnabled;
 				}
 
-				if (GUI::Widget::getWidgetByID<GUI::Checkbox>("enableDOFCB")->getToggled())
-				{
-					if (GUI::Widget::getWidgetByID<GUI::Checkbox>("enableDOFCB")->isChecked())
-						world.setBlurMul(0.0003);
-					else
-						world.setBlurMul(0);
-				}
 				if (GUI::Widget::getWidgetByID<GUI::Checkbox>("enableFPSCB")->getToggled())
 					drawFPS = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableFPSCB")->isChecked();
 

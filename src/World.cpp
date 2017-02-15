@@ -19,8 +19,6 @@ namespace mse
 			showCollisionModes["drawPoints"] = false;
 			showCollisionModes["drawMasterPoint"] = false;
 			showCollisionModes["drawSkel"] = false;
-			blurShader.loadFromFile("Data/Shaders/blur.frag", sf::Shader::Fragment);
-			normalShader.loadFromFile("Data/Shaders/normalMap.frag", sf::Shader::Fragment);
 			worldScriptEngine->dofile("boot.lua");
 		}
 
@@ -487,18 +485,13 @@ namespace mse
 					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
 				}
 				sfe::ComplexSprite tAffSpr;
-				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
-				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
 				tAffSpr = *backSpriteArray[i]->getSprite();
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
 				if (lightHooked) { if (cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 				if (backSpriteArray[i]->isVisible())
-				{
-					//std::cout << "Displaying : " << backSpriteArray[i]->getID() << " at " << layeredX << "," << layeredY << " >> " << tAffSpr.getGlobalBounds().width << "," << tAffSpr.getGlobalBounds().height << std::endl;
-					surf->draw(tAffSpr, &blurShader);
-				}
+					surf->draw(tAffSpr);
 				if (lightHooked) { if (!cLight->isBehind()) lightsMap[backSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
@@ -551,15 +544,13 @@ namespace mse
 				}
 
 				sfe::ComplexSprite tAffSpr;
-				blurShader.setParameter("texture", sf::Shader::CurrentTexture);
-				blurShader.setParameter("blur_radius", blurMul*(backSpriteArray[i]->getLayer() - 1));
 				tAffSpr = *frontSpriteArray[i]->getSprite();
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
 				tAffSpr.setPosition(layeredX, layeredY);
 				if (lightHooked) { if (cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 				if (frontSpriteArray[i]->isVisible())
-					surf->draw(tAffSpr, &blurShader);
+					surf->draw(tAffSpr);
 				if (lightHooked) { if (!cLight->isBehind()) lightsMap[frontSpriteArray[i]->getID()]->draw(surf); }
 			}
 		}
@@ -617,11 +608,6 @@ namespace mse
 		double World::getCamY()
 		{
 			return camY;
-		}
-
-		void World::setBlurMul(double newBlur)
-		{
-			blurMul = newBlur;
 		}
 
 		int World::getStartX()
@@ -685,13 +671,14 @@ namespace mse
 				this->addLevelSprite(newGameObject->getLevelSprite());
 				if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
 					newGameObject->getLevelSprite()->setPosition(0, 0);
+				newGameObject->getLevelSprite()->setParentID(id);
 			}
 			if (newGameObject->hasCollider)
 			{
 				this->addCollider(newGameObject->getCollider());
+				newGameObject->getCollider()->setParentID(id);
 			}
-			newGameObject->getLevelSprite()->setParentID(id);
-			newGameObject->getCollider()->setParentID(id);
+			
 			delete gameObjectData;
 			return newGameObject;
 		}
@@ -1038,7 +1025,6 @@ namespace mse
 				.addFunction("orderUpdateScrArray", &World::orderUpdateScrArray)
 				.addFunction("reorganizeLayers", &World::reorganizeLayers)
 				.addFunction("saveData", &World::saveData)
-				.addFunction("setBlurMul", &World::setBlurMul)
 				.addFunction("setCameraPosition", &World::setCameraPosition)
 				.addFunction("setUpdateState", &World::setUpdateState)
 				);

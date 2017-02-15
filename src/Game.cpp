@@ -55,8 +55,6 @@ namespace mse
 			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
 			World::World world;
 			Script::hookCore.dropValue("World", &world);
-			bool depthOfFieldEnabled = configFile.getBaseAttribute("depthOfField")->get<bool>();
-			if (!depthOfFieldEnabled) world.setBlurMul(0.0);
 
 			//Keybinding
 			Input::KeyBinder keybind;

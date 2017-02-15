@@ -306,7 +306,7 @@ namespace mse
 			std::vector<std::pair<int, int>> indexes;
 			std::string currentStack = "";
 			for (char chr : string) {
-				std::string currentChar = &chr;
+				std::string currentChar(1, chr);
 				std::cout << currentChar << std::endl;
 				if (currentChar == "\"") {
 					if (currentStack.size() > 0) {

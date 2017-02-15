@@ -31,11 +31,11 @@ namespace mse
 			this->behind = behind;
 			shader = new sf::Shader;
 			shader->loadFromFile("Data/Shaders/lightShader.frag", sf::Shader::Fragment);
-			shader->setParameter("frag_ScreenResolution", screenSize);
-			shader->setParameter("frag_LightOrigin", position);
-			shader->setParameter("frag_LightColor", sf::Vector3f(color.r, color.g, color.b));
-			shader->setParameter("frag_LightAlpha", color.a);
-			shader->setParameter("frag_LightAttenuation", size);
+			shader->setUniform("frag_ScreenResolution", screenSize);
+			shader->setUniform("frag_LightOrigin", position);
+			shader->setUniform("frag_LightColor", sf::Vector3f(color.r, color.g, color.b));
+			shader->setUniform("frag_LightAlpha", color.a);
+			shader->setUniform("frag_LightAttenuation", (float)size);
 			states.shader = shader;
 			states.blendMode = sf::BlendAdd;
 		}
@@ -53,11 +53,11 @@ namespace mse
 			this->behind = behind;
 			shader = new sf::Shader;
 			shader->loadFromFile("Data/Shaders/lightShader.frag", sf::Shader::Fragment);
-			shader->setParameter("frag_ScreenResolution", sf::Vector2f(screenSizeX, screenSizeY));
-			shader->setParameter("frag_LightOrigin", sf::Vector2f(x, y));
-			shader->setParameter("frag_LightColor", sf::Vector3f(r, g, b));
-			shader->setParameter("frag_LightAlpha", a);
-			shader->setParameter("frag_LightAttenuation", size);
+			shader->setUniform("frag_ScreenResolution", sf::Vector2f(screenSizeX, screenSizeY));
+			shader->setUniform("frag_LightOrigin", sf::Vector2f(x, y));
+			shader->setUniform("frag_LightColor", sf::Vector3f(r, g, b));
+			shader->setUniform("frag_LightAlpha", a);
+			shader->setUniform("frag_LightAttenuation", (float)size);
 			states.shader = shader;
 			states.blendMode = sf::BlendAdd;
 		}
@@ -91,14 +91,14 @@ namespace mse
 		{
 			this->x = x;
 			this->y = y;
-			shader->setParameter("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
+			shader->setUniform("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
 		}
 
 		void PointLight::move(double x, double y)
 		{
 			this->x += x;
 			this->y += y;
-			shader->setParameter("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
+			shader->setUniform("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
 		}
 
 		void PointLight::setOffset(double x, double y)
@@ -110,13 +110,13 @@ namespace mse
 		void PointLight::setSize(double size)
 		{
 			this->size = size;
-			shader->setParameter("frag_LightAttenuation", this->size);
+			shader->setUniform("frag_LightAttenuation", (float)this->size);
 		}
 
 		void PointLight::scale(double size)
 		{
 			this->size *= size;
-			shader->setParameter("frag_LightAttenuation", this->size);
+			shader->setUniform("frag_LightAttenuation", (float)this->size);
 		}
 
 		void PointLight::setColor(int r, int g, int b, int a)
@@ -126,8 +126,8 @@ namespace mse
 			this->b = b;
 			this->a = a;
 			this->checkColors();
-			shader->setParameter("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
-			shader->setParameter("frag_LightAlpha", this->a);
+			shader->setUniform("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
+			shader->setUniform("frag_LightAlpha", (float)this->a);
 		}
 
 		void PointLight::addColor(int r, int g, int b, int a)
@@ -137,8 +137,8 @@ namespace mse
 			this->b += b;
 			this->a += a;
 			this->checkColors();
-			shader->setParameter("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
-			shader->setParameter("frag_LightAlpha", this->a);
+			shader->setUniform("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
+			shader->setUniform("frag_LightAlpha", (float)this->a);
 		}
 
 		void PointLight::subColor(int r, int g, int b, int a)
@@ -148,8 +148,8 @@ namespace mse
 			this->b -= b;
 			this->a -= a;
 			this->checkColors();
-			shader->setParameter("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
-			shader->setParameter("frag_LightAlpha", this->a);
+			shader->setUniform("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
+			shader->setUniform("frag_LightAlpha", (float)this->a);
 		}
 
 		void PointLight::blendColor(double rB, double gB, double bB, double aB)
@@ -159,8 +159,8 @@ namespace mse
 			this->b *= bB;
 			this->a *= aB;
 			this->checkColors();
-			shader->setParameter("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
-			shader->setParameter("frag_LightAlpha", this->a);
+			shader->setUniform("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
+			shader->setUniform("frag_LightAlpha", (float)this->a);
 		}
 
 		void PointLight::setBehind(bool behind)
@@ -280,10 +280,10 @@ namespace mse
 
 		void PointLight::updateShader()
 		{
-			shader->setParameter("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
-			shader->setParameter("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
-			shader->setParameter("frag_LightAlpha", this->a);
-			shader->setParameter("frag_LightAttenuation", this->size);
+			shader->setUniform("frag_LightOrigin", sf::Vector2f(this->x + this->offX, this->y + this->offY));
+			shader->setUniform("frag_LightColor", sf::Vector3f(this->r, this->g, this->b));
+			shader->setUniform("frag_LightAlpha", (float)this->a);
+			shader->setUniform("frag_LightAttenuation", (float)this->size);
 		}
 
 		//DynamicPointLight
