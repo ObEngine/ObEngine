@@ -9,8 +9,8 @@ Meta:
     StartY:0
 
 LevelSprites:
-    @g2V27QPw
-        path:"background.png"
+    @background
+        path:"Sprites/LevelSprites/PONG_Background/background.png"
         posX:0
         posY:0
         rotation:0
