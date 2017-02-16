@@ -9,7 +9,9 @@ You will need several libs :
 - [Kaguya](https://github.com/satoren/kaguya) (Lua Binding)
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (Scripting language)
 - [ClipperLib](https://sourceforge.net/projects/polyclipping/files/) (Polygonal Intersection Resolution)
-If you'r on Windows vc14 is required.
+
+If you're on Windows vc14 is required.
+
 If you're on Linux g++-6 is required.
 
 ## Could you give an example of what I can do with your engine ?
