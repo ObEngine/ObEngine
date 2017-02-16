@@ -5,10 +5,12 @@
 
 ## What do I need to build it ?
 You will need several libs :
-- [SFML 2.3](http://www.sfml-dev.org/download/sfml/2.3/index-fr.php) (Display, Keys, Network, and much more)
+- [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2/index-fr.php) (Display, Keys, Network, and much more)
 - [Kaguya](https://github.com/satoren/kaguya) (Lua Binding)
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (Scripting language)
 - [ClipperLib](https://sourceforge.net/projects/polyclipping/files/) (Polygonal Intersection Resolution)
+If you'r on Windows vc14 is required.
+If you're on Linux g++-6 is required.
 
 ## Could you give an example of what I can do with your engine ?
 Well, you can do approximatively everything with it as long as it's in 2D. MSE doesn't handle 3D.
