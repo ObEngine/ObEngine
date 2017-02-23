@@ -1,7 +1,7 @@
 //Author : Sygmei
 //Key : 976938ef7d46c286a2027d73f3a99467bcfa8ff0c1e10bd0016139744ef5404f4eb4d069709f9831f6de74a094944bf0f1c5bf89109e9855290336a66420376f
 
-#include "MeltingSaga.hpp"
+#include "ObEngine.hpp"
 
 void testLua(kaguya::State* obj, kaguya::LuaRef me) {
 	std::cout << "Karkar0 " << std::endl;
@@ -19,19 +19,6 @@ int main(int argc, char** argv)
 	std::ofstream out("log.txt");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
-
-	std::cout << "GetMeResults" << std::endl;
-	mse::Functions::String::StringExtractor result = mse::Functions::String::extractAllStrings("~Color(int -> value, string -> me = \"Killian dit Miam\")");
-	for (std::string ex : std::get<0>(result)) {
-		std::cout << ex << std::endl;
-	}
-	for (std::string ex : std::get<1>(result)) {
-		std::cout << ex << std::endl;
-	}
-	for (std::pair<int, int> index : std::get<2>(result)) {
-		std::cout << index.first << ", " << index.second << std::endl;
-	}
-	std::cout << "StopResults" << std::endl;
 
 	mse::Data::DataParser workspaceConfig;
 	workspaceConfig.parseFile("Workspace/workspace.cfg.msd");
@@ -72,28 +59,17 @@ int main(int argc, char** argv)
 		std::string editMapName = mse::Modes::chooseMapMenu();
 		mse::Functions::Coord::width = sf::VideoMode::getDesktopMode().width;  mse::Functions::Coord::height = sf::VideoMode::getDesktopMode().height;
 		mse::Functions::Coord::baseWidth = 1920; mse::Functions::Coord::baseHeight = 1080;
-		std::cout << "Editing : " << editMapName << std::endl;
 		if (editMapName != "")
 			mse::Editor::editMap(editMapName);
 	}
 	else if (runParser.getArgumentValue("-mode") == "play")
-		mse::Modes::startGame("Main.map.msd");
+		mse::Modes::startGame("");
 	else if (runParser.getArgumentValue("-mode") == "console")
 		mse::Modes::startDebugMode();
 	else if (runParser.getArgumentValue("-mode") == "toolkit")
 		mse::Modes::startToolkitMode();
 	else
-		mse::Modes::startGame("Main.map.msd");
-	/*else
-	{
-		mse::Functions::Coord::width = 640; mse::Functions::Coord::height = 480;
-		mse::Functions::Coord::baseWidth = 640; mse::Functions::Coord::baseHeight = 480;
-		std::string editMapName = mse::Modes::chooseMapMenu();
-		mse::Functions::Coord::width = sf::VideoMode::getDesktopMode().width;  mse::Functions::Coord::height = sf::VideoMode::getDesktopMode().height;
-		mse::Functions::Coord::baseWidth = 1920; mse::Functions::Coord::baseHeight = 1080;
-		if (editMapName != "")
-			mse::Editor::editMap(editMapName);
-	}*/
+		mse::Modes::startGame("");
 	
 	return 0;
 }

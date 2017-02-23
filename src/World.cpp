@@ -19,7 +19,6 @@ namespace mse
 			showCollisionModes["drawPoints"] = false;
 			showCollisionModes["drawMasterPoint"] = false;
 			showCollisionModes["drawSkel"] = false;
-			worldScriptEngine->dofile("boot.lua");
 		}
 
 		void World::addLevelSprite(Graphics::LevelSprite* spr)
@@ -57,21 +56,22 @@ namespace mse
 			double startLoadTime = Time::getTickSinceEpoch();
 			int indexInFile = 0;
 			Data::DataParser mapParse;
-			std::cout << "Creation Chrono : " << "[WorldStart]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 			baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
-			mapParse.writeFile("rewrite.msd");
-			std::cout << "Creation Chrono : " << "[WorldParse]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-			mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("Meta");
 
-			levelName = mapParse.getBaseAttribute("Level")->get<std::string>();
-			sizeX = mapParse.getBaseAttribute("SizeX")->get<int>();
-			sizeY = mapParse.getBaseAttribute("SizeY")->get<int>();
-			if (mapParse.containsBaseAttribute("StartX"))
-				startX = mapParse.getBaseAttribute("StartX")->get<int>();
-			if (mapParse.containsBaseAttribute("StartY"))
-				startY = mapParse.getBaseAttribute("StartY")->get<int>();
-
-			std::cout << "Creation Chrono : " << "[WorldMeta]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
+			if (mapParse.containsRootAttribute("Meta")) {
+				mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("Meta");
+				levelName = mapParse.getBaseAttribute("Level")->get<std::string>();
+				sizeX = mapParse.getBaseAttribute("SizeX")->get<int>();
+				sizeY = mapParse.getBaseAttribute("SizeY")->get<int>();
+				if (mapParse.containsBaseAttribute("StartX"))
+					startX = mapParse.getBaseAttribute("StartX")->get<int>();
+				if (mapParse.containsBaseAttribute("StartY"))
+					startY = mapParse.getBaseAttribute("StartY")->get<int>();
+			}
+			else {
+				std::cout << "<Error:World:World>[loadFromFile] : Map file : " << filename << " does not have any 'Meta' Root Attribute" << std::endl;
+				return;
+			}
 
 			if (mapParse.containsRootAttribute("LevelSprites"))
 			{
@@ -118,11 +118,8 @@ namespace mse
 						frontSpriteArray.push_back(tempSprite);
 				}
 			}
-			std::cout << "Creation Chrono : " << "[WorldLevelSprites]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-
 
 			this->reorganizeLayers();
-			std::cout << "Creation Chrono : " << "[WorldReorganize]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 
 			if (mapParse.containsRootAttribute("Lights"))
@@ -188,7 +185,6 @@ namespace mse
 					}
 				}
 			}
-			std::cout << "Creation Chrono : " << "[WorldLights]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			if (mapParse.containsRootAttribute("Collisions"))
 			{
@@ -198,19 +194,15 @@ namespace mse
 				{
 					mapParse.accessNavigator()->setCurrentRootAttribute("Collisions", allCol[i]);
 					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(allCol[i]);
-					std::cout << "[World] Creating Collider : " << allCol[i] << std::endl;
 					for (unsigned int j = 0; j < mapParse.getListSize("polygonPoints"); j++)
 					{
 						std::string getPt = mapParse.getListItem("polygonPoints", j)->get<std::string>();
 						std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 						tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
-						std::cout << "[World::Collider] Add Point : " << tPoint[0] << " ," << tPoint[1] << std::endl;
 					}
 					this->collidersArray.push_back(tempCollider);
 				}
 			}
-			std::cout << "Creation Chrono : " << "[WorldCollisions]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-
 
 			if (mapParse.containsRootAttribute("LevelObjects"))
 			{
@@ -231,22 +223,8 @@ namespace mse
 						Script::GameObjectRequires::ApplyRequirements(this->getGameObject(allObjects[i]), *mapParse.getComplexAttribute("Requires"));
 						objectRequirements->setParent(mapParse[mapParse.accessNavigator()->getFullPath()]);
 					}
-						
-					/*if (this->getGameObject(allObjects[i])->canDisplay())
-					{
-						if (mapParse.containsBaseAttribute("posX"))
-							objX = mapParse.getBaseAttribute("posX")->get<int>();
-						if (mapParse.containsBaseAttribute("posY"))
-							objY = mapParse.getBaseAttribute("posY")->get<int>();
-						this->getGameObject(allObjects[i])->getLevelSprite()->setPosition(objX, objY);
-					}
-					if (getGameObject(allObjects[i])->hasCollider)
-					{
-						this->getGameObject(allObjects[i])->getCollider()->setPosition(objX, objY);
-					}*/
 				}
 			}
-			std::cout << "Creation Chrono : " << "[WorldLevelObjects]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			if (mapParse.containsRootAttribute("Script"))
 			{
@@ -259,7 +237,6 @@ namespace mse
 					scriptArray.push_back(scriptName);
 				}
 			}
-			std::cout << "Creation Chrono : " << "[WorldScript]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 			Script::TriggerDatabase::GetInstance()->update();
 			for (int i = 0; i < updateObjArray.size(); i++)
 			{
@@ -269,34 +246,26 @@ namespace mse
 
 		void World::clearWorld()
 		{
-			std::cout << "Clearing World" << std::endl;
 			/*for (int i = 0; i < backSpriteArray.size(); i++)
 			delete backSpriteArray[i];*/
-			std::cout << "Clearing bSpriteArray [Done]" << std::endl;
 			backSpriteArray.clear();
 			/*for (int i = 0; i < frontSpriteArray.size(); i++)
 			delete frontSpriteArray[i];*/
 			frontSpriteArray.clear();
-			std::cout << "Clearing fSpriteArray [Done]" << std::endl;
 			/*for (int i = 0; i < collidersArray.size(); i++)
 			delete collidersArray[i];*/
 			collidersArray.clear();
-			std::cout << "Clearing collidersArray [Done]" << std::endl;
 			/*for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
 			delete it->second;*/
 			gameObjectsMap.clear();
 			updateObjArray.clear();
-			std::cout << "Clearing gameObjectsMap [Done]" << std::endl;
 			/*for (auto it = lightsMap.begin(); it != lightsMap.end(); it++)
 			delete it->second;*/
 			lightsMap.clear();
-			std::cout << "Clearing lightsMapArray [Done]" << std::endl;
 			/*for (int i = 0; i < particleArray.size(); i++)
 			delete particleArray[i];*/
 			particleArray.clear();
-			std::cout << "Clearing particlesArray [Done]" << std::endl;
 			scriptArray.clear();
-			std::cout << "Clearing scriptArray [Done]" << std::endl;
 		}
 
 		Data::DataParser* World::saveData()
@@ -376,7 +345,6 @@ namespace mse
 				kaguya::LuaTable saveTable = (*it->second->getScriptEngine())["Local.Save"]();
 				(*it->second->getScriptEngine())("tnt = Local.Save()");
 				kaguya::LuaRef saveTableRef = (*it->second->getScriptEngine())["tnt"];
-				std::cout << "GNGN Type : " << saveTable.type() << std::endl;
 				(*it->second->getScriptEngine())("print(inspect(Local.Save()));");
 				Data::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);
@@ -600,6 +568,13 @@ namespace mse
 				camY = sizeY - Functions::Coord::height;
 		}
 
+		void World::setCameraPositionIfNotLocked(double tX, double tY, std::string setMode)
+		{
+			if (!cameraLocked) {
+				this->setCameraPosition(tX, tY, setMode);
+			}
+		}
+
 		double World::getCamX()
 		{
 			return camX;
@@ -608,6 +583,16 @@ namespace mse
 		double World::getCamY()
 		{
 			return camY;
+		}
+
+		void World::setCameraLock(bool state)
+		{
+			this->cameraLocked = state;
+		}
+
+		bool World::isCameraLocked()
+		{
+			return cameraLocked;
 		}
 
 		int World::getStartX()
@@ -1025,10 +1010,9 @@ namespace mse
 				.addFunction("orderUpdateScrArray", &World::orderUpdateScrArray)
 				.addFunction("reorganizeLayers", &World::reorganizeLayers)
 				.addFunction("saveData", &World::saveData)
-				.addFunction("setCameraPosition", &World::setCameraPosition)
+				.addFunction("setCameraPosition", &World::setCameraPositionIfNotLocked)
 				.addFunction("setUpdateState", &World::setUpdateState)
 				);
-			std::cout << "World Lib Loaded" << std::endl;
 		}
 
 		void loadWorldScriptEngineBaseLib(kaguya::State* lua)

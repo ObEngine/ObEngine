@@ -27,13 +27,16 @@ namespace mse
 				std::string levelName = "???";
 				int mapSizeX = 0;
 				int mapSizeY = 0;
-				mapInfoParser.parseFile("Data/Maps/" + allMaps[i]);
-				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("Level")) 
-					levelName = mapInfoParser.getPath("Meta")->getBaseAttribute("Level")->get<std::string>();
-				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeX")) 
-					mapSizeX = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeX")->get<int>();
-				if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeY")) 
-					mapSizeY = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeY")->get<int>();
+
+				if (mapInfoParser.containsRootAttribute("Meta")) {
+					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("Level"))
+						levelName = mapInfoParser.getPath("Meta")->getBaseAttribute("Level")->get<std::string>();
+					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeX"))
+						mapSizeX = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeX")->get<int>();
+					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeY"))
+						mapSizeY = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeY")->get<int>();
+				}
+				
 				GUI::Button* btn = gui->createButton("maps", "map_gbtn_" + std::to_string(i), 0, i * 100, true, true, "MAPSELECT");
 				gui->createLabel("maps", "map_glbl_" + std::to_string(i), 30, i * 100 + 10, filename, "weblysleekuil.ttf", 64, sf::Color::White);
 				gui->createLabel("maps", "map_gname_" + std::to_string(i), 320, i * 100 + 10, levelName, "weblysleekuil.ttf", 24, sf::Color::White);
@@ -83,7 +86,6 @@ namespace mse
 			sf::Vertex linetop[] = { sf::Vertex(sf::Vector2f(0, 60)), sf::Vertex(sf::Vector2f(640, 60)) };
 			window.clear(sf::Color(40, 40, 40));
 			window.display();
-			std::cout << "Map Selector Initialisation.." << std::endl;
 
 			sf::Event sfevent;
 			GUI::Container gui(&sfevent, &window, 640, 480);
@@ -101,23 +103,18 @@ namespace mse
 			gui.createButton("crea", "createBtn", 598, 14, true, true, "ADD");
 			GUI::Widget::getWidgetByID<GUI::Button>("createBtn")->bindFunction([&gui]() { createLevel(&gui); });
 
-			std::cout << "Map Selector GUI Initialisation..." << std::endl;
 			chooseMapAddMaps(&gui);
 			mapsContainer->addScrollBar();
-			std::cout << "All maps Added" << std::endl;
 
 			Cursor::Cursor cursor(&window);
 			cursor.selectCursor("RoundWhite");
-			std::cout << "Cursor Init" << std::endl;
 
 			sf::Font font;
 			font.loadFromFile("Data/Fonts/weblysleekuil.ttf");
-			std::cout << "Font init" << std::endl;
 
 			GUI::ButtonEvent* appQuitBool = GUI::Widget::getWidgetByID<GUI::Button>("quitBtn")->getHook();
 			sf::Vector2i grabbedOffset;
 			bool grabbedWindow = false;
-			std::cout << "Start loop" << std::endl;
 
 			while (window.isOpen() && currentChosenMap == "")
 			{
@@ -164,7 +161,6 @@ namespace mse
 				window.draw(*cursor.getSprite());
 				window.display();
 			}
-			std::cout << currentChosenMap << std::endl;
 			window.close();
 			return currentChosenMap;
 		}

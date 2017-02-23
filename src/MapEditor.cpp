@@ -13,6 +13,8 @@ namespace mse
 
 			//Creating Window
 			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "Melting Saga", sf::Style::Fullscreen);
+			sf::View viewPort(sf::FloatRect(0, 0, Functions::Coord::baseWidth, Functions::Coord::baseHeight));
+			window.setView(viewPort);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
 			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
@@ -30,23 +32,19 @@ namespace mse
 				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "loadingStr") - 1))->get<std::string>();
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();
-			std::cout << "Creation Chrono : " << "[Window]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			Script::hookCore.dropValue("TriggerDatabase", Script::TriggerDatabase::GetInstance());
 			Graphics::TextRenderer textDisplay;
 			textDisplay.createRenderer("Shade", "MapSaver");
 			Script::hookCore.dropValue("TextDisplay", &textDisplay);
-			std::cout << "Creation Chrono : " << "[Start]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Console
 			Console::Console gameConsole;
 			Script::hookCore.dropValue("Console", &gameConsole);
-			std::cout << "Creation Chrono : " << "[Console]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Font
 			sf::Font font;
 			font.loadFromFile("Data/Fonts/arial.ttf");
-			std::cout << "Creation Chrono : " << "[Font]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Config
 			Data::DataParser configFile;
@@ -61,7 +59,6 @@ namespace mse
 			bool showOverlay = configFile.getBaseAttribute("showOverlay")->get<bool>();
 			bool showCursor = configFile.getBaseAttribute("showCursor")->get<bool>();
 			bool drawFPS = configFile.getBaseAttribute("showFPS")->get<bool>();
-			std::cout << "Creation Chrono : " << "[Config]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
@@ -69,11 +66,6 @@ namespace mse
 			cursorCollider.addPoint(0, 0); cursorCollider.addPoint(1, 0); cursorCollider.addPoint(1, 1); cursorCollider.addPoint(0, 1);
 			cursor.updateOutsideWindow(true);
 			Script::hookCore.dropValue("Cursor", &cursor);
-			std::cout << "Creation Chrono : " << "[Cursor]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-
-			//Character Initialisation
-			//Character character("Natsugi");
-			std::cout << "Creation Chrono : " << "[Character]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//World Creation / Loading
 			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
@@ -84,7 +76,6 @@ namespace mse
 				std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
 			});
 			Script::hookCore.dropValue("World", &world);
-			std::cout << "Creation Chrono : " << "[World]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Socket
 			Input::NetworkHandler networkHandler;
@@ -93,14 +84,10 @@ namespace mse
 			Input::KeyBinder keybind;
 			Script::hookCore.dropValue("KeyBinder", &keybind);
 			keybind.loadFromFile(&configFile);
-			std::cout << "Gamepad Connected : " << sf::Joystick::isConnected(0) << std::endl;
-			std::cout << "Gamepad has : " << sf::Joystick::getButtonCount(0) << " buttons" << std::endl;
-			std::cout << "Creation Chrono : " << "[Keybind]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//GUI
 			sf::Event event;
-			GUI::Container* gui = new GUI::Container(&event, &window, Functions::Coord::width, Functions::Coord::height);
-			std::cout << "Pointer to (init) : " << gui << std::endl;
+			GUI::Container* gui = new GUI::Container(&event, &window, Functions::Coord::baseWidth, Functions::Coord::baseHeight);
 			Script::hookCore.dropValue("GUI", gui);
 			gui->createWidgetContainer("Main", 2, 0, 0, Functions::Coord::baseWidth, Functions::Coord::baseHeight, GUI::ContainerMovement::Fixed);
 			gui->createWidgetContainer("Score", 2, 0, 0, 1920, 1080, GUI::ContainerMovement::Fixed); //DELETE THIS IT WAS FOR PONG
@@ -108,11 +95,11 @@ namespace mse
 			gui->createButton("Main", "editorMenuBtn", Functions::Coord::width - 570, 0, true, true, "GREY");
 			GUI::ButtonEvent* menuOpened = GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->getHook();
 			GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->setText("Menu Editeur", "arial.ttf", sf::Color(255, 255, 255), 14, true);
-			std::vector<std::string> cameraMenuList = { "Fixed Camera", "Following Camera", "Zone Camera" };
+			std::vector<std::string> cameraMenuList = { "Movable Camera", "Free Camera" };
 			gui->createDroplist("Main", "cameraMenuList", Functions::Coord::width - 190, 0, 12, "", false, "arial.ttf", "GREY", cameraMenuList);
 			std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
 			gui->createDroplist("Main", "editModeList", Functions::Coord::width - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
-			GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
+			GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(0);
 			gui->createWidgetContainer("Editor", 3, 20, 40, Functions::Coord::baseWidth - 40, Functions::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
 			gui->getContainerByContainerName("Editor")->setBackground(sf::Color(0, 0, 0, 200));
 
@@ -175,7 +162,6 @@ namespace mse
 			gui->createLabel("EditorInfos", "camPos", 350, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
 			gui->createLabel("EditorInfos", "sumPos", 550, 5, "Sum : (0,0)", "arial.ttf", 16, sf::Color::White);
 			gui->createLabel("EditorInfos", "currentLayer", 750, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
-			std::cout << "Creation Chrono : " << "[GUI]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Map Editor
 			Graphics::LevelSprite* hoveredSprite = NULL;
@@ -203,7 +189,6 @@ namespace mse
 			//Build Tabs
 			EditorTools::loadSpriteFolder("");
 			EditorTools::buildObjectTab();
-			std::cout << "Creation Chrono : " << "[MapEditor]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
@@ -211,10 +196,7 @@ namespace mse
 			FramerateManager framerateManager(*configFile.getRootAttribute("GameConfig"));
 			window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
-			std::cout << "Creation Chrono : " << "[Framerate]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
-
 			Light::initLights();
-			std::cout << "Creation Chrono : " << "[Lights]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			EditorGrid editorGrid(32, 32);
 			keybind.setActionDelay("MagnetizeUp", 200);
@@ -235,7 +217,6 @@ namespace mse
 				int offY = std::stoi(offSY != "" ? offSY : "0");
 				editorGrid.setOffset(offX, offY);
 			});
-			std::cout << "Creation Chrono : " << "[Grid]" << Time::getTickSinceEpoch() - startLoadTime << std::endl; startLoadTime = Time::getTickSinceEpoch();
 
 			world.loadFromFile(mapName);
 
@@ -257,12 +238,10 @@ namespace mse
 
 				//GUI Actions
 				keybind.setEnabled(!gameConsole.isConsoleVisible());
-				if (keybind.isActionToggled("CamFixed"))
+				if (keybind.isActionToggled("CamMovable"))
 					GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(0);
-				else if (keybind.isActionToggled("CamFollow"))
+				else if (keybind.isActionToggled("CamFree"))
 					GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
-				else if (keybind.isActionToggled("CamZone"))
-					GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(2);
 
 				if (keybind.isActionToggled("SpriteMode"))
 				{
@@ -286,42 +265,12 @@ namespace mse
 				if (guiEditorEnabled)
 					GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(3);
 
-				/*if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() == "Following Camera")
-					world.setCameraPosition(world.getCharacter(0)->getX() - (Functions::Coord::width / 2) + 128, world.getCharacter(0)->getY() - (Functions::Coord::height / 2) + 152, "FOLLOW");
-				*/
-
 				//Updates
 				if (!gameConsole.isConsoleVisible())
 				{
-					//Keybinds
-					if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() != "Fixed Camera")
+					if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() == "Movable Camera")
 					{
-						/*if (keybind.isActionEnabled("Left") && keybind.isActionEnabled("Right"))
-						{
-						}
-						else if (keybind.isActionEnabled("Left"))
-							world.getCharacter(0)->move("Left");
-						else if (keybind.isActionEnabled("Right"))
-							world.getCharacter(0)->move("Right");
-
-						if (keybind.isActionEnabled("Crouch"))
-						{
-							world.getCharacter(0)->triggerCrouch(true);
-						}
-						if (keybind.isActionReleased("Crouch"))
-						{
-							world.getCharacter(0)->triggerCrouch(false);
-						}
-
-						if (keybind.isActionToggled("Jump"))
-							world.getCharacter(0)->jump();
-						if (keybind.isActionEnabled("Sprint"))
-							world.getCharacter(0)->sprint(true);
-						else
-							world.getCharacter(0)->sprint(false);*/
-					}
-					else
-					{
+						world.setCameraLock(true);
 						if (keybind.isActionEnabled("CamLeft") && keybind.isActionEnabled("CamRight"))
 						{
 						}
@@ -342,6 +291,9 @@ namespace mse
 							cameraSpeed = 60;
 						else
 							cameraSpeed = 30;
+					}
+					else {
+						world.setCameraLock(false);
 					}
 
 					if (keybind.isActionToggled("Reset"))

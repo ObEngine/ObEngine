@@ -18,8 +18,6 @@ namespace mse {
 				kaguya::State olol;
 				for (std::string elementName : convert.getAllAttributes()) {
 					if (convert.getAttributeType(elementName) == Types::BaseAttribute) {
-						std::cout << "ofid::" << convert.getBaseAttribute(elementName)->getID() << std::endl;
-						std::cout << "oftype::" << convert.getBaseAttribute(elementName)->getDataType() << std::endl;
 						baseAttributeToLuaElement(injectTable, *convert.getBaseAttribute(elementName));
 					}
 					else if (convert.getAttributeType(elementName) == Types::ComplexAttribute) {
@@ -33,7 +31,6 @@ namespace mse {
 			}
 			void baseAttributeToLuaElement(kaguya::LuaTable& target, BaseAttribute& convert)
 			{
-				std::cout << "ofin:" << convert.getID() << std::endl;
 				if (convert.getDataType() == "int")
 					target[convert.getID()] = convert.get<int>();
 				else if (convert.getDataType() == "string")
@@ -44,7 +41,6 @@ namespace mse {
 				{
 					double val = convert.get<double>();
 					std::string vid = convert.getID();
-					std::cout << "ofval::" << vid << ", " << val << std::endl;
 					target[vid] = val;
 				}
 					
@@ -60,12 +56,10 @@ namespace mse {
 			ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
 			{
 				ComplexAttribute* returnElement = new ComplexAttribute(id);
-				std::cout << "Table Type : " << convert.type() << std::endl;
 				if (convert.type() == 0 || convert.type() == 5) {
 					std::map<std::string, kaguya::LuaRef> tableMap = convert;
 					for (std::pair<std::string, kaguya::LuaRef> tableItem : tableMap) {
 						std::string tableKey = tableItem.first;
-						std::cout << "Current Table Key : " << tableKey << std::endl;
 						if (convert[tableKey].type() == 5) {
 							kaguya::LuaRef tempTableRef = convert[tableKey];
 							returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));

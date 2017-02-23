@@ -51,8 +51,10 @@ namespace mse
 			for (int i = 0; i < basePaths.size(); i++)
 			{
 				int loadResponse = 0;
-				if (Functions::File::fileExists(basePaths[i] + ((basePaths[i] != "") ? "/" : "") + this->path))
+				if (Functions::File::fileExists(basePaths[i] + ((basePaths[i] != "") ? "/" : "") + this->path)) {
 					loadResponse = lambda(resource, basePaths[i] + ((basePaths[i] != "") ? "/" : "") + this->path);
+				}
+					
 				loadSum += loadResponse;
 				if (loadResponse == 1)
 					return basePaths[i];

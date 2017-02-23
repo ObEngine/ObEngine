@@ -195,12 +195,10 @@ namespace mse
 
 		TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
 		{
-			std::cout << "Trying to create TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
 			if (allTriggers.find(groupNamespace) != allTriggers.end())
 			{
 				if (allTriggers[groupNamespace].find(triggerGroupName) == allTriggers[groupNamespace].end())
 				{
-					std::cout << "Success !" << std::endl;
 					allTriggers[groupNamespace][triggerGroupName] = new TriggerGroup(groupNamespace, triggerGroupName);
 					return allTriggers[groupNamespace][triggerGroupName];
 				}
@@ -237,10 +235,8 @@ namespace mse
 		}
 		void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
 		{
-			std::cout << "Deleting : " << trgGroup->getNamespace() << "::" << trgGroup->getName() << std::endl;
 			allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());
 			delete trgGroup;
-			//If crash, fix it by removing delete Triggers from delayedTriggers
 		}
 		bool TriggerDatabase::doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName)
 		{

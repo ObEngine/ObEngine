@@ -17,7 +17,6 @@ namespace mse
 		}
 		sf::Texture* Thumbnailer::GetSpriteThumbnail(std::string path)
 		{
-			std::cout << "ThumnailerLoad : " << path << std::endl;
 			if (_instance == nullptr)
 				_instance = new Thumbnailer();
 			if (_instance->cache.find(path) != _instance->cache.end())
@@ -101,7 +100,6 @@ namespace mse
 				xpos += xOff; ypos += yOff;
 				GUI::Button* currentObj = gui->createButton("EditorObjects", currentObjName, xpos, ypos, true, true, "OBJECT");
 				currentObj->setText(currentObjName, "weblysleekuil.ttf", sf::Color::White, 18, true);
-				std::cout << "Adding Btn : " << currentObjName << " at pos : " << xpos << "," << ypos << std::endl;
 				currentObj->bindFunction([currentObjName]() { 
 					buildRequiresObjectTab(currentObjName);
 				});

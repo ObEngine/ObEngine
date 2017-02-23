@@ -71,7 +71,9 @@ namespace mse
 
 			Light::initLights();
 
-			world.loadFromFile(mapName);
+			if (mapName != "")
+				world.loadFromFile(mapName);
+			System::Path("boot.lua").loadResource(world.getScriptEngine(), System::Loaders::luaLoader);
 
 			//Game Starts
 			while (window.isOpen())

@@ -43,7 +43,6 @@ namespace mse
 		}
 		void AnimationGroup::updateSprite()
 		{
-			std::cout << "Updating texture << [" << groupIndex << "] : " << groupList[groupIndex]->getSize().x << "," << groupList[groupIndex]->getSize().y << std::endl;
 			currentSprite.setTexture(*groupList[groupIndex], true);
 		}
 		void AnimationGroup::reset()
@@ -153,9 +152,7 @@ namespace mse
 						return textureDatabase[path];
 					}
 					else
-					{
 						std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
-					}
 				}
 				else
 				{
@@ -172,9 +169,7 @@ namespace mse
 					return textureDatabase[path];
 				}
 				else
-				{
 					std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
-				}
 			}
 		}
 
@@ -303,7 +298,6 @@ namespace mse
 					codeIndex = 0;
 				if (Time::getTickSinceEpoch() - startDelay > currentDelay)
 				{
-					std::cout << "Play animation : " << animationName << std::endl;
 					if (askCommand)
 					{
 						std::vector<std::string> currentCommand;
@@ -455,25 +449,19 @@ namespace mse
 		}
 		void Animator::setKey(std::string key)
 		{
-			std::cout << "Trying to set Key" << key << std::endl;
 			if (fullAnimSet.find(key) == fullAnimSet.end())
 				std::cout << "<Error:Animation:Animator>[setKey] : Can't find key : " << key << " for Animator : " << animationPath.toString() << std::endl;
 			else
 			{
 				if (key != currentAnimationName)
 				{
-					std::cout << "Animation switch" << std::endl;
 					bool changeAnim = false;
 					if (currentAnimation != NULL)
 					{
 						if (currentAnimation->isAnimationOver())
-						{
 							changeAnim = true;
-						}
 						else if (fullAnimSet[key]->getPriority() >= currentAnimation->getPriority())
-						{
 							changeAnim = true;
-						}
 					}
 					else
 						changeAnim = true;
@@ -506,7 +494,6 @@ namespace mse
 			}
 			for (unsigned int i = 0; i < listDir.size(); i++)
 			{
-				std::cout << "Loading Animation : " << listDir[i] << std::endl;
 				allAnimationNames.push_back(listDir[i]);
 				Animation* tempAnim = new Animation;
 				if (ressourceManagerHook != NULL)
@@ -544,7 +531,6 @@ namespace mse
 		sf::Sprite* Animator::getSprite()
 		{
 			lastSpriteAddress = currentAnimation->getSprite();
-			//lastRect = *currentAnimation->getSpriteRect();
 			return currentAnimation->getSprite();
 		}
 		sf::Texture* Animator::getTextureAtKey(std::string key, int index)

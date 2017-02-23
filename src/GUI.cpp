@@ -23,7 +23,6 @@ void GUI::Widget::autoLoad()
 	if (widgetStyle != "None")
 	{
 		std::string textureGUIPath = "Sprites/GUI/" + widgetType + "/" + widgetStyle;
-		std::cout << "Loading textures : " << textureGUIPath << std::endl;
 		std::vector<std::string> listFile = mse::Functions::File::listFileInDir(textureGUIPath);
 		for (int i = 0; i < listFile.size(); i++)
 		{
@@ -33,7 +32,6 @@ void GUI::Widget::autoLoad()
 			}
 			else
 			{
-				std::cout << "Load success : " << listFile[i] << std::endl;
 				texture.setSmooth(true);
 				widgetTextures[listFile[i]] = texture;
 			}
@@ -41,7 +39,6 @@ void GUI::Widget::autoLoad()
 	}
 	texture.loadFromFile("Sprites/GUI/default.png");
 	widgetTextures["default"] = texture;
-	std::cout << ID << " textures successfully loaded" << std::endl;
 }
 
 GUI::Widget::~Widget()

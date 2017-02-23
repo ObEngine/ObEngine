@@ -368,7 +368,6 @@ namespace mse
 			std::string fAnswerText = vtdb[0]["fAnswer"];
 			std::string sAnswerText = vtdb[0]["sAnswer"];
 			int selectedAnswer = std::stoi(vtdb[0]["selectedAnswer"]);
-			std::cout << "Set Answer : " << textToSay << "," << fAnswerText << "," << sAnswerText << "," << selectedAnswer << std::endl;
 
 			Functions::String::regenerateEncoding(textToSay);
 			Functions::String::regenerateEncoding(fAnswerText);
@@ -387,7 +386,6 @@ namespace mse
 
 			sAnswer->setString(sf::String(sAnswerText));
 			sAnswer->setPosition(Functions::Coord::transformX(1200), Functions::Coord::transformY(640));
-			std::cout << "SecondAnswer : " << sAnswer->getPosition().x << std::endl;
 			if (selectedAnswer == 1)
 				sAnswer->setFillColor(sf::Color(100, 255, 100, 255));
 			else

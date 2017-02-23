@@ -29,8 +29,6 @@ namespace mse
 			this->returnSprite = new sfe::ComplexSprite;
 			System::Path(path).loadResource(&this->texture, System::Loaders::textureLoader);
 			this->returnSprite->setTexture(this->texture);
-			std::cout << "Texture of " << sprID << " has been loaded thSize : " << this->texture.getSize().x << "," << this->texture.getSize().y << std::endl;
-			std::cout << "Sprite of " << sprID << " has been loaded thBound : " << this->returnSprite->getGlobalBounds().width << "," << this->returnSprite->getGlobalBounds().height << std::endl;
 			this->update();
 		}
 

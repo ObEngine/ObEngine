@@ -36,6 +36,7 @@ namespace mse
 				int sizeY = 0;
 				double camX = 0;
 				double camY = 0;
+				bool cameraLocked = true;
 				int startX = 0;
 				int startY = 0;
 				kaguya::State* worldScriptEngine;
@@ -76,8 +77,11 @@ namespace mse
 				void orderUpdateScrArray();
 				//Camera
 				void setCameraPosition(double tX, double tY, std::string setMode = "SET");
+				void setCameraPositionIfNotLocked(double tX, double tY, std::string setMode = "SET");
 				double getCamX();
 				double getCamY();
+				void setCameraLock(bool state);
+				bool isCameraLocked();
 				//Lights
 				void addLight(Light::PointLight* lgt);
 				//LevelSprites

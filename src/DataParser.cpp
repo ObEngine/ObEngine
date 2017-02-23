@@ -124,6 +124,9 @@ namespace mse
 			if (currentParent == parent) {
 				parent = nullptr;
 			}
+			else {
+				std::cout << "<Error:DataParser:Attribute>[removeParent] : Non-Parent Container can't remove Parent of Attribute : " << id << std::endl;
+			}
 		}
 		void Attribute::setAnnotation(std::string annotation)
 		{
@@ -468,7 +471,6 @@ namespace mse
 				return false;
 		}
 		bool ComplexAttribute::containsComplexAttribute(std::string attributeName) {
-			std::cout << "Searching for ComplexAttribute : " << attributeName << std::endl;
 			if (childAttributes.find(attributeName) != childAttributes.end() && childAttributes[attributeName]->getType() == Types::ComplexAttribute)
 				return true;
 			else {
@@ -856,7 +858,6 @@ namespace mse
 		}
 		ComplexAttribute* DataParser::getRootAttribute(std::string id)
 		{
-			std::cout << "Root equals to : " << root << std::endl;
 			if (containsRootAttribute(id)) {
 				return root->getComplexAttribute(id);
 			}
@@ -867,13 +868,11 @@ namespace mse
 		}
 		ComplexAttribute* DataParser::getPath(std::string path)
 		{
-			std::cout << "DAPATH IS / " << path << std::endl;
 			if (path.size() > 0 && Functions::String::extract(path, path.size() - 1, 0) == "/")
 				path = Functions::String::extract(path, 0, 1);
 			if (Functions::String::occurencesInString(path, "/") > 0) {
 				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
 				std::string subPath = Functions::Vector::join(splittedPath, "/", 1);
-				std::cout << "Go to : " << Functions::String::split(path, "/")[0] << " then " << subPath << std::endl;
 				return getRootAttribute(Functions::String::split(path, "/")[0])->at(subPath);
 			}
 			else {
@@ -1026,7 +1025,6 @@ namespace mse
 			}
 		}
 		bool DataParser::containsBaseAttribute(std::string attributePath, std::string attributeName) {
-			std::cout << "Searching for : " << attributeName << " on path " << attributePath << std::endl;
 			return this->getPath(attributePath)->containsBaseAttribute(attributeName);
 		}
 		bool DataParser::containsBaseAttribute(std::string attributeName) {

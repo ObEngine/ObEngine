@@ -103,14 +103,12 @@ namespace mse
 		}
 		void GameObjectRequires::applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires) {
 			for (std::string currentRequirement : requires.getAllComplexAttributes()) {
-				std::cout << "Current Requirement : " << currentRequirement << std::endl;
 
 			}
 		}
 		void GameObjectRequires::ApplyRequirements(GameObject* obj, Data::ComplexAttribute& requires)
 		{
 			for (std::string currentRequirement : requires.getAllAttributes()) {
-				std::cout << "Current Requirement : " << currentRequirement << std::endl;
 				requires.setID("Lua_ReqList");
 				kaguya::LuaTable requireTable = ((*obj->getScriptEngine())["LuaCore"]);
 				Data::DataBridge::complexAttributeToLuaTable(requireTable, requires);
@@ -129,7 +127,6 @@ namespace mse
 		}
 		void GameObject::loadGameObject(Data::ComplexAttribute* obj)
 		{
-			std::cout << "Currently Loading GameObject : " << id << std::endl;
 			//Animator
 			std::string animatorPath;
 			if (obj->containsComplexAttribute("Animator"))
@@ -307,7 +304,6 @@ namespace mse
 						}
 
 						if (funcname == "Local.Init") {
-							std::cout << "INITIALISATION MIRROR INJECTION" << std::endl;
 							this->scriptEngine->dostring("LuaCore.LocalInitMirrorInjector()");
 						}
 						else {
