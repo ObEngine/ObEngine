@@ -246,7 +246,7 @@ namespace mse
 				if (imageList->get(i)->getDataType() == vili::Types::Int && model != "")
 					textureName = Functions::String::replaceString(model, "%s", std::to_string(imageList->get(i)->get<int>()));
 				else if (imageList->get(i)->getDataType() == vili::Types::String)
-					textureName = *imageList->get(i);
+					textureName = imageList->get(i)->get<std::string>();
 				if (animatorRsHook == NULL)
 				{
 					sf::Texture* tempTexture = new sf::Texture(); path.add(textureName).loadResource(tempTexture, System::Loaders::textureLoader);
