@@ -27,7 +27,8 @@
 
 FIND_PATH(LUA53_INCLUDE_DIR lua.h
   HINTS
-  $ENV{LUA_DIR}
+  ${LUA_ROOT}
+  $ENV{LUA_ROOT}
   PATH_SUFFIXES include/lua53 include/lua5.3 include/lua include
   PATHS
   ~/Library/Frameworks
@@ -41,6 +42,7 @@ FIND_PATH(LUA53_INCLUDE_DIR lua.h
 FIND_LIBRARY(LUA53_LIBRARY
   NAMES lua53 lua5.3 lua-5.3 lua
   HINTS
+  ${LUA_ROOT}
   $ENV{LUA_DIR}
   PATH_SUFFIXES lib64 lib
   PATHS
