@@ -14,8 +14,7 @@
 #include <algorithm>
 #include <iterator>
 #include <typeinfo>
-
-#include "tinydir.h"
+#include <tinydir/tinydir.h>
 
 namespace mse
 {

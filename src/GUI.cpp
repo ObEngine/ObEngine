@@ -60,7 +60,7 @@ GUI::Widget::Widget(std::string ID, int posX, int posY, std::string style)
 	this->mapWidgets[ID] = this;
 	this->vectWidgets.push_back(this);
 
-	this->attributes = new mse::Data::ComplexAttribute(ID);
+	this->attributes = new vili::ComplexAttribute(ID);
 	attributes->createComplexAttribute(this->ID);
 	attributes->at(ID)->createBaseAttribute("style", this->widgetStyle);
 	createAttribute("posX", (this->posX[0]), "float");
@@ -385,7 +385,7 @@ std::string GUI::Widget::getID()
 	return ID;
 }
 
-mse::Data::ComplexAttribute* GUI::Widget::getDataObject()
+vili::ComplexAttribute* GUI::Widget::getDataObject()
 {
 	return attributes;
 }
@@ -4684,19 +4684,19 @@ void GUI::Container::setWindowSize(int windowWidth, int windowHeight)
 void GUI::Container::loadWidgetContainerFromFile(std::string filename, int posX, int posY)
 {
 	WidgetContainer* newWContainer = createWidgetContainer(filename, 1, posX, posY, 0, 0, GUI::ContainerMovement::Fixed);
-	mse::Data::DataParser data;
+	vili::DataParser data;
 
 	data.parseFile(filename);
-	std::vector<std::string> dataObj = data.getAllRootAttributes();
+	std::vector<std::string> dataObj = data->getAll(vili::Types::ComplexAttribute);
 	for (auto ite = dataObj.begin(); ite != dataObj.end(); ite++)
 	{
 		loadWidget(filename, *ite, *ite, "", &data, false);
 	}
 }
 
-GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, mse::Data::DataParser* data, bool isContained)
+GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, vili::DataParser* data, bool isContained)
 {
-	mse::Data::ComplexAttribute* widget = data->getRootAttribute(dataObject)->at(path)->getComplexAttribute(name);
+	vili::ComplexAttribute* widget = data->at(dataObject)->at(path)->getComplexAttribute(name);
 	int posX, posY;
 	bool displayed;
 	std::string style = widget->getBaseAttribute("style")->get<std::string>();
@@ -4742,10 +4742,10 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	{
 		bool hasText = false;
 		Label* label = NULL;
-		if (widget->containsComplexAttribute("containedItem"))
+		if (widget->contains(vili::Types::ComplexAttribute, "containedItem"))
 		{
-			mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
-			label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplexAttributes()[0]
+			vili::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+			label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAll(vili::Types::ComplexAttribute)[0]
 				, path + "/" + name + "/" + "containedItem", data, true));
 			hasText = true;
 		}
@@ -4774,10 +4774,10 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	}
 	else if (getType == "Droplist")
 	{
-		if (widget->containsComplexAttribute("containedItem"))
+		if (widget->contains(vili::Types::ComplexAttribute, "containedItem"))
 		{
-			mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
-			std::vector<std::string> buttonsComplex = containedItems->getAllComplexAttributes();
+			vili::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+			std::vector<std::string> buttonsComplex = containedItems->getAll(vili::Types::ComplexAttribute);
 			std::vector<Button*> buttons;
 			for (int i = 0; i < buttonsComplex.size(); i++)
 			{
@@ -4790,8 +4790,8 @@ GUI::Widget* GUI::Container::loadWidget(std::string widgetContainerName, std::st
 	else if (getType == "TextInput")
 	{
 		Label* label;
-		mse::Data::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
-		label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAllComplexAttributes()[0], 
+		vili::ComplexAttribute* containedItems = widget->getComplexAttribute("containedItem");
+		label = dynamic_cast<Label*>(loadWidget(widgetContainerName, dataObject, containedItems->getAll(vili::Types::ComplexAttribute)[0],
 			path + "/" + name + "/" + "containedItem", data, true));
 		this->createTextInput(widgetContainerName, name, attributesFloat["posX"], attributesFloat["posY"], label, style);
 	}
@@ -4829,14 +4829,14 @@ void GUI::Container::reorganizeContainers()
 	}
 }
 
-void GUI::Container::loadAttributes(mse::Data::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool)
+void GUI::Container::loadAttributes(vili::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool)
 {
-	std::vector<std::string> attributes = widget->getAllComplexAttributes();
+	std::vector<std::string> attributes = widget->getAll(vili::Types::ComplexAttribute);
 	for (std::vector<std::string>::iterator ite = attributes.begin(); ite != attributes.end(); ite++)
 	{
 		if (*ite != "containedItem")
 		{
-			mse::Data::ComplexAttribute* attribute = widget->getComplexAttribute(*ite);
+			vili::ComplexAttribute* attribute = widget->getComplexAttribute(*ite);
 			std::string type = attribute->getBaseAttribute("type")->get<std::string>();
 			if (type == "int")
 				attributesInt[*ite] = attribute->getBaseAttribute("value")->get<int>();
@@ -4850,7 +4850,7 @@ void GUI::Container::loadAttributes(mse::Data::ComplexAttribute* widget, std::ma
 	}
 }
 
-void GUI::Container::loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, mse::Data::ComplexAttribute* widget)
+void GUI::Container::loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, vili::ComplexAttribute* widget)
 {
 	*style = widget->getBaseAttribute("style")->get<std::string>();
 	*posX = widget->getComplexAttribute("posX")->getBaseAttribute("value")->get<double>();
@@ -4860,9 +4860,9 @@ void GUI::Container::loadBasicsAttributes(double* posX, double* posY, bool* disp
 
 void GUI::Container::loadWidContFromFileInWidCont(std::string filename, std::string widgetContainer)
 {
-	mse::Data::DataParser data;
+	vili::DataParser data;
 	data.parseFile(filename);
-	std::vector<std::string> dataObj = data.getAllRootAttributes();
+	std::vector<std::string> dataObj = data->getAll(vili::Types::ComplexAttribute);
 	for (auto ite = dataObj.begin(); ite != dataObj.end(); ite++)
 	{
 		loadWidget(widgetContainer, *ite, *ite, "", &data, false);
@@ -4925,10 +4925,10 @@ Color::Color()
 
 }
 
-mse::Data::ComplexAttribute* parseBind(std::string str)
+vili::ComplexAttribute* parseBind(std::string str)
 {
 	int k = 0;
-	mse::Data::ComplexAttribute* parameters = new mse::Data::ComplexAttribute("parameters");
+	vili::ComplexAttribute* parameters = new vili::ComplexAttribute("parameters");
 	std::vector<std::string> strings = mse::Functions::String::extractBetween(str, '\'', '\'');
 	std::vector<std::string> splitParameters = mse::Functions::String::split(str, ",");
 	std::map<std::string, std::string> vars;
@@ -4945,15 +4945,15 @@ mse::Data::ComplexAttribute* parseBind(std::string str)
 			splitVars[1] = strings[k];
 			k++;
 		}
-		parameters->createBaseAttribute(typeAndName[1], typeAndName[0], splitVars[1]);
+		parameters->createBaseAttribute(typeAndName[1], vili::Types::stringToDataType(typeAndName[0]), splitVars[1]);
 	}
 	return parameters;
 }
 
-void GUI::Widget::addContainedItem(mse::Data::ComplexAttribute* containedItem)
+void GUI::Widget::addContainedItem(vili::ComplexAttribute* containedItem)
 {
-	std::vector<std::string> complexAttributesID = containedItem->getAllComplexAttributes();
-	if (!attributes->at(this->ID)->containsComplexAttribute("containedItem"))
+	std::vector<std::string> complexAttributesID = containedItem->getAll(vili::Types::ComplexAttribute);
+	if (!attributes->at(this->ID)->contains(vili::Types::ComplexAttribute, "containedItem"))
 	{
 		attributes->at(ID)->createComplexAttribute("containedItem");
 	}

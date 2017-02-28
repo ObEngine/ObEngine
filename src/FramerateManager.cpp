@@ -1,14 +1,14 @@
 #include "FramerateManager.hpp"
 
-mse::FramerateManager::FramerateManager(Data::ComplexAttribute& config)
+mse::FramerateManager::FramerateManager(vili::ComplexAttribute& config)
 {
 	sf::Clock deltaClock;
 	sf::Time sfDeltaTime;
 	speedCoeff = 60.0;
 	frameLimiterClock = Time::getTickSinceEpoch();
-	limitFPS = (config.containsBaseAttribute("framerateLimit")) ? config.getBaseAttribute("framerateLimit")->get<bool>() : true;
-	framerateTarget = (config.containsBaseAttribute("framerateTarget")) ? config.getBaseAttribute("framerateTarget")->get<int>() : 60;
-	vsyncEnabled = (config.containsBaseAttribute("vsync")) ? config.getBaseAttribute("vsync")->get<bool>() : false;
+	limitFPS = (config.contains(vili::Types::BaseAttribute, "framerateLimit")) ? *config.at<vili::BaseAttribute>("framerateLimit") : true;
+	framerateTarget = (config.contains(vili::Types::BaseAttribute, "framerateTarget")) ? *config.at<vili::BaseAttribute>("framerateTarget") : 60;
+	vsyncEnabled = (config.contains(vili::Types::BaseAttribute, "vsync")) ? *config.at<vili::BaseAttribute>("vsync") : true;
 	reqFramerateInterval = 1.0 / (double)framerateTarget;
 	currentFrame = 0;
 	frameProgression = 0;

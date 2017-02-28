@@ -3,41 +3,41 @@
 namespace mse {
 	namespace Data {
 		namespace DataBridge {
-			void dataToLua(kaguya::LuaTable& target, Attribute& convert)
+			void dataToLua(kaguya::LuaTable& target, vili::Attribute& convert)
 			{
 			}
-			Attribute* luaToData(kaguya::LuaRef& convert)
+			vili::Attribute* luaToData(kaguya::LuaRef& convert)
 			{
 				//return Attribute();
 				return nullptr;
 			}
-			void complexAttributeToLuaTable(kaguya::LuaTable& target, ComplexAttribute& convert)
+			void complexAttributeToLuaTable(kaguya::LuaTable& target, vili::ComplexAttribute& convert)
 			{
 				target[convert.getID()] = kaguya::NewTable();
 				kaguya::LuaTable injectTable = target[convert.getID()];
 				kaguya::State olol;
-				for (std::string elementName : convert.getAllAttributes()) {
-					if (convert.getAttributeType(elementName) == Types::BaseAttribute) {
+				for (std::string elementName : convert.getAll()) {
+					if (convert.getAttributeType(elementName) == vili::Types::BaseAttribute) {
 						baseAttributeToLuaElement(injectTable, *convert.getBaseAttribute(elementName));
 					}
-					else if (convert.getAttributeType(elementName) == Types::ComplexAttribute) {
+					else if (convert.getAttributeType(elementName) == vili::Types::ComplexAttribute) {
 						complexAttributeToLuaTable(injectTable, *convert.getComplexAttribute(elementName));
 					}
-					else if (convert.getAttributeType(elementName) == Types::ListAttribute) {
+					else if (convert.getAttributeType(elementName) == vili::Types::ListAttribute) {
 						listAttributeToLuaTable(injectTable, *convert.getListAttribute(elementName));
 					}
 				}
 				target[convert.getID()] = injectTable;
 			}
-			void baseAttributeToLuaElement(kaguya::LuaTable& target, BaseAttribute& convert)
+			void baseAttributeToLuaElement(kaguya::LuaTable& target, vili::BaseAttribute& convert)
 			{
-				if (convert.getDataType() == "int")
+				if (convert.getDataType() == vili::Types::Int)
 					target[convert.getID()] = convert.get<int>();
-				else if (convert.getDataType() == "string")
+				else if (convert.getDataType() == vili::Types::String)
 					target[convert.getID()] = convert.get<std::string>();
-				else if (convert.getDataType() == "bool")
+				else if (convert.getDataType() == vili::Types::Bool)
 					target[convert.getID()] = convert.get<bool>();
-				else if (convert.getDataType() == "float")
+				else if (convert.getDataType() == vili::Types::Float)
 				{
 					double val = convert.get<double>();
 					std::string vid = convert.getID();
@@ -45,7 +45,7 @@ namespace mse {
 				}
 					
 			}
-			void listAttributeToLuaTable(kaguya::LuaTable& target, ListAttribute& convert)
+			void listAttributeToLuaTable(kaguya::LuaTable& target, vili::ListAttribute& convert)
 			{
 				kaguya::LuaTable injectList;
 				for (int i = 0; i < convert.getSize(); i++) {
@@ -53,9 +53,9 @@ namespace mse {
 				}
 				target[convert.getID()] = injectList;
 			}
-			ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
+			vili::ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
 			{
-				ComplexAttribute* returnElement = new ComplexAttribute(id);
+				vili::ComplexAttribute* returnElement = new vili::ComplexAttribute(id);
 				if (convert.type() == 0 || convert.type() == 5) {
 					std::map<std::string, kaguya::LuaRef> tableMap = convert;
 					for (std::pair<std::string, kaguya::LuaRef> tableItem : tableMap) {
@@ -75,7 +75,7 @@ namespace mse {
 				}
 				return returnElement;
 			}
-			BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert)
+			vili::BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert)
 			{
 				std::string luaElement = convert;
 				std::string convertType = "";
@@ -91,9 +91,9 @@ namespace mse {
 				else if (convert.type() == 4) {
 					convertType = "string";
 				}
-				return new BaseAttribute(id, convertType, convert);
+				return new vili::BaseAttribute(id, vili::Types::stringToDataType(convertType), convert);
 			}
-			ListAttribute* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert)
+			vili::ListAttribute* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert)
 			{
 				/*ListAttribute* returnElement = new ListAttribute(id, dataType);
 				std::cout << "Table Type : " << convert.type() << std::endl;

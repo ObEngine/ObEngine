@@ -9,9 +9,9 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include <vili/Vili.hpp>
 
 #include "Functions.hpp"
-#include "DataParser.hpp"
 #include "DataParserLuaBridge.hpp"
 #include "GameObject.hpp"
 #include "TimeManager.hpp"
@@ -61,7 +61,7 @@ namespace mse
 				World();
 				void loadFromFile(std::string filename);
 				void clearWorld();
-				Data::DataParser* saveData();
+				vili::DataParser* saveData();
 				void update(double dt);
 				void display(sf::RenderWindow* surf);
 				void setSize(int sizeX, int sizeY);

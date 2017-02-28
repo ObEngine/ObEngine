@@ -109,7 +109,7 @@ namespace mse
 		void buildRequiresObjectTab(std::string objName)
 		{
 			std::cout << "Call Require Creation for : " << objName << std::endl;
-			Data::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			if (requires != nullptr)
 			{
 				GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
@@ -131,20 +131,20 @@ namespace mse
 				gui->getContainerByContainerName(containerName + "_Frame")->setBackground(sf::Color(0, 0, 0, 200));
 				gui->getContainerByContainerName(containerName)->addScrollBar();
 				int widgetVerticalPosition = 0;
-				for (std::string& requireItem : requires->getAllComplexAttributes())
+				for (std::string& requireItem : requires->getAll(vili::Types::ComplexAttribute))
 				{
 					std::cout << "Require item is : " << requireItem << std::endl;
-					std::cout << requires->containsComplexAttribute("Color") << std::endl;
+					std::cout << requires->contains(vili::Types::ComplexAttribute, "Color") << std::endl;
 					std::string lblName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
 					gui->createLabel(containerName, objName + "_" + requireItem + "_Lbl", 50, widgetVerticalPosition, lblName, "weblysleekuil.ttf", 24, sf::Color::White);
-					if (requires->getPath(requireItem)->containsBaseAttribute("type")) {
+					if (requires->getPath(requireItem)->contains(vili::Types::BaseAttribute, "type")) {
 						gui->createTextInput(containerName, objName + "_" + requireItem + "_Input", 200, 
 							widgetVerticalPosition + 5, "", "weblysleekuil.ttf", 16, sf::Color::White, false, "GREY");
 						std::string reqType = requires->getPath(requireItem)->getBaseAttribute("type")->get<std::string>();
 						if (reqType == "int")
 							GUI::Widget::getWidgetByID<GUI::TextInput>(objName + "_" + requireItem + "_Input")->addFilter(GUI::TextInputFilters::Integer);
 					}
-					else if (requires->getPath(requireItem)->containsListAttribute("choices"))
+					else if (requires->getPath(requireItem)->contains(vili::Types::ListAttribute, "choices"))
 					{
 						std::vector<std::string> requireChoices;
 						for (int reqI = 0; reqI < requires->getPath(requireItem)->getListAttribute("choices")->getSize(); reqI++)
@@ -176,7 +176,7 @@ namespace mse
 
 		void buildObjectThroughRequire(std::string objName)
 		{
-			Data::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
 			Cursor::Cursor* cursor = Script::hookCore.getPointer("Cursor")->as<Cursor::Cursor*>();
 			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
@@ -184,15 +184,15 @@ namespace mse
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			Script::GameObject* newGameObject = world->createGameObject(key, objName);
 				
-			for (std::string& requireItem : requires->getAllComplexAttributes())
+			for (std::string& requireItem : requires->getAll(vili::Types::ComplexAttribute))
 			{
 				std::string requirementName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
-				bool optionalRequirement = requires->getPath(requireItem)->containsBaseAttribute("optional");
+				bool optionalRequirement = requires->getPath(requireItem)->contains(vili::Types::BaseAttribute, "optional");
 				if (optionalRequirement)
 					optionalRequirement = requires->getPath(requireItem)->getBaseAttribute("optional")->get<bool>();
 				if (objName + "_" + requireItem + "_Input" != "" || optionalRequirement)
 				{
-					if (requires->getPath(requireItem)->containsListAttribute("choices"))
+					if (requires->getPath(requireItem)->contains(vili::Types::ListAttribute, "choices"))
 						newGameObject->sendRequireArgumentFromCPP(requirementName, GUI::Widget::getWidgetByID<GUI::Droplist>(objName + "_" + requireItem + "_Input")->getCurrentSelected());
 				}
 			}

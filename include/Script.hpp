@@ -7,6 +7,7 @@
 #include <iostream>
 #include <kaguya/kaguya.hpp>
 #include <any/any.hpp>
+#include <vili/Vili.hpp>
 
 #include "Collisions.hpp"
 #include "Console.hpp"
@@ -37,7 +38,6 @@ namespace mse
 			void loadConsole(kaguya::State* lua, std::vector<std::string> args);
 			void loadConstants(kaguya::State* lua, std::vector<std::string> args);
 			void loadCursor(kaguya::State* lua, std::vector<std::string> args);
-			void loadDataParser(kaguya::State* lua, std::vector<std::string> args);
 			void loadDialog(kaguya::State* lua, std::vector<std::string> args);
 			void loadGUI(kaguya::State* lua, std::vector<std::string> args);
 			void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
@@ -49,6 +49,7 @@ namespace mse
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 			void loadUtils(kaguya::State* lua, std::vector<std::string> args);
+			void loadVili(kaguya::State* lua, std::vector<std::string> args);
 		}
 
 		class CoreHook

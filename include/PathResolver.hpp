@@ -6,8 +6,9 @@
 #include <functional>
 #include <SFML/Graphics.hpp>
 #include <kaguya/kaguya.hpp>
+#include <vili/Vili.hpp>
 
-#include "DataParser.hpp"
+#include "Functions.hpp"
 
 namespace mse
 {
@@ -16,7 +17,7 @@ namespace mse
 		namespace Loaders
 		{
 			extern std::function<int(sf::Texture*, std::string)> textureLoader;
-			extern std::function<int(Data::DataParser*, std::string)> dataLoader;
+			extern std::function<int(vili::DataParser*, std::string)> dataLoader;
 			extern std::function<int(sf::Font*, std::string)> fontLoader;
 			extern std::function<int(std::vector<std::string>*, std::string)> dirPathLoader;
 			extern std::function<int(std::vector<std::string>*, std::string)> filePathLoader;

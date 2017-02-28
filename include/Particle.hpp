@@ -4,9 +4,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vili/Vili.hpp>
 
 #include "MathExp.hpp"
-#include "DataParser.hpp"
 
 namespace mse
 {

@@ -3,56 +3,40 @@
 
 #include "ObEngine.hpp"
 
-void testLua(kaguya::State* obj, kaguya::LuaRef me) {
-	std::cout << "Karkar0 " << std::endl;
-	std::cout << "OfType " << me.type() << std::endl;
-	std::cout << "MEMEMEMEME" << std::endl;
-	(*obj)["t"]["me"] = me;
-}
-
 int main(int argc, char** argv)
 {
 	mse::Functions::Run::Parser runParser(argv, argc);
-	std::cout << "Running MeSa Engine using mode : " << runParser.getArgumentValue("-mode") << std::endl;
+	std::string startMode = runParser.getArgumentValue("-mode");
+	std::cout << "Running MeSa Engine using mode : " << startMode << std::endl;
 
-	//Sauvegarde du log dans log.txt
 	std::ofstream out("log.txt");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
-	mse::Data::DataParser workspaceConfig;
-	workspaceConfig.parseFile("Workspace/workspace.cfg.msd");
-	workspaceConfig.hookNavigator(new mse::Data::DataParserNavigator())->setCurrentRootAttribute("Workspace");
-	if (workspaceConfig.containsBaseAttribute("current"))
+	vili::DataParser workspaceConfig("Workspace/workspace.cfg.msd");
+	vili::ComplexAttribute* workspace = workspaceConfig.at("Workspace");
+
+	if (workspace->contains(vili::Types::BaseAttribute, "current"))
 	{
-		if (workspaceConfig.containsComplexAttribute(workspaceConfig.getBaseAttribute("current")->get<std::string>()))
+		if (workspace->contains(vili::Types::ComplexAttribute, workspace->getBaseAttribute("current")->get<std::string>()))
 		{
-			workspaceConfig.accessNavigator()->setCurrentPath(workspaceConfig.getBaseAttribute("current")->get<std::string>());
-			if (workspaceConfig.containsBaseAttribute("path"))
+			vili::ComplexAttribute* currentWorkspace = workspace->at(*workspace->getBaseAttribute("current"));
+			if (currentWorkspace->contains(vili::Types::BaseAttribute, "path"))
 			{
-				std::string workspacePath = workspaceConfig.getBaseAttribute("path")->get<std::string>();
+				std::string workspacePath = *currentWorkspace->at<vili::BaseAttribute>("path");
 				mse::System::Path::basePaths.push_back("Workspace/" + workspacePath);
-				workspaceConfig.accessNavigator()->setCurrentRootAttribute("Workspace");
-				std::cout << "<System> Mounting Workspace : " << workspaceConfig.getBaseAttribute("current")->get<std::string>() 
-					<< " : " << workspacePath << std::endl;
+				std::cout << "<System> Mounting Workspace : " << *workspace->getBaseAttribute("current") << " : " << workspacePath << std::endl;
 			}
 			else
-			{
-				workspaceConfig.accessNavigator()->setCurrentRootAttribute("Workspace");
-				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << 
-					workspaceConfig.getBaseAttribute("current")->get<std::string>() << " doesn't have a path defined" << std::endl;
-			}
+				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << *workspace->getBaseAttribute("current") << " doesn't have a path defined" << std::endl;
 		}
 		else
-		{
-			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << 
-				workspaceConfig.getBaseAttribute("current")->get<std::string>() << "doesn't exists" << std::endl;
-		}
+			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << *workspace->getBaseAttribute("current") << "doesn't exists" << std::endl;
 	}
 	std::cout << "<System> Mounting Path : /" << std::endl;
 	mse::System::Path::basePaths.push_back("");
 
-	if (runParser.getArgumentValue("-mode") == "edit")
+	if (startMode == "edit")
 	{
 		mse::Functions::Coord::width = 640; mse::Functions::Coord::height = 480;
 		mse::Functions::Coord::baseWidth = 640; mse::Functions::Coord::baseHeight = 480;
@@ -62,11 +46,9 @@ int main(int argc, char** argv)
 		if (editMapName != "")
 			mse::Editor::editMap(editMapName);
 	}
-	else if (runParser.getArgumentValue("-mode") == "play")
+	else if (startMode == "play")
 		mse::Modes::startGame("");
-	else if (runParser.getArgumentValue("-mode") == "console")
-		mse::Modes::startDebugMode();
-	else if (runParser.getArgumentValue("-mode") == "toolkit")
+	else if (startMode == "toolkit")
 		mse::Modes::startToolkitMode();
 	else
 		mse::Modes::startGame("");

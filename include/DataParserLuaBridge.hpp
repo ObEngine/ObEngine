@@ -1,19 +1,21 @@
 #pragma once
 
 #include <kaguya/kaguya.hpp>
-#include "DataParser.hpp"
+#include <vili/Vili.hpp>
+
+#include "Functions.hpp"
 
 namespace mse {
 	namespace Data {
 		namespace DataBridge {
-			void dataToLua(kaguya::LuaTable& target, Attribute& convert);
-			Attribute* luaToData(kaguya::LuaRef& convert);
-			void complexAttributeToLuaTable(kaguya::LuaTable& target, ComplexAttribute& convert);
-			void baseAttributeToLuaElement(kaguya::LuaTable& target, BaseAttribute& convert);
-			void listAttributeToLuaTable(kaguya::LuaTable& target, ListAttribute& convert);
-			ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert);
-			BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert);
-			ListAttribute* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert);
+			void dataToLua(kaguya::LuaTable& target, vili::Attribute& convert);
+			vili::Attribute* luaToData(kaguya::LuaRef& convert);
+			void complexAttributeToLuaTable(kaguya::LuaTable& target, vili::ComplexAttribute& convert);
+			void baseAttributeToLuaElement(kaguya::LuaTable& target, vili::BaseAttribute& convert);
+			void listAttributeToLuaTable(kaguya::LuaTable& target, vili::ListAttribute& convert);
+			vili::ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert);
+			vili::BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert);
+			vili::ListAttribute* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert);
 		}
 	}
 }

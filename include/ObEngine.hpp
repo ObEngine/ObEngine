@@ -9,12 +9,10 @@
 #include <vector>
 #include <fstream>
 #include <random>
+#include <vili/Vili.hpp>
 
 #include "Game.hpp"
 #include "MapEditor.hpp"
-#include "DebugMode.hpp"
 #include "Menu.hpp"
 #include "Toolkit.hpp"
 #include "PathResolver.hpp"
-#include "DataParser.hpp"
-#include "DataParserLuaBridge.hpp"

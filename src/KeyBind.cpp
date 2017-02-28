@@ -256,12 +256,12 @@ namespace mse
 				return false;
 		}
 
-		void KeyBinder::loadFromFile(Data::DataParser* configFile)
+		void KeyBinder::loadFromFile(vili::DataParser* configFile)
 		{
-			std::vector<std::string> allGameKeys = configFile->at("KeyBinding", "game")->getAllBaseAttributes();
+			std::vector<std::string> allGameKeys = configFile->at("KeyBinding", "game")->getAll(vili::Types::BaseAttribute);
 			for (unsigned int i = 0; i < allGameKeys.size(); i++)
 				actionMap[allGameKeys[i]] = configFile->at("KeyBinding", "game")->getBaseAttribute(allGameKeys[i])->get<std::string>();
-			std::vector<std::string> allMapEditorKeys = configFile->at("KeyBinding", "mapEditor")->getAllBaseAttributes();
+			std::vector<std::string> allMapEditorKeys = configFile->at("KeyBinding", "mapEditor")->getAll(vili::Types::BaseAttribute);
 			for (unsigned int i = 0; i < allMapEditorKeys.size(); i++)
 				actionMap[allMapEditorKeys[i]] = configFile->at("KeyBinding", "mapEditor")->getBaseAttribute(allMapEditorKeys[i])->get<std::string>();
 		}

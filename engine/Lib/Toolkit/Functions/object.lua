@@ -3,17 +3,17 @@ local Color = require("Lib/StdLib/ConsoleColor");
 Import("Core.DataParser");
 
 function object(argtable)
-    local parser = Core.DataParser.DataParser.new();
+    local parser = Core.Vili.DataParser.new();
     parser:parseFile("Workspace/workspace.cfg.msd", true);
-    local currentWs = parser:getBaseAttribute("Workspace", "current"):get_string();
+    local currentWs = parser:root():at("Workspace"):getBaseAttribute("current"):get_string();
     if (argtable.action == "create") then
         local haveAnimator = false;
         local haveLevelSprite = false;
         local haveCollider = false;
         local haveScript = false;
         os.execute("mkdir Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" .. argtable.objname);
-        local objSaveFile = Core.DataParser.DataParser.new();
-        objSaveFile:createRootAttribute(argtable.objname);
+        local objSaveFile = Core.Vili.DataParser.new();
+        objSaveFile:root():createComplexAttribute(argtable.objname);
         if (argtable.attributes ~= nil) then
             if (string.find(argtable.attributes, "C") ~= nil) then
                 haveCollider = true;
@@ -21,19 +21,19 @@ function object(argtable)
                     {color = "lightgreen", text = "+ Using component : "},
                     {color = "lightcyan", text = "(C)ollider\n"}
                 }, 2);
-                objSaveFile:getPath(argtable.objname):createComplexAttribute("Collider");
-                objCollider = objSaveFile:getPath(argtable.objname .. "/Collider");
+                objSaveFile:root():at(argtable.objname):createComplexAttribute("Collider");
+                objCollider = objSaveFile:root():at(argtable.objname .. "/Collider");
                 objCollider:createBaseAttribute("solid", true);
                 objCollider:createListAttribute("polygonPoints", "string");
-                objCollider:createListItem("polygonPoints", "0,0");
-                objCollider:createListItem("polygonPoints", "32,0");
-                objCollider:createListItem("polygonPoints", "32,32");
-                objCollider:createListItem("polygonPoints", "0,32");
+                objCollider:getListAttribute("polygonPoints"):push("0,0");
+                objCollider:getListAttribute("polygonPoints"):push("32,0");
+                objCollider:getListAttribute("polygonPoints"):push("32,32");
+                objCollider:getListAttribute("polygonPoints"):push("0,32");
             end
             if (string.find(argtable.attributes, "A") ~= nil) then
                 haveAnimator = true;
-                objSaveFile:getPath(argtable.objname):createComplexAttribute("Animator");
-                objSaveFile:getPath(argtable.objname .. "/" .. "Animator"):createBaseAttribute("path",
+                objSaveFile:root():at(argtable.objname):createComplexAttribute("Animator");
+                objSaveFile:root():at(argtable.objname .. "/" .. "Animator"):createBaseAttribute("path",
                 "Sprites/GameObjects/" .. argtable.objname);
                 Color.print({
                     {color = "lightgreen", text = "+ Using component : "},
@@ -47,8 +47,8 @@ function object(argtable)
                     {color = "lightgreen", text = "+ Using component : "},
                     {color = "lightcyan", text = "(L)evelSprite\n"}
                 }, 2);
-                objSaveFile:getPath(argtable.objname):createComplexAttribute("LevelSprite");
-                local objLevelSprite = objSaveFile:getPath(argtable.objname .. "/" .. "LevelSprite");
+                objSaveFile:root():at(argtable.objname):createComplexAttribute("LevelSprite");
+                local objLevelSprite = objSaveFile:root():at(argtable.objname .. "/" .. "LevelSprite");
                 if (haveCollider) then
                     objLevelSprite:createBaseAttribute("position", "relative");
                 else
@@ -71,10 +71,10 @@ function object(argtable)
                     {color = "lightgreen", text = "+ Using component : "},
                     {color = "lightcyan", text = "(S)cript\n"}
                 }, 2);
-                objSaveFile:getPath(argtable.objname):createComplexAttribute("Script");
-                objSaveFile:getPath(argtable.objname .. "/Script"):createBaseAttribute("priority", 0);
-                objSaveFile:getPath(argtable.objname .. "/Script"):createListAttribute("scriptList", "string");
-                objSaveFile:getPath(argtable.objname .. "/Script"):createListItem("scriptList", "Data/GameObjects/" .. 
+                objSaveFile:root():at(argtable.objname):createComplexAttribute("Script");
+                objSaveFile:root():at(argtable.objname .. "/Script"):createBaseAttribute("priority", 0);
+                objSaveFile:root():at(argtable.objname .. "/Script"):createListAttribute("scriptList", "string");
+                objSaveFile:root():at(argtable.objname .. "/Script"):getListAttribute("scriptList"):push("Data/GameObjects/" .. 
                  argtable.objname .. "/" .. argtable.objname .. ".lua");
             end
         end

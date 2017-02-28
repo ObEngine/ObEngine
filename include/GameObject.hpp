@@ -5,10 +5,10 @@
 
 #include <algorithm>
 #include <kaguya/kaguya.hpp>
+#include <vili/Vili.hpp>
 
 #include "Animation.hpp"
 #include "Collisions.hpp"
-#include "DataParser.hpp"
 #include "DataParserLuaBridge.hpp"
 #include "LevelSprite.hpp"
 #include "Script.hpp"
@@ -27,12 +27,12 @@ namespace mse
 		{
 			private:
 				static GameObjectRequires* instance;
-				Data::DataParser allRequires;
+				vili::DataParser allRequires;
 			public:
 				static GameObjectRequires* getInstance();
-				Data::ComplexAttribute* getRequiresForObjectType(std::string type);
-				void applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires);
-				static void ApplyRequirements(GameObject* obj, Data::ComplexAttribute& requires);
+				vili::ComplexAttribute* getRequiresForObjectType(std::string type);
+				void applyBaseRequires(GameObject* obj, vili::ComplexAttribute& requires);
+				static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
 		};
 
 		class GameObject
@@ -67,7 +67,7 @@ namespace mse
 
 				GameObject(std::string type, std::string id);
 				void registerTrigger(Script::Trigger* trg);
-				void loadGameObject(Data::ComplexAttribute* obj);
+				void loadGameObject(vili::ComplexAttribute* obj);
 				void hookLuaState(kaguya::State* lua);
 				void update(double dt);
 

@@ -6,11 +6,13 @@ Meta:
     clock:10
     play-mode:"FORCE"
 Images:
-    ?ImageList(string)<"%s.png">{1-9}:
+    ImageList:[1..9]
+    model:"%s.png"
 Groups:
     @main
-        ?content(int)<%s>{0-8}:
+        content:[0..8]
 Animation:
-    ?AnimationCode(string):
+    AnimationCode:[
         "PLAY_GROUP(main, 1)"
         "CALL('IDLE')"
+    ]

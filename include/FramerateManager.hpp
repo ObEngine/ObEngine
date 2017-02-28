@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <vili/Vili.hpp>
 
-#include "DataParser.hpp"
 #include "TimeManager.hpp"
 
 namespace mse
@@ -23,7 +23,7 @@ namespace mse
 			int frameProgression = 0;
 			bool needToRender = false;
 		public:
-			FramerateManager(Data::ComplexAttribute& config);
+			FramerateManager(vili::ComplexAttribute& config);
 
 			void update();
 			bool doRender();

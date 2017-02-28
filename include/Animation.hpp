@@ -7,9 +7,9 @@
 #include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vili/Vili.hpp>
 
 #include "Functions.hpp"
-#include "DataParser.hpp"
 #include "TimeManager.hpp"
 #include "PathResolver.hpp"
 
@@ -100,7 +100,7 @@ namespace mse
 			std::string getAnimationPlayMode(); //Return PlayMode
 			std::string getAnimationStatus(); //Return AnimationStatus
 			void loadAnimation(System::Path path, std::string filename); //Load Code File
-			void applyParameters(Data::ComplexAttribute* parameters);
+			void applyParameters(vili::ComplexAttribute* parameters);
 			void playAnimation(); //Execute next line
 			void resetAnimation(); //Unselect group and restart code execution
 			sf::Sprite* getSprite(); //Return actual texture

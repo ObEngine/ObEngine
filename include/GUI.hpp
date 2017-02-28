@@ -18,9 +18,9 @@
 #include <typeinfo>
 #include <fstream>
 #include <future>
+#include <vili/Vili.hpp>
 
 #include "RichText.hpp"
-#include "DataParser.hpp"
 
 #include "Functions.hpp"
 #if defined(WIN32) || defined(_WIN32)
@@ -97,7 +97,7 @@ namespace GUI
 	class Widget
 	{
 	protected:
-		mse::Data::ComplexAttribute* attributes;
+		vili::ComplexAttribute* attributes;
 		static std::vector<Widget*> vectWidgets;
 		static std::map<std::string, Widget*> mapWidgets;
 		std::string ID;
@@ -128,7 +128,7 @@ namespace GUI
 		~Widget();
 		virtual void setTexture();
 
-		void addContainedItem(mse::Data::ComplexAttribute* containedItem);
+		void addContainedItem(vili::ComplexAttribute* containedItem);
 
 		template <typename T> void createAttribute(std::string name, T& attribute, std::string type)
 		{
@@ -184,7 +184,7 @@ namespace GUI
 		virtual void updateAttributes();
 
 		virtual std::map<std::string, std::function<void()>> getFunctions();
-		virtual mse::Data::ComplexAttribute* getDataObject();
+		virtual vili::ComplexAttribute* getDataObject();
 
 		void addWidgetContained(Widget* widget);
 		std::vector<GUI::Widget*> getWidgetsContained();
@@ -745,9 +745,9 @@ namespace GUI
 		bool leftClickReleased = true;
 		bool rightClickReleased = true;
 
-		void loadAttributes(mse::Data::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool);
-		void loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, mse::Data::ComplexAttribute* widget);
-        GUI::Widget* loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, mse::Data::DataParser* data, bool isContained);
+		void loadAttributes(vili::ComplexAttribute* widget, std::map<std::string, int> &attributesInt, std::map<std::string, float> &attributesFloat, std::map<std::string, std::string> &attributesString, std::map<std::string, bool> &attributesBool);
+		void loadBasicsAttributes(double* posX, double* posY, bool* displayed, std::string* style, vili::ComplexAttribute* widget);
+        GUI::Widget* loadWidget(std::string widgetContainerName, std::string dataObject, std::string name, std::string path, vili::DataParser* data, bool isContained);
 
 	public:
 		Container(sf::Event* evnt, sf::RenderWindow* window, int windowWidth = 1920, int windowHeight = 1080);
@@ -804,7 +804,7 @@ int convertByWidthDecrease(int value);
 int convertByHeight(int value);
 int convertByHeightDecrease(int value);
 
-mse::Data::ComplexAttribute* parseBind(std::string str);
+vili::ComplexAttribute* parseBind(std::string str);
 
 template <typename T> std::string pointerToString(const T* obj)
 {

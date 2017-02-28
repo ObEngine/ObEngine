@@ -225,22 +225,28 @@ namespace mse
 		}
 		void Animation::Animation::loadAnimation(System::Path path, std::string filename)
 		{
-			Data::DataParser animFile;
-			animFile.hookNavigator(new Data::DataParserNavigator());
+			vili::DataParser animFile;
 			path.add(filename).loadResource(&animFile, System::Loaders::dataLoader);
 			//Meta
-			animFile.accessNavigator()->setCurrentRootAttribute("Meta");
-			animationName = animFile.getBaseAttribute("name")->get<std::string>();
-			if (animFile.containsBaseAttribute("clock"))
-				animationClock = animFile.getBaseAttribute("clock")->get<int>();
-			if (animFile.containsBaseAttribute("play-mode"))
-				animationPlaymode = animFile.getBaseAttribute("play-mode")->get<std::string>();
+			vili::ComplexAttribute* meta = animFile.at("Meta");
+			animationName = *meta->at<vili::BaseAttribute>("name");
+			if (meta->contains(vili::Types::BaseAttribute, "clock"))
+				animationClock = *meta->at<vili::BaseAttribute>("clock");
+			if (meta->contains(vili::Types::BaseAttribute, "play-mode"))
+				animationPlaymode = *meta->at<vili::BaseAttribute>("play-mode");
 			//Images
-			animFile.accessNavigator()->setCurrentRootAttribute("Images");
-			for (unsigned int i = 0; i < animFile.getListSize("ImageList"); i++)
+			vili::ListAttribute* imageList = animFile.at<vili::ListAttribute>("Images", "ImageList");
+			std::string model = "";
+			if (animFile.at("Images")->contains(vili::Types::BaseAttribute, "model")) {
+				model = *animFile.at("Images")->getBaseAttribute("model");
+			}
+			for (unsigned int i = 0; i < imageList->getSize(); i++)
 			{
-				std::string textureName;
-				textureName = animFile.getListItem("ImageList", i)->get<std::string>();
+				std::string textureName = "";
+				if (imageList->get(i)->getDataType() == vili::Types::Int && model != "")
+					textureName = Functions::String::replaceString(model, "%s", std::to_string(imageList->get(i)->get<int>()));
+				else if (imageList->get(i)->getDataType() == vili::Types::String)
+					textureName = *imageList->get(i);
 				if (animatorRsHook == NULL)
 				{
 					sf::Texture* tempTexture = new sf::Texture(); path.add(textureName).loadResource(tempTexture, System::Loaders::textureLoader);
@@ -256,26 +262,25 @@ namespace mse
 					animationTextures[i] = animatorRsHook->getTexture(path.add(textureName).toString());
 			}
 			//Groups
-			animFile.accessNavigator()->setCurrentRootAttribute("Groups");
-			std::vector<std::string> allGroups = animFile.getAllComplexAttributes();
-			for (unsigned int i = 0; i < allGroups.size(); i++)
+			vili::ComplexAttribute* groups = animFile.at("Groups");
+			for (std::string complexName : groups->getAll(vili::Types::ComplexAttribute))
 			{
-				AnimationGroup* tempGroup = new AnimationGroup(allGroups[i]);
-				animationGroupMap.insert(std::pair<std::string, AnimationGroup*>(allGroups[i], tempGroup));
-				animFile.accessNavigator()->setCurrentPath(allGroups[i]);
-				for (unsigned int j = 0; j < animFile.getListSize("content"); j++)
-					animationGroupMap[allGroups[i]]->pushTexture(animationTextures[animFile.getListItem("content", j)->get<int>()]);
-				if (animFile.containsBaseAttribute("clock"))
-					animationGroupMap[allGroups[i]]->setGroupClock(animFile.getBaseAttribute("clock")->get<int>());
+				AnimationGroup* tempGroup = new AnimationGroup(complexName);
+				animationGroupMap.insert(std::pair<std::string, AnimationGroup*>(complexName, tempGroup));
+				vili::ComplexAttribute* currentGroup = groups->at(complexName);
+				for (vili::BaseAttribute* currentTexture : *currentGroup->at<vili::ListAttribute>("content"))
+					animationGroupMap[complexName]->pushTexture(animationTextures[*currentTexture]);
+				if (currentGroup->contains(vili::Types::BaseAttribute, "clock"))
+					animationGroupMap[complexName]->setGroupClock(*currentGroup->at<vili::BaseAttribute>("clock"));
 				else
-					animationGroupMap[allGroups[i]]->setGroupClock(animationClock);
-				animationGroupMap[allGroups[i]]->build();
+					animationGroupMap[complexName]->setGroupClock(animationClock);
+				animationGroupMap[complexName]->build();
 			}
 			//Animation Code
-			animFile.accessNavigator()->setCurrentRootAttribute("Animation");
-			for (unsigned int i = 0; i < animFile.getListSize("AnimationCode"); i++)
+			vili::ComplexAttribute* animation = animFile.at("Animation");
+			for (vili::BaseAttribute* command : *animation->at<vili::ListAttribute>("AnimationCode"))
 			{
-				std::string curCom = animFile.getListItem("AnimationCode", i)->get<std::string>();
+				std::string curCom = *command;
 				std::vector<std::string> vecCurCom;
 				Functions::String::replaceStringInPlace(curCom, " ", "");
 				Functions::String::replaceStringInPlace(curCom, ")", "");
@@ -284,11 +289,14 @@ namespace mse
 				animationCode.push_back(vecCurCom);
 			}
 		}
-		void Animation::Animation::applyParameters(Data::ComplexAttribute* parameters)
+		void Animation::Animation::applyParameters(vili::ComplexAttribute* parameters)
 		{
-			if (parameters->containsBaseAttribute("spriteOffsetX")) sprOffsetX = parameters->getBaseAttribute("spriteOffsetX")->get<int>();
-			if (parameters->containsBaseAttribute("spriteOffsetY")) sprOffsetY = parameters->getBaseAttribute("spriteOffsetY")->get<int>();
-			if (parameters->containsBaseAttribute("priority")) priority = parameters->getBaseAttribute("priority")->get<int>();
+			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetX")) 
+				sprOffsetX = *parameters->at<vili::BaseAttribute>("spriteOffsetX");
+			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetY")) 
+				sprOffsetY = *parameters->at<vili::BaseAttribute>("spriteOffsetY");
+			if (parameters->contains(vili::Types::BaseAttribute, "priority")) 
+				priority = *parameters->at<vili::BaseAttribute>("priority");
 		}
 		void Animation::Animation::playAnimation()
 		{
@@ -481,16 +489,15 @@ namespace mse
 			animationPath.loadResource(&listDir, System::Loaders::dirPathLoader);
 			std::vector<std::string> allFiles;
 			animationPath.loadResource(&allFiles, System::Loaders::filePathLoader);
-			Data::DataParser animatorCfgFile;
-			std::map<std::string, Data::ComplexAttribute*> animationParameters;
+			vili::DataParser animatorCfgFile;
+			std::map<std::string, vili::ComplexAttribute*> animationParameters;
 			bool hasCfgFile;
 			if (Functions::Vector::isInList(std::string("animator.cfg.msd"), allFiles))
 			{
 				hasCfgFile = true;
 				System::Path(animationPath.toString() + "/" + "animator.cfg.msd").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
-				std::vector<std::string> allParamAnim = animatorCfgFile.getAllComplexAttributes("Animator");
-				for (unsigned int i = 0; i < allParamAnim.size(); i++)
-					animationParameters[allParamAnim[i]] = animatorCfgFile.getComplexAttribute("Animator", allParamAnim[i]);
+				for (std::string& currentAnimParameters : animatorCfgFile.at("Animator")->getAll(vili::Types::ComplexAttribute))
+					animationParameters[currentAnimParameters] = animatorCfgFile.at("Animator", currentAnimParameters);
 			}
 			for (unsigned int i = 0; i < listDir.size(); i++)
 			{
@@ -498,7 +505,9 @@ namespace mse
 				Animation* tempAnim = new Animation;
 				if (ressourceManagerHook != NULL)
 					tempAnim->attachRessourceManager(ressourceManagerHook);
+				std::cout << "Try to load : " << listDir[i] << std::endl;
 				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.msd");
+				std::cout << "Loaded " << listDir[i] << std::endl;
 				if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
 				{
 					tempAnim->applyParameters(animationParameters["all"]);

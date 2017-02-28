@@ -13,9 +13,9 @@
 #include <sstream>
 #include <fstream>
 #include <thread>
+#include <vili/Vili.hpp>
 
 #include "Functions.hpp"
-#include "DataParser.hpp"
 #include "TimeManager.hpp"
 #include "Triggers.hpp"
 

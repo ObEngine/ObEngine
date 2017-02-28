@@ -55,30 +55,30 @@ namespace mse
 			this->clearWorld();
 			double startLoadTime = Time::getTickSinceEpoch();
 			int indexInFile = 0;
-			Data::DataParser mapParse;
+			vili::DataParser mapParse;
 			baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
 
-			if (mapParse.containsRootAttribute("Meta")) {
-				mapParse.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("Meta");
-				levelName = mapParse.getBaseAttribute("Level")->get<std::string>();
-				sizeX = mapParse.getBaseAttribute("SizeX")->get<int>();
-				sizeY = mapParse.getBaseAttribute("SizeY")->get<int>();
-				if (mapParse.containsBaseAttribute("StartX"))
-					startX = mapParse.getBaseAttribute("StartX")->get<int>();
-				if (mapParse.containsBaseAttribute("StartY"))
-					startY = mapParse.getBaseAttribute("StartY")->get<int>();
+			if (mapParse->contains(vili::Types::ComplexAttribute, "Meta")) {
+				vili::ComplexAttribute* meta = mapParse.at("Meta");
+				levelName = meta->getBaseAttribute("Level")->get<std::string>();
+				sizeX = meta->getBaseAttribute("SizeX")->get<int>();
+				sizeY = meta->getBaseAttribute("SizeY")->get<int>();
+				if (meta->contains(vili::Types::BaseAttribute, "StartX"))
+					startX = meta->getBaseAttribute("StartX")->get<int>();
+				if (meta->contains(vili::Types::BaseAttribute, "StartY"))
+					startY = meta->getBaseAttribute("StartY")->get<int>();
 			}
 			else {
 				std::cout << "<Error:World:World>[loadFromFile] : Map file : " << filename << " does not have any 'Meta' Root Attribute" << std::endl;
 				return;
 			}
 
-			if (mapParse.containsRootAttribute("LevelSprites"))
+			if (mapParse->contains(vili::Types::ComplexAttribute, "LevelSprites"))
 			{
-				std::vector<std::string> allSprites = mapParse["LevelSprites"]->getAllComplexAttributes();
-				for (unsigned int i = 0; i < allSprites.size(); i++)
+				vili::ComplexAttribute* levelSprites = mapParse.at("LevelSprites");
+				for (std::string& currentSpriteName : levelSprites->getAll(vili::Types::ComplexAttribute))
 				{
-					mapParse.accessNavigator()->setCurrentRootAttribute("LevelSprites", allSprites[i]);
+					vili::ComplexAttribute* currentSprite = levelSprites->at(currentSpriteName);
 					std::string spriteID, spritePath;
 					int spritePosX, spritePosY;
 					int spriteRot = 0;
@@ -86,19 +86,18 @@ namespace mse
 					std::vector<std::string> spriteAtrList;
 					int layer;
 					int zdepth;
-					spriteID = allSprites[i];
-					spritePath = mapParse.getBaseAttribute("path")->get<std::string>();
-					spritePosX = mapParse.getBaseAttribute("posX")->get<int>();
-					spritePosY = mapParse.getBaseAttribute("posY")->get<int>();
-					spriteRot = mapParse.getBaseAttribute("rotation")->get<int>();
-					spriteSca = mapParse.getBaseAttribute("scale")->get<double>();
-					layer = mapParse.getBaseAttribute("layer")->get<int>();
-					zdepth = mapParse.getBaseAttribute("z-depth")->get<int>();
-					if (mapParse.containsListAttribute("attributeList"))
+					spriteID = currentSpriteName;
+					spritePath = *currentSprite->getBaseAttribute("path");
+					spritePosX = *currentSprite->getBaseAttribute("posX");
+					spritePosY = *currentSprite->getBaseAttribute("posY");
+					spriteRot = *currentSprite->getBaseAttribute("rotation");
+					spriteSca = *currentSprite->getBaseAttribute("scale");
+					layer = *currentSprite->getBaseAttribute("layer");
+					zdepth = *currentSprite->getBaseAttribute("z-depth");
+					if (currentSprite->contains(vili::Types::ListAttribute, "attributeList"))
 					{
-						int atrListSize = mapParse.getListSize("attributeList");
-						for (int j = 0; j < atrListSize; j++)
-							spriteAtrList.push_back(mapParse.getListItem("attributeList", j)->get<std::string>());
+						for (vili::BaseAttribute* attribute : *currentSprite->at<vili::ListAttribute>("attributeList"))
+							spriteAtrList.push_back(*attribute);
 					}
 					Graphics::LevelSprite* tempSprite;
 					if (spritePath != "None") {
@@ -121,82 +120,16 @@ namespace mse
 
 			this->reorganizeLayers();
 
-
-			if (mapParse.containsRootAttribute("Lights"))
+			if (mapParse->contains(vili::Types::ComplexAttribute, "Collisions"))
 			{
-				mapParse.accessNavigator()->setCurrentRootAttribute("Lights");
-				std::vector<std::string> allLights = mapParse.getAllComplexAttributes();
-				for (int i = 0; i < allLights.size(); i++)
+				vili::ComplexAttribute* collisions = mapParse.at("Collisions");
+				for (std::string& collisionName : collisions->getAll(vili::Types::ComplexAttribute))
 				{
-					mapParse.accessNavigator()->setCurrentRootAttribute("Lights", allLights[i]);
-					std::string ltype = mapParse.getBaseAttribute("type")->get<std::string>();
-					if (ltype == "Static")
+					vili::ComplexAttribute* currentCollision = collisions->at(collisionName);
+					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(collisionName);
+					for (vili::BaseAttribute* point : *currentCollision->getListAttribute("polygonPoints"))
 					{
-						double lsize;
-						double lr, lg, lb, la;
-						std::string lsBind;
-						bool lbehind;
-						double loffX = 0;
-						double loffY = 0;
-						lsize = mapParse.getBaseAttribute("size")->get<double>();
-						lr = mapParse.getBaseAttribute("r")->get<double>();
-						lg = mapParse.getBaseAttribute("g")->get<double>();
-						lb = mapParse.getBaseAttribute("b")->get<double>();
-						la = mapParse.getBaseAttribute("a")->get<double>();
-						lsBind = mapParse.getBaseAttribute("bind")->get<std::string>();
-						lbehind = mapParse.getBaseAttribute("behind")->get<bool>();
-						if (mapParse.containsBaseAttribute("offsetX")) loffX = mapParse.getBaseAttribute("offsetX")->get<double>();
-						if (mapParse.containsBaseAttribute("offsetY")) loffY = mapParse.getBaseAttribute("offsetY")->get<double>();
-						if (getSpriteByID(lsBind) != NULL)
-						{
-							lightsMap[lsBind] = new Light::PointLight(allLights[i], sf::Vector2f(1920, 1080), sf::Vector2f(0, 0), lsize, sf::Color(lr, lg, lb, la));
-							lightsMap[lsBind]->setOffset(loffX, loffY);
-						}
-					}
-					else if (ltype == "Dynamic")
-					{
-						double lprecision;
-						std::string lsize;
-						std::string lr, lg, lb, la;
-						std::string lsBind;
-						bool lbehind;
-						std::string loffX = "0";
-						std::string loffY = "0";
-
-						lprecision = mapParse.getBaseAttribute("precision")->get<double>();
-						lsize = mapParse.getBaseAttribute("size")->get<std::string>();
-						lr = mapParse.getBaseAttribute("r")->get<std::string>();
-						lg = mapParse.getBaseAttribute("g")->get<std::string>();
-						lb = mapParse.getBaseAttribute("b")->get<std::string>();
-						la = mapParse.getBaseAttribute("a")->get<std::string>();
-						lsBind = mapParse.getBaseAttribute("bind")->get<std::string>();
-						lbehind = mapParse.getBaseAttribute("behind")->get<bool>();
-						if (mapParse.containsBaseAttribute("offsetX")) loffX = mapParse.getBaseAttribute("offsetX")->get<std::string>();
-						if (mapParse.containsBaseAttribute("offsetY")) loffY = mapParse.getBaseAttribute("offsetY")->get<std::string>();
-						if (getSpriteByID(lsBind) != NULL)
-						{
-							Light::DynamicPointLight* tdpl = new Light::DynamicPointLight(allLights[i], sf::Vector2f(1920, 1080), lprecision);
-							tdpl->setSizeExp(lsize);
-							tdpl->setRExp(lr); tdpl->setGExp(lg); tdpl->setBExp(lb);
-							tdpl->setOffsetXExp(loffX);
-							tdpl->setOffsetYExp(loffY);
-							lightsMap[lsBind] = tdpl;
-						}
-					}
-				}
-			}
-
-			if (mapParse.containsRootAttribute("Collisions"))
-			{
-				mapParse.accessNavigator()->setCurrentRootAttribute("Collisions");
-				std::vector<std::string> allCol = mapParse.getAllComplexAttributes();
-				for (unsigned int i = 0; i < allCol.size(); i++)
-				{
-					mapParse.accessNavigator()->setCurrentRootAttribute("Collisions", allCol[i]);
-					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(allCol[i]);
-					for (unsigned int j = 0; j < mapParse.getListSize("polygonPoints"); j++)
-					{
-						std::string getPt = mapParse.getListItem("polygonPoints", j)->get<std::string>();
+						std::string getPt = *point;
 						std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 						tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
 					}
@@ -204,37 +137,34 @@ namespace mse
 				}
 			}
 
-			if (mapParse.containsRootAttribute("LevelObjects"))
+			if (mapParse->contains(vili::Types::ComplexAttribute, "LevelObjects"))
 			{
-				mapParse.accessNavigator()->setCurrentRootAttribute("LevelObjects");
-				std::vector<std::string> allObjects = mapParse.getAllComplexAttributes();
-				for (unsigned int i = 0; i < allObjects.size(); i++)
+				vili::ComplexAttribute* levelObjects = mapParse.at("LevelObjects");
+				for (std::string& currentObjectName : levelObjects->getAll(vili::Types::ComplexAttribute))
 				{
-					mapParse.accessNavigator()->setCurrentRootAttribute("LevelObjects", allObjects[i]);
-					std::string levelObjectType = mapParse.getBaseAttribute("type")->get<std::string>();
-					this->createGameObject(allObjects[i], levelObjectType);
+					vili::ComplexAttribute* currentObject = levelObjects->at(currentObjectName);
+					std::string levelObjectType = *currentObject->getBaseAttribute("type");
+					this->createGameObject(currentObjectName, levelObjectType);
 					int objX = 0;
 					int objY = 0;
 					int colOffX = 0;
 					int colOffY = 0;
-					if (mapParse.containsComplexAttribute("Requires")) {
-						Data::ComplexAttribute* objectRequirements = mapParse[mapParse.accessNavigator()->getFullPath()]->at("Requires");
-						mapParse[mapParse.accessNavigator()->getFullPath()]->removeOwnership(objectRequirements);
-						Script::GameObjectRequires::ApplyRequirements(this->getGameObject(allObjects[i]), *mapParse.getComplexAttribute("Requires"));
-						objectRequirements->setParent(mapParse[mapParse.accessNavigator()->getFullPath()]);
+					if (currentObject->contains(vili::Types::ComplexAttribute, "Requires")) {
+						vili::ComplexAttribute* objectRequirements = currentObject->at("Requires");
+						currentObject->removeOwnership(objectRequirements);
+						Script::GameObjectRequires::ApplyRequirements(this->getGameObject(currentObjectName), *objectRequirements);
+						objectRequirements->setParent(currentObject);
 					}
 				}
 			}
 
-			if (mapParse.containsRootAttribute("Script"))
+			if (mapParse->contains(vili::Types::ComplexAttribute, "Script"))
 			{
-				mapParse.accessNavigator()->setCurrentRootAttribute("Script");
-				int scriptAmt = mapParse.getListAttribute("gameScripts")->getSize();
-				for (int i = 0; i < scriptAmt; i++)
+				vili::ComplexAttribute* script = mapParse.at("Script");
+				for (vili::BaseAttribute* scriptName : *script->getListAttribute("gameScripts"))
 				{
-					std::string scriptName = mapParse.getListAttribute("gameScripts")->get(i)->get<std::string>();
-					System::Path(scriptName).loadResource(worldScriptEngine, System::Loaders::luaLoader);
-					scriptArray.push_back(scriptName);
+					System::Path(*scriptName).loadResource(worldScriptEngine, System::Loaders::luaLoader);
+					scriptArray.push_back(*scriptName);
 				}
 			}
 			Script::TriggerDatabase::GetInstance()->update();
@@ -268,18 +198,18 @@ namespace mse
 			scriptArray.clear();
 		}
 
-		Data::DataParser* World::saveData()
+		vili::DataParser* World::saveData()
 		{
-			Data::DataParser* dataStore = new Data::DataParser;
+			vili::DataParser* dataStore = new vili::DataParser;
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
-			dataStore->createRootAttribute("Meta");
+			(*dataStore)->createComplexAttribute("Meta");
 			dataStore->at("Meta")->createBaseAttribute("Level", levelName);
 			dataStore->at("Meta")->createBaseAttribute("SizeX", sizeX);
 			dataStore->at("Meta")->createBaseAttribute("SizeY", sizeY);
 			dataStore->at("Meta")->createBaseAttribute("StartX", startX);
 			dataStore->at("Meta")->createBaseAttribute("StartY", startY);
-			dataStore->createRootAttribute("LevelSprites");
+			(*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 			{
 				if (backSpriteArray[i]->getParentID() == "")
@@ -294,10 +224,9 @@ namespace mse
 					dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createBaseAttribute("z-depth", (int)backSpriteArray[i]->getZDepth());
 					if (backSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createListAttribute("attributeList", "string");
+						dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createListAttribute("attributeList");
 						for (unsigned int j = 0; j < backSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->at("LevelSprites", backSpriteArray[i]->getID())->createListItem(
-								"attributeList", backSpriteArray[i]->getAttributes()[j]);
+							dataStore->at("LevelSprites", backSpriteArray[i]->getID())->getListAttribute("attributeList")->push(backSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
@@ -315,28 +244,28 @@ namespace mse
 					dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createBaseAttribute("z-depth", (int)frontSpriteArray[i]->getZDepth());
 					if (frontSpriteArray[i]->getAttributes().size() != 0)
 					{
-						dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createListAttribute("attributeList", "string");
+						dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createListAttribute("attributeList");
 						for (unsigned int j = 0; j < frontSpriteArray[i]->getAttributes().size(); j++)
-							dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->createListItem("attributeList", frontSpriteArray[i]->getAttributes()[j]);
+							dataStore->at("LevelSprites", frontSpriteArray[i]->getID())->getListAttribute("attributeList")->push(frontSpriteArray[i]->getAttributes()[j]);
 					}
 				}
 			}
-			dataStore->createRootAttribute("Collisions");
+			(*dataStore)->createComplexAttribute("Collisions");
 			for (unsigned int i = 0; i < collidersArray.size(); i++)
 			{
 				if (collidersArray[i]->getParentID() == "")
 				{
 					dataStore->at("Collisions")->createComplexAttribute(collidersArray[i]->getID());
-					dataStore->at("Collisions", collidersArray[i]->getID())->createListAttribute("polygonPoints", "string");
+					dataStore->at("Collisions", collidersArray[i]->getID())->createListAttribute("polygonPoints");
 					for (unsigned int j = 0; j < collidersArray[i]->getPointsAmount(); j++)
 					{
 						int px = collidersArray[i]->getPointPosition(j).first;
 						int py = collidersArray[i]->getPointPosition(j).second;
-						dataStore->at("Collisions", collidersArray[i]->getID())->createListItem("polygonPoints", std::to_string(px) + "," + std::to_string(py));
+						dataStore->at("Collisions", collidersArray[i]->getID())->getListAttribute("polygonPoints")->push(std::to_string(px) + "," + std::to_string(py));
 					}
 				}
 			}
-			dataStore->createRootAttribute("LevelObjects");
+			(*dataStore)->createComplexAttribute("LevelObjects");
 			for (auto it = gameObjectsMap.begin(); it != gameObjectsMap.end(); it++)
 			{
 				dataStore->at("LevelObjects")->createComplexAttribute(it->first);
@@ -346,16 +275,16 @@ namespace mse
 				(*it->second->getScriptEngine())("tnt = Local.Save()");
 				kaguya::LuaRef saveTableRef = (*it->second->getScriptEngine())["tnt"];
 				(*it->second->getScriptEngine())("print(inspect(Local.Save()));");
-				Data::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
+				vili::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);
 				dataStore->at("LevelObjects", it->first)->pushComplexAttribute(saveRequirements);
 			}
 			if (scriptArray.size() > 0)
 			{
-				dataStore->createRootAttribute("Script");
-				dataStore->at("Script")->createListAttribute("gameScripts", "string");
+				(*dataStore)->createComplexAttribute("Script");
+				dataStore->at("Script")->createListAttribute("gameScripts");
 				for (int i = 0; i < scriptArray.size(); i++) {
-					dataStore->at("Script")->createListItem("gameScripts", scriptArray[i]);
+					dataStore->at("Script")->getListAttribute("gameScripts")->push(scriptArray[i]);
 				}
 			}
 			return dataStore;
@@ -640,9 +569,9 @@ namespace mse
 		Script::GameObject* World::createGameObject(std::string id, std::string obj)
 		{
 			Script::GameObject* newGameObject = new Script::GameObject(obj, id);
-			Data::DataParser getGameObjectFile;
+			vili::DataParser getGameObjectFile;
 			System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-			Data::ComplexAttribute* gameObjectData = getGameObjectFile.getRootAttribute(obj);
+			vili::ComplexAttribute* gameObjectData = getGameObjectFile.at(obj);
 			newGameObject->loadGameObject(gameObjectData);
 			this->gameObjectsMap[id] = newGameObject;
 			if (newGameObject->hasScriptEngine) {
@@ -663,8 +592,7 @@ namespace mse
 				this->addCollider(newGameObject->getCollider());
 				newGameObject->getCollider()->setParentID(id);
 			}
-			
-			delete gameObjectData;
+
 			return newGameObject;
 		}
 

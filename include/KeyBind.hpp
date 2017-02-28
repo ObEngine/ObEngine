@@ -8,8 +8,8 @@
 #include <string>
 #include <map>
 #include <SFML/Graphics.hpp>
+#include <vili/Vili.hpp>
 
-#include "DataParser.hpp"
 #include "TimeManager.hpp"
 #include "Triggers.hpp"
 
@@ -54,7 +54,7 @@ namespace mse
 			public:
 				KeyBinder();
 				void setEnabled(bool state);
-				void loadFromFile(mse::Data::DataParser* configFile);
+				void loadFromFile(vili::DataParser* configFile);
 				void connectAction(std::string action, std::string key);
 				bool isActionToggled(std::string action);
 				bool isActionReleased(std::string action);

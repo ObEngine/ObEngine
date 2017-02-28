@@ -26,10 +26,9 @@ namespace mse
 			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
 			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
 				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
-			Data::DataParser loadingStrDP; loadingStrDP.parseFile("Sprites/Menus/loading.dat.msd");
-			loadingStrDP.hookNavigator(new Data::DataParserNavigator)->setCurrentRootAttribute("Loading");
-			std::string loadingRandomStr = loadingStrDP.getListAttribute("loadingStr")->get(
-				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "loadingStr") - 1))->get<std::string>();
+			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
+			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
+				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();
 
@@ -47,28 +46,27 @@ namespace mse
 			font.loadFromFile("Data/Fonts/arial.ttf");
 
 			//Config
-			Data::DataParser configFile;
+			vili::DataParser configFile;
 			System::Path("Data/config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
-			//configFile.parseFile("Data/config.cfg.msd");
-			configFile.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("GameConfig");
-			int scrollSensitive = configFile.getBaseAttribute("scrollSensibility")->get<int>();
-			configFile.accessNavigator()->setCurrentRootAttribute("Developpement");
-			bool showChar = configFile.getBaseAttribute("showCharacter")->get<bool>();
-			bool showCol = configFile.getBaseAttribute("showCollisions")->get<bool>();
-			bool showLSpr = configFile.getBaseAttribute("showLevelSprites")->get<bool>();
-			bool showOverlay = configFile.getBaseAttribute("showOverlay")->get<bool>();
-			bool showCursor = configFile.getBaseAttribute("showCursor")->get<bool>();
-			bool drawFPS = configFile.getBaseAttribute("showFPS")->get<bool>();
+			vili::ComplexAttribute* gameConfig = configFile->at("GameConfig");
+			int scrollSensitive = *gameConfig->at<vili::BaseAttribute>("scrollSensibility");
+			vili::ComplexAttribute* developpement = configFile->at("Developpement");
+			bool showChar = *developpement->at<vili::BaseAttribute>("showCharacter");
+			bool showCol = *developpement->at<vili::BaseAttribute>("showCollisions");
+			bool showLSpr = *developpement->at<vili::BaseAttribute>("showLevelSprites");
+			bool showOverlay = *developpement->at<vili::BaseAttribute>("showOverlay");
+			bool showCursor = *developpement->at<vili::BaseAttribute>("showCursor");
+			bool drawFPS = *developpement->at<vili::BaseAttribute>("showFPS");
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
+			cursor.selectCursor("RoundWhite");
 			Collision::PolygonalCollider cursorCollider("cursor");
 			cursorCollider.addPoint(0, 0); cursorCollider.addPoint(1, 0); cursorCollider.addPoint(1, 1); cursorCollider.addPoint(0, 1);
 			cursor.updateOutsideWindow(true);
 			Script::hookCore.dropValue("Cursor", &cursor);
 
 			//World Creation / Loading
-			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
 			World::World world;
 			(*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
 			world.getScriptEngine()->setErrorHandler([&gameConsole](int statuscode, const char* message) {
@@ -193,7 +191,7 @@ namespace mse
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
 			fps.loadFont(font);
-			FramerateManager framerateManager(*configFile.getRootAttribute("GameConfig"));
+			FramerateManager framerateManager(*gameConfig);
 			window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
 			Light::initLights();

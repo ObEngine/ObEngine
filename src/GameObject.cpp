@@ -82,33 +82,29 @@ namespace mse
 				instance = new GameObjectRequires();
 			return instance;
 		}
-		Data::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type)
+		vili::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type)
 		{
-			if (!Functions::Vector::isInList(type, allRequires.getAllRootAttributes()))
+			if (!Functions::Vector::isInList(type, allRequires->getAll(vili::Types::ComplexAttribute)))
 			{
-				Data::DataParser getGameObjectFile;
+				vili::DataParser getGameObjectFile;
 				System::Path("Data/GameObjects/").add(type).add(type + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-				if (getGameObjectFile.containsRootAttribute("Requires"))
+				if (getGameObjectFile->contains("Requires"))
 				{
-					Data::ComplexAttribute* requiresData = getGameObjectFile.extractRootAttribute("Requires");
+					vili::ComplexAttribute* requiresData = getGameObjectFile->at<vili::ComplexAttribute>("Requires");
+					getGameObjectFile->extractElement(getGameObjectFile->at<vili::ComplexAttribute>("Requires"));
 					requiresData->setID(type);
-					allRequires.pushComplexAttribute(requiresData);
+					allRequires->pushComplexAttribute(requiresData);
 					return requiresData;
 				}
 				else
 					return nullptr;
 			}
 			else
-				return allRequires.getRootAttribute(type);
+				return allRequires->at(type);
 		}
-		void GameObjectRequires::applyBaseRequires(GameObject* obj, Data::ComplexAttribute& requires) {
-			for (std::string currentRequirement : requires.getAllComplexAttributes()) {
-
-			}
-		}
-		void GameObjectRequires::ApplyRequirements(GameObject* obj, Data::ComplexAttribute& requires)
+		void GameObjectRequires::ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires)
 		{
-			for (std::string currentRequirement : requires.getAllAttributes()) {
+			for (std::string currentRequirement : requires.getAll()) {
 				requires.setID("Lua_ReqList");
 				kaguya::LuaTable requireTable = ((*obj->getScriptEngine())["LuaCore"]);
 				Data::DataBridge::complexAttributeToLuaTable(requireTable, requires);
@@ -125,11 +121,11 @@ namespace mse
 		{
 			this->registeredTriggers.push_back(trg);
 		}
-		void GameObject::loadGameObject(Data::ComplexAttribute* obj)
+		void GameObject::loadGameObject(vili::ComplexAttribute* obj)
 		{
 			//Animator
 			std::string animatorPath;
-			if (obj->containsComplexAttribute("Animator"))
+			if (obj->contains(vili::Types::ComplexAttribute, "Animator"))
 			{
 				animatorPath = obj->at("Animator")->getBaseAttribute("path")->get<std::string>();
 				if (animatorPath != "")
@@ -138,13 +134,13 @@ namespace mse
 					this->objectAnimator.setPath(animatorPath);
 					this->objectAnimator.loadAnimator();
 				}
-				if (obj->at("Animator")->containsBaseAttribute("anim")) {
+				if (obj->at("Animator")->contains(vili::Types::BaseAttribute, "anim")) {
 					this->objectAnimator.setKey(obj->at("Animator")->getBaseAttribute("anim")->get<std::string>());
 				}
 				hasAnimator = true;
 			}
 			//Collider
-			if (obj->containsComplexAttribute("Collider"))
+			if (obj->contains(vili::Types::ComplexAttribute, "Collider"))
 			{
 				colliderSolid = obj->at("Collider")->getBaseAttribute("solid")->get<bool>();
 				colliderClick = true;
@@ -161,7 +157,7 @@ namespace mse
 				hasCollider = true;
 			}
 			//LevelSprite
-			if (obj->containsComplexAttribute("LevelSprite"))
+			if (obj->contains(vili::Types::ComplexAttribute, "LevelSprite"))
 			{
 				levelSpriteRelative = (obj->at("LevelSprite")->getBaseAttribute("position")->get<std::string>() == "relative") ? true : false;
 				int decoRot = 0;
@@ -171,7 +167,7 @@ namespace mse
 				std::vector<std::string> decoAtrList;
 				int layer;
 				int zdepth;
-				if (obj->at("LevelSprite")->containsBaseAttribute("path")) {
+				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "path")) {
 					std::cout << "Loading Sprite at : " << obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>() << std::endl;
 					objectLevelSprite.load(obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>());
 				}
@@ -179,11 +175,11 @@ namespace mse
 				decoSca = obj->at("LevelSprite")->getBaseAttribute("scale")->get<double>();
 				layer = obj->at("LevelSprite")->getBaseAttribute("layer")->get<int>();
 				zdepth = obj->at("LevelSprite")->getBaseAttribute("z-depth")->get<int>();
-				if (obj->at("LevelSprite")->containsBaseAttribute("offsetX"))
+				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "offsetX"))
 					sprOffX = obj->at("LevelSprite")->getBaseAttribute("offsetX")->get<int>();
-				if (obj->at("LevelSprite")->containsBaseAttribute("offsetY"))
+				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "offsetY"))
 					sprOffY = obj->at("LevelSprite")->getBaseAttribute("offsetY")->get<int>();
-				if (obj->at("LevelSprite")->containsListAttribute("attributeList"))
+				if (obj->at("LevelSprite")->contains(vili::Types::ListAttribute, "attributeList"))
 				{
 					int atrListSize = obj->at("LevelSprite")->getListAttribute("attributeList")->getSize();
 					for (int j = 0; j < atrListSize; j++)
@@ -198,7 +194,7 @@ namespace mse
 				hasLevelSprite = true;
 			}
 			//Script
-			if (obj->containsComplexAttribute("Script")) {
+			if (obj->contains(vili::Types::ComplexAttribute, "Script")) {
 				hasScriptEngine = true;
 				this->scriptEngine = new kaguya::State;
 				this->privateKey = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
@@ -227,14 +223,14 @@ namespace mse
 				this->localTriggers->addTrigger("Click");
 				this->localTriggers->addTrigger("Press");
 				this->localTriggers->addTrigger("Delete");
-				if (obj->at("Script")->containsListAttribute("scriptList")) {
+				if (obj->at("Script")->contains(vili::Types::ListAttribute, "scriptList")) {
 					int scriptListSize = obj->at("Script")->getListAttribute("scriptList")->getSize();
 					for (int i = 0; i < scriptListSize; i++) {
 						std::string getScrName = obj->at("Script")->getListAttribute("scriptList")->get(i)->get<std::string>();
 						System::Path(getScrName).loadResource(this->scriptEngine, System::Loaders::luaLoader);
 					}
 				}
-				if (obj->at("Script")->containsBaseAttribute("priority"))
+				if (obj->at("Script")->contains(vili::Types::BaseAttribute, "priority"))
 					scrPriority = obj->at("Script")->getBaseAttribute("priority")->get<int>();
 			}
 		}

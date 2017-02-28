@@ -36,17 +36,14 @@ function Linear:getAcceleration()
     return self.acceleration;
 end
 
-function Linear:setDeltaTime(dt)
-    self.dt = dt;
-end
-
 function Linear:updatePosition()
     local radAngle = (math.pi / 180.0) * ((90 - self.angle) * -1);
     self.addX = math.cos(radAngle) * (self.speed * self.dt);
     self.addY = math.sin(radAngle) * (self.speed * self.dt);
 end
 
-function Linear:update()
+function Linear:update(dt)
+    self.dt = dt;
     if self.enabled then
         self:updatePosition();
         self:updateConstraints();

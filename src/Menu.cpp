@@ -20,7 +20,7 @@ namespace mse
 			for (int i = 0; i < allMaps.size(); i++)
 			{
 				std::string mapFile = allMaps[i];
-				Data::DataParser mapInfoParser;
+				vili::DataParser mapInfoParser;
 				System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
 				std::string filename = (allMaps[i].size() <= 16) ? allMaps[i].substr(0, allMapsTemp[i].size() - 8) :
 					allMaps[i].substr(0, 8) + "..";
@@ -28,13 +28,13 @@ namespace mse
 				int mapSizeX = 0;
 				int mapSizeY = 0;
 
-				if (mapInfoParser.containsRootAttribute("Meta")) {
-					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("Level"))
-						levelName = mapInfoParser.getPath("Meta")->getBaseAttribute("Level")->get<std::string>();
-					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeX"))
-						mapSizeX = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeX")->get<int>();
-					if (mapInfoParser.getPath("Meta")->containsBaseAttribute("SizeY"))
-						mapSizeY = mapInfoParser.getPath("Meta")->getBaseAttribute("SizeY")->get<int>();
+				if (mapInfoParser->contains(vili::Types::ComplexAttribute, "Meta")) {
+					if (mapInfoParser->at("Meta")->contains(vili::Types::BaseAttribute, "Level"))
+						levelName = mapInfoParser.at("Meta")->getBaseAttribute("Level")->get<std::string>();
+					if (mapInfoParser.at("Meta")->contains(vili::Types::BaseAttribute, "SizeX"))
+						mapSizeX = mapInfoParser.at("Meta")->getBaseAttribute("SizeX")->get<int>();
+					if (mapInfoParser.at("Meta")->contains(vili::Types::BaseAttribute, "SizeY"))
+						mapSizeY = mapInfoParser.at("Meta")->getBaseAttribute("SizeY")->get<int>();
 				}
 				
 				GUI::Button* btn = gui->createButton("maps", "map_gbtn_" + std::to_string(i), 0, i * 100, true, true, "MAPSELECT");
@@ -55,16 +55,15 @@ namespace mse
 				if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.msd").getPath(0)))
 				{
 					std::cout << "Creating new level : " << newLevelName << std::endl;
-					Data::DataParser newFileParser;
-					newFileParser.hookNavigator(new Data::DataParserNavigator());
+					vili::DataParser newFileParser;
 					newFileParser.createFlag("Map");
 					newFileParser.createFlag("Lock");
-					newFileParser.createRootAttribute("Meta");
-					newFileParser.createBaseAttribute("Level", newLevelName);
-					newFileParser.createBaseAttribute("SizeX", 1920);
-					newFileParser.createBaseAttribute("SizeY", 1080);
-					newFileParser.createBaseAttribute("StartX", 0);
-					newFileParser.createBaseAttribute("StartY", 0);
+					newFileParser->createComplexAttribute("Meta");
+					newFileParser.at("Meta")->createBaseAttribute("Level", newLevelName);
+					newFileParser.at("Meta")->createBaseAttribute("SizeX", 1920);
+					newFileParser.at("Meta")->createBaseAttribute("SizeY", 1080);
+					newFileParser.at("Meta")->createBaseAttribute("StartX", 0);
+					newFileParser.at("Meta")->createBaseAttribute("StartY", 0);
 					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.msd").getPath(0), true);
 					GUI::Widget::getWidgetByID<GUI::TextInput>("createInput")->setText("");
 					chooseMapAddMaps(gui);

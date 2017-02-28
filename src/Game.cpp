@@ -21,10 +21,9 @@ namespace mse
 			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
 			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
 				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
-			Data::DataParser loadingStrDP; loadingStrDP.parseFile("Sprites/Menus/loading.dat.msd");
-			loadingStrDP.hookNavigator(new Data::DataParserNavigator)->setCurrentRootAttribute("Loading");
-			std::string loadingRandomStr = loadingStrDP.getListAttribute("loadingStr")->get(
-				Functions::Math::randint(0, loadingStrDP.getListSize("Loading", "loadingStr") - 1))->get<std::string>();
+			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
+			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
+				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();
 
@@ -38,11 +37,10 @@ namespace mse
 			font.loadFromFile("Data/Fonts/arial.ttf");
 
 			//Config
-			Data::DataParser configFile;
+			vili::DataParser configFile;
 			System::Path("Data/config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
-			configFile.hookNavigator(new Data::DataParserNavigator())->setCurrentRootAttribute("GameConfig");
-			int scrollSensitive = configFile.getBaseAttribute("scrollSensibility")->get<int>();
-			configFile.accessNavigator()->setCurrentRootAttribute("Developpement");
+			vili::ComplexAttribute* gameConfig = configFile.at("GameConfig");
+			int scrollSensitive = *gameConfig->at<vili::BaseAttribute>("scrollSensibility");
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
@@ -52,7 +50,6 @@ namespace mse
 			Script::hookCore.dropValue("Cursor", &cursor);
 
 			//World Creation / Loading
-			configFile.accessNavigator()->setCurrentRootAttribute("GameConfig");
 			World::World world;
 			Script::hookCore.dropValue("World", &world);
 
@@ -66,7 +63,7 @@ namespace mse
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
 			fps.loadFont(font);
-			FramerateManager framerateManager(*configFile.getRootAttribute("GameConfig"));
+			FramerateManager framerateManager(*gameConfig);
 			window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
 			Light::initLights();

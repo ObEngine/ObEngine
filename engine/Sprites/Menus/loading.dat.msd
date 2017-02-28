@@ -1,5 +1,5 @@
 Loading:
-    ?loadingStr(string):
+    loadingStr:[
         "Waiting is such a dumb thing isn't it ?"
         "Powered with shit-tons of lines of code"
         "If loading time is long, your PC is crap"
@@ -13,3 +13,4 @@ Loading:
         "I hope the game won't crash :("
         ":D I can use smileys too"
         "Using ALT+F4 won't make you stronger"
+    ]

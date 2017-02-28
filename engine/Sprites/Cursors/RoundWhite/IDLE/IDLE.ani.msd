@@ -5,10 +5,12 @@ Meta:
     name:"IDLE"
     clock:100
 Images:
-    ?ImageList(string)<"%s.png">{0}:
+    ImageList:[0]
+    model:"%s.png"
 Groups:
     @main
-        ?content(int)<%s>{0}:
+        content:[0]
 Animation:
-    ?AnimationCode(string):
+    AnimationCode:[
         "PLAY_GROUP(main, -1)"
+    ]

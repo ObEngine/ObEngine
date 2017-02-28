@@ -1,21 +1,20 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 
-Import("Core.DataParser");
-
 function workspace(argtable)
     local action = argtable.action;
     local wsname = argtable.wsname;
-    local parser = Core.DataParser.DataParser.new();
+    local parser = Core.Vili.DataParser.new();
+    local Types = Core.Vili.AttributeType;
     parser:parseFile("Workspace/workspace.cfg.msd", true);
     if action == "get" then
-        local currentWs = parser:getBaseAttribute("Workspace", "current"):get_string();
+        local currentWs = parser:root():at("Workspace"):getBaseAttribute("current"):get_string();
         Color.print({
             {color = "white", text = "Current Workspace : "}, 
             {color = "lightcyan", text = currentWs .. "\n"}
         }, 2);
     elseif action == "use" and wsname ~= nil then
-        if (parser:containsComplexAttribute("Workspace", wsname)) then
-            parser:getBaseAttribute("Workspace", "current"):set(wsname);
+        if (parser:root():contains(Types.ComplexAttribute, "Workspace", wsname)) then
+            parser:root():at("Workspace"):getBaseAttribute("current"):set(wsname);
             parser:writeFile("Workspace/workspace.cfg.msd", true);
             Color.print({
                 {color = "lightgreen", text = "Current workspace has been successfully switched to "},
@@ -29,11 +28,11 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "desc" and wsname ~= nil then
-        if (parser:containsComplexAttribute("Workspace", wsname)) then
+        if (parser:root():at("Workspace"):contains(Types.ComplexAttribute, wsname)) then
             Color.print({
                 {color = "lightcyan", text = wsname},
                 {color = "white", text = "'s description : "},
-                {color = "darkgrey", text = parser:getBaseAttribute("Workspace/" .. wsname, "description"):get_string() .. "\n"}
+                {color = "darkgrey", text = parser:root():at("Workspace/" .. wsname):getBaseAttribute("description"):get_string() .. "\n"}
             }, 2);
         else
             Color.print({
@@ -51,8 +50,8 @@ function workspace(argtable)
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\GameObjects");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\LevelSprites");
-        parser:createComplexAttribute("Workspace", wsname);
-        parser:getPath("Workspace/" .. wsname):createBaseAttribute("path", wsname);
+        parser:root():at("Workspace"):createComplexAttribute(wsname);
+        parser:root():getPath("Workspace/" .. wsname):createBaseAttribute("path", wsname);
         parser:writeFile("Workspace/workspace.cfg.msd", true);
         Color.print({
             {color = "lightgreen", text = "Workspace "},
