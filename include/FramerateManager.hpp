@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include <vili/Vili.hpp>
 
