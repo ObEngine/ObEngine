@@ -87,13 +87,13 @@ namespace mse
 					int layer;
 					int zdepth;
 					spriteID = currentSpriteName;
-					spritePath = *currentSprite->getBaseAttribute("path");
-					spritePosX = *currentSprite->getBaseAttribute("posX");
-					spritePosY = *currentSprite->getBaseAttribute("posY");
-					spriteRot = *currentSprite->getBaseAttribute("rotation");
-					spriteSca = *currentSprite->getBaseAttribute("scale");
-					layer = *currentSprite->getBaseAttribute("layer");
-					zdepth = *currentSprite->getBaseAttribute("z-depth");
+					spritePath = currentSprite->getBaseAttribute("path")->get<std::string>();
+					spritePosX = currentSprite->getBaseAttribute("posX")->get<int>();
+					spritePosY = currentSprite->getBaseAttribute("posY")->get<int>();
+					spriteRot = currentSprite->getBaseAttribute("rotation")->get<int>();
+					spriteSca = currentSprite->getBaseAttribute("scale")->get<double>();
+					layer = currentSprite->getBaseAttribute("layer")->get<int>();
+					zdepth = currentSprite->getBaseAttribute("z-depth")->get<int>();
 					if (currentSprite->contains(vili::Types::ListAttribute, "attributeList"))
 					{
 						for (vili::BaseAttribute* attribute : *currentSprite->at<vili::ListAttribute>("attributeList"))
@@ -129,7 +129,7 @@ namespace mse
 					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(collisionName);
 					for (vili::BaseAttribute* point : *currentCollision->getListAttribute("polygonPoints"))
 					{
-						std::string getPt = *point;
+						std::string getPt = point->get<std::string>();
 						std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
 						tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
 					}
@@ -143,7 +143,7 @@ namespace mse
 				for (std::string& currentObjectName : levelObjects->getAll(vili::Types::ComplexAttribute))
 				{
 					vili::ComplexAttribute* currentObject = levelObjects->at(currentObjectName);
-					std::string levelObjectType = *currentObject->getBaseAttribute("type");
+					std::string levelObjectType = currentObject->getBaseAttribute("type")->get<std::string>();
 					this->createGameObject(currentObjectName, levelObjectType);
 					int objX = 0;
 					int objY = 0;
