@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/build-scripts/")
 
 add_subdirectory(extlibs/build/clip)
 add_subdirectory(extlibs/build/clipper)
+add_subdirectory(extlibs/build/vili)
 
 file(GLOB PG_OBE include/*.hpp)
 file(GLOB HD_OBE src/*.cpp)
@@ -34,6 +35,7 @@ include_directories(${OPENGL_INCLUDE_DIR})
 
 target_link_libraries(ObEngine clip)
 target_link_libraries(ObEngine clipper)
+target_link_libraries(ObEngine vili)
 
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
