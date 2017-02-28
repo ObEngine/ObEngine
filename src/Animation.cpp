@@ -229,16 +229,16 @@ namespace mse
 			path.add(filename).loadResource(&animFile, System::Loaders::dataLoader);
 			//Meta
 			vili::ComplexAttribute* meta = animFile.at("Meta");
-			animationName = *meta->at<vili::BaseAttribute>("name");
+			animationName = meta->at<vili::BaseAttribute>("name")->get<std::string>();
 			if (meta->contains(vili::Types::BaseAttribute, "clock"))
-				animationClock = *meta->at<vili::BaseAttribute>("clock");
+				animationClock = meta->at<vili::BaseAttribute>("clock")->get<int>();
 			if (meta->contains(vili::Types::BaseAttribute, "play-mode"))
-				animationPlaymode = *meta->at<vili::BaseAttribute>("play-mode");
+				animationPlaymode = meta->at<vili::BaseAttribute>("play-mode")->get<std::string>();
 			//Images
 			vili::ListAttribute* imageList = animFile.at<vili::ListAttribute>("Images", "ImageList");
 			std::string model = "";
 			if (animFile.at("Images")->contains(vili::Types::BaseAttribute, "model")) {
-				model = *animFile.at("Images")->getBaseAttribute("model");
+				model = animFile.at("Images")->getBaseAttribute("model")->get<std::string>();
 			}
 			for (unsigned int i = 0; i < imageList->getSize(); i++)
 			{
@@ -280,7 +280,7 @@ namespace mse
 			vili::ComplexAttribute* animation = animFile.at("Animation");
 			for (vili::BaseAttribute* command : *animation->at<vili::ListAttribute>("AnimationCode"))
 			{
-				std::string curCom = *command;
+				std::string curCom = command->get<std::string>();
 				std::vector<std::string> vecCurCom;
 				Functions::String::replaceStringInPlace(curCom, " ", "");
 				Functions::String::replaceStringInPlace(curCom, ")", "");
@@ -292,11 +292,11 @@ namespace mse
 		void Animation::Animation::applyParameters(vili::ComplexAttribute* parameters)
 		{
 			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetX")) 
-				sprOffsetX = *parameters->at<vili::BaseAttribute>("spriteOffsetX");
+				sprOffsetX = parameters->at<vili::BaseAttribute>("spriteOffsetX")->get<int>();
 			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetY")) 
-				sprOffsetY = *parameters->at<vili::BaseAttribute>("spriteOffsetY");
+				sprOffsetY = parameters->at<vili::BaseAttribute>("spriteOffsetY")->get<int>();
 			if (parameters->contains(vili::Types::BaseAttribute, "priority")) 
-				priority = *parameters->at<vili::BaseAttribute>("priority");
+				priority = parameters->at<vili::BaseAttribute>("priority")->get<int>();
 		}
 		void Animation::Animation::playAnimation()
 		{
