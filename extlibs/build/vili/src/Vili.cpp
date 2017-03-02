@@ -666,7 +666,6 @@ namespace vili
 			return dynamic_cast<ComplexAttribute*>(childAttributes[attributeID].get());
 		else
 		{
-			std::cout << "Hello :)" << std::endl;
 			std::cout << "<Error:Vili:ComplexAttribute>[getComplexAttribute] : Can't find ComplexAttribute "
 					  << attributeID << " in " << getNodePath() << std::endl;
 		}
