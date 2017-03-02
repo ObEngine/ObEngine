@@ -3,7 +3,7 @@
 
 #include "Triggers.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Script
 	{

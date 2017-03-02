@@ -16,7 +16,7 @@
 #include <typeinfo>
 #include <tinydir/tinydir.h>
 
-namespace mse
+namespace obe
 {
 	namespace Functions
 	{

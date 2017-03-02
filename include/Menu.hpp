@@ -8,7 +8,7 @@
 #include "GUI.hpp"
 #include "PathResolver.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Modes
 	{

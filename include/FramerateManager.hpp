@@ -6,7 +6,7 @@
 
 #include "TimeManager.hpp"
 
-namespace mse
+namespace obe
 {
 	class FramerateManager
 	{

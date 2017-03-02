@@ -3,7 +3,7 @@
 
 #include "TimeManager.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Time
 	{

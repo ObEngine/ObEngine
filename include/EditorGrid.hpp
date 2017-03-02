@@ -9,7 +9,7 @@
 #include "SpriteFunc.hpp"
 #include "Cursor.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Editor
 	{

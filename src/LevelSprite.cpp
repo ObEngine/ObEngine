@@ -3,7 +3,7 @@
 
 #include "LevelSprite.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

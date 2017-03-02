@@ -8,7 +8,7 @@
 
 #include "MathExp.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

@@ -3,7 +3,7 @@
 
 #include "Dialog.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

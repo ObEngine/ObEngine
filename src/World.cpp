@@ -3,7 +3,7 @@
 
 #include "World.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace World
 	{

@@ -21,7 +21,7 @@ std::string colorConsole(std::string color)
 	return "";
 }
 
-namespace mse
+namespace obe
 {
 	namespace Modes
 	{

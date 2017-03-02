@@ -1,6 +1,6 @@
 #include "DataParserLuaBridge.hpp"
 
-namespace mse {
+namespace obe {
 	namespace Data {
 		namespace DataBridge {
 			void dataToLua(kaguya::LuaTable& target, vili::Attribute& convert)

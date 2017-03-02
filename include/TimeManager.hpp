@@ -8,7 +8,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-namespace mse
+namespace obe
 {
 	namespace Time
 	{

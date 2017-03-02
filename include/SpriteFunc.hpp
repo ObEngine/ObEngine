@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

@@ -20,7 +20,7 @@
 #include "Particle.hpp"
 #include "Script.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace World
 	{
@@ -45,8 +45,8 @@ namespace mse
 				std::vector<Graphics::LevelSprite*> backSpriteArray;
 				std::vector<Graphics::LevelSprite*> frontSpriteArray;
 				std::vector<Collision::PolygonalCollider*> collidersArray;
-				std::map<std::string, mse::Script::GameObject*> gameObjectsMap;
-				std::vector<mse::Script::GameObject*> updateObjArray;
+				std::map<std::string, Script::GameObject*> gameObjectsMap;
+				std::vector<Script::GameObject*> updateObjArray;
 				std::map<std::string, Light::PointLight*> lightsMap;
 				std::vector<Graphics::MathParticle*> particleArray;
 				std::vector<std::string> scriptArray;
@@ -71,9 +71,9 @@ namespace mse
 				int getStartY();
 				void setUpdateState(bool state);
 				//GameObjects
-				mse::Script::GameObject* getGameObject(std::string id);
-				std::vector<mse::Script::GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
-				mse::Script::GameObject* createGameObject(std::string id, std::string obj);
+				Script::GameObject* getGameObject(std::string id);
+				std::vector<Script::GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
+				Script::GameObject* createGameObject(std::string id, std::string obj);
 				void orderUpdateScrArray();
 				//Camera
 				void setCameraPosition(double tX, double tY, std::string setMode = "SET");

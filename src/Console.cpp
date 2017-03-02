@@ -3,7 +3,7 @@
 
 #include "Console.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Console
 	{

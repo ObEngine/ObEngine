@@ -1,6 +1,6 @@
 #include "Network.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Input
 	{

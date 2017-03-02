@@ -3,7 +3,7 @@
 
 #include "Functions.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Functions
 	{

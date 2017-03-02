@@ -13,7 +13,7 @@
 #include "TimeManager.hpp"
 #include "Functions.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Script
 	{

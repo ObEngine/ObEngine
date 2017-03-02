@@ -3,13 +3,13 @@ cmake_policy(SET CMP0015 NEW)
 
 project(clip)
 
-file(GLOB PG_CLIP ../../include/clip/*.h)
+file(GLOB PG_CLIP src/*.h)
 
 
 IF (WIN32)
-  file(GLOB HD_CLIP ../../src/clip/*.cpp)
+  file(GLOB HD_CLIP src/*.cpp)
 ELSE()
-  file(GLOB HD_CLIP ../../src/clip/clip.cpp)
+  file(GLOB HD_CLIP src/clip.cpp)
 ENDIF()
 
 ADD_DEFINITIONS(-std=c++14)

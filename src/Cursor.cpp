@@ -1,6 +1,6 @@
 #include "Cursor.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Cursor
 	{

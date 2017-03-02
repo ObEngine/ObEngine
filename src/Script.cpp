@@ -3,7 +3,7 @@
 
 #include "Script.hpp"
 
-namespace mse
+namespace obe
 {
 	Types::any::erasure::~erasure() {}
 	namespace Script
@@ -111,6 +111,7 @@ namespace mse
 				if (lib[0] == "LevelSprite" || all) { CoreLib::loadLevelSprite(lua, (all) ? std::vector<std::string>{"LevelSprite"} : lib);    found = true; }
 				if (lib[0] == "Light" || all) { CoreLib::loadLight(lua, (all) ? std::vector<std::string>{"Light"} : lib);    found = true; }
 				if (lib[0] == "MathExp" || all) { CoreLib::loadMathExp(lua, (all) ? std::vector<std::string>{"MathExp"} : lib);    found = true; }
+				if (lib[0] == "Package" || all) { CoreLib::loadPackage(lua, (all) ? std::vector<std::string>{"Package"} : lib);    found = true; }
 				if (lib[0] == "Particle" || all) { CoreLib::loadParticle(lua, (all) ? std::vector<std::string>{"Particle"} : lib);    found = true; }
 				if (lib[0] == "SFML" || all) { CoreLib::loadSFML(lua, (all) ? std::vector<std::string>{"SFML"} : lib);    found = true; }
 				if (lib[0] == "STD" || all) { CoreLib::loadSTD(lua, (all) ? std::vector<std::string>{"STD"} : lib);    found = true; }
@@ -660,6 +661,22 @@ namespace mse
 				foundPart = true;
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadMathExp] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+		}
+		void CoreLib::loadPackage(kaguya::State* lua, std::vector<std::string> args)
+		{
+			registerLib(lua, Functions::Vector::join(args, "."));
+			bool importAll = args.size() == 1;
+			bool foundPart = false;
+			if (!(bool)((*lua)["Core"]["Package"])) (*lua)["Core"]["Package"] = kaguya::NewTable();
+			if (importAll || args[1] == "Package")
+			{
+				(*lua)["Core"]["Package"]["Package"].setClass(kaguya::UserdataMetatable<System::Package>()
+					.addStaticFunction("Load", &System::Package::Load)
+					.addStaticFunction("Install", &System::Package::Install)
+				);
+				foundPart = true;
+			}
+			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadPackage] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
 		void CoreLib::loadParticle(kaguya::State* lua, std::vector<std::string> args)
 		{

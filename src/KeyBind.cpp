@@ -3,7 +3,7 @@
 
 #include "KeyBind.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Input
 	{

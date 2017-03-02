@@ -33,9 +33,8 @@ Toolkit.commands.object = {
 Toolkit.commands.package = {
     shortcuts = {"p", "pkg", "package"}, 
     args = {
-        {name = "pkgname", type = "string"}, 
-        {name = "output", type = "string"}, 
-        {name = "compress", type = "boolean", optional = true}
+        {name = "action", type = "string"},
+        {name = "pkgname", type = "string"}
     }
 };
 Toolkit.commands.reload = {

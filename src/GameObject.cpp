@@ -3,7 +3,7 @@
 
 #include "GameObject.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Script
 	{

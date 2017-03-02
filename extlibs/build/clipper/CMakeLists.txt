@@ -3,8 +3,8 @@ cmake_policy(SET CMP0015 NEW)
 
 project(clipper)
 
-file(GLOB PG_CLIPPER ../../include/clipper/*.hpp)
-file(GLOB HD_CLIPPER ../../src/clipper/*.cpp)
+file(GLOB PG_CLIPPER src/*.hpp)
+file(GLOB HD_CLIPPER src/*.cpp)
 
 ADD_DEFINITIONS(-std=c++14)
 

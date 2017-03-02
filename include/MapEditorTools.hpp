@@ -9,7 +9,7 @@
 #include "Script.hpp"
 #include "World.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace EditorTools
 	{

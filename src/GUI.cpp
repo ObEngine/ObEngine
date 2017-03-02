@@ -23,7 +23,7 @@ void GUI::Widget::autoLoad()
 	if (widgetStyle != "None")
 	{
 		std::string textureGUIPath = "Sprites/GUI/" + widgetType + "/" + widgetStyle;
-		std::vector<std::string> listFile = mse::Functions::File::listFileInDir(textureGUIPath);
+		std::vector<std::string> listFile = obe::Functions::File::listFileInDir(textureGUIPath);
 		for (int i = 0; i < listFile.size(); i++)
 		{
 			if (!texture.loadFromFile(textureGUIPath + "/" + listFile[i]))
@@ -1694,19 +1694,19 @@ void GUI::Label::setComplexText(std::string complexText)
 	text[0].clear();
 	sf::Color currColor = sf::Color::Black;
 	sf::Text::Style currStyle = sf::Text::Regular;
-	std::vector<std::string> markups = mse::Functions::String::extractBetween(complexText, '<', '>');
-	mse::Functions::String::removeCharFromString(complexText, "<");
-	std::vector<std::string> texts = mse::Functions::String::split(complexText, ">");
+	std::vector<std::string> markups = obe::Functions::String::extractBetween(complexText, '<', '>');
+	obe::Functions::String::removeCharFromString(complexText, "<");
+	std::vector<std::string> texts = obe::Functions::String::split(complexText, ">");
 
 	for (int i = 0; i < markups.size(); i++)
 	{
-		std::vector<std::string> splitMarkups = mse::Functions::String::split(markups[i], ";");
+		std::vector<std::string> splitMarkups = obe::Functions::String::split(markups[i], ";");
 		for (int j = 0; j < splitMarkups.size(); j++)
 		{
-			std::vector<std::string> splitProp = mse::Functions::String::split(splitMarkups[j], ":");
+			std::vector<std::string> splitProp = obe::Functions::String::split(splitMarkups[j], ":");
 			if (splitProp[0] == "color")
 			{
-				std::vector<std::string> splitColor = mse::Functions::String::split(splitProp[1], ",");
+				std::vector<std::string> splitColor = obe::Functions::String::split(splitProp[1], ",");
 				if (splitColor.size() == 4)
 					currColor = sf::Color(std::stoi(splitColor[0]), std::stoi(splitColor[1]), std::stoi(splitColor[2]), std::stoi(splitColor[3]));
 				else if(splitColor.size() == 3)
@@ -1714,7 +1714,7 @@ void GUI::Label::setComplexText(std::string complexText)
 			}
 			else if (splitProp[0] == "style")
 			{
-				std::vector<std::string> splitProp = mse::Functions::String::split(splitMarkups[j], ":");
+				std::vector<std::string> splitProp = obe::Functions::String::split(splitMarkups[j], ":");
 				if(splitProp[1] == "regular")
 				{
 					currStyle = sf::Text::Regular;
@@ -3648,7 +3648,7 @@ GUI::TextInput::TextInput(std::string ID, int posX, int posY, std::string font, 
 	}
 	else
 	{
-		std::vector<std::string> stringSplit = mse::Functions::String::split(defaultText, "\n");
+		std::vector<std::string> stringSplit = obe::Functions::String::split(defaultText, "\n");
 		for (int i = 0; i < stringSplit.size(); i++)
 		{
 			labelText.push_back(new Label(ID + "text" + std::to_string(i), 0, 0, stringSplit[i], font, fontSize, fontColor, sf::Text::Regular));
@@ -3774,7 +3774,7 @@ void GUI::TextInput::updateTextPositionX()
 		textLarger = false;
 		for (int i = 0; i < labelText.size(); i++)
 		{
-			mse::Functions::String::replaceStringInPlace(lines[i], "\n", "");
+			obe::Functions::String::replaceStringInPlace(lines[i], "\n", "");
 			labelText[i]->setText(lines[i], fontColor);
 
 			std::string toKeep = "";
@@ -3848,7 +3848,7 @@ void GUI::TextInput::moveCursorTextChanged(int enteredOrDeleted)
 
 int GUI::TextInput::interlineSum(int interline, int line)
 {
-	std::vector<std::string> splittedLines = mse::Functions::String::split(lines[line], "\n");
+	std::vector<std::string> splittedLines = obe::Functions::String::split(lines[line], "\n");
 	int sum = 0;
 	for (int i = 0; i < interline; i++)
 	{
@@ -3899,10 +3899,10 @@ void GUI::TextInput::moveCursorRight()
 	}
 	else
 	{
-		if (cursorPosition < lines[cursorLine].size() - (mse::Functions::String::split(lines[cursorLine]).size() - 1))
+		if (cursorPosition < lines[cursorLine].size() - (obe::Functions::String::split(lines[cursorLine]).size() - 1))
 		{
-			std::cout << "oui" << lines[cursorLine][cursorPosition + currentInterline] << "oui" << mse::Functions::String::split(lines[cursorLine], "\n").size() << " " << lines[cursorLine] << std::endl;
-			if (lines[cursorLine][cursorPosition + currentInterline] == '\n' && currentInterline < mse::Functions::String::split(lines[cursorLine], "\n").size() - 1)
+			std::cout << "oui" << lines[cursorLine][cursorPosition + currentInterline] << "oui" << obe::Functions::String::split(lines[cursorLine], "\n").size() << " " << lines[cursorLine] << std::endl;
+			if (lines[cursorLine][cursorPosition + currentInterline] == '\n' && currentInterline < obe::Functions::String::split(lines[cursorLine], "\n").size() - 1)
 			{
 				cursorPosition++;
 				currentInterline++;
@@ -3911,7 +3911,7 @@ void GUI::TextInput::moveCursorRight()
 			}
 			else
 			{
-				std::vector<std::string> offsetStr = mse::Functions::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offsetStr = obe::Functions::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
 					charMoved = offsetStr[currentInterline].substr(0, cursorPosition - interlineSum(currentInterline, cursorLine));
@@ -3967,7 +3967,7 @@ void GUI::TextInput::moveCursorLeft()
 		{
 			if (lines[cursorLine][cursorPosition] == '\n' && currentInterline > 0 && !isEndInterline())//pb ici avec le \n
 			{
-				std::vector<std::string> offX = mse::Functions::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offX = obe::Functions::String::split(lines[cursorLine], "\n");
 				charToMove.setString(offX[currentInterline - 1]);
 				std::cout << "changing interline (left)" << std::endl;
 				cursorPosition--;
@@ -3975,7 +3975,7 @@ void GUI::TextInput::moveCursorLeft()
 			}
 			else
 			{
-				std::vector<std::string> offsetStr = mse::Functions::String::split(lines[cursorLine], "\n");
+				std::vector<std::string> offsetStr = obe::Functions::String::split(lines[cursorLine], "\n");
 				std::string charMoved;
 				if (currentInterline >= 1)
 				{
@@ -4007,7 +4007,7 @@ void GUI::TextInput::moveCursorLeft()
 		}
 		else if (cursorLine > 0)
 		{
-			std::vector<std::string> offsetX = mse::Functions::String::split(lines[cursorLine - 1], "\n");
+			std::vector<std::string> offsetX = obe::Functions::String::split(lines[cursorLine - 1], "\n");
 			cursorPosition = lines[cursorLine - 1].size() - (offsetX.size() - 1);
 			cursorLine--;
 			currentInterline = offsetX.size() - 1;
@@ -4027,7 +4027,7 @@ void GUI::TextInput::moveCursorTop()
 	if (isMultiLine)
 	{
 		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
-		std::vector<std::string> split = mse::Functions::String::split(lines[cursorLine], "\n");
+		std::vector<std::string> split = obe::Functions::String::split(lines[cursorLine], "\n");
 
 		if(currentInterline > 0)
 		{
@@ -4047,7 +4047,7 @@ void GUI::TextInput::moveCursorTop()
 			}
 			std::cout << "going on previous interline (was maybe longer)" << std::endl;
 
-			currentInterline = static_cast<int>(mse::Functions::String::split(lines[cursorLine - 1], "\n").size()) - 1;
+			currentInterline = static_cast<int>(obe::Functions::String::split(lines[cursorLine - 1], "\n").size()) - 1;
 			cursorPosition += interlineSum(currentInterline, cursorLine - 1);
 			cursorLine--;
 		}
@@ -4063,7 +4063,7 @@ void GUI::TextInput::moveCursorBot()
 	if (isMultiLine)
 	{
 		std::cout << "BEGIN -->LINE: " << cursorLine << " inter " << currentInterline << "POS " << cursorPosition << std::endl;
-		std::vector<std::string> split = mse::Functions::String::split(lines[cursorLine], "\n");
+		std::vector<std::string> split = obe::Functions::String::split(lines[cursorLine], "\n");
 		if (split.size() > currentInterline + 1)
 			{
 				if (cursorPosition - interlineSum(currentInterline, cursorLine) > split[currentInterline + 1].size())
@@ -4119,7 +4119,7 @@ void GUI::TextInput::moveCursorBot()
 
 void GUI::TextInput::computeOffsetX()
 {
-	std::vector<std::string> str = mse::Functions::String::split(lines[cursorLine], "\n");
+	std::vector<std::string> str = obe::Functions::String::split(lines[cursorLine], "\n");
 	std::cout << "K°DICJN " << interlineSum(currentInterline, cursorLine) << std::endl;
 	std::string s;
 	if (cursorPosition == 0 && cursorLine == 0 && currentInterline == 0)
@@ -4140,7 +4140,7 @@ void GUI::TextInput::computeOffsetY()
 	int countInterlines = 0;
 	for (int i = 0; i < cursorLine; i++)
 	{
-		countInterlines += mse::Functions::String::split(lines[i], "\n").size() - 1;
+		countInterlines += obe::Functions::String::split(lines[i], "\n").size() - 1;
 	}
 	currentCursorOffsetY = (currentInterline + countInterlines + cursorLine) * shapes[0]->getGlobalBounds().height;
 }
@@ -4151,7 +4151,7 @@ bool GUI::TextInput::isEndInterline()
 	int pos = cursorPosition - sum - currentInterline;
 	std::cout << "sum " << sum << std::endl;
 	std::cout << "cursorPos " << pos << std::endl;
-	int lineSize = mse::Functions::String::split(lines[cursorLine], "\n")[currentInterline].size();
+	int lineSize = obe::Functions::String::split(lines[cursorLine], "\n")[currentInterline].size();
 	std::cout << "lineSize " << lineSize << std::endl;
 
 	return pos == lineSize;
@@ -4363,7 +4363,7 @@ void GUI::TextInput::setText(std::string string)
 {
 	if (isMultiLine)
 	{
-		std::vector<std::string> split = mse::Functions::String::split(string, "\n");
+		std::vector<std::string> split = obe::Functions::String::split(string, "\n");
 
 		for (int i = 0; i <= labelText.size(); i++)
 		{
@@ -4403,7 +4403,7 @@ std::string GUI::TextInput::getText()
 		std::vector<std::string> vectStr = lines;
 		for (int i = 0; i < lines.size(); i++)
 		{
-			mse::Functions::String::replaceStringInPlace(vectStr[i], "\n", "");
+			obe::Functions::String::replaceStringInPlace(vectStr[i], "\n", "");
 			str += vectStr[i] + "\n";
 		}
 		return str;
@@ -4878,7 +4878,7 @@ int convertByWidth(int value)
 
 int convertByWidthDecrease(int value)
 {
-	return static_cast<double>(GUI::windowWidth) / (mse::Functions::Coord::baseWidth) * value;
+	return static_cast<double>(GUI::windowWidth) / (obe::Functions::Coord::baseWidth) * value;
 }
 
 int convertByHeight(int value)
@@ -4890,7 +4890,7 @@ int convertByHeight(int value)
 
 int convertByHeightDecrease(int value)
 {
-	return static_cast<double>(GUI::windowHeight) / (mse::Functions::Coord::baseHeight) * value;
+	return static_cast<double>(GUI::windowHeight) / (obe::Functions::Coord::baseHeight) * value;
 }
 
 Color::Color(sf::Color color)
@@ -4929,16 +4929,16 @@ vili::ComplexAttribute* parseBind(std::string str)
 {
 	int k = 0;
 	vili::ComplexAttribute* parameters = new vili::ComplexAttribute("parameters");
-	std::vector<std::string> strings = mse::Functions::String::extractBetween(str, '\'', '\'');
-	std::vector<std::string> splitParameters = mse::Functions::String::split(str, ",");
+	std::vector<std::string> strings = obe::Functions::String::extractBetween(str, '\'', '\'');
+	std::vector<std::string> splitParameters = obe::Functions::String::split(str, ",");
 	std::map<std::string, std::string> vars;
 	for (int i = 0; i < splitParameters.size(); i++)
 	{
-		std::vector<std::string> splitVars = mse::Functions::String::split(splitParameters[i], "=");
-		std::vector<std::string> typeAndName = mse::Functions::String::split(splitVars[0], " ");
+		std::vector<std::string> splitVars = obe::Functions::String::split(splitParameters[i], "=");
+		std::vector<std::string> typeAndName = obe::Functions::String::split(splitVars[0], " ");
 		if (splitVars[1][0] == ' ')
 			splitVars[1].erase(splitVars[1].begin());
-		mse::Functions::String::replaceStringInPlace(splitVars[1], "'", "");
+		obe::Functions::String::replaceStringInPlace(splitVars[1], "'", "");
 		if (typeAndName[0] == "string" || typeAndName[0] == "std::string")
 		{
 			typeAndName[0] = "string";

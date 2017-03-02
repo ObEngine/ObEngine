@@ -3,7 +3,7 @@
 
 #include "EditorGrid.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Editor
 	{

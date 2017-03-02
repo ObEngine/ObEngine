@@ -20,7 +20,7 @@
 #include "TimeManager.hpp"
 #include "FramerateManager.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Modes
 	{

@@ -1,6 +1,6 @@
 #include "MapEditorTools.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace EditorTools
 	{

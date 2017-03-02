@@ -18,10 +18,11 @@
 #include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "MathExp.hpp"
+#include "Package.hpp"
 #include "Particle.hpp"
 #include "Triggers.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Script
 	{
@@ -44,6 +45,7 @@ namespace mse
 			void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
 			void loadLight(kaguya::State* lua, std::vector<std::string> args);
 			void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
+			void loadPackage(kaguya::State* lua, std::vector<std::string> args);
 			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
 			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);

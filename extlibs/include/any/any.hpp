@@ -2,7 +2,7 @@
 #include <type_traits>
 #include <typeinfo>
 
-namespace mse {
+namespace obe {
 	namespace Types
 	{
 		class any {

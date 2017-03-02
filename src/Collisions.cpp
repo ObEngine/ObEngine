@@ -3,7 +3,7 @@
 
 #include "Collisions.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Collision
 	{

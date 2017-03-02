@@ -3,7 +3,7 @@
 
 #include "MapEditor.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Editor
 	{

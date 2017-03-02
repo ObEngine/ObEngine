@@ -14,7 +14,7 @@
 #include "Script.hpp"
 #include "Triggers.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace World
 	{

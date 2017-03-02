@@ -3,7 +3,7 @@
 
 #include "Particle.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

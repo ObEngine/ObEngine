@@ -32,7 +32,7 @@
 #include "MapEditorTools.hpp"
 #include "FramerateManager.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Editor
 	{

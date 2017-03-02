@@ -13,7 +13,7 @@
 #include "TimeManager.hpp"
 #include "PathResolver.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Animation
 	{

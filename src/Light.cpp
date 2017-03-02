@@ -3,7 +3,7 @@
 
 #include "Light.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Light
 	{

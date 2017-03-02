@@ -8,7 +8,7 @@
 #include "Functions.hpp"
 #include "Triggers.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Cursor
 	{

@@ -1,6 +1,6 @@
 #include "Menu.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Modes
 	{

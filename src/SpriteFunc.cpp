@@ -3,7 +3,7 @@
 
 #include "SpriteFunc.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

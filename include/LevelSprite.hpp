@@ -14,7 +14,7 @@
 #include "Animation.hpp"
 #include "ComplexSprite.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Graphics
 	{

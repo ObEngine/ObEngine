@@ -4,7 +4,7 @@
 #include "Animation.hpp"
 
 //ANIMATION GROUP
-namespace mse
+namespace obe
 {
 	namespace Animation
 	{

@@ -1,6 +1,6 @@
 #include "PathResolver.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace System
 	{

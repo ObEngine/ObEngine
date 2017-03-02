@@ -13,7 +13,7 @@
 #include "TimeManager.hpp"
 #include "Triggers.hpp"
 
-namespace mse
+namespace obe
 {
 	namespace Input
 	{
