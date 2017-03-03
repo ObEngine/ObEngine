@@ -5,7 +5,7 @@ project(elzip)
 
 add_subdirectory(minizip)
 
-file(GLOB PG_LZIP src/*.hpp)
+file(GLOB PG_LZIP ../../include/elzip/*.hpp)
 file(GLOB HD_LZIP src/*.cpp)
 
 include_directories(../../include/minizip)

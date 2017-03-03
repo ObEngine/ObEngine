@@ -11,7 +11,7 @@ function package(argtable)
                 {color = "white", text = "> has been successfully installed\n"},
             }, 2);
             local parser = Core.Vili.DataParser.new();
-            parser:parseFile("Package/" .. packageName .. "/Opaque.vili", true);
+            parser:parseFile("Package/Opaque.vili", true);
             local tPackageName = parser:root():at("Meta"):getBaseAttribute("name"):get_string();
             if parser:hasFlag("Mount") then
                 repeat

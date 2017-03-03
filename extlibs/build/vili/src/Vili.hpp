@@ -66,6 +66,7 @@ namespace vili
 		const static Types::AttributeType ClassType = Types::Attribute;
 		Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
 		virtual ~Attribute() {}
+		
 		virtual void setAnnotation(const std::string& annotation);
 		virtual std::string getAnnotation();
 		virtual std::string getID();
@@ -84,8 +85,8 @@ namespace vili
 	public:
 		const static Types::AttributeType ClassType = Types::ContainerAttribute;
 		ContainerAttribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
-		virtual ~ContainerAttribute() {}
 		virtual Attribute* removeOwnership(Attribute* element);
+		virtual ~ContainerAttribute() {}
 		virtual Attribute* extractElement(Attribute* element) = 0;
 		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
 		virtual void write(std::ofstream* file, unsigned int depth) = 0;

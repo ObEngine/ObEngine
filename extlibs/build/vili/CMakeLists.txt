@@ -3,7 +3,7 @@ cmake_policy(SET CMP0015 NEW)
 
 project(vili)
 
-file(GLOB PG_VILI src/*.hpp)
+file(GLOB PG_VILI ../../include/vili/*.hpp)
 file(GLOB HD_VILI src/*.cpp)
 
 ADD_DEFINITIONS(-std=c++14)

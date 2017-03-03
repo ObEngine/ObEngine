@@ -15,19 +15,19 @@ local Trajectory = Class("Trajectory", function(self)
 end);
 
 Trajectory.bind = Overload();
-function Trajectory.bind.Trajectory.mse__Collision__PolygonalCollider(self, col, offset)
+function Trajectory.bind.Trajectory.obe__Collision__PolygonalCollider(self, col, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {col, offset
     , function(item) return {x = item:getPointPosition(0):first(), y = item:getPointPosition(0):second()}; end
     , function(item, x, y) item:setPosition(x, y, 0); end});
 end
-function Trajectory.bind.Trajectory.mse__Graphics__LevelSprite(self, spr, offset)
+function Trajectory.bind.Trajectory.obe__Graphics__LevelSprite(self, spr, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {spr, offset
     , function(item) return {x = item:getX(), y = item:getY()}; end
     , function(item, x, y) item:setPosition(x, y); end});
 end
-function Trajectory.bind.Trajectory.mse__Script__GameObject(self, obj, offset)
+function Trajectory.bind.Trajectory.obe__Script__GameObject(self, obj, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {obj, offset
     , function(item) return {x = item:Collider():getPointPosition(0):first(), y = item:Collider():getPointPosition(0):second()}; end

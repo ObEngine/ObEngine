@@ -131,8 +131,10 @@ namespace vili
 	}
 	void Attribute::removeParent(ContainerAttribute* currentParent)
 	{
-		if (currentParent == parent)
-			parent = nullptr;
+		if (currentParent == parent || parent == nullptr)
+			this->parent = nullptr;
+		else
+			std::cout << "<Error:Attribute:removeParent>[removeParent] : " << currentParent << " is not " << getNodePath() << "parent's" << std::endl;
 	}
 	void Attribute::setAnnotation(const std::string& annotation)
 	{
@@ -156,10 +158,10 @@ namespace vili
 	}
 	void Attribute::setParent(ContainerAttribute* parent)
 	{
-		if (this->parent != nullptr)
+		if (this->parent == nullptr)
 			this->parent = parent;
 		else
-			std::cout << "<Error:Vili:Attribute>[setParent] : Attribute " << getNodePath() << " already has a parent" << std::endl;
+			std::cout << "<Error:Vili:Attribute>[setParent] : Attribute " << getNodePath() << " already has a parent : " << parent->getNodePath() << std::endl;
 	}
 
 	std::string Attribute::getNodePath()

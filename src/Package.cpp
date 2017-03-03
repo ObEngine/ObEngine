@@ -32,16 +32,18 @@ namespace obe
 		{
 			if (!PackageExists(packageName)) {
 				int arg = 1000;
-				std::cout << "<Package> Installing Package <" << packageName << "> ..." << std::endl;
-				elz::extractZip("Package/" + packageName + ".opaque", "Package/" + packageName);
-				std::cout << "<Package> Package <" << packageName << "> has been successfully installed !" << std::endl;
-				vili::DataParser cPackage("Package/" + packageName + "/Opaque.vili");
+				elz::extractFile("Package/" + packageName + ".opaque", "Opaque.vili", "Package/Opaque.vili");
+				vili::DataParser cPackage("Package/Opaque.vili");
 				std::string realPackageName = cPackage->at<vili::BaseAttribute>("Meta", "name")->get<std::string>();
 				std::string packageVersion = cPackage->at<vili::BaseAttribute>("Meta", "version")->get<std::string>();
+				std::cout << "<Package> Installing Package <" << packageName << "> ..." << std::endl;
+				elz::extractZip("Package/" + packageName + ".opaque", "Package/" + realPackageName);
+				std::cout << "<Package> Package <" << packageName << "> has been successfully installed !" << std::endl;
+				
 				vili::DataParser packages("Package/Packages.vili");
 				packages->createComplexAttribute(realPackageName);
-				packages.at(packageName)->createBaseAttribute("version", packageVersion);
-				packages.at(packageName)->createBaseAttribute("path", "Package/" + packageName);
+				packages.at(realPackageName)->createBaseAttribute("version", packageVersion);
+				packages.at(realPackageName)->createBaseAttribute("path", "Package/" + realPackageName);
 				packages.writeFile("Package/Packages.vili");
 				return true;
 			}

@@ -3,8 +3,7 @@ cmake_policy(SET CMP0015 NEW)
 
 project(clip)
 
-file(GLOB PG_CLIP src/*.h)
-
+file(GLOB PG_CLIP ../../include/clip/*.h)
 
 IF (WIN32)
   file(GLOB HD_CLIP src/*.cpp)
