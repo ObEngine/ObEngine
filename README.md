@@ -11,7 +11,7 @@ You will need several libs :
 There is also some other libs but they are included in extlibs/ folder !
 
 ## How do I build it ?
-If you want to build ÖbEngine yourself (which is perfectly fine), you'll CMake software.
+If you want to build ÖbEngine yourself (which is perfectly fine), you'll need CMake software.
 
 A CMakeLists.txt is provided in the project.
 
