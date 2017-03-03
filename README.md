@@ -12,7 +12,7 @@ There are other libraries but they included in the repository :
 
 - [clip](https://github.com/dacap/clip) (MIT License) (clipboard)
 - [clipper](http://www.angusj.com/delphi/clipper.php) (Boost Software License) (Polygons)
-- (Code modifié) [any](https://github.com/PaulHowes/any) (Apache 2.0 License) (Contains anything)
+- (Customised code) [any](https://github.com/PaulHowes/any) (Apache 2.0 License) (Contains anything)
 - [11zip](https://github.com/Sygmei/11Zip)  (MIT License) (minizip wrapper based on [Vili Peter's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/))
 - [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
 - [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
