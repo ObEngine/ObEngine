@@ -34,7 +34,7 @@ You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, M
 ## Is it free ?
 Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
 You can also modify the sources.
-There's no need to write somewhere that your game is made with MSE (but it's nice if you do it !)
+There's no need to write somewhere that your game is made with ÖbE (but it's nice if you do it !)
 
 ## Give me some interesting features
 Here you go :
