@@ -15,6 +15,7 @@ local Trajectory = Class("Trajectory", function(self)
 end);
 
 Trajectory.bind = Overload();
+-- Overloads
 function Trajectory.bind.Trajectory.obe__Collision__PolygonalCollider(self, col, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {col, offset
