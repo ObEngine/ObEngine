@@ -6,22 +6,47 @@
 ## What do I need to build it ?
 You will need several libs :
 - [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2/index-fr.php) (Display, Keys, Network, and much more)
-- [Kaguya](https://github.com/satoren/kaguya) (Lua Binding)
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (Scripting language)
-- [ClipperLib](https://sourceforge.net/projects/polyclipping/files/) (Polygonal Intersection Resolution)
 
-If you're on Windows vc14 is required.
+There are other libraries but they included in the repository :
 
-If you're on Linux g++-6 is required.
+- [clip](https://github.com/dacap/clip) (MIT License) (clipboard)
+- [clipper](http://www.angusj.com/delphi/clipper.php) (Boost Software License) (Polygons)
+- (Customised code) [any](https://github.com/PaulHowes/any) (Apache 2.0 License) (Contains anything)
+- [11zip](https://github.com/Sygmei/11Zip)  (MIT License) (minizip wrapper based on [Vili Peter's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/))
+- [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
+- [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
+- [rlutil](https://github.com/tapio/rlutil) (Unlicense) (Color in console)
+- [tinydir](https://github.com/cxong/tinydir) (BSD2 License) (tiny filesystem, soon replaced with C++17's filesystem)
+- [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
+
+There is also some other libs but they are included in extlibs/ folder !
+
+## How do I build it ?
+If you want to build ÖbEngine yourself (which is perfectly fine), you'll need CMake software.
+
+A CMakeLists.txt is provided in the project.
+
+Just tell CMake where SFML(>= 2.4) and Lua(>= 5.3) are by providing the following CMake entries (or Environment vars) :
+- SFML_ROOT (Root of SFML folder where there is include/ and lib/ folders)
+- LUA_ROOT (Root of Lua folder where there is include/ folder and liblua file)
+
+Those are compiler requirements :
+- If you're on Windows vc14 is required.
+- If you're on Linux g++-6 is required.
+
+You'll need a compiler with \<filesystem\> support or at least \<experimental/filesystem\>.
+
+If everything is okay, CMake should generate what you want (Makefiles / VS Project / Something else).
 
 ## Could you give an example of what I can do with your engine ?
-Well, you can do approximatively everything with it as long as it's in 2D. MSE doesn't handle 3D.
+Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D.
 You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
 
 ## Is it free ?
 Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
 You can also modify the sources.
-There's no need to write somewhere that your game is made with MSE (but it's nice if you do it !)
+There's no need to write somewhere that your game is made with ÖbE (but it's nice if you do it !)
 
 ## Give me some interesting features
 Here you go :
@@ -33,7 +58,6 @@ Here you go :
 - Normal maps (Planned)
 - Lua scripting (Object oriented with a full events system)
 - Object-oriented
-- VisualNovel system included
 - Infinite amount of layers with optional parallax
 - Mathematical expressions parsing
 - Home-made data language
@@ -43,6 +67,8 @@ Here you go :
 - Serial and Network events support
 - Trajectory system (and you can even create your owns)
 - DeltaTime handling
+- Custom package manager with online repository
+- Extendable toolkit with a lot of functionalities
 
 ## Right, can I have several object scripting examples now ?
 Sure, here are some simple objects :
