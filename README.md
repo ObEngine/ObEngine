@@ -46,7 +46,6 @@ Here you go :
 - Normal maps (Planned)
 - Lua scripting (Object oriented with a full events system)
 - Object-oriented
-- VisualNovel system included
 - Infinite amount of layers with optional parallax
 - Mathematical expressions parsing
 - Home-made data language
