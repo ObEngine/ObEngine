@@ -43,5 +43,6 @@ if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
   target_link_libraries(ObEngine ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 endif()
+
 target_link_libraries(ObEngine ${LUA53_LIBRARIES})
 target_link_libraries(ObEngine ${OPENGL_LIBRARIES})

@@ -12,6 +12,7 @@ include_directories(../../include/minizip)
 
 add_library(elzip ${PG_LZIP} ${HD_LZIP})
 target_link_libraries(elzip minizip)
+
 IF(UNIX)
   target_link_libraries(elzip stdc++fs)
 ENDIF()

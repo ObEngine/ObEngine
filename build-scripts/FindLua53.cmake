@@ -43,7 +43,7 @@ FIND_LIBRARY(LUA53_LIBRARY
   NAMES lua53 lua5.3 lua-5.3 lua
   HINTS
   ${LUA_ROOT}
-  $ENV{LUA_DIR}
+  $ENV{LUA_ROOT}
   PATH_SUFFIXES lib64 lib
   PATHS
   ~/Library/Frameworks
