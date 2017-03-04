@@ -29,7 +29,7 @@ Workspace:
 
     @__body__
         type:"Workspace"
-        workspace:&(0/value)
+        path:&(0/value)
         priority:&(1/value)
 
 Template(Workspace);
@@ -47,7 +47,7 @@ Package:
 
     @__body__
         type:"Package"
-        package:&(0/value)
+        path:&(0/value)
         priority:&(1/value)
 
 Template(Package);
