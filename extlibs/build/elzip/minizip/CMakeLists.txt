@@ -4,8 +4,8 @@ cmake_policy(SET CMP0015 NEW)
 project(minizip)
 
 IF (WIN32)
-    file(RENAME src/iowin32.hw src/iowin32.h)
-    file(RENAME src/iowin32.cw src/iowin32.c)
+    file(GLOB PG_MZIP src/win/*.h)
+    file(GLOB HD_MZIP src/win/*.c)
 ENDIF()
 
 file(GLOB PG_MZIP src/*.h)
