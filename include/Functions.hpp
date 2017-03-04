@@ -44,6 +44,7 @@ namespace obe
 			std::vector<std::string> listFileInDir(std::string path);
 			bool fileExists(const std::string& path);
 			void copy(std::string source, std::string target);
+			std::string separator();
 		}
 		namespace Map
 		{

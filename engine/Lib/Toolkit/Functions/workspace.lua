@@ -35,14 +35,14 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "create" and wsname ~= nil then
-        os.execute(("mkdir Workspace" .. wsname):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Data"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Data/Maps"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameObjects"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameScripts"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/GameObjects"):gsub("/", package.config:sub(1,1)));
-        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/LevelSprites"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace" .. wsname):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/Maps"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameObjects"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameScripts"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/GameObjects"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/LevelSprites"):gsub("/", Core.Utils.File.separator()));
         parser:root():createComplexAttribute(wsname);
         parser:root():getPath(wsname):createBaseAttribute("path", wsname);
         parser:writeFile("Workspace/Workspaces.vili", true);

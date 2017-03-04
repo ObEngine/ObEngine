@@ -83,6 +83,15 @@ namespace obe
 			dst << src.rdbuf();
 		}
 
+		std::string File::separator()
+		{
+			#ifdef _WIN32
+				return "\\";
+			#else
+				return "/";
+			#endif
+		}
+
 		std::random_device rd;     // only used once to initialise (seed) engine
 		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
 
