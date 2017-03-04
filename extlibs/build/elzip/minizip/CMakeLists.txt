@@ -7,6 +7,7 @@ file(GLOB PG_MZIP src/*.h)
 file(GLOB HD_MZIP src/*.c)
 
 IF (WIN32)
+ELSE()
     list(REMOVE_ITEM PG_MZIP src/iowin32.h)
     list(REMOVE_ITEM HD_MZIP src/iowin32.c)
 ENDIF()
