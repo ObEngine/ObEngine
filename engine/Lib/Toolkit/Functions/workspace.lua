@@ -35,7 +35,7 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "create" and wsname ~= nil then
-        os.execute(("mkdir Workspace" .. wsname):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. wsname):gsub("/", Core.Utils.File.separator()));
         os.execute(("mkdir Workspace/" .. wsname .. "/Data"):gsub("/", Core.Utils.File.separator()));
         os.execute(("mkdir Workspace/" .. wsname .. "/Data/Maps"):gsub("/", Core.Utils.File.separator()));
         os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameObjects"):gsub("/", Core.Utils.File.separator()));
