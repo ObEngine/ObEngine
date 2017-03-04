@@ -19,10 +19,7 @@ function package(argtable)
                     answer = io.read()
                 until answer == "y" or answer == "n" or answer == "Y" or answer == "N"
                 if answer == "Y" or answer == "y" then
-                    local pMount = Core.Vili.DataParser.new();
-                    pMount:parseFile("Package/Mount.vili");
-                    pMount:root():at("Mount"):getListAttribute("Packages"):push(tPackageName);
-                    pMount:writeFile("Package/Mount.vili");
+                    Core.Utils.File.copy("Package/" .. tPackageName .. "/Mount.vili", "Mount.vili");
                 end
             end
         else

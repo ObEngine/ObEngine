@@ -75,6 +75,13 @@ namespace obe
 			bool fileFound = (stat(path.c_str(), &buffer) == 0);
 			return fileFound;
 		}
+		void File::copy(std::string source, std::string target)
+		{
+			std::ifstream src(source, std::ios::binary);
+			std::ofstream dst(target, std::ios::binary);
+
+			dst << src.rdbuf();
+		}
 
 		std::random_device rd;     // only used once to initialise (seed) engine
 		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)

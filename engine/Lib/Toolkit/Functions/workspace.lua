@@ -5,17 +5,10 @@ function workspace(argtable)
     local wsname = argtable.wsname;
     local parser = Core.Vili.DataParser.new();
     local Types = Core.Vili.AttributeType;
-    parser:parseFile("Workspace/workspace.cfg.msd", true);
-    if action == "get" then
-        local currentWs = parser:root():at("Workspace"):getBaseAttribute("current"):get_string();
-        Color.print({
-            {color = "white", text = "Current Workspace : "}, 
-            {color = "lightcyan", text = currentWs .. "\n"}
-        }, 2);
-    elseif action == "use" and wsname ~= nil then
-        if (parser:root():contains(Types.ComplexAttribute, "Workspace", wsname)) then
-            parser:root():at("Workspace"):getBaseAttribute("current"):set(wsname);
-            parser:writeFile("Workspace/workspace.cfg.msd", true);
+    parser:parseFile("Workspace/Workspaces.vili", true);
+    if action == "use" and wsname ~= nil then
+        if (parser:root():contains(Types.ComplexAttribute, wsname)) then
+            Core.Utils.File.copy("Workspace/" .. wsname .. "/Mount.vili", "Mount.vili");
             Color.print({
                 {color = "lightgreen", text = "Current workspace has been successfully switched to "},
                 {color = "lightcyan", text = wsname .. "\n"}
@@ -28,11 +21,11 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "desc" and wsname ~= nil then
-        if (parser:root():at("Workspace"):contains(Types.ComplexAttribute, wsname)) then
+        if (parser:root():contains(Types.ComplexAttribute, wsname)) then
             Color.print({
                 {color = "lightcyan", text = wsname},
                 {color = "white", text = "'s description : "},
-                {color = "darkgrey", text = parser:root():at("Workspace/" .. wsname):getBaseAttribute("description"):get_string() .. "\n"}
+                {color = "darkgrey", text = parser:root():at(wsname):getBaseAttribute("description"):get_string() .. "\n"}
             }, 2);
         else
             Color.print({
@@ -50,9 +43,17 @@ function workspace(argtable)
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\GameObjects");
         os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\LevelSprites");
-        parser:root():at("Workspace"):createComplexAttribute(wsname);
-        parser:root():getPath("Workspace/" .. wsname):createBaseAttribute("path", wsname);
-        parser:writeFile("Workspace/workspace.cfg.msd", true);
+        parser:root():createComplexAttribute(wsname);
+        parser:root():getPath(wsname):createBaseAttribute("path", wsname);
+        parser:writeFile("Workspace/Workspaces.vili", true);
+        local defaultMount = io.open("Workspace/" .. wsname .. "/Mount.vili", "w")
+
+        defaultMount:write("Include(Obe);\n\n");
+        defaultMount:write("Mount:\n");
+        defaultMount:write("    " .. wsname .. ":" .. "$Workspace(\"" .. wsname .. "\" | 1)\n");
+        defaultMount:write("    Root:$Path(\"\" | 0)");
+        defaultMount:close()
+
         Color.print({
             {color = "lightgreen", text = "Workspace "},
             {color = "lightcyan", text = wsname},

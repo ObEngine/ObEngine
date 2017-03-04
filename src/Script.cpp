@@ -874,6 +874,7 @@ namespace obe
 				if (!(bool)((*lua)["Core"]["Utils"]["File"])) (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
 				(*lua)["Core"]["Utils"]["File"]["listDirInDir"] = kaguya::function(Functions::File::listDirInDir);
 				(*lua)["Core"]["Utils"]["File"]["listFileInDir"] = kaguya::function(Functions::File::listFileInDir);
+				(*lua)["Core"]["Utils"]["File"]["copy"] = kaguya::function(Functions::File::copy);
 				foundPart = true;
 			}
 			if (importAll || args[1] == "Math")

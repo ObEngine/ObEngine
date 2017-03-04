@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <iterator>
 #include <typeinfo>
+#include <fstream>
 #include <tinydir/tinydir.h>
 
 namespace obe
@@ -42,6 +43,7 @@ namespace obe
 			std::vector<std::string> listDirInDir(std::string path);
 			std::vector<std::string> listFileInDir(std::string path);
 			bool fileExists(const std::string& path);
+			void copy(std::string source, std::string target);
 		}
 		namespace Map
 		{
