@@ -5,6 +5,31 @@
 
 namespace vili
 {
+	std::istream& safeGetline(std::istream& is, std::string& t)
+	{
+		t.clear();
+
+		std::istream::sentry se(is, true);
+		std::streambuf* sb = is.rdbuf();
+
+		for (;;) {
+			int c = sb->sbumpc();
+			switch (c) {
+			case '\n':
+				return is;
+			case '\r':
+				if (sb->sgetc() == '\n')
+					sb->sbumpc();
+				return is;
+			case EOF:
+				if (t.empty())
+					is.setstate(std::ios::eofbit);
+				return is;
+			default:
+				t += (char)c;
+			}
+		}
+	}
 	std::vector<std::string> convertPath(std::string path)
 	{
 		std::vector<std::string> vecPath = {};
@@ -1030,7 +1055,7 @@ namespace vili
 		if (useFile.is_open())
 		{
 			if (verbose) std::cout << "Start Parsing File : " << filename << std::endl;
-			while (getline(useFile, currentLine))
+			while (!safeGetline(useFile, currentLine).eof())
 			{
 				Functions::String::StringExtractor stringsInLine = Functions::String::extractAllStrings(currentLine);
 				std::string rawLine = Functions::Vector::join(std::get<1>(stringsInLine), "");
