@@ -21,7 +21,44 @@ namespace obe
 			};
 			std::function<int(kaguya::State*, std::string)> luaLoader = [](kaguya::State* obj, std::string path) -> int { return obj->dofile(path); };
 		}
-		std::vector<std::string> Path::basePaths = std::vector<std::string>();
+		
+		PriorizedPath::PriorizedPath(PathType::PathType pathType, std::string basePath, unsigned int priority)
+		{
+			this->pathType = pathType;
+			this->basePath = basePath;
+			this->priority = priority;
+		}
+
+		std::string PriorizedPath::getPath()
+		{
+			std::string buildPath = "";
+			if (pathType == PathType::Package)
+				buildPath = "Package/";
+			else if (pathType == PathType::Path)
+				buildPath = "";
+			else if (pathType == PathType::Workspace)
+				buildPath = "Workspace/";
+			buildPath += basePath;
+			return buildPath;
+		}
+
+		std::vector<PriorizedPath> Path::basePaths = std::vector<PriorizedPath>();
+		void Path::orderPriorizedPaths()
+		{
+			bool noChange = false;
+			while (noChange == false)
+			{
+				noChange = true;
+				for (unsigned int i = 0; i < basePaths.size(); i++)
+				{
+					if (i != basePaths.size() - 1 && basePaths[i].priority < basePaths[i + 1].priority)
+					{
+						std::iter_swap(basePaths.begin() + i, basePaths.begin() + i + 1);
+						noChange = false;
+					}
+				}
+			}
+		}
 		Path::Path()
 		{
 			this->path = "";
@@ -41,13 +78,18 @@ namespace obe
 		std::string Path::getPath(int index)
 		{
 			if (basePaths.size() > index)
-				return basePaths[index] + ((basePaths[index] != "") ? "/" : "") + this->path;
+				return basePaths[index].getPath() + ((basePaths[index].getPath() != "") ? "/" : "") + this->path;
 			else
 				std::cout << "<Error:PathResolver:Path>[getPath] : Can't find BasePath at index : " << index << std::endl;
 		}
 		std::string Path::toString() const
 		{
 			return this->path;
+		}
+		void Path::addPath(PriorizedPath path)
+		{
+			basePaths.push_back(path);
+			orderPriorizedPaths();
 		}
 	}
 }

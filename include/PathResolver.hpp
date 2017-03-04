@@ -23,10 +23,31 @@ namespace obe
 			extern std::function<int(std::vector<std::string>*, std::string)> filePathLoader;
 			extern std::function<int(kaguya::State*, std::string)> luaLoader;
 		}
+
+		namespace PathType
+		{
+			enum PathType
+			{
+				Path,
+				Package,
+				Workspace
+			};
+		}
+		class PriorizedPath
+		{
+			public:
+				PriorizedPath(PathType::PathType pathType, std::string basePath, unsigned int priority = 0);
+				PathType::PathType pathType;
+				std::string basePath;
+				std::string getPath();
+				unsigned int priority;
+		};
 		class Path
 		{
 			private:
 				std::string path;
+				static std::vector<PriorizedPath> basePaths;
+				static void orderPriorizedPaths();
 			public:
 				Path();
 				Path(const Path& path);
@@ -38,7 +59,7 @@ namespace obe
 				bool checkType(R type, std::string expectedType);
 				template <typename R, typename F>
 				std::string loadResource(R* resource, F lambda, bool silent = false);
-				static std::vector<std::string> basePaths;
+				static void addPath(PriorizedPath path);
 		};
 		template<typename R>
 		inline bool Path::checkType(R type, std::string expectedType)
@@ -52,13 +73,13 @@ namespace obe
 			for (int i = 0; i < basePaths.size(); i++)
 			{
 				int loadResponse = 0;
-				if (Functions::File::fileExists(basePaths[i] + ((basePaths[i] != "") ? "/" : "") + this->path)) {
-					loadResponse = lambda(resource, basePaths[i] + ((basePaths[i] != "") ? "/" : "") + this->path);
+				if (Functions::File::fileExists(basePaths[i].getPath() + ((basePaths[i].getPath() != "") ? "/" : "") + this->path)) {
+					loadResponse = lambda(resource, basePaths[i].getPath() + ((basePaths[i].getPath() != "") ? "/" : "") + this->path);
 				}
 					
 				loadSum += loadResponse;
 				if (loadResponse == 1)
-					return basePaths[i];
+					return basePaths[i].getPath();
 			}
 			if (loadSum > 0)
 				return "*";

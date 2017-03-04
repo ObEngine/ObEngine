@@ -13,33 +13,26 @@ int main(int argc, char** argv)
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
-	vili::DataParser mountedPackages("Package/Mount.vili");
-	for (vili::BaseAttribute* package : *mountedPackages->at<vili::ListAttribute>("Mount", "Packages")) {
-		obe::System::Package::Load(package->get<std::string>());
-	}
-
-	vili::DataParser workspaceConfig("Workspace/workspace.cfg.msd");
-	vili::ComplexAttribute* workspace = workspaceConfig.at("Workspace");
-
-	if (workspace->contains(vili::Types::BaseAttribute, "current"))
-	{
-		if (workspace->contains(vili::Types::ComplexAttribute, workspace->getBaseAttribute("current")->get<std::string>()))
-		{
-			vili::ComplexAttribute* currentWorkspace = workspace->at(*workspace->getBaseAttribute("current"));
-			if (currentWorkspace->contains(vili::Types::BaseAttribute, "path"))
-			{
-				std::string workspacePath = *currentWorkspace->at<vili::BaseAttribute>("path");
-				obe::System::Path::basePaths.push_back("Workspace/" + workspacePath);
-				std::cout << "<System> Mounting Workspace : " << *workspace->getBaseAttribute("current") << " : " << workspacePath << std::endl;
-			}
-			else
-				std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << *workspace->getBaseAttribute("current") << " doesn't have a path defined" << std::endl;
+	vili::DataParser mountedPaths;
+	mountedPaths.parseFile("Mount.vili");
+	for (std::string path : mountedPaths->at("Mount")->getAll(vili::Types::ComplexAttribute)) {
+		vili::ComplexAttribute* currentElement = mountedPaths->at("Mount", path);
+		std::string currentType = currentElement->at<vili::BaseAttribute>("type")->get<std::string>();
+		std::string currentPath = currentElement->at<vili::BaseAttribute>("path")->get<std::string>();
+		int currentPriority = currentElement->at<vili::BaseAttribute>("priority")->get<int>();
+		if (currentType == "Path") {
+			obe::System::Path::addPath(obe::System::PriorizedPath(obe::System::PathType::Path, currentPath, currentPriority));
+			std::cout << "Mounted Path : <" << currentPath << "> with priority : " << currentPriority << std::endl;
 		}
-		else
-			std::cout << "<Error:MeltingSaga:*>[main] : Workspace : " << *workspace->getBaseAttribute("current") << "doesn't exists" << std::endl;
+		else if (currentType == "Package") {
+			obe::System::Package::Load(currentPath, currentPriority);
+			std::cout << "Mounted Package : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+		}
+		else if (currentType == "Workspace") {
+			obe::System::Workspace::Load(currentPath, currentPriority);
+			std::cout << "Mounted Workspace : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+		}
 	}
-	std::cout << "<System> Mounting Path : /" << std::endl;
-	obe::System::Path::basePaths.push_back("");
 
 	if (startMode == "edit")
 	{

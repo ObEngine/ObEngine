@@ -1,0 +1,53 @@
+Path:    
+    @StringComposant
+        type:"String"
+    
+    @IntComposant
+        type:"Int"
+
+    @__init__
+        @0:StringComposant
+        @1:IntComposant
+
+    @__body__
+        type:"Path"
+        path:&(0/value)
+        priority:&(1/value)
+
+Template(Path);
+
+Workspace:    
+    @StringComposant
+        type:"String"
+    
+    @IntComposant
+        type:"Int"
+
+    @__init__
+        @0:StringComposant
+        @1:IntComposant
+
+    @__body__
+        type:"Workspace"
+        workspace:&(0/value)
+        priority:&(1/value)
+
+Template(Workspace);
+
+Package:    
+    @StringComposant
+        type:"String"
+    
+    @IntComposant
+        type:"Int"
+
+    @__init__
+        @0:StringComposant
+        @1:IntComposant
+
+    @__body__
+        type:"Package"
+        package:&(0/value)
+        priority:&(1/value)
+
+Template(Package);

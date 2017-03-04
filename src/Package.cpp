@@ -52,10 +52,10 @@ namespace obe
 				return false;
 			}
 		}
-		bool Package::Load(std::string packageName)
+		bool Package::Load(std::string packageName, unsigned int priority)
 		{
 			if (PackageExists(packageName)) {
-				Path::basePaths.push_back("Package/" + packageName);
+				Path::addPath(obe::System::PriorizedPath(obe::System::PathType::Package, GetPackageLocation(packageName), priority));
 				std::cout << "<System> Mounting Package : " << packageName << " : " << GetPackageLocation(packageName) << std::endl;
 				return true;
 			}

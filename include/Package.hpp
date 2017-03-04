@@ -15,12 +15,11 @@ namespace obe
 		class Package
 		{
 		private:
-			static std::vector<std::string> loadedPackages;
 			static std::string GetPackageLocation(std::string packageName);
 			static bool PackageExists(std::string packageName);
 		public:
 			static bool Install(std::string packageName);
-			static bool Load(std::string packageName);
+			static bool Load(std::string packageName, unsigned int priority = 1);
 		};
 	}
 }

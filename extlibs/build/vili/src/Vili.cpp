@@ -1245,7 +1245,10 @@ namespace vili
 									for (std::string& arg : templateArgs)
 									{
 										getRootChild(templateName)->at("__init__", std::to_string(i))->deleteBaseAttribute("value", true);
-										getRootChild(templateName)->at("__init__", std::to_string(i))->createBaseAttribute("value", Types::getVarType(arg), arg);
+										std::string realArg = arg;
+										if (Types::getVarType(realArg) == Types::String)
+											realArg = Functions::String::extract(realArg, 1, 1);
+										getRootChild(templateName)->at("__init__", std::to_string(i))->createBaseAttribute("value", Types::getVarType(arg), realArg);
 										getRootChild(templateName)->at("__init__", std::to_string(i))->getBaseAttribute("value")->setAnnotation("Set");
 										i++;
 									}
