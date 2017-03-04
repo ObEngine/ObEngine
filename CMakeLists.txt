@@ -24,7 +24,11 @@ set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(SFML 2 REQUIRED system window graphics network audio)
 find_package(OpenGL REQUIRED)
-find_package(Lua53 REQUIRED) 
+find_package(Lua53 REQUIRED)
+
+IF(UNIX)
+  target_link_libraries(ObEngine stdc++fs)
+ENIF()
 
 add_executable(ObEngine ${PG_OBE} ${HD_OBE})
 
