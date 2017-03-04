@@ -50,7 +50,7 @@ function workspace(argtable)
 
         defaultMount:write("Include(Obe);\n\n");
         defaultMount:write("Mount:\n");
-        defaultMount:write("    " .. wsname .. ":" .. "$Workspace(\"" .. wsname .. "\" | 1)\n");
+        defaultMount:write("    " .. wsname .. ":" .. "$Workspace(\"Workspace/" .. wsname .. "\" | 1)\n");
         defaultMount:write("    Root:$Path(\"\" | 0)");
         defaultMount:close()
 

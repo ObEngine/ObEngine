@@ -46,7 +46,6 @@ namespace obe
 		{
 			private:
 				std::string path;
-				static std::vector<PriorizedPath> basePaths;
 				static void orderPriorizedPaths();
 			public:
 				Path();
@@ -60,6 +59,7 @@ namespace obe
 				template <typename R, typename F>
 				std::string loadResource(R* resource, F lambda, bool silent = false);
 				static void addPath(PriorizedPath path);
+				static std::vector<PriorizedPath> basePaths;
 		};
 		template<typename R>
 		inline bool Path::checkType(R type, std::string expectedType)

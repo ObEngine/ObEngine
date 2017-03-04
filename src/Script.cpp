@@ -673,6 +673,8 @@ namespace obe
 				(*lua)["Core"]["Package"]["Package"].setClass(kaguya::UserdataMetatable<System::Package>()
 					.addStaticFunction("Load", &System::Package::Load)
 					.addStaticFunction("Install", &System::Package::Install)
+					.addStaticFunction("GetPackageLocation", &System::Package::GetPackageLocation)
+					.addStaticFunction("PackageExists", &System::Package::PackageExists)
 				);
 				foundPart = true;
 			}

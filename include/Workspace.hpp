@@ -11,10 +11,9 @@ namespace obe
 	{
 		class Workspace
 		{
-			private:
+			public:
 				static std::string GetWorkspaceLocation(std::string workspaceName);
 				static bool WorkspaceExists(std::string workspaceName);
-			public:
 				static bool Load(std::string workspaceName, unsigned int priority = 1);
 		};
 	}

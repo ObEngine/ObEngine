@@ -1,4 +1,5 @@
 local Color = require("Lib/StdLib/ConsoleColor");
+local Package = Core.Package.Package;
 
 function package(argtable)
     local action = argtable.action;
@@ -19,7 +20,7 @@ function package(argtable)
                     answer = io.read()
                 until answer == "y" or answer == "n" or answer == "Y" or answer == "N"
                 if answer == "Y" or answer == "y" then
-                    Core.Utils.File.copy("Package/" .. tPackageName .. "/Mount.vili", "Mount.vili");
+                    Core.Utils.File.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
                 end
             end
         else
@@ -27,6 +28,20 @@ function package(argtable)
                 {color = "red", text = "Package <"},
                 {color = "lightgreen", text = packageName},
                 {color = "red", text = "> has not been installed (Already installed ?)\n"},
+            }, 2);
+        end
+    elseif action == "use" then
+        if Package.PackageExists(packageName) then
+            Core.Utils.File.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
+            Color.print({
+                {color = "lightgreen", text = "Current package has been successfully switched to "},
+                {color = "lightcyan", text = packageName .. "\n"}
+            }, 2);
+        else
+            Color.print({
+                {color = "lightred", text = "Package "},
+                {color = "lightcyan", text = packageName},
+                {color = "lightred", text = " doesn't exists\n"}
             }, 2);
         end
     end

@@ -14,10 +14,9 @@ namespace obe
 	{
 		class Package
 		{
-		private:
+		public:
 			static std::string GetPackageLocation(std::string packageName);
 			static bool PackageExists(std::string packageName);
-		public:
 			static bool Install(std::string packageName);
 			static bool Load(std::string packageName, unsigned int priority = 1);
 		};

@@ -31,15 +31,7 @@ namespace obe
 
 		std::string PriorizedPath::getPath()
 		{
-			std::string buildPath = "";
-			if (pathType == PathType::Package)
-				buildPath = "Package/";
-			else if (pathType == PathType::Path)
-				buildPath = "";
-			else if (pathType == PathType::Workspace)
-				buildPath = "Workspace/";
-			buildPath += basePath;
-			return buildPath;
+			return basePath;
 		}
 
 		std::vector<PriorizedPath> Path::basePaths = std::vector<PriorizedPath>();

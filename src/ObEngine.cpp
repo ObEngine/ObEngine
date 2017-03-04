@@ -33,6 +33,10 @@ int main(int argc, char** argv)
 			std::cout << "Mounted Workspace : <" << currentPath << "> with priority : " << currentPriority << std::endl;
 		}
 	}
+	std::cout << "<System> List of mounted paths : " << std::endl;
+	for (obe::System::PriorizedPath& currentPath : obe::System::Path::basePaths) {
+		std::cout << "    <System> MountedPath : " << currentPath.getPath() << std::endl;
+	}
 
 	if (startMode == "edit")
 	{
