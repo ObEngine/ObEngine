@@ -3,14 +3,12 @@ cmake_policy(SET CMP0015 NEW)
 
 project(minizip)
 
+IF (WIN32)
+    file(RENAME src/iowin32.hw src/iowin32.h)
+    file(RENAME src/iowin32.cw src/iowin32.c)
+ENDIF()
+
 file(GLOB PG_MZIP src/*.h)
 file(GLOB HD_MZIP src/*.c)
-
-IF (WIN32)
-ELSE()
-    MESSAGE("Removing iowin32")
-    list(REMOVE_ITEM PG_MZIP src/iowin32.hd)
-    list(REMOVE_ITEM HD_MZIP src/iowin32.c)
-ENDIF()
 
 add_library(minizip ${PG_MZIP} ${HD_MZIP})
