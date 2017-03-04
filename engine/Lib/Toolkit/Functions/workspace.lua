@@ -35,14 +35,14 @@ function workspace(argtable)
             }, 2);
         end
     elseif action == "create" and wsname ~= nil then
-        os.execute("mkdir Workspace\\" .. wsname);
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Data");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Data\\Maps");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Data\\GameObjects");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Data\\GameScripts");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\GameObjects");
-        os.execute("mkdir Workspace\\" .. wsname .. "\\Sprites\\LevelSprites");
+        os.execute(("mkdir Workspace" .. wsname):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/Maps"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameObjects"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Data/GameScripts"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/GameObjects"):gsub("/", package.config:sub(1,1)));
+        os.execute(("mkdir Workspace/" .. wsname .. "/Sprites/LevelSprites"):gsub("/", package.config:sub(1,1)));
         parser:root():createComplexAttribute(wsname);
         parser:root():getPath(wsname):createBaseAttribute("path", wsname);
         parser:writeFile("Workspace/Workspaces.vili", true);
