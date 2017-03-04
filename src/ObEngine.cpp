@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	std::cout.rdbuf(out.rdbuf());
 
 	vili::DataParser mountedPaths;
-	mountedPaths.parseFile("Mount.vili");
+	mountedPaths.parseFile("Mount.vili", true);
 	for (std::string path : mountedPaths->at("Mount")->getAll(vili::Types::ComplexAttribute)) {
 		vili::ComplexAttribute* currentElement = mountedPaths->at("Mount", path);
 		std::string currentType = currentElement->at<vili::BaseAttribute>("type")->get<std::string>();
