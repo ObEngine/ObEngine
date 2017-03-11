@@ -10,17 +10,16 @@ namespace obe
 
 			//Creating Window
 			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "Melting Saga", sf::Style::Fullscreen);
+			sf::View viewPort(sf::FloatRect(0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight));
+			window.setView(viewPort);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
 			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
 			sf::Sprite loadingSprite; loadingSprite.setTexture(loadingTexture);
-			loadingSprite.setScale((double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
-				(double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
 			sf::Font loadingFont; loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
 			sf::Text loadingText; loadingText.setFont(loadingFont);
-			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
-			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
-				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
+			loadingText.setCharacterSize(70.0);
+			loadingText.setPosition(348.0, 595.0);
 			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));

@@ -5,8 +5,31 @@ project(elzip)
 
 add_subdirectory(minizip)
 
-file(GLOB PG_LZIP ../../include/elzip/*.hpp)
-file(GLOB HD_LZIP src/*.cpp)
+IF (_USE_CPP_NEW_FS)
+    MESSAGE("Using new C++17 Filesystem")
+    file(GLOB PG_LZIP 
+        ../../include/elzip/unzipper.hpp 
+        ../../include/elzip/zipper.hpp
+        ../../include/elzip/elzip.hpp
+    )
+    file(GLOB HD_LZIP 
+        src/unzipper.cpp
+        src/zipper.cpp
+        src/elzip.cpp
+    )
+ELSE()
+    MESSAGE("Using ElZip fallback")
+    file(GLOB PG_LZIP 
+        ../../include/elzip/unzipper.hpp 
+        ../../include/elzip/zipper.hpp
+        ../../include/elzip/elzip_fallback.hpp
+    )
+    file(GLOB HD_LZIP 
+        src/unzipper.cpp
+        src/zipper.cpp
+        src/elzip_fallback.cpp
+    )
+ENDIF()
 
 include_directories(../../include/minizip)
 

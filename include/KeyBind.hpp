@@ -57,6 +57,7 @@ namespace obe
 				void loadFromFile(vili::DataParser* configFile);
 				void connectAction(std::string action, std::string key);
 				bool isActionToggled(std::string action);
+				bool isActionPressed(std::string action);
 				bool isActionReleased(std::string action);
 				bool isActionEnabled(std::string action);
 				bool isActionDisabled(std::string action);

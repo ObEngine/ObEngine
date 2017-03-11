@@ -11,21 +11,21 @@ namespace obe
 		{
 			double startLoadTime = Time::getTickSinceEpoch();
 
+			std::cout << "<System> Creating window with resolution " << Functions::Coord::width << "x" << Functions::Coord::height << std::endl;
+
 			//Creating Window
 			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "Melting Saga", sf::Style::Fullscreen);
-			sf::View viewPort(sf::FloatRect(0, 0, Functions::Coord::baseWidth, Functions::Coord::baseHeight));
-			window.setView(viewPort);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
 			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
 			sf::Sprite loadingSprite; loadingSprite.setTexture(loadingTexture);
-			loadingSprite.setScale((double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
-				(double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
+			loadingSprite.setScale((double)Functions::Coord::width / (double)Functions::Coord::viewWidth,
+				(double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
 			sf::Font loadingFont; loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
 			sf::Text loadingText; loadingText.setFont(loadingFont);
-			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
-			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::baseWidth,
-				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::baseHeight);
+			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
+			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::viewWidth,
+				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
 			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
@@ -85,9 +85,9 @@ namespace obe
 
 			//GUI
 			sf::Event event;
-			GUI::Container* gui = new GUI::Container(&event, &window, Functions::Coord::baseWidth, Functions::Coord::baseHeight);
+			GUI::Container* gui = new GUI::Container(&event, &window, Functions::Coord::viewWidth, Functions::Coord::viewHeight);
 			Script::hookCore.dropValue("GUI", gui);
-			gui->createWidgetContainer("Main", 2, 0, 0, Functions::Coord::baseWidth, Functions::Coord::baseHeight, GUI::ContainerMovement::Fixed);
+			gui->createWidgetContainer("Main", 2, 0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight, GUI::ContainerMovement::Fixed);
 			gui->createWidgetContainer("Score", 2, 0, 0, 1920, 1080, GUI::ContainerMovement::Fixed); //DELETE THIS IT WAS FOR PONG
 			gui->createLabel("Main", "title", Functions::Coord::width - 800, 5, "Melting Saga Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
 			gui->createButton("Main", "editorMenuBtn", Functions::Coord::width - 570, 0, true, true, "GREY");
@@ -98,10 +98,10 @@ namespace obe
 			std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
 			gui->createDroplist("Main", "editModeList", Functions::Coord::width - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
 			GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(0);
-			gui->createWidgetContainer("Editor", 3, 20, 40, Functions::Coord::baseWidth - 40, Functions::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
+			gui->createWidgetContainer("Editor", 3, 20, 40, Functions::Coord::viewWidth - 40, Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
 			gui->getContainerByContainerName("Editor")->setBackground(sf::Color(0, 0, 0, 200));
 
-			gui->createWidgetContainer("EditorSettings", 4, 20, 40, Functions::Coord::baseWidth - 40, Functions::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
+			gui->createWidgetContainer("EditorSettings", 4, 20, 40, Functions::Coord::viewWidth - 40, Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
 			gui->getContainerByContainerName("EditorSettings")->setBackground(sf::Color(0, 0, 0, 0));
 			gui->createLabel("EditorSettings", "displayCatLbl", 25, 40, "Display Options", "arial.ttf", 25, sf::Color(255, 255, 255));
 			gui->createLabel("EditorSettings", "editorCatLbl", 400, 40, "Editor Options", "arial.ttf", 25, sf::Color(255, 255, 255));
@@ -139,13 +139,13 @@ namespace obe
 			guiMapDimY->addFilter(GUI::TextInputFilters::Integer);
 			gui->createButton("EditorSettings", "mapDimensionsBtn", 985, 80, true, true, "APPLY");
 
-			GUI::WidgetContainer* editorSprites = gui->createWidgetContainer("EditorSprites", 4, 20, 40, Functions::Coord::baseWidth - 20, 
-				Functions::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
+			GUI::WidgetContainer* editorSprites = gui->createWidgetContainer("EditorSprites", 4, 20, 40, Functions::Coord::viewWidth - 20, 
+				Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
 			editorSprites->setBackground(sf::Color(0, 0, 0, 0));
 			editorSprites->addScrollBar();
 
-			GUI::WidgetContainer* editorObjects = gui->createWidgetContainer("EditorObjects", 4, 20, 40, Functions::Coord::baseWidth - 20,
-				Functions::Coord::baseHeight - 80, GUI::ContainerMovement::Fixed);
+			GUI::WidgetContainer* editorObjects = gui->createWidgetContainer("EditorObjects", 4, 20, 40, Functions::Coord::viewWidth - 20,
+				Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
 			editorObjects->setBackground(sf::Color(0, 0, 0, 0));
 			editorObjects->addScrollBar();
 

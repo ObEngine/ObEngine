@@ -40,6 +40,7 @@ namespace obe
 		{
 			keysTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Keys")
 				->addTrigger("ActionReleased")
+				->addTrigger("ActionPressed")
 				->addTrigger("ActionToggled");
 
 			//Alpha
@@ -173,22 +174,34 @@ namespace obe
 			if (binderEnabled)
 			{
 				typedef std::map<std::string, std::string>::iterator it_type;
-				std::vector<std::string> releasedAction;
-				std::vector<std::string> toggledAction;
+				std::vector<std::string> toggledActions;
+				std::vector<std::string> releasedActions;
+				std::vector<std::string> pressedActions;
+				std::cout << "Cycle action " << std::endl;
 				for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++)
 				{
-					if (isActionToggled(iterator->first))
-						toggledAction.push_back(iterator->first);
-					if (isActionReleased(iterator->first))
-						releasedAction.push_back(iterator->first);
+					std::cout << "Test for key : " << iterator->first << " = " << isActionToggled(iterator->first) << std::endl;
+					if (isActionToggled(iterator->first)) {
+						if (isActionPressed(iterator->first))
+							pressedActions.push_back(iterator->first);
+						if (isActionReleased(iterator->first))
+							releasedActions.push_back(iterator->first);
+						toggledActions.push_back(iterator->first); 
+					}
+					
 				}
 
-				if (releasedAction.size() >= 1) {
-					keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedAction);
+				std::cout << "RSIZE : " << toggledActions.size() << "/" << pressedActions.size() << "/" << releasedActions.size() << std::endl;
+				if (releasedActions.size() >= 1) {
+					keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedActions);
 					keysTriggers->enableTrigger("ActionReleased");
 				}
-				if (toggledAction.size() >= 1) {
-					keysTriggers->pushParameter("ActionToggled", "ToggledActions", toggledAction);
+				if (pressedActions.size() >= 1) {
+					keysTriggers->pushParameter("ActionPressed", "PressedActions", pressedActions);
+					keysTriggers->enableTrigger("ActionPressed");
+				}
+				if (toggledActions.size() >= 1) {
+					keysTriggers->pushParameter("ActionToggled", "ToggledActions", toggledActions);
 					keysTriggers->enableTrigger("ActionToggled");
 				}
 			}
@@ -245,6 +258,18 @@ namespace obe
 		}
 
 		bool KeyBinder::isActionToggled(std::string action)
+		{
+			if (binderEnabled) {
+				if (currentActionMap[action] != previousActionMap[action])
+					return true;
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+
+		bool KeyBinder::isActionPressed(std::string action)
 		{
 			if (binderEnabled) {
 				if (currentActionMap[action] && !previousActionMap[action])

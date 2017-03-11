@@ -7,8 +7,8 @@ namespace obe
 {
 	namespace Functions
 	{
-		int Coord::baseWidth = 1920;
-		int Coord::baseHeight = 1080;
+		int Coord::viewWidth = 1920;
+		int Coord::viewHeight = 1080;
 		int Coord::width = sf::VideoMode::getDesktopMode().width;
 		int Coord::height = sf::VideoMode::getDesktopMode().height;
 		double Math::pi = 3.14159265359;

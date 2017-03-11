@@ -4,8 +4,8 @@ local Table = require("Lib/StdLib/Table");
 local Color = require("Lib/StdLib/ConsoleColor");
 
 -- Melting Saga Engine Toolkit
-Color.print({{color = "white", text = "Melting Saga Engine Toolkit\n"}});
-Color.print({{color = "white", text = "Version 0.0.3-rev032\n"}});
+Color.print({{color = "white", text = "ObEngine Toolkit\n"}});
+Color.print({{color = "white", text = "Version 1.0.0\n"}});
 
 local ToolkitFunctions = require("Lib/Toolkit/Functions");
 
@@ -26,7 +26,12 @@ end
 
 -- Input / Main
 while continue do
-    Color.print({{color = "lightgreen", text = "MSE"}, {color = "lightcyan", text = "@"}, {color = "cyan", text = promptType}, {color = "white", text = " >> "}});
+    Color.print({
+        {color = "lightgreen", text = "OBE"}, 
+        {color = "lightcyan", text = "@"}, 
+        {color = "cyan", text = promptType}, 
+        {color = "white", text = " >> "}
+    });
     local argv = io.read();
     if #argv > 0 then
         local shortcut = String.split(argv, " ")[1];

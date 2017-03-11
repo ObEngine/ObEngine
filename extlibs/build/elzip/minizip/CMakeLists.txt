@@ -4,11 +4,19 @@ cmake_policy(SET CMP0015 NEW)
 project(minizip)
 
 IF (WIN32)
-    file(GLOB PG_MZIP src/win/*.h)
-    file(GLOB HD_MZIP src/win/*.c)
+    MESSAGE("Using iowin32")
+    file(GLOB PG_MZIP 
+        src/win/*.h
+        src/*.h
+    )
+    file(GLOB HD_MZIP 
+        src/win/*.c
+        src/*.c
+    )
+ELSE()
+    MESSAGE("Not using iowin32")
+    file(GLOB PG_MZIP src/*.h)
+    file(GLOB HD_MZIP src/*.c)
 ENDIF()
-
-file(GLOB PG_MZIP src/*.h)
-file(GLOB HD_MZIP src/*.c)
 
 add_library(minizip ${PG_MZIP} ${HD_MZIP})

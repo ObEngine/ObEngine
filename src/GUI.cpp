@@ -4878,7 +4878,7 @@ int convertByWidth(int value)
 
 int convertByWidthDecrease(int value)
 {
-	return static_cast<double>(GUI::windowWidth) / (obe::Functions::Coord::baseWidth) * value;
+	return static_cast<double>(GUI::windowWidth) / (obe::Functions::Coord::viewWidth) * value;
 }
 
 int convertByHeight(int value)
@@ -4890,7 +4890,7 @@ int convertByHeight(int value)
 
 int convertByHeightDecrease(int value)
 {
-	return static_cast<double>(GUI::windowHeight) / (obe::Functions::Coord::baseHeight) * value;
+	return static_cast<double>(GUI::windowHeight) / (obe::Functions::Coord::viewHeight) * value;
 }
 
 Color::Color(sf::Color color)

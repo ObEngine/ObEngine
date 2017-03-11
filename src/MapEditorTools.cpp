@@ -12,7 +12,7 @@ namespace obe
 		Thumbnailer::Thumbnailer()
 		{
 			System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
-			renderer.create(256.0 * Functions::Coord::width / Functions::Coord::baseWidth, 256.0 * Functions::Coord::height / Functions::Coord::baseHeight);
+			renderer.create(256.0 * Functions::Coord::width / Functions::Coord::viewWidth, 256.0 * Functions::Coord::height / Functions::Coord::viewHeight);
 			System::Path("Sprites/Others/folder.png").loadResource(&folderTexture, System::Loaders::textureLoader);
 		}
 		sf::Texture* Thumbnailer::GetSpriteThumbnail(std::string path)

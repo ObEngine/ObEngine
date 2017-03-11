@@ -23,8 +23,8 @@ namespace obe
 	{
 		namespace Coord
 		{
-			extern int baseWidth;
-			extern int baseHeight;
+			extern int viewWidth;
+			extern int viewHeight;
 			extern int width;
 			extern int height;
 			int adaptCamX(int camX, int sizeX);
@@ -133,22 +133,22 @@ namespace obe
 		template<typename V>
 		inline V Functions::Coord::transformX(V value)
 		{
-			return value * Functions::Coord::width / Functions::Coord::baseWidth;
+			return value * Functions::Coord::width / Functions::Coord::viewWidth;
 		}
 		template<typename V>
 		inline V Functions::Coord::transformY(V value)
 		{
-			return value * Functions::Coord::height / Functions::Coord::baseHeight;
+			return value * Functions::Coord::height / Functions::Coord::viewHeight;
 		}
 		template<typename V>
 		inline V Functions::Coord::reverseX(V value)
 		{
-			return value / Functions::Coord::width * Functions::Coord::baseWidth;
+			return value / Functions::Coord::width * Functions::Coord::viewWidth;
 		}
 		template<typename V>
 		inline V Functions::Coord::reverseY(V value)
 		{
-			return value / Functions::Coord::height * Functions::Coord::baseHeight;
+			return value / Functions::Coord::height * Functions::Coord::viewHeight;
 		}
 
 		//Functions::Map

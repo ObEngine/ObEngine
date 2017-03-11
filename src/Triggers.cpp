@@ -92,32 +92,37 @@ namespace obe
 			this->triggerMap[triggerName] = new Trigger(this->fromNsp, triggerGroupName, triggerName);
 			return this;
 		}
-		void TriggerGroup::delayTriggerState(std::string triggerName, int delay, bool state)
+		TriggerGroup* TriggerGroup::delayTriggerState(std::string triggerName, int delay, bool state)
 		{
 			this->delayedTriggers.push_back(new TriggerDelay(getTrigger(triggerName), delay, state));
+			return this;
 		}
-		void TriggerGroup::enableTrigger(std::string triggerName)
+		TriggerGroup* TriggerGroup::enableTrigger(std::string triggerName)
 		{
 			this->getTrigger(triggerName)->toEnable = true;
 			if (this->getTrigger(triggerName)->toDisable) this->getTrigger(triggerName)->toDisable = false;
+			return this;
 		}
-		void TriggerGroup::disableTrigger(std::string triggerName)
+		TriggerGroup* TriggerGroup::disableTrigger(std::string triggerName)
 		{
 			this->getTrigger(triggerName)->toDisable = true;
 			if (this->getTrigger(triggerName)->toEnable) this->getTrigger(triggerName)->toEnable = false;
+			return this;
 		}
-		void TriggerGroup::setTriggerState(std::string triggerName, bool state)
+		TriggerGroup* TriggerGroup::setTriggerState(std::string triggerName, bool state)
 		{
 			if (state) this->enableTrigger(triggerName);
 			else this->disableTrigger(triggerName);
+			return this;
 		}
 		bool TriggerGroup::getState(std::string triggerName)
 		{
 			return this->getTrigger(triggerName)->getState();
 		}
-		void TriggerGroup::setPermanent(std::string triggerName, bool permanent)
+		TriggerGroup* TriggerGroup::setPermanent(std::string triggerName, bool permanent)
 		{
 			this->getTrigger(triggerName)->permanent = permanent;
+			return this;
 		}
 		std::vector<std::string> TriggerGroup::getAllTriggersName()
 		{

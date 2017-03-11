@@ -120,25 +120,27 @@ namespace obe
 				x = sf::Mouse::getPosition().x - window->getPosition().x;
 				y = sf::Mouse::getPosition().y - window->getPosition().y;
 				if (x < 0) x = 0;
-				if (x > window->getSize().x) x = window->getSize().x;
+				if (x > Functions::Coord::viewWidth) x = Functions::Coord::viewWidth;
 				if (y < 0) y = 0;
-				if (y > window->getSize().y) y = window->getSize().y;
+				if (y > Functions::Coord::viewHeight) y = Functions::Coord::viewHeight;
 			}
 			else
 			{
 				if (sf::Mouse::getPosition().x - window->getPosition().x > 0 && sf::Mouse::getPosition().y - window->getPosition().y > 0)
 				{
-					if (sf::Mouse::getPosition().x - window->getPosition().x < window->getSize().x && sf::Mouse::getPosition().y - window->getPosition().y < window->getSize().y)
+					if (sf::Mouse::getPosition().x - window->getPosition().x < Functions::Coord::viewWidth && sf::Mouse::getPosition().y - window->getPosition().y < Functions::Coord::viewHeight)
 					{
 						x = sf::Mouse::getPosition().x - window->getPosition().x;
 						y = sf::Mouse::getPosition().y - window->getPosition().y;
 						if (x < 0) x = 0;
-						if (x > window->getSize().x) x = window->getSize().x;
+						if (x > Functions::Coord::viewWidth) x = Functions::Coord::viewWidth;
 						if (y < 0) y = 0;
-						if (y > window->getSize().y) y = window->getSize().y;
+						if (y > Functions::Coord::viewHeight) y = Functions::Coord::viewHeight;
 					}
 				}
 			}
+			x = (double)x * ((double)Functions::Coord::viewWidth / (double)Functions::Coord::width);
+			y = (double)y * ((double)Functions::Coord::viewHeight / (double)Functions::Coord::height);
 			cursorSprite->setPosition(x, y);
 		}
 

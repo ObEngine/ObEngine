@@ -204,8 +204,23 @@ namespace obe
 				this->localTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup(this->privateKey, "Local");
 
 				System::Path("Lib/GameLib/ScrInit.lua").loadResource(this->scriptEngine, System::Loaders::luaLoader);
-				System::Path("Lib/GameLib/ObjectInit.lua").loadResource(this->scriptEngine, System::Loaders::luaLoader);
 				loadScrGameObject(this, this->scriptEngine);
+
+				this->localTriggers
+					->addTrigger("Init")
+					->setTriggerState("Init", true)
+					->addTrigger("Update")
+					->setPermanent("Update", true)
+					->setTriggerState("Update", true)
+					->addTrigger("Query")
+					->addTrigger("Collide")
+					->addTrigger("Click")
+					->addTrigger("Press")
+					->addTrigger("Delete")
+					->addTrigger("Save");
+
+				System::Path("Lib/GameLib/ObjectInit.lua").loadResource(this->scriptEngine, System::Loaders::luaLoader);
+
 				(*this->scriptEngine)["ID"] = id;
 				(*this->scriptEngine)["Private"] = this->privateKey;
 				(*this->scriptEngine)["Public"] = this->publicKey;
@@ -213,16 +228,6 @@ namespace obe
 				(*this->scriptEngine)("protect(\"Private\")");
 				(*this->scriptEngine)("protect(\"Public\")");
 
-				this->localTriggers->addTrigger("Init");
-				this->localTriggers->setTriggerState("Init", true); // Supposed to be triggered by UseLocalTrigger ??
-				this->localTriggers->addTrigger("Update");
-				this->localTriggers->setPermanent("Update", true);
-				this->localTriggers->setTriggerState("Update", true);
-				this->localTriggers->addTrigger("Query");
-				this->localTriggers->addTrigger("Collide");
-				this->localTriggers->addTrigger("Click");
-				this->localTriggers->addTrigger("Press");
-				this->localTriggers->addTrigger("Delete");
 				if (obj->at("Script")->contains(vili::Types::ListAttribute, "scriptList")) {
 					int scriptListSize = obj->at("Script")->getListAttribute("scriptList")->getSize();
 					for (int i = 0; i < scriptListSize; i++) {

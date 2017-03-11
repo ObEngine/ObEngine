@@ -5,6 +5,12 @@ project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/build-scripts/")
 
+IF (NOT DEFINED _USE_CPP_NEW_FS)
+    set(_USE_CPP_NEW_FS ON CACHE BOOL "Use C++17 Filesystem ?")
+ENDIF()
+ADD_DEFINITIONS(-D_USE_CPP_NEW_FS=${_MYDEFINE})
+
+
 add_subdirectory(extlibs/build/clip)
 add_subdirectory(extlibs/build/clipper)
 add_subdirectory(extlibs/build/vili)

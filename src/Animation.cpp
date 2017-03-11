@@ -505,9 +505,7 @@ namespace obe
 				Animation* tempAnim = new Animation;
 				if (ressourceManagerHook != NULL)
 					tempAnim->attachRessourceManager(ressourceManagerHook);
-				std::cout << "Try to load : " << listDir[i] << std::endl;
 				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.msd");
-				std::cout << "Loaded " << listDir[i] << std::endl;
 				if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
 				{
 					tempAnim->applyParameters(animationParameters["all"]);

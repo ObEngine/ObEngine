@@ -338,8 +338,8 @@ namespace obe
 			{
 				(*lua)["Core"]["Constants"]["ResX"] = Functions::Coord::width;
 				(*lua)["Core"]["Constants"]["ResY"] = Functions::Coord::height;
-				(*lua)["Core"]["Constants"]["BaseResX"] = Functions::Coord::baseWidth;
-				(*lua)["Core"]["Constants"]["BaseResY"] = Functions::Coord::baseHeight;
+				(*lua)["Core"]["Constants"]["ViewWidth"] = Functions::Coord::viewWidth;
+				(*lua)["Core"]["Constants"]["ViewHeight"] = Functions::Coord::viewHeight;
 				foundPart = true;
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConstants] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;

@@ -1,4 +1,13 @@
 Local = {}; -- Local Events
+Local__Meta = {
+    __newindex = function(object, index, value)
+        rawset(object, index, value);
+        print("Using Trigger : " .. index);
+        This:useLocalTrigger(index);
+    end
+}
+setmetatable(Local, Local__Meta);
+
 Global = {}; -- Global Events
 LuaCore = {};
 LuaCore.Lua_ReqList = {}; -- Require Parameters
@@ -37,16 +46,14 @@ function IsArgumentInRequireList(paramName)
     end
 end
 
-function Local.Init()
-end
-function Local.Update()
-end
-function Local.Collide()
-end
-function Local.Click()
-end
-function Local.Delete()
-end
+-- Local.Init
+-- Local.Update
+-- Local.Collide
+-- Local.Query
+-- Local.Click
+-- Local.Delete
+-- Local.Save
+
 function Local.Save()
     return {};
 end

@@ -68,12 +68,12 @@ namespace obe
 				TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);
 				Trigger* getTrigger(std::string triggerName);
 				TriggerGroup* addTrigger(std::string triggerName);
-				void delayTriggerState(std::string triggerName, int delay, bool state);
-				void enableTrigger(std::string triggerName);
-				void disableTrigger(std::string triggerName);
-				void setTriggerState(std::string triggerName, bool state);
+				TriggerGroup* delayTriggerState(std::string triggerName, int delay, bool state);
+				TriggerGroup* enableTrigger(std::string triggerName);
+				TriggerGroup* disableTrigger(std::string triggerName);
+				TriggerGroup* setTriggerState(std::string triggerName, bool state);
 				bool getState(std::string triggerName);
-				void setPermanent(std::string triggerName, bool permanent);
+				TriggerGroup* setPermanent(std::string triggerName, bool permanent);
 				template <typename P>
 				void pushParameter(std::string triggerName, std::string parameterName, P parameter);
 				std::vector<std::string> getAllTriggersName();
