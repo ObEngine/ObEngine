@@ -6,6 +6,17 @@ namespace obe
 	{
 		std::string currentChosenMap = "";
 
+		/*void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
+		{
+			static int previousScrolbarValue = 0;
+			int distanceToMove = previousScrolbarValue - scrollbar->getValue();
+
+			for (auto& widget : panel->getWidgets())
+				widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
+
+			previousScrolbarValue = scrollbar->getValue();
+		}*/
+
 		void chooseMapAddMaps(GUI::Container* gui)
 		{
 			gui->getContainerByContainerName("maps")->removeAllWidget(false); // Doesn't work when memory is freed
@@ -14,7 +25,7 @@ namespace obe
 			std::vector<std::string> allMaps;
 			for (int i = 0; i < allMapsTemp.size(); i++)
 			{
-				if (allMapsTemp[i].size() > 8 && allMapsTemp[i].substr(allMapsTemp[i].size() - 8) == ".map.msd")
+				if (allMapsTemp[i].size() > 8 && allMapsTemp[i].substr(allMapsTemp[i].size() - 8) == ".map.vili")
 					allMaps.push_back(allMapsTemp[i]);
 			}
 			for (int i = 0; i < allMaps.size(); i++)
@@ -52,7 +63,7 @@ namespace obe
 			std::string newLevelName = GUI::Widget::getWidgetByID<GUI::TextInput>("createInput")->getText();
 			if (newLevelName != "")
 			{
-				if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.msd").getPath(0)))
+				if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0)))
 				{
 					std::cout << "Creating new level : " << newLevelName << std::endl;
 					vili::DataParser newFileParser;
@@ -64,7 +75,7 @@ namespace obe
 					newFileParser.at("Meta")->createBaseAttribute("SizeY", 1080);
 					newFileParser.at("Meta")->createBaseAttribute("StartX", 0);
 					newFileParser.at("Meta")->createBaseAttribute("StartY", 0);
-					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.msd").getPath(0), true);
+					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0), true);
 					GUI::Widget::getWidgetByID<GUI::TextInput>("createInput")->setText("");
 					chooseMapAddMaps(gui);
 				}
@@ -75,7 +86,7 @@ namespace obe
 
 		std::string chooseMapMenu()
 		{
-			sf::RenderWindow window(sf::VideoMode(640, 480), "Melting Saga", sf::Style::None);
+			sf::RenderWindow window(sf::VideoMode(640, 480), "ObEngine", sf::Style::None);
 			window.setMouseCursorVisible(false);
 			sf::RectangleShape windowBorder(sf::Vector2f(638, 478));
 			windowBorder.setPosition(1, 1);
@@ -93,7 +104,7 @@ namespace obe
 			GUI::WidgetContainer* creaContainer = gui.createWidgetContainer("crea", 2, 0, 420, 640, 60, GUI::ContainerMovement::Fixed, 0, 0);
 			creaContainer->setBackground(sf::Color(50, 50, 50));
 
-			gui.createLabel("main", "titleLbl", 10, 10, "Melting Saga", "weblysleekuil.ttf", 32, sf::Color::White);
+			gui.createLabel("main", "titleLbl", 10, 10, "ObEngine", "weblysleekuil.ttf", 32, sf::Color::White);
 			gui.createLabel("main", "titleLbl2", 200, 25, "Map Editor", "weblysleekuil.ttf", 16, sf::Color::White);
 			gui.createButton("main", "quitBtn", 590, 15, true, true, "QUIT");
 

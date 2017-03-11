@@ -83,5 +83,37 @@ namespace obe
 			basePaths.push_back(path);
 			orderPriorizedPaths();
 		}
+		std::vector<PriorizedPath>& Path::Paths()
+		{
+			return basePaths;
+		}
+		void MountPaths()
+		{
+			Path::basePaths.clear();
+			vili::DataParser mountedPaths;
+			mountedPaths.parseFile("Mount.vili", true);
+			for (std::string path : mountedPaths->at("Mount")->getAll(vili::Types::ComplexAttribute)) {
+				vili::ComplexAttribute* currentElement = mountedPaths->at("Mount", path);
+				std::string currentType = currentElement->at<vili::BaseAttribute>("type")->get<std::string>();
+				std::string currentPath = currentElement->at<vili::BaseAttribute>("path")->get<std::string>();
+				int currentPriority = currentElement->at<vili::BaseAttribute>("priority")->get<int>();
+				if (currentType == "Path") {
+					obe::System::Path::addPath(obe::System::PriorizedPath(obe::System::PathType::Path, currentPath, currentPriority));
+					std::cout << "Mounted Path : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+				}
+				else if (currentType == "Package") {
+					System::Package::Load(currentPath, currentPriority);
+					std::cout << "Mounted Package : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+				}
+				else if (currentType == "Workspace") {
+					System::Workspace::Load(currentPath, currentPriority);
+					std::cout << "Mounted Workspace : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+				}
+			}
+			std::cout << "<System> List of mounted paths : " << std::endl;
+			for (obe::System::PriorizedPath& currentPath : obe::System::Path::basePaths) {
+				std::cout << "    <System> MountedPath : " << currentPath.getPath() << std::endl;
+			}
+		}
 	}
 }

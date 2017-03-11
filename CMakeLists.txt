@@ -15,6 +15,7 @@ add_subdirectory(extlibs/build/clip)
 add_subdirectory(extlibs/build/clipper)
 add_subdirectory(extlibs/build/vili)
 add_subdirectory(extlibs/build/elzip)
+add_subdirectory(extlibs/build/lua)
 
 file(GLOB PG_OBE include/*.hpp)
 file(GLOB HD_OBE src/*.cpp)
@@ -30,7 +31,6 @@ set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(SFML 2 REQUIRED system window graphics network audio)
 find_package(OpenGL REQUIRED)
-find_package(Lua53 REQUIRED)
 
 add_executable(ObEngine ${PG_OBE} ${HD_OBE})
 
@@ -44,11 +44,11 @@ target_link_libraries(ObEngine clip)
 target_link_libraries(ObEngine clipper)
 target_link_libraries(ObEngine vili)
 target_link_libraries(ObEngine elzip)
+target_link_libraries(ObEngine lua)
 
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
   target_link_libraries(ObEngine ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 endif()
 
-target_link_libraries(ObEngine ${LUA53_LIBRARIES})
 target_link_libraries(ObEngine ${OPENGL_LIBRARIES})

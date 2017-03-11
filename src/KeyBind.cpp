@@ -177,10 +177,8 @@ namespace obe
 				std::vector<std::string> toggledActions;
 				std::vector<std::string> releasedActions;
 				std::vector<std::string> pressedActions;
-				std::cout << "Cycle action " << std::endl;
 				for (it_type iterator = actionMap.begin(); iterator != actionMap.end(); iterator++)
 				{
-					std::cout << "Test for key : " << iterator->first << " = " << isActionToggled(iterator->first) << std::endl;
 					if (isActionToggled(iterator->first)) {
 						if (isActionPressed(iterator->first))
 							pressedActions.push_back(iterator->first);
@@ -191,7 +189,6 @@ namespace obe
 					
 				}
 
-				std::cout << "RSIZE : " << toggledActions.size() << "/" << pressedActions.size() << "/" << releasedActions.size() << std::endl;
 				if (releasedActions.size() >= 1) {
 					keysTriggers->pushParameter("ActionReleased", "ReleasedActions", releasedActions);
 					keysTriggers->enableTrigger("ActionReleased");

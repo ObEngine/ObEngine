@@ -492,10 +492,10 @@ namespace obe
 			vili::DataParser animatorCfgFile;
 			std::map<std::string, vili::ComplexAttribute*> animationParameters;
 			bool hasCfgFile;
-			if (Functions::Vector::isInList(std::string("animator.cfg.msd"), allFiles))
+			if (Functions::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
 			{
 				hasCfgFile = true;
-				System::Path(animationPath.toString() + "/" + "animator.cfg.msd").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
+				System::Path(animationPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
 				for (std::string& currentAnimParameters : animatorCfgFile.at("Animator")->getAll(vili::Types::ComplexAttribute))
 					animationParameters[currentAnimParameters] = animatorCfgFile.at("Animator", currentAnimParameters);
 			}
@@ -505,7 +505,7 @@ namespace obe
 				Animation* tempAnim = new Animation;
 				if (ressourceManagerHook != NULL)
 					tempAnim->attachRessourceManager(ressourceManagerHook);
-				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.msd");
+				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.vili");
 				if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
 				{
 					tempAnim->applyParameters(animationParameters["all"]);

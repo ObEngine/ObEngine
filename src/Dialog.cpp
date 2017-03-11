@@ -110,7 +110,7 @@ namespace obe
 			sf::Text* dialogText = new sf::Text;
 			sf::Text* speakerText = new sf::Text;
 
-			circleAnim->loadAnimation(System::Path("Sprites/Dialog/Loader/"), "Loader.ani.msd");
+			circleAnim->loadAnimation(System::Path("Sprites/Dialog/Loader/"), "Loader.ani.vili");
 			circleAnim->playAnimation();
 			circleAnim->getSprite()->setPosition(Functions::Coord::width - 64 - 16, Functions::Coord::height - 64 - 16);
 

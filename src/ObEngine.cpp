@@ -7,36 +7,13 @@ int main(int argc, char** argv)
 {
 	obe::Functions::Run::Parser runParser(argv, argc);
 	std::string startMode = runParser.getArgumentValue("-mode");
-	std::cout << "Running MeSa Engine using mode : " << startMode << std::endl;
+	std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
 	std::ofstream out("log.txt");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
-	vili::DataParser mountedPaths;
-	mountedPaths.parseFile("Mount.vili", true);
-	for (std::string path : mountedPaths->at("Mount")->getAll(vili::Types::ComplexAttribute)) {
-		vili::ComplexAttribute* currentElement = mountedPaths->at("Mount", path);
-		std::string currentType = currentElement->at<vili::BaseAttribute>("type")->get<std::string>();
-		std::string currentPath = currentElement->at<vili::BaseAttribute>("path")->get<std::string>();
-		int currentPriority = currentElement->at<vili::BaseAttribute>("priority")->get<int>();
-		if (currentType == "Path") {
-			obe::System::Path::addPath(obe::System::PriorizedPath(obe::System::PathType::Path, currentPath, currentPriority));
-			std::cout << "Mounted Path : <" << currentPath << "> with priority : " << currentPriority << std::endl;
-		}
-		else if (currentType == "Package") {
-			obe::System::Package::Load(currentPath, currentPriority);
-			std::cout << "Mounted Package : <" << currentPath << "> with priority : " << currentPriority << std::endl;
-		}
-		else if (currentType == "Workspace") {
-			obe::System::Workspace::Load(currentPath, currentPriority);
-			std::cout << "Mounted Workspace : <" << currentPath << "> with priority : " << currentPriority << std::endl;
-		}
-	}
-	std::cout << "<System> List of mounted paths : " << std::endl;
-	for (obe::System::PriorizedPath& currentPath : obe::System::Path::basePaths) {
-		std::cout << "    <System> MountedPath : " << currentPath.getPath() << std::endl;
-	}
+	obe::System::MountPaths();
 
 	if (startMode == "edit")
 	{

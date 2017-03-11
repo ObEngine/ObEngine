@@ -1,11 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 
-Import("Core.DataParser");
-
 function object(argtable)
-    local parser = Core.Vili.DataParser.new();
-    parser:parseFile("Workspace/workspace.cfg.msd", true);
-    local currentWs = parser:root():at("Workspace"):getBaseAttribute("current"):get_string();
+    local currentWs = Core.Path.Path.Paths()[1]:getPath();
     if (argtable.action == "create") then
         local haveAnimator = false;
         local haveLevelSprite = false;
@@ -65,7 +61,7 @@ function object(argtable)
                 haveScript = true;
                 local scriptFile = io.open("Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" ..
                  argtable.objname .. "\\" .. argtable.objname .. ".lua", "w")
-                scriptFile:write("function Local.Init()\n    print(\"Hello World\");\nend")
+                scriptFile:write("function Local.Init()\n    print(\"Hello, World!\");\nend")
                 scriptFile:close()
                 Color.print({
                     {color = "lightgreen", text = "+ Using component : "},
@@ -79,7 +75,7 @@ function object(argtable)
             end
         end
         objSaveFile:writeFile("Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" ..
-         argtable.objname .. "\\" .. argtable.objname .. ".obj.msd");
+         argtable.objname .. "\\" .. argtable.objname .. ".obj.vili");
         Color.print({
             {color = "lightgreen", text = "Object "},
             {color = "lightcyan", text = argtable.objname},

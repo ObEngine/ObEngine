@@ -570,7 +570,7 @@ namespace obe
 		{
 			Script::GameObject* newGameObject = new Script::GameObject(obj, id);
 			vili::DataParser getGameObjectFile;
-			System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
+			System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
 			vili::ComplexAttribute* gameObjectData = getGameObjectFile.at(obj);
 			newGameObject->loadGameObject(gameObjectData);
 			this->gameObjectsMap[id] = newGameObject;

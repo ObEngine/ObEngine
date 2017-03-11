@@ -165,7 +165,7 @@ namespace obe
 		MathParticle::MathParticle(std::string id) : MathExpObject(0)
 		{
 			trailTexFP.create(1920, 1080);
-			vili::DataParser particleSet("Data/Particles/particleSet.ptc.msd");
+			vili::DataParser particleSet("Data/Particles/particleSet.ptc.vili");
 			std::vector<std::string> attributeList = { "size", "x", "y", "lowerBound", "upperBound", "r", "g", "b"\
 				, "a", "lifetime","trailLength", "trailAlpha" };
 			this->setPrecision(particleSet.at("Particles", id)->getBaseAttribute("precision")->get<double>());

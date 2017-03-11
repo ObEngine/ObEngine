@@ -9,6 +9,8 @@
 #include <vili/Vili.hpp>
 
 #include "Functions.hpp"
+#include "Package.hpp"
+#include "Workspace.hpp"
 
 namespace obe
 {
@@ -60,7 +62,11 @@ namespace obe
 				std::string loadResource(R* resource, F lambda, bool silent = false);
 				static void addPath(PriorizedPath path);
 				static std::vector<PriorizedPath> basePaths;
+				static std::vector<PriorizedPath>& Paths();
 		};
+
+		void MountPaths();
+
 		template<typename R>
 		inline bool Path::checkType(R type, std::string expectedType)
 		{

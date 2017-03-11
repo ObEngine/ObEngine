@@ -87,7 +87,7 @@ namespace obe
 			if (!Functions::Vector::isInList(type, allRequires->getAll(vili::Types::ComplexAttribute)))
 			{
 				vili::DataParser getGameObjectFile;
-				System::Path("Data/GameObjects/").add(type).add(type + ".obj.msd").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
+				System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
 				if (getGameObjectFile->contains("Requires"))
 				{
 					vili::ComplexAttribute* requiresData = getGameObjectFile->at<vili::ComplexAttribute>("Requires");
@@ -168,7 +168,6 @@ namespace obe
 				int layer;
 				int zdepth;
 				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "path")) {
-					std::cout << "Loading Sprite at : " << obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>() << std::endl;
 					objectLevelSprite.load(obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>());
 				}
 				decoRot = obj->at("LevelSprite")->getBaseAttribute("rotation")->get<int>();

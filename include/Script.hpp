@@ -47,6 +47,7 @@ namespace obe
 			void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
 			void loadPackage(kaguya::State* lua, std::vector<std::string> args);
 			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
+			void loadPath(kaguya::State* lua, std::vector<std::string> args);
 			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);

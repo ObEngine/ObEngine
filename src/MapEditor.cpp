@@ -14,7 +14,7 @@ namespace obe
 			std::cout << "<System> Creating window with resolution " << Functions::Coord::width << "x" << Functions::Coord::height << std::endl;
 
 			//Creating Window
-			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "Melting Saga", sf::Style::Fullscreen);
+			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "ObEngine", sf::Style::Fullscreen);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
 			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
@@ -26,7 +26,7 @@ namespace obe
 			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
 			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::viewWidth,
 				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
-			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
+			vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
 			loadingText.setString(loadingRandomStr);
@@ -47,7 +47,7 @@ namespace obe
 
 			//Config
 			vili::DataParser configFile;
-			System::Path("Data/config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
+			System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
 			vili::ComplexAttribute* gameConfig = configFile->at("GameConfig");
 			int scrollSensitive = *gameConfig->at<vili::BaseAttribute>("scrollSensibility");
 			vili::ComplexAttribute* developpement = configFile->at("Developpement");
@@ -89,7 +89,7 @@ namespace obe
 			Script::hookCore.dropValue("GUI", gui);
 			gui->createWidgetContainer("Main", 2, 0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight, GUI::ContainerMovement::Fixed);
 			gui->createWidgetContainer("Score", 2, 0, 0, 1920, 1080, GUI::ContainerMovement::Fixed); //DELETE THIS IT WAS FOR PONG
-			gui->createLabel("Main", "title", Functions::Coord::width - 800, 5, "Melting Saga Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
+			gui->createLabel("Main", "title", Functions::Coord::width - 800, 5, "ObEngine Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
 			gui->createButton("Main", "editorMenuBtn", Functions::Coord::width - 570, 0, true, true, "GREY");
 			GUI::ButtonEvent* menuOpened = GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->getHook();
 			GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->setText("Menu Editeur", "arial.ttf", sf::Color(255, 255, 255), 14, true);

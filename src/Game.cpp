@@ -9,7 +9,7 @@ namespace obe
 			double startLoadTime = Time::getTickSinceEpoch();
 
 			//Creating Window
-			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "Melting Saga", sf::Style::Fullscreen);
+			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "ObEngine", sf::Style::Fullscreen);
 			sf::View viewPort(sf::FloatRect(0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight));
 			window.setView(viewPort);
 			window.setKeyRepeatEnabled(false);
@@ -20,7 +20,7 @@ namespace obe
 			sf::Text loadingText; loadingText.setFont(loadingFont);
 			loadingText.setCharacterSize(70.0);
 			loadingText.setPosition(348.0, 595.0);
-			vili::DataParser loadingStrDP("Sprites/Menus/loading.dat.msd");
+			vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
 			loadingText.setString(loadingRandomStr);
@@ -37,7 +37,7 @@ namespace obe
 
 			//Config
 			vili::DataParser configFile;
-			System::Path("Data/config.cfg.msd").loadResource(&configFile, System::Loaders::dataLoader);
+			System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
 			vili::ComplexAttribute* gameConfig = configFile.at("GameConfig");
 			int scrollSensitive = *gameConfig->at<vili::BaseAttribute>("scrollSensibility");
 
