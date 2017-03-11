@@ -1,0 +1,184 @@
+Button {
+    Texture      = "Button/Simple/idle.png";
+    TextureHover = "Button/Simple/hover.png";
+    TextureDown  = "Button/Simple/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+CloseButton {
+    Texture      = "Button/Close/idle.png";
+    TextureHover = "Button/Close/hover.png";
+    TextureDown  = "Button/Close/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+MapSelectButton {
+    Texture      = "Button/MapSelect/idle.png";
+    TextureHover = "Button/MapSelect/hover.png";
+    TextureDown  = "Button/MapSelect/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+AddButton {
+    Texture      = "Button/Add/idle.png";
+    TextureHover = "Button/Add/hover.png";
+    TextureDown  = "Button/Add/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+Panel {
+    BackgroundColor = rgb(44, 44, 44);
+}
+
+LightPanel {
+    BackgroundColor = rgb(66, 66, 66);
+}
+
+Label {
+    TextColor = rgb(255, 255, 255);
+}
+
+TextBox {
+    BackgroundColor             = rgb(22, 22, 22);
+    TextColor                   = rgb(255, 255, 255);
+    SelectedTextColor           = rgb(255, 255, 255);
+    SelectedTextBackgroundColor = rgb(66, 128, 244);
+    CaretColor                  = rgb(255, 255, 255);
+    BorderColor                 = rgb(33, 110, 255);
+    Borders                     = (1, 1, 1, 1);
+}
+
+Scrollbar {
+    TextureTrack     = "r.png";
+    TextureThumb     = "s.png";
+    TextureArrowUp   = "t.png";
+    TextureArrowDown = "u.png";
+}
+
+ChatBox {
+    BackgroundColor = rgb(210, 210, 210);
+    BorderColor     = White;
+    Borders         = (2, 2, 2, 2);
+    Scrollbar       = &Scrollbar;
+}
+
+CheckBox {
+    TextureChecked   = "a.png" Part(48, 40, 34, 36);
+    TextureUnchecked = "b.png" Part(381, 2, 31, 31);
+    TextColor        = rgb(100, 100, 100);
+}
+
+ChildWindow {
+    TextureTitlebar = "c.png" Part(317, 2, 62, 31) Middle(10, 0, 42, 31);
+    TitleColor      = rgb(100, 100, 100);
+    BackgroundColor = rgb(230, 230, 230);
+    BorderColor     = White;
+    Borders         = (2, 0, 2, 2);
+    DistanceToSide  = 3;
+
+    CloseButton = {
+        Texture      = "d.png" Part(96, 2, 25, 25);
+        TextureHover = "e.png" Part(123, 2, 25, 25);
+        TextureDown  = "f.png" Part(150, 2, 25, 25);
+    }
+}
+
+ComboBox {
+    TextureArrowUp   = "g.png" Part(199, 2, 20, 26);
+    TextureArrowDown = "h.png" Part(177, 2, 20, 26);
+    BackgroundColor  = rgb(210, 210, 210);
+    TextColor        = rgb(100, 100, 100);
+    BorderColor      = White;
+    Borders          = (2, 2, 2, 2);
+    ListBox          = &ListBox;
+}
+
+EditBox {
+    Texture                     = "i.png" Part(103, 40, 72, 48) Middle(24, 0, 24, 48);
+    TextColor                   = rgb(100, 100, 100);
+    SelectedTextColor           = rgb(150, 150, 150);
+    SelectedTextBackgroundColor = rgb(190, 225, 235);
+    CaretColor                  = rgb(145, 180, 190);
+    Padding                     = (14, 4, 14, 4);
+}
+
+ListBox {
+    BackgroundColor         = rgb(210, 210, 210);
+    TextColor               = rgb(100, 100, 100);
+    SelectedBackgroundColor = rgb(190, 225, 235);
+    SelectedTextColor       = rgb(150, 150, 150);
+    BorderColor             = White;
+    Borders                 = (2, 2, 2, 2);
+    Scrollbar               = &Scrollbar;
+}
+
+MenuBar {
+    BackgroundColor         = rgb(210, 210, 210);
+    TextColor               = rgb(100, 100, 100);
+    SelectedBackgroundColor = rgb(190, 225, 235);
+    SelectedTextColor       = rgb(150, 150, 150);
+    DistanceToSide          = 5;
+}
+
+MessageBox {
+    Button    = &Button;
+    TextColor = rgb(100, 100, 100);
+
+    TextureTitlebar = "j.png" Part(317, 2, 62, 31) Middle(10, 0, 42, 31);
+    TitleColor      = rgb(100, 100, 100);
+    BackgroundColor = rgb(230, 230, 230);
+    BorderColor     = White;
+    Borders         = (2, 0, 2, 2);
+    DistanceToSide  = 3;
+
+    CloseButton = {
+        Texture      = "k.png" Part(96, 2, 25, 25);
+        TextureHover = "l.png" Part(123, 2, 25, 25);
+        TextureDown  = "m.png" Part(150, 2, 25, 25);
+    }
+}
+
+ProgressBar {
+    TextureBackground  = "n.png" Part(221, 2, 30, 30) Middle(10, 0, 10, 30);
+    TextureFill        = "o.png" Part(70, 2, 24, 24) Middle(7, 0, 7, 24);
+    TextColor          = rgb(100, 100, 100);
+}
+
+RadioButton {
+    TextureChecked   = "p.png" Part(253, 2, 30, 30);
+    TextureUnchecked = "q.png" Part(285, 2, 30, 30);
+    TextColor        = rgb(100, 100, 100);
+}
+
+Scrollbar {
+    TextureTrack     = "r.png" Part(432, 2, 16, 32) Middle(0, 5, 32, 22);
+    TextureThumb     = "s.png" Part(414, 2, 16, 32) Middle(0, 5, 32, 22);
+    TextureArrowUp   = "t.png" Part(2, 2, 16, 16);
+    TextureArrowDown = "u.png" Part(20, 2, 16, 16);
+}
+
+Slider {
+    TextureTrack = "v.png" Part(38, 2, 30, 20) Middle(10, 0, 10, 20);
+    TextureThumb = "w.png" Part(84, 40, 17, 38);
+}
+
+SpinButton {
+    TextureArrowUp   = "x.png" Part(2, 2, 16, 16);
+    TextureArrowDown = "y.png" Part(20, 2, 16, 16);
+}
+
+Tabs {
+    TextureTab         = "z.png" Part(450, 2, 44, 36) Middle(4, 3, 36, 30);
+    TextureSelectedTab = "_.png" Part(2, 40, 44, 36) Middle(4, 3, 36, 30);
+    TextColor          = rgb(100, 100, 100);
+    SelectedTextColor  = rgb(150, 150, 150);
+    DistanceToSide     = 5;
+}
+
+Tooltip {
+    TextColor       = rgb(100, 100, 100);
+    BackgroundColor = rgb(210, 210, 210);
+    BorderColor     = rgb(255, 255, 255);
+    Borders         = (1, 1, 1, 1);
+    Padding         = (2, 2, 2, 2);
+}

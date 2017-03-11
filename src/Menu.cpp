@@ -4,9 +4,7 @@ namespace obe
 {
 	namespace Modes
 	{
-		std::string currentChosenMap = "";
-
-		/*void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
+		void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
 		{
 			static int previousScrolbarValue = 0;
 			int distanceToMove = previousScrolbarValue - scrollbar->getValue();
@@ -15,17 +13,23 @@ namespace obe
 				widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
 
 			previousScrolbarValue = scrollbar->getValue();
-		}*/
+		}
 
-		void chooseMapAddMaps(GUI::Container* gui)
+		void chooseMapAddMaps(tgui::Panel::Ptr middlePanel, tgui::Scrollbar::Ptr scrollbar, tgui::Theme& baseTheme, std::string& currentMap)
 		{
-			gui->getContainerByContainerName("maps")->removeAllWidget(false); // Doesn't work when memory is freed
+			int scrollBoxSize = 0;
+
+			scrollbar->setLowValue(middlePanel->getSize().y);
+			scrollbar->setMaximum(scrollBoxSize);
+
+			middlePanel->removeAllWidgets();
+
 			std::vector<std::string> allMapsTemp;
-			System::Path("Data/Maps").loadResource(&allMapsTemp, System::Loaders::filePathLoader);
+			std::string fPath = System::Path("Data/Maps").loadResource(&allMapsTemp, System::Loaders::filePathLoader);
 			std::vector<std::string> allMaps;
 			for (int i = 0; i < allMapsTemp.size(); i++)
 			{
-				if (allMapsTemp[i].size() > 8 && allMapsTemp[i].substr(allMapsTemp[i].size() - 8) == ".map.vili")
+				if (allMapsTemp[i].size() > 8 && allMapsTemp[i].substr(allMapsTemp[i].size() - 9) == ".map.vili")
 					allMaps.push_back(allMapsTemp[i]);
 			}
 			for (int i = 0; i < allMaps.size(); i++)
@@ -33,8 +37,7 @@ namespace obe
 				std::string mapFile = allMaps[i];
 				vili::DataParser mapInfoParser;
 				System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
-				std::string filename = (allMaps[i].size() <= 16) ? allMaps[i].substr(0, allMapsTemp[i].size() - 8) :
-					allMaps[i].substr(0, 8) + "..";
+				std::string filename = allMapsTemp[i];
 				std::string levelName = "???";
 				int mapSizeX = 0;
 				int mapSizeY = 0;
@@ -42,25 +45,24 @@ namespace obe
 				if (mapInfoParser->contains(vili::Types::ComplexAttribute, "Meta")) {
 					if (mapInfoParser->at("Meta")->contains(vili::Types::BaseAttribute, "Level"))
 						levelName = mapInfoParser.at("Meta")->getBaseAttribute("Level")->get<std::string>();
-					if (mapInfoParser.at("Meta")->contains(vili::Types::BaseAttribute, "SizeX"))
-						mapSizeX = mapInfoParser.at("Meta")->getBaseAttribute("SizeX")->get<int>();
-					if (mapInfoParser.at("Meta")->contains(vili::Types::BaseAttribute, "SizeY"))
-						mapSizeY = mapInfoParser.at("Meta")->getBaseAttribute("SizeY")->get<int>();
 				}
 				
-				GUI::Button* btn = gui->createButton("maps", "map_gbtn_" + std::to_string(i), 0, i * 100, true, true, "MAPSELECT");
-				gui->createLabel("maps", "map_glbl_" + std::to_string(i), 30, i * 100 + 10, filename, "weblysleekuil.ttf", 64, sf::Color::White);
-				gui->createLabel("maps", "map_gname_" + std::to_string(i), 320, i * 100 + 10, levelName, "weblysleekuil.ttf", 24, sf::Color::White);
-				gui->createLabel("maps", "map_gsize_" + std::to_string(i), 320, i * 100 + 60,
-					"Size : (" + std::to_string(mapSizeX) + "," + std::to_string(mapSizeY) + ")", "weblysleekuil.ttf", 16, sf::Color::White);
-				btn->bindFunction([mapFile] { currentChosenMap = mapFile;  });
-				gui->getContainerByContainerName("maps")->addScrollBar();
+				tgui::Button::Ptr selectMapButton = tgui::Button::create();
+				selectMapButton->setText(levelName + " (" + filename.substr(0, allMapsTemp[i].size() - 9) + ")");
+				selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
+				selectMapButton->setSize("630", "100");
+				selectMapButton->setPosition("0", std::to_string(i) + " * (&.height - 14) / 5");
+				selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
+				middlePanel->add(selectMapButton);
+				scrollBoxSize += selectMapButton->getSize().y;
 			}
+			scrollbar->setLowValue(middlePanel->getSize().y);
+			scrollbar->setMaximum(scrollBoxSize);
 		}
 
-		void createLevel(GUI::Container* gui)
+		void createLevel(tgui::TextBox::Ptr input)
 		{
-			std::string newLevelName = GUI::Widget::getWidgetByID<GUI::TextInput>("createInput")->getText();
+			std::string newLevelName = input->getText();
 			if (newLevelName != "")
 			{
 				if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0)))
@@ -76,8 +78,7 @@ namespace obe
 					newFileParser.at("Meta")->createBaseAttribute("StartX", 0);
 					newFileParser.at("Meta")->createBaseAttribute("StartY", 0);
 					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0), true);
-					GUI::Widget::getWidgetByID<GUI::TextInput>("createInput")->setText("");
-					chooseMapAddMaps(gui);
+					input->setText("");
 				}
 				else
 					std::cout << "<Warning:Menu:Menu>[createLevel] : Level \"" << newLevelName << "\" already exists, abort..." << std::endl;
@@ -86,93 +87,106 @@ namespace obe
 
 		std::string chooseMapMenu()
 		{
-			sf::RenderWindow window(sf::VideoMode(640, 480), "ObEngine", sf::Style::None);
-			window.setMouseCursorVisible(false);
-			sf::RectangleShape windowBorder(sf::Vector2f(638, 478));
-			windowBorder.setPosition(1, 1);
-			windowBorder.setFillColor(sf::Color(40, 40, 40));
-			windowBorder.setOutlineColor(sf::Color::White);
-			windowBorder.setOutlineThickness(1);
-			sf::Vertex linetop[] = { sf::Vertex(sf::Vector2f(0, 60)), sf::Vertex(sf::Vector2f(640, 60)) };
-			window.clear(sf::Color(40, 40, 40));
-			window.display();
+			sf::RenderWindow window({ 636, 636 }, "Window", sf::Style::None);
 
-			sf::Event sfevent;
-			GUI::Container gui(&sfevent, &window, 640, 480);
-			GUI::WidgetContainer* mainContainer = gui.createWidgetContainer("main", 1, 0, 0, 640, 480, GUI::ContainerMovement::Fixed, 0, 0);
-			GUI::WidgetContainer* mapsContainer = gui.createWidgetContainer("maps", 1, 0, 60, 640, 360, GUI::ContainerMovement::Fixed, 0, 0);
-			GUI::WidgetContainer* creaContainer = gui.createWidgetContainer("crea", 2, 0, 420, 640, 60, GUI::ContainerMovement::Fixed, 0, 0);
-			creaContainer->setBackground(sf::Color(50, 50, 50));
+			tgui::Gui gui(window);
+			gui.setFont("Data/Fonts/weblysleekuil.ttf");
+			tgui::Theme baseTheme;
+			baseTheme.load("Data/GUI/obe.style");
+			std::string currentMap = "";
 
-			gui.createLabel("main", "titleLbl", 10, 10, "ObEngine", "weblysleekuil.ttf", 32, sf::Color::White);
-			gui.createLabel("main", "titleLbl2", 200, 25, "Map Editor", "weblysleekuil.ttf", 16, sf::Color::White);
-			gui.createButton("main", "quitBtn", 590, 15, true, true, "QUIT");
+			tgui::Panel::Ptr topPanel = tgui::Panel::create();
+			tgui::Panel::Ptr bottomPanel = tgui::Panel::create();
+			tgui::Panel::Ptr middlePanel = tgui::Panel::create();
+			tgui::Scrollbar::Ptr scrollbar = tgui::Scrollbar::create();
+			tgui::Label::Ptr titleLabel = tgui::Label::create();
+			tgui::Label::Ptr mapEditorLabel = tgui::Label::create();
+			tgui::Button::Ptr closeButton = tgui::Button::create();
+			tgui::Label::Ptr createMapLabel = tgui::Label::create();
+			tgui::Button::Ptr createMapButton = tgui::Button::create();
+			tgui::TextBox::Ptr createMapInput = tgui::TextBox::create();
 
-			gui.createLabel("crea", "createLbl", 10, 10, "Create Level :", "weblysleekuil.ttf", 26, sf::Color::White);
-			gui.createTextInput("crea", "createInput", 250, 20, "", "weblysleekuil.ttf", 13, sf::Color::White, false, "GREY");
-			gui.createButton("crea", "createBtn", 598, 14, true, true, "ADD");
-			GUI::Widget::getWidgetByID<GUI::Button>("createBtn")->bindFunction([&gui]() { createLevel(&gui); });
+			topPanel->setRenderer(baseTheme.getRenderer("Panel"));
+			topPanel->setSize("&.width", "&.height / 10");
+			topPanel->setPosition("0", "0");
 
-			chooseMapAddMaps(&gui);
-			mapsContainer->addScrollBar();
+			bottomPanel->setRenderer(baseTheme.getRenderer("Panel"));
+			bottomPanel->setSize("&.width", "&.height / 10");
+			bottomPanel->setPosition("0", "&.height - height");
 
-			Cursor::Cursor cursor(&window);
-			cursor.selectCursor("RoundWhite");
+			middlePanel->setRenderer(baseTheme.getRenderer("LightPanel"));
+			middlePanel->setSize("&.width", "&.height - (&.height / 5)");
+			middlePanel->setPosition("0", "&.height / 10");
 
-			sf::Font font;
-			font.loadFromFile("Data/Fonts/weblysleekuil.ttf");
+			scrollbar->setPosition("&.width - width", "&.height / 10");
+			scrollbar->setSize("16", "&.height - (&.height / 5)");
+			scrollbar->connect("ValueChanged", scrollPanel, middlePanel, scrollbar);
 
-			GUI::ButtonEvent* appQuitBool = GUI::Widget::getWidgetByID<GUI::Button>("quitBtn")->getHook();
-			sf::Vector2i grabbedOffset;
-			bool grabbedWindow = false;
+			titleLabel->setRenderer(baseTheme.getRenderer("Label"));
+			titleLabel->setText("ÖbEngine");
+			titleLabel->setTextSize(34);
+			titleLabel->setPosition("&.width / 40", "(&.height / 2) - (height / 2)");
 
-			while (window.isOpen() && currentChosenMap == "")
+			mapEditorLabel->setRenderer(baseTheme.getRenderer("Label"));
+			mapEditorLabel->setText("<Map Editor>");
+			mapEditorLabel->setTextSize(22);
+			mapEditorLabel->setPosition("&.width / 3", "&.height / 25");
+
+			closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
+			closeButton->setSize("32", "32");
+			closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+			closeButton->connect("pressed", [&window]() {
+				window.close();
+			});
+
+			createMapLabel->setRenderer(baseTheme.getRenderer("Label"));
+			createMapLabel->setText("Create Level : ");
+			createMapLabel->setTextSize(30);
+			createMapLabel->setPosition("&.&.width / 40", "(&.height / 2) - (height / 2)");
+
+			createMapButton->setRenderer(baseTheme.getRenderer("AddButton"));
+			createMapButton->setSize("32", "32");
+			createMapButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+			createMapButton->connect("pressed", [createMapInput, middlePanel, scrollbar, &baseTheme, &currentMap]() {
+				createLevel(createMapInput);
+				chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
+			});
+
+			createMapInput->setVerticalScrollbarPresent(false);
+			createMapInput->setRenderer(baseTheme.getRenderer("TextBox"));
+			createMapInput->setSize("300", "32");
+			createMapInput->setPosition("(&.width / 2) - (width / 4)", "(&.height / 2) - (height / 2)");
+
+			gui.add(topPanel);
+			gui.add(bottomPanel);
+			gui.add(middlePanel);
+			gui.add(scrollbar);
+			topPanel->add(closeButton);
+			topPanel->add(titleLabel);
+			topPanel->add(mapEditorLabel);
+			bottomPanel->add(createMapButton);
+			bottomPanel->add(createMapLabel);
+			bottomPanel->add(createMapInput);
+
+			chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
+
+			while (window.isOpen() && currentMap == "")
 			{
-				while (window.pollEvent(sfevent))
+				sf::Event event;
+				while (window.pollEvent(event))
 				{
-					if (sfevent.type == sf::Event::Closed)
+					if (event.type == sf::Event::Closed)
 						window.close();
-					else if (sfevent.type == sf::Event::KeyPressed)
-					{
-						if (sfevent.key.code == sf::Keyboard::Escape)
-							window.close();
-					}
-					else if (sfevent.type == sf::Event::MouseButtonPressed)
-					{
-						if (sf::Mouse::getPosition().y - window.getPosition().y < 60 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
-						{
-							if (sfevent.mouseButton.button == sf::Mouse::Left)
-							{
-								grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
-								grabbedWindow = true;
-							}
-						}
-					}
-					else if (sfevent.type == sf::Event::MouseButtonReleased)
-					{
-						if (sfevent.mouseButton.button == sf::Mouse::Left)
-							grabbedWindow = false;
-					}
-					else if (sfevent.type == sf::Event::MouseMoved)
-					{
-						if (grabbedWindow)
-							window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
-					}
+
+					gui.handleEvent(event);
 				}
 
-				gui.updateAllContainer();
-				cursor.update();
-				if (*appQuitBool == GUI::ButtonEvent::Pressed) { window.close(); }
-
-				window.clear(sf::Color(40, 40, 40));
-				window.draw(windowBorder);
-				gui.drawAllContainer(&window);
-				window.draw(linetop, 2, sf::Lines);
-				window.draw(*cursor.getSprite());
+				window.clear();
+				gui.draw();
 				window.display();
 			}
-			window.close();
-			return currentChosenMap;
+
+			return currentMap;
 		}
 	}
 }

@@ -1,0 +1,161 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// TGUI - Texus' Graphical User Interface
+// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#ifndef TGUI_OUTLINE_HPP
+#define TGUI_OUTLINE_HPP
+
+#include <TGUI/Config.hpp>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace tgui
+{
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class TGUI_API Outline
+    {
+      public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Default constructor
+        ///
+        /// @param size  Width and height of the outline in all directions
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Outline(float size = 0) :
+            left  (size),
+            top   (size),
+            right (size),
+            bottom(size)
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor that initializes the outline
+        ///
+        /// @param width   Width of the left and right outline
+        /// @param height  Height of the top and bottom outline
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Outline(float width, float height) :
+            left  (width),
+            top   (height),
+            right (width),
+            bottom(height)
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor that initializes the outline
+        ///
+        /// @param leftBorderWidth    Width of the left outline
+        /// @param topBorderHeight    Height of the top outline
+        /// @param rightBorderWidth   Width of the right outline
+        /// @param bottomBorderHeight Height of the bottom outline
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Outline(float leftBorderWidth, float topBorderHeight, float rightBorderWidth, float bottomBorderHeight) :
+            left  (leftBorderWidth),
+            top   (topBorderHeight),
+            right (rightBorderWidth),
+            bottom(bottomBorderHeight)
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Compares two outlines
+        ///
+        /// @param outline  The outline to compare with this instance
+        ///
+        /// @return Whether the outlines are equal or not
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool operator==(const Outline& outline) const
+        {
+            return (left == outline.left) && (top == outline.top) && (right == outline.right) && (bottom == outline.bottom);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Compares two outlines
+        ///
+        /// @param outline  The outline to compare with this instance
+        ///
+        /// @return Whether the outlines are equal or not
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool operator!=(const Outline& outline) const
+        {
+            return !(*this == outline);
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        /// Width of the left outline
+        float left;
+
+        /// Height of the top outline
+        float top;
+
+        /// Width of the right outline
+        float right;
+
+        /// Height of the bottom outline
+        float bottom;
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Adds two outlines
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    inline Outline operator+(const Outline& left, const Outline& right)
+    {
+        return {left.left + right.left, left.top + right.top, left.right + right.right, left.bottom + right.bottom};
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Subtracts two outlines
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    inline Outline operator-(const Outline& left, const Outline& right)
+    {
+        return {left.left - right.left, left.top - right.top, left.right - right.right, left.bottom - right.bottom};
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    using Borders = Outline;
+    using Padding = Outline;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#endif // TGUI_OUTLINE_HPP
