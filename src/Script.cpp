@@ -8,10 +8,6 @@ namespace obe
 	Types::any::erasure::~erasure() {}
 	namespace Script
 	{
-		KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(container_createLabelProxy, GUI::Container, createLabel, 8, 9,
-			GUI::Label*(GUI::Container::*)(std::string, std::string, int, int, std::string, std::string, int, sf::Color, sf::Text::Style));
-		KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(label_setTextProxy, GUI::Label, setText, 2, 3, void(GUI::Label::*)(std::string, sf::Color, sf::Text::Style));
-
 		CoreHook hookCore;
 
 		void CoreHook::getValue(kaguya::State* lua, std::string name)
@@ -23,8 +19,6 @@ namespace obe
 					(*lua)["Hook"][name] = containerMap[name].second->as<Console::Console*>();
 				else if (gt == Functions::Type::getClassType<Cursor::Cursor*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Cursor::Cursor*>();
-				else if (gt == Functions::Type::getClassType<GUI::Container*>())
-					(*lua)["Hook"][name] = containerMap[name].second->as<GUI::Container*>();
 				else if (gt == Functions::Type::getClassType<Input::KeyBinder*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyBinder*>();
 				else if (gt == Functions::Type::getClassType<Math::MathExp*>())
@@ -106,7 +100,6 @@ namespace obe
 				if (lib[0] == "Constants" || all) { CoreLib::loadConstants(lua, (all) ? std::vector<std::string>{"Constants"} : lib);    found = true; }
 				if (lib[0] == "Cursor" || all) { CoreLib::loadCursor(lua, (all) ? std::vector<std::string>{"Cursor"} : lib);    found = true; }
 				if (lib[0] == "Dialog" || all) { CoreLib::loadDialog(lua, (all) ? std::vector<std::string>{"Dialog"} : lib);    found = true; }
-				if (lib[0] == "GUI" || all) { CoreLib::loadGUI(lua, (all) ? std::vector<std::string>{"GUI"} : lib);    found = true; }
 				if (lib[0] == "KeyBind" || all) { CoreLib::loadKeyBind(lua, (all) ? std::vector<std::string>{"KeyBind"} : lib);    found = true; }
 				if (lib[0] == "LevelSprite" || all) { CoreLib::loadLevelSprite(lua, (all) ? std::vector<std::string>{"LevelSprite"} : lib);    found = true; }
 				if (lib[0] == "Light" || all) { CoreLib::loadLight(lua, (all) ? std::vector<std::string>{"Light"} : lib);    found = true; }
@@ -386,118 +379,6 @@ namespace obe
 				foundPart = true;
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
-		}
-		void CoreLib::loadGUI(kaguya::State* lua, std::vector<std::string> args)
-		{
-			registerLib(lua, Functions::Vector::join(args, "."));
-			bool importAll = args.size() == 1;
-			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["GUI"])) (*lua)["Core"]["GUI"] = kaguya::NewTable();
-			if (importAll || args[1] == "Container")
-			{
-				(*lua)["Core"]["GUI"]["Container"].setClass(kaguya::UserdataMetatable<GUI::Container>()
-					.addFunction("createWidgetContainer", &GUI::Container::createWidgetContainer)
-					.addFunction("getContainerByContainerName", &GUI::Container::getContainerByContainerName)
-					.addFunction("resizeWidgetContainer", &GUI::Container::resizeWidgetContainer)
-					.addFunction("setFocus", static_cast<void (GUI::Container::*)(std::string)>(&GUI::Container::setFocus))
-					.addFunction("setLayer", &GUI::Container::setLayer)
-					.addFunction("setAlreadyClicked", &GUI::Container::setAlreadyClicked)
-					.addFunction("hasFocus", static_cast<bool (GUI::Container::*)(std::string)>(&GUI::Container::hasFocus))
-					.addFunction("getAlreadyClicked", &GUI::Container::getAlreadyClicked)
-					.addFunction("autoFocus", &GUI::Container::autoFocus)
-					.addFunction("autoMove", &GUI::Container::autoMove)
-					.addFunction("setWindowSize", &GUI::Container::setWindowSize)
-					.addFunction("createLabel", container_createLabelProxy())
-					.addFunction("createScrollBar", static_cast<GUI::ScrollBar* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, int size, int minHeightBar, bool needButtons, std::vector<GUI::Widget*>* widgetsLinked, std::string style)> (&GUI::Container::createScrollBar))
-					.addFunction("createLoadingBar", &GUI::Container::createLoadingBar)
-					.addFunction("createCheckbox", &GUI::Container::createCheckbox)
-					.addFunction("createButton", &GUI::Container::createButton)
-					.addFunction("createDroplist", static_cast<GUI::Droplist* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, int charSize, std::string titleOrDefaultValue, bool dropListMenu, std::string font, std::string style, \
-						std::vector<std::string> list, sf::Color fontColorIdle, sf::Color fontColorHover)> (&GUI::Container::createDroplist))
-					.addFunction("createTab", &GUI::Container::createTab)
-					.addFunction("createDropbox", &GUI::Container::createDropbox)
-					.addFunction("createRadioButton", &GUI::Container::createRadioButton)
-					.addFunction("createTextInput", static_cast<GUI::TextInput* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, std::string defaultText, std::string font, int fontSize, sf::Color fontColor, bool multiLine, std::string style)> (&GUI::Container::createTextInput))
-					.addFunction("createMovable", static_cast<GUI::Movable* (GUI::Container::*)(std::string containerName, std::string ID, int posX, int posY, std::string style)> (&GUI::Container::createMovable))
-					.addFunction("loadWidgetContainerFromFile", &GUI::Container::loadWidgetContainerFromFile)
-					.addFunction("loadWidContFromFileInWidCont", &GUI::Container::loadWidContFromFileInWidCont)
-					.addFunction("removeWidget", &GUI::Container::removeWidget)
-					.addFunction("removeWidgetContainer", &GUI::Container::removeWidgetContainer)
-				);
-				foundPart = true;
-			}
-			if (importAll || args[1] == "Widget")
-			{
-				(*lua)["Core"]["GUI"]["Widget"].setClass(kaguya::UserdataMetatable<GUI::Widget>()
-					.addFunction("isClicked", &GUI::Widget::isClicked)
-					.addFunction("isClickedOutside", &GUI::Widget::isClickedOutside)
-					.addFunction("isRectClicked", &GUI::Widget::isRectClicked)
-					.addFunction("isRectClickedOutside", &GUI::Widget::isRectClickedOutside)
-					.addFunction("isRectHovering", &GUI::Widget::isRectHovering)
-					.addFunction("isHovering", &GUI::Widget::isHovering)
-					.addFunction("setPosition", &GUI::Widget::setPosition)
-					.addFunction("move", &GUI::Widget::move)
-					.addFunction("getID", &GUI::Widget::getID)
-					.addFunction("getWidgetType", &GUI::Widget::getWidgetType)
-					.addFunction("getWidgetStyle", &GUI::Widget::getWidgetStyle)
-					.addFunction("getTexts", &GUI::Widget::getTexts)
-					.addFunction("getRect", &GUI::Widget::getRect)
-					.addFunction("getRelativePosX", &GUI::Widget::getRelativePosX)
-					.addFunction("getRelativePosY", &GUI::Widget::getRelativePosY)
-					.addFunction("getDisplayed", &GUI::Widget::getDisplayed)
-					.addFunction("setDisplayed", &GUI::Widget::setDisplayed)
-					.addFunction("setAbsolute", &GUI::Widget::setAbsolute)
-					.addFunction("containerChangePos", &GUI::Widget::containerChangePos)
-					.addFunction("removeWidget", &GUI::Widget::removeWidget)
-					);
-				foundPart = true;
-			}
-			if (importAll || args[1] == "TextInput")
-			{
-				(*lua)["Core"]["GUI"]["TextInput"].setClass(kaguya::UserdataMetatable<GUI::TextInput, GUI::Widget>()
-					.addFunction("addFilter", &GUI::TextInput::addFilter)
-					.addFunction("getText", &GUI::TextInput::getText)
-					.addFunction("setText", &GUI::TextInput::setText)
-					.addFunction("getEnterPressed", &GUI::TextInput::getEnterPressed)
-					.addFunction("getHasFocus", &GUI::TextInput::getHasFocus)
-					.addFunction("getLabel", &GUI::TextInput::getLabel)
-					);
-				foundPart = true;
-			}
-			if (importAll || args[1] == "Label")
-			{
-				(*lua)["Core"]["GUI"]["Label"].setClass(kaguya::UserdataMetatable<GUI::Label, GUI::Widget>()
-					.addFunction("resetFontVars", &GUI::Label::resetFontVars)
-					.addFunction("setFont", &GUI::Label::setFont)
-					.addFunction("setText", label_setTextProxy())
-					.addFunction("setComplexText", &GUI::Label::setComplexText)
-					.addFunction("addText", &GUI::Label::addText)
-					.addFunction("setFontSize", &GUI::Label::setFontSize)
-					.addFunction("centerInRect", &GUI::Label::centerInRect)
-					.addFunction("getFontName", &GUI::Label::getFontName)
-					.addFunction("getString", &GUI::Label::getString)
-					.addFunction("getFontSize", &GUI::Label::getfontSize)
-					.addFunction("getHook", &GUI::Label::getHook)
-					.addFunction("getRichText", &GUI::Label::getRichText)
-					);
-				foundPart = true;
-			}
-			if (importAll || args[1] == "WidgetContainer")
-			{
-				(*lua)["Core"]["GUI"]["WidgetContainer"].setClass(kaguya::UserdataMetatable<GUI::WidgetContainer>()
-					.addFunction("addWidget", &GUI::WidgetContainer::addWidget)
-					.addFunction("resize", &GUI::WidgetContainer::resize)
-					.addFunction("getRect", &GUI::WidgetContainer::getRect)
-					.addFunction("move", &GUI::WidgetContainer::move)
-					.addFunction("setPosition", &GUI::WidgetContainer::setPosition)
-					.addFunction("setBackground", &GUI::WidgetContainer::setBackground)
-					.addFunction("setDisplayed", &GUI::WidgetContainer::setDisplayed)
-					.addFunction("getDisplayed", &GUI::WidgetContainer::getDisplayed)
-					.addFunction("addScrollBar", &GUI::WidgetContainer::addScrollBar)
-					);
-				foundPart = true;
-			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadGUI] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
 		void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
 		{

@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <map>
+#include <tgui/TGUI.hpp>
 
-#include "GUI.hpp"
 #include "PathResolver.hpp"
 #include "Script.hpp"
 #include "World.hpp"
@@ -27,10 +27,10 @@ namespace obe
 				static sf::Texture* GetFolderThumbnail(std::string path);
 		};
 
-		void buildObjectTab();
-		void buildRequiresObjectTab(std::string objName);
+		void buildObjectTab(tgui::Gui& gui);
+		void buildRequiresObjectTab(tgui::Gui&, std::string objName);
 		void buildObjectThroughRequire(std::string objName);
-		void loadSpriteFolder(std::string path);
+		void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path);
 		void addSpriteToWorld(std::string geid);
 	}
 }

@@ -17,11 +17,7 @@ int main(int argc, char** argv)
 
 	if (startMode == "edit")
 	{
-		obe::Functions::Coord::width = 640; obe::Functions::Coord::height = 480;
-		obe::Functions::Coord::viewWidth = 640; obe::Functions::Coord::viewHeight = 480;
 		std::string editMapName = obe::Modes::chooseMapMenu();
-		obe::Functions::Coord::width = sf::VideoMode::getDesktopMode().width;  obe::Functions::Coord::height = sf::VideoMode::getDesktopMode().height;
-		obe::Functions::Coord::viewWidth = 1920; obe::Functions::Coord::viewHeight = 1080;
 		if (editMapName != "")
 			obe::Editor::editMap(editMapName);
 	}

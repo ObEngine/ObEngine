@@ -15,7 +15,6 @@
 #include "World.hpp"
 #include "Cursor.hpp"
 #include "KeyBind.hpp"
-#include "GUI.hpp"
 #include "Console.hpp"
 #include "TimeManager.hpp"
 #include "FramerateManager.hpp"

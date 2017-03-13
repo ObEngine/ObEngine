@@ -51,12 +51,15 @@ namespace obe
 			private:
 				double lastTick = getTickSinceEpoch();
 				int fpsCounter = 0;
+				int updCounter = 0;
 				int saveFPS = 0;
+				int saveUPD = 0;
 				bool canUpdateFPS = false;
 				sf::Text text;
 				sf::Font font;
 			public:
 				void tick();
+				void uTick();
 				void loadFont(sf::Font &font);
 				sf::Text getFPS();
 				void ForceText(std::string replacement);

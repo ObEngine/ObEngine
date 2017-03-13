@@ -63,10 +63,6 @@ namespace obe
 				levelName = meta->getBaseAttribute("Level")->get<std::string>();
 				sizeX = meta->getBaseAttribute("SizeX")->get<int>();
 				sizeY = meta->getBaseAttribute("SizeY")->get<int>();
-				if (meta->contains(vili::Types::BaseAttribute, "StartX"))
-					startX = meta->getBaseAttribute("StartX")->get<int>();
-				if (meta->contains(vili::Types::BaseAttribute, "StartY"))
-					startY = meta->getBaseAttribute("StartY")->get<int>();
 			}
 			else {
 				std::cout << "<Error:World:World>[loadFromFile] : Map file : " << filename << " does not have any 'Meta' Root Attribute" << std::endl;
@@ -207,8 +203,6 @@ namespace obe
 			dataStore->at("Meta")->createBaseAttribute("Level", levelName);
 			dataStore->at("Meta")->createBaseAttribute("SizeX", sizeX);
 			dataStore->at("Meta")->createBaseAttribute("SizeY", sizeY);
-			dataStore->at("Meta")->createBaseAttribute("StartX", startX);
-			dataStore->at("Meta")->createBaseAttribute("StartY", startY);
 			(*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < backSpriteArray.size(); i++)
 			{
@@ -350,7 +344,7 @@ namespace obe
 				int layeredY = 0;
 
 				bool lightHooked = lightsMap.find(backSpriteArray[i]->getID()) != lightsMap.end();
-				Light::PointLight* cLight = NULL;
+				Light::PointLight* cLight = nullptr;
 				if (lightHooked) cLight = lightsMap[backSpriteArray[i]->getID()];
 
 				layeredX = (((backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX()) * (backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
@@ -401,7 +395,7 @@ namespace obe
 				int layeredY = 0;
 
 				bool lightHooked = lightsMap.find(frontSpriteArray[i]->getID()) != lightsMap.end();
-				Light::PointLight* cLight = NULL;
+				Light::PointLight* cLight = nullptr;
 				if (lightHooked) cLight = lightsMap[frontSpriteArray[i]->getID()];
 
 				if (Functions::Vector::isInList((std::string)"+FIX", frontSpriteArray[i]->getAttributes()))
@@ -468,6 +462,16 @@ namespace obe
 			return sizeY;
 		}
 
+		std::string World::getLevelName()
+		{
+			return levelName;
+		}
+
+		void World::setLevelName(std::string newName)
+		{
+			this->levelName = newName;
+		}
+
 		std::vector<Collision::PolygonalCollider*> World::getColliders()
 		{
 			return collidersArray;
@@ -522,16 +526,6 @@ namespace obe
 		bool World::isCameraLocked()
 		{
 			return cameraLocked;
-		}
-
-		int World::getStartX()
-		{
-			return startX;
-		}
-
-		int World::getStartY()
-		{
-			return startY;
 		}
 
 		void World::setUpdateState(bool state)
@@ -773,7 +767,7 @@ namespace obe
 					return frontSpriteArray[i];
 			}
 			std::cout << "<Error:World:World>[getSpriteByID] : Can't find Sprite : " << ID << std::endl;
-			return NULL;
+			return nullptr;
 		}
 
 		void World::deleteSpriteByID(std::string sprID, bool freeMemory)
@@ -824,7 +818,7 @@ namespace obe
 					return std::pair<Collision::PolygonalCollider*, int>(collidersArray[i], collidersArray[i]->hasPoint(x, y, 6, 6));
 				}
 			}
-			return std::pair<Collision::PolygonalCollider*, int>(NULL, 0);
+			return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
 		}
 
 		Collision::PolygonalCollider* World::getCollisionMasterByPos(int x, int y)
@@ -836,7 +830,7 @@ namespace obe
 					return collidersArray[i];
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		Collision::PolygonalCollider* World::getCollisionByID(std::string id)
@@ -848,7 +842,7 @@ namespace obe
 					return collidersArray[i];
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		std::vector<Collision::PolygonalCollider*> World::getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy)
@@ -886,7 +880,7 @@ namespace obe
 		{
 			int i = 0;
 			std::string testID = "collider" + std::to_string(collidersArray.size() + i);
-			while (getCollisionByID(testID) != NULL)
+			while (getCollisionByID(testID) != nullptr)
 			{
 				++i;
 				testID = "collider" + std::to_string(collidersArray.size() + i);
@@ -932,8 +926,6 @@ namespace obe
 				.addFunction("getSpriteByIndex", &World::getSpriteByIndex)
 				.addFunction("getSpriteByPos", &World::getSpriteByPos)
 				.addFunction("getSpritesByLayer", &World::getSpritesByLayer)
-				.addFunction("getStartX", &World::getStartX)
-				.addFunction("getStartY", &World::getStartY)
 				.addFunction("loadFromFile", &World::loadFromFile)
 				.addFunction("orderUpdateScrArray", &World::orderUpdateScrArray)
 				.addFunction("reorganizeLayers", &World::reorganizeLayers)

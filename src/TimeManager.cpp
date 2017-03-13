@@ -75,21 +75,26 @@ namespace obe
 		void FPSCounter::tick()
 		{
 			if (getTickSinceEpoch() - lastTick <= 1000)
-			{
 				fpsCounter++;
-			}
+		}
+		void FPSCounter::uTick()
+		{
+			if (getTickSinceEpoch() - lastTick <= 1000)
+				updCounter++;
 			else
 			{
-				saveFPS = fpsCounter;
-				fpsCounter = 0;
+				saveUPD = updCounter;
+				updCounter = 0;
 				lastTick = getTickSinceEpoch();
 				canUpdateFPS = true;
+				saveFPS = fpsCounter;
+				fpsCounter = 0;
 			}
 		}
 		void FPSCounter::loadFont(sf::Font &font)
 		{
 			text.setFont(font);
-			text.setCharacterSize(24);
+			text.setCharacterSize(12);
 			text.setFillColor(sf::Color::White);
 		}
 		sf::Text FPSCounter::getFPS()
@@ -97,7 +102,7 @@ namespace obe
 			if (canUpdateFPS)
 			{
 				canUpdateFPS = false;
-				text.setString(std::to_string(saveFPS) + " FPS");
+				text.setString(std::to_string(saveFPS) + " FPS / " + std::to_string(saveUPD) + " UPS");
 				return text;
 			}
 			else

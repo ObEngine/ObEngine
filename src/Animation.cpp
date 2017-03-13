@@ -184,7 +184,7 @@ namespace obe
 		}
 		void Animation::Animation::deleteRessourceManager()
 		{
-			animatorRsHook = NULL;
+			animatorRsHook = nullptr;
 		}
 		float Animation::Animation::getAnimationClock()
 		{
@@ -247,7 +247,7 @@ namespace obe
 					textureName = Functions::String::replaceString(model, "%s", std::to_string(imageList->get(i)->get<int>()));
 				else if (imageList->get(i)->getDataType() == vili::Types::String)
 					textureName = imageList->get(i)->get<std::string>();
-				if (animatorRsHook == NULL)
+				if (animatorRsHook == nullptr)
 				{
 					sf::Texture* tempTexture = new sf::Texture(); path.add(textureName).loadResource(tempTexture, System::Loaders::textureLoader);
 					if (tempTexture != nullptr)
@@ -464,7 +464,7 @@ namespace obe
 				if (key != currentAnimationName)
 				{
 					bool changeAnim = false;
-					if (currentAnimation != NULL)
+					if (currentAnimation != nullptr)
 					{
 						if (currentAnimation->isAnimationOver())
 							changeAnim = true;
@@ -503,7 +503,7 @@ namespace obe
 			{
 				allAnimationNames.push_back(listDir[i]);
 				Animation* tempAnim = new Animation;
-				if (ressourceManagerHook != NULL)
+				if (ressourceManagerHook != nullptr)
 					tempAnim->attachRessourceManager(ressourceManagerHook);
 				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.vili");
 				if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
@@ -554,7 +554,7 @@ namespace obe
 		}
 		void Animator::deleteRessourceManager()
 		{
-			ressourceManagerHook = NULL;
+			ressourceManagerHook = nullptr;
 		}
 		int Animator::getSpriteOffsetX()
 		{

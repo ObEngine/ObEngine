@@ -83,87 +83,73 @@ namespace obe
 			Script::hookCore.dropValue("KeyBinder", &keybind);
 			keybind.loadFromFile(&configFile);
 
+			//Editor Grid
+			EditorGrid editorGrid(32, 32);
+			keybind.setActionDelay("MagnetizeUp", 200);
+			keybind.setActionDelay("MagnetizeRight", 200);
+			keybind.setActionDelay("MagnetizeDown", 200);
+			keybind.setActionDelay("MagnetizeLeft", 200);
+
 			//GUI
 			sf::Event event;
-			GUI::Container* gui = new GUI::Container(&event, &window, Functions::Coord::viewWidth, Functions::Coord::viewHeight);
-			Script::hookCore.dropValue("GUI", gui);
-			gui->createWidgetContainer("Main", 2, 0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight, GUI::ContainerMovement::Fixed);
-			gui->createWidgetContainer("Score", 2, 0, 0, 1920, 1080, GUI::ContainerMovement::Fixed); //DELETE THIS IT WAS FOR PONG
-			gui->createLabel("Main", "title", Functions::Coord::width - 800, 5, "ObEngine Level Editor", "arial.ttf", 16, sf::Color(255, 255, 255));
-			gui->createButton("Main", "editorMenuBtn", Functions::Coord::width - 570, 0, true, true, "GREY");
-			GUI::ButtonEvent* menuOpened = GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->getHook();
-			GUI::Widget::getWidgetByID<GUI::Button>(std::string("editorMenuBtn"))->setText("Menu Editeur", "arial.ttf", sf::Color(255, 255, 255), 14, true);
-			std::vector<std::string> cameraMenuList = { "Movable Camera", "Free Camera" };
-			gui->createDroplist("Main", "cameraMenuList", Functions::Coord::width - 190, 0, 12, "", false, "arial.ttf", "GREY", cameraMenuList);
-			std::vector<std::string> editModeList = { "LevelSprites", "Collisions", "Play", "None" };
-			gui->createDroplist("Main", "editModeList", Functions::Coord::width - 380, 0, 12, "", false, "arial.ttf", "GREY", editModeList);
-			GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(0);
-			gui->createWidgetContainer("Editor", 3, 20, 40, Functions::Coord::viewWidth - 40, Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
-			gui->getContainerByContainerName("Editor")->setBackground(sf::Color(0, 0, 0, 200));
+			tgui::Gui gui(window);
+			gui.setFont("Data/Fonts/weblysleekuil.ttf");
+			tgui::Theme baseTheme;
+			baseTheme.load("Data/GUI/obe.style");
 
-			gui->createWidgetContainer("EditorSettings", 4, 20, 40, Functions::Coord::viewWidth - 40, Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
-			gui->getContainerByContainerName("EditorSettings")->setBackground(sf::Color(0, 0, 0, 0));
-			gui->createLabel("EditorSettings", "displayCatLbl", 25, 40, "Display Options", "arial.ttf", 25, sf::Color(255, 255, 255));
-			gui->createLabel("EditorSettings", "editorCatLbl", 400, 40, "Editor Options", "arial.ttf", 25, sf::Color(255, 255, 255));
-			gui->createLabel("EditorSettings", "mapCatLbl", 775, 40, "Map Options", "arial.ttf", 25, sf::Color(255, 255, 255));
-			gui->createCheckbox("EditorSettings", "enableCharacterCB", 425, 80, "GREY", true);
-			gui->createLabel("EditorSettings", "enableCharacterLbl", 450, 80, "Enable Character in Edit Mode", "arial.ttf", 12, sf::Color(255, 255, 255));
-			gui->createCheckbox("EditorSettings", "enableFPSCB", 40, 105, "GREY", true);
-			gui->createLabel("EditorSettings", "enableFPSLbl", 65, 105, "Enable FPS Counter", "arial.ttf", 12, sf::Color(255, 255, 255));
-			gui->createCheckbox("EditorSettings", "enableGridCB", 425, 105, "GREY", false);
-			bool* isGridEnabled = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableGridCB")->getHook();
-			gui->createLabel("EditorSettings", "enableGridLbl", 450, 105, "Enable Grid", "arial.ttf", 12, sf::Color(255, 255, 255));
-			gui->createLabel("EditorSettings", "gridDimensionsLbl", 425, 130, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiGridDimX = gui->createTextInput("EditorSettings", "gridDimensionsEX", 505, 130, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiGridDimX->addFilter(GUI::TextInputFilters::Integer);
-			guiGridDimX->setText("32");
-			gui->createLabel("EditorSettings", "gridDimensionsMULbl", 550, 130, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiGridDimY = gui->createTextInput("EditorSettings", "gridDimensionsEY", 560, 130, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiGridDimY->addFilter(GUI::TextInputFilters::Integer);
-			guiGridDimY->setText("32");
-			gui->createButton("EditorSettings", "gridDimensionsBtn", 610, 130, true, true, "APPLY");
-			gui->createLabel("EditorSettings", "gridOffsetLbl", 425, 155, "Offset :", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiGridOffX = gui->createTextInput("EditorSettings", "gridOffsetEX", 505, 155, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiGridOffX->addFilter(GUI::TextInputFilters::Integer);
-			guiGridOffX->setText("0");
-			gui->createLabel("EditorSettings", "gridOffsetMULbl", 550, 155, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiGridOffY = gui->createTextInput("EditorSettings", "gridOffsetEY", 560, 155, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiGridOffY->addFilter(GUI::TextInputFilters::Integer);
-			guiGridOffY->setText("0");
-			gui->createButton("EditorSettings", "gridOffsetBtn", 610, 155, true, true, "APPLY");
-			gui->createLabel("EditorSettings", "mapDimensionsLbl", 800, 80, "Dimensions :", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiMapDimX = gui->createTextInput("EditorSettings", "mapDimensionsEX", 880, 80, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiMapDimX->addFilter(GUI::TextInputFilters::Integer);
-			gui->createLabel("EditorSettings", "mapDimensionsMULbl", 925, 80, "x", "arial.ttf", 12, sf::Color(255, 255, 255));
-			GUI::TextInput* guiMapDimY = gui->createTextInput("EditorSettings", "mapDimensionsEY", 935, 80, "", "arial.ttf", 13, sf::Color::White, false, "TINYGREY");
-			guiMapDimY->addFilter(GUI::TextInputFilters::Integer);
-			gui->createButton("EditorSettings", "mapDimensionsBtn", 985, 80, true, true, "APPLY");
+			//Main Editor GUI
+			tgui::Panel::Ptr mainPanel = tgui::Panel::create();
 
-			GUI::WidgetContainer* editorSprites = gui->createWidgetContainer("EditorSprites", 4, 20, 40, Functions::Coord::viewWidth - 20, 
-				Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
-			editorSprites->setBackground(sf::Color(0, 0, 0, 0));
-			editorSprites->addScrollBar();
+			//Toolbar
+			tgui::Panel::Ptr titlePanel = tgui::Panel::create();
+			tgui::Label::Ptr titleLabel = tgui::Label::create();
+			tgui::Label::Ptr cursorPosLabel = tgui::Label::create();
+			tgui::Label::Ptr cameraPosLabel = tgui::Label::create();
+			tgui::Label::Ptr absolutePosLabel = tgui::Label::create();
+			tgui::Label::Ptr layerLabel = tgui::Label::create();
+			tgui::Button::Ptr editorButton = tgui::Button::create();
+			tgui::ComboBox::Ptr cameraMode = tgui::ComboBox::create();
+			tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
 
-			GUI::WidgetContainer* editorObjects = gui->createWidgetContainer("EditorObjects", 4, 20, 40, Functions::Coord::viewWidth - 20,
-				Functions::Coord::viewHeight - 80, GUI::ContainerMovement::Fixed);
-			editorObjects->setBackground(sf::Color(0, 0, 0, 0));
-			editorObjects->addScrollBar();
+			//Editor GUI
+			tgui::Panel::Ptr editorPanel = tgui::Panel::create();
+			tgui::Panel::Ptr mapPanel = tgui::Panel::create();
+			tgui::Panel::Ptr settingsPanel = tgui::Panel::create();
+			tgui::Panel::Ptr spritesPanel = tgui::Panel::create();
+			tgui::Panel::Ptr objectsPanel = tgui::Panel::create();
+			tgui::Button::Ptr mapButton = tgui::Button::create();
+			tgui::Button::Ptr settingsButton = tgui::Button::create();
+			tgui::Button::Ptr spritesButton = tgui::Button::create();
+			tgui::Button::Ptr objectsButton = tgui::Button::create();
+			tgui::Label::Ptr mapCatLabel = tgui::Label::create();
+			tgui::Label::Ptr settingsCatLabel = tgui::Label::create();
+			tgui::Label::Ptr spritesCatLabel = tgui::Label::create();
+			tgui::Label::Ptr objectsCatLabel = tgui::Label::create();
 
-			std::vector<std::string> tabList = { "Settings", "LevelSprites", "Objects" };
-			std::vector<GUI::WidgetContainer*> tabPtrList = { gui->getContainerByContainerName("EditorSettings"), 
-				gui->getContainerByContainerName("EditorSprites"), gui->getContainerByContainerName("EditorObjects") };
-			gui->createTab("Editor", "editorTab", 0, 0, 16, sf::Color(255, 255, 255), "arial.ttf", tabList, tabPtrList, "GREY");
+			//Map Settings GUI
+			tgui::Label::Ptr mapSizeLabel = tgui::Label::create();
+			tgui::Label::Ptr mapNameLabel = tgui::Label::create();
+			tgui::TextBox::Ptr mapNameInput = tgui::TextBox::create();
+			tgui::Button::Ptr mapNameButton = tgui::Button::create();
+			tgui::TextBox::Ptr mapSizeXInput = tgui::TextBox::create();
+			tgui::TextBox::Ptr mapSizeYInput = tgui::TextBox::create();
+			tgui::Button::Ptr mapSizeButton = tgui::Button::create();
 
-			gui->createWidgetContainer("EditorInfos", 1, 0, 0, 1350, 30, GUI::ContainerMovement::Fixed);
-			gui->getContainerByContainerName("EditorInfos")->setBackground(sf::Color(0, 0, 0, 200));
-			gui->createLabel("EditorInfos", "cursorPos", 150, 5, "Cursor : (0,0)", "arial.ttf", 16, sf::Color::White);
-			gui->createLabel("EditorInfos", "camPos", 350, 5, "Camera : (0,0)", "arial.ttf", 16, sf::Color::White);
-			gui->createLabel("EditorInfos", "sumPos", 550, 5, "Sum : (0,0)", "arial.ttf", 16, sf::Color::White);
-			gui->createLabel("EditorInfos", "currentLayer", 750, 5, "Layer : 0", "arial.ttf", 16, sf::Color::White);
+			//Editor Settings GUI
+			tgui::CheckBox::Ptr displayFramerateCheckbox = tgui::CheckBox::create();
+			tgui::CheckBox::Ptr enableGridCheckbox = tgui::CheckBox::create();
+			tgui::Label::Ptr gridDimensionLabel = tgui::Label::create();
+			tgui::TextBox::Ptr gridDimensionXInput = tgui::TextBox::create();
+			tgui::TextBox::Ptr gridDimensionYInput = tgui::TextBox::create();
+			tgui::Button::Ptr gridDimensionButton = tgui::Button::create();
+			tgui::Label::Ptr gridOffsetLabel = tgui::Label::create();
+			tgui::TextBox::Ptr gridOffsetXInput = tgui::TextBox::create();
+			tgui::TextBox::Ptr gridOffsetYInput = tgui::TextBox::create();
+			tgui::Button::Ptr gridOffsetButton = tgui::Button::create();
 
 			//Map Editor
-			Graphics::LevelSprite* hoveredSprite = NULL;
-			Graphics::LevelSprite* selectedSprite = NULL;
+			Graphics::LevelSprite* hoveredSprite = nullptr;
+			Graphics::LevelSprite* selectedSprite = nullptr;
 			sf::FloatRect sdBoundingRect;
 			int selectedSpriteOffsetX = 0;
 			int selectedSpriteOffsetY = 0;
@@ -171,10 +157,9 @@ namespace obe
 			int selectedSpritePickPosY = 0;
 			bool guiEditorEnabled = false;
 			bool addSpriteMode = false;
-			int editMode = 0;
 			int cameraSpeed = 30;
 			int currentLayer = 1;
-			Collision::PolygonalCollider* selectedMasterCollider = NULL;
+			Collision::PolygonalCollider* selectedMasterCollider = nullptr;
 			int colliderPtGrabbed = -1;
 			bool masterColliderGrabbed = false;
 			sf::Text sprInfo;
@@ -184,9 +169,366 @@ namespace obe
 			sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
 			sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
 
-			//Build Tabs
-			EditorTools::loadSpriteFolder("");
-			EditorTools::buildObjectTab();
+			//GUI Setup
+			int saveEditMode = -1;
+			gui.add(mainPanel);
+			mainPanel->setSize(window.getSize().x, window.getSize().y);
+			mainPanel->add(titlePanel);
+			mainPanel->add(editorPanel);
+			
+			//Titlebar setup
+			unsigned int bigFontSize = (double)window.getSize().y / (double)32.0 - 6;
+			unsigned int mediumFontSize = (double)bigFontSize / 1.3;
+			unsigned int smallFontSize = (double)bigFontSize / 2.0;
+
+			titlePanel->add(titleLabel, "titleLabel");
+			titlePanel->add(cursorPosLabel, "cursorPosLabel");
+			titlePanel->add(cameraPosLabel, "cameraPosLabel");
+			titlePanel->add(absolutePosLabel, "absolutePosLabel");
+			titlePanel->add(layerLabel, "layerLabel");
+			titlePanel->add(editorButton, "editorButton");
+			titlePanel->add(editMode, "editMode");
+			titlePanel->add(cameraMode, "cameraMode");
+
+			titlePanel->setRenderer(baseTheme.getRenderer("TransparentPanel"));
+			titlePanel->setSize("&.w", "&.h / 30");
+			titlePanel->setPosition(0, 0);
+
+			titleLabel->setPosition("120", 0);
+			titleLabel->setTextSize(bigFontSize);
+			titleLabel->setRenderer(baseTheme.getRenderer("Label"));
+			titleLabel->setText("ÖbEngine Map Editor");
+
+			cursorPosLabel->setPosition(tgui::bindRight(titleLabel) + 60, 5);
+			cursorPosLabel->setTextSize(mediumFontSize);
+			cursorPosLabel->setRenderer(baseTheme.getRenderer("Label"));
+			cursorPosLabel->setText("Cursor : (1920, 1080)");
+
+			cameraPosLabel->setPosition(tgui::bindRight(cursorPosLabel) + 60, 5);
+			cameraPosLabel->setTextSize(mediumFontSize);
+			cameraPosLabel->setRenderer(baseTheme.getRenderer("Label"));
+			cameraPosLabel->setText("Camera : (10000, 10000)");
+
+			absolutePosLabel->setPosition(tgui::bindRight(cameraPosLabel) + 60, 5);
+			absolutePosLabel->setTextSize(mediumFontSize);
+			absolutePosLabel->setRenderer(baseTheme.getRenderer("Label"));
+			absolutePosLabel->setText("Sum : (10000, 10000)");
+
+			layerLabel->setPosition(tgui::bindRight(absolutePosLabel) + 60, 5);
+			layerLabel->setTextSize(mediumFontSize);
+			layerLabel->setRenderer(baseTheme.getRenderer("Label"));
+			layerLabel->setText("Layer : 10");
+
+			cameraMode->addItem("Movable Camera");
+			cameraMode->addItem("Free Camera");
+			cameraMode->setSelectedItem("Movable Camera");
+			cameraMode->setSize("200", "&.h");
+			cameraMode->setPosition("&.w - w", 0);
+			cameraMode->setTextSize(mediumFontSize);
+			cameraMode->setRenderer(baseTheme.getRenderer("ComboBox"));
+			
+			editMode->addItem("LevelSprites");
+			editMode->addItem("Collisions");
+			editMode->addItem("Play");
+			editMode->addItem("None");
+			editMode->setSelectedItem("None");
+			editMode->setPosition(tgui::bindLeft(cameraMode) - tgui::bindWidth(editMode) - 1, 0);
+			editMode->setSize("200", "&.h");
+			editMode->setTextSize(mediumFontSize);
+			editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
+
+			editorButton->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(editorButton) - 1, 0);
+			editorButton->setSize(190, "&.h");
+			editorButton->setText("Editor Menu");
+			editorButton->setTextSize(mediumFontSize);
+			editorButton->setRenderer(baseTheme.getRenderer("Button"));
+
+			editorButton->connect("pressed", [&guiEditorEnabled]() { guiEditorEnabled = !guiEditorEnabled; });
+
+			//Editor Menu Setup
+			editorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			editorPanel->setSize("&.w - 100", "&.h - 100");
+			editorPanel->setPosition(50, 70);
+
+			editorPanel->add(mapPanel, "mapPanel");
+			editorPanel->add(settingsPanel, "settingsPanel");
+			editorPanel->add(spritesPanel, "spritesPanel");
+			editorPanel->add(objectsPanel, "objectsPanel");
+			editorPanel->add(mapButton, "mapButton");
+			editorPanel->add(settingsButton, "settingsButton");
+			editorPanel->add(spritesButton, "spritesPanel");
+			editorPanel->add(objectsButton, "objectsPanel");
+
+			mapButton->setPosition(0, 0);
+			mapButton->setSize("&.w / 10", 30);
+			mapButton->setRenderer(baseTheme.getRenderer("Button"));
+			mapButton->setText("Map");
+			mapButton->setTextSize(mediumFontSize);
+
+			settingsButton->setPosition(tgui::bindRight(mapButton), 0);
+			settingsButton->setSize("&.w / 10", 30);
+			settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+			settingsButton->setText("Settings");
+			settingsButton->setTextSize(mediumFontSize);
+
+			spritesButton->setPosition(tgui::bindRight(settingsButton), 0);
+			spritesButton->setSize("&.w / 10", 30);
+			spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+			spritesButton->setText("Sprites");
+			spritesButton->setTextSize(mediumFontSize);
+
+			objectsButton->setPosition(tgui::bindRight(spritesButton), 0);
+			objectsButton->setSize("&.w / 10", 30);
+			objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+			objectsButton->setText("Objects");
+			objectsButton->setTextSize(mediumFontSize);
+
+			mapPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			mapPanel->setSize("&.w", "&.h - 30");
+			mapPanel->setPosition(0, 30);
+
+			settingsPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			settingsPanel->setSize("&.w", "&.h - 30");
+			settingsPanel->setPosition(0, 30);
+
+			spritesPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			spritesPanel->setSize("&.w", "&.h - 30");
+			spritesPanel->setPosition(0, 30);
+
+			objectsPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			objectsPanel->setSize("&.w", "&.h - 30");
+			objectsPanel->setPosition(0, 30);
+
+			mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+			settingsPanel->hide();
+			spritesPanel->hide();
+			objectsPanel->hide();
+
+			mapButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton, 
+				&mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]() { 
+				mapPanel->show(); settingsPanel->hide(); spritesPanel->hide(); objectsPanel->hide();
+				mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+				settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+				spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+				objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+			});
+
+			settingsButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
+				&mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]() {
+				mapPanel->hide(); settingsPanel->show(); spritesPanel->hide(); objectsPanel->hide();
+				mapButton->setRenderer(baseTheme.getRenderer("Button"));
+				settingsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+				spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+				objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+			});
+
+			spritesButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
+				&mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]() {
+				mapPanel->hide(); settingsPanel->hide(); spritesPanel->show(); objectsPanel->hide();
+				mapButton->setRenderer(baseTheme.getRenderer("Button"));
+				settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+				spritesButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+				objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+			});
+
+			objectsButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
+				&mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]() {
+				mapPanel->hide(); settingsPanel->hide(); spritesPanel->hide(); objectsPanel->show();
+				mapButton->setRenderer(baseTheme.getRenderer("Button"));
+				settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+				spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+				objectsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+			});
+
+			//Map Tab Setup
+			mapPanel->add(mapCatLabel);
+			mapPanel->add(mapNameLabel);
+			mapPanel->add(mapNameInput);
+			mapPanel->add(mapNameButton);
+			mapPanel->add(mapSizeLabel);
+			mapPanel->add(mapSizeXInput);
+			mapPanel->add(mapSizeYInput);
+			mapPanel->add(mapSizeButton);
+			
+			mapCatLabel->setPosition(20, 20);
+			mapCatLabel->setTextSize(bigFontSize);
+			mapCatLabel->setRenderer(baseTheme.getRenderer("Label"));
+			mapCatLabel->setText("[ Map Settings ]");
+
+			mapNameLabel->setPosition(60, tgui::bindBottom(mapCatLabel) + 20);
+			mapNameLabel->setTextSize(mediumFontSize);
+			mapNameLabel->setRenderer(baseTheme.getRenderer("Label"));
+			mapNameLabel->setText("Map Name : ");
+
+			mapNameInput->setPosition(tgui::bindRight(mapNameLabel) + 20, tgui::bindTop(mapNameLabel));
+			mapNameInput->setSize(160, mediumFontSize + 4);
+			mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			mapNameButton->setPosition(tgui::bindRight(mapNameInput) + 20, tgui::bindTop(mapNameLabel) + 4);
+			mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+			mapNameButton->setSize(16, 16);
+			mapNameButton->connect("pressed", [&baseTheme, &world, &mapNameInput]() {
+				if (mapNameInput->getText() != "") {
+					world.setLevelName(mapNameInput->getText());
+					mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
+				}
+				else {
+					mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+			});
+
+			mapSizeLabel->setPosition(60, tgui::bindBottom(mapNameLabel) + 20);
+			mapSizeLabel->setTextSize(mediumFontSize);
+			mapSizeLabel->setRenderer(baseTheme.getRenderer("Label"));
+			mapSizeLabel->setText("Map Size : ");
+
+			mapSizeXInput->setPosition(tgui::bindRight(mapSizeLabel) + 20, tgui::bindTop(mapSizeLabel));
+			mapSizeXInput->setSize(80, mediumFontSize + 4);
+			mapSizeXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			mapSizeYInput->setPosition(tgui::bindRight(mapSizeXInput) + 20, tgui::bindTop(mapSizeLabel));
+			mapSizeYInput->setSize(80, mediumFontSize + 4);
+			mapSizeYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			mapSizeButton->setPosition(tgui::bindRight(mapSizeYInput) + 20, tgui::bindTop(mapSizeLabel) + 4);
+			mapSizeButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+			mapSizeButton->setSize(16, 16);
+
+			mapSizeButton->connect("pressed", [&baseTheme, &mapSizeXInput, &mapSizeYInput, &world]() {
+				if (Functions::String::isStringInt(mapSizeXInput->getText()) && Functions::String::isStringInt(mapSizeYInput->getText())) {
+					std::string xMapSize = mapSizeXInput->getText();
+					std::string yMapSize = mapSizeYInput->getText();
+					world.setSize(std::stoi(xMapSize), std::stoi(yMapSize));
+					mapSizeXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					mapSizeYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					return;
+				}
+				if (!Functions::String::isStringInt(mapSizeXInput->getText())) {
+					mapSizeXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+				if (!Functions::String::isStringInt(mapSizeYInput->getText())) {
+					mapSizeYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+			});
+
+			//Settings Tab Setup
+			settingsPanel->add(settingsCatLabel);
+
+			settingsPanel->add(displayFramerateCheckbox, "displayFramerateCheckbox");
+			settingsPanel->add(enableGridCheckbox, "enableGridCheckbox");
+			settingsPanel->add(gridDimensionLabel, "gridDimensionLabel");
+			settingsPanel->add(gridDimensionXInput, "gridDimensionXInput");
+			settingsPanel->add(gridDimensionYInput, "gridDimensionYInput");
+			settingsPanel->add(gridDimensionButton, "gridDimensionButton");
+			settingsPanel->add(gridOffsetLabel, "gridOffsetLabel");
+			settingsPanel->add(gridOffsetXInput, "gridOffsetXInput");
+			settingsPanel->add(gridOffsetYInput, "gridOffsetYInput");
+			settingsPanel->add(gridOffsetButton, "gridOffsetButton");
+			
+			settingsCatLabel->setPosition(20, 20);
+			settingsCatLabel->setTextSize(bigFontSize);
+			settingsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
+			settingsCatLabel->setText("[ Global Settings ]");
+
+			displayFramerateCheckbox->setPosition(60, tgui::bindBottom(settingsCatLabel) + 20);
+			displayFramerateCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+			displayFramerateCheckbox->setSize(16, 16);
+			displayFramerateCheckbox->setTextSize(mediumFontSize);
+			displayFramerateCheckbox->setText("Display Framerate ?");
+
+			enableGridCheckbox->setPosition(60, tgui::bindBottom(displayFramerateCheckbox) + 20);
+			enableGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+			enableGridCheckbox->setSize(16, 16);
+			enableGridCheckbox->setTextSize(mediumFontSize);
+			enableGridCheckbox->setText("Enabled Grid ?");
+
+			gridDimensionLabel->setPosition(60, tgui::bindBottom(enableGridCheckbox) + 20);
+			gridDimensionLabel->setTextSize(mediumFontSize);
+			gridDimensionLabel->setRenderer(baseTheme.getRenderer("Label"));
+			gridDimensionLabel->setText("Grid Cell Size : ");
+
+			gridDimensionXInput->setPosition(tgui::bindRight(gridDimensionLabel) + 20, tgui::bindTop(gridDimensionLabel));
+			gridDimensionXInput->setSize(80, mediumFontSize + 4);
+			gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			gridDimensionYInput->setPosition(tgui::bindRight(gridDimensionXInput) + 20, tgui::bindTop(gridDimensionLabel));
+			gridDimensionYInput->setSize(80, mediumFontSize + 4);
+			gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			gridDimensionButton->setPosition(tgui::bindRight(gridDimensionYInput) + 20, tgui::bindTop(gridDimensionLabel) + 4);
+			gridDimensionButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+			gridDimensionButton->setSize(16, 16);
+
+			gridDimensionButton->connect("pressed", [&baseTheme, &gridDimensionXInput, &gridDimensionYInput, &editorGrid]() {
+				if (Functions::String::isStringInt(gridDimensionXInput->getText()) && Functions::String::isStringInt(gridDimensionYInput->getText())) {
+					std::string xGridSize = gridDimensionXInput->getText();
+					std::string yGridSize = gridDimensionYInput->getText();
+					editorGrid.setSize(std::stoi(xGridSize), std::stoi(yGridSize));
+					gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					return;
+				}
+				if (!Functions::String::isStringInt(gridDimensionXInput->getText())) {
+					gridDimensionXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+				if (!Functions::String::isStringInt(gridDimensionYInput->getText())) {
+					gridDimensionYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+			});
+
+			gridOffsetLabel->setPosition(60, tgui::bindBottom(gridDimensionLabel) + 20);
+			gridOffsetLabel->setTextSize(mediumFontSize);
+			gridOffsetLabel->setRenderer(baseTheme.getRenderer("Label"));
+			gridOffsetLabel->setText("Grid Cell Offset : ");
+
+			gridOffsetXInput->setPosition(tgui::bindRight(gridOffsetLabel) + 20, tgui::bindTop(gridOffsetLabel));
+			gridOffsetXInput->setSize(80, mediumFontSize + 4);
+			gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			gridOffsetYInput->setPosition(tgui::bindRight(gridOffsetXInput) + 20, tgui::bindTop(gridOffsetLabel));
+			gridOffsetYInput->setSize(80, mediumFontSize + 4);
+			gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+
+			gridOffsetButton->setPosition(tgui::bindRight(gridOffsetYInput) + 20, tgui::bindTop(gridOffsetLabel) + 4);
+			gridOffsetButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+			gridOffsetButton->setSize(16, 16);
+
+			gridOffsetButton->connect("pressed", [&baseTheme, &gridOffsetXInput, &gridOffsetYInput, &editorGrid]() {
+				if (Functions::String::isStringInt(gridOffsetXInput->getText()) && Functions::String::isStringInt(gridOffsetYInput->getText())) {
+					std::string xGridOffset = gridOffsetXInput->getText();
+					std::string yGridOffset = gridOffsetYInput->getText();
+					editorGrid.setOffset(std::stoi(xGridOffset), std::stoi(yGridOffset));
+					gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+					return;
+				}
+				if (!Functions::String::isStringInt(gridOffsetXInput->getText())) {
+					gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+				if (!Functions::String::isStringInt(gridOffsetYInput->getText())) {
+					gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+				}
+			});
+
+			//Sprites Tab Setup
+			spritesPanel->add(spritesCatLabel);
+
+			spritesCatLabel->setPosition(20, 20);
+			spritesCatLabel->setTextSize(bigFontSize);
+			spritesCatLabel->setRenderer(baseTheme.getRenderer("Label"));
+			spritesCatLabel->setText("[ Sprites Settings ]");
+
+			EditorTools::loadSpriteFolder(spritesPanel, spritesCatLabel, "");
+
+			//Objects Tab Setup
+			objectsPanel->add(objectsCatLabel);
+
+			objectsCatLabel->setPosition(20, 20);
+			objectsCatLabel->setTextSize(bigFontSize);
+			objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
+			objectsCatLabel->setText("[ Objects Settings ]");
+
+			EditorTools::buildObjectTab(gui);
 
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
@@ -196,34 +538,15 @@ namespace obe
 
 			Light::initLights();
 
-			EditorGrid editorGrid(32, 32);
-			keybind.setActionDelay("MagnetizeUp", 200);
-			keybind.setActionDelay("MagnetizeRight", 200);
-			keybind.setActionDelay("MagnetizeDown", 200);
-			keybind.setActionDelay("MagnetizeLeft", 200);
-			GUI::Widget::getWidgetByID<GUI::Button>("gridDimensionsBtn")->bindFunction([&editorGrid]() {
-				std::string dimSX = GUI::Widget::getWidgetByID<GUI::TextInput>("gridDimensionsEX")->getText();
-				std::string dimSY = GUI::Widget::getWidgetByID<GUI::TextInput>("gridDimensionsEY")->getText();
-				int dimX = std::stoi(dimSX != "" ? dimSX : "32");
-				int dimY = std::stoi(dimSY != "" ? dimSY : "32");
-				editorGrid.setSize(dimX, dimY);
-			});
-			GUI::Widget::getWidgetByID<GUI::Button>("gridOffsetBtn")->bindFunction([&editorGrid]() {
-				std::string offSX = GUI::Widget::getWidgetByID<GUI::TextInput>("gridOffsetEX")->getText();
-				std::string offSY = GUI::Widget::getWidgetByID<GUI::TextInput>("gridOffsetEY")->getText();
-				int offX = std::stoi(offSX != "" ? offSX : "0");
-				int offY = std::stoi(offSY != "" ? offSY : "0");
-				editorGrid.setOffset(offX, offY);
-			});
-
 			world.loadFromFile(mapName);
+			
+			mapNameInput->setText(world.getLevelName());
+			mapSizeXInput->setText(std::to_string(world.getSizeX()));
+			mapSizeYInput->setText(std::to_string(world.getSizeY()));
 
-			guiMapDimX->setText(std::to_string(world.getSizeX()));
-			guiMapDimY->setText(std::to_string(world.getSizeY()));
-
-			GUI::Widget::getWidgetByID<GUI::Button>("mapDimensionsBtn")->bindFunction([&world]() {
-				std::string dimSX = GUI::Widget::getWidgetByID<GUI::TextInput>("mapDimensionsEX")->getText();
-				std::string dimSY = GUI::Widget::getWidgetByID<GUI::TextInput>("mapDimensionsEY")->getText();
+			mapSizeButton->connect("pressed", [&world, &mapSizeXInput, &mapSizeYInput]() {
+				std::string dimSX = mapSizeXInput->getText();
+				std::string dimSY = mapSizeYInput->getText();
 				int dimX = std::stoi(dimSX != "" ? dimSX : "1920");
 				int dimY = std::stoi(dimSY != "" ? dimSY : "1080");
 				world.setSize(dimX, dimY);
@@ -237,36 +560,36 @@ namespace obe
 				//GUI Actions
 				keybind.setEnabled(!gameConsole.isConsoleVisible());
 				if (keybind.isActionToggled("CamMovable"))
-					GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(0);
+					cameraMode->setSelectedItemByIndex(0);
 				else if (keybind.isActionToggled("CamFree"))
-					GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->setSelected(1);
+					cameraMode->setSelectedItemByIndex(1);
 
 				if (keybind.isActionToggled("SpriteMode"))
 				{
-					GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(0);
+					editMode->setSelectedItemByIndex(0);
 					editMode = 0;
 				}
 				else if (keybind.isActionToggled("CollisionMode"))
 				{
-					GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(1);
-					editMode = 2;
+					editMode->setSelectedItemByIndex(1);
 				}
 
-				if (GUI::Widget::getWidgetByID<GUI::Button>("editorMenuBtn")->getJustClicked())
-				{
-					guiEditorEnabled = !guiEditorEnabled;
+				drawFPS = displayFramerateCheckbox->isChecked();
+
+				if (guiEditorEnabled && saveEditMode < 0) {
+					saveEditMode = editMode->getSelectedItemIndex();
+					editMode->setSelectedItemByIndex(3);
 				}
-
-				if (GUI::Widget::getWidgetByID<GUI::Checkbox>("enableFPSCB")->getToggled())
-					drawFPS = GUI::Widget::getWidgetByID<GUI::Checkbox>("enableFPSCB")->isChecked();
-
-				if (guiEditorEnabled)
-					GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->setSelected(3);
+				else if (!guiEditorEnabled && saveEditMode > 0) {
+					editMode->setSelectedItemByIndex(saveEditMode);
+					saveEditMode = -1;
+				}
+					
 
 				//Updates
 				if (!gameConsole.isConsoleVisible())
 				{
-					if (GUI::Widget::getWidgetByID<GUI::Droplist>("cameraMenuList")->getCurrentSelected() == "Movable Camera")
+					if (cameraMode->getSelectedItem() == "Movable Camera")
 					{
 						world.setCameraLock(true);
 						if (keybind.isActionEnabled("CamLeft") && keybind.isActionEnabled("CamRight"))
@@ -301,46 +624,47 @@ namespace obe
 					}
 				}
 
-				if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() != "LevelSprites" && selectedSprite != NULL)
+				if (editMode->getSelectedItem() != "LevelSprites")
 				{
-					selectedSprite->setColor(sf::Color::White);
-					selectedSprite = NULL;
-					hoveredSprite = NULL;
+					if (selectedSprite != nullptr)
+						selectedSprite->setColor(sf::Color::White);
+					selectedSprite = nullptr;
+					hoveredSprite = nullptr;
 					selectedSpriteOffsetX = 0;
 					selectedSpriteOffsetY = 0;
 					sprInfo.setString("");
 				}
 
 				//Sprite Editing
-				if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "LevelSprites")
+				if (editMode->getSelectedItem() == "LevelSprites")
 				{
 					world.enableShowCollision(true, true, false, false);
 
 					//Layer Change
-					if (selectedSprite == NULL && keybind.isActionToggled("LayerInc"))
+					if (selectedSprite == nullptr && keybind.isActionToggled("LayerInc"))
 					{
 						currentLayer += 1;
 						if (hoveredSprite != nullptr)
 						{
 							hoveredSprite->setColor(sf::Color::White);
-							hoveredSprite = NULL;
+							hoveredSprite = nullptr;
 							sprInfo.setString("");
 						}
 					}
-					if (selectedSprite == NULL && keybind.isActionToggled("LayerDec"))
+					if (selectedSprite == nullptr && keybind.isActionToggled("LayerDec"))
 					{
 						currentLayer -= 1;
 						if (hoveredSprite != nullptr)
 						{
 							hoveredSprite->setColor(sf::Color::White);
-							hoveredSprite = NULL;
+							hoveredSprite = nullptr;
 							sprInfo.setString("");
 						}
 					}
 					//Sprite Hover
-					if (hoveredSprite == NULL && selectedSprite == NULL)
+					if (hoveredSprite == nullptr && selectedSprite == nullptr)
 					{
-						if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer) != NULL)
+						if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer) != nullptr)
 						{
 							hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
 							sdBoundingRect = hoveredSprite->getRect();
@@ -357,7 +681,7 @@ namespace obe
 							sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
 						}
 					}
-					else if (hoveredSprite != NULL && selectedSprite == NULL)
+					else if (hoveredSprite != nullptr && selectedSprite == nullptr)
 					{
 						sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
 						sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
@@ -368,7 +692,7 @@ namespace obe
 						if (outHover)
 						{
 							hoveredSprite->setColor(sf::Color::White);
-							hoveredSprite = NULL;
+							hoveredSprite = nullptr;
 							sprInfo.setString("");
 						}
 					}
@@ -490,7 +814,7 @@ namespace obe
 				}
 
 				//Collision Edition
-				if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
+				if (editMode->getSelectedItem() == "Collisions")
 				{
 					bool deletedCollision = false;
 					world.enableShowCollision(true, true, true, true);
@@ -628,27 +952,21 @@ namespace obe
 						world.createCollisionAtPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
 					}
 				}
-				//Play Edition
-				if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
-				{
-					if (cursor.getClicked("Right"))
-					{
-						/*character.cancelMoves();
-						character.setPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());*/
-					}
-				}
 
 				//GUI Update
-				GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
+				/*GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string((int)world.getCamY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("sumPos")->setComplexText("<color:255,255,255>Sum : (<color:0,255,0>" + 
 					std::to_string((int)world.getCamX() + (int)cursor.getX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string((int)world.getCamY() + (int)cursor.getY()) + "<color:255,255,255>)");
-				GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));
-				gui->getContainerByContainerName("Editor")->setDisplayed(guiEditorEnabled);
-				gui->updateAllContainer();
+				GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));*/
+
+				if (guiEditorEnabled)
+					editorPanel->show();
+				else
+					editorPanel->hide();
 
 				//Events
 				Script::TriggerDatabase::GetInstance()->update();
@@ -657,14 +975,15 @@ namespace obe
 				keybind.update();
 				cursor.update();
 				gameConsole.update();
-				if (drawFPS) fps.tick();
+				if (drawFPS) fps.uTick();
+				if (drawFPS && framerateManager.doRender()) fps.tick();
 
 				//Triggers Handling
 				networkHandler.handleTriggers();
 				cursor.handleTriggers();
 				keybind.handleTriggers();
 
-				if (*isGridEnabled)
+				if (enableGridCheckbox->isChecked())
 				{
 					editorGrid.setCamOffsetX(-world.getCamX());
 					editorGrid.setCamOffsetY(-world.getCamY());
@@ -682,7 +1001,7 @@ namespace obe
 					world.getScriptEngine()->dostring(gameConsole.getCommand());
 
 				//Click&Press Trigger
-				if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Play")
+				if (editMode->getSelectedItem() == "Play")
 				{
 					if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 					{
@@ -710,63 +1029,62 @@ namespace obe
 				{
 					switch (event.type)
 					{
-					case sf::Event::Closed:
-						window.close();
-						break;
-
-					case sf::Event::KeyPressed:
-						if (event.key.code == sf::Keyboard::Escape)
+						case sf::Event::Closed:
 							window.close();
-						if (event.key.code == sf::Keyboard::Return)
-						{
-							if (textDisplay.textRemaining() && !gameConsole.isConsoleVisible())
-								textDisplay.next();
-						}
-						if (event.key.code == sf::Keyboard::S)
-						{
-							if (event.key.control)
+							break;
+
+						case sf::Event::KeyPressed:
+							if (event.key.code == sf::Keyboard::Escape)
+								window.close();
+							if (event.key.code == sf::Keyboard::Return)
 							{
-								world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
-								textDisplay.sendToRenderer("MapSaver", { { "text", "File <" + mapName + "> Saved !" } });
+								if (textDisplay.textRemaining() && !gameConsole.isConsoleVisible())
+									textDisplay.next();
 							}
-						}
-						if (event.key.code == sf::Keyboard::V)
-						{
-							if (event.key.control)
+							if (event.key.code == sf::Keyboard::S)
 							{
-								std::string clipboard_content;
-								clip::get_text(clipboard_content);
-								gameConsole.insertInputBufferContent(clipboard_content);
+								if (event.key.control)
+								{
+									world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+									textDisplay.sendToRenderer("MapSaver", { { "text", "File <" + mapName + "> Saved !" } });
+								}
 							}
-						}
-						if (event.key.code == sf::Keyboard::F1)
-							gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
-						if (event.key.code == sf::Keyboard::Up)
-							gameConsole.upHistory();
-						if (event.key.code == sf::Keyboard::Down)
-							gameConsole.downHistory();
-						if (event.key.code == sf::Keyboard::Left && gameConsole.isConsoleVisible())
-							gameConsole.moveCursor(-1);
-						if (event.key.code == sf::Keyboard::Right && gameConsole.isConsoleVisible())
-							gameConsole.moveCursor(1);
-						break;
-					case sf::Event::TextEntered:
-						//triggerDatabaseCore.setTriggerState("KeyPress", true);
-						if (gameConsole.isConsoleVisible())
-							gameConsole.inputKey(event.text.unicode);
-						break;
-					case sf::Event::MouseWheelMoved:
-						//triggerDatabaseCore.setTriggerState("MouseWheelScroll", true);
-						if (event.mouseWheel.delta >= scrollSensitive)
-						{
-							gameConsole.scroll(-1);
-						}
-						else if (event.mouseWheel.delta <= -scrollSensitive)
-						{
-							gameConsole.scroll(1);
-						}
-						break;
+							if (event.key.code == sf::Keyboard::V)
+							{
+								if (event.key.control)
+								{
+									std::string clipboard_content;
+									clip::get_text(clipboard_content);
+									gameConsole.insertInputBufferContent(clipboard_content);
+								}
+							}
+							if (event.key.code == sf::Keyboard::F1)
+								gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
+							if (event.key.code == sf::Keyboard::Up)
+								gameConsole.upHistory();
+							if (event.key.code == sf::Keyboard::Down)
+								gameConsole.downHistory();
+							if (event.key.code == sf::Keyboard::Left && gameConsole.isConsoleVisible())
+								gameConsole.moveCursor(-1);
+							if (event.key.code == sf::Keyboard::Right && gameConsole.isConsoleVisible())
+								gameConsole.moveCursor(1);
+							break;
+						case sf::Event::TextEntered:
+							if (gameConsole.isConsoleVisible())
+								gameConsole.inputKey(event.text.unicode);
+							break;
+						case sf::Event::MouseWheelMoved:
+							if (event.mouseWheel.delta >= scrollSensitive)
+							{
+								gameConsole.scroll(-1);
+							}
+							else if (event.mouseWheel.delta <= -scrollSensitive)
+							{
+								gameConsole.scroll(1);
+							}
+							break;
 					}
+					gui.handleEvent(event);
 				}
 				//Draw Everything Here
 				if (framerateManager.doRender())
@@ -774,7 +1092,7 @@ namespace obe
 					window.clear();
 					world.display(&window);
 					//Show Collision
-					if (GUI::Widget::getWidgetByID<GUI::Droplist>("editModeList")->getCurrentSelected() == "Collisions")
+					if (editMode->getSelectedItem() == "Collisions")
 						world.enableShowCollision(true);
 					else
 						world.enableShowCollision(false);
@@ -788,7 +1106,7 @@ namespace obe
 						sprBorder.setOutlineThickness(2);
 						window.draw(sprBorder);
 					}
-					if (*isGridEnabled)
+					if (enableGridCheckbox->isChecked())
 						editorGrid.draw(&window);
 					//HUD & GUI
 					if (sprInfo.getString() != "")
@@ -796,7 +1114,7 @@ namespace obe
 						window.draw(sprInfoBackground);
 						window.draw(sprInfo);
 					}
-					gui->drawAllContainer(&window);
+					gui.draw();
 					if (drawFPS)
 						window.draw(fps.getFPS());
 
@@ -814,7 +1132,6 @@ namespace obe
 					window.display();
 				}
 			}
-			delete gui;
 			window.close();
 		}
 

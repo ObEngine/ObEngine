@@ -1,5 +1,4 @@
 Include(Obe);
 
 Mount:
-    0:$Workspace("WorkspaceName" | 1)
-    1:$Path("" | 0)
+    Root:$Path("" | 0)

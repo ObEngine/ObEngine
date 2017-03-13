@@ -37,8 +37,6 @@ namespace obe
 				double camX = 0;
 				double camY = 0;
 				bool cameraLocked = true;
-				int startX = 0;
-				int startY = 0;
 				kaguya::State* worldScriptEngine;
 				bool updateState = true;
 
@@ -67,8 +65,8 @@ namespace obe
 				void setSize(int sizeX, int sizeY);
 				int getSizeX();
 				int getSizeY();
-				int getStartX();
-				int getStartY();
+				std::string getLevelName();
+				void setLevelName(std::string newName);
 				void setUpdateState(bool state);
 				//GameObjects
 				Script::GameObject* getGameObject(std::string id);

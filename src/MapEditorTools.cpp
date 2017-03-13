@@ -4,10 +4,6 @@ namespace obe
 {
 	namespace EditorTools
 	{
-		std::map<std::string, GUI::Button*> addSprBtnGUIMap;
-		std::map<std::string, GUI::Button*> addObjBtnGUIMap;
-		std::map<std::string, std::map<std::string, GUI::Button*>> addFileGUIMap;
-
 		Thumbnailer* Thumbnailer::_instance = nullptr;
 		Thumbnailer::Thumbnailer()
 		{
@@ -79,10 +75,8 @@ namespace obe
 			
 		}
 
-		void buildObjectTab()
+		void buildObjectTab(tgui::Gui& gui)
 		{
-			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
-			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
 			std::vector<std::string> allGameObjects;
 			System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
 			const int btnSize = 256;
@@ -98,23 +92,24 @@ namespace obe
 					xpos -= (1920 - (btnSize + btnOff + xOff));
 				xpos = std::floor((double)xpos / (double)(btnSize + btnOff)) * (btnSize + btnOff);
 				xpos += xOff; ypos += yOff;
-				GUI::Button* currentObj = gui->createButton("EditorObjects", currentObjName, xpos, ypos, true, true, "OBJECT");
-				currentObj->setText(currentObjName, "weblysleekuil.ttf", sf::Color::White, 18, true);
-				currentObj->bindFunction([currentObjName]() { 
-					buildRequiresObjectTab(currentObjName);
+				tgui::Button::Ptr currentObj = tgui::Button::create();
+				currentObj->setTextSize(18);
+				currentObj->setText(currentObjName);
+				currentObj->setPosition(xpos, ypos);
+				currentObj->connect("pressed", [&gui, currentObjName]() {
+					buildRequiresObjectTab(gui, currentObjName);
 				});
 			}
 		}
 
-		void buildRequiresObjectTab(std::string objName)
+		void buildRequiresObjectTab(tgui::Gui& gui, std::string objName)
 		{
 			std::cout << "Call Require Creation for : " << objName << std::endl;
 			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
-			if (requires != nullptr)
+			/*if (requires != nullptr)
 			{
-				GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
 				std::string containerName = "Requires";
-				if (gui->getContainerByContainerName(containerName) != nullptr)
+				if (gui.getContainer(containerName)-> != nullptr)
 				{
 					gui->getContainerByContainerName(containerName)->removeAllWidget(true);
 					gui->getContainerByContainerName(containerName)->setDisplayed(true);
@@ -171,12 +166,12 @@ namespace obe
 			{
 				std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 				Script::GameObject* obj = Script::hookCore.getPointer("World")->as<World::World*>()->createGameObject(key, objName);
-			}
+			}*/
 		}
 
 		void buildObjectThroughRequire(std::string objName)
 		{
-			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+			/*vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
 			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
 			Cursor::Cursor* cursor = Script::hookCore.getPointer("Cursor")->as<Cursor::Cursor*>();
 			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
@@ -202,14 +197,15 @@ namespace obe
 			}
 			else if (newGameObject->doesHaveLevelSprite()) {
 				std::cout << "Position of GO::LS set !" << std::endl;
-			}
+			}*/
 		}
 
-		void loadSpriteFolder(std::string path) 
+		void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path)
 		{
-			GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
-			gui->getContainerByContainerName("EditorSprites")->removeAllWidget(true);
-			gui->getContainerByContainerName("EditorSprites")->addScrollBar();
+			spritesPanel->removeAllWidgets();
+
+			spritesPanel->add(spritesCatLabel);
+
 			std::vector<std::string> fileList;
 			std::vector<std::string> folderList;
 			System::Path("Sprites/LevelSprites" + path).loadResource(&folderList, System::Loaders::dirPathLoader);
@@ -221,17 +217,19 @@ namespace obe
 			const int yOff = 40;
 			int elemIndex = 0;
 			int xpos = (0 * (sprSize + sprOff)) + xOff;
-			int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
-			GUI::Button* backButton = gui->createButton("EditorSprites", "LS_ELEM_BACK", xpos, ypos, true, false, "GREY");
-			backButton->bindFunction([path] {
-				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
-				loadSpriteFolder(Functions::Vector::join(splittedPath, "/", 0, 1)); 
-			});
+			int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
+			tgui::Picture::Ptr backButton = tgui::Picture::create();
+			spritesPanel->add(backButton, "LS_ELEM_BACK");
 			sf::Texture sprback; sprback.loadFromFile("Sprites/Others/back.png");
-			
-			backButton->setTextureAll(sprback);
+			backButton->setTexture(sprback);
+			backButton->setPosition(xpos, ypos);
 
-			for (std::string element : folderList) {
+			backButton->connect("Clicked", [&spritesPanel, &spritesCatLabel, path] {
+				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
+				loadSpriteFolder(spritesPanel, spritesCatLabel, Functions::Vector::join(splittedPath, "/", 0, 1));
+			});
+
+			/*for (std::string element : folderList) {
 				int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
 				int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
 				while (xpos > (1920 - (sprSize + sprOff)))
@@ -239,9 +237,13 @@ namespace obe
 				xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
 				xpos += xOff;
 				ypos += yOff;
-				GUI::Button* currentFolder = gui->createButton("EditorSprites", "LS_FOLDER_" + element, xpos, ypos, true, false, "GREY");
-				currentFolder->setTextureAll(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
-				currentFolder->bindFunction([path, element] {loadSpriteFolder(path + "/" + element); });
+				tgui::Picture::Ptr currentFolder = tgui::Picture::create();
+				spritesPanel->add(currentFolder, "LS_FOLDER_" + element);
+				currentFolder->setPosition(xpos, ypos);
+				currentFolder->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
+				currentFolder->connect("Clicked", [&spritesPanel, &spritesCatLabel, path, element]() {
+					loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element);
+				});
 			}
 
 			for (std::string element : fileList) {
@@ -252,10 +254,12 @@ namespace obe
 				xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
 				xpos += xOff;
 				ypos += yOff;
-				GUI::Button* currentFolder = gui->createButton("EditorSprites", "LS_FILE_" + element, xpos, ypos, true, false, "GREY");
-				currentFolder->setTextureAll(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
-				currentFolder->bindFunction([path, element] {addSpriteToWorld(path + "/" + element); });
-			}
+				tgui::Picture::Ptr currentSprite = tgui::Picture::create();
+				spritesPanel->add(currentSprite, "LS_FILE_" + element);
+				currentSprite->setPosition(xpos, ypos);
+				currentSprite->setTexture(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
+				currentSprite->connect("Clicked", [path, element] {addSpriteToWorld(path + "/" + element); });
+			}*/
 		}
 
 		void addSpriteToWorld(std::string geid)
@@ -263,7 +267,7 @@ namespace obe
 			std::cout << "Recv geid : " << geid << std::endl;
 			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			while (world->getSpriteByID(key) != NULL)
+			while (world->getSpriteByID(key) != nullptr)
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			Graphics::LevelSprite* sprToAdd = new Graphics::LevelSprite("Sprites/LevelSprites/" + geid, key);
 			sprToAdd->move(960 + world->getCamX(), 540 + world->getCamY());

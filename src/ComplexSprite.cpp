@@ -8,20 +8,20 @@
 namespace sfe
 {
 	ComplexSprite::ComplexSprite() :
-		m_texture(NULL),
+		m_texture(nullptr),
 		m_textureRect()
 	{
 	}
 
 	ComplexSprite::ComplexSprite(const sf::Texture& texture) :
-		m_texture(NULL),
+		m_texture(nullptr),
 		m_textureRect()
 	{
 		setTexture(texture);
 	}
 
 	ComplexSprite::ComplexSprite(const sf::Texture& texture, const sf::IntRect& rectangle) :
-		m_texture(NULL),
+		m_texture(nullptr),
 		m_textureRect()
 	{
 		setTexture(texture);

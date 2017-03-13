@@ -54,7 +54,7 @@ namespace obe
 				selectMapButton->setPosition("0", std::to_string(i) + " * (&.height - 14) / 5");
 				selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
 				middlePanel->add(selectMapButton);
-				scrollBoxSize += selectMapButton->getSize().y;
+				scrollBoxSize += selectMapButton->getSize().y - 1;
 			}
 			scrollbar->setLowValue(middlePanel->getSize().y);
 			scrollbar->setMaximum(scrollBoxSize);

@@ -13,11 +13,11 @@
 #include <fstream>
 #include <clip/clip.h>
 #include <vili/Vili.hpp>
+#include <tgui/TGUI.hpp>
 
 #include "World.hpp"
 #include "Cursor.hpp"
 #include "KeyBind.hpp"
-#include "GUI.hpp"
 #include "Dialog.hpp"
 #include "Particle.hpp"
 #include "Console.hpp"
