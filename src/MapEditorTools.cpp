@@ -75,7 +75,7 @@ namespace obe
 			
 		}
 
-		void buildObjectTab(tgui::Gui& gui)
+		void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Theme& baseTheme)
 		{
 			std::vector<std::string> allGameObjects;
 			System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
@@ -87,22 +87,27 @@ namespace obe
 			{
 				std::string currentObjName = allGameObjects[i];
 				int xpos = (i * (btnSize + btnOff));
-				int ypos = std::floor((double)xpos / (double)(1920 - (btnSize + btnOff))) * (btnSize + btnOff);
+				int ypos = std::floor((double)xpos / (double)(1920 - (btnSize + btnOff))) * (btnSize + btnOff) + yOff;
 				while (xpos >(1920 - (btnSize + btnOff + xOff)))
 					xpos -= (1920 - (btnSize + btnOff + xOff));
 				xpos = std::floor((double)xpos / (double)(btnSize + btnOff)) * (btnSize + btnOff);
 				xpos += xOff; ypos += yOff;
 				tgui::Button::Ptr currentObj = tgui::Button::create();
+				currentObj->setRenderer(baseTheme.getRenderer("ObjectButton"));
 				currentObj->setTextSize(18);
 				currentObj->setText(currentObjName);
 				currentObj->setPosition(xpos, ypos);
-				currentObj->connect("pressed", [&gui, currentObjName]() {
-					buildRequiresObjectTab(gui, currentObjName);
+				currentObj->setSize(256, 256);
+				objectTab->add(currentObj);
+				currentObj->connect("pressed", [currentObjName]() {
+					std::cout << "Trying to build : " << currentObjName << std::endl;
+					//buildRequiresObjectTab(gui, currentObjName);
 				});
+
 			}
 		}
 
-		void buildRequiresObjectTab(tgui::Gui& gui, std::string objName)
+		void buildRequiresObjectTab(std::string objName)
 		{
 			std::cout << "Call Require Creation for : " << objName << std::endl;
 			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);

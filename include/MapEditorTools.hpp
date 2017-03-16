@@ -27,7 +27,7 @@ namespace obe
 				static sf::Texture* GetFolderThumbnail(std::string path);
 		};
 
-		void buildObjectTab(tgui::Gui& gui);
+		void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Theme& baseTheme);
 		void buildRequiresObjectTab(tgui::Gui&, std::string objName);
 		void buildObjectThroughRequire(std::string objName);
 		void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path);

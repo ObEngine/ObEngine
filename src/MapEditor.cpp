@@ -528,7 +528,7 @@ namespace obe
 			objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
 			objectsCatLabel->setText("[ Objects Settings ]");
 
-			EditorTools::buildObjectTab(gui);
+			EditorTools::buildObjectTab(objectsPanel, baseTheme);
 
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;

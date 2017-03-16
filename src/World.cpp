@@ -163,11 +163,6 @@ namespace obe
 					scriptArray.push_back(*scriptName);
 				}
 			}
-			Script::TriggerDatabase::GetInstance()->update();
-			for (int i = 0; i < updateObjArray.size(); i++)
-			{
-				updateObjArray[i]->update(gameSpeed);
-			}
 		}
 
 		void World::clearWorld()
@@ -586,6 +581,8 @@ namespace obe
 				this->addCollider(newGameObject->getCollider());
 				newGameObject->getCollider()->setParentID(id);
 			}
+
+			std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
 			return newGameObject;
 		}

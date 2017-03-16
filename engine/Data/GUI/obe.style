@@ -12,6 +12,13 @@ SelectedButton {
     TextColor    = rgb(0, 150, 255);
 }
 
+ObjectButton {
+    Texture      = "Button/Object/idle.png";
+    TextureHover = "Button/Object/hover.png";
+    TextureDown  = "Button/Object/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
 CloseButton {
     Texture      = "Button/Close/idle.png";
     TextureHover = "Button/Close/hover.png";
