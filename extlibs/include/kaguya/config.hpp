@@ -6,9 +6,9 @@
 
 #include<string>
 extern "C" {
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
+#include <lua/lua.h>
+#include <lua/lauxlib.h>
+#include <lua/lualib.h>
 }
 
 #ifndef KAGUYA_USE_CPP11
