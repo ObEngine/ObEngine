@@ -52,7 +52,7 @@ namespace obe
 			void forceNext(); //Force index increment (ignoring clock)
 		};
 
-		class RessourceManager
+		class RessourceManager //Class that caches textures
 		{
 		private:
 			std::map<std::string, sf::Texture*> textureDatabase;
@@ -64,7 +64,7 @@ namespace obe
 			sf::Texture* getTexture(std::string path);
 		};
 
-		class Animation //An animation containing an AnimationGroup list
+		class Animation //An animation contains multiple AnimationGroup
 		{
 		private:
 			std::string animationName;

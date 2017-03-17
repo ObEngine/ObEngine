@@ -22,7 +22,7 @@ namespace obe
 		int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B);
 
 		typedef std::pair<double, double> DoublePoint;
-		class PolygonalCollider
+		class PolygonalCollider //Polygon with collision methods
 		{
 			private:
 				std::string id;
