@@ -596,17 +596,17 @@ namespace obe
 						{
 						}
 						else if (keybind.isActionEnabled("CamLeft"))
-							world.setCameraPosition(world.getCamX() - (cameraSpeed * framerateManager.getGameSpeed()), world.getCamY());
+							world.getCamera().move(-cameraSpeed * framerateManager.getGameSpeed(), 0);
 						else if (keybind.isActionEnabled("CamRight"))
-							world.setCameraPosition(world.getCamX() + (cameraSpeed * framerateManager.getGameSpeed()), world.getCamY());
+							world.getCamera().move(cameraSpeed * framerateManager.getGameSpeed(), 0);
 
 						if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
 						{
 						}
 						else if (keybind.isActionEnabled("CamUp"))
-							world.setCameraPosition(world.getCamX(), world.getCamY() - (cameraSpeed * framerateManager.getGameSpeed()));
+							world.getCamera().move(0, -cameraSpeed * framerateManager.getGameSpeed());
 						else if (keybind.isActionEnabled("CamDown"))
-							world.setCameraPosition(world.getCamX(), world.getCamY() + (cameraSpeed * framerateManager.getGameSpeed()));
+							world.getCamera().move(0, cameraSpeed * framerateManager.getGameSpeed());
 
 						if (keybind.isActionEnabled("CamDash"))
 							cameraSpeed = 60;
@@ -615,12 +615,6 @@ namespace obe
 					}
 					else {
 						world.setCameraLock(false);
-					}
-
-					if (keybind.isActionToggled("Reset"))
-					{
-						/*world.getCharacter(0)->setPos(world.getStartX(), world.getStartY());
-						world.getCharacter(0)->cancelMoves();*/
 					}
 				}
 
@@ -664,9 +658,10 @@ namespace obe
 					//Sprite Hover
 					if (hoveredSprite == nullptr && selectedSprite == nullptr)
 					{
-						if (world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer) != nullptr)
+						if (world.getSpriteByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY(), currentLayer) != nullptr)
 						{
-							hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
+							hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamera().getX(), 
+								cursor.getY() + world.getCamera().getY(), currentLayer);
 							sdBoundingRect = hoveredSprite->getRect();
 							hoveredSprite->setColor(sf::Color(0, 60, 255));
 							std::string sprInfoStr;
@@ -686,7 +681,8 @@ namespace obe
 						sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
 						sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
 						bool outHover = false;
-						Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY(), currentLayer);
+						Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamera().getX(),
+							cursor.getY() + world.getCamera().getY(), currentLayer);
 						if (testHoverSprite != hoveredSprite)
 							outHover = true;
 						if (outHover)
@@ -703,8 +699,8 @@ namespace obe
 						if (hoveredSprite != nullptr)
 						{
 							selectedSprite = hoveredSprite;
-							selectedSpriteOffsetX = (cursor.getX() + world.getCamX()) - selectedSprite->getX();
-							selectedSpriteOffsetY = (cursor.getY() + world.getCamY()) - selectedSprite->getY();
+							selectedSpriteOffsetX = (cursor.getX() + world.getCamera().getX()) - selectedSprite->getX();
+							selectedSpriteOffsetY = (cursor.getY() + world.getCamera().getY()) - selectedSprite->getY();
 							selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffsetX();
 							selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffsetY();
 
@@ -718,13 +714,13 @@ namespace obe
 					{
 						if (selectedSprite->getParentID() == "")
 						{
-							selectedSprite->setPosition(cursor.getX() + world.getCamX() - selectedSpriteOffsetX,
-								cursor.getY() + world.getCamY() - selectedSpriteOffsetY);
+							selectedSprite->setPosition(cursor.getX() + world.getCamera().getX() - selectedSpriteOffsetX,
+								cursor.getY() + world.getCamera().getY() - selectedSpriteOffsetY);
 						}
 						else
 						{
-							selectedSprite->setOffset(cursor.getX() + world.getCamX() - selectedSpriteOffsetX - selectedSpritePickPosX,
-								cursor.getY() + world.getCamY() - selectedSpriteOffsetY - selectedSpritePickPosY);
+							selectedSprite->setOffset(cursor.getX() + world.getCamera().getX() - selectedSpriteOffsetX - selectedSpritePickPosX,
+								cursor.getY() + world.getCamera().getY() - selectedSpriteOffsetY - selectedSpritePickPosY);
 						}
 						sdBoundingRect = selectedSprite->getRect();
 						std::string sprInfoStr;
@@ -821,8 +817,8 @@ namespace obe
 					if (selectedMasterCollider != nullptr)
 					{
 						selectedMasterCollider->clearHighlights();
-						int cursCoordX = cursor.getX() + world.getCamX();
-						int cursCoordY = cursor.getY() + world.getCamY();
+						int cursCoordX = cursor.getX() + world.getCamera().getX();
+						int cursCoordY = cursor.getY() + world.getCamera().getY();
 						int clNode = selectedMasterCollider->findClosestPoint(cursCoordX, cursCoordY);
 						selectedMasterCollider->highlightPoint(clNode);
 						int gLeftNode = ((clNode - 1 != -1) ? clNode - 1 : selectedMasterCollider->getPointsAmount() - 1);
@@ -831,10 +827,13 @@ namespace obe
 						selectedMasterCollider->highlightPoint(secondClosestNode);
 					}
 					//Collision Point Grab
-					if (cursor.getClicked("Left") && colliderPtGrabbed == -1 && world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first != nullptr)
+					if (cursor.getClicked("Left") && colliderPtGrabbed == -1 &&
+						world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(),
+						cursor.getY() + world.getCamera().getY()).first != nullptr)
 					{
 						std::pair<Collision::PolygonalCollider*, int> selectedPtCollider;
-						selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+						selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(),
+							cursor.getY() + world.getCamera().getY());
 						if (selectedMasterCollider != nullptr && selectedMasterCollider != selectedPtCollider.first)
 						{
 							selectedMasterCollider->setSelected(false);
@@ -849,12 +848,12 @@ namespace obe
 					//Collision Point Move
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
 					{
-						selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+						selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
 						if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
 							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
-								cursor.getX() + world.getCamX(),
-								cursor.getY() + world.getCamY());
+								cursor.getX() + world.getCamera().getX(),
+								cursor.getY() + world.getCamera().getY());
 						}
 					}
 					//Collision Point Release
@@ -863,9 +862,11 @@ namespace obe
 						colliderPtGrabbed = -1;
 					}
 					//Collision Master Grab
-					if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) != nullptr)
+					if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), 
+						cursor.getY() + world.getCamera().getY()) != nullptr)
 					{
-						Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+						Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), 
+							cursor.getY() + world.getCamera().getY());
 						if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
 						{
 							selectedMasterCollider->setSelected(false);
@@ -881,14 +882,14 @@ namespace obe
 					//Collision Master Move
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 					{
-						selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+						selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
 						if (selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
 							std::pair<int, int> zeroCoords = selectedMasterCollider->getPointPosition(0);
 							std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointPosition();
 							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
-								cursor.getX() + world.getCamX() + zeroCoords.first - masterCoords.first,
-								cursor.getY() + world.getCamY() + zeroCoords.second - masterCoords.second);
+								cursor.getX() + world.getCamera().getX() + zeroCoords.first - masterCoords.first,
+								cursor.getY() + world.getCamera().getY() + zeroCoords.second - masterCoords.second);
 						}
 					}
 					//Collision Master Release
@@ -899,8 +900,8 @@ namespace obe
 					}
 					if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && !masterColliderGrabbed)
 					{
-						int crPtX = cursor.getX() + world.getCamX();
-						int crPtY = cursor.getY() + world.getCamY();
+						int crPtX = cursor.getX() + world.getCamera().getX();
+						int crPtY = cursor.getY() + world.getCamera().getY();
 						int rqPtRes = selectedMasterCollider->hasPoint(crPtX, crPtY, 6, 6);
 						//Collision Point Create
 						if (rqPtRes == -1)
@@ -925,9 +926,9 @@ namespace obe
 					//Collision Release
 					if (cursor.getClicked("Left") && selectedMasterCollider != nullptr)
 					{
-						if (world.getCollisionMasterByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()) == nullptr)
+						if (world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY()) == nullptr)
 						{
-							if (world.getCollisionPointByPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY()).first == nullptr)
+							if (world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY()).first == nullptr)
 							{
 								selectedMasterCollider->setSelected(false);
 								selectedMasterCollider = nullptr;
@@ -949,18 +950,18 @@ namespace obe
 					//Collision Create
 					if (cursor.getClicked("Right") && selectedMasterCollider == nullptr && !deletedCollision)
 					{
-						world.createCollisionAtPos(cursor.getX() + world.getCamX(), cursor.getY() + world.getCamY());
+						world.createCollisionAtPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
 					}
 				}
 
 				//GUI Update
 				/*GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
-				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamX()) + "<color:255,255,255>"
-					",<color:0,255,0>" + std::to_string((int)world.getCamY()) + "<color:255,255,255>)");
+				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamera().getX()) + "<color:255,255,255>"
+					",<color:0,255,0>" + std::to_string((int)world.getCamera().getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("sumPos")->setComplexText("<color:255,255,255>Sum : (<color:0,255,0>" + 
-					std::to_string((int)world.getCamX() + (int)cursor.getX()) + "<color:255,255,255>"
-					",<color:0,255,0>" + std::to_string((int)world.getCamY() + (int)cursor.getY()) + "<color:255,255,255>)");
+					std::to_string((int)world.getCamera().getX() + (int)cursor.getX()) + "<color:255,255,255>"
+					",<color:0,255,0>" + std::to_string((int)world.getCamera().getY() + (int)cursor.getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));*/
 
 				if (guiEditorEnabled)
@@ -985,8 +986,8 @@ namespace obe
 
 				if (enableGridCheckbox->isChecked())
 				{
-					editorGrid.setCamOffsetX(-world.getCamX());
-					editorGrid.setCamOffsetY(-world.getCamY());
+					editorGrid.setCamOffsetX(-world.getCamera().getX());
+					editorGrid.setCamOffsetY(-world.getCamera().getY());
 					editorGrid.sendCursorPosition(cursor.getX(), cursor.getY());
 					if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(&cursor, 0, -1);
 					if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(&cursor, 1, 0);
@@ -1007,7 +1008,7 @@ namespace obe
 					{
 						std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
 						std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-							&cursorCollider, -world.getCamX(), -world.getCamY());
+							&cursorCollider, -world.getCamera().getX(), -world.getCamera().getY());
 						for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 						{
 							for (int j = 0; j < clickableGameObjects.size(); j++)
@@ -1100,7 +1101,7 @@ namespace obe
 					if (hoveredSprite != nullptr)
 					{
 						sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
-						sprBorder.setPosition(sdBoundingRect.left - world.getCamX(), sdBoundingRect.top - world.getCamY());
+						sprBorder.setPosition(sdBoundingRect.left - world.getCamera().getX(), sdBoundingRect.top - world.getCamera().getY());
 						sprBorder.setFillColor(sf::Color(0, 0, 0, 0));
 						sprBorder.setOutlineColor(sf::Color(255, 0, 0));
 						sprBorder.setOutlineThickness(2);

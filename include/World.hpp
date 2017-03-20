@@ -11,14 +11,15 @@
 #include <fstream>
 #include <vili/Vili.hpp>
 
-#include "Functions.hpp"
+#include "Camera.hpp"
 #include "DataParserLuaBridge.hpp"
+#include "Functions.hpp"
 #include "GameObject.hpp"
-#include "TimeManager.hpp"
 #include "LevelSprite.hpp"
 #include "Light.hpp"
 #include "Particle.hpp"
 #include "Script.hpp"
+#include "TimeManager.hpp"
 
 namespace obe
 {
@@ -34,8 +35,7 @@ namespace obe
 				std::string baseFolder = "";
 				int sizeX = 0;
 				int sizeY = 0;
-				double camX = 0;
-				double camY = 0;
+				Camera camera;
 				bool cameraLocked = true;
 				kaguya::State* worldScriptEngine;
 				bool updateState = true;
@@ -74,10 +74,8 @@ namespace obe
 				Script::GameObject* createGameObject(std::string id, std::string obj);
 				void orderUpdateScrArray();
 				//Camera
-				void setCameraPosition(double tX, double tY, std::string setMode = "SET");
-				void setCameraPositionIfNotLocked(double tX, double tY, std::string setMode = "SET");
-				double getCamX();
-				double getCamY();
+				Camera& getCamera();
+				Camera& getCameraIfNotLocked();
 				void setCameraLock(bool state);
 				bool isCameraLocked();
 				//Lights

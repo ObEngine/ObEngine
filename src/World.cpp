@@ -60,9 +60,16 @@ namespace obe
 
 			if (mapParse->contains(vili::Types::ComplexAttribute, "Meta")) {
 				vili::ComplexAttribute* meta = mapParse.at("Meta");
-				levelName = meta->getBaseAttribute("Level")->get<std::string>();
-				sizeX = meta->getBaseAttribute("SizeX")->get<int>();
-				sizeY = meta->getBaseAttribute("SizeY")->get<int>();
+				levelName = meta->getBaseAttribute("name")->get<std::string>();
+				sizeX = meta->getListAttribute("size")->get(0)->get<int>();
+				sizeY = meta->getListAttribute("size")->get(1)->get<int>();
+				camera.setWorldSize(sizeX, sizeY);
+				camera.setSize(sizeX, sizeY);
+				if (meta->contains(vili::Types::ListAttribute, "camera")) {
+					int camW = meta->getListAttribute("camera")->get(0)->get<int>();
+					int camH = meta->getListAttribute("camera")->get(1)->get<int>();
+					camera.setSize(camW, camH);
+				}
 			}
 			else {
 				std::cout << "<Error:World:World>[loadFromFile] : Map file : " << filename << " does not have any 'Meta' Root Attribute" << std::endl;
@@ -75,17 +82,28 @@ namespace obe
 				for (std::string& currentSpriteName : levelSprites->getAll(vili::Types::ComplexAttribute))
 				{
 					vili::ComplexAttribute* currentSprite = levelSprites->at(currentSpriteName);
-					std::string spriteID, spritePath;
-					int spritePosX, spritePosY;
+					std::string spriteID, spritePath, spriteUnits;
+					double spritePosX, spritePosY;
 					int spriteRot = 0;
 					double spriteSca = 1.0;
 					std::vector<std::string> spriteAtrList;
 					int layer;
 					int zdepth;
 					spriteID = currentSpriteName;
+					spriteUnits = currentSprite->contains(vili::Types::BaseAttribute, "unit") ? 
+						currentSprite->getBaseAttribute("unit")->get<std::string>() : "WorldUnits";
+					std::cout << "SpriteUnit : " << spriteUnits << std::endl;
 					spritePath = currentSprite->getBaseAttribute("path")->get<std::string>();
-					spritePosX = currentSprite->getBaseAttribute("posX")->get<int>();
-					spritePosY = currentSprite->getBaseAttribute("posY")->get<int>();
+					spritePosX = currentSprite->getListAttribute("pos")->get(0)->get<double>();
+					spritePosY = currentSprite->getListAttribute("pos")->get(1)->get<double>();
+					if (spriteUnits == "WorldUnits") {
+						spritePosX = (spritePosX * Functions::Coord::width) / ((double) sizeX);
+						spritePosY = (spritePosY * Functions::Coord::height) / ((double)sizeY);
+					}
+					else if (spriteUnits == "WorldPercentage") {
+						spritePosX = (spritePosX * (double)sizeX) / 100.0;
+						spritePosY = (spritePosY * (double)sizeY) / 100.0;
+					}
 					spriteRot = currentSprite->getBaseAttribute("rotation")->get<int>();
 					spriteSca = currentSprite->getBaseAttribute("scale")->get<double>();
 					layer = currentSprite->getBaseAttribute("layer")->get<int>();
@@ -123,11 +141,18 @@ namespace obe
 				{
 					vili::ComplexAttribute* currentCollision = collisions->at(collisionName);
 					Collision::PolygonalCollider* tempCollider = new Collision::PolygonalCollider(collisionName);
-					for (vili::BaseAttribute* point : *currentCollision->getListAttribute("polygonPoints"))
-					{
-						std::string getPt = point->get<std::string>();
-						std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
-						tempCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
+
+					bool pointExists = true;
+					int pointIndex = 0;
+					while (pointExists) {
+						if (currentCollision->contains(vili::Types::ListAttribute, std::to_string(pointIndex))) {
+							tempCollider->addPoint(currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>(), 
+								currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>());
+						}
+						else {
+							pointExists = false;
+						}
+						pointIndex++;
 					}
 					this->collidersArray.push_back(tempCollider);
 				}
@@ -325,7 +350,7 @@ namespace obe
 			{
 				for (unsigned int i = 0; i < collidersArray.size(); i++)
 				{
-					collidersArray[i]->setDrawOffset(-camX, -camY);
+					collidersArray[i]->setDrawOffset(-camera.getX(), -camera.getY());
 					collidersArray[i]->draw(surf, showCollisionModes["drawLines"], showCollisionModes["drawPoints"], showCollisionModes["drawMasterPoint"], showCollisionModes["drawSkel"]);
 				}
 			}
@@ -342,8 +367,10 @@ namespace obe
 				Light::PointLight* cLight = nullptr;
 				if (lightHooked) cLight = lightsMap[backSpriteArray[i]->getID()];
 
-				layeredX = (((backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX()) * (backSpriteArray[i]->getLayer()) - camX) / backSpriteArray[i]->getLayer());
-				layeredY = (((backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY()) * (backSpriteArray[i]->getLayer()) - camY) / backSpriteArray[i]->getLayer());
+				layeredX = (((backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX()) * (backSpriteArray[i]->getLayer()) - 
+					camera.getX()) / backSpriteArray[i]->getLayer());
+				layeredY = (((backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY()) * (backSpriteArray[i]->getLayer()) - 
+					camera.getY()) / backSpriteArray[i]->getLayer());
 				if (Functions::Vector::isInList((std::string)"+FIX", backSpriteArray[i]->getAttributes()))
 				{
 					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX();
@@ -359,16 +386,16 @@ namespace obe
 				}
 				else if (Functions::Vector::isInList((std::string)"+PHFIX", backSpriteArray[i]->getAttributes()))
 				{
-					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camX;
+					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camera.getX();
 				}
 				else if (Functions::Vector::isInList((std::string)"+PVFIX", backSpriteArray[i]->getAttributes()))
 				{
-					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
+					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camera.getY();
 				}
 				else if (Functions::Vector::isInList((std::string)"+PFIX", backSpriteArray[i]->getAttributes()))
 				{
-					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camX;
-					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camY;
+					layeredX = backSpriteArray[i]->getX() + backSpriteArray[i]->getOffsetX() - camera.getX();
+					layeredY = backSpriteArray[i]->getY() + backSpriteArray[i]->getOffsetY() - camera.getY();
 				}
 				sfe::ComplexSprite tAffSpr;
 				tAffSpr = *backSpriteArray[i]->getSprite();
@@ -400,33 +427,33 @@ namespace obe
 				}
 				else if (Functions::Vector::isInList((std::string)"+VFIX", frontSpriteArray[i]->getAttributes()))
 				{
-					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camX) * frontSpriteArray[i]->getLayer());
+					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camera.getX()) * frontSpriteArray[i]->getLayer());
 					layeredY = frontSpriteArray[i]->getY();
 				}
 				else if (Functions::Vector::isInList((std::string)"+HFIX", frontSpriteArray[i]->getAttributes()))
 				{
 					layeredX = frontSpriteArray[i]->getX();
-					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camY) * frontSpriteArray[i]->getLayer());
+					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camera.getY()) * frontSpriteArray[i]->getLayer());
 				}
 				else if (Functions::Vector::isInList((std::string)"+PHFIX", frontSpriteArray[i]->getAttributes()))
 				{
-					layeredX = frontSpriteArray[i]->getX() - camX;
-					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camY) * frontSpriteArray[i]->getLayer());
+					layeredX = frontSpriteArray[i]->getX() - camera.getX();
+					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camera.getY()) * frontSpriteArray[i]->getLayer());
 				}
 				else if (Functions::Vector::isInList((std::string)"+PVFIX", frontSpriteArray[i]->getAttributes()))
 				{
-					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camX) * frontSpriteArray[i]->getLayer());
-					layeredY = frontSpriteArray[i]->getY() - camY;
+					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camera.getX()) * frontSpriteArray[i]->getLayer());
+					layeredY = frontSpriteArray[i]->getY() - camera.getY();
 				}
 				else if (Functions::Vector::isInList((std::string)"+PFIX", frontSpriteArray[i]->getAttributes()))
 				{
-					layeredX = frontSpriteArray[i]->getX() - camX;
-					layeredY = frontSpriteArray[i]->getY() - camY;
+					layeredX = frontSpriteArray[i]->getX() - camera.getX();
+					layeredY = frontSpriteArray[i]->getY() - camera.getY();
 				}
 				else
 				{
-					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camX) * frontSpriteArray[i]->getLayer());
-					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camY) * frontSpriteArray[i]->getLayer());
+					layeredX = ((frontSpriteArray[i]->getX() / (frontSpriteArray[i]->getLayer()) + camera.getX()) * frontSpriteArray[i]->getLayer());
+					layeredY = ((frontSpriteArray[i]->getY() / (frontSpriteArray[i]->getLayer()) + camera.getY()) * frontSpriteArray[i]->getLayer());
 				}
 
 				sfe::ComplexSprite tAffSpr;
@@ -472,45 +499,17 @@ namespace obe
 			return collidersArray;
 		}
 
-		void World::setCameraPosition(double tX, double tY, std::string setMode)
+		Camera& World::getCamera()
 		{
-			if (setMode == "SET")
-			{
-				camX = tX;
-				camY = tY;
-			}
-			if (setMode == "FOLLOW")
-			{
-				double camInerty = 0.2;
-				camX += (tX - camX) * camInerty * gameSpeed;
-				camY += (tY - camY) * camInerty * gameSpeed;
-			}
-
-			if (camX < 0)
-				camX = 0;
-			if (camX + Functions::Coord::width > sizeX)
-				camX = sizeX - Functions::Coord::width;
-			if (camY <= 0)
-				camY = 0;
-			if (camY + Functions::Coord::height > sizeY)
-				camY = sizeY - Functions::Coord::height;
+			return camera;
 		}
 
-		void World::setCameraPositionIfNotLocked(double tX, double tY, std::string setMode)
+		Camera& World::getCameraIfNotLocked()
 		{
-			if (!cameraLocked) {
-				this->setCameraPosition(tX, tY, setMode);
-			}
-		}
-
-		double World::getCamX()
-		{
-			return camX;
-		}
-
-		double World::getCamY()
-		{
-			return camY;
+			if (cameraLocked)
+				return Camera(camera);
+			else
+				return camera;
 		}
 
 		void World::setCameraLock(bool state)
@@ -908,8 +907,7 @@ namespace obe
 				.addFunction("getAllCollidersByCollision", &World::getAllCollidersByCollision)
 				.addFunction("getAllGameObjects", &World::getAllGameObjects)
 				.addFunction("getAllSprites", &World::getAllSprites)
-				.addFunction("getCamX", &World::getCamX)
-				.addFunction("getCamY", &World::getCamY)
+				.addFunction("getCamera", &World::getCameraIfNotLocked)
 				.addFunction("getColliders", &World::getColliders)
 				.addFunction("getCollisionByID", &World::getCollisionByID)
 				.addFunction("getCollisionMasterByPos", &World::getCollisionMasterByPos)
@@ -927,7 +925,6 @@ namespace obe
 				.addFunction("orderUpdateScrArray", &World::orderUpdateScrArray)
 				.addFunction("reorganizeLayers", &World::reorganizeLayers)
 				.addFunction("saveData", &World::saveData)
-				.addFunction("setCameraPosition", &World::setCameraPositionIfNotLocked)
 				.addFunction("setUpdateState", &World::setUpdateState)
 				);
 		}

@@ -302,6 +302,8 @@ namespace vili
 	template <> inline int BaseAttribute::get() {
 		if (dtype == Types::Int)
 			return std::stoi(data);
+		else if (dtype == Types::Float)
+			return std::stod(data);
 		else
 			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
 			<< getNodePath() << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
@@ -309,6 +311,8 @@ namespace vili
 	template <> inline double BaseAttribute::get() {
 		if (dtype == Types::Float)
 			return std::stod(data);
+		else if (dtype == Types::Int)
+			return std::round(std::stod(data));
 		else
 			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
 			<< getNodePath() << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;

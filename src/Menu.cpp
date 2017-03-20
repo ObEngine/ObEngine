@@ -43,8 +43,8 @@ namespace obe
 				int mapSizeY = 0;
 
 				if (mapInfoParser->contains(vili::Types::ComplexAttribute, "Meta")) {
-					if (mapInfoParser->at("Meta")->contains(vili::Types::BaseAttribute, "Level"))
-						levelName = mapInfoParser.at("Meta")->getBaseAttribute("Level")->get<std::string>();
+					if (mapInfoParser->at("Meta")->contains(vili::Types::BaseAttribute, "name"))
+						levelName = mapInfoParser.at("Meta")->getBaseAttribute("name")->get<std::string>();
 				}
 				
 				tgui::Button::Ptr selectMapButton = tgui::Button::create();
