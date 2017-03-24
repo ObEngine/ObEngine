@@ -28,7 +28,7 @@ endif()
 
 set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
-find_package(SFML 2 REQUIRED system window graphics network audio)
+find_package(SFML 2 REQUIRED graphics window system network audio)
 find_package(OpenGL REQUIRED)
 
 add_executable(ObEngine ${PG_OBE} ${HD_OBE})
