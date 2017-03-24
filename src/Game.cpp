@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "FramerateManager.hpp"
 
 namespace obe
 {
@@ -6,25 +7,28 @@ namespace obe
 	{
 		void startGame(std::string mapName)
 		{
-			double startLoadTime = Time::getTickSinceEpoch();
-
 			//Creating Window
-			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "ObEngine", sf::Style::Fullscreen);
-			sf::View viewPort(sf::FloatRect(0, 0, Functions::Coord::viewWidth, Functions::Coord::viewHeight));
-			window.setView(viewPort);
+			sf::RenderWindow window(sf::VideoMode(Coord::UnitVector::Screen.w, Coord::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
-			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
-			sf::Sprite loadingSprite; loadingSprite.setTexture(loadingTexture);
-			sf::Font loadingFont; loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
-			sf::Text loadingText; loadingText.setFont(loadingFont);
+			sf::Texture loadingTexture;
+			loadingTexture.loadFromFile("Sprites/Menus/loading.png");
+			loadingTexture.setSmooth(true);
+			sf::Sprite loadingSprite;
+			loadingSprite.setTexture(loadingTexture);
+			sf::Font loadingFont;
+			loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
+			sf::Text loadingText;
+			loadingText.setFont(loadingFont);
 			loadingText.setCharacterSize(70.0);
 			loadingText.setPosition(348.0, 595.0);
 			vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
 			loadingText.setString(loadingRandomStr);
-			window.draw(loadingSprite); window.draw(loadingText); window.display();
+			window.draw(loadingSprite);
+			window.draw(loadingText);
+			window.display();
 
 			Script::hookCore.dropValue("TriggerDatabase", Script::TriggerDatabase::GetInstance());
 			Graphics::TextRenderer textDisplay;
@@ -39,13 +43,15 @@ namespace obe
 			vili::DataParser configFile;
 			System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
 			vili::ComplexAttribute* gameConfig = configFile.at("GameConfig");
-			int scrollSensitive = *gameConfig->at<vili::BaseAttribute>("scrollSensibility");
 
 			//Cursor
 			Cursor::Cursor cursor(&window);
 			cursor.updateOutsideWindow(true);
 			Collision::PolygonalCollider cursorCollider("cursor");
-			cursorCollider.addPoint(0, 0); cursorCollider.addPoint(1, 0); cursorCollider.addPoint(1, 1); cursorCollider.addPoint(0, 1);
+			cursorCollider.addPoint(0, 0);
+			cursorCollider.addPoint(1, 0);
+			cursorCollider.addPoint(1, 1);
+			cursorCollider.addPoint(0, 1);
 			Script::hookCore.dropValue("Cursor", &cursor);
 
 			//World Creation / Loading
@@ -110,7 +116,7 @@ namespace obe
 				if (cursor.getClicked("Left") || cursor.getPressed("Left"))
 				{
 					cursorCollider.setPosition(cursor.getX(), cursor.getY());
-					std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
+					std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
 					std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
 						&cursorCollider, -world.getCamera().getX(), -world.getCamera().getY());
 					for (int i = 0; i < elementsCollidedByCursor.size(); i++)
@@ -124,7 +130,6 @@ namespace obe
 								if (cursor.getPressed("Left"))
 									world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Press", true);
 							}
-
 						}
 					}
 				}

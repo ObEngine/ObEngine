@@ -10,8 +10,6 @@ IF (NOT DEFINED _USE_CPP_NEW_FS)
 ENDIF()
 ADD_DEFINITIONS(-D_USE_CPP_NEW_FS=${_MYDEFINE})
 
-
-add_subdirectory(extlibs/build/clip)
 add_subdirectory(extlibs/build/clipper)
 add_subdirectory(extlibs/build/vili)
 add_subdirectory(extlibs/build/elzip)
@@ -41,7 +39,6 @@ include_directories(extlibs/include/)
 include_directories(${LUA53_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
 
-target_link_libraries(ObEngine clip)
 target_link_libraries(ObEngine clipper)
 target_link_libraries(ObEngine vili)
 target_link_libraries(ObEngine elzip)

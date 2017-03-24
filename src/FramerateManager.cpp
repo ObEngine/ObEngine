@@ -4,92 +4,90 @@ namespace obe
 {
 	FramerateManager::FramerateManager(vili::ComplexAttribute& config)
 	{
-		sf::Clock deltaClock;
-		sf::Time sfDeltaTime;
-		speedCoeff = 60.0;
-		frameLimiterClock = Time::getTickSinceEpoch();
-		limitFPS = (config.contains(vili::Types::BaseAttribute, "framerateLimit")) ? *config.at<vili::BaseAttribute>("framerateLimit") : true;
-		framerateTarget = (config.contains(vili::Types::BaseAttribute, "framerateTarget")) ? *config.at<vili::BaseAttribute>("framerateTarget") : 60;
-		vsyncEnabled = (config.contains(vili::Types::BaseAttribute, "vsync")) ? *config.at<vili::BaseAttribute>("vsync") : true;
-		reqFramerateInterval = 1.0 / (double)framerateTarget;
-		currentFrame = 0;
-		frameProgression = 0;
-		needToRender = false;
+		m_speedCoeff = 1;
+		m_frameLimiterClock = Time::getTickSinceEpoch();
+		m_limitFPS = (config.contains(vili::Types::BaseAttribute, "framerateLimit")) ? *config.at<vili::BaseAttribute>("framerateLimit") : true;
+		m_framerateTarget = (config.contains(vili::Types::BaseAttribute, "framerateTarget")) ? *config.at<vili::BaseAttribute>("framerateTarget") : 60;
+		m_vsyncEnabled = (config.contains(vili::Types::BaseAttribute, "vsync")) ? *config.at<vili::BaseAttribute>("vsync") : true;
+		m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
+		m_currentFrame = 0;
+		m_frameProgression = 0;
+		m_needToRender = false;
 	}
 
 	void FramerateManager::update()
 	{
-		sfDeltaTime = deltaClock.restart();
-		deltaTime = std::min(1.0 / 60.0, (double)sfDeltaTime.asMicroseconds() / 1000000.0);
-		if (limitFPS)
+		m_sfDeltaTime = m_deltaClock.restart();
+		m_deltaTime = static_cast<double>(m_sfDeltaTime.asMicroseconds()) / 1000000.0;
+		if (m_limitFPS)
 		{
-			if (Time::getTickSinceEpoch() - frameLimiterClock > 1000)
+			if (Time::getTickSinceEpoch() - m_frameLimiterClock > 1000)
 			{
-				frameLimiterClock = Time::getTickSinceEpoch();
-				currentFrame = 0;
+				m_frameLimiterClock = Time::getTickSinceEpoch();
+				m_currentFrame = 0;
 			}
-			frameProgression = std::round((Time::getTickSinceEpoch() - frameLimiterClock) / (reqFramerateInterval * 1000));
-			needToRender = false;
-			if (frameProgression > currentFrame)
+			m_frameProgression = std::round((Time::getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
+			m_needToRender = false;
+			if (m_frameProgression > m_currentFrame)
 			{
-				currentFrame = frameProgression;
-				needToRender = true;
+				m_currentFrame = m_frameProgression;
+				m_needToRender = true;
 			}
 		}
 	}
 
-	double FramerateManager::getDeltaTime()
+	double FramerateManager::getDeltaTime() const
 	{
-		return deltaTime;
+		return m_deltaTime;
 	}
 
-	double FramerateManager::getGameSpeed()
+	double FramerateManager::getGameSpeed() const
 	{
-		return deltaTime * speedCoeff;
+		return m_deltaTime * m_speedCoeff;
 	}
 
-	double FramerateManager::getSpeedCoeff()
+	double FramerateManager::getSpeedCoeff() const
 	{
-		return speedCoeff;
+		return m_speedCoeff;
 	}
 
-	bool FramerateManager::isFramerateLimited()
+	bool FramerateManager::isFramerateLimited() const
 	{
-		return limitFPS;
+		return m_limitFPS;
 	}
 
-	int FramerateManager::getFramerateTarget()
+	int FramerateManager::getFramerateTarget() const
 	{
-		return framerateTarget;
+		return m_framerateTarget;
 	}
 
-	bool FramerateManager::isVSyncEnabled()
+	bool FramerateManager::isVSyncEnabled() const
 	{
-		return vsyncEnabled;
+		return m_vsyncEnabled;
 	}
 
 	void FramerateManager::setSpeedCoeff(double speed)
 	{
-		speedCoeff = speed;
+		m_speedCoeff = speed;
 	}
 
 	void FramerateManager::limitFramerate(bool state)
 	{
-		limitFPS = state;
+		m_limitFPS = state;
 	}
 
 	void FramerateManager::setFramerateTarget(int limit)
 	{
-		framerateTarget = limit;
+		m_framerateTarget = limit;
 	}
 
 	void FramerateManager::setVSyncEnabled(bool vsync)
 	{
-		vsyncEnabled = vsync;
+		m_vsyncEnabled = vsync;
 	}
 
-	bool FramerateManager::doRender()
+	bool FramerateManager::doRender() const
 	{
-		return (!limitFPS || needToRender);
+		return (!m_limitFPS || m_needToRender);
 	}
 }

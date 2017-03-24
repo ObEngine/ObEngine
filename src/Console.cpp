@@ -15,30 +15,24 @@ namespace obe
 			scrErrorStream = this->createStream("ScriptError", true);
 			scrErrorStream->setColor(255, 0, 0);
 			consoleTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console")
-				->addTrigger("UserInput")
-				->addTrigger("CursorMoved")
-				->addTrigger("ConsoleScrolled")
-				->addTrigger("NewMessage")
-				->addTrigger("ConsoleToggled")
-				->addTrigger("NewStream");
+			                                                        ->addTrigger("UserInput")
+			                                                        ->addTrigger("CursorMoved")
+			                                                        ->addTrigger("ConsoleScrolled")
+			                                                        ->addTrigger("NewMessage")
+			                                                        ->addTrigger("ConsoleToggled")
+			                                                        ->addTrigger("NewStream");
 		}
 
 		void Console::Console::scroll(int power)
 		{
 			if (consoleScroll + power > 0)
 			{
-				if (consoleScroll + power <= (int)consoleText.size() - 52)
+				if (consoleScroll + power <= static_cast<int>(consoleText.size()) - 52)
 					consoleScroll += power;
 			}
 			else
 				consoleScroll = 0;
 		}
-
-		void Console::update()
-		{
-
-		}
-
 
 		Console::Stream* Console::createStream(std::string streamName, bool enabled)
 		{
@@ -55,13 +49,9 @@ namespace obe
 		Console::Stream* Console::getStream(std::string streamName)
 		{
 			if (Functions::Vector::isInList(streamName, streamList))
-			{
 				return streamMap[streamName];
-			}
-			else
-			{
-				std::cout << "<Error:Console:Console>[getStream] : Can't find Stream : " << streamName << std::endl;
-			}
+			std::cout << "<Error:Console:Console>[getStream] : Can't find Stream : " << streamName << std::endl;
+			return nullptr;
 		}
 
 		void Console::downHistory()
@@ -219,7 +209,7 @@ namespace obe
 			textOutput.setCharacterSize(13);
 			bool alternBackground = false;
 			sf::Color backgroundColor = sf::Color(30, 30, 30, 200);
-			sf::RectangleShape rectangle = sf::RectangleShape(sf::Vector2f(Functions::Coord::width, 20));
+			sf::RectangleShape rectangle = sf::RectangleShape(sf::Vector2f(Coord::UnitVector::Screen.w, 20));
 			int textX = 5;
 			int textY = 1;
 			for (unsigned int i = 0; i < 1040; i += 20)
@@ -247,7 +237,7 @@ namespace obe
 			}
 
 			//FRAME
-			sf::RectangleShape rectangleFrame = sf::RectangleShape(sf::Vector2f(Functions::Coord::width - 4, Functions::Coord::height - 4));
+			sf::RectangleShape rectangleFrame = sf::RectangleShape(sf::Vector2f(Coord::UnitVector::Screen.w - 4, Coord::UnitVector::Screen.h - 4));
 			rectangleFrame.setFillColor(sf::Color(0, 0, 0, 0));
 			rectangleFrame.setOutlineColor(sf::Color(255, 255, 255, 255));
 			rectangleFrame.setOutlineThickness(2);
@@ -255,8 +245,8 @@ namespace obe
 			surf->draw(rectangleFrame);
 
 			//INPUT
-			sf::RectangleShape rectangleInput = sf::RectangleShape(sf::Vector2f(Functions::Coord::width, 40));
-			rectangleInput.setPosition(0, Functions::Coord::height - 40);
+			sf::RectangleShape rectangleInput = sf::RectangleShape(sf::Vector2f(Coord::UnitVector::Screen.w, 40));
+			rectangleInput.setPosition(0, Coord::UnitVector::Screen.h - 40);
 			rectangleInput.setFillColor(sf::Color(100, 100, 100));
 			surf->draw(rectangleInput);
 			//CURSOR
@@ -266,7 +256,7 @@ namespace obe
 			estimate.setCharacterSize(26);
 			estimate.setString(inputBuffer.substr(0, virtualCursor));
 			int consoleCurPos = estimate.getGlobalBounds().width;
-			rectangleCursor.setPosition(consoleCurPos + 2, Functions::Coord::height - 35);
+			rectangleCursor.setPosition(consoleCurPos + 2, Coord::UnitVector::Screen.h - 35);
 			rectangleCursor.setFillColor(sf::Color(200, 200, 200));
 			surf->draw(rectangleCursor);
 			//TEXT
@@ -274,7 +264,7 @@ namespace obe
 			textInput.setFont(font);
 			textInput.setFillColor(sf::Color(255, 255, 255));
 			textInput.setCharacterSize(26);
-			textInput.setPosition(2, Functions::Coord::height - 40);
+			textInput.setPosition(2, Coord::UnitVector::Screen.h - 40);
 			textInput.setString(inputBuffer);
 			surf->draw(textInput);
 		}

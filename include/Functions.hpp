@@ -9,7 +9,6 @@
 #include <sstream>
 #include <map>
 #include <chrono>
-#include <SFML/Graphics.hpp>
 #include <random>
 #include <algorithm>
 #include <iterator>
@@ -17,33 +16,18 @@
 #include <fstream>
 #include <tinydir/tinydir.h>
 
+#include "Coordinates.hpp"
+
 namespace obe
 {
 	namespace Functions
 	{
-		namespace Coord
-		{
-			extern int viewWidth;
-			extern int viewHeight;
-			extern int width;
-			extern int height;
-			int adaptCamX(int camX, int sizeX);
-			int adaptCamY(int camY, int sizeY);
-			template <typename V>
-			V transformX(V value);
-			template <typename V>
-			V transformY(V value);
-			template <typename V>
-			V reverseX(V value);
-			template <typename V>
-			V reverseY(V value);
-		}
 		namespace File
 		{
-			std::vector<std::string> listDirInDir(std::string path);
-			std::vector<std::string> listFileInDir(std::string path);
+			std::vector<std::string> listDirInDir(const std::string& path);
+			std::vector<std::string> listFileInDir(const std::string& path);
 			bool fileExists(const std::string& path);
-			void copy(std::string source, std::string target);
+			void copy(const std::string& source, const std::string& target);
 			std::string separator();
 		}
 		namespace Map
@@ -56,15 +40,15 @@ namespace obe
 		namespace Math
 		{
 			extern double pi;
-			int randint(int min, int max);
+			int randint(const int& min, const int& max);
 			double randfloat();
 			template <typename N>
-			N getMin(N min1, N min2);
+			N getMin(const N& min1, const N& min2);
 			template <typename N>
-			N getMax(N max1, N max2);
+			N getMax(const N& max1, const N& max2);
 			template <typename N>
-			bool isBetween(N target, N lowerBound, N upperBound);
-			bool isDoubleInt(double& value);
+			bool isBetween(const N& target, const N& lowerBound, const N& upperBound);
+			bool isDoubleInt(const double& value);
 		}
 		namespace Run
 		{
@@ -75,23 +59,21 @@ namespace obe
 					int size;
 				public:
 					Parser(char** start, int size);
-					bool argumentExists(std::string arg);
-					std::string getArgumentValue(std::string arg);
+					bool argumentExists(const std::string& arg) const;
+					std::string getArgumentValue(const std::string& arg) const;
 			};
 		}
 		namespace String
 		{
 			std::vector<std::string> split(const std::string &str, const std::string &delimiters = " ");
-			std::vector<std::string> multiSplit(std::string str, std::vector<std::string> seps, std::vector<std::string> sepsBef, std::vector<std::string> sepsAft);
-			std::vector<std::string> multiSplit(std::string str, std::vector<std::string> sepsBef, std::vector<std::string> sepsAft);
-			std::vector<std::string> multiSplit(std::string str, std::vector<std::string> seps);
-			int occurencesInString(std::string str, std::string occur);
-			bool isStringAlpha(std::string str);
-			bool isStringAlphaNumeric(std::string str);
-			bool isStringNumeric(std::string str);
-			bool isStringInt(std::string str);
-			bool isStringFloat(std::string str);
-			void removeCharFromString(std::string &str, std::string charToRemove);
+			std::vector<std::string> multiSplit(std::string str, const std::vector<std::string>& seps);
+			int occurencesInString(const std::string& str, const std::string& occur);
+			bool isStringAlpha(const std::string& str);
+			bool isStringAlphaNumeric(const std::string& str);
+			bool isStringNumeric(const std::string& str);
+			bool isStringInt(const std::string& str);
+			bool isStringFloat(const std::string& str);
+			void removeCharFromString(std::string &str, const std::string& charToRemove);
 			void replaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);
 			std::string replaceString(std::string subject, const std::string& search, const std::string &replace);
 			bool isBetween(const std::string& string, const std::string& bet);
@@ -102,7 +84,7 @@ namespace obe
 			std::string stringToAsciiCode(std::string& str);
 			std::string cutBeforeAsciiCode(std::string& str, int asciiCode);
 			typedef std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::pair<int, int>>> StringExtractor;
-			StringExtractor extractAllStrings(std::string);
+			StringExtractor extractAllStrings(std::string str);
 			bool contains(const std::string& string, const std::string& search);
 		}
 		namespace Type
@@ -129,33 +111,11 @@ namespace obe
 			std::vector<V> getSubVector(const std::vector<V>& vector, int start = 0, int end = 0);
 		}
 
-		//Functions::Coord
-		template<typename V>
-		inline V Functions::Coord::transformX(V value)
-		{
-			return value * Functions::Coord::width / Functions::Coord::viewWidth;
-		}
-		template<typename V>
-		inline V Functions::Coord::transformY(V value)
-		{
-			return value * Functions::Coord::height / Functions::Coord::viewHeight;
-		}
-		template<typename V>
-		inline V Functions::Coord::reverseX(V value)
-		{
-			return value / Functions::Coord::width * Functions::Coord::viewWidth;
-		}
-		template<typename V>
-		inline V Functions::Coord::reverseY(V value)
-		{
-			return value / Functions::Coord::height * Functions::Coord::viewHeight;
-		}
-
 		//Functions::Map
 		template <typename T, typename U>
 		inline bool Map::isInMap(T item, std::map<U, T>& map)
 		{
-			for (auto iterator = map.begin(); iterator != map.end(); iterator++) {
+			for (auto iterator = map.begin(); iterator != map.end(); ++iterator) {
 				if (iterator->second == item)
 					return true;
 			}
@@ -163,7 +123,7 @@ namespace obe
 		}
 		template <typename T, typename U>
 		inline bool Map::keyInMap(T item, std::map<T, U>& map) {
-			for (auto iterator = map.begin(); iterator != map.end(); iterator++) {
+			for (auto iterator = map.begin(); iterator != map.end(); ++iterator) {
 				if (iterator->first == item)
 					return true;
 			}
@@ -172,15 +132,15 @@ namespace obe
 
 		//Functions::Math
 		template <typename N>
-		inline N Math::getMin(N min1, N min2) {
+		inline N Math::getMin(const N& min1, const N& min2) {
 			return (min1 < min2) ? min1 : min2;
 		}
 		template <typename N>
-		inline N Math::getMax(N max1, N max2) {
+		inline N Math::getMax(const N& max1, const N& max2) {
 			return (max1 > max2) ? max1 : max2;
 		}
 		template <typename N>
-		inline bool Math::isBetween(N target, N lowerBound, N upperBound)
+		inline bool Math::isBetween(const N& target, const N& lowerBound, const N& upperBound)
 		{
 			if (target >= lowerBound && target <= upperBound)
 				return true;
@@ -229,6 +189,7 @@ namespace obe
 					
 			}
 			std::cout << "<Error:Functions:Vector>[indexOfElement] : Can't find element : " << item << " in vector" << std::endl;
+			return -1;
 		}
 		template <typename V>
 		inline void Vector::eraseAll(std::vector<V>& vector, V elem)

@@ -3,15 +3,12 @@
 
 #pragma once
 
-#include <algorithm>
 #include <kaguya/kaguya.hpp>
 #include <vili/Vili.hpp>
 
 #include "Animation.hpp"
 #include "Collisions.hpp"
-#include "DataParserLuaBridge.hpp"
 #include "LevelSprite.hpp"
-#include "Script.hpp"
 #include "Triggers.hpp"
 
 namespace obe
@@ -20,91 +17,95 @@ namespace obe
 	{
 		class World;
 	}
+
 	namespace Script
 	{
 		class GameObject;
+
 		class GameObjectRequires
 		{
-			private:
-				static GameObjectRequires* instance;
-				vili::DataParser allRequires;
-			public:
-				static GameObjectRequires* getInstance();
-				vili::ComplexAttribute* getRequiresForObjectType(std::string type);
-				void applyBaseRequires(GameObject* obj, vili::ComplexAttribute& requires);
-				static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
+		private:
+			static GameObjectRequires* instance;
+			vili::DataParser allRequires;
+		public:
+			static GameObjectRequires* getInstance();
+			vili::ComplexAttribute* getRequiresForObjectType(std::string type);
+			void applyBaseRequires(GameObject* obj, vili::ComplexAttribute& requires);
+			static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
 		};
 
 		class GameObject
 		{
-			private:
-				Animation::Animator objectAnimator;
-				Graphics::LevelSprite objectLevelSprite;
-				Collision::PolygonalCollider objectCollider;
-				kaguya::State* scriptEngine;
+		private:
+			std::unique_ptr<Animation::Animator> m_objectAnimator;
+			std::unique_ptr<kaguya::State> m_objectScript;
+			Graphics::LevelSprite* m_objectLevelSprite = nullptr;
+			Collision::PolygonalCollider* m_objectCollider = nullptr;
+			TriggerGroup* m_localTriggers = nullptr;
 
-				std::vector<Script::Trigger*> registeredTriggers;
-				Script::TriggerGroup* localTriggers;
-				std::vector<std::tuple<std::string, std::string, std::string>> registeredAliases;
+			std::vector<Trigger*> m_registeredTriggers;
+			std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
 
-				std::string id;
-				std::string type;
-				std::string privateKey;
-				std::string publicKey;
-				int scrPriority = 0;
+			std::string m_id;
+			std::string m_type;
+			std::string m_privateKey;
+			std::string m_publicKey;
+			int m_scrPriority = 0;
 
-				bool hasAnimator = false;
-				bool hasCollider = false;
-				bool colliderSolid = false;
-				bool colliderClick = false;
-				bool levelSpriteRelative = true;
-				bool hasLevelSprite = false;
-				bool hasScriptEngine = false;
-				bool initialised = false;
-				bool updated = true;
+			bool m_hasAnimator = false;
+			bool m_hasCollider = false;
+			bool m_colliderSolid = false;
+			bool m_colliderClick = false;
+			bool m_levelSpriteRelative = true;
+			bool m_hasLevelSprite = false;
+			bool m_hasScriptEngine = false;
+			bool m_initialised = false;
+			bool m_updated = true;
 
-				int queryCounter = 0;
+			int m_queryCounter = 0;
 
-				GameObject(std::string type, std::string id);
-				void registerTrigger(Script::Trigger* trg);
-				void loadGameObject(vili::ComplexAttribute* obj);
-				void hookLuaState(kaguya::State* lua);
-				void update(double dt);
+			friend class World::World;
+		public:
+			GameObject(std::string type, std::string id);
 
-				friend class World::World;
-			public:
-				std::string getID();
-				std::string getType();
-				std::string getPublicKey();
-				void setAnimationKey(std::string key);
-				int getPriority();
-				bool canDisplay();
-				bool canCollide();
-				bool canClick();
-				bool doesHaveCollider();
-				bool doesHaveLevelSprite();
-				bool doesHaveScriptEngine();
-				bool isLevelSpriteRelative();
-				bool getUpdateState();
-				void setUpdateState(bool state);
-				Graphics::LevelSprite* getLevelSprite();
-				Collision::PolygonalCollider* getCollider();
-				Animation::Animator* getAnimator();
-				kaguya::State* getScriptEngine();
-				Script::TriggerGroup* getLocalTriggers();
-				void useLocalTrigger(std::string trName);
-				void useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs = "");
-				void setInitialised(bool init);
-				bool getInitialised();
-				void exec(std::string query);
-				template <typename U>
-				void sendQuery(U query);
-				template <typename U>
-				void sendRequireArgumentFromCPP(std::string argName, U value);
-				void sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value);
+			std::string getID() const;
+			std::string getType() const;
+			std::string getPublicKey() const;
+			int getPriority() const;
+			bool canDisplay() const;
+			bool canCollide() const;
+			bool canClick() const;
+			bool doesHaveCollider() const;
+			bool doesHaveLevelSprite() const;
+			bool doesHaveScriptEngine() const;
+			bool isLevelSpriteRelative() const;
+			bool getUpdateState() const;
+			void setUpdateState(bool state);
+			
 
-				void deleteObject();
-				bool deletable = false;
+			Animation::Animator* getAnimator();
+			Collision::PolygonalCollider* getCollider();
+			Graphics::LevelSprite* getLevelSprite();
+			kaguya::State* getScript();
+
+			TriggerGroup* getLocalTriggers() const;
+			void useLocalTrigger(std::string trName);
+			void useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs = "");
+			void setInitialised(bool init);
+			bool getInitialised() const;
+			void exec(std::string query) const;
+			template <typename U>
+			void sendQuery(U query);
+			template <typename U>
+			void sendRequireArgumentFromCPP(std::string argName, U value);
+			void sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value) const;
+
+			void registerTrigger(Script::Trigger* trg);
+			void loadGameObject(World::World* world, vili::ComplexAttribute* obj);
+			void update(double dt);
+
+			void deleteObject();
+			bool deletable = false;
 		};
 
 		void loadScrGameObject(GameObject* obj, kaguya::State* lua);
@@ -113,20 +114,20 @@ namespace obe
 		void loadLibBridge(GameObject* object, std::string lib);
 		void loadHookBridge(GameObject* object, std::string hookname);
 
-		template<typename U>
-		inline void GameObject::sendRequireArgumentFromCPP(std::string argName, U value)
+		template <typename U>
+		void GameObject::sendRequireArgumentFromCPP(std::string argName, U value)
 		{
-			(*this->scriptEngine)["LuaCore"]["Lua_ReqList"][argName] = value;
+			(*m_objectScript.get())["LuaCore"]["Lua_ReqList"][argName] = value;
 		}
 
-		template<typename U>
-		inline void GameObject::sendQuery(U query)
+		template <typename U>
+		void GameObject::sendQuery(U query)
 		{
-			if (Functions::Vector::isInList(localTriggers->getTrigger("Query"), registeredTriggers))
+			if (Functions::Vector::isInList(m_localTriggers->getTrigger("Query"), m_registeredTriggers))
 			{
-				localTriggers->pushParameter("Query", std::to_string(queryCounter), query);
-				localTriggers->setTriggerState("Query", true);
-				queryCounter++;
+				m_localTriggers->pushParameter("Query", std::to_string(m_queryCounter), query);
+				m_localTriggers->setTriggerState("Query", true);
+				m_queryCounter++;
 			}
 		}
 	};

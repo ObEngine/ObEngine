@@ -2,6 +2,7 @@
 //Key : 976938ef7d46c286a2027d73f3a99467bcfa8ff0c1e10bd0016139744ef5404f4eb4d069709f9831f6de74a094944bf0f1c5bf89109e9855290336a66420376f
 
 #include "Dialog.hpp"
+#include "Animation.hpp"
 
 namespace obe
 {
@@ -45,11 +46,11 @@ namespace obe
 			else
 				std::cout << "<Error:Dialog:TextRenderer>[sendToRenderer] : Can't find Renderer with id : " << id << std::endl;
 		}
-		bool TextRenderer::textRemaining()
+		bool TextRenderer::textRemaining() const
 		{
 			return rendererCalls.size() > 0;
 		}
-		void TextRenderer::next()
+		void TextRenderer::next() const
 		{
 			if (rendererCalls.size() >= 1 && currentRenderer->getFadeState() != RendererState::FadeOut)
 				currentRenderer->setFadeState(RendererState::FadeOut);
@@ -112,11 +113,11 @@ namespace obe
 
 			circleAnim->loadAnimation(System::Path("Sprites/Dialog/Loader/"), "Loader.ani.vili");
 			circleAnim->playAnimation();
-			circleAnim->getSprite()->setPosition(Functions::Coord::width - 64 - 16, Functions::Coord::height - 64 - 16);
+			circleAnim->getSprite()->setPosition(Coord::UnitVector::Screen.w - 64 - 16, Coord::UnitVector::Screen.h - 64 - 16);
 
 			dialogLine->loadFromFile("Sprites/Dialog/textbox.png");
 			dialogLineSpr->setTexture(*dialogLine);
-			dialogLineSpr->setPosition(0, Functions::Coord::transformY(760));
+			dialogLineSpr->setPosition(0, 760);
 			dialogFont->loadFromFile("Data/Fonts/TravelingTypewriter.ttf");
 
 			dialogText->setFont(*dialogFont);
@@ -160,10 +161,9 @@ namespace obe
 			std::string speaker = vtdb[0]["speaker"];
 			std::string textToSay = vtdb[0]["text"];
 			speakerText->setString(sf::String(speaker));
-			speakerText->setPosition((90 + (12 * (11 - speaker.size()))), Functions::Coord::transformY(760));
+			speakerText->setPosition((90 + (12 * (11 - speaker.size()))), 760);
 			renTex.draw(*speakerText);
 			int indexCounter = 0;
-			int lignAlign = 0;
 			int borderSize = 30;
 			std::string currentPhr;
 			std::vector<std::string> currentTextList;
@@ -176,7 +176,7 @@ namespace obe
 				std::string testPhr = currentPhr + currentTextList[i] + " ";
 				Functions::String::regenerateEncoding(testPhr);
 				dialogText->setString(sf::String(testPhr));
-				if (dialogText->getGlobalBounds().width > Functions::Coord::width - (borderSize * 2))
+				if (dialogText->getGlobalBounds().width > Coord::UnitVector::Screen.w - (borderSize * 2))
 					currentPhr += "\n";
 				currentPhr += currentTextList[i] + " ";
 				Functions::String::regenerateEncoding(currentPhr);
@@ -185,7 +185,7 @@ namespace obe
 			}
 			Functions::String::regenerateEncoding(currentPhr);
 			dialogText->setString(sf::String(currentPhr));
-			dialogText->setPosition(borderSize, Functions::Coord::transformY(840));
+			dialogText->setPosition(borderSize, 840);
 			renTex.draw(*dialogText);
 
 			renTex.display();
@@ -244,7 +244,6 @@ namespace obe
 
 			std::string textToSay = vtdb[0]["text"];
 			int indexCounter = 0;
-			int lignAlign = 0;
 			int borderSize = 30;
 			std::string currentPhr;
 			std::vector<std::string> currentTextList;
@@ -257,7 +256,7 @@ namespace obe
 				std::string testPhr = currentPhr + currentTextList[i] + " ";
 				Functions::String::regenerateEncoding(testPhr);
 				dialogText->setString(sf::String(testPhr));
-				if (dialogText->getGlobalBounds().width > Functions::Coord::width - (borderSize * 2))
+				if (dialogText->getGlobalBounds().width > Coord::UnitVector::Screen.w - (borderSize * 2))
 					currentPhr += "\n";
 				currentPhr += currentTextList[i] + " ";
 				Functions::String::regenerateEncoding(currentPhr);
@@ -266,7 +265,7 @@ namespace obe
 			}
 			Functions::String::regenerateEncoding(currentPhr);
 			dialogText->setString(sf::String(currentPhr));
-			dialogText->setPosition(borderSize, Functions::Coord::transformY(540));
+			dialogText->setPosition(borderSize, 540);
 			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			renTex.display();
@@ -374,18 +373,18 @@ namespace obe
 			Functions::String::regenerateEncoding(sAnswerText);
 
 			dialogText->setString(sf::String(textToSay));
-			dialogText->setPosition(Functions::Coord::transformX(960 - (dialogText->getGlobalBounds().width / 2)), Functions::Coord::transformY(200));
+			dialogText->setPosition(960 - (dialogText->getGlobalBounds().width / 2),200);
 			dialogText->setFillColor(sf::Color(255, 255, 255, 255));
 
 			fAnswer->setString(sf::String(fAnswerText));
-			fAnswer->setPosition(Functions::Coord::transformX(200), Functions::Coord::transformY(640));
+			fAnswer->setPosition(200, 640);
 			if (selectedAnswer == 0)
 				fAnswer->setFillColor(sf::Color(100, 255, 100, 255));
 			else
 				fAnswer->setFillColor(sf::Color(255, 255, 255, 255));
 
 			sAnswer->setString(sf::String(sAnswerText));
-			sAnswer->setPosition(Functions::Coord::transformX(1200), Functions::Coord::transformY(640));
+			sAnswer->setPosition(1200, 640);
 			if (selectedAnswer == 1)
 				sAnswer->setFillColor(sf::Color(100, 255, 100, 255));
 			else
@@ -437,7 +436,7 @@ namespace obe
 		{
 			fadeState = state;
 		}
-		int Renderer::getFadeState()
+		int Renderer::getFadeState() const
 		{
 			return fadeState;
 		}

@@ -3,21 +3,7 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <vili/Vili.hpp>
-
 #include "World.hpp"
-#include "Cursor.hpp"
-#include "KeyBind.hpp"
-#include "Console.hpp"
-#include "TimeManager.hpp"
-#include "FramerateManager.hpp"
 
 namespace obe
 {

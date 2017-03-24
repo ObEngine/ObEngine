@@ -7,239 +7,239 @@ namespace obe
 {
 	namespace Graphics
 	{
-		LevelSprite::LevelSprite(std::string path, std::string decoID)
+		LevelSprite::LevelSprite(std::string path, std::string id)
 		{
-			this->sprName = path;
-			this->sprID = decoID;
-			this->returnSprite = new sfe::ComplexSprite;
-			System::Path(path).loadResource(&this->texture, System::Loaders::textureLoader);
-			this->returnSprite->setTexture(this->texture);
+			m_path = path;
+			m_id = id;
+			System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
+			m_returnSprite.setTexture(m_texture);
 		}
 
-		LevelSprite::LevelSprite(std::string decoID)
+		LevelSprite::LevelSprite(std::string id)
 		{
-			this->sprID = decoID;
-			this->drawable = false;
-			this->returnSprite = new sfe::ComplexSprite;
+			m_id = id;
+			m_drawable = false;
 		}
 
 		void LevelSprite::load(std::string path)
 		{
-			this->sprName = path;
-			this->returnSprite = new sfe::ComplexSprite;
-			System::Path(path).loadResource(&this->texture, System::Loaders::textureLoader);
-			this->returnSprite->setTexture(this->texture);
+			m_path = path;
+			System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
+			m_returnSprite.setTexture(m_texture);
 			this->update();
-		}
-
-		void LevelSprite::setSprite(sfe::ComplexSprite* spr)
-		{
-			returnSprite = spr;
-			int rotOrigX = (double)this->getW() / 2.0;
-			int rotOrigY = (double)this->getH() / 2.0;
-			this->setRotationOrigin(rotOrigX, rotOrigY);
 		}
 
 		void LevelSprite::setSprite(sf::Sprite* spr)
 		{
-			returnSprite->copyFromSprite(*spr);
-			int rotOrigX = (double)this->getW() / 2.0;
-			int rotOrigY = (double)this->getH() / 2.0;
+			m_returnSprite.copyFromSprite(*spr);
+			int rotOrigX = static_cast<double>(getWidth()) / 2.0;
+			int rotOrigY = static_cast<double>(getHeight()) / 2.0;
 			this->setRotationOrigin(rotOrigX, rotOrigY);
 		}
 
 		void LevelSprite::setLayer(int layer)
 		{
-			this->layer = layer;
+			m_layer = layer;
 		}
 		void LevelSprite::setZDepth(int zdepth)
 		{
-			this->zdepth = zdepth;
+			m_zdepth = zdepth;
 		}
 		void LevelSprite::setAtr(std::vector<std::string> atrList)
 		{
-			currentAtr = atrList;
+			m_currentAtr = atrList;
 		}
 		void LevelSprite::addAtr(std::string atr)
 		{
-			currentAtr.push_back(atr);
+			m_currentAtr.push_back(atr);
 		}
 		void LevelSprite::removeAtrByIndex(int index)
 		{
-			currentAtr.erase(currentAtr.begin() + index);
+			m_currentAtr.erase(m_currentAtr.begin() + index);
 		}
 		void LevelSprite::removeAtrByName(std::string name)
 		{
-			currentAtr.erase(remove(currentAtr.begin(), currentAtr.end(), name), currentAtr.end());
+			m_currentAtr.erase(std::remove(m_currentAtr.begin(), m_currentAtr.end(), name), m_currentAtr.end());
 		}
 		void LevelSprite::setRotation(double rotate)
 		{
-			rotation = rotate;
-			returnSprite->setRotation(rotation);
+			m_rotation = rotate;
+			m_returnSprite.setRotation(m_rotation);
 			calculateRealCoordinates();
 		}
 		void LevelSprite::rotate(double addRotate)
 		{
-			rotation += addRotate;
-			if (rotation < 0) rotation += 360;
-			rotation = ((int)rotation % 360) + (rotation - std::floor(rotation));
-			returnSprite->setRotation(rotation);
+			m_rotation += addRotate;
+			if (m_rotation < 0) m_rotation += 360;
+			m_rotation = (static_cast<int>(m_rotation) % 360) + (m_rotation - std::floor(m_rotation));
+			m_returnSprite.setRotation(m_rotation);
 			calculateRealCoordinates();
 		}
 		void LevelSprite::scale(double scaleX, double scaleY)
 		{
-			this->scaleX += scaleX;
-			this->scaleY += scaleY;
-			returnSprite->setScale(this->scaleX, this->scaleY);
+			m_scaleX += scaleX;
+			m_scaleY += scaleY;
+			m_returnSprite.setScale(m_scaleX, m_scaleY);
 			calculateRealCoordinates();
 		}
 		void LevelSprite::setScale(double scaleX, double scaleY)
 		{
-			this->scaleX = scaleX;
-			this->scaleY = scaleY;
-			returnSprite->setScale(scaleX, scaleY);
+			m_scaleX = scaleX;
+			m_scaleY = scaleY;
+			m_returnSprite.setScale(scaleX, scaleY);
 			calculateRealCoordinates();
 		}
 		void LevelSprite::setTranslationOrigin(int x, int y)
 		{
-			originTraX = x;
-			originTraY = y;
-			returnSprite->setTranslationOrigin(originTraX, originTraY);
+			m_originTraX = x;
+			m_originTraY = y;
+			m_returnSprite.setTranslationOrigin(m_originTraX, m_originTraY);
 		}
 		void LevelSprite::setRotationOrigin(int x, int y)
 		{
-			originRotX = x;
-			originRotY = y;
-			returnSprite->setRotationOrigin(originRotX, originRotY);
+			m_originRotX = x;
+			m_originRotY = y;
+			m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
 		}
 		void LevelSprite::update()
 		{
-			returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
-			returnSprite->setRotation(rotation);
-			returnSprite->setScale(scaleX, scaleY);
-			returnSprite->setColor(spriteColor);
+			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+			m_returnSprite.setPosition(realPosition.x, realPosition.y);
+			m_returnSprite.setRotation(m_rotation);
+			m_returnSprite.setScale(m_scaleX, m_scaleY);
+			m_returnSprite.setColor(m_spriteColor);
 			calculateRealCoordinates();
 		}
 		void LevelSprite::setColor(sf::Color newColor)
 		{
-			spriteColor = newColor;
-			returnSprite->setColor(spriteColor);
+			m_spriteColor = newColor;
+			m_returnSprite.setColor(m_spriteColor);
 		}
 		sfe::ComplexSprite* LevelSprite::getSprite()
 		{
 			this->update();
-			return returnSprite;
+			return &m_returnSprite;
 		}
 		void LevelSprite::setPosition(double x, double y)
 		{
-			absoluteX = x;
-			absoluteY = y;
-			returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
+			m_position.x = x;
+			m_position.y = y;
+
+			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+			std::cout << "Set position of " << m_id << " with " << m_position << " and " << m_offset << " to " << realPosition << std::endl;
+			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
 		void LevelSprite::setOffset(double offx, double offy)
 		{
-			offsetX = offx;
-			offsetY = offy;
-			returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
+			m_offset.x = offx;
+			m_offset.y = offy;
+			
+			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
 		void LevelSprite::move(double x, double y)
 		{
-			absoluteX += x;
-			absoluteY += y;
-			returnSprite->setPosition(absoluteX + offsetX, absoluteY + offsetY);
+			m_position.x += x;
+			m_position.y += y;
+			
+			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
-		double LevelSprite::getX()
+		double LevelSprite::getX() const
 		{
-			return absoluteX;
+			return m_position.x;
 		}
-		double LevelSprite::getY()
+		double LevelSprite::getY() const
 		{
-			return absoluteY;
+			return m_position.y;
 		}
-		double LevelSprite::getOffsetX()
+		double LevelSprite::getOffsetX() const
 		{
-			return offsetX;
+			return m_offset.x;
 		}
-		double LevelSprite::getOffsetY()
+		double LevelSprite::getOffsetY() const
 		{
-			return offsetY;
+			return m_offset.y;
 		}
-		double LevelSprite::getScaleX()
+		double LevelSprite::getScaleX() const
 		{
-			return scaleX;
+			return m_scaleX;
 		}
-		double LevelSprite::getScaleY()
+		double LevelSprite::getScaleY() const
 		{
-			return scaleY;
+			return m_scaleY;
 		}
-		float LevelSprite::getRotation()
+		float LevelSprite::getRotation() const
 		{
-			return rotation;
+			return m_rotation;
 		}
-		int LevelSprite::getLayer()
+		int LevelSprite::getLayer() const
 		{
-			return layer;
+			return m_layer;
 		}
-		int LevelSprite::getZDepth()
+		int LevelSprite::getZDepth() const
 		{
-			return zdepth;
+			return m_zdepth;
 		}
-		std::string LevelSprite::getID()
+		std::string LevelSprite::getID() const
 		{
-			return sprID;
+			return m_id;
 		}
-		std::string LevelSprite::getName()
+		std::string LevelSprite::getPath() const
 		{
-			return sprName;
+			return m_path;
 		}
-		std::vector<std::string> LevelSprite::getAttributes()
+		std::vector<std::string> LevelSprite::getAttributes() const
 		{
-			return currentAtr;
+			return m_currentAtr;
 		}
-		int LevelSprite::getW()
+		int LevelSprite::getWidth() const
 		{
-			return returnSprite->getGlobalBounds().width;
+			return m_returnSprite.getGlobalBounds().width;
 		}
-		int LevelSprite::getH()
+		int LevelSprite::getHeight() const
 		{
-			return returnSprite->getGlobalBounds().height;
+			return m_returnSprite.getGlobalBounds().height;
 		}
 		void LevelSprite::calculateRealCoordinates()
 		{
-			width = returnSprite->getGlobalBounds().width;
-			height = returnSprite->getGlobalBounds().height;
+			m_width = m_returnSprite.getGlobalBounds().width;
+			m_height = m_returnSprite.getGlobalBounds().height;
 		}
 		sf::FloatRect LevelSprite::getRect()
 		{
-			this->returnSprite->setTranslationOrigin(this->originTraX, this->originTraY);
-			this->returnSprite->setRotationOrigin(this->originRotX, this->originRotY);
-			this->returnSprite->setPosition(this->absoluteX + this->offsetX, this->absoluteY + this->offsetY);
-			this->returnSprite->setScale(this->scaleX, this->scaleY);
-			this->returnSprite->setRotation(this->rotation);
-			sf::FloatRect mrect = sf::FloatRect(this->absoluteX + this->offsetX, this->absoluteY + this->offsetY, this->width, this->height);
-			mrect.left = this->returnSprite->getGlobalBounds().left;
-			mrect.top = this->returnSprite->getGlobalBounds().top;
+			m_returnSprite.setTranslationOrigin(m_originTraX, m_originTraY);
+			m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
+
+			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+
+			m_returnSprite.setPosition(realPosition.x, realPosition.y);
+			m_returnSprite.setScale(m_scaleX, m_scaleY);
+			m_returnSprite.setRotation(m_rotation);
+			sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_width, m_height);
+			mrect.left = m_returnSprite.getGlobalBounds().left;
+			mrect.top = m_returnSprite.getGlobalBounds().top;
 			return mrect;
 		}
-		bool LevelSprite::isDrawable()
+		bool LevelSprite::isDrawable() const
 		{
-			return drawable;
+			return m_drawable;
 		}
 		void LevelSprite::setVisible(bool visible)
 		{
-			this->visible = visible;
+			m_visible = visible;
 		}
-		bool LevelSprite::isVisible()
+		bool LevelSprite::isVisible() const
 		{
-			return this->visible;
+			return m_visible;
 		}
-		std::string LevelSprite::getParentID()
+		std::string LevelSprite::getParentID() const
 		{
-			return parentID;
+			return m_parentID;
 		}
 		void LevelSprite::setParentID(std::string parent)
 		{
-			this->parentID = parent;
+			m_parentID = parent;
 		}
 	}
 }

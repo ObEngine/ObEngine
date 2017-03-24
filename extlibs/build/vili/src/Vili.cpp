@@ -453,7 +453,7 @@ namespace vili
 		if (index < dataList.size())
 			return dataList[index].get();
 		else
-			std::cout << "<Error:Vili:ListAttribute> : Can't access index " << index << " of " \
+			std::cout << "<Error:Vili:ListAttribute>[get] : Can't access index " << index << " of " \
 					  << getNodePath() << " (Size:" << dataList.size() << ")" << std::endl;
 	}
 	std::vector<BaseAttribute*>::iterator ListAttribute::begin()

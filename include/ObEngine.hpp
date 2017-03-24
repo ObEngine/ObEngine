@@ -11,6 +11,7 @@
 #include <random>
 #include <vili/Vili.hpp>
 
+#include "Coordinates.hpp"
 #include "Game.hpp"
 #include "MapEditor.hpp"
 #include "Menu.hpp"

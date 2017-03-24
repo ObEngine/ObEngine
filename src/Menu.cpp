@@ -72,11 +72,13 @@ namespace obe
 					newFileParser.createFlag("Map");
 					newFileParser.createFlag("Lock");
 					newFileParser->createComplexAttribute("Meta");
-					newFileParser.at("Meta")->createBaseAttribute("Level", newLevelName);
-					newFileParser.at("Meta")->createBaseAttribute("SizeX", 1920);
-					newFileParser.at("Meta")->createBaseAttribute("SizeY", 1080);
-					newFileParser.at("Meta")->createBaseAttribute("StartX", 0);
-					newFileParser.at("Meta")->createBaseAttribute("StartY", 0);
+					newFileParser.at("Meta")->createBaseAttribute("name", newLevelName);
+					newFileParser.at("Meta")->createListAttribute("size");
+					newFileParser->at<vili::ListAttribute>("Meta", "size")->push(1920);
+					newFileParser->at<vili::ListAttribute>("Meta", "size")->push(1080);
+					newFileParser.at("Meta")->createListAttribute("view");
+					newFileParser->at<vili::ListAttribute>("Meta", "view")->push(1920);
+					newFileParser->at<vili::ListAttribute>("Meta", "view")->push(1080);
 					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0), true);
 					input->setText("");
 				}

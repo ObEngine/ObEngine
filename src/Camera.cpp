@@ -4,123 +4,128 @@ namespace obe
 {
 	namespace World
 	{
-		double Camera::transformHorizontal(const double& x, Units unit)
-		{
-			if (unit == Units::Pixels) {
-				return (x * Functions::Coord::width) / worldWidth;
-			}
-			else if (unit == Units::WorldPercentage) {
-				return (worldWidth * x) / 100.0;
-			}
-			else if (unit == Units::WorldUnits) {
-				return x;
-			}
-		}
-
-		double Camera::transformVertical(const double& y, Units unit)
-		{
-			if (unit == Units::Pixels) {
-				return (y * Functions::Coord::height) / worldHeight;
-			}
-			else if (unit == Units::WorldPercentage) {
-				return (worldHeight * y) / 100.0;
-			}
-			else if (unit == Units::WorldUnits) {
-				return y;
-			}
-		}
-
 		Camera::Camera()
 		{
+			Coord::UnitVector::Init(m_camera);
 		}
 
-
-		void Camera::setWorldSize(const double& worldWidth, const double& worldHeight)
+		void Camera::apply() const
 		{
-			this->worldWidth = worldWidth;
-			this->worldHeight = worldHeight;
+			m_camera->x = m_position.x;
+			m_camera->y = m_position.y;
+			m_camera->w = m_size.x;
+			m_camera->h = m_size.y;
 		}
 
-		void Camera::setPosition(const double& x, const double& y, Units unit)
+		void Camera::setPosition(const Coord::UnitVector& position)
 		{
-			this->x = transformHorizontal(x, unit);
-			this->y = transformVertical(y, unit);
+			this->setPosition(position.x, position.y);
 		}
 
-		void Camera::move(const double& x, const double& y, Units unit)
+		void Camera::setPosition(const double& x, const double& y)
 		{
-			this->x += transformHorizontal(x, unit);
-			this->y += transformVertical(y, unit);
+			m_position.set(x, y);
+			this->apply();
 		}
 
-		void Camera::setX(const double& x, Units unit)
+		void Camera::move(const Coord::UnitVector& position)
 		{
-			this->x = transformHorizontal(x, unit);
+			m_position.add(position.x, position.y);
+			this->apply();
 		}
 
-		void Camera::setY(const double& y, Units unit)
+		void Camera::move(const double& x, const double& y)
 		{
-			this->y = transformVertical(y, unit);
+			m_position.add(x, y);
+			this->apply();
 		}
 
-		void Camera::setSize(const double& width, const double& height, Units unit)
+		void Camera::setX(const double& x)
 		{
-			this->width = width;
-			this->height = height;
+			m_position.set(x, m_position.y);
+			this->apply();
 		}
 
-		void Camera::scale(const double& width, const double& height, Units unit)
+		void Camera::setY(const double& y)
 		{
-			this->width += width;
-			this->height += height;
+			m_position.set(m_position.x, y);
+			this->apply();
 		}
 
-		void Camera::setWidth(const double& width, Units unit)
+		void Camera::setSize(const Coord::UnitVector& size)
 		{
-			this->width = transformHorizontal(width, unit);
+			m_size.set(size.x, size.y);
+			this->apply();
 		}
 
-		void Camera::setHeight(const double& height, Units unit)
+		void Camera::setSize(const double& width, const double& height)
 		{
-			this->height = transformVertical(height, unit);
+			m_size.set(width, height);
+			this->apply();
+		}
+
+		void Camera::scale(const Coord::UnitVector& size)
+		{
+			m_size.add(size.x, size.y);
+			this->apply();
+		}
+
+		void Camera::scale(const double& width, const double& height)
+		{
+			m_size.add(width, height);
+			this->apply();
+		}
+
+		void Camera::setWidth(const double& width)
+		{
+			m_size.set(width, m_size.y);
+			this->apply();
+		}
+
+		void Camera::setHeight(const double& height)
+		{
+			m_size.set(m_size.x, height);
+			this->apply();
 		}
 
 		void Camera::setAngle(const double& angle)
 		{
-			this->angle = angle;
+			m_angle = angle;
 		}
 
 		void Camera::rotate(const double& angle)
 		{
-			this->angle += angle;
+			m_angle += angle;
 		}
-		std::pair<double, double> Camera::getPosition(Units unit)
+
+		Coord::UnitVector Camera::getPosition() const
 		{
-			return std::pair<double, double>(transformHorizontal(x, unit), transformVertical(y, unit));
+			return m_position;
 		}
-		double Camera::getX(Units unit)
+
+		Coord::UnitVector Camera::getSize() const
 		{
-			return transformHorizontal(x, unit);
+			return m_size;
 		}
-		double Camera::getY(Units unit)
+
+		double Camera::getX() const
 		{
-			return transformVertical(y, unit);
+			return m_position.x;
 		}
-		double Camera::getWidth(Units unit)
+
+		double Camera::getY() const
 		{
-			return transformHorizontal(width, unit);
+			return m_position.y;
 		}
-		double Camera::getHeight(Units unit)
+
+		double Camera::getWidth() const
 		{
-			return transformVertical(height, unit);
+			return m_size.x;
 		}
-		double Camera::getWidthRatio()
+
+		double Camera::getHeight() const
 		{
-			return (width / worldWidth);
-		}
-		double Camera::getHeightRatio()
-		{
-			return (height / worldHeight);
+			return m_size.y;
 		}
 	}
 }

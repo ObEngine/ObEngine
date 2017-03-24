@@ -330,10 +330,6 @@ namespace obe
 			if (!(bool)((*lua)["Core"]["Constants"])) (*lua)["Core"]["Constants"] = kaguya::NewTable();
 			if (importAll)
 			{
-				(*lua)["Core"]["Constants"]["ResX"] = Functions::Coord::width;
-				(*lua)["Core"]["Constants"]["ResY"] = Functions::Coord::height;
-				(*lua)["Core"]["Constants"]["ViewWidth"] = Functions::Coord::viewWidth;
-				(*lua)["Core"]["Constants"]["ViewHeight"] = Functions::Coord::viewHeight;
 				foundPart = true;
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConstants] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
@@ -416,11 +412,11 @@ namespace obe
 					.addFunction("addAtr", &Graphics::LevelSprite::addAtr)
 					.addFunction("calculateRealCoordinates", &Graphics::LevelSprite::calculateRealCoordinates)
 					.addFunction("getAttributes", &Graphics::LevelSprite::getAttributes)
-					.addFunction("getH", &Graphics::LevelSprite::getH)
-					.addFunction("getW", &Graphics::LevelSprite::getW)
+					.addFunction("getH", &Graphics::LevelSprite::getHeight)
+					.addFunction("getW", &Graphics::LevelSprite::getWidth)
 					.addFunction("getID", &Graphics::LevelSprite::getID)
 					.addFunction("getLayer", &Graphics::LevelSprite::getLayer)
-					.addFunction("getName", &Graphics::LevelSprite::getName)
+					.addFunction("getName", &Graphics::LevelSprite::getPath)
 					.addFunction("getOffsetX", &Graphics::LevelSprite::getOffsetX)
 					.addFunction("getOffsetY", &Graphics::LevelSprite::getOffsetY)
 					.addFunction("getParentID", &Graphics::LevelSprite::getParentID)

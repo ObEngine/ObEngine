@@ -9,6 +9,10 @@ int main(int argc, char** argv)
 	std::string startMode = runParser.getArgumentValue("-mode");
 	std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
+	obe::Coord::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+
+	obe::Coord::UnitVector uv_a(500, 500);
+
 	std::ofstream out("log.txt");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());

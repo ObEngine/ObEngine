@@ -33,36 +33,34 @@ namespace obe
 
 		void EditorGrid::setSizeX(int sizeX)
 		{
-			bool needToRender = sizeX != gridSizeX;
 			gridSizeX = sizeX;
 		}
 
 		void EditorGrid::setSizeY(int sizeY)
 		{
-			bool needToRender = sizeY != gridSizeY;
 			gridSizeY = sizeY;
 		}
 
 		void EditorGrid::setSize(int sizeX, int sizeY)
 		{
-			this->setSizeX(sizeX); this->setSizeY(sizeY);
+			this->setSizeX(sizeX);
+			this->setSizeY(sizeY);
 		}
 
 		void EditorGrid::setOffsetX(int offsetX)
 		{
-			bool needToRender = offsetX != gridOffX;
 			this->gridOffX = offsetX % this->gridSizeX;
 		}
 
 		void EditorGrid::setOffsetY(int offsetY)
 		{
-			bool needToRender = offsetY != gridOffY;
 			this->gridOffY = offsetY % this->gridSizeY;
 		}
 
 		void EditorGrid::setOffset(int offsetX, int offsetY)
 		{
-			this->setOffsetX(offsetX); this->setOffsetY(offsetY);
+			this->setOffsetX(offsetX);
+			this->setOffsetY(offsetY);
 		}
 
 		void EditorGrid::setCamOffsetX(int camOffsetX)
@@ -80,27 +78,27 @@ namespace obe
 			fixedGrid = fixed;
 		}
 
-		int EditorGrid::getSizeX()
+		int EditorGrid::getSizeX() const
 		{
 			return gridSizeX;
 		}
 
-		int EditorGrid::getSizeY()
+		int EditorGrid::getSizeY() const
 		{
 			return gridSizeY;
 		}
 
-		int EditorGrid::getOffsetX()
+		int EditorGrid::getOffsetX() const
 		{
 			return gridOffX;
 		}
 
-		int EditorGrid::getOffsetY()
+		int EditorGrid::getOffsetY() const
 		{
 			return gridOffY;
 		}
 
-		void EditorGrid::magnetize(Cursor::Cursor* cur)
+		void EditorGrid::magnetize(Cursor::Cursor* cur) const
 		{
 			if (gridMagnetX != -1 && gridMagnetY != -1)
 			{
@@ -122,28 +120,28 @@ namespace obe
 		{
 			int stackX = -1;
 			int stackY = -1;
-			for (int i = gridOffX + gridCamOffX; i < Functions::Coord::width; i += gridSizeX)
+			for (int i = gridOffX + gridCamOffX; i < Coord::UnitVector::Screen.w; i += gridSizeX)
 			{
-				if (Functions::Math::isBetween(i, gridCursorX - ((int)std::floor(gridSizeX / 2) - 1), gridCursorX + ((int)std::floor(gridSizeX / 2) - 1)))
+				if (Functions::Math::isBetween(i, gridCursorX - (static_cast<int>(std::floor(gridSizeX / 2)) - 1), gridCursorX + (static_cast<int>(std::floor(gridSizeX / 2)) - 1)))
 				{
-					drawLine(surf, i, 0, i, Functions::Coord::height, 2, sf::Color(0, 125, 255, 255));
+					drawLine(surf, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(0, 125, 255, 255));
 					stackX = i;
 				}
 				else
 				{
-					drawLine(surf, i, 0, i, Functions::Coord::height, 2, sf::Color(125, 125, 125, 255));
+					drawLine(surf, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(125, 125, 125, 255));
 				}
 			}
-			for (int i = gridOffY + gridCamOffY; i < Functions::Coord::height; i += gridSizeY)
+			for (int i = gridOffY + gridCamOffY; i < Coord::UnitVector::Screen.h; i += gridSizeY)
 			{
-				if (Functions::Math::isBetween(i, gridCursorY - ((int)std::floor(gridSizeY / 2) - 1), gridCursorY + ((int)std::floor(gridSizeY / 2) - 1)))
+				if (Functions::Math::isBetween(i, gridCursorY - (static_cast<int>(std::floor(gridSizeY / 2)) - 1), gridCursorY + (static_cast<int>(std::floor(gridSizeY / 2)) - 1)))
 				{
-					drawLine(surf, 0, i, Functions::Coord::width, i, 2, sf::Color(0, 125, 255, 255));
+					drawLine(surf, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(0, 125, 255, 255));
 					stackY = i;
 				}
 				else
 				{
-					drawLine(surf, 0, i, Functions::Coord::width, i, 2, sf::Color(125, 125, 125, 255));
+					drawLine(surf, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(125, 125, 125, 255));
 				}
 			}
 			if (stackX != -1 && stackY != -1)

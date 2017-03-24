@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <clip/clip.h>
 #include <vili/Vili.hpp>
 #include <tgui/TGUI.hpp>
 

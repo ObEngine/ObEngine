@@ -10,219 +10,229 @@ namespace obe
 	{
 		AnimationGroup::AnimationGroup(std::string pgroupname)
 		{
-			this->groupName = pgroupname;
+			m_groupName = pgroupname;
 		}
+
 		void AnimationGroup::build()
 		{
-			currentSprite = sf::Sprite(*groupList[0]);
+			m_currentSprite = sf::Sprite(*m_groupList[0]);
 		}
-		void AnimationGroup::setGroupClock(int clock)
+
+		void AnimationGroup::setGroupClock(const int& clock)
 		{
-			this->groupClock = clock;
+			m_groupClock = clock;
 		}
-		void AnimationGroup::setGroupLoop(int loops)
+
+		void AnimationGroup::setGroupLoop(const int& loops)
 		{
-			this->loopTime = loops;
+			m_loopTime = loops;
 		}
+
 		void AnimationGroup::pushTexture(sf::Texture* texture)
 		{
-			groupList.push_back(texture);
-			groupSize++;
+			m_groupList.push_back(texture);
+			m_groupSize++;
 		}
-		void AnimationGroup::removeTextureByIndex(int index)
+
+		void AnimationGroup::removeTextureByIndex(const int& index)
 		{
-			if (groupSize > 0)
+			if (m_groupSize > 0)
 			{
-				groupList.erase(groupList.begin() + index);
-				groupSize--;
+				m_groupList.erase(m_groupList.begin() + index);
+				m_groupSize--;
 			}
 		}
+
 		sf::Sprite* AnimationGroup::returnSprite()
 		{
-			return &currentSprite;
+			return &m_currentSprite;
 		}
+
 		void AnimationGroup::updateSprite()
 		{
-			currentSprite.setTexture(*groupList[groupIndex], true);
+			m_currentSprite.setTexture(*m_groupList[m_groupIndex], true);
 		}
+
 		void AnimationGroup::reset()
 		{
-			groupIndex = 0;
-			groupOver = false;
-			currentLoop = 0;
-			loopTime = 0;
+			m_groupIndex = 0;
+			m_groupOver = false;
+			m_currentLoop = 0;
+			m_loopTime = 0;
 		}
+
 		void AnimationGroup::next()
 		{
-			if (Time::getTickSinceEpoch() - startDelayClock > groupClock)
+			if (Time::getTickSinceEpoch() - m_startDelayClock > m_groupClock)
 			{
-				startDelayClock = Time::getTickSinceEpoch();
-				groupIndex++;
-				if (groupIndex > groupList.size() - 1)
+				m_startDelayClock = Time::getTickSinceEpoch();
+				m_groupIndex++;
+				if (m_groupIndex > m_groupList.size() - 1)
 				{
-					if (currentLoop != loopTime - 1)
+					if (m_currentLoop != m_loopTime - 1)
 					{
-						groupIndex = 0;
-						currentLoop++;
+						m_groupIndex = 0;
+						m_currentLoop++;
 						this->updateSprite();
 					}
 					else
 					{
-						groupOver = true;
+						m_groupOver = true;
 					}
 				}
 			}
 		}
+
 		void AnimationGroup::previous()
 		{
-			if (Time::getTickSinceEpoch() - startDelayClock > groupClock)
+			if (Time::getTickSinceEpoch() - m_startDelayClock > m_groupClock)
 			{
-				startDelayClock = Time::getTickSinceEpoch();
-				groupIndex--;
-				if (groupIndex < 0)
+				m_startDelayClock = Time::getTickSinceEpoch();
+				m_groupIndex--;
+				if (m_groupIndex < 0)
 				{
-					if (currentLoop != 0)
-						groupIndex = groupList.size() - 1;
+					if (m_currentLoop != 0)
+						m_groupIndex = m_groupList.size() - 1;
 					else
 					{
-						groupIndex = 0;
-						currentLoop = 0;
+						m_groupIndex = 0;
+						m_currentLoop = 0;
 					}
 				}
 			}
 			this->updateSprite();
 		}
+
 		void AnimationGroup::forcePrevious()
 		{
-			groupIndex--;
+			m_groupIndex--;
 		}
+
 		void AnimationGroup::forceNext()
 		{
-			groupIndex++;
+			m_groupIndex++;
 		}
-		bool AnimationGroup::isGroupOver()
+
+		bool AnimationGroup::isGroupOver() const
 		{
-			return groupOver;
+			return m_groupOver;
 		}
-		int AnimationGroup::getGroupIndex()
+
+		int AnimationGroup::getGroupIndex() const
 		{
-			return groupIndex;
+			return m_groupIndex;
 		}
-		int AnimationGroup::getGroupSize() {
-			return groupList.size();
-		}
-		std::string AnimationGroup::getGroupName()
+
+		int AnimationGroup::getGroupSize() const
 		{
-			return groupName;
+			return m_groupList.size();
 		}
-		int AnimationGroup::getGroupClock()
+
+		std::string AnimationGroup::getGroupName() const
 		{
-			return groupClock;
+			return m_groupName;
+		}
+
+		int AnimationGroup::getGroupClock() const
+		{
+			return m_groupClock;
 		}
 
 
 		//RESSOURCE MANAGER
 		RessourceManager* RessourceManager::instance = nullptr;
-		RessourceManager::RessourceManager()
-		{
-			textureDatabase = std::map<std::string, sf::Texture*>();
-		}
 		RessourceManager* RessourceManager::GetInstance()
 		{
 			if (instance == nullptr)
 				instance = new RessourceManager();
 			return instance;
 		}
-		RessourceManager::~RessourceManager()
-		{
-			for (auto it = textureDatabase.begin(); it != textureDatabase.end(); it++)
-				delete it->second;
-		}
+
 		sf::Texture* RessourceManager::getTexture(std::string path)
 		{
 			if (textureDatabase.size() != 0)
 			{
 				if (textureDatabase.find(path) == textureDatabase.end())
 				{
-					sf::Texture* tempTexture = new sf::Texture(); System::Path(path).loadResource(tempTexture, System::Loaders::textureLoader);
+					std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
+					System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
 					if (tempTexture != nullptr)
 					{
 						tempTexture->setSmooth(true);
-						textureDatabase[path] = tempTexture;
-						return textureDatabase[path];
+						textureDatabase[path] = std::move(tempTexture);
+						return textureDatabase[path].get();
 					}
-					else
-						std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+					std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+					return nullptr;
 				}
 				else
 				{
-					return textureDatabase[path];
+					return textureDatabase[path].get();;
 				}
 			}
 			else
 			{
-				sf::Texture* tempTexture = new sf::Texture(); System::Path(path).loadResource(tempTexture, System::Loaders::textureLoader);
+				std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
+				System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
 				if (tempTexture != nullptr)
 				{
 					tempTexture->setSmooth(true);
-					textureDatabase[path] = tempTexture;
-					return textureDatabase[path];
+					textureDatabase[path] = std::move(tempTexture);
+					return textureDatabase[path].get();
 				}
-				else
-					std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+				std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
+				return nullptr;
 			}
 		}
 
 		//ANIMATION
-		std::string Animation::Animation::getAnimationName()
+		std::string Animation::Animation::getAnimationName() const
 		{
 			return animationName;
 		}
-		void Animation::Animation::attachRessourceManager(RessourceManager* rsMan)
-		{
-			animatorRsHook = rsMan;
-		}
-		void Animation::Animation::deleteRessourceManager()
-		{
-			animatorRsHook = nullptr;
-		}
-		float Animation::Animation::getAnimationClock()
+
+		float Animation::Animation::getAnimationClock() const
 		{
 			return animationClock;
 		}
+
 		AnimationGroup* Animation::Animation::getAnimationGroup(std::string groupname)
 		{
 			if (animationGroupMap.find(groupname) != animationGroupMap.end())
-				return animationGroupMap[groupname];
+				return animationGroupMap[groupname].get();
 			else
 				std::cout << "<Error:Animation:Animation>[getAnimationGroup] : Can't find AnimationGroup : " << groupname << std::endl;
 			return nullptr;
 		}
-		std::string Animation::Animation::getCurrentAnimationGroup()
+
+		std::string Animation::Animation::getCurrentAnimationGroup() const
 		{
 			return currentGroupName;
 		}
+
 		std::vector<std::string> Animation::Animation::getAllAnimationGroupName()
 		{
 			std::vector<std::string> rname;
-			for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); it++)
-			{
+			for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it)
 				rname.push_back(it->first);
-			}
 			return rname;
 		}
-		std::string Animation::Animation::getAnimationPlayMode()
+
+		std::string Animation::Animation::getAnimationPlayMode() const
 		{
 			return animationPlaymode;
 		}
-		std::string Animation::Animation::getAnimationStatus()
+
+		std::string Animation::Animation::getAnimationStatus() const
 		{
 			return currentStatus;
 		}
-		bool Animation::Animation::isAnimationOver()
+
+		bool Animation::Animation::isAnimationOver() const
 		{
 			return isOver;
 		}
+
 		void Animation::Animation::loadAnimation(System::Path path, std::string filename)
 		{
 			vili::DataParser animFile;
@@ -237,7 +247,8 @@ namespace obe
 			//Images
 			vili::ListAttribute* imageList = animFile.at<vili::ListAttribute>("Images", "ImageList");
 			std::string model = "";
-			if (animFile.at("Images")->contains(vili::Types::BaseAttribute, "model")) {
+			if (animFile.at("Images")->contains(vili::Types::BaseAttribute, "model"))
+			{
 				model = animFile.at("Images")->getBaseAttribute("model")->get<std::string>();
 			}
 			for (unsigned int i = 0; i < imageList->getSize(); i++)
@@ -247,19 +258,7 @@ namespace obe
 					textureName = Functions::String::replaceString(model, "%s", std::to_string(imageList->get(i)->get<int>()));
 				else if (imageList->get(i)->getDataType() == vili::Types::String)
 					textureName = imageList->get(i)->get<std::string>();
-				if (animatorRsHook == nullptr)
-				{
-					sf::Texture* tempTexture = new sf::Texture(); path.add(textureName).loadResource(tempTexture, System::Loaders::textureLoader);
-					if (tempTexture != nullptr)
-					{
-						tempTexture->setSmooth(true);
-						animationTextures[i] = tempTexture;
-					}
-					else
-						std::cout << "<Error:Animation:Animation>[loadAnimation] : Can't open file : " << path.toString() << std::endl;
-				}
-				else
-					animationTextures[i] = animatorRsHook->getTexture(path.add(textureName).toString());
+				animationTextures[i] = RessourceManager::GetInstance()->getTexture(path.add(textureName).toString());
 			}
 			//Groups
 			vili::ComplexAttribute* groups = animFile.at("Groups");
@@ -289,15 +288,17 @@ namespace obe
 				animationCode.push_back(vecCurCom);
 			}
 		}
+
 		void Animation::Animation::applyParameters(vili::ComplexAttribute* parameters)
 		{
-			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetX")) 
+			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetX"))
 				sprOffsetX = parameters->at<vili::BaseAttribute>("spriteOffsetX")->get<int>();
-			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetY")) 
+			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetY"))
 				sprOffsetY = parameters->at<vili::BaseAttribute>("spriteOffsetY")->get<int>();
-			if (parameters->contains(vili::Types::BaseAttribute, "priority")) 
+			if (parameters->contains(vili::Types::BaseAttribute, "priority"))
 				priority = parameters->at<vili::BaseAttribute>("priority")->get<int>();
 		}
+
 		void Animation::Animation::playAnimation()
 		{
 			if (animationCode.size() > 0)
@@ -375,34 +376,39 @@ namespace obe
 				}
 			}
 		}
+
 		void Animation::Animation::resetAnimation()
 		{
-			for (std::map<std::string, AnimationGroup*>::iterator it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it) {
+			for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it)
 				it->second->reset();
-			}
 			loopTime = 0;
 			currentStatus = "PLAY";
 			codeIndex = 0;
 			askCommand = true;
 			isOver = false;
 		}
+
 		sf::Texture* Animation::Animation::getTextureAtIndex(int index)
 		{
 			return animationTextures[index];
 		}
+
 		sf::Sprite* Animation::Animation::getSprite()
 		{
 			return animationGroupMap[currentGroupName]->returnSprite();
 		}
-		int Animation::Animation::getSpriteOffsetX()
+
+		int Animation::Animation::getSpriteOffsetX() const
 		{
 			return sprOffsetX;
 		}
-		int Animation::Animation::getSpriteOffsetY()
+
+		int Animation::Animation::getSpriteOffsetY() const
 		{
 			return sprOffsetY;
 		}
-		int Animation::Animation::getPriority()
+
+		int Animation::Animation::getPriority() const
 		{
 			return priority;
 		}
@@ -411,24 +417,24 @@ namespace obe
 		Animator::Animator()
 		{
 		}
+
 		Animator::Animator(System::Path path)
 		{
 			animationPath = path;
 		}
+
 		void Animator::setPath(System::Path path)
 		{
 			animationPath = path;
 		}
+
 		void Animator::setPath(std::string path)
 		{
 			animationPath = System::Path(path);
 		}
+
 		void Animator::clear(bool clearMemory)
 		{
-			if (clearMemory) {
-				for (auto it = fullAnimSet.begin(); it != fullAnimSet.end(); it++)
-					delete it->second;
-			}
 			fullAnimSet.clear();
 			currentAnimation = nullptr;
 			allAnimationNames.clear();
@@ -439,22 +445,26 @@ namespace obe
 			currentNameIndex = 0;
 			lastSpriteAddress = nullptr;
 		}
+
 		Animation* Animator::getAnimation(std::string animationName)
 		{
 			if (fullAnimSet.find(animationName) != fullAnimSet.end())
-				return fullAnimSet[animationName];
+				return fullAnimSet[animationName].get();
 			else
 				std::cout << "<Error:Animation:Animator>[getAnimation] : Can't find Animation : " << animationName << std::endl;
 			return nullptr;
 		}
-		std::vector<std::string> Animator::getAllAnimationName()
+
+		std::vector<std::string> Animator::getAllAnimationName() const
 		{
 			return allAnimationNames;
 		}
-		std::string Animator::getKey()
+
+		std::string Animator::getKey() const
 		{
 			return currentAnimationName;
 		}
+
 		void Animator::setKey(std::string key)
 		{
 			if (fullAnimSet.find(key) == fullAnimSet.end())
@@ -478,11 +488,12 @@ namespace obe
 						if (currentAnimationName != "NONE")
 							fullAnimSet[currentAnimationName]->resetAnimation();
 						currentAnimationName = key;
-						currentAnimation = fullAnimSet[currentAnimationName];
+						currentAnimation = fullAnimSet[currentAnimationName].get();
 					}
 				}
 			}
 		}
+
 		void Animator::loadAnimator()
 		{
 			std::vector<std::string> listDir;
@@ -502,9 +513,7 @@ namespace obe
 			for (unsigned int i = 0; i < listDir.size(); i++)
 			{
 				allAnimationNames.push_back(listDir[i]);
-				Animation* tempAnim = new Animation;
-				if (ressourceManagerHook != nullptr)
-					tempAnim->attachRessourceManager(ressourceManagerHook);
+				std::unique_ptr<Animation> tempAnim = std::make_unique<Animation>();
 				tempAnim->loadAnimation(animationPath.add(listDir[i]), listDir[i] + ".ani.vili");
 				if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
 				{
@@ -515,9 +524,10 @@ namespace obe
 					tempAnim->applyParameters(animationParameters[listDir[i]]);
 				else if (animationParameters.find("all") != animationParameters.end())
 					tempAnim->applyParameters(animationParameters["all"]);
-				fullAnimSet[tempAnim->getAnimationName()] = tempAnim;
+				fullAnimSet[tempAnim->getAnimationName()] = std::move(tempAnim);
 			}
 		}
+
 		void Animator::update()
 		{
 			std::vector<std::string> animStatusCommand;
@@ -529,38 +539,35 @@ namespace obe
 			{
 				currentAnimation->resetAnimation();
 				currentAnimationName = animStatusCommand[1];
-				currentAnimation = fullAnimSet[currentAnimationName];
+				currentAnimation = fullAnimSet[currentAnimationName].get();
 			}
 			animStatusCommand = Functions::String::split(currentAnimation->getAnimationStatus(), ":");
 			if (animStatusCommand[0] == "PLAY")
 				currentAnimation->playAnimation();
 		}
+
 		sf::Sprite* Animator::getSprite()
 		{
 			lastSpriteAddress = currentAnimation->getSprite();
 			return currentAnimation->getSprite();
 		}
+
 		sf::Texture* Animator::getTextureAtKey(std::string key, int index)
 		{
 			return fullAnimSet[key]->getTextureAtIndex(index);
 		}
-		bool Animator::textureChanged()
+
+		bool Animator::textureChanged() const
 		{
 			return (currentAnimation->getSprite() != lastSpriteAddress);
 		}
-		void Animator::attachRessourceManager(RessourceManager* rsman)
-		{
-			ressourceManagerHook = rsman;
-		}
-		void Animator::deleteRessourceManager()
-		{
-			ressourceManagerHook = nullptr;
-		}
-		int Animator::getSpriteOffsetX()
+
+		int Animator::getSpriteOffsetX() const
 		{
 			return currentAnimation->getSpriteOffsetX();
 		}
-		int Animator::getSpriteOffsetY()
+
+		int Animator::getSpriteOffsetY() const
 		{
 			return currentAnimation->getSpriteOffsetY();
 		}

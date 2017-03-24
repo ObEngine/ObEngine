@@ -5,8 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Functions.hpp"
-#include "SpriteFunc.hpp"
 #include "Cursor.hpp"
 
 namespace obe
@@ -30,7 +28,7 @@ namespace obe
 				sf::RenderTexture gridCreate;
 				sf::Texture gridCache;
 				sf::Sprite gridCacheSpr;
-				void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col);
+			static void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col);
 			public:
 				EditorGrid(int sizeX, int sizeY, int offsetX = 0, int offsetY = 0);
 				void sendCursorPosition(int x, int y);
@@ -43,11 +41,11 @@ namespace obe
 				void setCamOffsetX(int camOffsetX);
 				void setCamOffsetY(int camOffsetY);
 				void setFixedCam(bool fixed);
-				int getSizeX();
-				int getSizeY();
-				int getOffsetX();
-				int getOffsetY();
-				void magnetize(Cursor::Cursor* cur);
+				int getSizeX() const;
+				int getSizeY() const;
+				int getOffsetX() const;
+				int getOffsetY() const;
+				void magnetize(Cursor::Cursor* cur) const;
 				void moveMagnet(Cursor::Cursor* cur, int tox, int toy);
 				void draw(sf::RenderWindow* surf);
 		};

@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <memory>
 #include <functional>
+#include <cmath>
 
 #include "Functions.hpp"
 

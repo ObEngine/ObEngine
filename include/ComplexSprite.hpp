@@ -28,7 +28,7 @@ namespace sfe
 		sf::FloatRect getGlobalBounds() const;
 
 	private:
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		void updatePositions();
 		void updateTexCoords();
 		sf::Vertex         m_vertices[4]; ///< Vertices defining the sprite's geometry

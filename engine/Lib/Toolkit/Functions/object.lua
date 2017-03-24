@@ -7,7 +7,7 @@ function object(argtable)
         local haveLevelSprite = false;
         local haveCollider = false;
         local haveScript = false;
-        os.execute("mkdir Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" .. argtable.objname);
+        os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. argtable.objname):gsub("/", Core.Utils.File.separator()));
         local objSaveFile = Core.Vili.DataParser.new();
         objSaveFile:root():createComplexAttribute(argtable.objname);
         if (argtable.attributes ~= nil) then
@@ -38,7 +38,7 @@ function object(argtable)
             end
             if (string.find(argtable.attributes, "L") ~= nil) then
                 haveLevelSprite = true;
-                os.execute("mkdir Workspace\\" .. currentWs .. "\\Sprites\\GameObjects\\" .. argtable.objname);
+                os.execute("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. argtable.objname);
                 Color.print({
                     {color = "lightgreen", text = "+ Using component : "},
                     {color = "lightcyan", text = "(L)evelSprite\n"}
@@ -59,10 +59,10 @@ function object(argtable)
             end
             if (string.find(argtable.attributes, "S") ~= nil) then
                 haveScript = true;
-                local scriptFile = io.open("Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" ..
-                 argtable.objname .. "\\" .. argtable.objname .. ".lua", "w")
-                scriptFile:write("function Local.Init()\n    print(\"Hello, World!\");\nend")
-                scriptFile:close()
+                local scriptFile = io.open((currentWs .. "/Data/GameObjects/" ..
+                 argtable.objname .. "/" .. argtable.objname .. ".lua"):gsub("/", Core.Utils.File.separator()), "w");
+                scriptFile:write("function Local.Init()\n    print(\"Hello, World!\");\nend");
+                scriptFile:close();
                 Color.print({
                     {color = "lightgreen", text = "+ Using component : "},
                     {color = "lightcyan", text = "(S)cript\n"}
@@ -74,8 +74,8 @@ function object(argtable)
                  argtable.objname .. "/" .. argtable.objname .. ".lua");
             end
         end
-        objSaveFile:writeFile("Workspace\\" .. currentWs .. "\\Data\\GameObjects\\" ..
-         argtable.objname .. "\\" .. argtable.objname .. ".obj.vili");
+        objSaveFile:writeFile((currentWs .. "/Data/GameObjects/" ..
+         argtable.objname .. "/" .. argtable.objname .. ".obj.vili"):gsub("/", Core.Utils.File.separator()));
         Color.print({
             {color = "lightgreen", text = "Object "},
             {color = "lightcyan", text = argtable.objname},

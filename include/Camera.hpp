@@ -2,54 +2,50 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Functions.hpp"
+#include "Coordinates.hpp"
 
 namespace obe
 {
 	namespace World
 	{
-		enum Units
-		{
-			Pixels,
-			WorldPercentage,
-			WorldUnits
-		};
-
 		class Camera
 		{
-			private:
-				sf::View view;
-				double x;
-				double y;
-				double width;
-				double height;
-				double angle;
-				double worldWidth;
-				double worldHeight;
+		private:
+			sf::View m_view;
 
-				double transformHorizontal(const double& x, Units unit);
-				double transformVertical(const double& y, Units unit);
-			public:
-				Camera();
-				void setWorldSize(const double& worldWidth, const double& worldHeight);
-				void setPosition(const double& x, const double& y, Units unit = Units::WorldUnits);
-				void move(const double& x, const double& y, Units unit = Units::WorldUnits);
-				void setX(const double& x, Units unit = Units::WorldUnits);
-				void setY(const double& y, Units unit = Units::WorldUnits);
-				void setSize(const double& width, const double& height, Units unit = Units::WorldUnits);
-				void scale(const double& width, const double& height, Units unit = Units::WorldUnits);
-				void setWidth(const double& width, Units unit = Units::WorldUnits);
-				void setHeight(const double& height, Units unit = Units::WorldUnits);
-				void setAngle(const double& angle);
-				void rotate(const double& angle);
+			Coord::ViewStruct* m_camera;
 
-				std::pair<double, double> getPosition(Units unit = Units::WorldUnits);
-				double getX(Units unit = Units::WorldUnits);
-				double getY(Units unit = Units::WorldUnits);
-				double getWidth(Units unit = Units::WorldUnits);
-				double getHeight(Units unit = Units::WorldUnits);
-				double getWidthRatio();
-				double getHeightRatio();
+			Coord::UnitVector m_position;
+			Coord::UnitVector m_size;
+
+			double m_angle;
+
+			void apply() const;
+		public:
+			Camera();
+
+			void setPosition(const Coord::UnitVector& position);
+			void setPosition(const double& x, const double& y);
+			void move(const Coord::UnitVector& position);
+			void move(const double& x, const double& y);
+			void setX(const double& x);
+			void setY(const double& y);
+			void setSize(const Coord::UnitVector& size);
+			void setSize(const double& width, const double& height);
+			void scale(const Coord::UnitVector& size);
+			void scale(const double& width, const double& height);
+			void setWidth(const double& width);
+			void setHeight(const double& height);
+			void setAngle(const double& angle);
+			void rotate(const double& angle);
+
+			Coord::UnitVector getPosition() const;
+			Coord::UnitVector getSize() const;
+
+			double getX() const;
+			double getY() const;
+			double getWidth() const;
+			double getHeight() const;
 		};
 	}
 }

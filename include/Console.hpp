@@ -4,19 +4,12 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <string>
 #include <vector>
 #include <map>
-#include <algorithm>
-#include <iterator>
-#include <sstream>
-#include <fstream>
 #include <thread>
 #include <vili/Vili.hpp>
 
-#include "Functions.hpp"
-#include "TimeManager.hpp"
+#include "Coordinates.hpp"
 #include "Triggers.hpp"
 
 namespace obe
@@ -79,7 +72,6 @@ namespace obe
 				std::string getInputBufferContent();
 				void setInputBufferContent(std::string content);
 				void insertInputBufferContent(std::string content);
-				void update();
 				Stream* createStream(std::string streamName, bool enabled = true);
 				Stream* getStream(std::string streamName);
 				void downHistory();

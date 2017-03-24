@@ -4,13 +4,10 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
-#include <string>
 #include <map>
 #include <SFML/Graphics.hpp>
 #include <vili/Vili.hpp>
 
-#include "TimeManager.hpp"
 #include "Triggers.hpp"
 
 namespace obe
@@ -20,13 +17,14 @@ namespace obe
 		class KeyClass
 		{
 			private:
-				sf::Keyboard::Key key;
-				std::string name;
-				std::string returnChar;
-				std::string type;
+				sf::Keyboard::Key m_key;
+				std::string m_name;
+				std::string m_returnChar;
+				std::string m_type;
 			public:
+				KeyClass() {}
 				KeyClass(sf::Keyboard::Key key, std::string name, std::string returnChar, std::string type);
-				sf::Keyboard::Key getKey();
+				sf::Keyboard::Key getKey() const;
 				std::string getType();
 				bool isAlpha();
 				bool isNumeric();
@@ -41,16 +39,16 @@ namespace obe
 		class KeyBinder
 		{
 			private:
-				std::map<std::string, std::string> actionMap;
-				std::map<std::string, KeyClass*> keyMap;
-				std::map<std::string, bool> currentActionMap;
-				std::map<std::string, bool> previousActionMap;
-				std::map<std::string, int> baseActionDelayer;
-				std::map<std::string, unsigned long long int> actionDelayer;
-				bool binderEnabled = true;
+				std::map<std::string, std::string> m_actionMap;
+				std::map<std::string, KeyClass> m_keyMap;
+				std::map<std::string, bool> m_currentActionMap;
+				std::map<std::string, bool> m_previousActionMap;
+				std::map<std::string, int> m_baseActionDelayer;
+				std::map<std::string, unsigned long long int> m_actionDelayer;
+				bool m_binderEnabled = true;
 				std::string getActionKey(std::string action);
 				KeyClass* getKey(std::string key);
-				Script::TriggerGroup* keysTriggers;
+				Script::TriggerGroup* m_keysTriggers;
 			public:
 				KeyBinder();
 				void setEnabled(bool state);

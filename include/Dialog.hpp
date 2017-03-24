@@ -3,16 +3,11 @@
 
 #pragma once
 
-#include <iostream>
-#include <string>
 #include <vector>
 #include <map>
 #include <SFML/Graphics.hpp>
 #include <any/any.hpp>
 
-#include "Functions.hpp"
-#include "Animation.hpp"
-#include "TimeManager.hpp"
 #include "PathResolver.hpp"
 
 namespace obe
@@ -46,7 +41,7 @@ namespace obe
 				virtual void fadeOut(sf::RenderWindow* surf);
 				virtual void update(double dt);
 				void setFadeState(int state);
-				int getFadeState();
+				int getFadeState() const;
 				void addTDB(std::map<std::string, std::string> tdb);
 		};
 
@@ -62,8 +57,8 @@ namespace obe
 				TextRenderer();
 				void createRenderer(std::string rendererType, std::string id);
 				void sendToRenderer(std::string id, std::map<std::string, std::string> tdb);
-				bool textRemaining();
-				void next();
+				bool textRemaining() const;
+				void next() const;
 				void update(double dt);
 				void render(sf::RenderWindow* surf);
 		};

@@ -9,23 +9,18 @@ namespace obe
 	{
 		void editMap(std::string mapName)
 		{
-			double startLoadTime = Time::getTickSinceEpoch();
-
-			std::cout << "<System> Creating window with resolution " << Functions::Coord::width << "x" << Functions::Coord::height << std::endl;
+			std::cout << "<System> Creating window with resolution " << Coord::UnitVector::Screen.w << "x" << Coord::UnitVector::Screen.h << std::endl;
 
 			//Creating Window
-			sf::RenderWindow window(sf::VideoMode(Functions::Coord::width, Functions::Coord::height), "ObEngine", sf::Style::Fullscreen);
+			sf::RenderWindow window(sf::VideoMode(Coord::UnitVector::Screen.w, Coord::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
 			window.setKeyRepeatEnabled(false);
 			window.setMouseCursorVisible(false);
 			sf::Texture loadingTexture; loadingTexture.loadFromFile("Sprites/Menus/loading.png"); loadingTexture.setSmooth(true);
 			sf::Sprite loadingSprite; loadingSprite.setTexture(loadingTexture);
-			loadingSprite.setScale((double)Functions::Coord::width / (double)Functions::Coord::viewWidth,
-				(double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
 			sf::Font loadingFont; loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
 			sf::Text loadingText; loadingText.setFont(loadingFont);
-			loadingText.setCharacterSize(70.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
-			loadingText.setPosition(348.0 * (double)Functions::Coord::width / (double)Functions::Coord::viewWidth,
-				595.0 * (double)Functions::Coord::height / (double)Functions::Coord::viewHeight);
+			loadingText.setCharacterSize(70.0);
+			loadingText.setPosition(348.0, 595.0);
 			vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
 				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
@@ -156,7 +151,6 @@ namespace obe
 			int selectedSpritePickPosX = 0;
 			int selectedSpritePickPosY = 0;
 			bool guiEditorEnabled = false;
-			bool addSpriteMode = false;
 			int cameraSpeed = 30;
 			int currentLayer = 1;
 			Collision::PolygonalCollider* selectedMasterCollider = nullptr;
@@ -567,7 +561,7 @@ namespace obe
 				if (keybind.isActionToggled("SpriteMode"))
 				{
 					editMode->setSelectedItemByIndex(0);
-					editMode = 0;
+					editMode = nullptr;
 				}
 				else if (keybind.isActionToggled("CollisionMode"))
 				{
@@ -667,9 +661,9 @@ namespace obe
 							std::string sprInfoStr;
 							sprInfoStr = "Hovered Sprite : \n";
 							sprInfoStr += "    ID : " + hoveredSprite->getID() + "\n";
-							sprInfoStr += "    Name : " + hoveredSprite->getName() + "\n";
+							sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
 							sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
-							sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getW()) + "," + std::to_string(hoveredSprite->getH()) + "\n";
+							sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
 							sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
 							sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
 							sprInfo.setString(sprInfoStr);
@@ -726,9 +720,9 @@ namespace obe
 						std::string sprInfoStr;
 						sprInfoStr = "Hovered Sprite : \n";
 						sprInfoStr += "    ID : " + selectedSprite->getID() + "\n";
-						sprInfoStr += "    Name : " + selectedSprite->getName() + "\n";
+						sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
 						sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
-						sprInfoStr += "    Size : " + std::to_string(selectedSprite->getW()) + "," + std::to_string(selectedSprite->getH()) + "\n";
+						sprInfoStr += "    Size : " + std::to_string(selectedSprite->getWidth()) + "," + std::to_string(selectedSprite->getHeight()) + "\n";
 						sprInfoStr += "    Rot : " + std::to_string(selectedSprite->getRotation()) + "\n";
 						sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
 						sprInfo.setString(sprInfoStr);
@@ -975,7 +969,6 @@ namespace obe
 				textDisplay.update(framerateManager.getGameSpeed());
 				keybind.update();
 				cursor.update();
-				gameConsole.update();
 				if (drawFPS) fps.uTick();
 				if (drawFPS && framerateManager.doRender()) fps.tick();
 
@@ -1054,8 +1047,7 @@ namespace obe
 							{
 								if (event.key.control)
 								{
-									std::string clipboard_content;
-									clip::get_text(clipboard_content);
+									std::string clipboard_content = "";
 									gameConsole.insertInputBufferContent(clipboard_content);
 								}
 							}

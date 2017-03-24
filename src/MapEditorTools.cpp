@@ -8,7 +8,7 @@ namespace obe
 		Thumbnailer::Thumbnailer()
 		{
 			System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
-			renderer.create(256.0 * Functions::Coord::width / Functions::Coord::viewWidth, 256.0 * Functions::Coord::height / Functions::Coord::viewHeight);
+			renderer.create(256.0, 256.0);
 			System::Path("Sprites/Others/folder.png").loadResource(&folderTexture, System::Loaders::textureLoader);
 		}
 		sf::Texture* Thumbnailer::GetSpriteThumbnail(std::string path)
@@ -274,14 +274,13 @@ namespace obe
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			while (world->getSpriteByID(key) != nullptr)
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			Graphics::LevelSprite* sprToAdd = new Graphics::LevelSprite("Sprites/LevelSprites/" + geid, key);
+			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key, "Sprites/LevelSprites/" + geid);
 			sprToAdd->move(960 + world->getCamera().getX(), 540 + world->getCamera().getY());
 			sprToAdd->setRotation(0);
 			sprToAdd->setScale(1, 1);
 			sprToAdd->setAtr(std::vector<std::string>());
 			sprToAdd->setLayer(1);
 			sprToAdd->setZDepth(1);
-			world->addLevelSprite(sprToAdd);
 		}
 	}
 }
