@@ -172,4 +172,36 @@ function Local.Click() -- Called when the object's collider is clicked
 end
 ```
 
+### Drawing stuff
+The engine includes a `Canvas` lib to draw stuff in real time and using it is really straightforward !
+
+```lua
+Import("Core.Canvas");
+
+function Local.Init()
+  canvas = Core.Canvas.new(400, 400); -- Creating a 400x400 canvas
+  
+  myline = canvas:Line("hello"):init({ -- Drawing a line and getting the parameter table right after it (myline)
+    x1 = 0,
+    y1 = 0,
+    x2 = 50,
+    y2 = 50,
+  });
+  
+  canvas:Rectangle("goodbye"):init({ -- Drawing a rectangle without getting the parameter table
+      x = 10,
+      y = 40,
+      width = 100,
+      height = 50,
+      color = { r = 255, g = 0, b = 0, a = 255 }
+  });
+  
+  myrect = canvas:Get("goodbye"); -- Don't worry you can get it afterward !
+  
+  myrect.width = 200; -- You can also edit the object with the reference
+  myline.x1 = 100;
+end
+```
+
+
 Please check https://www.meltingsaga.xyz/doc for some documentation.
