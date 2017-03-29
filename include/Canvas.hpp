@@ -6,22 +6,28 @@
 
 #include "kaguya/kaguya.hpp"
 
-class AttributeArray
-{
-    public:
-        virtual void update(kaguya::State& state) = 0;
-};
-
-class Element : public AttributeArray
+class Element
 {
     protected:
+        std::vector<std::pair<std::string, std::string>> requires;
         std::string m_id;
     public:
         Element(const std::string& id);
-        void update(kaguya::State& state) override = 0;
+        virtual void update(kaguya::State& state) = 0;
 };
 
-class Drawable : public virtual Element
+class Configurable : public virtual Element
+{
+    protected:
+        kaguya::LuaTable m_tableWrapper;
+    public:
+        Configurable(const std::string& id);
+        kaguya::LuaTable& init(const kaguya::LuaTable& tableWrapper);
+        kaguya::LuaTable& get();
+        void update(kaguya::State& state) override;
+};
+
+class Drawable : public virtual Configurable
 {
     protected:
         unsigned int m_layer;
@@ -41,7 +47,7 @@ class Colorable : public virtual Drawable
         void update(kaguya::State& state) override;
 };
 
-class Transformable : public virtual Element
+class Transformable : public virtual Configurable
 {
     protected:
         double m_x;
@@ -58,19 +64,7 @@ class Transformable : public virtual Element
         void update(kaguya::State& state) override;
 };
 
-class Configurable : public virtual Element
-{
-    protected:
-        kaguya::LuaFunction m_configureFunction;
-        bool m_useConfiguration = false;
-    public:
-        Configurable(const std::string& id);
-        void init(const kaguya::LuaFunction& configureFunction);
-        void build(kaguya::State& state);
-        void update(kaguya::State& state) override = 0;
-};
-
-class CanvasElement : public virtual Drawable, public Configurable
+class CanvasElement : public virtual Drawable
 {
     public:
         CanvasElement(const std::string& id);
@@ -91,22 +85,32 @@ class Line : public CanvasElement, public Colorable
         void update(kaguya::State& state) override;
 };
 
+class Rectangle : public CanvasElement, public Colorable, public Transformable
+{
+    public:
+        Rectangle(const std::string& id);
+        void draw(sf::RenderTexture& target) const override;
+        void update(kaguya::State& state) override;
+};
+
 class Canvas
 {
     private:
         kaguya::State m_state;
         sf::RenderTexture m_canvas;
-        std::vector<CanvasElement*> elements;
+        std::map<std::string, CanvasElement*> elements;
     public:
         Canvas(unsigned int width, unsigned int height);
 
         Line* line(std::string id);
-        /*Rectangle& Rectangle(std::string id);
-        Circle& Circle(std::string id);
+        Rectangle* rectangle(std::string id);
+        /*Circle& Circle(std::string id);
         Polygon& Polygon(std::string id);
         Text& Text(std::string id);
         Shader& Shader(std::string id);
         Vertexes& Vertexes(std::string id);*/
+
+        kaguya::LuaTable& get(std::string id);
 
         void clear();
         void draw(const sf::Drawable& drawable);
