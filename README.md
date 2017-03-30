@@ -176,41 +176,41 @@ end
 The engine includes a `Canvas` lib to draw stuff in real time and using it is really straightforward !
 
 ```lua
-Import("Core.Canvas");
+Import("Core.Canvas"); -- Core Canvas Lib Import
 
 function Local.Init()
   canvas = Core.Canvas.new(400, 400); -- Creating a 400x400 canvas
   
-  canvas:Rectangle("background"):init({
+  canvas:Rectangle("background"):init({ -- Dark grey background
       layer = 2, x = 0, y = 0, width = 250, height = 100
       color = { r = 50, g = 50, b = 50, a = 255 },
   });
 
-  canvas:Text("fstPlayer"):init({
-      text = "Joueur 1 : 0 points", size = 22
+  canvas:Text("fstPlayer"):init({ -- First player's score label
+      text = "Player 1 : 0 points", size = 22
   });
 
-  canvas:Text("scdPlayer"):init({
-      text = "Joueur 2 : 0 points", size = 22, y = 50
+  canvas:Text("scdPlayer"):init({ -- Second player's score label
+      text = "Player 2 : 0 points", size = 22, y = 50
   });
 
-  canvas:Circle("green"):init({
-      color = { r = 0, g = 255, b = 0, a = 255 },
+  canvas:Circle("green"):init({ -- Small green circle
+      color = { r = 0, g = 255, b = 0, a = 255 }, -- Green color
       radius = 7, x = 200, y = 5
   });
 
-  canvas:Circle("yellow"):init({
-      color = { r = 255, g = 255, b = 0, a = 255 },
+  canvas:Circle("yellow"):init({ -- Small yellow circle
+      color = { r = 255, g = 255, b = 0, a = 255 }, -- Yellow color
       radius = 7, x = 217, y = 5
   });
 
-  canvas:Circle("red"):init({
-      color = { r = 255, g = 0, b = 0, a = 255 },
+  canvas:Circle("red"):init({ -- Small red circle
+      color = { r = 255, g = 0, b = 0, a = 255 }, -- Red color
       radius = 7, x = 234, y = 5
   });
   
-  canvas:target(This:LevelSprite());
-  canvas:render();
+  canvas:target(This:LevelSprite()); -- Canvas result will render in object's LevelSprite
+  canvas:render(); -- Drawing all the stuff !
 end
 ```
 
