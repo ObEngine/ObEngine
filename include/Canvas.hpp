@@ -93,6 +93,28 @@ class Rectangle : public CanvasElement, public Colorable, public Transformable
         void update(kaguya::State& state) override;
 };
 
+class Text : public CanvasElement, public Colorable, public Transformable
+{
+    private:
+        int m_characterSize;
+        std::string m_text;
+        std::string m_font;
+    public:
+        Text(const std::string& id);
+        void draw(sf::RenderTexture& target) const override;
+        void update(kaguya::State& state) override;
+};
+
+class Circle : public CanvasElement, public Colorable, public Transformable
+{
+    private:
+        double m_radius;
+    public:
+        Circle(const std::string& id);
+        void draw(sf::RenderTexture& target) const override;
+        void update(kaguya::State& state) override;
+};
+
 class Canvas
 {
     private:
@@ -102,11 +124,11 @@ class Canvas
     public:
         Canvas(unsigned int width, unsigned int height);
 
-        Line* line(std::string id);
-        Rectangle* rectangle(std::string id);
-        /*Circle& Circle(std::string id);
-        Polygon& Polygon(std::string id);
-        Text& Text(std::string id);
+        Line* line(const std::string& id);
+        Rectangle* rectangle(const std::string& id);
+        Text* text(const std::string& id);
+        Circle* circle(const std::string& id);
+        /*Polygon& Polygon(std::string id);
         Shader& Shader(std::string id);
         Vertexes& Vertexes(std::string id);*/
 
