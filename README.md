@@ -181,25 +181,36 @@ Import("Core.Canvas");
 function Local.Init()
   canvas = Core.Canvas.new(400, 400); -- Creating a 400x400 canvas
   
-  myline = canvas:Line("hello"):init({ -- Drawing a line and getting the parameter table right after it (myline)
-    x1 = 0,
-    y1 = 0,
-    x2 = 50,
-    y2 = 50,
+  canvas:Rectangle("background"):init({
+      layer = 2, x = 0, y = 0, width = 250, height = 100
+      color = { r = 50, g = 50, b = 50, a = 255 },
+  });
+
+  canvas:Text("fstPlayer"):init({
+      text = "Joueur 1 : 0 points", size = 22
+  });
+
+  canvas:Text("scdPlayer"):init({
+      text = "Joueur 2 : 0 points", size = 22, y = 50
+  });
+
+  canvas:Circle("green"):init({
+      color = { r = 0, g = 255, b = 0, a = 255 },
+      radius = 7, x = 200, y = 5
+  });
+
+  canvas:Circle("yellow"):init({
+      color = { r = 255, g = 255, b = 0, a = 255 },
+      radius = 7, x = 217, y = 5
+  });
+
+  canvas:Circle("red"):init({
+      color = { r = 255, g = 0, b = 0, a = 255 },
+      radius = 7, x = 234, y = 5
   });
   
-  canvas:Rectangle("goodbye"):init({ -- Drawing a rectangle without getting the parameter table
-      x = 10,
-      y = 40,
-      width = 100,
-      height = 50,
-      color = { r = 255, g = 0, b = 0, a = 255 }
-  });
-  
-  myrect = canvas:Get("goodbye"); -- Don't worry you can get it afterward !
-  
-  myrect.width = 200; -- You can also edit the object with the reference
-  myline.x1 = 100;
+  canvas:target(This:LevelSprite());
+  canvas:render();
 end
 ```
 
