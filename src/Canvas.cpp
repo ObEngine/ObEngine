@@ -111,6 +111,7 @@ void Line::draw(sf::RenderTexture& target) const
 void Line::update(kaguya::State& state)
 {
     Colorable::update(state);
+
     m_x1 = m_tableWrapper["x1"];
     m_y1 = m_tableWrapper["y1"];
     m_x2 = m_tableWrapper["x2"];
@@ -133,8 +134,57 @@ void Rectangle::draw(sf::RenderTexture& target) const
 void Rectangle::update(kaguya::State& state) 
 {
     Transformable::update(state);
-    CanvasElement::update(state);
     Colorable::update(state);
+}
+
+Text::Text(const std::string& id) : CanvasElement(id), Transformable(id), Drawable(id), Colorable(id), Configurable(id), Element(id)
+{
+    requires.insert(requires.end(), {
+        {"text", "\"\""}, {"font", "\"arial.ttf\""}, {"size", "12"}
+    });
+}
+
+void Text::draw(sf::RenderTexture& target) const
+{
+    sf::Font font;
+    font.loadFromFile(m_font);
+    sf::Text text(m_text, font, m_characterSize);
+    text.setPosition(m_x, m_y);
+
+    target.draw(text);
+}
+
+void Text::update(kaguya::State& state)
+{
+    Transformable::update(state);
+    Colorable::update(state);
+
+    m_font = static_cast<const char*>(m_tableWrapper["font"]);
+    m_text = static_cast<const char*>(m_tableWrapper["text"]);
+    m_characterSize = m_tableWrapper["size"];
+}
+
+Circle::Circle(const std::string& id) : CanvasElement(id), Transformable(id), Drawable(id), Colorable(id), Configurable(id), Element(id)
+{
+    requires.push_back({"radius", "1"});
+}
+
+void Circle::draw(sf::RenderTexture& target) const
+{
+    sf::CircleShape circle;
+    circle.setRadius(m_radius);
+    circle.setFillColor(m_color);
+    circle.setPosition(m_x, m_y);
+
+    target.draw(circle);
+}
+
+void Circle::update(kaguya::State& state)
+{
+    Transformable::update(state);
+    Colorable::update(state);
+
+    m_radius = m_tableWrapper["radius"];
 }
 
 Canvas::Canvas(unsigned int width, unsigned int height)
@@ -156,25 +206,43 @@ Canvas::Canvas(unsigned int width, unsigned int height)
     m_state["CanvasElement"].setClass(kaguya::UserdataMetatable<CanvasElement, Drawable>());
     m_state["Line"].setClass(kaguya::UserdataMetatable<Line, kaguya::MultipleBase<CanvasElement, Colorable>>());
     m_state["Rectangle"].setClass(kaguya::UserdataMetatable<Rectangle, kaguya::MultipleBase<CanvasElement, Colorable, Transformable>>());
+    m_state["Text"].setClass(kaguya::UserdataMetatable<Text, kaguya::MultipleBase<CanvasElement, Colorable, Transformable>>());
+    m_state["Circle"].setClass(kaguya::UserdataMetatable<Circle, kaguya::MultipleBase<CanvasElement, Colorable, Transformable>>());
     m_state["Canvas"].setClass(kaguya::UserdataMetatable<Canvas>()
         .addFunction("Line", &Canvas::line)
         .addFunction("Rectangle", &Canvas::rectangle)
+        .addFunction("Text", &Canvas::text)
+        .addFunction("Circle", &Canvas::circle)
         .addFunction("Get", &Canvas::get)
     );
 }
 
-Line* Canvas::line(std::string id)
+Line* Canvas::line(const std::string& id)
 {
     Line* newLine = new Line(id);
     elements[id] = newLine;
     return newLine;
 }
 
-Rectangle* Canvas::rectangle(std::string id)
+Rectangle* Canvas::rectangle(const std::string& id)
 {
     Rectangle* newRectangle = new Rectangle(id);
     elements[id] = newRectangle;
     return newRectangle;
+}
+
+Text* Canvas::text(const std::string& id)
+{
+    Text* newText = new Text(id);
+    elements[id] = newText;
+    return newText;
+}
+
+Circle* Canvas::circle(const std::string& id)
+{
+    Circle* newCircle = new Circle(id);
+    elements[id] = newCircle;
+    return newCircle;
 }
 
 kaguya::LuaTable& Canvas::get(std::string id)
