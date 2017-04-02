@@ -54,6 +54,7 @@ namespace obe
 			void load(std::string path);
 
 			void setSprite(sf::Sprite* spr);
+			void setTexture(sf::Texture texture);
 			void setLayer(int layer);
 			void setZDepth(int zdepth);
 			void rotate(double addRotate);

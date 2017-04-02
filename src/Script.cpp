@@ -95,6 +95,7 @@ namespace obe
 				if (all) { lib.clear(); lib.push_back("*"); }
 				bool found = false;
 				if (lib[0] == "Animation" || all) { CoreLib::loadAnimation(lua, (all) ? std::vector<std::string>{"Animation"} : lib);    found = true; }
+				if (lib[0] == "Canvas" || all) { CoreLib::loadCanvas(lua, (all) ? std::vector<std::string>{"Canvas"} : lib);    found = true; }
 				if (lib[0] == "Collision" || all) { CoreLib::loadCollision(lua, (all) ? std::vector<std::string>{"Collision"} : lib);    found = true; }
 				if (lib[0] == "Console" || all) { CoreLib::loadConsole(lua, (all) ? std::vector<std::string>{"Console"} : lib);    found = true; }
 				if (lib[0] == "Constants" || all) { CoreLib::loadConstants(lua, (all) ? std::vector<std::string>{"Constants"} : lib);    found = true; }
@@ -208,6 +209,63 @@ namespace obe
 			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
+
+		void CoreLib::loadCanvas(kaguya::State* lua, std::vector<std::string> args)
+		{
+			registerLib(lua, Functions::Vector::join(args, "."));
+			bool importAll = args.size() == 1;
+			bool foundPart = false;
+			if (!static_cast<bool>((*lua)["Core"]["Canvas"])) (*lua)["Core"]["Canvas"] = kaguya::NewTable();
+			if (importAll || args[1] == "Cursor")
+			{
+				(*lua)["Core"]["Canvas"]["RequirePair"].setClass(kaguya::UserdataMetatable<std::pair<std::string, std::string>>()
+					.addFunction("first", &std::pair<std::string, std::string>::first)
+					.addFunction("second", &std::pair<std::string, std::string>::second)
+				);
+				(*lua)["Core"]["Canvas"]["Element"].setClass(kaguya::UserdataMetatable<Graphics::Element>());
+				(*lua)["Core"]["Canvas"]["Configurable"].setClass(kaguya::UserdataMetatable<Graphics::Configurable, Graphics::Element>()
+					.addFunction("init", &Graphics::Configurable::init)
+				);
+				(*lua)["Core"]["Canvas"]["Drawable"].setClass(
+					kaguya::UserdataMetatable<Graphics::Drawable, Graphics::Configurable>()
+				);
+				(*lua)["Core"]["Canvas"]["Colorable"].setClass(
+					kaguya::UserdataMetatable<Graphics::Colorable, Graphics::Drawable>()
+				);
+				(*lua)["Core"]["Canvas"]["Transformable"].setClass(
+					kaguya::UserdataMetatable<Graphics::Transformable, Graphics::Configurable>()
+				);
+				(*lua)["Core"]["Canvas"]["CanvasElement"].setClass(
+					kaguya::UserdataMetatable<Graphics::CanvasElement, Graphics::Drawable>()
+				);
+				(*lua)["Core"]["Canvas"]["Line"].setClass(
+					kaguya::UserdataMetatable<Graphics::Line, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable>>()
+				);
+				(*lua)["Core"]["Canvas"]["Rectangle"].setClass(
+					kaguya::UserdataMetatable<Graphics::Rectangle, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
+				);
+				(*lua)["Core"]["Canvas"]["Text"].setClass(
+					kaguya::UserdataMetatable<Graphics::Text, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
+				);
+				(*lua)["Core"]["Canvas"]["Circle"].setClass(
+					kaguya::UserdataMetatable<Graphics::Circle, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
+				);
+				(*lua)["Core"]["Canvas"]["Canvas"].setClass(
+					kaguya::UserdataMetatable<Graphics::Canvas>()
+					.setConstructors<Graphics::Canvas(kaguya::State*, unsigned int, unsigned int)>()
+					.addFunction("Line", &Graphics::Canvas::line)
+					.addFunction("Rectangle", &Graphics::Canvas::rectangle)
+					.addFunction("Text", &Graphics::Canvas::text)
+					.addFunction("Circle", &Graphics::Canvas::circle)
+					.addFunction("Get", &Graphics::Canvas::get)
+					.addFunction("render", &Graphics::Canvas::render)
+					.addFunction("setTarget", &Graphics::Canvas::setTarget)
+				);
+				foundPart = true;
+			}
+			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCursor] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+		}
+
 		void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
 		{
 			registerLib(lua, Functions::Vector::join(args, "."));

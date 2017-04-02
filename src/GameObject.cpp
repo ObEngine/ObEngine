@@ -26,6 +26,7 @@ namespace obe
 				.addFunction("LevelSprite", &GameObject::getLevelSprite)
 				.addFunction("Collider", &GameObject::getCollider)
 				.addFunction("Animator", &GameObject::getAnimator)
+				.addFunction("State", &GameObject::getScript)
 				.addFunction("canCollide", &GameObject::canCollide)
 				.addFunction("canClick", &GameObject::canClick)
 				.addFunction("canDisplay", &GameObject::canDisplay)
@@ -201,6 +202,7 @@ namespace obe
 				m_objectLevelSprite->setZDepth(zdepth);
 				m_objectLevelSprite->setOffset(sprOffX, sprOffY);
 				m_hasLevelSprite = true;
+				world->reorganizeLayers();
 			}
 			//Script
 			if (obj->contains(vili::Types::ComplexAttribute, "Script"))
@@ -257,10 +259,13 @@ namespace obe
 		{
 			if (m_updated)
 			{
+				std::cout << "Updating " << m_id << std::endl;
 				for (int i = 0; i < m_registeredTriggers.size(); i++)
 				{
+					std::cout << "Testing trigger : " << m_registeredTriggers[i]->getName() << std::endl;
 					if (m_registeredTriggers[i]->getState())
 					{
+						std::cout << "Trigger : " << m_registeredTriggers[i]->getName() << " is enabled" << std::endl;
 						std::string useGrp = m_registeredTriggers[i]->getGroup();
 						for (int j = 0; j < m_registeredAliases.size(); j++)
 						{
@@ -316,10 +321,12 @@ namespace obe
 
 						if (funcname == "Local.Init")
 						{
+							std::cout << "Calling " << m_id << "'s Initialiser" << std::endl;
 							m_objectScript->dostring("LuaCore.LocalInitMirrorInjector()");
 						}
 						else
 						{
+							std::cout << "Calling " << m_id << " >> " << funcname << std::endl;
 							m_objectScript->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
 						}
 						(*m_objectScript)["cpp_param"] = nullptr;

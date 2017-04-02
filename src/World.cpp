@@ -282,6 +282,7 @@ namespace obe
 				m_gameSpeed = dt;
 				for (int i = 0; i < m_updateObjArray.size(); i++)
 				{
+					std::cout << m_updateObjArray[i]->deletable << " / >> " << m_updateObjArray[i]->getID() << " s/AUp" << std::endl;
 					if (!m_updateObjArray[i]->deletable)
 						m_updateObjArray[i]->update(dt);
 					else
@@ -482,7 +483,6 @@ namespace obe
 				(*newGameObject.get()->m_objectScript)["World"] = this;
 			}
 
-			this->orderUpdateScrArray();
 			if (newGameObject->canDisplay())
 			{
 				if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
@@ -495,6 +495,7 @@ namespace obe
 			}
 
 			m_gameObjectMap[id] = std::move(newGameObject);
+			this->orderUpdateScrArray();
 			std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
 			return m_gameObjectMap[id].get();

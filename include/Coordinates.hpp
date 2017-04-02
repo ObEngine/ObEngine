@@ -140,7 +140,7 @@ namespace obe
 			case WorldPixels:
 				return UnitVector(x, y, WorldPixels);
 			case WorldUnits:
-				std::cout << "Screen : " << Screen.w << ", " << Screen.h << std::endl << "View : " << View.w << ", " << View.h << std::endl << "Pos : " << x << ", " << y << std::endl;
+				//std::cout << "Screen : " << Screen.w << ", " << Screen.h << std::endl << "View : " << View.w << ", " << View.h << std::endl << "Pos : " << x << ", " << y << std::endl;
 				return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, WorldPixels);
 			default:
 				return UnitVector(0, 0);
