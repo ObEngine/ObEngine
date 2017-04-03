@@ -5,9 +5,11 @@
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <kaguya/kaguya.hpp>
 #include <vili/Vili.hpp>
 
+#include "FileFunctions.hpp"
 #include "Functions.hpp"
 #include "Package.hpp"
 #include "Workspace.hpp"
@@ -24,6 +26,7 @@ namespace obe
 			extern std::function<int(std::vector<std::string>*, std::string)> dirPathLoader;
 			extern std::function<int(std::vector<std::string>*, std::string)> filePathLoader;
 			extern std::function<int(kaguya::State*, std::string)> luaLoader;
+			extern std::function<int(sf::SoundBuffer*, std::string)> soundLoader;
 		}
 
 		namespace PathType

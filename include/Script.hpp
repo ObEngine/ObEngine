@@ -20,6 +20,7 @@
 #include "MathExp.hpp"
 #include "Package.hpp"
 #include "Particle.hpp"
+#include "SoundManager.hpp"
 #include "Triggers.hpp"
 
 namespace obe
@@ -49,6 +50,7 @@ namespace obe
 			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
 			void loadPath(kaguya::State* lua, std::vector<std::string> args);
 			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
+			void loadSound(kaguya::State* lua, std::vector<std::string> args);
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 			void loadUtils(kaguya::State* lua, std::vector<std::string> args);

@@ -109,6 +109,7 @@ namespace obe
 				if (lib[0] == "Particle" || all) { CoreLib::loadParticle(lua, (all) ? std::vector<std::string>{"Particle"} : lib);    found = true; }
 				if (lib[0] == "Path" || all) { CoreLib::loadPath(lua, (all) ? std::vector<std::string>{"Path"} : lib);    found = true; }
 				if (lib[0] == "SFML" || all) { CoreLib::loadSFML(lua, (all) ? std::vector<std::string>{"SFML"} : lib);    found = true; }
+				if (lib[0] == "Sound" || all) { CoreLib::loadSound(lua, (all) ? std::vector<std::string>{"Sound"} : lib); found = true; }
 				if (lib[0] == "STD" || all) { CoreLib::loadSTD(lua, (all) ? std::vector<std::string>{"STD"} : lib);    found = true; }
 				if (lib[0] == "Trigger" || all) { CoreLib::loadTrigger(lua, (all) ? std::vector<std::string>{"Trigger"} : lib);    found = true; }
 				if (lib[0] == "Utils" || all) { CoreLib::loadUtils(lua, (all) ? std::vector<std::string>{"Utils"} : lib);    found = true; }
@@ -152,7 +153,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Animation"])) (*lua)["Core"]["Animation"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Animation"])) (*lua)["Core"]["Animation"] = kaguya::NewTable();
 			if (importAll || args[1] == "AnimationGroup")
 			{
 				(*lua)["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
@@ -271,7 +272,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Collision"])) (*lua)["Core"]["Collision"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Collision"])) (*lua)["Core"]["Collision"] = kaguya::NewTable();
 			if (importAll || args[1] == "PolygonalCollider")
 			{
 				(*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(kaguya::UserdataMetatable<Collision::PolygonalCollider>()
@@ -329,7 +330,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Console"])) (*lua)["Core"]["Console"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Console"])) (*lua)["Core"]["Console"] = kaguya::NewTable();
 			if (importAll || args[1] == "Console")
 			{
 				(*lua)["Core"]["Console"]["Console"].setClass(kaguya::UserdataMetatable<Console::Console>()
@@ -385,7 +386,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Constants"])) (*lua)["Core"]["Constants"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Constants"])) (*lua)["Core"]["Constants"] = kaguya::NewTable();
 			if (importAll)
 			{
 				foundPart = true;
@@ -397,7 +398,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Cursor"])) (*lua)["Core"]["Cursor"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Cursor"])) (*lua)["Core"]["Cursor"] = kaguya::NewTable();
 			if (importAll || args[1] == "Cursor")
 			{
 				(*lua)["Core"]["Cursor"]["Cursor"].setClass(kaguya::UserdataMetatable<Cursor::Cursor>()
@@ -421,7 +422,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Dialog"])) (*lua)["Core"]["Dialog"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Dialog"])) (*lua)["Core"]["Dialog"] = kaguya::NewTable();
 			if (importAll || args[1] == "TextRenderer")
 			{
 				(*lua)["Core"]["Dialog"]["TextRenderer"].setClass(kaguya::UserdataMetatable<Graphics::TextRenderer>()
@@ -439,7 +440,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["KeyBind"])) (*lua)["Core"]["KeyBind"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["KeyBind"])) (*lua)["Core"]["KeyBind"] = kaguya::NewTable();
 			if (importAll || args[1] == "KeyBinder")
 			{
 				(*lua)["Core"]["KeyBind"]["KeyBinder"].setClass(kaguya::UserdataMetatable<Input::KeyBinder>()
@@ -462,7 +463,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["LevelSprite"])) (*lua)["Core"]["LevelSprite"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["LevelSprite"])) (*lua)["Core"]["LevelSprite"] = kaguya::NewTable();
 			if (importAll || args[1] == "LevelSprite")
 			{
 				(*lua)["Core"]["LevelSprite"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite>()
@@ -515,7 +516,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Light"])) (*lua)["Core"]["Light"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Light"])) (*lua)["Core"]["Light"] = kaguya::NewTable();
 			if (importAll || args[1] == "PointLight")
 			{
 				(*lua)["Core"]["Light"]["PointLight"].setClass(kaguya::UserdataMetatable<Light::PointLight>()
@@ -569,7 +570,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["MathExp"])) (*lua)["Core"]["MathExp"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["MathExp"])) (*lua)["Core"]["MathExp"] = kaguya::NewTable();
 			if (importAll || args[1] == "MathExp")
 			{
 				(*lua)["Core"]["MathExp"]["MathExp"].setClass(kaguya::UserdataMetatable<Math::MathExp>()
@@ -603,7 +604,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Package"])) (*lua)["Core"]["Package"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Package"])) (*lua)["Core"]["Package"] = kaguya::NewTable();
 			if (importAll || args[1] == "Package")
 			{
 				(*lua)["Core"]["Package"]["Package"].setClass(kaguya::UserdataMetatable<System::Package>()
@@ -621,7 +622,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Path"])) (*lua)["Core"]["Path"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Path"])) (*lua)["Core"]["Path"] = kaguya::NewTable();
 			if (importAll || args[1] == "PriorizedPath")
 			{
 				(*lua)["Core"]["Path"]["PriorizedPath"].setClass(kaguya::UserdataMetatable<System::PriorizedPath>()
@@ -644,7 +645,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Particle"])) (*lua)["Core"]["Particle"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Particle"])) (*lua)["Core"]["Particle"] = kaguya::NewTable();
 			if (importAll || args[1] == "Particle")
 			{
 				(*lua)["Core"]["Particle"]["Particle"].setClass(kaguya::UserdataMetatable<Graphics::Particle>()
@@ -679,7 +680,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["SFML"])) (*lua)["Core"]["SFML"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["SFML"])) (*lua)["Core"]["SFML"] = kaguya::NewTable();
 			if (importAll || args[1] == "Color")
 			{
 				(*lua)["Core"]["SFML"]["Color"].setClass(kaguya::UserdataMetatable<sf::Color>()
@@ -731,12 +732,49 @@ namespace obe
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
 
+		void CoreLib::loadSound(kaguya::State* lua, std::vector<std::string> args)
+		{
+			registerLib(lua, Functions::Vector::join(args, "."));
+			bool importAll = args.size() == 1;
+			bool foundPart = false;
+			if (!static_cast<bool>((*lua)["Core"]["Sound"])) (*lua)["Core"]["Sound"] = kaguya::NewTable();
+			if (importAll || args[1] == "Sound")
+			{
+				(*lua)["Core"]["Sound"]["Sound"].setClass(kaguya::UserdataMetatable<Sound::SoundWrapper>()
+					.setConstructors<Sound::SoundWrapper(), Sound::SoundWrapper(const std::string&)>()
+					.addFunction("doesUseSoundPosition", &Sound::SoundWrapper::doesUsesSoundPosition)
+					.addFunction("getMinimumDistance", &Sound::SoundWrapper::getMinimumDistance)
+					.addFunction("getPitch", &Sound::SoundWrapper::getPitch)
+					.addFunction("getPlayingOffset", &Sound::SoundWrapper::getPlayingOffset)
+					.addFunction("getPosition", &Sound::SoundWrapper::getPosition)
+					.addFunction("getSpatialAttenuation", &Sound::SoundWrapper::getSpatialAttenuation)
+					.addFunction("getStatus", &Sound::SoundWrapper::getStatus)
+					.addFunction("getVolume", &Sound::SoundWrapper::getVolume)
+					.addFunction("isLooping", &Sound::SoundWrapper::isLooping)
+					.addFunction("load", &Sound::SoundWrapper::load)
+					.addFunction("pause", &Sound::SoundWrapper::pause)
+					.addFunction("play", &Sound::SoundWrapper::play)
+					.addFunction("setLooping", &Sound::SoundWrapper::setLooping)
+					.addFunction("setMinimumDistance", &Sound::SoundWrapper::setMinimumDistance)
+					.addFunction("setPitch", &Sound::SoundWrapper::setPitch)
+					.addFunction("setPlayingOffset", &Sound::SoundWrapper::setPlayingOffset)
+					.addFunction("setPosition", &Sound::SoundWrapper::setPosition)
+					.addFunction("setSpatialAttenuation", &Sound::SoundWrapper::setSpatialAttenuation)
+					.addFunction("setVolume", &Sound::SoundWrapper::setVolume)
+					.addFunction("stop", &Sound::SoundWrapper::stop)
+					.addFunction("useSoundPosition", &Sound::SoundWrapper::useSoundPosition)
+				);
+				foundPart = true;
+			}
+			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSound] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+		}
+
 		void CoreLib::loadSTD(kaguya::State * lua, std::vector<std::string> args)
 		{
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["STD"])) (*lua)["Core"]["STD"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["STD"])) (*lua)["Core"]["STD"] = kaguya::NewTable();
 			if (importAll || args[1] == "Pair")
 			{
 				(*lua)["Core"]["STD"]["IntPair"].setClass(kaguya::UserdataMetatable<std::pair<int, int>>()
@@ -766,7 +804,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Trigger"])) (*lua)["Core"]["Trigger"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Trigger"])) (*lua)["Core"]["Trigger"] = kaguya::NewTable();
 			if (importAll || args[1] == "TriggerDatabase")
 			{
 				(*lua)["Core"]["Trigger"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<TriggerDatabase>()
@@ -829,10 +867,10 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Utils"])) (*lua)["Core"]["Utils"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Utils"])) (*lua)["Core"]["Utils"] = kaguya::NewTable();
 			if (importAll || args[1] == "File")
 			{
-				if (!(bool)((*lua)["Core"]["Utils"]["File"])) (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
+				if (!static_cast<bool>((*lua)["Core"]["Utils"]["File"])) (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
 				(*lua)["Core"]["Utils"]["File"]["listDirInDir"] = kaguya::function(Functions::File::listDirInDir);
 				(*lua)["Core"]["Utils"]["File"]["listFileInDir"] = kaguya::function(Functions::File::listFileInDir);
 				(*lua)["Core"]["Utils"]["File"]["copy"] = kaguya::function(Functions::File::copy);
@@ -841,7 +879,7 @@ namespace obe
 			}
 			if (importAll || args[1] == "Math")
 			{
-				if (!(bool)((*lua)["Core"]["Utils"]["Math"])) (*lua)["Core"]["Utils"]["Math"] = kaguya::NewTable();
+				if (!static_cast<bool>((*lua)["Core"]["Utils"]["Math"])) (*lua)["Core"]["Utils"]["Math"] = kaguya::NewTable();
 				(*lua)["Core"]["Utils"]["Math"]["randint"] = kaguya::function(Functions::Math::randint);
 				(*lua)["Core"]["Utils"]["Math"]["randfloat"] = kaguya::function(Functions::Math::randfloat);
 				(*lua)["Core"]["Utils"]["Math"]["getMin"] = kaguya::function(Functions::Math::getMin<double>);
@@ -857,7 +895,7 @@ namespace obe
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;
 			bool foundPart = false;
-			if (!(bool)((*lua)["Core"]["Vili"])) (*lua)["Core"]["Vili"] = kaguya::NewTable();
+			if (!static_cast<bool>((*lua)["Core"]["Vili"])) (*lua)["Core"]["Vili"] = kaguya::NewTable();
 			if (importAll || args[1] == "DataParser")
 			{
 				(*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::DataParser>()

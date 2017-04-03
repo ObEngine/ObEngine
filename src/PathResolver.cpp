@@ -20,6 +20,7 @@ namespace obe
 				return 0x002;
 			};
 			std::function<int(kaguya::State*, std::string)> luaLoader = [](kaguya::State* obj, std::string path) -> int { return obj->dofile(path); };
+			std::function<int(sf::SoundBuffer*, std::string)> soundLoader = [](sf::SoundBuffer* sound, std::string path) -> int { return sound->loadFromFile(path); };
 		}
 		
 		PriorizedPath::PriorizedPath(PathType::PathType pathType, std::string basePath, unsigned int priority)
