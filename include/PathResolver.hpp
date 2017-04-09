@@ -27,6 +27,7 @@ namespace obe
 			extern std::function<int(std::vector<std::string>*, std::string)> filePathLoader;
 			extern std::function<int(kaguya::State*, std::string)> luaLoader;
 			extern std::function<int(sf::SoundBuffer*, std::string)> soundLoader;
+			extern std::function<int(sf::Music*, std::string)> musicLoader;
 		}
 
 		namespace PathType

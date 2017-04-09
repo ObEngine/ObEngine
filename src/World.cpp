@@ -211,9 +211,14 @@ namespace obe
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
 			(*dataStore)->createComplexAttribute("Meta");
-			dataStore->at("Meta")->createBaseAttribute("Level", m_levelName);
-			dataStore->at("Meta")->createBaseAttribute("SizeX", m_size->w);
-			dataStore->at("Meta")->createBaseAttribute("SizeY", m_size->h);
+			dataStore->at("Meta")->createBaseAttribute("name", m_levelName);
+			dataStore->at("Meta")->createListAttribute("size");
+			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->w);
+			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->h);
+			dataStore->at("Meta")->createListAttribute("view");
+			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getWidth());
+			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getHeight());
+
 			(*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < m_spriteArray.size(); i++)
 			{
@@ -221,8 +226,9 @@ namespace obe
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(m_spriteArray[i]->getID());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("path", m_spriteArray[i]->getPath());
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("posX", static_cast<int>(m_spriteArray[i]->getX()));
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("posY", static_cast<int>(m_spriteArray[i]->getY()));
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createListAttribute("pos");
+					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getX());
+					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getY());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("rotation", static_cast<int>(m_spriteArray[i]->getRotation()));
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("scale", m_spriteArray[i]->getScaleX());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("layer", static_cast<int>(m_spriteArray[i]->getLayer()));
@@ -256,8 +262,8 @@ namespace obe
 				dataStore->at("LevelObjects")->createComplexAttribute(it->first);
 				dataStore->at("LevelObjects", it->first)->createBaseAttribute("type", it->second->getType());
 				(*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
-				kaguya::LuaTable saveTable = (*it->second->m_objectScript)["Local.Save"]();
-				kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local.Save"]();
+				kaguya::LuaTable saveTable = (*it->second->m_objectScript)["Local"]["Save"]();
+				kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
 				(*it->second->m_objectScript)("print(inspect(Local.Save()));");
 				vili::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);

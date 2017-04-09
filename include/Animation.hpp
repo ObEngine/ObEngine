@@ -9,6 +9,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vili/Vili.hpp>
+#include <aube/ErrorHandler.hpp>
 
 #include "Functions.hpp"
 #include "TimeManager.hpp"

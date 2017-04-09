@@ -162,8 +162,7 @@ namespace obe
 						textureDatabase[path] = std::move(tempTexture);
 						return textureDatabase[path].get();
 					}
-					std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
-					return nullptr;
+					throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture_NETD", {{"file", path}});
 				}
 				else
 				{
@@ -180,8 +179,7 @@ namespace obe
 					textureDatabase[path] = std::move(tempTexture);
 					return textureDatabase[path].get();
 				}
-				std::cout << "<Error:Animation:RessourceManager>[getTexture] : Can't open file : " << path << std::endl;
-				return nullptr;
+				throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture_ETD", {{"file", path}});
 			}
 		}
 
@@ -200,9 +198,7 @@ namespace obe
 		{
 			if (animationGroupMap.find(groupname) != animationGroupMap.end())
 				return animationGroupMap[groupname].get();
-			else
-				std::cout << "<Error:Animation:Animation>[getAnimationGroup] : Can't find AnimationGroup : " << groupname << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.Animation.Animation.AnimationGroupNotFound", {{"animation", animationName}, {"group", groupname}});
 		}
 
 		std::string Animation::Animation::getCurrentAnimationGroup() const
@@ -450,9 +446,9 @@ namespace obe
 		{
 			if (fullAnimSet.find(animationName) != fullAnimSet.end())
 				return fullAnimSet[animationName].get();
-			else
-				std::cout << "<Error:Animation:Animator>[getAnimation] : Can't find Animation : " << animationName << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", 
+				{ { "function", "getAnimation" }, {"animation", animationName}, {"%animator", animationPath.toString()} 
+			});
 		}
 
 		std::vector<std::string> Animator::getAllAnimationName() const
@@ -468,28 +464,27 @@ namespace obe
 		void Animator::setKey(std::string key)
 		{
 			if (fullAnimSet.find(key) == fullAnimSet.end())
-				std::cout << "<Error:Animation:Animator>[setKey] : Can't find key : " << key << " for Animator : " << animationPath.toString() << std::endl;
-			else
+				throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", {
+					{"function", "setKey"}, { "animation", key },{ "%animator", animationPath.toString() } 
+				});
+			if (key != currentAnimationName)
 			{
-				if (key != currentAnimationName)
+				bool changeAnim = false;
+				if (currentAnimation != nullptr)
 				{
-					bool changeAnim = false;
-					if (currentAnimation != nullptr)
-					{
-						if (currentAnimation->isAnimationOver())
-							changeAnim = true;
-						else if (fullAnimSet[key]->getPriority() >= currentAnimation->getPriority())
-							changeAnim = true;
-					}
-					else
+					if (currentAnimation->isAnimationOver())
 						changeAnim = true;
-					if (changeAnim)
-					{
-						if (currentAnimationName != "NONE")
-							fullAnimSet[currentAnimationName]->resetAnimation();
-						currentAnimationName = key;
-						currentAnimation = fullAnimSet[currentAnimationName].get();
-					}
+					else if (fullAnimSet[key]->getPriority() >= currentAnimation->getPriority())
+						changeAnim = true;
+				}
+				else
+					changeAnim = true;
+				if (changeAnim)
+				{
+					if (currentAnimationName != "NONE")
+						fullAnimSet[currentAnimationName]->resetAnimation();
+					currentAnimationName = key;
+					currentAnimation = fullAnimSet[currentAnimationName].get();
 				}
 			}
 		}
@@ -534,7 +529,7 @@ namespace obe
 			if (currentAnimation != nullptr)
 				animStatusCommand = Functions::String::split(currentAnimation->getAnimationStatus(), ":");
 			else
-				std::cout << "<Error:Animation:Animator>[update] : Current Animation of Animator : " << animationPath.toString() << " is NULL" << std::endl;
+				throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation", { {"animator", animationPath.toString() } });
 			if (animStatusCommand[0] == "CALL")
 			{
 				currentAnimation->resetAnimation();

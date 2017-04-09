@@ -110,6 +110,12 @@ CheckBox {
     TextColor        = rgb(255, 255, 255);
 }
 
+DisabledCheckBox {
+    TextureChecked   = "Checkbox/selected.png";
+    TextureUnchecked = "Checkbox/unselected.png";
+    TextColor        = rgb(100, 100, 100);
+}
+
 ChildWindow {
     TextureTitlebar = "c.png" Part(317, 2, 62, 31) Middle(10, 0, 42, 31);
     TitleColor      = rgb(100, 100, 100);

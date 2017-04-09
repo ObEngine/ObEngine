@@ -106,6 +106,11 @@ namespace obe
 			tgui::ComboBox::Ptr cameraMode = tgui::ComboBox::create();
 			tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
 
+			//Requires Panel
+			tgui::Panel::Ptr requiresPanel = tgui::Panel::create();
+			tgui::Label::Ptr requiresTitleLabel = tgui::Label::create();
+			tgui::Panel::Ptr requiresPanelContent = tgui::Panel::create();
+
 			//Editor GUI
 			tgui::Panel::Ptr editorPanel = tgui::Panel::create();
 			tgui::Panel::Ptr mapPanel = tgui::Panel::create();
@@ -141,6 +146,7 @@ namespace obe
 			tgui::TextBox::Ptr gridOffsetXInput = tgui::TextBox::create();
 			tgui::TextBox::Ptr gridOffsetYInput = tgui::TextBox::create();
 			tgui::Button::Ptr gridOffsetButton = tgui::Button::create();
+			tgui::CheckBox::Ptr snapGridCheckbox = tgui::CheckBox::create();
 
 			//Map Editor
 			Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -163,18 +169,37 @@ namespace obe
 			sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
 			sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
 
+			//Font size setup
+			unsigned int bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
+			unsigned int mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
+			unsigned int smallFontSize = static_cast<double>(bigFontSize) / 2.0;
+
+			//Requires Setup
+			requiresPanel->add(requiresPanelContent);
+			requiresPanel->add(requiresTitleLabel);
+			requiresPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+			requiresPanel->setSize("&.w / 3", "&.h / 1.5");
+			requiresPanel->setPosition("&.w / 2 - width / 2", "&.h / 2 - height / 2");
+
+			requiresTitleLabel->setPosition(30, 15);
+			requiresTitleLabel->setTextSize(bigFontSize);
+			requiresTitleLabel->setRenderer(baseTheme.getRenderer("Label"));
+			requiresTitleLabel->setText("Object builder Window");
+
+			requiresPanelContent->setRenderer(baseTheme.getRenderer("TransparentPanel"));
+			requiresPanelContent->setSize("&.w - 2", "&.h - 62");
+			requiresPanelContent->setPosition(0, 60);
+			requiresPanelContent->hide();
+
 			//GUI Setup
 			int saveEditMode = -1;
 			gui.add(mainPanel);
 			mainPanel->setSize(window.getSize().x, window.getSize().y);
 			mainPanel->add(titlePanel);
 			mainPanel->add(editorPanel);
-			
-			//Titlebar setup
-			unsigned int bigFontSize = (double)window.getSize().y / (double)32.0 - 6;
-			unsigned int mediumFontSize = (double)bigFontSize / 1.3;
-			unsigned int smallFontSize = (double)bigFontSize / 2.0;
+			mainPanel->add(requiresPanel);
 
+			//Titlebar setup
 			titlePanel->add(titleLabel, "titleLabel");
 			titlePanel->add(cursorPosLabel, "cursorPosLabel");
 			titlePanel->add(cameraPosLabel, "cameraPosLabel");
@@ -418,6 +443,7 @@ namespace obe
 			settingsPanel->add(gridOffsetXInput, "gridOffsetXInput");
 			settingsPanel->add(gridOffsetYInput, "gridOffsetYInput");
 			settingsPanel->add(gridOffsetButton, "gridOffsetButton");
+			settingsPanel->add(snapGridCheckbox, "snapGridCheckbox");
 			
 			settingsCatLabel->setPosition(20, 20);
 			settingsCatLabel->setTextSize(bigFontSize);
@@ -435,6 +461,16 @@ namespace obe
 			enableGridCheckbox->setSize(16, 16);
 			enableGridCheckbox->setTextSize(mediumFontSize);
 			enableGridCheckbox->setText("Enabled Grid ?");
+
+			enableGridCheckbox->connect("checked", [&baseTheme, &snapGridCheckbox]() {
+				snapGridCheckbox->enable();
+				snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+			});
+
+			enableGridCheckbox->connect("unchecked", [&baseTheme, &snapGridCheckbox]() {
+				snapGridCheckbox->disable();
+				snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
+			});
 
 			gridDimensionLabel->setPosition(60, tgui::bindBottom(enableGridCheckbox) + 20);
 			gridDimensionLabel->setTextSize(mediumFontSize);
@@ -504,6 +540,35 @@ namespace obe
 				}
 			});
 
+			snapGridCheckbox->setPosition(60, tgui::bindBottom(gridOffsetLabel) + 20);
+			snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
+			snapGridCheckbox->setSize(16, 16);
+			snapGridCheckbox->setTextSize(mediumFontSize);
+			snapGridCheckbox->setText("Snap to Grid ?");
+			snapGridCheckbox->disable();
+
+			snapGridCheckbox->connect("checked", [&editMode, &editorGrid, &cursor]()
+			{
+				cursor.setConstraint([&editMode, &editorGrid](Cursor::Cursor* cursor)
+				{
+					if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
+					{
+						int snappedX = cursor->getRawX() / editorGrid.getSizeX() * editorGrid.getSizeX() + editorGrid.getOffsetX();
+						int snappedY = cursor->getRawY() / editorGrid.getSizeY() * editorGrid.getSizeY() + editorGrid.getOffsetY();
+						return std::pair<int, int>(snappedX, snappedY);
+					}
+					else
+					{
+						return Cursor::Constraints::Default(cursor);
+					}
+				});
+			});
+
+			snapGridCheckbox->connect("unchecked", [&cursor]()
+			{
+				cursor.setConstraint(Cursor::Constraints::Default);
+			});
+
 			//Sprites Tab Setup
 			spritesPanel->add(spritesCatLabel);
 
@@ -522,7 +587,7 @@ namespace obe
 			objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
 			objectsCatLabel->setText("[ Objects Settings ]");
 
-			EditorTools::buildObjectTab(objectsPanel, baseTheme);
+			EditorTools::buildObjectTab(objectsPanel, requiresPanelContent, baseTheme);
 
 			//Framerate / DeltaTime
 			Time::FPSCounter fps;
@@ -603,9 +668,9 @@ namespace obe
 							world.getCamera().move(0, cameraSpeed * framerateManager.getGameSpeed());
 
 						if (keybind.isActionEnabled("CamDash"))
-							cameraSpeed = 60;
+							cameraSpeed = 1800;
 						else
-							cameraSpeed = 30;
+							cameraSpeed = 900;
 					}
 					else {
 						world.setCameraLock(false);

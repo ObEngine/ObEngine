@@ -4,12 +4,21 @@ namespace obe
 {
 	namespace Cursor
 	{
+		namespace Constraints
+		{
+			std::function <std::pair<int, int>(Cursor*)> Default = [](Cursor* cursor)
+			{
+				return std::pair<int, int>(cursor->getRawX(), cursor->getRawY());
+			};
+		}
 		Cursor::Cursor()
 		{
+			m_constraint = Constraints::Default;
 		}
 
 		Cursor::Cursor(sf::RenderWindow* window) : m_cursorAnim(System::Path("Sprites/Cursors/Round"))
 		{
+			m_constraint = Constraints::Default;
 			m_window = window;
 			m_cursorAnim.loadAnimator();
 			m_cursorAnim.setKey("IDLE");
@@ -42,10 +51,20 @@ namespace obe
 
 		int Cursor::getX() const
 		{
-			return m_x;
+			return m_constrainedX;
 		}
 
 		int Cursor::getY() const
+		{
+			return m_constrainedY;
+		}
+
+		int Cursor::getRawX() const
+		{
+			return m_x;
+		}
+
+		int Cursor::getRawY() const
 		{
 			return m_y;
 		}
@@ -145,7 +164,9 @@ namespace obe
 			}
 			//x = (double)x * (Functions::Coord::resolution->w / (double)Functions::Coord::width);
 			//y = (double)y * ((double)Functions::Coord::viewHeight / (double)Functions::Coord::height);
-			m_cursorSprite->setPosition(m_x, m_y);
+			std::pair<int, int> constrainedPosition = m_constraint(this);
+			m_constrainedX = constrainedPosition.first; m_constrainedY = constrainedPosition.second;
+			m_cursorSprite->setPosition(m_constrainedX, m_constrainedY);
 		}
 
 		void Cursor::handleTriggers() const
@@ -154,43 +175,43 @@ namespace obe
 			if (this->getClicked("Left"))
 			{
 				m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
-				m_cursorTriggers->pushParameter("Clicked", "X", m_x);
-				m_cursorTriggers->pushParameter("Clicked", "Y", m_y);
+				m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Clicked");
 			}
 			if (this->getClicked("Right"))
 			{
 				m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Right"));
-				m_cursorTriggers->pushParameter("Clicked", "X", m_x);
-				m_cursorTriggers->pushParameter("Clicked", "Y", m_y);
+				m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Clicked");
 			}
 			if (this->getPressed("Left"))
 			{
 				m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Left"));
-				m_cursorTriggers->pushParameter("Pressed", "X", m_x);
-				m_cursorTriggers->pushParameter("Pressed", "Y", m_y);
+				m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Pressed");
 			}
 			if (this->getPressed("Right"))
 			{
 				m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Right"));
-				m_cursorTriggers->pushParameter("Pressed", "X", m_x);
-				m_cursorTriggers->pushParameter("Pressed", "Y", m_y);
+				m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Pressed");
 			}
 			if (this->getReleased("Left"))
 			{
 				m_cursorTriggers->pushParameter("Released", "Key", std::string("Left"));
-				m_cursorTriggers->pushParameter("Released", "X", m_x);
-				m_cursorTriggers->pushParameter("Released", "Y", m_y);
+				m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Released");
 			}
 			if (this->getReleased("Right"))
 			{
 				m_cursorTriggers->pushParameter("Released", "Key", std::string("Right"));
-				m_cursorTriggers->pushParameter("Released", "X", m_x);
-				m_cursorTriggers->pushParameter("Released", "Y", m_y);
+				m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
+				m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
 				m_cursorTriggers->enableTrigger("Released");
 			}
 		}
@@ -228,6 +249,11 @@ namespace obe
 				return m_rightReleased;
 			else
 				return false;
+		}
+
+		void Cursor::setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint)
+		{
+			m_constraint = constraint;
 		}
 
 		sf::Sprite* Cursor::getSprite() const

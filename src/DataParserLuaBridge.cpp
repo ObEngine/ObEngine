@@ -67,6 +67,7 @@ namespace obe
 
 			vili::ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
 			{
+				std::cout << "Convert table : " << id << std::endl;
 				vili::ComplexAttribute* returnElement = new vili::ComplexAttribute(id);
 				if (convert.type() == 0 || convert.type() == 5)
 				{
@@ -76,11 +77,13 @@ namespace obe
 						std::string tableKey = tableItem.first;
 						if (convert[tableKey].type() == 5)
 						{
+							std::cout << "Push subtable : " << tableKey << std::endl;
 							kaguya::LuaRef tempTableRef = convert[tableKey];
 							returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));
 						}
 						else if (Functions::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
 						{
+							std::cout << "Push subelement : " << tableKey << std::endl;
 							kaguya::LuaRef tempElemRef = convert[tableKey];
 							returnElement->pushBaseAttribute(luaElementToBaseAttribute(tableKey, tempElemRef));
 						}

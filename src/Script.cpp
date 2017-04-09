@@ -766,10 +766,37 @@ namespace obe
 				);
 				foundPart = true;
 			}
+			if (importAll || args[1] == "Sound")
+			{
+				(*lua)["Core"]["Sound"]["Music"].setClass(kaguya::UserdataMetatable<Sound::MusicWrapper>()
+					.setConstructors<Sound::MusicWrapper(), Sound::MusicWrapper(const std::string&)>()
+					.addFunction("doesUseSoundPosition", &Sound::MusicWrapper::doesUsesSoundPosition)
+					.addFunction("getMinimumDistance", &Sound::MusicWrapper::getMinimumDistance)
+					.addFunction("getPitch", &Sound::MusicWrapper::getPitch)
+					.addFunction("getPlayingOffset", &Sound::MusicWrapper::getPlayingOffset)
+					.addFunction("getPosition", &Sound::MusicWrapper::getPosition)
+					.addFunction("getSpatialAttenuation", &Sound::MusicWrapper::getSpatialAttenuation)
+					.addFunction("getStatus", &Sound::MusicWrapper::getStatus)
+					.addFunction("getVolume", &Sound::MusicWrapper::getVolume)
+					.addFunction("isLooping", &Sound::MusicWrapper::isLooping)
+					.addFunction("load", &Sound::MusicWrapper::load)
+					.addFunction("pause", &Sound::MusicWrapper::pause)
+					.addFunction("play", &Sound::MusicWrapper::play)
+					.addFunction("setLooping", &Sound::MusicWrapper::setLooping)
+					.addFunction("setMinimumDistance", &Sound::MusicWrapper::setMinimumDistance)
+					.addFunction("setPitch", &Sound::MusicWrapper::setPitch)
+					.addFunction("setPlayingOffset", &Sound::MusicWrapper::setPlayingOffset)
+					.addFunction("setPosition", &Sound::MusicWrapper::setPosition)
+					.addFunction("setSpatialAttenuation", &Sound::MusicWrapper::setSpatialAttenuation)
+					.addFunction("setVolume", &Sound::MusicWrapper::setVolume)
+					.addFunction("stop", &Sound::MusicWrapper::stop)
+					.addFunction("useSoundPosition", &Sound::MusicWrapper::useSoundPosition)
+				);
+			}
 			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSound] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
 		}
 
-		void CoreLib::loadSTD(kaguya::State * lua, std::vector<std::string> args)
+		void CoreLib::loadSTD(kaguya::State* lua, std::vector<std::string> args)
 		{
 			registerLib(lua, Functions::Vector::join(args, "."));
 			bool importAll = args.size() == 1;

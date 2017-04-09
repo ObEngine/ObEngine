@@ -5,6 +5,15 @@
 
 namespace vili
 {
+	void LoadErrors(std::string errorFile)
+	{
+		DataParser errors(errorFile);
+
+		errors->walk([](ComplexAttribute* node) -> void {
+			unsigned int depth = Functions::String::split(node->getNodePath(), "/").size();
+		});
+	}
+
 	std::istream& safeGetline(std::istream& is, std::string& t)
 	{
 		t.clear();
@@ -30,6 +39,7 @@ namespace vili
 			}
 		}
 	}
+
 	std::vector<std::string> convertPath(std::string path)
 	{
 		std::vector<std::string> vecPath = {};
@@ -309,7 +319,18 @@ namespace vili
 	{
 		for (unsigned int j = 0; j < depth; j++)
 			(*file) << "    ";
-		(*file) << id << ":" << returnData() << std::endl;
+		std::string returnedData = returnData();
+		if (dtype == Types::Float)
+		{
+			while (returnedData.back() == '0')
+				returnedData.pop_back();
+			if (returnedData.back() == '.')
+				returnedData.pop_back();
+		}
+		if (id.front() != '#')
+			(*file) << id << ":" << returnedData << std::endl;
+		else
+			(*file) << returnedData << std::endl;
 	}
 	BaseAttribute::operator std::string()
 	{
@@ -560,11 +581,7 @@ namespace vili
 			(*file) << "    ";
 		(*file) << id << ":[" << std::endl;
 		for (unsigned int k = 0; k < getSize(); k++)
-		{
-			for (unsigned int l = 0; l < depth + 1; l++)
-				(*file) << "    ";
-			(*file) << get(k)->returnData() << std::endl;
-		}
+			get(k)->write(file, depth + 1);
 		for (unsigned int l = 0; l < depth; l++)
 			(*file) << "    ";
 		(*file) << "]" << std::endl;

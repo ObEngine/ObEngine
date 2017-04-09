@@ -1,0 +1,29 @@
+ObEngine:
+    @Animation
+        file:"src/Animation.cpp"
+        @RessourceManager
+            where:"class<RessourceManager>"
+            @LoadTexture_NETD
+                where:"getTexture"
+                message:"Can't open file '%file%'"
+                hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
+            @LoadTexture_ETD
+                where:"getTexture"
+                message:"Can't open file '%file%'"
+                hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
+        @Animation
+            location:"class<Animation>"
+            @AnimationGroupNotFound
+                where:"getAnimationGroup"
+                message:"Can't find AnimationGroup '%group%' in Animation '%animation%'"
+                hint:"Maybe a wrong group parameter while using PLAY_GROUP in Animation '%animation%'"
+        @Animator
+            location:"class<Animator>"
+            @AnimationNotFound
+                where:"%function%"
+                message:"Can't find Animation '%animation%' for Animator '%animator%'"
+                hint:"Animation %animation% doesn't exists, remove This:Animator():setKey("%animation%") ?"
+            @UpdateNullAnimation
+                where:"update"
+                message:"Can't update NULL Animation in animator : '%animator%'"
+                hint:"Assign an Animation to the Animator with This:Animator():setKey in Local.Init"

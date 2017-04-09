@@ -10,6 +10,7 @@
 #include <fstream>
 #include <random>
 #include <vili/Vili.hpp>
+#include <aube/ErrorHandler.hpp>
 
 #include "Coordinates.hpp"
 #include "Game.hpp"
