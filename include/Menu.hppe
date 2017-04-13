@@ -2,7 +2,7 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
-#include <TGUI/TGUI.hpp>
+#include <tgui/TGUI.hpp>
 
 #include "Cursor.hpp"
 #include "Functions.hpp"

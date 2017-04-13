@@ -14,7 +14,7 @@ add_subdirectory(extlibs/build/clipper)
 add_subdirectory(extlibs/build/vili)
 add_subdirectory(extlibs/build/elzip)
 add_subdirectory(extlibs/build/lua)
-add_subdirectory(extlibs/build/tgui)
+add_subdirectory(extlibs/build/TGUI)
 
 file(GLOB PG_OBE include/*.hpp)
 file(GLOB HD_OBE src/*.cpp)
