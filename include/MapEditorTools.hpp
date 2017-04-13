@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <map>
-#include <tgui/TGUI.hpp>
+#include <TGUI/TGUI.hpp>
 
 #include "PathResolver.hpp"
 #include "Script.hpp"

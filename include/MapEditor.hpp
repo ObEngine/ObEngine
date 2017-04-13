@@ -12,7 +12,7 @@
 #include <vector>
 #include <fstream>
 #include <vili/Vili.hpp>
-#include <tgui/TGUI.hpp>
+#include <TGUI/TGUI.hpp>
 
 #include "World.hpp"
 #include "Cursor.hpp"
