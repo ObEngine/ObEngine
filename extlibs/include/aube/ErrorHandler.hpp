@@ -29,6 +29,6 @@ namespace aube
 		static std::map<std::string, ErrorMessage*> m_errors;
 	public:
 		static void Load(std::string errorId, std::string filename, std::vector<std::string> location, std::string message, std::vector<std::string> hints = {});
-		static std::exception ErrorHandler::Raise(std::string errorId, std::map<std::string, std::string> parameters = {});
+		static std::exception Raise(std::string errorId, std::map<std::string, std::string> parameters = {});
 	};
 }

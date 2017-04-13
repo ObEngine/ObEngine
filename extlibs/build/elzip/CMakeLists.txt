@@ -39,3 +39,7 @@ target_link_libraries(elzip minizip)
 IF(UNIX)
   target_link_libraries(elzip stdc++fs)
 ENDIF()
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
