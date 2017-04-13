@@ -43,18 +43,27 @@ namespace aube
 
 	std::exception ErrorHandler::Raise(std::string errorId, std::map<std::string, std::string> parameters)
 	{
-		ErrorMessage* currentError = m_errors[errorId];
-		std::string errorMessage = "[" + errorId + "]{" + currentError->getFile() + "}";
-		errorMessage += "<" + currentError->getLocation() + "> : " + currentError->getMessage();
+		if (m_errors.find(errorId) != m_errors.end())
+		{
+			ErrorMessage* currentError = m_errors[errorId];
+			std::string errorMessage = "[" + errorId + "]{" + currentError->getFile() + "}";
+			errorMessage += "<" + currentError->getLocation() + "> : " + currentError->getMessage();
+			for (std::pair<std::string, std::string> parameter : parameters)
+			{
+				errorMessage = errorMessage.replace(errorMessage.find("%" + parameter.first + "%"), parameter.first.size() + 2, parameter.second);
+			}
+			std::cerr << errorMessage << std::endl;
+			for (std::string& hint : currentError->getHints())
+			{
+				std::cerr << "    > " << hint << std::endl;
+			}
+			return std::exception(errorMessage.c_str());
+		}
+		std::cerr << "Raised Unknown Exception : " << errorId << " with parameters : " << std::endl;
 		for (std::pair<std::string, std::string> parameter : parameters)
 		{
-			errorMessage = errorMessage.replace(errorMessage.find("%" + parameter.first + "%"), parameter.first.size() + 2, parameter.second);
+			std::cerr << "    > " << parameter.first << " = " << parameter.second << std::endl;
 		}
-		std::cerr << errorMessage << std::endl;
-		for (std::string& hint : currentError->getHints())
-		{
-			std::cerr << "    > " << hint << std::endl;
-		}
-		return std::exception(errorMessage.c_str());
+		return std::exception(errorId.c_str());
 	}
 }
