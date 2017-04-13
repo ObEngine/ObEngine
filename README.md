@@ -1,7 +1,7 @@
 # ÖbEngine
 
 ## What the hell is ÖbEngine ?
-ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on the top of SFML !
+ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML !
 
 ## What do I need to build it ?
 You will need several libs :
