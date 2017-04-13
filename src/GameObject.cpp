@@ -26,6 +26,7 @@ namespace obe
 				.addFunction("LevelSprite", &GameObject::getLevelSprite)
 				.addFunction("Collider", &GameObject::getCollider)
 				.addFunction("Animator", &GameObject::getAnimator)
+				.addFunction("State", &GameObject::getScript)
 				.addFunction("canCollide", &GameObject::canCollide)
 				.addFunction("canClick", &GameObject::canClick)
 				.addFunction("canDisplay", &GameObject::canDisplay)
@@ -201,6 +202,7 @@ namespace obe
 				m_objectLevelSprite->setZDepth(zdepth);
 				m_objectLevelSprite->setOffset(sprOffX, sprOffY);
 				m_hasLevelSprite = true;
+				world->reorganizeLayers();
 			}
 			//Script
 			if (obj->contains(vili::Types::ComplexAttribute, "Script"))

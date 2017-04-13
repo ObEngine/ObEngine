@@ -13,10 +13,14 @@
 #include <functional>
 #include <cmath>
 
+#include <aube/ErrorHandler.hpp>
+
 #include "Functions.hpp"
 
 namespace vili
 {
+	void LoadErrors(std::string errorFile);
+
 	namespace Types
 	{
 		enum AttributeType
@@ -63,6 +67,7 @@ namespace vili
 		virtual ContainerAttribute* getParent();
 		friend class ContainerAttribute;
 		friend class LinkAttribute;
+		friend void LoadErrors(std::string errorFile);
 	public:
 		const static Types::AttributeType ClassType = Types::Attribute;
 		Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
@@ -74,6 +79,7 @@ namespace vili
 		virtual Types::AttributeType getType();
 		virtual void setParent(ContainerAttribute* parent);
 		virtual std::string getNodePath();
+		unsigned int getDepth();
 		virtual void setID(const std::string& id);
 		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
 		virtual void write(std::ofstream* file, unsigned int depth) = 0;
@@ -82,15 +88,14 @@ namespace vili
 	//ContainerAttribute
 	class ContainerAttribute : public Attribute
 	{
-	protected:
 	public:
 		const static Types::AttributeType ClassType = Types::ContainerAttribute;
 		ContainerAttribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
 		virtual Attribute* removeOwnership(Attribute* element);
 		virtual ~ContainerAttribute() {}
 		virtual Attribute* extractElement(Attribute* element) = 0;
-		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
-		virtual void write(std::ofstream* file, unsigned int depth) = 0;
+		void copy(ContainerAttribute* newParent, std::string newid = "") override = 0;
+		void write(std::ofstream* file, unsigned int depth) override = 0;
 	};
 
 	//BaseAttribute
@@ -113,8 +118,8 @@ namespace vili
 		void autoset(std::string rawData);
 		Types::DataType getDataType();
 		template <class T> T get() {}
-		virtual void copy(ContainerAttribute* newParent, std::string newid = "");
-		virtual void write(std::ofstream* file, unsigned int depth);
+		void copy(ContainerAttribute* newParent, std::string newid = "") override;
+		void write(std::ofstream* file, unsigned int depth) override;
 		operator std::string();
 		operator int();
 		operator double();
@@ -137,8 +142,8 @@ namespace vili
 			std::string getFullPath();
 			void apply();
 			bool operator==(LinkAttribute compare);
-			virtual void copy(ContainerAttribute* newParent, std::string newid = "");
-			virtual void write(std::ofstream* file, unsigned int depth);
+			void copy(ContainerAttribute* newParent, std::string newid = "") override;
+			void write(std::ofstream* file, unsigned int depth) override;
 	};
 	
 	//ListAttribute
@@ -166,9 +171,9 @@ namespace vili
 		void insert(unsigned int index, const double& element);
 		void clear();
 		void erase(unsigned int index);
-		virtual Attribute* extractElement(Attribute* element);
-		virtual void copy(ContainerAttribute* newParent, std::string newid = "");
-		virtual void write(std::ofstream* file, unsigned int depth);
+		Attribute* extractElement(Attribute* element) override;
+		void copy(ContainerAttribute* newParent, std::string newid = "") override;
+		void write(std::ofstream* file, unsigned int depth) override;
 	};
 
 	//ComplexAttribute
@@ -189,7 +194,7 @@ namespace vili
 			ComplexAttribute(const std::string& id, std::vector<ComplexAttribute*>* multipleHerit);
 			virtual ~ComplexAttribute() {}
 
-			virtual Attribute* extractElement(Attribute* element);
+			Attribute* extractElement(Attribute* element) override;
 			void heritage(ComplexAttribute* heritTarget);
 
 			ComplexAttribute* getPath(std::string attributePath);
@@ -235,8 +240,8 @@ namespace vili
 			void deleteListAttribute(const std::string& attributeID, bool freeMemory = false);
 			void deleteLinkAttribute(const std::string& attributeID, bool freeMemory = false);
 
-			void write(std::ofstream* file, unsigned int depth = 0);
-			virtual void copy(ContainerAttribute* newParent, std::string newid = "");
+			void write(std::ofstream* file, unsigned int depth = 0) override;
+			void copy(ContainerAttribute* newParent, std::string newid = "") override;
 			void walk(std::function<void(ComplexAttribute*)> walkFunction);
 	};
 

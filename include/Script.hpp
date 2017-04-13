@@ -9,6 +9,7 @@
 #include <any/any.hpp>
 #include <vili/Vili.hpp>
 
+#include "Canvas.hpp"
 #include "Collisions.hpp"
 #include "Console.hpp"
 #include "Cursor.hpp"
@@ -19,6 +20,7 @@
 #include "MathExp.hpp"
 #include "Package.hpp"
 #include "Particle.hpp"
+#include "SoundManager.hpp"
 #include "Triggers.hpp"
 
 namespace obe
@@ -34,6 +36,7 @@ namespace obe
 		namespace CoreLib
 		{
 			void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
+			void loadCanvas(kaguya::State* lua, std::vector<std::string> args);
 			void loadCollision(kaguya::State* lua, std::vector<std::string> args);
 			void loadConsole(kaguya::State* lua, std::vector<std::string> args);
 			void loadConstants(kaguya::State* lua, std::vector<std::string> args);
@@ -47,6 +50,7 @@ namespace obe
 			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
 			void loadPath(kaguya::State* lua, std::vector<std::string> args);
 			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
+			void loadSound(kaguya::State* lua, std::vector<std::string> args);
 			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
 			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
 			void loadUtils(kaguya::State* lua, std::vector<std::string> args);

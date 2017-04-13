@@ -153,7 +153,7 @@ namespace obe
 						if (currentCollision->contains(vili::Types::ListAttribute, std::to_string(pointIndex)))
 						{
 							tempCollider->addPoint(currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>(),
-							                       currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>());
+							                       currentCollision->getListAttribute(std::to_string(pointIndex))->get(1)->get<double>());
 						}
 						else
 						{
@@ -211,9 +211,14 @@ namespace obe
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
 			(*dataStore)->createComplexAttribute("Meta");
-			dataStore->at("Meta")->createBaseAttribute("Level", m_levelName);
-			dataStore->at("Meta")->createBaseAttribute("SizeX", m_size->w);
-			dataStore->at("Meta")->createBaseAttribute("SizeY", m_size->h);
+			dataStore->at("Meta")->createBaseAttribute("name", m_levelName);
+			dataStore->at("Meta")->createListAttribute("size");
+			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->w);
+			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->h);
+			dataStore->at("Meta")->createListAttribute("view");
+			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getWidth());
+			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getHeight());
+
 			(*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < m_spriteArray.size(); i++)
 			{
@@ -221,8 +226,9 @@ namespace obe
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(m_spriteArray[i]->getID());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("path", m_spriteArray[i]->getPath());
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("posX", static_cast<int>(m_spriteArray[i]->getX()));
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("posY", static_cast<int>(m_spriteArray[i]->getY()));
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createListAttribute("pos");
+					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getX());
+					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getY());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("rotation", static_cast<int>(m_spriteArray[i]->getRotation()));
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("scale", m_spriteArray[i]->getScaleX());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("layer", static_cast<int>(m_spriteArray[i]->getLayer()));
@@ -256,8 +262,8 @@ namespace obe
 				dataStore->at("LevelObjects")->createComplexAttribute(it->first);
 				dataStore->at("LevelObjects", it->first)->createBaseAttribute("type", it->second->getType());
 				(*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
-				kaguya::LuaTable saveTable = (*it->second->m_objectScript)["Local.Save"]();
-				kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local.Save"]();
+				kaguya::LuaTable saveTable = (*it->second->m_objectScript)["Local"]["Save"]();
+				kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
 				(*it->second->m_objectScript)("print(inspect(Local.Save()));");
 				vili::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);
@@ -280,6 +286,12 @@ namespace obe
 			if (m_updateState)
 			{
 				m_gameSpeed = dt;
+				if (m_needToOrderUpdateArray)
+				{
+					this->orderUpdateScrArray();
+					m_needToOrderUpdateArray = false;
+				}
+					
 				for (int i = 0; i < m_updateObjArray.size(); i++)
 				{
 					if (!m_updateObjArray[i]->deletable)
@@ -482,7 +494,6 @@ namespace obe
 				(*newGameObject.get()->m_objectScript)["World"] = this;
 			}
 
-			this->orderUpdateScrArray();
 			if (newGameObject->canDisplay())
 			{
 				if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
@@ -495,6 +506,8 @@ namespace obe
 			}
 
 			m_gameObjectMap[id] = std::move(newGameObject);
+			m_needToOrderUpdateArray = true;
+			
 			std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
 			return m_gameObjectMap[id].get();

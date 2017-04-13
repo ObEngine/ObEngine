@@ -37,6 +37,12 @@ namespace obe
 			this->setRotationOrigin(rotOrigX, rotOrigY);
 		}
 
+		void LevelSprite::setTexture(sf::Texture texture)
+		{
+			m_texture = texture;
+			m_returnSprite = sfe::ComplexSprite(m_texture);
+		}
+
 		void LevelSprite::setLayer(int layer)
 		{
 			m_layer = layer;

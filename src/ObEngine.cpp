@@ -3,6 +3,11 @@
 
 #include "ObEngine.hpp"
 
+void LoadErrors()
+{
+	vili::LoadErrors("Data/Errors.vili");
+}
+
 int main(int argc, char** argv)
 {
 	obe::Functions::Run::Parser runParser(argv, argc);
@@ -13,10 +18,15 @@ int main(int argc, char** argv)
 
 	obe::Coord::UnitVector uv_a(500, 500);
 
-	std::ofstream out("log.txt");
+	std::ofstream out("debug.log");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
+	std::ofstream out_err("errors.log");
+	std::streambuf *cerrbug = std::cerr.rdbuf();
+	std::cerr.rdbuf(out_err.rdbuf());
+
+	LoadErrors();
 	obe::System::MountPaths();
 
 	if (startMode == "edit")

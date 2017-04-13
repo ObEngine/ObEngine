@@ -8,7 +8,7 @@ namespace obe
 		Thumbnailer::Thumbnailer()
 		{
 			System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
-			renderer.create(256.0, 256.0);
+			renderer.create(246, 246);
 			System::Path("Sprites/Others/folder.png").loadResource(&folderTexture, System::Loaders::textureLoader);
 		}
 		sf::Texture* Thumbnailer::GetSpriteThumbnail(std::string path)
@@ -24,16 +24,16 @@ namespace obe
 				sprite.setTexture(sprTexture);
 				double texW = sprTexture.getSize().x;
 				double texH = sprTexture.getSize().y;
-				double scale = (texW >= texH) ? 256 / texW : 256 / texH;
+				double scale = (texW >= texH) ? size / texW : size / texH;
 				sprite.setScale(scale, scale);
-				sprite.setPosition(sf::Vector2f(128 - (sprite.getGlobalBounds().width / 2), 128 - (sprite.getGlobalBounds().height / 2)));
+				sprite.setPosition(sf::Vector2f((size / 2) - (sprite.getGlobalBounds().width / 2), (size / 2) - (sprite.getGlobalBounds().height / 2)));
 				_instance->renderer.clear(sf::Color(0, 0, 0, 0));
-				sf::RectangleShape sprRec(sf::Vector2f(256, 256));
+				sf::RectangleShape sprRec(sf::Vector2f(size, size));
 				sprRec.setFillColor(sf::Color(100, 100, 100));
 				sprRec.setPosition(0, 0);
 				_instance->renderer.draw(sprRec);
 				_instance->renderer.draw(sprite);
-				sf::RectangleShape titleRec(sf::Vector2f(256, 20));
+				sf::RectangleShape titleRec(sf::Vector2f(size, 20));
 				titleRec.setPosition(0, 0);
 				titleRec.setFillColor(sf::Color(0, 0, 0, 200));
 				_instance->renderer.draw(titleRec);
@@ -66,7 +66,7 @@ namespace obe
 				folderText.setCharacterSize(16);
 				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
 				folderText.setString(splittedPath[splittedPath.size() - 1]);
-				folderText.setPosition(10, 50);
+				folderText.setPosition(10, 45);
 				_instance->renderer.draw(folderText);
 				_instance->renderer.display();
 				_instance->cache[path] = new sf::Texture(_instance->renderer.getTexture());
@@ -75,7 +75,7 @@ namespace obe
 			
 		}
 
-		void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Theme& baseTheme)
+		void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme)
 		{
 			std::vector<std::string> allGameObjects;
 			System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
@@ -99,28 +99,28 @@ namespace obe
 				currentObj->setPosition(xpos, ypos);
 				currentObj->setSize(256, 256);
 				objectTab->add(currentObj);
-				currentObj->connect("pressed", [currentObjName]() {
+				currentObj->connect("pressed", [&requiresPanel, currentObjName]() {
 					std::cout << "Trying to build : " << currentObjName << std::endl;
-					//buildRequiresObjectTab(gui, currentObjName);
+					buildRequiresObjectTab(requiresPanel, currentObjName);
 				});
 
 			}
 		}
 
-		void buildRequiresObjectTab(std::string objName)
+		void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, std::string objName)
 		{
 			std::cout << "Call Require Creation for : " << objName << std::endl;
 			vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
-			/*if (requires != nullptr)
+			if (requires != nullptr)
 			{
-				std::string containerName = "Requires";
-				if (gui.getContainer(containerName)-> != nullptr)
-				{
-					gui->getContainerByContainerName(containerName)->removeAllWidget(true);
-					gui->getContainerByContainerName(containerName)->setDisplayed(true);
-					gui->getContainerByContainerName(containerName + "_Frame")->removeAllWidget(true);
-					gui->getContainerByContainerName(containerName + "_Frame")->setDisplayed(true);
-				}
+				requiresPanel->show();
+				requiresPanel->removeAllWidgets();
+				tgui::Label::Ptr newObjectTitleLabel = tgui::Label::create();
+
+				//newObjectTitleLabel->setRenderer()
+			}
+				/*if (gui.getContainer(containerName)-> != nullptr)
+
 				else
 				{
 					gui->createWidgetContainer(containerName + "_Frame", 1, 700, 200, 520, 680, GUI::ContainerMovement::Fixed);
@@ -208,7 +208,6 @@ namespace obe
 		void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path)
 		{
 			spritesPanel->removeAllWidgets();
-
 			spritesPanel->add(spritesCatLabel);
 
 			std::vector<std::string> fileList;
@@ -216,55 +215,64 @@ namespace obe
 			System::Path("Sprites/LevelSprites" + path).loadResource(&folderList, System::Loaders::dirPathLoader);
 			System::Path("Sprites/LevelSprites" + path).loadResource(&fileList, System::Loaders::filePathLoader);
 			
-			const int sprSize = 256;
+			const int sprSize = 246;
 			const int sprOff = 10;
 			const int xOff = 15;
 			const int yOff = 40;
 			int elemIndex = 0;
 			int xpos = (0 * (sprSize + sprOff)) + xOff;
-			int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
-			tgui::Picture::Ptr backButton = tgui::Picture::create();
+			int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
+			tgui::Button::Ptr backButton = tgui::Button::create();
 			spritesPanel->add(backButton, "LS_ELEM_BACK");
 			sf::Texture sprback; sprback.loadFromFile("Sprites/Others/back.png");
-			backButton->setTexture(sprback);
+			backButton->getRenderer()->setTexture(sprback);
+			backButton->setSize(sprSize, sprSize);
 			backButton->setPosition(xpos, ypos);
 
-			backButton->connect("Clicked", [&spritesPanel, &spritesCatLabel, path] {
+			backButton->connect("pressed", [&spritesPanel, &spritesCatLabel, path] {
 				std::vector<std::string> splittedPath = Functions::String::split(path, "/");
-				loadSpriteFolder(spritesPanel, spritesCatLabel, Functions::Vector::join(splittedPath, "/", 0, 1));
+				loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Functions::Vector::join(splittedPath, "/", 0, 1));
 			});
 
-			/*for (std::string element : folderList) {
+			for (std::string element : folderList) {
 				int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-				int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+				int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
 				while (xpos > (1920 - (sprSize + sprOff)))
 					xpos -= (1920 - (sprSize + sprOff));
-				xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
+				xpos = std::floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
 				xpos += xOff;
 				ypos += yOff;
-				tgui::Picture::Ptr currentFolder = tgui::Picture::create();
+				tgui::Button::Ptr currentFolder = tgui::Button::create();
 				spritesPanel->add(currentFolder, "LS_FOLDER_" + element);
 				currentFolder->setPosition(xpos, ypos);
-				currentFolder->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
-				currentFolder->connect("Clicked", [&spritesPanel, &spritesCatLabel, path, element]() {
+				currentFolder->setSize(sprSize, sprSize);
+				currentFolder->getRenderer()->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
+				currentFolder->connect("pressed", [&spritesPanel, &spritesCatLabel, path, element]() {
 					loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element);
 				});
 			}
 
 			for (std::string element : fileList) {
-				int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-				int ypos = std::floor((double)xpos / (double)(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
-				while (xpos > (1920 - (sprSize + sprOff)))
-					xpos -= (1920 - (sprSize + sprOff));
-				xpos = std::floor((double)xpos / (double)(sprSize + sprOff)) * (sprSize + sprOff);
-				xpos += xOff;
-				ypos += yOff;
-				tgui::Picture::Ptr currentSprite = tgui::Picture::create();
-				spritesPanel->add(currentSprite, "LS_FILE_" + element);
-				currentSprite->setPosition(xpos, ypos);
-				currentSprite->setTexture(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
-				currentSprite->connect("Clicked", [path, element] {addSpriteToWorld(path + "/" + element); });
-			}*/
+				sf::Texture textureLoadChecker;
+				System::Path("Sprites/LevelSprites").add(path).add(element).loadResource(&textureLoadChecker, System::Loaders::textureLoader);
+				if (textureLoadChecker.getSize().x != 0)
+				{
+					int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
+					int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+					while (xpos > (1920 - (sprSize + sprOff)))
+						xpos -= (1920 - (sprSize + sprOff));
+					xpos = std::floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
+					xpos += xOff;
+					ypos += yOff;
+					std::cout << "MAMIA1 : " << xpos << ", " << ypos << std::endl;
+					tgui::Button::Ptr currentSprite = tgui::Button::create();
+					spritesPanel->add(currentSprite, "LS_FILE_" + element);
+					currentSprite->setPosition(xpos, ypos);
+					currentSprite->getRenderer()->setTexture(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
+					currentSprite->setSize(sprSize, sprSize);
+					currentSprite->connect("pressed", [path, element] {addSpriteToWorld(path + "/" + element); });
+				}
+			}
 		}
 
 		void addSpriteToWorld(std::string geid)

@@ -10,6 +10,8 @@ ADD_DEFINITIONS(-std=c++14)
 
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 add_library(clipper ${PG_CLIPPER} ${HD_CLIPPER})
