@@ -153,7 +153,7 @@ namespace obe
 						if (currentCollision->contains(vili::Types::ListAttribute, std::to_string(pointIndex)))
 						{
 							tempCollider->addPoint(currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>(),
-							                       currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>());
+							                       currentCollision->getListAttribute(std::to_string(pointIndex))->get(1)->get<double>());
 						}
 						else
 						{
@@ -286,9 +286,14 @@ namespace obe
 			if (m_updateState)
 			{
 				m_gameSpeed = dt;
+				if (m_needToOrderUpdateArray)
+				{
+					this->orderUpdateScrArray();
+					m_needToOrderUpdateArray = false;
+				}
+					
 				for (int i = 0; i < m_updateObjArray.size(); i++)
 				{
-					std::cout << m_updateObjArray[i]->deletable << " / >> " << m_updateObjArray[i]->getID() << " s/AUp" << std::endl;
 					if (!m_updateObjArray[i]->deletable)
 						m_updateObjArray[i]->update(dt);
 					else
@@ -501,7 +506,8 @@ namespace obe
 			}
 
 			m_gameObjectMap[id] = std::move(newGameObject);
-			this->orderUpdateScrArray();
+			m_needToOrderUpdateArray = true;
+			
 			std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
 			return m_gameObjectMap[id].get();

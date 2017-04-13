@@ -1,8 +1,9 @@
 ObEngine:
     @Animation
+        where:"Animation"
         file:"src/Animation.cpp"
         @RessourceManager
-            where:"class<RessourceManager>"
+            where:"RessourceManager"
             @LoadTexture_NETD
                 where:"getTexture"
                 message:"Can't open file '%file%'"
@@ -12,13 +13,13 @@ ObEngine:
                 message:"Can't open file '%file%'"
                 hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
         @Animation
-            location:"class<Animation>"
+            where:"Animation"
             @AnimationGroupNotFound
                 where:"getAnimationGroup"
                 message:"Can't find AnimationGroup '%group%' in Animation '%animation%'"
                 hint:"Maybe a wrong group parameter while using PLAY_GROUP in Animation '%animation%'"
         @Animator
-            location:"class<Animator>"
+            where:"Animator"
             @AnimationNotFound
                 where:"%function%"
                 message:"Can't find Animation '%animation%' for Animator '%animator%'"

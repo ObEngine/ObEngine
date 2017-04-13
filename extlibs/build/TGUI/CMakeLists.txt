@@ -13,10 +13,10 @@ file(GLOB_RECURSE HD_TGUI
 include_directories(../../include/)
 include_directories(${SFML_INCLUDE_DIR})
 
-ADD_DEFINITIONS(-std=c++14)
-
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 add_library(tgui ${PG_TGUI} ${HD_TGUI})

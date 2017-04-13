@@ -38,6 +38,7 @@ namespace obe
 				bool m_cameraLocked = true;
 				kaguya::State* m_worldScriptEngine;
 				bool m_updateState = true;
+				bool m_needToOrderUpdateArray = true;
 
 				std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
 				std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;

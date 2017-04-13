@@ -20,11 +20,11 @@ add_subdirectory(extlibs/build/aube)
 file(GLOB PG_OBE include/*.hpp)
 file(GLOB HD_OBE src/*.cpp)
 
-ADD_DEFINITIONS(-std=c++14)
-
 set(CMAKE_MODULE_PATH build-scripts/ ${CMAKE_MODULE_PATH})
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
@@ -32,13 +32,14 @@ set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 find_package(SFML 2 REQUIRED graphics window system network audio)
 find_package(OpenGL REQUIRED)
 
-add_executable(ObEngine ${PG_OBE} ${HD_OBE})
-
 include_directories(include/)
 include_directories(extlibs/include/)
 
+include_directories(${SFML_INCLUDE_DIR})
 include_directories(${LUA53_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
+
+add_executable(ObEngine ${PG_OBE} ${HD_OBE})
 
 target_link_libraries(ObEngine clipper)
 target_link_libraries(ObEngine vili)
@@ -48,7 +49,6 @@ target_link_libraries(ObEngine tgui)
 target_link_libraries(ObEngine aube)
 
 if(SFML_FOUND)
-  include_directories(${SFML_INCLUDE_DIR})
   target_link_libraries(ObEngine ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 endif()
 

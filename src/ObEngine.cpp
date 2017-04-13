@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 	std::streambuf *cerrbug = std::cerr.rdbuf();
 	std::cerr.rdbuf(out_err.rdbuf());
 
+	LoadErrors();
 	obe::System::MountPaths();
 
 	if (startMode == "edit")

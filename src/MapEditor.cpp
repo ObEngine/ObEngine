@@ -180,6 +180,7 @@ namespace obe
 			requiresPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
 			requiresPanel->setSize("&.w / 3", "&.h / 1.5");
 			requiresPanel->setPosition("&.w / 2 - width / 2", "&.h / 2 - height / 2");
+			requiresPanel->hide();
 
 			requiresTitleLabel->setPosition(30, 15);
 			requiresTitleLabel->setTextSize(bigFontSize);

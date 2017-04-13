@@ -13,6 +13,8 @@
 #include <functional>
 #include <cmath>
 
+#include <aube/ErrorHandler.hpp>
+
 #include "Functions.hpp"
 
 namespace vili
@@ -65,6 +67,7 @@ namespace vili
 		virtual ContainerAttribute* getParent();
 		friend class ContainerAttribute;
 		friend class LinkAttribute;
+		friend void LoadErrors(std::string errorFile);
 	public:
 		const static Types::AttributeType ClassType = Types::Attribute;
 		Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
@@ -76,6 +79,7 @@ namespace vili
 		virtual Types::AttributeType getType();
 		virtual void setParent(ContainerAttribute* parent);
 		virtual std::string getNodePath();
+		unsigned int getDepth();
 		virtual void setID(const std::string& id);
 		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
 		virtual void write(std::ofstream* file, unsigned int depth) = 0;

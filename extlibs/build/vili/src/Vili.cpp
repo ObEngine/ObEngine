@@ -10,7 +10,24 @@ namespace vili
 		DataParser errors(errorFile);
 
 		errors->walk([](ComplexAttribute* node) -> void {
-			unsigned int depth = Functions::String::split(node->getNodePath(), "/").size();
+			if (node->contains(Types::BaseAttribute, "message"))
+			{
+				std::vector<std::string> location;
+				ComplexAttribute* currentParent = node;
+				while (currentParent != nullptr)
+				{
+					if (currentParent->contains(Types::BaseAttribute, "where"))
+					{
+						location.insert(location.begin(), static_cast<ComplexAttribute*>(currentParent)->getBaseAttribute("where")->get<std::string>());
+					}
+					if (currentParent->getParent() != nullptr)
+						currentParent = static_cast<ComplexAttribute*>(currentParent->getParent());
+					else
+						currentParent = nullptr;
+				}
+				std::string errorLocation = Functions::Vector::join(location, ".");
+				std::cout << "Error Location : " << errorLocation << std::endl;
+			}
 		});
 	}
 
@@ -212,6 +229,17 @@ namespace vili
 		std::reverse(parentChain.begin(), parentChain.end());
 		parentChain.push_back(this->getID() + ((this->getAnnotation() != "") ? "<" + this->getAnnotation() + ">" : ""));
 		return Functions::Vector::join(parentChain, "/");
+	}
+
+	unsigned Attribute::getDepth()
+	{
+		ContainerAttribute* currentParent = this->getParent();
+		unsigned int depth = 0;
+		while (currentParent != nullptr)
+		{
+			depth++;
+		}
+		return depth;
 	}
 
 	void Attribute::setID(const std::string& id)
