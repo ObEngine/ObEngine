@@ -6,7 +6,7 @@ namespace obe
 	{
 		namespace File
 		{
-			std::vector<std::string> File::listDirInDir(const std::string& path)
+			std::vector<std::string> listDirInDir(const std::string& path)
 			{
 				tinydir_dir dir;
 				tinydir_open(&dir, path.c_str());
@@ -26,7 +26,7 @@ namespace obe
 				return fileList;
 			}
 
-			std::vector<std::string> File::listFileInDir(const std::string& path)
+			std::vector<std::string> listFileInDir(const std::string& path)
 			{
 				tinydir_dir dir;
 				tinydir_open(&dir, path.c_str());
@@ -43,14 +43,14 @@ namespace obe
 				return fileList;
 			}
 
-			bool File::fileExists(const std::string& path)
+			bool fileExists(const std::string& path)
 			{
 				struct stat buffer;
 				bool fileFound = (stat(path.c_str(), &buffer) == 0);
 				return fileFound;
 			}
 
-			void File::copy(const std::string& source, const std::string& target)
+			void copy(const std::string& source, const std::string& target)
 			{
 				std::ifstream src(source, std::ios::binary);
 				std::ofstream dst(target, std::ios::binary);
@@ -58,7 +58,7 @@ namespace obe
 				dst << src.rdbuf();
 			}
 
-			std::string File::separator()
+			std::string separator()
 			{
 				#ifdef _WIN32
 					return "\\";
