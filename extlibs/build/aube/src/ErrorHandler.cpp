@@ -57,13 +57,15 @@ namespace aube
 			{
 				std::cerr << "    > " << hint << std::endl;
 			}
-			return std::exception(errorMessage.c_str());
+			std::exception returnException(errorMessage.c_str());
+			return returnException;
 		}
 		std::cerr << "Raised Unknown Exception : " << errorId << " with parameters : " << std::endl;
 		for (std::pair<std::string, std::string> parameter : parameters)
 		{
 			std::cerr << "    > " << parameter.first << " = " << parameter.second << std::endl;
 		}
-		return std::exception(errorId.c_str());
+		std::exception returnException(errorId.c_str());
+		return returnException;
 	}
 }
