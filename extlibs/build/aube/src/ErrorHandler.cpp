@@ -41,7 +41,7 @@ namespace aube
 		m_errors[errorId] = new ErrorMessage(filename, location, message, hints);
 	}
 
-	std::exception ErrorHandler::Raise(std::string errorId, std::map<std::string, std::string> parameters)
+	std::runtime_error ErrorHandler::Raise(std::string errorId, std::map<std::string, std::string> parameters)
 	{
 		if (m_errors.find(errorId) != m_errors.end())
 		{
@@ -57,15 +57,13 @@ namespace aube
 			{
 				std::cerr << "    > " << hint << std::endl;
 			}
-			std::exception returnException(errorMessage.c_str());
-			return returnException;
+			return std::runtime_error(errorMessage.c_str());
 		}
 		std::cerr << "Raised Unknown Exception : " << errorId << " with parameters : " << std::endl;
 		for (std::pair<std::string, std::string> parameter : parameters)
 		{
 			std::cerr << "    > " << parameter.first << " = " << parameter.second << std::endl;
 		}
-		std::exception returnException(errorId.c_str());
-		return returnException;
+		return std::runtime_error(errorId.c_str());
 	}
 }
