@@ -438,7 +438,6 @@ namespace kaguya
 	{
 		typedef std::vector<T, A> get_type;
 		typedef const std::vector<T, A>& push_type;
-
 		struct checkTypeForEach
 		{
 			checkTypeForEach(bool& valid) :valid_(valid) {}
@@ -488,6 +487,20 @@ namespace kaguya
 			}
 			return LuaStackRef(l, index).values<T>();
 		}
+#if KAGUYA_USE_CPP11
+		typedef std::vector<T, A>&& move_push_type;
+		static int push(lua_State* l, move_push_type v)
+		{
+			lua_createtable(l, int(v.size()), 0);
+			int count = 1;//array is 1 origin in Lua
+			for (typename std::vector<T, A>::iterator it = v.begin(); it != v.end(); ++it)
+			{
+				util::one_push(l, static_cast<T&&>(*it));
+				lua_rawseti(l, -2, count++);
+			}
+			return 1;
+		}
+#endif
 		static int push(lua_State* l, push_type v)
 		{
 			lua_createtable(l, int(v.size()), 0);
