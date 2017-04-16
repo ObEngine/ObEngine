@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
-#include<string>
+#include <string>
 extern "C" {
 #include <lua/lua.h>
 #include <lua/lauxlib.h>
@@ -12,13 +12,13 @@ extern "C" {
 }
 
 #ifndef KAGUYA_USE_CPP11
-#if defined(__cpp_decltype) || __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1800)
+#if defined(__cpp_decltype) || __cplusplus >= 201103L ||                       \
+    (defined(_MSC_VER) && _MSC_VER >= 1800)
 #define KAGUYA_USE_CPP11 1
 #else
 #define KAGUYA_USE_CPP11 0
 #endif
 #endif
-
 
 #if KAGUYA_USE_CPP11
 #include <functional>
@@ -38,8 +38,6 @@ extern "C" {
 #include <boost/utility/result_of.hpp>
 #endif
 
-
-
 #ifndef KAGUYA_NO_USERDATA_TYPE_CHECK
 #define KAGUYA_NO_USERDATA_TYPE_CHECK 0
 #endif
@@ -52,12 +50,10 @@ extern "C" {
 #endif
 #endif
 
-
 #ifdef KAGUYA_NO_VECTOR_AND_MAP_TO_TABLE
 #define KAGUYA_NO_STD_VECTOR_TO_TABLE
 #define KAGUYA_NO_STD_MAP_TO_TABLE
 #endif
-
 
 #if !KAGUYA_USE_CPP11
 #ifndef KAGUYA_FUNCTION_MAX_ARGS
@@ -80,7 +76,6 @@ extern "C" {
 #define KAGUYA_CLASS_MAX_BASE_CLASSES 9
 #endif
 
-
 #ifndef KAGUYA_USE_CXX_ABI_DEMANGLE
 #if defined(__GNUC__) || defined(__clang__)
 #define KAGUYA_USE_CXX_ABI_DEMANGLE 1
@@ -89,33 +84,30 @@ extern "C" {
 #endif
 #endif
 
-
 #ifndef KAGUYA_USE_SHARED_LUAREF
 #define KAGUYA_USE_SHARED_LUAREF 0
 #endif
 
-
-
 #ifndef KAGUYA_NOEXCEPT
-# if KAGUYA_USE_CPP11 && (!defined(_MSC_VER) || _MSC_VER >= 1900)
-#  define KAGUYA_NOEXCEPT noexcept
-# else
-#  define KAGUYA_NOEXCEPT throw()
-# endif
+#if KAGUYA_USE_CPP11 && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+#define KAGUYA_NOEXCEPT noexcept
+#else
+#define KAGUYA_NOEXCEPT throw()
+#endif
 #endif
 
 #ifndef KAGUYA_DEPRECATED_FEATURE
 #if __cplusplus >= 201402L && defined(__has_cpp_attribute)
-#if  __has_cpp_attribute(deprecated)
-//C++ standard depecated
+#if __has_cpp_attribute(deprecated)
+// C++ standard depecated
 #define KAGUYA_DEPRECATED_FEATURE(MSG) [[deprecated(MSG)]]
 #endif
 #endif
 #endif
 #ifndef KAGUYA_DEPRECATED_FEATURE
 #if defined(_MSC_VER)
-//MSVC depecated
-#define KAGUYA_DEPRECATED_FEATURE(MSG) __declspec(deprecated(MSG)) 
+// MSVC depecated
+#define KAGUYA_DEPRECATED_FEATURE(MSG) __declspec(deprecated(MSG))
 #elif defined(__GNUC__) || defined(__clang__)
 #define KAGUYA_DEPRECATED_FEATURE(MSG) __attribute__((deprecated))
 #else
@@ -126,30 +118,27 @@ extern "C" {
 
 #define KAGUYA_UNUSED(V) (void)(V)
 
-namespace kaguya
-{
+namespace kaguya {
 #if defined(_MSC_VER) && _MSC_VER <= 1500
-	typedef unsigned char uint8_t;
-	typedef int int32_t;
-	typedef long long int64_t;
+typedef unsigned char uint8_t;
+typedef int int32_t;
+typedef long long int64_t;
 #endif
 
-	namespace standard
-	{
+namespace standard {
 #if KAGUYA_USE_CPP11
-		using namespace std;
+using namespace std;
 #define KAGUYA_STATIC_ASSERT static_assert
 
 #else
-		using namespace boost;
+using namespace boost;
 #define KAGUYA_STATIC_ASSERT BOOST_STATIC_ASSERT_MSG
-#endif
-	}
-
-#if LUA_VERSION_NUM > 502
-	typedef lua_Integer luaInt;
-#else
-	typedef int32_t luaInt;
 #endif
 }
 
+#if LUA_VERSION_NUM > 502
+typedef lua_Integer luaInt;
+#else
+typedef int32_t luaInt;
+#endif
+}
