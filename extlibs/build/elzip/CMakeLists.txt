@@ -36,7 +36,7 @@ include_directories(../../include/minizip)
 add_library(elzip ${PG_LZIP} ${HD_LZIP})
 target_link_libraries(elzip minizip)
 
-IF(UNIX)
+IF(CMAKE_COMPILER_IS_GNUCXX AND _USE_CPP_NEW_FS)
   target_link_libraries(elzip stdc++fs)
 ENDIF()
 
