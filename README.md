@@ -40,6 +40,8 @@ If your compiler doesn't support C++17 filesystem, you can disable CMake entry "
 
 If everything is okay, CMake should generate what you want (Makefiles / VS Project / Something else).
 
+Once ObEngine is built, place the generated executable in engine/ folder.
+
 ## Could you give an example of what I can do with your engine ?
 Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D.
 You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
