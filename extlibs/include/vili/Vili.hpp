@@ -59,10 +59,10 @@ namespace vili
 	class Attribute
 	{
 	protected:
-		std::string id;
-		Types::AttributeType type = Types::Attribute;
-		std::string annotation = "";
-		ContainerAttribute* parent = nullptr;
+		std::string m_id;
+		Types::AttributeType m_type = Types::Attribute;
+		std::string m_annotation = "";
+		ContainerAttribute* m_parent = nullptr;
 		virtual void removeParent(ContainerAttribute* currentParent);
 		virtual ContainerAttribute* getParent();
 		friend class ContainerAttribute;
@@ -102,22 +102,22 @@ namespace vili
 	class BaseAttribute : public Attribute
 	{
 	protected:
-		std::string data;
-		Types::DataType dtype;
+		std::string m_data;
+		Types::DataType m_dataType;
 		friend std::ostream& operator<<(std::ostream& stream, const BaseAttribute& attribute);
 	public:
 		const static Types::AttributeType ClassType = Types::BaseAttribute;
-		BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& btype, const std::string& bdata);
-		BaseAttribute(const std::string& id, const Types::DataType& btype, const std::string& bdata);
+		BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType, const std::string& data);
+		BaseAttribute(const std::string& id, const Types::DataType& dataType, const std::string& data);
 		virtual ~BaseAttribute() {}
-		std::string returnData();
+		std::string returnData() const;
 		void set(int var);
 		void set(double var);
 		void set(const std::string& var);
 		void set(bool var);
 		void autoset(std::string rawData);
-		Types::DataType getDataType();
-		template <class T> T get() {}
+		Types::DataType getDataType() const;
+		template <class T> T get() { }
 		void copy(ContainerAttribute* newParent, std::string newid = "") override;
 		void write(std::ofstream* file, unsigned int depth) override;
 		operator std::string();
@@ -132,16 +132,16 @@ namespace vili
 	class LinkAttribute : public Attribute
 	{
 		private:
-			std::string path = "";
+			std::string m_path = "";
 		public:
 			const static Types::AttributeType ClassType = Types::LinkAttribute;
 			LinkAttribute(ComplexAttribute* parent, const std::string& id, const std::string& path);
 			Attribute* getTarget();
-			template <class T> T get() {}
-			std::string getPath();
-			std::string getFullPath();
+			template <class T> T get() { }
+			std::string getPath() const;
+			std::string getFullPath() const;
 			void apply();
-			bool operator==(LinkAttribute compare);
+			bool operator==(LinkAttribute compare) const;
 			void copy(ContainerAttribute* newParent, std::string newid = "") override;
 			void write(std::ofstream* file, unsigned int depth) override;
 	};
@@ -150,14 +150,14 @@ namespace vili
 	class ListAttribute : public ContainerAttribute
 	{
 	private:
-		std::vector<std::unique_ptr<BaseAttribute>> dataList;
-		std::vector<BaseAttribute*> iteratorCache;
+		std::vector<std::unique_ptr<BaseAttribute>> m_dataList;
+		std::vector<BaseAttribute*> m_iteratorCache;
 	public:
 		const static Types::AttributeType ClassType = Types::ListAttribute;
 		ListAttribute(ContainerAttribute* parent, const std::string& id);
 		ListAttribute(const std::string& id);
 		virtual ~ListAttribute() {}
-		unsigned int getSize();
+		unsigned int getSize() const;
 		BaseAttribute* get(unsigned int index);
 		std::vector<BaseAttribute*>::iterator begin();
 		std::vector<BaseAttribute*>::iterator end();
@@ -180,10 +180,10 @@ namespace vili
 	class ComplexAttribute : public ContainerAttribute
 	{
 		private:
-			ComplexAttribute* parent = nullptr;
+			ComplexAttribute* m_parent = nullptr;
 		protected:
-			std::map<std::string, std::unique_ptr<Attribute>> childAttributes;
-			std::vector<std::string> childAttributesNames;
+			std::map<std::string, std::unique_ptr<Attribute>> m_childAttributes;
+			std::vector<std::string> m_childAttributesNames;
 		public:
 			const static Types::AttributeType ClassType = Types::ComplexAttribute;
 			ComplexAttribute(ComplexAttribute* parent, const std::string& id);
@@ -205,7 +205,7 @@ namespace vili
 			T* at(const std::string& cPath, Args ...pathParts);
 			template<class ...Args>
 			ComplexAttribute* at(const std::string& cPath, Args ...pathParts);
-			template<class T> T* at(std::string cPath) {}
+			template<class T> T* at(std::string cPath) { }
 
 			Attribute* get(const std::string& attributeID);
 			BaseAttribute* getBaseAttribute(const std::string& attributeID);
@@ -248,23 +248,23 @@ namespace vili
 	class AttributeConstraintManager
 	{
 		private:
-			LinkAttribute attribute;
-			std::vector<std::function<bool(BaseAttribute*)>> constraints;
+			LinkAttribute m_attribute;
+			std::vector<std::function<bool(BaseAttribute*)>> m_constraints;
 		public:
 			AttributeConstraintManager(ComplexAttribute* parent, std::string path);
 			void addConstraint(std::function<bool(BaseAttribute*)> constraint);
 			bool checkAllConstraints();
 			LinkAttribute* getLinkAttribute();
-			std::string getArgumentPath();
+			std::string getArgumentPath() const;
 	};
 
 	class DataTemplate
 	{
 		private:
-			std::vector<AttributeConstraintManager> signature;
-			ComplexAttribute body;
-			bool signatureEnd = false;
-			bool defaultLinkRoot = false;
+			std::vector<AttributeConstraintManager> m_signature;
+			ComplexAttribute m_body;
+			bool m_signatureEnd = false;
+			bool m_defaultLinkRoot = false;
 			bool checkSignature();
 		public:
 			DataTemplate();
@@ -278,18 +278,18 @@ namespace vili
 	class DataParser
 	{
 	private:
-		std::unique_ptr<ComplexAttribute> root = nullptr;
-		std::map<std::string, DataTemplate*> templateList;
-		std::vector<std::string> flagList;
-		ComplexAttribute* getPath(std::string path);
-		ComplexAttribute* getRootChild(std::string child);
+		std::unique_ptr<ComplexAttribute> m_root = nullptr;
+		std::map<std::string, DataTemplate*> m_templateList;
+		std::vector<std::string> m_flagList;
+		ComplexAttribute* getPath(std::string path) const;
+		ComplexAttribute* getRootChild(std::string child) const;
 	public:
 		DataParser();
 		DataParser(std::string file);
-		ComplexAttribute* operator->();
+		ComplexAttribute* operator->() const;
 		void createFlag(const std::string& flag);
-		ComplexAttribute& operator[](std::string cPath);
-		ComplexAttribute* at(std::string cPath);
+		ComplexAttribute& operator[](std::string cPath) const;
+		ComplexAttribute* at(std::string cPath) const;
 		template<class ...Args>
 		ComplexAttribute* at(const std::string& cPath, Args ...pathParts);
 		template<class T, class ...Args>
@@ -297,7 +297,7 @@ namespace vili
 		bool parseFile(const std::string& filename, bool verbose = false);
 		void writeFile(const std::string& filename, bool verbose = false);
 		bool hasFlag(const std::string& flagName);
-		unsigned int getAmountOfFlags();
+		unsigned int getAmountOfFlags() const;
 		std::string getFlagAtIndex(int index);
 	};
 }
@@ -306,56 +306,46 @@ namespace vili
 {
 	//BaseAttribute
 	template <> inline int BaseAttribute::get() {
-		if (dtype == Types::Int)
-			return std::stoi(data);
-		else if (dtype == Types::Float)
-			return std::stod(data);
-		else
-			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
-			<< getNodePath() << " is not a <int> BaseAttribute (" << dtype << ")" << std::endl;
+		if (m_dataType == Types::Int)
+			return std::stoi(m_data);
+		if (m_dataType == Types::Float)
+			return std::stod(m_data);
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongIntCast", { {"path", getNodePath()}, {"type", dataTypeToString(m_dataType)} });
 	}
 	template <> inline double BaseAttribute::get() {
-		if (dtype == Types::Float)
-			return std::stod(data);
-		else if (dtype == Types::Int)
-			return std::round(std::stod(data));
-		else
-			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
-			<< getNodePath() << " is not a <float> BaseAttribute (" << dtype << ")" << std::endl;
+		if (m_dataType == Types::Float)
+			return std::stod(m_data);
+		if (m_dataType == Types::Int)
+			return std::round(std::stod(m_data));
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongFloatCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 	template <> inline bool BaseAttribute::get() {
-		if (dtype == Types::Bool)
-			return (data == "True") ? true : false;
-		else
-			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
-			<< getNodePath() << " is not a <bool> BaseAttribute (" << dtype << ")" << std::endl;
+		if (m_dataType == Types::Bool)
+			return (m_data == "True") ? true : false;
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongBoolCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 	template <> inline std::string BaseAttribute::get() {
-		if (dtype == Types::String)
-			return data;
-		else
-			std::cout << "<Error:Vili:BaseAttribute>[getData] : " \
-			<< getNodePath() << " is not a <string> BaseAttribute (" << dtype << ")" << std::endl;
+		if (m_dataType == Types::String)
+			return m_data;
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongStringCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 
 	//LinkAttribute
 	template <> inline BaseAttribute* LinkAttribute::get() {
 		if (getTarget()->getType() == Types::BaseAttribute)
-			return dynamic_cast<BaseAttribute*>(getTarget());
-		else
-			std::cout << "<Error:Vili:LinkAttribute>[get<BaseAttribute>] : Target " << path << " is not a BaseAttribute" << std::endl;
+			return static_cast<BaseAttribute*>(getTarget());
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongBaseAttributeLink", { {"path", getNodePath()}, {"targetpath", m_path} });
 	}
+
 	template <> inline ComplexAttribute* LinkAttribute::get() {
 		if (getTarget()->getType() == Types::ComplexAttribute)
-			return dynamic_cast<ComplexAttribute*>(getTarget());
-		else
-			std::cout << "<Error:Vili:LinkAttribute>[get<ComplexAttribute>] : Target " << path << " is not a ComplexAttribute" << std::endl;
+			return static_cast<ComplexAttribute*>(getTarget());
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongComplexAttributeLink", { { "path", getNodePath() }, { "targetpath", m_path } });
 	}
 	template <> inline ListAttribute* LinkAttribute::get() {
 		if (getTarget()->getType() == Types::ListAttribute)
-			return dynamic_cast<ListAttribute*>(getTarget());
-		else
-			std::cout << "<Error:Vili:LinkAttribute>[get<ListAttribute>] : Target " << path << " is not a ListAttribute" << std::endl;
+			return static_cast<ListAttribute*>(getTarget());
+		throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongListAttributeLink", { { "path", getNodePath() }, { "targetpath", m_path } });
 	}
 
 	//ComplexAttribute
@@ -388,13 +378,13 @@ namespace vili
 
 	//DataParser
 	template<class ...Args>
-	inline ComplexAttribute* DataParser::at(const std::string& cPath, Args ...pathParts)
+	ComplexAttribute* DataParser::at(const std::string& cPath, Args ...pathParts)
 	{
-		return getPath(cPath)->at(pathParts...);
+		return m_root->at(cPath, pathParts...);
 	}
 	template<class T, class ...Args>
 	T* DataParser::at(const std::string& cPath, Args ...pathParts)
 	{
-		return getPath(cPath)->at<T>(pathParts...);
+		return m_root->at<T>(cPath, pathParts...);
 	}
 }

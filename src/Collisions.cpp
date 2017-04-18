@@ -670,7 +670,6 @@ namespace obe
 		{
 			if (m_origin != nullptr)
 			{
-				std::cout << "As " << m_id << " I don't want origin " << m_origin->getID() << " anymore" << std::endl;
 				m_origin->removeOriginChild(this, false);
 			}
 			m_origin = nullptr;

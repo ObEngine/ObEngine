@@ -81,7 +81,7 @@ namespace obe
 							kaguya::LuaRef tempTableRef = convert[tableKey];
 							returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));
 						}
-						else if (Functions::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
+						else if (Functions::Vector::isInList(convert[tableKey].type(), std::vector<int>({ 1, 3, 4 })))
 						{
 							std::cout << "Push subelement : " << tableKey << std::endl;
 							kaguya::LuaRef tempElemRef = convert[tableKey];
@@ -90,9 +90,7 @@ namespace obe
 					}
 				}
 				else
-				{
-					std::cout << "<Error:DataParserLuaBridge:DataBridge>[luaTableToComplexAttribute] LuaElement " << id << " is not a table" << std::endl;
-				}
+					throw aube::ErrorHandler::Raise("ObEngine.DataParserLuaBridge.LuaTableToComplexAttribute.NotATable", { { "id", id } });
 				return returnElement;
 			}
 

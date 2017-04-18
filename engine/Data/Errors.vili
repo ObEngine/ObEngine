@@ -1,3 +1,5 @@
+Include(Obe);
+
 ObEngine:
     @Animation
         where:"Animation"
@@ -28,3 +30,211 @@ ObEngine:
                 where:"update"
                 message:"Can't update NULL Animation in animator : '%animator%'"
                 hint:"Assign an Animation to the Animator with This:Animator():setKey in Local.Init"
+    @Console
+        where:"Console"
+        file:"src/Console.cpp"
+        @Console
+            where:"Console"
+            @UnknownStream
+                where:"getStream"
+                message:"Can't find Stream : %stream%"
+    @DataParserLuaBridge
+        where:"DataParserLuaBridge"
+        file:"src/DataParserLuaBridge.cpp"
+        @LuaTableToComplexAttribute
+            where:"luaTableToComplexAttribute"
+            @NotATable
+                message:"LuaElement %id% is not a table"
+    @GameObject
+        where:"GameObject"
+        file:"src/GameObject.cpp"
+        @GameObject
+            where:"GameObject"
+            @UnknownTriggerParameterType
+                where:"update"
+                message:"Unknown type for parameter %parameter% in GameObject %object% triggering %trigger%"
+            @NoLevelSprite
+                where:"getLevelSprite"
+                message:"GameObject %id% doesn't have a LevelSprite Component"
+            @NoCollider
+                where:"getCollider"
+                message:"GameObject %id% doesn't have a Collider Component"
+            @NoAnimator
+                where:"getAnimator"
+                message:"GameObject %id% doesn't have an Animator Component"
+            @NoScript
+                where:"getScript"
+                message:"GameObject %id% doesn't have a Script Component"
+    @KeyBinder
+        where:"KeyBinder"
+        file:"src/KeyBinder.cpp"
+        @KeyBinder
+            where:"KeyBinder"
+            @UnknownAction
+                where:"getActionKey"
+                message:"Can't find Key for Action %action%"
+            @UnknownKey
+                where:"getKey"
+                message:"Can't find KeyClass for Key %key%"
+    @Package
+        where:"Package"
+        file:"src/Package.cpp"
+        @Package
+            where:"Package"
+            @InexistantPackage
+                where:"%function%"
+                message:"Package <%package%> does not exists"
+    @PathResolverHeader
+        where:"PathResolverHeader"
+        file:"include/PathResolver.hpp"
+        @Path
+            where:"Path"
+            @CantFindResource
+                where:"loadResource"
+                message:"Can't find Resource at %path%"
+    @PathResolver
+        where:"PathResolver"
+        file:"src/PathResolver.cpp"
+        @Path
+            where:"Path"
+            @UnknownPathAtIndex
+                where:"getPath"
+                message:"Can't find BasePath at index %index% for Path %path%"
+
+Vili:
+    @ViliHeader
+        where:"ViliHeader"
+        file:"extlibs/include/vili/Vili.hpp"
+        @BaseAttribute
+            @WrongIntCast
+                where:"get<int>"
+                message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongFloatCast
+                where:"get<float>"
+                message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongBoolCast
+                where:"get<bool>"
+                message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongStringCast
+                where:"get<string>"
+                message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
+        @LinkAttribute
+            @WrongBaseAttributeLink
+                where:"get<BaseAttribute>"
+                message:"LinkAttribute's (%path%) target (%targetpath%) is not a BaseAttribute"
+            @WrongComplexAttributeLink
+                where:"get<ComplexAttribute>"
+                message:"LinkAttribute's (%path%) target (%targetpath%) is not a ComplexAttribute"
+            @WrongListAttributeLink
+                where:"get<ListAttribute>"
+                message:"LinkAttribute's (%path%) target (%targetpath%) is not a ListAttribute"
+    @Vili
+        where:"Vili"
+        file:"extlibs/build/vili/src/Vili.cpp"
+        @Attribute
+            where:"Attribute"
+            @WrongParentRemover
+                where:"removeParent"
+                message:"%wrongparent% is not %path% parent"
+            @AlreadyHaveParent
+                where:"setParent"
+                message:"Attribute %path% already has a parent : %parent"
+            @ChangeIDWithParent
+                where:"setID"
+                message:"Can't change ID of %path% when it has a parent"
+        @BaseAttribute
+            where:"BaseAttribute"
+            @WrongIntSet
+                where:"set(int)"
+                message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongFloatSet
+                where:"set(float)"
+                message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongStringSet
+                where:"set(string)"
+                message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongBoolSet
+                where:"set(bool)"
+                message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
+            @WrongIntCastOperator
+                where:"operator<int>"
+                message:"BaseAttribute %path% can't be casted into a int"
+            @WrongFloatCastOperator
+                where:"operator<float>"
+                message:"BaseAttribute %path% can't be casted into a float"
+            @WrongStringCastOperator
+                where:"operator<string>"
+                message:"BaseAttribute %path% can't be casted into a string"
+            @WrongBoolCastOperator
+                where:"operator<bool>"
+                message:"BaseAttribute %path% can't be casted into a bool"
+        @LinkAttribute
+            where:"LinkAttribute"
+            @WrongLinkPath
+                where:"getTarget"
+                message:"LinkAttribute (%path%) can't find target (%target%) with PathPart %pathpart%"
+            @WrongLinkListIndex
+                where:"getTarget"
+                message:"LinkAttribute (%path%) can't find ListAttribute item target (%target%) with index %pathpart%"
+            @WrongCopyTarget
+                where:"copy"
+                message:"LinkAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
+        @ListAttribute
+            where:"ListAttribute"
+            @WrongIndex
+                where:"get"
+                message:"Can't access index %index% of %path% (Size : %size%)"
+            @WrongCopyTarget
+                where:"copy"
+                message:"ListAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
+        @ComplexAttribute
+            where:"ComplexAttribute"
+            @WrongExtraction
+                where:"extractElement"
+                message:"%path% doesn't contain Attribute %element%"
+            @WrongGetAttributeKey
+                where:"get"
+                message:"Can't find Attribute %attribute% in %path%"
+            @WrongGetBaseAttributeKey
+                where:"getBaseAttribute"
+                message:"Can't find BaseAttribute %attribute% in %path%"
+            @WrongGetListAttributeKey
+                where:"getListAttribute"
+                message:"Can't find ListAttribute %attribute% in %path%"
+            @WrongGetLinkAttributeKey
+                where:"getLinkAttribute"
+                message:"Can't find LinkAttribute %attribute% in %path%"
+            @WrongGetComplexAttributeKey
+                where:"getComplexAttribute"
+                message:"Can't find ComplexAttribute %attribute% in %path%"
+            @WrongGetTypeKey
+                where:"getAttributeType"
+                message:"Can't find Attribute %attribute% in %path%"
+            @WrongCopyTarget
+                where:"copy"
+                message:"ComplexAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
+        @DataTemplate
+            where:"DataTemplate"
+            @BuildError
+                where:"build"
+                message:"Type / Constraint mismatch in Template building for element %element% in %parent%"
+            @WrongFacultativeParameterOrder
+                where:"addConstraintManager"
+                message:"Can't use a facultative arguement after a non-facultative argument (index : %size%)"
+        @DataParser
+            where:"DataParser"
+            @TemplateMissingInitOrBody
+                where:"parseFile"
+                message:"Can't create Template %template% without __init__ or __body__ in (File : %file%)"
+            @WrongTemplateBase
+                where:"parseFile"
+                message:"Can't create Template from non-existant RootAttribute %attribute% (File : %file)"
+            @UnknownTemplate
+                where:"parseFile"
+                message:"Can't build object from inexistant Template : %template% for attribute : %id% (File : %file%)"
+            @UnknownTypeInList
+                where:"parseFile"
+                message:"Can't push unknown type to ListAttribute %list% (File : %file%)"
+            @FileNotFound
+                where:"parseFile"
+                message:"Can't open %file%"

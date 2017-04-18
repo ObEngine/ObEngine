@@ -24,16 +24,14 @@ namespace obe
 		{
 			if (m_actionMap.find(action) != m_actionMap.end())
 				return m_actionMap[action];
-			std::cout << "<Error:KeyBind:KeyBinder>[getActionKey] : Can't find key for action : " << action << std::endl;
-			return {};
+			throw aube::ErrorHandler::Raise("ObEngine.KeyBinder.KeyBinder.UnknownAction", { {"action", action} });
 		}
 
 		KeyClass* KeyBinder::getKey(std::string key)
 		{
 			if (m_keyMap.find(key) != m_keyMap.end())
 				return &m_keyMap[key];
-			std::cout << "<Error:KeyBind:KeyBinder>[getKey] : Can't find KeyClass for key : " << key << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.KeyBinder.KeyBinder.UnknownKey", { { "key", key } });
 		}
 
 		KeyBinder::KeyBinder()

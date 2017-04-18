@@ -184,29 +184,29 @@ namespace obe
 		}
 
 		//ANIMATION
-		std::string Animation::Animation::getAnimationName() const
+		std::string Animation::getAnimationName() const
 		{
 			return animationName;
 		}
 
-		float Animation::Animation::getAnimationClock() const
+		float Animation::getAnimationClock() const
 		{
 			return animationClock;
 		}
 
-		AnimationGroup* Animation::Animation::getAnimationGroup(std::string groupname)
+		AnimationGroup* Animation::getAnimationGroup(std::string groupname)
 		{
 			if (animationGroupMap.find(groupname) != animationGroupMap.end())
 				return animationGroupMap[groupname].get();
 			throw aube::ErrorHandler::Raise("ObEngine.Animation.Animation.AnimationGroupNotFound", {{"animation", animationName}, {"group", groupname}});
 		}
 
-		std::string Animation::Animation::getCurrentAnimationGroup() const
+		std::string Animation::getCurrentAnimationGroup() const
 		{
 			return currentGroupName;
 		}
 
-		std::vector<std::string> Animation::Animation::getAllAnimationGroupName()
+		std::vector<std::string> Animation::getAllAnimationGroupName()
 		{
 			std::vector<std::string> rname;
 			for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it)
@@ -214,22 +214,22 @@ namespace obe
 			return rname;
 		}
 
-		std::string Animation::Animation::getAnimationPlayMode() const
+		std::string Animation::getAnimationPlayMode() const
 		{
 			return animationPlaymode;
 		}
 
-		std::string Animation::Animation::getAnimationStatus() const
+		std::string Animation::getAnimationStatus() const
 		{
 			return currentStatus;
 		}
 
-		bool Animation::Animation::isAnimationOver() const
+		bool Animation::isAnimationOver() const
 		{
 			return isOver;
 		}
 
-		void Animation::Animation::loadAnimation(System::Path path, std::string filename)
+		void Animation::loadAnimation(System::Path path, std::string filename)
 		{
 			vili::DataParser animFile;
 			path.add(filename).loadResource(&animFile, System::Loaders::dataLoader);
@@ -285,7 +285,7 @@ namespace obe
 			}
 		}
 
-		void Animation::Animation::applyParameters(vili::ComplexAttribute* parameters)
+		void Animation::applyParameters(vili::ComplexAttribute* parameters)
 		{
 			if (parameters->contains(vili::Types::BaseAttribute, "spriteOffsetX"))
 				sprOffsetX = parameters->at<vili::BaseAttribute>("spriteOffsetX")->get<int>();
@@ -295,7 +295,7 @@ namespace obe
 				priority = parameters->at<vili::BaseAttribute>("priority")->get<int>();
 		}
 
-		void Animation::Animation::playAnimation()
+		void Animation::playAnimation()
 		{
 			if (animationCode.size() > 0)
 			{
@@ -373,7 +373,7 @@ namespace obe
 			}
 		}
 
-		void Animation::Animation::resetAnimation()
+		void Animation::resetAnimation()
 		{
 			for (auto it = animationGroupMap.begin(); it != animationGroupMap.end(); ++it)
 				it->second->reset();
@@ -384,27 +384,27 @@ namespace obe
 			isOver = false;
 		}
 
-		sf::Texture* Animation::Animation::getTextureAtIndex(int index)
+		sf::Texture* Animation::getTextureAtIndex(int index)
 		{
 			return animationTextures[index];
 		}
 
-		sf::Sprite* Animation::Animation::getSprite()
+		sf::Sprite* Animation::getSprite()
 		{
 			return animationGroupMap[currentGroupName]->returnSprite();
 		}
 
-		int Animation::Animation::getSpriteOffsetX() const
+		int Animation::getSpriteOffsetX() const
 		{
 			return sprOffsetX;
 		}
 
-		int Animation::Animation::getSpriteOffsetY() const
+		int Animation::getSpriteOffsetY() const
 		{
 			return sprOffsetY;
 		}
 
-		int Animation::Animation::getPriority() const
+		int Animation::getPriority() const
 		{
 			return priority;
 		}

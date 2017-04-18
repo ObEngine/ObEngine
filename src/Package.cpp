@@ -4,23 +4,12 @@ namespace obe
 {
 	namespace System
 	{
-		int on_extract_entry(const char *filename, void *arg) {
-			static int i = 0;
-			int n = *(int *)arg;
-			printf("Extracted: %s (%d of %d)\n", filename, ++i, n);
-
-			return 0;
-		}
-
 		std::string Package::GetPackageLocation(std::string packageName)
 		{
 			if (PackageExists(packageName)) {
 				return (vili::DataParser("Package/Packages.vili")->at<vili::BaseAttribute>(packageName, "path")->get<std::string>());
 			}
-			else {
-				std::cout << "<Error:Package:Package>[GetPackageLocation] : Package <" << packageName << "> does not exists" << std::endl;
-			}
-			return std::string();
+			throw aube::ErrorHandler::Raise("ObEngine.Package.Package.InexistantPackage", { { "function", "GetPackageLocation" },{ "package", packageName } });
 		}
 
 		bool Package::PackageExists(std::string packageName)
@@ -59,10 +48,7 @@ namespace obe
 				std::cout << "<System> Mounting Package : " << packageName << " : " << GetPackageLocation(packageName) << std::endl;
 				return true;
 			}
-			else {
-				std::cout << "<Error:Package:Package>[Load] : Package <" << packageName << "> does not exists" << std::endl;
-				return false;
-			}
+			throw aube::ErrorHandler::Raise("ObEngine.Package.Package.InexistantPackage", { {"function", "Load"}, {"package", packageName} });
 		}
 	}
 }

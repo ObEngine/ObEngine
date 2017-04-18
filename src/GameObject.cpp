@@ -313,7 +313,11 @@ namespace obe
 							else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<std::string, std::string>()))
 								(*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, std::string>>();
 							else
-								std::cout << "<Error:GameObject:GameObject>[update] Unknown Type for Parameter : " << it->first << "(" << allParam->at(it->first).first << ")" << std::endl;
+								throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.UnknownTriggerParameterType", { 
+									{"parameter", it->first}, 
+									{"object", m_id}, 
+									{"trigger", funcname} 
+								});
 						}
 
 						if (funcname == "Local.Init")
@@ -410,32 +414,28 @@ namespace obe
 		{
 			if (m_hasLevelSprite)
 				return m_objectLevelSprite;
-			std::cout << "<Error:GameObject:GameObject>[getLevelSprite] : GameObject " << m_id << " has no LevelSprite" << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoLevelSprite", { {"id", m_id} });
 		}
 
 		Collision::PolygonalCollider* GameObject::getCollider()
 		{
 			if (m_hasCollider)
 				return m_objectCollider;
-			std::cout << "<Error:GameObject:GameObject>[getCollider] : GameObject " << m_id << " has no Collider" << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoCollider", { { "id", m_id } });
 		}
 
 		Animation::Animator* GameObject::getAnimator()
 		{
 			if (m_hasAnimator)
 				return m_objectAnimator.get();
-			std::cout << "<Error:GameObject:GameObject>[getAnimator] : GameObject " << m_id << " has no Animator" << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoAnimator", { { "id", m_id } });
 		}
 
 		kaguya::State* GameObject::getScript()
 		{
 			if (m_hasScriptEngine)
 				return m_objectScript.get();
-			std::cout << "<Error:GameObject:GameObject>[getAnimator] : GameObject " << m_id << " has no Animator" << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoScript", { { "id", m_id } });
 		}
 
 		TriggerGroup* GameObject::getLocalTriggers() const

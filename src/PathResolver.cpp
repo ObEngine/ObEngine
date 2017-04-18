@@ -31,7 +31,7 @@ namespace obe
 			this->priority = priority;
 		}
 
-		std::string PriorizedPath::getPath()
+		std::string PriorizedPath::getPath() const
 		{
 			return basePath;
 		}
@@ -65,7 +65,7 @@ namespace obe
 		{
 			this->path = path;
 		}
-		Path Path::add(std::string path)
+		Path Path::add(std::string path) const
 		{
 			return Path(this->path + "/" + path);
 		}
@@ -73,8 +73,7 @@ namespace obe
 		{
 			if (basePaths.size() > index)
 				return basePaths[index].getPath() + ((basePaths[index].getPath() != "") ? "/" : "") + this->path;
-			else
-				std::cout << "<Error:PathResolver:Path>[getPath] : Can't find BasePath at index : " << index << std::endl;
+			throw aube::ErrorHandler::Raise("ObEngine.PathResolver.Path.UnknownPathAtIndex", { {"index", std::to_string(index)}, {"path", path} });
 		}
 		std::string Path::toString() const
 		{

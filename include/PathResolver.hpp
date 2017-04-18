@@ -45,7 +45,7 @@ namespace obe
 				PriorizedPath(PathType::PathType pathType, std::string basePath, unsigned int priority = 0);
 				PathType::PathType pathType;
 				std::string basePath;
-				std::string getPath();
+				std::string getPath() const;
 				unsigned int priority;
 		};
 		class Path
@@ -57,11 +57,11 @@ namespace obe
 				Path();
 				Path(const Path& path);
 				Path(std::string path);
-				Path add(std::string path);
+				Path add(std::string path) const;
 				std::string getPath(int index);
 				std::string toString() const;
 				template<typename R>
-				bool checkType(R type, std::string expectedType);
+				static bool CheckType(R type, std::string expectedType);
 				template <typename R, typename F>
 				std::string loadResource(R* resource, F lambda, bool silent = false);
 				static void addPath(PriorizedPath path);
@@ -72,12 +72,12 @@ namespace obe
 		void MountPaths();
 
 		template<typename R>
-		inline bool Path::checkType(R type, std::string expectedType)
+		bool Path::CheckType(R type, std::string expectedType)
 		{
 			return (std::string(typeid(R).name()) == expectedType);
 		}
 		template<typename R, typename F>
-		inline std::string Path::loadResource(R* resource, F lambda, bool silent)
+		std::string Path::loadResource(R* resource, F lambda, bool silent)
 		{
 			int loadSum = 0;
 			for (int i = 0; i < basePaths.size(); i++)
@@ -93,12 +93,7 @@ namespace obe
 			}
 			if (loadSum > 0)
 				return "*";
-			else
-			{
-				if (silent)
-					std::cout << "<Error:PathResolver:Path>[loadResource] : Can't find resource : " << this->path << std::endl;
-				return "";
-			}
+			throw aube::ErrorHandler::Raise("ObEngine.PathResolverHeader.Path.CantFindResource", { { "path", path } });
 		}
 	}
 }

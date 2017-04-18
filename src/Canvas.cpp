@@ -132,10 +132,6 @@ namespace obe
 			sf::RectangleShape rectangle(sf::Vector2f(m_width, m_height));
 			rectangle.setPosition(m_x, m_y);
 			rectangle.setFillColor(m_color);
-			std::cout << "RECTRECT SUMMARY" << std::endl;
-			std::cout << "Position : " << m_x << ", " << m_y << std::endl;
-			std::cout << "Color : " << m_color.r << ", " << m_color.g << ", " << m_color.b << ", " << m_color.a << std::endl;
-			std::cout << "Size : " << m_width << ", " << m_height << std::endl;
 			target.draw(rectangle);
 		}
 

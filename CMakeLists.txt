@@ -53,3 +53,5 @@ if(SFML_FOUND)
 endif()
 
 target_link_libraries(ObEngine ${OPENGL_LIBRARIES})
+
+file(COPY engine/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/engine/ )

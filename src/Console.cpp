@@ -50,8 +50,7 @@ namespace obe
 		{
 			if (Functions::Vector::isInList(streamName, streamList))
 				return streamMap[streamName];
-			std::cout << "<Error:Console:Console>[getStream] : Can't find Stream : " << streamName << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.Console.Console.UnknownStream", { {"stream", streamName} });
 		}
 
 		void Console::downHistory()
