@@ -260,8 +260,7 @@ namespace obe
 			vili::ComplexAttribute* groups = animFile.at("Groups");
 			for (std::string complexName : groups->getAll(vili::Types::ComplexAttribute))
 			{
-				AnimationGroup* tempGroup = new AnimationGroup(complexName);
-				animationGroupMap.insert(std::pair<std::string, AnimationGroup*>(complexName, tempGroup));
+				animationGroupMap.emplace(complexName, std::make_unique<AnimationGroup>(complexName));
 				vili::ComplexAttribute* currentGroup = groups->at(complexName);
 				for (vili::BaseAttribute* currentTexture : *currentGroup->at<vili::ListAttribute>("content"))
 					animationGroupMap[complexName]->pushTexture(animationTextures[*currentTexture]);
