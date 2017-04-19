@@ -9,6 +9,7 @@
 #include <iostream>
 #include <kaguya/kaguya.hpp>
 #include <any/any.hpp>
+#include <aube/ErrorHandler.hpp>
 
 #include "TimeManager.hpp"
 #include "Functions.hpp"
@@ -20,14 +21,14 @@ namespace obe
 		class Trigger
 		{
 			private:
-				std::string group;
-				std::string triggerName;
-				std::string triggerNamespace;
-				std::map<std::string, std::pair<std::string, Types::any>> triggerParameters;
-				bool enabled = false;
-				bool toEnable = false;
-				bool toDisable = false;
-				bool permanent;
+				std::string m_group;
+				std::string m_triggerName;
+				std::string m_triggerNamespace;
+				std::map<std::string, std::pair<std::string, Types::any>> m_triggerParameters;
+				bool m_enabled = false;
+				bool m_toEnable = false;
+				bool m_toDisable = false;
+				bool m_permanent;
 				void clearParameters();
 				template <typename P>
 				void pushParameter(std::string name, P parameter);
@@ -36,11 +37,11 @@ namespace obe
 			public:
 				Trigger(std::string group, std::string triggerName, bool startState = false, bool permanent = false);
 				Trigger(std::string nsp, std::string group, std::string triggerName, bool startState = false, bool permanent = false);
-				bool getState();
-				bool isPermanent();
-				std::string getGroup();
-				std::string getName();
-				std::string getNamespace();
+				bool getState() const;
+				bool isPermanent() const;
+				std::string getGroup() const;
+				std::string getName() const;
+				std::string getNamespace() const;
 				std::map<std::string, std::pair<std::string, Types::any>>* getParameters();
 		};
 
@@ -48,19 +49,19 @@ namespace obe
 		{
 			public:
 				TriggerDelay(Trigger* trg, int del, bool sta);
-				Trigger* trigger;
-				int delay;
-				bool state;
-				int delaytarget;
+				Trigger* m_trigger;
+				int m_delay = 0;
+				bool m_state = false;
+				int m_delaytarget = 0;
 		};
 
 		class TriggerGroup
 		{
 			private:
-				std::string triggerGroupName;
-				std::string fromNsp;
-				std::map<std::string, Trigger*> triggerMap;
-				std::vector<TriggerDelay*> delayedTriggers;
+				std::string m_triggerGroupName;
+				std::string m_fromNsp;
+				std::map<std::string, Trigger*> m_triggerMap;
+				std::vector<TriggerDelay*> m_delayedTriggers;
 				friend class TriggerDatabase;
 
 			public:
@@ -78,18 +79,18 @@ namespace obe
 				void pushParameter(std::string triggerName, std::string parameterName, P parameter);
 				std::vector<std::string> getAllTriggersName();
 				std::vector<Trigger*> getAllTriggers();
-				std::string getNamespace();
-				std::string getName();
+				std::string getNamespace() const;
+				std::string getName() const;
 		};
 
 		class TriggerDatabase
 		{
 			private:
 				TriggerDatabase();
-				std::map<std::string, std::map<std::string, TriggerGroup*>> allTriggers;
-				Time::Chronometer databaseChrono;
-				std::vector<TriggerDelay*> delayedTriggers;
-				static TriggerDatabase* instance;
+				std::map<std::string, std::map<std::string, TriggerGroup*>> m_allTriggers;
+				Time::Chronometer m_databaseChrono;
+				std::vector<TriggerDelay*> m_delayedTriggers;
+				static TriggerDatabase* m_instance;
 			public:
 				static TriggerDatabase* GetInstance();
 				Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
@@ -108,7 +109,7 @@ namespace obe
 		{
 			std::vector<std::string> splittedTypeName = Functions::String::split(typeid(parameter).name(), " ");
 			std::string datatype = Functions::Vector::join(splittedTypeName, "", 1);
-			triggerParameters[name] = std::pair<std::string, Types::any>(datatype, Types::any(parameter));
+			m_triggerParameters[name] = std::pair<std::string, Types::any>(datatype, Types::any(parameter));
 		}
 
 		template<typename P>

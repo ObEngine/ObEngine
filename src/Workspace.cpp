@@ -6,13 +6,9 @@ namespace obe
 	{
 		std::string Workspace::GetWorkspaceLocation(std::string workspaceName)
 		{
-			if (WorkspaceExists(workspaceName)) {
+			if (WorkspaceExists(workspaceName))
 				return (vili::DataParser("Workspace/Workspaces.vili")->at<vili::BaseAttribute>(workspaceName, "path")->get<std::string>());
-			}
-			else {
-				std::cout << "<Error:Workspace:Workspace>[GetWorkspaceLocation] : Workspace <" << workspaceName << "> does not exists" << std::endl;
-			}
-			return std::string();
+			throw aube::ErrorHandler::Raise("ObEngine.Workspace.Workspace.InexistantWorkspace", { {"workspace", workspaceName} });
 		}
 
 		bool Workspace::WorkspaceExists(std::string workspaceName)
@@ -27,10 +23,7 @@ namespace obe
 				std::cout << "<System> Mounting Workspace : " << workspaceName << " : " << GetWorkspaceLocation(workspaceName) << std::endl;
 				return true;
 			}
-			else {
-				std::cout << "<Error:Workspace:Workspace>[Load] : Workspace <" << workspaceName << "> does not exists" << std::endl;
-				return false;
-			}
+			throw aube::ErrorHandler::Raise("ObEngine.Workspace.Workspace.InexistantWorkspace", { { "workspace", workspaceName } });
 		}
 	}
 }

@@ -7,108 +7,41 @@ namespace obe
 {
 	namespace Time
 	{
-		//TimeMonitor
-		void TimeMonitor::startTick(std::string id)
-		{
-			chronoSMap[id] = std::chrono::high_resolution_clock::now();
-		}
-		void TimeMonitor::endTick(std::string id)
-		{
-			chronoEMap[id] = std::chrono::high_resolution_clock::now();
-			chronoRMap[id] = std::chrono::duration_cast<std::chrono::microseconds>(chronoEMap[id] - chronoSMap[id]);
-			std::cout << "#PROFILER : " << id << " took " << chronoRMap[id].count() << " microseconds to execute" << std::endl;
-		}
-		void TimeMonitor::summary()
-		{
-			std::cout << "##### FULL PROFILER SUMMARY #####" << std::endl;
-			std::string key;
-			std::chrono::microseconds value;
-			std::chrono::microseconds totalSec;
-			for (auto iterator = chronoRMap.begin(); iterator != chronoRMap.end(); iterator++) {
-				key = iterator->first;
-				value = iterator->second;
-				std::cout << "     #> " << key << " took " << value.count() << " microseconds to execute" << std::endl;
-				totalSec += value;
-				if (chronoCMap.find(key) == chronoCMap.end()) {
-					chronoCMap[key] = value;
-				}
-				else {
-					chronoCMap[key] += value;
-				}
-				if (chronoOMap.find(key) == chronoOMap.end()) {
-					chronoOMap[key] = 1;
-				}
-				else {
-					chronoOMap[key]++;
-				}
-
-			}
-			std::cout << "    #>> " << "Loop elapsed in " << totalSec.count() << " microseconds" << std::endl;
-			std::cout << "##### END OF PROFILER SUMMARY #####" << std::endl;
-			chronoSMap.clear();
-			chronoEMap.clear();
-			chronoRMap.clear();
-		}
-		void TimeMonitor::endSummary()
-		{
-			std::cout << "##### FULL PROFILER END SUMMARY #####" << std::endl;
-			std::string key;
-			std::chrono::microseconds value;
-			std::chrono::microseconds totalSec;
-			for (auto iterator = chronoCMap.begin(); iterator != chronoCMap.end(); iterator++) {
-				key = iterator->first;
-				value = iterator->second;
-				std::cout << "    #> " << key << " took " << value.count() << " microseconds in total and has been called " << chronoOMap[key] << " times" << std::endl;
-				std::cout << "        #>> (Ratio:" << chronoOMap[key] * value.count() << ")" << std::endl;
-				totalSec += value;
-			}
-			std::cout << "    #>>> " << "Operation elapsed in " << totalSec.count() << " microseconds" << std::endl;
-			std::cout << "##### END OF PROFILER END SUMMARY #####" << std::endl;
-			chronoSMap.clear();
-			chronoEMap.clear();
-			chronoRMap.clear();
-			chronoCMap.clear();
-			chronoOMap.clear();
-		}
-
 		//FPS Counter
 		void FPSCounter::tick()
 		{
-			if (getTickSinceEpoch() - lastTick <= 1000)
-				fpsCounter++;
+			if (getTickSinceEpoch() - m_lastTick <= 1000)
+				m_fpsCounter++;
 		}
 		void FPSCounter::uTick()
 		{
-			if (getTickSinceEpoch() - lastTick <= 1000)
-				updCounter++;
+			if (getTickSinceEpoch() - m_lastTick <= 1000)
+				m_updCounter++;
 			else
 			{
-				saveUPD = updCounter;
-				updCounter = 0;
-				lastTick = getTickSinceEpoch();
-				canUpdateFPS = true;
-				saveFPS = fpsCounter;
-				fpsCounter = 0;
+				m_saveUPD = m_updCounter;
+				m_updCounter = 0;
+				m_lastTick = getTickSinceEpoch();
+				m_canUpdateFPS = true;
+				m_saveFPS = m_fpsCounter;
+				m_fpsCounter = 0;
 			}
 		}
 		void FPSCounter::loadFont(sf::Font &font)
 		{
-			text.setFont(font);
-			text.setCharacterSize(12);
-			text.setFillColor(sf::Color::White);
+			m_text.setFont(font);
+			m_text.setCharacterSize(12);
+			m_text.setFillColor(sf::Color::White);
 		}
 		sf::Text FPSCounter::getFPS()
 		{
-			if (canUpdateFPS)
+			if (m_canUpdateFPS)
 			{
-				canUpdateFPS = false;
-				text.setString(std::to_string(saveFPS) + " FPS / " + std::to_string(saveUPD) + " UPS");
-				return text;
+				m_canUpdateFPS = false;
+				m_text.setString(std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
+				return m_text;
 			}
-			else
-			{
-				return text;
-			}
+			return m_text;
 		}
 
 		//Chronometer
@@ -117,24 +50,24 @@ namespace obe
 
 		}
 		void Chronometer::start() {
-			chronoStart = std::chrono::high_resolution_clock::now();
-			chronoCurrent = std::chrono::high_resolution_clock::now();
-			started = true;
+			m_chronoStart = std::chrono::high_resolution_clock::now();
+			m_chronoCurrent = std::chrono::high_resolution_clock::now();
+			m_started = true;
 		}
 		void Chronometer::stop() {
-			started = false;
+			m_started = false;
 		}
 		unsigned long long int Chronometer::getTime() {
-			if (started) chronoCurrent = std::chrono::high_resolution_clock::now();
-			return std::chrono::duration_cast<std::chrono::milliseconds>(chronoCurrent - chronoStart).count();
+			if (m_started) m_chronoCurrent = std::chrono::high_resolution_clock::now();
+			return std::chrono::duration_cast<std::chrono::milliseconds>(m_chronoCurrent - m_chronoStart).count();
 		}
 		void Chronometer::setLimit(unsigned long long int limit) {
-			this->limit = limit;
+			this->m_limit = limit;
 		}
 		bool Chronometer::limitExceeded() {
-			std::cout << "Limit : " << limit << std::endl;
+			std::cout << "Limit : " << m_limit << std::endl;
 			std::cout << "Current : " << this->getTime() << std::endl;
-			return (this->getTime() > limit);
+			return (this->getTime() > m_limit);
 		}
 
 		double getTickSinceEpoch()

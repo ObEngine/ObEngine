@@ -45,6 +45,14 @@ ObEngine:
             where:"luaTableToComplexAttribute"
             @NotATable
                 message:"LuaElement %id% is not a table"
+    @FunctionsHeader
+        where:"Functions"
+        file:"src/Functions.hpp"
+        @Vector
+            where:"Vector"
+            @UnknownIndexOfElement
+                where:"indexOfElement"
+                message:"Can't find element %element% in std::vector"
     @GameObject
         where:"GameObject"
         file:"src/GameObject.cpp"
@@ -81,6 +89,9 @@ ObEngine:
         file:"src/Package.cpp"
         @Package
             where:"Package"
+            @AlreadyInstalled
+                where:"Install"
+                message:"Package <%package%> has already been installed"
             @InexistantPackage
                 where:"%function%"
                 message:"Package <%package%> does not exists"
@@ -100,6 +111,147 @@ ObEngine:
             @UnknownPathAtIndex
                 where:"getPath"
                 message:"Can't find BasePath at index %index% for Path %path%"
+    @Script
+        where:"Script"
+        file:"src/Script.cpp"
+        @CoreHook
+            where:"CoreHook"
+            @UnknownHookType
+                where:"getValue"
+                message:"Unknown type "%type%" for %name%"
+            @UnknownHookName
+                where:"getValue"
+                message:"Can't find Hook for : %name%"
+            @UnknownPointerName
+                where:"getPointer"
+                message:"Can't find Pointer for : %name%"
+        @Lib
+            @NoNamespaceProvided
+                where:"loadLib"
+                message:"Please provide a namespace"
+            @UnknownNamespace
+                where:"loadLib"
+                message:"%name% is not a known Lib Namespace"
+            @UnknownCoreLib
+                where:"loadCoreLib"
+                message:"Can't find Core.%lib%"
+            @AnimationImportError
+                where:"loadAnimation"
+                message:"Can't import %lib%"
+            @CanvasImportError
+                where:"loadCanvas"
+                message:"Can't import %lib%"
+            @CollisionImportError
+                where:"loadCollision"
+                message:"Can't import %lib%"
+            @ConsoleImportError
+                where:"loadConsole"
+                message:"Can't import %lib%"
+            @ConstantsImportError
+                where:"loadConstants"
+                message:"Can't import %lib%"
+            @CursorImportError
+                where:"loadCursor"
+                message:"Can't import %lib%"
+            @DialogImportError
+                where:"loadDialog"
+                message:"Can't import %lib%"
+            @KeyBindImportError
+                where:"loadKeyBind"
+                message:"Can't import %lib%"
+            @LevelSpriteImportError
+                where:"loadLevelSprite"
+                message:"Can't import %lib%"
+            @LightImportError
+                where:"loadLight"
+                message:"Can't import %lib%"
+            @MathExpImportError
+                where:"loadMathExp"
+                message:"Can't import %lib%"
+            @PackageImportError
+                where:"loadPackage"
+                message:"Can't import %lib%"
+            @PathImportError
+                where:"loadPath"
+                message:"Can't import %lib%"
+            @ParticleImportError
+                where:"loadParticle"
+                message:"Can't import %lib%"
+            @SFMLImportError
+                where:"loadSFML"
+                message:"Can't import %lib%"
+            @SoundImportError
+                where:"loadSound"
+                message:"Can't import %lib%"
+            @STDImportError
+                where:"loadSTD"
+                message:"Can't import %lib%"
+            @TriggerImportError
+                where:"loadTrigger"
+                message:"Can't import %lib%"
+            @UtilsImportError
+                where:"loadUtils"
+                message:"Can't import %lib%"
+            @ViliImportError
+                where:"loadVili"
+                message:"Can't import %lib%"
+    @Sound
+        file:"src/SoundManager.cpp"
+        where:"SoundManager"
+        @MusicWrapper
+            where:"MusicWrapper"
+            @IncorrectStatus
+                where:"getStatus"
+                message:"Music returned an incorrect status"
+        @SoundWrapper
+            where:"SoundWrapper"
+            @IncorrectStatus
+                where:"getStatus"
+                message:"Music returned an incorrect status"
+    @Trigger
+        file:"src/Triggers.cpp"
+        where:"Trigger"
+        @TriggerGroup
+            where:"TriggerGroup"
+            @UnknownTrigger
+                where:"getTrigger"
+                message:"Trigger %trigger% does not exists in TriggerGroup %group%"
+        @TriggerDatabase
+            where:"TriggerDatabase"
+            @UnknownCustomTriggerGroup
+                where:"%function%"
+                message:"Custom TriggerGroup %group% does not exists in Namespace %nsp%"
+            @UnknownNamespace
+                where:"%function%"
+                message:"Custom Group Namespace %nsp% does not exists"
+            @NamespaceAlreadyExists
+                where:"createNamespace"
+                message:"Namespace %nsp% already exists"
+            @TriggerGroupAlreadyExists
+                where:"createTriggerGroup"
+                message:"TriggerGroup %group% already exists in Namespace %nsp%"
+    @Workspace
+        where:"Workspace"
+        file:"src/Workspace.cpp"
+        @Workspace
+            where:"Workspace"
+            @InexistantWorkspace
+                where:"%function%"
+                message:"Workspace <%workspace%> does not exists"
+    @World
+        where:"World"
+        file:"src/World.cpp"
+        @World
+            where:"World"
+            @NoMeta
+                where:"loadFromFile"
+                message:"Map file %map% does not have any 'Meta' RootAttribute"
+            @UnknownGameObject
+                where:"getGameObject"
+                messsage:"Can't find GameObject %id% in World %map%"
+            @UnknownLevelSprite
+                where:"getSpriteByID"
+                message:"Can't find LevelSprite %id% in World %map%"
 
 Vili:
     @ViliHeader

@@ -36,10 +36,7 @@ namespace obe
 				packages.writeFile("Package/Packages.vili");
 				return true;
 			}
-			else {
-				std::cout << "<Error:Package:Package>[Install] : Package <" << packageName << "> has already been installed !" << std::endl;
-				return false;
-			}
+			throw aube::ErrorHandler::Raise("ObEngine.Package.Package.AlreadyInstalled", { {"package", packageName} });
 		}
 		bool Package::Load(std::string packageName, unsigned int priority)
 		{

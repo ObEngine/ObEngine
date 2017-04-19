@@ -15,28 +15,13 @@ namespace obe
 		double getTickSinceEpoch();
 		double getTickSinceEpochMicro();
 
-		class TimeMonitor
-		{
-			private:
-				std::map<std::string, std::chrono::high_resolution_clock::time_point> chronoSMap; //Start Map
-				std::map<std::string, std::chrono::high_resolution_clock::time_point> chronoEMap; //End Map
-				std::map<std::string, std::chrono::microseconds> chronoRMap; //Result Map
-				std::map<std::string, std::chrono::microseconds> chronoCMap; //Cumulative Map
-				std::map<std::string, unsigned long long int> chronoOMap; //Occurences Map
-			public:
-				void startTick(std::string id);
-				void endTick(std::string id);
-				void summary();
-				void endSummary();
-		};
-
 		class Chronometer
 		{
 			private:
-				std::chrono::high_resolution_clock::time_point chronoStart;
-				std::chrono::high_resolution_clock::time_point chronoCurrent;
-				bool started;
-				unsigned long long int limit;
+				std::chrono::high_resolution_clock::time_point m_chronoStart;
+				std::chrono::high_resolution_clock::time_point m_chronoCurrent;
+				bool m_started = false;
+				unsigned long long int m_limit = 0;
 			public:
 				Chronometer();
 				void start();
@@ -49,21 +34,19 @@ namespace obe
 		class FPSCounter
 		{
 			private:
-				double lastTick = getTickSinceEpoch();
-				int fpsCounter = 0;
-				int updCounter = 0;
-				int saveFPS = 0;
-				int saveUPD = 0;
-				bool canUpdateFPS = false;
-				sf::Text text;
-				sf::Font font;
+				double m_lastTick = getTickSinceEpoch();
+				int m_fpsCounter = 0;
+				int m_updCounter = 0;
+				int m_saveFPS = 0;
+				int m_saveUPD = 0;
+				bool m_canUpdateFPS = false;
+				sf::Text m_text;
+				sf::Font m_font;
 			public:
 				void tick();
 				void uTick();
 				void loadFont(sf::Font &font);
 				sf::Text getFPS();
-				void ForceText(std::string replacement);
-				sf::Text getText();
 		};
 	}
 }

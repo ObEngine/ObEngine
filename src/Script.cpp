@@ -14,28 +14,26 @@ namespace obe
 		{
 			if (containerMap.find(name) != containerMap.end())
 			{
-				std::string gt = containerMap[name].first;
-				if (gt == Functions::Type::getClassType<Console::Console*>())
+				std::string hookType = containerMap[name].first;
+				if (hookType == Functions::Type::getClassType<Console::Console*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Console::Console*>();
-				else if (gt == Functions::Type::getClassType<Cursor::Cursor*>())
+				else if (hookType == Functions::Type::getClassType<Cursor::Cursor*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Cursor::Cursor*>();
-				else if (gt == Functions::Type::getClassType<Input::KeyBinder*>())
+				else if (hookType == Functions::Type::getClassType<Input::KeyBinder*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyBinder*>();
-				else if (gt == Functions::Type::getClassType<Math::MathExp*>())
+				else if (hookType == Functions::Type::getClassType<Math::MathExp*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Math::MathExp*>();
-				else if (gt == Functions::Type::getClassType<Graphics::TextRenderer*>())
+				else if (hookType == Functions::Type::getClassType<Graphics::TextRenderer*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<Graphics::TextRenderer*>();
-				else if (gt == Functions::Type::getClassType<Script::TriggerDatabase*>())
+				else if (hookType == Functions::Type::getClassType<Script::TriggerDatabase*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<TriggerDatabase*>();
-				else if (gt == Functions::Type::getClassType<Script::TriggerGroup*>())
+				else if (hookType == Functions::Type::getClassType<Script::TriggerGroup*>())
 					(*lua)["Hook"][name] = containerMap[name].second->as<TriggerGroup*>();
-				else 
-					std::cout << "<Error:Script:CoreHook>[getValue] : Unknown type : '" << gt << "' for " << name << std::endl;
+				else
+					throw aube::ErrorHandler::Raise("ObEngine.Script.CoreHook.UnknownHookType", { {"type", hookType}, {"name", name} });
 			}
 			else
-			{
-				std::cout << "<Error:Script:CoreHook>[getValue] : Can't find Hook for : " << name << std::endl;
-			}
+				throw aube::ErrorHandler::Raise("ObEngine.Script.CoreHook.UnknownHookName", { { "name", name } });
 		}
 
 		Types::any* CoreHook::getPointer(std::string name)
@@ -44,19 +42,20 @@ namespace obe
 			{
 				return containerMap[name].second;
 			}
-			else
-			{
-				std::cout << "<Error:Script:CoreHook>[getPointer] : Can't find pointer of : " << name << std::endl;
-			}
+			throw aube::ErrorHandler::Raise("ObEngine.Script.CoreHook.UnknownPointerName", { { "name", name } });
 		}
 
 		void loadLib(kaguya::State* lua, std::string lib)
 		{
 			if (Functions::String::occurencesInString(lib, ".") >= 1)
 			{
-				if (Functions::String::split(lib, ".")[0] == "Core") loadCoreLib(lua, Functions::Vector::getSubVector(Functions::String::split(lib, "."), 1, 0));
+				if (Functions::String::split(lib, ".")[0] == "Core")
+					loadCoreLib(lua, Functions::Vector::getSubVector(Functions::String::split(lib, "."), 1, 0));
+				else
+					throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UnknownNamespace", { {"name", lib} });
 			}
-			else std::cout << "<Error:Script:*>[loadLib] : Please provide a namespace" << std::endl;
+			else
+				throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.NoNamespaceProvided");
 		}
 
 		void loadHook(kaguya::State* lua, std::string hookname)
@@ -116,12 +115,8 @@ namespace obe
 				if (lib[0] == "Vili" || all) { CoreLib::loadVili(lua, (all) ? std::vector<std::string>{"DataParser"} : lib); found = true; }
 				if (!found)
 				{
-					std::cout << "<Error:Script:*>[loadCoreLib] : Can't find Core.";
-					for (int i = 0; i < lib.size(); i++)
-					{
-						if (i != lib.size() - 1) std::cout << lib[i] << ".";
-						else std::cout << lib[i] << std::endl;
-					}
+					std::string libName = Functions::Vector::join(lib, ".");
+					throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UnknownCoreLib", { {"lib", libName} });
 				}
 			}
 			else
@@ -208,7 +203,7 @@ namespace obe
 				);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.AnimationImportError", { {"lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadCanvas(kaguya::State* lua, std::vector<std::string> args)
@@ -264,7 +259,7 @@ namespace obe
 				);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCursor] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.CanvasImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadCollision(kaguya::State* lua, std::vector<std::string> args)
@@ -323,7 +318,7 @@ namespace obe
 				);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCollision] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.CollisionImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -379,7 +374,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConsole] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConsoleImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadConstants(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -391,7 +386,7 @@ namespace obe
 			{
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadConstants] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConstantsImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadCursor(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -415,7 +410,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadCursor] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.CursorImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadDialog(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -433,7 +428,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDialog] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.DialogImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -456,7 +451,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadKeyBind] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.KeyBindImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadLevelSprite(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -509,7 +504,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadLevelSprite] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.LevelSpriteImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadLight(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -563,7 +558,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadLight] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.LightImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadMathExp(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -597,7 +592,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadMathExp] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.MathExpImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadPackage(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -615,7 +610,7 @@ namespace obe
 				);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadPackage] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.PackageImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadPath(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -638,7 +633,7 @@ namespace obe
 				foundPart = true;
 			}
 			(*lua)["Core"]["Path"]["MountPaths"] = kaguya::function(System::MountPaths);
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadPackage] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.PathImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadParticle(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -663,6 +658,7 @@ namespace obe
 					.addFunction("shapeInit", &Graphics::Particle::shapeInit)
 					.addFunction("update", &Graphics::Particle::update)
 				);
+				foundPart = true;
 			}
 			if (importAll || args[1] == "MathParticle")
 			{
@@ -673,7 +669,9 @@ namespace obe
 					.addFunction("setExp", &Graphics::MathParticle::setExp)
 					.addFunction("update", &Graphics::MathParticle::update)
 				);
+				foundPart = true;
 			}
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ParticleImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -729,7 +727,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSFML] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.SFMLImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadSound(kaguya::State* lua, std::vector<std::string> args)
@@ -793,7 +791,7 @@ namespace obe
 					.addFunction("useSoundPosition", &Sound::MusicWrapper::useSoundPosition)
 				);
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSound] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.SoundImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadSTD(kaguya::State* lua, std::vector<std::string> args)
@@ -823,7 +821,7 @@ namespace obe
 				(*lua)["Core"]["STD"]["Print"] = kaguya::function([](std::string disp) { std::cout << "[Lua] : " << disp << std::endl; });
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadSTD] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.STDImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadTrigger(kaguya::State* lua, std::vector<std::string> args)
@@ -887,7 +885,7 @@ namespace obe
 					);
 				foundPart = true;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadTrigger] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.TriggerImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadUtils(kaguya::State* lua, std::vector<std::string> args)
 		{
@@ -915,7 +913,7 @@ namespace obe
 				(*lua)["Core"]["Utils"]["Math"]["isDoubleInt"] = kaguya::function(Functions::Math::isDoubleInt);
 				foundPart = true;
 			}
-			//Add Others
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UtilsImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 		void CoreLib::loadVili(kaguya::State * lua, std::vector<std::string> args)
 		{
@@ -943,6 +941,7 @@ namespace obe
 					.addFunction("getID", &vili::Attribute::getID)
 					.addFunction("getType", &vili::Attribute::getType)
 				);
+				foundPart = true;
 			}
 			if (importAll || args[1] == "ComplexAttribute")
 			{
@@ -1029,7 +1028,7 @@ namespace obe
 				(*lua)["Core"]["Vili"]["AttributeType"]["ComplexAttribute"] = vili::Types::ComplexAttribute;
 				(*lua)["Core"]["Vili"]["AttributeType"]["ListAttribute"] = vili::Types::ListAttribute;
 			}
-			if (!foundPart) std::cout << "<Error:Script:CoreLib>[loadDataParser] : Can't import : " << Functions::Vector::join(args, ".") << std::endl;
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ViliImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 	}
 }

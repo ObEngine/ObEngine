@@ -111,6 +111,7 @@ namespace obe
 				case sf::SoundSource::Paused: return "Paused";
 				case sf::SoundSource::Playing: return "Playing";
 			}
+			throw aube::ErrorHandler::Raise("ObEngine.Sound.MusicWrapper.IncorrectStatus");
 		}
 
 		void MusicWrapper::pause()
@@ -237,6 +238,7 @@ namespace obe
 			case sf::SoundSource::Paused: return "Paused";
 			case sf::SoundSource::Playing: return "Playing";
 			}
+			throw aube::ErrorHandler::Raise("ObEngine.Sound.SoundWrapper.IncorrectStatus");
 		}
 
 		void SoundWrapper::pause()

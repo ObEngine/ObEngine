@@ -180,8 +180,7 @@ namespace obe
 				}
 					
 			}
-			std::cout << "<Error:Functions:Vector>[indexOfElement] : Can't find element : " << item << " in vector" << std::endl;
-			return -1;
+			throw aube::ErrorHandler::Raise("ObEngine.FunctionsHeader.Vector.UnknownIndexOfElement", { {"element", std::to_string(item)} });
 		}
 		template <typename V>
 		inline void Vector::eraseAll(std::vector<V>& vector, V elem)

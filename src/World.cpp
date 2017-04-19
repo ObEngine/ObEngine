@@ -85,10 +85,7 @@ namespace obe
 				}
 			}
 			else
-			{
-				std::cout << "<Error:World:World>[loadFromFile] : Map file : " << filename << " does not have any 'Meta' Root Attribute" << std::endl;
-				return;
-			}
+				throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", { {"map", filename} });
 
 			if (mapParse->contains(vili::Types::ComplexAttribute, "LevelSprites"))
 			{
@@ -459,8 +456,7 @@ namespace obe
 		{
 			if (m_gameObjectMap.find(id) != m_gameObjectMap.end())
 				return m_gameObjectMap[id].get();
-			std::cout << "<Error:World:World>[getGameObject] : Can't find GameObject : " << id << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownGameObject", { {"id", id}, {"map", m_levelName} });
 		}
 
 		std::vector<Script::GameObject*> World::getAllGameObjects(std::vector<std::string> filters)
@@ -602,15 +598,14 @@ namespace obe
 			return returnSpr;
 		}
 
-		Graphics::LevelSprite* World::getSpriteByID(std::string ID)
+		Graphics::LevelSprite* World::getSpriteByID(std::string id)
 		{
 			for (int i = 0; i < m_spriteArray.size(); i++)
 			{
-				if (m_spriteArray[i].get()->getID() == ID)
+				if (m_spriteArray[i].get()->getID() == id)
 					return m_spriteArray[i].get();
 			}
-			std::cout << "<Error:World:World>[getSpriteByID] : Can't find Sprite : " << ID << std::endl;
-			return nullptr;
+			throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownLevelSprite", { {"id", id}, {"map", m_levelName} });
 		}
 
 		void World::deleteSpriteByID(std::string sprID)
