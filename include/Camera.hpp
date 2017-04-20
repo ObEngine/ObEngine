@@ -46,6 +46,8 @@ namespace obe
 			double getY() const;
 			double getWidth() const;
 			double getHeight() const;
+
+			Coord::UnitVector getPosition();
 		};
 	}
 }

@@ -87,7 +87,7 @@ namespace obe
 			return instance;
 		}
 
-		vili::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type)
+		vili::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type) const
 		{
 			if (!Functions::Vector::isInList(type, allRequires->getAll(vili::Types::ComplexAttribute)))
 			{

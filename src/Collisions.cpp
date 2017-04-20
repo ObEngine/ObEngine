@@ -408,7 +408,7 @@ namespace obe
 				{
 					int nextIndex = (i == m_allPoints.size() - 1) ? 0 : i + 1;
 
-					int x1 = m_allPoints[i].first + m_drawOffsetY;
+					int x1 = m_allPoints[i].first + m_drawOffsetX;
 					int y1 = m_allPoints[i].second + m_drawOffsetY;
 					if (drawSkel)
 					{

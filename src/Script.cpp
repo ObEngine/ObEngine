@@ -384,6 +384,9 @@ namespace obe
 			if (!static_cast<bool>((*lua)["Core"]["Constants"])) (*lua)["Core"]["Constants"] = kaguya::NewTable();
 			if (importAll)
 			{
+				(*lua)["Core"]["Constants"]["Screen"] = kaguya::NewTable();
+				(*lua)["Core"]["Constants"]["Screen"]["Width"] = Coord::UnitVector::Screen.w;
+				(*lua)["Core"]["Constants"]["Screen"]["Height"] = Coord::UnitVector::Screen.h;
 				foundPart = true;
 			}
 			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConstantsImportError", { { "lib", Functions::Vector::join(args, ".") } });

@@ -14,6 +14,8 @@ int main(int argc, char** argv)
 	std::string startMode = runParser.getArgumentValue("-mode");
 	std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
+	vili::DataParser().parseFile("Workspace/Wedding/Sprites/GameObjects/Boy/JUMP_RIGHT/JUMP_RIGHT.ani.vili", true);
+
 	obe::Coord::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
 	obe::Coord::UnitVector uv_a(500, 500);

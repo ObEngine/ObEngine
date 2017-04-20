@@ -29,7 +29,7 @@ namespace obe
 			vili::DataParser allRequires;
 		public:
 			static GameObjectRequires* getInstance();
-			vili::ComplexAttribute* getRequiresForObjectType(std::string type);
+			vili::ComplexAttribute* getRequiresForObjectType(std::string type) const;
 			void applyBaseRequires(GameObject* obj, vili::ComplexAttribute& requires);
 			static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
 		};

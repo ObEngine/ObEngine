@@ -329,7 +329,7 @@ namespace obe
 			{
 				for (unsigned int i = 0; i < m_colliderArray.size(); i++)
 				{
-					m_colliderArray[i]->setDrawOffset(-m_camera.getX(), -m_camera.getY());
+					m_colliderArray[i]->setDrawOffset(-m_camera.getPosition().to<Coord::WorldPixels>().x, -m_camera.getPosition().to<Coord::WorldPixels>().y);
 					m_colliderArray[i]->draw(surf, m_showCollisionModes["drawLines"], 
 						m_showCollisionModes["drawPoints"],
 						m_showCollisionModes["drawMasterPoint"], 
@@ -709,18 +709,19 @@ namespace obe
 			newCollider->setPositionFromMaster(x, y);
 		}
 
+		KAGUYA_MEMBER_FUNCTION_OVERLOADS(World_createLevelSpriteWrapper, World, createLevelSprite, 1, 2)
 		void loadWorldLib(kaguya::State* lua)
 		{
 			if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
 			(*lua)["Core"]["World"] = kaguya::NewTable();
 			(*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<World>()
-				.addFunction("addLevelSprite", &World::createLevelSprite)
 				.addFunction("addLight", &World::addLight)
 				.addFunction("addCollider", &World::createCollider)
 				.addFunction("addParticle", &World::addParticle)
 				.addFunction("clearWorld", &World::clearWorld)
 				.addFunction("createCollisionAtPos", &World::createCollisionAtPos)
 				.addFunction("createGameObject", &World::createGameObject)
+				.addFunction("createLevelSprite", World_createLevelSpriteWrapper())
 				.addFunction("deleteCollisionByID", &World::deleteCollisionByID)
 				.addFunction("deleteSprite", &World::deleteSprite)
 				.addFunction("enableShowCollision", &World::enableShowCollision)

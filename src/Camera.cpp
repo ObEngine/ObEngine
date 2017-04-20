@@ -127,5 +127,10 @@ namespace obe
 		{
 			return m_size.y;
 		}
+
+		Coord::UnitVector Camera::getPosition()
+		{
+			return m_position;
+		}
 	}
 }
