@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	vVec->x = 2880;
 	vVec->y = 1620;
 
-	obe::Coord::UnitVector uv_a(768, 2592, obe::Coord::WorldPixels);
+	obe::Coord::UnitVector uv_a(384, 1296, obe::Coord::WorldUnits);
 	std::cout << uv_a.to<obe::Coord::ViewPercentage>() << std::endl;
 	std::cout << uv_a.to<obe::Coord::ViewPixels>() << std::endl;
 	std::cout << uv_a.to<obe::Coord::ViewUnits>() << std::endl;
@@ -36,6 +36,7 @@ int main(int argc, char** argv)
 	std::cout << uv_a.to<obe::Coord::WorldPixels>() << std::endl;
 	std::cout << uv_a.to<obe::Coord::WorldUnits>() << std::endl;
 
+	std::cout << std::endl;
 	std::cout << uv_a
 		.to<obe::Coord::ViewPixels>()
 		.to<obe::Coord::ViewUnits>()
