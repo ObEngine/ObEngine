@@ -56,13 +56,13 @@ namespace obe
 			case ViewPercentage:
 				return UnitVector(x, y, ViewPercentage);
 			case ViewPixels:
-				return UnitVector(x * Screen.w, y * Screen.h, ViewPercentage);
+				return UnitVector(x / Screen.w, y / Screen.h, ViewPercentage);
 			case ViewUnits:
-				return UnitVector(x * View.w, y * View.h, ViewPercentage);
+				return UnitVector(x / View.w, y / View.h, ViewPercentage);
 			case WorldPercentage:
-				return UnitVector((View.x / World.w) + (View.w * x / World.w), (View.y / World.h) + (View.h * y / World.h), ViewPercentage);
+				return UnitVector((x * World.w - View.x) / View.w, ((y * World.h) - View.y) / View.h, ViewPercentage);
 			case WorldPixels:
-				return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), ViewPercentage);
+				return UnitVector((x * World.w - View.x) / (Screen.w * View.w), Screen.h * (View.y / View.h + y), ViewPercentage);
 			case WorldUnits:
 				return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, ViewPercentage);
 			default:
@@ -73,13 +73,14 @@ namespace obe
 			switch (unit)
 			{
 			case ViewPercentage:
-				return UnitVector(x / Screen.w, y / Screen.h, ViewPixels);
+				return UnitVector(x * Screen.w, y * Screen.h, ViewPixels);
 			case ViewPixels:
 				return UnitVector(x, y, ViewPixels);
 			case ViewUnits:
-				return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, ViewPixels);
+				return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, ViewPixels);
 			case WorldPercentage:
-				return UnitVector((View.x / World.w) + (View.w * x / Screen.w / World.w), (View.y / World.h) + (View.h * y / Screen.h / World.h), ViewPixels);
+				return UnitVector(x * World.w * (Screen.w / View.w) - View.x * (Screen.w / View.w), 
+					y * World.h * (Screen.h / View.h) - View.y * (Screen.h / View.h), ViewPixels);
 			case WorldPixels:
 				return UnitVector(Screen.w * (View.x / View.w + x / Screen.w), Screen.h * (View.y / View.h + y / Screen.h), ViewPixels);
 			case WorldUnits:
@@ -92,13 +93,13 @@ namespace obe
 			switch (unit)
 			{
 			case ViewPercentage:
-				return UnitVector(x / View.w, y / View.h, ViewUnits);
+				return UnitVector(x * View.w, y * View.h, ViewUnits);
 			case ViewPixels:
-				return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, ViewUnits);
+				return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, ViewUnits);
 			case ViewUnits:
 				return UnitVector(x, y, ViewUnits);
 			case WorldPercentage:
-				return UnitVector((View.w + x) / World.w, (View.h + x) / World.h, ViewUnits);
+				return UnitVector(x * World.w - View.x, y * World.h - View.y, ViewUnits);
 			case WorldPixels:
 				return UnitVector((Screen.w * (View.x + x)) / View.w, (Screen.h * (View.y + x)) / View.h, ViewUnits);
 			case WorldUnits:
@@ -111,11 +112,11 @@ namespace obe
 			switch (unit)
 			{
 			case ViewPercentage:
-				return UnitVector(0, 0, WorldPercentage);
+				return UnitVector(((View.w * x) + View.x) / World.w, ((View.h * y) + View.y) / World.h, WorldPercentage);
 			case ViewPixels:
-				return UnitVector(0, 0, WorldPercentage);
+				return UnitVector(((View.w * (x / Screen.w)) + View.x) / World.w, ((View.h * (y / Screen.h)) + View.y) / World.h, WorldPercentage);
 			case ViewUnits:
-				return UnitVector(0, 0, WorldPercentage);
+				return UnitVector((View.x + x) / World.w, (View.y + y) / World.h, WorldPercentage);
 			case WorldPercentage:
 				return UnitVector(x, y, WorldPercentage);
 			case WorldPixels:
@@ -130,13 +131,13 @@ namespace obe
 			switch (unit)
 			{
 			case ViewPercentage:
-				return UnitVector(0, 0, WorldPixels);
+				return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), WorldPixels);
 			case ViewPixels:
-				return UnitVector(0, 0, WorldPixels);
+				return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, WorldPixels);
 			case ViewUnits:
-				return UnitVector(0, 0, WorldPixels);
+				return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, WorldPixels);
 			case WorldPercentage:
-				return UnitVector(0, 0, WorldPixels);
+				return UnitVector(x * World.w * (Screen.w / View.w), y * World.h * (Screen.h / View.h), WorldPixels);
 			case WorldPixels:
 				return UnitVector(x, y, WorldPixels);
 			case WorldUnits:
@@ -149,13 +150,13 @@ namespace obe
 			switch (unit)
 			{
 			case ViewPercentage:
-				return UnitVector(0, 0, WorldUnits);
+				return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, WorldUnits);
 			case ViewPixels:
-				return UnitVector(0, 0, WorldUnits);
+				return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, WorldUnits);
 			case ViewUnits:
-				return UnitVector(0, 0, WorldUnits);
+				return UnitVector(View.x + x, View.y + y, WorldUnits);
 			case WorldPercentage:
-				return UnitVector(x / World.w, y / World.h, WorldUnits);
+				return UnitVector(x * World.w, y * World.h, WorldUnits);
 			case WorldPixels:
 				return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, WorldUnits);
 			case WorldUnits:

@@ -70,7 +70,7 @@ namespace obe
 
 		std::ostream& operator<<(std::ostream& os, const UnitVector& m)
 		{
-			os << "(" << m.x << ", " << m.y << ")::" << m.unit << std::endl;
+			os << "(" << m.x << ", " << m.y << ")::" << m.unit;
 			return os;
 		}
 	}
