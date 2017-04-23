@@ -51,3 +51,81 @@ Package:
         priority:&(1/value)
 
 Template(Package);
+
+Vector2<ViewPercentage>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"ViewPercentage"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<ViewPercentage>);
+
+Vector2<ViewPixels>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"ViewPixels"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<ViewPixels>);
+
+Vector2<ViewUnits>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"ViewUnits"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<ViewUnits>);
+
+Vector2<WorldPercentage>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"WorldPercentage"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<WorldPercentage>);
+
+Vector2<WorldPixels>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"WorldPixels"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<WorldPixels>);
+
+Vector2<WorldUnits>:
+    @FloatComposant
+        type:"Float"
+    @__init__
+        @0:FloatComposant
+        @1:FloatComposant
+    @__body__
+        unit:"WorldUnits"
+        x:&(0/value)
+        y:&(1/value)
+
+Template(Vector2<WorldUnits>);

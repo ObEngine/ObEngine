@@ -36,6 +36,10 @@ int main(int argc, char** argv)
 	std::cout << uv_a.to<obe::Coord::WorldPixels>() << std::endl;
 	std::cout << uv_a.to<obe::Coord::WorldUnits>() << std::endl;
 
+	vili::DataParser testvec;
+	testvec.parseFile("testvec2.vili", true);
+	std::cout << testvec->at<vili::BaseAttribute>("Miam", "pos", "x")->get<double>() << std::endl;
+
 	std::cout << std::endl;
 	std::cout << uv_a
 		.to<obe::Coord::ViewPixels>()
