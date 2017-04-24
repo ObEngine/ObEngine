@@ -39,6 +39,7 @@ int main(int argc, char** argv)
 	vili::DataParser testvec;
 	testvec.parseFile("testvec2.vili", true);
 	std::cout << testvec->at<vili::BaseAttribute>("Miam", "pos", "x")->get<double>() << std::endl;
+	std::cout << testvec->at<vili::BaseAttribute>("Polygones", "polygone1", "unit", "unit")->get<std::string>() << std::endl;
 
 	std::cout << std::endl;
 	std::cout << uv_a

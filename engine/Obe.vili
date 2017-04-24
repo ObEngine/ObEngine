@@ -129,3 +129,45 @@ Vector2<WorldUnits>:
         y:&(1/value)
 
 Template(Vector2<WorldUnits>);
+
+Unit<ViewPercentage>:
+    @__init__
+    @__body__
+        unit:"ViewPercentage"
+
+Template(Unit<ViewPercentage>);
+
+Unit<ViewPixels>:
+    @__init__
+    @__body__
+        unit:"ViewPixels"
+
+Template(Unit<ViewPixels>);
+
+Unit<ViewUnits>:
+    @__init__
+    @__body__
+        unit:"ViewUnits"
+
+Template(Unit<ViewUnits>);
+
+Unit<WorldPercentage>:
+    @__init__
+    @__body__
+        unit:"WorldPercentage"
+
+Template(Unit<WorldPercentage>);
+
+Unit<WorldPixels>:
+    @__init__
+    @__body__
+        unit:"WorldPixels"
+
+Template(Unit<WorldPixels>);
+
+Unit<WorldUnits>:
+    @__init__
+    @__body__
+        unit:"WorldUnits"
+
+Template(Unit<WorldUnits>);

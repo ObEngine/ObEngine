@@ -12,6 +12,7 @@
 #include <memory>
 #include <functional>
 #include <cmath>
+#include <ctype.h>
 
 #include <aube/ErrorHandler.hpp>
 

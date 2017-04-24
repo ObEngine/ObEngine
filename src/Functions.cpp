@@ -273,26 +273,20 @@ namespace obe
 			std::vector<std::string> otherComponents;
 			std::vector<std::pair<int, int>> indexes;
 			std::string currentStack = "";
-			for (char chr : string)
+			for (unsigned int i = 0; i < string.size(); i++)
 			{
-				std::string currentChar(1, chr);
-				std::cout << currentChar << std::endl;
+				std::string currentChar = string.substr(i, 1);
 				if (currentChar == "\"")
 				{
-					if (currentStack.size() > 0)
+					if (readingString)
 					{
-						if (readingString)
-						{
-							std::cout << "Pushing : " << currentStack << " in extractedStrings" << std::endl;
-							extractedStrings.push_back(currentStack);
-							indexes.push_back(std::pair<int, int>(0, extractedStrings.size() - 1));
-						}
-						else
-						{
-							std::cout << "Pushing : " << currentStack << " in otherComponents" << std::endl;
-							otherComponents.push_back(currentStack);
-							indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
-						}
+						extractedStrings.push_back(currentStack);
+						indexes.push_back(std::pair<int, int>(0, extractedStrings.size() - 1));
+					}
+					else if (currentStack.size() > 0)
+					{
+						otherComponents.push_back(currentStack);
+						indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
 					}
 					readingString = !readingString;
 					currentStack.clear();
@@ -301,6 +295,11 @@ namespace obe
 				{
 					currentStack += currentChar;
 				}
+			}
+			if (!readingString)
+			{
+				otherComponents.push_back(currentStack);
+				indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
 			}
 			return std::make_tuple(extractedStrings, otherComponents, indexes);
 		}

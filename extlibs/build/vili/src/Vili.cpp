@@ -87,7 +87,7 @@ namespace vili
 		else if (type == Types::Float) value = "0.0";
 		else if (type == Types::Bool) value = "False";
 		else if (type == Types::Link) value = "&()";
-		else if (type == Types::Template) value = "$()";
+		else if (type == Types::Template) value = "T()";
 		return value;
 	}
 
@@ -105,7 +105,7 @@ namespace vili
 		}
 		else if (var.substr(0, 2) == "&(" && var.substr(var.size() - 1, 1) == ")")
 			attributeType = Types::Link;
-		else if (var.substr(0, 1) == "$" && Functions::String::occurencesInString(var, "(") == 1 && var.substr(var.size() - 1, 1) == ")")
+		else if (isalpha(var[0]) && Functions::String::occurencesInString(var, "(") == 1 && var.substr(var.size() - 1, 1) == ")")
 			attributeType = Types::Template;
 		else if (var.substr(0, 1) == "\"" && var.substr(var.size() - 1, 1) == "\"")
 			attributeType = Types::String;
@@ -1074,6 +1074,7 @@ namespace vili
 		std::string curCat = "None";
 		std::string curList = "None";
 		int curListIndent = 0;
+		bool inList = false;
 		if (useFile.is_open())
 		{
 			if (verbose) std::cout << "Start Parsing File : " << filename << std::endl;
@@ -1113,7 +1114,7 @@ namespace vili
 						for (int j = 0; j < removeRawSpacing.size(); j++)
 						{
 							std::string currentRawChar = removeRawSpacing.substr(j, 1);
-							if (currentRawChar == ",")
+							if (currentRawChar == "," && inList)
 							{
 								parsedLines.push_back(addParsedLine);
 								addParsedLine = "";
@@ -1122,12 +1123,14 @@ namespace vili
 							{
 								parsedLines.push_back(addParsedLine + "[");
 								addParsedLine = "";
+								inList = true;
 							}
 							else if (currentRawChar == "]")
 							{
 								parsedLines.push_back(addParsedLine);
 								parsedLines.push_back("]");
 								addParsedLine = "";
+								inList = false;
 							}
 							else
 								addParsedLine += currentRawChar;
@@ -1279,13 +1282,13 @@ namespace vili
 							}
 							else if (attributeType == Types::Template)
 							{
-								std::string templateName = attributeValue.substr(1, attributeValue.size() - 1);
+								std::string templateName = attributeValue;
 								templateName = Functions::String::split(templateName, "(")[0];
 								if (m_templateList.find(templateName) != m_templateList.end())
 								{
 									std::string argPart = Functions::String::split(attributeValue, "(")[1];
 									argPart = argPart.substr(0, argPart.size() - 1);
-									std::vector<std::string> templateArgs = Functions::String::split(argPart, "|");
+									std::vector<std::string> templateArgs = Functions::String::split(argPart, ",");
 									int i = 0;
 									for (std::string& arg : templateArgs)
 									{
