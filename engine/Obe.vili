@@ -53,11 +53,11 @@ Package:
 Template(Package);
 
 Vector2<ViewPercentage>:
-    @FloatComposant
-        type:"Float"
+    @NumericComposant
+        types:["Float", "Int"]
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:NumericComposant
+        @1:NumericComposant
     @__body__
         unit:"ViewPercentage"
         x:&(0/value)
@@ -66,11 +66,11 @@ Vector2<ViewPercentage>:
 Template(Vector2<ViewPercentage>);
 
 Vector2<ViewPixels>:
-    @FloatComposant
-        type:"Float"
+    @IntComposant
+        type:"Int"
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:IntComposant
+        @1:IntComposant
     @__body__
         unit:"ViewPixels"
         x:&(0/value)
@@ -79,11 +79,11 @@ Vector2<ViewPixels>:
 Template(Vector2<ViewPixels>);
 
 Vector2<ViewUnits>:
-    @FloatComposant
-        type:"Float"
+    @NumericComposant
+        types:["Float", "Int"]
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:NumericComposant
+        @1:NumericComposant
     @__body__
         unit:"ViewUnits"
         x:&(0/value)
@@ -92,11 +92,11 @@ Vector2<ViewUnits>:
 Template(Vector2<ViewUnits>);
 
 Vector2<WorldPercentage>:
-    @FloatComposant
-        type:"Float"
+    @NumericComposant
+        types:["Float", "Int"]
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:NumericComposant
+        @1:NumericComposant
     @__body__
         unit:"WorldPercentage"
         x:&(0/value)
@@ -105,11 +105,11 @@ Vector2<WorldPercentage>:
 Template(Vector2<WorldPercentage>);
 
 Vector2<WorldPixels>:
-    @FloatComposant
-        type:"Float"
+    @IntComposant
+        type:"Int"
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:IntComposant
+        @1:IntComposant
     @__body__
         unit:"WorldPixels"
         x:&(0/value)
@@ -118,11 +118,11 @@ Vector2<WorldPixels>:
 Template(Vector2<WorldPixels>);
 
 Vector2<WorldUnits>:
-    @FloatComposant
-        type:"Float"
+    @NumericComposant
+        types:["Float", "Int"]
     @__init__
-        @0:FloatComposant
-        @1:FloatComposant
+        @0:NumericComposant
+        @1:NumericComposant
     @__body__
         unit:"WorldUnits"
         x:&(0/value)
