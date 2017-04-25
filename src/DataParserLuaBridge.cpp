@@ -58,7 +58,7 @@ namespace obe
 			void listAttributeToLuaTable(kaguya::LuaTable& target, vili::ListAttribute& convert)
 			{
 				kaguya::LuaTable injectList;
-				for (int i = 0; i < convert.getSize(); i++)
+				for (int i = 0; i < convert.size(); i++)
 				{
 					injectList[i] = convert.get(i);
 				}

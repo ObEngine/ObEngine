@@ -17,7 +17,7 @@ namespace obe
 		class LevelSprite
 		{
 		private:
-			std::string m_path = "None";
+			std::string m_path = "";
 			std::string m_id;
 
 			Coord::UnitVector m_position;
@@ -49,8 +49,8 @@ namespace obe
 			void update();
 
 		public:
-			LevelSprite(std::string path, std::string id);
 			LevelSprite(std::string id);
+
 			void load(std::string path);
 
 			void setSprite(sf::Sprite* spr);

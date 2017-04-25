@@ -7,14 +7,6 @@ namespace obe
 {
 	namespace Graphics
 	{
-		LevelSprite::LevelSprite(std::string path, std::string id)
-		{
-			m_path = path;
-			m_id = id;
-			System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
-			m_returnSprite.setTexture(m_texture);
-		}
-
 		LevelSprite::LevelSprite(std::string id)
 		{
 			m_id = id;
@@ -23,10 +15,13 @@ namespace obe
 
 		void LevelSprite::load(std::string path)
 		{
-			m_path = path;
-			System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
-			m_returnSprite.setTexture(m_texture);
-			this->update();
+			if (path != "")
+			{
+				m_path = path;
+				System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
+				m_returnSprite.setTexture(m_texture);
+				this->update();
+			}
 		}
 
 		void LevelSprite::setSprite(sf::Sprite* spr)

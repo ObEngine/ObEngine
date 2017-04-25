@@ -428,7 +428,7 @@ namespace vili
 			else if (location->getType() == Types::ListAttribute)
 			{
 				ListAttribute* listLocation = static_cast<ListAttribute*>(location);
-				if (Functions::String::isStringInt(pathPart) && std::stoi(pathPart) < listLocation->getSize())
+				if (Functions::String::isStringInt(pathPart) && std::stoi(pathPart) < listLocation->size())
 					location = listLocation->get(std::stoi(pathPart));
 				else
 					throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongLinkListIndex", { {"path", getNodePath()}, {"target", m_path}, {"index", pathPart} });
@@ -489,7 +489,7 @@ namespace vili
 	ListAttribute::ListAttribute(const std::string& id) : ContainerAttribute(nullptr, id, Types::ListAttribute)
 	{
 	}
-	unsigned int ListAttribute::getSize() const
+	unsigned int ListAttribute::size() const
 	{
 		return m_dataList.size();
 	}
@@ -607,7 +607,7 @@ namespace vili
 		for (unsigned int j = 0; j < depth; j++)
 			(*file) << "    ";
 		(*file) << m_id << ":[" << std::endl;
-		for (unsigned int k = 0; k < getSize(); k++)
+		for (unsigned int k = 0; k < size(); k++)
 			get(k)->write(file, depth + 1);
 		for (unsigned int l = 0; l < depth; l++)
 			(*file) << "    ";
@@ -1068,6 +1068,7 @@ namespace vili
 	{
 		std::ifstream useFile;
 		useFile.open(filename);
+		m_root->setAnnotation(filename);
 		std::string currentLine;
 		std::vector<std::string> addPath = {};
 		unsigned int spacing = 4;
@@ -1186,6 +1187,7 @@ namespace vili
 							{
 								if (verbose) std::cout << indenter() << "Include New File : " << instructionValue << std::endl;
 								this->parseFile(instructionValue + ".vili", verbose);
+								m_root->setAnnotation(filename);
 							}
 							else if (instructionType == "Template")
 							{
@@ -1208,11 +1210,24 @@ namespace vili
 											if (templateBase->at("__init__")->contains(Types::ComplexAttribute, std::to_string(i)))
 											{
 												AttributeConstraintManager newConstraint(templateBase, instructionValue + "/__init__/" + std::to_string(i) + "/value");
-												std::string requiredType = templateBase->at("__init__", std::to_string(i))->getBaseAttribute("type")->get<std::string>();
-												Types::DataType requiredConstraintType = Types::stringToDataType(requiredType);
-												newConstraint.addConstraint([requiredConstraintType](BaseAttribute* attribute) -> bool
+												std::vector<std::string> requiredTypes;
+												ComplexAttribute* currentArgument = templateBase->at("__init__", std::to_string(i));
+												if (currentArgument->contains(Types::BaseAttribute, "type"))
+													requiredTypes.push_back(
+														currentArgument->getBaseAttribute("type")->get<std::string>()
+													);
+												else {
+													for (int i = 0; i < currentArgument->getListAttribute("types")->size(); i++) {
+														requiredTypes.push_back(currentArgument->getListAttribute("types")->get(i)->get<std::string>());
+													}
+												}
+												std::vector<Types::DataType> requiredConstraintTypes;
+												for (std::string& reqType : requiredTypes) {
+													requiredConstraintTypes.push_back(Types::stringToDataType(reqType));
+												}
+												newConstraint.addConstraint([requiredConstraintTypes](BaseAttribute* attribute) -> bool
 												{
-													return (attribute->getDataType() == requiredConstraintType);
+													return (Functions::Vector::isInList(attribute->getDataType(), requiredConstraintTypes));
 												});
 												if (templateBase->at("__init__", std::to_string(i))->contains(Types::BaseAttribute, "defaultValue"))
 												{
@@ -1354,7 +1369,7 @@ namespace vili
 						{
 							std::string attributeValue = parsedLine;
 							Types::DataType attributeType = Types::getVarType(attributeValue);
-							if (verbose) std::cout << indenter() << "Create Element #" << getPath(curCat)->getPath(Path(addPath))->getListAttribute(curList)->getSize()
+							if (verbose) std::cout << indenter() << "Create Element #" << getPath(curCat)->getPath(Path(addPath))->getListAttribute(curList)->size()
 													   << "(" << attributeValue << ") of ListAttribute " << curList << std::endl;
 							if (attributeType == Types::String)
 							{
@@ -1393,7 +1408,6 @@ namespace vili
 				}
 			}
 			useFile.close();
-			m_root->setAnnotation(filename);
 			if (verbose) std::cout << "Parsed over.." << std::endl;
 			return true;
 		}

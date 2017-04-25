@@ -158,7 +158,7 @@ namespace vili
 		ListAttribute(ContainerAttribute* parent, const std::string& id);
 		ListAttribute(const std::string& id);
 		virtual ~ListAttribute() {}
-		unsigned int getSize() const;
+		unsigned int size() const;
 		BaseAttribute* get(unsigned int index);
 		std::vector<BaseAttribute*>::iterator begin();
 		std::vector<BaseAttribute*>::iterator end();

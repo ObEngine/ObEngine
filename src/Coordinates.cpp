@@ -68,6 +68,22 @@ namespace obe
 			return UnitVector(x / add.x, y / add.y);
 		}
 
+		Units stringToUnits(const std::string& unit)
+		{
+			if (unit == "ViewPercentage")
+				return ViewPercentage;
+			else if (unit == "ViewPixels")
+				return ViewPixels;
+			else if (unit == "ViewUnits")
+				return ViewUnits;
+			else if (unit == "WorldPercentage")
+				return WorldPercentage;
+			else if (unit == "WorldPixels")
+				return WorldPixels;
+			else if (unit == "WorldUnits")
+				return WorldUnits;
+		}
+
 		std::ostream& operator<<(std::ostream& os, const UnitVector& m)
 		{
 			os << "(" << m.x << ", " << m.y << ")::" << m.unit;

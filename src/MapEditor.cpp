@@ -23,7 +23,7 @@ namespace obe
 			loadingText.setPosition(348.0, 595.0);
 			vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
 			std::string loadingRandomStr = *loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->get(
-				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->getSize() - 1));
+				Functions::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr")->size() - 1));
 			loadingText.setString(loadingRandomStr);
 			window.draw(loadingSprite); window.draw(loadingText); window.display();
 

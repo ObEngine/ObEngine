@@ -80,7 +80,7 @@ namespace obe
 				//Lights
 				void addLight(Light::PointLight* lgt);
 				//LevelSprites
-				Graphics::LevelSprite* createLevelSprite(std::string id, std::string path = "");
+				Graphics::LevelSprite* createLevelSprite(std::string id);
 				void reorganizeLayers();
 				void displaySprites(sf::RenderWindow* surf);
 				Graphics::LevelSprite* getSpriteByIndex(int index);

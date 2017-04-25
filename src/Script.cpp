@@ -1002,7 +1002,7 @@ namespace obe
 						static_cast<void (vili::ListAttribute::*)(unsigned int, const std::string&)>(&vili::ListAttribute::insert)
 					)
 					.addFunction("erase", &vili::ListAttribute::erase)
-					.addFunction("getSize", &vili::ListAttribute::getSize)
+					.addFunction("size", &vili::ListAttribute::size)
 				);
 				foundPart = true;
 			}

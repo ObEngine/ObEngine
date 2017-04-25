@@ -247,7 +247,7 @@ namespace obe
 			{
 				model = animFile.at("Images")->getBaseAttribute("model")->get<std::string>();
 			}
-			for (unsigned int i = 0; i < imageList->getSize(); i++)
+			for (unsigned int i = 0; i < imageList->size(); i++)
 			{
 				std::string textureName = "";
 				if (imageList->get(i)->getDataType() == vili::Types::Int && model != "")

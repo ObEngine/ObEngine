@@ -22,13 +22,9 @@ namespace obe
 			m_showCollisionModes["drawSkel"] = false;
 		}
 
-		Graphics::LevelSprite* World::createLevelSprite(std::string id, std::string path)
+		Graphics::LevelSprite* World::createLevelSprite(std::string id)
 		{
-			std::unique_ptr<Graphics::LevelSprite> newLevelSprite;
-			if (path == "")
-				newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
-			else
-				newLevelSprite = std::make_unique<Graphics::LevelSprite>(path, id);
+			std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
 
 			Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
 			m_spriteArray.push_back(std::move(newLevelSprite));
@@ -70,19 +66,13 @@ namespace obe
 			{
 				vili::ComplexAttribute* meta = mapParse.at("Meta");
 				m_levelName = meta->getBaseAttribute("name")->get<std::string>();
-				m_size->w = meta->getListAttribute("size")->get(0)->get<int>();
-				m_size->h = meta->getListAttribute("size")->get(1)->get<int>();
+				m_size->w = meta->at<vili::BaseAttribute>("size", "x")->get<double>();
+				m_size->h = meta->at<vili::BaseAttribute>("size", "y")->get<double>();
 
-				m_camera.setSize(meta->getListAttribute("view")->get(0)->get<int>(), meta->getListAttribute("view")->get(1)->get<int>());
-
-				//camera.setWorldSize(sizeX, sizeY);
-				//camera.setSize(sizeX, sizeY);
-				if (meta->contains(vili::Types::ListAttribute, "camera"))
-				{
-					int camW = meta->getListAttribute("camera")->get(0)->get<int>();
-					int camH = meta->getListAttribute("camera")->get(1)->get<int>();
-					m_camera.setSize(camW, camH);
-				}
+				m_camera.setSize(
+					meta->at<vili::BaseAttribute>("view", "x")->get<double>(), 
+					meta->at<vili::BaseAttribute>("view", "y")->get<double>()
+				);
 			}
 			else
 				throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", { {"map", filename} });
@@ -101,28 +91,36 @@ namespace obe
 					int layer;
 					int zdepth;
 					spriteID = currentSpriteName;
-					spriteUnits = currentSprite->contains(vili::Types::BaseAttribute, "unit") ?
-						              currentSprite->getBaseAttribute("unit")->get<std::string>() : "WorldUnits";
+					spriteUnits = currentSprite->contains(vili::Types::ComplexAttribute, "unit") ?
+						              currentSprite->at<vili::BaseAttribute>("unit", "unit")->get<std::string>() : "WorldUnits";
 					std::cout << "SpriteUnit : " << spriteUnits << std::endl;
-					spritePath = currentSprite->getBaseAttribute("path")->get<std::string>();
-					spritePos = Coord::UnitVector(currentSprite->getListAttribute("pos")->get(0)->get<double>(),
-					                              currentSprite->getListAttribute("pos")->get(1)->get<double>());
-					spriteRot = currentSprite->getBaseAttribute("rotation")->get<int>();
-					spriteSca = currentSprite->getBaseAttribute("scale")->get<double>();
-					layer = currentSprite->getBaseAttribute("layer")->get<int>();
-					zdepth = currentSprite->getBaseAttribute("z-depth")->get<int>();
+					spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ? 
+						currentSprite->getBaseAttribute("path")->get<std::string>() : "";
+					spritePos = Coord::UnitVector(
+						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
+							currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
+						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
+							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
+					);
+					spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ? 
+						currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
+					spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ? 
+						currentSprite->getBaseAttribute("scale")->get<double>() : 1;
+					layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ? 
+						currentSprite->getBaseAttribute("layer")->get<int>() : 1;
+					zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ? 
+						currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
+
 					if (currentSprite->contains(vili::Types::ListAttribute, "attributeList"))
 					{
 						for (vili::BaseAttribute* attribute : *currentSprite->at<vili::ListAttribute>("attributeList"))
 							spriteAtrList.push_back(*attribute);
 					}
+
 					std::unique_ptr<Graphics::LevelSprite> tempSprite;
-					if (spritePath != "None")
-					{
-						tempSprite = std::make_unique<Graphics::LevelSprite>(spritePath, spriteID);
-					}
-					else
-						tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
+					tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
+					if (spritePath != "")
+						tempSprite->load(spritePath);
 					tempSprite->setPosition(spritePos.x, spritePos.y);
 					tempSprite->setRotation(spriteRot);
 					tempSprite->setScale(spriteSca, spriteSca);
@@ -709,7 +707,6 @@ namespace obe
 			newCollider->setPositionFromMaster(x, y);
 		}
 
-		KAGUYA_MEMBER_FUNCTION_OVERLOADS(World_createLevelSpriteWrapper, World, createLevelSprite, 1, 2)
 		void loadWorldLib(kaguya::State* lua)
 		{
 			if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
@@ -721,7 +718,7 @@ namespace obe
 				.addFunction("clearWorld", &World::clearWorld)
 				.addFunction("createCollisionAtPos", &World::createCollisionAtPos)
 				.addFunction("createGameObject", &World::createGameObject)
-				.addFunction("createLevelSprite", World_createLevelSpriteWrapper())
+				.addFunction("createLevelSprite", &World::createLevelSprite)
 				.addFunction("deleteCollisionByID", &World::deleteCollisionByID)
 				.addFunction("deleteSprite", &World::deleteSprite)
 				.addFunction("enableShowCollision", &World::enableShowCollision)

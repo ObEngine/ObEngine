@@ -16,6 +16,8 @@ namespace obe
 			WorldUnits
 		};
 
+		Units stringToUnits(const std::string& unit);
+
 		struct WorldStruct { double w; double h; };
 		struct ViewStruct { double w; double h; double x; double y; };
 		struct ScreenStruct { double w; double h; };

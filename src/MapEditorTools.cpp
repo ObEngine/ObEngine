@@ -282,7 +282,8 @@ namespace obe
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			while (world->getSpriteByID(key) != nullptr)
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key, "Sprites/LevelSprites/" + geid);
+			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
+			sprToAdd->load("Sprites/LevelSprites/" + geid);
 			sprToAdd->move(960 + world->getCamera().getX(), 540 + world->getCamera().getY());
 			sprToAdd->setRotation(0);
 			sprToAdd->setScale(1, 1);

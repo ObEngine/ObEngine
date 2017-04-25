@@ -142,9 +142,9 @@ namespace obe
 					m_objectAnimator->setPath(animatorPath);
 					m_objectAnimator->loadAnimator();
 				}
-				if (obj->at("Animator")->contains(vili::Types::BaseAttribute, "anim"))
+				if (obj->at("Animator")->contains(vili::Types::BaseAttribute, "default"))
 				{
-					m_objectAnimator->setKey(obj->at("Animator")->getBaseAttribute("anim")->get<std::string>());
+					m_objectAnimator->setKey(obj->at("Animator")->getBaseAttribute("default")->get<std::string>());
 				}
 				m_hasAnimator = true;
 			}
@@ -152,17 +152,24 @@ namespace obe
 			if (obj->contains(vili::Types::ComplexAttribute, "Collider"))
 			{
 				m_objectCollider = world->createCollider(m_id);
-				m_colliderSolid = obj->at("Collider")->getBaseAttribute("solid")->get<bool>();
-				m_colliderClick = true;
 
-				if (m_colliderSolid) m_objectCollider->addTag("Solid");
-				int colliderPointSize;
-				colliderPointSize = obj->at("Collider")->getListAttribute("polygonPoints")->getSize();
-				for (int i = 0; i < colliderPointSize; i++)
+				std::string pointsUnit = obj->at("Collider", "unit")->getBaseAttribute("unit")->get<std::string>();
+				bool completePoint = false;
+				double pointBuffer;
+				Coord::Units pBaseUnit = Coord::stringToUnits(pointsUnit);
+				for (vili::BaseAttribute* colliderPoint : *obj->at("Collider")->getListAttribute("points"))
 				{
-					std::string getPt = obj->at("Collider")->getListAttribute("polygonPoints")->get(i)->get<std::string>();
-					std::vector<std::string> tPoint = Functions::String::split(getPt, ",");
-					m_objectCollider->addPoint(std::stoi(tPoint[0]), std::stoi(tPoint[1]));
+					if (completePoint = !completePoint)
+					{
+						Coord::UnitVector pVector2 = Coord::UnitVector(
+							pointBuffer, 
+							colliderPoint->get<double>(), 
+							pBaseUnit
+						).to<Coord::WorldPixels>();
+						m_objectCollider->addPoint(pVector2.x, pVector2.y);
+					}
+					else
+						pointBuffer = colliderPoint->get<double>();
 				}
 				m_hasCollider = true;
 			}
@@ -171,32 +178,48 @@ namespace obe
 			{
 				m_objectLevelSprite = world->createLevelSprite(m_id);
 				m_levelSpriteRelative = (obj->at("LevelSprite")->getBaseAttribute("position")->get<std::string>() == "relative") ? true : false;
-				int decoRot;
+				std::string spritePath;
+				Coord::UnitVector spritePos;
+				int spriteRot;
 				int sprOffX = 0;
 				int sprOffY = 0;
-				double decoSca;
+				double spriteSca;
 				std::vector<std::string> decoAtrList;
 				int layer;
 				int zdepth;
+				vili::ComplexAttribute* currentSprite = obj->at("LevelSprite");
 
-				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "path"))
-					m_objectLevelSprite->load(obj->at("LevelSprite")->getBaseAttribute("path")->get<std::string>());
-				decoRot = obj->at("LevelSprite")->getBaseAttribute("rotation")->get<int>();
-				decoSca = obj->at("LevelSprite")->getBaseAttribute("scale")->get<double>();
-				layer = obj->at("LevelSprite")->getBaseAttribute("layer")->get<int>();
-				zdepth = obj->at("LevelSprite")->getBaseAttribute("z-depth")->get<int>();
+				spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ?
+					currentSprite->getBaseAttribute("path")->get<std::string>() : "";
+				spritePos = Coord::UnitVector(
+					currentSprite->contains(vili::Types::ComplexAttribute, "pos") ?
+					currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
+					currentSprite->contains(vili::Types::ComplexAttribute, "pos") ?
+					currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
+					);
+				spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ?
+					currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
+				spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ?
+					currentSprite->getBaseAttribute("scale")->get<double>() : 1;
+				layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ?
+					currentSprite->getBaseAttribute("layer")->get<int>() : 1;
+				zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ?
+					currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
+
 				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "offsetX"))
 					sprOffX = obj->at("LevelSprite")->getBaseAttribute("offsetX")->get<int>();
 				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "offsetY"))
 					sprOffY = obj->at("LevelSprite")->getBaseAttribute("offsetY")->get<int>();
 				if (obj->at("LevelSprite")->contains(vili::Types::ListAttribute, "attributeList"))
 				{
-					int atrListSize = obj->at("LevelSprite")->getListAttribute("attributeList")->getSize();
+					int atrListSize = obj->at("LevelSprite")->getListAttribute("attributeList")->size();
 					for (int j = 0; j < atrListSize; j++)
 						decoAtrList.push_back(obj->at("LevelSprite")->getListAttribute("attributeList")->get(j)->get<std::string>());
 				}
-				m_objectLevelSprite->setRotation(decoRot);
-				m_objectLevelSprite->setScale(decoSca, decoSca);
+
+				m_objectLevelSprite->load(spritePath);
+				m_objectLevelSprite->setRotation(spriteRot);
+				m_objectLevelSprite->setScale(spriteSca, spriteSca);
 				m_objectLevelSprite->setAtr(decoAtrList);
 				m_objectLevelSprite->setLayer(layer);
 				m_objectLevelSprite->setZDepth(zdepth);
@@ -241,14 +264,19 @@ namespace obe
 				(*m_objectScript)("protect(\"Private\")");
 				(*m_objectScript)("protect(\"Public\")");
 
-				if (obj->at("Script")->contains(vili::Types::ListAttribute, "scriptList"))
+				if (obj->at("Script")->contains(vili::Types::ListAttribute, "sources"))
 				{
-					int scriptListSize = obj->at("Script")->getListAttribute("scriptList")->getSize();
+					int scriptListSize = obj->at("Script")->getListAttribute("sources")->size();
 					for (int i = 0; i < scriptListSize; i++)
 					{
 						std::string getScrName = obj->at("Script")->getListAttribute("scriptList")->get(i)->get<std::string>();
 						System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 					}
+				}
+				else if (obj->at("Script")->contains(vili::Types::BaseAttribute, "source"))
+				{
+					std::string getScrName = obj->at("Script")->getBaseAttribute("source")->get<std::string>();
+					System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 				}
 				if (obj->at("Script")->contains(vili::Types::BaseAttribute, "priority"))
 					m_scrPriority = obj->at("Script")->getBaseAttribute("priority")->get<int>();
