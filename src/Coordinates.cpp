@@ -72,15 +72,15 @@ namespace obe
 		{
 			if (unit == "ViewPercentage")
 				return ViewPercentage;
-			else if (unit == "ViewPixels")
+			if (unit == "ViewPixels")
 				return ViewPixels;
-			else if (unit == "ViewUnits")
+			if (unit == "ViewUnits")
 				return ViewUnits;
-			else if (unit == "WorldPercentage")
+			if (unit == "WorldPercentage")
 				return WorldPercentage;
-			else if (unit == "WorldPixels")
+			if (unit == "WorldPixels")
 				return WorldPixels;
-			else if (unit == "WorldUnits")
+			if (unit == "WorldUnits")
 				return WorldUnits;
 		}
 

@@ -154,7 +154,7 @@ namespace obe
 				m_objectCollider = world->createCollider(m_id);
 
 				std::string pointsUnit = obj->at("Collider", "unit")->getBaseAttribute("unit")->get<std::string>();
-				bool completePoint = false;
+				bool completePoint = true;
 				double pointBuffer;
 				Coord::Units pBaseUnit = Coord::stringToUnits(pointsUnit);
 				for (vili::BaseAttribute* colliderPoint : *obj->at("Collider")->getListAttribute("points"))
@@ -218,6 +218,7 @@ namespace obe
 				}
 
 				m_objectLevelSprite->load(spritePath);
+				m_objectLevelSprite->setPosition(spritePos.x, spritePos.y);
 				m_objectLevelSprite->setRotation(spriteRot);
 				m_objectLevelSprite->setScale(spriteSca, spriteSca);
 				m_objectLevelSprite->setAtr(decoAtrList);
@@ -269,7 +270,7 @@ namespace obe
 					int scriptListSize = obj->at("Script")->getListAttribute("sources")->size();
 					for (int i = 0; i < scriptListSize; i++)
 					{
-						std::string getScrName = obj->at("Script")->getListAttribute("scriptList")->get(i)->get<std::string>();
+						std::string getScrName = obj->at("Script")->getListAttribute("sources")->get(i)->get<std::string>();
 						System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 					}
 				}

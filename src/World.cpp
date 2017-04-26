@@ -141,20 +141,24 @@ namespace obe
 					vili::ComplexAttribute* currentCollision = collisions->at(collisionName);
 					std::unique_ptr<Collision::PolygonalCollider> tempCollider = std::make_unique<Collision::PolygonalCollider>(collisionName);
 
-					bool pointExists = true;
-					int pointIndex = 0;
-					while (pointExists)
+					std::string pointsUnit = currentCollision->at<vili::BaseAttribute>("unit", "unit")->get<std::string>();
+					bool completePoint = true;
+					double pointBuffer;
+					Coord::Units pBaseUnit = Coord::stringToUnits(pointsUnit);
+					for (vili::BaseAttribute* colliderPoint : *currentCollision->getListAttribute("points"))
 					{
-						if (currentCollision->contains(vili::Types::ListAttribute, std::to_string(pointIndex)))
+						if (completePoint = !completePoint)
 						{
-							tempCollider->addPoint(currentCollision->getListAttribute(std::to_string(pointIndex))->get(0)->get<double>(),
-							                       currentCollision->getListAttribute(std::to_string(pointIndex))->get(1)->get<double>());
+							Coord::UnitVector pVector2 = Coord::UnitVector(
+								pointBuffer,
+								colliderPoint->get<double>(),
+								pBaseUnit
+							).to<Coord::WorldPixels>();
+							std::cout << "Add Vector Pt : " << pVector2 << std::endl;
+							tempCollider->addPoint(pVector2.x, pVector2.y);
 						}
 						else
-						{
-							pointExists = false;
-						}
-						pointIndex++;
+							pointBuffer = colliderPoint->get<double>();
 					}
 					m_colliderArray.push_back(std::move(tempCollider));
 				}
