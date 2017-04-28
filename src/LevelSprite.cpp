@@ -24,6 +24,17 @@ namespace obe
 			}
 		}
 
+		void LevelSprite::setWorkingUnit(Coord::Units unit)
+		{
+			m_position = m_position.to(unit);
+			m_offset = m_offset.to(unit);
+		}
+
+		Coord::Units LevelSprite::getWorkingUnit() const
+		{
+			return m_position.unit;
+		}
+
 		void LevelSprite::setSprite(sf::Sprite* spr)
 		{
 			m_returnSprite.copyFromSprite(*spr);

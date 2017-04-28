@@ -178,33 +178,27 @@ namespace obe
 			{
 				m_objectLevelSprite = world->createLevelSprite(m_id);
 				m_levelSpriteRelative = (obj->at("LevelSprite")->getBaseAttribute("position")->get<std::string>() == "relative") ? true : false;
-				std::string spritePath;
-				Coord::UnitVector spritePos;
-				int spriteRot;
 				int sprOffX = 0;
 				int sprOffY = 0;
-				double spriteSca;
 				std::vector<std::string> decoAtrList;
-				int layer;
-				int zdepth;
 				vili::ComplexAttribute* currentSprite = obj->at("LevelSprite");
 
-				spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ?
-					currentSprite->getBaseAttribute("path")->get<std::string>() : "";
-				spritePos = Coord::UnitVector(
+				std::string spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ?
+					                         currentSprite->getBaseAttribute("path")->get<std::string>() : "";
+				Coord::UnitVector spritePos = Coord::UnitVector(
 					currentSprite->contains(vili::Types::ComplexAttribute, "pos") ?
-					currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
+						currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
 					currentSprite->contains(vili::Types::ComplexAttribute, "pos") ?
-					currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
-					);
-				spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ?
-					currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
-				spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ?
-					currentSprite->getBaseAttribute("scale")->get<double>() : 1;
-				layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ?
-					currentSprite->getBaseAttribute("layer")->get<int>() : 1;
-				zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ?
-					currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
+						currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
+				);
+				int spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ?
+					                currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
+				double spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ?
+					                   currentSprite->getBaseAttribute("scale")->get<double>() : 1;
+				int layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ?
+					            currentSprite->getBaseAttribute("layer")->get<int>() : 1;
+				int zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ?
+					             currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
 
 				if (obj->at("LevelSprite")->contains(vili::Types::BaseAttribute, "offsetX"))
 					sprOffX = obj->at("LevelSprite")->getBaseAttribute("offsetX")->get<int>();

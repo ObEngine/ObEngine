@@ -50,6 +50,7 @@ namespace obe
 
 				template <Units E> 
 				UnitVector to() { return {}; };
+				UnitVector to(Units pUnit);
 		};
 
 		template <> inline UnitVector UnitVector::to<ViewPercentage>() {
