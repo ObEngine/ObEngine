@@ -28,9 +28,10 @@ namespace obe
 			this->apply();
 		}
 
-		void Camera::move(const Coord::UnitVector& position)
+		void Camera::move(Coord::UnitVector position)
 		{
-			m_position.add(position.x, position.y);
+			Coord::UnitVector tPosition = position.to(m_position.unit);
+			m_position.add(tPosition.x, tPosition.y);
 			this->apply();
 		}
 

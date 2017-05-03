@@ -40,6 +40,7 @@ namespace obe
 			void loadCollision(kaguya::State* lua, std::vector<std::string> args);
 			void loadConsole(kaguya::State* lua, std::vector<std::string> args);
 			void loadConstants(kaguya::State* lua, std::vector<std::string> args);
+			void loadCoordinates(kaguya::State* lua, std::vector<std::string> args);
 			void loadCursor(kaguya::State* lua, std::vector<std::string> args);
 			void loadDialog(kaguya::State* lua, std::vector<std::string> args);
 			void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);

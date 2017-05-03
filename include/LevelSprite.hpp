@@ -14,7 +14,7 @@ namespace obe
 {
 	namespace Graphics
 	{
-		class LevelSprite
+		class LevelSprite : public Coord::UnitBasedObject
 		{
 		private:
 			std::string m_path = "";
@@ -22,7 +22,6 @@ namespace obe
 
 			Coord::UnitVector m_position;
 			Coord::UnitVector m_offset;
-			Coord::Units m_workingUnit = Coord::WorldUnits;
 
 			double m_width = 0;
 			double m_height = 0;
@@ -55,7 +54,6 @@ namespace obe
 			void load(std::string path);
 
 			void setWorkingUnit(Coord::Units unit);
-			Coord::Units getWorkingUnit() const;
 			void setSprite(sf::Sprite* spr);
 			void setTexture(sf::Texture texture);
 			void setLayer(int layer);

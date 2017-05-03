@@ -656,20 +656,20 @@ namespace obe
 						{
 						}
 						else if (keybind.isActionEnabled("CamLeft"))
-							world.getCamera().move(-cameraSpeed * framerateManager.getGameSpeed(), 0);
+							world.getCamera().move(Coord::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
 						else if (keybind.isActionEnabled("CamRight"))
-							world.getCamera().move(cameraSpeed * framerateManager.getGameSpeed(), 0);
+							world.getCamera().move(Coord::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
 
 						if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
 						{
 						}
 						else if (keybind.isActionEnabled("CamUp"))
-							world.getCamera().move(0, -cameraSpeed * framerateManager.getGameSpeed());
+							world.getCamera().move(Coord::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
 						else if (keybind.isActionEnabled("CamDown"))
-							world.getCamera().move(0, cameraSpeed * framerateManager.getGameSpeed());
+							world.getCamera().move(Coord::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
 
 						if (keybind.isActionEnabled("CamDash"))
-							cameraSpeed = 1800;
+							cameraSpeed = 3000;
 						else
 							cameraSpeed = 900;
 					}

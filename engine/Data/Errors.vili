@@ -150,6 +150,9 @@ ObEngine:
             @ConstantsImportError
                 where:"loadConstants"
                 message:"Can't import %lib%"
+            @CoordinatesImportError
+                where:"loadCoordinates"
+                message:"Can't import %lib%"
             @CursorImportError
                 where:"loadCursor"
                 message:"Can't import %lib%"

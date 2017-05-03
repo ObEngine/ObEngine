@@ -26,7 +26,7 @@ namespace obe
 
 			void setPosition(const Coord::UnitVector& position);
 			void setPosition(const double& x, const double& y);
-			void move(const Coord::UnitVector& position);
+			void move(Coord::UnitVector position);
 			void move(const double& x, const double& y);
 			void setX(const double& x);
 			void setY(const double& y);

@@ -358,6 +358,48 @@ namespace obe
 			calculateMasterPoint();
 		}
 
+		void PolygonalCollider::c_move(Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->move(pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_setPosition(Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->setPosition(pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_setPositionFromMaster(Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->setPositionFromMaster(pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_movePoint(int index, Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->movePoint(index, pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_setPointPosition(int index, Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->setPointPosition(index, pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_setPointRelativePosition(int index, Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->setPointRelativePosition(index, pos.x, pos.y);
+		}
+
+		void PolygonalCollider::c_setPointPositionFromMaster(int index, Coord::UnitVector pos)
+		{
+			pos = pos.to<Coord::WorldPixels>();
+			this->setPointPositionFromMaster(index, pos.x, pos.y);
+		}
+
 		void PolygonalCollider::setDrawOffset(int offx, int offy)
 		{
 			m_drawOffsetX = offx;
@@ -452,6 +494,26 @@ namespace obe
 		DoublePoint PolygonalCollider::getPosition()
 		{
 			return m_allPoints[0];
+		}
+
+		Coord::UnitVector PolygonalCollider::c_getPosition()
+		{
+			return Coord::UnitVector(m_allPoints[0].first, m_allPoints[0].second, Coord::WorldPixels).to(m_unit);
+		}
+
+		Coord::UnitVector PolygonalCollider::c_getPointPosition(int index)
+		{
+			return Coord::UnitVector(m_allPoints[index].first, m_allPoints[index].second, Coord::WorldPixels).to(m_unit);
+		}
+
+		Coord::UnitVector PolygonalCollider::c_getPointRelativePosition(int index)
+		{
+			return Coord::UnitVector(m_allPoints[index].first - m_allPoints[0].first, m_allPoints[index].second - m_allPoints[0].second, Coord::WorldPixels).to(m_unit);
+		}
+
+		Coord::UnitVector PolygonalCollider::c_getMasterPointPosition() const
+		{
+			return Coord::UnitVector(m_masterPoint.first, m_masterPoint.second, Coord::WorldPixels).to(m_unit);
 		}
 
 		void PolygonalCollider::move(double x, double y)

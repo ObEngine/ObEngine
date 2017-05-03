@@ -21,6 +21,15 @@ namespace obe
 		struct WorldStruct { double w; double h; };
 		struct ViewStruct { double w; double h; double x; double y; };
 		struct ScreenStruct { double w; double h; };
+
+		class UnitBasedObject
+		{
+		protected:
+			Units m_unit = WorldUnits;
+		public:
+			void setWorkingUnit(Units unit);
+			Units getWorkingUnit() const;
+		};
 		
 		class UnitVector
 		{

@@ -139,6 +139,7 @@ namespace obe
 				for (std::string& collisionName : collisions->getAll(vili::Types::ComplexAttribute))
 				{
 					vili::ComplexAttribute* currentCollision = collisions->at(collisionName);
+					std::cout << "New Collider : " << collisionName << std::endl;
 					std::unique_ptr<Collision::PolygonalCollider> tempCollider = std::make_unique<Collision::PolygonalCollider>(collisionName);
 
 					std::string pointsUnit = currentCollision->at<vili::BaseAttribute>("unit", "unit")->get<std::string>();

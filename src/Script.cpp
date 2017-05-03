@@ -98,6 +98,7 @@ namespace obe
 				if (lib[0] == "Collision" || all) { CoreLib::loadCollision(lua, (all) ? std::vector<std::string>{"Collision"} : lib);    found = true; }
 				if (lib[0] == "Console" || all) { CoreLib::loadConsole(lua, (all) ? std::vector<std::string>{"Console"} : lib);    found = true; }
 				if (lib[0] == "Constants" || all) { CoreLib::loadConstants(lua, (all) ? std::vector<std::string>{"Constants"} : lib);    found = true; }
+				if (lib[0] == "Coordinates" || all) { CoreLib::loadCoordinates(lua, (all) ? std::vector<std::string>{"Coordinates"} : lib); found = true; }
 				if (lib[0] == "Cursor" || all) { CoreLib::loadCursor(lua, (all) ? std::vector<std::string>{"Cursor"} : lib);    found = true; }
 				if (lib[0] == "Dialog" || all) { CoreLib::loadDialog(lua, (all) ? std::vector<std::string>{"Dialog"} : lib);    found = true; }
 				if (lib[0] == "KeyBind" || all) { CoreLib::loadKeyBind(lua, (all) ? std::vector<std::string>{"KeyBind"} : lib);    found = true; }
@@ -285,14 +286,14 @@ namespace obe
 					.addFunction("getCollidedCollidersWithTags", &Collision::PolygonalCollider::getCollidedCollidersWithTags)
 					.addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
 					.addFunction("getID", &Collision::PolygonalCollider::getID)
-					.addFunction("getMasterPointPosition", &Collision::PolygonalCollider::getMasterPointPosition)
+					.addFunction("getMasterPointPosition", &Collision::PolygonalCollider::c_getMasterPointPosition)
 					.addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
 					.addFunction("getParentID", &Collision::PolygonalCollider::getParentID)
 					.addFunction("getPath", &Collision::PolygonalCollider::getPath)
-					.addFunction("getPointPosition", &Collision::PolygonalCollider::getPointPosition)
-					.addFunction("getPointRelativePosition", &Collision::PolygonalCollider::getPointRelativePosition)
+					.addFunction("getPointPosition", &Collision::PolygonalCollider::c_getPointPosition)
+					.addFunction("getPointRelativePosition", &Collision::PolygonalCollider::c_getPointRelativePosition)
 					.addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
-					.addFunction("getPosition", &Collision::PolygonalCollider::getPosition)
+					.addFunction("getPosition", &Collision::PolygonalCollider::c_getPosition)
 					.addFunction("getSelected", &Collision::PolygonalCollider::getSelected)
 					.addFunction("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
 					.addFunction("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)
@@ -302,17 +303,17 @@ namespace obe
 					.addFunction("highlightLine", &Collision::PolygonalCollider::highlightLine)
 					.addFunction("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
 					.addFunction("isPointInBoundingBox", &Collision::PolygonalCollider::isPointInBoundingBox)
-					.addFunction("move", &Collision::PolygonalCollider::move)
-					.addFunction("movePoint", &Collision::PolygonalCollider::movePoint)
+					.addFunction("move", &Collision::PolygonalCollider::c_move)
+					.addFunction("movePoint", &Collision::PolygonalCollider::c_movePoint)
 					.addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
 					.addFunction("removeTag", &Collision::PolygonalCollider::removeTag)
 					.addFunction("setDrawOffset", &Collision::PolygonalCollider::setDrawOffset)
 					.addFunction("setOrigin", &Collision::PolygonalCollider::setOrigin)
-					.addFunction("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
-					.addFunction("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
-					.addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
-					.addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
-					.addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
+					.addFunction("setPointPosition", &Collision::PolygonalCollider::c_setPointPosition)
+					.addFunction("setPointRelativePosition", &Collision::PolygonalCollider::c_setPointRelativePosition)
+					.addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::c_setPointPositionFromMaster)
+					.addFunction("setPosition", &Collision::PolygonalCollider::c_setPosition)
+					.addFunction("setPositionFromMaster", &Collision::PolygonalCollider::c_setPositionFromMaster)
 					.addFunction("setSelected", &Collision::PolygonalCollider::setSelected)
 					.addFunction("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
 				);
@@ -391,6 +392,34 @@ namespace obe
 			}
 			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConstantsImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
+
+		void CoreLib::loadCoordinates(kaguya::State* lua, std::vector<std::string> args)
+		{
+			registerLib(lua, Functions::Vector::join(args, "."));
+			bool importAll = args.size() == 1;
+			bool foundPart = false;
+			if (!static_cast<bool>((*lua)["Core"]["Coordinates"])) (*lua)["Core"]["Coordinates"] = kaguya::NewTable();
+			if (importAll)
+			{
+				(*lua)["Core"]["Coordinates"]["ViewPercentage"] = Coord::Units::ViewPercentage;
+				(*lua)["Core"]["Coordinates"]["ViewPixels"] = Coord::Units::ViewPixels;
+				(*lua)["Core"]["Coordinates"]["ViewUnit"] = Coord::Units::ViewUnits;
+				(*lua)["Core"]["Coordinates"]["WorldPercentage"] = Coord::Units::WorldPercentage;
+				(*lua)["Core"]["Coordinates"]["WorldPixels"] = Coord::Units::WorldPixels;
+				(*lua)["Core"]["Coordinates"]["WorldUnits"] = Coord::Units::WorldUnits;
+				(*lua)["Core"]["Coordinates"]["UnitVector"].setClass(kaguya::UserdataMetatable<Coord::UnitVector>()
+					.addProperty("x", &Coord::UnitVector::x)
+					.addProperty("y", &Coord::UnitVector::y)
+					.addProperty("unit", &Coord::UnitVector::unit)
+					.addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units)>(&Coord::UnitVector::to))
+					.addFunction("add", &Coord::UnitVector::add)
+					.addFunction("set", &Coord::UnitVector::set)
+				);
+				foundPart = true;
+			}
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.CoordinatesImportError", { { "lib", Functions::Vector::join(args, ".") } });
+		}
+
 		void CoreLib::loadCursor(kaguya::State* lua, std::vector<std::string> args)
 		{
 			registerLib(lua, Functions::Vector::join(args, "."));
@@ -482,9 +511,11 @@ namespace obe
 					.addFunction("getScaleX", &Graphics::LevelSprite::getScaleX)
 					.addFunction("getScaleY", &Graphics::LevelSprite::getScaleY)
 					.addFunction("getX", &Graphics::LevelSprite::getX)
+					.addFunction("getWorkingUnit", &Graphics::LevelSprite::getWorkingUnit)
 					.addFunction("getY", &Graphics::LevelSprite::getY)
 					.addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
 					.addFunction("isDrawable", &Graphics::LevelSprite::isDrawable)
+					.addFunction("isVisible", &Graphics::LevelSprite::isVisible)
 					.addFunction("load", &Graphics::LevelSprite::load)
 					.addFunction("move", &Graphics::LevelSprite::move)
 					.addFunction("removeAtrByIndex", &Graphics::LevelSprite::removeAtrByIndex)
@@ -501,9 +532,10 @@ namespace obe
 					.addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)
 					.addFunction("setScale", &Graphics::LevelSprite::setScale)
 					.addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
-					.addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
 					.addFunction("setVisible", &Graphics::LevelSprite::setVisible)
-					.addFunction("isVisible", &Graphics::LevelSprite::isVisible)
+					.addFunction("setWorkingUnit", &Graphics::LevelSprite::setWorkingUnit)
+					.addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
+
 					);
 				foundPart = true;
 			}

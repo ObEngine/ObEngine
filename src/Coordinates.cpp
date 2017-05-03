@@ -8,6 +8,16 @@ namespace obe
 		ViewStruct UnitVector::View;
 		ScreenStruct UnitVector::Screen;
 
+		void UnitBasedObject::setWorkingUnit(Units unit)
+		{
+			m_unit = unit;
+		}
+
+		Units UnitBasedObject::getWorkingUnit() const
+		{
+			return m_unit;
+		}
+
 		void UnitVector::Init(WorldStruct*& world)
 		{
 			world = &UnitVector::World;
