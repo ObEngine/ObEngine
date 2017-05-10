@@ -280,11 +280,13 @@ namespace obe
 			std::cout << "Recv geid : " << geid << std::endl;
 			World::World* world = Script::hookCore.getPointer("World")->as<World::World*>();
 			std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-			while (world->getSpriteByID(key) != nullptr)
+			while (world->doesSpriteExists(key))
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
+			Coord::UnitVector pixelCamera = world->getCamera().getPosition().to<Coord::WorldPixels>();
 			sprToAdd->load("Sprites/LevelSprites/" + geid);
-			sprToAdd->move(960 + world->getCamera().getX(), 540 + world->getCamera().getY());
+			sprToAdd->setWorkingUnit(Coord::WorldPixels);
+			sprToAdd->move(960 + pixelCamera.x, 540 + pixelCamera.y);
 			sprToAdd->setRotation(0);
 			sprToAdd->setScale(1, 1);
 			sprToAdd->setAtr(std::vector<std::string>());

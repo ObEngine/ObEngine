@@ -30,12 +30,8 @@ namespace obe
 			void move(const double& x, const double& y);
 			void setX(const double& x);
 			void setY(const double& y);
-			void setSize(const Coord::UnitVector& size);
-			void setSize(const double& width, const double& height);
-			void scale(const Coord::UnitVector& size);
-			void scale(const double& width, const double& height);
-			void setWidth(const double& width);
-			void setHeight(const double& height);
+			void setSize(const double& pSize);
+			void scale(const double& pScale);
 			void setAngle(const double& angle);
 			void rotate(const double& angle);
 

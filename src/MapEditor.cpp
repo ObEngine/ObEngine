@@ -127,13 +127,9 @@ namespace obe
 			tgui::Label::Ptr objectsCatLabel = tgui::Label::create();
 
 			//Map Settings GUI
-			tgui::Label::Ptr mapSizeLabel = tgui::Label::create();
 			tgui::Label::Ptr mapNameLabel = tgui::Label::create();
 			tgui::TextBox::Ptr mapNameInput = tgui::TextBox::create();
 			tgui::Button::Ptr mapNameButton = tgui::Button::create();
-			tgui::TextBox::Ptr mapSizeXInput = tgui::TextBox::create();
-			tgui::TextBox::Ptr mapSizeYInput = tgui::TextBox::create();
-			tgui::Button::Ptr mapSizeButton = tgui::Button::create();
 
 			//Editor Settings GUI
 			tgui::CheckBox::Ptr displayFramerateCheckbox = tgui::CheckBox::create();
@@ -365,10 +361,6 @@ namespace obe
 			mapPanel->add(mapNameLabel);
 			mapPanel->add(mapNameInput);
 			mapPanel->add(mapNameButton);
-			mapPanel->add(mapSizeLabel);
-			mapPanel->add(mapSizeXInput);
-			mapPanel->add(mapSizeYInput);
-			mapPanel->add(mapSizeButton);
 			
 			mapCatLabel->setPosition(20, 20);
 			mapCatLabel->setTextSize(bigFontSize);
@@ -397,39 +389,6 @@ namespace obe
 				}
 			});
 
-			mapSizeLabel->setPosition(60, tgui::bindBottom(mapNameLabel) + 20);
-			mapSizeLabel->setTextSize(mediumFontSize);
-			mapSizeLabel->setRenderer(baseTheme.getRenderer("Label"));
-			mapSizeLabel->setText("Map Size : ");
-
-			mapSizeXInput->setPosition(tgui::bindRight(mapSizeLabel) + 20, tgui::bindTop(mapSizeLabel));
-			mapSizeXInput->setSize(80, mediumFontSize + 4);
-			mapSizeXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-
-			mapSizeYInput->setPosition(tgui::bindRight(mapSizeXInput) + 20, tgui::bindTop(mapSizeLabel));
-			mapSizeYInput->setSize(80, mediumFontSize + 4);
-			mapSizeYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-
-			mapSizeButton->setPosition(tgui::bindRight(mapSizeYInput) + 20, tgui::bindTop(mapSizeLabel) + 4);
-			mapSizeButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
-			mapSizeButton->setSize(16, 16);
-
-			mapSizeButton->connect("pressed", [&baseTheme, &mapSizeXInput, &mapSizeYInput, &world]() {
-				if (Functions::String::isStringInt(mapSizeXInput->getText()) && Functions::String::isStringInt(mapSizeYInput->getText())) {
-					std::string xMapSize = mapSizeXInput->getText();
-					std::string yMapSize = mapSizeYInput->getText();
-					world.setSize(std::stoi(xMapSize), std::stoi(yMapSize));
-					mapSizeXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-					mapSizeYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-					return;
-				}
-				if (!Functions::String::isStringInt(mapSizeXInput->getText())) {
-					mapSizeXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-				}
-				if (!Functions::String::isStringInt(mapSizeYInput->getText())) {
-					mapSizeYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-				}
-			});
 
 			//Settings Tab Setup
 			settingsPanel->add(settingsCatLabel);
@@ -601,16 +560,6 @@ namespace obe
 			world.loadFromFile(mapName);
 			
 			mapNameInput->setText(world.getLevelName());
-			mapSizeXInput->setText(std::to_string(world.getSizeX()));
-			mapSizeYInput->setText(std::to_string(world.getSizeY()));
-
-			mapSizeButton->connect("pressed", [&world, &mapSizeXInput, &mapSizeYInput]() {
-				std::string dimSX = mapSizeXInput->getText();
-				std::string dimSY = mapSizeYInput->getText();
-				int dimX = std::stoi(dimSX != "" ? dimSX : "1920");
-				int dimY = std::stoi(dimSY != "" ? dimSY : "1080");
-				world.setSize(dimX, dimY);
-			});
 
 			//Game Starts
 			while (window.isOpen())
@@ -627,7 +576,6 @@ namespace obe
 				if (keybind.isActionToggled("SpriteMode"))
 				{
 					editMode->setSelectedItemByIndex(0);
-					editMode = nullptr;
 				}
 				else if (keybind.isActionToggled("CollisionMode"))
 				{
@@ -645,7 +593,7 @@ namespace obe
 					saveEditMode = -1;
 				}
 					
-
+				Coord::UnitVector pixelCamera = world.getCamera().getPosition().to<Coord::WorldPixels>();
 				//Updates
 				if (!gameConsole.isConsoleVisible())
 				{
@@ -678,17 +626,6 @@ namespace obe
 					}
 				}
 
-				if (editMode->getSelectedItem() != "LevelSprites")
-				{
-					if (selectedSprite != nullptr)
-						selectedSprite->setColor(sf::Color::White);
-					selectedSprite = nullptr;
-					hoveredSprite = nullptr;
-					selectedSpriteOffsetX = 0;
-					selectedSpriteOffsetY = 0;
-					sprInfo.setString("");
-				}
-
 				//Sprite Editing
 				if (editMode->getSelectedItem() == "LevelSprites")
 				{
@@ -718,10 +655,10 @@ namespace obe
 					//Sprite Hover
 					if (hoveredSprite == nullptr && selectedSprite == nullptr)
 					{
-						if (world.getSpriteByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY(), currentLayer) != nullptr)
+						if (world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer) != nullptr)
 						{
-							hoveredSprite = world.getSpriteByPos(cursor.getX() + world.getCamera().getX(), 
-								cursor.getY() + world.getCamera().getY(), currentLayer);
+							hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x, 
+								cursor.getY() + pixelCamera.y, currentLayer);
 							sdBoundingRect = hoveredSprite->getRect();
 							hoveredSprite->setColor(sf::Color(0, 60, 255));
 							std::string sprInfoStr;
@@ -741,8 +678,8 @@ namespace obe
 						sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
 						sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
 						bool outHover = false;
-						Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + world.getCamera().getX(),
-							cursor.getY() + world.getCamera().getY(), currentLayer);
+						Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
+							cursor.getY() + pixelCamera.y, currentLayer);
 						if (testHoverSprite != hoveredSprite)
 							outHover = true;
 						if (outHover)
@@ -759,8 +696,8 @@ namespace obe
 						if (hoveredSprite != nullptr)
 						{
 							selectedSprite = hoveredSprite;
-							selectedSpriteOffsetX = (cursor.getX() + world.getCamera().getX()) - selectedSprite->getX();
-							selectedSpriteOffsetY = (cursor.getY() + world.getCamera().getY()) - selectedSprite->getY();
+							selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getX();
+							selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getY();
 							selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffsetX();
 							selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffsetY();
 
@@ -774,13 +711,13 @@ namespace obe
 					{
 						if (selectedSprite->getParentID() == "")
 						{
-							selectedSprite->setPosition(cursor.getX() + world.getCamera().getX() - selectedSpriteOffsetX,
-								cursor.getY() + world.getCamera().getY() - selectedSpriteOffsetY);
+							selectedSprite->setPosition(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
+								cursor.getY() + pixelCamera.y - selectedSpriteOffsetY);
 						}
 						else
 						{
-							selectedSprite->setOffset(cursor.getX() + world.getCamera().getX() - selectedSpriteOffsetX - selectedSpritePickPosX,
-								cursor.getY() + world.getCamera().getY() - selectedSpriteOffsetY - selectedSpritePickPosY);
+							selectedSprite->setOffset(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX - selectedSpritePickPosX,
+								cursor.getY() + pixelCamera.y - selectedSpriteOffsetY - selectedSpritePickPosY);
 						}
 						sdBoundingRect = selectedSprite->getRect();
 						std::string sprInfoStr;
@@ -868,6 +805,16 @@ namespace obe
 						selectedSpriteOffsetY = 0;
 					}
 				}
+				else
+				{
+					if (selectedSprite != nullptr)
+						selectedSprite->setColor(sf::Color::White);
+					selectedSprite = nullptr;
+					hoveredSprite = nullptr;
+					selectedSpriteOffsetX = 0;
+					selectedSpriteOffsetY = 0;
+					sprInfo.setString("");
+				}
 
 				//Collision Edition
 				if (editMode->getSelectedItem() == "Collisions")
@@ -877,8 +824,8 @@ namespace obe
 					if (selectedMasterCollider != nullptr)
 					{
 						selectedMasterCollider->clearHighlights();
-						int cursCoordX = cursor.getX() + world.getCamera().getX();
-						int cursCoordY = cursor.getY() + world.getCamera().getY();
+						int cursCoordX = cursor.getX() + pixelCamera.x;
+						int cursCoordY = cursor.getY() + pixelCamera.y;
 						int clNode = selectedMasterCollider->findClosestPoint(cursCoordX, cursCoordY);
 						selectedMasterCollider->highlightPoint(clNode);
 						int gLeftNode = ((clNode - 1 != -1) ? clNode - 1 : selectedMasterCollider->getPointsAmount() - 1);
@@ -888,12 +835,12 @@ namespace obe
 					}
 					//Collision Point Grab
 					if (cursor.getClicked("Left") && colliderPtGrabbed == -1 &&
-						world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(),
-						cursor.getY() + world.getCamera().getY()).first != nullptr)
+						world.getCollisionPointByPos(cursor.getX() + pixelCamera.x,
+						cursor.getY() + pixelCamera.y).first != nullptr)
 					{
 						std::pair<Collision::PolygonalCollider*, int> selectedPtCollider;
-						selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(),
-							cursor.getY() + world.getCamera().getY());
+						selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + pixelCamera.x,
+							cursor.getY() + pixelCamera.y);
 						if (selectedMasterCollider != nullptr && selectedMasterCollider != selectedPtCollider.first)
 						{
 							selectedMasterCollider->setSelected(false);
@@ -908,12 +855,12 @@ namespace obe
 					//Collision Point Move
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
 					{
-						selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
+						selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
 						if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
 							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
-								cursor.getX() + world.getCamera().getX(),
-								cursor.getY() + world.getCamera().getY());
+								cursor.getX() + pixelCamera.x,
+								cursor.getY() + pixelCamera.y);
 						}
 					}
 					//Collision Point Release
@@ -922,11 +869,11 @@ namespace obe
 						colliderPtGrabbed = -1;
 					}
 					//Collision Master Grab
-					if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), 
-						cursor.getY() + world.getCamera().getY()) != nullptr)
+					if (cursor.getClicked("Left") && world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x, 
+						cursor.getY() + pixelCamera.y) != nullptr)
 					{
-						Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), 
-							cursor.getY() + world.getCamera().getY());
+						Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x, 
+							cursor.getY() + pixelCamera.y);
 						if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
 						{
 							selectedMasterCollider->setSelected(false);
@@ -942,14 +889,14 @@ namespace obe
 					//Collision Master Move
 					if (cursor.getPressed("Left") && selectedMasterCollider != nullptr && masterColliderGrabbed)
 					{
-						selectedMasterCollider->setPositionFromMaster(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
+						selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
 						if (selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
 						{
 							std::pair<int, int> zeroCoords = selectedMasterCollider->getPointPosition(0);
 							std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointPosition();
 							world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
-								cursor.getX() + world.getCamera().getX() + zeroCoords.first - masterCoords.first,
-								cursor.getY() + world.getCamera().getY() + zeroCoords.second - masterCoords.second);
+								cursor.getX() + pixelCamera.x + zeroCoords.first - masterCoords.first,
+								cursor.getY() + pixelCamera.y + zeroCoords.second - masterCoords.second);
 						}
 					}
 					//Collision Master Release
@@ -960,8 +907,8 @@ namespace obe
 					}
 					if (cursor.getClicked("Right") && selectedMasterCollider != nullptr && !masterColliderGrabbed)
 					{
-						int crPtX = cursor.getX() + world.getCamera().getX();
-						int crPtY = cursor.getY() + world.getCamera().getY();
+						int crPtX = cursor.getX() + pixelCamera.x;
+						int crPtY = cursor.getY() + pixelCamera.y;
 						int rqPtRes = selectedMasterCollider->hasPoint(crPtX, crPtY, 6, 6);
 						//Collision Point Create
 						if (rqPtRes == -1)
@@ -986,9 +933,9 @@ namespace obe
 					//Collision Release
 					if (cursor.getClicked("Left") && selectedMasterCollider != nullptr)
 					{
-						if (world.getCollisionMasterByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY()) == nullptr)
+						if (world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y) == nullptr)
 						{
-							if (world.getCollisionPointByPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY()).first == nullptr)
+							if (world.getCollisionPointByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y).first == nullptr)
 							{
 								selectedMasterCollider->setSelected(false);
 								selectedMasterCollider = nullptr;
@@ -1010,43 +957,24 @@ namespace obe
 					//Collision Create
 					if (cursor.getClicked("Right") && selectedMasterCollider == nullptr && !deletedCollision)
 					{
-						world.createCollisionAtPos(cursor.getX() + world.getCamera().getX(), cursor.getY() + world.getCamera().getY());
+						world.createCollisionAtPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
 					}
 				}
 
 				//GUI Update
 				/*GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
 					",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
-				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)world.getCamera().getX()) + "<color:255,255,255>"
-					",<color:0,255,0>" + std::to_string((int)world.getCamera().getY()) + "<color:255,255,255>)");
+				GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)pixelCamera.x) + "<color:255,255,255>"
+					",<color:0,255,0>" + std::to_string((int)pixelCamera.y) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("sumPos")->setComplexText("<color:255,255,255>Sum : (<color:0,255,0>" + 
-					std::to_string((int)world.getCamera().getX() + (int)cursor.getX()) + "<color:255,255,255>"
-					",<color:0,255,0>" + std::to_string((int)world.getCamera().getY() + (int)cursor.getY()) + "<color:255,255,255>)");
+					std::to_string((int)pixelCamera.x + (int)cursor.getX()) + "<color:255,255,255>"
+					",<color:0,255,0>" + std::to_string((int)pixelCamera.y + (int)cursor.getY()) + "<color:255,255,255>)");
 				GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));*/
-
-				if (guiEditorEnabled)
-					editorPanel->show();
-				else
-					editorPanel->hide();
-
-				//Events
-				Script::TriggerDatabase::GetInstance()->update();
-				world.update(framerateManager.getGameSpeed());
-				textDisplay.update(framerateManager.getGameSpeed());
-				keybind.update();
-				cursor.update();
-				if (drawFPS) fps.uTick();
-				if (drawFPS && framerateManager.doRender()) fps.tick();
-
-				//Triggers Handling
-				networkHandler.handleTriggers();
-				cursor.handleTriggers();
-				keybind.handleTriggers();
 
 				if (enableGridCheckbox->isChecked())
 				{
-					editorGrid.setCamOffsetX(-world.getCamera().getX());
-					editorGrid.setCamOffsetY(-world.getCamera().getY());
+					editorGrid.setCamOffsetX(-pixelCamera.x);
+					editorGrid.setCamOffsetY(-pixelCamera.y);
 					editorGrid.sendCursorPosition(cursor.getX(), cursor.getY());
 					if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(&cursor, 0, -1);
 					if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(&cursor, 1, 0);
@@ -1067,7 +995,7 @@ namespace obe
 					{
 						std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({ "Click" });
 						std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-							&cursorCollider, -world.getCamera().getX(), -world.getCamera().getY());
+							&cursorCollider, -pixelCamera.x, -pixelCamera.y);
 						for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 						{
 							for (int j = 0; j < clickableGameObjects.size(); j++)
@@ -1084,6 +1012,25 @@ namespace obe
 						}
 					}
 				}
+
+				if (guiEditorEnabled)
+					editorPanel->show();
+				else
+					editorPanel->hide();
+
+				//Events
+				Script::TriggerDatabase::GetInstance()->update();
+				world.update(framerateManager.getGameSpeed());
+				textDisplay.update(framerateManager.getGameSpeed());
+				keybind.update();
+				cursor.update();
+				if (drawFPS) fps.uTick();
+				if (drawFPS && framerateManager.doRender()) fps.tick();
+
+				//Triggers Handling
+				networkHandler.handleTriggers();
+				cursor.handleTriggers();
+				keybind.handleTriggers();
 
 				while (window.pollEvent(event))
 				{
@@ -1159,7 +1106,7 @@ namespace obe
 					if (hoveredSprite != nullptr)
 					{
 						sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
-						sprBorder.setPosition(sdBoundingRect.left - world.getCamera().getX(), sdBoundingRect.top - world.getCamera().getY());
+						sprBorder.setPosition(sdBoundingRect.left - pixelCamera.x, sdBoundingRect.top - pixelCamera.y);
 						sprBorder.setFillColor(sf::Color(0, 0, 0, 0));
 						sprBorder.setOutlineColor(sf::Color(255, 0, 0));
 						sprBorder.setOutlineThickness(2);

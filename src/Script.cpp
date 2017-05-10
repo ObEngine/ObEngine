@@ -303,17 +303,17 @@ namespace obe
 					.addFunction("highlightLine", &Collision::PolygonalCollider::highlightLine)
 					.addFunction("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
 					.addFunction("isPointInBoundingBox", &Collision::PolygonalCollider::isPointInBoundingBox)
-					.addFunction("move", &Collision::PolygonalCollider::c_move)
-					.addFunction("movePoint", &Collision::PolygonalCollider::c_movePoint)
+					.addFunction("move", &Collision::PolygonalCollider::u_move)
+					.addFunction("movePoint", &Collision::PolygonalCollider::u_movePoint)
 					.addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
 					.addFunction("removeTag", &Collision::PolygonalCollider::removeTag)
 					.addFunction("setDrawOffset", &Collision::PolygonalCollider::setDrawOffset)
 					.addFunction("setOrigin", &Collision::PolygonalCollider::setOrigin)
-					.addFunction("setPointPosition", &Collision::PolygonalCollider::c_setPointPosition)
-					.addFunction("setPointRelativePosition", &Collision::PolygonalCollider::c_setPointRelativePosition)
-					.addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::c_setPointPositionFromMaster)
-					.addFunction("setPosition", &Collision::PolygonalCollider::c_setPosition)
-					.addFunction("setPositionFromMaster", &Collision::PolygonalCollider::c_setPositionFromMaster)
+					.addFunction("setPointPosition", &Collision::PolygonalCollider::u_setPointPosition)
+					.addFunction("setPointRelativePosition", &Collision::PolygonalCollider::u_setPointRelativePosition)
+					.addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::u_setPointPositionFromMaster)
+					.addFunction("setPosition", &Collision::PolygonalCollider::u_setPosition)
+					.addFunction("setPositionFromMaster", &Collision::PolygonalCollider::u_setPositionFromMaster)
 					.addFunction("setSelected", &Collision::PolygonalCollider::setSelected)
 					.addFunction("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
 				);
@@ -404,14 +404,13 @@ namespace obe
 				(*lua)["Core"]["Coordinates"]["ViewPercentage"] = Coord::Units::ViewPercentage;
 				(*lua)["Core"]["Coordinates"]["ViewPixels"] = Coord::Units::ViewPixels;
 				(*lua)["Core"]["Coordinates"]["ViewUnit"] = Coord::Units::ViewUnits;
-				(*lua)["Core"]["Coordinates"]["WorldPercentage"] = Coord::Units::WorldPercentage;
 				(*lua)["Core"]["Coordinates"]["WorldPixels"] = Coord::Units::WorldPixels;
 				(*lua)["Core"]["Coordinates"]["WorldUnits"] = Coord::Units::WorldUnits;
 				(*lua)["Core"]["Coordinates"]["UnitVector"].setClass(kaguya::UserdataMetatable<Coord::UnitVector>()
 					.addProperty("x", &Coord::UnitVector::x)
 					.addProperty("y", &Coord::UnitVector::y)
 					.addProperty("unit", &Coord::UnitVector::unit)
-					.addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units)>(&Coord::UnitVector::to))
+					.addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units) const>(&Coord::UnitVector::to))
 					.addFunction("add", &Coord::UnitVector::add)
 					.addFunction("set", &Coord::UnitVector::set)
 				);

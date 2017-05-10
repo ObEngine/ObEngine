@@ -134,6 +134,7 @@ namespace obe
 			m_position.y = y;
 
 			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+			std::cout << "Abq : " << m_position << " and " << m_offset << std::endl;
 			std::cout << "Set position of " << m_id << " with " << m_position << " and " << m_offset << " to " << realPosition << std::endl;
 			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}

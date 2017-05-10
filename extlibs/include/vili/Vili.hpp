@@ -282,6 +282,8 @@ namespace vili
 		std::unique_ptr<ComplexAttribute> m_root = nullptr;
 		std::map<std::string, DataTemplate*> m_templateList;
 		std::vector<std::string> m_flagList;
+		unsigned int m_spacing = 4;
+		std::vector<std::string> m_includes;
 		ComplexAttribute* getPath(std::string path) const;
 		ComplexAttribute* getRootChild(std::string child) const;
 	public:
@@ -300,6 +302,10 @@ namespace vili
 		bool hasFlag(const std::string& flagName);
 		unsigned int getAmountOfFlags() const;
 		std::string getFlagAtIndex(int index);
+		void setSpacing(unsigned int spacing);
+		unsigned int getSpacing() const;
+		void addInclude(const std::string& filename);
+		std::vector<std::string> getIncludes() const;
 	};
 }
 

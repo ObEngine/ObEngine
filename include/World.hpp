@@ -33,7 +33,6 @@ namespace obe
 			private:
 				std::string m_levelName = "";
 				std::string m_baseFolder = "";
-				Coord::WorldStruct* m_size;
 				Camera m_camera;
 				bool m_cameraLocked = true;
 				kaguya::State* m_worldScriptEngine;
@@ -61,9 +60,6 @@ namespace obe
 				vili::DataParser* saveData();
 				void update(double dt);
 				void display(sf::RenderWindow* surf);
-				void setSize(int sizeX, int sizeY) const;
-				int getSizeX() const;
-				int getSizeY() const;
 				std::string getLevelName() const;
 				void setLevelName(std::string newName);
 				void setUpdateState(bool state);
@@ -89,6 +85,7 @@ namespace obe
 				std::vector<Graphics::LevelSprite*> getSpritesByLayer(int layer);
 				Graphics::LevelSprite* getSpriteByPos(int x, int y, int layer);
 				Graphics::LevelSprite* getSpriteByID(std::string ID);
+				bool doesSpriteExists(const std::string& id);
 				void deleteSpriteByID(std::string sprID);
 				void deleteSprite(Graphics::LevelSprite* sprToDelete);
 				//Colliders

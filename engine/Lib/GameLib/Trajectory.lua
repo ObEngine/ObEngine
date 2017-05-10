@@ -4,7 +4,7 @@ local inspect = require("Lib/StdLib/Inspect");
 
 Import("Core.Collision");
 Import("Core.LevelSprite");
-Import("Core.STD.Pair");
+Import("Core.Coordinates");
 
 local Trajectory = Class("Trajectory", function(self)
     self.trajName = "Trajectory";
@@ -19,7 +19,7 @@ Trajectory.bind = Overload();
 function Trajectory.bind.Trajectory.obe__Collision__PolygonalCollider(self, col, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {col, offset
-    , function(item) return {x = item:getPointPosition(0):first(), y = item:getPointPosition(0):second()}; end
+    , function(item) return {x = item:getPointPosition(0).x, y = item:getPointPosition(0).y}; end
     , function(item, x, y) item:setPosition(x, y, 0); end});
 end
 function Trajectory.bind.Trajectory.obe__Graphics__LevelSprite(self, spr, offset)
@@ -31,7 +31,7 @@ end
 function Trajectory.bind.Trajectory.obe__Script__GameObject(self, obj, offset)
     offset = offset == nil and offset or {0, 0};
     table.insert(self.bindingList, {obj, offset
-    , function(item) return {x = item:Collider():getPointPosition(0):first(), y = item:Collider():getPointPosition(0):second()}; end
+    , function(item) return {x = item:Collider():getPointPosition(0).x, y = item:Collider():getPointPosition(0).y}; end
     , function(item, x, y) item:LevelSprite():setPosition(x, y); item:Collider():setPosition(x, y, 0); end});
 end
 

@@ -9,7 +9,6 @@ namespace obe
 	{
 		World::World()
 		{
-			Coord::UnitVector::Init(m_size);
 			m_worldScriptEngine = new kaguya::State();
 			loadWorldScriptEngineBaseLib(m_worldScriptEngine);
 			(*m_worldScriptEngine)["World"] = this;
@@ -27,7 +26,7 @@ namespace obe
 			std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
 
 			Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
-			m_spriteArray.push_back(std::move(newLevelSprite));
+			m_spriteArray.push_back(move(newLevelSprite));
 			
 			this->reorganizeLayers();
 			return returnLevelSprite;
@@ -37,7 +36,7 @@ namespace obe
 		{
 			std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
 			Collision::PolygonalCollider* returnCollider = newCollider.get();
-			m_colliderArray.push_back(std::move(newCollider));
+			m_colliderArray.push_back(move(newCollider));
 			return returnCollider;
 		}
 
@@ -61,21 +60,25 @@ namespace obe
 			this->clearWorld();
 			vili::DataParser mapParse;
 			m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
+			std::cout << "Base Folder : " << m_baseFolder << std::endl;
 
 			if (mapParse->contains(vili::Types::ComplexAttribute, "Meta"))
 			{
 				vili::ComplexAttribute* meta = mapParse.at("Meta");
 				m_levelName = meta->getBaseAttribute("name")->get<std::string>();
-				m_size->w = meta->at<vili::BaseAttribute>("size", "x")->get<double>();
-				m_size->h = meta->at<vili::BaseAttribute>("size", "y")->get<double>();
 
-				m_camera.setSize(
-					meta->at<vili::BaseAttribute>("view", "x")->get<double>(), 
-					meta->at<vili::BaseAttribute>("view", "y")->get<double>()
-				);
+				
 			}
 			else
 				throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", { {"map", filename} });
+
+			if (mapParse->contains(vili::Types::ComplexAttribute, "View"))
+			{
+				vili::ComplexAttribute* view = mapParse.at("View");
+				m_camera.setSize(view->at<vili::BaseAttribute>("size")->get<double>());
+			}
+			else
+				throw aube::ErrorHandler::Raise("ObEngine.World.World.NoView", { {"map", filename} });
 
 			if (mapParse->contains(vili::Types::ComplexAttribute, "LevelSprites"))
 			{
@@ -83,33 +86,27 @@ namespace obe
 				for (std::string& currentSpriteName : levelSprites->getAll(vili::Types::ComplexAttribute))
 				{
 					vili::ComplexAttribute* currentSprite = levelSprites->at(currentSpriteName);
-					std::string spriteID, spritePath, spriteUnits;
-					Coord::UnitVector spritePos;
-					int spriteRot;
-					double spriteSca;
 					std::vector<std::string> spriteAtrList;
-					int layer;
-					int zdepth;
-					spriteID = currentSpriteName;
-					spriteUnits = currentSprite->contains(vili::Types::ComplexAttribute, "unit") ?
-						              currentSprite->at<vili::BaseAttribute>("unit", "unit")->get<std::string>() : "WorldUnits";
+					std::string spriteID = currentSpriteName;
+					std::string spriteUnits = currentSprite->contains(vili::Types::ComplexAttribute, "pos") ?
+						                          currentSprite->at<vili::BaseAttribute>("pos", "unit")->get<std::string>() : "WorldUnits";
 					std::cout << "SpriteUnit : " << spriteUnits << std::endl;
-					spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ? 
-						currentSprite->getBaseAttribute("path")->get<std::string>() : "";
-					spritePos = Coord::UnitVector(
+					std::string spritePath = currentSprite->contains(vili::Types::BaseAttribute, "path") ? 
+						                         currentSprite->getBaseAttribute("path")->get<std::string>() : "";
+					Coord::UnitVector spritePos = Coord::UnitVector(
 						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
 							currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
 						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
 							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
 					);
-					spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ? 
-						currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
-					spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ? 
-						currentSprite->getBaseAttribute("scale")->get<double>() : 1;
-					layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ? 
-						currentSprite->getBaseAttribute("layer")->get<int>() : 1;
-					zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ? 
-						currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
+					int spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ? 
+						                currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
+					double spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ? 
+						                   currentSprite->getBaseAttribute("scale")->get<double>() : 1;
+					int layer = currentSprite->contains(vili::Types::BaseAttribute, "layer") ? 
+						            currentSprite->getBaseAttribute("layer")->get<int>() : 1;
+					int zdepth = currentSprite->contains(vili::Types::BaseAttribute, "z-depth") ? 
+						             currentSprite->getBaseAttribute("z-depth")->get<int>() : 1;
 
 					if (currentSprite->contains(vili::Types::ListAttribute, "attributeList"))
 					{
@@ -117,17 +114,17 @@ namespace obe
 							spriteAtrList.push_back(*attribute);
 					}
 
-					std::unique_ptr<Graphics::LevelSprite> tempSprite;
-					tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
+					std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
 					if (spritePath != "")
 						tempSprite->load(spritePath);
+					tempSprite->setWorkingUnit(Coord::stringToUnits(spriteUnits));
 					tempSprite->setPosition(spritePos.x, spritePos.y);
 					tempSprite->setRotation(spriteRot);
 					tempSprite->setScale(spriteSca, spriteSca);
 					tempSprite->setAtr(spriteAtrList);
 					tempSprite->setLayer(layer);
 					tempSprite->setZDepth(zdepth);
-					m_spriteArray.push_back(std::move(tempSprite));
+					m_spriteArray.push_back(move(tempSprite));
 				}
 			}
 
@@ -148,7 +145,7 @@ namespace obe
 					Coord::Units pBaseUnit = Coord::stringToUnits(pointsUnit);
 					for (vili::BaseAttribute* colliderPoint : *currentCollision->getListAttribute("points"))
 					{
-						if (completePoint = !completePoint)
+						if ((completePoint = !completePoint))
 						{
 							Coord::UnitVector pVector2 = Coord::UnitVector(
 								pointBuffer,
@@ -161,7 +158,7 @@ namespace obe
 						else
 							pointBuffer = colliderPoint->get<double>();
 					}
-					m_colliderArray.push_back(std::move(tempCollider));
+					m_colliderArray.push_back(move(tempCollider));
 				}
 			}
 
@@ -210,11 +207,10 @@ namespace obe
 			vili::DataParser* dataStore = new vili::DataParser;
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
+			dataStore->addInclude("Obe");
 			(*dataStore)->createComplexAttribute("Meta");
 			dataStore->at("Meta")->createBaseAttribute("name", m_levelName);
 			dataStore->at("Meta")->createListAttribute("size");
-			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->w);
-			dataStore->at<vili::ListAttribute>("Meta", "size")->push(m_size->h);
 			dataStore->at("Meta")->createListAttribute("view");
 			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getWidth());
 			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getHeight());
@@ -343,19 +339,17 @@ namespace obe
 
 		void World::displaySprites(sf::RenderWindow* surf)
 		{
+			Coord::UnitVector pixelCamera = m_camera.getPosition().to<Coord::WorldPixels>();
 			for (unsigned int i = 0; i < m_spriteArray.size(); i++)
 			{
-				int layeredX;
-				int layeredY;
-
 				bool lightHooked = m_lightMap.find(m_spriteArray[i]->getID()) != m_lightMap.end();
 				Light::PointLight* cLight = nullptr;
 				if (lightHooked) cLight = m_lightMap[m_spriteArray[i]->getID()].get();
 
-				layeredX = (((m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX()) * (m_spriteArray[i]->getLayer()) -
-					m_camera.getX()) / m_spriteArray[i]->getLayer());
-				layeredY = (((m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY()) * (m_spriteArray[i]->getLayer()) -
-					m_camera.getY()) / m_spriteArray[i]->getLayer());
+				int layeredX = (((m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX()) * (m_spriteArray[i]->getLayer()) -
+					pixelCamera.x) / m_spriteArray[i]->getLayer());
+				int layeredY = (((m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY()) * (m_spriteArray[i]->getLayer()) -
+					pixelCamera.y) / m_spriteArray[i]->getLayer());
 				if (Functions::Vector::isInList(static_cast<std::string>("+FIX"), m_spriteArray[i]->getAttributes()))
 				{
 					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX();
@@ -371,44 +365,28 @@ namespace obe
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PHFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - m_camera.getX();
+					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - pixelCamera.x;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PVFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - m_camera.getY();
+					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - pixelCamera.y;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - m_camera.getX();
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - m_camera.getY();
+					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - pixelCamera.x;
+					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - pixelCamera.y;
 				}
-				sfe::ComplexSprite tAffSpr;
-				tAffSpr = *m_spriteArray[i]->getSprite();
+				sfe::ComplexSprite tAffSpr = *m_spriteArray[i]->getSprite();
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
-				Coord::UnitVector realPosition = Coord::UnitVector(layeredX, layeredY).to<Coord::WorldPixels>();
+				Coord::UnitVector realPosition = Coord::UnitVector(layeredX, layeredY, m_spriteArray[i]->getWorkingUnit()).to<Coord::WorldPixels>();
+				std::cout << "Real position of " << m_spriteArray[i]->getID() << " is " << realPosition << std::endl;
 				tAffSpr.setPosition(realPosition.x, realPosition.y);
 				if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
 				if (m_spriteArray[i]->isVisible())
 					surf->draw(tAffSpr);
 				if (lightHooked) { if (!cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
 			}
-		}
-
-		void World::setSize(int sizeX, int sizeY) const
-		{
-			m_size->w = sizeX;
-			m_size->h = sizeY;
-		}
-
-		int World::getSizeX() const
-		{
-			return m_size->w;
-		}
-
-		int World::getSizeY() const
-		{
-			return m_size->h;
 		}
 
 		std::string World::getLevelName() const
@@ -504,7 +482,7 @@ namespace obe
 				newGameObject->getCollider()->setParentID(id);
 			}
 
-			m_gameObjectMap[id] = std::move(newGameObject);
+			m_gameObjectMap[id] = move(newGameObject);
 			m_needToOrderUpdateArray = true;
 			
 			std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
@@ -609,6 +587,16 @@ namespace obe
 					return m_spriteArray[i].get();
 			}
 			throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownLevelSprite", { {"id", id}, {"map", m_levelName} });
+		}
+
+		bool World::doesSpriteExists(const std::string& id)
+		{
+			for (int i = 0; i < m_spriteArray.size(); i++)
+			{
+				if (m_spriteArray[i].get()->getID() == id)
+					return true;
+			}
+			return false;
 		}
 
 		void World::deleteSpriteByID(std::string sprID)
@@ -737,8 +725,6 @@ namespace obe
 				.addFunction("getCollisionPointByPos", &World::getCollisionPointByPos)
 				.addFunction("getGameObject", &World::getGameObject)
 				.addFunction("getScriptEngine", &World::getScriptEngine)
-				.addFunction("getSizeX", &World::getSizeX)
-				.addFunction("getSizeY", &World::getSizeY)
 				.addFunction("getSpriteArraySize", &World::getSpriteArraySize)
 				.addFunction("getSpriteByID", &World::getSpriteByID)
 				.addFunction("getSpriteByIndex", &World::getSpriteByIndex)

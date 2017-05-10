@@ -79,6 +79,26 @@ namespace vili
 		return stream;
 	}
 
+	void DataParser::setSpacing(unsigned spacing)
+	{
+		m_spacing = spacing;
+	}
+
+	unsigned DataParser::getSpacing() const
+	{
+		return m_spacing;
+	}
+
+	void DataParser::addInclude(const std::string& filename)
+	{
+		m_includes.push_back(filename);
+	}
+
+	std::vector<std::string> DataParser::getIncludes() const
+	{
+		return m_includes;
+	}
+
 	std::string Types::getDefaultValueForType(Types::DataType type)
 	{
 		std::string value = "";
@@ -1071,7 +1091,6 @@ namespace vili
 		m_root->setAnnotation(filename);
 		std::string currentLine;
 		std::vector<std::string> addPath = {};
-		unsigned int spacing = 4;
 		std::string curCat = "None";
 		std::string curList = "None";
 		int curListIndent = 0;
@@ -1083,7 +1102,7 @@ namespace vili
 			{
 				Functions::String::StringExtractor stringsInLine = Functions::String::extractAllStrings(currentLine);
 				std::string rawLine = Functions::Vector::join(std::get<1>(stringsInLine), "");
-				Functions::String::replaceStringInPlace(rawLine, "	", std::string(spacing, ' '));
+				Functions::String::replaceStringInPlace(rawLine, "	", std::string(m_spacing, ' '));
 				unsigned int currentIndent = 0;
 				unsigned int spacingAmount = 0;
 				for (int i = 0; i < rawLine.size(); i++)
@@ -1091,7 +1110,7 @@ namespace vili
 					if (rawLine[i] == ' ')
 					{
 						spacingAmount += 1;
-						if (spacingAmount == spacing)
+						if (spacingAmount == m_spacing)
 						{
 							spacingAmount = 0;
 							currentIndent += 1;
@@ -1100,7 +1119,7 @@ namespace vili
 					else
 						break;
 				}
-				Functions::String::replaceStringInPlace(rawLine, std::string(spacing, ' '), "");
+				Functions::String::replaceStringInPlace(rawLine, std::string(m_spacing, ' '), "");
 				std::vector<std::string> parsedLines;
 				std::string addParsedLine = "";
 				for (int i = 0; i < std::get<2>(stringsInLine).size(); i++)
@@ -1180,13 +1199,14 @@ namespace vili
 							}
 							else if (instructionType == "Spacing")
 							{
-								spacing = std::stoi(instructionValue);
-								if (verbose) std::cout << indenter() << "Define New Spacing : " << spacing << std::endl;
+								m_spacing = std::stoi(instructionValue);
+								if (verbose) std::cout << indenter() << "Define New Spacing : " << m_spacing << std::endl;
 							}
 							else if (instructionType == "Include")
 							{
 								if (verbose) std::cout << indenter() << "Include New File : " << instructionValue << std::endl;
 								this->parseFile(instructionValue + ".vili", verbose);
+								this->addInclude(instructionValue);
 								m_root->setAnnotation(filename);
 							}
 							else if (instructionType == "Template")
@@ -1418,6 +1438,11 @@ namespace vili
 		std::ofstream outFile;
 		outFile.open(filename);
 		if (verbose) std::cout << "Writing DataParser's content on file : " << filename << std::endl;
+		if (m_spacing != 4)
+		{
+			outFile << "Spacing (" << m_spacing << ");" << std::endl;
+			if (verbose) std::cout << "Define custom spacing : " << m_spacing << std::endl;
+		}
 		if (verbose && this->getAmountOfFlags() > 0) std::cout << "    Writing Flags..." << std::endl;
 		for (unsigned int i = 0; i < this->getAmountOfFlags(); i++)
 		{

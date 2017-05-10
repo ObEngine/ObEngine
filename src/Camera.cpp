@@ -30,8 +30,7 @@ namespace obe
 
 		void Camera::move(Coord::UnitVector position)
 		{
-			Coord::UnitVector tPosition = position.to(m_position.unit);
-			m_position.add(tPosition.x, tPosition.y);
+			m_position += position;
 			this->apply();
 		}
 
@@ -43,49 +42,19 @@ namespace obe
 
 		void Camera::setX(const double& x)
 		{
-			m_position.set(x, m_position.y);
+			m_position.x = x;
 			this->apply();
 		}
 
 		void Camera::setY(const double& y)
 		{
-			m_position.set(m_position.x, y);
+			m_position.y = y;
 			this->apply();
 		}
 
-		void Camera::setSize(const Coord::UnitVector& size)
+		void Camera::setSize(const double& pSize)
 		{
-			m_size.set(size.x, size.y);
-			this->apply();
-		}
-
-		void Camera::setSize(const double& width, const double& height)
-		{
-			m_size.set(width, height);
-			this->apply();
-		}
-
-		void Camera::scale(const Coord::UnitVector& size)
-		{
-			m_size.add(size.x, size.y);
-			this->apply();
-		}
-
-		void Camera::scale(const double& width, const double& height)
-		{
-			m_size.add(width, height);
-			this->apply();
-		}
-
-		void Camera::setWidth(const double& width)
-		{
-			m_size.set(width, m_size.y);
-			this->apply();
-		}
-
-		void Camera::setHeight(const double& height)
-		{
-			m_size.set(m_size.x, height);
+			m_size.set(pSize * 2 * (Coord::UnitVector::Screen.w / Coord::UnitVector::Screen.h), pSize * 2);
 			this->apply();
 		}
 

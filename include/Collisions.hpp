@@ -75,9 +75,9 @@ namespace obe
 			int findClosestPoint(double x, double y, bool neighboor = false, std::vector<int> excludedNodes = std::vector<int>());
 			std::vector<DoublePoint> getAllPoints() const;
 			//Collision Tests
-			PolygonalCollider joinPolygonalColliders(std::string joinID, Collision::PolygonalCollider* other);
-			bool testAllColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy, bool opt = false);
-			std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<Collision::PolygonalCollider*> collidersList, double offx, double offy);
+			PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other);
+			bool testAllColliders(std::vector<PolygonalCollider*> collidersList, double offx, double offy, bool opt = false);
+			std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<PolygonalCollider*> collidersList, double offx, double offy);
 			bool doesCollide(PolygonalCollider* other, double offsetX = 0, double offsetY = 0);
 			bool doesPathCollide(std::vector<PolygonalCollider*> others, double offsetX = 0, double offsetY = 0, double toX = 0, double toY = 0);
 			ClipperLib::Path getPath();
@@ -103,13 +103,14 @@ namespace obe
 			void setPointRelativePosition(int index, double x, double y);
 			void setPointPositionFromMaster(int index, double x, double y);
 
-			void c_move(Coord::UnitVector pos);
-			void c_setPosition(Coord::UnitVector pos);
-			void c_setPositionFromMaster(Coord::UnitVector pos);
-			void c_movePoint(int index, Coord::UnitVector pos);
-			void c_setPointPosition(int index, Coord::UnitVector pos);
-			void c_setPointRelativePosition(int index, Coord::UnitVector pos);
-			void c_setPointPositionFromMaster(int index, Coord::UnitVector pos);
+			void u_move(double x, double y);
+			void u_setPosition(double x, double y);
+			void u_setPositionFromMaster(double x, double y);
+			void u_movePoint(int index, double x, double y);
+			void u_setPointPosition(int index, double x, double y);
+			void u_setPointRelativePosition(int index, double x, double y);
+			void u_setPointPositionFromMaster(int index, double x, double y);
+
 			//Origin
 			void addOriginChild(PolygonalCollider* child);
 			void removeOriginChild(PolygonalCollider* child, bool trigger = true);
@@ -136,8 +137,8 @@ namespace obe
 			std::vector<std::string>* getAllTags();
 			std::vector<std::string>* getAllExcludedTags();
 			std::vector<std::string>* getAllAcceptedTags();
-			bool doesCollideWithTags(std::vector<Collision::PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
-			std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<Collision::PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
+			bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
+			std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, double offx, double offy);
 			//Debug
 			void draw(sf::RenderWindow* surf, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
 			void highlightPoint(int pointIndex);

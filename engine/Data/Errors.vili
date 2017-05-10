@@ -249,6 +249,9 @@ ObEngine:
             @NoMeta
                 where:"loadFromFile"
                 message:"Map file %map% does not have any 'Meta' RootAttribute"
+            @NoView
+                where:"loadFromFile"
+                message:"Map file %map% does not have any 'View' RootAttribute"
             @UnknownGameObject
                 where:"getGameObject"
                 messsage:"Can't find GameObject %id% in World %map%"

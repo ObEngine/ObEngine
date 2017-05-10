@@ -4,7 +4,6 @@ namespace obe
 {
 	namespace Coord
 	{
-		WorldStruct UnitVector::World;
 		ViewStruct UnitVector::View;
 		ScreenStruct UnitVector::Screen;
 
@@ -16,11 +15,6 @@ namespace obe
 		Units UnitBasedObject::getWorkingUnit() const
 		{
 			return m_unit;
-		}
-
-		void UnitVector::Init(WorldStruct*& world)
-		{
-			world = &UnitVector::World;
 		}
 
 		void UnitVector::Init(ViewStruct*& view)
@@ -60,25 +54,61 @@ namespace obe
 
 		UnitVector UnitVector::operator+(const UnitVector& add) const
 		{
-			return UnitVector(x + add.x, y + add.y);
+			UnitVector pVec = add.to(unit);
+			return UnitVector(x + pVec.x, y + pVec.y, unit);
+		}
+
+		UnitVector& UnitVector::operator+=(const UnitVector& add)
+		{
+			UnitVector pVec = add.to(unit);
+			x += pVec.x;
+			y += pVec.y;
+			return *this;
 		}
 
 		UnitVector UnitVector::operator-(const UnitVector& add) const
 		{
-			return UnitVector(x - add.x, y - add.y);
+			UnitVector pVec = add.to(unit);
+			return UnitVector(x - pVec.x, y - pVec.y, unit);
+		}
+
+		UnitVector& UnitVector::operator-=(const UnitVector& add)
+		{
+			UnitVector pVec = add.to(unit);
+			x -= pVec.x;
+			y -= pVec.y;
+			return *this;
 		}
 
 		UnitVector UnitVector::operator*(const UnitVector& add) const
 		{
-			return UnitVector(x * add.x, y * add.y);
+			UnitVector pVec = add.to(unit);
+			return UnitVector(x * pVec.x, y * pVec.y, unit);
+		}
+
+		UnitVector& UnitVector::operator*=(const UnitVector& add)
+		{
+			UnitVector pVec = add.to(unit);
+			x *= pVec.x;
+			y *= pVec.y;
+			return *this;
 		}
 
 		UnitVector UnitVector::operator/(const UnitVector& add) const
 		{
-			return UnitVector(x / add.x, y / add.y);
+			UnitVector pVec = add.to(unit);
+			return UnitVector(x / pVec.x, y / pVec.y, unit);
 		}
 
-		UnitVector UnitVector::to(Units pUnit)
+		UnitVector& UnitVector::operator/=(const UnitVector& add)
+		{
+			UnitVector pVec = add.to(unit);
+			x /= pVec.x;
+			y /= pVec.y;
+			return *this;
+		}
+
+		UnitVector UnitVector::to(Units pUnit) const
 		{
 			switch (pUnit)
 			{
@@ -91,8 +121,6 @@ namespace obe
 						return UnitVector(x / Screen.w, y / Screen.h, ViewPercentage);
 					case ViewUnits:
 						return UnitVector(x / View.w, y / View.h, ViewPercentage);
-					case WorldPercentage:
-						return UnitVector((x * World.w - View.x) / View.w, ((y * World.h) - View.y) / View.h, ViewPercentage);
 					case WorldPixels:
 						return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h, ViewPercentage);
 					case WorldUnits:
@@ -109,8 +137,6 @@ namespace obe
 						return UnitVector(x, y, ViewPixels);
 					case ViewUnits:
 						return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, ViewPixels);
-					case WorldPercentage:
-						return UnitVector(Screen.w * (World.w * x / View.w - View.x / View.w), Screen.h * (World.h * y / View.h - View.y / View.h), ViewPixels);
 					case WorldPixels:
 						return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h), ViewPixels);
 					case WorldUnits:
@@ -127,30 +153,10 @@ namespace obe
 						return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, ViewUnits);
 					case ViewUnits:
 						return UnitVector(x, y, ViewUnits);
-					case WorldPercentage:
-						return UnitVector(x * World.w - View.x, y * World.h - View.y, ViewUnits);
 					case WorldPixels:
 						return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y, ViewUnits);
 					case WorldUnits:
 						return UnitVector(x - View.x, y - View.y, ViewUnits);
-					default:
-						return UnitVector(0, 0);
-					}
-				case WorldPercentage:
-					switch (unit)
-					{
-					case ViewPercentage:
-						return UnitVector(((View.w * x) + View.x) / World.w, ((View.h * y) + View.y) / World.h, WorldPercentage);
-					case ViewPixels:
-						return UnitVector(((View.w * (x / Screen.w)) + View.x) / World.w, ((View.h * (y / Screen.h)) + View.y) / World.h, WorldPercentage);
-					case ViewUnits:
-						return UnitVector((View.x + x) / World.w, (View.y + y) / World.h, WorldPercentage);
-					case WorldPercentage:
-						return UnitVector(x, y, WorldPercentage);
-					case WorldPixels:
-						return UnitVector(x / Screen.w * View.w / World.w, y / Screen.h * View.h / World.h, WorldPercentage);
-					case WorldUnits:
-						return UnitVector(x / World.w, y / World.h, WorldPercentage);
 					default:
 						return UnitVector(0, 0);
 					}
@@ -163,8 +169,6 @@ namespace obe
 						return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, WorldPixels);
 					case ViewUnits:
 						return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, WorldPixels);
-					case WorldPercentage:
-						return UnitVector(x * World.w * (Screen.w / View.w), y * World.h * (Screen.h / View.h), WorldPixels);
 					case WorldPixels:
 						return UnitVector(x, y, WorldPixels);
 					case WorldUnits:
@@ -181,8 +185,6 @@ namespace obe
 						return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, WorldUnits);
 					case ViewUnits:
 						return UnitVector(View.x + x, View.y + y, WorldUnits);
-					case WorldPercentage:
-						return UnitVector(x * World.w, y * World.h, WorldUnits);
 					case WorldPixels:
 						return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, WorldUnits);
 					case WorldUnits:
@@ -201,17 +203,30 @@ namespace obe
 				return ViewPixels;
 			if (unit == "ViewUnits")
 				return ViewUnits;
-			if (unit == "WorldPercentage")
-				return WorldPercentage;
 			if (unit == "WorldPixels")
 				return WorldPixels;
 			if (unit == "WorldUnits")
 				return WorldUnits;
 		}
 
+		std::string unitsToString(Units unit)
+		{
+			switch (unit)
+			{
+			case ViewPercentage: 
+				break;
+			case ViewPixels: return "ViewPixels";
+			case ViewUnits: return "ViewUnits";
+			case WorldPixels: return "WorldPixels";
+			case WorldUnits: return "WorldUnits";
+			default: return "Error";
+			}
+			return "Error";
+		}
+
 		std::ostream& operator<<(std::ostream& os, const UnitVector& m)
 		{
-			os << "(" << m.x << ", " << m.y << ")::" << m.unit;
+			os << "(" << m.x << ", " << m.y << ")::" << unitsToString(m.unit).c_str();
 			return os;
 		}
 	}
