@@ -9,14 +9,14 @@ namespace vili
 	{
 		DataParser errors(errorFile);
 
-		errors->walk([](ComplexAttribute* node) -> void {
+		errors->walk([](NodeIterator& node) -> void {
 			if (node->contains(Types::BaseAttribute, "message"))
 			{
 				std::vector<std::string> location;
 				std::vector<std::string> errorIdParts;
 				std::string filename = "";
 				std::string message = node->getBaseAttribute("message")->get<std::string>();
-				ComplexAttribute* currentParent = node;
+				ComplexAttribute* currentParent = node.get();
 				while (currentParent != nullptr)
 				{
 					if (currentParent->contains(Types::BaseAttribute, "where"))
@@ -368,10 +368,10 @@ namespace vili
 		else if (newParent->getType() == Types::ComplexAttribute)
 			dynamic_cast<ComplexAttribute*>(newParent)->createBaseAttribute((newid == "") ? m_id : newid, m_dataType, m_data);
 	}
-	void BaseAttribute::write(std::ofstream* file, unsigned int depth)
+	void BaseAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth; j++)
-			(*file) << "    ";
+		for (unsigned int j = 0; j < depth - 1; j++)
+			(*file) << spacing;
 		std::string returnedData = returnData();
 		if (m_dataType == Types::Float)
 		{
@@ -495,10 +495,10 @@ namespace vili
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongCopyTarget", { {"path", getNodePath()}, {"target", newParent->getNodePath()} });
 	}
-	void LinkAttribute::write(std::ofstream* file, unsigned int depth)
+	void LinkAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth; j++)
-			(*file) << "    ";
+		for (unsigned int j = 0; j < depth - 1; j++)
+			(*file) << spacing;
 		(*file) << m_id << ":&(" << getPath() << ")" << std::endl;
 	}
 
@@ -622,18 +622,87 @@ namespace vili
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.ListAttribute.WrongCopyTarget", { { "path", getNodePath() }, { "target", newParent->getNodePath() } });
 	}
-	void ListAttribute::write(std::ofstream* file, unsigned int depth)
+	void ListAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth; j++)
-			(*file) << "    ";
+		for (unsigned int j = 0; j < depth - 1; j++)
+			(*file) << spacing;
 		(*file) << m_id << ":[" << std::endl;
 		for (unsigned int k = 0; k < size(); k++)
-			get(k)->write(file, depth + 1);
-		for (unsigned int l = 0; l < depth; l++)
-			(*file) << "    ";
+			get(k)->write(file, spacing, depth + 1);
+		for (unsigned int l = 0; l < depth - 1; l++)
+			(*file) << spacing;
 		(*file) << "]" << std::endl;
 	}
 
+	//NodeIterator
+	NodeIterator::NodeIterator()
+	{
+
+	}
+	NodeIterator::NodeIterator(ComplexAttribute* node)
+	{
+		node->walk([this](NodeIterator& node){ m_cache.push_back(node.get()); });
+	}
+	void NodeIterator::next()
+	{
+		if (hasCache()) 
+			m_node = m_cache[m_index++];
+		else
+			throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"}, {"function", "next"}});
+	}
+	void NodeIterator::next(ComplexAttribute* node)
+	{
+		if (!hasCache())
+			m_node = node;
+		else
+			throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.HasCache", {{"class", "NodeIterator"}, {"function", "next"}});
+	}
+	bool NodeIterator::hasCache() const
+	{
+		return (m_cache.size() > 0);
+	}
+	ComplexAttribute* NodeIterator::operator->() const
+	{
+		return m_node;
+	}
+	ComplexAttribute* NodeIterator::get() const
+	{
+		return m_node;
+	}
+	unsigned int NodeIterator::index() const
+	{
+		if (hasCache())
+			return m_index;
+		throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"}, {"function", "index"}});
+	}
+	unsigned int NodeIterator::size() const
+	{
+		if (hasCache())
+			return m_cache.size();
+		throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"}, {"function", "size"}});
+	}
+	bool NodeIterator::first() const
+	{
+		if (hasCache())
+			return (m_index == 0);
+		throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"}, {"function", "first"}});
+	}
+	bool NodeIterator::last() const
+	{
+		if (hasCache())
+			return (m_index >= (m_cache.size()));
+		throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"}, {"function", "last"}});
+	}
+	bool NodeIterator::over() const
+	{
+		return m_over;
+	}
+	void NodeIterator::terminate()
+	{
+		m_over = true;
+		m_index = 0;
+		m_cache.clear();
+	}
 
 	//ComplexAttribute
 	ComplexAttribute::ComplexAttribute(ComplexAttribute* parent, const std::string& id) : ContainerAttribute(parent, id, Types::ComplexAttribute)
@@ -850,18 +919,48 @@ namespace vili
 		if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
 			m_childAttributesNames.push_back(attribute->getID());
 	}
-	void ComplexAttribute::write(std::ofstream* file, unsigned int depth)
+	void ComplexAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
 	{
-		for (unsigned int i = 0; i < depth; i++)
-			(*file) << "    ";
-		if (depth)
-			(*file) << "@" << m_id << std::endl;
-		else
-			(*file) << m_id << ":" << std::endl;
-		for (auto& child : m_childAttributesNames)
-			m_childAttributes[child]->write(file, depth + 1);
-		if (depth == 0)
-			(*file) << std::endl;
+		if (depth > 0)
+		{
+			for (unsigned int i = 0; i < depth - 1; i++)
+				(*file) << spacing;
+			if (m_template == nullptr)
+				(*file) << m_id << ":" << std::endl;
+			else
+			{
+				std::vector<std::string> argsMap(m_template->getArgumentCount());
+				std::string templateName = m_template->getName();
+				
+				m_template->getBody()->walk([this, &argsMap, templateName](NodeIterator& node) {
+					for (std::string& currentLink : node->getAll(Types::LinkAttribute)) 
+					{
+						std::vector<std::string> linkParts = Functions::String::split(node->getLinkAttribute(currentLink)->getPath(), "/");
+						if (Functions::String::isStringInt(linkParts[linkParts.size() - 2]) && linkParts[linkParts.size() - 1] == "value")
+						{
+							if (std::stoi(linkParts[linkParts.size() - 2]) <= argsMap.size())
+							{
+								std::vector<std::string> argPathFragments = Functions::String::split(node->getLinkAttribute(currentLink)->getNodePath(), "/");
+								argsMap[std::stoi(linkParts[linkParts.size() - 2])] = at<BaseAttribute>(Functions::Vector::join(argPathFragments, "/", 2))->returnData();
+							}
+								
+						}
+					}
+				});
+
+				(*file) << m_id << ":" << templateName << "(";
+				for (int i = 0; i < argsMap.size(); i++)
+					(*file) << argsMap[i] << ((i < argsMap.size() - 1) ? ", " : "");
+				(*file) << ")" << std::endl;
+			}
+		}
+		if (m_template == nullptr)
+		{
+			for (auto& child : m_childAttributesNames)
+				m_childAttributes[child]->write(file, spacing, depth + 1);
+			if (depth == 1)
+				(*file) << std::endl;
+		}
 	}
 	void ComplexAttribute::deleteBaseAttribute(const std::string& attributeID, bool freeMemory)
 	{
@@ -929,11 +1028,60 @@ namespace vili
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongCopyTarget", { { "path", getNodePath() },{ "target", newParent->getNodePath() } });
 	}
-	void ComplexAttribute::walk(std::function<void(ComplexAttribute*)> walkFunction)
+
+	void ComplexAttribute::walk(std::function<void(NodeIterator&)> walkFunction, bool useCache)
+	{
+		if (useCache)
+		{
+			NodeIterator baseIterator(this);
+			while (!baseIterator.last())
+			{
+				baseIterator.next();
+				walkFunction(baseIterator);
+			}
+		}
+		else
+		{
+			NodeIterator baseIterator;
+			for (std::string& complex : getAll(Types::ComplexAttribute))
+			{
+				if (!baseIterator.over())
+					getComplexAttribute(complex)->walk(walkFunction, baseIterator);
+				else
+					break;
+			}
+			if (!baseIterator.over())
+			{
+				baseIterator.next(this);
+				walkFunction(baseIterator);
+			}
+		}
+	}
+
+	void ComplexAttribute::walk(std::function<void(NodeIterator&)> walkFunction, NodeIterator& iterator)
 	{
 		for (std::string& complex : getAll(Types::ComplexAttribute))
-			this->getComplexAttribute(complex)->walk(walkFunction);
-		walkFunction(this);
+		{
+			if (!iterator.over())
+				getComplexAttribute(complex)->walk(walkFunction, iterator);
+			else
+				break;
+		}
+		if (!iterator.over())
+		{
+			iterator.next(this);
+			walkFunction(iterator);
+		}
+	}
+
+	void ComplexAttribute::useTemplate(DataTemplate* useTemplate)
+	{
+		m_template = useTemplate;
+	}
+
+	DataTemplate* ComplexAttribute::getCurrentTemplate() const
+	{
+		return m_template;
 	}
 
 	//AttributeConstraintManager
@@ -966,8 +1114,9 @@ namespace vili
 	}
 
 	//DataTemplate
-	DataTemplate::DataTemplate() : m_body("root")
+	DataTemplate::DataTemplate(std::string name) : m_body("root")
 	{
+		m_name = name;
 	}
 	ComplexAttribute* DataTemplate::getBody()
 	{
@@ -981,7 +1130,7 @@ namespace vili
 			std::vector<LinkAttribute*> attributeAddresses;
 			for (AttributeConstraintManager& constraintManager : m_signature)
 				attributeAddresses.push_back(constraintManager.getLinkAttribute());
-			parent->getComplexAttribute(id)->walk([attributeAddresses](ComplexAttribute* complex)
+			parent->getComplexAttribute(id)->walk([attributeAddresses](NodeIterator& complex)
 			{
 				for (int i = 0; i < complex->getAll(Types::LinkAttribute).size(); i++)
 				{
@@ -1022,6 +1171,16 @@ namespace vili
 	void DataTemplate::useDefaultLinkRoot()
 	{
 		m_defaultLinkRoot = true;
+	}
+
+	unsigned int DataTemplate::getArgumentCount() const
+	{
+		return m_signature.size();
+	}
+
+	std::string DataTemplate::getName() const
+	{
+		return m_name;
 	}
 
 	//DataParser
@@ -1091,7 +1250,6 @@ namespace vili
 		m_root->setAnnotation(filename);
 		std::string currentLine;
 		std::vector<std::string> addPath = {};
-		std::string curCat = "None";
 		std::string curList = "None";
 		int curListIndent = 0;
 		bool inList = false;
@@ -1160,7 +1318,7 @@ namespace vili
 				parsedLines.push_back(addParsedLine);
 				for (std::string parsedLine : parsedLines)
 				{
-					while (currentIndent < addPath.size() + 1 && addPath.size() > 0)
+					while (parsedLine != "" && currentIndent < addPath.size() && addPath.size() > 0)
 						addPath.pop_back();
 					std::function<std::string()> indenter = [curList, currentIndent, curListIndent]()
 					{
@@ -1181,13 +1339,7 @@ namespace vili
 						curList = "None";
 					if (parsedLine != "" && currentIndent == 0)
 					{
-						if (parsedLine.substr(parsedLine.size() - 1, 1) == ":")
-						{
-							if (verbose) std::cout << indenter() << "Create new RootAttribute : " << parsedLine.substr(0, parsedLine.size() - 1) << std::endl;
-							curCat = parsedLine.substr(0, parsedLine.size() - 1);
-							m_root->createComplexAttribute(curCat);
-						}
-						else if (parsedLine.substr(parsedLine.size() - 1, 1) == ";")
+						if (parsedLine.substr(parsedLine.size() - 1, 1) == ";")
 						{
 							std::string instructionType = Functions::String::split(parsedLine, "(")[0];
 							std::string instructionValue = Functions::String::split(parsedLine, "(")[1];
@@ -1213,7 +1365,7 @@ namespace vili
 							{
 								if (verbose) std::cout << indenter() << "Creating New Template from : " << instructionValue << std::endl;
 								ComplexAttribute* templateBase = getRootChild(instructionValue);
-								DataTemplate* newTemplate = new DataTemplate();
+								DataTemplate* newTemplate = new DataTemplate(instructionValue);
 								if (templateBase != nullptr)
 								{
 									if (templateBase->contains(Types::ComplexAttribute, "__init__") && templateBase->contains(Types::ComplexAttribute, "__body__"))
@@ -1278,26 +1430,58 @@ namespace vili
 							}
 						}
 					}
-					else if (curCat != "None" && parsedLine != "" && currentIndent > 0)
+					if (parsedLine != "")
 					{
-						std::vector<std::string> symbolExclusion = { "@", "\"", "#" };
+						std::vector<std::string> symbolExclusion = { "\"", "#" };
 
-						std::string pushIndicator;
-						if (addPath.size() == 0)
-							pushIndicator = curCat + ":Root";
-						else
-							pushIndicator = getRootChild(curCat)->getPath(Path(addPath))->getNodePath();
+						std::string pushIndicator = getPath(Path(addPath))->getNodePath();
 
 						if (!Functions::Vector::isInList(parsedLine.substr(0, 1), symbolExclusion) && Functions::String::occurencesInString(parsedLine, ":[") == 1)
 						{
 							std::string listElementID = Functions::String::split(parsedLine, ":")[0];
-							getRootChild(curCat)->getPath(Path(addPath))->createListAttribute(listElementID);
+							getPath(Path(addPath))->createListAttribute(listElementID);
 							curList = listElementID;
 							curListIndent = currentIndent;
 							if (verbose)
 							{
 								std::cout << indenter() << "Create ListAttribute " << curList << " inside " << pushIndicator << std::endl;
 							}
+						}
+						else if (parsedLine.substr(parsedLine.size() - 1, 1) == ":")
+						{
+							std::string complexElementID = parsedLine.substr(0, parsedLine.size() - 1);
+							std::vector<std::string> complexToHeritIDList;
+							std::vector<ComplexAttribute*> complexToHerit;
+							if (Functions::String::occurencesInString(complexElementID, "(") == 1 && 
+								Functions::String::occurencesInString(complexElementID, ")") == 1 &&
+								Functions::String::split(complexElementID, "(").size() == 2)
+							{
+								std::string complexToHeritID = Functions::String::replaceString(Functions::String::split(complexElementID, "(")[1], ")", "");
+								complexElementID = Functions::String::split(complexElementID, "(")[0];
+								complexToHeritIDList = Functions::String::split(complexToHeritID, ",");
+
+								for (std::string& currentHerit : complexToHeritIDList)
+								{
+									m_root->walk([currentHerit, &complexToHerit](NodeIterator& node) {
+										if (node->getID() == currentHerit)
+										{
+											complexToHerit.push_back(node.get());
+											node.terminate();
+										}
+											
+									});
+								}
+							}
+							getPath(Path(addPath))->createComplexAttribute(complexElementID);
+							if (verbose) std::cout << indenter() << "Create ComplexAttribute " << complexElementID << " inside "
+								<< pushIndicator << std::endl;
+							for (unsigned int i = 0; i < complexToHerit.size(); i++)
+							{
+								if (verbose) std::cout << indenter() << "    {Herit from : " << complexToHeritIDList[i] << "}" << std::endl;
+								getPath(Path(addPath))->getComplexAttribute(complexElementID)->heritage(complexToHerit[i]);
+							}
+
+							addPath.push_back(complexElementID);
 						}
 						else if (!Functions::Vector::isInList(parsedLine.substr(0, 1), symbolExclusion) && Functions::String::occurencesInString(parsedLine, ":"))
 						{
@@ -1308,7 +1492,7 @@ namespace vili
 
 							if (attributeType == Types::Link)
 							{
-								getRootChild(curCat)->getPath(Path(addPath))->createLinkAttribute(attributeID, Functions::String::extract(attributeValue, 2, 1));
+								getPath(Path(addPath))->createLinkAttribute(attributeID, Functions::String::extract(attributeValue, 2, 1));
 								if (verbose)
 								{
 									std::cout << indenter() << "Create LinkAttribute " << attributeID << " linking to " << attributeValue
@@ -1335,7 +1519,9 @@ namespace vili
 										getRootChild(templateName)->at("__init__", std::to_string(i))->getBaseAttribute("value")->setAnnotation("Set");
 										i++;
 									}
-									m_templateList[templateName]->build(getRootChild(curCat)->getPath(Path(addPath)), attributeID);
+									m_templateList[templateName]->build(getPath(Path(addPath)), attributeID);
+									getPath(Path(addPath))->getComplexAttribute(attributeID)->useTemplate(m_templateList[templateName]);
+
 									if (verbose)
 									{
 										std::cout << indenter() << "Create ComplexAttribute " << attributeID << " from Template <" << templateName
@@ -1350,7 +1536,7 @@ namespace vili
 								if (attributeType == Types::String)
 									attributeValue = Functions::String::extract(attributeValue, 1, 1);
 
-								getRootChild(curCat)->getPath(Path(addPath))->createBaseAttribute(attributeID, attributeType, attributeValue);
+								getPath(Path(addPath))->createBaseAttribute(attributeID, attributeType, attributeValue);
 								if (verbose)
 								{
 									std::cout << indenter() << "Create BaseAttribute " << attributeID << "(" << attributeValue;
@@ -1358,55 +1544,28 @@ namespace vili
 								}
 							}
 						}
-						else if (parsedLine.substr(0, 1) == "@")
-						{
-							std::string complexElementID = parsedLine.substr(1);
-							std::vector<std::string> complexToHeritIDList;
-							std::vector<ComplexAttribute*> complexToHerit;
-							if (Functions::String::occurencesInString(complexElementID, ":") == 1 && Functions::String::split(complexElementID, ":").size() == 2)
-							{
-								std::string complexToHeritID = Functions::String::replaceString(Functions::String::split(complexElementID, ":")[1], " ", "");
-								complexElementID = Functions::String::split(complexElementID, ":")[0];
-								complexToHeritIDList = Functions::String::split(complexToHeritID, "|");
-
-								for (unsigned int i = 0; i < complexToHeritIDList.size(); i++)
-								{
-									complexToHerit.push_back(getRootChild(curCat)->getComplexAttribute(complexToHeritIDList[i]));
-								}
-							}
-							getRootChild(curCat)->getPath(Path(addPath))->createComplexAttribute(complexElementID);
-							if (verbose) std::cout << indenter() << "Create ComplexAttribute @" << complexElementID << " inside " 
-								<< pushIndicator << std::endl;
-							for (unsigned int i = 0; i < complexToHerit.size(); i++)
-							{
-								if (verbose) std::cout << indenter() << "    {Herit from : " << complexToHeritIDList[i] << "}" << std::endl;
-								getRootChild(curCat)->getPath(Path(addPath))->getComplexAttribute(complexElementID)->heritage(complexToHerit[i]);
-							}
-
-							addPath.push_back(complexElementID);
-						}
 						else if (curList != "None")
 						{
 							std::string attributeValue = parsedLine;
 							Types::DataType attributeType = Types::getVarType(attributeValue);
-							if (verbose) std::cout << indenter() << "Create Element #" << getPath(curCat)->getPath(Path(addPath))->getListAttribute(curList)->size()
+							if (verbose) std::cout << indenter() << "Create Element #" << getPath(Path(addPath))->getListAttribute(curList)->size()
 													   << "(" << attributeValue << ") of ListAttribute " << curList << std::endl;
 							if (attributeType == Types::String)
 							{
 								attributeValue = Functions::String::extract(attributeValue, 1, 1);
-								getRootChild(curCat)->getPath(Path(addPath))->getListAttribute(curList)->push(attributeValue);
+								getPath(Path(addPath))->getListAttribute(curList)->push(attributeValue);
 							}
 							else if (attributeType == Types::Int)
 							{
-								getRootChild(curCat)->getPath(Path(addPath))->getListAttribute(curList)->push(std::stoi(attributeValue));
+								getPath(Path(addPath))->getListAttribute(curList)->push(std::stoi(attributeValue));
 							}
 							else if (attributeType == Types::Float)
 							{
-								getRootChild(curCat)->getPath(Path(addPath))->getListAttribute(curList)->push(std::stod(attributeValue));
+								getPath(Path(addPath))->getListAttribute(curList)->push(std::stod(attributeValue));
 							}
 							else if (attributeType == Types::Bool)
 							{
-								getRootChild(curCat)->getPath(Path(addPath))->getListAttribute(curList)->push(((attributeValue == "True") ? true : false));
+								getPath(Path(addPath))->getListAttribute(curList)->push(((attributeValue == "True") ? true : false));
 							}
 							else if (attributeType == Types::Range)
 							{
@@ -1418,7 +1577,7 @@ namespace vili
 								rEnd += step;
 								for (int i = rStart; i != rEnd; i += step)
 								{
-									getRootChild(curCat)->getPath(Path(addPath))->getListAttribute(curList)->push(i);
+									getPath(Path(addPath))->getListAttribute(curList)->push(i);
 								}
 							}
 							else
@@ -1450,15 +1609,10 @@ namespace vili
 			if (verbose) std::cout << "        Write New Flag : " << this->getFlagAtIndex(i) << std::endl;
 		}
 		if (this->getAmountOfFlags() > 0) outFile << std::endl;
-		if (verbose && m_root->getAll(Types::ComplexAttribute).size() > 0) std::cout << "    Writing RootAttributes..." << std::endl;
-		for (std::string& currentRootAttribute : m_root->getAll(Types::ComplexAttribute))
-		{
-			if (m_templateList.find(currentRootAttribute) == m_templateList.end())
-			{
-				if (verbose) std::cout << "        Write New RootAttribute : " << currentRootAttribute << std::endl;
-				getRootChild(currentRootAttribute)->write(&outFile);
-			}
-		}
+		std::string writeSpacing = "";
+		for (unsigned int i = 0; i < m_spacing; i++)
+			writeSpacing += " ";
+		m_root->write(&outFile, writeSpacing);
 		outFile.close();
 	}
 }

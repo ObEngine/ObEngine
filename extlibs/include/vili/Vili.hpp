@@ -14,8 +14,7 @@
 #include <cmath>
 #include <ctype.h>
 
-#include <aube/ErrorHandler.hpp>
-
+#include "ErrorHandler.hpp"
 #include "Functions.hpp"
 
 namespace vili
@@ -83,7 +82,7 @@ namespace vili
 		unsigned int getDepth();
 		virtual void setID(const std::string& id);
 		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
-		virtual void write(std::ofstream* file, unsigned int depth) = 0;
+		virtual void write(std::ofstream* file, std::string spacing, unsigned int depth) = 0;
 	};
 
 	//ContainerAttribute
@@ -96,7 +95,7 @@ namespace vili
 		virtual ~ContainerAttribute() {}
 		virtual Attribute* extractElement(Attribute* element) = 0;
 		void copy(ContainerAttribute* newParent, std::string newid = "") override = 0;
-		void write(std::ofstream* file, unsigned int depth) override = 0;
+		void write(std::ofstream* file, std::string spacing, unsigned int depth) override = 0;
 	};
 
 	//BaseAttribute
@@ -120,7 +119,7 @@ namespace vili
 		Types::DataType getDataType() const;
 		template <class T> T get() { }
 		void copy(ContainerAttribute* newParent, std::string newid = "") override;
-		void write(std::ofstream* file, unsigned int depth) override;
+		void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
 		operator std::string();
 		operator int();
 		operator double();
@@ -144,7 +143,7 @@ namespace vili
 			void apply();
 			bool operator==(LinkAttribute compare) const;
 			void copy(ContainerAttribute* newParent, std::string newid = "") override;
-			void write(std::ofstream* file, unsigned int depth) override;
+			void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
 	};
 	
 	//ListAttribute
@@ -174,9 +173,46 @@ namespace vili
 		void erase(unsigned int index);
 		Attribute* extractElement(Attribute* element) override;
 		void copy(ContainerAttribute* newParent, std::string newid = "") override;
-		void write(std::ofstream* file, unsigned int depth) override;
+		void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
 	};
 
+	class NodeIterator
+	{
+		protected:
+			std::vector<ComplexAttribute*> m_cache;
+			bool m_over = false;
+			unsigned int m_index = 0;
+			ComplexAttribute* m_node = nullptr;
+			void next();
+			void next(ComplexAttribute* node);
+			friend class ComplexAttribute;
+		public:
+			NodeIterator();
+			NodeIterator(ComplexAttribute* node);
+			ComplexAttribute* operator->() const;
+			ComplexAttribute* get() const;
+			bool hasCache() const;
+			unsigned int index() const;
+			unsigned int size() const;
+			bool first() const;
+			bool last() const;
+			bool over() const;
+			void terminate();
+	};
+
+	template <class T>
+	class NodeValidator : public NodeIterator
+	{
+		private:
+			T m_result;
+		public:
+			NodeValidator();
+			NodeValidator(ComplexAttribute* node);
+			void validate(T result);
+			T result();
+	};
+
+	class DataTemplate;
 	//ComplexAttribute
 	class ComplexAttribute : public ContainerAttribute
 	{
@@ -185,6 +221,7 @@ namespace vili
 		protected:
 			std::map<std::string, std::unique_ptr<Attribute>> m_childAttributes;
 			std::vector<std::string> m_childAttributesNames;
+			DataTemplate* m_template = nullptr;
 		public:
 			const static Types::AttributeType ClassType = Types::ComplexAttribute;
 			ComplexAttribute(ComplexAttribute* parent, const std::string& id);
@@ -241,9 +278,17 @@ namespace vili
 			void deleteListAttribute(const std::string& attributeID, bool freeMemory = false);
 			void deleteLinkAttribute(const std::string& attributeID, bool freeMemory = false);
 
-			void write(std::ofstream* file, unsigned int depth = 0) override;
+			void write(std::ofstream* file, std::string spacing, unsigned int depth = 0) override;
 			void copy(ContainerAttribute* newParent, std::string newid = "") override;
-			void walk(std::function<void(ComplexAttribute*)> walkFunction);
+			void walk(std::function<void(NodeIterator&)> walkFunction, bool useCache = false);
+			void walk(std::function<void(NodeIterator&)> walkFunction, NodeIterator& iterator);
+			template <class T>
+			T walk(std::function<void(NodeValidator<T>&)> walkFunction, bool useCache = false);
+			template <class T>
+			void walk(std::function<void(NodeValidator<T>&)> walkFunction, NodeValidator<T>& iterator);
+
+			void useTemplate(DataTemplate* useTemplate);
+			DataTemplate* getCurrentTemplate() const;
 	};
 
 	class AttributeConstraintManager
@@ -262,17 +307,20 @@ namespace vili
 	class DataTemplate
 	{
 		private:
+			std::string m_name;
 			std::vector<AttributeConstraintManager> m_signature;
 			ComplexAttribute m_body;
 			bool m_signatureEnd = false;
 			bool m_defaultLinkRoot = false;
 			bool checkSignature();
 		public:
-			DataTemplate();
+			DataTemplate(std::string name);
 			ComplexAttribute* getBody();
 			void build(ComplexAttribute* parent, const std::string& id);
 			void addConstraintManager(AttributeConstraintManager constraintManager, bool facultative = false);
 			void useDefaultLinkRoot();
+			unsigned int getArgumentCount() const;
+			std::string getName() const;
 	};
 
 	//DataParser
@@ -355,6 +403,28 @@ namespace vili
 		throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongListAttributeLink", { { "path", getNodePath() }, { "targetpath", m_path } });
 	}
 
+	//NodeValidator
+	template <class T>
+	NodeValidator<T>::NodeValidator()
+	{
+
+	}
+	template <class T>
+	NodeValidator<T>::NodeValidator(ComplexAttribute* node)
+	{
+		node->walk([this](NodeIterator& node){ m_cache.push_back(node.get()); });
+	}
+	template <class T>
+	void NodeValidator<T>::validate(T result)
+	{
+		m_result = result;
+	}
+	template <class T>
+	T NodeValidator<T>::result()
+	{
+		return m_result;
+	}
+
 	//ComplexAttribute
 	template<class ...Args>
 	inline ComplexAttribute* ComplexAttribute::at(const std::string& cPath, Args ...pathParts)
@@ -381,6 +451,54 @@ namespace vili
 	template <> inline LinkAttribute* ComplexAttribute::at(std::string cPath)
 	{
 		return getLinkAttribute(cPath);
+	}
+	template <class T>
+	T ComplexAttribute::walk(std::function<void(NodeValidator<T>&)> walkFunction, bool useCache)
+	{
+		if (useCache)
+		{
+			NodeValidator<T> baseIterator(this);
+			while (!baseIterator.last()) 
+			{
+				baseIterator.next();
+				walkFunction(baseIterator);
+			}
+				
+			return baseIterator.result();
+		}
+		else
+		{
+			NodeValidator<T> baseIterator;
+			for (std::string& complex : getAll(Types::ComplexAttribute))
+			{
+				if (!baseIterator.over())
+					getComplexAttribute(complex)->walk<T>(walkFunction, baseIterator);
+				else
+					break;
+			}
+			if (!baseIterator.over())
+			{
+				baseIterator.next(this);
+				walkFunction(baseIterator);
+			}
+			return baseIterator.result();
+		}
+	}
+	template <class T>
+	void ComplexAttribute::walk(std::function<void(NodeValidator<T>&)> walkFunction, NodeValidator<T>& iterator)
+	{
+		for (std::string& complex : getAll(Types::ComplexAttribute))
+		{
+			if (!iterator.over())
+				getComplexAttribute(complex)->walk<T>(walkFunction, iterator);
+			else
+				break;
+		}
+		if (!iterator.over())
+		{
+			iterator.next(this);
+			walkFunction(iterator);
+		}
 	}
 
 	//DataParser

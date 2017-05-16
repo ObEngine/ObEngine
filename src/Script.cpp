@@ -510,7 +510,6 @@ namespace obe
 					.addFunction("getScaleX", &Graphics::LevelSprite::getScaleX)
 					.addFunction("getScaleY", &Graphics::LevelSprite::getScaleY)
 					.addFunction("getX", &Graphics::LevelSprite::getX)
-					.addFunction("getWorkingUnit", &Graphics::LevelSprite::getWorkingUnit)
 					.addFunction("getY", &Graphics::LevelSprite::getY)
 					.addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
 					.addFunction("isDrawable", &Graphics::LevelSprite::isDrawable)
@@ -532,7 +531,6 @@ namespace obe
 					.addFunction("setScale", &Graphics::LevelSprite::setScale)
 					.addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
 					.addFunction("setVisible", &Graphics::LevelSprite::setVisible)
-					.addFunction("setWorkingUnit", &Graphics::LevelSprite::setWorkingUnit)
 					.addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
 
 					);

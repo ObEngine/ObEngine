@@ -63,6 +63,15 @@ namespace obe
 				UnitVector to(Units pUnit) const;
 		};
 
+		class ProtectedUnitVector : public UnitVector
+		{
+			protected:
+				Units unit;
+			public:
+				ProtectedUnitVector(const Units& unit = Units::WorldUnits);
+				ProtectedUnitVector(const double& x, const double& y, const Units& unit = Units::WorldUnits);
+		};
+
 		template <> inline UnitVector UnitVector::to<ViewPercentage>() const {
 			switch (unit)
 			{

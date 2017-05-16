@@ -97,8 +97,9 @@ namespace obe
 						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
 							currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>() : 0,
 						currentSprite->contains(vili::Types::ComplexAttribute, "pos") ? 
-							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0
-					);
+							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0,
+						Coord::stringToUnits(spriteUnits)
+					).to<Coord::WorldUnits>();
 					int spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ? 
 						                currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
 					double spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ? 
@@ -117,7 +118,6 @@ namespace obe
 					std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
 					if (spritePath != "")
 						tempSprite->load(spritePath);
-					tempSprite->setWorkingUnit(Coord::stringToUnits(spriteUnits));
 					tempSprite->setPosition(spritePos.x, spritePos.y);
 					tempSprite->setRotation(spriteRot);
 					tempSprite->setScale(spriteSca, spriteSca);
@@ -208,13 +208,16 @@ namespace obe
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
 			dataStore->addInclude("Obe");
+
+			//Meta
 			(*dataStore)->createComplexAttribute("Meta");
 			dataStore->at("Meta")->createBaseAttribute("name", m_levelName);
-			dataStore->at("Meta")->createListAttribute("size");
-			dataStore->at("Meta")->createListAttribute("view");
-			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getWidth());
-			dataStore->at<vili::ListAttribute>("Meta", "view")->push(m_camera.getHeight());
 
+			//View
+			(*dataStore)->createComplexAttribute("View");
+			dataStore->at("View")->createBaseAttribute("size", m_camera.getSize().y / 2);
+
+			//LevelSprites
 			(*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < m_spriteArray.size(); i++)
 			{
@@ -222,13 +225,13 @@ namespace obe
 				{
 					dataStore->at("LevelSprites")->createComplexAttribute(m_spriteArray[i]->getID());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("path", m_spriteArray[i]->getPath());
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createListAttribute("pos");
-					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getX());
-					dataStore->at<vili::ListAttribute>("LevelSprites", m_spriteArray[i]->getID(), "pos")->push(m_spriteArray[i]->getY());
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("rotation", static_cast<int>(m_spriteArray[i]->getRotation()));
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createComplexAttribute("pos");
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos")->createBaseAttribute("x", m_spriteArray[i]->getX());
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos")->createBaseAttribute("y", m_spriteArray[i]->getY());
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("scale", m_spriteArray[i]->getScaleX());
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("layer", static_cast<int>(m_spriteArray[i]->getLayer()));
-					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("z-depth", static_cast<int>(m_spriteArray[i]->getZDepth()));
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("layer", m_spriteArray[i]->getLayer());
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
 					if (m_spriteArray[i]->getAttributes().size() != 0)
 					{
 						dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createListAttribute("attributeList");
@@ -243,12 +246,13 @@ namespace obe
 				if (m_colliderArray[i]->getParentID() == "")
 				{
 					dataStore->at("Collisions")->createComplexAttribute(m_colliderArray[i]->getID());
-					dataStore->at("Collisions", m_colliderArray[i]->getID())->createListAttribute("polygonPoints");
+					dataStore->at("Collisions", m_colliderArray[i]->getID())->createComplexAttribute("unit");
+					dataStore->at("Collisions", m_colliderArray[i]->getID(), "unit")->createBaseAttribute("unit", unitsToString(m_colliderArray[i]->getWorkingUnit()));
+					dataStore->at("Collisions", m_colliderArray[i]->getID())->createListAttribute("points");
 					for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
 					{
-						int px = m_colliderArray[i]->getPointPosition(j).first;
-						int py = m_colliderArray[i]->getPointPosition(j).second;
-						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("polygonPoints")->push(std::to_string(px) + "," + std::to_string(py));
+						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(m_colliderArray[i]->getPointPosition(j).first);
+						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(m_colliderArray[i]->getPointPosition(j).second);
 					}
 				}
 			}
@@ -346,42 +350,45 @@ namespace obe
 				Light::PointLight* cLight = nullptr;
 				if (lightHooked) cLight = m_lightMap[m_spriteArray[i]->getID()].get();
 
-				int layeredX = (((m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX()) * (m_spriteArray[i]->getLayer()) -
+				Coord::UnitVector pixelPosition = m_spriteArray[i]->getPosition().to<Coord::WorldPixels>();
+				Coord::UnitVector pixelOffset = m_spriteArray[i]->getPosition().to<Coord::WorldPixels>();
+
+				std::cout << "@ARK : " << m_spriteArray[i]->getID() << " @@@ " << pixelPosition << " AND " << pixelOffset << " AND " << pixelCamera << std::endl;
+
+				int layeredX = (((pixelPosition.x + pixelOffset.x) * (m_spriteArray[i]->getLayer()) -
 					pixelCamera.x) / m_spriteArray[i]->getLayer());
-				int layeredY = (((m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY()) * (m_spriteArray[i]->getLayer()) -
+				int layeredY = (((pixelPosition.y + pixelOffset.y) * (m_spriteArray[i]->getLayer()) -
 					pixelCamera.y) / m_spriteArray[i]->getLayer());
 				if (Functions::Vector::isInList(static_cast<std::string>("+FIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX();
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY();
+					layeredX = pixelPosition.x + pixelOffset.x;
+					layeredY = pixelPosition.y + pixelOffset.y;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+HFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX();
+					layeredX = pixelPosition.x + pixelOffset.x;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+VFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY();
+					layeredY = pixelPosition.y + pixelOffset.y;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PHFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - pixelCamera.x;
+					layeredX = pixelPosition.x + pixelOffset.x - pixelCamera.x;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PVFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - pixelCamera.y;
+					layeredY = pixelPosition.y + pixelOffset.y - pixelCamera.y;
 				}
 				else if (Functions::Vector::isInList(static_cast<std::string>("+PFIX"), m_spriteArray[i]->getAttributes()))
 				{
-					layeredX = m_spriteArray[i]->getX() + m_spriteArray[i]->getOffsetX() - pixelCamera.x;
-					layeredY = m_spriteArray[i]->getY() + m_spriteArray[i]->getOffsetY() - pixelCamera.y;
+					layeredX = pixelPosition.x + pixelOffset.x - pixelCamera.x;
+					layeredY = pixelPosition.y + pixelOffset.y - pixelCamera.y;
 				}
 				sfe::ComplexSprite tAffSpr = *m_spriteArray[i]->getSprite();
 
 				if (lightHooked) cLight->setPosition(layeredX, layeredY);
-				Coord::UnitVector realPosition = Coord::UnitVector(layeredX, layeredY, m_spriteArray[i]->getWorkingUnit()).to<Coord::WorldPixels>();
-				std::cout << "Real position of " << m_spriteArray[i]->getID() << " is " << realPosition << std::endl;
-				tAffSpr.setPosition(realPosition.x, realPosition.y);
+				tAffSpr.setPosition(layeredX, layeredY);
 				if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
 				if (m_spriteArray[i]->isVisible())
 					surf->draw(tAffSpr);

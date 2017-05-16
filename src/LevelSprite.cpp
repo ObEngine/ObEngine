@@ -24,13 +24,6 @@ namespace obe
 			}
 		}
 
-		void LevelSprite::setWorkingUnit(Coord::Units unit)
-		{
-			UnitBasedObject::setWorkingUnit(unit);
-			m_position = m_position.to(unit);
-			m_offset = m_offset.to(unit);
-		}
-
 		void LevelSprite::setSprite(sf::Sprite* spr)
 		{
 			m_returnSprite.copyFromSprite(*spr);
@@ -134,8 +127,6 @@ namespace obe
 			m_position.y = y;
 
 			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
-			std::cout << "Abq : " << m_position << " and " << m_offset << std::endl;
-			std::cout << "Set position of " << m_id << " with " << m_position << " and " << m_offset << " to " << realPosition << std::endl;
 			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
 		void LevelSprite::setOffset(double offx, double offy)
@@ -146,6 +137,17 @@ namespace obe
 			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
 			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
+
+		Coord::ProtectedUnitVector& LevelSprite::getPosition()
+		{
+			return m_position;
+		}
+
+		Coord::ProtectedUnitVector& LevelSprite::getOffset()
+		{
+			return m_offset;
+		}
+
 		void LevelSprite::move(double x, double y)
 		{
 			m_position.x += x;

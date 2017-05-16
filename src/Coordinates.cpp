@@ -195,6 +195,18 @@ namespace obe
 			}
 		}
 
+		ProtectedUnitVector::ProtectedUnitVector(const Units& unit)
+		{
+			this->unit = unit;
+		}
+
+		ProtectedUnitVector::ProtectedUnitVector(const double& x, const double& y, const Units& unit)
+		{
+			this->x = x;
+			this->y = y;
+			this->unit = unit;
+		}
+
 		Units stringToUnits(const std::string& unit)
 		{
 			if (unit == "ViewPercentage")

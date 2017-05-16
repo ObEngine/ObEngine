@@ -285,8 +285,7 @@ namespace obe
 			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
 			Coord::UnitVector pixelCamera = world->getCamera().getPosition().to<Coord::WorldPixels>();
 			sprToAdd->load("Sprites/LevelSprites/" + geid);
-			sprToAdd->setWorkingUnit(Coord::WorldPixels);
-			sprToAdd->move(960 + pixelCamera.x, 540 + pixelCamera.y);
+			sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::WorldPixels);
 			sprToAdd->setRotation(0);
 			sprToAdd->setScale(1, 1);
 			sprToAdd->setAtr(std::vector<std::string>());
