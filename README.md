@@ -7,7 +7,7 @@
 You will need several libs :
 - [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2/index-fr.php) (Display, Keys, Network, and much more)
 
-There are other libraries but they included in the repository :
+There are other libraries but they are included in the repository (extlibs/ folder) :
 
 - [clipper](http://www.angusj.com/delphi/clipper.php) (Boost Software License) (Polygons)
 - (Customised code) [any](https://github.com/PaulHowes/any) (Apache 2.0 License) (Contains anything)
@@ -19,8 +19,6 @@ There are other libraries but they included in the repository :
 - [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
 - [tinydir](https://github.com/cxong/tinydir) (BSD2 License) (tiny filesystem, soon replaced with C++17's filesystem)
 - [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
-
-There is also some other libs but they are included in extlibs/ folder !
 
 ## How do I build it ?
 If you want to build ÖbEngine yourself (which is perfectly fine), you'll need CMake software.
@@ -55,10 +53,8 @@ There's no need to write somewhere that your game is made with ÖbE (but it's ni
 Here you go :
 - Neat map editor (With a grid for precise map edition)
 - Spritesheet animations (with tiny animation language)
-- Skeletal animations (Planned)
 - Light system
 - Particles
-- Normal maps (Planned)
 - Lua scripting (Object oriented with a full events system)
 - Object-oriented
 - Infinite amount of layers with optional parallax
@@ -72,6 +68,21 @@ Here you go :
 - DeltaTime handling
 - Custom package manager with online repository
 - Extendable toolkit with a lot of functionalities
+
+## Future features which are also really cool ?
+- Normal maps
+- 3D objects in 2D scene
+- Skeletal animations
+- Collaborative map editor
+- Better light & particle system
+
+## ObEngine's versions
+
+- 0.37 Aurvandil (April 2016) - First usable version of ObEngine
+- 0.55 Baldur (June 2016) - Better scripting support
+- 0.81 Clue (January 2017) - Big engine rework
+- 0.99 Dagr (February 2017) - First released dev version of ObEngine
+- 1.0 Eir (June 2017) - First public released version
 
 ## Right, can I have several object scripting examples now ?
 Sure, here are some simple objects :
