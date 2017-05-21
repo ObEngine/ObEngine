@@ -9,13 +9,6 @@ reload = true;
 promptType = "Toolkit";
 
 -- Commands Definition
-Toolkit.commands.alias = {
-	shortcuts = {"a", "alias"},
-    args = {
-        {name = "command", type = "string"},
-        {name = "alias", type = "string"}
-    }
-};
 Toolkit.commands.exit = {
 	shortcuts = {"q", "quit", "exit"}
 };

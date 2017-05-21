@@ -1,8 +1,8 @@
-local Color = require("Lib/Toolkit/ToolkitRoute");
+local Route = require("Lib/Toolkit/Route");
 
 return {
     Functions = {
-        function exit()
+        exit = function()
             continue = false;
             reload = false;
         end

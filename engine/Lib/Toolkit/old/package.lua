@@ -1,5 +1,4 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
 local Package = Core.Package.Package;
 
 return {
@@ -52,9 +51,6 @@ return {
             Route.Arg("packageName", Route.Types.Any, {
                 Route.Call("install");
             });
-        }),
-        Route.Arg("instagram", {
-
         }),
         Route.Arg("use", {
             Route.Arg("packageName", Route.Types.Any, {

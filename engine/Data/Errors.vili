@@ -1,398 +1,400 @@
 Include(Obe);
 
 ObEngine:
-    @Animation
+    Animation:
         where:"Animation"
         file:"src/Animation.cpp"
-        @RessourceManager
+        RessourceManager:
             where:"RessourceManager"
-            @LoadTexture_NETD
+            LoadTexture_NETD:
                 where:"getTexture"
                 message:"Can't open file '%file%'"
                 hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
-            @LoadTexture_ETD
+            LoadTexture_ETD:
                 where:"getTexture"
                 message:"Can't open file '%file%'"
                 hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
-        @Animation
+        Animation:
             where:"Animation"
-            @AnimationGroupNotFound
+            AnimationGroupNotFound:
                 where:"getAnimationGroup"
                 message:"Can't find AnimationGroup '%group%' in Animation '%animation%'"
                 hint:"Maybe a wrong group parameter while using PLAY_GROUP in Animation '%animation%'"
-        @Animator
+        Animator:
             where:"Animator"
-            @AnimationNotFound
+            AnimationNotFound:
                 where:"%function%"
                 message:"Can't find Animation '%animation%' for Animator '%animator%'"
                 hint:"Animation %animation% doesn't exists, remove This:Animator():setKey("%animation%") ?"
-            @UpdateNullAnimation
+            UpdateNullAnimation:
                 where:"update"
                 message:"Can't update NULL Animation in animator : '%animator%'"
                 hint:"Assign an Animation to the Animator with This:Animator():setKey in Local.Init"
-    @Console
+    Console:
         where:"Console"
         file:"src/Console.cpp"
-        @Console
+        Console:
             where:"Console"
-            @UnknownStream
+            UnknownStream:
                 where:"getStream"
                 message:"Can't find Stream : %stream%"
-    @DataParserLuaBridge
+    DataParserLuaBridge:
         where:"DataParserLuaBridge"
         file:"src/DataParserLuaBridge.cpp"
-        @LuaTableToComplexAttribute
+        LuaTableToComplexAttribute:
             where:"luaTableToComplexAttribute"
-            @NotATable
+            NotATable:
                 message:"LuaElement %id% is not a table"
-    @FunctionsHeader
+    FunctionsHeader:
         where:"Functions"
         file:"src/Functions.hpp"
-        @Vector
+        Vector:
             where:"Vector"
-            @UnknownIndexOfElement
+            UnknownIndexOfElement:
                 where:"indexOfElement"
                 message:"Can't find element %element% in std::vector"
-    @GameObject
+    GameObject:
         where:"GameObject"
         file:"src/GameObject.cpp"
-        @GameObject
+        GameObject:
             where:"GameObject"
-            @UnknownTriggerParameterType
+            UnknownTriggerParameterType:
                 where:"update"
                 message:"Unknown type for parameter %parameter% in GameObject %object% triggering %trigger%"
-            @NoLevelSprite
+            NoLevelSprite:
                 where:"getLevelSprite"
                 message:"GameObject %id% doesn't have a LevelSprite Component"
-            @NoCollider
+            NoCollider:
                 where:"getCollider"
                 message:"GameObject %id% doesn't have a Collider Component"
-            @NoAnimator
+            NoAnimator:
                 where:"getAnimator"
                 message:"GameObject %id% doesn't have an Animator Component"
-            @NoScript
+            NoScript:
                 where:"getScript"
                 message:"GameObject %id% doesn't have a Script Component"
-    @KeyBinder
+    KeyBinder:
         where:"KeyBinder"
         file:"src/KeyBinder.cpp"
-        @KeyBinder
+        KeyBinder:
             where:"KeyBinder"
-            @UnknownAction
+            UnknownAction:
                 where:"getActionKey"
                 message:"Can't find Key for Action %action%"
-            @UnknownKey
+            UnknownKey:
                 where:"getKey"
                 message:"Can't find KeyClass for Key %key%"
-    @Package
+    Package:
         where:"Package"
         file:"src/Package.cpp"
-        @Package
+        Package:
             where:"Package"
-            @AlreadyInstalled
+            AlreadyInstalled:
                 where:"Install"
                 message:"Package <%package%> has already been installed"
-            @InexistantPackage
+            InexistantPackage:
                 where:"%function%"
                 message:"Package <%package%> does not exists"
-    @PathResolverHeader
+    PathResolverHeader:
         where:"PathResolverHeader"
         file:"include/PathResolver.hpp"
-        @Path
+        Path:
             where:"Path"
-            @CantFindResource
+            CantFindResource:
                 where:"loadResource"
                 message:"Can't find Resource at %path%"
-    @PathResolver
+    PathResolver:
         where:"PathResolver"
         file:"src/PathResolver.cpp"
-        @Path
+        Path:
             where:"Path"
-            @UnknownPathAtIndex
+            UnknownPathAtIndex:
                 where:"getPath"
                 message:"Can't find BasePath at index %index% for Path %path%"
-    @Script
+    Script:
         where:"Script"
         file:"src/Script.cpp"
-        @CoreHook
+        CoreHook:
             where:"CoreHook"
-            @UnknownHookType
+            UnknownHookType:
                 where:"getValue"
                 message:"Unknown type "%type%" for %name%"
-            @UnknownHookName
+            UnknownHookName:
                 where:"getValue"
                 message:"Can't find Hook for : %name%"
-            @UnknownPointerName
+            UnknownPointerName:
                 where:"getPointer"
                 message:"Can't find Pointer for : %name%"
-        @Lib
-            @NoNamespaceProvided
+        Lib:
+            NoNamespaceProvided:
                 where:"loadLib"
                 message:"Please provide a namespace"
-            @UnknownNamespace
+            UnknownNamespace:
                 where:"loadLib"
                 message:"%name% is not a known Lib Namespace"
-            @UnknownCoreLib
+            UnknownCoreLib:
                 where:"loadCoreLib"
                 message:"Can't find Core.%lib%"
-            @AnimationImportError
+            AnimationImportError:
                 where:"loadAnimation"
                 message:"Can't import %lib%"
-            @CanvasImportError
+            CanvasImportError:
                 where:"loadCanvas"
                 message:"Can't import %lib%"
-            @CollisionImportError
+            CollisionImportError:
                 where:"loadCollision"
                 message:"Can't import %lib%"
-            @ConsoleImportError
+            ConsoleImportError:
                 where:"loadConsole"
                 message:"Can't import %lib%"
-            @ConstantsImportError
+            ConstantsImportError:
                 where:"loadConstants"
                 message:"Can't import %lib%"
-            @CoordinatesImportError
+            CoordinatesImportError:
                 where:"loadCoordinates"
                 message:"Can't import %lib%"
-            @CursorImportError
+            CursorImportError:
                 where:"loadCursor"
                 message:"Can't import %lib%"
-            @DialogImportError
+            DialogImportError:
                 where:"loadDialog"
                 message:"Can't import %lib%"
-            @KeyBindImportError
+            KeyBindImportError:
                 where:"loadKeyBind"
                 message:"Can't import %lib%"
-            @LevelSpriteImportError
+            LevelSpriteImportError:
                 where:"loadLevelSprite"
                 message:"Can't import %lib%"
-            @LightImportError
+            LightImportError:
                 where:"loadLight"
                 message:"Can't import %lib%"
-            @MathExpImportError
+            MathExpImportError:
                 where:"loadMathExp"
                 message:"Can't import %lib%"
-            @PackageImportError
+            PackageImportError:
                 where:"loadPackage"
                 message:"Can't import %lib%"
-            @PathImportError
+            PathImportError:
                 where:"loadPath"
                 message:"Can't import %lib%"
-            @ParticleImportError
+            ParticleImportError:
                 where:"loadParticle"
                 message:"Can't import %lib%"
-            @SFMLImportError
+            SFMLImportError:
                 where:"loadSFML"
                 message:"Can't import %lib%"
-            @SoundImportError
+            SoundImportError:
                 where:"loadSound"
                 message:"Can't import %lib%"
-            @STDImportError
+            STDImportError:
                 where:"loadSTD"
                 message:"Can't import %lib%"
-            @TriggerImportError
+            TriggerImportError:
                 where:"loadTrigger"
                 message:"Can't import %lib%"
-            @UtilsImportError
+            UtilsImportError:
                 where:"loadUtils"
                 message:"Can't import %lib%"
-            @ViliImportError
+            ViliImportError:
                 where:"loadVili"
                 message:"Can't import %lib%"
-    @Sound
+    Sound:
         file:"src/SoundManager.cpp"
         where:"SoundManager"
-        @MusicWrapper
+        MusicWrapper:
             where:"MusicWrapper"
-            @IncorrectStatus
+            IncorrectStatus:
                 where:"getStatus"
                 message:"Music returned an incorrect status"
-        @SoundWrapper
+        SoundWrapper:
             where:"SoundWrapper"
-            @IncorrectStatus
+            IncorrectStatus:
                 where:"getStatus"
                 message:"Music returned an incorrect status"
-    @Trigger
+    Trigger:
         file:"src/Triggers.cpp"
         where:"Trigger"
-        @TriggerGroup
+        TriggerGroup:
             where:"TriggerGroup"
-            @UnknownTrigger
+            UnknownTrigger:
                 where:"getTrigger"
                 message:"Trigger %trigger% does not exists in TriggerGroup %group%"
-        @TriggerDatabase
+        TriggerDatabase:
             where:"TriggerDatabase"
-            @UnknownCustomTriggerGroup
+            UnknownCustomTriggerGroup:
                 where:"%function%"
                 message:"Custom TriggerGroup %group% does not exists in Namespace %nsp%"
-            @UnknownNamespace
+            UnknownNamespace:
                 where:"%function%"
                 message:"Custom Group Namespace %nsp% does not exists"
-            @NamespaceAlreadyExists
+            NamespaceAlreadyExists:
                 where:"createNamespace"
                 message:"Namespace %nsp% already exists"
-            @TriggerGroupAlreadyExists
+            TriggerGroupAlreadyExists:
                 where:"createTriggerGroup"
                 message:"TriggerGroup %group% already exists in Namespace %nsp%"
-    @Workspace
+    Workspace:
         where:"Workspace"
         file:"src/Workspace.cpp"
-        @Workspace
+        Workspace:
             where:"Workspace"
-            @InexistantWorkspace
+            InexistantWorkspace:
                 where:"%function%"
                 message:"Workspace <%workspace%> does not exists"
-    @World
+    World:
         where:"World"
         file:"src/World.cpp"
-        @World
+        World:
             where:"World"
-            @NoMeta
+            NoMeta:
                 where:"loadFromFile"
                 message:"Map file %map% does not have any 'Meta' RootAttribute"
-            @NoView
+            NoView:
                 where:"loadFromFile"
                 message:"Map file %map% does not have any 'View' RootAttribute"
-            @UnknownGameObject
+            UnknownGameObject:
                 where:"getGameObject"
                 messsage:"Can't find GameObject %id% in World %map%"
-            @UnknownLevelSprite
+            UnknownLevelSprite:
                 where:"getSpriteByID"
                 message:"Can't find LevelSprite %id% in World %map%"
 
 Vili:
-    @ViliHeader
+    ViliHeader:
         where:"ViliHeader"
         file:"extlibs/include/vili/Vili.hpp"
-        @BaseAttribute
-            @WrongIntCast
+        BaseAttribute:
+            where:"BaseAttribute"
+            WrongIntCast:
                 where:"get<int>"
                 message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongFloatCast
+            WrongFloatCast:
                 where:"get<float>"
                 message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongBoolCast
+            WrongBoolCast:
                 where:"get<bool>"
                 message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongStringCast
+            WrongStringCast:
                 where:"get<string>"
                 message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
-        @LinkAttribute
-            @WrongBaseAttributeLink
+        LinkAttribute:
+            where:"LinkAttribute"
+            WrongBaseAttributeLink:
                 where:"get<BaseAttribute>"
                 message:"LinkAttribute's (%path%) target (%targetpath%) is not a BaseAttribute"
-            @WrongComplexAttributeLink
+            WrongComplexAttributeLink:
                 where:"get<ComplexAttribute>"
                 message:"LinkAttribute's (%path%) target (%targetpath%) is not a ComplexAttribute"
-            @WrongListAttributeLink
+            WrongListAttributeLink:
                 where:"get<ListAttribute>"
                 message:"LinkAttribute's (%path%) target (%targetpath%) is not a ListAttribute"
-    @Vili
+    Vili:
         where:"Vili"
         file:"extlibs/build/vili/src/Vili.cpp"
-        @Attribute
+        Attribute:
             where:"Attribute"
-            @WrongParentRemover
+            WrongParentRemover:
                 where:"removeParent"
                 message:"%wrongparent% is not %path% parent"
-            @AlreadyHaveParent
+            AlreadyHaveParent:
                 where:"setParent"
                 message:"Attribute %path% already has a parent : %parent"
-            @ChangeIDWithParent
+            ChangeIDWithParent:
                 where:"setID"
                 message:"Can't change ID of %path% when it has a parent"
-        @BaseAttribute
+        BaseAttribute:
             where:"BaseAttribute"
-            @WrongIntSet
+            WrongIntSet:
                 where:"set(int)"
                 message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongFloatSet
+            WrongFloatSet:
                 where:"set(float)"
                 message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongStringSet
+            WrongStringSet:
                 where:"set(string)"
                 message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongBoolSet
+            WrongBoolSet:
                 where:"set(bool)"
                 message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
-            @WrongIntCastOperator
+            WrongIntCastOperator:
                 where:"operator<int>"
                 message:"BaseAttribute %path% can't be casted into a int"
-            @WrongFloatCastOperator
+            WrongFloatCastOperator:
                 where:"operator<float>"
                 message:"BaseAttribute %path% can't be casted into a float"
-            @WrongStringCastOperator
+            WrongStringCastOperator:
                 where:"operator<string>"
                 message:"BaseAttribute %path% can't be casted into a string"
-            @WrongBoolCastOperator
+            WrongBoolCastOperator:
                 where:"operator<bool>"
                 message:"BaseAttribute %path% can't be casted into a bool"
-        @LinkAttribute
+        LinkAttribute:
             where:"LinkAttribute"
-            @WrongLinkPath
+            WrongLinkPath:
                 where:"getTarget"
                 message:"LinkAttribute (%path%) can't find target (%target%) with PathPart %pathpart%"
-            @WrongLinkListIndex
+            WrongLinkListIndex:
                 where:"getTarget"
                 message:"LinkAttribute (%path%) can't find ListAttribute item target (%target%) with index %pathpart%"
-            @WrongCopyTarget
+            WrongCopyTarget:
                 where:"copy"
                 message:"LinkAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
-        @ListAttribute
+        ListAttribute:
             where:"ListAttribute"
-            @WrongIndex
+            WrongIndex:
                 where:"get"
                 message:"Can't access index %index% of %path% (Size : %size%)"
-            @WrongCopyTarget
+            WrongCopyTarget:
                 where:"copy"
                 message:"ListAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
-        @ComplexAttribute
+        ComplexAttribute:
             where:"ComplexAttribute"
-            @WrongExtraction
+            WrongExtraction:
                 where:"extractElement"
                 message:"%path% doesn't contain Attribute %element%"
-            @WrongGetAttributeKey
+            WrongGetAttributeKey:
                 where:"get"
                 message:"Can't find Attribute %attribute% in %path%"
-            @WrongGetBaseAttributeKey
+            WrongGetBaseAttributeKey:
                 where:"getBaseAttribute"
                 message:"Can't find BaseAttribute %attribute% in %path%"
-            @WrongGetListAttributeKey
+            WrongGetListAttributeKey:
                 where:"getListAttribute"
                 message:"Can't find ListAttribute %attribute% in %path%"
-            @WrongGetLinkAttributeKey
+            WrongGetLinkAttributeKey:
                 where:"getLinkAttribute"
                 message:"Can't find LinkAttribute %attribute% in %path%"
-            @WrongGetComplexAttributeKey
+            WrongGetComplexAttributeKey:
                 where:"getComplexAttribute"
                 message:"Can't find ComplexAttribute %attribute% in %path%"
-            @WrongGetTypeKey
+            WrongGetTypeKey:
                 where:"getAttributeType"
                 message:"Can't find Attribute %attribute% in %path%"
-            @WrongCopyTarget
+            WrongCopyTarget:
                 where:"copy"
                 message:"ComplexAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
-        @DataTemplate
+        DataTemplate:
             where:"DataTemplate"
-            @BuildError
+            BuildError:
                 where:"build"
                 message:"Type / Constraint mismatch in Template building for element %element% in %parent%"
-            @WrongFacultativeParameterOrder
+            WrongFacultativeParameterOrder:
                 where:"addConstraintManager"
                 message:"Can't use a facultative arguement after a non-facultative argument (index : %size%)"
-        @DataParser
+        DataParser:
             where:"DataParser"
-            @TemplateMissingInitOrBody
+            TemplateMissingInitOrBody:
                 where:"parseFile"
                 message:"Can't create Template %template% without __init__ or __body__ in (File : %file%)"
-            @WrongTemplateBase
+            WrongTemplateBase:
                 where:"parseFile"
                 message:"Can't create Template from non-existant RootAttribute %attribute% (File : %file)"
-            @UnknownTemplate
+            UnknownTemplate:
                 where:"parseFile"
                 message:"Can't build object from inexistant Template : %template% for attribute : %id% (File : %file%)"
-            @UnknownTypeInList
+            UnknownTypeInList:
                 where:"parseFile"
                 message:"Can't push unknown type to ListAttribute %list% (File : %file%)"
-            @FileNotFound
+            FileNotFound:
                 where:"parseFile"
                 message:"Can't open %file%"
