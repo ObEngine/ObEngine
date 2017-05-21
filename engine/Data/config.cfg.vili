@@ -1,7 +1,7 @@
 Define Flag (Settings);
 
 GameConfig:
-	antiAliasing:True
+    antiAliasing:True
     depthOfField:True
     scrollSensibility:1
     framerateLimit:True
@@ -9,7 +9,7 @@ GameConfig:
     vsync:True
     
 KeyBinding:
-    @game
+    game:
         Jump:"Space"
         Left:"Q"
         Right:"D"
@@ -25,9 +25,9 @@ KeyBinding:
         Spell7:"C"
         Spell8:"V"
         Reset:"R"
-    @controller
+    controller:
         A:"Jump"
-    @mapEditor
+    mapEditor:
         SpriteMode:"W"
         ObjectMode:"X"
         CollisionMode:"C"

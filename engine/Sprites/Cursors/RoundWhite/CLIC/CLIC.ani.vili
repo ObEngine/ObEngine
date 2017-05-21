@@ -9,7 +9,7 @@ Images:
     ImageList:[1..9]
     model:"%s.png"
 Groups:
-    @main
+    main:
         content:[8..0]
 Animation:
     AnimationCode:[
