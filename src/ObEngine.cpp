@@ -14,10 +14,6 @@ int main(int argc, char** argv)
 	std::string startMode = runParser.getArgumentValue("-mode");
 	std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
-	vili::DataParser dpfile;
-	dpfile.parseFile("Package/BiblicalFortress/Data/Maps/Main.map.vili", true);
-	dpfile.writeFile("testout.vili", true);
-
 	obe::Coord::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
 	/*std::ofstream out("debug.log");

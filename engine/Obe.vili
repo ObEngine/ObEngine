@@ -1,15 +1,15 @@
 Path:    
-    @StringComposant
+    StringComposant:
         type:"String"
     
-    @IntComposant
+    IntComposant:
         type:"Int"
 
-    @__init__
-        @0:StringComposant
-        @1:IntComposant
+    __init__:
+        0(StringComposant):
+        1(IntComposant):
 
-    @__body__
+    __body__:
         type:"Path"
         path:&(0/value)
         priority:&(1/value)
@@ -17,17 +17,17 @@ Path:
 Template(Path);
 
 Workspace:    
-    @StringComposant
+    StringComposant:
         type:"String"
     
-    @IntComposant
+    IntComposant:
         type:"Int"
 
-    @__init__
-        @0:StringComposant
-        @1:IntComposant
+    __init__:
+        0(StringComposant):
+        1(IntComposant):
 
-    @__body__
+    __body__:
         type:"Workspace"
         path:&(0/value)
         priority:&(1/value)
@@ -35,17 +35,17 @@ Workspace:
 Template(Workspace);
 
 Package:    
-    @StringComposant
+    StringComposant:
         type:"String"
     
-    @IntComposant
+    IntComposant:
         type:"Int"
 
-    @__init__
-        @0:StringComposant
-        @1:IntComposant
+    __init__:
+        0(StringComposant):
+        1(IntComposant):
 
-    @__body__
+    __body__:
         type:"Package"
         path:&(0/value)
         priority:&(1/value)
@@ -53,12 +53,12 @@ Package:
 Template(Package);
 
 Vector2<ViewPercentage>:
-    @NumericComposant
+    NumericComposant:
         types:["Float", "Int"]
-    @__init__
-        @0:NumericComposant
-        @1:NumericComposant
-    @__body__
+    __init__:
+        0(NumericComposant):
+        1(NumericComposant):
+    __body__:
         unit:"ViewPercentage"
         x:&(0/value)
         y:&(1/value)
@@ -66,12 +66,12 @@ Vector2<ViewPercentage>:
 Template(Vector2<ViewPercentage>);
 
 Vector2<ViewPixels>:
-    @IntComposant
+    IntComposant:
         type:"Int"
-    @__init__
-        @0:IntComposant
-        @1:IntComposant
-    @__body__
+    __init__:
+        0(IntComposant):
+        1(IntComposant):
+    __body__:
         unit:"ViewPixels"
         x:&(0/value)
         y:&(1/value)
@@ -79,38 +79,25 @@ Vector2<ViewPixels>:
 Template(Vector2<ViewPixels>);
 
 Vector2<ViewUnits>:
-    @NumericComposant
+    NumericComposant:
         types:["Float", "Int"]
-    @__init__
-        @0:NumericComposant
-        @1:NumericComposant
-    @__body__
+    __init__:
+        0(NumericComposant):
+        1(NumericComposant):
+    __body__:
         unit:"ViewUnits"
         x:&(0/value)
         y:&(1/value)
 
 Template(Vector2<ViewUnits>);
 
-Vector2<WorldPercentage>:
-    @NumericComposant
-        types:["Float", "Int"]
-    @__init__
-        @0:NumericComposant
-        @1:NumericComposant
-    @__body__
-        unit:"WorldPercentage"
-        x:&(0/value)
-        y:&(1/value)
-
-Template(Vector2<WorldPercentage>);
-
 Vector2<WorldPixels>:
-    @IntComposant
+    IntComposant:
         type:"Int"
-    @__init__
-        @0:IntComposant
-        @1:IntComposant
-    @__body__
+    __init__:
+        0(IntComposant):
+        1(IntComposant):
+    __body__:
         unit:"WorldPixels"
         x:&(0/value)
         y:&(1/value)
@@ -118,12 +105,12 @@ Vector2<WorldPixels>:
 Template(Vector2<WorldPixels>);
 
 Vector2<WorldUnits>:
-    @NumericComposant
+    NumericComposant:
         types:["Float", "Int"]
-    @__init__
-        @0:NumericComposant
-        @1:NumericComposant
-    @__body__
+    __init__:
+        0(NumericComposant):
+        1(NumericComposant):
+    __body__:
         unit:"WorldUnits"
         x:&(0/value)
         y:&(1/value)
@@ -131,43 +118,36 @@ Vector2<WorldUnits>:
 Template(Vector2<WorldUnits>);
 
 Unit<ViewPercentage>:
-    @__init__
-    @__body__
+    __init__:
+    __body__:
         unit:"ViewPercentage"
 
 Template(Unit<ViewPercentage>);
 
 Unit<ViewPixels>:
-    @__init__
-    @__body__
+    __init__:
+    __body__:
         unit:"ViewPixels"
 
 Template(Unit<ViewPixels>);
 
 Unit<ViewUnits>:
-    @__init__
-    @__body__
+    __init__:
+    __body__:
         unit:"ViewUnits"
 
 Template(Unit<ViewUnits>);
 
-Unit<WorldPercentage>:
-    @__init__
-    @__body__
-        unit:"WorldPercentage"
-
-Template(Unit<WorldPercentage>);
-
 Unit<WorldPixels>:
-    @__init__
-    @__body__
+    __init__:
+    __body__:
         unit:"WorldPixels"
 
 Template(Unit<WorldPixels>);
 
 Unit<WorldUnits>:
-    @__init__
-    @__body__
+    __init__:
+    __body__:
         unit:"WorldUnits"
 
 Template(Unit<WorldUnits>);
