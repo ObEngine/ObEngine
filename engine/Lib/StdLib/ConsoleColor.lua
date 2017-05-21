@@ -8,12 +8,17 @@ function Color.print(tables, indent)
     end
     for k, v in pairs(tables) do
         if type(v) == "string" then
-            io.write(v); io.flush();
+            _term_display(v);
         elseif type(v) == "table" then
-            io.write(color(v.color) .. v.text); io.flush();
+            if v.dark == nil then
+                _term_setcolor(v.color, false);
+            else 
+                _term_setcolor(v.color, v.dark);
+            end
+            _term_display(v.text);
         end
     end
-    color("white");
+    _term_setcolor("white", false);
 end
 
 return Color;

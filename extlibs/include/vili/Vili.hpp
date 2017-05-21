@@ -19,7 +19,7 @@
 
 namespace vili
 {
-	void LoadErrors(std::string errorFile);
+	void LoadErrors(const std::string& errorFile);
 
 	namespace Types
 	{
@@ -45,14 +45,14 @@ namespace vili
 			Unknown = 0x7
 		};
 
-		Types::DataType stringToDataType(std::string type);
-		Types::DataType getVarType(std::string var);
+		Types::DataType stringToDataType(const std::string& type);
+		Types::DataType getVarType(const std::string& var);
 		std::string getDefaultValueForType(Types::DataType type);
 		std::string dataTypeToString(Types::DataType type);
 		std::string attributeTypeToString(Types::AttributeType type);
 	}
 
-	std::vector<std::string> convertPath(std::string path);
+	std::vector<std::string> convertPath(const std::string& path);
 
 	class ContainerAttribute;
 	//Attribute
@@ -67,7 +67,7 @@ namespace vili
 		virtual ContainerAttribute* getParent();
 		friend class ContainerAttribute;
 		friend class LinkAttribute;
-		friend void LoadErrors(std::string errorFile);
+		friend void LoadErrors(const std::string& errorFile);
 	public:
 		const static Types::AttributeType ClassType = Types::Attribute;
 		Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
@@ -81,8 +81,8 @@ namespace vili
 		virtual std::string getNodePath();
 		unsigned int getDepth();
 		virtual void setID(const std::string& id);
-		virtual void copy(ContainerAttribute* newParent, std::string newid = "") = 0;
-		virtual void write(std::ofstream* file, std::string spacing, unsigned int depth) = 0;
+		virtual void copy(ContainerAttribute* newParent, const std::string& newid = "") = 0;
+		virtual void write(std::ofstream* file, const std::string& spacing, unsigned int depth) = 0;
 	};
 
 	//ContainerAttribute
@@ -94,32 +94,39 @@ namespace vili
 		virtual Attribute* removeOwnership(Attribute* element);
 		virtual ~ContainerAttribute() {}
 		virtual Attribute* extractElement(Attribute* element) = 0;
-		void copy(ContainerAttribute* newParent, std::string newid = "") override = 0;
-		void write(std::ofstream* file, std::string spacing, unsigned int depth) override = 0;
+		void copy(ContainerAttribute* newParent, const std::string& newid = "") override = 0;
+		void write(std::ofstream* file, const std::string& spacing, unsigned int depth) override = 0;
 	};
 
 	//BaseAttribute
 	class BaseAttribute : public Attribute
 	{
 	protected:
-		std::string m_data;
+		union
+		{
+			int Int;
+			double Float;
+			bool Bool;
+			std::string String;
+		};
 		Types::DataType m_dataType;
 		friend std::ostream& operator<<(std::ostream& stream, const BaseAttribute& attribute);
 	public:
 		const static Types::AttributeType ClassType = Types::BaseAttribute;
-		BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType, const std::string& data);
-		BaseAttribute(const std::string& id, const Types::DataType& dataType, const std::string& data);
+		BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType);
+		BaseAttribute(const std::string& id, const Types::DataType& dataType);
 		virtual ~BaseAttribute() {}
 		std::string returnData() const;
 		void set(int var);
 		void set(double var);
 		void set(const std::string& var);
+		void set(const char* var);
 		void set(bool var);
-		void autoset(std::string rawData);
+		void autoset(const std::string& rawData);
 		Types::DataType getDataType() const;
 		template <class T> T get() { }
-		void copy(ContainerAttribute* newParent, std::string newid = "") override;
-		void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
+		void copy(ContainerAttribute* newParent, const std::string& newid = "") override;
+		void write(std::ofstream* file, const std::string& spacing, unsigned int depth) override;
 		operator std::string();
 		operator int();
 		operator double();
@@ -141,9 +148,9 @@ namespace vili
 			std::string getPath() const;
 			std::string getFullPath() const;
 			void apply();
-			bool operator==(LinkAttribute compare) const;
-			void copy(ContainerAttribute* newParent, std::string newid = "") override;
-			void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
+			bool operator==(const LinkAttribute& compare) const;
+			void copy(ContainerAttribute* newParent, const std::string& newid = "") override;
+			void write(std::ofstream* file, const std::string& spacing, unsigned int depth) override;
 	};
 	
 	//ListAttribute
@@ -172,8 +179,8 @@ namespace vili
 		void clear();
 		void erase(unsigned int index);
 		Attribute* extractElement(Attribute* element) override;
-		void copy(ContainerAttribute* newParent, std::string newid = "") override;
-		void write(std::ofstream* file, std::string spacing, unsigned int depth) override;
+		void copy(ContainerAttribute* newParent, const std::string& newid = "") override;
+		void write(std::ofstream* file, const std::string& spacing, unsigned int depth) override;
 	};
 
 	class NodeIterator
@@ -243,7 +250,7 @@ namespace vili
 			T* at(const std::string& cPath, Args ...pathParts);
 			template<class ...Args>
 			ComplexAttribute* at(const std::string& cPath, Args ...pathParts);
-			template<class T> T* at(std::string cPath) { }
+			template<class T> T* at(std::string cPath) { return T(); };
 
 			Attribute* get(const std::string& attributeID);
 			BaseAttribute* getBaseAttribute(const std::string& attributeID);
@@ -258,6 +265,7 @@ namespace vili
 			bool contains(Types::AttributeType searchType, const std::string& attributeID);
 
 			void createBaseAttribute(const std::string& attributeID, const Types::DataType& type, const std::string& data);
+			void createBaseAttribute(const std::string& attributeID, const Types::DataType& type);
 			void createBaseAttribute(const std::string& attributeID, const std::string& data);
 			void createBaseAttribute(const std::string& attributeID, bool data);
 			void createBaseAttribute(const std::string& attributeID, int data);
@@ -278,8 +286,8 @@ namespace vili
 			void deleteListAttribute(const std::string& attributeID, bool freeMemory = false);
 			void deleteLinkAttribute(const std::string& attributeID, bool freeMemory = false);
 
-			void write(std::ofstream* file, std::string spacing, unsigned int depth = 0) override;
-			void copy(ContainerAttribute* newParent, std::string newid = "") override;
+			void write(std::ofstream* file, const std::string& spacing, unsigned int depth = 0) override;
+			void copy(ContainerAttribute* newParent, const std::string& newid = "") override;
 			void walk(std::function<void(NodeIterator&)> walkFunction, bool useCache = false);
 			void walk(std::function<void(NodeIterator&)> walkFunction, NodeIterator& iterator);
 			template <class T>
@@ -317,7 +325,7 @@ namespace vili
 			DataTemplate(std::string name);
 			ComplexAttribute* getBody();
 			void build(ComplexAttribute* parent, const std::string& id);
-			void addConstraintManager(AttributeConstraintManager constraintManager, bool facultative = false);
+			void addConstraintManager(const AttributeConstraintManager& constraintManager, bool facultative = false);
 			void useDefaultLinkRoot();
 			unsigned int getArgumentCount() const;
 			std::string getName() const;
@@ -339,7 +347,7 @@ namespace vili
 		DataParser(std::string file);
 		ComplexAttribute* operator->() const;
 		void createFlag(const std::string& flag);
-		ComplexAttribute& operator[](std::string cPath) const;
+		ComplexAttribute& operator[](const std::string& cPath) const;
 		ComplexAttribute* at(std::string cPath) const;
 		template<class ...Args>
 		ComplexAttribute* at(const std::string& cPath, Args ...pathParts);
@@ -362,26 +370,26 @@ namespace vili
 	//BaseAttribute
 	template <> inline int BaseAttribute::get() {
 		if (m_dataType == Types::Int)
-			return std::stoi(m_data);
+			return Int;
 		if (m_dataType == Types::Float)
-			return std::stod(m_data);
+			return Float;
 		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongIntCast", { {"path", getNodePath()}, {"type", dataTypeToString(m_dataType)} });
 	}
 	template <> inline double BaseAttribute::get() {
 		if (m_dataType == Types::Float)
-			return std::stod(m_data);
+			return Float;
 		if (m_dataType == Types::Int)
-			return std::round(std::stod(m_data));
+			return Int;
 		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongFloatCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 	template <> inline bool BaseAttribute::get() {
 		if (m_dataType == Types::Bool)
-			return (m_data == "True") ? true : false;
+			return Bool;
 		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongBoolCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 	template <> inline std::string BaseAttribute::get() {
 		if (m_dataType == Types::String)
-			return m_data;
+			return String;
 		throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongStringCast", { { "path", getNodePath() }, { "type", dataTypeToString(m_dataType) } });
 	}
 

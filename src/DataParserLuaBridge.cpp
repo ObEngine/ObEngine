@@ -96,13 +96,12 @@ namespace obe
 
 			vili::BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert)
 			{
-				std::string luaElement = convert;
 				std::string convertType = "";
-				if (convert.type() == 3 && Functions::String::isStringInt(luaElement))
+				if (convert.type() == 3 && Functions::String::isStringInt(convert))
 				{
 					convertType = "int";
 				}
-				else if (convert.type() == 3 && vili::Functions::String::isStringFloat(luaElement))
+				else if (convert.type() == 3 && vili::Functions::String::isStringFloat(convert))
 				{
 					convertType = "float";
 				}
@@ -114,7 +113,9 @@ namespace obe
 				{
 					convertType = "string";
 				}
-				return new vili::BaseAttribute(id, vili::Types::stringToDataType(convertType), convert);
+				vili::BaseAttribute* returnAttribute = new vili::BaseAttribute(id, vili::Types::stringToDataType(convertType));
+				returnAttribute->autoset(convert);
+				return returnAttribute;
 			}
 
 			vili::ListAttribute* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert)

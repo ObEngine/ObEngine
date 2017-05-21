@@ -1038,7 +1038,7 @@ namespace obe
 			if (importAll || args[1] == "BaseAttribute")
 			{
 				(*lua)["Core"]["Vili"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<vili::BaseAttribute, vili::Attribute>()
-					.setConstructors<vili::BaseAttribute(std::string, vili::Types::DataType, std::string)>()
+					.setConstructors<vili::BaseAttribute(std::string, vili::Types::DataType)>()
 					.addFunction("get_int", static_cast<int(vili::BaseAttribute::*)()>(&vili::BaseAttribute::get))
 					.addFunction("get_float", static_cast<double(vili::BaseAttribute::*)()>(&vili::BaseAttribute::get))
 					.addFunction("get_bool", static_cast<bool(vili::BaseAttribute::*)()>(&vili::BaseAttribute::get))

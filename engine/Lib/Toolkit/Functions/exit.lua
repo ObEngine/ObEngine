@@ -1,6 +1,13 @@
-function exit()
-    continue = false;
-    reload = false;
-end
+local Color = require("Lib/Toolkit/ToolkitRoute");
 
-return exit;
+return {
+    Functions = {
+        function exit()
+            continue = false;
+            reload = false;
+        end
+    },
+    Routes = {
+        Route.Call("exit");
+    }
+};

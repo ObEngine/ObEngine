@@ -3,7 +3,7 @@ cmake_policy(SET CMP0015 NEW)
 
 project(ObEngine)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/build-scripts/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/find/")
 
 IF (NOT DEFINED _USE_CPP_NEW_FS)
     set(_USE_CPP_NEW_FS ON CACHE BOOL "Use C++17 Filesystem ?")
@@ -22,7 +22,6 @@ add_subdirectory(extlibs/build/TGUI)
 file(GLOB PG_OBE include/*.hpp)
 file(GLOB HD_OBE src/*.cpp)
 
-set(CMAKE_MODULE_PATH build-scripts/ ${CMAKE_MODULE_PATH})
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
 else()

@@ -12,7 +12,8 @@ namespace obe
 			ViewPixels,
 			ViewUnits,
 			WorldPixels,
-			WorldUnits
+			WorldUnits,
+			Unknown
 		};
 
 		Units stringToUnits(const std::string& unit);

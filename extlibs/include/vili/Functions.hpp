@@ -18,12 +18,12 @@ namespace vili
 		namespace String
 		{
 			std::vector<std::string> split(const std::string &str, const std::string &delimiters = " ");
-			int occurencesInString(std::string str, std::string occur);
-			bool isStringAlpha(std::string str);
-			bool isStringAlphaNumeric(std::string str);
-			bool isStringNumeric(std::string str);
-			bool isStringInt(std::string str);
-			bool isStringFloat(std::string str);
+			int occurencesInString(const std::string& str, const std::string& occur);
+			bool isStringAlpha(const std::string& str);
+			bool isStringAlphaNumeric(const std::string& str);
+			bool isStringNumeric(const std::string& str);
+			bool isStringInt(const std::string& str);
+			bool isStringFloat(const std::string& str);
 			void removeCharFromString(std::string &str, std::string charToRemove);
 			void replaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);
 			std::string replaceString(std::string subject, const std::string& search, const std::string &replace);
@@ -31,7 +31,7 @@ namespace vili
 			std::string extract(const std::string& base, int start, int end);
 			std::vector<std::string> extractBetween(std::string &str, char delimiter1, char delimiter2);
 			typedef std::tuple<std::vector<std::string>, std::vector<std::string>, std::vector<std::pair<int, int>>> StringExtractor;
-			StringExtractor extractAllStrings(std::string);
+			StringExtractor extractAllStrings(const std::string& string);
 			bool contains(const std::string& string, const std::string& search);
 		}
 		namespace Vector
@@ -40,11 +40,11 @@ namespace vili
 			bool isInList(V item, const std::vector<V>& vector);
 			template <typename V>
 			int indexOfElement(V item, const std::vector<V>& vector);
-			std::string join(std::vector<std::string>& vector, std::string sep = "", int start = 0, int end = 0);
+			std::string join(std::vector<std::string>& vector, const std::string& sep = "", int start = 0, int end = 0);
 			template <typename V>
 			void eraseAll(std::vector<V>& vector, V elem);
-			void joinBetween(std::vector<std::string>& vector, std::string joinValue, std::string sep = "");
-			void mergeNeighboors(std::vector<std::string>& vector, std::string n1, std::string n2, std::string sep = "", bool strict = false);
+			void joinBetween(std::vector<std::string>& vector, const std::string& joinValue, const std::string& sep = "");
+			void mergeNeighboors(std::vector<std::string>& vector, const std::string& n1, const std::string& n2, const std::string& sep = "", bool strict = false);
 			template <typename V>
 			int findSubVector(std::vector<V>& vector, std::vector<V>& find);
 			template <typename V>

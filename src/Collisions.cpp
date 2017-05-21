@@ -230,7 +230,6 @@ namespace obe
 			other->clearHighlights(false, true);
 			if (solution.size() >= 1)
 			{
-				std::vector<int> sidesToHL;
 				for (ClipperLib::Path& path : solution)
 				{
 					for (ClipperLib::IntPoint& point : path)

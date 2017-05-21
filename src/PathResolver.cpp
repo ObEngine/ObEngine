@@ -93,6 +93,7 @@ namespace obe
 			Path::basePaths.clear();
 			vili::DataParser mountedPaths;
 			mountedPaths.parseFile("Mount.vili", true);
+			mountedPaths.writeFile("MountExport.vili");
 			for (std::string path : mountedPaths->at("Mount")->getAll(vili::Types::ComplexAttribute)) {
 				vili::ComplexAttribute* currentElement = mountedPaths->at("Mount", path);
 				std::string currentType = currentElement->at<vili::BaseAttribute>("type")->get<std::string>();

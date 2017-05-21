@@ -25,7 +25,7 @@ namespace vili
 			}
 			return tokens;
 		}
-		int String::occurencesInString(std::string str, std::string occur)
+		int String::occurencesInString(const std::string& str, const std::string& occur)
 		{
 			int occurrences = 0;
 			std::string::size_type start = 0;
@@ -36,49 +36,51 @@ namespace vili
 			}
 			return occurrences;
 		}
-		bool String::isStringAlpha(std::string str)
+		bool String::isStringAlpha(const std::string& str)
 		{
 			if (str.size() > 0)
 				return std::all_of(str.begin(), str.end(), ::isalpha);
 			else
 				return false;
 		}
-		bool String::isStringAlphaNumeric(std::string str)
+		bool String::isStringAlphaNumeric(const std::string& str)
 		{
 			if (str.size() > 0)
 				return std::all_of(str.begin(), str.end(), ::isalnum);
 			else
 				return false;
 		}
-		bool String::isStringInt(std::string str)
+		bool String::isStringInt(const std::string& str)
 		{
 			if (str.size() > 0)
 			{
 				if (str.substr(0, 1) == "-")
-					str = str.substr(1);
-				return std::all_of(str.begin(), str.end(), ::isdigit);
+					return std::all_of(str.begin() + 1, str.end(), ::isdigit);
+				else
+					return std::all_of(str.begin(), str.end(), ::isdigit);
 			}
 			else
 				return false;
 		}
-		bool String::isStringFloat(std::string str)
+		bool String::isStringFloat(const std::string& str)
 		{
+			std::string floatStr = str;
 			bool isFloat = false;
-			if (str.size() > 0)
+			if (floatStr.size() > 0)
 			{
-				if (str.substr(0, 1) == "-")
-					str = str.substr(1);
-				if (String::occurencesInString(str, ".") == 1)
+				if (floatStr.substr(0, 1) == "-")
+					floatStr = floatStr.substr(1);
+				if (String::occurencesInString(floatStr, ".") == 1)
 				{
 					isFloat = true;
-					String::removeCharFromString(str, ".");
+					String::removeCharFromString(floatStr, ".");
 				}
-				return (std::all_of(str.begin(), str.end(), ::isdigit) && isFloat);
+				return (std::all_of(floatStr.begin(), floatStr.end(), ::isdigit) && isFloat);
 			}
 			else
 				return false;
 		}
-		bool String::isStringNumeric(std::string str)
+		bool String::isStringNumeric(const std::string& str)
 		{
 			return (String::isStringFloat(str) || String::isStringInt(str));
 		}
@@ -140,7 +142,7 @@ namespace vili
 				String::replaceStringInPlace(str, strings[i], "");
 			return strings;
 		}
-		String::StringExtractor String::extractAllStrings(std::string string)
+		String::StringExtractor String::extractAllStrings(const std::string& string)
 		{
 			bool readingString = false;
 			std::vector<std::string> extractedStrings;
@@ -183,7 +185,7 @@ namespace vili
 		}
 
 		//Functions::Vector
-		std::string Vector::join(std::vector<std::string>& vector, std::string sep, int start, int end)
+		std::string Vector::join(std::vector<std::string>& vector, const std::string& sep, int start, int end)
 		{
 			std::string result = "";
 			if (end >= vector.size())
@@ -199,7 +201,7 @@ namespace vili
 			}
 			return result;
 		}
-		void Vector::joinBetween(std::vector<std::string>& vector, std::string joinValue, std::string sep)
+		void Vector::joinBetween(std::vector<std::string>& vector, const std::string& joinValue, const std::string& sep)
 		{
 			std::string stack = "";
 			bool stacking = false;
@@ -212,7 +214,7 @@ namespace vili
 					{
 						stack += vector.at(i);
 						vector.at(i) = stack;
-						stack = "";
+						stack.clear();
 					}
 					stacking = !stacking;
 				}
@@ -225,7 +227,7 @@ namespace vili
 			for (int i = toErase.size() - 1; i >= 0; i--)
 				vector.erase(vector.begin() + toErase[i]);
 		}
-		void Vector::mergeNeighboors(std::vector<std::string>& vector, std::string n1, std::string n2, std::string sep, bool strict)
+		void Vector::mergeNeighboors(std::vector<std::string>& vector, const std::string& n1, const std::string& n2, const std::string& sep, bool strict)
 		{
 			if (vector.size() > 0)
 			{

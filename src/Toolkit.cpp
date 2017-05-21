@@ -1,24 +1,23 @@
 #include "Toolkit.hpp"
+#include <rang/rang.hpp>
 
-std::string colorConsole(std::string color)
+void colorConsole(std::string color)
 {
-	if (color == "black") rlutil::setColor(rlutil::BLACK);
-	else if (color == "blue") rlutil::setColor(rlutil::BLUE);
-	else if (color == "brown") rlutil::setColor(rlutil::BROWN);
-	else if (color == "cyan") rlutil::setColor(rlutil::CYAN);
-	else if (color == "darkgrey") rlutil::setColor(rlutil::DARKGREY);
-	else if (color == "green") rlutil::setColor(rlutil::GREEN);
-	else if (color == "grey") rlutil::setColor(rlutil::GREY);
-	else if (color == "lightblue") rlutil::setColor(rlutil::LIGHTBLUE);
-	else if (color == "lightcyan") rlutil::setColor(rlutil::LIGHTCYAN);
-	else if (color == "lightgreen") rlutil::setColor(rlutil::LIGHTGREEN);
-	else if (color == "lightmagenta") rlutil::setColor(rlutil::LIGHTMAGENTA);
-	else if (color == "lightred") rlutil::setColor(rlutil::LIGHTRED);
-	else if (color == "magenta") rlutil::setColor(rlutil::MAGENTA);
-	else if (color == "red") rlutil::setColor(rlutil::RED);
-	else if (color == "white") rlutil::setColor(rlutil::WHITE);
-	else if (color == "yellow") rlutil::setColor(rlutil::YELLOW);
-	return "";
+	if (color == "black") std::cout << rang::fg::black;
+	else if (color == "blue") std::cout << rang::fg::blue;
+	else if (color == "cyan") std::cout << rang::fg::cyan;
+	else if (color == "green") std::cout << rang::fg::green;
+	else if (color == "grey") std::cout << rang::fg::gray;
+	else if (color == "magenta") std::cout << rang::fg::magenta;
+	else if (color == "red") std::cout << rang::fg::red;
+	else if (color == "white") std::cout << rang::style::reset;
+	else if (color == "yellow") std::cout << rang::fg::yellow;
+}
+
+void displayConsole(std::string disp)
+{
+	std::cout << disp;
+	std::cout << rang::style::reset;
 }
 
 namespace obe
@@ -36,7 +35,8 @@ namespace obe
 				toolkitEngine.dofile("Lib/GameLib/WScrInit.lua");
 				Script::loadLib(&toolkitEngine, "Core.*");
 				Script::loadBaseLib(&toolkitEngine);
-				toolkitEngine["color"] = kaguya::function(colorConsole);
+				toolkitEngine["_term_setcolor"] = kaguya::function(colorConsole);
+				toolkitEngine["_term_display"] = kaguya::function(displayConsole);
 				toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
 				continueToolkit = toolkitEngine["reload"];
 				printf("Press Enter to Continue");

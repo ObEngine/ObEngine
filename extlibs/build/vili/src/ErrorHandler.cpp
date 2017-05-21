@@ -36,12 +36,12 @@ namespace aube
 	}
 
 	std::map<std::string, ErrorMessage*> ErrorHandler::m_errors = std::map<std::string, ErrorMessage*>();
-	void ErrorHandler::Load(std::string errorId, std::string filename, std::vector<std::string> location, std::string message, std::vector<std::string> hints)
+	void ErrorHandler::Load(const std::string& errorId, const std::string& filename, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints)
 	{
 		m_errors[errorId] = new ErrorMessage(filename, location, message, hints);
 	}
 
-	std::runtime_error ErrorHandler::Raise(std::string errorId, std::map<std::string, std::string> parameters)
+	std::runtime_error ErrorHandler::Raise(const std::string& errorId, const std::map<std::string, std::string>& parameters)
 	{
 		if (m_errors.find(errorId) != m_errors.end())
 		{

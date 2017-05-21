@@ -5,7 +5,7 @@
 
 namespace vili
 {
-	void LoadErrors(std::string errorFile)
+	void LoadErrors(const std::string& errorFile)
 	{
 		DataParser errors(errorFile);
 
@@ -21,7 +21,7 @@ namespace vili
 				{
 					if (currentParent->contains(Types::BaseAttribute, "where"))
 						location.insert(location.begin(), currentParent->getBaseAttribute("where")->get<std::string>());
-					if (currentParent->contains(Types::BaseAttribute, "file") && filename == "")
+					if (currentParent->contains(Types::BaseAttribute, "file") && filename.empty())
 						filename = currentParent->getBaseAttribute("file")->get<std::string>();
 					errorIdParts.push_back(currentParent->getID());
 					if (currentParent->getParent() != nullptr)
@@ -41,7 +41,6 @@ namespace vili
 	{
 		t.clear();
 
-		std::istream::sentry se(is, true);
 		std::streambuf* sb = is.rdbuf();
 
 		for (;;) {
@@ -63,19 +62,26 @@ namespace vili
 		}
 	}
 
-	std::vector<std::string> convertPath(std::string path)
+	std::vector<std::string> convertPath(const std::string& path)
 	{
 		std::vector<std::string> vecPath = {};
 		if (Functions::String::occurencesInString(path, "/") >= 1)
 			vecPath = Functions::String::split(path, "/");
-		else if (path != "")
+		else if (!path.empty())
 			vecPath.push_back(path);
 		return vecPath;
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const BaseAttribute& attribute)
 	{
-		stream << attribute.m_data;
+		if (attribute.getDataType() == Types::Int)
+			stream << attribute.Int;
+		else if (attribute.getDataType() == Types::Float)
+			stream << attribute.Float;
+		else if (attribute.getDataType() == Types::Bool)
+			stream << attribute.Bool;
+		else if (attribute.getDataType() == Types::String)
+			stream << attribute.String;
 		return stream;
 	}
 
@@ -102,7 +108,7 @@ namespace vili
 	std::string Types::getDefaultValueForType(Types::DataType type)
 	{
 		std::string value = "";
-		if (type == Types::String) value = "";
+		if (type == Types::String) value.clear();
 		else if (type == Types::Int) value = "0";
 		else if (type == Types::Float) value = "0.0";
 		else if (type == Types::Bool) value = "False";
@@ -111,7 +117,7 @@ namespace vili
 		return value;
 	}
 
-	Types::DataType Types::getVarType(std::string var)
+	Types::DataType Types::getVarType(const std::string& var)
 	{
 		Types::DataType attributeType;
 		std::vector<std::string> boolType = { "True", "False" };
@@ -138,7 +144,7 @@ namespace vili
 		return attributeType;
 	}
 
-	Types::DataType Types::stringToDataType(std::string type)
+	Types::DataType Types::stringToDataType(const std::string& type)
 	{
 		if (type == "string" || type == "String")
 			return Types::String;
@@ -190,7 +196,7 @@ namespace vili
 			cPath = Functions::String::extract(cPath, 0, 1);
 		return cPath;
 	}
-	std::string Path(std::vector<std::string> path)
+	std::string Path(const std::vector<std::string>& path)
 	{
 		std::string strPath = "";
 		for (unsigned int i = 0; i < path.size(); i++)
@@ -254,20 +260,21 @@ namespace vili
 		while (currentParent != nullptr)
 		{
 			parentChain.push_back(currentParent->getID() +
-								  ((currentParent->getAnnotation() != "") ? "<" + currentParent->getAnnotation() + ">" : ""));
+								  (!currentParent->getAnnotation().empty() ? "<" + currentParent->getAnnotation() + ">" : ""));
 			currentParent = currentParent->getParent();
 		}
 		std::reverse(parentChain.begin(), parentChain.end());
-		parentChain.push_back(this->getID() + ((this->getAnnotation() != "") ? "<" + this->getAnnotation() + ">" : ""));
+		parentChain.push_back(this->getID() + (!this->getAnnotation().empty() ? "<" + this->getAnnotation() + ">" : ""));
 		return Functions::Vector::join(parentChain, "/");
 	}
 
-	unsigned Attribute::getDepth()
+	unsigned int Attribute::getDepth()
 	{
 		ContainerAttribute* currentParent = this->getParent();
 		unsigned int depth = 0;
 		while (currentParent != nullptr)
 		{
+			currentParent = currentParent->getParent();
 			depth++;
 		}
 		return depth;
@@ -291,68 +298,87 @@ namespace vili
 	}
 
 	//BaseAttribute
-	BaseAttribute::BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType, const std::string& data) : Attribute(parent, id, Types::BaseAttribute)
+	BaseAttribute::BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType) : Attribute(parent, id, Types::BaseAttribute)
 	{
+		new((void*)& String) std::string();
 		m_dataType = dataType;
-		m_data = data;
 	}
-	BaseAttribute::BaseAttribute(const std::string& id, const Types::DataType& dataType, const std::string& data) : Attribute(nullptr, id, Types::BaseAttribute)
+	BaseAttribute::BaseAttribute(const std::string& id, const Types::DataType& dataType) : Attribute(nullptr, id, Types::BaseAttribute)
 	{
 		m_dataType = dataType;
-		m_data = data;
+		new((void*)& String) std::string();
 	}
 	void BaseAttribute::set(int var)
 	{
 		if (m_dataType == Types::Int)
-			m_data = std::to_string(var);
+			Int = var;
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntSet", { {"path", getNodePath()}, {"type", dataTypeToString(m_dataType) } });
 	}
 	void BaseAttribute::set(double var)
 	{
 		if (m_dataType == Types::Float)
-			m_data = std::to_string(var);
+			Float = var;
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatSet", { { "path", getNodePath() },{ "type", dataTypeToString(m_dataType) } });
 	}
 	void BaseAttribute::set(const std::string& var)
 	{
 		if (m_dataType == Types::String)
-			m_data = var;
+			String = var;
+		else
+			throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", { { "path", getNodePath() },{ "type", dataTypeToString(m_dataType) } });
+	}
+	void BaseAttribute::set(const char* var)
+	{
+		if (m_dataType == Types::String)
+			String = std::string(var);
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", { { "path", getNodePath() },{ "type", dataTypeToString(m_dataType) } });
 	}
 	void BaseAttribute::set(bool var)
 	{
 		if (m_dataType == Types::Bool)
-		{
-			if (var)
-				m_data = "True";
-			else
-				m_data = "False";
-		}
+			Bool = var;
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolSet", { { "path", getNodePath() },{ "type", dataTypeToString(m_dataType) } });
 	}
-	void BaseAttribute::autoset(std::string rawData)
+	void BaseAttribute::autoset(const std::string& rawData)
 	{
+		std::string pop = m_id;
 		if (Types::getVarType(rawData) == m_dataType)
-			m_data = rawData;
-		if (m_dataType == Types::String)
-			m_data = Functions::String::extract(m_data, 1, 1);
+		{
+			if (m_dataType == Types::Int)
+				Int = std::stoi(rawData);
+			else if (m_dataType == Types::Float)
+				Float = std::stod(rawData);
+			else if (m_dataType == Types::String)
+				String = Functions::String::extract(rawData, 1, 1);
+			else if (m_dataType == Types::Bool)
+				Bool = (rawData == "True" ? true : false);
+		}
+		else
+			int todo;
+			//Throw Error here
 	}
 	std::string BaseAttribute::returnData() const
 	{
-		if (m_dataType != Types::String)
-			return m_data;
+		if (m_dataType == Types::String)
+			return "\"" + String + "\"";
+		else if (m_dataType == Types::Int)
+			return std::to_string(Int);
+		else if (m_dataType == Types::Float)
+			return std::to_string(Float);
+		else if (m_dataType == Types::Bool)
+			return (Bool ? "True" : "False");
 		else
-			return "\"" + m_data + "\"";
+			return "?TypeError?";
 	}
 	Types::DataType BaseAttribute::getDataType() const
 	{
 		return m_dataType;
 	}
-	void BaseAttribute::copy(ContainerAttribute* newParent, std::string newid)
+	void BaseAttribute::copy(ContainerAttribute* newParent, const std::string& newid)
 	{
 		if (newParent->getType() == Types::ListAttribute)
 		{
@@ -366,9 +392,20 @@ namespace vili
 				static_cast<ListAttribute*>(newParent)->push(this->get<std::string>());
 		}
 		else if (newParent->getType() == Types::ComplexAttribute)
-			dynamic_cast<ComplexAttribute*>(newParent)->createBaseAttribute((newid == "") ? m_id : newid, m_dataType, m_data);
+		{
+			dynamic_cast<ComplexAttribute*>(newParent)->createBaseAttribute(newid.empty() ? m_id : newid, m_dataType);
+			BaseAttribute* newCopy = dynamic_cast<ComplexAttribute*>(newParent)->getBaseAttribute(newid.empty() ? m_id : newid);
+			if (m_dataType == Types::Int)
+				newCopy->set(Int);
+			else if (m_dataType == Types::Float)
+				newCopy->set(Float);
+			else if (m_dataType == Types::Bool)
+				newCopy->set(Bool);
+			else if (m_dataType == Types::String)
+				newCopy->set(String);
+		}		
 	}
-	void BaseAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
+	void BaseAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
 		for (unsigned int j = 0; j < depth - 1; j++)
 			(*file) << spacing;
@@ -388,26 +425,26 @@ namespace vili
 	BaseAttribute::operator std::string()
 	{
 		if (m_dataType == Types::String)
-			return m_data;
+			return String;
 		throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringCastOperator", { {"path", getNodePath()} });
 	}
 	BaseAttribute::operator int()
 	{
 		if (m_dataType == Types::Int)
-			return get<int>();
+			return Int;
 		throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntCastOperator", { { "path", getNodePath() } });
 	}
 
 	BaseAttribute::operator double()
 	{
 		if (m_dataType == Types::Float)
-			return get<double>();
+			return Float;
 		throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatCastOperator", { { "path", getNodePath() } });
 	}
 	BaseAttribute::operator bool()
 	{
 		if (m_dataType == Types::Bool)
-			return get<bool>();
+			return Bool;
 		throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolCastOperator", { { "path", getNodePath() } });
 	}
 
@@ -483,19 +520,19 @@ namespace vili
 		else if (getTarget()->getType() == Types::LinkAttribute)
 			dynamic_cast<LinkAttribute*>(getTarget())->copy(complexParent, m_id);
 	}
-	bool LinkAttribute::operator==(LinkAttribute compare) const
+	bool LinkAttribute::operator==(const LinkAttribute& compare) const
 	{
 		return (this->getFullPath() == compare.getFullPath());
 	}
 
-	void LinkAttribute::copy(ContainerAttribute* newParent, std::string newid)
+	void LinkAttribute::copy(ContainerAttribute* newParent, const std::string& newid)
 	{
 		if (newParent->getType() == Types::ComplexAttribute)
-			dynamic_cast<ComplexAttribute*>(newParent)->createLinkAttribute((newid == "") ? m_id : newid, m_path);
+			dynamic_cast<ComplexAttribute*>(newParent)->createLinkAttribute(newid.empty() ? m_id : newid, m_path);
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongCopyTarget", { {"path", getNodePath()}, {"target", newParent->getNodePath()} });
 	}
-	void LinkAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
+	void LinkAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
 		for (unsigned int j = 0; j < depth - 1; j++)
 			(*file) << spacing;
@@ -537,23 +574,28 @@ namespace vili
 	}
 	void ListAttribute::push(const std::string& element)
 	{
-		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String, element));
+		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String));
+		m_dataList.back()->set(element);
 	}
 	void ListAttribute::push(const int& element)
 	{
-		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int, std::to_string(element)));
+		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int));
+		m_dataList.back()->set(element);
 	}
 	void ListAttribute::push(const bool& element)
 	{
-		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool, (element == true) ? "True" : "False"));
+		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool));
+		m_dataList.back()->set(element);
 	}
 	void ListAttribute::push(const double& element)
 	{
-		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float, std::to_string(element)));
+		m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float));
+		m_dataList.back()->set(element);
 	}
 	void ListAttribute::insert(unsigned int index, const std::string& element)
 	{
-		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String, element));
+		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String));
+		m_dataList[index]->set(element);
 		for (int i = index + 1; i < m_dataList.size(); i++)
 		{
 			this->removeOwnership(m_dataList[i].get());
@@ -563,7 +605,8 @@ namespace vili
 	}
 	void ListAttribute::insert(unsigned int index, const int& element)
 	{
-		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int, std::to_string(element)));
+		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int));
+		m_dataList[index]->set(element);
 		for (int i = index + 1; i < m_dataList.size(); i++)
 		{
 			this->removeOwnership(m_dataList[i].get());
@@ -573,7 +616,8 @@ namespace vili
 	}
 	void ListAttribute::insert(unsigned int index, const bool& element)
 	{
-		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool, (element == true) ? "True" : "False"));
+		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool));
+		m_dataList[index]->set(element);
 		for (int i = index + 1; i < m_dataList.size(); i++)
 		{
 			this->removeOwnership(m_dataList[i].get());
@@ -583,7 +627,8 @@ namespace vili
 	}
 	void ListAttribute::insert(unsigned int index, const double& element)
 	{
-		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float, std::to_string(element)));
+		m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float));
+		m_dataList[index]->set(element);
 		for (int i = index + 1; i < m_dataList.size(); i++)
 		{
 			this->removeOwnership(m_dataList[i].get());
@@ -610,11 +655,11 @@ namespace vili
 		}
 		return element;
 	}
-	void ListAttribute::copy(ContainerAttribute* newParent, std::string newid)
+	void ListAttribute::copy(ContainerAttribute* newParent, const std::string& newid)
 	{
 		if (newParent->getType() == Types::ComplexAttribute)
 		{
-			std::string useID = (newid == "") ? m_id : newid;
+			std::string useID = newid.empty() ? m_id : newid;
 			dynamic_cast<ComplexAttribute*>(newParent)->createListAttribute(useID);
 			for (int i = 0; i < m_dataList.size(); i++)
 				m_dataList[i]->copy(dynamic_cast<ComplexAttribute*>(newParent)->getListAttribute(useID));
@@ -622,7 +667,7 @@ namespace vili
 		else
 			throw aube::ErrorHandler::Raise("Vili.Vili.ListAttribute.WrongCopyTarget", { { "path", getNodePath() }, { "target", newParent->getNodePath() } });
 	}
-	void ListAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
+	void ListAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
 		for (unsigned int j = 0; j < depth - 1; j++)
 			(*file) << spacing;
@@ -849,31 +894,44 @@ namespace vili
 	}
 	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const Types::DataType& type, const std::string& data)
 	{
-		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, type, data);
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, type);
+		getBaseAttribute(attributeID)->autoset(data);
 		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
 			m_childAttributesNames.push_back(attributeID);
 	}
+
+	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const Types::DataType& type)
+	{
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, type);
+		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
+			m_childAttributesNames.push_back(attributeID);
+	}
+
 	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const std::string& data)
 	{
-		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::String, data);
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::String);
+		getBaseAttribute(attributeID)->set(data);
 		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
 			m_childAttributesNames.push_back(attributeID);
 	}
 	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, bool data)
 	{
-		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Bool, (data == true ? "True" : "False"));
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Bool);
+		getBaseAttribute(attributeID)->set(data);
 		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
 			m_childAttributesNames.push_back(attributeID);
 	}
 	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, int data)
 	{
-		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Int, std::to_string(data));
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Int);
+		getBaseAttribute(attributeID)->set(data);
 		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
 			m_childAttributesNames.push_back(attributeID);
 	}
 	void ComplexAttribute::createBaseAttribute(const std::string& attributeID, double data)
 	{
-		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Float, std::to_string(data));
+		m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, Types::Float);
+		getBaseAttribute(attributeID)->set(data);
 		if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
 			m_childAttributesNames.push_back(attributeID);
 	}
@@ -919,7 +977,7 @@ namespace vili
 		if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
 			m_childAttributesNames.push_back(attribute->getID());
 	}
-	void ComplexAttribute::write(std::ofstream* file, std::string spacing, unsigned int depth)
+	void ComplexAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
 		if (depth > 0)
 		{
@@ -1014,9 +1072,9 @@ namespace vili
 			m_childAttributes.erase(itDel);
 		}
 	}
-	void ComplexAttribute::copy(ContainerAttribute* newParent, std::string newid)
+	void ComplexAttribute::copy(ContainerAttribute* newParent, const std::string& newid)
 	{
-		std::string useID = (newid == "") ? this->m_id : newid;
+		std::string useID = (newid.empty()) ? this->m_id : newid;
 		if (newParent->getType() == Types::ComplexAttribute)
 		{
 			dynamic_cast<ComplexAttribute*>(newParent)->createComplexAttribute(useID);
@@ -1132,10 +1190,17 @@ namespace vili
 				attributeAddresses.push_back(constraintManager.getLinkAttribute());
 			parent->getComplexAttribute(id)->walk([attributeAddresses](NodeIterator& complex)
 			{
+				std::cout << "Amount of links : " << complex->getAll(Types::LinkAttribute).size() << std::endl;
+				for (int i = 0; i < complex->getAll(Types::LinkAttribute).size(); i++)
+				{
+					std::cout << complex->getAll(Types::LinkAttribute)[i] << std::endl;
+				}
 				for (int i = 0; i < complex->getAll(Types::LinkAttribute).size(); i++)
 				{
 					for (int j = 0; j < attributeAddresses.size(); j++)
 					{
+						std::cout << "Applying link : " << complex->getLinkAttribute(complex->getAll(Types::LinkAttribute).at(i))->getID() << std::endl;
+						
 						if ((*complex->getLinkAttribute(complex->getAll(Types::LinkAttribute)[i])) == (*attributeAddresses[j]))
 							complex->getLinkAttribute(complex->getAll(Types::LinkAttribute)[i])->apply();
 					}
@@ -1156,7 +1221,7 @@ namespace vili
 		}
 		return true;
 	}
-	void DataTemplate::addConstraintManager(AttributeConstraintManager constraintManager, bool facultative)
+	void DataTemplate::addConstraintManager(const AttributeConstraintManager& constraintManager, bool facultative)
 	{
 		if (facultative)
 		{
@@ -1229,11 +1294,11 @@ namespace vili
 	}
 	ComplexAttribute* DataParser::getRootChild(std::string child) const
 	{
-		if (child == "")
+		if (child.empty())
 			return m_root.get();
 		return m_root->getComplexAttribute(child);
 	}
-	ComplexAttribute& DataParser::operator[](std::string cPath) const
+	ComplexAttribute& DataParser::operator[](const std::string& cPath) const
 	{
 		return (*getPath(cPath));
 	}
@@ -1256,8 +1321,10 @@ namespace vili
 		if (useFile.is_open())
 		{
 			if (verbose) std::cout << "Start Parsing File : " << filename << std::endl;
-			while (!safeGetline(useFile, currentLine).eof())
+			std::istream& lineGetter = safeGetline(useFile, currentLine);
+			while (!lineGetter.eof() && !lineGetter.fail())
 			{
+				
 				Functions::String::StringExtractor stringsInLine = Functions::String::extractAllStrings(currentLine);
 				std::string rawLine = Functions::Vector::join(std::get<1>(stringsInLine), "");
 				Functions::String::replaceStringInPlace(rawLine, "	", std::string(m_spacing, ' '));
@@ -1295,19 +1362,19 @@ namespace vili
 							if (currentRawChar == "," && inList)
 							{
 								parsedLines.push_back(addParsedLine);
-								addParsedLine = "";
+								addParsedLine.clear();
 							}
 							else if (currentRawChar == "[")
 							{
 								parsedLines.push_back(addParsedLine + "[");
-								addParsedLine = "";
+								addParsedLine.clear();
 								inList = true;
 							}
 							else if (currentRawChar == "]")
 							{
 								parsedLines.push_back(addParsedLine);
 								parsedLines.push_back("]");
-								addParsedLine = "";
+								addParsedLine.clear();
 								inList = false;
 							}
 							else
@@ -1318,7 +1385,7 @@ namespace vili
 				parsedLines.push_back(addParsedLine);
 				for (std::string parsedLine : parsedLines)
 				{
-					while (parsedLine != "" && currentIndent < addPath.size() && addPath.size() > 0)
+					while (!parsedLine.empty() && currentIndent < addPath.size() && addPath.size() > 0)
 						addPath.pop_back();
 					std::function<std::string()> indenter = [curList, currentIndent, curListIndent]()
 					{
@@ -1337,7 +1404,7 @@ namespace vili
 					};
 					if (curList != "None" && parsedLine == "]")
 						curList = "None";
-					if (parsedLine != "" && currentIndent == 0)
+					if (!parsedLine.empty() && currentIndent == 0)
 					{
 						if (parsedLine.substr(parsedLine.size() - 1, 1) == ";")
 						{
@@ -1430,7 +1497,7 @@ namespace vili
 							}
 						}
 					}
-					if (parsedLine != "")
+					if (!parsedLine.empty())
 					{
 						std::vector<std::string> symbolExclusion = { "\"", "#" };
 
@@ -1511,12 +1578,10 @@ namespace vili
 									int i = 0;
 									for (std::string& arg : templateArgs)
 									{
-										getRootChild(templateName)->at("__init__", std::to_string(i))->deleteBaseAttribute("value", true);
-										std::string realArg = arg;
-										if (Types::getVarType(realArg) == Types::String)
-											realArg = Functions::String::extract(realArg, 1, 1);
-										getRootChild(templateName)->at("__init__", std::to_string(i))->createBaseAttribute("value", Types::getVarType(arg), realArg);
-										getRootChild(templateName)->at("__init__", std::to_string(i))->getBaseAttribute("value")->setAnnotation("Set");
+										ComplexAttribute* cArg = getRootChild(templateName)->at("__init__", std::to_string(i));
+										cArg->deleteBaseAttribute("value", true);
+										cArg->createBaseAttribute("value", Types::getVarType(arg), arg);
+										cArg->getBaseAttribute("value")->setAnnotation("Set");
 										i++;
 									}
 									m_templateList[templateName]->build(getPath(Path(addPath)), attributeID);
@@ -1533,10 +1598,8 @@ namespace vili
 							}
 							else
 							{
-								if (attributeType == Types::String)
-									attributeValue = Functions::String::extract(attributeValue, 1, 1);
-
-								getPath(Path(addPath))->createBaseAttribute(attributeID, attributeType, attributeValue);
+								getPath(Path(addPath))->createBaseAttribute(attributeID, attributeType);
+								getPath(Path(addPath))->getBaseAttribute(attributeID)->autoset(attributeValue);
 								if (verbose)
 								{
 									std::cout << indenter() << "Create BaseAttribute " << attributeID << "(" << attributeValue;
@@ -1585,6 +1648,7 @@ namespace vili
 						}
 					}
 				}
+				safeGetline(useFile, currentLine);
 			}
 			useFile.close();
 			if (verbose) std::cout << "Parsed over.." << std::endl;

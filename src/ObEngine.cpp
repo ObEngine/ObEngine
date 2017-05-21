@@ -20,13 +20,13 @@ int main(int argc, char** argv)
 
 	obe::Coord::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
-	std::ofstream out("debug.log");
+	/*std::ofstream out("debug.log");
 	std::streambuf *coutbuf = std::cout.rdbuf();
 	std::cout.rdbuf(out.rdbuf());
 
 	std::ofstream out_err("errors.log");
 	std::streambuf *cerrbug = std::cerr.rdbuf();
-	std::cerr.rdbuf(out_err.rdbuf());
+	std::cerr.rdbuf(out_err.rdbuf());*/
 
 	LoadErrors();
 	obe::System::MountPaths();

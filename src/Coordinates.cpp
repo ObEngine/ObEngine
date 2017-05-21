@@ -211,14 +211,16 @@ namespace obe
 		{
 			if (unit == "ViewPercentage")
 				return ViewPercentage;
-			if (unit == "ViewPixels")
+			else if (unit == "ViewPixels")
 				return ViewPixels;
-			if (unit == "ViewUnits")
+			else if (unit == "ViewUnits")
 				return ViewUnits;
-			if (unit == "WorldPixels")
+			else if (unit == "WorldPixels")
 				return WorldPixels;
-			if (unit == "WorldUnits")
+			else if (unit == "WorldUnits")
 				return WorldUnits;
+			else
+				return Unknown;
 		}
 
 		std::string unitsToString(Units unit)
