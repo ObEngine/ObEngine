@@ -1,6 +1,7 @@
 #pragma once
 
 #include <kaguya/kaguya.hpp>
+#include <TGUI/TGUI.hpp>
 
 #include "Script.hpp"
 

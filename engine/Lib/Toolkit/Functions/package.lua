@@ -2,59 +2,38 @@ local Color = require("Lib/StdLib/ConsoleColor");
 local Route = require("Lib/Toolkit/Route");
 local Package = Core.Package.Package;
 
-return {
-    Functions = {
-        install = function(packageName)
-            if Core.Package.Package.Install(packageName) then
-                Color.print({
-                    {color = "white", text = "Package <"},
-                    {color = "lightgreen", text = packageName},
-                    {color = "white", text = "> has been successfully installed\n"},
-                }, 2);
-                local parser = Core.Vili.DataParser.new();
-                parser:parseFile("Package/Opaque.vili", true);
-                local tPackageName = parser:root():at("Meta"):getBaseAttribute("name"):get_string();
-                if parser:hasFlag("Mount") then
-                    repeat
-                        print("The package asks the <Mount> permission, do you want to allow it ? (Y/N)");
-                        answer = io.read()
-                    until answer == "y" or answer == "n" or answer == "Y" or answer == "N"
-                    if answer == "Y" or answer == "y" then
-                        Core.Utils.File.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
-                    end
-                end
-            else
-                Color.print({
-                    {color = "red", text = "Package <"},
-                    {color = "lightgreen", text = packageName},
-                    {color = "red", text = "> has not been installed (Already installed ?)\n"},
-                }, 2);
-            end
-        end,
-        use = function(packageName)
-            if Package.PackageExists(packageName) then
-                Core.Utils.File.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
-                Color.print({
-                    {color = "lightgreen", text = "Current package has been successfully switched to "},
-                    {color = "lightcyan", text = packageName .. "\n"}
-                }, 2);
-            else
-                Color.print({
-                    {color = "lightred", text = "Package "},
-                    {color = "lightcyan", text = packageName},
-                    {color = "lightred", text = " doesn't exists\n"}
-                }, 2);
-            end
+local Functions = {};
+
+function Functions.install(packageName)
+    if Core.Package.Package.Install(packageName) then
+        Color.print({ text = "Package '" .. packageName .. "' has been successfully installed", color = {0, 255, 0}}, 1);
+        local parser = Core.Vili.DataParser.new();
+        parser:parseFile("Package/Opaque.vili", true);
+        local tPackageName = parser:root():at("Meta"):getBaseAttribute("name"):get_string();
+        if parser:hasFlag("Mount") then
+            Core.Utils.File.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
         end
-    },
+    else
+        Color.print({ text = "Package '" .. packageName .. "' has not been installed (Already installed ?)", color = {255, 0, 0}}, 1);
+    end
+end
+
+function Functions.use(packageName)
+    if Package.PackageExists(packageName) then
+        Core.Utils.File.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
+        Color.print({ text = "Package '" .. packageName .. "' has been successfully mounted", color = {0, 255, 0}}, 1);
+    else
+        Color.print({ text = "Package '" .. packageName .. "' does not exists", color = {255, 0, 0}}, 1);
+    end
+end
+
+return {
+    Functions = Functions,
     Routes = {
         Route.Arg("install", {
             Route.Arg("packageName", Route.Types.Any, {
                 Route.Call("install");
-            });
-        }),
-        Route.Arg("instagram", {
-
+            }, function() return { "bob", "ana" }; end);
         }),
         Route.Arg("use", {
             Route.Arg("packageName", Route.Types.Any, {

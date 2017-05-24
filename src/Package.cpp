@@ -19,8 +19,9 @@ namespace obe
 
 		bool Package::Install(std::string packageName)
 		{
-			if (!PackageExists(packageName)) {
-				int arg = 1000;
+			if (!Functions::Vector::isInList(packageName + ".opaque", Functions::File::listFileInDir("Package")))
+				throw aube::ErrorHandler::Raise("ObEngine.Package.Package.CantFindPackage", { { "package", packageName } });
+			else if (!PackageExists(packageName)) {
 				elz::extractFile("Package/" + packageName + ".opaque", "Opaque.vili", "Package/Opaque.vili");
 				vili::DataParser cPackage("Package/Opaque.vili");
 				std::string realPackageName = cPackage->at<vili::BaseAttribute>("Meta", "name")->get<std::string>();

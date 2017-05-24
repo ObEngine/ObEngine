@@ -1,72 +1,4 @@
 #include "Toolkit.hpp"
-#include <rang/rang.hpp>
-
-#if defined(UNIX)
-#include <termios.h>
-#include <unistd.h>
-int getch(void)
-{
-	struct termios oldattr, newattr;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldattr);
-	newattr = oldattr;
-	newattr.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
-	return ch;
-}
-#elif defined(WINDOWS)
-int getch() {
-	DWORD mode, cc;
-	HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
-	if (h == NULL) {
-		return 0; // console not found
-	}
-	GetConsoleMode(h, &mode);
-	SetConsoleMode(h, mode & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT));
-	TCHAR c = 0;
-	ReadConsole(h, &c, 1, &cc, NULL);
-	SetConsoleMode(h, mode);
-	return c;
-}
-#endif
-
-void colorConsole(std::string color)
-{
-	if (color == "black") std::cout << rang::fg::black;
-	else if (color == "blue") std::cout << rang::fg::blue;
-	else if (color == "cyan") std::cout << rang::fg::cyan;
-	else if (color == "green") std::cout << rang::fg::green;
-	else if (color == "grey") std::cout << rang::fg::gray;
-	else if (color == "magenta") std::cout << rang::fg::magenta;
-	else if (color == "red") std::cout << rang::fg::red;
-	else if (color == "white") std::cout << rang::style::reset;
-	else if (color == "yellow") std::cout << rang::fg::yellow;
-}
-
-void displayConsole(std::string disp)
-{
-	std::cout << disp;
-	std::cout << rang::style::reset;
-}
-
-std::string strGetch()
-{
-	int getchResult = getch();
-	//std::cout << getchResult << std::endl;
-	switch (getchResult)
-	{
-	case 8:
-		return "BS";
-	case 9:
-		return "TAB";
-	case 13:
-		return "CR";
-	default:
-		return std::string(1, getchResult);;
-	}
-}
 
 namespace obe
 {
@@ -75,22 +7,113 @@ namespace obe
 		void startToolkitMode()
 		{
 			bool continueToolkit = true;
-			std::cout << strGetch() << std::endl;
+			sf::RenderWindow window({ 636, 636 }, "Window", sf::Style::None);
+			sf::Color inputColor(255, 255, 255);
 
-			while (continueToolkit)
+			tgui::Gui gui(window);
+			gui.setFont("Data/Fonts/weblysleekuil.ttf");
+			tgui::Theme baseTheme;
+			baseTheme.load("Data/GUI/obe.style");
+			std::string currentMap = "";
+
+			tgui::Panel::Ptr mainPanel = tgui::Panel::create();
+			tgui::ChatBox::Ptr content = tgui::ChatBox::create();
+			tgui::Scrollbar::Ptr scrollbar = tgui::Scrollbar::create();
+			tgui::Label::Ptr titleLabel = tgui::Label::create();
+			tgui::Button::Ptr closeButton = tgui::Button::create();
+			tgui::EditBox::Ptr toolkitInput = tgui::EditBox::create();
+
+			gui.add(mainPanel, "mainPanel");
+
+			mainPanel->setRenderer(baseTheme.getRenderer("Panel"));
+			mainPanel->setSize(window.getSize().x, window.getSize().y);
+			mainPanel->setPosition("0", "0");
+
+			content->setRenderer(baseTheme.getRenderer("ChatBox"));
+			content->setSize("&.width", "534");
+			content->setPosition("0", "70");
+			content->setLinesStartFromTop();
+			mainPanel->add(content, "contentPanel");
+
+			titleLabel->setRenderer(baseTheme.getRenderer("Label"));
+			titleLabel->setText("ÖbEngine Toolkit");
+			titleLabel->setTextSize(34);
+			titleLabel->setPosition("10", "10");
+			mainPanel->add(titleLabel);
+
+			closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
+			closeButton->setSize("32", "32");
+			closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+			closeButton->connect("pressed", [&window]() {
+				window.close();
+			});
+			mainPanel->add(closeButton);
+
+			toolkitInput->setRenderer(baseTheme.getRenderer("TextBox"));
+			toolkitInput->setSize("&.width", "32");
+			toolkitInput->setPosition("0", "&.height - height");
+			mainPanel->add(toolkitInput);
+
+			kaguya::State toolkitEngine;
+			toolkitInput->connect("returnkeypressed", [&content, &toolkitInput, inputColor, &toolkitEngine]()
 			{
-				kaguya::State toolkitEngine;
-				toolkitEngine["This"] = &toolkitEngine;
-				toolkitEngine.dofile("Lib/GameLib/WScrInit.lua");
-				Script::loadLib(&toolkitEngine, "Core.*");
-				Script::loadBaseLib(&toolkitEngine);
-				toolkitEngine["_term_getch"] = kaguya::function(strGetch);
-				toolkitEngine["_term_setcolor"] = kaguya::function(colorConsole);
-				toolkitEngine["_term_display"] = kaguya::function(displayConsole);
-				toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
-				continueToolkit = toolkitEngine["reload"];
-				printf("Press Enter to Continue");
-				std::cin.ignore();
+				content->addLine("> " + toolkitInput->getText(), inputColor);
+				toolkitEngine["evaluate"](toolkitInput->getText().toAnsiString());
+				toolkitInput->setText("");
+			});
+			
+
+			toolkitEngine["This"] = &toolkitEngine;
+			toolkitEngine.dofile("Lib/GameLib/WScrInit.lua");
+			Script::loadLib(&toolkitEngine, "Core.*");
+			Script::loadBaseLib(&toolkitEngine);
+			toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)
+			{
+				inputColor.r = r;
+				inputColor.g = g;
+				inputColor.b = b;
+			});
+			toolkitEngine["_term_display"] = kaguya::function([&content](const std::string& string, unsigned int r, unsigned int g, unsigned int b)
+			{
+				content->addLine(string, sf::Color(r, g, b));
+			});
+			toolkitEngine["_term_clear"] = kaguya::function([&toolkitInput]()
+			{
+				toolkitInput->setText("");
+			});
+			toolkitEngine["_term_write"] = kaguya::function([&toolkitInput](const std::string& string)
+			{
+				toolkitInput->setText(toolkitInput->getText() + string);
+			});
+			toolkitEngine["_term_last"] = kaguya::function([&toolkitInput]()
+			{
+				toolkitInput->setCaretPosition(toolkitInput->getText().getSize());
+			});
+			toolkitEngine["_term_get"] = kaguya::function([&toolkitInput]() -> std::string
+			{
+				return toolkitInput->getText().toAnsiString();
+			});
+			toolkitEngine["_term_close"] = kaguya::function([&continueToolkit]()
+			{
+				continueToolkit = false;
+			});
+			toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
+
+			while (window.isOpen() && continueToolkit)
+			{
+				sf::Event event;
+				while (window.pollEvent(event))
+				{
+					if (event.type == sf::Event::Closed)
+						window.close();
+					else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab)
+						toolkitEngine["autocomplete"](toolkitInput->getText().toAnsiString());
+					gui.handleEvent(event);
+				}
+
+				window.clear();
+				gui.draw();
+				window.display();
 			}
 		}
 	}

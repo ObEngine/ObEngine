@@ -1,6 +1,5 @@
 return {
     Arg = function(id, type, children, autocomplete)
-    
         if children then ntype = "Arg"; argtype = type;
         else ntype = "Path";
         end
@@ -14,6 +13,7 @@ return {
             autocomplete = autocomplete
         };
     end,
+
     Call = function(func)
         if (type(func) == "string") then
             calltype = "Ref";
@@ -26,6 +26,7 @@ return {
             ref = func
         };
     end,
+    
     Types = {
         String = "String",
         Int = "Int",

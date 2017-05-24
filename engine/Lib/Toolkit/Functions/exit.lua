@@ -3,8 +3,7 @@ local Route = require("Lib/Toolkit/Route");
 return {
     Functions = {
         exit = function()
-            continue = false;
-            reload = false;
+            _term_close();
         end
     },
     Routes = {

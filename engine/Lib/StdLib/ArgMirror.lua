@@ -1,4 +1,6 @@
-local function getArgs(fun)
+local Mirror = {};
+
+function Mirror.GetArgs(fun)
     local args = {}
     local hook = debug.gethook()
 
@@ -23,4 +25,11 @@ local function getArgs(fun)
     return args
 end
 
-return getArgs;
+function Mirror.Unpack(t, i)
+    i = i or 1
+    if t[i] ~= nil then
+        return t[i], Mirror.Unpack(t, i + 1)
+    end
+end
+
+return Mirror;

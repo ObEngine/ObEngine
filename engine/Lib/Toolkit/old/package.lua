@@ -51,7 +51,7 @@ return {
             Route.Arg("packageName", Route.Types.Any, {
                 Route.Call("install");
             });
-        }),
+        }, function() return { "bob"}; end),
         Route.Arg("use", {
             Route.Arg("packageName", Route.Types.Any, {
                 Route.Call("use");

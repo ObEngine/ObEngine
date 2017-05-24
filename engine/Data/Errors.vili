@@ -92,6 +92,9 @@ ObEngine:
             AlreadyInstalled:
                 where:"Install"
                 message:"Package <%package%> has already been installed"
+            CantFindPackage:
+                where:"Install"
+                message:"Package <%package%> file is not in Package/ folder"
             InexistantPackage:
                 where:"%function%"
                 message:"Package <%package%> does not exists"
