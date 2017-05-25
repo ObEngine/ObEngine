@@ -2,8 +2,8 @@
 local String = require("Lib/StdLib/String");
 local Table = require("Lib/StdLib/Table");
 local Color = require("Lib/StdLib/ConsoleColor");
-local inspect = require("Lib/StdLib/inspect");
-local copy = require("Lib/StdLib/copy");
+local inspect = require("Lib/StdLib/Inspect");
+local copy = require("Lib/StdLib/Copy");
 
 function loadToolkitFunctions()
     local fileList = Core.Utils.File.listFileInDir("Lib/Toolkit/Functions");
