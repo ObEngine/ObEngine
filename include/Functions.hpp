@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include <fstream>
 #include <tinydir/tinydir.h>
+#include <vili/Vili.hpp>
 
 #include "Coordinates.hpp"
 
