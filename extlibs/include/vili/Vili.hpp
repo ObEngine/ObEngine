@@ -63,6 +63,7 @@ namespace vili
 		Types::AttributeType m_type = Types::Attribute;
 		std::string m_annotation = "";
 		ContainerAttribute* m_parent = nullptr;
+		bool m_visible = true;
 		virtual void removeParent(ContainerAttribute* currentParent);
 		virtual ContainerAttribute* getParent();
 		friend class ContainerAttribute;
@@ -80,6 +81,8 @@ namespace vili
 		virtual void setParent(ContainerAttribute* parent);
 		virtual std::string getNodePath();
 		unsigned int getDepth();
+		bool isVisible();
+		void setVisible(bool visible);
 		virtual void setID(const std::string& id);
 		virtual void copy(ContainerAttribute* newParent, const std::string& newid = "") = 0;
 		virtual void write(std::ofstream* file, const std::string& spacing, unsigned int depth) = 0;
@@ -353,7 +356,7 @@ namespace vili
 		ComplexAttribute* at(const std::string& cPath, Args ...pathParts);
 		template<class T, class ...Args>
 		T* at(const std::string& cPath, Args ...pathParts);
-		bool parseFile(const std::string& filename, bool verbose = false);
+		bool parseFile(const std::string& filename, bool verbose = false, bool visible = true);
 		void writeFile(const std::string& filename, bool verbose = false);
 		bool hasFlag(const std::string& flagName);
 		unsigned int getAmountOfFlags() const;
@@ -362,6 +365,7 @@ namespace vili
 		unsigned int getSpacing() const;
 		void addInclude(const std::string& filename);
 		std::vector<std::string> getIncludes() const;
+		DataTemplate* getTemplate(const std::string& templateId);
 	};
 }
 

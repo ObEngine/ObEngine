@@ -100,6 +100,13 @@ namespace obe
 							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>() : 0,
 						Coord::stringToUnits(spriteUnits)
 					).to<Coord::WorldUnits>();
+					if (currentSprite->contains(vili::Types::ComplexAttribute, "pos"))
+					{
+						m_cameraInitialPosition = Coord::UnitVector(
+							currentSprite->at<vili::BaseAttribute>("pos", "x")->get<double>(),
+							currentSprite->at<vili::BaseAttribute>("pos", "y")->get<double>(),
+							Coord::stringToUnits(currentSprite->at<vili::BaseAttribute>("pos", "unit")->get<std::string>()));
+					}
 					int spriteRot = currentSprite->contains(vili::Types::BaseAttribute, "rotation") ? 
 						                currentSprite->getBaseAttribute("rotation")->get<int>() : 0;
 					double spriteSca = currentSprite->contains(vili::Types::BaseAttribute, "scale") ? 
@@ -158,6 +165,7 @@ namespace obe
 						else
 							pointBuffer = colliderPoint->get<double>();
 					}
+					tempCollider->setWorkingUnit(pBaseUnit);
 					m_colliderArray.push_back(move(tempCollider));
 				}
 			}
@@ -208,6 +216,7 @@ namespace obe
 			dataStore->createFlag("Map");
 			dataStore->createFlag("Lock");
 			dataStore->addInclude("Obe");
+			dataStore->parseFile("Obe.vili", false, false);
 
 			//Meta
 			(*dataStore)->createComplexAttribute("Meta");
@@ -216,9 +225,14 @@ namespace obe
 			//View
 			(*dataStore)->createComplexAttribute("View");
 			dataStore->at("View")->createBaseAttribute("size", m_camera.getSize().y / 2);
+			dataStore->at("View")->createComplexAttribute("pos");
+			dataStore->at("View", "pos")->createBaseAttribute("unit", Coord::unitsToString(m_cameraInitialPosition.unit));
+			dataStore->at("View", "pos")->createBaseAttribute("x", m_cameraInitialPosition.x);
+			dataStore->at("View", "pos")->createBaseAttribute("y", m_cameraInitialPosition.y);
+			dataStore->at("View", "pos")->useTemplate(dataStore->getTemplate("Vector2<WorldUnits>"));
 
 			//LevelSprites
-			(*dataStore)->createComplexAttribute("LevelSprites");
+			if (m_spriteArray.size() > 0) (*dataStore)->createComplexAttribute("LevelSprites");
 			for (unsigned int i = 0; i < m_spriteArray.size(); i++)
 			{
 				if (m_spriteArray[i]->getParentID() == "")
@@ -240,23 +254,26 @@ namespace obe
 					}
 				}
 			}
-			(*dataStore)->createComplexAttribute("Collisions");
+			if (m_colliderArray.size() > 0) (*dataStore)->createComplexAttribute("Collisions");
 			for (unsigned int i = 0; i < m_colliderArray.size(); i++)
 			{
 				if (m_colliderArray[i]->getParentID() == "")
 				{
 					dataStore->at("Collisions")->createComplexAttribute(m_colliderArray[i]->getID());
 					dataStore->at("Collisions", m_colliderArray[i]->getID())->createComplexAttribute("unit");
-					dataStore->at("Collisions", m_colliderArray[i]->getID(), "unit")->createBaseAttribute("unit", unitsToString(m_colliderArray[i]->getWorkingUnit()));
+					dataStore->at("Collisions", m_colliderArray[i]->getID(), "unit")->useTemplate(
+						dataStore->getTemplate("Unit<" + unitsToString(m_colliderArray[i]->getWorkingUnit()) + ">")
+					);
 					dataStore->at("Collisions", m_colliderArray[i]->getID())->createListAttribute("points");
 					for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
 					{
-						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(m_colliderArray[i]->getPointPosition(j).first);
-						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(m_colliderArray[i]->getPointPosition(j).second);
+						Coord::UnitVector pVec = m_colliderArray[i]->u_getPointPosition(j);
+						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(pVec.x);
+						dataStore->at("Collisions", m_colliderArray[i]->getID())->getListAttribute("points")->push(pVec.y);
 					}
 				}
 			}
-			(*dataStore)->createComplexAttribute("LevelObjects");
+			if (m_gameObjectMap.size() > 0) (*dataStore)->createComplexAttribute("LevelObjects");
 			for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
 			{
 				dataStore->at("LevelObjects")->createComplexAttribute(it->first);

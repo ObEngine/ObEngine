@@ -85,26 +85,6 @@ namespace vili
 		return stream;
 	}
 
-	void DataParser::setSpacing(unsigned spacing)
-	{
-		m_spacing = spacing;
-	}
-
-	unsigned DataParser::getSpacing() const
-	{
-		return m_spacing;
-	}
-
-	void DataParser::addInclude(const std::string& filename)
-	{
-		m_includes.push_back(filename);
-	}
-
-	std::vector<std::string> DataParser::getIncludes() const
-	{
-		return m_includes;
-	}
-
 	std::string Types::getDefaultValueForType(Types::DataType type)
 	{
 		std::string value = "";
@@ -280,6 +260,16 @@ namespace vili
 		return depth;
 	}
 
+	bool Attribute::isVisible()
+	{
+		return m_visible;
+	}
+
+	void Attribute::setVisible(bool visible)
+	{
+		m_visible = visible;
+	}
+
 	void Attribute::setID(const std::string& id)
 	{
 		if (m_parent == nullptr)
@@ -407,20 +397,23 @@ namespace vili
 	}
 	void BaseAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth - 1; j++)
-			(*file) << spacing;
-		std::string returnedData = returnData();
-		if (m_dataType == Types::Float)
+		if (m_visible)
 		{
-			while (returnedData.back() == '0')
-				returnedData.pop_back();
-			if (returnedData.back() == '.')
-				returnedData.pop_back();
+			for (unsigned int j = 0; j < depth - 1; j++)
+				(*file) << spacing;
+			std::string returnedData = returnData();
+			if (m_dataType == Types::Float)
+			{
+				while (returnedData.back() == '0')
+					returnedData.pop_back();
+				if (returnedData.back() == '.')
+					returnedData.pop_back();
+			}
+			if (m_id.front() != '#')
+				(*file) << m_id << ":" << returnedData << std::endl;
+			else
+				(*file) << returnedData << std::endl;
 		}
-		if (m_id.front() != '#')
-			(*file) << m_id << ":" << returnedData << std::endl;
-		else
-			(*file) << returnedData << std::endl;
 	}
 	BaseAttribute::operator std::string()
 	{
@@ -534,9 +527,12 @@ namespace vili
 	}
 	void LinkAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth - 1; j++)
-			(*file) << spacing;
-		(*file) << m_id << ":&(" << getPath() << ")" << std::endl;
+		if (m_visible)
+		{
+			for (unsigned int j = 0; j < depth - 1; j++)
+				(*file) << spacing;
+			(*file) << m_id << ":&(" << getPath() << ")" << std::endl;
+		}
 	}
 
 	//ListAttribute
@@ -669,14 +665,17 @@ namespace vili
 	}
 	void ListAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
-		for (unsigned int j = 0; j < depth - 1; j++)
-			(*file) << spacing;
-		(*file) << m_id << ":[" << std::endl;
-		for (unsigned int k = 0; k < size(); k++)
-			get(k)->write(file, spacing, depth + 1);
-		for (unsigned int l = 0; l < depth - 1; l++)
-			(*file) << spacing;
-		(*file) << "]" << std::endl;
+		if (m_visible)
+		{
+			for (unsigned int j = 0; j < depth - 1; j++)
+				(*file) << spacing;
+			(*file) << m_id << ":[" << std::endl;
+			for (unsigned int k = 0; k < size(); k++)
+				get(k)->write(file, spacing, depth + 1);
+			for (unsigned int l = 0; l < depth - 1; l++)
+				(*file) << spacing;
+			(*file) << "]" << std::endl;
+		}
 	}
 
 	//NodeIterator
@@ -979,7 +978,7 @@ namespace vili
 	}
 	void ComplexAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth)
 	{
-		if (depth > 0)
+		if (m_visible && depth > 0)
 		{
 			for (unsigned int i = 0; i < depth - 1; i++)
 				(*file) << spacing;
@@ -1012,7 +1011,7 @@ namespace vili
 				(*file) << ")" << std::endl;
 			}
 		}
-		if (m_template == nullptr)
+		if (m_visible && m_template == nullptr)
 		{
 			for (auto& child : m_childAttributesNames)
 				m_childAttributes[child]->write(file, spacing, depth + 1);
@@ -1308,7 +1307,7 @@ namespace vili
 			cPath = Functions::String::extract(cPath, 0, 1);
 		return getPath(cPath);
 	}
-	bool DataParser::parseFile(const std::string& filename, bool verbose)
+	bool DataParser::parseFile(const std::string& filename, bool verbose, bool visible)
 	{
 		std::ifstream useFile;
 		useFile.open(filename);
@@ -1424,7 +1423,7 @@ namespace vili
 							else if (instructionType == "Include")
 							{
 								if (verbose) std::cout << indenter() << "Include New File : " << instructionValue << std::endl;
-								this->parseFile(instructionValue + ".vili", verbose);
+								this->parseFile(instructionValue + ".vili", verbose, false);
 								this->addInclude(instructionValue);
 								m_root->setAnnotation(filename);
 							}
@@ -1507,6 +1506,7 @@ namespace vili
 						{
 							std::string listElementID = Functions::String::split(parsedLine, ":")[0];
 							getPath(Path(addPath))->createListAttribute(listElementID);
+							getPath(Path(addPath))->getListAttribute(listElementID)->setVisible(visible);
 							curList = listElementID;
 							curListIndent = currentIndent;
 							if (verbose)
@@ -1540,6 +1540,7 @@ namespace vili
 								}
 							}
 							getPath(Path(addPath))->createComplexAttribute(complexElementID);
+							getPath(Path(addPath))->getComplexAttribute(complexElementID)->setVisible(visible);
 							if (verbose) std::cout << indenter() << "Create ComplexAttribute " << complexElementID << " inside "
 								<< pushIndicator << std::endl;
 							for (unsigned int i = 0; i < complexToHerit.size(); i++)
@@ -1560,6 +1561,7 @@ namespace vili
 							if (attributeType == Types::Link)
 							{
 								getPath(Path(addPath))->createLinkAttribute(attributeID, Functions::String::extract(attributeValue, 2, 1));
+								getPath(Path(addPath))->getLinkAttribute(attributeID)->setVisible(visible);
 								if (verbose)
 								{
 									std::cout << indenter() << "Create LinkAttribute " << attributeID << " linking to " << attributeValue
@@ -1599,6 +1601,7 @@ namespace vili
 							else
 							{
 								getPath(Path(addPath))->createBaseAttribute(attributeID, attributeType);
+								getPath(Path(addPath))->getBaseAttribute(attributeID)->setVisible(visible);
 								getPath(Path(addPath))->getBaseAttribute(attributeID)->autoset(attributeValue);
 								if (verbose)
 								{
@@ -1666,17 +1669,50 @@ namespace vili
 			outFile << "Spacing (" << m_spacing << ");" << std::endl;
 			if (verbose) std::cout << "Define custom spacing : " << m_spacing << std::endl;
 		}
+		for (std::string& include : m_includes)
+		{
+			outFile << "Include (" << include << ");" << std::endl;
+			if (verbose) std::cout << "        Add New Include : " << include << std::endl;
+		}
 		if (verbose && this->getAmountOfFlags() > 0) std::cout << "    Writing Flags..." << std::endl;
 		for (unsigned int i = 0; i < this->getAmountOfFlags(); i++)
 		{
 			outFile << "Flag (" << this->getFlagAtIndex(i) << ");" << std::endl;
 			if (verbose) std::cout << "        Write New Flag : " << this->getFlagAtIndex(i) << std::endl;
 		}
+		
+			
 		if (this->getAmountOfFlags() > 0) outFile << std::endl;
 		std::string writeSpacing = "";
 		for (unsigned int i = 0; i < m_spacing; i++)
 			writeSpacing += " ";
 		m_root->write(&outFile, writeSpacing);
 		outFile.close();
+	}
+
+	void DataParser::setSpacing(unsigned int spacing)
+	{
+		m_spacing = spacing;
+	}
+
+	unsigned DataParser::getSpacing() const
+	{
+		return m_spacing;
+	}
+
+	void DataParser::addInclude(const std::string& filename)
+	{
+		m_includes.push_back(filename);
+	}
+
+	std::vector<std::string> DataParser::getIncludes() const
+	{
+		return m_includes;
+	}
+	DataTemplate* DataParser::getTemplate(const std::string & templateId)
+	{
+		if (m_templateList.find(templateId) != m_templateList.end())
+			return m_templateList[templateId];
+		throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.TemplateNotFound", { {"templateName", templateId} });
 	}
 }

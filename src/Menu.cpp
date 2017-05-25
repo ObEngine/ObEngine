@@ -71,14 +71,17 @@ namespace obe
 					vili::DataParser newFileParser;
 					newFileParser.createFlag("Map");
 					newFileParser.createFlag("Lock");
+					newFileParser.parseFile("Obe.vili", false, false);
+					newFileParser.addInclude("Obe");
 					newFileParser->createComplexAttribute("Meta");
 					newFileParser.at("Meta")->createBaseAttribute("name", newLevelName);
-					newFileParser.at("Meta")->createListAttribute("size");
-					newFileParser->at<vili::ListAttribute>("Meta", "size")->push(1920);
-					newFileParser->at<vili::ListAttribute>("Meta", "size")->push(1080);
-					newFileParser.at("Meta")->createListAttribute("view");
-					newFileParser->at<vili::ListAttribute>("Meta", "view")->push(1920);
-					newFileParser->at<vili::ListAttribute>("Meta", "view")->push(1080);
+					newFileParser->createComplexAttribute("View");
+					newFileParser.at("View")->createComplexAttribute("pos");
+					newFileParser.at("View", "pos")->createBaseAttribute("unit", "WorldUnits");
+					newFileParser.at("View", "pos")->createBaseAttribute("x", 0);
+					newFileParser.at("View", "pos")->createBaseAttribute("y", 0);
+					newFileParser.at("View", "pos")->useTemplate(newFileParser.getTemplate("Vector2<WorldUnits>"));
+					newFileParser.at("View")->createBaseAttribute("size", 4.5);
 					newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0), true);
 					input->setText("");
 				}

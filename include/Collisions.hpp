@@ -90,10 +90,10 @@ namespace obe
 			DoublePoint getPointRelativePosition(int index);
 			DoublePoint getMasterPointPosition() const;
 
-			Coord::UnitVector c_getPosition();
-			Coord::UnitVector c_getPointPosition(int index);
-			Coord::UnitVector c_getPointRelativePosition(int index);
-			Coord::UnitVector c_getMasterPointPosition() const;
+			Coord::UnitVector u_getPosition();
+			Coord::UnitVector u_getPointPosition(int index);
+			Coord::UnitVector u_getPointRelativePosition(int index);
+			Coord::UnitVector u_getMasterPointPosition() const;
 
 			void move(double x, double y);
 			void setPosition(double x, double y);
@@ -103,13 +103,13 @@ namespace obe
 			void setPointRelativePosition(int index, double x, double y);
 			void setPointPositionFromMaster(int index, double x, double y);
 
-			void u_move(double x, double y);
-			void u_setPosition(double x, double y);
-			void u_setPositionFromMaster(double x, double y);
-			void u_movePoint(int index, double x, double y);
-			void u_setPointPosition(int index, double x, double y);
-			void u_setPointRelativePosition(int index, double x, double y);
-			void u_setPointPositionFromMaster(int index, double x, double y);
+			void u_move(Coord::UnitVector vec);
+			void u_setPosition(Coord::UnitVector vec);
+			void u_setPositionFromMaster(Coord::UnitVector vec);
+			void u_movePoint(int index, Coord::UnitVector vec);
+			void u_setPointPosition(int index, Coord::UnitVector vec);
+			void u_setPointRelativePosition(int index, Coord::UnitVector vec);
+			void u_setPointPositionFromMaster(int index, Coord::UnitVector vec);
 
 			//Origin
 			void addOriginChild(PolygonalCollider* child);

@@ -401,3 +401,6 @@ Vili:
             FileNotFound:
                 where:"parseFile"
                 message:"Can't open %file%"
+            TemplateNotFound:
+                where:"getTemplate"
+                message:"Can't find DataTemplate %templateName%"

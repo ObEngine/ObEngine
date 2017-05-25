@@ -35,6 +35,7 @@ namespace obe
 				std::string m_baseFolder = "";
 				Camera m_camera;
 				bool m_cameraLocked = true;
+				Coord::UnitVector m_cameraInitialPosition;
 				kaguya::State* m_worldScriptEngine;
 				bool m_updateState = true;
 				bool m_needToOrderUpdateArray = true;

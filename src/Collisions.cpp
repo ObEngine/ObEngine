@@ -357,46 +357,46 @@ namespace obe
 			calculateMasterPoint();
 		}
 
-		void PolygonalCollider::u_move(double x, double y)
+		void PolygonalCollider::u_move(Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->move(pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_setPosition(double x, double y)
+		void PolygonalCollider::u_setPosition(Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->setPosition(pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_setPositionFromMaster(double x, double y)
+		void PolygonalCollider::u_setPositionFromMaster(Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->setPositionFromMaster(pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_movePoint(int index, double x, double y)
+		void PolygonalCollider::u_movePoint(int index, Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->movePoint(index, pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_setPointPosition(int index, double x, double y)
+		void PolygonalCollider::u_setPointPosition(int index, Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->setPointPosition(index, pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_setPointRelativePosition(int index, double x, double y)
+		void PolygonalCollider::u_setPointRelativePosition(int index, Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
 			this->setPointRelativePosition(index, pVec.x, pVec.y);
 		}
 
-		void PolygonalCollider::u_setPointPositionFromMaster(int index, double x, double y)
+		void PolygonalCollider::u_setPointPositionFromMaster(int index, Coord::UnitVector vec)
 		{
-			Coord::UnitVector pVec = Coord::UnitVector(x, y, m_unit).to<Coord::WorldPixels>();
-			this->setPointPositionFromMaster(index, x, y);
+			Coord::UnitVector pVec = vec.to<Coord::WorldPixels>();
+			this->setPointPositionFromMaster(index, pVec.x, pVec.y);
 		}
 
 		void PolygonalCollider::setDrawOffset(int offx, int offy)
@@ -495,22 +495,22 @@ namespace obe
 			return m_allPoints[0];
 		}
 
-		Coord::UnitVector PolygonalCollider::c_getPosition()
+		Coord::UnitVector PolygonalCollider::u_getPosition()
 		{
 			return Coord::UnitVector(m_allPoints[0].first, m_allPoints[0].second, Coord::WorldPixels).to(m_unit);
 		}
 
-		Coord::UnitVector PolygonalCollider::c_getPointPosition(int index)
+		Coord::UnitVector PolygonalCollider::u_getPointPosition(int index)
 		{
 			return Coord::UnitVector(m_allPoints[index].first, m_allPoints[index].second, Coord::WorldPixels).to(m_unit);
 		}
 
-		Coord::UnitVector PolygonalCollider::c_getPointRelativePosition(int index)
+		Coord::UnitVector PolygonalCollider::u_getPointRelativePosition(int index)
 		{
 			return Coord::UnitVector(m_allPoints[index].first - m_allPoints[0].first, m_allPoints[index].second - m_allPoints[0].second, Coord::WorldPixels).to(m_unit);
 		}
 
-		Coord::UnitVector PolygonalCollider::c_getMasterPointPosition() const
+		Coord::UnitVector PolygonalCollider::u_getMasterPointPosition() const
 		{
 			return Coord::UnitVector(m_masterPoint.first, m_masterPoint.second, Coord::WorldPixels).to(m_unit);
 		}
