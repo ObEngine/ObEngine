@@ -1,4 +1,4 @@
 Include(Obe);
 
 Mount:
-    Root:Path("" | 0)
+    Root:Path("", 0)
