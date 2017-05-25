@@ -128,7 +128,7 @@ namespace obe
 			scrollbar->connect("ValueChanged", scrollPanel, middlePanel, scrollbar);
 
 			titleLabel->setRenderer(baseTheme.getRenderer("Label"));
-			titleLabel->setText("ÖbEngine");
+			titleLabel->setText("ObEngine");
 			titleLabel->setTextSize(34);
 			titleLabel->setPosition("&.width / 40", "(&.height / 2) - (height / 2)");
 

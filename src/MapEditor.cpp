@@ -696,10 +696,10 @@ namespace obe
 						if (hoveredSprite != nullptr)
 						{
 							selectedSprite = hoveredSprite;
-							selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getX();
-							selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getY();
-							selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffsetX();
-							selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffsetY();
+							selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::WorldPixels>().x;
+							selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::WorldPixels>().y;
+							selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::WorldPixels>().x;
+							selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffset().to<Coord::WorldPixels>().y;
 
 							sdBoundingRect = selectedSprite->getRect();
 							selectedSprite->setColor(sf::Color(255, 0, 0));
@@ -711,8 +711,8 @@ namespace obe
 					{
 						if (selectedSprite->getParentID() == "")
 						{
-							selectedSprite->setPosition(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
-								cursor.getY() + pixelCamera.y - selectedSpriteOffsetY);
+							selectedSprite->getPosition().set(Coord::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
+								cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Coord::WorldPixels));
 						}
 						else
 						{

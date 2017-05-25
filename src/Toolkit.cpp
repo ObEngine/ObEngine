@@ -36,7 +36,7 @@ namespace obe
 			mainPanel->add(content, "contentPanel");
 
 			titleLabel->setRenderer(baseTheme.getRenderer("Label"));
-			titleLabel->setText("ÖbEngine Toolkit");
+			titleLabel->setText("ObEngine Toolkit");
 			titleLabel->setTextSize(34);
 			titleLabel->setPosition("10", "10");
 			mainPanel->add(titleLabel);

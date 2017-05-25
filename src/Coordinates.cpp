@@ -40,6 +40,13 @@ namespace obe
 			this->unit = unit;
 		}
 
+		void UnitVector::set(const Coord::UnitVector& vec)
+		{
+			Coord::UnitVector pVec = vec.to(unit);
+			x = pVec.x;
+			y = pVec.y;
+		}
+
 		void UnitVector::set(const double& x, const double& y)
 		{
 			this->x = x;

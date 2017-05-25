@@ -47,6 +47,7 @@ namespace obe
 				double y = 0.0;
 				Units unit;
 
+				void set(const Coord::UnitVector& vec);
 				void set(const double& x, const double& y);
 				void add(const double& x, const double& y);
 

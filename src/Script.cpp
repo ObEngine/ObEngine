@@ -412,7 +412,10 @@ namespace obe
 					.addProperty("unit", &Coord::UnitVector::unit)
 					.addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units) const>(&Coord::UnitVector::to))
 					.addFunction("add", &Coord::UnitVector::add)
-					.addFunction("set", &Coord::UnitVector::set)
+					.addOverloadedFunctions("set", 
+						static_cast<void (Coord::UnitVector::*)(const double&, const double&)>(&Coord::UnitVector::set),
+						static_cast<void (Coord::UnitVector::*)(const Coord::UnitVector&)>(&Coord::UnitVector::set)
+					)
 				);
 				foundPart = true;
 			}

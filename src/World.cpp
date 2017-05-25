@@ -368,7 +368,7 @@ namespace obe
 				if (lightHooked) cLight = m_lightMap[m_spriteArray[i]->getID()].get();
 
 				Coord::UnitVector pixelPosition = m_spriteArray[i]->getPosition().to<Coord::WorldPixels>();
-				Coord::UnitVector pixelOffset = m_spriteArray[i]->getPosition().to<Coord::WorldPixels>();
+				Coord::UnitVector pixelOffset = m_spriteArray[i]->getOffset().to<Coord::WorldPixels>();
 
 				std::cout << "@ARK : " << m_spriteArray[i]->getID() << " @@@ " << pixelPosition << " AND " << pixelOffset << " AND " << pixelCamera << std::endl;
 
