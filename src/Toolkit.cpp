@@ -99,6 +99,9 @@ namespace obe
 			});
 			toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
 
+			sf::Vector2i grabbedOffset;
+			bool grabbedWindow = false;
+
 			while (window.isOpen() && continueToolkit)
 			{
 				sf::Event event;
@@ -108,6 +111,27 @@ namespace obe
 						window.close();
 					else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab)
 						toolkitEngine["autocomplete"](toolkitInput->getText().toAnsiString());
+					else if (event.type == sf::Event::MouseButtonPressed)
+					{
+						if (sf::Mouse::getPosition().y - window.getPosition().y < 60 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
+						{
+							if (event.mouseButton.button == sf::Mouse::Left)
+							{
+								grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
+								grabbedWindow = true;
+							}
+						}
+					}
+					else if (event.type == sf::Event::MouseButtonReleased)
+					{
+						if (event.mouseButton.button == sf::Mouse::Left)
+							grabbedWindow = false;
+					}
+					else if (event.type == sf::Event::MouseMoved)
+					{
+						if (grabbedWindow)
+							window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
+					}
 					gui.handleEvent(event);
 				}
 

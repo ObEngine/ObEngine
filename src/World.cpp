@@ -126,6 +126,7 @@ namespace obe
 					if (spritePath != "")
 						tempSprite->load(spritePath);
 					tempSprite->setPosition(spritePos.x, spritePos.y);
+					tempSprite->setWorkingUnit(Coord::stringToUnits(spriteUnits));
 					tempSprite->setRotation(spriteRot);
 					tempSprite->setScale(spriteSca, spriteSca);
 					tempSprite->setAtr(spriteAtrList);
@@ -242,6 +243,9 @@ namespace obe
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createComplexAttribute("pos");
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos")->createBaseAttribute("x", m_spriteArray[i]->getX());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos")->createBaseAttribute("y", m_spriteArray[i]->getY());
+					dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos")->useTemplate(
+						dataStore->getTemplate("Vector2<" + Coord::unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
+					);
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("scale", m_spriteArray[i]->getScaleX());
 					dataStore->at("LevelSprites", m_spriteArray[i]->getID())->createBaseAttribute("layer", m_spriteArray[i]->getLayer());

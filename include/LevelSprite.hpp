@@ -14,7 +14,7 @@ namespace obe
 {
 	namespace Graphics
 	{
-		class LevelSprite
+		class LevelSprite : public Coord::UnitBasedObject
 		{
 		private:
 			std::string m_path = "";

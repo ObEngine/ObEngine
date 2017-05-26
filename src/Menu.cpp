@@ -173,6 +173,10 @@ namespace obe
 			bottomPanel->add(createMapLabel);
 			bottomPanel->add(createMapInput);
 
+			sf::Vector2i grabbedOffset;
+			bool grabbedWindow = false;
+
+
 			chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
 
 			while (window.isOpen() && currentMap == "")
@@ -182,7 +186,27 @@ namespace obe
 				{
 					if (event.type == sf::Event::Closed)
 						window.close();
-
+					else if (event.type == sf::Event::MouseButtonPressed)
+					{
+						if (sf::Mouse::getPosition().y - window.getPosition().y < 60 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
+						{
+							if (event.mouseButton.button == sf::Mouse::Left)
+							{
+								grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
+								grabbedWindow = true;
+							}
+						}
+					}
+					else if (event.type == sf::Event::MouseButtonReleased)
+					{
+						if (event.mouseButton.button == sf::Mouse::Left)
+							grabbedWindow = false;
+					}
+					else if (event.type == sf::Event::MouseMoved)
+					{
+						if (grabbedWindow)
+							window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
+					}
 					gui.handleEvent(event);
 				}
 
