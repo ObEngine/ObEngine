@@ -104,8 +104,6 @@ namespace obe
 		}
 		void LevelSprite::update()
 		{
-			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
-			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 			m_returnSprite.setRotation(m_rotation);
 			m_returnSprite.setScale(m_scaleX, m_scaleY);
 			m_returnSprite.setColor(m_spriteColor);
@@ -125,17 +123,23 @@ namespace obe
 		{
 			m_position.x = x;
 			m_position.y = y;
-
-			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
-			m_returnSprite.setPosition(realPosition.x, realPosition.y);
 		}
 		void LevelSprite::setOffset(double offx, double offy)
 		{
 			m_offset.x = offx;
 			m_offset.y = offy;
-			
-			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
-			m_returnSprite.setPosition(realPosition.x, realPosition.y);
+		}
+
+		void LevelSprite::u_setPosition(const Coord::UnitVector& vec)
+		{
+			Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+			this->setPosition(pVec.x, pVec.y);
+		}
+
+		void LevelSprite::u_setOffset(const Coord::UnitVector& vec)
+		{
+			Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+			this->setOffset(pVec.x, pVec.y);
 		}
 
 		Coord::ProtectedUnitVector& LevelSprite::getPosition()
@@ -150,11 +154,21 @@ namespace obe
 
 		void LevelSprite::move(double x, double y)
 		{
-			m_position.x += x;
-			m_position.y += y;
-			
-			Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
-			m_returnSprite.setPosition(realPosition.x, realPosition.y);
+			m_position.add(x, y);
+		}
+		void LevelSprite::moveOffset(double x, double y)
+		{
+			m_offset.add(x, y);
+		}
+		void LevelSprite::u_move(const Coord::UnitVector& vec)
+		{
+			Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+			this->move(pVec.x, pVec.y);
+		}
+		void LevelSprite::u_moveOffset(const Coord::UnitVector & vec)
+		{
+			Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+			this->moveOffset(pVec.x, pVec.y);
 		}
 		double LevelSprite::getX() const
 		{

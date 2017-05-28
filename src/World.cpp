@@ -288,7 +288,8 @@ namespace obe
 				(*it->second->m_objectScript)("print(inspect(Local.Save()));");
 				vili::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
 					"Requires", saveTableRef);
-				dataStore->at("LevelObjects", it->first)->pushComplexAttribute(saveRequirements);
+				if (saveRequirements->getAll().size() > 0)
+					dataStore->at("LevelObjects", it->first)->pushComplexAttribute(saveRequirements);
 			}
 			if (m_scriptArray.size() > 0)
 			{
@@ -304,6 +305,10 @@ namespace obe
 
 		void World::update(double dt)
 		{
+			if (m_cameraLocked)
+				m_camera.lock();
+			else
+				m_camera.unlock();
 			if (m_updateState)
 			{
 				m_gameSpeed = dt;
@@ -326,6 +331,7 @@ namespace obe
 							this->deleteSprite(m_updateObjArray[i]->getLevelSprite());
 						m_updateObjArray.erase(m_updateObjArray.begin() + i);
 					}
+					std::cout << "After updating : " << m_updateObjArray[i]->getID() << " Camera at " << m_camera.getPosition() << std::endl;
 				}
 
 				for (auto iterator = m_lightMap.begin(); iterator != m_lightMap.end(); ++iterator)
@@ -340,6 +346,7 @@ namespace obe
 					m_particleArray[i]->update();
 				}
 			}
+			m_camera.unlock();
 		}
 
 		void World::display(sf::RenderWindow* surf)
@@ -374,7 +381,7 @@ namespace obe
 				Coord::UnitVector pixelPosition = m_spriteArray[i]->getPosition().to<Coord::WorldPixels>();
 				Coord::UnitVector pixelOffset = m_spriteArray[i]->getOffset().to<Coord::WorldPixels>();
 
-				std::cout << "@ARK : " << m_spriteArray[i]->getID() << " @@@ " << pixelPosition << " AND " << pixelOffset << " AND " << pixelCamera << std::endl;
+				//std::cout << "@ARK : " << m_spriteArray[i]->getID() << " @@@ " << pixelPosition << " AND " << pixelOffset << " AND " << pixelCamera << std::endl;
 
 				int layeredX = (((pixelPosition.x + pixelOffset.x) * (m_spriteArray[i]->getLayer()) -
 					pixelCamera.x) / m_spriteArray[i]->getLayer());
@@ -435,15 +442,10 @@ namespace obe
 			return allColliders;
 		}
 
-		Camera& World::getCamera()
+		Camera* World::getCamera()
 		{
-			return m_camera;
-		}
-
-		Camera& World::getCameraIfNotLocked()
-		{
-			if (!m_cameraLocked)
-				return m_camera;
+			std::cout << "GET DA CAMERA" << std::endl;
+			return &m_camera;
 		}
 
 		void World::setCameraLock(bool state)
@@ -746,7 +748,7 @@ namespace obe
 				.addFunction("getAllCollidersByCollision", &World::getAllCollidersByCollision)
 				.addFunction("getAllGameObjects", &World::getAllGameObjects)
 				.addFunction("getAllSprites", &World::getAllSprites)
-				.addFunction("getCamera", &World::getCameraIfNotLocked)
+				.addFunction("getCamera", &World::getCamera)
 				.addFunction("getColliders", &World::getColliders)
 				.addFunction("getCollisionByID", &World::getCollisionByID)
 				.addFunction("getCollisionMasterByPos", &World::getCollisionMasterByPos)

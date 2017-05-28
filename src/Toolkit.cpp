@@ -113,7 +113,7 @@ namespace obe
 						toolkitEngine["autocomplete"](toolkitInput->getText().toAnsiString());
 					else if (event.type == sf::Event::MouseButtonPressed)
 					{
-						if (sf::Mouse::getPosition().y - window.getPosition().y < 60 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
+						if (sf::Mouse::getPosition().y - window.getPosition().y < 70 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
 						{
 							if (event.mouseButton.button == sf::Mouse::Left)
 							{

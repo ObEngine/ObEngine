@@ -283,7 +283,7 @@ namespace obe
 			while (world->doesSpriteExists(key))
 				key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 			Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
-			Coord::UnitVector pixelCamera = world->getCamera().getPosition().to<Coord::WorldPixels>();
+			Coord::UnitVector pixelCamera = world->getCamera()->getPosition().to<Coord::WorldPixels>();
 			sprToAdd->load("Sprites/LevelSprites/" + geid);
 			sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::WorldPixels);
 			sprToAdd->setRotation(0);

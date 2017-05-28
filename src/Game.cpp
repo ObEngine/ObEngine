@@ -118,7 +118,7 @@ namespace obe
 					cursorCollider.setPosition(cursor.getX(), cursor.getY());
 					std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
 					std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-						&cursorCollider, -world.getCamera().getX(), -world.getCamera().getY());
+						&cursorCollider, -world.getCamera()->getX(), -world.getCamera()->getY());
 					for (int i = 0; i < elementsCollidedByCursor.size(); i++)
 					{
 						for (int j = 0; j < clickableGameObjects.size(); j++)

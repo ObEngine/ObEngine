@@ -564,6 +564,7 @@ namespace obe
 			//Game Starts
 			while (window.isOpen())
 			{
+				std::cout << "Camera at : " << world.getCamera()->getX() << "," << world.getCamera()->getY() << std::endl;
 				framerateManager.update();
 
 				//GUI Actions
@@ -593,7 +594,7 @@ namespace obe
 					saveEditMode = -1;
 				}
 					
-				Coord::UnitVector pixelCamera = world.getCamera().getPosition().to<Coord::WorldPixels>();
+				Coord::UnitVector pixelCamera = world.getCamera()->getPosition().to<Coord::WorldPixels>();
 				//Updates
 				if (!gameConsole.isConsoleVisible())
 				{
@@ -604,17 +605,17 @@ namespace obe
 						{
 						}
 						else if (keybind.isActionEnabled("CamLeft"))
-							world.getCamera().move(Coord::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
+							world.getCamera()->move(Coord::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
 						else if (keybind.isActionEnabled("CamRight"))
-							world.getCamera().move(Coord::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
+							world.getCamera()->move(Coord::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
 
 						if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
 						{
 						}
 						else if (keybind.isActionEnabled("CamUp"))
-							world.getCamera().move(Coord::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
+							world.getCamera()->move(Coord::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
 						else if (keybind.isActionEnabled("CamDown"))
-							world.getCamera().move(Coord::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
+							world.getCamera()->move(Coord::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
 
 						if (keybind.isActionEnabled("CamDash"))
 							cameraSpeed = 3000;

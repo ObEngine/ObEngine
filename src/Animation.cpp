@@ -463,9 +463,12 @@ namespace obe
 		void Animator::setKey(std::string key)
 		{
 			if (fullAnimSet.find(key) == fullAnimSet.end())
+			{
 				throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", {
-					{"function", "setKey"}, { "animation", key },{ "%animator", animationPath.toString() } 
+					{ "function", "setKey" },{ "animation", key },{ "%animator", animationPath.toString() }
 				});
+			}
+				
 			if (key != currentAnimationName)
 			{
 				bool changeAnim = false;

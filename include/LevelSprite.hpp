@@ -63,14 +63,23 @@ namespace obe
 			void setScale(double scaleX, double scaleY);
 			void setTranslationOrigin(int x, int y);
 			void setRotationOrigin(int x, int y);
+
+			//Position
 			void setPosition(double x, double y);
 			void setOffset(double offx, double offy);
+			void u_setPosition(const Coord::UnitVector& vec);
+			void u_setOffset(const Coord::UnitVector& vec);
+			void move(double x, double y);
+			void moveOffset(double x, double y);
+			void u_move(const Coord::UnitVector& vec);
+			void u_moveOffset(const Coord::UnitVector& vec);
 			Coord::ProtectedUnitVector& getPosition();
 			Coord::ProtectedUnitVector& getOffset();
 			double getX() const;
 			double getY() const;
 			double getOffsetX() const;
 			double getOffsetY() const;
+
 			void setAtr(std::vector<std::string> atrList);
 			void addAtr(std::string atr);
 			std::vector<std::string> getAttributes() const;
@@ -78,7 +87,6 @@ namespace obe
 			void removeAtrByName(std::string name);
 			sfe::ComplexSprite* getSprite();
 			void setColor(sf::Color newColor);
-			void move(double x, double y);
 			double getScaleX() const;
 			double getScaleY() const;
 			float getRotation() const;

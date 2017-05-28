@@ -75,6 +75,7 @@ namespace obe
 			bool canDisplay() const;
 			bool canCollide() const;
 			bool canClick() const;
+			bool doesHaveAnimator() const;
 			bool doesHaveCollider() const;
 			bool doesHaveLevelSprite() const;
 			bool doesHaveScriptEngine() const;

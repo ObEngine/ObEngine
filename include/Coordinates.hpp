@@ -35,21 +35,21 @@ namespace obe
 		{
 			public:
 				static void Init(ViewStruct*&);
-				static void Init(const int& width, const int& height);
+				static void Init(int width, int height);
 
 				static ViewStruct View;
 				static ScreenStruct Screen;
 
-				UnitVector(const Units& unit = Units::WorldUnits);
-				UnitVector(const double& x, const double& y, const Units& unit = Units::WorldUnits);
+				UnitVector(Units unit = Units::WorldUnits);
+				UnitVector(double x, double y, Units unit = Units::WorldUnits);
 
 				double x = 0.0;
 				double y = 0.0;
 				Units unit;
 
 				void set(const Coord::UnitVector& vec);
-				void set(const double& x, const double& y);
-				void add(const double& x, const double& y);
+				void set(double x, double y);
+				void add(double x, double y);
 
 				UnitVector operator+(const UnitVector& add) const;
 				UnitVector& operator+=(const UnitVector& add);

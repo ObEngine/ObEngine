@@ -70,8 +70,7 @@ namespace obe
 				Script::GameObject* createGameObject(std::string id, std::string obj);
 				void orderUpdateScrArray();
 				//Camera
-				Camera& getCamera();
-				Camera& getCameraIfNotLocked();
+				Camera* getCamera();
 				void setCameraLock(bool state);
 				bool isCameraLocked() const;
 				//Lights

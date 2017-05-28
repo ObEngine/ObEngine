@@ -27,7 +27,7 @@ function LuaCore.LocalInitMirrorInjector()
     for _, i in pairs(Lua_LocalInit_ArgList) do
         table.insert(Lua_LocalInit_CallArgs, LuaCore.Lua_ReqList[i]);
     end
-    Local.Init(Mirror.Unpack(Lua_LocalInit_CallArgs));
+    Local.Init(ArgMirror.Unpack(Lua_LocalInit_CallArgs));
     This:setInitialised(true);
 end
 

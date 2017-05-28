@@ -22,18 +22,18 @@ namespace obe
 			view = &UnitVector::View;
 		}
 
-		void UnitVector::Init(const int& width, const int& height)
+		void UnitVector::Init(int width, int height)
 		{
 			Screen.w = width;
 			Screen.h = height;
 		}
 
-		UnitVector::UnitVector(const Units& unit)
+		UnitVector::UnitVector(Units unit)
 		{
 			this->unit = unit;
 		}
 
-		UnitVector::UnitVector(const double& x, const double& y, const Units & unit)
+		UnitVector::UnitVector(double x, double y, Units unit)
 		{
 			this->x = x;
 			this->y = y;
@@ -47,13 +47,13 @@ namespace obe
 			y = pVec.y;
 		}
 
-		void UnitVector::set(const double& x, const double& y)
+		void UnitVector::set(double x, double y)
 		{
 			this->x = x;
 			this->y = y;
 		}
 
-		void UnitVector::add(const double& x, const double& y)
+		void UnitVector::add(double x, double y)
 		{
 			this->x += x;
 			this->y += y;

@@ -9,6 +9,7 @@
 #include <any/any.hpp>
 #include <vili/Vili.hpp>
 
+#include "Camera.hpp"
 #include "Canvas.hpp"
 #include "Collisions.hpp"
 #include "Console.hpp"
@@ -36,6 +37,7 @@ namespace obe
 		namespace CoreLib
 		{
 			void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
+			void loadCamera(kaguya::State* lua, std::vector<std::string> args);
 			void loadCanvas(kaguya::State* lua, std::vector<std::string> args);
 			void loadCollision(kaguya::State* lua, std::vector<std::string> args);
 			void loadConsole(kaguya::State* lua, std::vector<std::string> args);

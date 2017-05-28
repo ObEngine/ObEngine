@@ -103,13 +103,13 @@ namespace obe
 			void setPointRelativePosition(int index, double x, double y);
 			void setPointPositionFromMaster(int index, double x, double y);
 
-			void u_move(Coord::UnitVector vec);
-			void u_setPosition(Coord::UnitVector vec);
-			void u_setPositionFromMaster(Coord::UnitVector vec);
-			void u_movePoint(int index, Coord::UnitVector vec);
-			void u_setPointPosition(int index, Coord::UnitVector vec);
-			void u_setPointRelativePosition(int index, Coord::UnitVector vec);
-			void u_setPointPositionFromMaster(int index, Coord::UnitVector vec);
+			void u_move(const Coord::UnitVector& vec);
+			void u_setPosition(const Coord::UnitVector& vec);
+			void u_setPositionFromMaster(const Coord::UnitVector& vec);
+			void u_movePoint(int index, const Coord::UnitVector& vec);
+			void u_setPointPosition(int index, const Coord::UnitVector& vec);
+			void u_setPointRelativePosition(int index, const Coord::UnitVector& vec);
+			void u_setPointPositionFromMaster(int index, const Coord::UnitVector& vec);
 
 			//Origin
 			void addOriginChild(PolygonalCollider* child);

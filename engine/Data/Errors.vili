@@ -141,6 +141,9 @@ ObEngine:
             AnimationImportError:
                 where:"loadAnimation"
                 message:"Can't import %lib%"
+            CameraImportError:
+                where:"loadCamera"
+                message:"Can't import %lib%"
             CanvasImportError:
                 where:"loadCanvas"
                 message:"Can't import %lib%"

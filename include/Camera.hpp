@@ -11,6 +11,7 @@ namespace obe
 		class Camera
 		{
 		private:
+			bool m_locked = false;
 			sf::View m_view;
 
 			Coord::ViewStruct* m_camera;
@@ -24,16 +25,19 @@ namespace obe
 		public:
 			Camera();
 
+			void lock();
+			void unlock();
+
 			void setPosition(const Coord::UnitVector& position);
-			void setPosition(const double& x, const double& y);
-			void move(Coord::UnitVector position);
-			void move(const double& x, const double& y);
-			void setX(const double& x);
-			void setY(const double& y);
-			void setSize(const double& pSize);
-			void scale(const double& pScale);
-			void setAngle(const double& angle);
-			void rotate(const double& angle);
+			void setPosition(double x, double y);
+			void move(const Coord::UnitVector& position);
+			void move(double x, double y);
+			void setX(double x);
+			void setY(double y);
+			void setSize(double pSize);
+			void scale(double pScale);
+			void setAngle(double angle);
+			void rotate(double angle);
 
 			Coord::UnitVector getPosition() const;
 			Coord::UnitVector getSize() const;
@@ -42,8 +46,6 @@ namespace obe
 			double getY() const;
 			double getWidth() const;
 			double getHeight() const;
-
-			Coord::UnitVector getPosition();
 		};
 	}
 }

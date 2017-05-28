@@ -94,6 +94,7 @@ namespace obe
 				if (all) { lib.clear(); lib.push_back("*"); }
 				bool found = false;
 				if (lib[0] == "Animation" || all) { CoreLib::loadAnimation(lua, (all) ? std::vector<std::string>{"Animation"} : lib);    found = true; }
+				if (lib[0] == "Camera" || all) { CoreLib::loadCamera(lua, (all) ? std::vector<std::string>{"Camera"} : lib); found = true; }
 				if (lib[0] == "Canvas" || all) { CoreLib::loadCanvas(lua, (all) ? std::vector<std::string>{"Canvas"} : lib);    found = true; }
 				if (lib[0] == "Collision" || all) { CoreLib::loadCollision(lua, (all) ? std::vector<std::string>{"Collision"} : lib);    found = true; }
 				if (lib[0] == "Console" || all) { CoreLib::loadConsole(lua, (all) ? std::vector<std::string>{"Console"} : lib);    found = true; }
@@ -205,6 +206,41 @@ namespace obe
 				foundPart = true;
 			}
 			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.AnimationImportError", { {"lib", Functions::Vector::join(args, ".") } });
+		}
+
+		void CoreLib::loadCamera(kaguya::State* lua, std::vector<std::string> args)
+		{
+			registerLib(lua, Functions::Vector::join(args, "."));
+			bool importAll = args.size() == 1;
+			bool foundPart = false;
+			if (!static_cast<bool>((*lua)["Core"]["Camera"])) (*lua)["Core"]["Camera"] = kaguya::NewTable();
+			if (importAll || args[1] == "Camera")
+			{
+				(*lua)["Core"]["Camera"]["Camera"].setClass(kaguya::UserdataMetatable<World::Camera>()
+					.addFunction("getHeight", &World::Camera::getHeight)
+					.addFunction("getPosition", &World::Camera::getPosition)
+					.addFunction("getSize", &World::Camera::getSize)
+					.addFunction("getWidth", &World::Camera::getWidth)
+					.addFunction("getX", &World::Camera::getX)
+					.addFunction("getY", &World::Camera::getY)
+					.addOverloadedFunctions("move", 
+						static_cast<void (World::Camera::*)(double, double)>(&World::Camera::move),
+						static_cast<void (World::Camera::*)(const Coord::UnitVector&)>(&World::Camera::move)
+					)
+					.addFunction("rotate", &World::Camera::rotate)
+					.addFunction("scale", &World::Camera::scale)
+					.addFunction("setAngle", &World::Camera::setAngle)
+					.addOverloadedFunctions("setPosition",
+						static_cast<void (World::Camera::*)(double, double)>(&World::Camera::setPosition),
+						static_cast<void (World::Camera::*)(const Coord::UnitVector&)>(&World::Camera::setPosition)
+					)
+					.addFunction("setSize", &World::Camera::setSize)
+					.addFunction("setX", &World::Camera::setX)
+					.addFunction("setY", &World::Camera::setY)
+				);
+				foundPart = true;
+			}
+			if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.CameraImportError", { { "lib", Functions::Vector::join(args, ".") } });
 		}
 
 		void CoreLib::loadCanvas(kaguya::State* lua, std::vector<std::string> args)
@@ -407,13 +443,14 @@ namespace obe
 				(*lua)["Core"]["Coordinates"]["WorldPixels"] = Coord::Units::WorldPixels;
 				(*lua)["Core"]["Coordinates"]["WorldUnits"] = Coord::Units::WorldUnits;
 				(*lua)["Core"]["Coordinates"]["UnitVector"].setClass(kaguya::UserdataMetatable<Coord::UnitVector>()
+					.setConstructors<Coord::UnitVector(Coord::Units), Coord::UnitVector(double, double, Coord::Units)>()
 					.addProperty("x", &Coord::UnitVector::x)
 					.addProperty("y", &Coord::UnitVector::y)
 					.addProperty("unit", &Coord::UnitVector::unit)
 					.addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units) const>(&Coord::UnitVector::to))
 					.addFunction("add", &Coord::UnitVector::add)
 					.addOverloadedFunctions("set", 
-						static_cast<void (Coord::UnitVector::*)(const double&, const double&)>(&Coord::UnitVector::set),
+						static_cast<void (Coord::UnitVector::*)(double, double)>(&Coord::UnitVector::set),
 						static_cast<void (Coord::UnitVector::*)(const Coord::UnitVector&)>(&Coord::UnitVector::set)
 					)
 				);
@@ -505,9 +542,11 @@ namespace obe
 					.addFunction("getID", &Graphics::LevelSprite::getID)
 					.addFunction("getLayer", &Graphics::LevelSprite::getLayer)
 					.addFunction("getName", &Graphics::LevelSprite::getPath)
+					.addFunction("getOffset", &Graphics::LevelSprite::getOffset)
 					.addFunction("getOffsetX", &Graphics::LevelSprite::getOffsetX)
 					.addFunction("getOffsetY", &Graphics::LevelSprite::getOffsetY)
 					.addFunction("getParentID", &Graphics::LevelSprite::getParentID)
+					.addFunction("getPosition", &Graphics::LevelSprite::getPosition)
 					.addFunction("getRect", &Graphics::LevelSprite::getRect)
 					.addFunction("getRotation", &Graphics::LevelSprite::getRotation)
 					.addFunction("getScaleX", &Graphics::LevelSprite::getScaleX)
@@ -518,7 +557,14 @@ namespace obe
 					.addFunction("isDrawable", &Graphics::LevelSprite::isDrawable)
 					.addFunction("isVisible", &Graphics::LevelSprite::isVisible)
 					.addFunction("load", &Graphics::LevelSprite::load)
-					.addFunction("move", &Graphics::LevelSprite::move)
+					.addOverloadedFunctions("move", 
+						&Graphics::LevelSprite::move,
+						&Graphics::LevelSprite::u_move
+					)
+					.addOverloadedFunctions("moveOffset",
+						&Graphics::LevelSprite::moveOffset,
+						&Graphics::LevelSprite::u_moveOffset
+					)
 					.addFunction("removeAtrByIndex", &Graphics::LevelSprite::removeAtrByIndex)
 					.addFunction("removeAtrByName", &Graphics::LevelSprite::removeAtrByName)
 					.addFunction("rotate", &Graphics::LevelSprite::rotate)
@@ -526,9 +572,15 @@ namespace obe
 					.addFunction("setAtr", &Graphics::LevelSprite::setAtr)
 					.addFunction("setColor", &Graphics::LevelSprite::setColor)
 					.addFunction("setLayer", &Graphics::LevelSprite::setLayer)
-					.addFunction("setOffset", &Graphics::LevelSprite::setOffset)
+					.addOverloadedFunctions("setOffset", 
+						&Graphics::LevelSprite::setOffset,
+						&Graphics::LevelSprite::u_setOffset
+					)
 					.addFunction("setParentID", &Graphics::LevelSprite::setParentID)
-					.addFunction("setPosition", &Graphics::LevelSprite::setPosition)
+					.addOverloadedFunctions("setPosition", 
+						&Graphics::LevelSprite::setPosition,
+						&Graphics::LevelSprite::u_setPosition
+					)
 					.addFunction("setRotation", &Graphics::LevelSprite::setRotation)
 					.addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)
 					.addFunction("setScale", &Graphics::LevelSprite::setScale)

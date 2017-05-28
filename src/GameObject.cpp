@@ -171,6 +171,28 @@ namespace obe
 					else
 						pointBuffer = colliderPoint->get<double>();
 				}
+				if (obj->at("Collider")->contains(vili::Types::BaseAttribute, "tag"))
+					m_objectCollider->addTag(obj->at<vili::BaseAttribute>("Collider", "tag")->get<std::string>());
+				else if (obj->at("Collider")->contains(vili::Types::ListAttribute, "tags"))
+				{
+					for (vili::BaseAttribute* cTag : *obj->at<vili::ListAttribute>("Collider", "tags"))
+						m_objectCollider->addTag(cTag->get<std::string>());
+				}
+				if (obj->at("Collider")->contains(vili::Types::BaseAttribute, "accept"))
+					m_objectCollider->addAcceptedTag(obj->at<vili::BaseAttribute>("Collider", "accept")->get<std::string>());
+				else if (obj->at("Collider")->contains(vili::Types::ListAttribute, "accept"))
+				{
+					for (vili::BaseAttribute* aTag : *obj->at<vili::ListAttribute>("Collider", "accept"))
+						m_objectCollider->addAcceptedTag(aTag->get<std::string>());
+				}
+				if (obj->at("Collider")->contains(vili::Types::BaseAttribute, "exclude"))
+					m_objectCollider->addExcludedTag(obj->at<vili::BaseAttribute>("Collider", "exclude")->get<std::string>());
+				else if (obj->at("Collider")->contains(vili::Types::ListAttribute, "exclude"))
+				{
+					for (vili::BaseAttribute* eTag : *obj->at<vili::ListAttribute>("Collider", "exclude"))
+						m_objectCollider->addExcludedTag(eTag->get<std::string>());
+				}
+				
 				m_hasCollider = true;
 			}
 			//LevelSprite
@@ -259,7 +281,13 @@ namespace obe
 				(*m_objectScript)("protect(\"Private\")");
 				(*m_objectScript)("protect(\"Public\")");
 
-				if (obj->at("Script")->contains(vili::Types::ListAttribute, "sources"))
+				
+				if (obj->at("Script")->contains(vili::Types::BaseAttribute, "source"))
+				{
+					std::string getScrName = obj->at("Script")->getBaseAttribute("source")->get<std::string>();
+					System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+				}
+				else if (obj->at("Script")->contains(vili::Types::ListAttribute, "sources"))
 				{
 					int scriptListSize = obj->at("Script")->getListAttribute("sources")->size();
 					for (int i = 0; i < scriptListSize; i++)
@@ -267,11 +295,6 @@ namespace obe
 						std::string getScrName = obj->at("Script")->getListAttribute("sources")->get(i)->get<std::string>();
 						System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 					}
-				}
-				else if (obj->at("Script")->contains(vili::Types::BaseAttribute, "source"))
-				{
-					std::string getScrName = obj->at("Script")->getBaseAttribute("source")->get<std::string>();
-					System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 				}
 				if (obj->at("Script")->contains(vili::Types::BaseAttribute, "priority"))
 					m_scrPriority = obj->at("Script")->getBaseAttribute("priority")->get<int>();
@@ -401,6 +424,11 @@ namespace obe
 		bool GameObject::canClick() const
 		{
 			return (m_hasCollider && m_colliderClick);
+		}
+
+		bool GameObject::doesHaveAnimator() const
+		{
+			return m_hasAnimator;
 		}
 
 		bool GameObject::doesHaveCollider() const
