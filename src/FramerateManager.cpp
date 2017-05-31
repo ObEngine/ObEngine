@@ -26,7 +26,7 @@ namespace obe
                 m_frameLimiterClock = Time::getTickSinceEpoch();
                 m_currentFrame = 0;
             }
-            m_frameProgression = round((Time::getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
+            m_frameProgression = std::round((Time::getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
             m_needToRender = false;
             if (m_frameProgression > m_currentFrame)
             {
