@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Attribute.hpp"
 #include "ErrorHandler.hpp"
+
+#include "Attribute.hpp"
 
 namespace vili
 {
