@@ -1081,7 +1081,7 @@ namespace obe
                 (*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::DataParser>()
                     .setConstructors<vili::DataParser(), vili::DataParser(std::string)>()
                     .addFunction("createFlag", &vili::DataParser::createFlag)
-                    .addFunction("root", &vili::DataParser::root)
+                    .addFunction("root", &vili::DataParser::operator->)
                     .addFunction("getAmountOfFlags", &vili::DataParser::getAmountOfFlags)
                     .addFunction("getFlagAtIndex", &vili::DataParser::getFlagAtIndex)
                     .addFunction("hasFlag", &vili::DataParser::hasFlag)
