@@ -4,6 +4,7 @@ cmake_policy(SET CMP0015 NEW)
 project(vili)
 
 include_directories(../../include/vili/)
+include_directories(../../include/vili/vili)
 file(GLOB PG_VILI ../../include/vili/*.hpp)
 file(GLOB PG_VILI 
   ../../include/vili/*.hpp
