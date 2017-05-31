@@ -103,7 +103,7 @@ namespace obe
             return m_music.isRelativeToListener();
         }
 
-        const std::string& MusicWrapper::getStatus() const
+        std::string MusicWrapper::getStatus() const
         {
             switch (m_music.getStatus())
             {
@@ -231,7 +231,7 @@ namespace obe
             return m_sound.getMinDistance();
         }
 
-        const std::string& SoundWrapper::getStatus() const
+        std::string SoundWrapper::getStatus() const
         {
             switch (m_sound.getStatus())
             {

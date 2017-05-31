@@ -47,7 +47,7 @@ namespace obe
             void useSoundPosition(bool usePosition);
             bool doesUsesSoundPosition() const;
 
-            const std::string& getStatus() const;
+            std::string getStatus() const;
             void pause();
             void play();
             void stop();
@@ -88,7 +88,7 @@ namespace obe
             void setMinimumDistance(float distance);
             float getMinimumDistance() const;
 
-            const std::string& getStatus() const;
+            std::string getStatus() const;
             void pause();
             void play();
             void stop();
