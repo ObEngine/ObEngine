@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vili/NodeIterator.hpp"
+#include "NodeIterator.hpp"
 
 namespace vili
 {

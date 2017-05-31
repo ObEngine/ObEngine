@@ -60,7 +60,7 @@ namespace obe
                 kaguya::LuaTable injectList;
                 for (int i = 0; i < convert.size(); i++)
                 {
-                    injectList[i] = convert.get(i);
+                    injectList[i] = &convert.get(i);
                 }
                 target[convert.getID()] = injectList;
             }

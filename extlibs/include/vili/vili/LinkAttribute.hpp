@@ -2,10 +2,10 @@
 
 #include <string>
 
-#include "vili/BaseAttribute.hpp"
-#include "vili/ComplexAttribute.hpp"
-#include "vili/ContainerAttribute.hpp"
-#include "vili/ListAttribute.hpp"
+#include "BaseAttribute.hpp"
+#include "ComplexAttribute.hpp"
+#include "ContainerAttribute.hpp"
+#include "ListAttribute.hpp"
 
 namespace vili
 {
