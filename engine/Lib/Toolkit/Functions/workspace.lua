@@ -27,7 +27,7 @@ Functions.create = function(workspaceName)
     os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Utils.File.separator()));
     os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Utils.File.separator()));
     parser:root():createComplexAttribute(workspaceName);
-    parser:root():getPath(workspaceName):createBaseAttribute("path", "Workspace/" .. workspaceName);
+    parser:root():at(workspaceName):createBaseAttribute("path", "Workspace/" .. workspaceName);
     parser:writeFile("Workspace/Workspaces.vili", true);
     local defaultMount = io.open("Workspace/" .. workspaceName .. "/Mount.vili", "w")
 

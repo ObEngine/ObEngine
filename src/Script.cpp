@@ -1081,8 +1081,7 @@ namespace obe
                 (*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::DataParser>()
                     .setConstructors<vili::DataParser(), vili::DataParser(std::string)>()
                     .addFunction("createFlag", &vili::DataParser::createFlag)
-                    .addFunction("root", &vili::DataParser::operator->)
-                    //.addFunction("at", &vili::DataParser::at)
+                    .addFunction("root", &vili::DataParser::root)
                     .addFunction("getAmountOfFlags", &vili::DataParser::getAmountOfFlags)
                     .addFunction("getFlagAtIndex", &vili::DataParser::getFlagAtIndex)
                     .addFunction("hasFlag", &vili::DataParser::hasFlag)
@@ -1106,7 +1105,6 @@ namespace obe
                         vili::ComplexAttribute(std::string),
                         vili::ComplexAttribute(std::string, vili::ComplexAttribute*),
                         vili::ComplexAttribute(std::string, std::vector<vili::ComplexAttribute*>*)>()
-                    .addFunction("at", &vili::ComplexAttribute::getPath)
                     .addOverloadedFunctions("createBaseAttribute",
                                             static_cast<void (vili::ComplexAttribute::*)(const std::string&, const vili::Types::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
                                             static_cast<void (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
@@ -1124,16 +1122,37 @@ namespace obe
                     .addFunction("deleteComplexAttribute", &vili::ComplexAttribute::deleteComplexAttribute)
                     .addFunction("deleteListAttribute", &vili::ComplexAttribute::deleteListAttribute)
                     .addFunction("getAll", &vili::ComplexAttribute::getAll)
-                    .addFunction("getBaseAttribute", &vili::ComplexAttribute::getBaseAttribute)
-                    .addFunction("getComplexAttribute", &vili::ComplexAttribute::getComplexAttribute)
-                    .addFunction("getListAttribute", &vili::ComplexAttribute::getListAttribute)
-                    .addFunction("getPath", &vili::ComplexAttribute::getPath)
                     .addFunction("heritage", &vili::ComplexAttribute::heritage)
                     .addFunction("pushBaseAttribute", &vili::ComplexAttribute::pushBaseAttribute)
                     .addFunction("pushComplexAttribute", &vili::ComplexAttribute::pushComplexAttribute)
                     .addFunction("pushListAttribute", &vili::ComplexAttribute::pushListAttribute)
-                    .addFunction("write", &vili::ComplexAttribute::write)
                 );
+                (*lua)["Core"]["Vili"]["ComplexAttribute"]["at"] = kaguya::function(
+                    [](vili::ComplexAttribute& attribute, kaguya::VariadicArgType args)
+                {
+                    std::vector<std::string> fullPath;
+                    for (auto arg : args)
+                    {
+                        fullPath.push_back(arg.get<std::string>());
+                    }
+                    std::string stringPath = Functions::Vector::join(fullPath, "/");
+                    return &attribute.at(stringPath);
+                });
+                (*lua)["Core"]["Vili"]["ComplexAttribute"]["getBaseAttribute"] = kaguya::function(
+                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                {
+                    return &attribute.getBaseAttribute(attributeID);
+                });
+                (*lua)["Core"]["Vili"]["ComplexAttribute"]["getComplexAttribute"] = kaguya::function(
+                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                {
+                    return &attribute.getComplexAttribute(attributeID);
+                });
+                (*lua)["Core"]["Vili"]["ComplexAttribute"]["getListAttribute"] = kaguya::function(
+                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                {
+                    return &attribute.getListAttribute(attributeID);
+                });
                 foundPart = true;
             }
             if (importAll || args[1] == "ListAttribute")
@@ -1146,7 +1165,6 @@ namespace obe
                                             static_cast<void (vili::ListAttribute::*)(double)>(&vili::ListAttribute::push),
                                             static_cast<void (vili::ListAttribute::*)(const std::string&)>(&vili::ListAttribute::push)
                     )
-                    .addFunction("get", &vili::ListAttribute::get)
                     .addFunction("clear", &vili::ListAttribute::clear)
                     .addOverloadedFunctions("insert",
                                             static_cast<void (vili::ListAttribute::*)(unsigned int, int)>(&vili::ListAttribute::insert),
@@ -1157,6 +1175,10 @@ namespace obe
                     .addFunction("erase", &vili::ListAttribute::erase)
                     .addFunction("size", &vili::ListAttribute::size)
                 );
+                (*lua)["Core"]["Vili"]["ListAttribute"]["get"] = kaguya::function([](vili::ListAttribute& attribute, int index)
+                {
+                    return &attribute.get(index);
+                });
                 foundPart = true;
             }
             if (importAll || args[1] == "BaseAttribute")
