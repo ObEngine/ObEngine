@@ -31,15 +31,15 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"bordercolor", sf::Color::Black},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"backgroundcolorhover", sf::Color::White},
-                {"arrowcolor", Color{60, 60, 60}},
-                {"arrowcolorhover", sf::Color::Black},
-                {"spacebetweenarrows", 2.f}
-            };
+    {
+        {"borders", Borders{2}},
+        {"bordercolor", sf::Color::Black},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"backgroundcolorhover", sf::Color::White},
+        {"arrowcolor", Color{60, 60, 60}},
+        {"arrowcolorhover", sf::Color::Black},
+        {"spacebetweenarrows", 2.f}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,12 +70,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    SpinButton::Ptr SpinButton::copy(SpinButton::ConstPtr spinButton)
+    SpinButton::Ptr SpinButton::copy(ConstPtr spinButton)
     {
         if (spinButton)
             return std::static_pointer_cast<SpinButton>(spinButton->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +227,7 @@ namespace tgui
             {
                 // Check if the mouse went up on the same arrow
                 if ((m_verticalScroll && (sf::FloatRect{0, 0, getSize().x, getSize().y / 2.f}.contains(pos)))
-                 || (!m_verticalScroll && (!sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
+                    || (!m_verticalScroll && (!sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
                 {
                     // Increment the value
                     if (m_value < m_maximum)
@@ -243,7 +242,7 @@ namespace tgui
             {
                 // Check if the mouse went up on the same arrow
                 if ((m_verticalScroll && (!sf::FloatRect{0, 0, getSize().x, getSize().y / 2.f}.contains(pos)))
-                 || (!m_verticalScroll && (sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
+                    || (!m_verticalScroll && (sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
                 {
                     // Decrement the value
                     if (m_value > m_minimum)
@@ -360,8 +359,7 @@ namespace tgui
     {
         if (m_verticalScroll)
             return {getSize().x - m_bordersCached.left - m_bordersCached.right, (getSize().y - m_bordersCached.top - m_bordersCached.bottom - m_spaceBetweenArrowsCached) / 2.0f};
-        else
-            return {getSize().y - m_bordersCached.top - m_bordersCached.bottom, (getSize().x - m_bordersCached.left - m_bordersCached.right - m_spaceBetweenArrowsCached) / 2.0f};
+        return {getSize().y - m_bordersCached.top - m_bordersCached.bottom, (getSize().x - m_bordersCached.left - m_bordersCached.right - m_spaceBetweenArrowsCached) / 2.0f};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -396,17 +394,17 @@ namespace tgui
             {
                 arrowBack.setSize(arrowSize);
 
-                arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4/5});
+                arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4 / 5});
                 arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y / 5});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y * 4/5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y * 4 / 5});
             }
             else // Spin button lies horizontal
             {
                 arrowBack.setSize({arrowSize.y, arrowSize.x});
 
-                arrow.setPoint(0, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 5});
+                arrow.setPoint(0, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 5});
                 arrow.setPoint(1, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 2});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y * 4/5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y * 4 / 5});
             }
 
             if (m_mouseHover && m_mouseHoverOnTopArrow && m_backgroundColorHoverCached.isSet())
@@ -463,16 +461,16 @@ namespace tgui
                 arrowBack.setSize(arrowSize);
 
                 arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 5});
-                arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y * 4/5});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 5});
+                arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y * 4 / 5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 5});
             }
             else // Spin button lies horizontal
             {
                 arrowBack.setSize({arrowSize.y, arrowSize.x});
 
                 arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 5});
-                arrow.setPoint(1, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 2});
-                arrow.setPoint(2, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4/5});
+                arrow.setPoint(1, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 2});
+                arrow.setPoint(2, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4 / 5});
             }
 
             if (m_mouseHover && !m_mouseHoverOnTopArrow && m_backgroundColorHoverCached.isSet())

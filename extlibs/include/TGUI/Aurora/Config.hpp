@@ -43,7 +43,7 @@
 // Tell the compiler that a code path is unreachable, to disable warnings and enable optimizations
 // Most common case: default label in switch statements
 #if defined(_MSC_VER)
-	#define AURORA_UNREACHABLE __assume(false)
+#define AURORA_UNREACHABLE __assume(false)
 #elif defined(__GNUC__) || defined(__clang__)
 	#define AURORA_UNREACHABLE __builtin_unreachable()
 #endif
@@ -52,27 +52,27 @@
 // Output useful error message if MSVC, Clang or g++ compilers do not support C++11
 // Cascaded because symbols are not 100% reliable, clang sometimes defines g++ macros
 #if defined(_MSC_VER)
-	#if _MSC_VER < 1600
+#if _MSC_VER < 1600
 		#error At least Visual Studio 2010 is required.
-	#endif
+#endif
 #elif defined(__clang__)
-	#if 100*__clang_major__ + __clang_minor__ < 301
+#if 100*__clang_major__ + __clang_minor__ < 301
 		#error At least Clang 3.1 is required.
-	#endif
+#endif
 #elif defined(__GNUC__)
-	#if 100*__GNUC__ + __GNUC_MINOR__ < 406
+#if 100*__GNUC__ + __GNUC_MINOR__ < 406
 		#error At least g++ 4.6 is required.
-	#endif
+#endif
 #endif
 
 
 // Find out whether variadic templates are supported (VC++, gcc, clang)
 #if defined(_MSC_VER) && _MSC_VER >= 1800
-	#define AURORA_HAS_VARIADIC_TEMPLATES
+#define AURORA_HAS_VARIADIC_TEMPLATES
 #elif defined(__clang__)
-	#if __has_feature(cxx_variadic_templates)
+#if __has_feature(cxx_variadic_templates)
 		#define AURORA_HAS_VARIADIC_TEMPLATES
-	#endif
+#endif
 #elif defined(__GNUG__) && (defined(__VARIADIC_TEMPLATES) || __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4 && defined(__GXX_EXPERIMENTAL_CXX0X__)))
 	#define AURORA_HAS_VARIADIC_TEMPLATES
 #endif

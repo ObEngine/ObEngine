@@ -49,7 +49,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Canvas& Canvas::operator= (const Canvas& right)
+    Canvas& Canvas::operator=(const Canvas& right)
     {
         if (this != &right)
         {
@@ -69,12 +69,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Canvas::Ptr Canvas::copy(Canvas::ConstPtr canvas)
+    Canvas::Ptr Canvas::copy(ConstPtr canvas)
     {
         if (canvas)
             return std::static_pointer_cast<Canvas>(canvas->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +105,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Canvas::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states)
+    void Canvas::draw(const sf::Vertex* vertices, size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states)
     {
         m_renderTexture.draw(vertices, vertexCount, type, states);
     }

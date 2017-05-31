@@ -84,15 +84,13 @@
 	TupleName()																					\
 	: AURORA_PP_FOREACH(AURORA_DETAIL_INITDEFAULT, typeVarPairs)								\
 	{																							\
-	}																							\
-
+	}
 // Conversion function from named tuple to std::tuple
 #define AURORA_DETAIL_TOSTDTUPLE(typeVarPairs)													\
 	std::tuple<AURORA_PP_FOREACH(AURORA_DETAIL_TYPE, typeVarPairs)> toStdTuple() const			\
 	{																							\
 		return std::make_tuple(AURORA_PP_FOREACH(AURORA_DETAIL_VAR, typeVarPairs));				\
-	}																							\
-
+	}
 // Macro to define base functionality within named tuple
 #define AURORA_DETAIL_BASE_TUPLE(TupleName, typeVarPairs, extensions)							\
 	/* Member variables	*/																		\
@@ -106,8 +104,7 @@
 	}																							\
 																								\
 	/* toStdTuple() conversion function */														\
-	AURORA_DETAIL_TOSTDTUPLE(typeVarPairs)														\
-
+	AURORA_DETAIL_TOSTDTUPLE(typeVarPairs)
 // ---------------------------------------------------------------------------------------------------------------------------
 
 
@@ -119,8 +116,7 @@
 	friend bool operator== (const TupleName& lhs, const TupleName& rhs)							\
 	{																							\
 		return lhs.toStdTuple() == rhs.toStdTuple();											\
-	}																							\
-
+	}
 /// @brief Comparison operator < for named tuples
 /// @details Supplies the named tuple with an operator< in the surrounding namespace, which compares lexicographically.
 ///  Do not invoke this macro directly. It is passed to @ref AURORA_NAMED_TUPLE_EXT.
@@ -129,8 +125,7 @@
 	friend bool operator< (const TupleName& lhs, const TupleName& rhs)							\
 	{																							\
 		return lhs.toStdTuple() < rhs.toStdTuple();												\
-	}																							\
-
+	}
 /// @brief Hash functor for named tuples
 /// @details Supplies the named tuple with a member typedef @c Hasher inside the tuple class.
 ///  Do not invoke this macro directly. It is passed to @ref AURORA_NAMED_TUPLE_EXT.
@@ -144,8 +139,7 @@
 			AURORA_PP_FOREACH(AURORA_DETAIL_HASHCOMBINE, typeVarPairs)							\
 			return h;																			\
 		}																						\
-	};																							\
-
+	};
 /// @brief Default constructor for named tuples
 /// @details Supplies the named tuple with a default constructor calls each members' default constructor.
 ///  Do not invoke this macro directly. It is passed to @ref AURORA_NAMED_TUPLE_EXT.
@@ -189,8 +183,7 @@ AURORA_PP_IF(AURORA_PP_SIZE(typeVarPairs), /* there is already a 0-argument ctor
 struct TupleName																							\
 {																											\
 	AURORA_DETAIL_BASE_TUPLE(TupleName, typeVarPairs, extensions)											\
-};																											\
-
+};
 /// @brief Named tuple definition with extended functionality
 /// @details Defines a struct type with a specified list of public members and a corresponding constructor.
 /// @param TupleName Name of the struct
@@ -227,8 +220,7 @@ struct TupleName																							\
 	/* All extensions -- use positive size because size creates problems with called high-order macros */	\
 	AURORA_PP_FOREACH_DATA_SIZED(AURORA_DETAIL_EXTENSION, AURORA_PP_POSITIVE_SIZE(extensions),				\
 		extensions, (TupleName, typeVarPairs))																\
-};																											\
-
+};
 /// @}
 
 #endif // AURORA_NAMEDTUPLE_HPP

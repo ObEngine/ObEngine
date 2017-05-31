@@ -30,19 +30,19 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"bordercolor", Color{60, 60, 60}},
-                {"bordercolorhover", sf::Color::Black},
-                {"bordercolordown", sf::Color::Black},
-                {"textcolor", Color{60, 60, 60}},
-                {"textcolorhover", sf::Color::Black},
-                {"textcolordown", sf::Color::Black},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"backgroundcolorhover", sf::Color::White},
-                {"backgroundcolordown", sf::Color::White}
-                ///TODO: Define default disabled colors
-            };
+    {
+        {"borders", Borders{2}},
+        {"bordercolor", Color{60, 60, 60}},
+        {"bordercolorhover", sf::Color::Black},
+        {"bordercolordown", sf::Color::Black},
+        {"textcolor", Color{60, 60, 60}},
+        {"textcolorhover", sf::Color::Black},
+        {"textcolordown", sf::Color::Black},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"backgroundcolorhover", sf::Color::White},
+        {"backgroundcolordown", sf::Color::White}
+        ///TODO: Define default disabled colors
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,12 +73,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Button::Ptr Button::copy(Button::ConstPtr button)
+    Button::Ptr Button::copy(ConstPtr button)
     {
         if (button)
             return std::static_pointer_cast<Button>(button->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +258,7 @@ namespace tgui
             updateSize();
         }
         else if ((property == "textcolor") || (property == "textcolorhover") || (property == "textcolordown") || (property == "textcolordisabled")
-              || (property == "textstyle") || (property == "textstylehover") || (property == "textstyledown") || (property == "textstyledisabled"))
+            || (property == "textstyle") || (property == "textstylehover") || (property == "textstyledown") || (property == "textstyledisabled"))
         {
             updateTextColorAndStyle();
         }
@@ -352,12 +351,11 @@ namespace tgui
     {
         if (!m_enabled && m_backgroundColorDisabledCached.isSet())
             return m_backgroundColorDisabledCached;
-        else if (m_mouseHover && m_mouseDown && m_backgroundColorDownCached.isSet())
+        if (m_mouseHover && m_mouseDown && m_backgroundColorDownCached.isSet())
             return m_backgroundColorDownCached;
-        else if (m_mouseHover && m_backgroundColorHoverCached.isSet())
+        if (m_mouseHover && m_backgroundColorHoverCached.isSet())
             return m_backgroundColorHoverCached;
-        else
-            return m_backgroundColorCached;
+        return m_backgroundColorCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,12 +364,11 @@ namespace tgui
     {
         if (!m_enabled && m_borderColorDisabledCached.isSet())
             return m_borderColorDisabledCached;
-        else if (m_mouseHover && m_mouseDown && m_borderColorDownCached.isSet())
+        if (m_mouseHover && m_mouseDown && m_borderColorDownCached.isSet())
             return m_borderColorDownCached;
-        else if (m_mouseHover && m_borderColorHoverCached.isSet())
+        if (m_mouseHover && m_borderColorHoverCached.isSet())
             return m_borderColorHoverCached;
-        else
-            return m_borderColorCached;
+        return m_borderColorCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

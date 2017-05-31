@@ -30,15 +30,15 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"bordercolor", Color{60, 60, 60}},
-                {"bordercolorhover", sf::Color::Black},
-                {"trackcolor", Color{245, 245, 245}},
-                {"trackcolorhover", Color{255, 255, 255}},
-                {"thumbcolor", Color{245, 245, 245}},
-                {"thumbcolorhover", Color{255, 255, 255}}
-            };
+    {
+        {"borders", Borders{2}},
+        {"bordercolor", Color{60, 60, 60}},
+        {"bordercolorhover", sf::Color::Black},
+        {"trackcolor", Color{245, 245, 245}},
+        {"trackcolorhover", Color{255, 255, 255}},
+        {"thumbcolor", Color{245, 245, 245}},
+        {"thumbcolorhover", Color{255, 255, 255}}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,12 +71,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Slider::Ptr Slider::copy(Slider::ConstPtr slider)
+    Slider::Ptr Slider::copy(ConstPtr slider)
     {
         if (slider)
             return std::static_pointer_cast<Slider>(slider->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,8 +158,7 @@ namespace tgui
     {
         if (m_verticalScroll)
             return {std::max(getSize().x, m_thumb.width), getSize().y + m_thumb.height};
-        else
-            return {getSize().x + m_thumb.width, std::max(getSize().y, m_thumb.height)};
+        return {getSize().x + m_thumb.width, std::max(getSize().y, m_thumb.height)};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,8 +167,7 @@ namespace tgui
     {
         if (m_verticalScroll)
             return {std::min(0.f, getSize().x - m_thumb.width), -m_thumb.height / 2.f};
-        else
-            return {-m_thumb.width / 2.f, std::min(0.f, getSize().y - m_thumb.height)};
+        return {-m_thumb.width / 2.f, std::min(0.f, getSize().y - m_thumb.height)};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,7 +340,7 @@ namespace tgui
                 if ((thumbLeft + (m_thumb.width / 2.0f) > 0) && (thumbLeft + (m_thumb.width / 2.0f) < getSize().x))
                     m_thumb.left = thumbLeft;
                 else
-                    m_thumb.left = (getSize().x / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.width / 2.0f) ;
+                    m_thumb.left = (getSize().x / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.width / 2.0f);
             }
         }
         else // Normal mouse move

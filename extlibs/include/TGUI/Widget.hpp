@@ -45,6 +45,7 @@ namespace tgui
     class Container;
 
     enum class ShowAnimationType;
+
     namespace priv
     {
         class Animation;
@@ -151,7 +152,7 @@ namespace tgui
         /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setPosition(const Layout2d& position) override;
+        void setPosition(const Layout2d& position) override;
         using Transformable::setPosition;
 
 
@@ -173,7 +174,7 @@ namespace tgui
         /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(const Layout2d& size) override;
+        void setSize(const Layout2d& size) override;
         using Transformable::setSize;
 
 
@@ -377,7 +378,7 @@ namespace tgui
         /// @param toolTip  Any widget that you want to use as a tool tip (usually a Label)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setToolTip(Widget::Ptr toolTip);
+        void setToolTip(Ptr toolTip);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +387,7 @@ namespace tgui
         /// @return The widget that is used as tool tip or nullptr when no tool tip has been set
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr getToolTip();
+        Ptr getToolTip();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,7 +467,7 @@ namespace tgui
         // Returns its tool tip or the tool tip from a child widget if the mouse is on top of the widget.
         // A nullptr is returned when the mouse is not on top of the widget or when the tool tip is empty.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Widget::Ptr askToolTip(sf::Vector2f mousePos);
+        virtual Ptr askToolTip(sf::Vector2f mousePos);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -490,7 +491,7 @@ namespace tgui
         /// @return Copy of the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Widget::Ptr clone() const = 0;
+        virtual Ptr clone() const = 0;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -581,7 +582,7 @@ namespace tgui
         bool m_containerWidget = false;
 
         // The tool tip connected to the widget
-        Widget::Ptr m_toolTip = nullptr;
+        Ptr m_toolTip = nullptr;
 
         // Renderer of the widget
         aurora::CopiedPtr<WidgetRenderer> m_renderer = aurora::makeCopied<WidgetRenderer>();
@@ -590,7 +591,7 @@ namespace tgui
         std::vector<std::shared_ptr<priv::Animation>> m_showAnimations;
 
         // Cached renderer properties
-        Font  m_fontCached;
+        Font m_fontCached;
         float m_opacityCached;
 
 

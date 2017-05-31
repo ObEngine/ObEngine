@@ -67,7 +67,9 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         struct ValueNode
         {
-            ValueNode(const sf::String& v = "") : value(v) {}
+            ValueNode(const sf::String& v = "") : value(v)
+            {
+            }
 
             sf::String value;
             bool listNode = false;

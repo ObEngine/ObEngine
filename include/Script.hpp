@@ -20,63 +20,61 @@
 #include "Light.hpp"
 #include "MathExp.hpp"
 #include "Package.hpp"
-#include "Particle.hpp"
 #include "SoundManager.hpp"
 #include "Triggers.hpp"
 
 namespace obe
 {
-	namespace Script
-	{
-		void loadLib(kaguya::State* lua, std::string lib);
-		void loadHook(kaguya::State* lua, std::string hookname);
-		void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib);
-		void registerLib(kaguya::State* lua, std::string lib);
-		void loadBaseLib(kaguya::State* lua);
+    namespace Script
+    {
+        void loadLib(kaguya::State* lua, std::string lib);
+        void loadHook(kaguya::State* lua, std::string hookname);
+        void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib);
+        void registerLib(kaguya::State* lua, std::string lib);
+        void loadBaseLib(kaguya::State* lua);
 
-		namespace CoreLib
-		{
-			void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
-			void loadCamera(kaguya::State* lua, std::vector<std::string> args);
-			void loadCanvas(kaguya::State* lua, std::vector<std::string> args);
-			void loadCollision(kaguya::State* lua, std::vector<std::string> args);
-			void loadConsole(kaguya::State* lua, std::vector<std::string> args);
-			void loadConstants(kaguya::State* lua, std::vector<std::string> args);
-			void loadCoordinates(kaguya::State* lua, std::vector<std::string> args);
-			void loadCursor(kaguya::State* lua, std::vector<std::string> args);
-			void loadDialog(kaguya::State* lua, std::vector<std::string> args);
-			void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
-			void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
-			void loadLight(kaguya::State* lua, std::vector<std::string> args);
-			void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
-			void loadPackage(kaguya::State* lua, std::vector<std::string> args);
-			void loadParticle(kaguya::State* lua, std::vector<std::string> args);
-			void loadPath(kaguya::State* lua, std::vector<std::string> args);
-			void loadSFML(kaguya::State* lua, std::vector<std::string> args);
-			void loadSound(kaguya::State* lua, std::vector<std::string> args);
-			void loadSTD(kaguya::State* lua, std::vector<std::string> args);
-			void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
-			void loadUtils(kaguya::State* lua, std::vector<std::string> args);
-			void loadVili(kaguya::State* lua, std::vector<std::string> args);
-		}
+        namespace CoreLib
+        {
+            void loadAnimation(kaguya::State* lua, std::vector<std::string> args);
+            void loadCamera(kaguya::State* lua, std::vector<std::string> args);
+            void loadCanvas(kaguya::State* lua, std::vector<std::string> args);
+            void loadCollision(kaguya::State* lua, std::vector<std::string> args);
+            void loadConsole(kaguya::State* lua, std::vector<std::string> args);
+            void loadConstants(kaguya::State* lua, std::vector<std::string> args);
+            void loadCoordinates(kaguya::State* lua, std::vector<std::string> args);
+            void loadCursor(kaguya::State* lua, std::vector<std::string> args);
+            void loadDialog(kaguya::State* lua, std::vector<std::string> args);
+            void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
+            void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
+            void loadLight(kaguya::State* lua, std::vector<std::string> args);
+            void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
+            void loadPackage(kaguya::State* lua, std::vector<std::string> args);
+            void loadPath(kaguya::State* lua, std::vector<std::string> args);
+            void loadSFML(kaguya::State* lua, std::vector<std::string> args);
+            void loadSound(kaguya::State* lua, std::vector<std::string> args);
+            void loadSTD(kaguya::State* lua, std::vector<std::string> args);
+            void loadTrigger(kaguya::State* lua, std::vector<std::string> args);
+            void loadUtils(kaguya::State* lua, std::vector<std::string> args);
+            void loadVili(kaguya::State* lua, std::vector<std::string> args);
+        }
 
-		class CoreHook
-		{
-		private:
-			std::map<std::string, std::pair<std::string, Types::any*>> containerMap;
-		public:
-			template <typename T>
-			void dropValue(std::string name, T val);
-			void getValue(kaguya::State* lua, std::string name);
-			Types::any* getPointer(std::string name);
-		};
+        class CoreHook
+        {
+        private:
+            std::map<std::string, std::pair<std::string, Types::any*>> containerMap;
+        public:
+            template <typename T>
+            void dropValue(std::string name, T val);
+            void getValue(kaguya::State* lua, std::string name);
+            Types::any* getPointer(std::string name);
+        };
 
-		template <typename T>
-		inline void CoreHook::dropValue(std::string name, T val)
-		{
-			containerMap[name] = std::pair<std::string, Types::any*>(Functions::Type::getObjectType(val), new Types::any(val));
-		}
+        template <typename T>
+        void CoreHook::dropValue(std::string name, T val)
+        {
+            containerMap[name] = std::pair<std::string, Types::any*>(Functions::Type::getObjectType(val), new Types::any(val));
+        }
 
-		extern CoreHook hookCore;
-	}
+        extern CoreHook hookCore;
+    }
 }

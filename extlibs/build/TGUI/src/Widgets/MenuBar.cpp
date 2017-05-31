@@ -32,13 +32,13 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"textcolor", sf::Color::Black},
-                {"selectedtextcolor", sf::Color::White},
-                {"backgroundcolor", sf::Color::White},
-                {"selectedbackgroundcolor", Color{0, 110, 255}},
-                {"distancetoside", 4.f}
-            };
+    {
+        {"textcolor", sf::Color::Black},
+        {"selectedtextcolor", sf::Color::White},
+        {"backgroundcolor", sf::Color::White},
+        {"selectedbackgroundcolor", Color{0, 110, 255}},
+        {"distancetoside", 4.f}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,12 +64,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    MenuBar::Ptr MenuBar::copy(MenuBar::ConstPtr menuBar)
+    MenuBar::Ptr MenuBar::copy(ConstPtr menuBar)
     {
         if (menuBar)
             return std::static_pointer_cast<MenuBar>(menuBar->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,8 +127,7 @@ namespace tgui
     {
         if (!m_menus.empty())
             return addMenuItem(m_menus.back().text.getString(), text);
-        else
-            return false;
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,35 +277,32 @@ namespace tgui
         // Check if the mouse is on top of the menu bar
         if (sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos))
             return true;
-        else
+        // Check if there is a menu open
+        if (m_visibleMenu != -1)
         {
-            // Check if there is a menu open
-            if (m_visibleMenu != -1)
+            // Search the left position of the open menu
+            float left = 0;
+            for (int i = 0; i < m_visibleMenu; ++i)
+                left += m_menus[i].text.getSize().x + (2 * m_distanceToSideCached);
+
+            // Find out what the width of the menu should be
+            float width = m_minimumSubMenuWidth;
+            for (unsigned int j = 0; j < m_menus[m_visibleMenu].menuItems.size(); ++j)
             {
-                // Search the left position of the open menu
-                float left = 0;
-                for (int i = 0; i < m_visibleMenu; ++i)
-                    left += m_menus[i].text.getSize().x + (2 * m_distanceToSideCached);
+                if (width < m_menus[m_visibleMenu].menuItems[j].getSize().x + (3 * m_distanceToSideCached))
+                    width = m_menus[m_visibleMenu].menuItems[j].getSize().x + (3 * m_distanceToSideCached);
+            }
 
-                // Find out what the width of the menu should be
-                float width = m_minimumSubMenuWidth;
-                for (unsigned int j = 0; j < m_menus[m_visibleMenu].menuItems.size(); ++j)
-                {
-                    if (width < m_menus[m_visibleMenu].menuItems[j].getSize().x + (3 * m_distanceToSideCached))
-                        width = m_menus[m_visibleMenu].menuItems[j].getSize().x + (3 * m_distanceToSideCached);
-                }
-
-                // Check if the mouse is on top of the open menu
-                if (m_invertedMenuDirection)
-                {
-                    if (sf::FloatRect{left, -(getSize().y * m_menus[m_visibleMenu].menuItems.size()), width, getSize().y * m_menus[m_visibleMenu].menuItems.size()}.contains(pos))
-                        return true;
-                }
-                else
-                {
-                    if (sf::FloatRect{left, getSize().y, width, getSize().y * m_menus[m_visibleMenu].menuItems.size()}.contains(pos))
-                        return true;
-                }
+            // Check if the mouse is on top of the open menu
+            if (m_invertedMenuDirection)
+            {
+                if (sf::FloatRect{left, -(getSize().y * m_menus[m_visibleMenu].menuItems.size()), width, getSize().y * m_menus[m_visibleMenu].menuItems.size()}.contains(pos))
+                    return true;
+            }
+            else
+            {
+                if (sf::FloatRect{left, getSize().y, width, getSize().y * m_menus[m_visibleMenu].menuItems.size()}.contains(pos))
+                    return true;
             }
         }
 
@@ -369,11 +364,11 @@ namespace tgui
             // Check if the mouse is on top of one of the menus
             if (!sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos))
             {
-                std::size_t selectedMenuItem;
+                size_t selectedMenuItem;
                 if (m_invertedMenuDirection)
-                    selectedMenuItem = static_cast<std::size_t>((-pos.y-1) / getSize().y);
+                    selectedMenuItem = static_cast<size_t>((-pos.y - 1) / getSize().y);
                 else
-                    selectedMenuItem = static_cast<std::size_t>((pos.y - getSize().y) / getSize().y);
+                    selectedMenuItem = static_cast<size_t>((pos.y - getSize().y) / getSize().y);
 
                 if (selectedMenuItem < m_menus[m_visibleMenu].menuItems.size())
                 {
@@ -446,7 +441,7 @@ namespace tgui
             // Calculate on what menu item the mouse is located
             int selectedMenuItem;
             if (m_invertedMenuDirection)
-                selectedMenuItem = static_cast<int>((-pos.y-1) / getSize().y);
+                selectedMenuItem = static_cast<int>((-pos.y - 1) / getSize().y);
             else
                 selectedMenuItem = static_cast<int>((pos.y - getSize().y) / getSize().y);
 

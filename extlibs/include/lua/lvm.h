@@ -92,22 +92,21 @@
     luaV_finishset(L,t,k,v,slot); }
 
 
-
-LUAI_FUNC int luaV_equalobj (lua_State *L, const TValue *t1, const TValue *t2);
-LUAI_FUNC int luaV_lessthan (lua_State *L, const TValue *l, const TValue *r);
-LUAI_FUNC int luaV_lessequal (lua_State *L, const TValue *l, const TValue *r);
-LUAI_FUNC int luaV_tonumber_ (const TValue *obj, lua_Number *n);
-LUAI_FUNC int luaV_tointeger (const TValue *obj, lua_Integer *p, int mode);
-LUAI_FUNC void luaV_finishget (lua_State *L, const TValue *t, TValue *key,
-                               StkId val, const TValue *slot);
-LUAI_FUNC void luaV_finishset (lua_State *L, const TValue *t, TValue *key,
-                               StkId val, const TValue *slot);
-LUAI_FUNC void luaV_finishOp (lua_State *L);
-LUAI_FUNC void luaV_execute (lua_State *L);
-LUAI_FUNC void luaV_concat (lua_State *L, int total);
-LUAI_FUNC lua_Integer luaV_div (lua_State *L, lua_Integer x, lua_Integer y);
-LUAI_FUNC lua_Integer luaV_mod (lua_State *L, lua_Integer x, lua_Integer y);
-LUAI_FUNC lua_Integer luaV_shiftl (lua_Integer x, lua_Integer y);
-LUAI_FUNC void luaV_objlen (lua_State *L, StkId ra, const TValue *rb);
+LUAI_FUNC int luaV_equalobj(lua_State* L, const TValue* t1, const TValue* t2);
+LUAI_FUNC int luaV_lessthan(lua_State* L, const TValue* l, const TValue* r);
+LUAI_FUNC int luaV_lessequal(lua_State* L, const TValue* l, const TValue* r);
+LUAI_FUNC int luaV_tonumber_(const TValue* obj, lua_Number* n);
+LUAI_FUNC int luaV_tointeger(const TValue* obj, lua_Integer* p, int mode);
+LUAI_FUNC void luaV_finishget(lua_State* L, const TValue* t, TValue* key,
+                              StkId val, const TValue* slot);
+LUAI_FUNC void luaV_finishset(lua_State* L, const TValue* t, TValue* key,
+                              StkId val, const TValue* slot);
+LUAI_FUNC void luaV_finishOp(lua_State* L);
+LUAI_FUNC void luaV_execute(lua_State* L);
+LUAI_FUNC void luaV_concat(lua_State* L, int total);
+LUAI_FUNC lua_Integer luaV_div(lua_State* L, lua_Integer x, lua_Integer y);
+LUAI_FUNC lua_Integer luaV_mod(lua_State* L, lua_Integer x, lua_Integer y);
+LUAI_FUNC lua_Integer luaV_shiftl(lua_Integer x, lua_Integer y);
+LUAI_FUNC void luaV_objlen(lua_State* L, StkId ra, const TValue* rb);
 
 #endif

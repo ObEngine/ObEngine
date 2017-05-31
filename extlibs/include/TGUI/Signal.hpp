@@ -60,11 +60,20 @@ namespace tgui
         template <typename T>
         std::string convertTypeToString();
 
-        template <> inline std::string convertTypeToString<int>() { return "int"; }
-        template <> inline std::string convertTypeToString<sf::Vector2f>() { return "sf::Vector2f"; }
-        template <> inline std::string convertTypeToString<sf::String>() { return "sf::String"; }
-        template <> inline std::string convertTypeToString<std::vector<sf::String>>() { return "std::vector<sf::String>"; }
-        template <> inline std::string convertTypeToString<std::shared_ptr<ChildWindow>>() { return "std::shared_ptr<ChildWindow>"; }
+        template <>
+        inline std::string convertTypeToString<int>() { return "int"; }
+
+        template <>
+        inline std::string convertTypeToString<sf::Vector2f>() { return "sf::Vector2f"; }
+
+        template <>
+        inline std::string convertTypeToString<sf::String>() { return "sf::String"; }
+
+        template <>
+        inline std::string convertTypeToString<std::vector<sf::String>>() { return "std::vector<sf::String>"; }
+
+        template <>
+        inline std::string convertTypeToString<std::shared_ptr<ChildWindow>>() { return "std::shared_ptr<ChildWindow>"; }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,13 +134,13 @@ namespace tgui
         template <typename Func, typename... TypesA, typename... TypesB, typename... Args>
         struct isConvertible<Func, TypeSet<TypesA...>, TypeSet<TypesB...>, Args...>
         {
-            using type = typename std::conditional<std::is_convertible<Func, std::function<void(Args..., TypesA...)>>::value, TypeSet<TypesA...>, TypeSet<TypesB...>>::type;
+            using type = typename std::conditional<std::is_convertible<Func, std::function<void(Args ..., TypesA ...)>>::value, TypeSet<TypesA...>, TypeSet<TypesB...>>::type;
         };
 
         template <typename Func, typename... Type, typename... Args>
         struct isConvertible<Func, TypeSet<>, TypeSet<Type...>, Args...>
         {
-            using type = typename std::conditional<std::is_convertible<Func, std::function<void(Args...)>>::value || std::is_convertible<Func, std::function<void(Args...)>>::value, TypeSet<>, TypeSet<Type...>>::type;
+            using type = typename std::conditional<std::is_convertible<Func, std::function<void(Args ...)>>::value || std::is_convertible<Func, std::function<void(Args ...)>>::value, TypeSet<>, TypeSet<Type...>>::type;
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +159,7 @@ namespace tgui
         template <typename Func, typename... Args>
         struct connector<TypeSet<>, Func, Args...>
         {
-            static std::function<void()> connect(Func func, std::size_t, Args... args)
+            static std::function<void()> connect(Func func, size_t, Args ... args)
             {
                 return std::bind(func, args...);
             }
@@ -159,7 +168,7 @@ namespace tgui
         template <typename Func, typename... Args, typename Type>
         struct connector<TypeSet<Type>, Func, Args...>
         {
-            static std::function<void()> connect(Func func, std::size_t argPos, Args... args)
+            static std::function<void()> connect(Func func, size_t argPos, Args ... args)
             {
                 return std::bind(func, args..., std::bind(dereference<Type>, std::cref(data[argPos])));
             }
@@ -168,11 +177,11 @@ namespace tgui
         template <typename Func, typename... Args, typename TypeA, typename TypeB>
         struct connector<TypeSet<TypeA, TypeB>, Func, Args...>
         {
-            static std::function<void()> connect(Func func, std::size_t argPos, Args... args)
+            static std::function<void()> connect(Func func, size_t argPos, Args ... args)
             {
                 return std::bind(func, args...,
                                  std::bind(dereference<TypeA>, std::cref(data[argPos])),
-                                 std::bind(dereference<TypeB>, std::cref(data[argPos+1])));
+                                 std::bind(dereference<TypeB>, std::cref(data[argPos + 1])));
             }
         };
 
@@ -198,20 +207,20 @@ namespace tgui
         struct isFunctionConvertible
         {
             using type = typename isConvertible<Func, TypeSet<>,
-                            typename isConvertible<Func, TypeSet<int>,
-                                typename isConvertible<Func, TypeSet<sf::Vector2f>,
-                                    typename isConvertible<Func, TypeSet<sf::String>,
-                                        typename isConvertible<Func, TypeSet<std::vector<sf::String>>,
-                                            typename isConvertible<Func, TypeSet<std::shared_ptr<ChildWindow>>,
-                                                typename isConvertible<Func, TypeSet<sf::String, sf::String>,
-                                                    TypeSet<void>,
-                                                    Args...>::type,
-                                                Args...>::type,
-                                            Args...>::type,
-                                        Args...>::type,
-                                    Args...>::type,
-                                Args...>::type,
-                            Args...>::type;
+                                                typename isConvertible<Func, TypeSet<int>,
+                                                                       typename isConvertible<Func, TypeSet<sf::Vector2f>,
+                                                                                              typename isConvertible<Func, TypeSet<sf::String>,
+                                                                                                                     typename isConvertible<Func, TypeSet<std::vector<sf::String>>,
+                                                                                                                                            typename isConvertible<Func, TypeSet<std::shared_ptr<ChildWindow>>,
+                                                                                                                                                                   typename isConvertible<Func, TypeSet<sf::String, sf::String>,
+                                                                                                                                                                                          TypeSet<void>,
+                                                                                                                                                                                          Args...>::type,
+                                                                                                                                                                   Args...>::type,
+                                                                                                                                            Args...>::type,
+                                                                                                                     Args...>::type,
+                                                                                              Args...>::type,
+                                                                       Args...>::type,
+                                                Args...>::type;
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,12 +235,14 @@ namespace tgui
     {
     public:
 
-        Signal() {};
+        Signal()
+        {
+        };
 
         Signal(std::vector<std::vector<std::string>>&& types);
 
         template <typename Func, typename... Args>
-        void connect(unsigned int id, Func func, Args... args)
+        void connect(unsigned int id, Func func, Args ... args)
         {
             using type = typename priv::isFunctionConvertible<Func, decltype(priv::bindRemover<Args>::remove(args))...>::type;
             static_assert(!std::is_same<type, TypeSet<void>>::value, "Parameters passed to the connect function are wrong!");
@@ -241,7 +252,7 @@ namespace tgui
         }
 
         template <typename Func, typename... Args>
-        void connectEx(unsigned int id, Func func, Args... args)
+        void connectEx(unsigned int id, Func func, Args ... args)
         {
             m_functionsEx[id] = std::bind(func, args..., std::placeholders::_1);
         }
@@ -255,16 +266,16 @@ namespace tgui
         void operator()(unsigned int count);
 
         template <typename T, typename... Args>
-        void operator()(unsigned int count, const T& value, Args... args)
+        void operator()(unsigned int count, const T& value, Args ... args)
         {
             priv::data[count] = static_cast<const void*>(&value);
-            (*this)(count+1, args...);
+            (*this)(count + 1, args...);
         }
 
     protected:
 
         template <typename Type>
-        std::size_t checkCompatibleParameterType()
+        size_t checkCompatibleParameterType()
         {
             if (std::is_same<Type, TypeSet<>>::value)
                 return 0;
@@ -272,8 +283,8 @@ namespace tgui
             auto acceptedType = priv::extractTypes<Type>::get();
             assert(acceptedType.size() == 1);
 
-            std::size_t count = 0;
-            for (std::size_t i = 0; i < m_allowedTypes.size(); ++i)
+            size_t count = 0;
+            for (size_t i = 0; i < m_allowedTypes.size(); ++i)
             {
                 if (acceptedType[0] == m_allowedTypes[i])
                     return count;
@@ -305,7 +316,9 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Virtual destructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~SignalWidgetBase() {};
+        virtual ~SignalWidgetBase()
+        {
+        };
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,7 +332,7 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename Func, typename... Args>
-        unsigned int connect(const std::string& signalNames, Func func, Args... args)
+        unsigned int connect(const std::string& signalNames, Func func, Args ... args)
         {
             auto signalNameList = extractSignalNames(signalNames);
             if (signalNameList.empty())
@@ -329,11 +342,13 @@ namespace tgui
             {
                 if (m_signals.find(toLower(signalName)) != m_signals.end())
                 {
-                    try {
+                    try
+                    {
                         m_signals[toLower(signalName)].connect(m_lastId, func, args...);
                         m_lastId++;
                     }
-                    catch (const Exception& e) {
+                    catch (const Exception& e)
+                    {
                         throw Exception{e.what() + (" The parameters are not valid for the '" + signalName + "' signal.")};
                     }
                 }
@@ -341,19 +356,18 @@ namespace tgui
                 {
                     if (toLower(signalName) != "all")
                         throw Exception{"Cannot connect to unknown signal '" + signalName + "'."};
-                    else
-                    {
-                        assert(!m_signals.empty());
+                    assert(!m_signals.empty());
 
-                        for (auto& signal : m_signals)
+                    for (auto& signal : m_signals)
+                    {
+                        try
                         {
-                            try {
-                                signal.second.connect(m_lastId, func, args...);
-                                m_lastId++;
-                            }
-                            catch (const Exception& e) {
-                                throw Exception{e.what() + (" The parameters are not valid for the '" + signalName + "' signal.")};
-                            }
+                            signal.second.connect(m_lastId, func, args...);
+                            m_lastId++;
+                        }
+                        catch (const Exception& e)
+                        {
+                            throw Exception{e.what() + (" The parameters are not valid for the '" + signalName + "' signal.")};
                         }
                     }
                 }
@@ -376,7 +390,7 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename Func, typename... Args>
-        unsigned int connectEx(const std::string& signalName, Func func, Args... args)
+        unsigned int connectEx(const std::string& signalName, Func func, Args ... args)
         {
             auto signalNameList = extractSignalNames(signalName);
             if (signalNameList.empty())
@@ -386,11 +400,13 @@ namespace tgui
             {
                 if (m_signals.find(toLower(name)) != m_signals.end())
                 {
-                    try {
+                    try
+                    {
                         m_signals[toLower(name)].connectEx(m_lastId, func, args...);
                         m_lastId++;
                     }
-                    catch (const Exception& e) {
+                    catch (const Exception& e)
+                    {
                         throw Exception{e.what() + (" since it is not valid for the '" + name + "' signal.")};
                     }
                 }
@@ -398,19 +414,18 @@ namespace tgui
                 {
                     if (toLower(name) != "all")
                         throw Exception{"Cannot connect to unknown signal '" + name + "'."};
-                    else
-                    {
-                        assert(!m_signals.empty());
+                    assert(!m_signals.empty());
 
-                        for (auto& signal : m_signals)
+                    for (auto& signal : m_signals)
+                    {
+                        try
                         {
-                            try {
-                                signal.second.connectEx(m_lastId, func, args...);
-                                m_lastId++;
-                            }
-                            catch (const Exception& e) {
-                                throw Exception{e.what() + (" since it is not valid for the '" + name + "' signal.")};
-                            }
+                            signal.second.connectEx(m_lastId, func, args...);
+                            m_lastId++;
+                        }
+                        catch (const Exception& e)
+                        {
+                            throw Exception{e.what() + (" since it is not valid for the '" + name + "' signal.")};
                         }
                     }
                 }
@@ -469,7 +484,7 @@ namespace tgui
         // @brief Sends a signal to all signal handlers that are connected with this signal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename... Args>
-        void sendSignal(std::string&& name, Args... args)
+        void sendSignal(std::string&& name, Args ... args)
         {
             assert(m_signals.find(toLower(name)) != m_signals.end());
             auto& signal = m_signals[toLower(name)];

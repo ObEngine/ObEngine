@@ -39,7 +39,7 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Gui::Gui() :
-        m_window        (nullptr),
+        m_window(nullptr),
         m_accessToWindow(false)
     {
         m_container->m_focused = true;
@@ -52,7 +52,7 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Gui::Gui(sf::RenderWindow& window) :
-        m_window        (&window),
+        m_window(&window),
         m_accessToWindow(true)
     {
         m_container->m_window = &window;
@@ -70,7 +70,7 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Gui::Gui(sf::RenderTarget& window) :
-        m_window        (&window),
+        m_window(&window),
         m_accessToWindow(false)
     {
         m_container->m_window = &window;
@@ -147,15 +147,15 @@ namespace tgui
 
         // Check if the event has something to do with the mouse
         if ((event.type == sf::Event::MouseMoved) || (event.type == sf::Event::TouchMoved)
-         || (event.type == sf::Event::MouseButtonPressed) || (event.type == sf::Event::TouchBegan)
-         || (event.type == sf::Event::MouseButtonReleased) || (event.type == sf::Event::TouchEnded)
-         || (event.type == sf::Event::MouseWheelScrolled))
+            || (event.type == sf::Event::MouseButtonPressed) || (event.type == sf::Event::TouchBegan)
+            || (event.type == sf::Event::MouseButtonReleased) || (event.type == sf::Event::TouchEnded)
+            || (event.type == sf::Event::MouseWheelScrolled))
         {
             sf::Vector2f mouseCoords;
 
             switch (event.type)
             {
-                case sf::Event::MouseMoved:
+            case sf::Event::MouseMoved:
                 {
                     mouseCoords = m_window->mapPixelToCoords({event.mouseMove.x, event.mouseMove.y}, m_view);
                     event.mouseMove.x = static_cast<int>(mouseCoords.x + 0.5f);
@@ -163,8 +163,8 @@ namespace tgui
                     break;
                 }
 
-                case sf::Event::MouseButtonPressed:
-                case sf::Event::MouseButtonReleased:
+            case sf::Event::MouseButtonPressed:
+            case sf::Event::MouseButtonReleased:
                 {
                     mouseCoords = m_window->mapPixelToCoords({event.mouseButton.x, event.mouseButton.y}, m_view);
                     event.mouseButton.x = static_cast<int>(mouseCoords.x + 0.5f);
@@ -172,7 +172,7 @@ namespace tgui
                     break;
                 }
 
-                case sf::Event::MouseWheelScrolled:
+            case sf::Event::MouseWheelScrolled:
                 {
                     mouseCoords = m_window->mapPixelToCoords({event.mouseWheelScroll.x, event.mouseWheelScroll.y}, m_view);
                     event.mouseWheelScroll.x = static_cast<int>(mouseCoords.x + 0.5f);
@@ -180,9 +180,9 @@ namespace tgui
                     break;
                 }
 
-                case sf::Event::TouchMoved:
-                case sf::Event::TouchBegan:
-                case sf::Event::TouchEnded:
+            case sf::Event::TouchMoved:
+            case sf::Event::TouchBegan:
+            case sf::Event::TouchEnded:
                 {
                     mouseCoords = m_window->mapPixelToCoords({event.touch.x, event.touch.y}, m_view);
                     event.touch.x = static_cast<int>(mouseCoords.x + 0.5f);
@@ -190,8 +190,8 @@ namespace tgui
                     break;
                 }
 
-                default:
-                    break;
+            default:
+                break;
             }
 
             // If a tooltip is visible then hide it now

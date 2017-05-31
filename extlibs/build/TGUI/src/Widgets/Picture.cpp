@@ -56,12 +56,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Picture::Ptr Picture::copy(Picture::ConstPtr picture)
+    Picture::Ptr Picture::copy(ConstPtr picture)
     {
         if (picture)
             return std::static_pointer_cast<Picture>(picture->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,8 +116,7 @@ namespace tgui
             // We sometimes want clicks to go through transparent parts of the picture
             if (!m_fullyClickable && m_sprite.isTransparentPixel(pos))
                 return false;
-            else
-                return true;
+            return true;
         }
 
         return false;

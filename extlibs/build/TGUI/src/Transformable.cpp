@@ -59,10 +59,10 @@ namespace tgui
         {
             Transformable temp(other);
 
-            std::swap(m_position,     temp.m_position);
-            std::swap(m_size,         temp.m_size);
+            std::swap(m_position, temp.m_position);
+            std::swap(m_size, temp.m_size);
             std::swap(m_prevPosition, temp.m_prevPosition);
-            std::swap(m_prevSize,     temp.m_prevSize);
+            std::swap(m_prevSize, temp.m_prevSize);
         }
 
         return *this;
@@ -75,8 +75,8 @@ namespace tgui
         m_position = position;
         m_prevPosition = m_position.getValue();
 
-        m_position.x.connectUpdateCallback([this](){ updatePosition(false); });
-        m_position.y.connectUpdateCallback([this](){ updatePosition(false); });
+        m_position.x.connectUpdateCallback([this]() { updatePosition(false); });
+        m_position.y.connectUpdateCallback([this]() { updatePosition(false); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,8 +100,8 @@ namespace tgui
         m_size = size;
         m_prevSize = m_size.getValue();
 
-        m_size.x.connectUpdateCallback([this](){ updateSize(false); });
-        m_size.y.connectUpdateCallback([this](){ updateSize(false); });
+        m_size.x.connectUpdateCallback([this]() { updateSize(false); });
+        m_size.y.connectUpdateCallback([this]() { updateSize(false); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

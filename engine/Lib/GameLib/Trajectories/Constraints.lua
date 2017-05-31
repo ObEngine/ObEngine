@@ -1,7 +1,7 @@
 local Constraints = {};
 
 function Constraints.StaticWhenColliding(self, callback)
-    while This:Collider():doesPathCollide(allColliders, 0, 0, self.addX, self.addY, true) do
+    while This:Collider():testAllColliders(allColliders, self.addX, self.addY, true) do
         if self.speed < 1 then
             self.speed = 0;
             self.static = true;
@@ -24,7 +24,7 @@ end
 
 function Constraints.StopWhenColliding(self, callback)
     self:updatePosition();
-    while This:Collider():doesPathCollide(allColliders, 0, 0, self.addX, self.addY, true) do
+    while This:Collider():testAllColliders(allColliders, self.addX, self.addY, true) do
         if self.speed < 1 then
             self.speed = 0;
             callback();

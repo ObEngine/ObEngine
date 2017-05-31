@@ -54,12 +54,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CheckBox::Ptr CheckBox::copy(CheckBox::ConstPtr checkbox)
+    CheckBox::Ptr CheckBox::copy(ConstPtr checkbox)
     {
         if (checkbox)
             return std::static_pointer_cast<CheckBox>(checkbox->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,21 +66,16 @@ namespace tgui
     sf::Vector2f CheckBox::getFullSize() const
     {
         if (m_spriteUnchecked.isSet() && m_spriteChecked.isSet()
-         && (m_textureUncheckedCached.getImageSize() != m_textureCheckedCached.getImageSize()))
+            && (m_textureUncheckedCached.getImageSize() != m_textureCheckedCached.getImageSize()))
         {
             sf::Vector2f sizeDiff = m_spriteChecked.getSize() - m_spriteUnchecked.getSize();
             if (getText().isEmpty())
                 return getSize() + sf::Vector2f{std::max(0.f, sizeDiff.x - m_bordersCached.right), std::max(0.f, sizeDiff.y - m_bordersCached.top)};
-            else
-                return getSize() + sf::Vector2f{(getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(0.f, std::max((m_text.getSize().y - getSize().y) / 2, sizeDiff.y - m_bordersCached.top))};
+            return getSize() + sf::Vector2f{(getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(0.f, std::max((m_text.getSize().y - getSize().y) / 2, sizeDiff.y - m_bordersCached.top))};
         }
-        else
-        {
-            if (getText().isEmpty())
-                return getSize();
-            else
-                return {getSize().x + (getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(getSize().y, m_text.getSize().y)};
-        }
+        if (getText().isEmpty())
+            return getSize();
+        return {getSize().x + (getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(getSize().y, m_text.getSize().y)};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +84,7 @@ namespace tgui
     {
         float yOffset = 0;
         if (m_spriteUnchecked.isSet() && m_spriteChecked.isSet()
-         && (m_textureUncheckedCached.getImageSize() != m_textureCheckedCached.getImageSize()))
+            && (m_textureUncheckedCached.getImageSize() != m_textureCheckedCached.getImageSize()))
         {
             float sizeDiff = m_spriteChecked.getSize().y - m_spriteUnchecked.getSize().y;
             if (sizeDiff > m_bordersCached.top)
@@ -99,8 +93,7 @@ namespace tgui
 
         if (getText().isEmpty() || (getSize().y >= m_text.getSize().y))
             return {0, -yOffset};
-        else
-            return {0, -std::max(yOffset, (m_text.getSize().y - getSize().y) / 2)};
+        return {0, -std::max(yOffset, (m_text.getSize().y - getSize().y) / 2)};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +168,7 @@ namespace tgui
             m_spriteUnchecked.setSize(getInnerSize());
             m_spriteChecked.setSize(
                 {getInnerSize().x + ((m_textureCheckedCached.getImageSize().x - m_textureUncheckedCached.getImageSize().x) * (getInnerSize().x / m_textureUncheckedCached.getImageSize().x)),
-                 getInnerSize().y + ((m_textureCheckedCached.getImageSize().y - m_textureUncheckedCached.getImageSize().y) * (getInnerSize().y / m_textureUncheckedCached.getImageSize().y))}
+                    getInnerSize().y + ((m_textureCheckedCached.getImageSize().y - m_textureUncheckedCached.getImageSize().y) * (getInnerSize().y / m_textureUncheckedCached.getImageSize().y))}
             );
 
             m_spriteUncheckedHover.setSize(m_spriteUnchecked.getSize());
@@ -250,19 +243,19 @@ namespace tgui
 
                 sf::Vector2f size = getInnerSize();
 
-                sf::Vector2f leftPoint = {0, size.y * 5.f/12.f};
+                sf::Vector2f leftPoint = {0, size.y * 5.f / 12.f};
                 sf::Vector2f middlePoint = {size.x / 2, size.y};
                 sf::Vector2f rightPoint = {size.x, 0};
 
-                sf::RectangleShape left{{std::min(size.x, size.y) / 6, static_cast<float>(std::sqrt(std::pow(middlePoint.x - leftPoint.x, 2) + std::pow(middlePoint.y - leftPoint.y, 2)))}};
+                sf::RectangleShape left{{std::min(size.x, size.y) / 6, static_cast<float>(sqrt(pow(middlePoint.x - leftPoint.x, 2) + pow(middlePoint.y - leftPoint.y, 2)))}};
                 left.setPosition(leftPoint);
                 left.setOrigin({left.getSize().x / 2, 0});
-                left.setRotation(-90 + (std::atan2(middlePoint.y - leftPoint.y, middlePoint.x - leftPoint.x) / pi * 180));
+                left.setRotation(-90 + (atan2(middlePoint.y - leftPoint.y, middlePoint.x - leftPoint.x) / pi * 180));
 
-                sf::RectangleShape right{{std::min(size.x, size.y) / 5, static_cast<float>(std::sqrt(std::pow(rightPoint.x - middlePoint.x, 2) + std::pow(rightPoint.y - middlePoint.y, 2)))}};
+                sf::RectangleShape right{{std::min(size.x, size.y) / 5, static_cast<float>(sqrt(pow(rightPoint.x - middlePoint.x, 2) + pow(rightPoint.y - middlePoint.y, 2)))}};
                 right.setPosition(middlePoint);
                 right.setOrigin({left.getSize().x / 2, 0});
-                right.setRotation(-90 + (std::atan2(rightPoint.y - middlePoint.y, rightPoint.x - middlePoint.x) / pi * 180));
+                right.setRotation(-90 + (atan2(rightPoint.y - middlePoint.y, rightPoint.x - middlePoint.x) / pi * 180));
 
                 sf::Color checkColor = getCurrentCheckColor();
                 left.setFillColor(checkColor);

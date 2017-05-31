@@ -59,20 +59,19 @@ typedef unsigned char lu_byte;
 #define point2uint(p)	((unsigned int)((size_t)(p) & UINT_MAX))
 
 
-
 /* type to ensure maximum alignment */
 #if defined(LUAI_USER_ALIGNMENT_T)
 typedef LUAI_USER_ALIGNMENT_T L_Umaxalign;
 #else
-typedef union {
-  lua_Number n;
-  double u;
-  void *s;
-  lua_Integer i;
-  long l;
+typedef union
+{
+    lua_Number n;
+    double u;
+    void* s;
+    lua_Integer i;
+    long l;
 } L_Umaxalign;
 #endif
-
 
 
 /* types of 'usual argument conversions' for lua_Number and lua_Integer */
@@ -144,7 +143,6 @@ typedef LUAI_UACINT l_uacInt;
 #endif
 
 
-
 /*
 ** maximum depth for nested C calls and syntactical nested non-terminals
 ** in a program. (Value must fit in an unsigned short int.)
@@ -152,7 +150,6 @@ typedef LUAI_UACINT l_uacInt;
 #if !defined(LUAI_MAXCCALLS)
 #define LUAI_MAXCCALLS		200
 #endif
-
 
 
 /*
@@ -164,7 +161,6 @@ typedef unsigned int Instruction;
 #else
 typedef unsigned long Instruction;
 #endif
-
 
 
 /*
@@ -254,7 +250,6 @@ typedef unsigned long Instruction;
 #endif
 
 
-
 /*
 ** The luai_num* macros define the primitive operations over numbers.
 */
@@ -297,9 +292,6 @@ typedef unsigned long Instruction;
 #define luai_numle(a,b)         ((a)<=(b))
 #define luai_numisnan(a)        (!luai_numeq((a), (a)))
 #endif
-
-
-
 
 
 /*

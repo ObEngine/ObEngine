@@ -7,8 +7,8 @@
 
 namespace obe
 {
-	namespace Graphics
-	{
-		sf::Sprite getCleanSprite(sf::Texture texture);
-	}
+    namespace Graphics
+    {
+        sf::Sprite getCleanSprite(sf::Texture texture);
+    }
 }

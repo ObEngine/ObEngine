@@ -35,13 +35,13 @@ namespace tgui
 {
     Texture::TextureLoaderFunc Texture::m_textureLoader = &TextureManager::getTexture;
     Texture::ImageLoaderFunc Texture::m_imageLoader = [](const sf::String& filename) -> std::shared_ptr<sf::Image>
-        {
-            auto image = std::make_shared<sf::Image>();
-            if (image->loadFromFile(filename))
-                return image;
-            else
-                return nullptr;
-        };
+    {
+        auto image = std::make_shared<sf::Image>();
+        if (image->loadFromFile(filename))
+            return image;
+        else
+            return nullptr;
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,10 +60,10 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Texture::Texture(const Texture& other) :
-        m_data            {other.m_data},
-        m_middleRect      {other.m_middleRect},
-        m_id              (other.m_id), // Did not compile in VS2013 when using braces
-        m_copyCallback    {other.m_copyCallback},
+        m_data {other.m_data},
+        m_middleRect {other.m_middleRect},
+        m_id(other.m_id), // Did not compile in VS2013 when using braces
+        m_copyCallback {other.m_copyCallback},
         m_destructCallback{other.m_destructCallback}
     {
         if (getData() && (m_copyCallback != nullptr))
@@ -73,11 +73,11 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Texture::Texture(Texture&& other) :
-        m_data            {std::move(other.m_data)},
-        m_middleRect      {std::move(other.m_middleRect)},
-        m_id              (std::move(other.m_id)), // Did not compile in VS2013 when using braces
-        m_copyCallback    {std::move(other.m_copyCallback)},
-        m_destructCallback{std::move(other.m_destructCallback)}
+        m_data {move(other.m_data)},
+        m_middleRect {std::move(other.m_middleRect)},
+        m_id(std::move(other.m_id)), // Did not compile in VS2013 when using braces
+        m_copyCallback {move(other.m_copyCallback)},
+        m_destructCallback{move(other.m_destructCallback)}
     {
         other.m_data = nullptr;
         other.m_copyCallback = nullptr;
@@ -100,11 +100,11 @@ namespace tgui
         {
             Texture temp{other};
 
-            std::swap(m_data,             temp.m_data);
-            std::swap(m_middleRect,       temp.m_middleRect);
-            std::swap(m_id,               temp.m_id);
-            std::swap(m_copyCallback,     temp.m_copyCallback);
-            std::swap(m_destructCallback, temp.m_destructCallback);
+            swap(m_data, temp.m_data);
+            std::swap(m_middleRect, temp.m_middleRect);
+            std::swap(m_id, temp.m_id);
+            swap(m_copyCallback, temp.m_copyCallback);
+            swap(m_destructCallback, temp.m_destructCallback);
         }
 
         return *this;
@@ -116,11 +116,11 @@ namespace tgui
     {
         if (this != &other)
         {
-            m_data             = std::move(other.m_data);
-            m_middleRect       = std::move(other.m_middleRect);
-            m_id               = std::move(other.m_id);
-            m_copyCallback     = std::move(other.m_copyCallback);
-            m_destructCallback = std::move(other.m_destructCallback);
+            m_data = move(other.m_data);
+            m_middleRect = std::move(other.m_middleRect);
+            m_id = std::move(other.m_id);
+            m_copyCallback = move(other.m_copyCallback);
+            m_destructCallback = move(other.m_destructCallback);
 
             other.m_data = nullptr;
             other.m_copyCallback = nullptr;
@@ -184,8 +184,7 @@ namespace tgui
     {
         if (m_data)
             return sf::Vector2f{m_data->texture.getSize()};
-        else
-            return {0,0};
+        return {0,0};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,8 +201,7 @@ namespace tgui
     {
         if (m_data)
             return m_data->texture.isSmooth();
-        else
-            return false;
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,8 +222,7 @@ namespace tgui
 
         if (m_data->image->getPixel(pixel.x + m_data->rect.left, pixel.y + m_data->rect.top).a == 0)
             return true;
-        else
-            return false;
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

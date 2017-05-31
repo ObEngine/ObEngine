@@ -46,12 +46,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    HorizontalLayout::Ptr HorizontalLayout::copy(HorizontalLayout::ConstPtr layout)
+    HorizontalLayout::Ptr HorizontalLayout::copy(ConstPtr layout)
     {
         if (layout)
             return std::static_pointer_cast<HorizontalLayout>(layout->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ namespace tgui
     void HorizontalLayout::updateWidgetPositions()
     {
         float sumRatio = 0;
-        for (std::size_t i = 0; i < m_widgetsRatio.size(); ++i)
+        for (size_t i = 0; i < m_widgetsRatio.size(); ++i)
         {
             if (m_widgetsFixedSizes[i] == 0)
                 sumRatio += m_widgetsRatio[i];
@@ -67,8 +66,8 @@ namespace tgui
 
         float currentRatio = 0;
         float currentOffset = 0;
-        const float sumFixedSize = std::accumulate(m_widgetsFixedSizes.begin(), m_widgetsFixedSizes.end(), 0.f);
-        for (std::size_t i = 0; i < m_widgets.size(); ++i)
+        const float sumFixedSize = accumulate(m_widgetsFixedSizes.begin(), m_widgetsFixedSizes.end(), 0.f);
+        for (size_t i = 0; i < m_widgets.size(); ++i)
         {
             m_widgets[i]->setPosition((getSize().x - sumFixedSize) * currentRatio + currentOffset, 0.f);
             if (m_widgetsFixedSizes[i])

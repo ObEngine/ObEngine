@@ -52,12 +52,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ClickableWidget::Ptr ClickableWidget::copy(ClickableWidget::ConstPtr widget)
+    ClickableWidget::Ptr ClickableWidget::copy(ConstPtr widget)
     {
         if (widget)
             return std::static_pointer_cast<ClickableWidget>(widget->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

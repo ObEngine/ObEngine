@@ -331,8 +331,8 @@
 #define AURORA_PP_SIZE_IMPL1(tuple)		AURORA_PP_SIZE_IMPL2(tuple)
 
 #ifdef _MSC_VER
-	#define AURORA_PP_SIZE_IMPL(tuple)	AURORA_PP_CAT(AURORA_PP_SIZE_IMPL1(tuple),)	// works with nested tuples, but not deep inside other macros (especially IF)
-	#define AURORA_PP_FLAT_SIZE(tuple)	AURORA_PP_CAT(AURORA_PP_VA_SIZE tuple,)		// doesn't work with nested tuples
+#define AURORA_PP_SIZE_IMPL(tuple)	AURORA_PP_CAT(AURORA_PP_SIZE_IMPL1(tuple),)	// works with nested tuples, but not deep inside other macros (especially IF)
+#define AURORA_PP_FLAT_SIZE(tuple)	AURORA_PP_CAT(AURORA_PP_VA_SIZE tuple,)		// doesn't work with nested tuples
 #else
 	#define AURORA_PP_SIZE_IMPL(tuple)	AURORA_PP_SIZE_IMPL1(tuple)
 	#define AURORA_PP_FLAT_SIZE(tuple)	AURORA_PP_CAT(AURORA_PP_VA_SIZE tuple,)

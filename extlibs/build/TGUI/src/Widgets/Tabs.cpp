@@ -31,15 +31,15 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"bordercolor", sf::Color::Black},
-                {"textcolor", sf::Color::Black},
-                {"selectedtextcolor", sf::Color::White},
-                {"backgroundcolor", sf::Color::White},
-                {"selectedbackgroundcolor", Color{0, 110, 255}},
-                {"distancetoside", 1.f}
-            };
+    {
+        {"borders", Borders{2}},
+        {"bordercolor", sf::Color::Black},
+        {"textcolor", sf::Color::Black},
+        {"selectedtextcolor", sf::Color::White},
+        {"backgroundcolor", sf::Color::White},
+        {"selectedbackgroundcolor", Color{0, 110, 255}},
+        {"distancetoside", 1.f}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,12 +65,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Tabs::Ptr Tabs::copy(Tabs::ConstPtr tabs)
+    Tabs::Ptr Tabs::copy(ConstPtr tabs)
     {
         if (tabs)
             return std::static_pointer_cast<Tabs>(tabs->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,18 +80,18 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t Tabs::add(const sf::String& text, bool selectTab)
+    size_t Tabs::add(const sf::String& text, bool selectTab)
     {
         // Use the insert function to put the tab in the right place
         insert(m_tabTexts.size(), text, selectTab);
 
         // Return the index of the new tab
-        return m_tabTexts.size()-1;
+        return m_tabTexts.size() - 1;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::insert(std::size_t index, const sf::String& text, bool selectTab)
+    void Tabs::insert(size_t index, const sf::String& text, bool selectTab)
     {
         // If the index is too high then just insert at the end
         if (index > m_tabWidth.size())
@@ -129,17 +128,16 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::String Tabs::getText(std::size_t index) const
+    sf::String Tabs::getText(size_t index) const
     {
         if (index >= m_tabTexts.size())
             return "";
-        else
-            return m_tabTexts[index].getString();
+        return m_tabTexts[index].getString();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Tabs::changeText(std::size_t index, const sf::String& text)
+    bool Tabs::changeText(size_t index, const sf::String& text)
     {
         if (index >= m_tabTexts.size())
             return false;
@@ -175,7 +173,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::select(std::size_t index)
+    void Tabs::select(size_t index)
     {
         // If the index is too big then do nothing
         if (index > m_tabTexts.size() - 1)
@@ -223,7 +221,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::remove(std::size_t index)
+    void Tabs::remove(size_t index)
     {
         // The index can't be too high
         if (index > m_tabTexts.size() - 1)
@@ -262,8 +260,7 @@ namespace tgui
     {
         if (m_selectedTab >= 0)
             return m_tabTexts[m_selectedTab].getString();
-        else
-            return "";
+        return "";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,7 +335,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t Tabs::getTabsCount() const
+    size_t Tabs::getTabsCount() const
     {
         return m_tabTexts.size();
     }

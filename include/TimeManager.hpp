@@ -10,43 +10,43 @@
 
 namespace obe
 {
-	namespace Time
-	{
-		double getTickSinceEpoch();
-		double getTickSinceEpochMicro();
+    namespace Time
+    {
+        double getTickSinceEpoch();
+        double getTickSinceEpochMicro();
 
-		class Chronometer
-		{
-			private:
-				std::chrono::high_resolution_clock::time_point m_chronoStart;
-				std::chrono::high_resolution_clock::time_point m_chronoCurrent;
-				bool m_started = false;
-				unsigned long long int m_limit = 0;
-			public:
-				Chronometer();
-				void start();
-				void stop();
-				unsigned long long int getTime();
-				void setLimit(unsigned long long int limit);
-				bool limitExceeded();
-		};
+        class Chronometer
+        {
+        private:
+            std::chrono::high_resolution_clock::time_point m_chronoStart;
+            std::chrono::high_resolution_clock::time_point m_chronoCurrent;
+            bool m_started = false;
+            unsigned long long int m_limit = 0;
+        public:
+            Chronometer();
+            void start();
+            void stop();
+            unsigned long long int getTime();
+            void setLimit(unsigned long long int limit);
+            bool limitExceeded();
+        };
 
-		class FPSCounter
-		{
-			private:
-				double m_lastTick = getTickSinceEpoch();
-				int m_fpsCounter = 0;
-				int m_updCounter = 0;
-				int m_saveFPS = 0;
-				int m_saveUPD = 0;
-				bool m_canUpdateFPS = false;
-				sf::Text m_text;
-				sf::Font m_font;
-			public:
-				void tick();
-				void uTick();
-				void loadFont(sf::Font &font);
-				sf::Text getFPS();
-		};
-	}
+        class FPSCounter
+        {
+        private:
+            double m_lastTick = getTickSinceEpoch();
+            int m_fpsCounter = 0;
+            int m_updCounter = 0;
+            int m_saveFPS = 0;
+            int m_saveUPD = 0;
+            bool m_canUpdateFPS = false;
+            sf::Text m_text;
+            sf::Font m_font;
+        public:
+            void tick();
+            void uTick();
+            void loadFont(sf::Font& font);
+            sf::Text getFPS();
+        };
+    }
 }

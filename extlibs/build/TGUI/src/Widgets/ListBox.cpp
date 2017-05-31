@@ -31,20 +31,20 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"padding", Padding{2, 0, 0, 0}},
-                {"bordercolor", sf::Color::Black},
-                {"textcolor", Color{60, 60, 60}},
-                {"textcolorhover", sf::Color::Black},
-                {"selectedtextcolor", sf::Color::White},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"backgroundcolorhover", sf::Color::White},
-                {"selectedbackgroundcolor", Color{0, 110, 255}},
-                {"selectedbackgroundcolorhover", Color{30, 150, 255}}
-            };
+    {
+        {"borders", Borders{2}},
+        {"padding", Padding{2, 0, 0, 0}},
+        {"bordercolor", sf::Color::Black},
+        {"textcolor", Color{60, 60, 60}},
+        {"textcolorhover", sf::Color::Black},
+        {"selectedtextcolor", sf::Color::White},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"backgroundcolorhover", sf::Color::White},
+        {"selectedbackgroundcolor", Color{0, 110, 255}},
+        {"selectedbackgroundcolorhover", Color{30, 150, 255}}
+    };
 
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ListBox::ListBox()
     {
@@ -74,12 +74,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ListBox::Ptr ListBox::copy(ListBox::ConstPtr listBox)
+    ListBox::Ptr ListBox::copy(ConstPtr listBox)
     {
         if (listBox)
             return std::static_pointer_cast<ListBox>(listBox->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +87,7 @@ namespace tgui
     {
         Widget::setPosition(position);
 
-        for (std::size_t i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
             m_items[i].setPosition({0, (i * m_itemHeight) + ((m_itemHeight - m_items[i].getSize().y) / 2.0f)});
 
         m_scroll.setPosition(getSize().x - m_bordersCached.right - m_paddingCached.right - m_scroll.getSize().x, m_bordersCached.top + m_paddingCached.top);
@@ -136,15 +135,15 @@ namespace tgui
             m_itemIds.push_back(id);
             return true;
         }
-        else // The item limit was reached
-            return false;
+        // The item limit was reached
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool ListBox::setSelectedItem(const sf::String& itemName)
     {
-        for (std::size_t i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == itemName)
                 return setSelectedItemByIndex(i);
@@ -159,7 +158,7 @@ namespace tgui
 
     bool ListBox::setSelectedItemById(const sf::String& id)
     {
-        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
+        for (size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return setSelectedItemByIndex(i);
@@ -172,7 +171,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::setSelectedItemByIndex(std::size_t index)
+    bool ListBox::setSelectedItemByIndex(size_t index)
     {
         if (index >= m_items.size())
         {
@@ -202,7 +201,7 @@ namespace tgui
 
     bool ListBox::removeItem(const sf::String& itemName)
     {
-        for (std::size_t i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == itemName)
                 return removeItemByIndex(i);
@@ -215,7 +214,7 @@ namespace tgui
 
     bool ListBox::removeItemById(const sf::String& id)
     {
-        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
+        for (size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return removeItemByIndex(i);
@@ -226,7 +225,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::removeItemByIndex(std::size_t index)
+    bool ListBox::removeItemByIndex(size_t index)
     {
         if (index >= m_items.size())
             return false;
@@ -271,7 +270,7 @@ namespace tgui
 
     sf::String ListBox::getItemById(const sf::String& id) const
     {
-        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
+        for (size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return m_items[i].getString();
@@ -305,7 +304,7 @@ namespace tgui
 
     bool ListBox::changeItem(const sf::String& originalValue, const sf::String& newValue)
     {
-        for (std::size_t i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == originalValue)
                 return changeItemByIndex(i, newValue);
@@ -318,7 +317,7 @@ namespace tgui
 
     bool ListBox::changeItemById(const sf::String& id, const sf::String& newValue)
     {
-        for (std::size_t i = 0; i < m_items.size(); ++i)
+        for (size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return changeItemByIndex(i, newValue);
@@ -329,7 +328,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::changeItemByIndex(std::size_t index, const sf::String& newValue)
+    bool ListBox::changeItemByIndex(size_t index, const sf::String& newValue)
     {
         if (index >= m_items.size())
             return false;
@@ -340,7 +339,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t ListBox::getItemCount() const
+    size_t ListBox::getItemCount() const
     {
         return m_items.size();
     }
@@ -414,7 +413,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ListBox::setMaximumItems(std::size_t maximumItems)
+    void ListBox::setMaximumItems(size_t maximumItems)
     {
         // Set the new limit
         m_maxItems = maximumItems;
@@ -433,7 +432,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t ListBox::getMaximumItems() const
+    size_t ListBox::getMaximumItems() const
     {
         return m_maxItems;
     }
@@ -472,7 +471,7 @@ namespace tgui
         else
         {
             if (sf::FloatRect{m_bordersCached.left + m_paddingCached.left, m_bordersCached.top + m_paddingCached.top,
-                              getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
+                getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
             {
                 pos.y -= m_bordersCached.top + m_paddingCached.top;
 
@@ -520,7 +519,7 @@ namespace tgui
         {
             if (m_selectedItem >= 0)
             {
-                m_callback.text  = m_items[m_selectedItem].getString();
+                m_callback.text = m_items[m_selectedItem].getString();
                 m_callback.itemId = m_itemIds[m_selectedItem];
                 sendSignal("MouseReleased", m_items[m_selectedItem].getString(), m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
             }
@@ -563,7 +562,7 @@ namespace tgui
 
             // Find out on which item the mouse is hovering
             if (sf::FloatRect{m_bordersCached.left + m_paddingCached.left,
-                              m_bordersCached.top + m_paddingCached.top, getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
+                m_bordersCached.top + m_paddingCached.top, getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
             {
                 pos.y -= m_bordersCached.top + m_paddingCached.top;
 
@@ -874,8 +873,8 @@ namespace tgui
             Clipping clipping{target, states, {m_paddingCached.left, m_paddingCached.top}, {maxItemWidth, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}};
 
             // Find out which items are visible
-            std::size_t firstItem = 0;
-            std::size_t lastItem = m_items.size();
+            size_t firstItem = 0;
+            size_t lastItem = m_items.size();
             if (m_scroll.getLowValue() < m_scroll.getMaximum())
             {
                 firstItem = m_scroll.getValue() / m_itemHeight;
@@ -911,7 +910,7 @@ namespace tgui
             }
 
             // Draw the items
-            for (std::size_t i = firstItem; i < lastItem; ++i)
+            for (size_t i = firstItem; i < lastItem; ++i)
                 m_items[i].draw(target, states);
         }
 

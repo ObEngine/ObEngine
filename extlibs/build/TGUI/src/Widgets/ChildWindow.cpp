@@ -51,15 +51,15 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{1}},
-                {"bordercolor", sf::Color::Black},
-                {"titlecolor", sf::Color::Black},
-                {"titlebarcolor", sf::Color::White},
-                {"backgroundcolor", Color{230, 230, 230}},
-                {"distancetoside", 3.f},
-                {"paddingbetweenbuttons", 1.f}
-            };
+    {
+        {"borders", Borders{1}},
+        {"bordercolor", sf::Color::Black},
+        {"titlecolor", sf::Color::Black},
+        {"titlebarcolor", sf::Color::White},
+        {"backgroundcolor", Color{230, 230, 230}},
+        {"distancetoside", 3.f},
+        {"paddingbetweenbuttons", 1.f}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,9 +69,9 @@ namespace tgui
         m_callback.widgetType = "ChildWindow";
 
         addSignal<sf::Vector2f>("MousePressed");
-        addSignal<ChildWindow::Ptr>("Closed");
-        addSignal<ChildWindow::Ptr>("Minimized");
-        addSignal<ChildWindow::Ptr>("Maximized");
+        addSignal<Ptr>("Closed");
+        addSignal<Ptr>("Minimized");
+        addSignal<Ptr>("Maximized");
 
         m_renderer = aurora::makeCopied<ChildWindowRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -80,7 +80,7 @@ namespace tgui
         getRenderer()->getMaximizeButton()->propertyValuePairs["borders"] = {Borders{1}};
         getRenderer()->getMinimizeButton()->propertyValuePairs["borders"] = {Borders{1}};
 
-        setTitleButtons(TitleButton::Close);
+        setTitleButtons(Close);
         setSize(400, 300);
     }
 
@@ -93,12 +93,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ChildWindow::Ptr ChildWindow::copy(ChildWindow::ConstPtr childWindow)
+    ChildWindow::Ptr ChildWindow::copy(ConstPtr childWindow)
     {
         if (childWindow)
             return std::static_pointer_cast<ChildWindow>(childWindow->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +178,7 @@ namespace tgui
     sf::Vector2f ChildWindow::getFullSize() const
     {
         return {getSize().x + m_bordersCached.left + m_bordersCached.right,
-                getSize().y + m_bordersCached.top + m_bordersCached.bottom + m_titleBarHeightCached};
+            getSize().y + m_bordersCached.top + m_bordersCached.bottom + m_titleBarHeightCached};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,7 +261,7 @@ namespace tgui
     {
         m_titleButtons = buttons;
 
-        if (m_titleButtons & TitleButton::Close)
+        if (m_titleButtons & Close)
         {
             m_closeButton = Button::create();
             m_closeButton->setRenderer(getRenderer()->getCloseButton());
@@ -272,7 +271,7 @@ namespace tgui
         else
             m_closeButton = nullptr;
 
-        if (m_titleButtons & TitleButton::Maximize)
+        if (m_titleButtons & Maximize)
         {
             m_maximizeButton = Button::create();
             m_maximizeButton->setRenderer(getRenderer()->getMaximizeButton());
@@ -282,7 +281,7 @@ namespace tgui
         else
             m_maximizeButton = nullptr;
 
-        if (m_titleButtons & TitleButton::Minimize)
+        if (m_titleButtons & Minimize)
         {
             m_minimizeButton = Button::create();
             m_minimizeButton->setRenderer(getRenderer()->getMinimizeButton());
@@ -397,7 +396,7 @@ namespace tgui
         {
             // Check if the mouse is on top of the borders
             if ((sf::FloatRect{0, 0, getSize().x + m_bordersCached.left + m_bordersCached.right, getSize().y + m_bordersCached.top + m_bordersCached.bottom + m_titleBarHeightCached}.contains(pos))
-             && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
+                && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
             {
                 // Check if you start resizing the child window
                 if (m_resizable)
@@ -444,7 +443,7 @@ namespace tgui
         {
             // Check if the mouse is on top of the borders
             if ((sf::FloatRect{0, 0, getSize().x + m_bordersCached.left + m_bordersCached.right, getSize().y + m_bordersCached.top + m_bordersCached.bottom + m_titleBarHeightCached}.contains(pos))
-             && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
+                && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
             {
                 // Tell the widgets that the mouse was released
                 for (auto& widget : m_widgets)
@@ -529,7 +528,7 @@ namespace tgui
 
             // Check if the mouse is on top of the borders
             if ((sf::FloatRect{0, 0, getSize().x + m_bordersCached.left + m_bordersCached.right, getSize().y + m_bordersCached.top + m_bordersCached.bottom + m_titleBarHeightCached}.contains(pos))
-             && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
+                && (!sf::FloatRect{m_bordersCached.left, m_titleBarHeightCached + m_bordersCached.top, getSize().x, getSize().y}.contains(pos)))
             {
                 if (!m_mouseHover)
                     mouseEnteredWidget();

@@ -34,7 +34,7 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Font::Font(std::nullptr_t)
+    Font::Font(nullptr_t)
     {
     }
 
@@ -42,7 +42,7 @@ namespace tgui
 
     Font::Font(const std::string& id) :
         m_font{Deserializer::deserialize(ObjectConverter::Type::Font, id).getFont()},
-        m_id  (Deserializer::deserialize(ObjectConverter::Type::String, id).getString()) // Did not compile in VS2013 when using braces
+        m_id(Deserializer::deserialize(ObjectConverter::Type::String, id).getString()) // Did not compile in VS2013 when using braces
     {
     }
 
@@ -97,14 +97,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Font::operator==(std::nullptr_t) const
+    bool Font::operator==(nullptr_t) const
     {
         return m_font == nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Font::operator!=(std::nullptr_t) const
+    bool Font::operator!=(nullptr_t) const
     {
         return m_font != nullptr;
     }
@@ -123,8 +123,7 @@ namespace tgui
     {
         if (m_font)
             return m_font->getKerning(first, second, characterSize);
-        else
-            return 0;
+        return 0;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,8 +132,7 @@ namespace tgui
     {
         if (m_font)
             return m_font->getLineSpacing(characterSize);
-        else
-            return 0;
+        return 0;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

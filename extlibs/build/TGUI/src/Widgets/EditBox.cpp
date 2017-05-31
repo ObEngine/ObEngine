@@ -36,29 +36,29 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::string EditBox::Validator::All   = ".*";
-    std::string EditBox::Validator::Int   = "[+-]?[0-9]*";
-    std::string EditBox::Validator::UInt  = "[0-9]*";
+    std::string EditBox::Validator::All = ".*";
+    std::string EditBox::Validator::Int = "[+-]?[0-9]*";
+    std::string EditBox::Validator::UInt = "[0-9]*";
     std::string EditBox::Validator::Float = "[+-]?[0-9]*\\.?[0-9]*";
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"padding", Padding{4, 2, 4, 2}},
-                {"caretwidth", 1.f},
-                {"caretcolor", sf::Color::Black},
-                {"bordercolor", Color{60, 60, 60}},
-                {"bordercolorhover", sf::Color::Black},
-                {"textcolor", Color{60, 60, 60}},
-                {"selectedtextcolor", sf::Color::White},
-                {"selectedtextbackgroundcolor", Color{0, 110, 255}},
-                {"defaulttextcolor", Color{160, 160, 160}},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"backgroundcolorhover", sf::Color::White}
-                ///TODO: Define default disabled colors
-            };
+    {
+        {"borders", Borders{2}},
+        {"padding", Padding{4, 2, 4, 2}},
+        {"caretwidth", 1.f},
+        {"caretcolor", sf::Color::Black},
+        {"bordercolor", Color{60, 60, 60}},
+        {"bordercolorhover", sf::Color::Black},
+        {"textcolor", Color{60, 60, 60}},
+        {"selectedtextcolor", sf::Color::White},
+        {"selectedtextbackgroundcolor", Color{0, 110, 255}},
+        {"defaulttextcolor", Color{160, 160, 160}},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"backgroundcolorhover", sf::Color::White}
+        ///TODO: Define default disabled colors
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -88,12 +88,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    EditBox::Ptr EditBox::copy(EditBox::ConstPtr editBox)
+    EditBox::Ptr EditBox::copy(ConstPtr editBox)
     {
         if (editBox)
             return std::static_pointer_cast<EditBox>(editBox->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,7 +165,7 @@ namespace tgui
         // Change the text if allowed
         if (m_regexString == ".*")
             m_text = text;
-        else if (std::regex_match(text.toAnsiString(), m_regex))
+        else if (regex_match(text.toAnsiString(), m_regex))
             m_text = text.toAnsiString(); // Unicode is not supported when using regex because it can't be checked
         else // Clear the text
             m_text = "";
@@ -179,7 +178,7 @@ namespace tgui
         if (m_passwordChar != '\0')
         {
             sf::String displayedText = m_text;
-            std::fill(displayedText.begin(), displayedText.end(), m_passwordChar);
+            fill(displayedText.begin(), displayedText.end(), m_passwordChar);
 
             m_textFull.setString(displayedText);
         }
@@ -203,9 +202,9 @@ namespace tgui
             {
                 // The text doesn't fit inside the EditBox, so the last character must be deleted.
                 sf::String displayedString = m_textFull.getString();
-                displayedString.erase(displayedString.getSize()-1);
+                displayedString.erase(displayedString.getSize() - 1);
                 m_textFull.setString(displayedString);
-                m_text.erase(m_text.getSize()-1);
+                m_text.erase(m_text.getSize() - 1);
             }
 
             m_textBeforeSelection.setString(m_textFull.getString());
@@ -251,7 +250,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void EditBox::selectText(std::size_t start, std::size_t length)
+    void EditBox::selectText(size_t start, size_t length)
     {
         m_selStart = start;
         m_selEnd = std::min(m_text.getSize(), start + length);
@@ -373,9 +372,9 @@ namespace tgui
             while (m_textFull.getSize().x > width)
             {
                 sf::String displayedString = m_textFull.getString();
-                displayedString.erase(displayedString.getSize()-1);
+                displayedString.erase(displayedString.getSize() - 1);
                 m_textFull.setString(displayedString);
-                m_text.erase(m_text.getSize()-1);
+                m_text.erase(m_text.getSize() - 1);
             }
 
             m_textBeforeSelection.setString(m_textFull.getString());
@@ -398,7 +397,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void EditBox::setCaretPosition(std::size_t charactersBeforeCaret)
+    void EditBox::setCaretPosition(size_t charactersBeforeCaret)
     {
         // The caret position has to stay inside the string
         if (charactersBeforeCaret > m_text.getSize())
@@ -437,7 +436,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t EditBox::getCaretPosition() const
+    size_t EditBox::getCaretPosition() const
     {
         return m_selEnd;
     }
@@ -466,7 +465,7 @@ namespace tgui
         // Find the caret position
         float positionX = pos.x - m_bordersCached.left - m_paddingCached.left;
 
-        std::size_t caretPosition = findCaretPosition(positionX);
+        size_t caretPosition = findCaretPosition(positionX);
 
         // When clicking on the left of the first character, move the caret to the left
         if ((positionX < 0) && (caretPosition > 0))
@@ -704,9 +703,9 @@ namespace tgui
 
                 // Erase the character
                 sf::String displayedString = m_textFull.getString();
-                displayedString.erase(m_selEnd-1, 1);
+                displayedString.erase(m_selEnd - 1, 1);
                 m_textFull.setString(displayedString);
-                m_text.erase(m_selEnd-1, 1);
+                m_text.erase(m_selEnd - 1, 1);
 
                 // Set the caret back on the correct position
                 setCaretPosition(m_selEnd - 1);
@@ -794,7 +793,7 @@ namespace tgui
                     {
                         deleteSelectedCharacters();
 
-                        std::size_t oldCaretPos = m_selEnd;
+                        size_t oldCaretPos = m_selEnd;
 
                         if (m_text.getSize() > m_selEnd)
                             setText(m_text.toWideString().substr(0, m_selEnd) + Clipboard::get() + m_text.toWideString().substr(m_selEnd, m_text.getSize() - m_selEnd));
@@ -834,7 +833,7 @@ namespace tgui
             text.insert(m_selEnd, key);
 
             // The character has to match the regex
-            if (!std::regex_match(text.toAnsiString(), m_regex))
+            if (!regex_match(text.toAnsiString(), m_regex))
                 return;
         }
 
@@ -887,9 +886,9 @@ namespace tgui
 
     void EditBox::widgetFocused()
     {
-    #if defined (SFML_SYSTEM_ANDROID) || defined (SFML_SYSTEM_IOS)
+#if defined (SFML_SYSTEM_ANDROID) || defined (SFML_SYSTEM_IOS)
         sf::Keyboard::setVirtualKeyboardVisible(true);
-    #endif
+#endif
 
         Widget::widgetFocused();
     }
@@ -902,9 +901,9 @@ namespace tgui
         if (m_selChars)
             setCaretPosition(m_selEnd);
 
-    #if defined (SFML_SYSTEM_ANDROID) || defined (SFML_SYSTEM_IOS)
+#if defined (SFML_SYSTEM_ANDROID) || defined (SFML_SYSTEM_IOS)
         sf::Keyboard::setVirtualKeyboardVisible(false);
-    #endif
+#endif
 
         Widget::widgetUnfocused();
     }
@@ -1068,7 +1067,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t EditBox::findCaretPosition(float posX)
+    size_t EditBox::findCaretPosition(float posX)
     {
         // Take the part outside the edit box into account when the text does not fit inside it
         posX += m_textCropPosition;
@@ -1094,7 +1093,7 @@ namespace tgui
         unsigned int textSize = getTextSize();
         bool bold = (m_textFull.getStyle() & sf::Text::Bold) != 0;
 
-        std::size_t index;
+        size_t index;
         for (index = 0; index < m_text.getSize(); ++index)
         {
             float charWidth;
@@ -1106,7 +1105,7 @@ namespace tgui
                 prevChar = 0;
                 continue;
             }
-            else if (curChar == '\t')
+            if (curChar == '\t')
                 charWidth = static_cast<float>(m_fontCached.getGlyph(' ', textSize, bold).advance) * 4;
             else
                 charWidth = static_cast<float>(m_fontCached.getGlyph(curChar, textSize, bold).advance);
@@ -1137,7 +1136,7 @@ namespace tgui
         if (m_selChars == 0)
             return;
 
-        std::size_t pos = std::min(m_selStart, m_selEnd);
+        size_t pos = std::min(m_selStart, m_selEnd);
 
         // Erase the characters
         sf::String displayedString = m_textFull.getString();
@@ -1201,7 +1200,7 @@ namespace tgui
 
             // Set the position and size of the rectangle that gets drawn behind the selected text
             m_selectedTextBackground.setSize({m_textSelection.findCharacterPos(m_textSelection.getString().getSize()).x,
-                                              getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom});
+                getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom});
             m_selectedTextBackground.setPosition({textX, m_paddingCached.top});
 
             // Set the text selected text on the correct position

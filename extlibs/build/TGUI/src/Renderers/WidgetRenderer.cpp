@@ -58,8 +58,7 @@ namespace tgui
         auto it = m_data->propertyValuePairs.find("font");
         if (it != m_data->propertyValuePairs.end())
             return it->second.getFont();
-        else
-            return {};
+        return {};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,8 +87,7 @@ namespace tgui
         auto it = m_data->propertyValuePairs.find(toLower(property));
         if (it != m_data->propertyValuePairs.end())
             return it->second;
-        else
-            return {};
+        return {};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

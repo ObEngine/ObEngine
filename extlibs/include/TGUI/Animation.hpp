@@ -37,17 +37,17 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     enum class ShowAnimationType
     {
-        Fade,          ///< Fade widget in or out
-        Scale,         ///< Shrink to the center of the widget to hide or grow from its center to show
-        SlideToRight,  ///< Slide to the right to hide or from left to show
-        SlideToLeft,   ///< Slide to the left to hide or from right to show
+        Fade, ///< Fade widget in or out
+        Scale, ///< Shrink to the center of the widget to hide or grow from its center to show
+        SlideToRight, ///< Slide to the right to hide or from left to show
+        SlideToLeft, ///< Slide to the left to hide or from right to show
         SlideToBottom, ///< Slide to the bottom to hide or from top to show
-        SlideToTop,    ///< Slide to the top to hide or from bottom to show
+        SlideToTop, ///< Slide to the top to hide or from bottom to show
 
         SlideFromLeft = SlideToRight, ///< Slide from left to show or to the right to hide
         SlideFromRight = SlideToLeft, ///< Slide from right to show or to the left to hide
         SlideFromTop = SlideToBottom, ///< Slide from top to show or to the bottom to hide
-        SlideFromBottom = SlideToTop  ///< Slide from bottom to show or to the top to hide
+        SlideFromBottom = SlideToTop ///< Slide from bottom to show or to the top to hide
     };
 
     namespace priv
@@ -88,9 +88,9 @@ namespace tgui
         public:
             MoveAnimation(Widget::Ptr widget, sf::Vector2f start, sf::Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
-            virtual bool update(sf::Time elapsedTime) override;
+            bool update(sf::Time elapsedTime) override;
 
-            virtual void finish() override;
+            void finish() override;
 
         private:
             sf::Vector2f m_startPos;
@@ -104,9 +104,9 @@ namespace tgui
         public:
             ResizeAnimation(Widget::Ptr widget, sf::Vector2f start, sf::Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
-            virtual bool update(sf::Time elapsedTime) override;
+            bool update(sf::Time elapsedTime) override;
 
-            virtual void finish() override;
+            void finish() override;
 
         private:
             sf::Vector2f m_startSize;
@@ -120,9 +120,9 @@ namespace tgui
         public:
             FadeAnimation(Widget::Ptr widget, float start, float end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
-            virtual bool update(sf::Time elapsedTime) override;
+            bool update(sf::Time elapsedTime) override;
 
-            virtual void finish() override;
+            void finish() override;
 
         private:
             float m_startOpacity;
@@ -130,7 +130,6 @@ namespace tgui
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     } // namespace priv
 } // namespace tgui
 

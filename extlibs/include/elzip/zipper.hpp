@@ -10,28 +10,27 @@
 
 namespace ziputils
 {
-	class zipper
-	{
-	public:
-		zipper();
-		~zipper(void);
+    class zipper
+    {
+    public:
+        zipper();
+        ~zipper(void);
 
-		bool open( const char* filename, bool append = false );
-		void close();
-		bool isOpen();
+        bool open(const char* filename, bool append = false);
+        void close();
+        bool isOpen();
 
-		bool addEntry( const char* filename );
-		void closeEntry();
-		bool isOpenEntry();
+        bool addEntry(const char* filename);
+        void closeEntry();
+        bool isOpenEntry();
 
-		zipper& operator<<( std::istream& is );
+        zipper& operator<<(std::istream& is);
 
-	private:
-		void getTime(tm_zip& tmZip);
+    private:
+        void getTime(tm_zip& tmZip);
 
-	private:
-		zipFile			zipFile_;
-		bool			entryOpen_;
-	};
-
+    private:
+        zipFile zipFile_;
+        bool entryOpen_;
+    };
 };

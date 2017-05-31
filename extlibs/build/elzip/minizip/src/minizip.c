@@ -14,18 +14,18 @@
 
 
 #if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
-        #ifndef __USE_FILE_OFFSET64
+#ifndef __USE_FILE_OFFSET64
                 #define __USE_FILE_OFFSET64
-        #endif
-        #ifndef __USE_LARGEFILE64
+#endif
+#ifndef __USE_LARGEFILE64
                 #define __USE_LARGEFILE64
-        #endif
-        #ifndef _LARGEFILE64_SOURCE
+#endif
+#ifndef _LARGEFILE64_SOURCE
                 #define _LARGEFILE64_SOURCE
-        #endif
-        #ifndef _FILE_OFFSET_BIT
+#endif
+#ifndef _FILE_OFFSET_BIT
                 #define _FILE_OFFSET_BIT 64
-        #endif
+#endif
 #endif
 
 #ifdef __APPLE__
@@ -38,7 +38,6 @@
 #define FTELLO_FUNC(stream) ftello64(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
 #endif
-
 
 
 #include <stdio.h>
@@ -61,10 +60,9 @@
 #include "zip.h"
 
 #ifdef _WIN32
-        #define USEWIN32IOAPI
-        #include "win/iowin32.h"
+#define USEWIN32IOAPI
+#include "win/iowin32.h"
 #endif
-
 
 
 #define WRITEBUFFERSIZE (16384)
@@ -72,26 +70,26 @@
 
 #ifdef _WIN32
 uLong filetime(f, tmzip, dt)
-    char *f;                /* name of file to get info on */
-    tm_zip *tmzip;             /* return value: access, modific. and creation times */
-    uLong *dt;             /* dostime */
+char* f; /* name of file to get info on */
+tm_zip* tmzip; /* return value: access, modific. and creation times */
+uLong* dt; /* dostime */
 {
-  int ret = 0;
-  {
-      FILETIME ftLocal;
-      HANDLE hFind;
-      WIN32_FIND_DATAA ff32;
+    int ret = 0;
+    {
+        FILETIME ftLocal;
+        HANDLE hFind;
+        WIN32_FIND_DATAA ff32;
 
-      hFind = FindFirstFileA(f,&ff32);
-      if (hFind != INVALID_HANDLE_VALUE)
-      {
-        FileTimeToLocalFileTime(&(ff32.ftLastWriteTime),&ftLocal);
-        FileTimeToDosDateTime(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);
-        FindClose(hFind);
-        ret = 1;
-      }
-  }
-  return ret;
+        hFind = FindFirstFileA(f, &ff32);
+        if (hFind != INVALID_HANDLE_VALUE)
+        {
+            FileTimeToLocalFileTime(&(ff32.ftLastWriteTime), &ftLocal);
+            FileTimeToDosDateTime(&ftLocal, ((LPWORD)dt) + 1, ((LPWORD)dt) + 0);
+            FindClose(hFind);
+            ret = 1;
+        }
+    }
+    return ret;
 }
 #else
 #ifdef unix || __APPLE__
@@ -113,12 +111,12 @@ uLong filetime(f, tmzip, dt)
       len = MAXFILENAME;
 
     strncpy(name, f,MAXFILENAME-1);
-    /* strncpy doesnt append the trailing NULL, of the string is too long. */
+/* strncpy doesnt append the trailing NULL, of the string is too long. */
     name[ MAXFILENAME ] = '\0';
 
     if (name[len - 1] == '/')
       name[len - 1] = '\0';
-    /* not all systems allow stat'ing a file with / appended */
+/* not all systems allow stat'ing a file with / appended */
     if (stat(name,&s)==0)
     {
       tm_t = s.st_mtime;
@@ -148,15 +146,15 @@ uLong filetime(f, tmzip, dt)
 #endif
 
 
-
-
 int check_exist_file(filename)
-    const char* filename;
+    const
+
+char* filename;
 {
     FILE* ftestexist;
     int ret = 1;
     ftestexist = FOPEN_FUNC(filename,"rb");
-    if (ftestexist==NULL)
+    if (ftestexist == NULL)
         ret = 0;
     else
         fclose(ftestexist);
@@ -165,63 +163,63 @@ int check_exist_file(filename)
 
 /* calculate the CRC32 of a file,
    because to encrypt a file, we need known the CRC32 of the file before */
-int getFileCrc(const char* filenameinzip,void*buf,unsigned long size_buf,unsigned long* result_crc)
+int getFileCrc(const char* filenameinzip, void* buf, unsigned long size_buf, unsigned long* result_crc)
 {
-   unsigned long calculate_crc=0;
-   int err=ZIP_OK;
-   FILE * fin = FOPEN_FUNC(filenameinzip,"rb");
+    unsigned long calculate_crc = 0;
+    int err = ZIP_OK;
+    FILE* fin = FOPEN_FUNC(filenameinzip,"rb");
 
-   unsigned long size_read = 0;
-   unsigned long total_read = 0;
-   if (fin==NULL)
-   {
-       err = ZIP_ERRNO;
-   }
+    unsigned long size_read = 0;
+    unsigned long total_read = 0;
+    if (fin == NULL)
+    {
+        err = ZIP_ERRNO;
+    }
 
     if (err == ZIP_OK)
         do
         {
             err = ZIP_OK;
-            size_read = (int)fread(buf,1,size_buf,fin);
+            size_read = (int)fread(buf, 1, size_buf, fin);
             if (size_read < size_buf)
-                if (feof(fin)==0)
-            {
-                printf("error in reading %s\n",filenameinzip);
-                err = ZIP_ERRNO;
-            }
+                if (feof(fin) == 0)
+                {
+                    printf("error in reading %s\n", filenameinzip);
+                    err = ZIP_ERRNO;
+                }
 
-            if (size_read>0)
-                calculate_crc = crc32(calculate_crc,buf,size_read);
+            if (size_read > 0)
+                calculate_crc = crc32(calculate_crc, buf, size_read);
             total_read += size_read;
-
-        } while ((err == ZIP_OK) && (size_read>0));
+        }
+        while ((err == ZIP_OK) && (size_read > 0));
 
     if (fin)
         fclose(fin);
 
-    *result_crc=calculate_crc;
+    *result_crc = calculate_crc;
     printf("file %s crc %lx\n", filenameinzip, calculate_crc);
     return err;
 }
 
 int isLargeFile(const char* filename)
 {
-  int largeFile = 0;
-  ZPOS64_T pos = 0;
-  FILE* pFile = FOPEN_FUNC(filename, "rb");
+    int largeFile = 0;
+    ZPOS64_T pos = 0;
+    FILE* pFile = FOPEN_FUNC(filename, "rb");
 
-  if(pFile != NULL)
-  {
-    int n = FSEEKO_FUNC(pFile, 0, SEEK_END);
-    pos = FTELLO_FUNC(pFile);
+    if (pFile != NULL)
+    {
+        int n = FSEEKO_FUNC(pFile, 0, SEEK_END);
+        pos = FTELLO_FUNC(pFile);
 
-                printf("File : %s is %lld bytes\n", filename, pos);
+        printf("File : %s is %lld bytes\n", filename, pos);
 
-    if(pos >= 0xffffffff)
-     largeFile = 1;
+        if (pos >= 0xffffffff)
+            largeFile = 1;
 
-                fclose(pFile);
-  }
+        fclose(pFile);
+    }
 
- return largeFile;
+    return largeFile;
 }

@@ -64,8 +64,8 @@ namespace tgui
         sf::String itemId;
 
         // Only one of these things can be filled at a given time
-        bool         checked = false;
-        int          value = 0;
+        bool checked = false;
+        int value = 0;
         unsigned int index = 0;
         sf::Vector2f value2d;
         sf::Vector2f position;
@@ -78,4 +78,3 @@ namespace tgui
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif // TGUI_CALLBACK_HPP
-

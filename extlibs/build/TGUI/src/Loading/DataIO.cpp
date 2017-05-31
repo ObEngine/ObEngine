@@ -107,7 +107,7 @@ namespace tgui
                     stream.read(&c, 1);
                     return word;
                 }
-                else if (!::isspace(c) && (c != '=') && (c != ';') && (c != '{') && (c != '}'))
+                if (!isspace(c) && (c != '=') && (c != ';') && (c != '{') && (c != '}'))
                 {
                     stream.read(&c, 1);
 
@@ -203,7 +203,6 @@ namespace tgui
                                 }
                             }
                         }
-                        continue;
                     }
                     else
                         return "";
@@ -239,13 +238,13 @@ namespace tgui
 
                 if ((c == '=') || (c == '{'))
                     return "";
-                else if ((c == ';') || (c == '}'))
+                if ((c == ';') || (c == '}'))
                 {
                     // Remove trailing whitespace before returning the line
-                    line.erase(line.find_last_not_of(" \n\r\t")+1);
+                    line.erase(line.find_last_not_of(" \n\r\t") + 1);
                     return line;
                 }
-                else if (::isspace(c))
+                if (isspace(c))
                 {
                     stream.read(&c, 1);
                     if (!whitespaceFound)
@@ -300,8 +299,8 @@ namespace tgui
                     {
                         valueNode->valueList.push_back("");
 
-                        std::size_t i = 1;
-                        while (i < line.size()-1)
+                        size_t i = 1;
+                        while (i < line.size() - 1)
                         {
                             if (line[i] == ',')
                             {
@@ -315,7 +314,7 @@ namespace tgui
                                 i++;
 
                                 bool backslash = false;
-                                while (i < line.size()-1)
+                                while (i < line.size() - 1)
                                 {
                                     valueNode->valueList.back().insert(valueNode->valueList.back().getSize(), line[i]);
 
@@ -346,21 +345,15 @@ namespace tgui
 
                 return "";
             }
+            if (stream.peek() == EOF)
+                return "Found EOF while trying to read a value.";
+            chr = stream.peek();
+            if (chr == '=')
+                return "Found '=' while trying to read a value.";
+            else if (chr == '{')
+                return "Found '{' while trying to read a value.";
             else
-            {
-                if (stream.peek() == EOF)
-                    return "Found EOF while trying to read a value.";
-                else
-                {
-                    chr = stream.peek();
-                    if (chr == '=')
-                        return "Found '=' while trying to read a value.";
-                    else if (chr == '{')
-                        return "Found '{' while trying to read a value.";
-                    else
-                        return "Found empty value.";
-                }
-            }
+                return "Found empty value.";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +380,7 @@ namespace tgui
                 {
                     if (stream.peek() == EOF)
                         return "Found EOF while trying to read property or nested section name.";
-                    else if (stream.peek() == '}')
+                    if (stream.peek() == '}')
                     {
                         stream.read(&chr, 1);
 
@@ -399,7 +392,7 @@ namespace tgui
                         REMOVE_WHITESPACE_AND_COMMENTS(false)
                         return "";
                     }
-                    else if (stream.peek() != '{')
+                    if (stream.peek() != '{')
                         return "Expected property or nested section name, found '" + std::string(1, stream.peek()) + "' instead.";
                 }
 
@@ -440,10 +433,9 @@ namespace tgui
             REMOVE_WHITESPACE_AND_COMMENTS(true)
             if (stream.peek() == '{')
                 return parseSection(stream, root, word);
-            else if (stream.peek() == '=')
+            if (stream.peek() == '=')
                 return parseKeyValue(stream, root, word);
-            else
-                return "Expected '{' or '=', found '" + std::string(1, stream.peek()) + "' instead.";
+            return "Expected '{' or '=', found '" + std::string(1, stream.peek()) + "' instead.";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -467,7 +459,7 @@ namespace tgui
 
             if (!node->children.empty())
             {
-                for (std::size_t i = 0; i < node->children.size(); ++i)
+                for (size_t i = 0; i < node->children.size(); ++i)
                 {
                     for (const auto& line : convertNodesToLines(node->children[i]))
                         output.emplace_back("    " + line);
@@ -499,11 +491,10 @@ namespace tgui
                 if (stream.tellg() != std::stringstream::pos_type(-1))
                 {
                     std::string str = stream.str();
-                    std::size_t lineNumber = std::count(str.begin(), str.begin() + stream.tellg(), '\n') + 1;
+                    size_t lineNumber = count(str.begin(), str.begin() + stream.tellg(), '\n') + 1;
                     throw Exception{"Error while parsing input at line " + std::to_string(lineNumber) + ". " + error};
                 }
-                else
-                    throw Exception{"Error while parsing input. " + error};
+                throw Exception{"Error while parsing input. " + error};
             }
         }
 
@@ -521,12 +512,12 @@ namespace tgui
             stream << std::endl;
 
         std::vector<std::string> output;
-        for (std::size_t i = 0; i < rootNode->children.size(); ++i)
+        for (size_t i = 0; i < rootNode->children.size(); ++i)
         {
             for (const auto& line : convertNodesToLines(rootNode->children[i]))
-                output.emplace_back(std::move(line));
+                output.emplace_back(move(line));
 
-            if (i < rootNode->children.size()-1)
+            if (i < rootNode->children.size() - 1)
                 output.emplace_back("");
         }
 

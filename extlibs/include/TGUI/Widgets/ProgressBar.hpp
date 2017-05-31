@@ -66,10 +66,10 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         enum class FillDirection
         {
-            LeftToRight,  ///< Start filling at the left side and go to the right
-            RightToLeft,  ///< Start filling at the right side and go to the left
-            TopToBottom,  ///< Start filling at the top an go downward
-            BottomToTop   ///< Start filling at the bottom and go upward
+            LeftToRight, ///< Start filling at the left side and go to the right
+            RightToLeft, ///< Start filling at the right side and go to the left
+            TopToBottom, ///< Start filling at the top an go downward
+            BottomToTop ///< Start filling at the bottom and go upward
         };
 
 
@@ -85,7 +85,7 @@ namespace tgui
         /// @return The new progress bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static ProgressBar::Ptr create();
+        static Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace tgui
         /// @return The new progress bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static ProgressBar::Ptr copy(ProgressBar::ConstPtr progressBar);
+        static Ptr copy(ConstPtr progressBar);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ namespace tgui
         /// @param property  Lowercase name of the property that was changed
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void rendererChanged(const std::string& property) override;
+        void rendererChanged(const std::string& property) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Widget::Ptr clone() const override
+        Widget::Ptr clone() const override
         {
             return std::make_shared<ProgressBar>(*this);
         }
@@ -318,9 +318,9 @@ namespace tgui
 
         // Cached renderer properties
         Borders m_bordersCached;
-        Color   m_borderColorCached;
-        Color   m_backgroundColorCached;
-        Color   m_fillColorCached;
+        Color m_borderColorCached;
+        Color m_backgroundColorCached;
+        Color m_fillColorCached;
     };
 
 

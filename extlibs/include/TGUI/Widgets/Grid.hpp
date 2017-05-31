@@ -52,15 +52,15 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         enum class Alignment
         {
-            Center,      ///< Center the widget in the cell
-            UpperLeft,   ///< Draw the widget in the upper left corner of the cell
-            Up,          ///< Draw the widget at the upper side of the cell (horizontally centered)
-            UpperRight,  ///< Draw the widget in the upper right corner of the cell
-            Right,       ///< Draw the widget at the right side of the cell (vertically centered)
+            Center, ///< Center the widget in the cell
+            UpperLeft, ///< Draw the widget in the upper left corner of the cell
+            Up, ///< Draw the widget at the upper side of the cell (horizontally centered)
+            UpperRight, ///< Draw the widget in the upper right corner of the cell
+            Right, ///< Draw the widget at the right side of the cell (vertically centered)
             BottomRight, ///< Draw the widget in the bottom right corner of the cell
-            Bottom,      ///< Draw the widget at the bottom of the cell (horizontally centered)
-            BottomLeft,  ///< Draw the widget in the bottom left corner of the cell
-            Left         ///< Draw the widget at the left side of the cell (vertically centered)
+            Bottom, ///< Draw the widget at the bottom of the cell (horizontally centered)
+            BottomLeft, ///< Draw the widget in the bottom left corner of the cell
+            Left ///< Draw the widget at the left side of the cell (vertically centered)
         };
 
 
@@ -76,7 +76,7 @@ namespace tgui
         /// @return The new grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Grid::Ptr create();
+        static Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace tgui
         /// @return Reference to itself
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Grid& operator= (const Grid& right);
+        Grid& operator=(const Grid& right);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ namespace tgui
         /// @return The new grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Grid::Ptr copy(Grid::ConstPtr grid);
+        static Ptr copy(ConstPtr grid);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ namespace tgui
         /// some Widgets are removed of the grid and the size was become valid again.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setSize(const Layout2d& size) override;
+        void setSize(const Layout2d& size) override;
         using Transformable::setSize;
 
 
@@ -130,7 +130,7 @@ namespace tgui
         /// @return Size of the grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual sf::Vector2f getSize() const override;
+        sf::Vector2f getSize() const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,14 +141,14 @@ namespace tgui
         /// @see remove(sf::String)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool remove(const Widget::Ptr& widget) override;
+        bool remove(const Widget::Ptr& widget) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Removes all widgets that were added to the container
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void removeAllWidgets() override;
+        void removeAllWidgets() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,10 +162,10 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void addWidget(const Widget::Ptr& widget,
-                       std::size_t        row,
-                       std::size_t        column,
-                       const Borders&     borders   = Borders{0},
-                       Alignment          alignment = Alignment::Center);
+                       size_t row,
+                       size_t column,
+                       const Borders& borders = Borders{0},
+                       Alignment alignment = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ namespace tgui
         /// @return The widget inside the given cell, or nullptr when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr getWidget(std::size_t row, std::size_t column) const;
+        Widget::Ptr getWidget(size_t row, size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace tgui
         /// @param borders The new borders around the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetBorders(std::size_t row, std::size_t column, const Borders& borders = Borders(0, 0, 0, 0));
+        void setWidgetBorders(size_t row, size_t column, const Borders& borders = Borders(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ namespace tgui
         /// @return The borders inside the given cell, or Borders{0} when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Borders getWidgetBorders(std::size_t row, std::size_t column) const;
+        Borders getWidgetBorders(size_t row, size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ namespace tgui
         /// @param alignment The new alignment
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetAlignment(std::size_t row, std::size_t column, Alignment alignment = Alignment::Center);
+        void setWidgetAlignment(size_t row, size_t column, Alignment alignment = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ namespace tgui
         /// @return The alignment inside the given cell, or Grid::Alignment::Center when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Alignment getWidgetAlignment(std::size_t row, std::size_t column) const;
+        Alignment getWidgetAlignment(size_t row, size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool mouseOnWidget(sf::Vector2f pos) const override;
+        bool mouseOnWidget(sf::Vector2f pos) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +290,7 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Widget::Ptr clone() const override
+        Widget::Ptr clone() const override
         {
             return std::make_shared<Grid>(*this);
         }
@@ -328,8 +328,8 @@ namespace tgui
     protected:
 
         std::vector<std::vector<Widget::Ptr>> m_gridWidgets;
-        std::vector<std::vector<Borders>>     m_objBorders;
-        std::vector<std::vector<Alignment>>   m_objAlignment;
+        std::vector<std::vector<Borders>> m_objBorders;
+        std::vector<std::vector<Alignment>> m_objAlignment;
 
         std::vector<float> m_rowHeight;
         std::vector<float> m_columnWidth;

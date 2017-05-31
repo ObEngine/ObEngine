@@ -45,12 +45,12 @@ namespace tgui
     {
         const std::vector<Widget::Ptr>& widgets = gridToCopy.m_widgets;
 
-        for (std::size_t row = 0; row < gridToCopy.m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < gridToCopy.m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < gridToCopy.m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < gridToCopy.m_gridWidgets[row].size(); ++col)
             {
                 // Find the widget that belongs in this square
-                for (std::size_t i = 0; i < widgets.size(); ++i)
+                for (size_t i = 0; i < widgets.size(); ++i)
                 {
                     // If a widget matches then add it to the grid
                     if (widgets[i] == gridToCopy.m_gridWidgets[row][col])
@@ -62,7 +62,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Grid& Grid::operator= (const Grid& right)
+    Grid& Grid::operator=(const Grid& right)
     {
         // Make sure it is not the same widget
         if (this != &right)
@@ -70,12 +70,12 @@ namespace tgui
             Grid temp{right};
             Container::operator=(right);
 
-            std::swap(m_gridWidgets,  temp.m_gridWidgets);
-            std::swap(m_objBorders,   temp.m_objBorders);
-            std::swap(m_objAlignment, temp.m_objAlignment);
-            std::swap(m_rowHeight,    temp.m_rowHeight);
-            std::swap(m_columnWidth,  temp.m_columnWidth);
-            std::swap(m_realSize,     temp.m_realSize);
+            swap(m_gridWidgets, temp.m_gridWidgets);
+            swap(m_objBorders, temp.m_objBorders);
+            swap(m_objAlignment, temp.m_objAlignment);
+            swap(m_rowHeight, temp.m_rowHeight);
+            swap(m_columnWidth, temp.m_columnWidth);
+            std::swap(m_realSize, temp.m_realSize);
         }
 
         return *this;
@@ -90,12 +90,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Grid::Ptr Grid::copy(Grid::ConstPtr grid)
+    Grid::Ptr Grid::copy(ConstPtr grid)
     {
         if (grid)
             return std::static_pointer_cast<Grid>(grid->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,9 +122,9 @@ namespace tgui
             m_connectedCallbacks.erase(callbackIt);
 
         // Find the widget in the grid
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col] == widget)
                 {
@@ -139,7 +138,7 @@ namespace tgui
                     {
                         // Check if there is another row with this many columns
                         bool rowFound = false;
-                        for (std::size_t i = 0; i < m_gridWidgets.size(); ++i)
+                        for (size_t i = 0; i < m_gridWidgets.size(); ++i)
                         {
                             if (m_gridWidgets[i].size() >= m_columnWidth.size())
                             {
@@ -150,7 +149,7 @@ namespace tgui
 
                         // Erase the last column if no other row is using it
                         if (!rowFound)
-                            m_columnWidth.erase(m_columnWidth.end()-1);
+                            m_columnWidth.erase(m_columnWidth.end() - 1);
                     }
 
                     // If the row is empty then remove it as well
@@ -191,10 +190,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Grid::addWidget(const Widget::Ptr& widget, std::size_t row, std::size_t col, const Borders& borders, Alignment alignment)
+    void Grid::addWidget(const Widget::Ptr& widget, size_t row, size_t col, const Borders& borders, Alignment alignment)
     {
         // If the widget hasn't already been added then add it now
-        if (std::find(getWidgets().begin(), getWidgets().end(), widget) == getWidgets().end())
+        if (find(getWidgets().begin(), getWidgets().end(), widget) == getWidgets().end())
             add(widget);
 
         // Create the row if it did not exist yet
@@ -235,12 +234,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Widget::Ptr Grid::getWidget(std::size_t row, std::size_t col) const
+    Widget::Ptr Grid::getWidget(size_t row, size_t col) const
     {
         if ((row < m_gridWidgets.size()) && (col < m_gridWidgets[row].size()))
             return m_gridWidgets[row][col];
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,9 +246,9 @@ namespace tgui
     void Grid::setWidgetBorders(const Widget::Ptr& widget, const Borders& borders)
     {
         // Find the widget in the grid
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col] == widget)
                     setWidgetBorders(row, col, borders);
@@ -260,7 +258,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Grid::setWidgetBorders(std::size_t row, std::size_t col, const Borders& borders)
+    void Grid::setWidgetBorders(size_t row, size_t col, const Borders& borders)
     {
         if (((row < m_gridWidgets.size()) && (col < m_gridWidgets[row].size())) && (m_gridWidgets[row][col] != nullptr))
         {
@@ -277,9 +275,9 @@ namespace tgui
     Borders Grid::getWidgetBorders(const Widget::Ptr& widget) const
     {
         // Find the widget in the grid
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col] == widget)
                     return getWidgetBorders(row, col);
@@ -291,12 +289,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Borders Grid::getWidgetBorders(std::size_t row, std::size_t col) const
+    Borders Grid::getWidgetBorders(size_t row, size_t col) const
     {
         if (((row < m_gridWidgets.size()) && (col < m_gridWidgets[row].size())) && (m_gridWidgets[row][col] != nullptr))
             return m_objBorders[row][col];
-        else
-            return {};
+        return {};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -304,9 +301,9 @@ namespace tgui
     void Grid::setWidgetAlignment(const Widget::Ptr& widget, Alignment alignment)
     {
         // Find the widget in the grid
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col] == widget)
                     setWidgetAlignment(row, col, alignment);
@@ -316,7 +313,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Grid::setWidgetAlignment(std::size_t row, std::size_t col, Alignment alignment)
+    void Grid::setWidgetAlignment(size_t row, size_t col, Alignment alignment)
     {
         if (((row < m_gridWidgets.size()) && (col < m_gridWidgets[row].size())) && (m_gridWidgets[row][col] != nullptr))
         {
@@ -335,15 +332,15 @@ namespace tgui
                     availableSpace.y = m_realSize.y - minSize.y;
 
                 sf::Vector2f availSpaceOffset{0.5f * availableSpace.x / m_columnWidth.size(),
-                                              0.5f * availableSpace.y / m_rowHeight.size()};
+                    0.5f * availableSpace.y / m_rowHeight.size()};
 
                 float left = 0;
                 float top = 0;
 
-                for (std::size_t i = 0; i < row; ++i)
+                for (size_t i = 0; i < row; ++i)
                     top += m_rowHeight[i] + 2 * availSpaceOffset.y;
 
-                for (std::size_t i = 0; i < col; ++i)
+                for (size_t i = 0; i < col; ++i)
                     left += m_columnWidth[i] + 2 * availSpaceOffset.x;
 
                 switch (m_objAlignment[row][col])
@@ -403,9 +400,9 @@ namespace tgui
 
     Grid::Alignment Grid::getWidgetAlignment(const Widget::Ptr& widget) const
     {
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col] == widget)
                     return getWidgetAlignment(row, col);
@@ -417,12 +414,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Grid::Alignment Grid::getWidgetAlignment(std::size_t row, std::size_t col) const
+    Grid::Alignment Grid::getWidgetAlignment(size_t row, size_t col) const
     {
         if (((row < m_gridWidgets.size()) && (col < m_gridWidgets[row].size())) && (m_gridWidgets[row][col] != nullptr))
             return m_objAlignment[row][col];
-        else
-            return Alignment::Center;
+        return Alignment::Center;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -480,16 +476,16 @@ namespace tgui
             m_realSize.y = minSize.y;
 
         sf::Vector2f availSpaceOffset{0.5f * availableSpace.x / m_columnWidth.size(),
-                                      0.5f * availableSpace.y / m_rowHeight.size()};
+            0.5f * availableSpace.y / m_rowHeight.size()};
 
         // Loop through all rows
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
             // Remember the current position
             previousPosition = position;
 
             // Loop through all widgets in the row
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col].get() == nullptr)
                 {
@@ -567,12 +563,12 @@ namespace tgui
             *it = 0;
 
         // Loop through all widgets
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
             // Reset the row height
             m_rowHeight[row] = 0;
 
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col].get() == nullptr)
                     continue;
@@ -598,9 +594,9 @@ namespace tgui
         states.transform.translate(getPosition());
 
         // Draw all widgets
-        for (std::size_t row = 0; row < m_gridWidgets.size(); ++row)
+        for (size_t row = 0; row < m_gridWidgets.size(); ++row)
         {
-            for (std::size_t col = 0; col < m_gridWidgets[row].size(); ++col)
+            for (size_t col = 0; col < m_gridWidgets[row].size(); ++col)
             {
                 if (m_gridWidgets[row][col].get() != nullptr)
                 {

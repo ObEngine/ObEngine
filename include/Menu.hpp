@@ -10,8 +10,8 @@
 
 namespace obe
 {
-	namespace Modes
-	{
-		std::string chooseMapMenu();
-	}
+    namespace Modes
+    {
+        std::string chooseMapMenu();
+    }
 }

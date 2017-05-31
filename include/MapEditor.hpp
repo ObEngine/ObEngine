@@ -18,7 +18,6 @@
 #include "Cursor.hpp"
 #include "KeyBind.hpp"
 #include "Dialog.hpp"
-#include "Particle.hpp"
 #include "Console.hpp"
 #include "MathExp.hpp"
 #include "Script.hpp"
@@ -33,8 +32,8 @@
 
 namespace obe
 {
-	namespace Editor
-	{
-		void editMap(std::string mapName);
-	}
+    namespace Editor
+    {
+        void editMap(std::string mapName);
+    }
 }

@@ -47,10 +47,10 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         enum class ScalingType
         {
-            Normal,     ///< The image is not split and scaled normally
+            Normal, ///< The image is not split and scaled normally
             Horizontal, ///< Image is split in Left, Middle and Right parts. Left and Right keep ratio, Middle gets stretched
-            Vertical,   ///< Image is split in Top, Middle and Bottom parts. Top and Bottom keep ratio, Middle gets stretched
-            NineSlice   ///< Image is split in 9 parts. Corners keep size, sides are stretched in one direction, middle is stretched in both directions
+            Vertical, ///< Image is split in Top, Middle and Bottom parts. Top and Bottom keep ratio, Middle gets stretched
+            NineSlice ///< Image is split in 9 parts. Corners keep size, sides are stretched in one direction, middle is stretched in both directions
         };
 
 
@@ -218,15 +218,15 @@ namespace tgui
     private:
 
         sf::Vector2f m_size;
-        Texture      m_texture;
+        Texture m_texture;
         std::vector<sf::Vertex> m_vertices;
 
         sf::FloatRect m_visibleRect;
 
-        sf::Color     m_vertexColor = sf::Color::White;
-        float         m_opacity = 1;
+        sf::Color m_vertexColor = sf::Color::White;
+        float m_opacity = 1;
 
-        ScalingType   m_scalingType = ScalingType::Normal;
+        ScalingType m_scalingType = ScalingType::Normal;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

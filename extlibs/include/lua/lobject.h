@@ -82,11 +82,10 @@ typedef struct GCObject GCObject;
 /*
 ** Common type has only the common header
 */
-struct GCObject {
-  CommonHeader;
+struct GCObject
+{
+    CommonHeader;
 };
-
-
 
 
 /*
@@ -97,23 +96,24 @@ struct GCObject {
 /*
 ** Union of all Lua values
 */
-typedef union Value {
-  GCObject *gc;    /* collectable objects */
-  void *p;         /* light userdata */
-  int b;           /* booleans */
-  lua_CFunction f; /* light C functions */
-  lua_Integer i;   /* integer numbers */
-  lua_Number n;    /* float numbers */
+typedef union Value
+{
+    GCObject* gc; /* collectable objects */
+    void* p; /* light userdata */
+    int b; /* booleans */
+    lua_CFunction f; /* light C functions */
+    lua_Integer i; /* integer numbers */
+    lua_Number n; /* float numbers */
 } Value;
 
 
 #define TValuefields	Value value_; int tt_
 
 
-typedef struct lua_TValue {
-  TValuefields;
+typedef struct lua_TValue
+{
+    TValuefields;
 } TValue;
-
 
 
 /* macro defining a nil value */
@@ -255,7 +255,6 @@ typedef struct lua_TValue {
 #define setdeadvalue(obj)	settt_(obj, LUA_TDEADKEY)
 
 
-
 #define setobj(L,obj1,obj2) \
 	{ TValue *io1=(obj1); *io1 = *(obj2); \
 	  (void)L; checkliveness(L,io1); }
@@ -282,8 +281,6 @@ typedef struct lua_TValue {
 #define setobj2t(L,o1,o2)  ((void)L, *(o1)=*(o2), checkliveness(L,(o1)))
 
 
-
-
 /*
 ** {======================================================
 ** types and prototypes
@@ -291,33 +288,35 @@ typedef struct lua_TValue {
 */
 
 
-typedef TValue *StkId;  /* index to stack elements */
-
-
+typedef TValue* StkId; /* index to stack elements */
 
 
 /*
 ** Header for string value; string bytes follow the end of this structure
 ** (aligned according to 'UTString'; see next).
 */
-typedef struct TString {
-  CommonHeader;
-  lu_byte extra;  /* reserved words for short strings; "has hash" for longs */
-  lu_byte shrlen;  /* length for short strings */
-  unsigned int hash;
-  union {
-    size_t lnglen;  /* length for long strings */
-    struct TString *hnext;  /* linked list for hash table */
-  } u;
+typedef struct TString
+{
+    CommonHeader;
+    lu_byte extra; /* reserved words for short strings; "has hash" for longs */
+    lu_byte shrlen; /* length for short strings */
+    unsigned int hash;
+
+    union
+    {
+        size_t lnglen; /* length for long strings */
+        struct TString* hnext; /* linked list for hash table */
+    } u;
 } TString;
 
 
 /*
 ** Ensures that address after this type is always fully aligned.
 */
-typedef union UTString {
-  L_Umaxalign dummy;  /* ensures maximum alignment for strings */
-  TString tsv;
+typedef union UTString
+{
+    L_Umaxalign dummy; /* ensures maximum alignment for strings */
+    TString tsv;
 } UTString;
 
 
@@ -343,21 +342,23 @@ typedef union UTString {
 ** Header for userdata; memory area follows the end of this structure
 ** (aligned according to 'UUdata'; see next).
 */
-typedef struct Udata {
-  CommonHeader;
-  lu_byte ttuv_;  /* user value's tag */
-  struct Table *metatable;
-  size_t len;  /* number of bytes */
-  union Value user_;  /* user value */
+typedef struct Udata
+{
+    CommonHeader;
+    lu_byte ttuv_; /* user value's tag */
+    struct Table* metatable;
+    size_t len; /* number of bytes */
+    union Value user_; /* user value */
 } Udata;
 
 
 /*
 ** Ensures that address after this type is always fully aligned.
 */
-typedef union UUdata {
-  L_Umaxalign dummy;  /* ensures maximum alignment for 'local' udata */
-  Udata uv;
+typedef union UUdata
+{
+    L_Umaxalign dummy; /* ensures maximum alignment for 'local' udata */
+    Udata uv;
 } UUdata;
 
 
@@ -383,10 +384,11 @@ typedef union UUdata {
 /*
 ** Description of an upvalue for function prototypes
 */
-typedef struct Upvaldesc {
-  TString *name;  /* upvalue name (for debug information) */
-  lu_byte instack;  /* whether it is in stack (register) */
-  lu_byte idx;  /* index of upvalue (in stack or in outer function's list) */
+typedef struct Upvaldesc
+{
+    TString* name; /* upvalue name (for debug information) */
+    lu_byte instack; /* whether it is in stack (register) */
+    lu_byte idx; /* index of upvalue (in stack or in outer function's list) */
 } Upvaldesc;
 
 
@@ -394,40 +396,41 @@ typedef struct Upvaldesc {
 ** Description of a local variable for function prototypes
 ** (used for debug information)
 */
-typedef struct LocVar {
-  TString *varname;
-  int startpc;  /* first point where variable is active */
-  int endpc;    /* first point where variable is dead */
+typedef struct LocVar
+{
+    TString* varname;
+    int startpc; /* first point where variable is active */
+    int endpc; /* first point where variable is dead */
 } LocVar;
 
 
 /*
 ** Function Prototypes
 */
-typedef struct Proto {
-  CommonHeader;
-  lu_byte numparams;  /* number of fixed parameters */
-  lu_byte is_vararg;
-  lu_byte maxstacksize;  /* number of registers needed by this function */
-  int sizeupvalues;  /* size of 'upvalues' */
-  int sizek;  /* size of 'k' */
-  int sizecode;
-  int sizelineinfo;
-  int sizep;  /* size of 'p' */
-  int sizelocvars;
-  int linedefined;  /* debug information  */
-  int lastlinedefined;  /* debug information  */
-  TValue *k;  /* constants used by the function */
-  Instruction *code;  /* opcodes */
-  struct Proto **p;  /* functions defined inside the function */
-  int *lineinfo;  /* map from opcodes to source lines (debug information) */
-  LocVar *locvars;  /* information about local variables (debug information) */
-  Upvaldesc *upvalues;  /* upvalue information */
-  struct LClosure *cache;  /* last-created closure with this prototype */
-  TString  *source;  /* used for debug information */
-  GCObject *gclist;
+typedef struct Proto
+{
+    CommonHeader;
+    lu_byte numparams; /* number of fixed parameters */
+    lu_byte is_vararg;
+    lu_byte maxstacksize; /* number of registers needed by this function */
+    int sizeupvalues; /* size of 'upvalues' */
+    int sizek; /* size of 'k' */
+    int sizecode;
+    int sizelineinfo;
+    int sizep; /* size of 'p' */
+    int sizelocvars;
+    int linedefined; /* debug information  */
+    int lastlinedefined; /* debug information  */
+    TValue* k; /* constants used by the function */
+    Instruction* code; /* opcodes */
+    struct Proto** p; /* functions defined inside the function */
+    int* lineinfo; /* map from opcodes to source lines (debug information) */
+    LocVar* locvars; /* information about local variables (debug information) */
+    Upvaldesc* upvalues; /* upvalue information */
+    struct LClosure* cache; /* last-created closure with this prototype */
+    TString* source; /* used for debug information */
+    GCObject* gclist;
 } Proto;
-
 
 
 /*
@@ -443,23 +446,26 @@ typedef struct UpVal UpVal;
 #define ClosureHeader \
 	CommonHeader; lu_byte nupvalues; GCObject *gclist
 
-typedef struct CClosure {
-  ClosureHeader;
-  lua_CFunction f;
-  TValue upvalue[1];  /* list of upvalues */
+typedef struct CClosure
+{
+    ClosureHeader;
+    lua_CFunction f;
+    TValue upvalue[1]; /* list of upvalues */
 } CClosure;
 
 
-typedef struct LClosure {
-  ClosureHeader;
-  struct Proto *p;
-  UpVal *upvals[1];  /* list of upvalues */
+typedef struct LClosure
+{
+    ClosureHeader;
+    struct Proto* p;
+    UpVal* upvals[1]; /* list of upvalues */
 } LClosure;
 
 
-typedef union Closure {
-  CClosure c;
-  LClosure l;
+typedef union Closure
+{
+    CClosure c;
+    LClosure l;
 } Closure;
 
 
@@ -472,12 +478,15 @@ typedef union Closure {
 ** Tables
 */
 
-typedef union TKey {
-  struct {
-    TValuefields;
-    int next;  /* for chaining (offset for next node) */
-  } nk;
-  TValue tvk;
+typedef union TKey
+{
+    struct
+    {
+        TValuefields;
+        int next; /* for chaining (offset for next node) */
+    } nk;
+
+    TValue tvk;
 } TKey;
 
 
@@ -488,24 +497,25 @@ typedef union TKey {
 	  (void)L; checkliveness(L,io_); }
 
 
-typedef struct Node {
-  TValue i_val;
-  TKey i_key;
+typedef struct Node
+{
+    TValue i_val;
+    TKey i_key;
 } Node;
 
 
-typedef struct Table {
-  CommonHeader;
-  lu_byte flags;  /* 1<<p means tagmethod(p) is not present */
-  lu_byte lsizenode;  /* log2 of size of 'node' array */
-  unsigned int sizearray;  /* size of 'array' array */
-  TValue *array;  /* array part */
-  Node *node;
-  Node *lastfree;  /* any free position is before this position */
-  struct Table *metatable;
-  GCObject *gclist;
+typedef struct Table
+{
+    CommonHeader;
+    lu_byte flags; /* 1<<p means tagmethod(p) is not present */
+    lu_byte lsizenode; /* log2 of size of 'node' array */
+    unsigned int sizearray; /* size of 'array' array */
+    TValue* array; /* array part */
+    Node* node;
+    Node* lastfree; /* any free position is before this position */
+    struct Table* metatable;
+    GCObject* gclist;
 } Table;
-
 
 
 /*
@@ -530,20 +540,19 @@ LUAI_DDEC const TValue luaO_nilobject_;
 /* size of buffer for 'luaO_utf8esc' function */
 #define UTF8BUFFSZ	8
 
-LUAI_FUNC int luaO_int2fb (unsigned int x);
-LUAI_FUNC int luaO_fb2int (int x);
-LUAI_FUNC int luaO_utf8esc (char *buff, unsigned long x);
-LUAI_FUNC int luaO_ceillog2 (unsigned int x);
-LUAI_FUNC void luaO_arith (lua_State *L, int op, const TValue *p1,
-                           const TValue *p2, TValue *res);
-LUAI_FUNC size_t luaO_str2num (const char *s, TValue *o);
-LUAI_FUNC int luaO_hexavalue (int c);
-LUAI_FUNC void luaO_tostring (lua_State *L, StkId obj);
-LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
-                                                       va_list argp);
-LUAI_FUNC const char *luaO_pushfstring (lua_State *L, const char *fmt, ...);
-LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t len);
+LUAI_FUNC int luaO_int2fb(unsigned int x);
+LUAI_FUNC int luaO_fb2int(int x);
+LUAI_FUNC int luaO_utf8esc(char* buff, unsigned long x);
+LUAI_FUNC int luaO_ceillog2(unsigned int x);
+LUAI_FUNC void luaO_arith(lua_State* L, int op, const TValue* p1,
+                          const TValue* p2, TValue* res);
+LUAI_FUNC size_t luaO_str2num(const char* s, TValue* o);
+LUAI_FUNC int luaO_hexavalue(int c);
+LUAI_FUNC void luaO_tostring(lua_State* L, StkId obj);
+LUAI_FUNC const char* luaO_pushvfstring(lua_State* L, const char* fmt,
+                                        va_list argp);
+LUAI_FUNC const char* luaO_pushfstring(lua_State* L, const char* fmt, ...);
+LUAI_FUNC void luaO_chunkid(char* out, const char* source, size_t len);
 
 
 #endif
-

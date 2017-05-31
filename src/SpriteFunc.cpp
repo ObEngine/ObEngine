@@ -5,13 +5,13 @@
 
 namespace obe
 {
-	namespace Graphics
-	{
-		sf::Sprite getCleanSprite(sf::Texture texture)
-		{
-			sf::Sprite returnSprite;
-			returnSprite.setTexture(texture);
-			return returnSprite;
-		}
-	}
+    namespace Graphics
+    {
+        sf::Sprite getCleanSprite(sf::Texture texture)
+        {
+            sf::Sprite returnSprite;
+            returnSprite.setTexture(texture);
+            return returnSprite;
+        }
+    }
 }

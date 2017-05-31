@@ -39,7 +39,7 @@ namespace tgui
 
     Signal::Signal(std::vector<std::vector<std::string>>&& types)
     {
-        std::size_t maxSize = 0;
+        size_t maxSize = 0;
         for (const auto& typeList : types)
             maxSize += typeList.size();
 
@@ -91,7 +91,7 @@ namespace tgui
                 return;
         }
 
-        throw Exception{"Failed to disconnect signal handler. There is no function bound to the given id " + tgui::to_string(id) + "."};
+        throw Exception{"Failed to disconnect signal handler. There is no function bound to the given id " + to_string(id) + "."};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ namespace tgui
             if (token != "")
                 names.push_back(token);
 
-            input.erase(0, pos+1);
+            input.erase(0, pos + 1);
         }
 
         if (input != "")

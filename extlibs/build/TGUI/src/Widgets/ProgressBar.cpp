@@ -31,14 +31,14 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"bordercolor", sf::Color::Black},
-                {"textcolor", sf::Color::Black},
-                {"textcolorfilled", sf::Color::White},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"fillcolor", Color{0, 110, 255}}
-            };
+    {
+        {"borders", Borders{2}},
+        {"bordercolor", sf::Color::Black},
+        {"textcolor", sf::Color::Black},
+        {"textcolorfilled", sf::Color::White},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"fillcolor", Color{0, 110, 255}}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,12 +65,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ProgressBar::Ptr ProgressBar::copy(ProgressBar::ConstPtr progressBar)
+    ProgressBar::Ptr ProgressBar::copy(ConstPtr progressBar)
     {
         if (progressBar)
             return std::static_pointer_cast<ProgressBar>(progressBar->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -371,27 +370,27 @@ namespace tgui
 
         switch (getFillDirection())
         {
-            case FillDirection::LeftToRight:
-                m_frontRect =  {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
-                m_backRect = {m_frontRect.width, 0, size.x - m_frontRect.width, size.y};
-                break;
+        case FillDirection::LeftToRight:
+            m_frontRect = {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
+            m_backRect = {m_frontRect.width, 0, size.x - m_frontRect.width, size.y};
+            break;
 
-            case FillDirection::RightToLeft:
-                m_frontRect =  {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
-                m_frontRect.left = size.x - m_frontRect.width;
-                m_backRect = {0, 0, size.x - m_frontRect.width, size.y};
-                break;
+        case FillDirection::RightToLeft:
+            m_frontRect = {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
+            m_frontRect.left = size.x - m_frontRect.width;
+            m_backRect = {0, 0, size.x - m_frontRect.width, size.y};
+            break;
 
-            case FillDirection::TopToBottom:
-                m_frontRect =  {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
-                m_backRect = {0, m_frontRect.height, size.x, size.y - m_frontRect.height};
-                break;
+        case FillDirection::TopToBottom:
+            m_frontRect = {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
+            m_backRect = {0, m_frontRect.height, size.x, size.y - m_frontRect.height};
+            break;
 
-            case FillDirection::BottomToTop:
-                m_frontRect =  {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
-                m_frontRect.top = size.y - m_frontRect.height;
-                m_backRect = {0, 0, size.x, size.y - m_frontRect.height};
-                break;
+        case FillDirection::BottomToTop:
+            m_frontRect = {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
+            m_frontRect.top = size.y - m_frontRect.height;
+            m_backRect = {0, 0, size.x, size.y - m_frontRect.height};
+            break;
         }
 
         if (m_spriteFill.isSet())

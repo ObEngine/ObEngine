@@ -34,50 +34,48 @@
 
 namespace aurora
 {
+    /// @addtogroup SmartPtr
+    /// @{
 
-/// @addtogroup SmartPtr
-/// @{
+    /// @brief Cloner that invokes the copy constructor and new operator.
+    /// @details Makes a copy of the origin using the copy constructor. The resulting object is allocated with new, so the
+    ///  recommended deleter to use together with this cloner is OperatorDelete.
+    template <typename T>
+    struct OperatorNewCopy
+    {
+        T* operator()(const T* pointer) const
+        {
+            return new T(*pointer);
+        }
+    };
 
-/// @brief Cloner that invokes the copy constructor and new operator.
-/// @details Makes a copy of the origin using the copy constructor. The resulting object is allocated with new, so the
-///  recommended deleter to use together with this cloner is OperatorDelete.
-template <typename T>
-struct OperatorNewCopy
-{
-	T* operator() (const T* pointer) const
-	{
-		return new T(*pointer);
-	}
-};
+    /// @brief Cloner that invokes a member function clone().
+    /// @details clone() shall be a virtual function with the signature <tt>C* C::clone() const</tt>, where C is the class type.
+    ///  The returned pointer has to point to a new copy of the object on which clone() is invoked. In case you do not call
+    ///  the new operator to allocate the copy, make sure you also use a corresponding deleter in CopiedPtr.
+    template <typename T>
+    struct VirtualClone
+    {
+        T* operator()(const T* pointer) const
+        {
+            return pointer->clone();
+        }
+    };
 
-/// @brief Cloner that invokes a member function clone().
-/// @details clone() shall be a virtual function with the signature <tt>C* C::clone() const</tt>, where C is the class type.
-///  The returned pointer has to point to a new copy of the object on which clone() is invoked. In case you do not call
-///  the new operator to allocate the copy, make sure you also use a corresponding deleter in CopiedPtr.
-template <typename T>
-struct VirtualClone
-{
-	T* operator() (const T* pointer) const
-	{
-		return pointer->clone();
-	}
-};
+    /// @brief Deleter that invokes the delete operator.
+    /// @details If you use this deleter, ensure that the object has been allocated with new. Note that for CopiedPtr, also the
+    ///  cloner has to return a copy allocated with new (like OperatorNewCopy). The type T shall be complete at the time of deletion.
+    template <typename T>
+    struct OperatorDelete
+    {
+        void operator()(T* pointer)
+        {
+            AURORA_REQUIRE_COMPLETE_TYPE(T);
+            delete pointer;
+        }
+    };
 
-/// @brief Deleter that invokes the delete operator.
-/// @details If you use this deleter, ensure that the object has been allocated with new. Note that for CopiedPtr, also the
-///  cloner has to return a copy allocated with new (like OperatorNewCopy). The type T shall be complete at the time of deletion.
-template <typename T>
-struct OperatorDelete
-{
-	void operator() (T* pointer)
-	{
-		AURORA_REQUIRE_COMPLETE_TYPE(T);
-		delete pointer;
-	}
-};
-
-/// @}
-
+    /// @}
 } // namespace aurora
 
 #endif // AURORA_PTRFUNCTORS_HPP

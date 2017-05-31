@@ -334,6 +334,9 @@ Vili:
             WrongBoolCastOperator:
                 where:"operator<bool>"
                 message:"BaseAttribute %path% can't be casted into a bool"
+            WrongAutoset
+                where:"autoset"
+                message:"Can't autoset raw value %data% for BaseAttribute %path%"
         LinkAttribute:
             where:"LinkAttribute"
             WrongLinkPath:
@@ -379,6 +382,9 @@ Vili:
             WrongCopyTarget:
                 where:"copy"
                 message:"ComplexAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
+            EmptyPath:
+                where:"getPath"
+                message:"Can't get empty path in ComplexAttribute %path%"
         DataTemplate:
             where:"DataTemplate"
             BuildError:

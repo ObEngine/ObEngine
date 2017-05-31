@@ -137,7 +137,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::Vector2f Text::findCharacterPos(std::size_t index) const
+    sf::Vector2f Text::findCharacterPos(size_t index) const
     {
         return m_text.findCharacterPos(index);
     }
@@ -150,9 +150,9 @@ namespace tgui
 
         // Round the position to avoid blurry text
         const float* matrix = states.transform.getMatrix();
-        states.transform = sf::Transform{matrix[0], matrix[4], std::round(matrix[12]),
-                                         matrix[1], matrix[5], std::floor(matrix[13]),
-                                         matrix[3], matrix[7], matrix[15]};
+        states.transform = sf::Transform{matrix[0], matrix[4], round(matrix[12]),
+            matrix[1], matrix[5], floor(matrix[13]),
+            matrix[3], matrix[7], matrix[15]};
 
         target.draw(m_text, states);
     }
@@ -175,7 +175,7 @@ namespace tgui
         const sf::String& string = m_text.getString();
         bool bold = (m_text.getStyle() & sf::Text::Bold) != 0;
         unsigned int textSize = m_text.getCharacterSize();
-        for (std::size_t i = 0; i < string.getSize(); ++i)
+        for (size_t i = 0; i < string.getSize(); ++i)
         {
             float kerning = static_cast<float>(font->getKerning(prevChar, string[i], textSize));
             if (string[i] == '\n')
@@ -192,7 +192,7 @@ namespace tgui
             prevChar = string[i];
         }
 
-        float extraVerticalSpace = Text::calculateExtraVerticalSpace(m_font, m_text.getCharacterSize(), m_text.getStyle());
+        float extraVerticalSpace = calculateExtraVerticalSpace(m_font, m_text.getCharacterSize(), m_text.getStyle());
         m_size = {std::max(maxWidth, width), lines * font->getLineSpacing(m_text.getCharacterSize()) + extraVerticalSpace};
     }
 
@@ -207,12 +207,12 @@ namespace tgui
         if (height < 2)
             return 1;
 
-        std::vector<unsigned int> textSizes(static_cast<std::size_t>(height));
+        std::vector<unsigned int> textSizes(static_cast<size_t>(height));
         for (unsigned int i = 0; i < static_cast<unsigned int>(height); ++i)
             textSizes[i] = i + 1;
 
         auto high = std::lower_bound(textSizes.begin(), textSizes.end(), height,
-                                     [&](unsigned int charSize, float h) { return font->getLineSpacing(charSize) + Text::calculateExtraVerticalSpace(font, charSize) < h; });
+                                     [&](unsigned int charSize, float h) { return font->getLineSpacing(charSize) + calculateExtraVerticalSpace(font, charSize) < h; });
         if (high == textSizes.end())
             return static_cast<unsigned int>(height);
 
@@ -225,15 +225,12 @@ namespace tgui
 
         if (fit < 0)
             return *low;
-        else if (fit > 0)
+        if (fit > 0)
             return *high;
+        if (abs(height - lowLineSpacing) < abs(height - highLineSpacing))
+            return *low;
         else
-        {
-            if (std::abs(height - lowLineSpacing) < std::abs(height - highLineSpacing))
-                return *low;
-            else
-                return *high;
-        }
+            return *high;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -244,8 +241,8 @@ namespace tgui
 
         // Calculate the height of the first line (char size = everything above baseline, height + top = part below baseline)
         float lineHeight = characterSize
-                           + font.getFont()->getGlyph('g', characterSize, bold).bounds.height
-                           + font.getFont()->getGlyph('g', characterSize, bold).bounds.top;
+            + font.getFont()->getGlyph('g', characterSize, bold).bounds.height
+            + font.getFont()->getGlyph('g', characterSize, bold).bounds.top;
 
         // Get the line spacing sfml returns
         float lineSpacing = font.getFont()->getLineSpacing(characterSize);
@@ -262,15 +259,15 @@ namespace tgui
             return "";
 
         sf::String result;
-        std::size_t index = 0;
+        size_t index = 0;
         while (index < text.getSize())
         {
-            std::size_t oldIndex = index;
+            size_t oldIndex = index;
 
             // Find out how many characters we can get on this line
             float width = 0;
             sf::Uint32 prevChar = 0;
-            for (std::size_t i = index; i < text.getSize(); ++i)
+            for (size_t i = index; i < text.getSize(); ++i)
             {
                 float charWidth;
                 sf::Uint32 curChar = text[i];
@@ -279,7 +276,7 @@ namespace tgui
                     index++;
                     break;
                 }
-                else if (curChar == '\t')
+                if (curChar == '\t')
                     charWidth = font.getFont()->getGlyph(' ', textSize, bold).advance * 4;
                 else
                     charWidth = font.getFont()->getGlyph(curChar, textSize, bold).advance;
@@ -301,12 +298,12 @@ namespace tgui
                 index++;
 
             // Implement the word-wrap by removing the last few characters from the line
-            if (text[index-1] != '\n')
+            if (text[index - 1] != '\n')
             {
-                std::size_t indexWithoutWordWrap = index;
+                size_t indexWithoutWordWrap = index;
                 if ((index < text.getSize()) && (!isWhitespace(text[index])))
                 {
-                    std::size_t wordWrapCorrection = 0;
+                    size_t wordWrapCorrection = 0;
                     while ((index > oldIndex) && (!isWhitespace(text[index - 1])))
                     {
                         wordWrapCorrection++;
@@ -324,7 +321,7 @@ namespace tgui
             {
                 if ((index < text.getSize()) && (text[index] == ' '))
                 {
-                    if ((index == 0) || (!isWhitespace(text[index-1])))
+                    if ((index == 0) || (!isWhitespace(text[index - 1])))
                     {
                         // But two or more spaces indicate that it is not a normal text and the spaces should not be ignored
                         if (((index + 1 < text.getSize()) && (!isWhitespace(text[index + 1]))) || (index + 1 == text.getSize()))
@@ -334,7 +331,7 @@ namespace tgui
             }
 
             result += text.substring(oldIndex, index - oldIndex);
-            if ((index < text.getSize()) && (text[index-1] != '\n'))
+            if ((index < text.getSize()) && (text[index - 1] != '\n'))
                 result += "\n";
         }
 

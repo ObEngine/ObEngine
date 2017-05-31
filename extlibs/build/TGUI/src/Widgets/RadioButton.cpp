@@ -30,19 +30,19 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{3}},
-                {"bordercolor", Color{60, 60, 60}},
-                {"bordercolorhover", sf::Color::Black},
-                {"textcolor", Color{60, 60, 60}},
-                {"textcolorhover", sf::Color::Black},
-                {"backgroundcolor", Color{245, 245, 245}},
-                {"backgroundcolorhover", sf::Color::White},
-                {"checkcolor", Color{60, 60, 60}},
-                {"checkcolorhover", sf::Color::Black},
-                {"textdistanceratio", 0.2f}
-                ///TODO: Define default disabled colors
-            };
+    {
+        {"borders", Borders{3}},
+        {"bordercolor", Color{60, 60, 60}},
+        {"bordercolorhover", sf::Color::Black},
+        {"textcolor", Color{60, 60, 60}},
+        {"textcolorhover", sf::Color::Black},
+        {"backgroundcolor", Color{245, 245, 245}},
+        {"backgroundcolorhover", sf::Color::White},
+        {"checkcolor", Color{60, 60, 60}},
+        {"checkcolorhover", sf::Color::Black},
+        {"textdistanceratio", 0.2f}
+        ///TODO: Define default disabled colors
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,12 +69,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    RadioButton::Ptr RadioButton::copy(RadioButton::ConstPtr radioButton)
+    RadioButton::Ptr RadioButton::copy(ConstPtr radioButton)
     {
         if (radioButton)
             return std::static_pointer_cast<RadioButton>(radioButton->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,8 +95,7 @@ namespace tgui
     {
         if (getText().isEmpty())
             return getSize();
-        else
-            return {getSize().x + (getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(getSize().y, m_text.getSize().y)};
+        return {getSize().x + (getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(getSize().y, m_text.getSize().y)};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,8 +104,7 @@ namespace tgui
     {
         if (getText().isEmpty() || (getSize().y >= m_text.getSize().y))
             return {0, 0};
-        else
-            return {0, -(m_text.getSize().y - getSize().y) / 2};
+        return {0, -(m_text.getSize().y - getSize().y) / 2};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,7 +280,7 @@ namespace tgui
             updateTextureSizes();
         }
         else if ((property == "textcolor") || (property == "textcolorhover") || (property == "textcolordisabled")
-              || (property == "textcolorchecked") || (property == "textcolorcheckedhover") || (property == "textcolorcheckeddisabled"))
+            || (property == "textcolorchecked") || (property == "textcolorcheckedhover") || (property == "textcolorcheckeddisabled"))
         {
             updateTextColor();
         }
@@ -438,10 +435,9 @@ namespace tgui
     {
         if (!m_enabled && getRenderer()->getCheckColorDisabled().isSet())
             return getRenderer()->getCheckColorDisabled();
-        else if (m_mouseHover && getRenderer()->getCheckColorHover().isSet())
+        if (m_mouseHover && getRenderer()->getCheckColorHover().isSet())
             return getRenderer()->getCheckColorHover();
-        else
-            return getRenderer()->getCheckColor();
+        return getRenderer()->getCheckColor();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,36 +448,27 @@ namespace tgui
         {
             if (!m_enabled && getRenderer()->getBackgroundColorCheckedDisabled().isSet())
                 return getRenderer()->getBackgroundColorCheckedDisabled();
-            else if (!m_enabled && getRenderer()->getBackgroundColorDisabled().isSet())
+            if (!m_enabled && getRenderer()->getBackgroundColorDisabled().isSet())
                 return getRenderer()->getBackgroundColorDisabled();
-            else if (m_mouseHover)
+            if (m_mouseHover)
             {
                 if (getRenderer()->getBackgroundColorCheckedHover().isSet())
                     return getRenderer()->getBackgroundColorCheckedHover();
-                else if (getRenderer()->getBackgroundColorChecked().isSet())
-                    return getRenderer()->getBackgroundColorChecked();
-                else if (getRenderer()->getBackgroundColorHover().isSet())
-                    return getRenderer()->getBackgroundColorHover();
-                else
-                    return getRenderer()->getBackgroundColor();
-            }
-            else
-            {
                 if (getRenderer()->getBackgroundColorChecked().isSet())
                     return getRenderer()->getBackgroundColorChecked();
-                else
-                    return getRenderer()->getBackgroundColor();
-            }
-        }
-        else
-        {
-            if (!m_enabled && getRenderer()->getBackgroundColorDisabled().isSet())
-                return getRenderer()->getBackgroundColorDisabled();
-            else if (m_mouseHover && getRenderer()->getBackgroundColorHover().isSet())
-                return getRenderer()->getBackgroundColorHover();
-            else
+                if (getRenderer()->getBackgroundColorHover().isSet())
+                    return getRenderer()->getBackgroundColorHover();
                 return getRenderer()->getBackgroundColor();
+            }
+            if (getRenderer()->getBackgroundColorChecked().isSet())
+                return getRenderer()->getBackgroundColorChecked();
+            return getRenderer()->getBackgroundColor();
         }
+        if (!m_enabled && getRenderer()->getBackgroundColorDisabled().isSet())
+            return getRenderer()->getBackgroundColorDisabled();
+        if (m_mouseHover && getRenderer()->getBackgroundColorHover().isSet())
+            return getRenderer()->getBackgroundColorHover();
+        return getRenderer()->getBackgroundColor();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -492,36 +479,27 @@ namespace tgui
         {
             if (!m_enabled && getRenderer()->getBorderColorCheckedDisabled().isSet())
                 return getRenderer()->getBorderColorCheckedDisabled();
-            else if (!m_enabled && getRenderer()->getBorderColorDisabled().isSet())
+            if (!m_enabled && getRenderer()->getBorderColorDisabled().isSet())
                 return getRenderer()->getBorderColorDisabled();
-            else if (m_mouseHover)
+            if (m_mouseHover)
             {
                 if (getRenderer()->getBorderColorCheckedHover().isSet())
                     return getRenderer()->getBorderColorCheckedHover();
-                else if (getRenderer()->getBorderColorChecked().isSet())
-                    return getRenderer()->getBorderColorChecked();
-                else if (getRenderer()->getBorderColorHover().isSet())
-                    return getRenderer()->getBorderColorHover();
-                else
-                    return getRenderer()->getBorderColor();
-            }
-            else
-            {
                 if (getRenderer()->getBorderColorChecked().isSet())
                     return getRenderer()->getBorderColorChecked();
-                else
-                    return getRenderer()->getBorderColor();
-            }
-        }
-        else
-        {
-            if (!m_enabled && getRenderer()->getBorderColorDisabled().isSet())
-                return getRenderer()->getBorderColorDisabled();
-            else if (m_mouseHover && getRenderer()->getBorderColorHover().isSet())
-                return getRenderer()->getBorderColorHover();
-            else
+                if (getRenderer()->getBorderColorHover().isSet())
+                    return getRenderer()->getBorderColorHover();
                 return getRenderer()->getBorderColor();
+            }
+            if (getRenderer()->getBorderColorChecked().isSet())
+                return getRenderer()->getBorderColorChecked();
+            return getRenderer()->getBorderColor();
         }
+        if (!m_enabled && getRenderer()->getBorderColorDisabled().isSet())
+            return getRenderer()->getBorderColorDisabled();
+        if (m_mouseHover && getRenderer()->getBorderColorHover().isSet())
+            return getRenderer()->getBorderColorHover();
+        return getRenderer()->getBorderColor();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

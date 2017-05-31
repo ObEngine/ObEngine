@@ -17,92 +17,89 @@
 #include "GameObject.hpp"
 #include "LevelSprite.hpp"
 #include "Light.hpp"
-#include "Particle.hpp"
 #include "Script.hpp"
 #include "TimeManager.hpp"
 
 namespace obe
 {
-	namespace World
-	{
-		void loadWorldLib(kaguya::State* lua);
-		void loadWorldScriptEngineBaseLib(kaguya::State* lua);
+    namespace World
+    {
+        void loadWorldLib(kaguya::State* lua);
+        void loadWorldScriptEngineBaseLib(kaguya::State* lua);
 
-		class World
-		{
-			private:
-				std::string m_levelName = "";
-				std::string m_baseFolder = "";
-				Camera m_camera;
-				bool m_cameraLocked = true;
-				Coord::UnitVector m_cameraInitialPosition;
-				kaguya::State* m_worldScriptEngine;
-				bool m_updateState = true;
-				bool m_needToOrderUpdateArray = true;
+        class World
+        {
+        private:
+            std::string m_levelName = "";
+            std::string m_baseFolder = "";
+            Camera m_camera;
+            bool m_cameraLocked = true;
+            Coord::UnitVector m_cameraInitialPosition;
+            kaguya::State* m_worldScriptEngine;
+            bool m_updateState = true;
+            bool m_needToOrderUpdateArray = true;
 
-				std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
-				std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
-				std::map<std::string, std::unique_ptr<Script::GameObject>> m_gameObjectMap;
-				std::vector<Script::GameObject*> m_updateObjArray;
-				std::map<std::string, std::unique_ptr<Light::PointLight>> m_lightMap;
-				std::vector<std::unique_ptr<Graphics::MathParticle>> m_particleArray;
-				std::vector<std::string> m_scriptArray;
+            std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
+            std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
+            std::map<std::string, std::unique_ptr<Script::GameObject>> m_gameObjectMap;
+            std::vector<Script::GameObject*> m_updateObjArray;
+            std::map<std::string, std::unique_ptr<Light::PointLight>> m_lightMap;
+            std::vector<std::string> m_scriptArray;
 
-				sf::Shader m_lightShader;
+            sf::Shader m_lightShader;
 
-				double m_gameSpeed;
-				std::map<std::string, bool> m_showCollisionModes;
+            double m_gameSpeed;
+            std::map<std::string, bool> m_showCollisionModes;
 
-			public:
-				//World
-				World();
-				void loadFromFile(std::string filename);
-				void clearWorld();
-				vili::DataParser* saveData();
-				void update(double dt);
-				void display(sf::RenderWindow* surf);
-				std::string getLevelName() const;
-				void setLevelName(std::string newName);
-				void setUpdateState(bool state);
-				//GameObjects
-				Script::GameObject* getGameObject(std::string id);
-				std::vector<Script::GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
-				Script::GameObject* createGameObject(std::string id, std::string obj);
-				void orderUpdateScrArray();
-				//Camera
-				Camera* getCamera();
-				void setCameraLock(bool state);
-				bool isCameraLocked() const;
-				//Lights
-				void addLight(Light::PointLight* lgt);
-				//LevelSprites
-				Graphics::LevelSprite* createLevelSprite(std::string id);
-				void reorganizeLayers();
-				void displaySprites(sf::RenderWindow* surf);
-				Graphics::LevelSprite* getSpriteByIndex(int index);
-				int getSpriteArraySize() const;
-				std::vector<Graphics::LevelSprite*> getAllSprites();
-				std::vector<Graphics::LevelSprite*> getSpritesByLayer(int layer);
-				Graphics::LevelSprite* getSpriteByPos(int x, int y, int layer);
-				Graphics::LevelSprite* getSpriteByID(std::string ID);
-				bool doesSpriteExists(const std::string& id);
-				void deleteSpriteByID(std::string sprID);
-				void deleteSprite(Graphics::LevelSprite* sprToDelete);
-				//Colliders
-				Collision::PolygonalCollider* createCollider(std::string id);
-				std::vector<Collision::PolygonalCollider*> getColliders() const;
-				std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
-				Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
-				Collision::PolygonalCollider* getCollisionByID(std::string id);
-				std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
-				void deleteCollisionByID(std::string id);
-				void deleteCollision(Collision::PolygonalCollider* colToDelete);
-				void createCollisionAtPos(int x, int y);
-				void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
-				//Other
-				void addParticle(Graphics::MathParticle* particle);
-				kaguya::State* getScriptEngine() const;
-				std::string getBaseFolder() const;
-		};
-	}
+        public:
+            //World
+            World();
+            void loadFromFile(std::string filename);
+            void clearWorld();
+            vili::DataParser* saveData();
+            void update(double dt);
+            void display(sf::RenderWindow* surf);
+            std::string getLevelName() const;
+            void setLevelName(std::string newName);
+            void setUpdateState(bool state);
+            //GameObjects
+            Script::GameObject* getGameObject(std::string id);
+            std::vector<Script::GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
+            Script::GameObject* createGameObject(std::string id, std::string obj);
+            void orderUpdateScrArray();
+            //Camera
+            Camera* getCamera();
+            void setCameraLock(bool state);
+            bool isCameraLocked() const;
+            //Lights
+            void addLight(Light::PointLight* lgt);
+            //LevelSprites
+            Graphics::LevelSprite* createLevelSprite(std::string id);
+            void reorganizeLayers();
+            void displaySprites(sf::RenderWindow* surf);
+            Graphics::LevelSprite* getSpriteByIndex(int index);
+            int getSpriteArraySize() const;
+            std::vector<Graphics::LevelSprite*> getAllSprites();
+            std::vector<Graphics::LevelSprite*> getSpritesByLayer(int layer);
+            Graphics::LevelSprite* getSpriteByPos(int x, int y, int layer);
+            Graphics::LevelSprite* getSpriteByID(std::string ID);
+            bool doesSpriteExists(const std::string& id);
+            void deleteSpriteByID(std::string sprID);
+            void deleteSprite(Graphics::LevelSprite* sprToDelete);
+            //Colliders
+            Collision::PolygonalCollider* createCollider(std::string id);
+            std::vector<Collision::PolygonalCollider*> getColliders() const;
+            std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
+            Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
+            Collision::PolygonalCollider* getCollisionByID(std::string id);
+            std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
+            void deleteCollisionByID(std::string id);
+            void deleteCollision(Collision::PolygonalCollider* colToDelete);
+            void createCollisionAtPos(int x, int y);
+            void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+            //Other
+            kaguya::State* getScriptEngine() const;
+            std::string getBaseFolder() const;
+        };
+    }
 }

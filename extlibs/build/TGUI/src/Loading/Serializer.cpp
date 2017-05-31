@@ -44,18 +44,17 @@ namespace tgui
 
             if (c == 10)
                 return 'A';
-            else if (c == 11)
+            if (c == 11)
                 return 'B';
-            else if (c == 12)
+            if (c == 12)
                 return 'C';
-            else if (c == 13)
+            if (c == 13)
                 return 'D';
-            else if (c == 14)
+            if (c == 14)
                 return 'E';
-            else if (c == 15)
+            if (c == 15)
                 return 'F';
-            else
-                return static_cast<char>(c + '0');
+            return static_cast<char>(c + '0');
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,8 +77,7 @@ namespace tgui
         {
             if (value.getFont() && !value.getFont().getId().empty())
                 return Serializer::serialize({sf::String{value.getFont().getId()}});
-            else
-                return "null";
+            return "null";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,15 +117,15 @@ namespace tgui
             std::string result = value.getString();
 
             auto replace = [&](char from, char to)
+            {
+                size_t pos = 0;
+                while ((pos = result.find(from, pos)) != std::string::npos)
                 {
-                    std::size_t pos = 0;
-                    while ((pos = result.find(from, pos)) != std::string::npos)
-                    {
-                        result[pos] = to;
-                        result.insert(pos, 1, '\\');
-                        pos += 2;
-                    }
-                };
+                    result[pos] = to;
+                    result.insert(pos, 1, '\\');
+                    pos += 2;
+                }
+            };
 
             replace('\\', '\\');
             replace('\"', '\"');
@@ -152,7 +150,7 @@ namespace tgui
         {
             Outline outline = value.getOutline();
             return "(" + to_string(static_cast<unsigned int>(outline.left)) + ", " + to_string(static_cast<unsigned int>(outline.top))
-                 + ", " + to_string(static_cast<unsigned int>(outline.right)) + ", " + to_string(static_cast<unsigned int>(outline.bottom)) + ")";
+                + ", " + to_string(static_cast<unsigned int>(outline.right)) + ", " + to_string(static_cast<unsigned int>(outline.bottom)) + ")";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,12 +166,12 @@ namespace tgui
             if (texture.getData()->rect != sf::IntRect{})
             {
                 result += " Part(" + to_string(texture.getData()->rect.left) + ", " + to_string(texture.getData()->rect.top)
-                            + ", " + to_string(texture.getData()->rect.width) + ", " + to_string(texture.getData()->rect.height) + ")";
+                    + ", " + to_string(texture.getData()->rect.width) + ", " + to_string(texture.getData()->rect.height) + ")";
             }
             if (texture.getMiddleRect() != sf::IntRect{0, 0, static_cast<int>(texture.getData()->texture.getSize().x), static_cast<int>(texture.getData()->texture.getSize().y)})
             {
                 result += " Middle(" + to_string(texture.getMiddleRect().left) + ", " + to_string(texture.getMiddleRect().top)
-                              + ", " + to_string(texture.getMiddleRect().width) + ", " + to_string(texture.getMiddleRect().height) + ")";
+                    + ", " + to_string(texture.getMiddleRect().width) + ", " + to_string(texture.getMiddleRect().height) + ")";
             }
 
             return result;
@@ -200,8 +198,8 @@ namespace tgui
 
             if (!encodedStyle.empty())
                 return encodedStyle.substr(3);
-            else // Something is wrong with the style parameter
-                return "Regular";
+            // Something is wrong with the style parameter
+            return "Regular";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,17 +234,17 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::map<ObjectConverter::Type, Serializer::SerializeFunc> Serializer::m_serializers =
-        {
-            {ObjectConverter::Type::None, serializeEmptyObject},
-            {ObjectConverter::Type::Font, serializeFont},
-            {ObjectConverter::Type::Color, serializeColor},
-            {ObjectConverter::Type::String, serializeString},
-            {ObjectConverter::Type::Number, serializeNumber},
-            {ObjectConverter::Type::Outline, serializeOutline},
-            {ObjectConverter::Type::Texture, serializeTexture},
-            {ObjectConverter::Type::TextStyle, serializeTextStyle},
-            {ObjectConverter::Type::RendererData, serializeRendererData}
-        };
+    {
+        {ObjectConverter::Type::None, serializeEmptyObject},
+        {ObjectConverter::Type::Font, serializeFont},
+        {ObjectConverter::Type::Color, serializeColor},
+        {ObjectConverter::Type::String, serializeString},
+        {ObjectConverter::Type::Number, serializeNumber},
+        {ObjectConverter::Type::Outline, serializeOutline},
+        {ObjectConverter::Type::Texture, serializeTexture},
+        {ObjectConverter::Type::TextStyle, serializeTextStyle},
+        {ObjectConverter::Type::RendererData, serializeRendererData}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

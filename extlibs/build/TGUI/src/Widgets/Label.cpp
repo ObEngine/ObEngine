@@ -33,12 +33,12 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{}},
-                {"bordercolor", Color{60, 60, 60}},
-                {"textcolor", Color{60, 60, 60}},
-                {"backgroundcolor", sf::Color::Transparent}
-            };
+    {
+        {"borders", Borders{}},
+        {"bordercolor", Color{60, 60, 60}},
+        {"textcolor", Color{60, 60, 60}},
+        {"backgroundcolor", sf::Color::Transparent}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,12 +67,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Label::Ptr Label::copy(Label::ConstPtr label)
+    Label::Ptr Label::copy(ConstPtr label)
     {
         if (label)
             return std::static_pointer_cast<Label>(label->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +183,7 @@ namespace tgui
     {
         if (m_autoSize)
             return m_maximumTextWidth;
-        else
-            return getSize().x;
+        return getSize().x;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,8 +309,8 @@ namespace tgui
         // Split the string in multiple lines
         m_lines.clear();
         float width = 0;
-        std::size_t searchPosStart = 0;
-        std::size_t newLinePos = 0;
+        size_t searchPosStart = 0;
+        size_t newLinePos = 0;
         while (newLinePos != sf::String::InvalidPos)
         {
             newLinePos = string.find('\n', searchPosStart);
@@ -341,7 +339,7 @@ namespace tgui
         if (m_autoSize)
         {
             m_size = {std::max(width, maxWidth) + outline.left + outline.right,
-                      (std::max<std::size_t>(m_lines.size(), 1) * m_fontCached.getLineSpacing(m_textSize)) + Text::calculateExtraVerticalSpace(m_fontCached, m_textSize, m_textStyleCached) + outline.top + outline.bottom};
+                (std::max<size_t>(m_lines.size(), 1) * m_fontCached.getLineSpacing(m_textSize)) + Text::calculateExtraVerticalSpace(m_fontCached, m_textSize, m_textStyleCached) + outline.top + outline.bottom};
         }
 
         // Update the line positions
@@ -379,8 +377,8 @@ namespace tgui
                 {
                     line.setPosition(0, 0);
 
-                    std::size_t lastChar = line.getString().getSize();
-                    while (lastChar > 0 && isWhitespace(line.getString()[lastChar-1]))
+                    size_t lastChar = line.getString().getSize();
+                    while (lastChar > 0 && isWhitespace(line.getString()[lastChar - 1]))
                         lastChar--;
 
                     float textWidth = line.findCharacterPos(lastChar).x;
@@ -400,7 +398,7 @@ namespace tgui
 
     void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.transform.translate(std::round(getPosition().x), std::round(getPosition().y));
+        states.transform.translate(round(getPosition().x), round(getPosition().y));
 
         sf::Vector2f innerSize = {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
 

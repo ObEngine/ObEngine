@@ -7,8 +7,8 @@
 
 namespace obe
 {
-	namespace Modes
-	{
-		void startToolkitMode();
-	}
+    namespace Modes
+    {
+        void startToolkitMode();
+    }
 }

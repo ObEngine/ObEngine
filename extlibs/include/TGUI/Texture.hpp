@@ -48,7 +48,9 @@ namespace tgui
         /// @brief Default constructor
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Texture() {}
+        Texture()
+        {
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +335,7 @@ namespace tgui
         std::shared_ptr<TextureData> m_data = nullptr;
 
         sf::IntRect m_middleRect;
-        sf::String  m_id;
+        sf::String m_id;
 
         std::function<void(std::shared_ptr<TextureData>)> m_copyCallback;
         std::function<void(std::shared_ptr<TextureData>)> m_destructCallback;

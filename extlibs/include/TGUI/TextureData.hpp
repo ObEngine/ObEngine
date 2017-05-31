@@ -57,7 +57,7 @@ namespace tgui
     struct TGUI_API TextureDataHolder
     {
         std::shared_ptr<TextureData> data;
-        std::string  filename;
+        std::string filename;
         unsigned int users;
     };
 

@@ -61,9 +61,9 @@ namespace tgui
 
             // Get the global position
             sf::Vector2f topLeftPosition = {((topLeft.x - view.getCenter().x + (view.getSize().x / 2.f)) * view.getViewport().width) + (view.getSize().x * view.getViewport().left),
-                                            ((topLeft.y - view.getCenter().y + (view.getSize().y / 2.f)) * view.getViewport().height) + (view.getSize().y * view.getViewport().top)};
+                ((topLeft.y - view.getCenter().y + (view.getSize().y / 2.f)) * view.getViewport().height) + (view.getSize().y * view.getViewport().top)};
             sf::Vector2f bottomRightPosition = {(bottomRight.x - view.getCenter().x + (view.getSize().x / 2.f)) * view.getViewport().width + (view.getSize().x * view.getViewport().left),
-                                                (bottomRight.y - view.getCenter().y + (view.getSize().y / 2.f)) * view.getViewport().height + (view.getSize().y * view.getViewport().top)};
+                (bottomRight.y - view.getCenter().y + (view.getSize().y / 2.f)) * view.getViewport().height + (view.getSize().y * view.getViewport().top)};
 
             topLeftPosition = states.transform.transformPoint(topLeftPosition);
             bottomRightPosition = states.transform.transformPoint(bottomRightPosition);

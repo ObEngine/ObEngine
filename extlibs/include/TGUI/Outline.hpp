@@ -36,7 +36,7 @@ namespace tgui
 
     class TGUI_API Outline
     {
-      public:
+    public:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Default constructor
@@ -45,9 +45,9 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Outline(float size = 0) :
-            left  (size),
-            top   (size),
-            right (size),
+            left(size),
+            top(size),
+            right(size),
             bottom(size)
         {
         }
@@ -61,9 +61,9 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Outline(float width, float height) :
-            left  (width),
-            top   (height),
-            right (width),
+            left(width),
+            top(height),
+            right(width),
             bottom(height)
         {
         }
@@ -79,9 +79,9 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Outline(float leftBorderWidth, float topBorderHeight, float rightBorderWidth, float bottomBorderHeight) :
-            left  (leftBorderWidth),
-            top   (topBorderHeight),
-            right (rightBorderWidth),
+            left(leftBorderWidth),
+            top(topBorderHeight),
+            right(rightBorderWidth),
             bottom(bottomBorderHeight)
         {
         }

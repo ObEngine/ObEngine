@@ -158,7 +158,7 @@ namespace tgui
             value = operands[0]->value / operands[1]->value;
             break;
         case Operation::Modulus:
-            value = std::fmod(operands[0]->value, operands[1]->value);
+            value = fmod(operands[0]->value, operands[1]->value);
             break;
         case Operation::And:
             value = operands[0]->value && operands[1]->value;
@@ -306,9 +306,9 @@ namespace tgui
         auto ifPos = expression.find("if");
         auto questionMarkPos = expression.find('?');
 
-        while ((ifPos != std::string::npos) && (ifPos > 0) && !::isspace(expression[ifPos-1]))
+        while ((ifPos != std::string::npos) && (ifPos > 0) && !isspace(expression[ifPos - 1]))
             ifPos = expression.find("if", ifPos + 2);
-        while ((ifPos < expression.size()-2) && !::isspace(expression[ifPos+2]))
+        while ((ifPos < expression.size() - 2) && !isspace(expression[ifPos + 2]))
             ifPos = expression.find("if", ifPos + 2);
 
         if ((ifPos != std::string::npos) || (questionMarkPos != std::string::npos))
@@ -328,78 +328,75 @@ namespace tgui
 
                 if (parseLayoutString(expression.substr(0, questionMarkPos)) != 0)
                     return parseLayoutString(expression.substr(questionMarkPos + 1, matchingColonPos - questionMarkPos - 1));
-                else
-                    return parseLayoutString(expression.substr(matchingColonPos + 1));
+                return parseLayoutString(expression.substr(matchingColonPos + 1));
             }
-            else // if-then-else instead of ?:
+            // if-then-else instead of ?:
+            auto thenPos = expression.find("then", ifPos + 2);
+            auto nextifPos = expression.find("if", ifPos + 2);
+
+            while ((nextifPos != std::string::npos) && (nextifPos > 0) && !isspace(expression[nextifPos - 1]))
+                nextifPos = expression.find("if", nextifPos + 2);
+            while ((nextifPos < expression.size() - 2) && !isspace(expression[nextifPos + 2]))
+                nextifPos = expression.find("if", nextifPos + 2);
+
+            while ((thenPos != std::string::npos) && (thenPos > 0) && !isspace(expression[thenPos - 1]))
+                thenPos = expression.find("then", thenPos + 4);
+            while ((thenPos < expression.size() - 4) && !isspace(expression[thenPos + 4]))
+                thenPos = expression.find("then", thenPos + 4);
+
+            while ((thenPos != std::string::npos) && (nextifPos < thenPos))
             {
-                auto thenPos = expression.find("then", ifPos + 2);
-                auto nextifPos = expression.find("if", ifPos + 2);
-
-                while ((nextifPos != std::string::npos) && (nextifPos > 0) && !::isspace(expression[nextifPos-1]))
-                    nextifPos = expression.find("if", nextifPos + 2);
-                while ((nextifPos < expression.size()-2) && !::isspace(expression[nextifPos+2]))
-                    nextifPos = expression.find("if", nextifPos + 2);
-
-                while ((thenPos != std::string::npos) && (thenPos > 0) && !::isspace(expression[thenPos-1]))
-                    thenPos = expression.find("then", thenPos + 4);
-                while ((thenPos < expression.size()-4) && !::isspace(expression[thenPos+4]))
-                    thenPos = expression.find("then", thenPos + 4);
-
-                while ((thenPos != std::string::npos) && (nextifPos < thenPos))
-                {
-                    nextifPos = expression.find("if", thenPos + 4);
-                    while ((nextifPos != std::string::npos) && (nextifPos > 0) && !::isspace(expression[nextifPos-1]))
-                        nextifPos = expression.find("if", nextifPos + 2);
-                    while ((nextifPos < expression.size()-2) && !::isspace(expression[nextifPos+2]))
-                        nextifPos = expression.find("if", nextifPos + 2);
-
-                    thenPos = expression.find("then", thenPos + 4);
-                    while ((thenPos != std::string::npos) && (thenPos > 0) && !::isspace(expression[thenPos-1]))
-                        thenPos = expression.find("then", thenPos + 4);
-                    while ((thenPos < expression.size()-4) && !::isspace(expression[thenPos+4]))
-                        thenPos = expression.find("then", thenPos + 4);
-                }
-
-                if (thenPos == std::string::npos)
-                    return 0; // 'if' without matching 'then'
-
-                auto elsePos = expression.find("else", thenPos + 4);
                 nextifPos = expression.find("if", thenPos + 4);
-
-                while ((nextifPos != std::string::npos) && (nextifPos > 0) && !::isspace(expression[nextifPos-1]))
+                while ((nextifPos != std::string::npos) && (nextifPos > 0) && !isspace(expression[nextifPos - 1]))
                     nextifPos = expression.find("if", nextifPos + 2);
-                while ((nextifPos < expression.size()-2) && !::isspace(expression[nextifPos+2]))
+                while ((nextifPos < expression.size() - 2) && !isspace(expression[nextifPos + 2]))
                     nextifPos = expression.find("if", nextifPos + 2);
 
-                while ((elsePos != std::string::npos) && (elsePos > 0) && !::isspace(expression[elsePos-1]))
-                    elsePos = expression.find("else", elsePos + 4);
-                while ((elsePos < expression.size()-4) && !::isspace(expression[elsePos+4]))
-                    elsePos = expression.find("else", elsePos + 4);
-
-                while ((elsePos != std::string::npos) && (nextifPos < elsePos))
-                {
-                    nextifPos = expression.find("if", elsePos + 4);
-                    while ((nextifPos != std::string::npos) && (nextifPos > 0) && !::isspace(expression[nextifPos-1]))
-                        nextifPos = expression.find("if", nextifPos + 2);
-                    while ((nextifPos < expression.size()-2) && !::isspace(expression[nextifPos+2]))
-                        nextifPos = expression.find("if", nextifPos + 2);
-
-                    elsePos = expression.find("else", elsePos + 4);
-                    while ((elsePos != std::string::npos) && (elsePos > 0) && !::isspace(expression[elsePos-1]))
-                        elsePos = expression.find("else", elsePos + 4);
-                    while ((elsePos < expression.size()-4) && !::isspace(expression[elsePos+4]))
-                        elsePos = expression.find("else", elsePos + 4);
-                }
-
-                if (elsePos == std::string::npos)
-                    return 0; // 'if' and 'then' found without matching 'else'
-
-                if (parseLayoutString(expression.substr(ifPos + 2, thenPos - ifPos - 2)) != 0)
-                    expression = expression.substr(0, ifPos) + to_string(parseLayoutString(expression.substr(thenPos + 4, elsePos - thenPos - 4)));
-                else
-                    expression = expression.substr(0, ifPos) + to_string(parseLayoutString(expression.substr(elsePos + 4)));
+                thenPos = expression.find("then", thenPos + 4);
+                while ((thenPos != std::string::npos) && (thenPos > 0) && !isspace(expression[thenPos - 1]))
+                    thenPos = expression.find("then", thenPos + 4);
+                while ((thenPos < expression.size() - 4) && !isspace(expression[thenPos + 4]))
+                    thenPos = expression.find("then", thenPos + 4);
             }
+
+            if (thenPos == std::string::npos)
+                return 0; // 'if' without matching 'then'
+
+            auto elsePos = expression.find("else", thenPos + 4);
+            nextifPos = expression.find("if", thenPos + 4);
+
+            while ((nextifPos != std::string::npos) && (nextifPos > 0) && !isspace(expression[nextifPos - 1]))
+                nextifPos = expression.find("if", nextifPos + 2);
+            while ((nextifPos < expression.size() - 2) && !isspace(expression[nextifPos + 2]))
+                nextifPos = expression.find("if", nextifPos + 2);
+
+            while ((elsePos != std::string::npos) && (elsePos > 0) && !isspace(expression[elsePos - 1]))
+                elsePos = expression.find("else", elsePos + 4);
+            while ((elsePos < expression.size() - 4) && !isspace(expression[elsePos + 4]))
+                elsePos = expression.find("else", elsePos + 4);
+
+            while ((elsePos != std::string::npos) && (nextifPos < elsePos))
+            {
+                nextifPos = expression.find("if", elsePos + 4);
+                while ((nextifPos != std::string::npos) && (nextifPos > 0) && !isspace(expression[nextifPos - 1]))
+                    nextifPos = expression.find("if", nextifPos + 2);
+                while ((nextifPos < expression.size() - 2) && !isspace(expression[nextifPos + 2]))
+                    nextifPos = expression.find("if", nextifPos + 2);
+
+                elsePos = expression.find("else", elsePos + 4);
+                while ((elsePos != std::string::npos) && (elsePos > 0) && !isspace(expression[elsePos - 1]))
+                    elsePos = expression.find("else", elsePos + 4);
+                while ((elsePos < expression.size() - 4) && !isspace(expression[elsePos + 4]))
+                    elsePos = expression.find("else", elsePos + 4);
+            }
+
+            if (elsePos == std::string::npos)
+                return 0; // 'if' and 'then' found without matching 'else'
+
+            if (parseLayoutString(expression.substr(ifPos + 2, thenPos - ifPos - 2)) != 0)
+                expression = expression.substr(0, ifPos) + to_string(parseLayoutString(expression.substr(thenPos + 4, elsePos - thenPos - 4)));
+            else
+                expression = expression.substr(0, ifPos) + to_string(parseLayoutString(expression.substr(elsePos + 4)));
         }
 
         // All brackets and conditionals should be remove by now
@@ -412,8 +409,7 @@ namespace tgui
         {
             if ((andPos == std::string::npos) || (orPos < andPos))
                 return parseLayoutString(expression.substr(0, orPos)) || parseLayoutString(expression.substr(orPos + 2));
-            else
-                return parseLayoutString(expression.substr(0, andPos)) && parseLayoutString(expression.substr(andPos + 2));
+            return parseLayoutString(expression.substr(0, andPos)) && parseLayoutString(expression.substr(andPos + 2));
         }
 
         andPos = expression.rfind("and");
@@ -422,8 +418,7 @@ namespace tgui
         {
             if ((andPos == std::string::npos) || (orPos < andPos))
                 return parseLayoutString(expression.substr(0, orPos)) || parseLayoutString(expression.substr(orPos + 2));
-            else
-                return parseLayoutString(expression.substr(0, andPos)) && parseLayoutString(expression.substr(andPos + 3));
+            return parseLayoutString(expression.substr(0, andPos)) && parseLayoutString(expression.substr(andPos + 3));
         }
 
         auto equalsPos = expression.rfind("==");
@@ -432,8 +427,7 @@ namespace tgui
         {
             if ((equalsPos == std::string::npos) || (notEqualsPos < equalsPos))
                 return parseLayoutString(expression.substr(0, notEqualsPos)) != parseLayoutString(expression.substr(notEqualsPos + 2));
-            else
-                return parseLayoutString(expression.substr(0, equalsPos)) == parseLayoutString(expression.substr(equalsPos + 2));
+            return parseLayoutString(expression.substr(0, equalsPos)) == parseLayoutString(expression.substr(equalsPos + 2));
         }
 
         auto lessThanPos = expression.rfind('<');
@@ -446,16 +440,12 @@ namespace tgui
             {
                 if ((greaterEqualPos != std::string::npos) && (greaterEqualPos == greaterThanPos))
                     return parseLayoutString(expression.substr(0, greaterEqualPos)) >= parseLayoutString(expression.substr(greaterEqualPos + 2));
-                else
-                    return parseLayoutString(expression.substr(0, greaterThanPos)) > parseLayoutString(expression.substr(greaterThanPos + 1));
+                return parseLayoutString(expression.substr(0, greaterThanPos)) > parseLayoutString(expression.substr(greaterThanPos + 1));
             }
-            else // < or <=
-            {
-                if ((lessEqualPos != std::string::npos) && (lessEqualPos == lessThanPos))
-                    return parseLayoutString(expression.substr(0, lessEqualPos)) <= parseLayoutString(expression.substr(lessEqualPos + 2));
-                else
-                    return parseLayoutString(expression.substr(0, lessThanPos)) < parseLayoutString(expression.substr(lessThanPos + 1));
-            }
+            // < or <=
+            if ((lessEqualPos != std::string::npos) && (lessEqualPos == lessThanPos))
+                return parseLayoutString(expression.substr(0, lessEqualPos)) <= parseLayoutString(expression.substr(lessEqualPos + 2));
+            return parseLayoutString(expression.substr(0, lessThanPos)) < parseLayoutString(expression.substr(lessThanPos + 1));
         }
 
         auto lastPos = std::string::npos;
@@ -465,17 +455,14 @@ namespace tgui
         {
             if ((plusPos != std::string::npos) && ((minusPos == std::string::npos) || (minusPos < plusPos)))
                 return parseLayoutString(expression.substr(0, plusPos)) + parseLayoutString(expression.substr(plusPos + 1));
+            // The minus might be a unary instead of a binary operator
+            auto leftExpr = trim(expression.substr(0, minusPos));
+            if (leftExpr.empty())
+                return -parseLayoutString(expression.substr(minusPos + 1));
+            if ((leftExpr.back() == '+') || (leftExpr.back() == '-') || (leftExpr.back() == '*') || (leftExpr.back() == '/') || (leftExpr.back() == '%'))
+                lastPos = minusPos - 1;
             else
-            {
-                // The minus might be a unary instead of a binary operator
-                auto leftExpr = trim(expression.substr(0, minusPos));
-                if (leftExpr.empty())
-                    return -parseLayoutString(expression.substr(minusPos + 1));
-                else if ((leftExpr.back() == '+') || (leftExpr.back() == '-') || (leftExpr.back() == '*') || (leftExpr.back() == '/') || (leftExpr.back() == '%'))
-                    lastPos = minusPos - 1;
-                else
-                    return parseLayoutString(expression.substr(0, minusPos)) - parseLayoutString(expression.substr(minusPos + 1));
-            }
+                return parseLayoutString(expression.substr(0, minusPos)) - parseLayoutString(expression.substr(minusPos + 1));
 
             plusPos = expression.rfind('+', lastPos);
             minusPos = expression.rfind('-', lastPos);
@@ -507,7 +494,7 @@ namespace tgui
                 if ((multiplyPos == std::string::npos) || (multiplyPos < modulusPos))
                 {
                     if ((dividePos == std::string::npos) || (dividePos < modulusPos))
-                        return std::fmod(parseLayoutString(expression.substr(0, modulusPos)),  parseLayoutString(expression.substr(modulusPos + 1)));
+                        return fmod(parseLayoutString(expression.substr(0, modulusPos)), parseLayoutString(expression.substr(modulusPos + 1)));
                 }
             }
         }
@@ -515,21 +502,20 @@ namespace tgui
         // The expression might reference to a widget instead of being a constant
         assert(!expression.empty());
         expression = toLower(trim(expression));
-        if ((expression.substr(expression.size()-1) == "x")
-         || (expression.substr(expression.size()-1) == "y")
-         || (expression.substr(expression.size()-1) == "w") // width
-         || (expression.substr(expression.size()-1) == "h") // height
-         || (expression.size() >= 4 && expression.substr(expression.size()-4) == "left")
-         || (expression.size() >= 3 && expression.substr(expression.size()-3) == "top")
-         || (expression.size() >= 5 && expression.substr(expression.size()-5) == "width")
-         || (expression.size() >= 6 && expression.substr(expression.size()-6) == "height")
-         || (expression.size() >= 5 && expression.substr(expression.size()-5) == "right")
-         || (expression.size() >= 6 && expression.substr(expression.size()-6) == "bottom"))
+        if ((expression.substr(expression.size() - 1) == "x")
+            || (expression.substr(expression.size() - 1) == "y")
+            || (expression.substr(expression.size() - 1) == "w") // width
+            || (expression.substr(expression.size() - 1) == "h") // height
+            || (expression.size() >= 4 && expression.substr(expression.size() - 4) == "left")
+            || (expression.size() >= 3 && expression.substr(expression.size() - 3) == "top")
+            || (expression.size() >= 5 && expression.substr(expression.size() - 5) == "width")
+            || (expression.size() >= 6 && expression.substr(expression.size() - 6) == "height")
+            || (expression.size() >= 5 && expression.substr(expression.size() - 5) == "right")
+            || (expression.size() >= 6 && expression.substr(expression.size() - 6) == "bottom"))
         {
             if (parentWidget)
                 return parseWidgetName(expression, parentWidget);
-            else
-                return 0;
+            return 0;
         }
 
         // The string no longer contains operators, so return the value that it contains
@@ -545,70 +531,73 @@ namespace tgui
             if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
             {
                 boundCallbacks.insert(alreadyParsedPart + "position");
-                widget->connect("PositionChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetLeft, widget)));
+                widget->connect("PositionChanged", bind(resetLayout, shared_from_this(), bind(getWidgetLeft, widget)));
             }
 
             return widget->getPosition().x;
         }
-        else if (expression == "y" || expression == "top")
+        if (expression == "y" || expression == "top")
         {
             if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
             {
                 boundCallbacks.insert(alreadyParsedPart + "position");
-                widget->connect("PositionChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetTop, widget)));
+                widget->connect("PositionChanged", bind(resetLayout, shared_from_this(), bind(getWidgetTop, widget)));
             }
 
             return widget->getPosition().y;
         }
-        else if (expression == "w" || expression == "width")
+        if (expression == "w" || expression == "width")
         {
             if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
             {
                 boundCallbacks.insert(alreadyParsedPart + "size");
-                widget->connect("SizeChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetWidth, widget)));
+                widget->connect("SizeChanged", bind(resetLayout, shared_from_this(), bind(getWidgetWidth, widget)));
             }
 
             return widget->getSize().x;
         }
-        else if (expression == "h" || expression == "height")
+        if (expression == "h" || expression == "height")
         {
             if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
             {
                 boundCallbacks.insert(alreadyParsedPart + "size");
-                widget->connect("SizeChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetHeight, widget)));
+                widget->connect("SizeChanged", bind(resetLayout, shared_from_this(), bind(getWidgetHeight, widget)));
             }
 
             return widget->getSize().y;
         }
-        else if (expression == "right")
+        else
         {
-            if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
+            if (expression == "right")
             {
-                boundCallbacks.insert(alreadyParsedPart + "position");
-                widget->connect("PositionChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetLeft, widget)));
-            }
-            if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
-            {
-                boundCallbacks.insert(alreadyParsedPart + "size");
-                widget->connect("SizeChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetWidth, widget)));
-            }
+                if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
+                {
+                    boundCallbacks.insert(alreadyParsedPart + "position");
+                    widget->connect("PositionChanged", bind(resetLayout, shared_from_this(), bind(getWidgetLeft, widget)));
+                }
+                if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
+                {
+                    boundCallbacks.insert(alreadyParsedPart + "size");
+                    widget->connect("SizeChanged", bind(resetLayout, shared_from_this(), bind(getWidgetWidth, widget)));
+                }
 
-            return widget->getPosition().x + widget->getSize().x;
-        }
-        else if (expression == "bottom")
-        {
-            if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
-            {
-                boundCallbacks.insert(alreadyParsedPart + "position");
-                widget->connect("PositionChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetTop, widget)));
+                return widget->getPosition().x + widget->getSize().x;
             }
-            if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
+            if (expression == "bottom")
             {
-                boundCallbacks.insert(alreadyParsedPart + "size");
-                widget->connect("SizeChanged", std::bind(resetLayout, shared_from_this(), std::bind(getWidgetHeight, widget)));
-            }
+                if (boundCallbacks.find(alreadyParsedPart + "position") == boundCallbacks.end())
+                {
+                    boundCallbacks.insert(alreadyParsedPart + "position");
+                    widget->connect("PositionChanged", bind(resetLayout, shared_from_this(), bind(getWidgetTop, widget)));
+                }
+                if (boundCallbacks.find(alreadyParsedPart + "size") == boundCallbacks.end())
+                {
+                    boundCallbacks.insert(alreadyParsedPart + "size");
+                    widget->connect("SizeChanged", bind(resetLayout, shared_from_this(), bind(getWidgetHeight, widget)));
+                }
 
-            return widget->getPosition().y + widget->getSize().y;
+                return widget->getPosition().y + widget->getSize().y;
+            }
         }
 
         auto dotPos = expression.find('.');
@@ -618,11 +607,10 @@ namespace tgui
             if (widgetName == "parent" || widgetName == "&")
             {
                 if (widget->getParent())
-                    return parseWidgetName(expression.substr(dotPos+1), widget->getParent(), "parent.");
-                else
-                    return 0;
+                    return parseWidgetName(expression.substr(dotPos + 1), widget->getParent(), "parent.");
+                return 0;
             }
-            else if (!widgetName.empty())
+            if (!widgetName.empty())
             {
                 // If the widget is a container, search in its children first
                 Container* container = dynamic_cast<Container*>(widget);
@@ -630,7 +618,7 @@ namespace tgui
                 {
                     auto widgetToBind = container->get(widgetName);
                     if (widgetToBind)
-                        return parseWidgetName(expression.substr(dotPos+1), widgetToBind.get(), widgetName + ".");
+                        return parseWidgetName(expression.substr(dotPos + 1), widgetToBind.get(), widgetName + ".");
                 }
 
                 // If the widget has a parent, look for a sibling
@@ -638,7 +626,7 @@ namespace tgui
                 {
                     auto widgetToBind = widget->getParent()->get(widgetName);
                     if (widgetToBind)
-                        return parseWidgetName(expression.substr(dotPos+1), widgetToBind.get(), widgetName + ".");
+                        return parseWidgetName(expression.substr(dotPos + 1), widgetToBind.get(), widgetName + ".");
                 }
             }
         }
@@ -811,7 +799,7 @@ namespace tgui
         std::string xExpr;
         std::string yExpr;
 
-        std::size_t currentPos = 0;
+        size_t currentPos = 0;
         auto openingBracePos = expression.find('{', currentPos);
         auto bindPositionPos = expression.find("pos", currentPos);
         auto bindSizePos = expression.find("size", currentPos);
@@ -1081,7 +1069,7 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getPosition().x;
-        widget->connect("PositionChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetLeft, widget.get())));
+        widget->connect("PositionChanged", bind(resetLayout, result.getImpl(), bind(getWidgetLeft, widget.get())));
         return result;
     }
 
@@ -1091,7 +1079,7 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getPosition().y;
-        widget->connect("PositionChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetTop, widget.get())));
+        widget->connect("PositionChanged", bind(resetLayout, result.getImpl(), bind(getWidgetTop, widget.get())));
         return result;
     }
 
@@ -1101,7 +1089,7 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getSize().x;
-        widget->connect("SizeChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetWidth, widget.get())));
+        widget->connect("SizeChanged", bind(resetLayout, result.getImpl(), bind(getWidgetWidth, widget.get())));
         return result;
     }
 
@@ -1111,7 +1099,7 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getSize().y;
-        widget->connect("SizeChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetHeight, widget.get())));
+        widget->connect("SizeChanged", bind(resetLayout, result.getImpl(), bind(getWidgetHeight, widget.get())));
         return result;
     }
 
@@ -1121,8 +1109,8 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getPosition().x + widget->getSize().x;
-        widget->connect("PositionChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetRight, widget.get())));
-        widget->connect("SizeChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetRight, widget.get())));
+        widget->connect("PositionChanged", bind(resetLayout, result.getImpl(), bind(getWidgetRight, widget.get())));
+        widget->connect("SizeChanged", bind(resetLayout, result.getImpl(), bind(getWidgetRight, widget.get())));
         return result;
     }
 
@@ -1132,8 +1120,8 @@ namespace tgui
     {
         Layout result;
         result.getImpl()->value = widget->getPosition().y + widget->getSize().y;
-        widget->connect("PositionChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetBottom, widget.get())));
-        widget->connect("SizeChanged", std::bind(resetLayout, result.getImpl(), std::bind(getWidgetBottom, widget.get())));
+        widget->connect("PositionChanged", bind(resetLayout, result.getImpl(), bind(getWidgetBottom, widget.get())));
+        widget->connect("SizeChanged", bind(resetLayout, result.getImpl(), bind(getWidgetBottom, widget.get())));
         return result;
     }
 

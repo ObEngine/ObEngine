@@ -77,11 +77,11 @@ namespace tgui
         /// @param string  String to store
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ObjectConverter(const sf::String& string)  :
-            m_type      {Type::String},
-            m_value     {string},
+        ObjectConverter(const sf::String& string) :
+            m_type {Type::String},
+            m_value {string},
             m_serialized{true},
-            m_string    {string}
+            m_string {string}
         {
         }
 
@@ -301,7 +301,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private:
         Type m_type = Type::None;
-        Any  m_value;
+        Any m_value;
 
         bool m_serialized = false;
         sf::String m_string;

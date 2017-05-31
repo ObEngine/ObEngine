@@ -54,7 +54,7 @@ namespace tgui
 
     namespace
     {
-        #define SET_PROPERTY(property, value) node->propertyValuePairs[property] = std::make_shared<DataIO::ValueNode>(value)
+#define SET_PROPERTY(property, value) node->propertyValuePairs[property] = std::make_shared<DataIO::ValueNode>(value)
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,18 +94,18 @@ namespace tgui
                 node->name = widget->getWidgetType() + "." + Serializer::serialize(widgetName);
 
             if (!widget->isVisible())
-                SET_PROPERTY("Visible", "false");
+            SET_PROPERTY("Visible", "false");
             if (!widget->isEnabled())
-                SET_PROPERTY("Enabled", "false");
+            SET_PROPERTY("Enabled", "false");
             if (widget->getPosition() != sf::Vector2f{})
-                SET_PROPERTY("Position", emitLayout(widget->getPositionLayout()));
+            SET_PROPERTY("Position", emitLayout(widget->getPositionLayout()));
             if (widget->getSize() != sf::Vector2f{})
             {
                 /// TODO: Fix Grid and Tab to no longer override the getSize function
                 if (widget->getSize() != widget->getSizeLayout().getValue())
-                    SET_PROPERTY("Size", emitLayout({widget->getSize()}));
+                SET_PROPERTY("Size", emitLayout({widget->getSize()}));
                 else
-                    SET_PROPERTY("Size", emitLayout(widget->getSizeLayout()));
+                SET_PROPERTY("Size", emitLayout(widget->getSizeLayout()));
             }
 
             if (widget->getToolTip() != nullptr)
@@ -176,7 +176,7 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(button);
 
             if (!button->getText().isEmpty())
-                SET_PROPERTY("Text", Serializer::serialize(button->getText()));
+            SET_PROPERTY("Text", Serializer::serialize(button->getText()));
 
             SET_PROPERTY("TextSize", to_string(button->getTextSize()));
             return node;
@@ -193,19 +193,19 @@ namespace tgui
             SET_PROPERTY("TextColor", Serializer::serialize(chatBox->getTextColor()));
 
             if (chatBox->getLineLimit())
-                SET_PROPERTY("LineLimit", to_string(chatBox->getLineLimit()));
+            SET_PROPERTY("LineLimit", to_string(chatBox->getLineLimit()));
 
             if (chatBox->getLinesStartFromTop())
-                SET_PROPERTY("LinesStartFromTop", "true");
+            SET_PROPERTY("LinesStartFromTop", "true");
             else
-                SET_PROPERTY("LinesStartFromTop", "false");
+            SET_PROPERTY("LinesStartFromTop", "false");
 
             if (chatBox->getNewLinesBelowOthers())
-                SET_PROPERTY("NewLinesBelowOthers", "true");
+            SET_PROPERTY("NewLinesBelowOthers", "true");
             else
-                SET_PROPERTY("NewLinesBelowOthers", "false");
+            SET_PROPERTY("NewLinesBelowOthers", "false");
 
-            for (std::size_t i = 0; i < chatBox->getLineAmount(); ++i)
+            for (size_t i = 0; i < chatBox->getLineAmount(); ++i)
             {
                 unsigned int lineTextSize = chatBox->getLineTextSize(i);
                 sf::Color lineTextColor = chatBox->getLineColor(i);
@@ -234,20 +234,20 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("container")(childWindow);
 
             if (childWindow->getTitleAlignment() == ChildWindow::TitleAlignment::Left)
-                SET_PROPERTY("TitleAlignment", "Left");
+            SET_PROPERTY("TitleAlignment", "Left");
             else if (childWindow->getTitleAlignment() == ChildWindow::TitleAlignment::Center)
-                SET_PROPERTY("TitleAlignment", "Center");
+            SET_PROPERTY("TitleAlignment", "Center");
             else if (childWindow->getTitleAlignment() == ChildWindow::TitleAlignment::Right)
-                SET_PROPERTY("TitleAlignment", "Right");
+            SET_PROPERTY("TitleAlignment", "Right");
 
             if (childWindow->getTitle().getSize() > 0)
-                SET_PROPERTY("Title", Serializer::serialize(childWindow->getTitle()));
+            SET_PROPERTY("Title", Serializer::serialize(childWindow->getTitle()));
 
             if (childWindow->isKeptInParent())
-                SET_PROPERTY("KeepInParent", "true");
+            SET_PROPERTY("KeepInParent", "true");
 
             if (childWindow->isResizable())
-                SET_PROPERTY("Resizable", "true");
+            SET_PROPERTY("Resizable", "true");
 
             std::string serializedTitleButtons;
             if (childWindow->getTitleButtons() & ChildWindow::TitleButton::Minimize)
@@ -281,7 +281,7 @@ namespace tgui
 
                 std::string itemList = "[" + Serializer::serialize(items[0]);
                 std::string itemIdList = "[" + Serializer::serialize(ids[0]);
-                for (std::size_t i = 1; i < items.size(); ++i)
+                for (size_t i = 1; i < items.size(); ++i)
                 {
                     itemList += ", " + Serializer::serialize(items[i]);
                     itemIdList += ", " + Serializer::serialize(ids[i]);
@@ -310,33 +310,33 @@ namespace tgui
             if (editBox->getAlignment() != EditBox::Alignment::Left)
             {
                 if (editBox->getAlignment() == EditBox::Alignment::Center)
-                    SET_PROPERTY("Alignment", "Center");
+                SET_PROPERTY("Alignment", "Center");
                 else
-                    SET_PROPERTY("Alignment", "Right");
+                SET_PROPERTY("Alignment", "Right");
             }
 
             if (editBox->getInputValidator() != ".*")
             {
                 if (editBox->getInputValidator() == EditBox::Validator::Int)
-                    SET_PROPERTY("InputValidator", "Int");
+                SET_PROPERTY("InputValidator", "Int");
                 else if (editBox->getInputValidator() == EditBox::Validator::UInt)
-                    SET_PROPERTY("InputValidator", "UInt");
+                SET_PROPERTY("InputValidator", "UInt");
                 else if (editBox->getInputValidator() == EditBox::Validator::Float)
-                    SET_PROPERTY("InputValidator", "Float");
+                SET_PROPERTY("InputValidator", "Float");
                 else
-                    SET_PROPERTY("InputValidator", Serializer::serialize(sf::String{editBox->getInputValidator()}));
+                SET_PROPERTY("InputValidator", Serializer::serialize(sf::String{editBox->getInputValidator()}));
             }
 
             if (!editBox->getText().isEmpty())
-                SET_PROPERTY("Text", Serializer::serialize(editBox->getText()));
+            SET_PROPERTY("Text", Serializer::serialize(editBox->getText()));
             if (!editBox->getDefaultText().isEmpty())
-                SET_PROPERTY("DefaultText", Serializer::serialize(editBox->getDefaultText()));
+            SET_PROPERTY("DefaultText", Serializer::serialize(editBox->getDefaultText()));
             if (editBox->getPasswordCharacter() != '\0')
-                SET_PROPERTY("PasswordCharacter", Serializer::serialize(sf::String(editBox->getPasswordCharacter())));
+            SET_PROPERTY("PasswordCharacter", Serializer::serialize(sf::String(editBox->getPasswordCharacter())));
             if (editBox->getMaximumCharacters() != 0)
-                SET_PROPERTY("MaximumCharacters", to_string(editBox->getMaximumCharacters()));
+            SET_PROPERTY("MaximumCharacters", to_string(editBox->getMaximumCharacters()));
             if (editBox->isTextWidthLimited())
-                SET_PROPERTY("TextWidthLimited", "true");
+            SET_PROPERTY("TextWidthLimited", "true");
 
             SET_PROPERTY("TextSize", to_string(editBox->getTextSize()));
             return node;
@@ -350,9 +350,9 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(knob);
 
             if (knob->getClockwiseTurning())
-                SET_PROPERTY("ClockwiseTurning", "true");
+            SET_PROPERTY("ClockwiseTurning", "true");
             else
-                SET_PROPERTY("ClockwiseTurning", "false");
+            SET_PROPERTY("ClockwiseTurning", "false");
 
             SET_PROPERTY("StartRotation", to_string(knob->getStartRotation()));
             SET_PROPERTY("EndRotation", to_string(knob->getEndRotation()));
@@ -370,21 +370,21 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(label);
 
             if (label->getHorizontalAlignment() == Label::HorizontalAlignment::Center)
-                SET_PROPERTY("HorizontalAlignment", "Center");
+            SET_PROPERTY("HorizontalAlignment", "Center");
             else if (label->getHorizontalAlignment() == Label::HorizontalAlignment::Right)
-                SET_PROPERTY("HorizontalAlignment", "Right");
+            SET_PROPERTY("HorizontalAlignment", "Right");
 
             if (label->getVerticalAlignment() == Label::VerticalAlignment::Center)
-                SET_PROPERTY("VerticalAlignment", "Center");
+            SET_PROPERTY("VerticalAlignment", "Center");
             else if (label->getVerticalAlignment() == Label::VerticalAlignment::Bottom)
-                SET_PROPERTY("VerticalAlignment", "Bottom");
+            SET_PROPERTY("VerticalAlignment", "Bottom");
 
             if (!label->getText().isEmpty())
-                SET_PROPERTY("Text", Serializer::serialize(label->getText()));
+            SET_PROPERTY("Text", Serializer::serialize(label->getText()));
             if (label->getMaximumTextWidth() > 0)
-                SET_PROPERTY("MaximumTextWidth", to_string(label->getMaximumTextWidth()));
+            SET_PROPERTY("MaximumTextWidth", to_string(label->getMaximumTextWidth()));
             if (label->getAutoSize())
-                SET_PROPERTY("AutoSize", "true");
+            SET_PROPERTY("AutoSize", "true");
 
             SET_PROPERTY("TextSize", to_string(label->getTextSize()));
             return node;
@@ -404,7 +404,7 @@ namespace tgui
 
                 std::string itemList = "[" + Serializer::serialize(items[0]);
                 std::string itemIdList = "[" + Serializer::serialize(ids[0]);
-                for (std::size_t i = 1; i < items.size(); ++i)
+                for (size_t i = 1; i < items.size(); ++i)
                 {
                     itemList += ", " + Serializer::serialize(items[i]);
                     itemIdList += ", " + Serializer::serialize(ids[i]);
@@ -417,7 +417,7 @@ namespace tgui
             }
 
             if (!listBox->getAutoScroll())
-                SET_PROPERTY("AutoScroll", "false");
+            SET_PROPERTY("AutoScroll", "false");
 
             SET_PROPERTY("TextSize", to_string(listBox->getTextSize()));
             SET_PROPERTY("ItemHeight", to_string(listBox->getItemHeight()));
@@ -446,7 +446,7 @@ namespace tgui
                 if (!items.empty())
                 {
                     std::string itemList = "[" + Serializer::serialize(items[0]);
-                    for (std::size_t i = 1; i < items.size(); ++i)
+                    for (size_t i = 1; i < items.size(); ++i)
                         itemList += ", " + Serializer::serialize(items[i]);
                     itemList += "]";
 
@@ -484,9 +484,9 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(picture);
 
             if (!picture->getLoadedFilename().isEmpty())
-                SET_PROPERTY("Filename", Serializer::serialize(sf::String{picture->getLoadedFilename()}));
+            SET_PROPERTY("Filename", Serializer::serialize(sf::String{picture->getLoadedFilename()}));
             if (picture->isSmooth())
-                SET_PROPERTY("Smooth", "true");
+            SET_PROPERTY("Smooth", "true");
 
             return node;
         }
@@ -499,16 +499,16 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(progressBar);
 
             if (!progressBar->getText().isEmpty())
-                SET_PROPERTY("Text", Serializer::serialize(progressBar->getText()));
+            SET_PROPERTY("Text", Serializer::serialize(progressBar->getText()));
 
             if (progressBar->getFillDirection() != ProgressBar::FillDirection::LeftToRight)
             {
                 if (progressBar->getFillDirection() == ProgressBar::FillDirection::RightToLeft)
-                    SET_PROPERTY("FillDirection", "RightToLeft");
+                SET_PROPERTY("FillDirection", "RightToLeft");
                 else if (progressBar->getFillDirection() == ProgressBar::FillDirection::TopToBottom)
-                    SET_PROPERTY("FillDirection", "TopToBottom");
+                SET_PROPERTY("FillDirection", "TopToBottom");
                 else if (progressBar->getFillDirection() == ProgressBar::FillDirection::BottomToTop)
-                    SET_PROPERTY("FillDirection", "BottomToTop");
+                SET_PROPERTY("FillDirection", "BottomToTop");
             }
 
             SET_PROPERTY("Minimum", to_string(progressBar->getMinimum()));
@@ -526,11 +526,11 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(radioButton);
 
             if (!radioButton->getText().isEmpty())
-                SET_PROPERTY("Text", Serializer::serialize(radioButton->getText()));
+            SET_PROPERTY("Text", Serializer::serialize(radioButton->getText()));
             if (radioButton->isChecked())
-                SET_PROPERTY("Checked", "true");
+            SET_PROPERTY("Checked", "true");
             if (!radioButton->isTextClickable())
-                SET_PROPERTY("TextClickable", "false");
+            SET_PROPERTY("TextClickable", "false");
 
             SET_PROPERTY("TextSize", to_string(radioButton->getTextSize()));
             return node;
@@ -544,9 +544,9 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(scrollbar);
 
             if (scrollbar->getAutoHide())
-                SET_PROPERTY("AutoHide", "true");
+            SET_PROPERTY("AutoHide", "true");
             else
-                SET_PROPERTY("AutoHide", "false");
+            SET_PROPERTY("AutoHide", "false");
 
             SET_PROPERTY("LowValue", to_string(scrollbar->getLowValue()));
             SET_PROPERTY("Maximum", to_string(scrollbar->getMaximum()));
@@ -576,9 +576,9 @@ namespace tgui
             auto node = WidgetSaver::getSaveFunction("widget")(spinButton);
 
             if (spinButton->getVerticalScroll())
-                SET_PROPERTY("VerticalScroll", "true");
+            SET_PROPERTY("VerticalScroll", "true");
             else
-                SET_PROPERTY("VerticalScroll", "false");
+            SET_PROPERTY("VerticalScroll", "false");
 
             SET_PROPERTY("Minimum", to_string(spinButton->getMinimum()));
             SET_PROPERTY("Maximum", to_string(spinButton->getMaximum()));
@@ -596,7 +596,7 @@ namespace tgui
             if (tabs->getTabsCount() > 0)
             {
                 std::string tabList = "[" + Serializer::serialize(tabs->getText(0));
-                for (std::size_t i = 1; i < tabs->getTabsCount(); ++i)
+                for (size_t i = 1; i < tabs->getTabsCount(); ++i)
                     tabList += ", " + Serializer::serialize(tabs->getText(i));
 
                 tabList += "]";
@@ -604,10 +604,10 @@ namespace tgui
             }
 
             if (tabs->getSelectedIndex() >= 0)
-                SET_PROPERTY("Selected", to_string(tabs->getSelectedIndex()));
+            SET_PROPERTY("Selected", to_string(tabs->getSelectedIndex()));
 
             if (tabs->getMaximumTabWidth() > 0)
-                SET_PROPERTY("MaximumTabWidth", to_string(tabs->getMaximumTabWidth()));
+            SET_PROPERTY("MaximumTabWidth", to_string(tabs->getMaximumTabWidth()));
 
             SET_PROPERTY("TextSize", to_string(tabs->getTextSize()));
             SET_PROPERTY("TabHeight", to_string(tabs->getTabHeight()));
@@ -626,10 +626,10 @@ namespace tgui
             SET_PROPERTY("MaximumCharacters", to_string(textBox->getMaximumCharacters()));
 
             if (textBox->isReadOnly())
-                SET_PROPERTY("ReadOnly", "true");
+            SET_PROPERTY("ReadOnly", "true");
 
             if (!textBox->isVerticalScrollbarPresent())
-                SET_PROPERTY("VerticalScrollbarPresent", "false");
+            SET_PROPERTY("VerticalScrollbarPresent", "false");
 
             return node;
         }
@@ -638,34 +638,34 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::map<std::string, WidgetSaver::SaveFunction> WidgetSaver::m_saveFunctions =
-        {
-            {"widget", saveWidget},
-            {"container", saveContainer},
-            {"button", saveButton},
-            {"canvas", saveWidget},
-            {"chatbox", saveChatBox},
-            {"checkbox", saveRadioButton},
-            {"childwindow", saveChildWindow},
-            {"clickablewidget", saveWidget},
-            {"combobox", saveComboBox},
-            {"editbox", saveEditBox},
-            {"group", saveContainer},
-            {"knob", saveKnob},
-            {"label", saveLabel},
-            {"listbox", saveListBox},
-            {"menubar", saveMenuBar},
-            {"messagebox", saveMessageBox},
-            {"panel", saveContainer},
-            {"picture", savePicture},
-            {"progressbar", saveProgressBar},
-            {"radiobutton", saveRadioButton},
-            {"radiobuttongroup", saveContainer},
-            {"scrollbar", saveScrollbar},
-            {"slider", saveSlider},
-            {"spinbutton", saveSpinButton},
-            {"tabs", saveTabs},
-            {"textbox", saveTextBox}
-        };
+    {
+        {"widget", saveWidget},
+        {"container", saveContainer},
+        {"button", saveButton},
+        {"canvas", saveWidget},
+        {"chatbox", saveChatBox},
+        {"checkbox", saveRadioButton},
+        {"childwindow", saveChildWindow},
+        {"clickablewidget", saveWidget},
+        {"combobox", saveComboBox},
+        {"editbox", saveEditBox},
+        {"group", saveContainer},
+        {"knob", saveKnob},
+        {"label", saveLabel},
+        {"listbox", saveListBox},
+        {"menubar", saveMenuBar},
+        {"messagebox", saveMessageBox},
+        {"panel", saveContainer},
+        {"picture", savePicture},
+        {"progressbar", saveProgressBar},
+        {"radiobutton", saveRadioButton},
+        {"radiobuttongroup", saveContainer},
+        {"scrollbar", saveScrollbar},
+        {"slider", saveSlider},
+        {"spinbutton", saveSpinButton},
+        {"tabs", saveTabs},
+        {"textbox", saveTextBox}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -674,7 +674,7 @@ namespace tgui
         auto node = std::make_shared<DataIO::Node>();
         for (const auto& child : widget->getWidgets())
         {
-            auto& saveFunction = WidgetSaver::getSaveFunction(toLower(child->getWidgetType()));
+            auto& saveFunction = getSaveFunction(toLower(child->getWidgetType()));
             if (saveFunction)
                 node->children.emplace_back(saveFunction(child));
             else

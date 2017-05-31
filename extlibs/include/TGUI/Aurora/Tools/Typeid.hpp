@@ -37,65 +37,62 @@
 
 namespace aurora
 {
-namespace detail
-{
-
-	template <typename T>
-	void verifyRttiType()
-	{
-		AURORA_REQUIRE_COMPLETE_TYPE(T);
-		static_assert(std::is_polymorphic<T>::value, "T must be a polymorphic type.");
+    namespace detail
+    {
+        template <typename T>
+        void verifyRttiType()
+        {
+            AURORA_REQUIRE_COMPLETE_TYPE(T);
+            static_assert(std::is_polymorphic<T>::value, "T must be a polymorphic type.");
 #ifndef AURORA_TYPEID_ALLOW_NONVIRTUAL_DTOR
-		static_assert(std::has_virtual_destructor<T>::value,  "Polymorphic types should have a virtual destructor. "
-			"Define AURORA_TYPEID_ALLOW_NONVIRTUAL_DTOR to let this code compile.");
+            static_assert(std::has_virtual_destructor<T>::value, "Polymorphic types should have a virtual destructor. "
+                "Define AURORA_TYPEID_ALLOW_NONVIRTUAL_DTOR to let this code compile.");
 #endif
-	}
+        }
+    } // namespace detail
 
-} // namespace detail
+    /// @addtogroup Tools
+    /// @{
 
-/// @addtogroup Tools
-/// @{
+    /// @brief Safe typeid operator for references
+    /// @details The C++ typeid operator can easily be used incorrectly in RTTI scenarios, leading to tedious bugs at runtime:
+    /// * The operand is a value instead of a reference.
+    /// * The operand is a pointer which was not dereferenced.
+    /// * The operand is an incomplete type. The compiler has no knowledge about the polymorphic class hierarchy at this point.
+    /// * The class is not polymorphic. This can happen when a destructor was not declared virtual.
+    ///
+    /// This implementation makes sure that the above-mentioned cases do not occur. %Type verification happens at compile time, so
+    /// there is no performance overhead in using this function. This function is specifically designed for the use of RTTI in
+    /// polymorphic class hierarchies, it cannot be used in other scenarios (e.g. printing arbitrary type names for debugging).
+    ///
+    /// Usage:
+    /// @code
+    /// Base& baseRef = ...;
+    /// std::type_index t = aurora::typeIndex(baseRef);
+    /// @endcode
+    template <typename T>
+    std::type_index typeIndex(T& reference)
+    {
+        detail::verifyRttiType<T>();
+        return typeid(reference);
+    }
 
-/// @brief Safe typeid operator for references
-/// @details The C++ typeid operator can easily be used incorrectly in RTTI scenarios, leading to tedious bugs at runtime:
-/// * The operand is a value instead of a reference.
-/// * The operand is a pointer which was not dereferenced.
-/// * The operand is an incomplete type. The compiler has no knowledge about the polymorphic class hierarchy at this point.
-/// * The class is not polymorphic. This can happen when a destructor was not declared virtual.
-///
-/// This implementation makes sure that the above-mentioned cases do not occur. %Type verification happens at compile time, so
-/// there is no performance overhead in using this function. This function is specifically designed for the use of RTTI in
-/// polymorphic class hierarchies, it cannot be used in other scenarios (e.g. printing arbitrary type names for debugging).
-///
-/// Usage:
-/// @code
-/// Base& baseRef = ...;
-/// std::type_index t = aurora::typeIndex(baseRef);
-/// @endcode
-template <typename T>
-std::type_index typeIndex(T& reference)
-{
-	detail::verifyRttiType<T>();
-	return typeid(reference);
-}
-
-/// @brief Safe typeid operator for types
-/// @details Same as <c>typeIndex(T& reference)</c>, but for types.
-///
-/// Usage:
-/// @code
-/// std::type_index t = aurora::typeIndex<Base>();
-/// @endcode
-template <typename T>
-std::type_index typeIndex()
-{
-	detail::verifyRttiType<T>();
-	return typeid(T);
-}
+    /// @brief Safe typeid operator for types
+    /// @details Same as <c>typeIndex(T& reference)</c>, but for types.
+    ///
+    /// Usage:
+    /// @code
+    /// std::type_index t = aurora::typeIndex<Base>();
+    /// @endcode
+    template <typename T>
+    std::type_index typeIndex()
+    {
+        detail::verifyRttiType<T>();
+        return typeid(T);
+    }
 
 
-/// @}
-
+    /// @}
 } // namespace aurora
 
 #endif // AURORA_TYPEID_HPP

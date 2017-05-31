@@ -4,10 +4,10 @@
 #include <vector>
 
 #ifdef _USE_CPP_NEW_FS
-	#include <elzip/elzip.hpp>
+#include <elzip/elzip.hpp>
 #else
 	#include <elzip/elzip_fallback.hpp>
-#endif 
+#endif
 
 #include <vili/Vili.hpp>
 
@@ -16,15 +16,15 @@
 
 namespace obe
 {
-	namespace System
-	{
-		class Package
-		{
-		public:
-			static std::string GetPackageLocation(std::string packageName);
-			static bool PackageExists(std::string packageName);
-			static bool Install(std::string packageName);
-			static bool Load(std::string packageName, unsigned int priority = 1);
-		};
-	}
+    namespace System
+    {
+        class Package
+        {
+        public:
+            static std::string GetPackageLocation(std::string packageName);
+            static bool PackageExists(std::string packageName);
+            static bool Install(std::string packageName);
+            static bool Load(std::string packageName, unsigned int priority = 1);
+        };
+    }
 }

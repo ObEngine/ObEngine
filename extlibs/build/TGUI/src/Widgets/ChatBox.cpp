@@ -33,12 +33,12 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{2}},
-                {"padding", Padding{2, 0, 0, 0}},
-                {"bordercolor", sf::Color::Black},
-                {"backgroundcolor", Color{245, 245, 245}}
-            };
+    {
+        {"borders", Borders{2}},
+        {"padding", Padding{2, 0, 0, 0}},
+        {"bordercolor", sf::Color::Black},
+        {"backgroundcolor", Color{245, 245, 245}}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,12 +64,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ChatBox::Ptr ChatBox::copy(ChatBox::ConstPtr chatBox)
+    ChatBox::Ptr ChatBox::copy(ConstPtr chatBox)
     {
         if (chatBox)
             return std::static_pointer_cast<ChatBox>(chatBox->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +123,7 @@ namespace tgui
             if (m_newLinesBelowOthers)
                 removeLine(0);
             else
-                removeLine(m_maxLines-1);
+                removeLine(m_maxLines - 1);
         }
 
         Line line;
@@ -147,55 +146,55 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::String ChatBox::getLine(std::size_t lineIndex) const
+    sf::String ChatBox::getLine(size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].string;
         }
-        else // Index too high
-            return "";
+        // Index too high
+        return "";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::Color ChatBox::getLineColor(std::size_t lineIndex) const
+    sf::Color ChatBox::getLineColor(size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getColor();
         }
-        else // Index too high
-            return m_textColor;
+        // Index too high
+        return m_textColor;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    unsigned int ChatBox::getLineTextSize(std::size_t lineIndex) const
+    unsigned int ChatBox::getLineTextSize(size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getCharacterSize();
         }
-        else // Index too high
-            return m_textSize;
+        // Index too high
+        return m_textSize;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<sf::Font> ChatBox::getLineFont(std::size_t lineIndex) const
+    std::shared_ptr<sf::Font> ChatBox::getLineFont(size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getFont();
         }
-        else // Index too high
-            return m_fontCached;
+        // Index too high
+        return m_fontCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ChatBox::removeLine(std::size_t lineIndex)
+    bool ChatBox::removeLine(size_t lineIndex)
     {
         if (lineIndex < m_lines.size())
         {
@@ -204,8 +203,8 @@ namespace tgui
             recalculateFullTextHeight();
             return true;
         }
-        else // Index too high
-            return false;
+        // Index too high
+        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,14 +218,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t ChatBox::getLineAmount()
+    size_t ChatBox::getLineAmount()
     {
         return m_lines.size();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ChatBox::setLineLimit(std::size_t maxLines)
+    void ChatBox::setLineLimit(size_t maxLines)
     {
         m_maxLines = maxLines;
 
@@ -244,7 +243,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::size_t ChatBox::getLineLimit()
+    size_t ChatBox::getLineLimit()
     {
         return m_maxLines;
     }
@@ -418,7 +417,7 @@ namespace tgui
         if (m_newLinesBelowOthers)
         {
             if (((oldMaximum >= m_scroll.getLowValue()) && (m_scroll.getValue() == oldMaximum - m_scroll.getLowValue()))
-             || ((oldMaximum <= m_scroll.getLowValue()) && (m_scroll.getMaximum() > m_scroll.getLowValue())))
+                || ((oldMaximum <= m_scroll.getLowValue()) && (m_scroll.getMaximum() > m_scroll.getLowValue())))
             {
                 m_scroll.setValue(m_scroll.getMaximum() - m_scroll.getLowValue());
             }

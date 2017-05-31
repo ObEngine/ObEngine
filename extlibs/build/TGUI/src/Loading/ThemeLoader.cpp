@@ -44,7 +44,7 @@
 
 // Ignore warning "C4503: decorated name length exceeded, name was truncated" in Visual Studio
 #if defined _MSC_VER
-    #pragma warning(disable : 4503)
+#pragma warning(disable : 4503)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ namespace tgui
                     if (quotePos != std::string::npos)
                     {
                         ///TODO: Detect absolute pathname on windows
-                        if ((pair.second->value.getSize() > quotePos + 1) && (pair.second->value[quotePos+1] != '/'))
-                            pair.second->value = pair.second->value.substring(0, quotePos+1) + path + pair.second->value.substring(quotePos+1);
+                        if ((pair.second->value.getSize() > quotePos + 1) && (pair.second->value[quotePos + 1] != '/'))
+                            pair.second->value = pair.second->value.substring(0, quotePos + 1) + path + pair.second->value.substring(quotePos + 1);
                     }
                 }
             }
@@ -152,7 +152,7 @@ namespace tgui
             std::string resourcePath;
             auto slashPos = filename.find_last_of("/\\");
             if (slashPos != std::string::npos)
-                resourcePath = filename.substr(0, slashPos+1);
+                resourcePath = filename.substr(0, slashPos + 1);
 
             std::stringstream fileContents;
             readFile(filename, fileContents);
@@ -222,7 +222,7 @@ namespace tgui
     {
         std::string fullFilename = getResourcePath() + filename;
 
-    #ifdef SFML_SYSTEM_ANDROID
+#ifdef SFML_SYSTEM_ANDROID
         // If the file does not start with a slash then load it from the assets
         if (!fullFilename.empty() && (fullFilename[0] != '/'))
         {
@@ -256,7 +256,7 @@ namespace tgui
             activity->vm->DetachCurrentThread();
         }
         else
-    #endif
+#endif
         {
             std::ifstream file{fullFilename};
             if (!file.is_open())

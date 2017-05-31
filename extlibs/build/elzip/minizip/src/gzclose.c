@@ -9,7 +9,8 @@
    That way the other gzclose functions can be used instead to avoid linking in
    unneeded compression or decompression routines. */
 int ZEXPORT gzclose(file)
-    gzFile file;
+
+gzFile file;
 {
 #ifndef NO_GZCOMPRESS
     gz_statep state;

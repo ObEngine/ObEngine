@@ -57,7 +57,7 @@ namespace tgui
 
     Color::Color(const std::string& string) :
         m_isSet{true},
-        m_color{Deserializer::deserialize(tgui::ObjectConverter::Type::Color, string).getColor()}
+        m_color{Deserializer::deserialize(ObjectConverter::Type::Color, string).getColor()}
     {
     }
 

@@ -31,10 +31,10 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"bordercolor", sf::Color::Black},
-                {"backgroundcolor", sf::Color::Transparent}
-            };
+    {
+        {"bordercolor", sf::Color::Black},
+        {"backgroundcolor", sf::Color::Transparent}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,12 +62,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Panel::Ptr Panel::copy(Panel::ConstPtr panel)
+    Panel::Ptr Panel::copy(ConstPtr panel)
     {
         if (panel)
             return std::static_pointer_cast<Panel>(panel->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

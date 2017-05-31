@@ -39,13 +39,13 @@ namespace
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-            {
-                {"borders", Borders{5}},
-                {"imagerotation", 0.f},
-                {"bordercolor", sf::Color::Black},
-                {"thumbcolor", sf::Color::Black},
-                {"backgroundcolor", sf::Color::White}
-            };
+    {
+        {"borders", Borders{5}},
+        {"imagerotation", 0.f},
+        {"bordercolor", sf::Color::Black},
+        {"thumbcolor", sf::Color::Black},
+        {"backgroundcolor", sf::Color::White}
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,12 +72,11 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Knob::Ptr Knob::copy(Knob::ConstPtr knob)
+    Knob::Ptr Knob::copy(ConstPtr knob)
     {
         if (knob)
             return std::static_pointer_cast<Knob>(knob->clone());
-        else
-            return nullptr;
+        return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +89,7 @@ namespace tgui
         {
             m_spriteBackground.setSize(getInnerSize());
             m_spriteForeground.setSize({m_spriteForeground.getTexture().getImageSize().x / m_spriteBackground.getTexture().getImageSize().x * getInnerSize().x,
-                                        m_spriteForeground.getTexture().getImageSize().y / m_spriteBackground.getTexture().getImageSize().y * getInnerSize().y});
+                m_spriteForeground.getTexture().getImageSize().y / m_spriteBackground.getTexture().getImageSize().y * getInnerSize().y});
         }
     }
 
@@ -262,7 +261,7 @@ namespace tgui
             else // There is no texture, the widget has a circle shape
             {
                 sf::Vector2f centerPoint = getSize() / 2.f;
-                float distance = std::sqrt(std::pow(centerPoint.x - pos.x, 2) + std::pow(centerPoint.y - pos.y, 2));
+                float distance = sqrt(pow(centerPoint.x - pos.x, 2) + pow(centerPoint.y - pos.y, 2));
                 return (distance <= std::min(getSize().x, getSize().y));
             }
         }
@@ -310,7 +309,7 @@ namespace tgui
             }
             else
             {
-                m_angle = std::atan2(centerPosition.y - pos.y, pos.x - centerPosition.x) * 180.0f / pi;
+                m_angle = atan2(centerPosition.y - pos.y, pos.x - centerPosition.x) * 180.0f / pi;
                 if (m_angle < 0)
                     m_angle += 360;
             }
@@ -328,7 +327,7 @@ namespace tgui
                 else if (m_angle > m_endRotation)
                 {
                     if (((m_startRotation > m_endRotation) && (m_clockwiseTurning))
-                     || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
+                        || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
                     {
                         if (std::min(m_angle - m_startRotation, 360 - m_angle + m_startRotation) <= std::min(m_angle - m_endRotation, 360 - m_angle + m_endRotation))
                             m_angle = m_startRotation;
@@ -342,9 +341,9 @@ namespace tgui
                 if (m_angle < m_endRotation)
                 {
                     if (((m_startRotation > m_endRotation) && (m_clockwiseTurning))
-                     || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
+                        || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
                     {
-                        if (std::min(m_startRotation - m_angle, 360 - m_startRotation + m_angle) <= std::min(m_endRotation - m_angle, 360 -m_endRotation + m_angle))
+                        if (std::min(m_startRotation - m_angle, 360 - m_startRotation + m_angle) <= std::min(m_endRotation - m_angle, 360 - m_endRotation + m_angle))
                             m_angle = m_startRotation;
                         else
                             m_angle = m_endRotation;
@@ -366,14 +365,14 @@ namespace tgui
             else
             {
                 if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
-                 || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
+                    || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
                 {
-                    allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
+                    allowedAngle = 360 - abs(m_endRotation - m_startRotation);
                 }
                 else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
-                      || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
+                    || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
                 {
-                    allowedAngle = std::abs(m_endRotation - m_startRotation);
+                    allowedAngle = abs(m_endRotation - m_startRotation);
                 }
             }
 
@@ -421,14 +420,14 @@ namespace tgui
         else
         {
             if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
-             || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
+                || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
             {
-                allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
+                allowedAngle = 360 - abs(m_endRotation - m_startRotation);
             }
             else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
-                  || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
+                || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
             {
-                allowedAngle = std::abs(m_endRotation - m_startRotation);
+                allowedAngle = abs(m_endRotation - m_startRotation);
             }
         }
 
@@ -547,8 +546,8 @@ namespace tgui
         {
             sf::CircleShape thumb{size / 10.0f};
             thumb.setFillColor(Color::calcColorOpacity(m_thumbColorCached, m_opacityCached));
-            thumb.setPosition({(size / 2.0f) - thumb.getRadius() + (std::cos(m_angle / 180 * pi) * (size / 2) * 3/5),
-                               (size / 2.0f) - thumb.getRadius() + (-std::sin(m_angle / 180 * pi) * (size / 2) * 3/5)});
+            thumb.setPosition({(size / 2.0f) - thumb.getRadius() + (cos(m_angle / 180 * pi) * (size / 2) * 3 / 5),
+                (size / 2.0f) - thumb.getRadius() + (-sin(m_angle / 180 * pi) * (size / 2) * 3 / 5)});
             target.draw(thumb, states);
         }
     }
