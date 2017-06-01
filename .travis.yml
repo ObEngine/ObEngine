@@ -11,7 +11,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - nschloe-cmake-nightly
+      - sourceline: 'ppa:nschloe/cmake-nightly'
     packages:
       - g++-6
       - cmake
