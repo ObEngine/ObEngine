@@ -1,9 +1,9 @@
 language: cpp
 compiler: gcc
 script:
-  - sudo apt-get purge cmake
-  - wget https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.sh && chmod +x cmake-3.8.2-Linux-x86_64.sh
-  - ./cmake-3.8.2-Linux-x86_64.sh
+  - sudo add-apt-repository ppa:george-edison55/cmake-3.x -y
+  - sudo apt-get update
+  - sudo apt-get upgrade
   - cmake --version
   - sudo apt-get install libsfml-dev
   - mkdir build
