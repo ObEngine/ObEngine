@@ -46,6 +46,7 @@ addons:
 script:
   - which cmake
   - cmake --version
+  - ./usr/local/bin/cmake --version
   - sudo apt-get purge cmake
   - mkdir ~/temp
   - cd ~/temp
