@@ -44,6 +44,7 @@ addons:
       - libudev-dev
       
 script:
+  - ls ~/.casher
   - which cmake
   - cmake --version
   - ./usr/local/bin/cmake --version
