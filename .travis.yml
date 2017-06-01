@@ -30,6 +30,9 @@ addons:
       - libvorbisfile3
       - libopenal-dev
       - libpthread-stubs0-dev
+      - libstdc++6
+      - libc6
+      - libgcc1
 
       - libglew-dev
       - libgpgme11-dev
