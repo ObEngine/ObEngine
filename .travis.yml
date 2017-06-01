@@ -4,12 +4,21 @@ compiler: gcc
 dist: trusty
 sudo: required
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-6
+      - g++-6
+      - cmake
       
 script:
-  - sudo add-apt-repository ppa:nschloe/cmake-nightly
-  - sudo apt-get update
-  - sudo apt-get install cmake
-  - cmake --version
+  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+  - export CC=/usr/bin/gcc-6
+  - export CXX=/usr/bin/g++-6
+  - gcc -v && g++ -v && cmake --version
   - sudo apt-get install libsfml-dev
   - mkdir build
   - cd build
