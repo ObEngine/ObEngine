@@ -44,6 +44,7 @@ addons:
       - libudev-dev
       
 script:
+  - which cmake
   - cmake --version
   - sudo apt-get purge cmake
   - mkdir ~/temp
