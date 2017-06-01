@@ -9,7 +9,7 @@ sudo: required
 
 cache:
   directories:
-    - /usr/bin/cmake
+    - /usr/local/bin/cmake
 
 addons:
   apt:
@@ -44,6 +44,7 @@ addons:
       - libudev-dev
       
 script:
+  - cmake --version
   - sudo apt-get purge cmake
   - mkdir ~/temp
   - cd ~/temp
@@ -70,6 +71,7 @@ script:
   - cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
   - make >> install.log
   - sudo make install >> install.log
+  - sudo ldconfig
   # Building ObEngine
   - cd /home/travis/build/Sygmei/ObEngine
   - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
