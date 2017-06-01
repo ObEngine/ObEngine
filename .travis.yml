@@ -45,10 +45,11 @@ addons:
       
 script:
   - ls ~/.casher
+  - ls ~/.casher/bin
   - cp ~/.casher/bin/cmake /usr/local/bin/cmake
   - which cmake
   - cmake --version
-  - ./usr/local/bin/cmake --version
+  - /usr/local/bin/cmake --version
   - sudo apt-get purge cmake
   - mkdir ~/temp
   - cd ~/temp
@@ -72,7 +73,7 @@ script:
   - cd SFML-2.4.2
   - mkdir build/
   - cd build
-  - ./usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
+  - /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
   - make >> install.log
   - sudo make install >> install.log
   - sudo ldconfig
@@ -85,5 +86,5 @@ script:
   - gcc -v && g++ -v && cmake --version
   - mkdir build
   - cd build
-  - ./usr/local/bin/cmake ..
+  - /usr/local/bin/cmake ..
   - make
