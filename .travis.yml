@@ -11,7 +11,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - george-edison55-precise-backports
+      - nschloe-cmake-nightly
     packages:
       - g++-6
       - cmake
