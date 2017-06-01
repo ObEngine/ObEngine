@@ -35,14 +35,15 @@ addons:
       - libudev-dev
       
 script:
+  - pwd
   - mkdir ~/temp
   - cd ~/temp
-  - wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
-  - tar xzvf cmake-3.8.2.tar.gz
+  - echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
+  - echo "(Step 2/5) Extracting CMake.." &&tar xzvf cmake-3.8.2.tar.gz > cmake-extractlog
   - cd cmake-3.8.2/
-  - ./bootstrap
-  - make -j4 > makelog
-  - sudo make install > makelog-install
+  - echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
+  - echo "(Step 4/5) Make CMake.." && make -j4 > makelog
+  - echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
   - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
   - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
   - export CC=/usr/bin/gcc-6
