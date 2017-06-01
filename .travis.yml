@@ -6,7 +6,7 @@ sudo: required
 
       
 script:
-  - sudo add-apt-repository http://ppa.launchpad.net/nschloe/cmake-nightly/ubuntu trusty main 
+  - sudo add-apt-repository ppa:nschloe/cmake-nightly
   - sudo apt-get update
   - sudo apt-get install cmake
   - cmake --version
