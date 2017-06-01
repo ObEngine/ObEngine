@@ -22,19 +22,31 @@ addons:
       - libx11-xcb-dev
       - libxcb-randr0-dev
       - libxcb-image0-dev
+      - libgl1-mesa-glx
       - libgl1-mesa-dev
+      - libogg0-dev
+      - libflac8-dev
       - libflac-dev
       - libogg-dev
+      - libvorbis0a-dev
+      - libvorbisenc2-dev
+      - libvorbisfile3-dev
       - libvorbis-dev
       - libvorbisenc2
       - libvorbisfile3
+      - libopenal1-dev
       - libopenal-dev
       - libpthread-stubs0-dev
-
+      - libc6-dev
+      - libgcc1-dev
+      - libstdc++6-dev
       - libglew-dev
       - libgpgme11-dev
       - libsndfile1-dev
       - libudev-dev
+      - libudev1-dev
+      - libx11-6-dev
+      - libxrandr2-dev
       
 script:
   - sudo apt-get purge cmake
