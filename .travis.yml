@@ -1,15 +1,15 @@
 language: cpp
 compiler: gcc
 
-addons:
-  apt:
-    sources:
-      - nschloe/cmake-nightly
-    packages:
-      - cmake
-      - cmake-data
+dist: trusty
+sudo: required
+
       
 script:
+  - deb http://ppa.launchpad.net/nschloe/cmake-nightly/ubuntu trusty main 
+  - deb-src http://ppa.launchpad.net/nschloe/cmake-nightly/ubuntu trusty main
+  - sudo apt-get update
+  - sudo apt-get install cmake
   - cmake --version
   - sudo apt-get install libsfml-dev
   - mkdir build
