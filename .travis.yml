@@ -9,7 +9,7 @@ sudo: required
 
 cache:
   directories:
-    - /usr/local/bin/cmake
+    - /usr/local/bin/
 
 addons:
   apt:
