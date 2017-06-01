@@ -7,6 +7,10 @@ env: COMPILER=g++-6
 dist: trusty
 sudo: required
 
+cache:
+  directories:
+    - /usr/bin/cmake
+
 addons:
   apt:
     sources:
@@ -50,12 +54,17 @@ script:
   - echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
   - echo "(Step 4/5) Make CMake.." && make -j4 > makelog
   - echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
+  - which cmake
   # Installing SFML 2.4.2
   - cd ~/temp
   - echo "Installing SFML..."
+  - pwd
+  - ls
   - wget https://www.sfml-dev.org/files/SFML-2.4.2-sources.zip
-  - unzip SFML-2.4.2-sources.zip
-  - cd SFML-2.4.2-sources
+  - unzip SFML-2.4.2-sources.zip > sfml-downloadlog
+  - pwd
+  - ls
+  - cd SFML-2.4.2
   - mkdir build/
   - cd build
   - cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
