@@ -1,4 +1,5 @@
 language: cpp
+compiler: gcc
 script:
   - sudo apt-get install libsfml-dev
   - mkdir build
