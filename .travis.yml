@@ -13,29 +13,9 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-6
-      - libfreetype6-dev
-      - libjpeg-dev
-      - libx11-dev
-      - libxrandr-dev
-      - libxcb1-dev
-      - libx11-xcb-dev
-      - libxcb-randr0-dev
-      - libxcb-image0-dev
-      - libgl1-mesa-dev
-      - libflac-dev
-      - libogg-dev
-      - libvorbis-dev
-      - libvorbisenc2
-      - libvorbisfile3
-      - libopenal-dev
-      - libpthread-stubs0-dev
-      - libglew-dev
-      - libgpgme11-dev
-      - libsndfile1-dev
-      - libudev-dev
       
 script:
-  - pwd
+  - sudo apt-get purge cmake
   - mkdir ~/temp
   - cd ~/temp
   - echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
@@ -44,6 +24,7 @@ script:
   - echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
   - echo "(Step 4/5) Make CMake.." && make -j4 > makelog
   - echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
+  - cd /home/travis/build/Sygmei/ObEngine
   - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
   - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
   - export CC=/usr/bin/gcc-6
