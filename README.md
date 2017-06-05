@@ -1,5 +1,7 @@
 # ÖbEngine
 
+[![Build Status](https://travis-ci.org/Sygmei/ObEngine.svg?branch=master)](https://travis-ci.org/Sygmei/ObEngine)
+
 ## What the hell is ÖbEngine ?
 ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML !
 
