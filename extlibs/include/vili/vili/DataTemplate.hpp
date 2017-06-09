@@ -23,6 +23,7 @@ namespace vili
         std::string m_name;
         std::vector<AttributeConstraintManager> m_signature;
         ComplexAttribute m_body;
+        bool m_visible = true;
         bool m_signatureEnd = false;
         bool m_defaultLinkRoot = false;
         bool checkSignature();
@@ -34,5 +35,7 @@ namespace vili
         void useDefaultLinkRoot();
         unsigned int getArgumentCount() const;
         std::string getName() const;
+        void setVisible(bool visible);
+        bool isVisible();
     };
 }

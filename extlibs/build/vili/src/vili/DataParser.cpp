@@ -255,7 +255,7 @@ namespace vili
                             else if (instructionType == "Template")
                             {
                                 if (verbose) std::cout << indenter() << "Creating New Template from : " << instructionValue << std::endl;
-                                this->generateTemplate(instructionValue);
+                                this->generateTemplate(instructionValue, visible);
                             }
                         }
                     }
@@ -425,7 +425,7 @@ namespace vili
         throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.FileNotFound", {{"file", filename}});
     }
 
-    void DataParser::generateTemplate(const std::string& templateName)
+    void DataParser::generateTemplate(const std::string& templateName, bool visible)
     {
         ComplexAttribute* templateBase = &getRootChild(templateName);
         DataTemplate* newTemplate = new DataTemplate(templateName);
@@ -488,6 +488,7 @@ namespace vili
                     i++;
                 }
                 templateBase->at("__body__").copy(newTemplate->getBody());
+                newTemplate->setVisible(visible);
                 m_templateList[templateBase->getID()] = newTemplate;
             }
             else
@@ -530,7 +531,11 @@ namespace vili
             outFile << std::endl;
 
         for (std::pair<std::string, DataTemplate*> templatePair : m_templateList)
-            outFile << "Template (" << templatePair.first << ");";
+        {
+            if (templatePair.second->isVisible())
+                outFile << "Template (" << templatePair.first << ");" << std::endl;
+        }
+            
 
         outFile.close();
     }

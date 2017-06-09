@@ -111,4 +111,14 @@ namespace vili
     {
         return m_name;
     }
+
+    void DataTemplate::setVisible(bool visible)
+    {
+        m_visible = visible;
+    }
+
+    bool DataTemplate::isVisible()
+    {
+        return m_visible;
+    }
 }

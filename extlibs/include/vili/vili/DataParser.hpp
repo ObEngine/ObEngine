@@ -28,7 +28,7 @@ namespace vili
         template <class T, class ...Args>
         T& at(const std::string& cPath, Args ...pathParts);
         bool parseFile(const std::string& filename, bool verbose = false, bool visible = true);
-        void generateTemplate(const std::string& templateName);
+        void generateTemplate(const std::string& templateName, bool visible = true);
         void writeFile(const std::string& filename, bool verbose = false) const;
         bool hasFlag(const std::string& flagName) const;
         unsigned int getAmountOfFlags() const;

@@ -25,7 +25,7 @@ function Trajectory.bind.Trajectory.obe__Collision__PolygonalCollider(self, col,
     , function(item, x, y)
         unit = unit or Core.Coordinates.WorldUnits;
         local pVec = Core.Coordinates.UnitVector.new(x, y, unit);
-        item:setPosition(pVec); 
+        item:setPosition(pVec);
     end});
 end
 function Trajectory.bind.Trajectory.obe__Graphics__LevelSprite(self, spr, offset)

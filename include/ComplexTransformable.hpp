@@ -20,11 +20,14 @@ namespace sfe
         void setTranslationOrigin(const sf::Vector2f& origin);
         void setRotationOrigin(float x, float y);
         void setRotationOrigin(const sf::Vector2f& origin);
+        void setScalingOrigin(float x, float y);
+        void setScalingOrigin(const sf::Vector2f& origin);
         const sf::Vector2f& getPosition() const;
         float getRotation() const;
         const sf::Vector2f& getScale() const;
         const sf::Vector2f& getTranslationOrigin() const;
         const sf::Vector2f& getRotationOrigin() const;
+        const sf::Vector2f& getScalingOrigin() const;
         void move(float offsetX, float offsetY);
         void move(const sf::Vector2f& offset);
         void rotate(float angle);
@@ -36,6 +39,7 @@ namespace sfe
     private:
         sf::Vector2f m_tra_origin; ///< Origin of translation/scaling of the object
         sf::Vector2f m_rot_origin; ///< Origin of rotation of the object
+        sf::Vector2f m_sca_origin;
         sf::Vector2f m_position; ///< Position of the object in the 2D world
         float m_rotation; ///< Orientation of the object, in degrees
         sf::Vector2f m_scale; ///< Scale of the object

@@ -74,7 +74,7 @@ namespace obe
 
         void Camera::scale(double pScale)
         {
-            if (!m_locked) this->setSize((m_size.y / 2) + pScale);
+            if (!m_locked) this->setSize((m_size.y / 2) * pScale);
         }
 
         void Camera::setAngle(double angle)

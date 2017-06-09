@@ -5,6 +5,7 @@ namespace sfe
     ComplexTransformable::ComplexTransformable() :
         m_tra_origin(0, 0),
         m_rot_origin(0, 0),
+        m_sca_origin(0, 0),
         m_position(0, 0),
         m_rotation(0),
         m_scale(1, 1),
@@ -81,6 +82,19 @@ namespace sfe
         setRotationOrigin(origin.x, origin.y);
     }
 
+    void ComplexTransformable::setScalingOrigin(float x, float y)
+    {
+        m_sca_origin.x = x;
+        m_sca_origin.y = y;
+        m_transformNeedUpdate = true;
+        m_inverseTransformNeedUpdate = true;
+    }
+
+    void ComplexTransformable::setScalingOrigin(const sf::Vector2f& origin)
+    {
+        setScalingOrigin(origin.x, origin.y);
+    }
+
     const sf::Vector2f& ComplexTransformable::getPosition() const
     {
         return m_position;
@@ -104,6 +118,11 @@ namespace sfe
     const sf::Vector2f& ComplexTransformable::getRotationOrigin() const
     {
         return m_rot_origin;
+    }
+
+    const sf::Vector2f& ComplexTransformable::getScalingOrigin() const
+    {
+        return m_sca_origin;
     }
 
     void ComplexTransformable::move(float offsetX, float offsetY)
@@ -144,7 +163,7 @@ namespace sfe
 
             m_transform = sf::Transform::Identity;
             m_transform.translate(m_position.x - m_tra_origin.x, m_position.y - m_tra_origin.y);
-            m_transform.scale(m_scale.x, m_scale.y);
+            m_transform.scale(m_scale.x, m_scale.y, m_sca_origin.x, m_sca_origin.y);
             m_transform.rotate(m_rotation, m_rot_origin);
 
             m_transformNeedUpdate = false;

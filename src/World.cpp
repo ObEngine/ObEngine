@@ -404,6 +404,8 @@ namespace obe
 
                 if (lightHooked) cLight->setPosition(layeredX, layeredY);
                 tAffSpr.setPosition(layeredX, layeredY);
+                //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
+                tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
                 if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
                 if (m_spriteArray[i]->isVisible())
                     surf->draw(tAffSpr);

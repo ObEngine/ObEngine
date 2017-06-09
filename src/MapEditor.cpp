@@ -678,6 +678,7 @@ namespace obe
                     if (selectedSprite == nullptr && keybind.isActionToggled("LayerInc"))
                     {
                         currentLayer += 1;
+                        world.getCamera()->scale(1.1);
                         if (hoveredSprite != nullptr)
                         {
                             hoveredSprite->setColor(sf::Color::White);
@@ -687,6 +688,7 @@ namespace obe
                     }
                     if (selectedSprite == nullptr && keybind.isActionToggled("LayerDec"))
                     {
+                        world.getCamera()->scale(0.9);
                         currentLayer -= 1;
                         if (hoveredSprite != nullptr)
                         {
@@ -935,11 +937,11 @@ namespace obe
                         selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                         if (selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
                         {
-                            std::pair<int, int> zeroCoords = selectedMasterCollider->getPointPosition(0);
-                            std::pair<int, int> masterCoords = selectedMasterCollider->getMasterPointPosition();
+                            ClipperLib::IntPoint zeroCoords = selectedMasterCollider->getPointPosition(0);
+                            ClipperLib::IntPoint masterCoords = selectedMasterCollider->getMasterPointPosition();
                             world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
-                                cursor.getX() + pixelCamera.x + zeroCoords.first - masterCoords.first,
-                                cursor.getY() + pixelCamera.y + zeroCoords.second - masterCoords.second);
+                                cursor.getX() + pixelCamera.x + zeroCoords.X - masterCoords.X,
+                                cursor.getY() + pixelCamera.y + zeroCoords.Y - masterCoords.Y);
                         }
                     }
                     //Collision Master Release

@@ -419,7 +419,6 @@ namespace obe
                     .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::u_getMasterPointPosition)
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
                     .addFunction("getParentID", &Collision::PolygonalCollider::getParentID)
-                    .addFunction("getPath", &Collision::PolygonalCollider::getPath)
                     .addFunction("getPointPosition", &Collision::PolygonalCollider::u_getPointPosition)
                     .addFunction("getPointRelativePosition", &Collision::PolygonalCollider::u_getPointRelativePosition)
                     .addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
@@ -1070,6 +1069,7 @@ namespace obe
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UtilsImportError", {{"lib", Functions::Vector::join(args, ".")}});
         }
 
+        KAGUYA_MEMBER_FUNCTION_OVERLOADS(DataParser_parseFile_wrapper, vili::DataParser, parseFile, 1, 3)
         void CoreLib::loadVili(kaguya::State* lua, std::vector<std::string> args)
         {
             registerLib(lua, Functions::Vector::join(args, "."));
@@ -1085,7 +1085,7 @@ namespace obe
                     .addFunction("getAmountOfFlags", &vili::DataParser::getAmountOfFlags)
                     .addFunction("getFlagAtIndex", &vili::DataParser::getFlagAtIndex)
                     .addFunction("hasFlag", &vili::DataParser::hasFlag)
-                    .addFunction("parseFile", &vili::DataParser::parseFile)
+                    .addFunction("parseFile", DataParser_parseFile_wrapper())
                     .addFunction("writeFile", &vili::DataParser::writeFile)
                 );
                 foundPart = true;
