@@ -1,0 +1,87 @@
+language: cpp
+compiler: gcc
+
+compiler: g++-6
+env: COMPILER=g++-6
+
+dist: trusty
+sudo: required
+
+cache:
+  directories:
+    - /usr/local/bin/
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-6
+      
+      - libfreetype6-dev
+      - libjpeg-dev
+      - libx11-dev
+      - libxrandr-dev
+      - libxcb1-dev
+      - libx11-xcb-dev
+      - libxcb-randr0-dev
+      - libxcb-image0-dev
+      - libgl1-mesa-dev
+      - libflac-dev
+      - libogg-dev
+      - libvorbis-dev
+      - libvorbisenc2
+      - libvorbisfile3
+      - libopenal-dev
+      - libpthread-stubs0-dev
+      - libstdc++6
+      - libc6
+      - libgcc1
+
+      - libglew-dev
+      - libgpgme11-dev
+      - libsndfile1-dev
+      - libudev-dev
+      
+script:
+  - sudo apt-get purge cmake
+  - mkdir ~/temp
+  - cd ~/temp
+  # Installing CMake
+  - echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
+  - echo "(Step 2/5) Extracting CMake.." &&tar xzvf cmake-3.8.2.tar.gz > cmake-extractlog
+  - cd cmake-3.8.2/
+  - echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
+  - echo "(Step 4/5) Make CMake.." && make -j4 > makelog
+  - echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
+  - which cmake
+  # Installing SFML 2.4.2
+  - cd ~/temp
+  - echo "Installing SFML..."
+  - pwd
+  - ls
+  - wget https://www.sfml-dev.org/files/SFML-2.4.2-sources.zip
+  - unzip SFML-2.4.2-sources.zip > sfml-downloadlog
+  - pwd
+  - ls
+  - cd SFML-2.4.2/src/SFML/Graphics
+  - rm CMakeLists.txt
+  - wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/build/SFML/Graphics/CMakeLists.txt
+  - cd ../../../
+  - mkdir build/
+  - cd build
+  - /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
+  - make >> install.log
+  - sudo make install >> install.log
+  - sudo ldconfig
+  # Building ObEngine
+  - cd /home/travis/build/Sygmei/ObEngine
+  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+  - export CC=/usr/bin/gcc-6
+  - export CXX=/usr/bin/g++-6
+  - gcc -v && g++ -v && /usr/local/bin/cmake --version
+  - mkdir build
+  - cd build
+  - /usr/local/bin/cmake ..
+  - make
