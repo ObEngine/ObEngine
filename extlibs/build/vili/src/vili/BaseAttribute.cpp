@@ -145,9 +145,7 @@ namespace vili
             std::string returnedData = returnData();
             if (m_dataType == Types::Float)
             {
-                while (returnedData.back() == '0')
-                    returnedData.pop_back();
-                if (returnedData.back() == '.')
+                while (returnedData.size() > 2 && returnedData.back() == '0' && returnedData[returnedData.size() - 2] != '.')
                     returnedData.pop_back();
             }
             if (m_id.front() != '#')

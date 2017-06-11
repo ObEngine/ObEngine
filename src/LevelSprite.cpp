@@ -86,18 +86,35 @@ namespace obe
 
         void LevelSprite::scale(double scaleX, double scaleY)
         {
-            m_scaleX += scaleX;
-            m_scaleY += scaleY;
-            m_returnSprite.setScale(m_scaleX, m_scaleY);
-            calculateRealCoordinates();
+            m_size.add(scaleX, scaleY);
+            this->applySize();
         }
 
-        void LevelSprite::setScale(double scaleX, double scaleY)
+        void LevelSprite::setSize(double scaleX, double scaleY)
         {
-            m_scaleX = scaleX;
-            m_scaleY = scaleY;
-            m_returnSprite.setScale(scaleX, scaleY);
-            calculateRealCoordinates();
+            m_size.set(scaleX, scaleY);
+            Coord::UnitVector pixelSize = m_size.to<Coord::WorldPixels>();
+            std::cout << ":D Apply size : " << pixelSize << " for LevelSprite " << m_id << ", got : " << scaleX << ", " << scaleY << std::endl;
+            std::cout << "Texture size : " << this->getWidth() << ", " << this->getHeight() << std::endl;
+            std::cout << "It gives scale : " << double(this->getWidth()) / pixelSize.x << ", " << double(this->getWidth()) / pixelSize.y << std::endl;
+            this->applySize();
+        }
+
+        void LevelSprite::u_scale(const Coord::UnitVector& vec)
+        {
+            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            this->scale(pVec.x, pVec.y);
+        }
+
+        void LevelSprite::u_setSize(const Coord::UnitVector& vec)
+        {
+            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            this->setSize(pVec.x, pVec.y);
+        }
+
+        Coord::ProtectedUnitVector& LevelSprite::getSize()
+        {
+            return m_size;
         }
 
         void LevelSprite::setTranslationOrigin(int x, int y)
@@ -114,10 +131,19 @@ namespace obe
             m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
         }
 
+        void LevelSprite::applySize()
+        {
+            Coord::UnitVector pixelSize = m_size.to<Coord::WorldPixels>();
+            /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;*/
+            m_returnSprite.setScale(pixelSize.x / double(this->getWidth()), pixelSize.y / double(this->getHeight()));
+            //std::cout << "It gives scale : " << double(this->getWidth()) / pixelSize.x << ", " << double(this->getWidth()) / pixelSize.y << std::endl;
+            calculateRealCoordinates();
+        }
+
         void LevelSprite::update()
         {
             m_returnSprite.setRotation(m_rotation);
-            m_returnSprite.setScale(m_scaleX, m_scaleY);
+            //this->applySize();
             m_returnSprite.setColor(m_spriteColor);
             calculateRealCoordinates();
         }
@@ -210,16 +236,6 @@ namespace obe
             return m_offset.y;
         }
 
-        double LevelSprite::getScaleX() const
-        {
-            return m_scaleX;
-        }
-
-        double LevelSprite::getScaleY() const
-        {
-            return m_scaleY;
-        }
-
         float LevelSprite::getRotation() const
         {
             return m_rotation;
@@ -274,7 +290,7 @@ namespace obe
             Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
 
             m_returnSprite.setPosition(realPosition.x, realPosition.y);
-            m_returnSprite.setScale(m_scaleX, m_scaleY);
+            this->applySize();
             m_returnSprite.setRotation(m_rotation);
             sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_width, m_height);
             mrect.left = m_returnSprite.getGlobalBounds().left;

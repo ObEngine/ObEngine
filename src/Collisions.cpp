@@ -208,24 +208,24 @@ namespace obe
 
         bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY)
         {
-            std::cout << m_id << " Test collision with : " << other->getID() << std::endl;
+            //std::cout << m_id << " Test collision with : " << other->getID() << std::endl;
             if (isATagExcluded(other->getAllTags()))
                 return false;
             if (!isATagAccepted(other->getAllTags()))
                 return false;
 
             ClipperLib::Path pPath = this->getAllPoints();
-            std::cout << "ME" << std::endl;
+            //std::cout << "ME" << std::endl;
             for (int i = 0; i < m_allPoints.size(); i++)
             {
                 pPath[i].X += offsetX;
                 pPath[i].Y += offsetY;
-                std::cout << "Point : " << pPath[i].X << ", " << pPath[i].X << std::endl;
+                //std::cout << "Point : " << pPath[i].X << ", " << pPath[i].X << std::endl;
             }
 
-            std::cout << "OTHER" << std::endl;
-            for (int i = 0; i < other->getAllPoints().size(); i++)
-                std::cout << other->getAllPoints()[i].X << ", " << other->getAllPoints()[i].Y << std::endl;
+            //std::cout << "OTHER" << std::endl;
+            /*for (int i = 0; i < other->getAllPoints().size(); i++)
+                std::cout << other->getAllPoints()[i].X << ", " << other->getAllPoints()[i].Y << std::endl;*/
             ClipperLib::Clipper clipper;
             clipper.AddPath(pPath, ClipperLib::ptSubject, true);
             clipper.AddPath(other->getAllPoints(), ClipperLib::ptClip, true);

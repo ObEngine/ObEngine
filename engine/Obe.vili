@@ -151,3 +151,88 @@ Unit<WorldUnits>:
         unit:"WorldUnits"
 
 Template(Unit<WorldUnits>);
+
+Rect<ViewPercentage>:
+    FloatComposant:
+        type:"Float"
+    __init__:
+        0(FloatComposant):
+        1(FloatComposant):
+        2(FloatComposant):
+        3(FloatComposant):
+    __body__:
+        unit:"ViewPercentage"
+        x:&(0/value)
+        y:&(1/value)
+        w:&(2/value)
+        h:&(3/value)
+
+Template(Rect<ViewPercentage>);
+
+Rect<ViewPixels>:
+    IntComposant:
+        type:"Int"
+    __init__:
+        0(IntComposant):
+        1(IntComposant):
+        2(IntComposant):
+        3(IntComposant):
+    __body__:
+        unit:"ViewPixels"
+        x:&(0/value)
+        y:&(1/value)
+        w:&(2/value)
+        h:&(3/value)
+
+Template(Rect<ViewPixels>);
+
+Rect<ViewUnits>:
+    FloatComposant:
+        type:"Float"
+    __init__:
+        0(FloatComposant):
+        1(FloatComposant):
+        2(FloatComposant):
+        3(FloatComposant):
+    __body__:
+        unit:"ViewUnits"
+        x:&(0/value)
+        y:&(1/value)
+        w:&(2/value)
+        h:&(3/value)
+
+Template(Rect<ViewUnits>);
+
+Rect<WorldPixels>:
+    IntComposant:
+        type:"Int"
+    __init__:
+        0(IntComposant):
+        1(IntComposant):
+        2(IntComposant):
+        3(IntComposant):
+    __body__:
+        unit:"WorldPixels"
+        x:&(0/value)
+        y:&(1/value)
+        w:&(2/value)
+        h:&(3/value)
+
+Template(Rect<WorldPixels>);
+
+Rect<WorldUnits>:
+    FloatComposant:
+        type:"Float"
+    __init__:
+        0(FloatComposant):
+        1(FloatComposant):
+        2(FloatComposant):
+        3(FloatComposant):
+    __body__:
+        unit:"WorldUnits"
+        x:&(0/value)
+        y:&(1/value)
+        w:&(2/value)
+        h:&(3/value)
+
+Template(Rect<WorldUnits>);

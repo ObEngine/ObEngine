@@ -74,6 +74,10 @@ namespace obe
             {
                 vili::ComplexAttribute& view = mapParse.at("View");
                 m_camera.setSize(view.at<vili::BaseAttribute>("size").get<double>());
+                m_cameraInitialPosition = Coord::UnitVector(
+                    view.at<vili::BaseAttribute>("pos", "x").get<double>(),
+                    view.at<vili::BaseAttribute>("pos", "y").get<double>(),
+                    Coord::stringToUnits(view.at<vili::BaseAttribute>("pos", "unit").get<std::string>()));
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.World.World.NoView", {{"map", filename}});
@@ -86,29 +90,27 @@ namespace obe
                     vili::ComplexAttribute& currentSprite = levelSprites.at(currentSpriteName);
                     std::vector<std::string> spriteAtrList;
                     std::string spriteID = currentSpriteName;
-                    std::string spriteUnits = currentSprite.contains(vili::Types::ComplexAttribute, "pos") ?
-                                                  currentSprite.at<vili::BaseAttribute>("pos", "unit").get<std::string>() : "WorldUnits";
+                    std::string spriteUnits = currentSprite.contains(vili::Types::ComplexAttribute, "rect") ?
+                                                  currentSprite.at<vili::BaseAttribute>("rect", "unit").get<std::string>() : "WorldUnits";
                     std::cout << "SpriteUnit : " << spriteUnits << std::endl;
                     std::string spritePath = currentSprite.contains(vili::Types::BaseAttribute, "path") ?
                                                  currentSprite.getBaseAttribute("path").get<std::string>() : "";
-                    Coord::UnitVector spritePos = Coord::UnitVector(
-                        currentSprite.contains(vili::Types::ComplexAttribute, "pos") ?
-                            currentSprite.at<vili::BaseAttribute>("pos", "x").get<double>() : 0,
-                        currentSprite.contains(vili::Types::ComplexAttribute, "pos") ?
-                            currentSprite.at<vili::BaseAttribute>("pos", "y").get<double>() : 0,
-                        Coord::stringToUnits(spriteUnits)
-                    ).to<Coord::WorldUnits>();
-                    if (currentSprite.contains(vili::Types::ComplexAttribute, "pos"))
+                    Coord::UnitVector spritePos(0, 0);
+                    Coord::UnitVector spriteSize(1, 1);
+                    if (currentSprite.contains(vili::Types::ComplexAttribute, "rect"))
                     {
-                        m_cameraInitialPosition = Coord::UnitVector(
-                            currentSprite.at<vili::BaseAttribute>("pos", "x").get<double>(),
-                            currentSprite.at<vili::BaseAttribute>("pos", "y").get<double>(),
-                            Coord::stringToUnits(currentSprite.at<vili::BaseAttribute>("pos", "unit").get<std::string>()));
+                        Coord::Units rectUnit = Coord::stringToUnits(spriteUnits);
+                        spritePos.unit = rectUnit;
+                        spritePos.x = currentSprite.at<vili::BaseAttribute>("rect", "x").get<double>();
+                        spritePos.y = currentSprite.at<vili::BaseAttribute>("rect", "y").get<double>();
+                        spriteSize.unit = rectUnit;
+                        spriteSize.x = currentSprite.at<vili::BaseAttribute>("rect", "w").get<double>();
+                        spriteSize.y = currentSprite.at<vili::BaseAttribute>("rect", "h").get<double>();
+                        spritePos = spritePos.to<Coord::WorldUnits>();
+                        spriteSize = spriteSize.to<Coord::WorldUnits>();
                     }
                     int spriteRot = currentSprite.contains(vili::Types::BaseAttribute, "rotation") ?
                                         currentSprite.getBaseAttribute("rotation").get<int>() : 0;
-                    double spriteSca = currentSprite.contains(vili::Types::BaseAttribute, "scale") ?
-                                           currentSprite.getBaseAttribute("scale").get<double>() : 1;
                     int layer = currentSprite.contains(vili::Types::BaseAttribute, "layer") ?
                                     currentSprite.getBaseAttribute("layer").get<int>() : 1;
                     int zdepth = currentSprite.contains(vili::Types::BaseAttribute, "z-depth") ?
@@ -124,9 +126,9 @@ namespace obe
                     if (spritePath != "")
                         tempSprite->load(spritePath);
                     tempSprite->setPosition(spritePos.x, spritePos.y);
+                    tempSprite->setSize(spriteSize.x, spriteSize.y);
                     tempSprite->setWorkingUnit(Coord::stringToUnits(spriteUnits));
                     tempSprite->setRotation(spriteRot);
-                    tempSprite->setScale(spriteSca, spriteSca);
                     tempSprite->setAtr(spriteAtrList);
                     tempSprite->setLayer(layer);
                     tempSprite->setZDepth(zdepth);
@@ -236,14 +238,20 @@ namespace obe
                 {
                     dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getID());
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("path", m_spriteArray[i]->getPath());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createComplexAttribute("pos");
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos").createBaseAttribute("x", m_spriteArray[i]->getX());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos").createBaseAttribute("y", m_spriteArray[i]->getY());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "pos").useTemplate(
-                        dataStore->getTemplate("Vector2<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createComplexAttribute("rect");
+                    Coord::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Coord::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("x", spritePositionRect.x);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("y", spritePositionRect.y);
+                    Coord::UnitVector spriteSizeRect = Coord::UnitVector(
+                        m_spriteArray[i]->getWidth(), 
+                        m_spriteArray[i]->getHeight(), 
+                        Coord::WorldPixels).to<Coord::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("w", spriteSizeRect.x);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("h", spriteSizeRect.y);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").useTemplate(
+                        dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
                     );
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("scale", m_spriteArray[i]->getScaleX());
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("layer", m_spriteArray[i]->getLayer());
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
                     if (m_spriteArray[i]->getAttributes().size() != 0)
@@ -279,13 +287,15 @@ namespace obe
                 dataStore->at("LevelObjects").createComplexAttribute(it->first);
                 dataStore->at("LevelObjects", it->first).createBaseAttribute("type", it->second->getType());
                 (*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
-                kaguya::LuaTable saveTable = (*it->second->m_objectScript)["Local"]["Save"]();
                 kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
+                (*it->second->m_objectScript)("print('Saving : ', This:getID())");
                 (*it->second->m_objectScript)("print(inspect(Local.Save()));");
+                (*it->second->m_objectScript)("print('Processing...')");
                 vili::ComplexAttribute* saveRequirements = Data::DataBridge::luaTableToComplexAttribute(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
                     dataStore->at("LevelObjects", it->first).pushComplexAttribute(saveRequirements);
+                (*it->second->m_objectScript)("print('Saving over for : ', This:getID())");
             }
             if (m_scriptArray.size() > 0)
             {

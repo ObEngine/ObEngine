@@ -789,13 +789,13 @@ namespace obe
                     }
 
                     //Sprite Scale
-                    if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
+                    /*if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
                     {
                         if (keybind.isActionEnabled("ScaleDec"))
                             selectedSprite->scale(-0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), -0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
                         if (keybind.isActionEnabled("ScaleInc"))
                             selectedSprite->scale(0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), 0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
-                    }
+                    }*/
 
                     //Sprite Drop
                     if (cursor.getReleased("Left") && selectedSprite != nullptr)

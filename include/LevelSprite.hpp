@@ -22,6 +22,7 @@ namespace obe
 
             Coord::ProtectedUnitVector m_position;
             Coord::ProtectedUnitVector m_offset;
+            Coord::ProtectedUnitVector m_size;
 
             double m_width = 0;
             double m_height = 0;
@@ -30,13 +31,13 @@ namespace obe
             bool m_visible = true;
 
             double m_rotation = 0;
-            double m_scaleX = 1;
-            double m_scaleY = 1;
 
             int m_originTraX = 0;
             int m_originTraY = 0;
             int m_originRotX = 0;
             int m_originRotY = 0;
+            int m_originScaX = 0;
+            int m_originScaY = 0;
 
             std::vector<std::string> m_currentAtr = {};
             int m_layer = 1;
@@ -46,6 +47,7 @@ namespace obe
             sf::Color m_spriteColor = sf::Color(255, 255, 255);
             std::string m_parentID = "";
 
+            void applySize();
             void update();
 
         public:
@@ -59,8 +61,7 @@ namespace obe
             void setZDepth(int zdepth);
             void rotate(double addRotate);
             void setRotation(double rotate);
-            void scale(double scaleX, double scaleY);
-            void setScale(double scaleX, double scaleY);
+            
             void setTranslationOrigin(int x, int y);
             void setRotationOrigin(int x, int y);
 
@@ -80,6 +81,13 @@ namespace obe
             double getOffsetX() const;
             double getOffsetY() const;
 
+            //Size
+            void scale(double scaleX, double scaleY);
+            void setSize(double scaleX, double scaleY);
+            void u_scale(const Coord::UnitVector& vec);
+            void u_setSize(const Coord::UnitVector& vec);
+            Coord::ProtectedUnitVector& getSize();
+
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);
             std::vector<std::string> getAttributes() const;
@@ -87,8 +95,6 @@ namespace obe
             void removeAtrByName(std::string name);
             sfe::ComplexSprite* getSprite();
             void setColor(sf::Color newColor);
-            double getScaleX() const;
-            double getScaleY() const;
             float getRotation() const;
             int getLayer() const;
             int getZDepth() const;

@@ -310,7 +310,13 @@ namespace vili
                             if (stoi(linkParts[linkParts.size() - 2]) <= argsMap.size())
                             {
                                 std::vector<std::string> argPathFragments = Functions::String::split(node->getLinkAttribute(currentLink).getNodePath(), "/");
-                                argsMap[stoi(linkParts[linkParts.size() - 2])] = at<BaseAttribute>(Functions::Vector::join(argPathFragments, "/", 2)).returnData();
+                                std::string returnedData = this->at<BaseAttribute>(Functions::Vector::join(argPathFragments, "/", 2)).returnData();
+                                if (this->at<BaseAttribute>(Functions::Vector::join(argPathFragments, "/", 2)).getDataType() == Types::Float)
+                                {
+                                    while (returnedData.size() > 2 && returnedData.back() == '0' && returnedData[returnedData.size() - 2] != '.')
+                                        returnedData.pop_back();
+                                }
+                                argsMap[stoi(linkParts[linkParts.size() - 2])] = returnedData;
                             }
                         }
                     }

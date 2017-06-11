@@ -72,6 +72,7 @@ namespace obe
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
             Light::initLights();
+            world.setCameraLock(false);
 
             if (mapName != "")
                 world.loadFromFile(mapName);

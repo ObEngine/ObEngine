@@ -214,8 +214,6 @@ namespace obe
                 );
                 int spriteRot = currentSprite.contains(vili::Types::BaseAttribute, "rotation") ?
                                     currentSprite.getBaseAttribute("rotation").get<int>() : 0;
-                double spriteSca = currentSprite.contains(vili::Types::BaseAttribute, "scale") ?
-                                       currentSprite.getBaseAttribute("scale").get<double>() : 1;
                 int layer = currentSprite.contains(vili::Types::BaseAttribute, "layer") ?
                                 currentSprite.getBaseAttribute("layer").get<int>() : 1;
                 int zdepth = currentSprite.contains(vili::Types::BaseAttribute, "z-depth") ?
@@ -235,7 +233,7 @@ namespace obe
                 m_objectLevelSprite->load(spritePath);
                 m_objectLevelSprite->setPosition(spritePos.x, spritePos.y);
                 m_objectLevelSprite->setRotation(spriteRot);
-                m_objectLevelSprite->setScale(spriteSca, spriteSca);
+                //ADD SPRITE SIZE
                 m_objectLevelSprite->setAtr(decoAtrList);
                 m_objectLevelSprite->setLayer(layer);
                 m_objectLevelSprite->setZDepth(zdepth);

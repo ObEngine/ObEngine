@@ -291,7 +291,8 @@ namespace obe
             sprToAdd->load("Sprites/LevelSprites/" + geid);
             sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::WorldPixels);
             sprToAdd->setRotation(0);
-            sprToAdd->setScale(1, 1);
+            //ADD SPRITE SIZE
+            //sprToAdd->setScale(1, 1);
             sprToAdd->setAtr(std::vector<std::string>());
             sprToAdd->setLayer(1);
             sprToAdd->setZDepth(1);
