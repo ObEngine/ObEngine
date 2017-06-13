@@ -1140,7 +1140,7 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     window.clear();
-                    world.display(&window);
+                    world.display(window);
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")
                         world.enableShowCollision(true);

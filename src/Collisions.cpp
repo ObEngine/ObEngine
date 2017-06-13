@@ -7,15 +7,6 @@ namespace obe
 {
     namespace Collision
     {
-        void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col)
-        {
-            sf::Vertex line[] = {
-                sf::Vertex(sf::Vector2f(x1, y1), col),
-                sf::Vertex(sf::Vector2f(x2, y2), col)
-            };
-            surf->draw(line, w, sf::Lines);
-        }
-
         bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt)
         {
             if (firstPt->X < secondPt->X)
@@ -425,64 +416,56 @@ namespace obe
             return sqrt(pow(p1coords.X - p2coords.X, 2) + pow(p1coords.Y - p2coords.Y, 2));
         }
 
-        void PolygonalCollider::draw(sf::RenderWindow* surf, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+        void PolygonalCollider::draw(sf::RenderWindow& target, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
             if (m_allPoints.size() >= 1)
             {
-                sf::CircleShape polyPt;
+                std::map<std::string, obe::Types::any> drawOptions;
+                
                 int r = 6;
-                polyPt.setRadius(r);
-                polyPt.setPointCount(100);
-                if (!m_selected) polyPt.setFillColor(sf::Color(255, 150, 0));
-                if (m_selected) polyPt.setFillColor(sf::Color(0, 150, 255));
-                if (drawMasterPoint)
-                {
-                    polyPt.setPosition(sf::Vector2f(m_masterPoint.X + m_drawOffsetX - r, m_masterPoint.Y + m_drawOffsetY - r));
-                    surf->draw(polyPt);
-                }
-                polyPt.setFillColor(sf::Color(255, 255, 255));
+                
+                drawOptions["lines"] = drawLines;
+                drawOptions["points"] = drawPoints;
+                drawOptions["radius"] = r;
+                drawOptions["point_color"] = sf::Color::White;
+
+                std::vector<sf::Vector2i> drawPoints;
+
                 for (int i = 0; i < m_allPoints.size(); i++)
                 {
-                    int nextIndex = (i == m_allPoints.size() - 1) ? 0 : i + 1;
+                    ClipperLib::IntPoint& point = m_allPoints[i];
 
-                    int x1 = m_allPoints[i].X + m_drawOffsetX;
-                    int y1 = m_allPoints[i].Y + m_drawOffsetY;
+                    if (Functions::Vector::isInList(i, m_highlightedPoints) && m_selected)
+                        drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
+                    else
+                        drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 255, 255);
+                    drawPoints.emplace_back(point.X + m_drawOffsetX, point.Y + m_drawOffsetY);
+                }
+
+                if (Functions::Vector::isInList(0, m_highlightedPoints) && m_selected)
+                    drawOptions["point_color_0"] = sf::Color(255, 255, 0);
+                else if (m_selected)
+                    drawOptions["point_color_0"] = sf::Color(0, 255, 0);
+
+                if (drawMasterPoint)
+                {
+                    sf::CircleShape polyPt;
+                    polyPt.setPosition(sf::Vector2f(m_masterPoint.X + m_drawOffsetX - r, m_masterPoint.Y + m_drawOffsetY - r));
+                    polyPt.setRadius(r);
+                    polyPt.setFillColor(m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0));
+                    target.draw(polyPt);
                     if (drawSkel)
                     {
-                        if (!m_selected)
-                            drawLine(surf, x1, y1, m_masterPoint.X + m_drawOffsetX, m_masterPoint.Y + m_drawOffsetY, 2, sf::Color(255, 200, 0));
-                        if (m_selected)
-                            drawLine(surf, x1, y1, m_masterPoint.X + m_drawOffsetX, m_masterPoint.Y + m_drawOffsetY, 2, sf::Color(0, 200, 255));
-                    }
-                    if (drawLines)
-                    {
-                        if (!Functions::Vector::isInList(i, m_highlightedLines))
+                        for (ClipperLib::IntPoint& point : m_allPoints)
                         {
-                            if (m_parentID == "")
-                                drawLine(surf, m_allPoints[i].X + m_drawOffsetX, m_allPoints[i].Y + m_drawOffsetY,
-                                         m_allPoints[nextIndex].X + m_drawOffsetX, m_allPoints[nextIndex].Y + m_drawOffsetY);
-                            else
-                                drawLine(surf, m_allPoints[i].X + m_drawOffsetX, m_allPoints[i].Y + m_drawOffsetY,
-                                         m_allPoints[nextIndex].X + m_drawOffsetX, m_allPoints[nextIndex].Y + m_drawOffsetY, 2, sf::Color(255, 0, 255));
+                            Graphics::Utils::drawLine(target,
+                                point.X + m_drawOffsetX, point.Y + m_drawOffsetY,
+                                m_masterPoint.X + m_drawOffsetX, m_masterPoint.Y + m_drawOffsetY,
+                                2, m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0));
                         }
-                        else
-                            drawLine(surf, m_allPoints[i].X + m_drawOffsetX, m_allPoints[i].Y + m_drawOffsetY,
-                                     m_allPoints[nextIndex].X + m_drawOffsetX, m_allPoints[nextIndex].Y + m_drawOffsetY, 2, sf::Color(0, 255, 0));
-                    }
-                    if (drawPoints)
-                    {
-                        polyPt.setPosition(sf::Vector2f(m_allPoints[i].X + m_drawOffsetX - r, m_allPoints[i].Y + m_drawOffsetY - r));
-                        if (i == 0 && Functions::Vector::isInList(i, m_highlightedPoints) && m_selected)
-                            polyPt.setFillColor(sf::Color(255, 255, 0));
-                        else if (i == 0 && m_selected)
-                            polyPt.setFillColor(sf::Color(0, 255, 0));
-                        else if (Functions::Vector::isInList(i, m_highlightedPoints) && m_selected)
-                            polyPt.setFillColor(sf::Color(255, 0, 0));
-                        else
-                            polyPt.setFillColor(sf::Color(255, 255, 255));
-                        surf->draw(polyPt);
                     }
                 }
+                Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
             }
         }
 

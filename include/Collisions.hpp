@@ -6,14 +6,13 @@
 #include <SFML/Graphics.hpp>
 #include <clipper/clipper.hpp>
 
+#include "DrawUtils.hpp"
 #include "Functions.hpp"
-
 
 namespace obe
 {
     namespace Collision
     {
-        void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w = 2, sf::Color col1 = sf::Color(255, 255, 255));
         bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
         double pointsDistance(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
         std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points);
@@ -137,7 +136,7 @@ namespace obe
             bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
             std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
             //Debug
-            void draw(sf::RenderWindow* surf, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+            void draw(sf::RenderWindow& target, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
             void highlightPoint(int pointIndex);
             void highlightLine(int pointIndex);
             void clearHighlights(bool points = true, bool lines = true);

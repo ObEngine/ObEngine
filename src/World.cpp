@@ -350,15 +350,15 @@ namespace obe
             m_camera.unlock();
         }
 
-        void World::display(sf::RenderWindow* surf)
+        void World::display(sf::RenderWindow& target)
         {
-            displaySprites(surf);
+            this->displaySprites(target);
             if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
             {
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
                     m_colliderArray[i]->setDrawOffset(-m_camera.getPosition().to<Coord::WorldPixels>().x, -m_camera.getPosition().to<Coord::WorldPixels>().y);
-                    m_colliderArray[i]->draw(surf, m_showCollisionModes["drawLines"],
+                    m_colliderArray[i]->draw(target, m_showCollisionModes["drawLines"],
                                              m_showCollisionModes["drawPoints"],
                                              m_showCollisionModes["drawMasterPoint"],
                                              m_showCollisionModes["drawSkel"]);
@@ -366,7 +366,7 @@ namespace obe
             }
         }
 
-        void World::displaySprites(sf::RenderWindow* surf)
+        void World::displaySprites(sf::RenderWindow& target)
         {
             Coord::UnitVector pixelCamera = m_camera.getPosition().to<Coord::WorldPixels>();
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
@@ -416,10 +416,10 @@ namespace obe
                 tAffSpr.setPosition(layeredX, layeredY);
                 //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
                 tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
-                if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
+                //if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(target); }
                 if (m_spriteArray[i]->isVisible())
-                    surf->draw(tAffSpr);
-                if (lightHooked) { if (!cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(surf); }
+                    target.draw(tAffSpr);
+                //if (lightHooked) { if (!cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(target); }
             }
         }
 

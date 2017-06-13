@@ -58,7 +58,7 @@ namespace obe
             void clearWorld();
             vili::DataParser* saveData();
             void update(double dt);
-            void display(sf::RenderWindow* surf);
+            void display(sf::RenderWindow& target);
             std::string getLevelName() const;
             void setLevelName(std::string newName);
             void setUpdateState(bool state);
@@ -76,7 +76,7 @@ namespace obe
             //LevelSprites
             Graphics::LevelSprite* createLevelSprite(std::string id);
             void reorganizeLayers();
-            void displaySprites(sf::RenderWindow* surf);
+            void displaySprites(sf::RenderWindow& target);
             Graphics::LevelSprite* getSpriteByIndex(int index);
             int getSpriteArraySize() const;
             std::vector<Graphics::LevelSprite*> getAllSprites();

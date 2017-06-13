@@ -77,6 +77,7 @@ namespace obe
             if (mapName != "")
                 world.loadFromFile(mapName);
             System::Path("boot.lua").loadResource(world.getScriptEngine(), System::Loaders::luaLoader);
+            world.getScriptEngine()->dostring("Game.Start()");
 
             //Game Starts
             while (window.isOpen())
@@ -138,7 +139,7 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     window.clear();
-                    world.display(&window);
+                    world.display(window);
                     if (textDisplay.textRemaining())
                         textDisplay.render(&window);
                     window.draw(*cursor.getSprite());
