@@ -5,10 +5,12 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <any/any.hpp>
 
 #include "Animation.hpp"
 #include "ComplexSprite.hpp"
 #include "Coordinates.hpp"
+#include "DrawUtils.hpp"
 
 namespace obe
 {
@@ -87,6 +89,7 @@ namespace obe
             void u_scale(const Coord::UnitVector& vec);
             void u_setSize(const Coord::UnitVector& vec);
             Coord::ProtectedUnitVector& getSize();
+            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
 
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);

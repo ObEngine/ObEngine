@@ -117,6 +117,32 @@ namespace obe
             return m_size;
         }
 
+        void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY)
+        {
+            std::map<std::string, obe::Types::any> drawOptions;
+
+            int r = 4;
+
+            drawOptions["lines"] = true;
+            drawOptions["points"] = true;
+            drawOptions["radius"] = r;
+            drawOptions["point_color"] = sf::Color::White;
+
+            std::vector<sf::Vector2i> drawPoints;
+
+            Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::WorldPixels);
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y + this->getHeight() / 2);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y + this->getHeight());
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + this->getHeight());
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + this->getHeight());
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + this->getHeight() / 2);
+
+            Utils::drawPolygon(target, drawPoints, drawOptions);
+        }
+
         void LevelSprite::setTranslationOrigin(int x, int y)
         {
             m_originTraX = x;

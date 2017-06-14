@@ -418,7 +418,11 @@ namespace obe
                 tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
                 //if (lightHooked) { if (cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(target); }
                 if (m_spriteArray[i]->isVisible())
+                {
                     target.draw(tAffSpr);
+                    m_spriteArray[i]->drawHandle(target, layeredX, layeredY);
+                }
+                    
                 //if (lightHooked) { if (!cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(target); }
             }
         }

@@ -139,9 +139,9 @@ namespace obe
         void PolygonalCollider::addPoint(int x, int y, int pointIndex)
         {
             if (pointIndex == -1 || pointIndex == m_allPoints.size())
-                m_allPoints.push_back({x, y});
+                m_allPoints.emplace_back(x, y);
             else if (pointIndex >= 0 && pointIndex < m_allPoints.size())
-                m_allPoints.insert(m_allPoints.begin() + pointIndex, {x, y});
+                m_allPoints.insert(m_allPoints.begin() + pointIndex, ClipperLib::IntPoint(x, y));
             if (m_allPoints.size() >= 3)
                 calculateMasterPoint();
         }
@@ -452,16 +452,18 @@ namespace obe
                     sf::CircleShape polyPt;
                     polyPt.setPosition(sf::Vector2f(m_masterPoint.X + m_drawOffsetX - r, m_masterPoint.Y + m_drawOffsetY - r));
                     polyPt.setRadius(r);
-                    polyPt.setFillColor(m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0));
+                    sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
+                    polyPt.setFillColor(polyPtColor);
                     target.draw(polyPt);
                     if (drawSkel)
                     {
                         for (ClipperLib::IntPoint& point : m_allPoints)
                         {
+                            sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
                                 point.X + m_drawOffsetX, point.Y + m_drawOffsetY,
                                 m_masterPoint.X + m_drawOffsetX, m_masterPoint.Y + m_drawOffsetY,
-                                2, m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0));
+                                2, currentLineColor);
                         }
                     }
                 }

@@ -1007,14 +1007,10 @@ namespace obe
                 }
 
                 //GUI Update
-                /*GUI::Widget::getWidgetByID<GUI::Label>("cursorPos")->setComplexText("<color:255,255,255>Cursor : (<color:0,255,0>" + std::to_string(cursor.getX()) + "<color:255,255,255>"
-                    ",<color:0,255,0>" + std::to_string(cursor.getY()) + "<color:255,255,255>)");
-                GUI::Widget::getWidgetByID<GUI::Label>("camPos")->setComplexText("<color:255,255,255>Camera : (<color:0,255,0>" + std::to_string((int)pixelCamera.x) + "<color:255,255,255>"
-                    ",<color:0,255,0>" + std::to_string((int)pixelCamera.y) + "<color:255,255,255>)");
-                GUI::Widget::getWidgetByID<GUI::Label>("sumPos")->setComplexText("<color:255,255,255>Sum : (<color:0,255,0>" + 
-                    std::to_string((int)pixelCamera.x + (int)cursor.getX()) + "<color:255,255,255>"
-                    ",<color:0,255,0>" + std::to_string((int)pixelCamera.y + (int)cursor.getY()) + "<color:255,255,255>)");
-                GUI::Widget::getWidgetByID<GUI::Label>("currentLayer")->setComplexText("<color:255,255,255>Layer : <color:0,255,0>" + std::to_string(currentLayer));*/
+                cursorPosLabel->setText("Cursor : (" + std::to_string(cursor.getX()) + ", " + std::to_string(cursor.getY()) + ")");
+                cameraPosLabel->setText("Camera : (" + std::to_string(int(pixelCamera.x)) + ", " + std::to_string(int(pixelCamera.y)) + ")");
+                absolutePosLabel->setText("Sum : (" + std::to_string(int(pixelCamera.x) + int(cursor.getX())) + ", " + std::to_string(int(pixelCamera.y) + int(cursor.getY())) + ")");
+                layerLabel->setText("Layer : " + std::to_string(currentLayer));
 
                 if (enableGridCheckbox->isChecked())
                 {
