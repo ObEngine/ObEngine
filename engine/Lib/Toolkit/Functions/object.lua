@@ -72,6 +72,10 @@ function Functions.create(objectName, components)
     Color.print({ text = "GameObject '" .. objectName .. "' has been successfully created !", color = {0, 255, 0}}, 1);
 end
 
+function Functions.list()
+
+end
+
 return {
     Functions = Functions,
     Routes = {
@@ -81,6 +85,9 @@ return {
                     Route.Call("create");
                 })
             })
-        })
+        }),
+        Route.Arg("list", {
+            Route.Call("list");
+        });
     }
 };

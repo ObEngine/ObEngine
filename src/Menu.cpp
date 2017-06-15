@@ -61,7 +61,7 @@ namespace obe
             scrollbar->setMaximum(scrollBoxSize);
         }
 
-        void createLevel(tgui::TextBox::Ptr input)
+        void createLevel(tgui::EditBox::Ptr input)
         {
             std::string newLevelName = input->getText();
             if (newLevelName != "")
@@ -109,7 +109,7 @@ namespace obe
             tgui::Button::Ptr closeButton = tgui::Button::create();
             tgui::Label::Ptr createMapLabel = tgui::Label::create();
             tgui::Button::Ptr createMapButton = tgui::Button::create();
-            tgui::TextBox::Ptr createMapInput = tgui::TextBox::create();
+            tgui::EditBox::Ptr createMapInput = tgui::EditBox::create();
 
             topPanel->setRenderer(baseTheme.getRenderer("Panel"));
             topPanel->setSize("&.width", "&.height / 10");
@@ -150,19 +150,21 @@ namespace obe
             createMapLabel->setTextSize(30);
             createMapLabel->setPosition("&.&.width / 40", "(&.height / 2) - (height / 2)");
 
+            auto createMapLambda = [createMapInput, middlePanel, scrollbar, &baseTheme, &currentMap]()
+            {
+                createLevel(createMapInput);
+                chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
+            };
+
             createMapButton->setRenderer(baseTheme.getRenderer("AddButton"));
             createMapButton->setSize("32", "32");
             createMapButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
-            createMapButton->connect("pressed", [createMapInput, middlePanel, scrollbar, &baseTheme, &currentMap]()
-                                 {
-                                     createLevel(createMapInput);
-                                     chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
-                                 });
+            createMapButton->connect("pressed", createMapLambda);
 
-            createMapInput->setVerticalScrollbarPresent(false);
             createMapInput->setRenderer(baseTheme.getRenderer("TextBox"));
             createMapInput->setSize("300", "32");
             createMapInput->setPosition("(&.width / 2) - (width / 4)", "(&.height / 2) - (height / 2)");
+            createMapInput->connect("returnkeypressed", createMapLambda);
 
             gui.add(topPanel);
             gui.add(bottomPanel);
