@@ -7,7 +7,7 @@ namespace obe
 {
     namespace Graphics
     {
-        LevelSprite::LevelSprite(std::string id)
+        LevelSprite::LevelSprite(std::string id) : Selectable(false)
         {
             m_id = id;
             m_drawable = false;
@@ -131,14 +131,14 @@ namespace obe
             std::vector<sf::Vector2i> drawPoints;
 
             Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::WorldPixels);
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y + this->getHeight() / 2);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth(), pixelPosition.y + this->getHeight());
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + this->getHeight());
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + this->getHeight());
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + this->getHeight() / 2);
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + this->getHeight() / 2);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + this->getHeight() - r);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + this->getHeight() - r);
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + this->getHeight() - r);
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + this->getHeight() / 2);
 
             Utils::drawPolygon(target, drawPoints, drawOptions);
         }
@@ -159,6 +159,7 @@ namespace obe
 
         void LevelSprite::applySize()
         {
+            std::cout << "Applying Size of " << m_id << std::endl;
             Coord::UnitVector pixelSize = m_size.to<Coord::WorldPixels>();
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;*/
             m_returnSprite.setScale(pixelSize.x / double(this->getWidth()), pixelSize.y / double(this->getHeight()));
@@ -316,7 +317,6 @@ namespace obe
             Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
 
             m_returnSprite.setPosition(realPosition.x, realPosition.y);
-            this->applySize();
             m_returnSprite.setRotation(m_rotation);
             sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_width, m_height);
             mrect.left = m_returnSprite.getGlobalBounds().left;

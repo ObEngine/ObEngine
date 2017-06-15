@@ -11,12 +11,13 @@
 #include "ComplexSprite.hpp"
 #include "Coordinates.hpp"
 #include "DrawUtils.hpp"
+#include "Selectable.hpp"
 
 namespace obe
 {
     namespace Graphics
     {
-        class LevelSprite : public Coord::UnitBasedObject
+        class LevelSprite : public Coord::UnitBasedObject, public Types::Selectable
         {
         private:
             std::string m_path = "";

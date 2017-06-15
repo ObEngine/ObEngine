@@ -698,14 +698,15 @@ namespace obe
                         }
                     }
                     //Sprite Hover
-                    if (hoveredSprite == nullptr && selectedSprite == nullptr)
+                    if (hoveredSprite == nullptr)
                     {
-                        if (world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer) != nullptr)
+                        hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer);
+                        if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
                             hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
-                                                                 cursor.getY() + pixelCamera.y, currentLayer);
+                                cursor.getY() + pixelCamera.y, currentLayer);
                             sdBoundingRect = hoveredSprite->getRect();
-                            hoveredSprite->setColor(sf::Color(0, 60, 255));
+                            hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
                             sprInfoStr += "    ID : " + hoveredSprite->getID() + "\n";
@@ -717,8 +718,10 @@ namespace obe
                             sprInfo.setString(sprInfoStr);
                             sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
                         }
+                        else
+                            hoveredSprite == nullptr;
                     }
-                    else if (hoveredSprite != nullptr && selectedSprite == nullptr)
+                    else if (hoveredSprite != nullptr)
                     {
                         sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
                         sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
@@ -729,7 +732,8 @@ namespace obe
                             outHover = true;
                         if (outHover)
                         {
-                            hoveredSprite->setColor(sf::Color::White);
+                            if (hoveredSprite != selectedSprite)
+                                hoveredSprite->setColor(sf::Color::White);
                             hoveredSprite = nullptr;
                             sprInfo.setString("");
                         }
@@ -738,6 +742,15 @@ namespace obe
                     //Sprite Pick
                     if (cursor.getClicked("Left"))
                     {
+                        if (selectedSprite != nullptr)
+                        {
+                            selectedSprite->setColor(sf::Color::White);
+                            selectedSprite->unselect();
+                            sprInfo.setString("");
+                            selectedSprite = nullptr;
+                            selectedSpriteOffsetX = 0;
+                            selectedSpriteOffsetY = 0;
+                        }
                         if (hoveredSprite != nullptr)
                         {
                             selectedSprite = hoveredSprite;
@@ -745,9 +758,10 @@ namespace obe
                             selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::WorldPixels>().y;
                             selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::WorldPixels>().x;
                             selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffset().to<Coord::WorldPixels>().y;
+                            selectedSprite->select();
 
                             sdBoundingRect = selectedSprite->getRect();
-                            selectedSprite->setColor(sf::Color(255, 0, 0));
+                            selectedSprite->setColor(sf::Color(100, 255, 100));
                         }
                     }
 
@@ -796,17 +810,6 @@ namespace obe
                         if (keybind.isActionEnabled("ScaleInc"))
                             selectedSprite->scale(0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), 0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
                     }*/
-
-                    //Sprite Drop
-                    if (cursor.getReleased("Left") && selectedSprite != nullptr)
-                    {
-                        selectedSprite->setColor(sf::Color::White);
-                        sprInfo.setString("");
-                        selectedSprite = nullptr;
-                        hoveredSprite = nullptr;
-                        selectedSpriteOffsetX = 0;
-                        selectedSpriteOffsetY = 0;
-                    }
 
                     //Sprite Layer / Z-Depth
                     if (cursor.getPressed("Left") && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))

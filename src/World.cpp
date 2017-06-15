@@ -420,7 +420,8 @@ namespace obe
                 if (m_spriteArray[i]->isVisible())
                 {
                     target.draw(tAffSpr);
-                    m_spriteArray[i]->drawHandle(target, layeredX, layeredY);
+                    if (m_spriteArray[i]->isSelected())
+                        m_spriteArray[i]->drawHandle(target, layeredX, layeredY);
                 }
                     
                 //if (lightHooked) { if (!cLight->isBehind()) m_lightMap[m_spriteArray[i]->getID()]->draw(target); }

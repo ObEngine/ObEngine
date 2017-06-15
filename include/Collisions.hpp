@@ -8,6 +8,7 @@
 
 #include "DrawUtils.hpp"
 #include "Functions.hpp"
+#include "Selectable.hpp"
 
 namespace obe
 {
@@ -18,7 +19,7 @@ namespace obe
         std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points);
         int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B);
 
-        class PolygonalCollider : public Coord::UnitBasedObject //Polygon with collision methods
+        class PolygonalCollider : public Coord::UnitBasedObject, public Types::Selectable //Polygon with collision methods
         {
         private:
             std::string m_id;
@@ -57,9 +58,6 @@ namespace obe
             //Sides
             double getSideAngle(int side);
             double getSideLength(int side);
-            //Selection
-            void setSelected(bool sel);
-            bool getSelected() const;
             //Points
             int getPointsAmount() const;
             int getSideContainingPoint(int x, int y);

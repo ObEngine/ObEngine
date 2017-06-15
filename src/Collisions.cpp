@@ -57,7 +57,7 @@ namespace obe
             return (A->X - O->X) * (B->Y - O->Y) - (A->Y - O->Y) * (B->X - O->X);
         }
 
-        PolygonalCollider::PolygonalCollider(std::string id)
+        PolygonalCollider::PolygonalCollider(std::string id) : Selectable(false)
         {
             m_id = id;
         }
@@ -76,16 +76,6 @@ namespace obe
         int PolygonalCollider::getPointsAmount() const
         {
             return m_allPoints.size();
-        }
-
-        void PolygonalCollider::setSelected(bool sel)
-        {
-            m_selected = sel;
-        }
-
-        bool PolygonalCollider::getSelected() const
-        {
-            return m_selected;
         }
 
         ClipperLib::IntPoint PolygonalCollider::getPointPosition(int index)
