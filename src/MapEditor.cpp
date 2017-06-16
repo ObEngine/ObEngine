@@ -113,6 +113,7 @@ namespace obe
             tgui::Label::Ptr cameraPosLabel = tgui::Label::create();
             tgui::Label::Ptr absolutePosLabel = tgui::Label::create();
             tgui::Label::Ptr layerLabel = tgui::Label::create();
+            tgui::Label::Ptr savedLabel = tgui::Label::create();
             tgui::Button::Ptr editorButton = tgui::Button::create();
             tgui::ComboBox::Ptr cameraMode = tgui::ComboBox::create();
             tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
@@ -175,6 +176,7 @@ namespace obe
             sprInfo.setFillColor(sf::Color::White);
             sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
             sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
+            double waitForMapSaving = -1;
 
             //Font size setup
             unsigned int bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
@@ -213,6 +215,7 @@ namespace obe
             titlePanel->add(cameraPosLabel, "cameraPosLabel");
             titlePanel->add(absolutePosLabel, "absolutePosLabel");
             titlePanel->add(layerLabel, "layerLabel");
+            titlePanel->add(savedLabel, "savedLabel");
             titlePanel->add(editorButton, "editorButton");
             titlePanel->add(editMode, "editMode");
             titlePanel->add(cameraMode, "cameraMode");
@@ -245,6 +248,12 @@ namespace obe
             layerLabel->setTextSize(mediumFontSize);
             layerLabel->setRenderer(baseTheme.getRenderer("Label"));
             layerLabel->setText("Layer : 10");
+
+            savedLabel->setPosition(bindRight(layerLabel) + 60, 5);
+            savedLabel->setTextSize(smallFontSize);
+            savedLabel->setRenderer(baseTheme.getRenderer("GreenLabel"));
+            savedLabel->setText("Saved");
+            savedLabel->hide();
 
             cameraMode->addItem("Movable Camera");
             cameraMode->addItem("Free Camera");
@@ -618,6 +627,18 @@ namespace obe
             while (window.isOpen())
             {
                 framerateManager.update();
+                if (waitForMapSaving >= 0)
+                {
+                    waitForMapSaving += framerateManager.getDeltaTime();
+                    if (waitForMapSaving > 1 && waitForMapSaving < 2)
+                    {
+                        savedLabel->hideWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
+                        waitForMapSaving = 2;
+                    }
+                    else if (waitForMapSaving > 3)
+                        waitForMapSaving = -1;
+                }
+                    
 
                 //GUI Actions
                 keybind.setEnabled(!gameConsole.isConsoleVisible());
@@ -1109,7 +1130,12 @@ namespace obe
                             if (event.key.control)
                             {
                                 world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
-                                textDisplay.sendToRenderer("MapSaver", {{"text", "File <" + mapName + "> Saved !"}});
+                                if (waitForMapSaving < 0)
+                                {
+                                    savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
+                                    waitForMapSaving = 0;
+                                }
+                                    
                             }
                         }
                         if (event.key.code == sf::Keyboard::V)

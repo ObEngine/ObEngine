@@ -70,6 +70,10 @@ Label {
     TextColor = rgb(255, 255, 255);
 }
 
+GreenLabel {
+    TextColor = rgb(100, 255, 100);
+}
+
 TextBox {
     BackgroundColor             = rgb(22, 22, 22);
     TextColor                   = rgb(255, 255, 255);
