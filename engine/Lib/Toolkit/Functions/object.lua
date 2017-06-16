@@ -73,7 +73,10 @@ function Functions.create(objectName, components)
 end
 
 function Functions.list()
-
+    local allObjects = Core.Path.ListDirInDir("Data/GameObjects");
+    for _, key in pairs(allObjects) do 
+        Color.print({ text = "- Object : " .. key, color = {0, 255, 255}}, 2);
+    end
 end
 
 return {

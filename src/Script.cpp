@@ -816,6 +816,18 @@ namespace obe
                 (*lua)["Core"]["Path"]["Path"].setClass(kaguya::UserdataMetatable<System::Path>()
                     .addStaticFunction("Paths", &System::Path::Paths)
                 );
+                (*lua)["Core"]["Path"]["ListFileInDir"] = kaguya::function([](const std::string& path)
+                {
+                    std::vector<std::string> fileList;
+                    System::Path(path).loadResource(&fileList, System::Loaders::filePathLoader);
+                    return fileList;
+                });
+                (*lua)["Core"]["Path"]["ListDirInDir"] = kaguya::function([](const std::string& path)
+                {
+                    std::vector<std::string> dirList;
+                    System::Path(path).loadResource(&dirList, System::Loaders::dirPathLoader);
+                    return dirList;
+                });
                 foundPart = true;
             }
             (*lua)["Core"]["Path"]["MountPaths"] = kaguya::function(System::MountPaths);
