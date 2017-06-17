@@ -54,6 +54,7 @@ namespace obe
             Script::TriggerGroup* m_keysTriggers;
         public:
             KeyBinder();
+            ~KeyBinder();
             void setEnabled(bool state);
             void loadFromFile(vili::DataParser& configFile);
             void connectAction(std::string action, std::string key);

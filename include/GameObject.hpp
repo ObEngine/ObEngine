@@ -67,6 +67,7 @@ namespace obe
             friend class World::World;
         public:
             GameObject(std::string type, std::string id);
+            ~GameObject();
 
             std::string getID() const;
             std::string getType() const;

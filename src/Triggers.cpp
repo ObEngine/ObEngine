@@ -242,6 +242,14 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "joinTriggerGroup"},{"nsp", groupNamespace}});
         }
 
+        void TriggerDatabase::removeNamespace(const std::string& namespaceId)
+        {
+            if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
+                m_allTriggers.erase(m_allTriggers.find(namespaceId));
+            else
+                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", { {"function", "removeNamespace"}, {"nsp", namespaceId} });
+        }
+
         void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
         {
             m_allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());

@@ -21,6 +21,11 @@ namespace obe
             m_showCollisionModes["drawSkel"] = false;
         }
 
+        World::~World()
+        {
+            Script::TriggerDatabase::GetInstance()->removeNamespace("Map");
+        }
+
         Graphics::LevelSprite* World::createLevelSprite(std::string id)
         {
             std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);

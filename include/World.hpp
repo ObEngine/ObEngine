@@ -54,6 +54,7 @@ namespace obe
         public:
             //World
             World();
+            ~World();
             void loadFromFile(std::string filename);
             void clearWorld();
             vili::DataParser* saveData();

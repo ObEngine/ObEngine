@@ -123,6 +123,12 @@ namespace obe
             m_id = id;
         }
 
+        GameObject::~GameObject()
+        {
+            TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
+            TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
+        }
+
         void GameObject::registerTrigger(Trigger* trg)
         {
             m_registeredTriggers.push_back(trg);

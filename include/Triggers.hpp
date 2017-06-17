@@ -97,6 +97,7 @@ namespace obe
             void createNamespace(std::string groupNamespace);
             TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
             TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            void removeNamespace(const std::string& namespaceId);
             void removeTriggerGroup(TriggerGroup* trgGroup);
             bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
             std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
