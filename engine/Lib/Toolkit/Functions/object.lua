@@ -3,6 +3,7 @@ local Route = require("Lib/Toolkit/Route");
 
 local Functions = {};
 function Functions.create(objectName, components)
+    components = components:upper();
     local currentWs = Core.Path.Path.Paths()[1]:getPath();
     local haveAnimator = false;
     local haveLevelSprite = false;
@@ -18,15 +19,17 @@ function Functions.create(objectName, components)
             Color.print({ text = "+ Using component (C)ollider", color = {0, 255, 255}}, 2);
             objSaveFile:root():at(objectName):createComplexAttribute("Collider");
             objCollider = objSaveFile:root():at(objectName .. "/Collider");
+            objCollider:createComplexAttribute("unit");
+            objCollider:at("unit"):createBaseAttribute("unit", "WorldUnits");
             objCollider:createListAttribute("points");
             objCollider:getListAttribute("points"):push(0);
             objCollider:getListAttribute("points"):push(0);
-            objCollider:getListAttribute("points"):push(32);
+            objCollider:getListAttribute("points"):push(1);
             objCollider:getListAttribute("points"):push(0);
-            objCollider:getListAttribute("points"):push(32);
-            objCollider:getListAttribute("points"):push(32);
+            objCollider:getListAttribute("points"):push(1);
+            objCollider:getListAttribute("points"):push(1);
             objCollider:getListAttribute("points"):push(0);
-            objCollider:getListAttribute("points"):push(32);
+            objCollider:getListAttribute("points"):push(1);
         end
         if (string.find(components, "A") ~= nil) then
             haveAnimator = true;

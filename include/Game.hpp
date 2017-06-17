@@ -9,6 +9,6 @@ namespace obe
 {
     namespace Modes
     {
-        void startGame(std::string mapName);
+        void startGame();
     }
 }

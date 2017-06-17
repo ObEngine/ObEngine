@@ -7,7 +7,7 @@ namespace obe
         void startToolkitMode()
         {
             bool continueToolkit = true;
-            sf::RenderWindow window({636, 636}, "Window", sf::Style::None);
+            sf::RenderWindow window({636, 636}, "ObEngine Toolkit", sf::Style::None);
             sf::Color inputColor(255, 255, 255);
 
             tgui::Gui gui(window);

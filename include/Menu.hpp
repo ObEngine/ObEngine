@@ -7,11 +7,15 @@
 #include "Cursor.hpp"
 #include "Functions.hpp"
 #include "PathResolver.hpp"
+#include "MapEditor.hpp"
+#include "Game.hpp"
+#include "Toolkit.hpp"
 
 namespace obe
 {
     namespace Modes
     {
         std::string chooseMapMenu();
+        void startDevMenu();
     }
 }

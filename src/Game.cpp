@@ -5,7 +5,7 @@ namespace obe
 {
     namespace Modes
     {
-        void startGame(std::string mapName)
+        void startGame()
         {
             //Creating Window
             sf::RenderWindow window(sf::VideoMode(Coord::UnitVector::Screen.w, Coord::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
@@ -74,8 +74,6 @@ namespace obe
             Light::initLights();
             world.setCameraLock(false);
 
-            if (mapName != "")
-                world.loadFromFile(mapName);
             System::Path("boot.lua").loadResource(world.getScriptEngine(), System::Loaders::luaLoader);
             world.getScriptEngine()->dostring("Game.Start()");
 

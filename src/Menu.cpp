@@ -92,7 +92,7 @@ namespace obe
 
         std::string chooseMapMenu()
         {
-            sf::RenderWindow window({636, 636}, "Window", sf::Style::None);
+            sf::RenderWindow window({636, 636}, "ObEngine Map Selector", sf::Style::None);
 
             tgui::Gui gui(window);
             gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -220,6 +220,127 @@ namespace obe
             }
 
             return currentMap;
+        }
+
+        void startDevMenu()
+        {
+            sf::RenderWindow window({ 636, 636 }, "ObEngine Development Window", sf::Style::None);
+
+            tgui::Gui gui(window);
+            gui.setFont("Data/Fonts/weblysleekuil.ttf");
+            tgui::Theme baseTheme;
+            baseTheme.load("Data/GUI/obe.style");
+
+            tgui::Panel::Ptr topPanel = tgui::Panel::create();
+            tgui::Panel::Ptr middlePanel = tgui::Panel::create();
+            tgui::Label::Ptr titleLabel = tgui::Label::create();
+            tgui::Button::Ptr closeButton = tgui::Button::create();
+            tgui::Button::Ptr playButton = tgui::Button::create();
+            tgui::Button::Ptr editButton = tgui::Button::create();
+            tgui::Button::Ptr toolkitButton = tgui::Button::create();
+            tgui::Button::Ptr helpButton = tgui::Button::create();
+
+            topPanel->setRenderer(baseTheme.getRenderer("Panel"));
+            topPanel->setSize("&.width", "&.height / 10");
+            topPanel->setPosition("0", "0");
+
+            middlePanel->setRenderer(baseTheme.getRenderer("LightPanel"));
+            middlePanel->setSize("&.width", "&.height - (&.height / 10)");
+            middlePanel->setPosition("0", "&.height / 10");
+
+            titleLabel->setRenderer(baseTheme.getRenderer("Label"));
+            titleLabel->setText("ObEngine Development Menu");
+            titleLabel->setTextSize(34);
+            titleLabel->setPosition("&.width / 40", "(&.height / 2) - (height / 2)");
+
+            closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
+            closeButton->setSize("32", "32");
+            closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+            closeButton->connect("pressed", [&window]()
+            {
+                window.close();
+            });
+
+            playButton->setRenderer(baseTheme.getRenderer("PlaySquareButton"));
+            playButton->setSize("318", "286");
+            playButton->setPosition("0", "0");
+            playButton->connect("pressed", []()
+            {
+                obe::Modes::startGame();
+            });
+
+            editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
+            editButton->setSize("318", "286");
+            editButton->setPosition(tgui::bindRight(playButton), "0");
+            editButton->connect("pressed", []()
+            {
+                std::string editMapName = obe::Modes::chooseMapMenu();
+                if (editMapName != "")
+                    obe::Editor::editMap(editMapName);
+            });
+
+            toolkitButton->setRenderer(baseTheme.getRenderer("ToolkitSquareButton"));
+            toolkitButton->setSize("318", "286");
+            toolkitButton->setPosition("0", tgui::bindBottom(playButton));
+            toolkitButton->connect("pressed", [&window]()
+            {
+                obe::Modes::startToolkitMode();
+            });
+
+            helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));
+            helpButton->setSize("318", "286");
+            helpButton->setPosition(tgui::bindLeft(editButton), tgui::bindBottom(playButton));
+            //helpButton->connect("pressed", [&window]()
+
+            gui.add(topPanel);
+            gui.add(middlePanel);
+            topPanel->add(closeButton);
+            topPanel->add(titleLabel);
+            middlePanel->add(playButton);
+            middlePanel->add(editButton);
+            middlePanel->add(toolkitButton);
+            middlePanel->add(helpButton);
+
+            sf::Vector2i grabbedOffset;
+            bool grabbedWindow = false;
+
+            std::cout << middlePanel->getSize().x << ", " << middlePanel->getSize().y << std::endl;
+
+            while (window.isOpen())
+            {
+                sf::Event event;
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::MouseButtonPressed)
+                    {
+                        if (sf::Mouse::getPosition().y - window.getPosition().y < 60 && sf::Mouse::getPosition().x - window.getPosition().x < 580)
+                        {
+                            if (event.mouseButton.button == sf::Mouse::Left)
+                            {
+                                grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
+                                grabbedWindow = true;
+                            }
+                        }
+                    }
+                    else if (event.type == sf::Event::MouseButtonReleased)
+                    {
+                        if (event.mouseButton.button == sf::Mouse::Left)
+                            grabbedWindow = false;
+                    }
+                    else if (event.type == sf::Event::MouseMoved)
+                    {
+                        if (grabbedWindow)
+                            window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
+                    }
+                    gui.handleEvent(event);
+                }
+
+                window.clear();
+                gui.draw();
+                window.display();
+            }
         }
     }
 }

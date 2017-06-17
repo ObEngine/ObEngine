@@ -37,11 +37,13 @@ int main(int argc, char** argv)
             obe::Editor::editMap(editMapName);
     }
     else if (startMode == "play")
-        obe::Modes::startGame("");
+        obe::Modes::startGame();
     else if (startMode == "toolkit")
         obe::Modes::startToolkitMode();
+    else if (startMode == "dev")
+        obe::Modes::startDevMenu();
     else
-        obe::Modes::startGame("");
+        obe::Modes::startGame();
 
     return 0;
 }

@@ -48,6 +48,34 @@ ApplyButton {
     TextColor    = rgb(255, 255, 255);
 }
 
+PlaySquareButton {
+    Texture      = "Button/Play/idle.png";
+    TextureHover = "Button/Play/hover.png";
+    TextureDown  = "Button/Play/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+EditSquareButton {
+    Texture      = "Button/Edit/idle.png";
+    TextureHover = "Button/Edit/hover.png";
+    TextureDown  = "Button/Edit/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+ToolkitSquareButton {
+    Texture      = "Button/Toolkit/idle.png";
+    TextureHover = "Button/Toolkit/hover.png";
+    TextureDown  = "Button/Toolkit/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
+HelpSquareButton {
+    Texture      = "Button/Help/idle.png";
+    TextureHover = "Button/Help/hover.png";
+    TextureDown  = "Button/Help/pushed.png";
+    TextColor    = rgb(255, 255, 255);
+}
+
 Panel {
     BackgroundColor = rgb(44, 44, 44);
 }
