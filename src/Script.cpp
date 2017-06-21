@@ -1058,9 +1058,9 @@ namespace obe
             if (importAll || args[1] == "File")
             {
                 if (!static_cast<bool>((*lua)["Core"]["Utils"]["File"])) (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
-                (*lua)["Core"]["Utils"]["File"]["listDirInDir"] = kaguya::function(Functions::File::listDirInDir);
-                (*lua)["Core"]["Utils"]["File"]["listFileInDir"] = kaguya::function(Functions::File::listFileInDir);
-                (*lua)["Core"]["Utils"]["File"]["copy"] = kaguya::function(Functions::File::copy);
+                (*lua)["Core"]["Utils"]["File"]["listDirInDir"] = kaguya::function(Functions::File::getDirectoryList);
+                (*lua)["Core"]["Utils"]["File"]["listFileInDir"] = kaguya::function(Functions::File::getFileList);
+                (*lua)["Core"]["Utils"]["File"]["copyFile"] = kaguya::function(Functions::File::copyFile);
                 (*lua)["Core"]["Utils"]["File"]["separator"] = kaguya::function(Functions::File::separator);
                 foundPart = true;
             }

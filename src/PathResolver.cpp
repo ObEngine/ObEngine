@@ -11,13 +11,13 @@ namespace obe
             std::function<int(sf::Font*, std::string)> fontLoader = [](sf::Font* obj, std::string path) -> int { return obj->loadFromFile(path); };
             std::function<int(std::vector<std::string>*, std::string)> dirPathLoader = [](std::vector<std::string>* obj, std::string path) -> int
             {
-                std::vector<std::string> newPaths = Functions::File::listDirInDir(path);
+                std::vector<std::string> newPaths = Functions::File::getDirectoryList(path);
                 obj->insert(obj->end(), newPaths.begin(), newPaths.end());
                 return 0x002;
             };
             std::function<int(std::vector<std::string>*, std::string)> filePathLoader = [](std::vector<std::string>* obj, std::string path) -> int
             {
-                std::vector<std::string> newFiles = Functions::File::listFileInDir(path);
+                std::vector<std::string> newFiles = Functions::File::getFileList(path);
                 obj->insert(obj->end(), newFiles.begin(), newFiles.end());
                 return 0x002;
             };

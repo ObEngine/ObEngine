@@ -120,6 +120,7 @@ namespace obe
 
             //Requires Panel
             tgui::Panel::Ptr requiresPanel = tgui::Panel::create();
+            tgui::Button::Ptr requiresCloseButton = tgui::Button::create();
             tgui::Label::Ptr requiresTitleLabel = tgui::Label::create();
             tgui::Panel::Ptr requiresPanelContent = tgui::Panel::create();
 
@@ -184,12 +185,21 @@ namespace obe
             unsigned int smallFontSize = static_cast<double>(bigFontSize) / 2.0;
 
             //Requires Setup
-            requiresPanel->add(requiresPanelContent);
-            requiresPanel->add(requiresTitleLabel);
+            requiresPanel->add(requiresPanelContent, "content");
+            requiresPanel->add(requiresTitleLabel, "label");
             requiresPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
             requiresPanel->setSize("&.w / 3", "&.h / 1.5");
             requiresPanel->setPosition("&.w / 2 - width / 2", "&.h / 2 - height / 2");
             requiresPanel->hide();
+
+            requiresCloseButton->setRenderer(baseTheme.getRenderer("CloseButton"));
+            requiresCloseButton->setSize("32", "32");
+            requiresCloseButton->setPosition("&.width - 40", "8");
+            requiresCloseButton->connect("pressed", [&requiresPanel]()
+            {
+                requiresPanel->hide();
+            });
+            requiresPanel->add(requiresCloseButton);
 
             requiresTitleLabel->setPosition(30, 15);
             requiresTitleLabel->setTextSize(bigFontSize);
@@ -199,7 +209,6 @@ namespace obe
             requiresPanelContent->setRenderer(baseTheme.getRenderer("TransparentPanel"));
             requiresPanelContent->setSize("&.w - 2", "&.h - 62");
             requiresPanelContent->setPosition(0, 60);
-            requiresPanelContent->hide();
 
             //GUI Setup
             int saveEditMode = -1;
@@ -609,7 +618,7 @@ namespace obe
             objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
             objectsCatLabel->setText("[ Objects Settings ]");
 
-            EditorTools::buildObjectTab(objectsPanel, requiresPanelContent, baseTheme);
+            EditorTools::buildObjectTab(objectsPanel, requiresPanel, baseTheme);
 
             //Framerate / DeltaTime
             Time::FPSCounter fps;

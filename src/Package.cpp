@@ -20,7 +20,7 @@ namespace obe
 
         bool Package::Install(std::string packageName)
         {
-            if (!Functions::Vector::isInList(packageName + ".opaque", Functions::File::listFileInDir("Package")))
+            if (!Functions::Vector::isInList(packageName + ".opaque", Functions::File::getFileList("Package")))
                 throw aube::ErrorHandler::Raise("ObEngine.Package.Package.CantFindPackage", {{"package", packageName}});
             if (!PackageExists(packageName))
             {

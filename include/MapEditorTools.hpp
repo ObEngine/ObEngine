@@ -29,7 +29,7 @@ namespace obe
         };
 
         void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme);
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, std::string objName);
+        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, std::string objName);
         void buildObjectThroughRequire(std::string objName);
         void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path);
         void addSpriteToWorld(std::string geid);

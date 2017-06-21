@@ -98,79 +98,91 @@ namespace obe
                 currentObj->setPosition(xpos, ypos);
                 currentObj->setSize(256, 256);
                 objectTab->add(currentObj);
-                currentObj->connect("pressed", [&requiresPanel, currentObjName]()
-                                {
-                                    std::cout << "Trying to build : " << currentObjName << std::endl;
-                                    buildRequiresObjectTab(requiresPanel, currentObjName);
-                                });
+                currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
+                {
+                    std::cout << "Trying to build : " << currentObjName << std::endl;
+                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
+                });
             }
         }
 
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, std::string objName)
+        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, std::string objName)
         {
             std::cout << "Call Require Creation for : " << objName << std::endl;
             vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+            vili::ComplexAttribute& requireInput = requires->at("Input");
+            std::cout << "Requires is : " << requires << std::endl;
             if (requires != nullptr)
             {
+                std::cout << "Show Requires Panel !" << std::endl;
                 requiresPanel->show();
-                requiresPanel->removeAllWidgets();
+                tgui::Panel::Ptr content = requiresPanel->get<tgui::Panel>("content");
+                content->removeAllWidgets();
+
                 tgui::Label::Ptr newObjectTitleLabel = tgui::Label::create();
+                newObjectTitleLabel->setPosition(10, 10);
+                newObjectTitleLabel->setTextSize(32);
+                newObjectTitleLabel->setRenderer(baseTheme.getRenderer("Label"));
+                newObjectTitleLabel->setText("<" + objName + "> Instance Creator");
 
-                //newObjectTitleLabel->setRenderer()
+                content->add(newObjectTitleLabel);
+
+                int widgetVerticalPosition = 70;
+                for (std::string& requireItem : requireInput.getAll(vili::Types::ComplexAttribute))
+                {
+                    std::cout << "Require item is : " << requireItem << std::endl;
+                    std::cout << requires->contains(vili::Types::ComplexAttribute, "Color") << std::endl;
+
+                    tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
+                    currentRequirementLabel->setPosition(50, widgetVerticalPosition);
+                    currentRequirementLabel->setTextSize(18);
+                    currentRequirementLabel->setRenderer(baseTheme.getRenderer("Label"));
+                    currentRequirementLabel->setText(requireItem);
+                    content->add(currentRequirementLabel, requireItem + "_label");
+
+
+                    if (requireInput.getPath(requireItem).contains(vili::Types::BaseAttribute, "type")) {
+                        tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
+                        currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                        currentRequirementInput->setSize("&.width / 3", "32");
+                        currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
+                        content->add(currentRequirementInput, requireItem + "_input");
+                    }
+                    else if (requireInput.getPath(requireItem).contains(vili::Types::ListAttribute, "choices"))
+                    {
+                        tgui::ComboBox::Ptr currentRequirementList = tgui::ComboBox::create();
+                        currentRequirementList->setSize(200, 32);
+                        currentRequirementList->setPosition(200, widgetVerticalPosition);
+                        currentRequirementList->setTextSize(20);
+                        currentRequirementList->setItemsToDisplay(4);
+                        currentRequirementList->setRenderer(baseTheme.getRenderer("ComboBox"));
+                        content->add(currentRequirementList, requireItem + "_input");
+                        for (int reqI = 0; reqI < requireInput.getPath(requireItem).getListAttribute("choices").size(); reqI++)
+                            currentRequirementList->addItem(requireInput.getPath(requireItem).getListAttribute("choices").get(reqI).get<std::string>());
+                        currentRequirementList->setSelectedItem(currentRequirementList->getItems()[0]);
+                    }
+                    widgetVerticalPosition += 50;
+                }
+                tgui::Button::Ptr createObjectButton = tgui::Button::create();
+
+                createObjectButton->setPosition(10, "&.height - 60");
+                createObjectButton->setSize("&.w - 20", 50);
+                createObjectButton->setRenderer(baseTheme.getRenderer("Button"));
+                createObjectButton->setText("Sprites");
+                createObjectButton->setTextSize(22);
+                createObjectButton->setText("Create Object");
+
+                createObjectButton->connect("pressed", [objName]() {
+                    buildObjectThroughRequire(objName);
+                });
+
+                requiresPanel->add(createObjectButton);
             }
-            /*if (gui.getContainer(containerName)-> != nullptr)
-
             else
             {
-                gui->createWidgetContainer(containerName + "_Frame", 1, 700, 200, 520, 680, GUI::ContainerMovement::Fixed);
-                //gui->createWidgetContainer(containerName + "_Top", 1, 10, 10, 10, 10, GUI::ContainerMovement::Fixed); //Uncomment for REALLY WEIRD ERROR
-                gui->createWidgetContainer(containerName, 2, 700, 300, 520, 530, GUI::ContainerMovement::Fixed);
+                std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
+                Script::GameObject* obj = Script::hookCore.getPointer("World")->as<World::World*>()->createGameObject(key, objName);
             }
-            gui->createLabel(containerName + "_Frame", objName + "_Title", 20, 20, objName + " Requirements", "weblysleekuil.ttf", 32, sf::Color::White);
-            gui->getContainerByContainerName(containerName + "_Frame")->setBackground(sf::Color(0, 0, 0, 200));
-            gui->getContainerByContainerName(containerName)->addScrollBar();
-            int widgetVerticalPosition = 0;
-            for (std::string& requireItem : requires->getAll(vili::Types::ComplexAttribute))
-            {
-                std::cout << "Require item is : " << requireItem << std::endl;
-                std::cout << requires->contains(vili::Types::ComplexAttribute, "Color") << std::endl;
-                std::string lblName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
-                gui->createLabel(containerName, objName + "_" + requireItem + "_Lbl", 50, widgetVerticalPosition, lblName, "weblysleekuil.ttf", 24, sf::Color::White);
-                if (requires->getPath(requireItem)->contains(vili::Types::BaseAttribute, "type")) {
-                    gui->createTextInput(containerName, objName + "_" + requireItem + "_Input", 200, 
-                        widgetVerticalPosition + 5, "", "weblysleekuil.ttf", 16, sf::Color::White, false, "GREY");
-                    std::string reqType = requires->getPath(requireItem)->getBaseAttribute("type")->get<std::string>();
-                    if (reqType == "int")
-                        GUI::Widget::getWidgetByID<GUI::TextInput>(objName + "_" + requireItem + "_Input")->addFilter(GUI::TextInputFilters::Integer);
-                }
-                else if (requires->getPath(requireItem)->contains(vili::Types::ListAttribute, "choices"))
-                {
-                    std::vector<std::string> requireChoices;
-                    for (int reqI = 0; reqI < requires->getPath(requireItem)->getListAttribute("choices")->getSize(); reqI++)
-                        requireChoices.push_back(requires->getPath(requireItem)->getListAttribute("choices")->get(reqI)->get<std::string>());
-                    gui->createDroplist(containerName, objName + "_" + requireItem + "_Input", 200, 
-                        widgetVerticalPosition, 16, "", false, "weblysleekuil.ttf", "GREY", requireChoices);
-                }
-                widgetVerticalPosition += 50;
-            }
-            GUI::Button* createObjectAndCloseBtn = gui->createButton(containerName + "_Frame", "createObjectAndCloseAfterRequireBtn", 20, 640, true, true, "GREY");
-            createObjectAndCloseBtn->setText("Create Object and Close", "weblysleekuil.ttf", sf::Color::White, 16, true);
-            createObjectAndCloseBtn->bindFunction([objName, gui]() { 
-                buildObjectThroughRequire(objName);
-                gui->getContainerByContainerName("Requires")->setDisplayed(false);
-                gui->getContainerByContainerName("Requires_Frame")->setDisplayed(false);
-            });
-
-            GUI::Button* createObjectBtn = gui->createButton(containerName + "_Frame", "createObjectAfterRequireBtn", 310, 640, true, true, "GREY");
-            createObjectBtn->setText("Create Object", "weblysleekuil.ttf", sf::Color::White, 16, true);
-            createObjectBtn->bindFunction([objName]() { buildObjectThroughRequire(objName); });
-
-        }
-        else
-        {
-            std::string key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-            Script::GameObject* obj = Script::hookCore.getPointer("World")->as<World::World*>()->createGameObject(key, objName);
-        }*/
         }
 
         void buildObjectThroughRequire(std::string objName)

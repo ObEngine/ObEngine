@@ -57,9 +57,8 @@ namespace obe
             return (A->X - O->X) * (B->Y - O->Y) - (A->Y - O->Y) * (B->X - O->X);
         }
 
-        PolygonalCollider::PolygonalCollider(std::string id) : Selectable(false)
+        PolygonalCollider::PolygonalCollider(std::string id) : Selectable(false), m_id(id)
         {
-            m_id = id;
         }
 
         PolygonalCollider::~PolygonalCollider()

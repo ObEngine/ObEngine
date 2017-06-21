@@ -12,10 +12,27 @@ namespace obe
     {
         namespace File
         {
-            std::vector<std::string> listDirInDir(const std::string& path);
-            std::vector<std::string> listFileInDir(const std::string& path);
+            class FilePath
+            {
+            };
+            class File
+            {
+                
+            };
+            class Directory
+            {
+                
+            };
+            std::vector<std::string> getDirectoryList(const std::string& path);
+            std::vector<std::string> getFileList(const std::string& path);
             bool fileExists(const std::string& path);
-            void copy(const std::string& source, const std::string& target);
+            bool directoryExists(const std::string& path);
+            bool createDirectory(const std::string& path);
+            bool createFile(const std::string& path);
+            void copyFile(const std::string& source, const std::string& target);
+            void copyDirectory(const std::string& source, const std::string& target);
+
+            std::string getCurrentDirectory();
             std::string separator();
         }
     }

@@ -6,7 +6,7 @@ namespace obe
     {
         namespace File
         {
-            std::vector<std::string> listDirInDir(const std::string& path)
+            std::vector<std::string> getDirectoryList(const std::string& path)
             {
                 tinydir_dir dir;
                 tinydir_open(&dir, path.c_str());
@@ -26,7 +26,7 @@ namespace obe
                 return fileList;
             }
 
-            std::vector<std::string> listFileInDir(const std::string& path)
+            std::vector<std::string> getFileList(const std::string& path)
             {
                 tinydir_dir dir;
                 tinydir_open(&dir, path.c_str());
@@ -50,7 +50,7 @@ namespace obe
                 return fileFound;
             }
 
-            void copy(const std::string& source, const std::string& target)
+            void copyFile(const std::string& source, const std::string& target)
             {
                 std::ifstream src(source, std::ios::binary);
                 std::ofstream dst(target, std::ios::binary);
