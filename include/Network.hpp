@@ -19,6 +19,7 @@ namespace obe
             Script::TriggerGroup* socketTriggers;
         public:
             NetworkHandler();
+            ~NetworkHandler();
             void handleTriggers();
         };
     }

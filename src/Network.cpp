@@ -15,6 +15,11 @@ namespace obe
                                                                    ->addTrigger("Disconnected");
         }
 
+        NetworkHandler::~NetworkHandler()
+        {
+            Script::TriggerDatabase::GetInstance()->removeTriggerGroup(socketTriggers);
+        }
+
         void NetworkHandler::handleTriggers()
         {
             if (listener.accept(client) == sf::Socket::Done)

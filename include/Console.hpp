@@ -63,6 +63,7 @@ namespace obe
             };
 
             Console();
+            ~Console();
             void handleCommands(std::string text);
             std::string getCommand();
             bool hasCommand();
