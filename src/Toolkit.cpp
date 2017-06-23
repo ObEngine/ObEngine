@@ -103,6 +103,8 @@ namespace obe
             sf::Vector2i grabbedOffset;
             bool grabbedWindow = false;
 
+            gui.focusWidget(toolkitInput);
+
             while (window.isOpen() && continueToolkit)
             {
                 sf::Event event;

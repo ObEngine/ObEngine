@@ -6,7 +6,7 @@ local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
 
 function loadToolkitFunctions()
-    local fileList = Core.Utils.File.listFileInDir("Lib/Toolkit/Functions");
+    local fileList = Core.Filesystem.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
     for _, content in pairs(fileList) do
         allFunctions[String.split(content, ".")[1]] = require("Lib/Toolkit/Functions/" .. String.split(content, ".")[1]);

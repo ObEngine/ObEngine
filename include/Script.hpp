@@ -44,6 +44,7 @@ namespace obe
             void loadCoordinates(kaguya::State* lua, std::vector<std::string> args);
             void loadCursor(kaguya::State* lua, std::vector<std::string> args);
             void loadDialog(kaguya::State* lua, std::vector<std::string> args);
+            void loadFilesystem(kaguya::State* lua, std::vector<std::string> args);
             void loadKeyBind(kaguya::State* lua, std::vector<std::string> args);
             void loadLevelSprite(kaguya::State* lua, std::vector<std::string> args);
             void loadLight(kaguya::State* lua, std::vector<std::string> args);

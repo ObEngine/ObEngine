@@ -149,6 +149,11 @@ namespace obe
                     CoreLib::loadDialog(lua, (all) ? std::vector<std::string>{"Dialog"} : lib);
                     found = true;
                 }
+                if (lib[0] == "Filesystem" || all)
+                {
+                    CoreLib::loadFilesystem(lua, (all) ? std::vector<std::string>{"Filesystem"} : lib);
+                    found = true;
+                }
                 if (lib[0] == "KeyBind" || all)
                 {
                     CoreLib::loadKeyBind(lua, (all) ? std::vector<std::string>{"KeyBind"} : lib);
@@ -206,7 +211,7 @@ namespace obe
                 }
                 if (lib[0] == "Vili" || all)
                 {
-                    CoreLib::loadVili(lua, (all) ? std::vector<std::string>{"DataParser"} : lib);
+                    CoreLib::loadVili(lua, (all) ? std::vector<std::string>{"Vili"} : lib);
                     found = true;
                 }
                 if (!found)
@@ -596,6 +601,24 @@ namespace obe
                 foundPart = true;
             }
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.DialogImportError", {{"lib", Functions::Vector::join(args, ".")}});
+        }
+
+        void CoreLib::loadFilesystem(kaguya::State* lua, std::vector<std::string> args)
+        {
+            registerLib(lua, Functions::Vector::join(args, "."));
+            bool importAll = args.size() == 1;
+            if (!static_cast<bool>((*lua)["Core"]["Filesystem"])) (*lua)["Core"]["Filesystem"] = kaguya::NewTable();
+
+            (*lua)["Core"]["Filesystem"]["getDirectoryList"] = kaguya::function(Functions::File::getDirectoryList);
+            (*lua)["Core"]["Filesystem"]["getFileList"] = kaguya::function(Functions::File::getFileList);
+            (*lua)["Core"]["Filesystem"]["copy"] = kaguya::function(Functions::File::copy);
+            (*lua)["Core"]["Filesystem"]["separator"] = kaguya::function(Functions::File::separator);
+            (*lua)["Core"]["Filesystem"]["createFile"] = kaguya::function(Functions::File::createFile);
+            (*lua)["Core"]["Filesystem"]["createDirectory"] = kaguya::function(Functions::File::createDirectory);
+            (*lua)["Core"]["Filesystem"]["fileExists"] = kaguya::function(Functions::File::fileExists);
+            (*lua)["Core"]["Filesystem"]["directoryExists"] = kaguya::function(Functions::File::directoryExists);
+            (*lua)["Core"]["Filesystem"]["deleteFile"] = kaguya::function(Functions::File::deleteFile);
+            (*lua)["Core"]["Filesystem"]["deleteDirectory"] = kaguya::function(Functions::File::deleteDirectory);
         }
 
         void CoreLib::loadKeyBind(kaguya::State* lua, std::vector<std::string> args)
@@ -1055,15 +1078,7 @@ namespace obe
             bool importAll = args.size() == 1;
             bool foundPart = false;
             if (!static_cast<bool>((*lua)["Core"]["Utils"])) (*lua)["Core"]["Utils"] = kaguya::NewTable();
-            if (importAll || args[1] == "File")
-            {
-                if (!static_cast<bool>((*lua)["Core"]["Utils"]["File"])) (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
-                (*lua)["Core"]["Utils"]["File"]["listDirInDir"] = kaguya::function(Functions::File::getDirectoryList);
-                (*lua)["Core"]["Utils"]["File"]["listFileInDir"] = kaguya::function(Functions::File::getFileList);
-                (*lua)["Core"]["Utils"]["File"]["copyFile"] = kaguya::function(Functions::File::copyFile);
-                (*lua)["Core"]["Utils"]["File"]["separator"] = kaguya::function(Functions::File::separator);
-                foundPart = true;
-            }
+
             if (importAll || args[1] == "Math")
             {
                 if (!static_cast<bool>((*lua)["Core"]["Utils"]["Math"])) (*lua)["Core"]["Utils"]["Math"] = kaguya::NewTable();

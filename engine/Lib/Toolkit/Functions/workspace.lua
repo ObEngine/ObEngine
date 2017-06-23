@@ -7,7 +7,7 @@ Functions.use = function(workspaceName)
     local parser = Core.Vili.DataParser.new();
     parser:parseFile("Workspace/Workspaces.vili", true);
     if (parser:root():contains(Core.Vili.AttributeType.ComplexAttribute, workspaceName)) then
-        Core.Utils.File.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
+        Core.Filesystem.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
         Color.print({ text = "Workspace '" .. workspaceName .. "' has  been successfully mounted !", color = {0, 255, 0}}, 1);
         Core.Path.MountPaths();
     else
@@ -18,14 +18,14 @@ end
 Functions.create = function(workspaceName)
     local parser = Core.Vili.DataParser.new();
     parser:parseFile("Workspace/Workspaces.vili", true);
-    os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Utils.File.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Filesystem.separator()));
     parser:root():createComplexAttribute(workspaceName);
     parser:root():at(workspaceName):createBaseAttribute("path", "Workspace/" .. workspaceName);
     parser:writeFile("Workspace/Workspaces.vili", true);
@@ -40,6 +40,13 @@ Functions.create = function(workspaceName)
     Color.print({ text = "Workspace '" .. workspaceName .. "' has been successfully created", color = {0, 255, 0}}, 1);
 end
 
+function Functions.list()
+    local parser = Core.Vili.DataParser.new();
+    parser:parseFile("Workspace/Workspaces.vili", false);
+    for _, key in pairs(parser:root():getAll(Core.Vili.AttributeType.ComplexAttribute)) do 
+        Color.print({ text = "- Workspace : " .. key, color = {0, 255, 255}}, 2);
+    end
+end
 
 return {
     Functions = Functions,
@@ -53,6 +60,9 @@ return {
             Route.Arg("workspaceName", Route.Types.Any, {
                 Route.Call("use");
             });
+        }),
+        Route.Arg("list", {
+            Route.Call("list");
         })
     }
 };

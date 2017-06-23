@@ -10,7 +10,7 @@ function Functions.create(objectName, components)
     local haveCollider = false;
     local haveScript = false;
     Color.print({ text = "Creating GameObject '" .. objectName .. "' ...", color = {0, 0, 255}}, 1);
-    os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", Core.Filesystem.separator()));
     local objSaveFile = Core.Vili.DataParser.new();
     objSaveFile:root():createComplexAttribute(objectName);
     if (components ~= nil) then
@@ -40,7 +40,7 @@ function Functions.create(objectName, components)
         end
         if (string.find(components, "L") ~= nil) then
             haveLevelSprite = true;
-            os.execute(("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. objectName):gsub("/", Core.Utils.File.separator()));
+            os.execute(("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. objectName):gsub("/", Core.Filesystem.separator()));
             Color.print({ text = "+ Using component (L)evelSprite", color = {0, 255, 255}}, 2);
             objSaveFile:root():at(objectName):createComplexAttribute("LevelSprite");
             local objLevelSprite = objSaveFile:root():at(objectName .. "/" .. "LevelSprite");
@@ -59,7 +59,7 @@ function Functions.create(objectName, components)
         if (string.find(components, "S") ~= nil) then
             haveScript = true;
             local scriptFile = io.open((currentWs .. "/Data/GameObjects/" ..
-                objectName .. "/" .. objectName .. ".lua"):gsub("/", Core.Utils.File.separator()), "w");
+                objectName .. "/" .. objectName .. ".lua"):gsub("/", Core.Filesystem.separator()), "w");
             scriptFile:write("function Local.Init()\n    print(\"Hello, World!\");\nend");
             scriptFile:close();
             Color.print({ text = "+ Using component (S)cript", color = {0, 255, 255}}, 2);
@@ -71,7 +71,7 @@ function Functions.create(objectName, components)
         end
     end
     objSaveFile:writeFile((currentWs .. "/Data/GameObjects/" ..
-        objectName .. "/" .. objectName .. ".obj.vili"):gsub("/", Core.Utils.File.separator()));
+        objectName .. "/" .. objectName .. ".obj.vili"):gsub("/", Core.Filesystem.separator()));
     Color.print({ text = "GameObject '" .. objectName .. "' has been successfully created !", color = {0, 255, 0}}, 1);
 end
 

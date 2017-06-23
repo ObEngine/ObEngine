@@ -11,7 +11,7 @@ function Functions.install(packageName)
         parser:parseFile("Package/Opaque.vili", true);
         local tPackageName = parser:root():at("Meta"):getBaseAttribute("name"):get_string();
         if parser:hasFlag("Mount") then
-            Core.Utils.File.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
+            Core.Filesystem.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
         end
     else
         Color.print({ text = "Package '" .. packageName .. "' has not been installed (Already installed ?)", color = {255, 0, 0}}, 1);
@@ -20,7 +20,7 @@ end
 
 function Functions.use(packageName)
     if Package.PackageExists(packageName) then
-        Core.Utils.File.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
+        Core.Filesystem.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
         Color.print({ text = "Package '" .. packageName .. "' has been successfully mounted", color = {0, 255, 0}}, 1);
     else
         Color.print({ text = "Package '" .. packageName .. "' does not exists", color = {255, 0, 0}}, 1);
