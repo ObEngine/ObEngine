@@ -7,6 +7,7 @@
 #define AffectIfCorrectType(type) else if(affectIfCorrectType<type>(lua,parameter)){}
 #define _AffectIfCorrectType(type, ntype) else if(affectIfCorrectType<type, ntype>(lua,parameter)){}
 #define EndCheck else { return false; }
+
 namespace obe
 {
     namespace Script
@@ -16,7 +17,7 @@ namespace obe
         {
             if (parameter.second.first == Functions::Type::getClassType<T>())
             {
-                lua["cpp_param"][parameter.first] = parameterTypeValue.second.second.as<T>();
+                lua["cpp_param"][parameter.first] = parameter.second.second.as<T>();
                 return true;
             }
             return false;
@@ -27,30 +28,30 @@ namespace obe
             for (auto& parameter : *trigger.getParameters())
             {
                 StartCheck
-                AffectIfCorrectType(int)
-                AffectIfCorrectType(std::string)
-                AffectIfCorrectType(double)
-                AffectIfCorrectType(bool)
-                AffectIfCorrectType(std::vector<int>)
-                AffectIfCorrectType(std::vector<std::string>)
-                AffectIfCorrectType(std::vector<double>)
-                AffectIfCorrectType(std::vector<bool>)
-                _AffectIfCorrectType(std::map<int, int>)
-                _AffectIfCorrectType(std::map<int, std::string>)
-                _AffectIfCorrectType(std::map<int, double>)
-                _AffectIfCorrectType(std::map<int, bool>)
-                _AffectIfCorrectType(std::map<std::string, int>)
-                _AffectIfCorrectType(std::map<std::string, std::string>)
-                _AffectIfCorrectType(std::map<std::string, double>)
-                _AffectIfCorrectType(std::map<std::string, bool>)
-                _AffectIfCorrectType(std::map<double, int>)
-                _AffectIfCorrectType(std::map<double, std::string>)
-                _AffectIfCorrectType(std::map<double, double>)
-                _AffectIfCorrectType(std::map<double, bool>)
-                _AffectIfCorrectType(std::map<bool, int>)
-                _AffectIfCorrectType(std::map<bool, std::string>)
-                _AffectIfCorrectType(std::map<bool, double>)
-                _AffectIfCorrectType(std::map<bool, bool>)
+                    AffectIfCorrectType(int)
+                    AffectIfCorrectType(std::string)
+                    AffectIfCorrectType(double)
+                    AffectIfCorrectType(bool)
+                    AffectIfCorrectType(std::vector<int>)
+                    AffectIfCorrectType(std::vector<std::string>)
+                    AffectIfCorrectType(std::vector<double>)
+                    AffectIfCorrectType(std::vector<bool>)
+                    _AffectIfCorrectType(std::map<int, int>)
+                    _AffectIfCorrectType(std::map<int, std::string>)
+                    _AffectIfCorrectType(std::map<int, double>)
+                    _AffectIfCorrectType(std::map<int, bool>)
+                    _AffectIfCorrectType(std::map<std::string, int>)
+                    _AffectIfCorrectType(std::map<std::string, std::string>)
+                    _AffectIfCorrectType(std::map<std::string, double>)
+                    _AffectIfCorrectType(std::map<std::string, bool>)
+                    _AffectIfCorrectType(std::map<double, int>)
+                    _AffectIfCorrectType(std::map<double, std::string>)
+                    _AffectIfCorrectType(std::map<double, double>)
+                    _AffectIfCorrectType(std::map<double, bool>)
+                    _AffectIfCorrectType(std::map<bool, int>)
+                    _AffectIfCorrectType(std::map<bool, std::string>)
+                    _AffectIfCorrectType(std::map<bool, double>)
+                    _AffectIfCorrectType(std::map<bool, bool>)
                 EndCheck
             }
         }
@@ -90,7 +91,7 @@ namespace obe
             return m_triggerNamespace;
         }
 
-        std::map<std::string, std::pair<std::string, Types::any))* Trigger::getParameters()
+        std::map<std::string, std::pair<std::string, Types::any>>* Trigger::getParameters()
         {
             return &m_triggerParameters;
         }
