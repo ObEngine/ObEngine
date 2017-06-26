@@ -2,7 +2,7 @@
 
 namespace obe
 {
-    namespace EditorTools
+    namespace Editor
     {
         Thumbnailer* Thumbnailer::_instance = nullptr;
 

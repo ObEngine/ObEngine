@@ -61,7 +61,7 @@ namespace obe
             bool drawFPS = developpement.at<vili::BaseAttribute>("showFPS");
 
             //Cursor
-            Cursor::Cursor cursor(&window);
+            System::Cursor cursor(&window);
             cursor.selectCursor("RoundWhite");
             Collision::PolygonalCollider cursorCollider("cursor");
             cursorCollider.addPoint(0, 0);
@@ -490,12 +490,12 @@ namespace obe
             gridDimensionXInput->setPosition(bindRight(gridDimensionLabel) + 20, bindTop(gridDimensionLabel));
             gridDimensionXInput->setSize(80, mediumFontSize + 4);
             gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-            gridDimensionXInput->setText(std::to_string(editorGrid.getSizeX()));
+            gridDimensionXInput->setText(std::to_string(editorGrid.getCellWidth()));
 
             gridDimensionYInput->setPosition(bindRight(gridDimensionXInput) + 20, bindTop(gridDimensionLabel));
             gridDimensionYInput->setSize(80, mediumFontSize + 4);
             gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-            gridDimensionYInput->setText(std::to_string(editorGrid.getSizeY()));
+            gridDimensionYInput->setText(std::to_string(editorGrid.getCellHeight()));
 
             gridDimensionButton->setPosition(bindRight(gridDimensionYInput) + 20, bindTop(gridDimensionLabel) + 4);
             gridDimensionButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
@@ -579,26 +579,26 @@ namespace obe
             snapGridCheckbox->disable();
 
             snapGridCheckbox->connect("checked", [&editMode, &editorGrid, &cursor]()
-                                  {
-                                      cursor.setConstraint([&editMode, &editorGrid](Cursor::Cursor* cursor)
-                                      {
-                                          if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
-                                          {
-                                              int snappedX = cursor->getRawX() / editorGrid.getSizeX() * editorGrid.getSizeX() + editorGrid.getOffsetX();
-                                              int snappedY = cursor->getRawY() / editorGrid.getSizeY() * editorGrid.getSizeY() + editorGrid.getOffsetY();
-                                              return std::pair<int, int>(snappedX, snappedY);
-                                          }
-                                          else
-                                          {
-                                              return Cursor::Constraints::Default(cursor);
-                                          }
-                                      });
-                                  });
+            {
+                cursor.setConstraint([&editMode, &editorGrid](System::Cursor* cursor)
+                {
+                    if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
+                    {
+                        int snappedX = cursor->getRawX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
+                        int snappedY = cursor->getRawY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
+                        return std::pair<int, int>(snappedX, snappedY);
+                    }
+                    else
+                    {
+                        return System::Constraints::Default(cursor);
+                    }
+                });
+            });
 
             snapGridCheckbox->connect("unchecked", [&cursor]()
-                                  {
-                                      cursor.setConstraint(Cursor::Constraints::Default);
-                                  });
+            {
+                cursor.setConstraint(System::Constraints::Default);
+            });
 
             //Sprites Tab Setup
             spritesPanel->add(spritesCatLabel);
@@ -608,7 +608,7 @@ namespace obe
             spritesCatLabel->setRenderer(baseTheme.getRenderer("Label"));
             spritesCatLabel->setText("[ Sprites Settings ]");
 
-            EditorTools::loadSpriteFolder(spritesPanel, spritesCatLabel, "");
+            Editor::loadSpriteFolder(spritesPanel, spritesCatLabel, "");
 
             //Objects Tab Setup
             objectsPanel->add(objectsCatLabel);
@@ -618,7 +618,7 @@ namespace obe
             objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
             objectsCatLabel->setText("[ Objects Settings ]");
 
-            EditorTools::buildObjectTab(objectsPanel, requiresPanel, baseTheme);
+            Editor::buildObjectTab(objectsPanel, requiresPanel, baseTheme);
 
             //Framerate / DeltaTime
             Time::FPSCounter fps;
@@ -1060,15 +1060,12 @@ namespace obe
 
                 if (enableGridCheckbox->isChecked())
                 {
-                    editorGrid.setCamOffsetX(-pixelCamera.x);
-                    editorGrid.setCamOffsetY(-pixelCamera.y);
-                    editorGrid.sendCursorPosition(cursor.getX(), cursor.getY());
-                    if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(&cursor, 0, -1);
-                    if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(&cursor, 1, 0);
-                    if (keybind.isActionEnabled("MagnetizeDown")) editorGrid.moveMagnet(&cursor, 0, 1);
-                    if (keybind.isActionEnabled("MagnetizeLeft")) editorGrid.moveMagnet(&cursor, -1, 0);
+                    if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(cursor, 0, -1);
+                    if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(cursor, 1, 0);
+                    if (keybind.isActionEnabled("MagnetizeDown")) editorGrid.moveMagnet(cursor, 0, 1);
+                    if (keybind.isActionEnabled("MagnetizeLeft")) editorGrid.moveMagnet(cursor, -1, 0);
                     if (keybind.isActionEnabled("MagnetizeCursor"))
-                        editorGrid.magnetize(&cursor);
+                        editorGrid.magnetize(cursor);
                 }
 
                 //Console Command Handle
@@ -1204,7 +1201,7 @@ namespace obe
                         window.draw(sprBorder);
                     }
                     if (enableGridCheckbox->isChecked())
-                        editorGrid.draw(&window);
+                        editorGrid.draw(window, cursor, -pixelCamera.x, -pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")
                     {

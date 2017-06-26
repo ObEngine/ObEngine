@@ -12,7 +12,6 @@ namespace obe
         class Cursor
         {
         private:
-            Cursor();
             int m_x = 0;
             int m_y = 0;
             int m_constrainedX = 0;
@@ -32,6 +31,7 @@ namespace obe
             friend class CoreHook;
         public:
             Cursor(sf::RenderWindow* window);
+            ~Cursor();
             void selectCursor(std::string cursor);
             void selectKey(std::string key);
             int getX() const;

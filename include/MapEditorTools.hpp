@@ -11,7 +11,7 @@
 
 namespace obe
 {
-    namespace EditorTools
+    namespace Editor
     {
         class Thumbnailer
         {

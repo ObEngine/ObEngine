@@ -72,6 +72,12 @@ namespace obe
             return Path(m_path + ((m_path != "" && m_path.back() != '/') ? "/" : "") + path);
         }
 
+        std::string Path::last() const
+        {
+            std::vector<std::string> splittedPath = Functions::String::split(m_path, "/");
+            return splittedPath.back();
+        }
+
         Path Path::getPath(int index)
         {
 			if (basePaths.size() > index)

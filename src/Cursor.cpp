@@ -12,22 +12,22 @@ namespace obe
             };
         }
 
-        Cursor::Cursor()
-        {
-            m_constraint = Constraints::Default;
-        }
-
-        Cursor::Cursor(sf::RenderWindow* window) : m_cursorAnim(System::Path("Sprites/Cursors/Round"))
+        Cursor::Cursor(sf::RenderWindow* window) : 
+        m_cursorAnim(System::Path("Sprites/Cursors/Round")), 
+        m_cursorTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"))
         {
             m_constraint = Constraints::Default;
             m_window = window;
             m_cursorAnim.loadAnimator();
             m_cursorAnim.setKey("IDLE");
 
-            m_cursorTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")
-                                                                     ->addTrigger("Clicked")
-                                                                     ->addTrigger("Pressed")
-                                                                     ->addTrigger("Released");
+            m_cursorTriggers->addTrigger("Clicked")
+                            ->addTrigger("Pressed")
+                            ->addTrigger("Released");
+        }
+
+        Cursor::~Cursor()
+        {
         }
 
         void Cursor::selectCursor(std::string cursor)

@@ -4,15 +4,14 @@ namespace obe
 {
     namespace Input
     {
-        NetworkHandler::NetworkHandler()
+        NetworkHandler::NetworkHandler() : socketTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"))
         {
             listener.setBlocking(false);
             listener.listen(53000);
             client.setBlocking(false);
-            socketTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network")
-                                                                   ->addTrigger("DataReceived")
-                                                                   ->addTrigger("Connected")
-                                                                   ->addTrigger("Disconnected");
+            socketTriggers->addTrigger("DataReceived")
+                          ->addTrigger("Connected")
+                          ->addTrigger("Disconnected");
         }
 
         void NetworkHandler::handleTriggers()

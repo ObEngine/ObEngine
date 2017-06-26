@@ -8,19 +8,18 @@ namespace obe
     namespace Console
     {
         //Console
-        Console::Console()
+        Console::Console() : consoleTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"))
         {
             font.loadFromFile("Data/Fonts/arial.ttf");
             scrEngineStream = this->createStream("ScriptEngine", true);
             scrErrorStream = this->createStream("ScriptError", true);
             scrErrorStream->setColor(255, 0, 0);
-            consoleTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console")
-                                                                    ->addTrigger("UserInput")
-                                                                    ->addTrigger("CursorMoved")
-                                                                    ->addTrigger("ConsoleScrolled")
-                                                                    ->addTrigger("NewMessage")
-                                                                    ->addTrigger("ConsoleToggled")
-                                                                    ->addTrigger("NewStream");
+            consoleTriggers->addTrigger("UserInput")
+                           ->addTrigger("CursorMoved")
+                           ->addTrigger("ConsoleScrolled")
+                           ->addTrigger("NewMessage")
+                           ->addTrigger("ConsoleToggled")
+                           ->addTrigger("NewStream");
         }
 
         void Console::scroll(int power)

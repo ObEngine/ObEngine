@@ -3,29 +3,66 @@
 
 #include "Triggers.hpp"
 
+#define StartCheck if (false) {}
+#define AffectIfCorrectType(type) else if(affectIfCorrectType<type>(lua,parameter)){}
+#define _AffectIfCorrectType(type, ntype) else if(affectIfCorrectType<type, ntype>(lua,parameter)){}
+#define EndCheck else { return false; }
 namespace obe
 {
     namespace Script
     {
-        //Trigger
-        Trigger::Trigger(std::string group, std::string triggerName, bool startState, bool permanent)
+        template <typename T>
+        bool affectIfCorrectType(kaguya::State& lua, const std::pair<std::string, std::pair<std::string, Types::any>>& parameter)
         {
-            m_triggerNamespace = "";
-            m_group = group;
-            m_triggerName = triggerName;
-            m_permanent = permanent;
-            m_enabled = startState;
-            m_triggerParameters = std::map<std::string, std::pair<std::string, Types::any>>();
+            if (parameter.second.first == Functions::Type::getClassType<T>())
+            {
+                lua["cpp_param"][parameter.first] = parameterTypeValue.second.second.as<T>();
+                return true;
+            }
+            return false;
         }
 
-        Trigger::Trigger(std::string nsp, std::string group, std::string triggerName, bool startState, bool permanent)
+        bool injectParameters(Trigger& trigger, kaguya::State& lua)
         {
-            m_triggerNamespace = nsp;
-            m_group = group;
-            m_triggerName = triggerName;
+            for (auto& parameter : *trigger.getParameters())
+            {
+                StartCheck
+                AffectIfCorrectType(int)
+                AffectIfCorrectType(std::string)
+                AffectIfCorrectType(double)
+                AffectIfCorrectType(bool)
+                AffectIfCorrectType(std::vector<int>)
+                AffectIfCorrectType(std::vector<std::string>)
+                AffectIfCorrectType(std::vector<double>)
+                AffectIfCorrectType(std::vector<bool>)
+                _AffectIfCorrectType(std::map<int, int>)
+                _AffectIfCorrectType(std::map<int, std::string>)
+                _AffectIfCorrectType(std::map<int, double>)
+                _AffectIfCorrectType(std::map<int, bool>)
+                _AffectIfCorrectType(std::map<std::string, int>)
+                _AffectIfCorrectType(std::map<std::string, std::string>)
+                _AffectIfCorrectType(std::map<std::string, double>)
+                _AffectIfCorrectType(std::map<std::string, bool>)
+                _AffectIfCorrectType(std::map<double, int>)
+                _AffectIfCorrectType(std::map<double, std::string>)
+                _AffectIfCorrectType(std::map<double, double>)
+                _AffectIfCorrectType(std::map<double, bool>)
+                _AffectIfCorrectType(std::map<bool, int>)
+                _AffectIfCorrectType(std::map<bool, std::string>)
+                _AffectIfCorrectType(std::map<bool, double>)
+                _AffectIfCorrectType(std::map<bool, bool>)
+                EndCheck
+            }
+        }
+
+        //Trigger
+        Trigger::Trigger(const TriggerGroup& parent, const std::string& name, bool startState, bool permanent)
+        {
+            m_triggerNamespace = parent.getNamespace();
+            m_group = parent.getName();
+            m_triggerName = name;
             m_permanent = permanent;
             m_enabled = startState;
-            m_triggerParameters = std::map<std::string, std::pair<std::string, Types::any>>();
         }
 
         bool Trigger::getState() const
@@ -53,7 +90,7 @@ namespace obe
             return m_triggerNamespace;
         }
 
-        std::map<std::string, std::pair<std::string, Types::any>>* Trigger::getParameters()
+        std::map<std::string, std::pair<std::string, Types::any))* Trigger::getParameters()
         {
             return &m_triggerParameters;
         }
@@ -96,7 +133,7 @@ namespace obe
 
         TriggerGroup* TriggerGroup::addTrigger(std::string triggerName)
         {
-            m_triggerMap[triggerName] = new Trigger(m_fromNsp, m_triggerGroupName, triggerName);
+            m_triggerMap[triggerName] = new Trigger(*this, triggerName);
             return this;
         }
 
@@ -212,27 +249,27 @@ namespace obe
             }
         }
 
-        TriggerGroup::Ptr TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
+        TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
         {
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) == m_allTriggers[groupNamespace].end())
                 {
                     m_allTriggers[groupNamespace][triggerGroupName] = new TriggerGroup(groupNamespace, triggerGroupName);
-                    return TriggerGroup::Ptr(m_allTriggers[groupNamespace][triggerGroupName]);
+                    return m_allTriggers[groupNamespace][triggerGroupName];
                 }
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.TriggerGroupAlreadyExists", {{"group", triggerGroupName}, {"nsp", groupNamespace}});
             }
             throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "createTriggerGroup"},{"nsp", groupNamespace}});
         }
 
-        TriggerGroup::Ptr TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
+        TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
         {
             std::cout << "Trying to join TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
-                    return TriggerGroup::Ptr(m_allTriggers[groupNamespace][triggerGroupName]);
+                    return m_allTriggers[groupNamespace][triggerGroupName];
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
                                                     {"function", "joinTriggerGroup"},
                                                     {"group", triggerGroupName},
@@ -338,19 +375,39 @@ namespace obe
             m_databaseChrono.start();
             //Need to delete Map-only stuff !!
         }
+
+        unsigned int TriggerGroup::Ptr::amount = 0;
 		TriggerGroup::Ptr::Ptr(TriggerGroup* link)
 		{
-			m_link = link;
-			m_link->m_references++;
+            if (link != nullptr)
+            {
+                m_link = link;
+                m_link->m_references++;
+                m_id = amount++;
+            }
 		}
-		TriggerGroup::Ptr::~Ptr()
+
+        TriggerGroup::Ptr& TriggerGroup::Ptr::operator=(const Ptr& link)
+        {
+            if (link.m_link != nullptr)
+            {
+                m_link = link.m_link;
+                m_link->m_references++;
+                m_id = amount++;
+            }
+            return *this;
+        }
+
+        TriggerGroup::Ptr::~Ptr()
 		{
-			m_link->m_references--;
-			if (m_link->m_references == 0)
-				TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
-		}
-		TriggerGroup::Ptr::Ptr()
-		{
+            if (m_link != nullptr)
+            {
+                m_link->m_references--;
+                if (m_link->m_references == 0)
+                {
+                    TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
+                }
+            }
 		}
 		TriggerGroup* TriggerGroup::Ptr::operator->() const
 		{

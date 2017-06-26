@@ -67,11 +67,11 @@ namespace obe
 	        /**
              * \brief The amount of times the AnimationGroup has been repeated
              */
-            unsigned int m_loopIndex = 0;
+            int m_loopIndex = 0;
 			/**
 			* \brief The amount of times the AnimationGroup will be repeated
 			*/
-            unsigned int m_loopAmount = 0;
+            int m_loopAmount = 0;
 
         public:
             explicit AnimationGroup(const std::string& groupName);
@@ -88,7 +88,7 @@ namespace obe
              * \brief Set how many times the AnimationGroup should be replayed before end
              * \param loops Amount of loops to do
              */
-            void setGroupLoop(unsigned int loops);
+            void setGroupLoop(int loops);
 	        /**
              * \brief Get the name of the AnimationGroup
              * \return A std::string containing the AnimationGroup's name

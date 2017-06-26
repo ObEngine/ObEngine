@@ -138,6 +138,11 @@ namespace obe
              * \return The new path which is the result of the base concatened with the path parameter
              */
             Path add(const std::string& path) const;
+            /**
+             * \brief Get the last part of a Path
+             * \return The last part of the Path (terminal directory)
+             */
+            std::string last() const;
 	        /**
              * \brief Build a path using the current path and the BasePath at given index
              * \param index Index of the BasePath to use

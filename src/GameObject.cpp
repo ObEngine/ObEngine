@@ -112,12 +112,12 @@ namespace obe
             {
                 requires.setID("Lua_ReqList");
                 kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]);
-                Data::DataBridge::complexAttributeToLuaTable(requireTable, requires);
+                Script::DataBridge::complexAttributeToLuaTable(requireTable, requires);
             }
         }
 
         //GameObject
-        GameObject::GameObject(std::string type, std::string id)
+        GameObject::GameObject(std::string type, std::string id) : m_localTriggers(nullptr)
         {
             m_type = type;
             m_id = id;

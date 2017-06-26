@@ -23,7 +23,7 @@ namespace obe
             m_groupDelay = clock;
         }
 
-        void AnimationGroup::setGroupLoop(unsigned int loops)
+        void AnimationGroup::setGroupLoop(int loops)
         {
             m_loopAmount = loops;
         }
@@ -236,7 +236,7 @@ namespace obe
         void Animation::loadAnimation(const System::Path& path)
         {
             vili::DataParser animFile;
-            path.loadResource(&animFile, System::Loaders::dataLoader);
+            path.add(path.last() + ".ani.vili").loadResource(&animFile, System::Loaders::dataLoader);
             //Meta
             vili::ComplexAttribute& meta = animFile.at("Meta");
             m_animationName = meta.at<vili::BaseAttribute>("name").get<std::string>();
@@ -508,7 +508,7 @@ namespace obe
             for (unsigned int i = 0; i < listDir.size(); i++)
             {
                 std::unique_ptr<Animation> tempAnim = std::make_unique<Animation>();
-                tempAnim->loadAnimation(m_animatorPath.add(listDir[i]).add(listDir[i] + ".ani.vili"));
+                tempAnim->loadAnimation(m_animatorPath.add(listDir[i]));
                 if (animationParameters.find(listDir[i]) != animationParameters.end() && animationParameters.find("all") != animationParameters.end())
                 {
                     tempAnim->applyParameters(*animationParameters["all"]);
@@ -532,7 +532,7 @@ namespace obe
                 m_currentAnimation = m_animationSet[m_currentAnimation->getCalledAnimation()].get();
             }
             if (m_currentAnimation->getAnimationStatus() == Play)
-                m_currentAnimation->update();
+                m_currentAnimation->update();      
         }
 
         sf::Sprite* Animator::getSprite()

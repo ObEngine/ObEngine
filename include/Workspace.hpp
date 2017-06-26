@@ -36,14 +36,3 @@ namespace obe
         }
     }
 }
-
-/**
- * \defgroup Workspace Workspace Functions
- * 
- * Easily work with Workspaces with these useful functions.
- * 
- * \code
- * obe::System::Workspace::Load("myWorkspace", 1);
- * \endcode
- *
- */

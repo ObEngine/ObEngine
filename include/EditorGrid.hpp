@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Cursor.hpp"
+#include "DrawUtils.hpp"
 
 namespace obe
 {
@@ -14,40 +15,34 @@ namespace obe
         class EditorGrid
         {
         private:
-            int gridSizeX;
-            int gridSizeY;
+            unsigned int m_gridSizeX;
+            unsigned int m_gridSizeY;
             int gridOffX = 0;
             int gridOffY = 0;
-            int gridCamOffX = 0;
-            int gridCamOffY = 0;
-            int gridCursorX = 0;
-            int gridCursorY = 0;
-            bool fixedGrid = false;
             int gridMagnetX = -1;
             int gridMagnetY = -1;
-            sf::RenderTexture gridCreate;
-            sf::Texture gridCache;
-            sf::Sprite gridCacheSpr;
-            static void drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col);
         public:
-            EditorGrid(int sizeX, int sizeY, int offsetX = 0, int offsetY = 0);
-            void sendCursorPosition(int x, int y);
-            void setSizeX(int sizeX);
-            void setSizeY(int sizeY);
-            void setSize(int sizeX, int sizeY);
+            /**
+             * \brief Constructor of the EditorGrid
+             * \param cellWidth
+             * \param cellHeight 
+             * \param offsetX 
+             * \param offsetY 
+             */
+            EditorGrid(int cellWidth, int cellHeight, int offsetX = 0, int offsetY = 0);
+            void setCellWidth(int cellWidth);
+            void setCellHeight(int cellHeight);
+            void setSize(int cellWidth, int cellHeight);
             void setOffsetX(int offsetX);
             void setOffsetY(int offsetY);
             void setOffset(int offsetX, int offsetY);
-            void setCamOffsetX(int camOffsetX);
-            void setCamOffsetY(int camOffsetY);
-            void setFixedCam(bool fixed);
-            int getSizeX() const;
-            int getSizeY() const;
+            int getCellWidth() const;
+            int getCellHeight() const;
             int getOffsetX() const;
             int getOffsetY() const;
-            void magnetize(Cursor::Cursor* cur) const;
-            void moveMagnet(Cursor::Cursor* cur, int tox, int toy);
-            void draw(sf::RenderWindow* surf);
+            void magnetize(System::Cursor& cursor) const;
+            void moveMagnet(System::Cursor& cursor, int x, int y);
+            void draw(sf::RenderWindow& target, System::Cursor& cursor, int offsetX, int offsetY);
         };
     }
 }

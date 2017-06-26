@@ -6,19 +6,60 @@ namespace obe
 {
     namespace Coord
     {
+        /**
+         * \brief Different Units used to work with elements position / size in the Scene
+         */
         enum Units
         {
+            /**
+             * \brief ViewPercentage is an Unit used to place / scale an element using the View. \n
+             * Exemple : x = 0.5, y = 0.5 is the middle of the View
+             */
             ViewPercentage,
+            /**
+            * \brief ViewPercentage is an Unit used to place / scale an element using the pixels of the View. \n
+            * Exemple : x = 500, y = 500 is the middle of a 1000x1000 pixels screen
+            */
             ViewPixels,
+            /**
+            * \brief ViewUnits is an Unit used to place / scale an element using the View. \n
+            * Exemple : x = 1, y = 1 is the middle of a 1000x1000 pixels screen. \n
+            * The screen height will ALWAYS be 2 ViewUnits when the View size is 1, the width will depend on the screen ratio. \n
+            * The screen width in ViewUnits can be calculated using this formula : 2 * viewSize * (Screen.Width / Screen.Height)
+            */
             ViewUnits,
+            /**
+            * \brief ViewPercentage is an Unit used to place / scale an element using the pixels of the World. \n
+            * Exemple : x = 4000, y = 10000
+            */
             WorldPixels,
+            /**
+            * \brief WorldUnits is an Unit used to place / scale an element using the World. \n
+            * Exemple : x = 4.5, y = 2.5\n
+            */
             WorldUnits,
+            /**
+             * \brief This Unit should never be used. (Debug purpose)
+             */
             Unknown
         };
 
+        /**
+         * \brief Converts a std::string to an Unit
+         * \param unit Unit in string form
+         * \return The convert Units enum value
+         */
         Units stringToUnits(const std::string& unit);
+        /**
+         * \brief Converts an Unit to a std::string
+         * \param unit The Units enum value you want to convert into a std::string
+         * \return A std::string containing the Units enum value in string form
+         */
         std::string unitsToString(Units unit);
 
+        /**
+         * \brief Struct representing the View used for internal UnitVector conversions
+         */
         struct ViewStruct
         {
             double w;
@@ -27,21 +68,41 @@ namespace obe
             double y;
         };
 
+        /**
+        * \brief Struct representing the Screen used for internal UnitVector conversions
+        */
         struct ScreenStruct
         {
             double w;
             double h;
         };
 
+        /**
+         * \brief Classes that works with Units should herit from this Class
+         */
         class UnitBasedObject
         {
         protected:
+            /**
+             * \brief Unit used in the Class
+             */
             Units m_unit = WorldUnits;
         public:
+            /**
+             * \brief Set the unit the Object should work with
+             * \param unit Unit you want the Object to work with
+             */
             void setWorkingUnit(Units unit);
+            /**
+             * \brief Get the unit the Object works with
+             * \return The unit the Object works with
+             */
             Units getWorkingUnit() const;
         };
 
+        /**
+         * \brief Class widely used in the Engine to scale and position elements in a Scene
+         */
         class UnitVector
         {
         public:
@@ -72,11 +133,24 @@ namespace obe
             UnitVector operator/(const UnitVector& add) const;
             UnitVector& operator/=(const UnitVector& add);
 
+            /**
+             * \brief Return an UnitVector with the converted values (x, y) to the Unit you want
+             * \tparam E An enum value from Coord::Units
+             * \return A new UnitVector containing the converted values with the new Units
+             */
             template <Units E>
             UnitVector to() const { return {}; };
+            /**
+             * \brief Return an UnitVector with the converted values (x, y) to the Unit you want
+             * \param pUnit An enum value from Coord::Units
+             * \return A new UnitVector containing the converted values with the new Units
+             */
             UnitVector to(Units pUnit) const;
         };
 
+        /**
+         * \brief An UnitVector where you can't access the unit
+         */
         class ProtectedUnitVector : public UnitVector
         {
         protected:
@@ -186,6 +260,12 @@ namespace obe
             }
         }
 
+        /**
+         * \brief Display an UnitVector for debug purposes
+         * \param os The stream you want to print the UnitVector in
+         * \param m The UnitVector you want to print
+         * \return The stream passed by reference (To chain calls)
+         */
         std::ostream& operator<<(std::ostream& os, const UnitVector& m);
     }
 }

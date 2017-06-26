@@ -20,8 +20,8 @@ namespace obe
                 std::string hookType = containerMap[name].first;
                 if (hookType == Functions::Type::getClassType<Console::Console*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<Console::Console*>();
-                else if (hookType == Functions::Type::getClassType<Cursor::Cursor*>())
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Cursor::Cursor*>();
+                else if (hookType == Functions::Type::getClassType<System::Cursor*>())
+                    (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
                 else if (hookType == Functions::Type::getClassType<Input::KeyBinder*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyBinder*>();
                 else if (hookType == Functions::Type::getClassType<Math::MathExp*>())
@@ -330,8 +330,8 @@ namespace obe
                     .addFunction("scale", &World::Camera::scale)
                     .addFunction("setAngle", &World::Camera::setAngle)
                     .addOverloadedFunctions("setPosition",
-                                            static_cast<void (World::Camera::*)(double, double)>(&World::Camera::setPosition),
-                                            static_cast<void (World::Camera::*)(const Coord::UnitVector&)>(&World::Camera::setPosition)
+                                            static_cast<void (World::Camera::*)(double, double, Coord::Rect::Referencial)>(&World::Camera::setPosition),
+                                            static_cast<void (World::Camera::*)(const Coord::UnitVector&, Coord::Rect::Referencial)>(&World::Camera::setPosition)
                     )
                     .addFunction("setSize", &World::Camera::setSize)
                     .addFunction("setX", &World::Camera::setX)
@@ -548,7 +548,10 @@ namespace obe
                     .addProperty("y", &Coord::UnitVector::y)
                     .addProperty("unit", &Coord::UnitVector::unit)
                     .addFunction("to", static_cast<Coord::UnitVector (Coord::UnitVector::*)(Coord::Units) const>(&Coord::UnitVector::to))
-                    .addFunction("add", &Coord::UnitVector::add)
+                    .addOverloadedFunctions("add", 
+                        static_cast<void (Coord::UnitVector::*)(double, double)>(&Coord::UnitVector::add),
+                        static_cast<void (Coord::UnitVector::*)(const Coord::UnitVector&)>(&Coord::UnitVector::add)
+                    )
                     .addOverloadedFunctions("set",
                                             static_cast<void (Coord::UnitVector::*)(double, double)>(&Coord::UnitVector::set),
                                             static_cast<void (Coord::UnitVector::*)(const Coord::UnitVector&)>(&Coord::UnitVector::set)
@@ -567,17 +570,17 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["Cursor"])) (*lua)["Core"]["Cursor"] = kaguya::NewTable();
             if (importAll || args[1] == "Cursor")
             {
-                (*lua)["Core"]["Cursor"]["Cursor"].setClass(kaguya::UserdataMetatable<Cursor::Cursor>()
-                    .addFunction("getClicked", &Cursor::Cursor::getClicked)
-                    .addFunction("getPressed", &Cursor::Cursor::getPressed)
-                    .addFunction("getReleased", &Cursor::Cursor::getReleased)
-                    .addFunction("getX", &Cursor::Cursor::getX)
-                    .addFunction("getY", &Cursor::Cursor::getY)
-                    .addFunction("selectCursor", &Cursor::Cursor::selectCursor)
-                    .addFunction("selectKey", &Cursor::Cursor::selectKey)
-                    .addFunction("setPosition", &Cursor::Cursor::setPosition)
-                    .addFunction("setX", &Cursor::Cursor::setX)
-                    .addFunction("setY", &Cursor::Cursor::setY)
+                (*lua)["Core"]["Cursor"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
+                    .addFunction("getClicked", &System::Cursor::getClicked)
+                    .addFunction("getPressed", &System::Cursor::getPressed)
+                    .addFunction("getReleased", &System::Cursor::getReleased)
+                    .addFunction("getX", &System::Cursor::getX)
+                    .addFunction("getY", &System::Cursor::getY)
+                    .addFunction("selectCursor", &System::Cursor::selectCursor)
+                    .addFunction("selectKey", &System::Cursor::selectKey)
+                    .addFunction("setPosition", &System::Cursor::setPosition)
+                    .addFunction("setX", &System::Cursor::setX)
+                    .addFunction("setY", &System::Cursor::setY)
                 );
                 foundPart = true;
             }
@@ -810,12 +813,10 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["Package"])) (*lua)["Core"]["Package"] = kaguya::NewTable();
             if (importAll || args[1] == "Package")
             {
-                (*lua)["Core"]["Package"]["Package"].setClass(kaguya::UserdataMetatable<System::Package>()
-                    .addStaticFunction("Load", &System::Package::Load)
-                    .addStaticFunction("Install", &System::Package::Install)
-                    .addStaticFunction("GetPackageLocation", &System::Package::GetPackageLocation)
-                    .addStaticFunction("PackageExists", &System::Package::PackageExists)
-                );
+                (*lua)["Core"]["Package"]["Load"] = kaguya::function(System::Package::Load);
+                (*lua)["Core"]["Package"]["Install"] = kaguya::function(System::Package::Install);
+                (*lua)["Core"]["Package"]["GetPackageLocation"] = kaguya::function(System::Package::GetPackageLocation);
+                (*lua)["Core"]["Package"]["PackageExists"] = kaguya::function(System::Package::PackageExists);
                 foundPart = true;
             }
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.PackageImportError", {{"lib", Functions::Vector::join(args, ".")}});

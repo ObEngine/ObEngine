@@ -45,7 +45,7 @@ namespace obe
             vili::ComplexAttribute& gameConfig = configFile.at("GameConfig");
 
             //Cursor
-            Cursor::Cursor cursor(&window);
+            System::Cursor cursor(&window);
             cursor.updateOutsideWindow(true);
             Collision::PolygonalCollider cursorCollider("cursor");
             cursorCollider.addPoint(0, 0);

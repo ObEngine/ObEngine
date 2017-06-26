@@ -112,7 +112,7 @@ namespace obe
             if (!m_locked) m_angle += angle;
         }
 
-        Coord::UnitVector Camera::getPosition(Referencial ref = TopLeft) const
+        Coord::UnitVector Camera::getPosition(Referencial ref) const
         {
             return Rect::getPosition(ref);
         }

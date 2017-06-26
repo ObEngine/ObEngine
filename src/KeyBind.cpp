@@ -34,12 +34,11 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.KeyBinder.KeyBinder.UnknownKey", {{"key", key}});
         }
 
-        KeyBinder::KeyBinder()
+        KeyBinder::KeyBinder() : m_keysTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Keys"))
         {
-            m_keysTriggers = Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Keys")
-                                                                   ->addTrigger("ActionReleased")
-                                                                   ->addTrigger("ActionPressed")
-                                                                   ->addTrigger("ActionToggled");
+            m_keysTriggers->addTrigger("ActionReleased")
+                          ->addTrigger("ActionPressed")
+                          ->addTrigger("ActionToggled");
 
             //Alpha
             m_keyMap["A"] = KeyClass(sf::Keyboard::A, "A", "A", "Alpha");

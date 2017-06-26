@@ -7,54 +7,38 @@ namespace obe
 {
     namespace Editor
     {
-        void EditorGrid::drawLine(sf::RenderWindow* surf, int x1, int y1, int x2, int y2, int w, sf::Color col)
-        {
-            sf::Vertex line[] =
-            {
-                sf::Vertex(sf::Vector2f(x1, y1), col),
-                sf::Vertex(sf::Vector2f(x2, y2), col)
-            };
-            surf->draw(line, w, sf::Lines);
-        }
-
         EditorGrid::EditorGrid(int sizeX, int sizeY, int offsetX, int offsetY)
         {
-            gridSizeX = sizeX;
-            gridSizeY = sizeY;
+            m_gridSizeX = sizeX;
+            m_gridSizeY = sizeY;
             gridOffX = offsetX;
             gridOffY = offsetY;
         }
 
-        void EditorGrid::sendCursorPosition(int cux, int cuy)
+        void EditorGrid::setCellWidth(int sizeX)
         {
-            this->gridCursorX = cux;
-            this->gridCursorY = cuy;
+            m_gridSizeX = sizeX;
         }
 
-        void EditorGrid::setSizeX(int sizeX)
+        void EditorGrid::setCellHeight(int sizeY)
         {
-            gridSizeX = sizeX;
-        }
-
-        void EditorGrid::setSizeY(int sizeY)
-        {
-            gridSizeY = sizeY;
+            m_gridSizeY = sizeY;
         }
 
         void EditorGrid::setSize(int sizeX, int sizeY)
         {
-            this->setSizeX(sizeX);
-            this->setSizeY(sizeY);
+            this->setCellWidth(sizeX);
+            this->setCellHeight(sizeY);
         }
 
         void EditorGrid::setOffsetX(int offsetX)
         {
-            this->gridOffX = offsetX % this->gridSizeX;
+            this->gridOffX = offsetX % this->m_gridSizeX;
         }
 
         void EditorGrid::setOffsetY(int offsetY)
         {
-            this->gridOffY = offsetY % this->gridSizeY;
+            this->gridOffY = offsetY % this->m_gridSizeY;
         }
 
         void EditorGrid::setOffset(int offsetX, int offsetY)
@@ -63,29 +47,14 @@ namespace obe
             this->setOffsetY(offsetY);
         }
 
-        void EditorGrid::setCamOffsetX(int camOffsetX)
+        int EditorGrid::getCellWidth() const
         {
-            gridCamOffX = camOffsetX;
+            return m_gridSizeX;
         }
 
-        void EditorGrid::setCamOffsetY(int camOffsetY)
+        int EditorGrid::getCellHeight() const
         {
-            gridCamOffY = camOffsetY;
-        }
-
-        void EditorGrid::setFixedCam(bool fixed)
-        {
-            fixedGrid = fixed;
-        }
-
-        int EditorGrid::getSizeX() const
-        {
-            return gridSizeX;
-        }
-
-        int EditorGrid::getSizeY() const
-        {
-            return gridSizeY;
+            return m_gridSizeY;
         }
 
         int EditorGrid::getOffsetX() const
@@ -98,50 +67,50 @@ namespace obe
             return gridOffY;
         }
 
-        void EditorGrid::magnetize(Cursor::Cursor* cur) const
+        void EditorGrid::magnetize(System::Cursor& cursor) const
         {
             if (gridMagnetX != -1 && gridMagnetY != -1)
             {
-                cur->setPosition(gridMagnetX, gridMagnetY);
+                cursor.setPosition(gridMagnetX, gridMagnetY);
             }
         }
 
-        void EditorGrid::moveMagnet(Cursor::Cursor* cur, int tox, int toy)
+        void EditorGrid::moveMagnet(System::Cursor& cursor, int x, int y)
         {
             if (gridMagnetX != -1 && gridMagnetY != -1)
             {
-                if (tox != 0) gridMagnetX += (gridSizeX * tox);
-                if (toy != 0) gridMagnetY += (gridSizeY * toy);
-                cur->setPosition(gridMagnetX, gridMagnetY);
+                if (x != 0) gridMagnetX += (m_gridSizeX * x);
+                if (y != 0) gridMagnetY += (m_gridSizeY * y);
+                cursor.setPosition(gridMagnetX, gridMagnetY);
             }
         }
 
-        void EditorGrid::draw(sf::RenderWindow* surf)
+        void EditorGrid::draw(sf::RenderWindow& target, System::Cursor& cursor, int offsetX, int offsetY)
         {
             int stackX = -1;
             int stackY = -1;
-            for (int i = gridOffX + gridCamOffX; i < Coord::UnitVector::Screen.w; i += gridSizeX)
+            for (int i = gridOffX + offsetX; i < Coord::UnitVector::Screen.w; i += m_gridSizeX)
             {
-                if (Functions::Math::isBetween(i, gridCursorX - (static_cast<int>(floor(gridSizeX / 2)) - 1), gridCursorX + (static_cast<int>(floor(gridSizeX / 2)) - 1)))
+                if (Functions::Math::isBetween(i, cursor.getX() - (static_cast<int>(floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
                 {
-                    drawLine(surf, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(0, 125, 255, 255));
+                    Graphics::Utils::drawLine(target, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(0, 125, 255, 255));
                     stackX = i;
                 }
                 else
                 {
-                    drawLine(surf, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(125, 125, 125, 255));
+                    Graphics::Utils::drawLine(target, i, 0, i, Coord::UnitVector::Screen.h, 2, sf::Color(125, 125, 125, 255));
                 }
             }
-            for (int i = gridOffY + gridCamOffY; i < Coord::UnitVector::Screen.h; i += gridSizeY)
+            for (int i = gridOffY + offsetY; i < Coord::UnitVector::Screen.h; i += m_gridSizeY)
             {
-                if (Functions::Math::isBetween(i, gridCursorY - (static_cast<int>(floor(gridSizeY / 2)) - 1), gridCursorY + (static_cast<int>(floor(gridSizeY / 2)) - 1)))
+                if (Functions::Math::isBetween(i, cursor.getY() - (static_cast<int>(floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))
                 {
-                    drawLine(surf, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(0, 125, 255, 255));
+                    Graphics::Utils::drawLine(target, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(0, 125, 255, 255));
                     stackY = i;
                 }
                 else
                 {
-                    drawLine(surf, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(125, 125, 125, 255));
+                    Graphics::Utils::drawLine(target, 0, i, Coord::UnitVector::Screen.w, i, 2, sf::Color(125, 125, 125, 255));
                 }
             }
             if (stackX != -1 && stackY != -1)

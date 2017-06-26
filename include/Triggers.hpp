@@ -18,6 +18,7 @@ namespace obe
 {
     namespace Script
     {
+        class TriggerGroup;
         class Trigger
         {
         private:
@@ -35,8 +36,7 @@ namespace obe
             friend class TriggerGroup;
             friend class TriggerDatabase;
         public:
-            Trigger(std::string group, std::string triggerName, bool startState = false, bool permanent = false);
-            Trigger(std::string nsp, std::string group, std::string triggerName, bool startState = false, bool permanent = false);
+            Trigger(const TriggerGroup& parent, const std::string& name, bool startState = false, bool permanent = false);
             bool getState() const;
             bool isPermanent() const;
             std::string getGroup() const;
@@ -44,6 +44,8 @@ namespace obe
             std::string getNamespace() const;
             std::map<std::string, std::pair<std::string, Types::any>>* getParameters();
         };
+
+        bool injectParameters(Trigger& trigger, kaguya::State& lua);
 
         class TriggerDelay
         {
@@ -62,7 +64,7 @@ namespace obe
             std::string m_fromNsp;
             std::map<std::string, Trigger*> m_triggerMap;
             std::vector<TriggerDelay*> m_delayedTriggers;
-			unsigned int m_references;
+			unsigned int m_references = 0;
             friend class TriggerDatabase;
         public:
             TriggerGroup(std::string triggerGroupName);
@@ -84,11 +86,13 @@ namespace obe
 			class Ptr
 			{
 				private:
-					TriggerGroup* m_link;
+					TriggerGroup* m_link = nullptr;
+                    static unsigned int amount;
+                    unsigned int m_id = 0;
 					friend class TriggerDatabase;
 				public:
-					Ptr();
 					Ptr(TriggerGroup* link);
+                    Ptr& operator=(const Ptr& link);
 					TriggerGroup* operator->() const;
 					~Ptr();
 			};
@@ -107,8 +111,8 @@ namespace obe
             static TriggerDatabase* GetInstance();
             Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
             void createNamespace(std::string groupNamespace);
-            TriggerGroup::Ptr createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-            TriggerGroup::Ptr joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
             void removeNamespace(const std::string& namespaceId);
             void removeTriggerGroup(TriggerGroup* trgGroup);
             bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
