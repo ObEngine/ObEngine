@@ -14,6 +14,12 @@ ObEngine:
                 where:"getTexture"
                 message:"Can't open file '%file%'"
                 hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
+        AnimationPlayMode:
+            where:"AnimationPlayMode"
+            UnknownPlayMode:
+                where:"stringToAnimationPlayMode"
+                message:"Unknown Play Mode '%playmode%', it can be either one of those : 'OneTime', 'Loop' or 'Force'"
+                hint:"Check in your Animation if the play-mode parameter is correct"
         Animation:
             where:"Animation"
             AnimationGroupNotFound:

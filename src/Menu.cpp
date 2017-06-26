@@ -66,7 +66,7 @@ namespace obe
             std::string newLevelName = input->getText();
             if (newLevelName != "")
             {
-                if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0)))
+                if (!Functions::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString()))
                 {
                     std::cout << "Creating new level : " << newLevelName << std::endl;
                     vili::DataParser newFileParser;
@@ -82,7 +82,7 @@ namespace obe
                     newFileParser.at("View", "pos").createBaseAttribute("y", 0);
                     newFileParser.at("View", "pos").useTemplate(newFileParser.getTemplate("Vector2<WorldUnits>"));
                     newFileParser.at("View").createBaseAttribute("size", 4.5);
-                    newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0), true);
+                    newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString(), true);
                     input->setText("");
                 }
                 else

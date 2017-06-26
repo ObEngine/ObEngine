@@ -12,9 +12,24 @@ namespace obe
 {
     namespace Time
     {
-        double getTickSinceEpoch();
-        double getTickSinceEpochMicro();
+	    /**
+		 * \brief TimeUnit to store Epoch milli/micro seconds
+		 */
+		typedef unsigned long long int TimeUnit;
+	    /**
+         * \brief Get the amount of milliseconds elapsed since Epoch
+         * \return A TimeUnit containing the amount of milliseconds elapsed since Epoch
+         */
+        TimeUnit getTickSinceEpoch();
+		/**
+		* \brief Get the amount of microseconds elapsed since Epoch
+		* \return A TimeUnit containing the amount of microseconds elapsed since Epoch
+		*/
+        TimeUnit getTickSinceEpochMicro();
 
+	    /**
+         * \brief A Chronometer class to measure time
+         */
         class Chronometer
         {
         private:
@@ -23,18 +38,39 @@ namespace obe
             bool m_started = false;
             unsigned long long int m_limit = 0;
         public:
+	        /**
+             * \brief Chronometer default constructor
+             */
             Chronometer();
+	        /**
+             * \brief Starts the Chronometer
+             */
             void start();
+	        /**
+             * \brief Stops the Chronometer
+             */
             void stop();
-            unsigned long long int getTime();
-            void setLimit(unsigned long long int limit);
+	        /**
+             * \brief Get Time elapsed since the Chronometer started
+             * \return The amount of milliseconds elapsed since the Chronometer started
+             */
+            TimeUnit getTime();
+	        /**
+             * \brief Defines a limit to the Chronometer
+             * \param limit The amount of milliseconds before the limit is exceeded
+             */
+            void setLimit(TimeUnit limit);
+	        /**
+             * \brief Check if the defined limit has been exceeded
+             * \return true if the limit has been exceeded, false otherwise.
+             */
             bool limitExceeded();
         };
 
         class FPSCounter
         {
         private:
-            double m_lastTick = getTickSinceEpoch();
+            TimeUnit m_lastTick = getTickSinceEpoch();
             int m_fpsCounter = 0;
             int m_updCounter = 0;
             int m_saveFPS = 0;
@@ -43,10 +79,24 @@ namespace obe
             sf::Text m_text;
             sf::Font m_font;
         public:
+	        /**
+             * \brief Called when screen is refreshed.
+             */
             void tick();
+	        /**
+             * \brief Called when game is updated
+             */
             void uTick();
+	        /**
+             * \brief Load a new font to use when drawing the stats
+             * \param font Font to use to draw the amount of fps / ups
+             */
             void loadFont(sf::Font& font);
-            sf::Text getFPS();
+	        /**
+             * \brief Draws the calculated stats on the screen
+             * \param target Window to draws that stats on
+             */
+			void draw(sf::RenderWindow& target);
         };
     }
 }

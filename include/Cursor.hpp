@@ -7,7 +7,7 @@
 
 namespace obe
 {
-    namespace Cursor
+    namespace System
     {
         class Cursor
         {
@@ -25,14 +25,13 @@ namespace obe
             bool m_leftReleased = false;
             bool m_rightReleased = false;
             bool m_doesUpdateOutsideWindow = false;
-            Script::TriggerGroup* m_cursorTriggers = nullptr;
+            Script::TriggerGroup::Ptr m_cursorTriggers;
             Animation::Animator m_cursorAnim;
             sf::Sprite* m_cursorSprite = nullptr;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
             friend class CoreHook;
         public:
             Cursor(sf::RenderWindow* window);
-            ~Cursor();
             void selectCursor(std::string cursor);
             void selectKey(std::string key);
             int getX() const;

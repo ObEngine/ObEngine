@@ -62,8 +62,8 @@ namespace obe
             std::string m_fromNsp;
             std::map<std::string, Trigger*> m_triggerMap;
             std::vector<TriggerDelay*> m_delayedTriggers;
+			unsigned int m_references;
             friend class TriggerDatabase;
-
         public:
             TriggerGroup(std::string triggerGroupName);
             TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);
@@ -81,6 +81,18 @@ namespace obe
             std::vector<Trigger*> getAllTriggers();
             std::string getNamespace() const;
             std::string getName() const;
+			class Ptr
+			{
+				private:
+					TriggerGroup* m_link;
+					friend class TriggerDatabase;
+				public:
+					Ptr();
+					Ptr(TriggerGroup* link);
+					TriggerGroup* operator->() const;
+					~Ptr();
+			};
+			friend class TriggerGroup::Ptr;
         };
 
         class TriggerDatabase
@@ -95,8 +107,8 @@ namespace obe
             static TriggerDatabase* GetInstance();
             Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
             void createNamespace(std::string groupNamespace);
-            TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-            TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            TriggerGroup::Ptr createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            TriggerGroup::Ptr joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
             void removeNamespace(const std::string& namespaceId);
             void removeTriggerGroup(TriggerGroup* trgGroup);
             bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);

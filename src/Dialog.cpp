@@ -118,8 +118,8 @@ namespace obe
             sf::Text* dialogText = new sf::Text;
             sf::Text* speakerText = new sf::Text;
 
-            circleAnim->loadAnimation(System::Path("Sprites/Dialog/Loader/"), "Loader.ani.vili");
-            circleAnim->playAnimation();
+            circleAnim->loadAnimation(System::Path("Sprites/Dialog/Loader/").add("Loader.ani.vili"));
+            circleAnim->update();
             circleAnim->getSprite()->setPosition(Coord::UnitVector::Screen.w - 64 - 16, Coord::UnitVector::Screen.h - 64 - 16);
 
             dialogLine->loadFromFile("Sprites/Dialog/textbox.png");
@@ -210,7 +210,7 @@ namespace obe
             sf::Sprite* dispSpr = this->locals["dispSpr"].as<sf::Sprite*>();
             Animation::Animation* circleAnim = this->locals["circleAnim"].as<Animation::Animation*>();
 
-            circleAnim->playAnimation();
+            circleAnim->update();
             surf->draw(*dispSpr);
             surf->draw(*circleAnim->getSprite());
         }

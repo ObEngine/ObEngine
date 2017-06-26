@@ -53,7 +53,14 @@ namespace obe
             this->y = y;
         }
 
-        void UnitVector::add(double x, double y)
+	    void UnitVector::add(const UnitVector& vec)
+	    {
+			UnitVector pVec = vec.to(unit);
+			x += pVec.x;
+			y += pVec.y;
+	    }
+
+	    void UnitVector::add(double x, double y)
         {
             this->x += x;
             this->y += y;

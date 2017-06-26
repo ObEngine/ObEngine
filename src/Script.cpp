@@ -253,10 +253,10 @@ namespace obe
             if (importAll || args[1] == "AnimationGroup")
             {
                 (*lua)["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
-                    .addFunction("setGroupClock", &Animation::AnimationGroup::setGroupClock)
+                    .addFunction("setGroupDelay", &Animation::AnimationGroup::setGroupDelay)
                     .addFunction("setGroupLoop", &Animation::AnimationGroup::setGroupLoop)
                     .addFunction("getGroupName", &Animation::AnimationGroup::getGroupName)
-                    .addFunction("getGroupClock", &Animation::AnimationGroup::getGroupClock)
+                    .addFunction("getGroupDelay", &Animation::AnimationGroup::getGroupDelay)
                     .addFunction("getGroupIndex", &Animation::AnimationGroup::getGroupIndex)
                     .addFunction("isGroupOver", &Animation::AnimationGroup::isGroupOver)
                     .addFunction("pushTexture", &Animation::AnimationGroup::pushTexture)
@@ -273,7 +273,7 @@ namespace obe
             {
                 (*lua)["Core"]["Animation"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
                     .addFunction("getAnimationName", &Animation::Animation::getAnimationName)
-                    .addFunction("getAnimationClock", &Animation::Animation::getAnimationClock)
+                    .addFunction("getAnimationDelay", &Animation::Animation::getAnimationDelay)
                     .addFunction("getAnimationGroup", &Animation::Animation::getAnimationGroup)
                     .addFunction("getCurrentAnimationGroup", &Animation::Animation::getCurrentAnimationGroup)
                     .addFunction("getAllAnimationGroupName", &Animation::Animation::getAllAnimationGroupName)
@@ -830,7 +830,7 @@ namespace obe
             if (importAll || args[1] == "PriorizedPath")
             {
                 (*lua)["Core"]["Path"]["PriorizedPath"].setClass(kaguya::UserdataMetatable<System::PriorizedPath>()
-                    .addFunction("getPath", &System::PriorizedPath::getPath)
+                    .addProperty("basePath", &System::PriorizedPath::basePath)
                 );
                 foundPart = true;
             }

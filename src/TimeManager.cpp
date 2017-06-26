@@ -36,15 +36,14 @@ namespace obe
             m_text.setFillColor(sf::Color::White);
         }
 
-        sf::Text FPSCounter::getFPS()
+        void FPSCounter::draw(sf::RenderWindow& target)
         {
             if (m_canUpdateFPS)
             {
                 m_canUpdateFPS = false;
                 m_text.setString(std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
-                return m_text;
             }
-            return m_text;
+			target.draw(m_text);
         }
 
         //Chronometer
@@ -64,15 +63,15 @@ namespace obe
             m_started = false;
         }
 
-        unsigned long long int Chronometer::getTime()
+        TimeUnit Chronometer::getTime()
         {
             if (m_started) m_chronoCurrent = std::chrono::high_resolution_clock::now();
             return std::chrono::duration_cast<std::chrono::milliseconds>(m_chronoCurrent - m_chronoStart).count();
         }
 
-        void Chronometer::setLimit(unsigned long long int limit)
+        void Chronometer::setLimit(TimeUnit limit)
         {
-            this->m_limit = limit;
+            m_limit = limit;
         }
 
         bool Chronometer::limitExceeded()
@@ -82,12 +81,12 @@ namespace obe
             return (this->getTime() > m_limit);
         }
 
-        double getTickSinceEpoch()
+        TimeUnit getTickSinceEpoch()
         {
-            return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+            return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         }
 
-        double getTickSinceEpochMicro()
+        TimeUnit getTickSinceEpochMicro()
         {
             return std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1);
         }

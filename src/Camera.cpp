@@ -30,51 +30,76 @@ namespace obe
             }
         }
 
-        void Camera::setPosition(const Coord::UnitVector& position)
+	    void Camera::setPosition(const Coord::UnitVector& position, Referencial ref)
         {
-            Coord::UnitVector pVec = position.to<Coord::WorldUnits>();
-            if (!m_locked) this->setPosition(pVec.x, pVec.y);
+			if (!m_locked)
+			{
+				Rect::setPosition(position, ref);
+				this->apply();
+			}
         }
 
-        void Camera::setPosition(double x, double y)
+        void Camera::setPosition(double x, double y, Referencial ref)
         {
-            if (!m_locked) m_position.set(x, y);
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::setPosition(x, y, ref);
+				this->apply();
+			}
         }
 
         void Camera::move(const Coord::UnitVector& position)
         {
-            if (!m_locked) m_position += position;
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::move(position);
+				this->apply();
+			}
         }
 
         void Camera::move(double x, double y)
         {
-            if (!m_locked) m_position.add(x, y);
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::setPosition(x, y);
+				this->apply();
+			}
         }
 
-        void Camera::setX(double x)
+        void Camera::setX(double x, Referencial ref)
         {
-            if (!m_locked) m_position.x = x;
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::setX(x, ref);
+				this->apply();
+			}
         }
 
-        void Camera::setY(double y)
+        void Camera::setY(double y, Referencial ref)
         {
-            if (!m_locked) m_position.y = y;
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::setY(y, ref);
+				this->apply();
+			}
         }
 
         void Camera::setSize(double pSize)
         {
-            if (!m_locked) m_size.set(pSize * 2 * (Coord::UnitVector::Screen.w / Coord::UnitVector::Screen.h), pSize * 2);
-            this->apply();
+			if (!m_locked)
+			{
+				Rect::setSize(pSize * 2 * (Coord::UnitVector::Screen.w / Coord::UnitVector::Screen.h), pSize * 2);
+				this->apply();
+			}
         }
 
         void Camera::scale(double pScale)
         {
-            if (!m_locked) this->setSize((m_size.y / 2) * pScale);
+			if (!m_locked)
+			{
+				this->setSize((m_size.y / 2) * pScale);
+				this->apply();
+			}
         }
 
         void Camera::setAngle(double angle)
@@ -87,9 +112,9 @@ namespace obe
             if (!m_locked) m_angle += angle;
         }
 
-        Coord::UnitVector Camera::getPosition() const
+        Coord::UnitVector Camera::getPosition(Referencial ref = TopLeft) const
         {
-            return m_position;
+            return Rect::getPosition(ref);
         }
 
         Coord::UnitVector Camera::getSize() const
@@ -97,14 +122,14 @@ namespace obe
             return m_size;
         }
 
-        double Camera::getX() const
+        double Camera::getX(Referencial ref) const
         {
-            return m_position.x;
+            return Rect::getX(ref);
         }
 
-        double Camera::getY() const
+        double Camera::getY(Referencial ref) const
         {
-            return m_position.y;
+            return Rect::getY(ref);
         }
 
         double Camera::getWidth() const

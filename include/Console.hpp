@@ -63,7 +63,6 @@ namespace obe
             };
 
             Console();
-            ~Console();
             void handleCommands(std::string text);
             std::string getCommand();
             bool hasCommand();
@@ -104,7 +103,7 @@ namespace obe
             std::vector<std::string> streamList;
             std::vector<std::string> disabledStreams;
             std::vector<Message*> consoleText;
-            Script::TriggerGroup* consoleTriggers;
+            Script::TriggerGroup::Ptr consoleTriggers;
         };
     }
 }

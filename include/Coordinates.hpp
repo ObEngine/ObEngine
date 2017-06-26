@@ -60,6 +60,7 @@ namespace obe
 
             void set(const UnitVector& vec);
             void set(double x, double y);
+			void add(const UnitVector& vec);
             void add(double x, double y);
 
             UnitVector operator+(const UnitVector& add) const;

@@ -26,16 +26,11 @@ namespace obe
             std::function<int(sf::Music*, std::string)> musicLoader = [](sf::Music* music, std::string path) -> int { return music->openFromFile(path); };
         }
 
-        PriorizedPath::PriorizedPath(PathType::PathType pathType, std::string basePath, unsigned int priority)
+        PriorizedPath::PriorizedPath(PathType::PathType pathType, const std::string& basePath, unsigned int priority)
         {
             this->pathType = pathType;
             this->basePath = basePath;
             this->priority = priority;
-        }
-
-        std::string PriorizedPath::getPath() const
-        {
-            return basePath;
         }
 
         std::vector<PriorizedPath> Path::basePaths = std::vector<PriorizedPath>();
@@ -59,35 +54,35 @@ namespace obe
 
         Path::Path()
         {
-            this->path = "";
+            this->m_path = "";
         }
 
         Path::Path(const Path& path)
         {
-            this->path = path.toString();
+            this->m_path = path.toString();
         }
 
-        Path::Path(std::string path)
+        Path::Path(const std::string& path)
         {
-            this->path = path;
+            m_path = path;
         }
 
-        Path Path::add(std::string path) const
+        Path Path::add(const std::string& path) const
         {
-            return Path(this->path + "/" + path);
+            return Path(m_path + ((m_path != "" && m_path.back() != '/') ? "/" : "") + path);
         }
 
-        std::string Path::getPath(int index)
+        Path Path::getPath(int index)
         {
-            if (basePaths.size() > index)
-                return basePaths[index].getPath() + ((basePaths[index].getPath() != "") ? "/" : "") + this->path;
-            throw aube::ErrorHandler::Raise("ObEngine.PathResolver.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", path}});
+			if (basePaths.size() > index)
+				return Path(basePaths[index].basePath).add(m_path);
+            throw aube::ErrorHandler::Raise("ObEngine.PathResolver.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", m_path}});
         }
 
-        std::string Path::toString() const
-        {
-            return this->path;
-        }
+	    std::string Path::toString() const
+	    {
+			return m_path;
+	    }
 
         void Path::addPath(PriorizedPath path)
         {
@@ -131,7 +126,7 @@ namespace obe
             std::cout << "<System> List of mounted paths : " << std::endl;
             for (PriorizedPath& currentPath : Path::basePaths)
             {
-                std::cout << "    <System> MountedPath : " << currentPath.getPath() << std::endl;
+                std::cout << "    <System> MountedPath : " << currentPath.basePath << std::endl;
             }
         }
     }

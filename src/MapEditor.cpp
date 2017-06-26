@@ -1212,8 +1212,8 @@ namespace obe
                         window.draw(sprInfo);
                     }
                     gui.draw();
-                    if (drawFPS)
-                        window.draw(fps.getFPS());
+					if (drawFPS)
+						fps.draw(window);
 
                     if (textDisplay.textRemaining())
                         textDisplay.render(&window);

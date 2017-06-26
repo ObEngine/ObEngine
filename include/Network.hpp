@@ -8,6 +8,9 @@ namespace obe
 {
     namespace Input
     {
+	    /**
+         * \brief Handle the Network Input / Output (Will be remade)
+         */
         class NetworkHandler
         {
         private:
@@ -16,10 +19,9 @@ namespace obe
             size_t received;
             sf::Socket::Status status;
             char data[4096];
-            Script::TriggerGroup* socketTriggers;
+            Script::TriggerGroup::Ptr socketTriggers;
         public:
             NetworkHandler();
-            ~NetworkHandler();
             void handleTriggers();
         };
     }

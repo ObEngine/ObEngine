@@ -51,10 +51,9 @@ namespace obe
             bool m_binderEnabled = true;
             std::string getActionKey(std::string action);
             KeyClass* getKey(std::string key);
-            Script::TriggerGroup* m_keysTriggers;
+            Script::TriggerGroup::Ptr m_keysTriggers;
         public:
             KeyBinder();
-            ~KeyBinder();
             void setEnabled(bool state);
             void loadFromFile(vili::DataParser& configFile);
             void connectAction(std::string action, std::string key);

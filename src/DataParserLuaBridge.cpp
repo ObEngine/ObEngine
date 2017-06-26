@@ -2,7 +2,7 @@
 
 namespace obe
 {
-    namespace Data
+    namespace Script
     {
         namespace DataBridge
         {

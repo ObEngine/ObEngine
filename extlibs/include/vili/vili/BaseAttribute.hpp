@@ -46,6 +46,7 @@ namespace vili
         void copy(ContainerAttribute* newParent, const std::string& newid = "") const override;
         void write(std::ofstream* file, const std::string& spacing, unsigned int depth) const override;
         operator std::string() const;
+		operator unsigned int() const;
         operator int() const;
         operator double() const;
         operator bool() const;

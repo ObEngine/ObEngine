@@ -212,27 +212,27 @@ namespace obe
             }
         }
 
-        TriggerGroup* TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
+        TriggerGroup::Ptr TriggerDatabase::createTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
         {
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) == m_allTriggers[groupNamespace].end())
                 {
                     m_allTriggers[groupNamespace][triggerGroupName] = new TriggerGroup(groupNamespace, triggerGroupName);
-                    return m_allTriggers[groupNamespace][triggerGroupName];
+                    return TriggerGroup::Ptr(m_allTriggers[groupNamespace][triggerGroupName]);
                 }
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.TriggerGroupAlreadyExists", {{"group", triggerGroupName}, {"nsp", groupNamespace}});
             }
             throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "createTriggerGroup"},{"nsp", groupNamespace}});
         }
 
-        TriggerGroup* TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
+        TriggerGroup::Ptr TriggerDatabase::joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName)
         {
             std::cout << "Trying to join TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
-                    return m_allTriggers[groupNamespace][triggerGroupName];
+                    return TriggerGroup::Ptr(m_allTriggers[groupNamespace][triggerGroupName]);
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
                                                     {"function", "joinTriggerGroup"},
                                                     {"group", triggerGroupName},
@@ -338,5 +338,23 @@ namespace obe
             m_databaseChrono.start();
             //Need to delete Map-only stuff !!
         }
-    }
+		TriggerGroup::Ptr::Ptr(TriggerGroup* link)
+		{
+			m_link = link;
+			m_link->m_references++;
+		}
+		TriggerGroup::Ptr::~Ptr()
+		{
+			m_link->m_references--;
+			if (m_link->m_references == 0)
+				TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
+		}
+		TriggerGroup::Ptr::Ptr()
+		{
+		}
+		TriggerGroup* TriggerGroup::Ptr::operator->() const
+		{
+			return m_link;
+		}
+}
 }

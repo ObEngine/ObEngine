@@ -162,7 +162,12 @@ namespace vili
         throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringCastOperator", {{"path", getNodePath()}});
     }
 
-    BaseAttribute::operator int() const
+	BaseAttribute::operator unsigned int() const
+	{
+		return int(*this);
+	}
+
+	BaseAttribute::operator int() const
     {
         if (m_dataType == Types::Int)
             return Int;

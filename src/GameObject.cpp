@@ -494,7 +494,7 @@ namespace obe
 
         TriggerGroup* GameObject::getLocalTriggers() const
         {
-            return m_localTriggers;
+            return m_localTriggers.operator->();
         }
 
         void GameObject::useLocalTrigger(std::string trName)

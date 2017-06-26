@@ -2,7 +2,7 @@
 
 namespace obe
 {
-    namespace Cursor
+    namespace System
     {
         namespace Constraints
         {
@@ -30,15 +30,10 @@ namespace obe
                                                                      ->addTrigger("Released");
         }
 
-        Cursor::~Cursor()
-        {
-            Script::TriggerDatabase::GetInstance()->removeTriggerGroup(m_cursorTriggers);
-        }
-
         void Cursor::selectCursor(std::string cursor)
         {
             m_cursorAnim.clear();
-            m_cursorAnim = Animation::Animator(System::Path("Sprites/Cursors/").add(cursor).toString());
+            m_cursorAnim = Animation::Animator(System::Path("Sprites/Cursors/").add(cursor));
             m_cursorAnim.loadAnimator();
             m_cursorAnim.setKey("IDLE");
             m_cursorAnim.update();

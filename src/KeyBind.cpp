@@ -146,11 +146,6 @@ namespace obe
             m_keyMap["Tilde"] = KeyClass(sf::Keyboard::Tilde, "Tilde", "~", "Others");
         }
 
-        KeyBinder::~KeyBinder()
-        {
-            Script::TriggerDatabase::GetInstance()->removeTriggerGroup(m_keysTriggers);
-        }
-
         void KeyBinder::setEnabled(bool state)
         {
             m_binderEnabled = state;

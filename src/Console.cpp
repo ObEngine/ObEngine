@@ -23,11 +23,6 @@ namespace obe
                                                                     ->addTrigger("NewStream");
         }
 
-        Console::~Console()
-        {
-            Script::TriggerDatabase::GetInstance()->removeTriggerGroup(consoleTriggers);
-        }
-
         void Console::scroll(int power)
         {
             if (consoleScroll + power > 0)
