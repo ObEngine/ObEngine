@@ -18,8 +18,8 @@ namespace obe
             if (containerMap.find(name) != containerMap.end())
             {
                 std::string hookType = containerMap[name].first;
-                if (hookType == Functions::Type::getClassType<Console::Console*>())
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Console::Console*>();
+                if (hookType == Functions::Type::getClassType<Debug::Console*>())
+                    (*lua)["Hook"][name] = containerMap[name].second->as<Debug::Console*>();
                 else if (hookType == Functions::Type::getClassType<System::Cursor*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
                 else if (hookType == Functions::Type::getClassType<Input::KeyBinder*>())
@@ -464,49 +464,49 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["Console"])) (*lua)["Core"]["Console"] = kaguya::NewTable();
             if (importAll || args[1] == "Console")
             {
-                (*lua)["Core"]["Console"]["Console"].setClass(kaguya::UserdataMetatable<Console::Console>()
-                    .addFunction("getCommand", &Console::Console::getCommand)
-                    .addFunction("hasCommand", &Console::Console::hasCommand)
-                    .addFunction("scroll", &Console::Console::scroll)
-                    .addFunction("getInputBufferContent", &Console::Console::getInputBufferContent)
-                    .addFunction("setInputBufferContent", &Console::Console::setInputBufferContent)
-                    .addFunction("insertInputBufferContent", &Console::Console::insertInputBufferContent)
-                    .addFunction("createStream", &Console::Console::createStream)
-                    .addFunction("isConsoleVisible", &Console::Console::isConsoleVisible)
-                    .addFunction("setConsoleVisibility", &Console::Console::setConsoleVisibility)
+                (*lua)["Core"]["Console"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
+                    .addFunction("getCommand", &Debug::Console::getCommand)
+                    .addFunction("hasCommand", &Debug::Console::hasCommand)
+                    .addFunction("scroll", &Debug::Console::scroll)
+                    .addFunction("getInputBufferContent", &Debug::Console::getInputBufferContent)
+                    .addFunction("setInputBufferContent", &Debug::Console::setInputBufferContent)
+                    .addFunction("insertInputBufferContent", &Debug::Console::insertInputBufferContent)
+                    .addFunction("createStream", &Debug::Console::createStream)
+                    .addFunction("isConsoleVisible", &Debug::Console::isConsoleVisible)
+                    .addFunction("setConsoleVisibility", &Debug::Console::setConsoleVisibility)
                 );
                 foundPart = true;
             }
             if (importAll || args[1] == "Stream")
             {
-                (*lua)["Core"]["Console"]["Stream"].setClass(kaguya::UserdataMetatable<Console::Console::Stream>()
+                (*lua)["Core"]["Console"]["Stream"].setClass(kaguya::UserdataMetatable<Debug::Console::Stream>()
                     .addOverloadedFunctions("write",
-                                            static_cast<Console::Console::Message* (Console::Console::Stream::*)(std::string)>
-                                            (&Console::Console::Stream::streamPush),
-                                            static_cast<Console::Console::Message* (Console::Console::Stream::*)(std::string, int, int, int, int)>
-                                            (&Console::Console::Stream::streamPush)
+                                            static_cast<Debug::Console::Message* (Debug::Console::Stream::*)(std::string)>
+                                            (&Debug::Console::Stream::streamPush),
+                                            static_cast<Debug::Console::Message* (Debug::Console::Stream::*)(std::string, int, int, int, int)>
+                                            (&Debug::Console::Stream::streamPush)
                     )
-                    .addFunction("setColor", &Console::Console::Stream::setColor)
-                    .addFunction("getR", &Console::Console::Stream::getR)
-                    .addFunction("getG", &Console::Console::Stream::getG)
-                    .addFunction("getB", &Console::Console::Stream::getB)
-                    .addFunction("getA", &Console::Console::Stream::getA)
+                    .addFunction("setColor", &Debug::Console::Stream::setColor)
+                    .addFunction("getR", &Debug::Console::Stream::getR)
+                    .addFunction("getG", &Debug::Console::Stream::getG)
+                    .addFunction("getB", &Debug::Console::Stream::getB)
+                    .addFunction("getA", &Debug::Console::Stream::getA)
                 );
                 foundPart = true;
             }
             if (importAll || args[1] == "Message")
             {
-                (*lua)["Core"]["Console"]["Message"].setClass(kaguya::UserdataMetatable<Console::Console::Message>()
-                    .addFunction("getFormatedMessage", &Console::Console::Message::getFormatedMessage)
-                    .addFunction("getHeader", &Console::Console::Message::getHeader)
-                    .addFunction("getMessage", &Console::Console::Message::getMessage)
-                    .addFunction("getR", &Console::Console::Message::getR)
-                    .addFunction("getG", &Console::Console::Message::getG)
-                    .addFunction("getB", &Console::Console::Message::getB)
-                    .addFunction("getA", &Console::Console::Message::getA)
-                    .addFunction("getType", &Console::Console::Message::getType)
-                    .addFunction("setMessage", &Console::Console::Message::setMessage)
-                    .addFunction("setColor", &Console::Console::Message::setColor)
+                (*lua)["Core"]["Console"]["Message"].setClass(kaguya::UserdataMetatable<Debug::Console::Message>()
+                    .addFunction("getFormatedMessage", &Debug::Console::Message::getFormatedMessage)
+                    .addFunction("getHeader", &Debug::Console::Message::getHeader)
+                    .addFunction("getMessage", &Debug::Console::Message::getMessage)
+                    .addFunction("getR", &Debug::Console::Message::getR)
+                    .addFunction("getG", &Debug::Console::Message::getG)
+                    .addFunction("getB", &Debug::Console::Message::getB)
+                    .addFunction("getA", &Debug::Console::Message::getA)
+                    .addFunction("getType", &Debug::Console::Message::getType)
+                    .addFunction("setMessage", &Debug::Console::Message::setMessage)
+                    .addFunction("setColor", &Debug::Console::Message::setColor)
                 );
                 foundPart = true;
             }

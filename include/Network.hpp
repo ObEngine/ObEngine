@@ -6,7 +6,7 @@
 
 namespace obe
 {
-    namespace Input
+    namespace Network
     {
 	    /**
          * \brief Handle the Network Input / Output (Will be remade)

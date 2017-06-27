@@ -2,7 +2,7 @@
 
 namespace obe
 {
-    namespace Input
+    namespace Network
     {
         NetworkHandler::NetworkHandler() : socketTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"))
         {

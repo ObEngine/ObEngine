@@ -14,7 +14,7 @@
 
 namespace obe
 {
-    namespace Console
+    namespace Debug
     {
         class Console
         {

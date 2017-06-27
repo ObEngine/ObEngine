@@ -45,7 +45,7 @@ namespace obe
             std::map<std::string, std::pair<std::string, Types::any>>* getParameters();
         };
 
-        bool injectParameters(Trigger& trigger, kaguya::State& lua);
+        std::string injectParameters(Trigger& trigger, kaguya::State& lua);
 
         class TriggerDelay
         {

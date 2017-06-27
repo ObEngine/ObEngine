@@ -6,7 +6,7 @@
 #define StartCheck if (false) {}
 #define AffectIfCorrectType(type) else if(affectIfCorrectType<type>(lua,parameter)){}
 #define _AffectIfCorrectType(type, ntype) else if(affectIfCorrectType<type, ntype>(lua,parameter)){}
-#define EndCheck else { return false; }
+#define EndCheck else { return parameter.first; }
 
 namespace obe
 {
@@ -23,7 +23,7 @@ namespace obe
             return false;
         }
 
-        bool injectParameters(Trigger& trigger, kaguya::State& lua)
+        std::string injectParameters(Trigger& trigger, kaguya::State& lua)
         {
             for (auto& parameter : *trigger.getParameters())
             {
@@ -54,6 +54,7 @@ namespace obe
                     _AffectIfCorrectType(std::map<bool, bool>)
                 EndCheck
             }
+            return "";
         }
 
         //Trigger

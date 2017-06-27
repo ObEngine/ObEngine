@@ -310,65 +310,30 @@ namespace obe
             {
                 for (int i = 0; i < m_registeredTriggers.size(); i++)
                 {
-                    if (m_registeredTriggers[i]->getState())
+                    Trigger* trigger = m_registeredTriggers[i];
+                    if (trigger->getState())
                     {
-                        std::string useGrp = m_registeredTriggers[i]->getGroup();
+                        std::string useGrp = trigger->getGroup();
                         for (int j = 0; j < m_registeredAliases.size(); j++)
                         {
                             std::string alNsp, alGrp, alRep;
-                            tie(alNsp, alGrp, alRep) = m_registeredAliases[j];
-                            if (alNsp == m_registeredTriggers[i]->getNamespace() && alGrp == m_registeredTriggers[i]->getGroup())
-                            {
+                            std::tie(alNsp, alGrp, alRep) = m_registeredAliases[j];
+                            if (alNsp == trigger->getNamespace() && alGrp == trigger->getGroup())
                                 useGrp = alRep;
-                            }
                         }
-                        std::string funcname = useGrp + "." + m_registeredTriggers[i]->getName();
-                        auto allParam = m_registeredTriggers[i]->getParameters();
+                        std::string funcname = useGrp + "." + trigger->getName();
                         m_queryCounter = 0;
                         (*m_objectScript)["cpp_param"] = kaguya::NewTable();
                         (*m_objectScript)["cpp_param"]["dt"] = dt;
-                        for (auto it = allParam->begin(); it != allParam->end(); ++it)
+                        std::string triggerError = Script::injectParameters(*trigger, *m_objectScript);
+                        if (!triggerError.empty())
                         {
-                            if (allParam->at(it->first).first == Functions::Type::getObjectType(int()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<int>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::string()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::string>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(bool()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<bool>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(float()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<float>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::vector<int>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::vector<int>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::vector<float>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::vector<float>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::vector<std::string>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::vector<std::string>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::vector<bool>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::vector<bool>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<int, int>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<int, int>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<int, float>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<int, float>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<int, bool>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<int, bool>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<int, std::string>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<int, std::string>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<std::string, int>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, int>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<std::string, float>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, float>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<std::string, bool>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, bool>>();
-                            else if (allParam->at(it->first).first == Functions::Type::getObjectType(std::map<std::string, std::string>()))
-                                (*m_objectScript)["cpp_param"][it->first] = allParam->at(it->first).second.as<std::map<std::string, std::string>>();
-                            else
-                                throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.UnknownTriggerParameterType", {
-                                                                    {"parameter", it->first},
-                                                                    {"object", m_id},
-                                                                    {"trigger", funcname}
-                                                                });
-                        }
-
+                            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.UnknownTriggerParameterType", {
+                                { "parameter", triggerError },
+                                { "object", m_id },
+                                { "trigger", funcname }
+                            });
+                        }              
                         if (funcname == "Local.Init")
                         {
                             m_objectScript->dostring("LuaCore.LocalInitMirrorInjector()");

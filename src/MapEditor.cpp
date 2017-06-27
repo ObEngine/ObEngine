@@ -40,7 +40,7 @@ namespace obe
             Script::hookCore.dropValue("TextDisplay", &textDisplay);
 
             //Console
-            Console::Console gameConsole;
+            Debug::Console gameConsole;
             Script::hookCore.dropValue("Console", &gameConsole);
 
             //Font
@@ -82,7 +82,7 @@ namespace obe
             Script::hookCore.dropValue("World", &world);
 
             //Socket
-            Input::NetworkHandler networkHandler;
+            Network::NetworkHandler networkHandler;
 
             //Keybinding
             Input::KeyBinder keybind;
@@ -623,7 +623,7 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            FramerateManager framerateManager(gameConfig);
+            Time::FramerateManager framerateManager(gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
             Light::initLights();

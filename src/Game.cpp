@@ -68,7 +68,7 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            FramerateManager framerateManager(gameConfig);
+            Time::FramerateManager framerateManager(gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
             Light::initLights();

@@ -5,7 +5,7 @@
 
 namespace obe
 {
-    namespace Console
+    namespace Debug
     {
         //Console
         Console::Console() : consoleTriggers(Script::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"))
