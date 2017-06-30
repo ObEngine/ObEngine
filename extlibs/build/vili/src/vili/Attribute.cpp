@@ -5,7 +5,7 @@
 
 namespace vili
 {
-    Attribute::Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type)
+    Attribute::Attribute(ContainerAttribute* parent, const std::string& id, const AttributeType& type)
     {
         m_id = id;
         m_type = type;
@@ -38,7 +38,7 @@ namespace vili
         return m_id;
     }
 
-    Types::AttributeType Attribute::getType() const
+    AttributeType Attribute::getType() const
     {
         return m_type;
     }

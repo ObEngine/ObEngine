@@ -15,7 +15,7 @@ namespace obe
 
 			bool WorkspaceExists(const std::string& workspaceName)
 			{
-				return (vili::DataParser("Workspace/Workspaces.vili")->contains(vili::Types::ComplexAttribute, workspaceName));
+				return (vili::DataParser("Workspace/Workspaces.vili")->contains(vili::AttributeType::ComplexAttribute, workspaceName));
 			}
 
 			bool Load(const std::string& workspaceName, unsigned int priority)

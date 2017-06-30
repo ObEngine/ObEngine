@@ -58,29 +58,23 @@ namespace obe
         }
 
 	    /**
-         * \brief Contains PathType enum 
-         */
-        namespace PathType
+            * \brief Defines the source of a mounted path
+            */
+        enum class PathType
         {
 	        /**
-             * \brief Defines the source of a mounted path
-             */
-            enum PathType
-            {
-	            /**
-                 * \brief A standard path
-                 */
-                Path,
-	            /**
-                 * \brief The mounted path is a Package
-                 */
-                Package,
-	            /**
-                 * \brief The mounted path is a Workspace
-                 */
-                Workspace
-            };
-        }
+                * \brief A standard path
+                */
+            Path,
+	        /**
+                * \brief The mounted path is a Package
+                */
+            Package,
+	        /**
+                * \brief The mounted path is a Workspace
+                */
+            Workspace
+        };
 
 	    /**
          * \brief Class used to encapsulate mounted Paths
@@ -94,11 +88,11 @@ namespace obe
              * \param basePath Path to the mounted path
              * \param priority Priority of the mounted path
              */
-            PriorizedPath(PathType::PathType pathType, const std::string& basePath, unsigned int priority = 0);
+            PriorizedPath(PathType pathType, const std::string& basePath, unsigned int priority = 0);
 	        /**
              * \brief Type of the mounted path
              */
-            PathType::PathType pathType;
+            PathType pathType;
 	        /**
              * \brief Path of the mounted path
              */

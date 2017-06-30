@@ -93,7 +93,7 @@ namespace obe
         void LevelSprite::setSize(double scaleX, double scaleY)
         {
             m_size.set(scaleX, scaleY);
-            Coord::UnitVector pixelSize = m_size.to<Coord::WorldPixels>();
+            Coord::UnitVector pixelSize = m_size.to<Coord::Units::WorldPixels>();
             std::cout << ":D Apply size : " << pixelSize << " for LevelSprite " << m_id << ", got : " << scaleX << ", " << scaleY << std::endl;
             std::cout << "Texture size : " << this->getWidth() << ", " << this->getHeight() << std::endl;
             std::cout << "It gives scale : " << double(this->getWidth()) / pixelSize.x << ", " << double(this->getWidth()) / pixelSize.y << std::endl;
@@ -102,13 +102,13 @@ namespace obe
 
         void LevelSprite::u_scale(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->scale(pVec.x, pVec.y);
         }
 
         void LevelSprite::u_setSize(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->setSize(pVec.x, pVec.y);
         }
 
@@ -130,7 +130,7 @@ namespace obe
 
             std::vector<sf::Vector2i> drawPoints;
 
-            Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::WorldPixels);
+            Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::Units::WorldPixels);
             drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + r);
             drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + r);
             drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + r);
@@ -160,7 +160,7 @@ namespace obe
         void LevelSprite::applySize()
         {
             std::cout << "Applying Size of " << m_id << std::endl;
-            Coord::UnitVector pixelSize = m_size.to<Coord::WorldPixels>();
+            Coord::UnitVector pixelSize = m_size.to<Coord::Units::WorldPixels>();
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;*/
             m_returnSprite.setScale(pixelSize.x / double(this->getWidth()), pixelSize.y / double(this->getHeight()));
             //std::cout << "It gives scale : " << double(this->getWidth()) / pixelSize.x << ", " << double(this->getWidth()) / pixelSize.y << std::endl;
@@ -181,10 +181,10 @@ namespace obe
             m_returnSprite.setColor(m_spriteColor);
         }
 
-        sfe::ComplexSprite* LevelSprite::getSprite()
+        sfe::ComplexSprite& LevelSprite::getSprite()
         {
             this->update();
-            return &m_returnSprite;
+            return m_returnSprite;
         }
 
         void LevelSprite::setPosition(double x, double y)
@@ -201,13 +201,13 @@ namespace obe
 
         void LevelSprite::u_setPosition(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->setPosition(pVec.x, pVec.y);
         }
 
         void LevelSprite::u_setOffset(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->setOffset(pVec.x, pVec.y);
         }
 
@@ -233,13 +233,13 @@ namespace obe
 
         void LevelSprite::u_move(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->move(pVec.x, pVec.y);
         }
 
         void LevelSprite::u_moveOffset(const Coord::UnitVector& vec)
         {
-            Coord::UnitVector pVec = vec.to<Coord::WorldUnits>();
+            Coord::UnitVector pVec = vec.to<Coord::Units::WorldUnits>();
             this->moveOffset(pVec.x, pVec.y);
         }
 
@@ -261,6 +261,45 @@ namespace obe
         double LevelSprite::getOffsetY() const
         {
             return m_offset.y;
+        }
+
+        Coord::UnitVector LevelSprite::getDrawPosition(Coord::UnitVector& cameraPosition)
+        {
+            Coord::UnitVector pixelPosition = m_position.to<Coord::Units::WorldPixels>();
+            Coord::UnitVector pixelOffset = m_offset.to<Coord::Units::WorldPixels>();
+
+            int layeredX = ((pixelPosition.x + pixelOffset.x) * m_layer -
+                cameraPosition.x) / m_layer;
+            int layeredY = ((pixelPosition.y + pixelOffset.y) * m_layer -
+                cameraPosition.y) / m_layer;
+            if (Functions::Vector::isInList(static_cast<std::string>("+FIX"), m_currentAtr))
+            {
+                layeredX = pixelPosition.x + pixelOffset.x;
+                layeredY = pixelPosition.y + pixelOffset.y;
+            }
+            else if (Functions::Vector::isInList(static_cast<std::string>("+HFIX"), m_currentAtr))
+            {
+                layeredX = pixelPosition.x + pixelOffset.x;
+            }
+            else if (Functions::Vector::isInList(static_cast<std::string>("+VFIX"), m_currentAtr))
+            {
+                layeredY = pixelPosition.y + pixelOffset.y;
+            }
+            else if (Functions::Vector::isInList(static_cast<std::string>("+PHFIX"), m_currentAtr))
+            {
+                layeredX = pixelPosition.x + pixelOffset.x - cameraPosition.x;
+            }
+            else if (Functions::Vector::isInList(static_cast<std::string>("+PVFIX"), m_currentAtr))
+            {
+                layeredY = pixelPosition.y + pixelOffset.y - cameraPosition.y;
+            }
+            else if (Functions::Vector::isInList(static_cast<std::string>("+PFIX"), m_currentAtr))
+            {
+                layeredX = pixelPosition.x + pixelOffset.x - cameraPosition.x;
+                layeredY = pixelPosition.y + pixelOffset.y - cameraPosition.y;
+            }
+            
+            return Coord::UnitVector(layeredX, layeredY, Coord::Units::WorldPixels);
         }
 
         float LevelSprite::getRotation() const
@@ -314,7 +353,7 @@ namespace obe
             m_returnSprite.setTranslationOrigin(m_originTraX, m_originTraY);
             m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
 
-            Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::WorldPixels>();
+            Coord::UnitVector realPosition = (m_position + m_offset).to<Coord::Units::WorldPixels>();
 
             m_returnSprite.setPosition(realPosition.x, realPosition.y);
             m_returnSprite.setRotation(m_rotation);

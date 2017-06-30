@@ -286,10 +286,10 @@ namespace obe
 
         void KeyBinder::loadFromFile(vili::DataParser& configFile)
         {
-            std::vector<std::string> allGameKeys = configFile.at("KeyBinding", "game").getAll(vili::Types::BaseAttribute);
+            std::vector<std::string> allGameKeys = configFile.at("KeyBinding", "game").getAll(vili::AttributeType::BaseAttribute);
             for (unsigned int i = 0; i < allGameKeys.size(); i++)
                 m_actionMap[allGameKeys[i]] = configFile.at("KeyBinding", "game").getBaseAttribute(allGameKeys[i]).get<std::string>();
-            std::vector<std::string> allMapEditorKeys = configFile.at("KeyBinding", "mapEditor").getAll(vili::Types::BaseAttribute);
+            std::vector<std::string> allMapEditorKeys = configFile.at("KeyBinding", "mapEditor").getAll(vili::AttributeType::BaseAttribute);
             for (unsigned int i = 0; i < allMapEditorKeys.size(); i++)
                 m_actionMap[allMapEditorKeys[i]] = configFile.at("KeyBinding", "mapEditor").getBaseAttribute(allMapEditorKeys[i]).get<std::string>();
         }

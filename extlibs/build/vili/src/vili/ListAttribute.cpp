@@ -6,11 +6,11 @@
 
 namespace vili
 {
-    ListAttribute::ListAttribute(ContainerAttribute* parent, const std::string& id) : ContainerAttribute(parent, id, Types::ListAttribute)
+    ListAttribute::ListAttribute(ContainerAttribute* parent, const std::string& id) : ContainerAttribute(parent, id, AttributeType::ListAttribute)
     {
     }
 
-    ListAttribute::ListAttribute(const std::string& id) : ContainerAttribute(nullptr, id, Types::ListAttribute)
+    ListAttribute::ListAttribute(const std::string& id) : ContainerAttribute(nullptr, id, AttributeType::ListAttribute)
     {
     }
 
@@ -45,52 +45,52 @@ namespace vili
 
     void ListAttribute::push(const std::string& element)
     {
-        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String));
+        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::String));
         m_dataList.back()->set(element);
     }
 
     void ListAttribute::push(int element)
     {
-        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int));
+        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Int));
         m_dataList.back()->set(element);
     }
 
     void ListAttribute::push(bool element)
     {
-        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool));
+        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Bool));
         m_dataList.back()->set(element);
     }
 
     void ListAttribute::push(double element)
     {
-        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float));
+        m_dataList.push_back(std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Float));
         m_dataList.back()->set(element);
     }
 
     void ListAttribute::insert(unsigned int index, const std::string& element)
     {
-        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::String));
+        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::String));
         m_dataList[index]->set(element);
         this->reorder(index);
     }
 
     void ListAttribute::insert(unsigned int index, int element)
     {
-        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Int));
+        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Int));
         m_dataList[index]->set(element);
         this->reorder(index);
     }
 
     void ListAttribute::insert(unsigned int index, bool element)
     {
-        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Bool));
+        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Bool));
         m_dataList[index]->set(element);
         this->reorder(index);
     }
 
     void ListAttribute::insert(unsigned int index, double element)
     {
-        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), Types::Float));
+        m_dataList.insert(m_dataList.begin() + index, std::make_unique<BaseAttribute>(this, "#" + std::to_string(m_dataList.size()), DataType::Float));
         m_dataList[index]->set(element);
         this->reorder(index);
     }
@@ -119,7 +119,7 @@ namespace vili
 
     void ListAttribute::copy(ContainerAttribute* newParent, const std::string& newid) const
     {
-        if (newParent->getType() == Types::ComplexAttribute)
+        if (newParent->getType() == AttributeType::ComplexAttribute)
         {
             std::string useID = newid.empty() ? m_id : newid;
             dynamic_cast<ComplexAttribute*>(newParent)->createListAttribute(useID);

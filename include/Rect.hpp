@@ -15,7 +15,7 @@ namespace obe
 				/**
 				 * \brief Set or Get Position using Referencials
 				 */
-				enum Referencial
+				enum class Referencial
 				{
 					/**
 					* \brief Referencial TopLeft
@@ -138,7 +138,7 @@ namespace obe
 				/**
 				 * \brief Conversion Type for Referencial Usage
 				 */
-				enum ConversionType
+				enum class ConversionType
 				{
 					/**
 					 * \brief Factor x1 (GetPosition)
@@ -160,15 +160,15 @@ namespace obe
 				 */
 				void transformRef(UnitVector& vec, Referencial ref, ConversionType type) const;
 
-				void setPosition(const UnitVector& position, Referencial ref = TopLeft);
-				void setPosition(double x, double y, Referencial ref = TopLeft);
+				void setPosition(const UnitVector& position, Referencial ref = Referencial::TopLeft);
+				void setPosition(double x, double y, Referencial ref = Referencial::TopLeft);
 				void move(const UnitVector& position);
 				void move(double x, double y);
-				void setX(double x, Referencial ref = TopLeft);
-				void setY(double y, Referencial ref = TopLeft);
-				double getX(Referencial ref = TopLeft) const;
-				double getY(Referencial ref = TopLeft) const;
-				UnitVector getPosition(Referencial ref = TopLeft) const;
+				void setX(double x, Referencial ref = Referencial::TopLeft);
+				void setY(double y, Referencial ref = Referencial::TopLeft);
+				double getX(Referencial ref = Referencial::TopLeft) const;
+				double getY(Referencial ref = Referencial::TopLeft) const;
+				UnitVector getPosition(Referencial ref = Referencial::TopLeft) const;
 
 				void setSize(const UnitVector& size);
 				void setSize(double width, double height);

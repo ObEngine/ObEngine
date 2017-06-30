@@ -12,7 +12,7 @@ namespace vili
     {
     protected:
         std::string m_id;
-        Types::AttributeType m_type = Types::Attribute;
+        AttributeType m_type = AttributeType::Attribute;
         std::string m_annotation = "";
         ContainerAttribute* m_parent = nullptr;
         bool m_visible = true;
@@ -22,8 +22,8 @@ namespace vili
         friend class LinkAttribute;
         friend void LoadErrors(const std::string& errorFile);
     public:
-        const static Types::AttributeType ClassType = Types::Attribute;
-        Attribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
+        const static AttributeType ClassType = AttributeType::Attribute;
+        Attribute(ContainerAttribute* parent, const std::string& id, const AttributeType& type);
 
         virtual ~Attribute()
         {
@@ -32,7 +32,7 @@ namespace vili
         virtual void setAnnotation(const std::string& annotation);
         virtual std::string getAnnotation() const;
         virtual std::string getID() const;
-        virtual Types::AttributeType getType() const;
+        virtual AttributeType getType() const;
         virtual void setParent(ContainerAttribute* parent);
         virtual std::string getNodePath() const;
         unsigned int getDepth() const;

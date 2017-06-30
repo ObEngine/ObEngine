@@ -24,7 +24,7 @@ namespace vili
         std::vector<std::string> m_heritFrom;
         DataTemplate* m_template = nullptr;
     public:
-        const static Types::AttributeType ClassType = Types::ComplexAttribute;
+        const static AttributeType ClassType = AttributeType::ComplexAttribute;
         ComplexAttribute(ComplexAttribute* parent, const std::string& id);
         ComplexAttribute(ComplexAttribute* parent, const std::string& id, ComplexAttribute* herit);
         ComplexAttribute(ComplexAttribute* parent, const std::string& id, std::vector<ComplexAttribute*>* multipleHerit);
@@ -57,14 +57,14 @@ namespace vili
         ListAttribute& getListAttribute(const std::string& attributeID) const;
         LinkAttribute& getLinkAttribute(const std::string& attributeID) const;
 
-        Types::AttributeType getAttributeType(const std::string& id) const;
-        std::vector<std::string> getAll(Types::AttributeType searchType = Types::Attribute) const;
+        AttributeType getAttributeType(const std::string& id) const;
+        std::vector<std::string> getAll(AttributeType searchType = AttributeType::Attribute) const;
 
         bool contains(const std::string& attributeID) const;
-        bool contains(Types::AttributeType searchType, const std::string& attributeID) const;
+        bool contains(AttributeType searchType, const std::string& attributeID) const;
 
-        void createBaseAttribute(const std::string& attributeID, const Types::DataType& type, const std::string& data);
-        void createBaseAttribute(const std::string& attributeID, const Types::DataType& type);
+        void createBaseAttribute(const std::string& attributeID, const DataType& type, const std::string& data);
+        void createBaseAttribute(const std::string& attributeID, const DataType& type);
         void createBaseAttribute(const std::string& attributeID, const std::string& data);
         void createBaseAttribute(const std::string& attributeID, const char* data);
         void createBaseAttribute(const std::string& attributeID, bool data);

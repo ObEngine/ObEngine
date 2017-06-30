@@ -1131,7 +1131,7 @@ namespace obe
                         vili::ComplexAttribute(std::string, vili::ComplexAttribute*),
                         vili::ComplexAttribute(std::string, std::vector<vili::ComplexAttribute*>*)>()
                     .addOverloadedFunctions("createBaseAttribute",
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, const vili::Types::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
+                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, const vili::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
                                             static_cast<void (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
                                             static_cast<void (vili::ComplexAttribute::*)(const std::string&, double)>(&vili::ComplexAttribute::createBaseAttribute),
                                             static_cast<void (vili::ComplexAttribute::*)(const std::string&, bool)>(&vili::ComplexAttribute::createBaseAttribute),
@@ -1139,7 +1139,7 @@ namespace obe
                     )
                     .addOverloadedFunctions("contains",
                                             static_cast<bool (vili::ComplexAttribute::*)(const std::string&) const>(&vili::ComplexAttribute::contains),
-                                            static_cast<bool (vili::ComplexAttribute::*)(vili::Types::AttributeType, const std::string&) const>(&vili::ComplexAttribute::contains)
+                                            static_cast<bool (vili::ComplexAttribute::*)(vili::AttributeType, const std::string&) const>(&vili::ComplexAttribute::contains)
                     )
                     .addFunction("createComplexAttribute", &vili::ComplexAttribute::createComplexAttribute)
                     .addFunction("createListAttribute", &vili::ComplexAttribute::createListAttribute)
@@ -1209,7 +1209,7 @@ namespace obe
             if (importAll || args[1] == "BaseAttribute")
             {
                 (*lua)["Core"]["Vili"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<vili::BaseAttribute, vili::Attribute>()
-                    .setConstructors<vili::BaseAttribute(std::string, vili::Types::DataType)>()
+                    .setConstructors<vili::BaseAttribute(std::string, vili::DataType)>()
                     .addFunction("get_int", &vili::BaseAttribute::get<int>)
                     .addFunction("get_float", &vili::BaseAttribute::get<double>)
                     .addFunction("get_bool", &vili::BaseAttribute::get<bool>)
@@ -1228,9 +1228,9 @@ namespace obe
             if (importAll || args[1] == "AttributeType")
             {
                 (*lua)["Core"]["Vili"]["AttributeType"] = kaguya::NewTable();
-                (*lua)["Core"]["Vili"]["AttributeType"]["BaseAttribute"] = vili::Types::BaseAttribute;
-                (*lua)["Core"]["Vili"]["AttributeType"]["ComplexAttribute"] = vili::Types::ComplexAttribute;
-                (*lua)["Core"]["Vili"]["AttributeType"]["ListAttribute"] = vili::Types::ListAttribute;
+                (*lua)["Core"]["Vili"]["AttributeType"]["BaseAttribute"] = vili::AttributeType::BaseAttribute;
+                (*lua)["Core"]["Vili"]["AttributeType"]["ComplexAttribute"] = vili::AttributeType::ComplexAttribute;
+                (*lua)["Core"]["Vili"]["AttributeType"]["ListAttribute"] = vili::AttributeType::ListAttribute;
             }
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ViliImportError", {{"lib", Functions::Vector::join(args, ".")}});
         }

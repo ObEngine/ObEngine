@@ -18,12 +18,12 @@ namespace vili
             std::string String;
         };
 
-        Types::DataType m_dataType;
+        DataType m_dataType;
         friend std::ostream& operator<<(std::ostream& stream, const BaseAttribute& attribute);
     public:
-        const static Types::AttributeType ClassType = Types::BaseAttribute;
-        BaseAttribute(ContainerAttribute* parent, const std::string& id, const Types::DataType& dataType);
-        BaseAttribute(const std::string& id, const Types::DataType& dataType);
+        const static AttributeType ClassType = AttributeType::BaseAttribute;
+        BaseAttribute(ContainerAttribute* parent, const std::string& id, const DataType& dataType);
+        BaseAttribute(const std::string& id, const DataType& dataType);
 
         virtual ~BaseAttribute()
         {
@@ -36,7 +36,7 @@ namespace vili
         void set(const char* var);
         void set(bool var);
         void autoset(const std::string& rawData);
-        Types::DataType getDataType() const;
+        DataType getDataType() const;
 
         template <class T>
         T get() const
@@ -57,36 +57,36 @@ namespace vili
     template <>
     inline int BaseAttribute::get() const
     {
-        if (m_dataType == Types::Int)
+        if (m_dataType == DataType::Int)
             return Int;
-        if (m_dataType == Types::Float)
+        if (m_dataType == DataType::Float)
             return Float;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongIntCast", {{"path", getNodePath()},{"type", dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongIntCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
     inline double BaseAttribute::get() const
     {
-        if (m_dataType == Types::Float)
+        if (m_dataType == DataType::Float)
             return Float;
-        if (m_dataType == Types::Int)
+        if (m_dataType == DataType::Int)
             return Int;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongFloatCast", {{"path", getNodePath()},{"type", dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongFloatCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
     inline bool BaseAttribute::get() const
     {
-        if (m_dataType == Types::Bool)
+        if (m_dataType == DataType::Bool)
             return Bool;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongBoolCast", {{"path", getNodePath()},{"type", dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongBoolCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
     inline std::string BaseAttribute::get() const
     {
-        if (m_dataType == Types::String)
+        if (m_dataType == DataType::String)
             return String;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongStringCast", {{"path", getNodePath()},{"type", dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongStringCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 }

@@ -11,7 +11,7 @@ namespace vili
 
         errors->walk([](NodeIterator& node) -> void
         {
-            if (node->contains(Types::BaseAttribute, "message"))
+            if (node->contains(AttributeType::BaseAttribute, "message"))
             {
                 std::vector<std::string> location;
                 std::vector<std::string> errorIdParts;
@@ -20,9 +20,9 @@ namespace vili
                 ComplexAttribute* currentParent = node.get();
                 while (currentParent != nullptr)
                 {
-                    if (currentParent->contains(Types::BaseAttribute, "where"))
+                    if (currentParent->contains(AttributeType::BaseAttribute, "where"))
                         location.insert(location.begin(), currentParent->getBaseAttribute("where").get<std::string>());
-                    if (currentParent->contains(Types::BaseAttribute, "file") && filename.empty())
+                    if (currentParent->contains(AttributeType::BaseAttribute, "file") && filename.empty())
                         filename = currentParent->getBaseAttribute("file").get<std::string>();
                     errorIdParts.push_back(currentParent->getID());
                     if (currentParent->getParent() != nullptr)

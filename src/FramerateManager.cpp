@@ -8,9 +8,9 @@ namespace obe
         {
             m_speedCoeff = 1;
             m_frameLimiterClock = Time::getTickSinceEpoch();
-            m_limitFPS = (config.contains(vili::Types::BaseAttribute, "framerateLimit")) ? config.at<vili::BaseAttribute>("framerateLimit") : true;
-            m_framerateTarget = (config.contains(vili::Types::BaseAttribute, "framerateTarget")) ? config.at<vili::BaseAttribute>("framerateTarget") : 60;
-            m_vsyncEnabled = (config.contains(vili::Types::BaseAttribute, "vsync")) ? config.at<vili::BaseAttribute>("vsync") : true;
+            m_limitFPS = (config.contains(vili::AttributeType::BaseAttribute, "framerateLimit")) ? config.at<vili::BaseAttribute>("framerateLimit") : true;
+            m_framerateTarget = (config.contains(vili::AttributeType::BaseAttribute, "framerateTarget")) ? config.at<vili::BaseAttribute>("framerateTarget") : 60;
+            m_vsyncEnabled = (config.contains(vili::AttributeType::BaseAttribute, "vsync")) ? config.at<vili::BaseAttribute>("vsync") : true;
             m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
             m_currentFrame = 0;
             m_frameProgression = 0;

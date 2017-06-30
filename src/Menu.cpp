@@ -42,9 +42,9 @@ namespace obe
                 int mapSizeX = 0;
                 int mapSizeY = 0;
 
-                if (mapInfoParser->contains(vili::Types::ComplexAttribute, "Meta"))
+                if (mapInfoParser->contains(vili::AttributeType::ComplexAttribute, "Meta"))
                 {
-                    if (mapInfoParser.at("Meta").contains(vili::Types::BaseAttribute, "name"))
+                    if (mapInfoParser.at("Meta").contains(vili::AttributeType::BaseAttribute, "name"))
                         levelName = mapInfoParser.at("Meta").getBaseAttribute("name").get<std::string>();
                 }
 

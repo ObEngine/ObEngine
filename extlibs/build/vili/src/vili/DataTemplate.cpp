@@ -54,16 +54,16 @@ namespace vili
                 attributeAddresses.push_back(constraintManager.getLinkAttribute());
             parent->getComplexAttribute(id).walk([attributeAddresses](NodeIterator& complex)
             {
-                for (int i = 0; i < complex->getAll(Types::LinkAttribute).size(); i++)
+                for (int i = 0; i < complex->getAll(AttributeType::LinkAttribute).size(); i++)
                 {
-                    std::cout << complex->getAll(Types::LinkAttribute)[i] << std::endl;
+                    std::cout << complex->getAll(AttributeType::LinkAttribute)[i] << std::endl;
                 }
-                for (int i = 0; i < complex->getAll(Types::LinkAttribute).size(); i++)
+                for (int i = 0; i < complex->getAll(AttributeType::LinkAttribute).size(); i++)
                 {
                     for (int j = 0; j < attributeAddresses.size(); j++)
                     {
-                        if (complex->getLinkAttribute(complex->getAll(Types::LinkAttribute)[i]) == (*attributeAddresses[j]))
-                            complex->getLinkAttribute(complex->getAll(Types::LinkAttribute)[i]).apply();
+                        if (complex->getLinkAttribute(complex->getAll(AttributeType::LinkAttribute)[i]) == (*attributeAddresses[j]))
+                            complex->getLinkAttribute(complex->getAll(AttributeType::LinkAttribute)[i]).apply();
                     }
                 }
             });

@@ -52,7 +52,6 @@ namespace obe
 
             void applySize();
             void update();
-
         public:
             LevelSprite(std::string id);
 
@@ -83,6 +82,7 @@ namespace obe
             double getY() const;
             double getOffsetX() const;
             double getOffsetY() const;
+            Coord::UnitVector getDrawPosition(Coord::UnitVector& cameraPosition);
 
             //Size
             void scale(double scaleX, double scaleY);
@@ -91,13 +91,14 @@ namespace obe
             void u_setSize(const Coord::UnitVector& vec);
             Coord::ProtectedUnitVector& getSize();
             void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
+            void getHandlePoint(int posX, int posY);
 
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);
             std::vector<std::string> getAttributes() const;
             void removeAtrByIndex(int index);
             void removeAtrByName(std::string name);
-            sfe::ComplexSprite* getSprite();
+            sfe::ComplexSprite& getSprite();
             void setColor(sf::Color newColor);
             float getRotation() const;
             int getLayer() const;

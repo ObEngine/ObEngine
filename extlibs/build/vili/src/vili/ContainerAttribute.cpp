@@ -2,7 +2,7 @@
 
 namespace vili
 {
-    ContainerAttribute::ContainerAttribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type) : Attribute(parent, id, type)
+    ContainerAttribute::ContainerAttribute(ContainerAttribute* parent, const std::string& id, const AttributeType& type) : Attribute(parent, id, type)
     {
     }
 

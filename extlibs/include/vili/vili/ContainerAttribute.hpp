@@ -8,8 +8,8 @@ namespace vili
     class ContainerAttribute : public Attribute
     {
     public:
-        const static Types::AttributeType ClassType = Types::ContainerAttribute;
-        ContainerAttribute(ContainerAttribute* parent, const std::string& id, const Types::AttributeType& type);
+        const static AttributeType ClassType = AttributeType::ContainerAttribute;
+        ContainerAttribute(ContainerAttribute* parent, const std::string& id, const AttributeType& type);
         virtual Attribute* removeOwnership(Attribute* element);
 
         virtual ~ContainerAttribute()

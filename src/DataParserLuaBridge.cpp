@@ -23,15 +23,15 @@ namespace obe
                 kaguya::State olol;
                 for (std::string elementName : convert.getAll())
                 {
-                    if (convert.getAttributeType(elementName) == vili::Types::BaseAttribute)
+                    if (convert.getAttributeType(elementName) == vili::AttributeType::BaseAttribute)
                     {
                         baseAttributeToLuaElement(injectTable, convert.getBaseAttribute(elementName));
                     }
-                    else if (convert.getAttributeType(elementName) == vili::Types::ComplexAttribute)
+                    else if (convert.getAttributeType(elementName) == vili::AttributeType::ComplexAttribute)
                     {
                         complexAttributeToLuaTable(injectTable, convert.getComplexAttribute(elementName));
                     }
-                    else if (convert.getAttributeType(elementName) == vili::Types::ListAttribute)
+                    else if (convert.getAttributeType(elementName) == vili::AttributeType::ListAttribute)
                     {
                         listAttributeToLuaTable(injectTable, convert.getListAttribute(elementName));
                     }
@@ -41,13 +41,13 @@ namespace obe
 
             void baseAttributeToLuaElement(kaguya::LuaTable& target, vili::BaseAttribute& convert)
             {
-                if (convert.getDataType() == vili::Types::Int)
+                if (convert.getDataType() == vili::DataType::Int)
                     target[convert.getID()] = convert.get<int>();
-                else if (convert.getDataType() == vili::Types::String)
+                else if (convert.getDataType() == vili::DataType::String)
                     target[convert.getID()] = convert.get<std::string>();
-                else if (convert.getDataType() == vili::Types::Bool)
+                else if (convert.getDataType() == vili::DataType::Bool)
                     target[convert.getID()] = convert.get<bool>();
-                else if (convert.getDataType() == vili::Types::Float)
+                else if (convert.getDataType() == vili::DataType::Float)
                 {
                     double val = convert.get<double>();
                     std::string vid = convert.getID();
@@ -100,22 +100,22 @@ namespace obe
                 vili::BaseAttribute* returnAttribute;
                 if (convert.type() == 3 && Functions::String::isStringInt(convert))
                 {
-                    returnAttribute = new vili::BaseAttribute(id, vili::Types::Int);
+                    returnAttribute = new vili::BaseAttribute(id, vili::DataType::Int);
                     returnAttribute->set(int(convert));
                 }
                 else if (convert.type() == 3 && vili::Functions::String::isStringFloat(convert))
                 {
-                    returnAttribute = new vili::BaseAttribute(id, vili::Types::Float);
+                    returnAttribute = new vili::BaseAttribute(id, vili::DataType::Float);
                     returnAttribute->set(double(convert));
                 }
                 else if (convert.type() == 1)
                 {
-                    returnAttribute = new vili::BaseAttribute(id, vili::Types::Bool);
+                    returnAttribute = new vili::BaseAttribute(id, vili::DataType::Bool);
                     returnAttribute->set(bool(convert));
                 }
                 else if (convert.type() == 4)
                 {
-                    returnAttribute = new vili::BaseAttribute(id, vili::Types::String);
+                    returnAttribute = new vili::BaseAttribute(id, vili::DataType::String);
                     const char* convertChar = convert;
                     returnAttribute->set(convertChar);
                 }

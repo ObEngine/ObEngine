@@ -17,7 +17,7 @@ namespace obe
 
 			bool PackageExists(const std::string& packageName)
 			{
-				return (vili::DataParser("Package/Packages.vili")->contains(vili::Types::ComplexAttribute, packageName));
+				return (vili::DataParser("Package/Packages.vili")->contains(vili::AttributeType::ComplexAttribute, packageName));
 			}
 
 			bool Install(const std::string& packageName)

@@ -16,7 +16,7 @@ namespace vili
         std::vector<BaseAttribute*> m_iteratorCache;
         void reorder(int index);
     public:
-        const static Types::AttributeType ClassType = Types::ListAttribute;
+        const static AttributeType ClassType = AttributeType::ListAttribute;
         ListAttribute(ContainerAttribute* parent, const std::string& id);
         ListAttribute(const std::string& id);
 

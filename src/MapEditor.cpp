@@ -351,55 +351,55 @@ namespace obe
 
             mapButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
                                    &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
-                           {
-                               mapPanel->show();
-                               settingsPanel->hide();
-                               spritesPanel->hide();
-                               objectsPanel->hide();
-                               mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                               settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                               spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                               objectsButton->setRenderer(baseTheme.getRenderer("Button"));
-                           });
+            {
+                mapPanel->show();
+                settingsPanel->hide();
+                spritesPanel->hide();
+                objectsPanel->hide();
+                mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+                spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+                objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+            });
 
             settingsButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
                                         &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
-                                {
-                                    mapPanel->hide();
-                                    settingsPanel->show();
-                                    spritesPanel->hide();
-                                    objectsPanel->hide();
-                                    mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                                    settingsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                                    spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                                    objectsButton->setRenderer(baseTheme.getRenderer("Button"));
-                                });
+            {
+                mapPanel->hide();
+                settingsPanel->show();
+                spritesPanel->hide();
+                objectsPanel->hide();
+                mapButton->setRenderer(baseTheme.getRenderer("Button"));
+                settingsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+                objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+            });
 
             spritesButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
                                        &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
-                               {
-                                   mapPanel->hide();
-                                   settingsPanel->hide();
-                                   spritesPanel->show();
-                                   objectsPanel->hide();
-                                   mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                                   settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                                   spritesButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                                   objectsButton->setRenderer(baseTheme.getRenderer("Button"));
-                               });
+            {
+                mapPanel->hide();
+                settingsPanel->hide();
+                spritesPanel->show();
+                objectsPanel->hide();
+                mapButton->setRenderer(baseTheme.getRenderer("Button"));
+                settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+                spritesButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+            });
 
             objectsButton->connect("pressed", [&baseTheme, &mapButton, &settingsButton, &spritesButton, &objectsButton,
                                        &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
-                               {
-                                   mapPanel->hide();
-                                   settingsPanel->hide();
-                                   spritesPanel->hide();
-                                   objectsPanel->show();
-                                   mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                                   settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                                   spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                                   objectsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                               });
+            {
+                mapPanel->hide();
+                settingsPanel->hide();
+                spritesPanel->hide();
+                objectsPanel->show();
+                mapButton->setRenderer(baseTheme.getRenderer("Button"));
+                settingsButton->setRenderer(baseTheme.getRenderer("Button"));
+                spritesButton->setRenderer(baseTheme.getRenderer("Button"));
+                objectsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+            });
 
             //Map Tab Setup
             mapPanel->add(mapCatLabel);
@@ -425,17 +425,17 @@ namespace obe
             mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
             mapNameButton->setSize(16, 16);
             mapNameButton->connect("pressed", [&baseTheme, &world, &mapNameInput]()
-                               {
-                                   if (mapNameInput->getText() != "")
-                                   {
-                                       world.setLevelName(mapNameInput->getText());
-                                       mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                                   }
-                                   else
-                                   {
-                                       mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                                   }
-                               });
+            {
+                if (mapNameInput->getText() != "")
+                {
+                    world.setLevelName(mapNameInput->getText());
+                    mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                }
+                else
+                {
+                    mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                }
+            });
 
 
             //Settings Tab Setup
@@ -471,16 +471,16 @@ namespace obe
             enableGridCheckbox->setText("Enabled Grid ?");
 
             enableGridCheckbox->connect("checked", [&baseTheme, &snapGridCheckbox]()
-                                    {
-                                        snapGridCheckbox->enable();
-                                        snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
-                                    });
+            {
+                snapGridCheckbox->enable();
+                snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+            });
 
             enableGridCheckbox->connect("unchecked", [&baseTheme, &snapGridCheckbox]()
-                                    {
-                                        snapGridCheckbox->disable();
-                                        snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
-                                    });
+            {
+                snapGridCheckbox->disable();
+                snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
+            });
 
             gridDimensionLabel->setPosition(60, bindBottom(enableGridCheckbox) + 20);
             gridDimensionLabel->setTextSize(mediumFontSize);
@@ -551,25 +551,25 @@ namespace obe
             gridOffsetButton->setSize(16, 16);
 
             gridOffsetButton->connect("pressed", [&baseTheme, &gridOffsetXInput, &gridOffsetYInput, &editorGrid]()
-                                  {
-                                      if (Functions::String::isStringInt(gridOffsetXInput->getText()) && Functions::String::isStringInt(gridOffsetYInput->getText()))
-                                      {
-                                          std::string xGridOffset = gridOffsetXInput->getText();
-                                          std::string yGridOffset = gridOffsetYInput->getText();
-                                          editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
-                                          gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                                          gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                                          return;
-                                      }
-                                      if (!Functions::String::isStringInt(gridOffsetXInput->getText()))
-                                      {
-                                          gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                                      }
-                                      if (!Functions::String::isStringInt(gridOffsetYInput->getText()))
-                                      {
-                                          gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                                      }
-                                  });
+            {
+                if (Functions::String::isStringInt(gridOffsetXInput->getText()) && Functions::String::isStringInt(gridOffsetYInput->getText()))
+                {
+                    std::string xGridOffset = gridOffsetXInput->getText();
+                    std::string yGridOffset = gridOffsetYInput->getText();
+                    editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
+                    gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                    gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                    return;
+                }
+                if (!Functions::String::isStringInt(gridOffsetXInput->getText()))
+                {
+                    gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                }
+                if (!Functions::String::isStringInt(gridOffsetYInput->getText()))
+                {
+                    gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                }
+            });
 
             snapGridCheckbox->setPosition(60, bindBottom(gridOffsetLabel) + 20);
             snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
@@ -678,7 +678,7 @@ namespace obe
                     saveEditMode = -1;
                 }
 
-                Coord::UnitVector pixelCamera = world.getCamera()->getPosition().to<Coord::WorldPixels>();
+                Coord::UnitVector pixelCamera = world.getCamera()->getPosition().to<Coord::Units::WorldPixels>();
                 //Updates
                 if (!gameConsole.isConsoleVisible())
                 {
@@ -689,17 +689,17 @@ namespace obe
                         {
                         }
                         else if (keybind.isActionEnabled("CamLeft"))
-                            world.getCamera()->move(Coord::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
+                            world.getCamera()->move(Coord::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::Units::WorldPixels));
                         else if (keybind.isActionEnabled("CamRight"))
-                            world.getCamera()->move(Coord::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::WorldPixels));
+                            world.getCamera()->move(Coord::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Coord::Units::WorldPixels));
 
                         if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
                         {
                         }
                         else if (keybind.isActionEnabled("CamUp"))
-                            world.getCamera()->move(Coord::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
+                            world.getCamera()->move(Coord::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Coord::Units::WorldPixels));
                         else if (keybind.isActionEnabled("CamDown"))
-                            world.getCamera()->move(Coord::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Coord::WorldPixels));
+                            world.getCamera()->move(Coord::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Coord::Units::WorldPixels));
 
                         if (keybind.isActionEnabled("CamDash"))
                             cameraSpeed = 3000;
@@ -797,10 +797,10 @@ namespace obe
                         if (hoveredSprite != nullptr)
                         {
                             selectedSprite = hoveredSprite;
-                            selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::WorldPixels>().x;
-                            selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::WorldPixels>().y;
-                            selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::WorldPixels>().x;
-                            selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffset().to<Coord::WorldPixels>().y;
+                            selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
+                            selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().y;
+                            selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::Units::WorldPixels>().x;
+                            selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffset().to<Coord::Units::WorldPixels>().y;
                             selectedSprite->select();
 
                             sdBoundingRect = selectedSprite->getRect();
@@ -808,13 +808,20 @@ namespace obe
                         }
                     }
 
-                    //Sprite Move
+                    
+                    //Sprite Scale
                     if (cursor.getPressed("Left") && selectedSprite != nullptr)
+                    {
+                        selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
+                        world.reorganizeLayers();
+                    }
+                    //Sprite Move
+                    else if (cursor.getPressed("Left") && selectedSprite != nullptr)
                     {
                         if (selectedSprite->getParentID() == "")
                         {
                             selectedSprite->getPosition().set(Coord::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
-                                                                                cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Coord::WorldPixels));
+                                                                                cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Coord::Units::WorldPixels));
                         }
                         else
                         {
@@ -845,7 +852,6 @@ namespace obe
                             selectedSprite->rotate(1 * framerateManager.getGameSpeed());
                     }
 
-                    //Sprite Scale
                     /*if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
                     {
                         if (keybind.isActionEnabled("ScaleDec"))

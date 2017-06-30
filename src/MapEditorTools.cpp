@@ -128,10 +128,10 @@ namespace obe
                 content->add(newObjectTitleLabel);
 
                 int widgetVerticalPosition = 70;
-                for (std::string& requireItem : requireInput.getAll(vili::Types::ComplexAttribute))
+                for (std::string& requireItem : requireInput.getAll(vili::AttributeType::ComplexAttribute))
                 {
                     std::cout << "Require item is : " << requireItem << std::endl;
-                    std::cout << requires->contains(vili::Types::ComplexAttribute, "Color") << std::endl;
+                    std::cout << requires->contains(vili::AttributeType::ComplexAttribute, "Color") << std::endl;
 
                     tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                     currentRequirementLabel->setPosition(50, widgetVerticalPosition);
@@ -141,14 +141,14 @@ namespace obe
                     content->add(currentRequirementLabel, requireItem + "_label");
 
 
-                    if (requireInput.getPath(requireItem).contains(vili::Types::BaseAttribute, "type")) {
+                    if (requireInput.getPath(requireItem).contains(vili::AttributeType::BaseAttribute, "type")) {
                         tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
                         currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
                         currentRequirementInput->setSize("&.width / 3", "32");
                         currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
                         content->add(currentRequirementInput, requireItem + "_input");
                     }
-                    else if (requireInput.getPath(requireItem).contains(vili::Types::ListAttribute, "choices"))
+                    else if (requireInput.getPath(requireItem).contains(vili::AttributeType::ListAttribute, "choices"))
                     {
                         tgui::ComboBox::Ptr currentRequirementList = tgui::ComboBox::create();
                         currentRequirementList->setSize(200, 32);
@@ -299,9 +299,9 @@ namespace obe
             while (world->doesSpriteExists(key))
                 key = Functions::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
             Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
-            Coord::UnitVector pixelCamera = world->getCamera()->getPosition().to<Coord::WorldPixels>();
+            Coord::UnitVector pixelCamera = world->getCamera()->getPosition().to<Coord::Units::WorldPixels>();
             sprToAdd->load("Sprites/LevelSprites/" + geid);
-            sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::WorldPixels);
+            sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::Units::WorldPixels);
             sprToAdd->setRotation(0);
             //ADD SPRITE SIZE
             //sprToAdd->setScale(1, 1);

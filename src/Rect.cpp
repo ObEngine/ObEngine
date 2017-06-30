@@ -7,32 +7,41 @@ namespace obe
 	{
 		void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
 		{
-			double factor = (type == From) ? 1.0 : -1.0;
+			double factor = (type == ConversionType::From) ? 1.0 : -1.0;
 			switch (ref)
 			{
-			case TopLeft: break;
-			case Top: vec.add(factor * m_size.to(vec.unit).x / 2, 0); break;
-			case TopRight: vec.add(factor * m_size.to(vec.unit).x, 0); break;
-			case Left: vec.add(0, factor * m_size.to(vec.unit).y / 2); break;
-			case Center: vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y / 2); break;
-			case Right: vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y / 2); break;
-			case BottomLeft: vec.add(0, factor * m_size.to(vec.unit).y); break;
-			case Bottom: vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y); break;
-			case BottomRight: vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y); break;
+            case Referencial::TopLeft: 
+			    break;
+			case Referencial::Top: 
+			    vec.add(factor * m_size.to(vec.unit).x / 2, 0); break;
+			case Referencial::TopRight: 
+			    vec.add(factor * m_size.to(vec.unit).x, 0); break;
+			case Referencial::Left: 
+			    vec.add(0, factor * m_size.to(vec.unit).y / 2); break;
+			case Referencial::Center: 
+			    vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y / 2); break;
+			case Referencial::Right: 
+			    vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y / 2); break;
+			case Referencial::BottomLeft: 
+			    vec.add(0, factor * m_size.to(vec.unit).y); break;
+			case Referencial::Bottom: 
+			    vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y); break;
+			case Referencial::BottomRight: 
+			    vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y); break;
 			default: break;
 			}
 		}
 
 		void Rect::setPosition(const Coord::UnitVector& position, Referencial ref)
 		{
-			Coord::UnitVector pVec = position.to<Coord::WorldUnits>();
-			this->transformRef(pVec, ref, To);
+			Coord::UnitVector pVec = position.to<Units::WorldUnits>();
+			this->transformRef(pVec, ref, ConversionType::To);
 			this->setPosition(pVec.x, pVec.y);
 		}
 
 		void Rect::setPosition(double x, double y, Referencial ref)
 		{
-			this->setPosition(UnitVector(x, y, WorldUnits), ref);
+			this->setPosition(UnitVector(x, y, Units::WorldUnits), ref);
 		}
 
 		void Rect::move(const Coord::UnitVector& position)
@@ -47,15 +56,15 @@ namespace obe
 
 		void Rect::setX(double x, Referencial ref)
 		{
-			UnitVector vec(x, 0, WorldUnits);
-			this->transformRef(vec, ref, To);
+			UnitVector vec(x, 0, Units::WorldUnits);
+            this->transformRef(vec, ref, ConversionType::To);
 			m_position.x = vec.x;
 		}
 
 		void Rect::setY(double y, Referencial ref)
 		{
-			UnitVector vec(0, y, WorldUnits);
-			this->transformRef(vec, ref, To);
+			UnitVector vec(0, y, Units::WorldUnits);
+			this->transformRef(vec, ref, ConversionType::To);
 			m_position.y = vec.y;
 		}
 
@@ -87,7 +96,7 @@ namespace obe
 		UnitVector Rect::getPosition(Referencial ref) const
 		{
 			UnitVector getPosVec = m_position;
-			this->transformRef(getPosVec, ref, From);
+			this->transformRef(getPosVec, ref, ConversionType::From);
 			return getPosVec;
 		}
 

@@ -39,15 +39,15 @@ namespace obe
             void lock();
             void unlock();
 
-			void setPosition(const Coord::UnitVector& position, Referencial ref = TopLeft);
-			void setPosition(double x, double y, Referencial ref = TopLeft);
+			void setPosition(const Coord::UnitVector& position, Referencial ref = Referencial::TopLeft);
+			void setPosition(double x, double y, Referencial ref = Referencial::TopLeft);
 			void move(const Coord::UnitVector& position);
 			void move(double x, double y);
-			void setX(double x, Referencial ref = TopLeft);
-			void setY(double y, Referencial ref = TopLeft);
-			double getX(Referencial ref = TopLeft) const;
-			double getY(Referencial ref = TopLeft) const;
-			Coord::UnitVector getPosition(Referencial ref = TopLeft) const;
+			void setX(double x, Referencial ref = Referencial::TopLeft);
+			void setY(double y, Referencial ref = Referencial::TopLeft);
+			double getX(Referencial ref = Referencial::TopLeft) const;
+			double getY(Referencial ref = Referencial::TopLeft) const;
+			Coord::UnitVector getPosition(Referencial ref = Referencial::TopLeft) const;
 
 			void setSize(double pSize);
 			void scale(double pSize);

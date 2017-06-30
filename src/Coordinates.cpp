@@ -126,83 +126,83 @@ namespace obe
         {
             switch (pUnit)
             {
-            case ViewPercentage:
+            case Units::ViewPercentage:
                 switch (unit)
                 {
-                case ViewPercentage:
-                    return UnitVector(x, y, ViewPercentage);
-                case ViewPixels:
-                    return UnitVector(x / Screen.w, y / Screen.h, ViewPercentage);
-                case ViewUnits:
-                    return UnitVector(x / View.w, y / View.h, ViewPercentage);
-                case WorldPixels:
-                    return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h, ViewPercentage);
-                case WorldUnits:
-                    return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, ViewPercentage);
+                case Units::ViewPercentage:
+                    return UnitVector(x, y, Units::ViewPercentage);
+                case Units::ViewPixels:
+                    return UnitVector(x / Screen.w, y / Screen.h, Units::ViewPercentage);
+                case Units::ViewUnits:
+                    return UnitVector(x / View.w, y / View.h, Units::ViewPercentage);
+                case Units::WorldPixels:
+                    return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h, Units::ViewPercentage);
+                case Units::WorldUnits:
+                    return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, Units::ViewPercentage);
                 default:
                     return UnitVector(0, 0);
                 }
-            case ViewPixels:
+            case Units::ViewPixels:
                 switch (unit)
                 {
-                case ViewPercentage:
-                    return UnitVector(x * Screen.w, y * Screen.h, ViewPixels);
-                case ViewPixels:
-                    return UnitVector(x, y, ViewPixels);
-                case ViewUnits:
-                    return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, ViewPixels);
-                case WorldPixels:
-                    return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h), ViewPixels);
-                case WorldUnits:
-                    return UnitVector((x - View.x) / View.w * Screen.w, (y - View.y) / View.h * Screen.h, ViewPixels);
+                case Units::ViewPercentage:
+                    return UnitVector(x * Screen.w, y * Screen.h, Units::ViewPixels);
+                case Units::ViewPixels:
+                    return UnitVector(x, y, Units::ViewPixels);
+                case Units::ViewUnits:
+                    return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, Units::ViewPixels);
+                case Units::WorldPixels:
+                    return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h), Units::ViewPixels);
+                case Units::WorldUnits:
+                    return UnitVector((x - View.x) / View.w * Screen.w, (y - View.y) / View.h * Screen.h, Units::ViewPixels);
                 default:
                     return UnitVector(0, 0);
                 }
-            case ViewUnits:
+            case Units::ViewUnits:
                 switch (unit)
                 {
-                case ViewPercentage:
-                    return UnitVector(x * View.w, y * View.h, ViewUnits);
-                case ViewPixels:
-                    return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, ViewUnits);
-                case ViewUnits:
-                    return UnitVector(x, y, ViewUnits);
-                case WorldPixels:
-                    return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y, ViewUnits);
-                case WorldUnits:
-                    return UnitVector(x - View.x, y - View.y, ViewUnits);
+                case Units::ViewPercentage:
+                    return UnitVector(x * View.w, y * View.h, Units::ViewUnits);
+                case Units::ViewPixels:
+                    return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::ViewUnits);
+                case Units::ViewUnits:
+                    return UnitVector(x, y, Units::ViewUnits);
+                case Units::WorldPixels:
+                    return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y, Units::ViewUnits);
+                case Units::WorldUnits:
+                    return UnitVector(x - View.x, y - View.y, Units::ViewUnits);
                 default:
                     return UnitVector(0, 0);
                 }
-            case WorldPixels:
+            case Units::WorldPixels:
                 switch (unit)
                 {
-                case ViewPercentage:
-                    return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), WorldPixels);
-                case ViewPixels:
-                    return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, WorldPixels);
-                case ViewUnits:
-                    return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, WorldPixels);
-                case WorldPixels:
-                    return UnitVector(x, y, WorldPixels);
-                case WorldUnits:
-                    return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, WorldPixels);
+                case Units::ViewPercentage:
+                    return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), Units::WorldPixels);
+                case Units::ViewPixels:
+                    return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, Units::WorldPixels);
+                case Units::ViewUnits:
+                    return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, Units::WorldPixels);
+                case Units::WorldPixels:
+                    return UnitVector(x, y, Units::WorldPixels);
+                case Units::WorldUnits:
+                    return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, Units::WorldPixels);
                 default:
                     return UnitVector(0, 0);
                 }
-            case WorldUnits:
+            case Units::WorldUnits:
                 switch (unit)
                 {
-                case ViewPercentage:
-                    return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, WorldUnits);
-                case ViewPixels:
-                    return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, WorldUnits);
-                case ViewUnits:
-                    return UnitVector(View.x + x, View.y + y, WorldUnits);
-                case WorldPixels:
-                    return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, WorldUnits);
-                case WorldUnits:
-                    return UnitVector(x, y, WorldUnits);
+                case Units::ViewPercentage:
+                    return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, Units::WorldUnits);
+                case Units::ViewPixels:
+                    return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, Units::WorldUnits);
+                case Units::ViewUnits:
+                    return UnitVector(View.x + x, View.y + y, Units::WorldUnits);
+                case Units::WorldPixels:
+                    return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::WorldUnits);
+                case Units::WorldUnits:
+                    return UnitVector(x, y, Units::WorldUnits);
                 default:
                     return UnitVector(0, 0);
                 }
@@ -224,29 +224,28 @@ namespace obe
         Units stringToUnits(const std::string& unit)
         {
             if (unit == "ViewPercentage")
-                return ViewPercentage;
+                return Units::ViewPercentage;
             if (unit == "ViewPixels")
-                return ViewPixels;
+                return Units::ViewPixels;
             if (unit == "ViewUnits")
-                return ViewUnits;
+                return Units::ViewUnits;
             if (unit == "WorldPixels")
-                return WorldPixels;
+                return Units::WorldPixels;
             if (unit == "WorldUnits")
-                return WorldUnits;
+                return Units::WorldUnits;
             else
-                return Unknown;
+                return Units::Unknown;
         }
 
         std::string unitsToString(Units unit)
         {
             switch (unit)
             {
-            case ViewPercentage:
-                break;
-            case ViewPixels: return "ViewPixels";
-            case ViewUnits: return "ViewUnits";
-            case WorldPixels: return "WorldPixels";
-            case WorldUnits: return "WorldUnits";
+            case Units::ViewPercentage: return "ViewPercentage0";
+            case Units::ViewPixels: return "ViewPixels";
+            case Units::ViewUnits: return "ViewUnits";
+            case Units::WorldPixels: return "WorldPixels";
+            case Units::WorldUnits: return "WorldUnits";
             default: return "Error";
             }
             return "Error";

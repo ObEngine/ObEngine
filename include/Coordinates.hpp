@@ -9,7 +9,7 @@ namespace obe
         /**
          * \brief Different Units used to work with elements position / size in the Scene
          */
-        enum Units
+        enum class Units
         {
             /**
              * \brief ViewPercentage is an Unit used to place / scale an element using the View. \n
@@ -86,7 +86,7 @@ namespace obe
             /**
              * \brief Unit used in the Class
              */
-            Units m_unit = WorldUnits;
+            Units m_unit = Units::WorldUnits;
         public:
             /**
              * \brief Set the unit the Object should work with
@@ -112,8 +112,8 @@ namespace obe
             static ViewStruct View;
             static ScreenStruct Screen;
 
-            UnitVector(Units unit = WorldUnits);
-            UnitVector(double x, double y, Units unit = WorldUnits);
+            UnitVector(Units unit = Units::WorldUnits);
+            UnitVector(double x, double y, Units unit = Units::WorldUnits);
 
             double x = 0.0;
             double y = 0.0;
@@ -156,105 +156,105 @@ namespace obe
         protected:
             Units unit;
         public:
-            ProtectedUnitVector(const Units& unit = WorldUnits);
-            ProtectedUnitVector(const double& x, const double& y, const Units& unit = WorldUnits);
+            ProtectedUnitVector(const Units& unit = Units::WorldUnits);
+            ProtectedUnitVector(const double& x, const double& y, const Units& unit = Units::WorldUnits);
         };
 
         template <>
-        inline UnitVector UnitVector::to<ViewPercentage>() const
+        inline UnitVector UnitVector::to<Units::ViewPercentage>() const
         {
             switch (unit)
             {
-            case ViewPercentage:
-                return UnitVector(x, y, ViewPercentage);
-            case ViewPixels:
-                return UnitVector(x / Screen.w, y / Screen.h, ViewPercentage);
-            case ViewUnits:
-                return UnitVector(x / View.w, y / View.h, ViewPercentage);
-            case WorldPixels:
-                return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h, ViewPercentage);
-            case WorldUnits:
-                return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, ViewPercentage);
+            case Units::ViewPercentage:
+                return UnitVector(x, y, Units::ViewPercentage);
+            case Units::ViewPixels:
+                return UnitVector(x / Screen.w, y / Screen.h, Units::ViewPercentage);
+            case Units::ViewUnits:
+                return UnitVector(x / View.w, y / View.h, Units::ViewPercentage);
+            case Units::WorldPixels:
+                return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h, Units::ViewPercentage);
+            case Units::WorldUnits:
+                return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, Units::ViewPercentage);
             default:
                 return UnitVector(0, 0);
             }
         }
 
         template <>
-        inline UnitVector UnitVector::to<ViewPixels>() const
+        inline UnitVector UnitVector::to<Units::ViewPixels>() const
         {
             switch (unit)
             {
-            case ViewPercentage:
-                return UnitVector(x * Screen.w, y * Screen.h, ViewPixels);
-            case ViewPixels:
-                return UnitVector(x, y, ViewPixels);
-            case ViewUnits:
-                return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, ViewPixels);
-            case WorldPixels:
-                return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h), ViewPixels);
-            case WorldUnits:
-                return UnitVector((x - View.x) / View.w * Screen.w, (y - View.y) / View.h * Screen.h, ViewPixels);
+            case Units::ViewPercentage:
+                return UnitVector(x * Screen.w, y * Screen.h, Units::ViewPixels);
+            case Units::ViewPixels:
+                return UnitVector(x, y, Units::ViewPixels);
+            case Units::ViewUnits:
+                return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, Units::ViewPixels);
+            case Units::WorldPixels:
+                return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h), Units::ViewPixels);
+            case Units::WorldUnits:
+                return UnitVector((x - View.x) / View.w * Screen.w, (y - View.y) / View.h * Screen.h, Units::ViewPixels);
             default:
                 return UnitVector(0, 0);
             }
         }
 
         template <>
-        inline UnitVector UnitVector::to<ViewUnits>() const
+        inline UnitVector UnitVector::to<Units::ViewUnits>() const
         {
             switch (unit)
             {
-            case ViewPercentage:
-                return UnitVector(x * View.w, y * View.h, ViewUnits);
-            case ViewPixels:
-                return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, ViewUnits);
-            case ViewUnits:
-                return UnitVector(x, y, ViewUnits);
-            case WorldPixels:
-                return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y, ViewUnits);
-            case WorldUnits:
-                return UnitVector(x - View.x, y - View.y, ViewUnits);
+            case Units::ViewPercentage:
+                return UnitVector(x * View.w, y * View.h, Units::ViewUnits);
+            case Units::ViewPixels:
+                return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::ViewUnits);
+            case Units::ViewUnits:
+                return UnitVector(x, y, Units::ViewUnits);
+            case Units::WorldPixels:
+                return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y, Units::ViewUnits);
+            case Units::WorldUnits:
+                return UnitVector(x - View.x, y - View.y, Units::ViewUnits);
             default:
                 return UnitVector(0, 0);
             }
         }
 
         template <>
-        inline UnitVector UnitVector::to<WorldPixels>() const
+        inline UnitVector UnitVector::to<Units::WorldPixels>() const
         {
             switch (unit)
             {
-            case ViewPercentage:
-                return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), WorldPixels);
-            case ViewPixels:
-                return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, WorldPixels);
-            case ViewUnits:
-                return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, WorldPixels);
-            case WorldPixels:
-                return UnitVector(x, y, WorldPixels);
-            case WorldUnits:
-                return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, WorldPixels);
+            case Units::ViewPercentage:
+                return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y), Units::WorldPixels);
+            case Units::ViewPixels:
+                return UnitVector(Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, Units::WorldPixels);
+            case Units::ViewUnits:
+                return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h, Units::WorldPixels);
+            case Units::WorldPixels:
+                return UnitVector(x, y, Units::WorldPixels);
+            case Units::WorldUnits:
+                return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, Units::WorldPixels);
             default:
                 return UnitVector(0, 0);
             }
         }
 
         template <>
-        inline UnitVector UnitVector::to<WorldUnits>() const
+        inline UnitVector UnitVector::to<Units::WorldUnits>() const
         {
             switch (unit)
             {
-            case ViewPercentage:
-                return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, WorldUnits);
-            case ViewPixels:
-                return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, WorldUnits);
-            case ViewUnits:
-                return UnitVector(View.x + x, View.y + y, WorldUnits);
-            case WorldPixels:
-                return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, WorldUnits);
-            case WorldUnits:
-                return UnitVector(x, y, WorldUnits);
+            case Units::ViewPercentage:
+                return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, Units::WorldUnits);
+            case Units::ViewPixels:
+                return UnitVector((View.w * (x / Screen.w)) + View.x, (View.h * (y / Screen.h)) + View.y, Units::WorldUnits);
+            case Units::ViewUnits:
+                return UnitVector(View.x + x, View.y + y, Units::WorldUnits);
+            case Units::WorldPixels:
+                return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::WorldUnits);
+            case Units::WorldUnits:
+                return UnitVector(x, y, Units::WorldUnits);
             default:
                 return UnitVector(0, 0);
             }

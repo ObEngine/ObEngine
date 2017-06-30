@@ -16,7 +16,7 @@ namespace vili
     private:
         std::string m_path = "";
     public:
-        const static Types::AttributeType ClassType = Types::LinkAttribute;
+        const static AttributeType ClassType = AttributeType::LinkAttribute;
         LinkAttribute(ComplexAttribute* parent, const std::string& id, const std::string& path);
         Attribute* getTarget();
 
@@ -36,7 +36,7 @@ namespace vili
     template <>
     inline BaseAttribute* LinkAttribute::get()
     {
-        if (getTarget()->getType() == Types::BaseAttribute)
+        if (getTarget()->getType() == AttributeType::BaseAttribute)
             return static_cast<BaseAttribute*>(getTarget());
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongBaseAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }
@@ -44,7 +44,7 @@ namespace vili
     template <>
     inline ComplexAttribute* LinkAttribute::get()
     {
-        if (getTarget()->getType() == Types::ComplexAttribute)
+        if (getTarget()->getType() == AttributeType::ComplexAttribute)
             return static_cast<ComplexAttribute*>(getTarget());
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongComplexAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }
@@ -52,7 +52,7 @@ namespace vili
     template <>
     inline ListAttribute* LinkAttribute::get()
     {
-        if (getTarget()->getType() == Types::ListAttribute)
+        if (getTarget()->getType() == AttributeType::ListAttribute)
             return static_cast<ListAttribute*>(getTarget());
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongListAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }

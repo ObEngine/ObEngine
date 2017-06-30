@@ -187,7 +187,7 @@ namespace obe
 		 * \brief The Play Mode of an Animation.\n
 		 *        It indicates whether an Animation can be interrupted or not and what to do when the Animation is over.
 		 */
-		enum AnimationPlayMode
+		enum class AnimationPlayMode
 		{
 			/**
 			 * \brief The Animation will play once and stay at last texture
@@ -213,7 +213,7 @@ namespace obe
 	    /**
 		 * \brief The AnimationStatus indicates whether the current Animation should continue to play or call another one.
 		 */
-		enum AnimationStatus
+		enum class AnimationStatus
 		{
 			/**
 			 * \brief The Animation continues to play.
@@ -235,12 +235,12 @@ namespace obe
         private:
             std::string m_animationName;
             unsigned int m_animationDelay = 0;
-            AnimationPlayMode m_animationPlayMode = OneTime;
+            AnimationPlayMode m_animationPlayMode = AnimationPlayMode::OneTime;
             std::map<int, sf::Texture*> m_animationTextures;
             std::map<std::string, std::unique_ptr<AnimationGroup>> m_animationGroupMap;
             std::vector<std::vector<std::string>> m_animationCode;
             std::string m_currentGroupName = "NONE";
-            AnimationStatus m_currentStatus = Play;
+            AnimationStatus m_currentStatus = AnimationStatus::Play;
 			std::string m_animationToCall = "";
             bool m_askCommand = true;
             unsigned int m_codeIndex = 0;

@@ -174,11 +174,11 @@ namespace obe
 	    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode)
 	    {
 			if (animationPlayMode == "OneTime")
-				return OneTime;
+				return AnimationPlayMode::OneTime;
 			if (animationPlayMode == "Loop")
-				return Loop;
+				return AnimationPlayMode::Loop;
 			if (animationPlayMode == "Force")
-				return Force;
+				return AnimationPlayMode::Force;
 			throw aube::ErrorHandler::Raise("ObEngine.Animation.AnimationPlayMode.UnknownPlayMode", { {"playmode", animationPlayMode} });
 	    }
 
@@ -240,35 +240,35 @@ namespace obe
             //Meta
             vili::ComplexAttribute& meta = animFile.at("Meta");
             m_animationName = meta.at<vili::BaseAttribute>("name").get<std::string>();
-            if (meta.contains(vili::Types::BaseAttribute, "clock"))
+            if (meta.contains(vili::AttributeType::BaseAttribute, "clock"))
                 m_animationDelay = meta.at<vili::BaseAttribute>("clock").get<int>();
-            if (meta.contains(vili::Types::BaseAttribute, "play-mode"))
+            if (meta.contains(vili::AttributeType::BaseAttribute, "play-mode"))
                 m_animationPlayMode = stringToAnimationPlayMode(meta.at<vili::BaseAttribute>("play-mode").get<std::string>());
             //Images
             vili::ListAttribute& imageList = animFile.at<vili::ListAttribute>("Images", "ImageList");
             std::string model = "";
-            if (animFile.at("Images").contains(vili::Types::BaseAttribute, "model"))
+            if (animFile.at("Images").contains(vili::AttributeType::BaseAttribute, "model"))
             {
                 model = animFile.at("Images").getBaseAttribute("model").get<std::string>();
             }
             for (unsigned int i = 0; i < imageList.size(); i++)
             {
                 std::string textureName = "";
-                if (imageList.get(i).getDataType() == vili::Types::Int && model != "")
+                if (imageList.get(i).getDataType() == vili::DataType::Int && model != "")
                     textureName = Functions::String::replaceString(model, "%s", std::to_string(imageList.get(i).get<int>()));
-                else if (imageList.get(i).getDataType() == vili::Types::String)
+                else if (imageList.get(i).getDataType() == vili::DataType::String)
                     textureName = imageList.get(i).get<std::string>();
                 m_animationTextures[i] = RessourceManager::GetInstance()->getTexture(path.add(textureName).toString());
             }
             //Groups
             vili::ComplexAttribute& groups = animFile.at("Groups");
-            for (std::string complexName : groups.getAll(vili::Types::ComplexAttribute))
+            for (std::string complexName : groups.getAll(vili::AttributeType::ComplexAttribute))
             {
                 m_animationGroupMap.emplace(complexName, std::make_unique<AnimationGroup>(complexName));
                 vili::ComplexAttribute& currentGroup = groups.at(complexName);
                 for (vili::BaseAttribute* currentTexture : currentGroup.at<vili::ListAttribute>("content"))
                     m_animationGroupMap[complexName]->pushTexture(m_animationTextures[*currentTexture]);
-                if (currentGroup.contains(vili::Types::BaseAttribute, "clock"))
+                if (currentGroup.contains(vili::AttributeType::BaseAttribute, "clock"))
                     m_animationGroupMap[complexName]->setGroupDelay(currentGroup.at<vili::BaseAttribute>("clock"));
                 else
                     m_animationGroupMap[complexName]->setGroupDelay(m_animationDelay);
@@ -289,11 +289,11 @@ namespace obe
 
         void Animation::applyParameters(vili::ComplexAttribute& parameters)
         {
-            if (parameters.contains(vili::Types::BaseAttribute, "spriteOffsetX"))
+            if (parameters.contains(vili::AttributeType::BaseAttribute, "spriteOffsetX"))
                 m_sprOffsetX = parameters.at<vili::BaseAttribute>("spriteOffsetX").get<int>();
-            if (parameters.contains(vili::Types::BaseAttribute, "spriteOffsetY"))
+            if (parameters.contains(vili::AttributeType::BaseAttribute, "spriteOffsetY"))
                 m_sprOffsetY = parameters.at<vili::BaseAttribute>("spriteOffsetY").get<int>();
-            if (parameters.contains(vili::Types::BaseAttribute, "priority"))
+            if (parameters.contains(vili::AttributeType::BaseAttribute, "priority"))
                 m_priority = parameters.at<vili::BaseAttribute>("priority").get<int>();
         }
 
@@ -301,7 +301,7 @@ namespace obe
         {
             if (m_animationCode.size() > 0)
             {
-                if (m_codeIndex > m_animationCode.size() - 1 && m_animationPlayMode != OneTime)
+                if (m_codeIndex > m_animationCode.size() - 1 && m_animationPlayMode != AnimationPlayMode::OneTime)
                     m_codeIndex = 0;
                 if (Time::getTickSinceEpoch() - m_animationDelay > m_currentDelay)
                 {
@@ -313,7 +313,7 @@ namespace obe
                             m_askCommand = true;
                             m_currentDelay = stoi(currentCommand[1]);
                             m_animationClock = Time::getTickSinceEpoch();
-                            if (m_animationPlayMode != OneTime && !(m_codeIndex >= m_animationCode.size() - 1))
+                            if (m_animationPlayMode != AnimationPlayMode::OneTime && !(m_codeIndex >= m_animationCode.size() - 1))
                                 m_codeIndex++;
                             else
                                 m_isOver = true;
@@ -337,7 +337,7 @@ namespace obe
                             m_askCommand = false;
 	                        std::string callAnimation = currentCommand[1];
                             Functions::String::replaceStringInPlace(callAnimation, "'", "");
-                            m_currentStatus = Call;
+                            m_currentStatus = AnimationStatus::Call;
 							m_animationToCall = callAnimation;
                         }
                     }
@@ -346,13 +346,13 @@ namespace obe
                         m_animationGroupMap[m_currentGroupName]->next();
                         if (m_animationGroupMap[m_currentGroupName]->isGroupOver())
                         {
-                            if (m_animationPlayMode != OneTime)
+                            if (m_animationPlayMode != AnimationPlayMode::OneTime)
                             {
                                 m_askCommand = true;
                                 m_animationGroupMap[m_currentGroupName]->reset();
                                 m_codeIndex++;
                             }
-                            else if (m_animationPlayMode == OneTime)
+                            else if (m_animationPlayMode == AnimationPlayMode::OneTime)
                             {
                                 if (m_codeIndex < m_animationCode.size() - 1)
                                 {
@@ -378,7 +378,7 @@ namespace obe
         {
             for (auto it = m_animationGroupMap.begin(); it != m_animationGroupMap.end(); ++it)
                 it->second->reset();
-            m_currentStatus = Play;
+            m_currentStatus = AnimationStatus::Play;
             m_codeIndex = 0;
             m_askCommand = true;
             m_isOver = false;
@@ -502,7 +502,7 @@ namespace obe
 	        if (Functions::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
             {
                 System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
-                for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::Types::ComplexAttribute))
+                for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::AttributeType::ComplexAttribute))
                     animationParameters[currentAnimParameters] = &animatorCfgFile.at("Animator", currentAnimParameters);
             }
             for (unsigned int i = 0; i < listDir.size(); i++)
@@ -526,12 +526,12 @@ namespace obe
         {
             if (m_currentAnimation == nullptr)
                 throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation", {{"animator", m_animatorPath.toString()}});
-            if (m_currentAnimation->getAnimationStatus() == Call)
+            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
                 m_currentAnimation = m_animationSet[m_currentAnimation->getCalledAnimation()].get();
             }
-            if (m_currentAnimation->getAnimationStatus() == Play)
+            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
                 m_currentAnimation->update();      
         }
 

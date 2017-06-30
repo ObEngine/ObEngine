@@ -320,9 +320,9 @@ namespace vili
                             std::string attributeID = Functions::String::split(parsedLine, ":")[0];
                             std::vector<std::string> splittedLine = Functions::String::split(parsedLine, ":");
                             std::string attributeValue = Functions::Vector::join(splittedLine, ":", 1, 0);
-                            Types::DataType attributeType = Types::getVarType(attributeValue);
+                            DataType attributeType = Types::getVarType(attributeValue);
 
-                            if (attributeType == Types::Link)
+                            if (attributeType == DataType::Link)
                             {
                                 getPath(Path(addPath)).createLinkAttribute(attributeID, Functions::String::extract(attributeValue, 2, 1));
                                 getPath(Path(addPath)).getLinkAttribute(attributeID).setVisible(visible);
@@ -332,7 +332,7 @@ namespace vili
                                         << " inside " << pushIndicator << " (Type:" << attributeType << ")" << std::endl;
                                 }
                             }
-                            else if (attributeType == Types::Template)
+                            else if (attributeType == DataType::Template)
                             {
                                 std::string templateName = attributeValue;
                                 templateName = Functions::String::split(templateName, "(")[0];
@@ -377,28 +377,28 @@ namespace vili
                         else if (curList != "None")
                         {
                             std::string attributeValue = parsedLine;
-                            Types::DataType attributeType = Types::getVarType(attributeValue);
+                            DataType attributeType = Types::getVarType(attributeValue);
                             if (verbose)
                                 std::cout << indenter() << "Create Element #" << getPath(Path(addPath)).getListAttribute(curList).size()
                                     << "(" << attributeValue << ") of ListAttribute " << curList << std::endl;
-                            if (attributeType == Types::String)
+                            if (attributeType == DataType::String)
                             {
                                 attributeValue = Functions::String::extract(attributeValue, 1, 1);
                                 getPath(Path(addPath)).getListAttribute(curList).push(attributeValue);
                             }
-                            else if (attributeType == Types::Int)
+                            else if (attributeType == DataType::Int)
                             {
                                 getPath(Path(addPath)).getListAttribute(curList).push(stoi(attributeValue));
                             }
-                            else if (attributeType == Types::Float)
+                            else if (attributeType == DataType::Float)
                             {
                                 getPath(Path(addPath)).getListAttribute(curList).push(stod(attributeValue));
                             }
-                            else if (attributeType == Types::Bool)
+                            else if (attributeType == DataType::Bool)
                             {
                                 getPath(Path(addPath)).getListAttribute(curList).push(((attributeValue == "True") ? true : false));
                             }
-                            else if (attributeType == Types::Range)
+                            else if (attributeType == DataType::Range)
                             {
                                 int rStart = stoi(Functions::String::split(attributeValue, "..")[0]);
                                 int rEnd = stoi(Functions::String::split(attributeValue, "..")[1]);
@@ -431,9 +431,9 @@ namespace vili
         DataTemplate* newTemplate = new DataTemplate(templateName);
         if (templateBase != nullptr)
         {
-            if (templateBase->contains(Types::ComplexAttribute, "__init__") && templateBase->contains(Types::ComplexAttribute, "__body__"))
+            if (templateBase->contains(AttributeType::ComplexAttribute, "__init__") && templateBase->contains(AttributeType::ComplexAttribute, "__body__"))
             {
-                if (!templateBase->contains(Types::BaseAttribute, "__linkroot__"))
+                if (!templateBase->contains(AttributeType::BaseAttribute, "__linkroot__"))
                 {
                     templateBase->at("__body__").createBaseAttribute("__linkroot__", "/" + templateName + "/__init__");
                     templateBase->at<BaseAttribute>("__body__", "__linkroot__").setVisible(false);
@@ -443,12 +443,12 @@ namespace vili
                 int i = 0;
                 while (true)
                 {
-                    if (templateBase->at("__init__").contains(Types::ComplexAttribute, std::to_string(i)))
+                    if (templateBase->at("__init__").contains(AttributeType::ComplexAttribute, std::to_string(i)))
                     {
                         AttributeConstraintManager newConstraint(templateBase, templateName + "/__init__/" + std::to_string(i) + "/value");
                         std::vector<std::string> requiredTypes;
                         ComplexAttribute& currentArgument = templateBase->at("__init__", std::to_string(i));
-                        if (currentArgument.contains(Types::BaseAttribute, "type"))
+                        if (currentArgument.contains(AttributeType::BaseAttribute, "type"))
                             requiredTypes.push_back(
                                 currentArgument.getBaseAttribute("type").get<std::string>()
                             );
@@ -459,7 +459,7 @@ namespace vili
                                 requiredTypes.push_back(currentArgument.getListAttribute("types").get(j).get<std::string>());
                             }
                         }
-                        std::vector<Types::DataType> requiredConstraintTypes;
+                        std::vector<DataType> requiredConstraintTypes;
                         for (std::string& reqType : requiredTypes)
                         {
                             requiredConstraintTypes.push_back(Types::stringToDataType(reqType));
@@ -468,7 +468,7 @@ namespace vili
                         {
                             return (Functions::Vector::isInList(attribute->getDataType(), requiredConstraintTypes));
                         });
-                        if (templateBase->at("__init__", std::to_string(i)).contains(Types::BaseAttribute, "defaultValue"))
+                        if (templateBase->at("__init__", std::to_string(i)).contains(AttributeType::BaseAttribute, "defaultValue"))
                         {
                             std::string defaultValue = templateBase->at<BaseAttribute>("__init__", std::to_string(i), "defaultValue").returnData();
                             newConstraint.addConstraint([defaultValue](BaseAttribute* attribute) -> bool

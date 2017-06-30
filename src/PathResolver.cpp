@@ -26,7 +26,7 @@ namespace obe
             std::function<int(sf::Music*, std::string)> musicLoader = [](sf::Music* music, std::string path) -> int { return music->openFromFile(path); };
         }
 
-        PriorizedPath::PriorizedPath(PathType::PathType pathType, const std::string& basePath, unsigned int priority)
+        PriorizedPath::PriorizedPath(PathType pathType, const std::string& basePath, unsigned int priority)
         {
             this->pathType = pathType;
             this->basePath = basePath;
@@ -107,7 +107,7 @@ namespace obe
             vili::DataParser mountedPaths;
             mountedPaths.parseFile("Mount.vili", true);
             mountedPaths.writeFile("MountExport.vili");
-            for (std::string path : mountedPaths.at("Mount").getAll(vili::Types::ComplexAttribute))
+            for (std::string path : mountedPaths.at("Mount").getAll(vili::AttributeType::ComplexAttribute))
             {
                 vili::ComplexAttribute& currentElement = mountedPaths.at("Mount", path);
                 std::string currentType = currentElement.at<vili::BaseAttribute>("type").get<std::string>();
