@@ -84,7 +84,7 @@ Here you go :
 - 0.55 Baldur (June 2016) - Better scripting support
 - 0.81 Clue (January 2017) - Big engine rework
 - 0.99 Dagr (February 2017) - First released dev version of ObEngine
-- 1.0 Eir (June 2017) - First public released version
+- 1.0 Eir (July 2017) - First public released version
 
 ## Right, can I have several object scripting examples now ?
 Sure, here are some simple objects :
