@@ -11,6 +11,8 @@
 #include "ComplexSprite.hpp"
 #include "Coordinates.hpp"
 #include "DrawUtils.hpp"
+#include "Rect.hpp"
+#include "Referencial.hpp"
 #include "Selectable.hpp"
 
 namespace obe
@@ -26,6 +28,8 @@ namespace obe
             Coord::ProtectedUnitVector m_position;
             Coord::ProtectedUnitVector m_offset;
             Coord::ProtectedUnitVector m_size;
+            Coord::Rect m_handleRect;
+            int m_handlePointRadius = 6;
 
             double m_width = 0;
             double m_height = 0;
@@ -90,8 +94,9 @@ namespace obe
             void u_scale(const Coord::UnitVector& vec);
             void u_setSize(const Coord::UnitVector& vec);
             Coord::ProtectedUnitVector& getSize();
+            void setScalingOrigin(int x, int y);
             void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
-            void getHandlePoint(int posX, int posY);
+            void getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY);
 
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);
@@ -114,6 +119,20 @@ namespace obe
             bool isVisible() const;
             std::string getParentID() const;
             void setParentID(std::string parent);
+
+            class HandlePoint
+            {
+            private:
+                LevelSprite* m_parent;
+                int m_changeWidthFactor;
+                int m_changeHeightFactor;
+                Coord::Referencial m_referencial;
+                int m_x;
+                int m_y;
+            public:
+                HandlePoint(LevelSprite* parent, Coord::Referencial ref);
+                void moveTo(int x, int y);
+            };
         };
     }
 }

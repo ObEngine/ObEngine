@@ -30,7 +30,7 @@ namespace obe
             }
         }
 
-	    void Camera::setPosition(const Coord::UnitVector& position, Referencial ref)
+	    void Camera::setPosition(const Coord::UnitVector& position, Coord::Referencial ref)
         {
 			if (!m_locked)
 			{
@@ -39,7 +39,7 @@ namespace obe
 			}
         }
 
-        void Camera::setPosition(double x, double y, Referencial ref)
+        void Camera::setPosition(double x, double y, Coord::Referencial ref)
         {
 			if (!m_locked)
 			{
@@ -66,7 +66,7 @@ namespace obe
 			}
         }
 
-        void Camera::setX(double x, Referencial ref)
+        void Camera::setX(double x, Coord::Referencial ref)
         {
 			if (!m_locked)
 			{
@@ -75,7 +75,7 @@ namespace obe
 			}
         }
 
-        void Camera::setY(double y, Referencial ref)
+        void Camera::setY(double y, Coord::Referencial ref)
         {
 			if (!m_locked)
 			{
@@ -112,7 +112,7 @@ namespace obe
             if (!m_locked) m_angle += angle;
         }
 
-        Coord::UnitVector Camera::getPosition(Referencial ref) const
+        Coord::UnitVector Camera::getPosition(Coord::Referencial ref) const
         {
             return Rect::getPosition(ref);
         }
@@ -122,12 +122,12 @@ namespace obe
             return m_size;
         }
 
-        double Camera::getX(Referencial ref) const
+        double Camera::getX(Coord::Referencial ref) const
         {
             return Rect::getX(ref);
         }
 
-        double Camera::getY(Referencial ref) const
+        double Camera::getY(Coord::Referencial ref) const
         {
             return Rect::getY(ref);
         }

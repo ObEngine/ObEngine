@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Coordinates.hpp"
+#include "Referencial.hpp"
 
 namespace obe
 {
@@ -12,129 +13,6 @@ namespace obe
 				UnitVector m_size;
 				UnitVector m_position;
 			public:
-				/**
-				 * \brief Set or Get Position using Referencials
-				 */
-				enum class Referencial
-				{
-					/**
-					* \brief Referencial TopLeft
-					* \code
-					* Coeff : w * 0, h * 0
-					*
-					* o | x | x
-					* ----------
-					* x | x | x
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					TopLeft,
-					/**
-					* \brief Referencial Top
-					* \code
-					* Coeff : w * 0.5, h * 1
-					*
-					* x | o | x
-					* ----------
-					* x | x | x
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					Top,
-					/**
-					* \brief Referencial TopRight
-					* \code
-					* Coeff : w * 1, h * 0
-					*
-					* x | x | o
-					* ----------
-					* x | x | x
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					TopRight,
-					/**
-					* \brief Referencial Left
-					* \code
-					* Coeff : w * 0, h * 0.5
-					* 
-					* x | x | x
-					* ----------
-					* o | x | x
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					Left,
-					/**
-					* \brief Referencial Center
-					* \code
-					* Coeff : w * 0.5, h * 0.5
-					*
-					* x | x | x
-					* ----------
-					* x | o | x
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					Center,
-					/**
-					* \brief Referencial Right
-					* \code
-					* Coeff : w * 1, h * 0.5
-					*
-					* x | x | x
-					* ----------
-					* x | x | o
-					* ----------
-					* x | x | x
-					* \endcode
-					*/
-					Right,
-					/**
-					* \brief Referencial BottomLeft
-					* \code
-					* Coeff : w * 0, h * 1
-					*
-					* x | x | x
-					* ----------
-					* x | x | x
-					* ----------
-					* o | x | x
-					* \endcode
-					*/
-					BottomLeft,
-					/**
-					* \brief Referencial Bottom
-					* \code
-					* Coeff : w * 0.5, h * 1
-					*
-					* x | x | x
-					* ----------
-					* x | x | x
-					* ----------
-					* x | o | x
-					* \endcode
-					*/
-					Bottom,
-					/**
-					* \brief Referencial BottomRight
-					* \code
-					* Coeff : w * 1, h * 1
-					* 
-					* x | x | x
-					* ----------
-					* x | x | x
-					* ----------
-					* x | x | o
-					* \endcode
-					*/
-					BottomRight,
-				};
 				/**
 				 * \brief Conversion Type for Referencial Usage
 				 */
@@ -170,16 +48,15 @@ namespace obe
 				double getY(Referencial ref = Referencial::TopLeft) const;
 				UnitVector getPosition(Referencial ref = Referencial::TopLeft) const;
 
-				void setSize(const UnitVector& size);
-				void setSize(double width, double height);
-				void scale(const UnitVector& size);
-				void scale(double width, double height);
-				void setWidth(double width);
-				void setHeight(double height);
+				void setSize(const UnitVector& size, Referencial ref = Referencial::TopLeft);
+				void setSize(double width, double height, Referencial ref = Referencial::TopLeft);
+				void scale(const UnitVector& size, Referencial ref = Referencial::TopLeft);
+				void scale(double width, double height, Referencial ref = Referencial::TopLeft);
+				void setWidth(double width, Referencial ref = Referencial::TopLeft);
+				void setHeight(double height, Referencial ref = Referencial::TopLeft);
 				double getWidth() const;
 				double getHeight() const;
 				UnitVector getSize() const;
-				
 		};
 	}
 }

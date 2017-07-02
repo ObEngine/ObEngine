@@ -3,6 +3,8 @@
 
 #include "ObEngine.hpp"
 
+#include "Rect.hpp" //To remove
+
 void LoadErrors()
 {
     vili::LoadErrors("Data/Errors.vili");

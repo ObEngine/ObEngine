@@ -36,7 +36,7 @@ namespace obe
 		{
 			Coord::UnitVector pVec = position.to<Units::WorldUnits>();
 			this->transformRef(pVec, ref, ConversionType::To);
-			this->setPosition(pVec.x, pVec.y);
+            m_position.set(pVec.x, pVec.y);
 		}
 
 		void Rect::setPosition(double x, double y, Referencial ref)
@@ -68,29 +68,46 @@ namespace obe
 			m_position.y = vec.y;
 		}
 
-		void Rect::setSize(double width, double height)
+		void Rect::setSize(double width, double height, Referencial ref)
 		{
+            Coord::UnitVector savePosition = this->getPosition(ref);
 			m_size.set(width, height);
+            this->setPosition(savePosition, ref);
 		}
 
-		void Rect::scale(const UnitVector& size)
+        void Rect::setSize(const UnitVector& size, Referencial ref)
+        {
+            Coord::UnitVector savePosition = this->getPosition(ref);
+            m_size.set(size);
+            this->setPosition(savePosition, ref);
+        }
+
+		void Rect::scale(const UnitVector& size, Referencial ref)
 		{
+            Coord::UnitVector savePosition = this->getPosition(ref);
 			m_size.add(size);
+            this->setPosition(savePosition, ref);
 		}
 
-		void Rect::scale(double width, double height)
+		void Rect::scale(double width, double height, Referencial ref)
 		{
+            Coord::UnitVector savePosition = this->getPosition(ref);
 			m_size *= UnitVector(width, height, m_size.unit);
+            this->setPosition(savePosition, ref);
 		}
 
-		void Rect::setWidth(double width)
+		void Rect::setWidth(double width, Referencial ref)
 		{
+            Coord::UnitVector savePosition = this->getPosition(ref);
 			m_size.x = width;
+            this->setPosition(savePosition, ref);
 		}
 
-		void Rect::setHeight(double height)
+		void Rect::setHeight(double height, Referencial ref)
 		{
+            Coord::UnitVector savePosition = this->getPosition(ref);
 			m_size.y = height;
+            this->setPosition(savePosition, ref);
 		}
 
 		UnitVector Rect::getPosition(Referencial ref) const
@@ -98,11 +115,6 @@ namespace obe
 			UnitVector getPosVec = m_position;
 			this->transformRef(getPosVec, ref, ConversionType::From);
 			return getPosVec;
-		}
-
-		void Rect::setSize(const UnitVector& size)
-		{
-			m_size.set(size);
 		}
 
 		UnitVector Rect::getSize() const

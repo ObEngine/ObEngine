@@ -330,8 +330,8 @@ namespace obe
                     .addFunction("scale", &World::Camera::scale)
                     .addFunction("setAngle", &World::Camera::setAngle)
                     .addOverloadedFunctions("setPosition",
-                                            static_cast<void (World::Camera::*)(double, double, Coord::Rect::Referencial)>(&World::Camera::setPosition),
-                                            static_cast<void (World::Camera::*)(const Coord::UnitVector&, Coord::Rect::Referencial)>(&World::Camera::setPosition)
+                                            static_cast<void (World::Camera::*)(double, double, Coord::Referencial)>(&World::Camera::setPosition),
+                                            static_cast<void (World::Camera::*)(const Coord::UnitVector&, Coord::Referencial)>(&World::Camera::setPosition)
                     )
                     .addFunction("setSize", &World::Camera::setSize)
                     .addFunction("setX", &World::Camera::setX)
@@ -1087,7 +1087,7 @@ namespace obe
                 (*lua)["Core"]["Utils"]["Math"]["randfloat"] = kaguya::function(Functions::Math::randfloat);
                 (*lua)["Core"]["Utils"]["Math"]["getMin"] = kaguya::function(Functions::Math::getMin<double>);
                 (*lua)["Core"]["Utils"]["Math"]["getMax"] = kaguya::function(Functions::Math::getMax<double>);
-                (*lua)["Core"]["Utils"]["Math"]["isBetween"] = kaguya::function(Functions::Math::isBetween<double>);
+                (*lua)["Core"]["Utils"]["Math"]["isBetween"] = kaguya::function(Functions::Math::isBetween<double, double, double>);
                 (*lua)["Core"]["Utils"]["Math"]["isDoubleInt"] = kaguya::function(Functions::Math::isDoubleInt);
                 foundPart = true;
             }

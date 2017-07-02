@@ -4,6 +4,7 @@
 
 #include "Coordinates.hpp"
 #include "Rect.hpp"
+#include "Referencial.hpp"
 
 namespace obe
 {
@@ -39,15 +40,15 @@ namespace obe
             void lock();
             void unlock();
 
-			void setPosition(const Coord::UnitVector& position, Referencial ref = Referencial::TopLeft);
-			void setPosition(double x, double y, Referencial ref = Referencial::TopLeft);
+			void setPosition(const Coord::UnitVector& position, Coord::Referencial ref = Coord::Referencial::TopLeft);
+			void setPosition(double x, double y, Coord::Referencial ref = Coord::Referencial::TopLeft);
 			void move(const Coord::UnitVector& position);
 			void move(double x, double y);
-			void setX(double x, Referencial ref = Referencial::TopLeft);
-			void setY(double y, Referencial ref = Referencial::TopLeft);
-			double getX(Referencial ref = Referencial::TopLeft) const;
-			double getY(Referencial ref = Referencial::TopLeft) const;
-			Coord::UnitVector getPosition(Referencial ref = Referencial::TopLeft) const;
+			void setX(double x, Coord::Referencial ref = Coord::Referencial::TopLeft);
+			void setY(double y, Coord::Referencial ref = Coord::Referencial::TopLeft);
+			double getX(Coord::Referencial ref = Coord::Referencial::TopLeft) const;
+			double getY(Coord::Referencial ref = Coord::Referencial::TopLeft) const;
+			Coord::UnitVector getPosition(Coord::Referencial ref = Coord::Referencial::TopLeft) const;
 
 			void setSize(double pSize);
 			void scale(double pSize);

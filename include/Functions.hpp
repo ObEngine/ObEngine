@@ -40,8 +40,8 @@ namespace obe
             N getMin(const N& min1, const N& min2);
             template <typename N>
             N getMax(const N& max1, const N& max2);
-            template <typename N>
-            bool isBetween(const N& target, const N& lowerBound, const N& upperBound);
+            template <typename N, typename N1, typename N2>
+            bool isBetween(const N& target, const N1& lowerBound, const N2& upperBound);
             bool isDoubleInt(const double& value);
         }
 
@@ -145,8 +145,8 @@ namespace obe
             return (max1 > max2) ? max1 : max2;
         }
 
-        template <typename N>
-        bool Math::isBetween(const N& target, const N& lowerBound, const N& upperBound)
+        template <typename N, typename N1, typename N2>
+        bool Math::isBetween(const N& target, const N1& lowerBound, const N2& upperBound)
         {
             if (target >= lowerBound && target <= upperBound)
                 return true;

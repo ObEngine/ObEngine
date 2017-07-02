@@ -797,6 +797,7 @@ namespace obe
                         if (hoveredSprite != nullptr)
                         {
                             selectedSprite = hoveredSprite;
+                            selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
                             selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
                             selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().y;
                             selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::Units::WorldPixels>().x;
@@ -810,13 +811,13 @@ namespace obe
 
                     
                     //Sprite Scale
-                    if (cursor.getPressed("Left") && selectedSprite != nullptr)
+                    /*if (cursor.getPressed("Left") && selectedSprite != nullptr)
                     {
                         selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
                         world.reorganizeLayers();
-                    }
+                    }*/
                     //Sprite Move
-                    else if (cursor.getPressed("Left") && selectedSprite != nullptr)
+                    if (cursor.getPressed("Left") && selectedSprite != nullptr)
                     {
                         if (selectedSprite->getParentID() == "")
                         {
@@ -847,9 +848,16 @@ namespace obe
                     if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
                     {
                         if (keybind.isActionEnabled("RotateLeft") && selectedSprite != nullptr)
-                            selectedSprite->rotate(-1 * framerateManager.getGameSpeed());
+                        {
+                            //selectedSprite->rotate(-1 * framerateManager.getGameSpeed());
+                            selectedSprite->scale(2 * framerateManager.getGameSpeed(), 2 * framerateManager.getGameSpeed());
+                        }
+                            
                         if (keybind.isActionEnabled("RotateRight") && selectedSprite != nullptr)
-                            selectedSprite->rotate(1 * framerateManager.getGameSpeed());
+                        {
+                            //selectedSprite->rotate(1 * framerateManager.getGameSpeed());
+                            selectedSprite->scale(-2 * framerateManager.getGameSpeed(), -2 * framerateManager.getGameSpeed());
+                        }
                     }
 
                     /*if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)

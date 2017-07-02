@@ -117,30 +117,56 @@ namespace obe
             return m_size;
         }
 
+        void LevelSprite::setScalingOrigin(int x, int y)
+        {
+            m_originScaX = x;
+            m_originScaY = y;
+            m_returnSprite.setScalingOrigin(x, y);
+        }
+
         void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY)
         {
             std::map<std::string, obe::Types::any> drawOptions;
 
-            int r = 4;
-
             drawOptions["lines"] = true;
             drawOptions["points"] = true;
-            drawOptions["radius"] = r;
+            drawOptions["radius"] = m_handlePointRadius;
             drawOptions["point_color"] = sf::Color::White;
 
             std::vector<sf::Vector2i> drawPoints;
 
             Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::Units::WorldPixels);
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + this->getHeight() / 2);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - r, pixelPosition.y + this->getHeight() - r);
-            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + this->getHeight() - r);
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + this->getHeight() - r);
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + this->getHeight() / 2);
+            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - m_handlePointRadius, pixelPosition.y + m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - m_handlePointRadius, pixelPosition.y + this->getHeight() / 2);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() - m_handlePointRadius, pixelPosition.y + this->getHeight() - m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + this->getWidth() / 2, pixelPosition.y + this->getHeight() - m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + this->getHeight() - m_handlePointRadius);
+            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + this->getHeight() / 2);
 
             Utils::drawPolygon(target, drawPoints, drawOptions);
+        }
+
+        void LevelSprite::getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY)
+        {
+            Coord::UnitVector drawPosition = this->getDrawPosition(cameraPosition);
+            m_handleRect.setPosition(drawPosition + Coord::UnitVector(m_handlePointRadius, m_handlePointRadius, Coord::Units::WorldPixels));
+            m_handleRect.setSize(m_size - Coord::UnitVector(2 * m_handlePointRadius, 2 * m_handlePointRadius, Coord::Units::WorldPixels));
+            for (int i = 0; i < 9; i++)
+            {
+                Coord::Referencial refIndex = static_cast<Coord::Referencial>(i);
+                std::cout << refIndex << std::endl;
+                Coord::UnitVector refPoint = m_handleRect.getPosition(refIndex).to<Coord::Units::WorldPixels>();
+                std::cout << refPoint.x - (m_handlePointRadius / 2) << " <= " << posX << " <= " << refPoint.x + (m_handlePointRadius / 2) << std::endl;
+                if (Functions::Math::isBetween(posX, refPoint.x - m_handlePointRadius, refPoint.x + m_handlePointRadius))
+                {
+                    if (Functions::Math::isBetween(posY, refPoint.y - m_handlePointRadius, refPoint.y + m_handlePointRadius))
+                    {
+                        std::cout << "CLICKED POINT" << std::endl;
+                    }
+                }
+            }
         }
 
         void LevelSprite::setTranslationOrigin(int x, int y)
@@ -386,6 +412,36 @@ namespace obe
         void LevelSprite::setParentID(std::string parent)
         {
             m_parentID = parent;
+        }
+
+        LevelSprite::HandlePoint::HandlePoint(LevelSprite* parent, Coord::Referencial ref)
+        {
+            m_parent = parent;
+            m_referencial = ref;
+            switch (ref)
+            {
+            case Coord::Referencial::TopLeft: m_changeWidthFactor = -1; m_changeHeightFactor = -1; break;
+            case Coord::Referencial::TopRight: m_changeWidthFactor = 1; m_changeHeightFactor = -1; break;
+            case Coord::Referencial::Center: /* RAISE ERROR HERE */ break;
+            case Coord::Referencial::BottomLeft: m_changeWidthFactor = -1; m_changeHeightFactor = 1; break;
+            case Coord::Referencial::BottomRight: m_changeWidthFactor = 1; m_changeHeightFactor = 1; break;
+            case Coord::Referencial::Top: m_changeWidthFactor = 0; m_changeHeightFactor = -1; break;
+            case Coord::Referencial::Left: m_changeWidthFactor = -1; m_changeHeightFactor = 0; break;
+            case Coord::Referencial::Right: m_changeWidthFactor = 1; m_changeHeightFactor = 0; break;
+            case Coord::Referencial::Bottom: m_changeWidthFactor = 0; m_changeHeightFactor = 1; break;
+            default: ;
+            }
+}
+
+        void LevelSprite::HandlePoint::moveTo(int x, int y)
+        {
+            int diffX = (m_x - x) * m_changeWidthFactor;
+            int diffY = (m_y - y) * m_changeHeightFactor;
+            m_x = x;
+            m_y = y;
+            Coord::UnitVector scaleParent(diffX, diffY, Coord::Units::WorldPixels);
+            m_parent->setScalingOrigin(m_parent->getWidth() / 2, m_parent->getWidth() / 2);
+            m_parent->u_scale(scaleParent);
         }
     }
 }
