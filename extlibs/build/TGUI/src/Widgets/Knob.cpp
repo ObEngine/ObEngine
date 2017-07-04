@@ -367,12 +367,12 @@ namespace tgui
                 if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
                     || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
                 {
-                    allowedAngle = 360 - abs(m_endRotation - m_startRotation);
+                    allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
                 }
                 else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
                     || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
                 {
-                    allowedAngle = abs(m_endRotation - m_startRotation);
+                    allowedAngle = std::abs(m_endRotation - m_startRotation);
                 }
             }
 
@@ -422,12 +422,12 @@ namespace tgui
             if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
                 || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
             {
-                allowedAngle = 360 - abs(m_endRotation - m_startRotation);
+                allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
             }
             else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
                 || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
             {
-                allowedAngle = abs(m_endRotation - m_startRotation);
+                allowedAngle = std::abs(m_endRotation - m_startRotation);
             }
         }
 
