@@ -43,6 +43,8 @@ namespace obe
             template <typename N, typename N1, typename N2>
             bool isBetween(const N& target, const N1& lowerBound, const N2& upperBound);
             bool isDoubleInt(const double& value);
+            template <typename T> 
+            int sign(T val);
         }
 
         namespace Run
@@ -151,6 +153,12 @@ namespace obe
             if (target >= lowerBound && target <= upperBound)
                 return true;
             return false;
+        }
+
+        template <typename T> 
+        int Math::sign(T val)
+        {
+            return (T(0) < val) - (val < T(0));
         }
 
         //Functions::Type

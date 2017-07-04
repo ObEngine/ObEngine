@@ -129,6 +129,15 @@ namespace obe
             */
             BottomRight,
         };
+        Referencial reverseReferencial(Referencial ref);
+        Referencial horizontallyReverseReferencial(Referencial ref);
+        Referencial verticallyReverseReferencial(Referencial ref);
+        bool isOnLeftSide(Referencial ref);
+        bool isOnRightSide(Referencial ref);
+        bool isOnTopSide(Referencial ref);
+        bool isOnBottomSide(Referencial ref);
+        bool isOnCorner(Referencial ref);
+        bool isOnSide(Referencial ref);
         std::string referencialToString(Referencial ref);
         std::ostream& operator<<(std::ostream& os, Referencial m);
     }

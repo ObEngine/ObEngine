@@ -19,16 +19,13 @@ namespace obe
 {
     namespace Graphics
     {
-        class LevelSprite : public Coord::UnitBasedObject, public Types::Selectable
+        class LevelSprite : public Coord::UnitBasedObject, public Types::Selectable, public Coord::Rect
         {
         private:
             std::string m_path = "";
             std::string m_id;
 
-            Coord::ProtectedUnitVector m_position;
-            Coord::ProtectedUnitVector m_offset;
-            Coord::ProtectedUnitVector m_size;
-            Coord::Rect m_handleRect;
+            Coord::Rect m_rect;
             int m_handlePointRadius = 6;
 
             double m_width = 0;
@@ -51,11 +48,9 @@ namespace obe
             int m_zdepth = 0;
             sf::Texture m_texture;
             sfe::ComplexSprite m_returnSprite;
-            sf::Color m_spriteColor = sf::Color(255, 255, 255);
             std::string m_parentID = "";
 
-            void applySize();
-            void update();
+            void applySize();;
         public:
             LevelSprite(std::string id);
 
@@ -63,40 +58,26 @@ namespace obe
 
             void setSprite(sf::Sprite* spr);
             void setTexture(sf::Texture texture);
+            sf::Texture& getTexture();
             void setLayer(int layer);
             void setZDepth(int zdepth);
             void rotate(double addRotate);
             void setRotation(double rotate);
             
+            //Origins
             void setTranslationOrigin(int x, int y);
             void setRotationOrigin(int x, int y);
+            void setScalingOrigin(int x, int y);
 
             //Position
-            void setPosition(double x, double y);
-            void setOffset(double offx, double offy);
-            void u_setPosition(const Coord::UnitVector& vec);
-            void u_setOffset(const Coord::UnitVector& vec);
-            void move(double x, double y);
-            void moveOffset(double x, double y);
-            void u_move(const Coord::UnitVector& vec);
-            void u_moveOffset(const Coord::UnitVector& vec);
-            Coord::ProtectedUnitVector& getPosition();
-            Coord::ProtectedUnitVector& getOffset();
-            double getX() const;
-            double getY() const;
-            double getOffsetX() const;
-            double getOffsetY() const;
             Coord::UnitVector getDrawPosition(Coord::UnitVector& cameraPosition);
 
-            //Size
-            void scale(double scaleX, double scaleY);
-            void setSize(double scaleX, double scaleY);
-            void u_scale(const Coord::UnitVector& vec);
-            void u_setSize(const Coord::UnitVector& vec);
-            Coord::ProtectedUnitVector& getSize();
-            void setScalingOrigin(int x, int y);
+            //Handle
             void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
             void getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY);
+
+            double getSpriteWidth();
+            double getSpriteHeight();
 
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);
@@ -110,9 +91,6 @@ namespace obe
             int getZDepth() const;
             std::string getID() const;
             std::string getPath() const;
-            int getWidth() const;
-            int getHeight() const;
-            void calculateRealCoordinates();
             sf::FloatRect getRect();
             bool isDrawable() const;
             void setVisible(bool visible);

@@ -29,9 +29,10 @@ namespace obe
     {
         void loadLib(kaguya::State* lua, std::string lib);
         void loadHook(kaguya::State* lua, std::string hookname);
-        void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib);
+        void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib, bool alreadyImportedWarning = true);
         void registerLib(kaguya::State* lua, std::string lib);
         void loadBaseLib(kaguya::State* lua);
+        bool checkIfAlreadyImported(kaguya::State* lua, std::string lib);
 
         namespace CoreLib
         {
@@ -51,6 +52,7 @@ namespace obe
             void loadMathExp(kaguya::State* lua, std::vector<std::string> args);
             void loadPackage(kaguya::State* lua, std::vector<std::string> args);
             void loadPath(kaguya::State* lua, std::vector<std::string> args);
+            void loadSelectable(kaguya::State* lua, std::vector<std::string> args);
             void loadSFML(kaguya::State* lua, std::vector<std::string> args);
             void loadSound(kaguya::State* lua, std::vector<std::string> args);
             void loadSTD(kaguya::State* lua, std::vector<std::string> args);

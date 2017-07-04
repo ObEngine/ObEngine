@@ -13,7 +13,7 @@
 #include <experimental/filesystem>
 #endif
 
-#ifdef _WIN32
+#if _MSC_VER
 #include <io.h>
 #include <direct.h>
 #include <winbase.h>

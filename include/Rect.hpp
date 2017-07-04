@@ -2,6 +2,10 @@
 
 #include "Coordinates.hpp"
 #include "Referencial.hpp"
+#include "DrawUtils.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <any/any.hpp>
 
 namespace obe
 {
@@ -12,6 +16,7 @@ namespace obe
 			protected:
 				UnitVector m_size;
 				UnitVector m_position;
+				UnitVector getPointSizeModifier(Referencial ref);
 			public:
 				/**
 				 * \brief Conversion Type for Referencial Usage
@@ -48,6 +53,13 @@ namespace obe
 				double getY(Referencial ref = Referencial::TopLeft) const;
 				UnitVector getPosition(Referencial ref = Referencial::TopLeft) const;
 
+				void setPointPosition(const UnitVector& position, Referencial ref = Referencial::TopLeft);
+				void setPointPosition(double x, double y, Referencial ref = Referencial::TopLeft);
+				void movePoint(const UnitVector& position);
+				void movePoint(double x, double y);
+				void setPointX(double x, Referencial ref = Referencial::TopLeft);
+				void setPointY(double y, Referencial ref = Referencial::TopLeft);
+
 				void setSize(const UnitVector& size, Referencial ref = Referencial::TopLeft);
 				void setSize(double width, double height, Referencial ref = Referencial::TopLeft);
 				void scale(const UnitVector& size, Referencial ref = Referencial::TopLeft);
@@ -57,6 +69,8 @@ namespace obe
 				double getWidth() const;
 				double getHeight() const;
 				UnitVector getSize() const;
+
+				void draw(sf::RenderWindow& target);
 		};
 	}
 }
