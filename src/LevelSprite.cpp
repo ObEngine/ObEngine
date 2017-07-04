@@ -11,6 +11,12 @@ namespace obe
         {
             m_id = id;
             m_drawable = false;
+
+            for (int i = 0; i < 9; i++)
+            {
+                Coord::Referencial refIndex = static_cast<Coord::Referencial>(i);
+                m_handlePoints.emplace_back(this, refIndex);
+            }
         }
 
         void LevelSprite::load(std::string path)
@@ -128,7 +134,7 @@ namespace obe
             Utils::drawPolygon(target, drawPoints, drawOptions);
         }
 
-        void LevelSprite::getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY)
+        LevelSprite::HandlePoint* LevelSprite::getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY)
         {
             Coord::UnitVector drawPosition = this->getDrawPosition(cameraPosition);
             Coord::Rect handleRect;
@@ -140,14 +146,16 @@ namespace obe
                 std::cout << refIndex << std::endl;
                 Coord::UnitVector refPoint = handleRect.getPosition(refIndex).to<Coord::Units::WorldPixels>();
                 std::cout << refPoint.x - (m_handlePointRadius / 2) << " <= " << posX << " <= " << refPoint.x + (m_handlePointRadius / 2) << std::endl;
-                if (Functions::Math::isBetween(posX, refPoint.x - m_handlePointRadius, refPoint.x + m_handlePointRadius))
+                if (Functions::Math::isBetween(posX, refPoint.x - m_handlePointRadius, refPoint.x + m_handlePointRadius) && refIndex != Coord::Referencial::Center)
                 {
                     if (Functions::Math::isBetween(posY, refPoint.y - m_handlePointRadius, refPoint.y + m_handlePointRadius))
                     {
                         std::cout << "CLICKED POINT" << std::endl;
+                        return &m_handlePoints[i];
                     }
                 }
             }
+            return nullptr;
         }
 
         void LevelSprite::setTranslationOrigin(int x, int y)
@@ -166,16 +174,16 @@ namespace obe
 
         void LevelSprite::applySize()
         {
-            std::cout << "Applying Size of " << m_id << std::endl;
+            //std::cout << "Applying Size of " << m_id << std::endl;
             Coord::UnitVector pixelSize = m_size.to<Coord::Units::WorldPixels>();
             double spriteWidth = this->getSpriteWidth() * Functions::Math::sign(m_returnSprite.getScale().x); 
             double spriteHeight = this->getSpriteHeight() * Functions::Math::sign(m_returnSprite.getScale().y); 
-            /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;*/
+            /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
             std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
             std::cout << "From : " << pixelSize << std::endl;
-            std::cout << "Equals to : " << pixelSize.x / spriteWidth << ", " << pixelSize.y / spriteHeight << std::endl;
+            std::cout << "Equals to : " << pixelSize.x / spriteWidth << ", " << pixelSize.y / spriteHeight << std::endl;*/
             m_returnSprite.scale(pixelSize.x / spriteWidth, pixelSize.y / spriteHeight);
-            std::cout << "It gives scale : " << this->getSpriteWidth() << ", " << this->getSpriteHeight() << std::endl;
+            //std::cout << "It gives scale : " << this->getSpriteWidth() << ", " << this->getSpriteHeight() << std::endl;
         }
 
         void LevelSprite::setColor(sf::Color newColor)
@@ -311,34 +319,15 @@ namespace obe
             m_parentID = parent;
         }
 
-        LevelSprite::HandlePoint::HandlePoint(LevelSprite* parent, Coord::Referencial ref)
+        LevelSprite::HandlePoint::HandlePoint(Coord::Rect* parentRect, Coord::Referencial ref)
         {
-            m_parent = parent;
+            m_rect = parentRect;
             m_referencial = ref;
-            switch (ref)
-            {
-            case Coord::Referencial::TopLeft: m_changeWidthFactor = -1; m_changeHeightFactor = -1; break;
-            case Coord::Referencial::TopRight: m_changeWidthFactor = 1; m_changeHeightFactor = -1; break;
-            case Coord::Referencial::Center: /* RAISE ERROR HERE */ break;
-            case Coord::Referencial::BottomLeft: m_changeWidthFactor = -1; m_changeHeightFactor = 1; break;
-            case Coord::Referencial::BottomRight: m_changeWidthFactor = 1; m_changeHeightFactor = 1; break;
-            case Coord::Referencial::Top: m_changeWidthFactor = 0; m_changeHeightFactor = -1; break;
-            case Coord::Referencial::Left: m_changeWidthFactor = -1; m_changeHeightFactor = 0; break;
-            case Coord::Referencial::Right: m_changeWidthFactor = 1; m_changeHeightFactor = 0; break;
-            case Coord::Referencial::Bottom: m_changeWidthFactor = 0; m_changeHeightFactor = 1; break;
-            default: ;
-            }
-}
+        }
 
         void LevelSprite::HandlePoint::moveTo(int x, int y)
         {
-            int diffX = (m_x - x) * m_changeWidthFactor;
-            int diffY = (m_y - y) * m_changeHeightFactor;
-            m_x = x;
-            m_y = y;
-            Coord::UnitVector scaleParent(diffX, diffY, Coord::Units::WorldPixels);
-            m_parent->setScalingOrigin(m_parent->getWidth() / 2, m_parent->getWidth() / 2);
-            m_parent->scale(scaleParent);
+            m_rect->setPointPosition(Coord::UnitVector(x, y, Coord::Units::WorldPixels), m_referencial);
         }
     }
 }

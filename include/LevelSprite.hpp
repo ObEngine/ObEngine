@@ -21,6 +21,20 @@ namespace obe
     {
         class LevelSprite : public Coord::UnitBasedObject, public Types::Selectable, public Coord::Rect
         {
+        public:
+            class HandlePoint
+            {
+            private:
+                Coord::Rect* m_rect;
+                int m_changeWidthFactor;
+                int m_changeHeightFactor;
+                Coord::Referencial m_referencial;
+                int m_x;
+                int m_y;
+            public:
+                HandlePoint(Coord::Rect* parentRect, Coord::Referencial ref);
+                void moveTo(int x, int y);
+            };
         private:
             std::string m_path = "";
             std::string m_id;
@@ -43,6 +57,7 @@ namespace obe
             int m_originScaX = 0;
             int m_originScaY = 0;
 
+            std::vector<HandlePoint> m_handlePoints;
             std::vector<std::string> m_currentAtr = {};
             int m_layer = 1;
             int m_zdepth = 0;
@@ -72,10 +87,6 @@ namespace obe
             //Position
             Coord::UnitVector getDrawPosition(Coord::UnitVector& cameraPosition);
 
-            //Handle
-            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
-            void getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY);
-
             double getSpriteWidth();
             double getSpriteHeight();
 
@@ -98,19 +109,9 @@ namespace obe
             std::string getParentID() const;
             void setParentID(std::string parent);
 
-            class HandlePoint
-            {
-            private:
-                LevelSprite* m_parent;
-                int m_changeWidthFactor;
-                int m_changeHeightFactor;
-                Coord::Referencial m_referencial;
-                int m_x;
-                int m_y;
-            public:
-                HandlePoint(LevelSprite* parent, Coord::Referencial ref);
-                void moveTo(int x, int y);
-            };
+            //Handle
+            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
+            HandlePoint* getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY);
         };
     }
 }

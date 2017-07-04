@@ -171,7 +171,7 @@ namespace obe
 
 		void Rect::setPointPosition(const UnitVector& position, Referencial ref)
 		{
-			if (Coord::isOnSide(ref))
+			if (Coord::isOnCorner(ref))
 			{
 				UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
 				this->setPosition(position, ref);

@@ -157,6 +157,7 @@ namespace obe
             //Map Editor
             Graphics::LevelSprite* hoveredSprite = nullptr;
             Graphics::LevelSprite* selectedSprite = nullptr;
+            Graphics::LevelSprite::HandlePoint* selectedHandlePoint = nullptr;
             sf::FloatRect sdBoundingRect;
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;
@@ -611,10 +612,6 @@ namespace obe
 
             mapNameInput->setText(world.getLevelName());
 
-            Coord::Rect myRect;
-            myRect.setPosition(Coord::UnitVector(100, 100, Coord::Units::WorldPixels));
-            myRect.setSize(Coord::UnitVector(500, 500, Coord::Units::WorldPixels));
-
             //Game Starts
             while (window.isOpen())
             {
@@ -770,17 +767,29 @@ namespace obe
                     {
                         if (selectedSprite != nullptr)
                         {
-                            selectedSprite->setColor(sf::Color::White);
-                            selectedSprite->unselect();
-                            sprInfo.setString("");
-                            selectedSprite = nullptr;
-                            selectedSpriteOffsetX = 0;
-                            selectedSpriteOffsetY = 0;
+                            std::cout << "Picky picky :D" << std::endl;
+                            selectedHandlePoint = selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
+                            std::cout << selectedHandlePoint << ", " << hoveredSprite << ", " << selectedSprite << std::endl;
+                            if (selectedHandlePoint != nullptr && hoveredSprite == selectedSprite)
+                            {
+                                std::cout << "POINT POINT POINT" << std::endl;
+                                hoveredSprite = nullptr;
+                                selectedSprite = nullptr;
+                            }
+                            else if (hoveredSprite != selectedSprite)
+                            {
+                                selectedSprite->setColor(sf::Color::White);
+                                selectedSprite->unselect();
+                                sprInfo.setString("");
+                                selectedSprite = nullptr;
+                                selectedSpriteOffsetX = 0;
+                                selectedSpriteOffsetY = 0;
+                            }
+                            
                         }
                         if (hoveredSprite != nullptr)
                         {
                             selectedSprite = hoveredSprite;
-                            selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
                             selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
                             selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().y;
                             selectedSpritePickPosX = selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
@@ -1228,8 +1237,8 @@ namespace obe
                     if (showCursor)
                         window.draw(*cursor.getSprite());
 
-                    myRect.draw(window);
-                    myRect.setPointPosition(Coord::UnitVector(cursor.getX(), cursor.getY(), Coord::Units::WorldPixels), Coord::Referencial::TopRight);
+                    if (selectedHandlePoint != nullptr)
+                        selectedHandlePoint->moveTo(cursor.getX(), cursor.getY());
 
                     window.display();
                 }
