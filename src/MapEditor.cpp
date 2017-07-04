@@ -109,10 +109,7 @@ namespace obe
             //Toolbar
             tgui::Panel::Ptr titlePanel = tgui::Panel::create();
             tgui::Label::Ptr titleLabel = tgui::Label::create();
-            tgui::Label::Ptr cursorPosLabel = tgui::Label::create();
-            tgui::Label::Ptr cameraPosLabel = tgui::Label::create();
-            tgui::Label::Ptr absolutePosLabel = tgui::Label::create();
-            tgui::Label::Ptr layerLabel = tgui::Label::create();
+            tgui::Label::Ptr infoLabel = tgui::Label::create();
             tgui::Label::Ptr savedLabel = tgui::Label::create();
             tgui::Button::Ptr editorButton = tgui::Button::create();
             tgui::ComboBox::Ptr cameraMode = tgui::ComboBox::create();
@@ -220,10 +217,7 @@ namespace obe
 
             //Titlebar setup
             titlePanel->add(titleLabel, "titleLabel");
-            titlePanel->add(cursorPosLabel, "cursorPosLabel");
-            titlePanel->add(cameraPosLabel, "cameraPosLabel");
-            titlePanel->add(absolutePosLabel, "absolutePosLabel");
-            titlePanel->add(layerLabel, "layerLabel");
+            titlePanel->add(infoLabel, "cursorPosLabel");
             titlePanel->add(savedLabel, "savedLabel");
             titlePanel->add(editorButton, "editorButton");
             titlePanel->add(editMode, "editMode");
@@ -233,32 +227,17 @@ namespace obe
             titlePanel->setSize("&.w", "&.h / 30");
             titlePanel->setPosition(0, 0);
 
-            titleLabel->setPosition("120", 0);
+            titleLabel->setPosition(0, 0);
             titleLabel->setTextSize(bigFontSize);
             titleLabel->setRenderer(baseTheme.getRenderer("Label"));
-            titleLabel->setText("ÖbEngine Map Editor");
+            titleLabel->setText("ObEngine Map Editor");
 
-            cursorPosLabel->setPosition(bindRight(titleLabel) + 60, 5);
-            cursorPosLabel->setTextSize(mediumFontSize);
-            cursorPosLabel->setRenderer(baseTheme.getRenderer("Label"));
-            cursorPosLabel->setText("Cursor : (1920, 1080)");
+            infoLabel->setPosition(bindRight(titleLabel) + 60, 5);
+            infoLabel->setTextSize(mediumFontSize);
+            infoLabel->setRenderer(baseTheme.getRenderer("Label"));
+            infoLabel->setText("<>");
 
-            cameraPosLabel->setPosition(bindRight(cursorPosLabel) + 60, 5);
-            cameraPosLabel->setTextSize(mediumFontSize);
-            cameraPosLabel->setRenderer(baseTheme.getRenderer("Label"));
-            cameraPosLabel->setText("Camera : (10000, 10000)");
-
-            absolutePosLabel->setPosition(bindRight(cameraPosLabel) + 60, 5);
-            absolutePosLabel->setTextSize(mediumFontSize);
-            absolutePosLabel->setRenderer(baseTheme.getRenderer("Label"));
-            absolutePosLabel->setText("Sum : (10000, 10000)");
-
-            layerLabel->setPosition(bindRight(absolutePosLabel) + 60, 5);
-            layerLabel->setTextSize(mediumFontSize);
-            layerLabel->setRenderer(baseTheme.getRenderer("Label"));
-            layerLabel->setText("Layer : 10");
-
-            savedLabel->setPosition(bindRight(layerLabel) + 60, 5);
+            savedLabel->setPosition(bindLeft(editorButton) - 50, 5);
             savedLabel->setTextSize(smallFontSize);
             savedLabel->setRenderer(baseTheme.getRenderer("GreenLabel"));
             savedLabel->setText("Saved");
@@ -632,6 +611,10 @@ namespace obe
 
             mapNameInput->setText(world.getLevelName());
 
+            Coord::Rect myRect;
+            myRect.setPosition(Coord::UnitVector(100, 100, Coord::Units::WorldPixels));
+            myRect.setSize(Coord::UnitVector(500, 500, Coord::Units::WorldPixels));
+
             //Game Starts
             while (window.isOpen())
             {
@@ -800,8 +783,8 @@ namespace obe
                             selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
                             selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
                             selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Coord::Units::WorldPixels>().y;
-                            selectedSpritePickPosX = selectedSprite->getX() - selectedSprite->getOffset().to<Coord::Units::WorldPixels>().x;
-                            selectedSpritePickPosY = selectedSprite->getY() - selectedSprite->getOffset().to<Coord::Units::WorldPixels>().y;
+                            selectedSpritePickPosX = selectedSprite->getPosition().to<Coord::Units::WorldPixels>().x;
+                            selectedSpritePickPosY = selectedSprite->getPosition().to<Coord::Units::WorldPixels>().y;
                             selectedSprite->select();
 
                             sdBoundingRect = selectedSprite->getRect();
@@ -819,15 +802,15 @@ namespace obe
                     //Sprite Move
                     if (cursor.getPressed("Left") && selectedSprite != nullptr)
                     {
-                        if (selectedSprite->getParentID() == "")
+                        if (selectedSprite->getParentID().empty())
                         {
-                            selectedSprite->getPosition().set(Coord::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
+                            selectedSprite->setPosition(Coord::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
                                                                                 cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Coord::Units::WorldPixels));
                         }
                         else
                         {
-                            selectedSprite->setOffset(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX - selectedSpritePickPosX,
-                                                      cursor.getY() + pixelCamera.y - selectedSpriteOffsetY - selectedSpritePickPosY);
+                            std::cout << "Not empty : '" << selectedSprite->getParentID() << "'" << std::endl;
+                            // What to do here ?
                         }
                         sdBoundingRect = selectedSprite->getRect();
                         std::string sprInfoStr;
@@ -1067,10 +1050,18 @@ namespace obe
                 }
 
                 //GUI Update
-                cursorPosLabel->setText("Cursor : (" + std::to_string(cursor.getX()) + ", " + std::to_string(cursor.getY()) + ")");
-                cameraPosLabel->setText("Camera : (" + std::to_string(int(pixelCamera.x)) + ", " + std::to_string(int(pixelCamera.y)) + ")");
-                absolutePosLabel->setText("Sum : (" + std::to_string(int(pixelCamera.x) + int(cursor.getX())) + ", " + std::to_string(int(pixelCamera.y) + int(cursor.getY())) + ")");
-                layerLabel->setText("Layer : " + std::to_string(currentLayer));
+                infoLabel->setText(
+                    "Cursor : (" + 
+                        std::to_string(cursor.getX()) + ", " + std::to_string(cursor.getY()) + 
+                    ")" +
+                    std::string("   Camera : (") + 
+                        std::to_string(int(pixelCamera.x)) + ", " + std::to_string(int(pixelCamera.y)) + 
+                    ")" +
+                    std::string("   Sum : (") + 
+                        std::to_string(int(pixelCamera.x) + int(cursor.getX())) + ", " + std::to_string(int(pixelCamera.y) + int(cursor.getY())) + 
+                    ")" +
+                    std::string("   Layer : ") + std::to_string(currentLayer)
+                );
 
                 if (enableGridCheckbox->isChecked())
                 {
@@ -1236,6 +1227,9 @@ namespace obe
                     //Cursor
                     if (showCursor)
                         window.draw(*cursor.getSprite());
+
+                    myRect.draw(window);
+                    myRect.setPointPosition(Coord::UnitVector(cursor.getX(), cursor.getY(), Coord::Units::WorldPixels), Coord::Referencial::TopRight);
 
                     window.display();
                 }

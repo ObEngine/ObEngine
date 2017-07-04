@@ -304,7 +304,9 @@ namespace obe
             sprToAdd->getPosition() += Coord::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Coord::Units::WorldPixels);
             sprToAdd->setRotation(0);
             //ADD SPRITE SIZE
-            //sprToAdd->setScale(1, 1);
+            sf::Vector2u textureSize = sprToAdd->getTexture().getSize();
+            Coord::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Coord::Units::WorldPixels);
+            sprToAdd->setSize(initialSpriteSize);
             sprToAdd->setAtr(std::vector<std::string>());
             sprToAdd->setLayer(1);
             sprToAdd->setZDepth(1);

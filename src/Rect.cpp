@@ -5,6 +5,33 @@ namespace obe
 {
 	namespace Coord
 	{
+		UnitVector Rect::getPointSizeModifier(Referencial ref)
+		{
+			switch (ref)
+			{
+            case Referencial::TopLeft: 
+			    return UnitVector(1, 1);
+			case Referencial::Top: 
+			    return UnitVector(0, 1);
+			case Referencial::TopRight: 
+			    return UnitVector(-1, 1);
+			case Referencial::Left: 
+			    return UnitVector(1, 0);
+			case Referencial::Center: 
+			    return UnitVector(0, 0);
+			case Referencial::Right: 
+			    return UnitVector(-1, 0);
+			case Referencial::BottomLeft: 
+			    return UnitVector(1, -1);
+			case Referencial::Bottom: 
+			    return UnitVector(0, -1);
+			case Referencial::BottomRight: 
+			    return UnitVector(-1, -1);
+			default:
+				return UnitVector(0, 0);
+			}
+		}
+
 		void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
 		{
 			double factor = (type == ConversionType::From) ? 1.0 : -1.0;
@@ -140,6 +167,84 @@ namespace obe
 		double Rect::getHeight() const
 		{
 			return m_size.y;
+		}
+
+		void Rect::setPointPosition(const UnitVector& position, Referencial ref)
+		{
+			if (Coord::isOnSide(ref))
+			{
+				UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+				this->setPosition(position, ref);
+				UnitVector newSize = (oppositePointPosition - position) * this->getPointSizeModifier(ref);
+				this->setSize(newSize, ref);
+			}
+			else
+			{
+				
+			}
+		}
+
+		void Rect::setPointPosition(double x, double y, Referencial ref)
+		{
+			Coord::UnitVector pVec(x, y);
+			this->setPointPosition(pVec, ref);
+		}
+
+		void Rect::movePoint(const UnitVector& position)
+		{
+
+		}
+
+		void Rect::movePoint(double x, double y)
+		{
+
+		}
+
+		void Rect::setPointX(double x, Referencial ref)
+		{
+
+		}
+
+		void Rect::setPointY(double y, Referencial ref)
+		{
+
+		}
+
+		void Rect::draw(sf::RenderWindow& target)
+		{
+			int r = 6;
+			std::map<std::string, obe::Types::any> drawOptions;
+
+            drawOptions["lines"] = true;
+            drawOptions["points"] = true;
+            drawOptions["radius"] = r;
+            drawOptions["point_color"] = sf::Color::White;
+
+            std::vector<sf::Vector2i> drawPoints;
+
+            drawOptions["point_color_0"] = sf::Color(255, 0, 0);
+            drawOptions["point_color_1"] = sf::Color(255, 128, 0);
+            drawOptions["point_color_2"] = sf::Color(255, 255, 0);
+            drawOptions["point_color_3"] = sf::Color(128, 255, 0);
+            drawOptions["point_color_4"] = sf::Color(0, 255, 0);
+            drawOptions["point_color_5"] = sf::Color(0, 255, 128);
+            drawOptions["point_color_6"] = sf::Color(0, 255, 255);
+            drawOptions["point_color_7"] = sf::Color(0, 128, 255);
+            drawOptions["point_color_8"] = sf::Color(0, 0, 255);
+
+            Coord::UnitVector pixelPosition = m_position.to<Units::WorldPixels>();
+			Coord::UnitVector pixelSize = m_size.to<Units::WorldPixels>();
+
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + pixelSize.x / 2, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + r);
+            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + pixelSize.y / 2);
+            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + pixelSize.y - r);
+            drawPoints.emplace_back(pixelPosition.x + pixelSize.x / 2, pixelPosition.y + pixelSize.y - r);
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + pixelSize.y - r);
+            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + pixelSize.y / 2);
+
+            Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
 		}
 	}
 }

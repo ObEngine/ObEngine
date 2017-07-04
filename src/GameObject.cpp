@@ -243,7 +243,6 @@ namespace obe
                 m_objectLevelSprite->setAtr(decoAtrList);
                 m_objectLevelSprite->setLayer(layer);
                 m_objectLevelSprite->setZDepth(zdepth);
-                m_objectLevelSprite->setOffset(sprOffX, sprOffY);
                 m_hasLevelSprite = true;
                 world.reorganizeLayers();
             }

@@ -248,8 +248,8 @@ namespace obe
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("x", spritePositionRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("y", spritePositionRect.y);
                     Coord::UnitVector spriteSizeRect = Coord::UnitVector(
-                        m_spriteArray[i]->getWidth(), 
-                        m_spriteArray[i]->getHeight(), 
+                        m_spriteArray[i]->getSpriteWidth(), 
+                        m_spriteArray[i]->getSpriteHeight(), 
                         Coord::Units::WorldPixels).to<Coord::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("w", spriteSizeRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("h", spriteSizeRect.y);
@@ -379,14 +379,16 @@ namespace obe
                 Coord::UnitVector spritePosition = m_spriteArray[i]->getDrawPosition(pixelCamera);
                 sfe::ComplexSprite& tAffSpr = m_spriteArray[i]->getSprite();
 
+                //std::cout << "Draw Position of Sprite : " << spritePosition << std::endl;
+
                 tAffSpr.setPosition(spritePosition.x, spritePosition.y);
                 //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
-                tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
+                //tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
                 if (m_spriteArray[i]->isVisible())
                 {
                     target.draw(tAffSpr);
-                    if (m_spriteArray[i]->isSelected())
-                        m_spriteArray[i]->drawHandle(target, spritePosition.x, spritePosition.y);
+                    //if (m_spriteArray[i]->isSelected())
+                    m_spriteArray[i]->drawHandle(target, spritePosition.x, spritePosition.y);
                 }
             }
         }
@@ -561,9 +563,9 @@ namespace obe
             std::vector<Graphics::LevelSprite*> getSpriteVec = getSpritesByLayer(layer);
             for (unsigned int i = 0; i < getSpriteVec.size(); i++)
             {
-                if (x > getSpriteVec[i]->getRect().left && x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getWidth())
+                if (x > getSpriteVec[i]->getRect().left && x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getSpriteWidth())
                 {
-                    if (y > getSpriteVec[i]->getRect().top && y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getHeight())
+                    if (y > getSpriteVec[i]->getRect().top && y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getSpriteHeight())
                         returnSpr = getSpriteVec[i];
                 }
             }

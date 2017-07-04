@@ -66,7 +66,7 @@ namespace obe
             hookCore.getValue(lua, hookname);
         }
 
-        void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib)
+        bool checkIfAlreadyImported(kaguya::State* lua, std::vector<std::string> lib)
         {
             std::vector<std::string> importedLibs = (*lua)["Core"]["ImportedLibs"];
             bool alreadyImported = false;
@@ -95,7 +95,12 @@ namespace obe
                     }
                 }
             }
-            if (!alreadyImported)
+            return alreadyImported;
+        }
+
+        void loadCoreLib(kaguya::State* lua, std::vector<std::string> lib, bool alreadyImportedWarning)
+        {
+            if (!checkIfAlreadyImported(lua, lib))
             {
                 bool all = lib[0] == "*";
                 if (all)
@@ -184,6 +189,11 @@ namespace obe
                     CoreLib::loadPath(lua, (all) ? std::vector<std::string>{"Path"} : lib);
                     found = true;
                 }
+                if (lib[0] == "Selectable" || all)
+                {
+                    CoreLib::loadSelectable(lua, (all) ? std::vector<std::string>{"Selectable"} : lib);
+                    found = true;
+                }
                 if (lib[0] == "SFML" || all)
                 {
                     CoreLib::loadSFML(lua, (all) ? std::vector<std::string>{"SFML"} : lib);
@@ -220,7 +230,7 @@ namespace obe
                     throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UnknownCoreLib", {{"lib", libName}});
                 }
             }
-            else
+            else if (alreadyImportedWarning)
             {
                 std::cout << "<Warning:Script:*>[loadCoreLib] : Core.";
                 for (int i = 0; i < lib.size(); i++)
@@ -406,7 +416,9 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["Collision"])) (*lua)["Core"]["Collision"] = kaguya::NewTable();
             if (importAll || args[1] == "PolygonalCollider")
             {
-                (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(kaguya::UserdataMetatable<Collision::PolygonalCollider>()
+                loadCoreLib(lua, {"Selectable"}, false);
+                (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
+                    kaguya::UserdataMetatable<Collision::PolygonalCollider, kaguya::MultipleBase<Coord::UnitBasedObject, Types::Selectable>>()
                     .setConstructors<Collision::PolygonalCollider(std::string)>()
                     .addFunction("addExcludedTag", &Collision::PolygonalCollider::addExcludedTag)
                     .addFunction("addPoint", &Collision::PolygonalCollider::addPoint)
@@ -436,7 +448,6 @@ namespace obe
                     .addFunction("highlightLine", &Collision::PolygonalCollider::highlightLine)
                     .addFunction("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
                     .addFunction("isPointInBoundingBox", &Collision::PolygonalCollider::isPointInBoundingBox)
-                    .addFunction("isSelected", &Collision::PolygonalCollider::isSelected)
                     .addFunction("move", &Collision::PolygonalCollider::u_move)
                     .addFunction("movePoint", &Collision::PolygonalCollider::u_movePoint)
                     .addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
@@ -448,7 +459,6 @@ namespace obe
                     .addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::u_setPointPositionFromMaster)
                     .addFunction("setPosition", &Collision::PolygonalCollider::u_setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::u_setPositionFromMaster)
-                    .addFunction("setSelected", &Collision::PolygonalCollider::setSelected)
                     .addFunction("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
                 );
                 foundPart = true;
@@ -658,7 +668,7 @@ namespace obe
             {
                 (*lua)["Core"]["LevelSprite"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite>()
                     .setConstructors<Graphics::LevelSprite(std::string)>()
-                    .addFunction("addAtr", &Graphics::LevelSprite::addAtr)
+                    /*.addFunction("addAtr", &Graphics::LevelSprite::addAtr)
                     .addFunction("calculateRealCoordinates", &Graphics::LevelSprite::calculateRealCoordinates)
                     .addFunction("getAttributes", &Graphics::LevelSprite::getAttributes)
                     .addFunction("getH", &Graphics::LevelSprite::getHeight)
@@ -707,7 +717,7 @@ namespace obe
                     .addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)
                     .addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
                     .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
-                    .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
+                    .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)*/
 
                 );
                 foundPart = true;
@@ -856,6 +866,21 @@ namespace obe
             }
             (*lua)["Core"]["Path"]["MountPaths"] = kaguya::function(System::MountPaths);
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.PathImportError", {{"lib", Functions::Vector::join(args, ".")}});
+        }
+
+        void CoreLib::loadSelectable(kaguya::State* lua, std::vector<std::string> args)
+        {
+            registerLib(lua, Functions::Vector::join(args, "."));
+            bool importAll = args.size() == 1;
+            bool foundPart = false;
+            (*lua)["Core"]["Selectable"].setClass(kaguya::UserdataMetatable<Types::Selectable>()
+                .setConstructors<Types::Selectable(bool)>()
+                .addFunction("setSelected", &Types::Selectable::setSelected)
+                .addFunction("toggleSelected", &Types::Selectable::toggleSelected)
+                .addFunction("select", &Types::Selectable::select)
+                .addFunction("unselect", &Types::Selectable::unselect)
+                .addFunction("isSelected", &Types::Selectable::isSelected)
+            );
         }
 
         void CoreLib::loadSFML(kaguya::State* lua, std::vector<std::string> args)
