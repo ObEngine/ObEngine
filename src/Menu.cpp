@@ -81,7 +81,7 @@ namespace obe
                     newFileParser.at("View", "pos").createBaseAttribute("x", 0);
                     newFileParser.at("View", "pos").createBaseAttribute("y", 0);
                     newFileParser.at("View", "pos").useTemplate(newFileParser.getTemplate("Vector2<WorldUnits>"));
-                    newFileParser.at("View").createBaseAttribute("size", 4.5);
+                    newFileParser.at("View").createBaseAttribute("size", 1);
                     newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString(), true);
                     input->setText("");
                 }
