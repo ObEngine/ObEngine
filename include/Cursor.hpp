@@ -9,6 +9,12 @@ namespace obe
 {
     namespace System
     {
+        enum class CursorButton
+        {
+            Left,
+            Right
+        };
+
         class Cursor
         {
         private:
@@ -44,9 +50,9 @@ namespace obe
             void update();
             void handleTriggers() const;
             void updateOutsideWindow(bool state);
-            bool getPressed(std::string clic) const;
-            bool getClicked(std::string clic) const;
-            bool getReleased(std::string clic) const;
+            bool getPressed(CursorButton button) const;
+            bool getClicked(CursorButton button) const;
+            bool getReleased(CursorButton button) const;
             void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint);
             sf::Sprite* getSprite() const;
         };

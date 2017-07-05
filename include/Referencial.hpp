@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Coordinates.hpp"
+
 namespace obe
 {
     namespace Coord
@@ -138,6 +140,7 @@ namespace obe
         bool isOnBottomSide(Referencial ref);
         bool isOnCorner(Referencial ref);
         bool isOnSide(Referencial ref);
+        UnitVector getReferencialOffset(Referencial ref);
         std::string referencialToString(Referencial ref);
         std::ostream& operator<<(std::ostream& os, Referencial m);
     }

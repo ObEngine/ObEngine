@@ -3,6 +3,7 @@
 #include "Coordinates.hpp"
 #include "Referencial.hpp"
 #include "DrawUtils.hpp"
+#include "Functions.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <any/any.hpp>
@@ -16,7 +17,6 @@ namespace obe
 			protected:
 				UnitVector m_size;
 				UnitVector m_position;
-				UnitVector getPointSizeModifier(Referencial ref);
 			public:
 				/**
 				 * \brief Conversion Type for Referencial Usage
@@ -69,6 +69,7 @@ namespace obe
 				double getWidth() const;
 				double getHeight() const;
 				UnitVector getSize() const;
+				UnitVector getScaleFactor() const;
 
 				void draw(sf::RenderWindow& target);
 		};

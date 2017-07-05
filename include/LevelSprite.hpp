@@ -34,13 +34,13 @@ namespace obe
             public:
                 HandlePoint(Coord::Rect* parentRect, Coord::Referencial ref);
                 void moveTo(int x, int y);
+                Coord::Referencial getReferencial() const;
+                Coord::Rect& getRect() const;
+                static const int radius = 6;
             };
         private:
             std::string m_path = "";
             std::string m_id;
-
-            Coord::Rect m_rect;
-            int m_handlePointRadius = 6;
 
             double m_width = 0;
             double m_height = 0;
@@ -89,6 +89,8 @@ namespace obe
 
             double getSpriteWidth();
             double getSpriteHeight();
+            int getXScaleFactor();
+            int getYScaleFactor();
 
             void setAtr(std::vector<std::string> atrList);
             void addAtr(std::string atr);
@@ -112,6 +114,7 @@ namespace obe
             //Handle
             void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
             HandlePoint* getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY);
+            int getHandlePointRadius() const;
         };
     }
 }
