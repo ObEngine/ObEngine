@@ -248,8 +248,8 @@ namespace obe
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("x", spritePositionRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("y", spritePositionRect.y);
                     Coord::UnitVector spriteSizeRect = Coord::UnitVector(
-                        m_spriteArray[i]->getSpriteWidth(), 
-                        m_spriteArray[i]->getSpriteHeight(), 
+                        m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(), 
+                        m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(), 
                         Coord::Units::WorldPixels).to<Coord::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("w", spriteSizeRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("h", spriteSizeRect.y);

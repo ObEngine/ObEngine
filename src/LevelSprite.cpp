@@ -104,8 +104,8 @@ namespace obe
             std::map<std::string, obe::Types::any> drawOptions;
 
             drawOptions["lines"] = true;
-            drawOptions["points"] = true;
-            drawOptions["radius"] = m_handlePointRadius;
+            drawOptions["points"] = m_selected;
+            drawOptions["radius"] = HandlePoint::radius;
             drawOptions["point_color"] = sf::Color::White;
 
             std::vector<sf::Vector2i> drawPoints;
@@ -121,38 +121,36 @@ namespace obe
             drawOptions["point_color_7"] = sf::Color(0, 128, 255);
             drawOptions["point_color_8"] = sf::Color(0, 0, 255);
 
+            int pOffX = this->getXScaleFactor();
+            int pOffY = this->getYScaleFactor();
+
             Coord::UnitVector pixelPosition(spritePositionX, spritePositionY, Coord::Units::WorldPixels);
-            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y + m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x - m_handlePointRadius, pixelPosition.y + m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x - m_handlePointRadius, pixelPosition.y + spriteSize.y / 2);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x - m_handlePointRadius, pixelPosition.y + spriteSize.y - m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y + spriteSize.y - m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + spriteSize.y - m_handlePointRadius);
-            drawPoints.emplace_back(pixelPosition.x + m_handlePointRadius, pixelPosition.y + spriteSize.y / 2);
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y);
+            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y + spriteSize.y / 2);
+            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y + spriteSize.y);
+            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y + spriteSize.y);
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + spriteSize.y);
+            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + spriteSize.y / 2);
 
             Utils::drawPolygon(target, drawPoints, drawOptions);
         }
 
         LevelSprite::HandlePoint* LevelSprite::getHandlePoint(Coord::UnitVector& cameraPosition, int posX, int posY)
         {
-            Coord::UnitVector drawPosition = this->getDrawPosition(cameraPosition);
-            Coord::Rect handleRect;
-            handleRect.setPosition(drawPosition + Coord::UnitVector(m_handlePointRadius, m_handlePointRadius, Coord::Units::WorldPixels));
-            handleRect.setSize(m_size - Coord::UnitVector(2 * m_handlePointRadius, 2 * m_handlePointRadius, Coord::Units::WorldPixels));
             for (int i = 0; i < 9; i++)
             {
                 Coord::Referencial refIndex = static_cast<Coord::Referencial>(i);
-                std::cout << refIndex << std::endl;
-                Coord::UnitVector refPoint = handleRect.getPosition(refIndex).to<Coord::Units::WorldPixels>();
-                std::cout << refPoint.x - (m_handlePointRadius / 2) << " <= " << posX << " <= " << refPoint.x + (m_handlePointRadius / 2) << std::endl;
-                if (Functions::Math::isBetween(posX, refPoint.x - m_handlePointRadius, refPoint.x + m_handlePointRadius) && refIndex != Coord::Referencial::Center)
+                Coord::UnitVector refPoint = this->getPosition(refIndex).to<Coord::Units::WorldPixels>();
+                int lowerXBound = std::min(refPoint.x - HandlePoint::radius, refPoint.x + HandlePoint::radius);
+                int upperXBound = std::max(refPoint.x - HandlePoint::radius, refPoint.x + HandlePoint::radius);
+                if (Functions::Math::isBetween(posX, lowerXBound, upperXBound) && refIndex != Coord::Referencial::Center)
                 {
-                    if (Functions::Math::isBetween(posY, refPoint.y - m_handlePointRadius, refPoint.y + m_handlePointRadius))
-                    {
-                        std::cout << "CLICKED POINT" << std::endl;
+                    int lowerYBound = std::min(refPoint.y - HandlePoint::radius, refPoint.y + HandlePoint::radius);
+                    int upperYBound = std::max(refPoint.y - HandlePoint::radius, refPoint.y + HandlePoint::radius);
+                    if (Functions::Math::isBetween(posY, lowerYBound, upperYBound))
                         return &m_handlePoints[i];
-                    }
                 }
             }
             return nullptr;
@@ -176,14 +174,17 @@ namespace obe
         {
             //std::cout << "Applying Size of " << m_id << std::endl;
             Coord::UnitVector pixelSize = m_size.to<Coord::Units::WorldPixels>();
-            double spriteWidth = this->getSpriteWidth() * Functions::Math::sign(m_returnSprite.getScale().x); 
-            double spriteHeight = this->getSpriteHeight() * Functions::Math::sign(m_returnSprite.getScale().y); 
+            double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor(); 
+            double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor(); 
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
             std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
-            std::cout << "From : " << pixelSize << std::endl;
-            std::cout << "Equals to : " << pixelSize.x / spriteWidth << ", " << pixelSize.y / spriteHeight << std::endl;*/
-            m_returnSprite.scale(pixelSize.x / spriteWidth, pixelSize.y / spriteHeight);
-            //std::cout << "It gives scale : " << this->getSpriteWidth() << ", " << this->getSpriteHeight() << std::endl;
+            std::cout << "From : " << pixelSize << std::endl;*/
+            double widthScale = pixelSize.x / spriteWidth;
+            double heightScale = pixelSize.y / spriteHeight;
+            //std::cout << "ISSCALE : " << widthScale << ", " << heightScale << std::endl;
+            //std::cout << "ShiftTest : " << (pixelSize.x > 1 || pixelSize.x < -1) << ", " << (pixelSize.y > 1 || pixelSize.y < -1) << std::endl;
+            if ((pixelSize.x >= 1 || pixelSize.x <= -1) && (pixelSize.y >= 1 || pixelSize.y <= -1))
+                m_returnSprite.scale(widthScale, heightScale);
         }
 
         void LevelSprite::setColor(sf::Color newColor)
@@ -319,6 +320,21 @@ namespace obe
             m_parentID = parent;
         }
 
+        int LevelSprite::getHandlePointRadius() const
+        {
+            return HandlePoint::radius;
+        }
+
+        int LevelSprite::getXScaleFactor()
+        {
+            return Functions::Math::sign(m_returnSprite.getScale().x);
+        }
+        
+        int LevelSprite::getYScaleFactor()
+        {
+            return Functions::Math::sign(m_returnSprite.getScale().y);
+        }
+
         LevelSprite::HandlePoint::HandlePoint(Coord::Rect* parentRect, Coord::Referencial ref)
         {
             m_rect = parentRect;
@@ -327,7 +343,20 @@ namespace obe
 
         void LevelSprite::HandlePoint::moveTo(int x, int y)
         {
+            std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Coord::Units::WorldPixels>() << std::endl;
+            std::cout << "Set : " << x << ", " << y << std::endl;
             m_rect->setPointPosition(Coord::UnitVector(x, y, Coord::Units::WorldPixels), m_referencial);
+            std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Coord::Units::WorldPixels>() << std::endl;
+        }
+
+        Coord::Referencial LevelSprite::HandlePoint::getReferencial() const
+        {
+            return m_referencial;
+        }
+
+        Coord::Rect& LevelSprite::HandlePoint::getRect() const
+        {
+            return *m_rect;
         }
     }
 }

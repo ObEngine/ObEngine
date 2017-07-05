@@ -113,7 +113,7 @@ namespace obe
                     }
                 }
 
-                if (cursor.getClicked("Left") || cursor.getPressed("Left"))
+                if (cursor.getClicked(System::CursorButton::Left) || cursor.getPressed(System::CursorButton::Left))
                 {
                     cursorCollider.setPosition(cursor.getX(), cursor.getY());
                     std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
@@ -125,9 +125,9 @@ namespace obe
                         {
                             if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
                             {
-                                if (cursor.getClicked("Left"))
+                                if (cursor.getClicked(System::CursorButton::Left))
                                     world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Click", true);
-                                if (cursor.getPressed("Left"))
+                                if (cursor.getPressed(System::CursorButton::Left))
                                     world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Press", true);
                             }
                         }

@@ -5,33 +5,6 @@ namespace obe
 {
 	namespace Coord
 	{
-		UnitVector Rect::getPointSizeModifier(Referencial ref)
-		{
-			switch (ref)
-			{
-            case Referencial::TopLeft: 
-			    return UnitVector(1, 1);
-			case Referencial::Top: 
-			    return UnitVector(0, 1);
-			case Referencial::TopRight: 
-			    return UnitVector(-1, 1);
-			case Referencial::Left: 
-			    return UnitVector(1, 0);
-			case Referencial::Center: 
-			    return UnitVector(0, 0);
-			case Referencial::Right: 
-			    return UnitVector(-1, 0);
-			case Referencial::BottomLeft: 
-			    return UnitVector(1, -1);
-			case Referencial::Bottom: 
-			    return UnitVector(0, -1);
-			case Referencial::BottomRight: 
-			    return UnitVector(-1, -1);
-			default:
-				return UnitVector(0, 0);
-			}
-		}
-
 		void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
 		{
 			double factor = (type == ConversionType::From) ? 1.0 : -1.0;
@@ -175,7 +148,7 @@ namespace obe
 			{
 				UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
 				this->setPosition(position, ref);
-				UnitVector newSize = (oppositePointPosition - position) * this->getPointSizeModifier(ref);
+				UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
 				this->setSize(newSize, ref);
 			}
 			else
@@ -208,6 +181,11 @@ namespace obe
 		void Rect::setPointY(double y, Referencial ref)
 		{
 
+		}
+
+		UnitVector Rect::getScaleFactor() const
+		{
+			return UnitVector(Functions::Math::sign(m_size.x), Functions::Math::sign(m_size.y));
 		}
 
 		void Rect::draw(sf::RenderWindow& target)

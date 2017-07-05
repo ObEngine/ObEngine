@@ -169,42 +169,42 @@ namespace obe
         void Cursor::handleTriggers() const
         {
             //<Rewrite> Dumb code, could do way shorter
-            if (this->getClicked("Left"))
+            if (this->getClicked(CursorButton::Left))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Clicked");
             }
-            if (this->getClicked("Right"))
+            if (this->getClicked(CursorButton::Right))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Clicked");
             }
-            if (this->getPressed("Left"))
+            if (this->getPressed(CursorButton::Left))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Pressed");
             }
-            if (this->getPressed("Right"))
+            if (this->getPressed(CursorButton::Right))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Pressed");
             }
-            if (this->getReleased("Left"))
+            if (this->getReleased(CursorButton::Left))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Released");
             }
-            if (this->getReleased("Right"))
+            if (this->getReleased(CursorButton::Right))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
@@ -218,29 +218,29 @@ namespace obe
             m_doesUpdateOutsideWindow = state;
         }
 
-        bool Cursor::getPressed(std::string clic) const
+        bool Cursor::getPressed(CursorButton button) const
         {
-            if (clic == "Left")
+            if (button == CursorButton::Left)
                 return m_leftclicked;
-            if (clic == "Right")
+            if (button == CursorButton::Right)
                 return m_rightclicked;
             return false;
         }
 
-        bool Cursor::getClicked(std::string clic) const
+        bool Cursor::getClicked(CursorButton button) const
         {
-            if (clic == "Left")
+            if (button == CursorButton::Left)
                 return m_leftfirstclic;
-            if (clic == "Right")
+            if (button == CursorButton::Right)
                 return m_rightfirstclic;
             return false;
         }
 
-        bool Cursor::getReleased(std::string clic) const
+        bool Cursor::getReleased(CursorButton button) const
         {
-            if (clic == "Left")
+            if (button == CursorButton::Left)
                 return m_leftReleased;
-            if (clic == "Right")
+            if (button == CursorButton::Right)
                 return m_rightReleased;
             return false;
         }

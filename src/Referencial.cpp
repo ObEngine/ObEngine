@@ -148,6 +148,32 @@ namespace obe
             default: return false;
             }
         }
+        UnitVector getReferencialOffset(Referencial ref)
+		{
+			switch (ref)
+			{
+            case Referencial::TopLeft: 
+			    return UnitVector(1, 1);
+			case Referencial::Top: 
+			    return UnitVector(0, 1);
+			case Referencial::TopRight: 
+			    return UnitVector(-1, 1);
+			case Referencial::Left: 
+			    return UnitVector(1, 0);
+			case Referencial::Center: 
+			    return UnitVector(0, 0);
+			case Referencial::Right: 
+			    return UnitVector(-1, 0);
+			case Referencial::BottomLeft: 
+			    return UnitVector(1, -1);
+			case Referencial::Bottom: 
+			    return UnitVector(0, -1);
+			case Referencial::BottomRight: 
+			    return UnitVector(-1, -1);
+			default:
+				return UnitVector(0, 0);
+			}
+		}
         std::string referencialToString(Referencial ref)
         {
             switch (ref)
