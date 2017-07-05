@@ -150,7 +150,7 @@ namespace vili
             return baseIterator.result();
         }
         NodeValidator<T> baseIterator;
-        for (std::string& complex : getAll(Types::ComplexAttribute))
+        for (std::string& complex : getAll(AttributeType::ComplexAttribute))
         {
             if (!baseIterator.over())
                 getComplexAttribute(complex).walk<T>(walkFunction, baseIterator);
@@ -168,7 +168,7 @@ namespace vili
     template <class T>
     void ComplexAttribute::walk(std::function<void(NodeValidator<T>&)> walkFunction, NodeValidator<T>& iterator)
     {
-        for (std::string& complex : getAll(Types::ComplexAttribute))
+        for (std::string& complex : getAll(AttributeType::ComplexAttribute))
         {
             if (!iterator.over())
                 getComplexAttribute(complex).walk<T>(walkFunction, iterator);

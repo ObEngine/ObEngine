@@ -144,17 +144,26 @@ namespace obe
 
 		void Rect::setPointPosition(const UnitVector& position, Referencial ref)
 		{
+            UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+            UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
+            std::cout << "Position : " << position << std::endl;
+            std::cout << "Opposite Point Position : " << reverseReferencial(ref) << " : " << oppositePointPosition << std::endl;
+            std::cout << "New Size : " << newSize << std::endl;
 			if (Coord::isOnCorner(ref))
 			{
-				UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
-				this->setPosition(position, ref);
-				UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
-				this->setSize(newSize, ref);
+                this->setPosition(position, ref);
+                this->setSize(newSize, ref);
 			}
-			else
+			else if (Coord::isOnLeftSide(ref) || Coord::isOnRightSide(ref))
 			{
-				
-			}
+                this->setX(position.to<Units::WorldUnits>().x, ref);
+                this->setWidth(newSize.x, ref);
+			} 
+            else if (Coord::isOnTopSide(ref) || Coord::isOnBottomSide(ref))
+            {
+                this->setY(position.to<Units::WorldUnits>().y, ref);
+                this->setHeight(newSize.y, ref);
+            }
 		}
 
 		void Rect::setPointPosition(double x, double y, Referencial ref)
