@@ -17,7 +17,6 @@ There are other libraries but they are included in the repository (extlibs/ fold
 - [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (zlib License) (Scripting language)
 - [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
-- [rlutil](https://github.com/tapio/rlutil) (Unlicense) (Color in console)
 - [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
 - [tinydir](https://github.com/cxong/tinydir) (BSD2 License) (tiny filesystem, soon replaced with C++17's filesystem)
 - [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
