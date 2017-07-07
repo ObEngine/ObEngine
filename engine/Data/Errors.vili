@@ -44,9 +44,9 @@ ObEngine:
             UnknownStream:
                 where:"getStream"
                 message:"Can't find Stream : %stream%"
-    DataParserLuaBridge:
-        where:"DataParserLuaBridge"
-        file:"src/DataParserLuaBridge.cpp"
+    ViliLuaBridge:
+        where:"ViliLuaBridge"
+        file:"src/ViliLuaBridge.cpp"
         LuaTableToComplexAttribute:
             where:"luaTableToComplexAttribute"
             NotATable:

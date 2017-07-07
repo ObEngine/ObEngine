@@ -56,10 +56,6 @@ namespace vili
             {
                 for (int i = 0; i < complex->getAll(AttributeType::LinkAttribute).size(); i++)
                 {
-                    std::cout << complex->getAll(AttributeType::LinkAttribute)[i] << std::endl;
-                }
-                for (int i = 0; i < complex->getAll(AttributeType::LinkAttribute).size(); i++)
-                {
                     for (int j = 0; j < attributeAddresses.size(); j++)
                     {
                         if (complex->getLinkAttribute(complex->getAll(AttributeType::LinkAttribute)[i]) == (*attributeAddresses[j]))

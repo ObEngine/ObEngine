@@ -1,0 +1,188 @@
+#pragma once
+
+#include <vili/Vili.hpp>
+
+#include <Animation/AnimationGroup.hpp>
+#include <System/Path.hpp>
+
+namespace obe
+{
+	/**
+     * \brief Various Animation Classes
+     */
+    namespace Animation
+    {
+        /**
+		 * \brief The Play Mode of an Animation.\n
+		 *        It indicates whether an Animation can be interrupted or not and what to do when the Animation is over.
+		 */
+		enum class AnimationPlayMode
+		{
+			/**
+			 * \brief The Animation will play once and stay at last texture
+			 */
+			OneTime,
+			/**
+			 * \brief The Animation will play in loop and can be interrupted at any time
+			 */
+			Loop,
+			/**
+			 * \brief The Animation will be played Once and can't be interrupted
+			 */
+			Force
+		};
+
+	    /**
+		 * \brief Converts a std::string containing an AnimationPlayMode in string form to an AnimationPlayMode enum value.
+		 * \param animationPlayMode The std::string containing the AnimationPlayMode in string form.
+		 * \return The converted value which is an AnimationPlayMode enum value.
+		 */
+		AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
+
+	    /**
+		 * \brief The AnimationStatus indicates whether the current Animation should continue to play or call another one.
+		 */
+		enum class AnimationStatus
+		{
+			/**
+			 * \brief The Animation continues to play.
+			 */
+			Play,
+			/**
+			 * \brief The Animation will call another one.\n
+			 *	      The name of the Animation to call is stored in m_animationToCall.\n
+			 *	      You can also get the Animation name to call by using Animation::getCalledAnimation().
+			 */
+			Call
+		};
+
+	    /**
+         * \brief A whole Animation that contains one or more AnimationGroup.
+         */
+        class Animation
+        {
+        private:
+            std::string m_animationName;
+            unsigned int m_animationDelay = 0;
+            AnimationPlayMode m_animationPlayMode = AnimationPlayMode::OneTime;
+            std::map<int, sf::Texture*> m_animationTextures;
+            std::map<std::string, std::unique_ptr<AnimationGroup>> m_animationGroupMap;
+            std::vector<std::vector<std::string>> m_animationCode;
+            std::string m_currentGroupName = "NONE";
+            AnimationStatus m_currentStatus = AnimationStatus::Play;
+			std::string m_animationToCall = "";
+            bool m_askCommand = true;
+            unsigned int m_codeIndex = 0;
+            int m_loopAmount = 0;
+            int m_currentDelay = 0;
+			Time::TimeUnit m_animationClock = 0;
+            bool m_isOver = false;
+            int m_sprOffsetX = 0;
+            int m_sprOffsetY = 0;
+            int m_priority = 0;
+
+        public:
+	        /**
+             * \brief Get the Animation name
+             * \return A std::string containing the name of the Animation
+             */
+            std::string getAnimationName() const;
+	        /**
+             * \brief Get the default delay of the Animation.\n 
+             *		  The delay will be transfered to AnimationGroup children if not specified.
+             * \return The default delay of the Animation in milliseconds.
+             */
+            unsigned int getAnimationDelay() const;
+	        /**
+             * \brief Get AnimationGroup pointer by groupName.\n
+             *		  It will throws a ObEngine.Animation.Animation.AnimationGroupNotFound if the AnimationGroup is not found.
+             * \param groupName The name of the AnimationGroup to return
+             * \return A pointer to the AnimationGroup
+             */
+            AnimationGroup* getAnimationGroup(const std::string& groupName);
+	        /**
+             * \brief Get the name of the current AnimationGroup
+             * \return A std::string containing the name of the current AnimationGroup
+             */
+            std::string getCurrentAnimationGroup() const;
+	        /**
+             * \brief Get the name of all contained AnimationGroup of the Animation
+             * \return A std::vector of std::string with all the names of the AnimationGroup
+             */
+            std::vector<std::string> getAllAnimationGroupName();
+	        /**
+             * \brief Get the Animation Play Mode
+             * \return An enum value containing the AnimationPlayMode, it can be one of these modes :\n
+             *		   - AnimationPlayMode::OneTime\n
+             *		   - AnimationPlayMode::Loop\n
+             *		   - AnimationPlayMode::Force\n
+             */
+            AnimationPlayMode getAnimationPlayMode() const;
+	        /**
+             * \brief Get the Animation Status
+             * \return An enum value containing the AnimationStatus, it can be one of these modes ;\n
+             *		   - AnimationStatus::Play\n
+             *		   - AnimationStatus::Call\n
+             */
+            AnimationStatus getAnimationStatus() const;
+	        /**
+			 * \brief Get the name of the Animation to call when the AnimationStatus of the Animation is equal to AnimationStatus::Call
+			 * \return A std::string containing the name of the Animation that will be called.
+			 */
+			std::string getCalledAnimation() const;
+	        /**
+             * \brief Configure an Animation using the Animation configuration file (Vili file)
+             * \param path System::Path to the Animation config file (.ani.vili file extension)
+             */
+            void loadAnimation(const System::Path& path);
+	        /**
+             * \brief Apply global Animation parameters (Sprite offset and priority)
+             * \param parameters A vili::ComplexAttribute that contains the following facultative parameters :\n
+             *					 - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in pixels.\n
+             *					 - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in pixels.\n
+             *					 - priority : Priority of the Animation (A higher Animation priority can't be interrupted by an Animation with a lower one).
+             */
+            void applyParameters(vili::ComplexAttribute& parameters);
+	        /**
+             * \brief Updates the Animation (Updates the current AnimationGroup, executes the AnimationCode)
+             */
+            void update();
+	        /**
+             * \brief Resets the Animation (Unselect current AnimationGroup and restart AnimationCode)
+             */
+            void reset();
+	        /**
+             * \brief Get the Sprite containing the current texture in the Animation
+             * \return A pointer to the currently displayed Sprite
+             */
+            sf::Sprite* getSprite();
+	        /**
+             * \brief Get the texture used in the Animation at the specified index
+             * \param index Index of the texture to return.
+             * \return A pointer to the sf::Texture at the given index
+             */
+            sf::Texture* getTextureAtIndex(int index);
+	        /**
+             * \brief Return whether the Animation is over or not
+             * \return true if the Animation is over, false otherwise
+             */
+            bool isAnimationOver() const;
+	        /**
+             * \brief Get the x Coordinate of the Sprite Offset (0 if not defined)
+             * \return an int containing the x Coordinate of the Sprite offset
+             */
+            int getSpriteOffsetX() const;
+	        /**
+             * \brief Get the y Coordinate of the Sprite Offset (0 if not defined)
+             * \return an int containing the y Coordinate of the Sprite offset
+             */
+            int getSpriteOffsetY() const;
+	        /**
+             * \brief Returns the Animation priority
+             * \return an int containing the priority of the Animation.\n
+             *		   Higher int is higher priority = Can't be interrupted by lower priority.
+             */
+            int getPriority() const;
+        };
+    }
+}

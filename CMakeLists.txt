@@ -19,8 +19,8 @@ add_subdirectory(extlibs/build/elzip)
 add_subdirectory(extlibs/build/lua)
 add_subdirectory(extlibs/build/TGUI)
 
-file(GLOB PG_OBE include/*.hpp)
-file(GLOB HD_OBE src/*.cpp)
+file(GLOB_RECURSE PG_OBE include/*.hpp)
+file(GLOB_RECURSE HD_OBE src/*.cpp)
 
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")

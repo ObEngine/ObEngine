@@ -1,22 +1,30 @@
-//Author : Sygmei
-//Key : 976938ef7d46c286a2027d73f3a99467bcfa8ff0c1e10bd0016139744ef5404f4eb4d069709f9831f6de74a094944bf0f1c5bf89109e9855290336a66420376f
+#include <fstream>
+#include <iostream>
 
-#include "ObEngine.hpp"
+#include <vili/Vili.hpp>
+#include <SFML/Graphics.hpp>
 
-#include "Rect.hpp" //To remove
+#include <Editor/MapEditor.hpp>
+#include <Modes.hpp>
+#include <ObEngine.hpp>
+#include <System/MountablePath.hpp>
+#include <Transform/UnitVector.hpp>
+#include <Utils/ExecUtils.hpp>
 
 void LoadErrors()
 {
     vili::LoadErrors("Data/Errors.vili");
 }
 
+using namespace obe;
+
 int main(int argc, char** argv)
 {
-    obe::Functions::Run::Parser runParser(argv, argc);
+    Utils::Exec::RunArgsParser runParser(argv, argc);
     std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
-    obe::Coord::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
     /*std::ofstream out("debug.log");
     std::streambuf *coutbuf = std::cout.rdbuf();
@@ -27,25 +35,25 @@ int main(int argc, char** argv)
     std::cerr.rdbuf(out_err.rdbuf());
 
     std::cout << "<Computer Configuration>" << std::endl;
-    std::cout << "Screen Resolution : " << obe::Coord::UnitVector::Screen.w << ", " << obe::Coord::UnitVector::Screen.h << std::endl;
+    std::cout << "Screen Resolution : " << Transform::UnitVector::Screen.w << ", " << Transform::UnitVector::Screen.h << std::endl;
 
     LoadErrors();
-    obe::System::MountPaths();
+    System::MountPaths();
 
     if (startMode == "edit")
     {
-        std::string editMapName = obe::Modes::chooseMapMenu();
+        std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
-            obe::Editor::editMap(editMapName);
+            Editor::editMap(editMapName);
     }
     else if (startMode == "play")
-        obe::Modes::startGame();
+        Modes::startGame();
     else if (startMode == "toolkit")
-        obe::Modes::startToolkitMode();
+        Modes::startToolkitMode();
     else if (startMode == "dev")
-        obe::Modes::startDevMenu();
+        Modes::startDevMenu();
     else
-        obe::Modes::startGame();
+        Modes::startGame();
 
     return 0;
 }
