@@ -5,7 +5,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <Editor/MapEditor.hpp>
-#include <Modes.hpp>
+#include <Modes/Game.hpp>
+#include <Modes/Menu.hpp>
+#include <Modes/Toolkit.hpp>
 #include <ObEngine.hpp>
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>

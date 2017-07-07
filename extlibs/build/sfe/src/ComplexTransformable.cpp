@@ -1,4 +1,4 @@
-#include <SFMLExtension/ComplexTransformable.hpp>
+#include <ComplexTransformable.hpp>
 
 namespace sfe
 {

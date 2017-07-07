@@ -3,7 +3,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include <SFMLExtension/ComplexSprite.hpp>
+#include <ComplexSprite.hpp>
 
 namespace sfe
 {

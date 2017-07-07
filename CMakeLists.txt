@@ -14,10 +14,10 @@ if(_USE_CPP_NEW_FS)
 endif()
 
 add_subdirectory(extlibs/build/clipper)
-add_subdirectory(extlibs/build/vili)
 add_subdirectory(extlibs/build/elzip)
 add_subdirectory(extlibs/build/lua)
 add_subdirectory(extlibs/build/TGUI)
+add_subdirectory(extlibs/build/vili)
 
 file(GLOB_RECURSE PG_OBE include/*.hpp)
 file(GLOB_RECURSE HD_OBE src/*.cpp)
@@ -31,6 +31,7 @@ endif()
 set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(SFML 2 REQUIRED graphics window system network audio)
+add_subdirectory(extlibs/build/sfe)
 find_package(OpenGL REQUIRED)
 
 include_directories(include/)
@@ -43,10 +44,11 @@ include_directories(${OPENGL_INCLUDE_DIR})
 add_executable(ObEngine ${PG_OBE} ${HD_OBE})
 
 target_link_libraries(ObEngine clipper)
-target_link_libraries(ObEngine vili)
 target_link_libraries(ObEngine elzip)
 target_link_libraries(ObEngine lua)
+target_link_libraries(ObEngine sfe)
 target_link_libraries(ObEngine tgui)
+target_link_libraries(ObEngine vili)
 
 if(SFML_FOUND)
   target_link_libraries(ObEngine ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
@@ -55,3 +57,30 @@ endif()
 target_link_libraries(ObEngine ${OPENGL_LIBRARIES})
 
 file(COPY engine/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/engine/ )
+
+set(_inc_root_path "${ObEngine_SOURCE_DIR}/include/")
+file(
+    GLOB_RECURSE _inc_list 
+    LIST_DIRECTORIES false
+    "${_inc_root_path}/*.hpp"
+)
+set(_src_root_path "${ObEngine_SOURCE_DIR}/src/")
+file(
+    GLOB_RECURSE _src_list 
+    LIST_DIRECTORIES false
+    "${_src_root_path}/*.cpp"
+)
+
+foreach(_include IN ITEMS ${_inc_list})
+    get_filename_component(_include_path "${_include}" PATH)
+    file(RELATIVE_PATH _include_path_rel "${_inc_root_path}" "${_include_path}")
+    string(REPLACE "/" "\\" _group_path "${_include_path_rel}")
+    source_group("${_group_path}" FILES "${_include}")
+endforeach()
+
+foreach(_source IN ITEMS ${_src_list})
+    get_filename_component(_source_path "${_source}" PATH)
+    file(RELATIVE_PATH _source_path_rel "${_src_root_path}" "${_source_path}")
+    string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+    source_group("${_group_path}" FILES "${_source}")
+endforeach()

@@ -8,7 +8,7 @@
 
 #include <SFML/System/String.hpp>
 
-#include <SFMLExtension/RichText.hpp>
+#include <RichText.hpp>
 
 namespace sfe
 {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <SFMLExtension/ComplexSprite.hpp>
+#include <sfe/ComplexSprite.hpp>
+
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
