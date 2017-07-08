@@ -36,7 +36,6 @@ namespace obe
                 .addFunction("canDisplay", &GameObject::canDisplay)
                 .addFunction("delete", &GameObject::deleteObject)
                 .addFunction("exec", &GameObject::exec)
-                .addFunction("getID", &GameObject::getID)
                 .addFunction("getInitialised", &GameObject::getInitialised)
                 .addFunction("getPriority", &GameObject::getPriority)
                 .addFunction("getPublicKey", &GameObject::getPublicKey)
@@ -121,7 +120,7 @@ namespace obe
         }
 
         //GameObject
-        GameObject::GameObject(std::string type, std::string id) : m_localTriggers(nullptr)
+        GameObject::GameObject(const std::string& type, const std::string& id) : m_localTriggers(nullptr), Identifiable(id)
         {
             m_type = type;
             m_id = id;
@@ -181,25 +180,25 @@ namespace obe
                         pointBuffer = colliderPoint->get<double>();
                 }
                 if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "tag"))
-                    m_objectCollider->addTag(obj.at<vili::BaseAttribute>("Collider", "tag").get<std::string>());
+                    m_objectCollider->addTag(Collision::ColliderTagType::Tag, obj.at<vili::BaseAttribute>("Collider", "tag").get<std::string>());
                 else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "tags"))
                 {
                     for (vili::BaseAttribute* cTag : obj.at<vili::ListAttribute>("Collider", "tags"))
-                        m_objectCollider->addTag(cTag->get<std::string>());
+                        m_objectCollider->addTag(Collision::ColliderTagType::Tag, cTag->get<std::string>());
                 }
                 if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "accept"))
-                    m_objectCollider->addAcceptedTag(obj.at<vili::BaseAttribute>("Collider", "accept").get<std::string>());
+                    m_objectCollider->addTag(Collision::ColliderTagType::Accepted, obj.at<vili::BaseAttribute>("Collider", "accept").get<std::string>());
                 else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "accept"))
                 {
                     for (vili::BaseAttribute* aTag : obj.at<vili::ListAttribute>("Collider", "accept"))
-                        m_objectCollider->addAcceptedTag(aTag->get<std::string>());
+                        m_objectCollider->addTag(Collision::ColliderTagType::Accepted, aTag->get<std::string>());
                 }
-                if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "exclude"))
-                    m_objectCollider->addExcludedTag(obj.at<vili::BaseAttribute>("Collider", "exclude").get<std::string>());
-                else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "exclude"))
+                if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "reject"))
+                    m_objectCollider->addTag(Collision::ColliderTagType::Rejected, obj.at<vili::BaseAttribute>("Collider", "reject").get<std::string>());
+                else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "reject"))
                 {
-                    for (vili::BaseAttribute* eTag : obj.at<vili::ListAttribute>("Collider", "exclude"))
-                        m_objectCollider->addExcludedTag(eTag->get<std::string>());
+                    for (vili::BaseAttribute* rTag : obj.at<vili::ListAttribute>("Collider", "reject"))
+                        m_objectCollider->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
                 }
 
                 m_hasCollider = true;
@@ -362,11 +361,6 @@ namespace obe
             }
         }
 
-        std::string GameObject::getID() const
-        {
-            return m_id;
-        }
-
         std::string GameObject::getType() const
         {
             return m_type;
@@ -465,12 +459,12 @@ namespace obe
             return m_localTriggers.operator->();
         }
 
-        void GameObject::useLocalTrigger(std::string trName)
+        void GameObject::useLocalTrigger(const std::string& trName)
         {
             this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName));
         }
 
-        void GameObject::useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs)
+        void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs)
         {
             if (trName == "*")
             {
@@ -502,7 +496,7 @@ namespace obe
             m_objectScript->dostring(query);
         }
 
-        void GameObject::sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value) const
+        void GameObject::sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const
         {
             (*m_objectScript)["LuaCore"]["Lua_ReqList"][argName] = value;
         }

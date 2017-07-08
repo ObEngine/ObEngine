@@ -5,13 +5,14 @@
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
+#include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
 
 namespace obe
 {
     namespace Graphics
     {
-        class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect
+        class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect, public Types::Identifiable
         {
         public:
             class HandlePoint
@@ -32,7 +33,6 @@ namespace obe
             };
         private:
             std::string m_path = "";
-            std::string m_id;
 
             double m_width = 0;
             double m_height = 0;
@@ -59,9 +59,9 @@ namespace obe
 
             void applySize();;
         public:
-            LevelSprite(std::string id);
+            explicit LevelSprite(const std::string& id);
 
-            void load(std::string path);
+            void load(const std::string& path);
 
             void setSprite(sf::Sprite* spr);
             void setTexture(sf::Texture texture);
@@ -85,7 +85,7 @@ namespace obe
             int getYScaleFactor();
 
             void setAtr(std::vector<std::string> atrList);
-            void addAtr(std::string atr);
+            void addAtr(const std::string& atr);
             std::vector<std::string> getAttributes() const;
             void removeAtrByIndex(int index);
             void removeAtrByName(std::string name);
@@ -94,14 +94,13 @@ namespace obe
             float getRotation() const;
             int getLayer() const;
             int getZDepth() const;
-            std::string getID() const;
             std::string getPath() const;
             sf::FloatRect getRect();
             bool isDrawable() const;
             void setVisible(bool visible);
             bool isVisible() const;
             std::string getParentID() const;
-            void setParentID(std::string parent);
+            void setParentID(const std::string& parent);
 
             //Handle
             void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);

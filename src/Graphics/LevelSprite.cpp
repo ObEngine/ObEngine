@@ -10,7 +10,7 @@ namespace obe
 {
     namespace Graphics
     {
-        LevelSprite::LevelSprite(std::string id) : Selectable(false)
+        LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Identifiable(id)
         {
             m_id = id;
             m_drawable = false;
@@ -22,7 +22,7 @@ namespace obe
             }
         }
 
-        void LevelSprite::load(std::string path)
+        void LevelSprite::load(const std::string& path)
         {
             if (path != "")
             {
@@ -66,7 +66,7 @@ namespace obe
             m_currentAtr = atrList;
         }
 
-        void LevelSprite::addAtr(std::string atr)
+        void LevelSprite::addAtr(const std::string& atr)
         {
             m_currentAtr.push_back(atr);
         }
@@ -268,11 +268,6 @@ namespace obe
             return m_zdepth;
         }
 
-        std::string LevelSprite::getID() const
-        {
-            return m_id;
-        }
-
         std::string LevelSprite::getPath() const
         {
             return m_path;
@@ -318,7 +313,7 @@ namespace obe
             return m_parentID;
         }
 
-        void LevelSprite::setParentID(std::string parent)
+        void LevelSprite::setParentID(const std::string& parent)
         {
             m_parentID = parent;
         }

@@ -129,9 +129,9 @@ namespace obe
                             if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
                             {
                                 if (cursor.getClicked(System::CursorButton::Left))
-                                    world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Click", true);
+                                    world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
                                 if (cursor.getPressed(System::CursorButton::Left))
-                                    world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Press", true);
+                                    world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
                             }
                         }
                     }

@@ -237,29 +237,29 @@ namespace obe
             {
                 if (m_spriteArray[i]->getParentID() == "")
                 {
-                    dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getID());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("path", m_spriteArray[i]->getPath());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createComplexAttribute("rect");
+                    dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("path", m_spriteArray[i]->getPath());
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createComplexAttribute("rect");
                     Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("x", spritePositionRect.x);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("y", spritePositionRect.y);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("x", spritePositionRect.x);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("y", spritePositionRect.y);
                     Transform::UnitVector spriteSizeRect = Transform::UnitVector(
                         m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(), 
                         m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(), 
                         Transform::Units::WorldPixels).to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("w", spriteSizeRect.x);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").createBaseAttribute("h", spriteSizeRect.y);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID(), "rect").useTemplate(
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("w", spriteSizeRect.x);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("h", spriteSizeRect.y);
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").useTemplate(
                         dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
                     );
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("layer", m_spriteArray[i]->getLayer());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("layer", m_spriteArray[i]->getLayer());
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
                     if (m_spriteArray[i]->getAttributes().size() != 0)
                     {
-                        dataStore->at("LevelSprites", m_spriteArray[i]->getID()).createListAttribute("attributeList");
+                        dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createListAttribute("attributeList");
                         for (unsigned int j = 0; j < m_spriteArray[i]->getAttributes().size(); j++)
-                            dataStore->at("LevelSprites", m_spriteArray[i]->getID()).getListAttribute("attributeList").push(m_spriteArray[i]->getAttributes()[j]);
+                            dataStore->at("LevelSprites", m_spriteArray[i]->getId()).getListAttribute("attributeList").push(m_spriteArray[i]->getAttributes()[j]);
                     }
                 }
             }
@@ -268,17 +268,17 @@ namespace obe
             {
                 if (m_colliderArray[i]->getParentID() == "")
                 {
-                    dataStore->at("Collisions").createComplexAttribute(m_colliderArray[i]->getID());
-                    dataStore->at("Collisions", m_colliderArray[i]->getID()).createComplexAttribute("unit");
-                    dataStore->at("Collisions", m_colliderArray[i]->getID(), "unit").useTemplate(
+                    dataStore->at("Collisions").createComplexAttribute(m_colliderArray[i]->getId());
+                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createComplexAttribute("unit");
+                    dataStore->at("Collisions", m_colliderArray[i]->getId(), "unit").useTemplate(
                         dataStore->getTemplate("Unit<" + unitsToString(m_colliderArray[i]->getWorkingUnit()) + ">")
                     );
-                    dataStore->at("Collisions", m_colliderArray[i]->getID()).createListAttribute("points");
+                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createListAttribute("points");
                     for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
                     {
                         Transform::UnitVector pVec = m_colliderArray[i]->u_getPointPosition(j);
-                        dataStore->at("Collisions", m_colliderArray[i]->getID()).getListAttribute("points").push(pVec.x);
-                        dataStore->at("Collisions", m_colliderArray[i]->getID()).getListAttribute("points").push(pVec.y);
+                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.x);
+                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.y);
                     }
                 }
             }
@@ -289,14 +289,14 @@ namespace obe
                 dataStore->at("LevelObjects", it->first).createBaseAttribute("type", it->second->getType());
                 (*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
                 kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
-                (*it->second->m_objectScript)("print('Saving : ', This:getID())");
+                (*it->second->m_objectScript)("print('Saving : ', This:getId())");
                 (*it->second->m_objectScript)("print(inspect(Local.Save()));");
                 (*it->second->m_objectScript)("print('Processing...')");
                 vili::ComplexAttribute* saveRequirements = Script::DataBridge::luaTableToComplexAttribute(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
                     dataStore->at("LevelObjects", it->first).pushComplexAttribute(saveRequirements);
-                (*it->second->m_objectScript)("print('Saving over for : ', This:getID())");
+                (*it->second->m_objectScript)("print('Saving over for : ', This:getId())");
             }
             if (m_scriptArray.size() > 0)
             {
@@ -346,15 +346,16 @@ namespace obe
         void World::display(sf::RenderWindow& target)
         {
             this->displaySprites(target);
+            Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
             {
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
-                    m_colliderArray[i]->setDrawOffset(-m_camera.getPosition().to<Transform::Units::WorldPixels>().x, -m_camera.getPosition().to<Transform::Units::WorldPixels>().y);
-                    m_colliderArray[i]->draw(target, m_showCollisionModes["drawLines"],
-                                             m_showCollisionModes["drawPoints"],
-                                             m_showCollisionModes["drawMasterPoint"],
-                                             m_showCollisionModes["drawSkel"]);
+                    m_colliderArray[i]->draw(target, -pixelCamera.x, -pixelCamera.y,
+                        m_showCollisionModes["drawLines"],
+                        m_showCollisionModes["drawPoints"],
+                        m_showCollisionModes["drawMasterPoint"],
+                        m_showCollisionModes["drawSkel"]);
                 }
             }
         }
@@ -564,7 +565,7 @@ namespace obe
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
-                if (m_spriteArray[i].get()->getID() == id)
+                if (m_spriteArray[i].get()->getId() == id)
                     return m_spriteArray[i].get();
             }
             throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownLevelSprite", {{"id", id}, {"map", m_levelName}});
@@ -574,7 +575,7 @@ namespace obe
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
-                if (m_spriteArray[i].get()->getID() == id)
+                if (m_spriteArray[i].get()->getId() == id)
                     return true;
             }
             return false;
@@ -589,7 +590,7 @@ namespace obe
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
-                if (m_spriteArray[i].get()->getID() == spriteToDelete->getID())
+                if (m_spriteArray[i].get()->getId() == spriteToDelete->getId())
                     m_spriteArray.erase(m_spriteArray.begin() + i);
             }
         }
@@ -628,7 +629,7 @@ namespace obe
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (id == m_colliderArray[i]->getID())
+                if (id == m_colliderArray[i]->getId())
                 {
                     return m_colliderArray[i].get();
                 }

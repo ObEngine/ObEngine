@@ -62,7 +62,7 @@ namespace obe
             return (A->X - O->X) * (B->Y - O->Y) - (A->Y - O->Y) * (B->X - O->X);
         }
 
-        PolygonalCollider::PolygonalCollider(std::string id) : Selectable(false), m_id(id)
+        PolygonalCollider::PolygonalCollider(const std::string& id) : Selectable(false), Identifiable(id)
         {
         }
 
@@ -70,11 +70,6 @@ namespace obe
         {
             this->clearOriginChildren();
             this->removeOrigin();
-        }
-
-        std::string PolygonalCollider::getID() const
-        {
-            return m_id;
         }
 
         int PolygonalCollider::getPointsAmount() const
@@ -128,6 +123,17 @@ namespace obe
             signedArea *= 0.5;
             m_masterPoint.X /= (6.0 * signedArea);
             m_masterPoint.Y /= (6.0 * signedArea);
+        }
+
+        std::vector<std::string>& PolygonalCollider::retrieveTagVector(ColliderTagType tagType)
+        {
+            switch (tagType)
+            {
+            case ColliderTagType::Tag: return m_tags;
+            case ColliderTagType::Accepted: return m_acceptedTags;
+            case ColliderTagType::Rejected: return m_rejectedTags;
+            default: ;
+            }
         }
 
         void PolygonalCollider::addPoint(int x, int y, int pointIndex)
@@ -194,9 +200,9 @@ namespace obe
         bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY)
         {
             //std::cout << m_id << " Test collision with : " << other->getID() << std::endl;
-            if (isATagExcluded(other->getAllTags()))
+            if (this->doesHaveAnyTag(ColliderTagType::Rejected, other->getAllTags(ColliderTagType::Tag)))
                 return false;
-            if (!isATagAccepted(other->getAllTags()))
+            if (!this->doesHaveAnyTag(ColliderTagType::Accepted, other->getAllTags(ColliderTagType::Tag)))
                 return false;
 
             ClipperLib::Path pPath = this->getAllPoints();
@@ -234,7 +240,7 @@ namespace obe
             std::vector<PolygonalCollider*> toExclude;
             for (PolygonalCollider* other : others)
             {
-                if (isATagExcluded(other->getAllTags()))
+                if (this->doesHaveAnyTag(ColliderTagType::Rejected, other->getAllTags(ColliderTagType::Tag)))
                 {
                     toExclude.push_back(other);
                 }
@@ -303,11 +309,6 @@ namespace obe
                     return true;
             }
             return false;
-        }
-
-        bool PolygonalCollider::isPointInBoundingBox(int x, int y) const
-        {
-            return (x >= m_boundingLeft && x <= m_boundingRight && y >= m_boundingTop && y <= m_boundingBottom);
         }
 
         void PolygonalCollider::movePoint(int index, int x, int y)
@@ -380,12 +381,6 @@ namespace obe
             this->setPointPositionFromMaster(index, pVec.x, pVec.y);
         }
 
-        void PolygonalCollider::setDrawOffset(int offx, int offy)
-        {
-            m_drawOffsetX = offx;
-            m_drawOffsetY = offy;
-        }
-
         double PolygonalCollider::getSideAngle(int side)
         {
             int p1 = side;
@@ -410,7 +405,7 @@ namespace obe
             return std::sqrt(std::pow(p1coords.X - p2coords.X, 2) + std::pow(p1coords.Y - p2coords.Y, 2));
         }
 
-        void PolygonalCollider::draw(sf::RenderWindow& target, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+        void PolygonalCollider::draw(sf::RenderWindow& target, int offsetX, int offsetY, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
             if (m_allPoints.size() >= 1)
             {
@@ -433,7 +428,7 @@ namespace obe
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
                     else
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 255, 255);
-                    drawPoints.emplace_back(point.X + m_drawOffsetX, point.Y + m_drawOffsetY);
+                    drawPoints.emplace_back(point.X + offsetX, point.Y + offsetY);
                 }
 
                 if (Utils::Vector::isInList(0, m_highlightedPoints) && m_selected)
@@ -444,7 +439,7 @@ namespace obe
                 if (drawMasterPoint)
                 {
                     sf::CircleShape polyPt;
-                    polyPt.setPosition(sf::Vector2f(m_masterPoint.X + m_drawOffsetX - r, m_masterPoint.Y + m_drawOffsetY - r));
+                    polyPt.setPosition(sf::Vector2f(m_masterPoint.X + offsetX - r, m_masterPoint.Y + offsetY - r));
                     polyPt.setRadius(r);
                     sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
                     polyPt.setFillColor(polyPtColor);
@@ -455,8 +450,8 @@ namespace obe
                         {
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
-                                point.X + m_drawOffsetX, point.Y + m_drawOffsetY,
-                                m_masterPoint.X + m_drawOffsetX, m_masterPoint.Y + m_drawOffsetY,
+                                point.X + offsetX, point.Y + offsetY,
+                                m_masterPoint.X + offsetX, m_masterPoint.Y + offsetY,
                                 2, currentLineColor);
                         }
                     }
@@ -565,7 +560,7 @@ namespace obe
             return m_parentID;
         }
 
-        void PolygonalCollider::setParentID(std::string parent)
+        void PolygonalCollider::setParentID(const std::string& parent)
         {
             m_parentID = parent;
         }
@@ -711,144 +706,66 @@ namespace obe
             m_origin = nullptr;
         }
 
-        void PolygonalCollider::addTag(std::string tag)
+        void PolygonalCollider::addTag(ColliderTagType tagType, const std::string& tag)
         {
-            if (!Utils::Vector::isInList(tag, m_tags))
-                m_tags.push_back(tag);
+            if (!Utils::Vector::isInList(tag, this->retrieveTagVector(tagType)))
+                this->retrieveTagVector(tagType).push_back(tag);
             else
                 std::cout << "<Warning:Collisions:PolygonalCollider>[addTag] : Tag \'" << tag << "\" is already in PolygonalCollider \"" << m_id << "\"" << std::endl;
         }
 
-        void PolygonalCollider::addExcludedTag(std::string tag)
+        void PolygonalCollider::clearTags(ColliderTagType tagType)
         {
-            if (!Utils::Vector::isInList(tag, m_excludedTags))
-                m_excludedTags.push_back(tag);
-            else
-                std::cout << "<Warning:Collisions:PolygonalCollider>[addExcludedTag] : Tag \'" << tag << "\" is already in PolygonalCollider \"" << m_id << "\"" << std::endl;
+            this->retrieveTagVector(tagType).clear();
         }
 
-        void PolygonalCollider::addAcceptedTag(std::string tag)
+        void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)
         {
-            if (!Utils::Vector::isInList(tag, m_acceptedTags))
-                m_acceptedTags.push_back(tag);
-            else
-                std::cout << "<Warning:Collisions:PolygonalCollider>[addAcceptedTag] : Tag \'" << tag << "\" is already in PolygonalCollider \"" << m_id << "\"" << std::endl;
+            Utils::Vector::eraseAll(this->retrieveTagVector(tagType), tag);
         }
 
-        void PolygonalCollider::clearTags()
+        bool PolygonalCollider::doesHaveTag(ColliderTagType tagType, const std::string& tag)
         {
-            m_tags.clear();
+            return Utils::Vector::isInList(tag, this->retrieveTagVector(tagType));
         }
 
-        void PolygonalCollider::clearExcludedTags()
-        {
-            m_excludedTags.clear();
-        }
-
-        void PolygonalCollider::clearAcceptedTags()
-        {
-            m_acceptedTags.clear();
-        }
-
-        void PolygonalCollider::removeTag(std::string tag)
-        {
-            Utils::Vector::eraseAll(m_tags, tag);
-        }
-
-        void PolygonalCollider::removeExcludedTag(std::string tag)
-        {
-            Utils::Vector::eraseAll(m_excludedTags, tag);
-        }
-
-        void PolygonalCollider::removeAcceptedTag(std::string tag)
-        {
-            Utils::Vector::eraseAll(m_acceptedTags, tag);
-        }
-
-        bool PolygonalCollider::doesHaveTag(std::string tag) const
-        {
-            return Utils::Vector::isInList(tag, m_tags);
-        }
-
-        bool PolygonalCollider::isTagExcluded(std::string tag) const
-        {
-            return Utils::Vector::isInList(tag, m_excludedTags);
-        }
-
-        bool PolygonalCollider::isTagAccepted(std::string tag) const
-        {
-            return Utils::Vector::isInList(tag, m_acceptedTags);
-        }
-
-        bool PolygonalCollider::doesHaveAnyTag(std::vector<std::string>* tags) const
+        bool PolygonalCollider::doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags)
         {
             if (m_tags.size() == 0) return false;
-            for (std::string tag : *tags)
+            for (std::string tag : tags)
             {
-                if (Utils::Vector::isInList(tag, m_tags))
+                if (Utils::Vector::isInList(tag, this->retrieveTagVector(tagType)))
                     return true;
             }
             return false;
         }
 
-        bool PolygonalCollider::isATagExcluded(std::vector<std::string>* tags) const
+        std::vector<std::string> PolygonalCollider::getAllTags(ColliderTagType tagType)
         {
-            if (m_excludedTags.size() == 0) return false;
-            for (std::string tag : *tags)
-            {
-                if (Utils::Vector::isInList(tag, m_excludedTags))
-                    return true;
-            }
-            return false;
-        }
-
-        bool PolygonalCollider::isATagAccepted(std::vector<std::string>* tags) const
-        {
-            if (m_acceptedTags.size() == 0) return true;
-            for (std::string tag : *tags)
-            {
-                if (Utils::Vector::isInList(tag, m_acceptedTags))
-                    return true;
-            }
-            return false;
-        }
-
-        std::vector<std::string>* PolygonalCollider::getAllTags()
-        {
-            return &m_tags;
-        }
-
-        std::vector<std::string>* PolygonalCollider::getAllExcludedTags()
-        {
-            return &m_excludedTags;
-        }
-
-        std::vector<std::string>* PolygonalCollider::getAllAcceptedTags()
-        {
-            return &m_acceptedTags;
+            return this->retrieveTagVector(tagType);
         }
 
         bool PolygonalCollider::doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy)
         {
             std::vector<std::string> acceptedTagsBuffer = m_acceptedTags;
-            std::vector<std::string> excludedTagsBuffer = m_excludedTags;
-            clearExcludedTags();
+            std::vector<std::string> rejectedTagsBuffer = m_rejectedTags;
+            this->clearTags(ColliderTagType::Rejected);
             m_acceptedTags = tags;
             bool result = testAllColliders(collidersList, offx, offy, true);
             m_acceptedTags = acceptedTagsBuffer;
-            m_excludedTags = excludedTagsBuffer;
+            m_rejectedTags = rejectedTagsBuffer;
             return result;
         }
 
         std::vector<PolygonalCollider*> PolygonalCollider::getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy)
         {
             std::vector<std::string> acceptedTagsBuffer = m_acceptedTags;
-            std::vector<std::string> excludedTagsBuffer = m_excludedTags;
-            clearExcludedTags();
+            std::vector<std::string> rejectedTagsBuffer = m_rejectedTags;
+            clearTags(ColliderTagType::Rejected);
             m_acceptedTags = tags;
             std::vector<PolygonalCollider*> collided = getAllCollidedColliders(collidersList, offx, offy);
             m_acceptedTags = acceptedTagsBuffer;
-            m_excludedTags = excludedTagsBuffer;
+            m_rejectedTags = rejectedTagsBuffer;
             return collided;
         }
     }

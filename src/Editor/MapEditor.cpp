@@ -755,7 +755,7 @@ namespace obe
                                 hoveredSprite->setColor(sf::Color(0, 255, 255));
                                 std::string sprInfoStr;
                                 sprInfoStr = "Hovered Sprite : \n";
-                                sprInfoStr += "    ID : " + hoveredSprite->getID() + "\n";
+                                sprInfoStr += "    ID : " + hoveredSprite->getId() + "\n";
                                 sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
                                 sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
                                 sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
@@ -848,7 +848,7 @@ namespace obe
                             sdBoundingRect = selectedSprite->getRect();
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
-                            sprInfoStr += "    ID : " + selectedSprite->getID() + "\n";
+                            sprInfoStr += "    ID : " + selectedSprite->getId() + "\n";
                             sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
                             sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
                             sprInfoStr += "    Size : " + std::to_string(selectedSprite->getWidth()) + "," + std::to_string(selectedSprite->getHeight()) + "\n";
@@ -1044,7 +1044,7 @@ namespace obe
                             if (selectedMasterCollider->getPointsAmount() <= 2)
                             {
                                 selectedMasterCollider->setSelected(false);
-                                world.deleteCollisionByID(selectedMasterCollider->getID());
+                                world.deleteCollisionByID(selectedMasterCollider->getId());
                                 selectedMasterCollider = nullptr;
                                 masterColliderGrabbed = false;
                                 colliderPtGrabbed = -1;
@@ -1070,7 +1070,7 @@ namespace obe
                     if (cursor.getClicked(System::CursorButton::Right) && selectedMasterCollider != nullptr && masterColliderGrabbed)
                     {
                         selectedMasterCollider->setSelected(false);
-                        world.deleteCollisionByID(selectedMasterCollider->getID());
+                        world.deleteCollisionByID(selectedMasterCollider->getId());
                         selectedMasterCollider = nullptr;
                         masterColliderGrabbed = false;
                         colliderPtGrabbed = -1;
@@ -1126,9 +1126,9 @@ namespace obe
                                 if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
                                 {
                                     if (cursor.getClicked(System::CursorButton::Left))
-                                        world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Click", true);
+                                        world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
                                     if (cursor.getPressed(System::CursorButton::Left))
-                                        world.getGameObject(clickableGameObjects[j]->getID())->getLocalTriggers()->setTriggerState("Press", true);
+                                        world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
                                 }
                             }
                         }

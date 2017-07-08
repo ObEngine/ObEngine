@@ -31,7 +31,7 @@ namespace obe
             static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
         };
 
-        class GameObject
+        class GameObject : public Types::Identifiable
         {
         private:
             std::unique_ptr<Animation::Animator> m_objectAnimator;
@@ -63,10 +63,9 @@ namespace obe
 
             friend class Scene::World;
         public:
-            GameObject(std::string type, std::string id);
+            explicit GameObject(const std::string& type, const std::string& id);
             ~GameObject();
 
-            std::string getID() const;
             std::string getType() const;
             std::string getPublicKey() const;
             int getPriority() const;
@@ -81,23 +80,22 @@ namespace obe
             bool getUpdateState() const;
             void setUpdateState(bool state);
 
-
             Animation::Animator* getAnimator();
             Collision::PolygonalCollider* getCollider();
             Graphics::LevelSprite* getLevelSprite();
             kaguya::State* getScript();
 
             Triggers::TriggerGroup* getLocalTriggers() const;
-            void useLocalTrigger(std::string trName);
-            void useExternalTrigger(std::string trNsp, std::string trGrp, std::string trName, std::string useAs = "");
+            void useLocalTrigger(const std::string& trName);
+            void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs = "");
             void setInitialised(bool init);
             bool getInitialised() const;
             void exec(std::string query) const;
             template <typename U>
             void sendQuery(U query);
             template <typename U>
-            void sendRequireArgumentFromCPP(std::string argName, U value);
-            void sendRequireArgumentFromLua(std::string argName, kaguya::LuaRef value) const;
+            void sendRequireArgumentFromCPP(const std::string& argName, U value);
+            void sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const;
 
             void registerTrigger(Triggers::Trigger* trg);
             void loadGameObject(Scene::World& world, vili::ComplexAttribute& obj);
@@ -114,7 +112,7 @@ namespace obe
         void loadHookBridge(GameObject* object, std::string hookname);
 
         template <typename U>
-        void GameObject::sendRequireArgumentFromCPP(std::string argName, U value)
+        void GameObject::sendRequireArgumentFromCPP(const std::string& argName, U value)
         {
             (*m_objectScript.get())["LuaCore"]["Lua_ReqList"][argName] = value;
         }

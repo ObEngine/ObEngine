@@ -5,6 +5,7 @@
 
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
+#include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
 
 namespace obe
@@ -16,29 +17,24 @@ namespace obe
         std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points);
         int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B);
 
-        class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable
+        enum class ColliderTagType
+        {
+            Tag,
+            Accepted,
+            Rejected
+        };
+
+        class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable, public Types::Identifiable
         {
         private:
-            std::string m_id;
-            std::vector<std::string> m_excludedIds;
-            std::vector<std::string> m_acceptedIds;
-
             //Tag System
             std::vector<std::string> m_tags;
-            std::vector<std::string> m_excludedTags;
             std::vector<std::string> m_acceptedTags;
+            std::vector<std::string> m_rejectedTags;
 
-            int m_drawOffsetX = 0;
-            int m_drawOffsetY = 0;
-            long long int m_boundingLeft = 0;
-            long long int m_boundingTop = 0;
-            long long int m_boundingRight = 0;
-            long long int m_boundingBottom = 0;
             ClipperLib::IntPoint m_masterPoint;
             ClipperLib::Path m_allPoints;
-            sf::ConvexShape m_drawShape;
 
-            bool m_selected = false;
             std::vector<int> m_highlightedPoints;
             std::vector<int> m_highlightedLines;
 
@@ -47,18 +43,25 @@ namespace obe
             std::string m_parentID = "";
 
             void calculateMasterPoint();
+            std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
         public:
-            explicit PolygonalCollider(std::string id);
+            /**
+             * \brief Constructs a PolygonalCollider
+             * \param id Id of the PolygonalCollider (Used to retrieve it for example)
+             */
+            explicit PolygonalCollider(const std::string& id);
+            /**
+             * \brief Destructor of PolygonalCollider, removes origins
+             */
             ~PolygonalCollider();
-            std::string getID() const;
 
             //Sides
             double getSideAngle(int side);
             double getSideLength(int side);
+
             //Points
             int getPointsAmount() const;
             int getSideContainingPoint(int x, int y);
-            bool isPointInBoundingBox(int x, int y) const;
             int hasPoint(int x, int y, int toleranceX = 0, int toleranceY = 0);
             bool hasMasterPoint(int x, int y, int toleranceX = 0, int toleranceY = 0) const;
             void addPoint(int x, int y, int pointIndex = -1);
@@ -66,15 +69,20 @@ namespace obe
             double getDistanceFromPoint(int nodeIndex, int x, int y);
             int findClosestPoint(int x, int y, bool neighboor = false, std::vector<int> excludedNodes = std::vector<int>());
             ClipperLib::Path getAllPoints() const;
+
             //Collision Tests
             PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other);
             bool testAllColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy, bool opt = false);
             std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy);
             bool doesCollide(PolygonalCollider* other, int offsetX = 0, int offsetY = 0);
             bool doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX = 0, int offsetY = 0, int toX = 0, int toY = 0);
+            bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
+            std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
+
             //Parent
             std::string getParentID() const;
-            void setParentID(std::string parent);
+            void setParentID(const std::string& parent);
+
             //Position
             ClipperLib::IntPoint getPosition();
             ClipperLib::IntPoint getPointPosition(int index);
@@ -109,33 +117,20 @@ namespace obe
             void setOrigin(PolygonalCollider* origin);
             PolygonalCollider* getOrigin() const;
             void removeOrigin();
+
             //Tags
-            void addTag(std::string tag);
-            void addExcludedTag(std::string tag);
-            void addAcceptedTag(std::string tag);
-            void clearTags();
-            void clearExcludedTags();
-            void clearAcceptedTags();
-            void removeTag(std::string tag);
-            void removeExcludedTag(std::string tag);
-            void removeAcceptedTag(std::string tag);
-            bool doesHaveTag(std::string tag) const;
-            bool isTagExcluded(std::string tag) const;
-            bool isTagAccepted(std::string tag) const;
-            bool doesHaveAnyTag(std::vector<std::string>* tags) const;
-            bool isATagExcluded(std::vector<std::string>* tags) const;
-            bool isATagAccepted(std::vector<std::string>* tags) const;
-            std::vector<std::string>* getAllTags();
-            std::vector<std::string>* getAllExcludedTags();
-            std::vector<std::string>* getAllAcceptedTags();
-            bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
-            std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
+            void addTag(ColliderTagType tagType, const std::string& tag);
+            void clearTags(ColliderTagType tagType);
+            void removeTag(ColliderTagType tagType, const std::string& tag);
+            bool doesHaveTag(ColliderTagType tagType, const std::string& tag);
+            bool doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags);
+            std::vector<std::string> getAllTags(ColliderTagType tagType);
+
             //Debug
-            void draw(sf::RenderWindow& target, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+            void draw(sf::RenderWindow& target, int offsetX, int offsetY, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
             void highlightPoint(int pointIndex);
             void highlightLine(int pointIndex);
             void clearHighlights(bool points = true, bool lines = true);
-            void setDrawOffset(int offx, int offy);
         };
     }
 }
