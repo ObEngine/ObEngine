@@ -72,7 +72,7 @@ namespace obe
             this->removeOrigin();
         }
 
-        int PolygonalCollider::getPointsAmount() const
+        unsigned int PolygonalCollider::getPointsAmount() const
         {
             return m_allPoints.size();
         }
@@ -146,18 +146,18 @@ namespace obe
                 calculateMasterPoint();
         }
 
-        void PolygonalCollider::deletePoint(int pointIndex)
+        void PolygonalCollider::deletePoint(unsigned int pointIndex)
         {
             m_allPoints.erase(m_allPoints.begin() + pointIndex);
             this->calculateMasterPoint();
         }
 
-        double PolygonalCollider::getDistanceFromPoint(int nodeIndex, int x, int y)
+        double PolygonalCollider::getDistanceFromPoint(unsigned int pointIndex, int x, int y)
         {
-            return std::sqrt(std::pow((x - m_allPoints[nodeIndex].X), 2) + std::pow((y - m_allPoints[nodeIndex].Y), 2));
+            return std::sqrt(std::pow((x - m_allPoints[pointIndex].X), 2) + std::pow((y - m_allPoints[pointIndex].Y), 2));
         }
 
-        int PolygonalCollider::findClosestPoint(int x, int y, bool neighboor, std::vector<int> excludedNodes)
+        unsigned int PolygonalCollider::findClosestPoint(int x, int y, bool neighboor, std::vector<int> excludedNodes)
         {
             if (m_allPoints.size() > 0)
             {
@@ -194,7 +194,6 @@ namespace obe
                 }
                 return closestNode;
             }
-            return -1;
         }
 
         bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY)
@@ -271,13 +270,14 @@ namespace obe
 
         int PolygonalCollider::getSideContainingPoint(int x, int y)
         {
+            double tolerance = 0.01;
             for (int i = 0; i < m_allPoints.size(); i++)
             {
                 int nextNode = (i != m_allPoints.size() - 1) ? i + 1 : 0;
                 double lineLength = this->getDistanceFromPoint(i, this->getPointPosition(nextNode).X, this->getPointPosition(nextNode).Y);
                 double firstLength = this->getDistanceFromPoint(i, x, y);
                 double secondLength = this->getDistanceFromPoint(nextNode, x, y);
-                if (Utils::Math::isBetween(lineLength, firstLength + secondLength - 0.01, firstLength + secondLength + 0.01))
+                if (Utils::Math::isBetween(lineLength, firstLength + secondLength - tolerance, firstLength + secondLength + tolerance))
                     return i;
             }
             return -1;
@@ -288,24 +288,24 @@ namespace obe
             return m_allPoints;
         }
 
-        int PolygonalCollider::hasPoint(int x, int y, int toleranceX, int toleranceY)
+        int PolygonalCollider::hasPoint(int x, int y, int tolerance)
         {
             for (unsigned int i = 0; i < m_allPoints.size(); i++)
             {
-                if (Utils::Math::isBetween(x, static_cast<int>(m_allPoints[i].X) - toleranceX, static_cast<int>(m_allPoints[i].X) + toleranceX))
+                if (Utils::Math::isBetween(x, static_cast<int>(m_allPoints[i].X) - tolerance, static_cast<int>(m_allPoints[i].X) + tolerance))
                 {
-                    if (Utils::Math::isBetween(y, static_cast<int>(m_allPoints[i].Y) - toleranceY, static_cast<int>(m_allPoints[i].Y) + toleranceY))
+                    if (Utils::Math::isBetween(y, static_cast<int>(m_allPoints[i].Y) - tolerance, static_cast<int>(m_allPoints[i].Y) + tolerance))
                         return i;
                 }
             }
             return -1;
         }
 
-        bool PolygonalCollider::hasMasterPoint(int x, int y, int toleranceX, int toleranceY) const
+        bool PolygonalCollider::hasMasterPoint(int x, int y, int tolerance) const
         {
-            if (Utils::Math::isBetween(x, static_cast<int>(m_masterPoint.X) - toleranceX, static_cast<int>(m_masterPoint.X) + toleranceX))
+            if (Utils::Math::isBetween(x, static_cast<int>(m_masterPoint.X) - tolerance, static_cast<int>(m_masterPoint.X) + tolerance))
             {
-                if (Utils::Math::isBetween(y, static_cast<int>(m_masterPoint.Y) - toleranceY, static_cast<int>(m_masterPoint.Y) + toleranceY))
+                if (Utils::Math::isBetween(y, static_cast<int>(m_masterPoint.Y) - tolerance, static_cast<int>(m_masterPoint.Y) + tolerance))
                     return true;
             }
             return false;
@@ -381,7 +381,7 @@ namespace obe
             this->setPointPositionFromMaster(index, pVec.x, pVec.y);
         }
 
-        double PolygonalCollider::getSideAngle(int side)
+        double PolygonalCollider::getSideAngle(unsigned int side)
         {
             int p1 = side;
             int p2 = side + 1;
@@ -394,7 +394,7 @@ namespace obe
             return (atan2(deltaY, deltaX) * 180 / Utils::Math::pi);
         }
 
-        double PolygonalCollider::getSideLength(int side)
+        double PolygonalCollider::getSideLength(unsigned int side)
         {
             int p1 = side;
             int p2 = side + 1;
@@ -539,12 +539,12 @@ namespace obe
             }
         }
 
-        void PolygonalCollider::highlightPoint(int pointIndex)
+        void PolygonalCollider::highlightPoint(unsigned int pointIndex)
         {
             m_highlightedPoints.push_back(pointIndex);
         }
 
-        void PolygonalCollider::highlightLine(int pointIndex)
+        void PolygonalCollider::highlightLine(unsigned int pointIndex)
         {
             m_highlightedLines.push_back(pointIndex);
         }
@@ -555,12 +555,12 @@ namespace obe
             if (lines) m_highlightedLines.clear();
         }
 
-        std::string PolygonalCollider::getParentID() const
+        std::string PolygonalCollider::getParentId() const
         {
             return m_parentID;
         }
 
-        void PolygonalCollider::setParentID(const std::string& parent)
+        void PolygonalCollider::setParentId(const std::string& parent)
         {
             m_parentID = parent;
         }

@@ -266,7 +266,7 @@ namespace obe
             if (m_colliderArray.size() > 0) (*dataStore)->createComplexAttribute("Collisions");
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (m_colliderArray[i]->getParentID() == "")
+                if (m_colliderArray[i]->getParentId() == "")
                 {
                     dataStore->at("Collisions").createComplexAttribute(m_colliderArray[i]->getId());
                     dataStore->at("Collisions", m_colliderArray[i]->getId()).createComplexAttribute("unit");
@@ -466,7 +466,7 @@ namespace obe
             }
             if (newGameObject->m_hasCollider)
             {
-                newGameObject->getCollider()->setParentID(id);
+                newGameObject->getCollider()->setParentId(id);
             }
 
             m_gameObjectMap[id] = move(newGameObject);
@@ -607,9 +607,9 @@ namespace obe
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (m_colliderArray[i]->hasPoint(x, y, 6, 6) != -1)
+                if (m_colliderArray[i]->hasPoint(x, y, 6) != -1)
                 {
-                    return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), m_colliderArray[i]->hasPoint(x, y, 6, 6));
+                    return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), m_colliderArray[i]->hasPoint(x, y, 6));
                 }
             }
             return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
@@ -619,7 +619,7 @@ namespace obe
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (m_colliderArray[i]->hasMasterPoint(x, y, 6, 6))
+                if (m_colliderArray[i]->hasMasterPoint(x, y, 6))
                     return m_colliderArray[i].get();
             }
             return nullptr;

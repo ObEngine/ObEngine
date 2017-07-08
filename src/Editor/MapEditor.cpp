@@ -978,9 +978,9 @@ namespace obe
                     if (cursor.getPressed(System::CursorButton::Left) && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                     {
                         selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
-                        if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
+                        if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
                         {
-                            world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
+                            world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
                                 cursor.getX() + pixelCamera.x,
                                 cursor.getY() + pixelCamera.y);
                         }
@@ -1005,18 +1005,18 @@ namespace obe
                         }
                         selectedMasterCollider = tempCol;
                         selectedMasterCollider->setSelected(true);
-                        if (selectedMasterCollider->getParentID() != "") world.getGameObject(selectedMasterCollider->getParentID())->setUpdateState(false);
+                        if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
                         masterColliderGrabbed = true;
                     }
                     //Collision Master Move
                     if (cursor.getPressed(System::CursorButton::Left) && selectedMasterCollider != nullptr && masterColliderGrabbed)
                     {
                         selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
-                        if (selectedMasterCollider->getParentID() != "" && world.getGameObject(selectedMasterCollider->getParentID())->canDisplay())
+                        if (selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
                         {
                             ClipperLib::IntPoint zeroCoords = selectedMasterCollider->getPointPosition(0);
                             ClipperLib::IntPoint masterCoords = selectedMasterCollider->getMasterPointPosition();
-                            world.getGameObject(selectedMasterCollider->getParentID())->getLevelSprite()->setPosition(
+                            world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
                                 cursor.getX() + pixelCamera.x + zeroCoords.X - masterCoords.X,
                                 cursor.getY() + pixelCamera.y + zeroCoords.Y - masterCoords.Y);
                         }
@@ -1025,13 +1025,13 @@ namespace obe
                     if (cursor.getReleased(System::CursorButton::Left) && masterColliderGrabbed)
                     {
                         masterColliderGrabbed = false;
-                        if (selectedMasterCollider->getParentID() != "") world.getGameObject(selectedMasterCollider->getParentID())->setUpdateState(true);
+                        if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
                     }
                     if (cursor.getClicked(System::CursorButton::Right) && selectedMasterCollider != nullptr && !masterColliderGrabbed)
                     {
                         int crPtX = cursor.getX() + pixelCamera.x;
                         int crPtY = cursor.getY() + pixelCamera.y;
-                        int rqPtRes = selectedMasterCollider->hasPoint(crPtX, crPtY, 6, 6);
+                        int rqPtRes = selectedMasterCollider->hasPoint(crPtX, crPtY, 6);
                         //Collision Point Create
                         if (rqPtRes == -1)
                         {

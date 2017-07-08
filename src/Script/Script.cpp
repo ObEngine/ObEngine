@@ -431,7 +431,7 @@ namespace obe
                     .addFunction("getId", &Collision::PolygonalCollider::getId)
                     .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::u_getMasterPointPosition)
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
-                    .addFunction("getParentID", &Collision::PolygonalCollider::getParentID)
+                    .addFunction("getParentId", &Collision::PolygonalCollider::getParentId)
                     .addFunction("getPointPosition", &Collision::PolygonalCollider::u_getPointPosition)
                     .addFunction("getPointRelativePosition", &Collision::PolygonalCollider::u_getPointRelativePosition)
                     .addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)

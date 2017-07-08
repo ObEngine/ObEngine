@@ -28,7 +28,7 @@ namespace obe
              * \param offsetX 
              * \param offsetY 
              */
-            EditorGrid(int cellWidth, int cellHeight, int offsetX = 0, int offsetY = 0);
+            explicit EditorGrid(int cellWidth, int cellHeight, int offsetX = 0, int offsetY = 0);
             void setCellWidth(int cellWidth);
             void setCellHeight(int cellHeight);
             void setSize(int cellWidth, int cellHeight);
