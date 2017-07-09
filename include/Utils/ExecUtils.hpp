@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Some Classes and Functions to manipulate Engine Execution
+         */
         namespace Exec
         {
             /**

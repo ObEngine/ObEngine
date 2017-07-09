@@ -12,19 +12,46 @@ namespace obe
 {
     namespace Graphics
     {
+        /**
+         * \brief An element meant to be displayed in a Scene
+         */
         class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect, public Types::Identifiable
         {
         public:
+            /**
+             * \brief A HandlePoint to manipulate a LevelSprite Size
+             */
             class HandlePoint
             {
             private:
                 Transform::Rect* m_rect;
                 Transform::Referencial m_referencial;
             public:
+                /**
+                 * \brief Creates a HandlePoint
+                 * \param parentRect Rect of the parent LevelSprite
+                 * \param ref Referencial of the HandlePoint
+                 */
                 HandlePoint(Transform::Rect* parentRect, Transform::Referencial ref);
+                /**
+                 * \brief Move the HandlePoint to the given Position
+                 * \param x x Coordinate of the Position where to move the HandlePoint
+                 * \param y y Coordinate of the Position where to move the HandlePoint
+                 */
                 void moveTo(int x, int y) const;
+                /**
+                 * \brief Get the Referencial of the HandlePoint
+                 * \return The Referencial value
+                 */
                 Transform::Referencial getReferencial() const;
+                /**
+                 * \brief Get the rect of the parent LevelSprite
+                 * \return The Rect of the parent LevelSprite
+                 */
                 Transform::Rect& getRect() const;
+                /**
+                 * \brief The radius of a HandlePoint
+                 */
                 static const int radius = 6;
             };
         private:
