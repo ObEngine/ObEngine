@@ -1,4 +1,5 @@
 #include <Debug/Console.hpp>
+#include <Script/GlobalState.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
@@ -9,199 +10,179 @@ namespace obe
         //Console
         Console::Console() : consoleTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"))
         {
-            font.loadFromFile("Data/Fonts/arial.ttf");
-            scrEngineStream = this->createStream("ScriptEngine", true);
-            scrErrorStream = this->createStream("ScriptError", true);
-            scrErrorStream->setColor(255, 0, 0);
+            m_font.loadFromFile("Data/Fonts/arial.ttf");
+            
             consoleTriggers->addTrigger("UserInput")
                            ->addTrigger("CursorMoved")
                            ->addTrigger("ConsoleScrolled")
                            ->addTrigger("NewMessage")
                            ->addTrigger("ConsoleToggled")
                            ->addTrigger("NewStream");
+
+            m_debugStream = this->createStream("ScriptEngine", true);
+            m_errorStream = this->createStream("ScriptError", true);
+            m_errorStream->setColor(sf::Color::Red);
         }
 
         void Console::scroll(int power)
         {
-            if (consoleScroll + power > 0)
+            if (m_consoleScroll + power > 0)
             {
-                if (consoleScroll + power <= static_cast<int>(consoleText.size()) - 52)
-                    consoleScroll += power;
+                if (m_consoleScroll + power <= static_cast<int>(consoleText.size()) - 52)
+                    m_consoleScroll += power;
             }
             else
-                consoleScroll = 0;
+                m_consoleScroll = 0;
         }
 
-        Console::Stream* Console::createStream(std::string streamName, bool enabled)
+        Console::Stream* Console::createStream(const std::string& id, bool enabled)
         {
-            Stream* tempStream = new Stream(streamName, this);
-            streamMap[streamName] = tempStream;
-            streamList.push_back(streamName);
+            m_streamMap[id] = std::make_unique<Stream>(id, this);
             if (!enabled)
-                disabledStreams.push_back(streamName);
-            /*consoleTriggers->pushParameter("NewStream", "StreamName", streamName);
-            consoleTriggers->pushParameter("NewStream", "Enabled", enabled);*/
-            return streamMap[streamName];
+                m_streamMap[id]->disable();
+            consoleTriggers->pushParameter("NewStream", "StreamName", id);
+            consoleTriggers->pushParameter("NewStream", "Enabled", enabled);
+            consoleTriggers->enableTrigger("NewStream");
+            return m_streamMap[id].get();
         }
 
-        Console::Stream* Console::getStream(std::string streamName)
+        Console::Stream* Console::getStream(const std::string& id)
         {
-            if (Utils::Vector::isInList(streamName, streamList))
-                return streamMap[streamName];
-            throw aube::ErrorHandler::Raise("ObEngine.Console.Console.UnknownStream", {{"stream", streamName}});
+            if (m_streamMap.find(id) != m_streamMap.end())
+                return m_streamMap[id].get();
+            throw aube::ErrorHandler::Raise("ObEngine.Console.Console.UnknownStream", {{"stream", id}});
         }
 
         void Console::downHistory()
         {
-            if (consoleHistoryIndex < consoleHistory.size() - 1)
-                consoleHistoryIndex++;
+            if (m_consoleHistoryIndex < m_consoleHistory.size() - 1)
+                m_consoleHistoryIndex++;
             else
-                consoleHistoryIndex = consoleHistory.size() - 1;
-            if (consoleHistory.size() != 0)
+                m_consoleHistoryIndex = m_consoleHistory.size() - 1;
+            if (m_consoleHistory.size() != 0)
             {
-                inputBuffer = consoleHistory[consoleHistoryIndex];
-                virtualCursor = consoleHistory[consoleHistoryIndex].size();
+                m_inputBuffer = m_consoleHistory[m_consoleHistoryIndex];
+                m_virtualCursor = m_consoleHistory[m_consoleHistoryIndex].size();
             }
         }
 
         void Console::upHistory()
         {
-            if (consoleHistoryIndex > 0)
-                consoleHistoryIndex--;
+            if (m_consoleHistoryIndex > 0)
+                m_consoleHistoryIndex--;
             else
-                consoleHistoryIndex = 0;
-            if (consoleHistory.size() != 0)
+                m_consoleHistoryIndex = 0;
+            if (m_consoleHistory.size() != 0)
             {
-                inputBuffer = consoleHistory[consoleHistoryIndex];
-                virtualCursor = consoleHistory[consoleHistoryIndex].size();
+                m_inputBuffer = m_consoleHistory[m_consoleHistoryIndex];
+                m_virtualCursor = m_consoleHistory[m_consoleHistoryIndex].size();
             }
         }
 
-        Console::Message* Console::pushMessage(std::string headerName, std::string message, int r, int g, int b, int a, std::string type, bool disableTimestamp)
+        Console::Message* Console::pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color)
         {
-            Message* forgeMessage = new Message("", "", sf::Color(0, 0, 0), "", false);
-            if (Utils::String::occurencesInString(message, "\n") > 0 && !consoleMuted)
+            Message* forgeMessage = nullptr;
+            if (Utils::String::occurencesInString(message, "\n") > 0 && !m_consoleMuted)
             {
-                std::vector<std::string> sepMessage = Utils::String::split(message, "\n");
-                for (int i = 0; i < sepMessage.size(); i++)
-                {
-                    if (i == 0)
-                        this->pushMessage(headerName, sepMessage[i], r, g, b, a, type);
-                    else
-                        this->pushMessage(headerName, sepMessage[i], r, g, b, a, type, false);
-                }
+                std::vector<std::string> splittedMessage = Utils::String::split(message, "\n");
+                for (const std::string& messagePart : splittedMessage)
+                    this->pushMessage(headerName, messagePart, color);
             }
-            else if (!consoleMuted)
+            else if (!m_consoleMuted)
             {
-                if (!Utils::Vector::isInList(headerName, disabledStreams))
-                {
-                    delete forgeMessage;
-                    forgeMessage = new Message(headerName, message, sf::Color(r, g, b, a), type, !disableTimestamp);
-                    consoleText.push_back(forgeMessage);
-                }
-                if (consoleAutoScroll)
+                forgeMessage = new Message(headerName, message, color);
+                consoleText.push_back(forgeMessage);
+                if (m_consoleAutoScroll)
                 {
                     if (consoleText.size() >= 52)
                     {
-                        consoleScroll = consoleText.size() - 52;
+                        m_consoleScroll = consoleText.size() - 52;
                     }
                 }
             }
             return forgeMessage;
         }
 
-        void Console::handleCommands(std::string text)
+        void Console::handleCommand(const std::string& text)
         {
-            this->pushMessage("UserInput", text, 0, 255, 255);
-            commandReady = true;
-            currentCommand = text;
-            if (consoleHistory.size() == 0 || currentCommand != consoleHistory[consoleHistory.size() - 1])
-                consoleHistory.push_back(currentCommand);
-            consoleHistoryIndex = consoleHistory.size();
-        }
-
-        std::string Console::getCommand()
-        {
-            commandReady = false;
-            return currentCommand;
-        }
-
-        bool Console::hasCommand()
-        {
-            return commandReady;
+            this->pushMessage("UserInput", text, sf::Color::Cyan);
+            if (m_consoleHistory.size() == 0 || text != m_consoleHistory[m_consoleHistory.size() - 1])
+                m_consoleHistory.push_back(text);
+            m_consoleHistoryIndex = m_consoleHistory.size();
+            Script::ScriptEngine(text);
         }
 
         void Console::inputKey(int keyCode)
         {
-            std::cout << "Current Key : " << keyCode << std::endl;
+            //std::cout << "Current Key : " << keyCode << std::endl;
             switch (keyCode)
             {
             case 8:
-                if (virtualCursor > 0)
+                if (m_virtualCursor > 0)
                 {
-                    virtualCursor--;
-                    inputBuffer.erase(inputBuffer.begin() + virtualCursor);
+                    m_virtualCursor--;
+                    m_inputBuffer.erase(m_inputBuffer.begin() + m_virtualCursor);
                 }
                 break;
             case 13:
-                this->handleCommands(inputBuffer);
+                this->handleCommand(m_inputBuffer);
                 this->clearInputBuffer();
-                virtualCursor = 0;
+                m_virtualCursor = 0;
                 break;
             case 22:
                 std::cout << "PASTE" << std::endl;
                 break;
             default:
-                inputBuffer.insert(inputBuffer.begin() + virtualCursor, static_cast<char>(keyCode));
-                virtualCursor++;
+                m_inputBuffer.insert(m_inputBuffer.begin() + m_virtualCursor, static_cast<char>(keyCode));
+                m_virtualCursor++;
                 break;
             }
         }
 
         void Console::moveCursor(int move)
         {
-            if (virtualCursor + move <= inputBuffer.size() && virtualCursor + move >= 0)
-                virtualCursor += move;
+            if (m_virtualCursor + move <= m_inputBuffer.size() && m_virtualCursor + move >= 0)
+                m_virtualCursor += move;
         }
 
         void Console::clearInputBuffer()
         {
-            inputBuffer = "";
+            m_inputBuffer = "";
         }
 
-        void Console::insertInputBufferContent(std::string content)
+        void Console::insertInputBufferContent(const std::string& content)
         {
-            inputBuffer.insert(virtualCursor, content);
-            virtualCursor += content.size();
+            m_inputBuffer.insert(m_virtualCursor, content);
+            m_virtualCursor += content.size();
         }
 
-        void Console::setInputBufferContent(std::string content)
+        void Console::setInputBufferContent(const std::string& content)
         {
-            inputBuffer = content;
-            inputBuffer = content.size();
+            m_inputBuffer = content;
+            m_inputBuffer = content.size();
         }
 
-        std::string Console::getInputBufferContent()
+        std::string Console::getInputBufferContent() const
         {
-            return inputBuffer;
+            return m_inputBuffer;
         }
 
-        bool Console::isConsoleVisible()
+        bool Console::isConsoleVisible() const
         {
-            return consoleVisibility;
+            return m_consoleVisibility;
         }
 
         void Console::setConsoleVisibility(bool enabled)
         {
-            consoleVisibility = enabled;
+            m_consoleVisibility = enabled;
         }
 
-        void Console::display(sf::RenderWindow* surf)
+        void Console::display(sf::RenderWindow& target)
         {
             //OUTPUT
-            surf->clear(sf::Color(0, 0, 0, 200));
+            target.clear(sf::Color(0, 0, 0, 200));
             sf::Text textOutput;
-            textOutput.setFont(font);
+            textOutput.setFont(m_font);
             textOutput.setFillColor(sf::Color(255, 255, 255));
             textOutput.setCharacterSize(13);
             bool alternBackground = false;
@@ -222,14 +203,14 @@ namespace obe
                 }
                 rectangle.setPosition(0, i);
                 rectangle.setFillColor(backgroundColor);
-                surf->draw(rectangle);
+                target.draw(rectangle);
             }
-            for (unsigned int i = 0 + consoleScroll; i < consoleText.size(); i++)
+            for (unsigned int i = 0 + m_consoleScroll; i < consoleText.size(); i++)
             {
                 textOutput.setString(consoleText[i]->getFormatedMessage());
                 textOutput.setFillColor(consoleText[i]->getColor());
                 textOutput.setPosition(sf::Vector2f(textX, textY));
-                surf->draw(textOutput);
+                target.draw(textOutput);
                 textY += 20;
             }
 
@@ -239,172 +220,101 @@ namespace obe
             rectangleFrame.setOutlineColor(sf::Color(255, 255, 255, 255));
             rectangleFrame.setOutlineThickness(2);
             rectangleFrame.move(2, 2);
-            surf->draw(rectangleFrame);
+            target.draw(rectangleFrame);
 
             //INPUT
             sf::RectangleShape rectangleInput = sf::RectangleShape(sf::Vector2f(Transform::UnitVector::Screen.w, 40));
             rectangleInput.setPosition(0, Transform::UnitVector::Screen.h - 40);
             rectangleInput.setFillColor(sf::Color(100, 100, 100));
-            surf->draw(rectangleInput);
+            target.draw(rectangleInput);
             //CURSOR
             sf::RectangleShape rectangleCursor = sf::RectangleShape(sf::Vector2f(2, 30));
             sf::Text estimate;
-            estimate.setFont(font);
+            estimate.setFont(m_font);
             estimate.setCharacterSize(26);
-            estimate.setString(inputBuffer.substr(0, virtualCursor));
+            estimate.setString(m_inputBuffer.substr(0, m_virtualCursor));
             int consoleCurPos = estimate.getGlobalBounds().width;
             rectangleCursor.setPosition(consoleCurPos + 2, Transform::UnitVector::Screen.h - 35);
             rectangleCursor.setFillColor(sf::Color(200, 200, 200));
-            surf->draw(rectangleCursor);
+            target.draw(rectangleCursor);
             //TEXT
             sf::Text textInput;
-            textInput.setFont(font);
+            textInput.setFont(m_font);
             textInput.setFillColor(sf::Color(255, 255, 255));
             textInput.setCharacterSize(26);
             textInput.setPosition(2, Transform::UnitVector::Screen.h - 40);
-            textInput.setString(inputBuffer);
-            surf->draw(textInput);
+            textInput.setString(m_inputBuffer);
+            target.draw(textInput);
         }
 
         //ConsoleMessage
-
-        Console::Message::Message(std::string header, std::string message, sf::Color textColor, std::string type, bool timestamped)
+        Console::Message::Message(const std::string& header, const std::string& message, const sf::Color& textColor)
         {
-            this->header = header;
-            this->message = message;
-            this->textColor = textColor;
-            this->type = type;
+            this->m_header = header;
+            this->m_text = message;
+            this->m_color = textColor;
             this->timestamp = Time::getTickSinceEpoch();
-            this->useTimeStamp = timestamped;
         }
 
-        std::string Console::Message::getFormatedMessage()
+        std::string Console::Message::getFormatedMessage() const
         {
             std::string fMessage;
-            if (useTimeStamp)
+            if (Timestamped)
             {
                 fMessage = "(TimeStamp:" + std::to_string(timestamp) + ")";
-                fMessage += " [" + header + "]";
-                if (type != "DEFAULT")
-                {
-                    fMessage += " <" + type + ">";
-                }
-                fMessage += " : " + message;
+                fMessage += " [" + m_header + "]";
+                fMessage += " : " + m_text;
             }
             else
-                fMessage = message;
+                fMessage = m_text;
             return fMessage;
         }
 
-        std::string Console::Message::getHeader()
+        std::string Console::Message::getHeader() const
         {
-            return header;
+            return m_header;
         }
 
-        std::string Console::Message::getMessage()
+        std::string Console::Message::getText() const
         {
-            return message;
+            return m_text;
         }
 
-        sf::Color Console::Message::getColor()
+        sf::Color Console::Message::getColor() const
         {
-            return textColor;
+            return m_color;
         }
 
-        int Console::Message::getR()
+        void Console::Message::setMessage(const std::string& text)
         {
-            return textColor.r;
+            m_text = text;
         }
 
-        int Console::Message::getG()
+        void Console::Message::setColor(const sf::Color& color)
         {
-            return textColor.g;
+            m_color = color;
         }
-
-        int Console::Message::getB()
-        {
-            return textColor.b;
-        }
-
-        int Console::Message::getA()
-        {
-            return textColor.a;
-        }
-
-        std::string Console::Message::getType()
-        {
-            return type;
-        }
-
-        void Console::Message::setMessage(std::string newmessage)
-        {
-            this->message = newmessage;
-        }
-
-        void Console::Message::setColor(int r, int g, int b, int a)
-        {
-            if (r < 0) r = 0;
-            if (g < 0) g = 0;
-            if (b < 0) b = 0;
-            if (a < 0) a = 0;
-            if (r > 255) r = 255;
-            if (g > 255) g = 255;
-            if (b > 255) b = 255;
-            if (a > 255) a = 255;
-            this->textColor.r = r;
-            this->textColor.g = g;
-            this->textColor.b = b;
-            this->textColor.a = a;
-        }
-
 
         //Stream
-
-        Console::Stream::Stream(std::string streamName, Console* consolePointer)
+        Console::Stream::Stream(const std::string& id, Console* consoleParent) : Identifiable(id), Togglable(true)
         {
-            this->streamName = streamName;
-            this->consolePointer = consolePointer;
-            streamColor = sf::Color(255, 255, 255);
+            m_consoleParent = consoleParent;
+            m_color = sf::Color(255, 255, 255);
         }
 
-        Console::Message* Console::Stream::streamPush(std::string message, int r, int g, int b, int a)
+        Console::Message* Console::Stream::push(const std::string& message) const
         {
-            return consolePointer->pushMessage(streamName, message, r, g, b, a, "DEFAULT");
+            return m_consoleParent->pushMessage(m_id, message, m_color);
         }
 
-        Console::Message* Console::Stream::streamPush(std::string message)
+        void Console::Stream::setColor(const sf::Color& color)
         {
-            return consolePointer->pushMessage(streamName, message, streamColor.r, streamColor.g, streamColor.b, streamColor.a, "DEFAULT");
+            m_color = color;
         }
 
-        void Console::Stream::setColor(int r, int g, int b, int a)
+        sf::Color Console::Stream::getColor() const
         {
-            streamColor = sf::Color(r, g, b, a);
-        }
-
-        sf::Color Console::Stream::getColor()
-        {
-            return streamColor;
-        }
-
-        int Console::Stream::getR()
-        {
-            return streamColor.r;
-        }
-
-        int Console::Stream::getG()
-        {
-            return streamColor.g;
-        }
-
-        int Console::Stream::getB()
-        {
-            return streamColor.g;
-        }
-
-        int Console::Stream::getA()
-        {
-            return streamColor.a;
+            return m_color;
         }
     }
 }

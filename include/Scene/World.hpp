@@ -20,7 +20,6 @@ namespace obe
             Camera m_camera;
             bool m_cameraLocked = true;
             Transform::UnitVector m_cameraInitialPosition;
-            kaguya::State* m_worldScriptEngine;
             bool m_updateState = true;
             bool m_needToOrderUpdateArray = true;
 
@@ -81,7 +80,6 @@ namespace obe
             void createCollisionAtPos(int x, int y);
             void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
             //Other
-            kaguya::State* getScriptEngine() const;
             std::string getBaseFolder() const;
         };
     }

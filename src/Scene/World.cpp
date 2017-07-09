@@ -1,6 +1,7 @@
 #include <Scene/World.hpp>
-#include <Script/ViliLuaBridge.hpp>
+#include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
+#include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/VectorUtils.hpp>
@@ -11,11 +12,10 @@ namespace obe
     {
         World::World()
         {
-            m_worldScriptEngine = new kaguya::State();
-            loadWorldScriptEngineBaseLib(m_worldScriptEngine);
-            (*m_worldScriptEngine)["World"] = this;
-            System::Path("Lib/GameLib/WScrInit.lua").loadResource(m_worldScriptEngine, System::Loaders::luaLoader);
-            Script::loadLib(m_worldScriptEngine, "Core.*");
+            loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
+            Script::ScriptEngine["World"] = this;
+            System::Path("Lib/GameLib/WScrInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+            Script::loadLib(&Script::ScriptEngine, "Core.*");
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;
             m_showCollisionModes["drawPoints"] = false;
@@ -45,11 +45,6 @@ namespace obe
             Collision::PolygonalCollider* returnCollider = newCollider.get();
             m_colliderArray.push_back(move(newCollider));
             return returnCollider;
-        }
-
-        kaguya::State* World::getScriptEngine() const
-        {
-            return m_worldScriptEngine;
         }
 
         std::string World::getBaseFolder() const
@@ -151,7 +146,7 @@ namespace obe
 
                     std::string pointsUnit = currentCollision.at<vili::BaseAttribute>("unit", "unit").get<std::string>();
                     bool completePoint = true;
-                    double pointBuffer;
+                    double pointBuffer = 0;
                     Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
                     for (vili::BaseAttribute* colliderPoint : currentCollision.getListAttribute("points"))
                     {
@@ -196,7 +191,7 @@ namespace obe
                 vili::ComplexAttribute& script = mapParse.at("Script");
                 for (vili::BaseAttribute* scriptName : script.getListAttribute("gameScripts"))
                 {
-                    System::Path(*scriptName).loadResource(m_worldScriptEngine, System::Loaders::luaLoader);
+                    System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
                     m_scriptArray.push_back(*scriptName);
                 }
             }
@@ -704,7 +699,6 @@ namespace obe
                 .addFunction("getCollisionMasterByPos", &World::getCollisionMasterByPos)
                 .addFunction("getCollisionPointByPos", &World::getCollisionPointByPos)
                 .addFunction("getGameObject", &World::getGameObject)
-                .addFunction("getScriptEngine", &World::getScriptEngine)
                 .addFunction("getSpriteArraySize", &World::getSpriteArraySize)
                 .addFunction("getSpriteByID", &World::getSpriteByID)
                 .addFunction("getSpriteByIndex", &World::getSpriteByIndex)

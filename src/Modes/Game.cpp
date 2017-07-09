@@ -4,6 +4,7 @@
 #include <Input/KeyBind.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/World.hpp>
+#include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
@@ -83,8 +84,8 @@ namespace obe
 
             world.setCameraLock(false);
 
-            System::Path("boot.lua").loadResource(world.getScriptEngine(), System::Loaders::luaLoader);
-            world.getScriptEngine()->dostring("Game.Start()");
+            System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+            Script::ScriptEngine.dostring("Game.Start()");
 
             //Game Starts
             while (window.isOpen())

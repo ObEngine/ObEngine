@@ -428,7 +428,6 @@ namespace obe
                     .addFunction("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
                     .addFunction("getCollidedCollidersWithTags", &Collision::PolygonalCollider::getCollidedCollidersWithTags)
                     .addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
-                    .addFunction("getId", &Collision::PolygonalCollider::getId)
                     .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::u_getMasterPointPosition)
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
                     .addFunction("getParentId", &Collision::PolygonalCollider::getParentId)
@@ -469,8 +468,6 @@ namespace obe
             if (importAll || args[1] == "Console")
             {
                 (*lua)["Core"]["Console"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
-                    .addFunction("getCommand", &Debug::Console::getCommand)
-                    .addFunction("hasCommand", &Debug::Console::hasCommand)
                     .addFunction("scroll", &Debug::Console::scroll)
                     .addFunction("getInputBufferContent", &Debug::Console::getInputBufferContent)
                     .addFunction("setInputBufferContent", &Debug::Console::setInputBufferContent)
@@ -484,12 +481,6 @@ namespace obe
             if (importAll || args[1] == "Stream")
             {
                 (*lua)["Core"]["Console"]["Stream"].setClass(kaguya::UserdataMetatable<Debug::Console::Stream>()
-                    .addOverloadedFunctions("write",
-                                            static_cast<Debug::Console::Message* (Debug::Console::Stream::*)(std::string)>
-                                            (&Debug::Console::Stream::streamPush),
-                                            static_cast<Debug::Console::Message* (Debug::Console::Stream::*)(std::string, int, int, int, int)>
-                                            (&Debug::Console::Stream::streamPush)
-                    )
                     .addFunction("setColor", &Debug::Console::Stream::setColor)
                     .addFunction("getR", &Debug::Console::Stream::getR)
                     .addFunction("getG", &Debug::Console::Stream::getG)
@@ -508,7 +499,6 @@ namespace obe
                     .addFunction("getG", &Debug::Console::Message::getG)
                     .addFunction("getB", &Debug::Console::Message::getB)
                     .addFunction("getA", &Debug::Console::Message::getA)
-                    .addFunction("getType", &Debug::Console::Message::getType)
                     .addFunction("setMessage", &Debug::Console::Message::setMessage)
                     .addFunction("setColor", &Debug::Console::Message::setColor)
                 );

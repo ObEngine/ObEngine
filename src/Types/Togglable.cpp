@@ -1,0 +1,37 @@
+#include <Types/Togglable.hpp>
+
+namespace obe
+{
+    namespace Types
+    {
+        Togglable::Togglable(bool enabled)
+        {
+            m_enabled = enabled;
+        }
+
+        void Togglable::setState(bool state)
+        {
+            m_enabled = state;
+        }
+
+        void Togglable::toggle()
+        {
+            m_enabled = !m_enabled;
+        }
+
+        void Togglable::enable()
+        {
+            m_enabled = true;
+        }
+
+        void Togglable::disable()
+        {
+            m_enabled = false;
+        }
+
+        bool Togglable::getState() const
+        {
+            return m_enabled;
+        }
+    }
+}

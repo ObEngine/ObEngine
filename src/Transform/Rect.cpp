@@ -91,7 +91,7 @@ namespace obe
 		void Rect::scale(const UnitVector& size, Referencial ref)
 		{
             UnitVector savePosition = this->getPosition(ref);
-			m_size.add(size);
+			m_size *= size;
             this->setPosition(savePosition, ref);
 		}
 
@@ -178,12 +178,12 @@ namespace obe
 			this->setPointPosition(pVec, ref);
 		}
 
-		void Rect::movePoint(const UnitVector& position)
+		void Rect::movePoint(const UnitVector& position, Referencial ref)
 		{
 
 		}
 
-		void Rect::movePoint(double x, double y)
+		void Rect::movePoint(double x, double y, Referencial ref)
 		{
 
 		}
@@ -203,7 +203,7 @@ namespace obe
 			return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
 		}
 
-		void Rect::draw(sf::RenderWindow& target)
+		void Rect::display(sf::RenderWindow& target)
 		{
 			int r = 6;
 			std::map<std::string, Types::Any> drawOptions;

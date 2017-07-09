@@ -10,6 +10,7 @@
 #include <Network/Network.hpp>
 #include <Scene/World.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
@@ -66,12 +67,8 @@ namespace obe
             vili::ComplexAttribute& gameConfig = configFile->at("GameConfig");
             int scrollSensitive = gameConfig.at<vili::BaseAttribute>("scrollSensibility");
             vili::ComplexAttribute& developpement = configFile.at("Developpement");
-            bool showChar = developpement.at<vili::BaseAttribute>("showCharacter");
-            bool showCol = developpement.at<vili::BaseAttribute>("showCollisions");
-            bool showLSpr = developpement.at<vili::BaseAttribute>("showLevelSprites");
-            bool showOverlay = developpement.at<vili::BaseAttribute>("showOverlay");
+
             bool showCursor = developpement.at<vili::BaseAttribute>("showCursor");
-            bool drawFPS = developpement.at<vili::BaseAttribute>("showFPS");
 
             //Cursor
             System::Cursor cursor(&window);
@@ -86,8 +83,8 @@ namespace obe
 
             //World Creation / Loading
             Scene::World world;
-            (*world.getScriptEngine())["stream"] = gameConsole.createStream("World", true);
-            world.getScriptEngine()->setErrorHandler([&gameConsole](int statuscode, const char* message)
+            Script::ScriptEngine["stream"] = gameConsole.createStream("World", true);
+            Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
                 gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, 255, 0, 0);
                 std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
@@ -174,8 +171,6 @@ namespace obe
             sf::FloatRect sdBoundingRect;
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;
-            int selectedSpritePickPosX = 0;
-            int selectedSpritePickPosY = 0;
             bool guiEditorEnabled = false;
             int cameraSpeed = 30;
             int currentLayer = 1;
@@ -656,7 +651,7 @@ namespace obe
                     editMode->setSelectedItemByIndex(1);
                 }
 
-                drawFPS = displayFramerateCheckbox->isChecked();
+                bool drawFPS = displayFramerateCheckbox->isChecked();
 
                 if (guiEditorEnabled && saveEditMode < 0)
                 {
@@ -816,8 +811,6 @@ namespace obe
                                 selectedSprite = hoveredSprite;
                                 selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
                                 selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
-                                selectedSpritePickPosX = selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
-                                selectedSpritePickPosY = selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
                                 selectedSprite->select();
 
                                 sdBoundingRect = selectedSprite->getRect();
@@ -1108,8 +1101,6 @@ namespace obe
                 }
 
                 //Console Command Handle
-                if (gameConsole.hasCommand())
-                    world.getScriptEngine()->dostring(gameConsole.getCommand());
 
                 //Click&Press Trigger
                 if (editMode->getSelectedItem() == "Play")
@@ -1247,7 +1238,7 @@ namespace obe
 
                     //Console
                     if (gameConsole.isConsoleVisible())
-                        gameConsole.display(&window);
+                        gameConsole.display(window);
 
                     //Cursor
                     if (showCursor)

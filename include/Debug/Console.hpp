@@ -7,6 +7,8 @@
 #include <SFML/Graphics.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Identifiable.hpp>
+#include <Types/Togglable.hpp>
 
 namespace obe
 {
@@ -18,86 +20,184 @@ namespace obe
             class Message
             {
             private:
-                std::string header;
-                std::string message;
-                sf::Color textColor;
-                std::string type;
+                std::string m_header;
+                std::string m_text;
+                sf::Color m_color;
                 unsigned long long int timestamp;
-                bool useTimeStamp;
             public:
-                Message(std::string header, std::string message, sf::Color textColor, std::string type, bool timestamped = true);
-                std::string getFormatedMessage();
-                std::string getHeader();
-                std::string getMessage();
-                sf::Color getColor();
-                int getR();
-                int getG();
-                int getB();
-                int getA();
-                std::string getType();
-                void setMessage(std::string newmessage);
-                void setColor(int r, int g, int b, int a = 255);
+                /**
+                 * \brief Creates a Message
+                 * \param header Name of the stream of the Message
+                 * \param text Text of the Message
+                 * \param textColor Color of the Message
+                 */
+                Message(const std::string& header, const std::string& text, const sf::Color& textColor);
+                /**
+                 * \brief Get the whole Message (with header and text)
+                 * \return A std::string containing the whole Message
+                 */
+                std::string getFormatedMessage() const;
+                /**
+                 * \brief Get the header of the Message
+                 * \return A std::string containing the header of the Message
+                 */
+                std::string getHeader() const;
+                /**
+                 * \brief Get the text of the Message
+                 * \return A std::string containing the text of the Message
+                 */
+                std::string getText() const;
+                /**
+                 * \brief Get the Color of the Message
+                 * \return A sf::Color containing the color of the Message
+                 */
+                sf::Color getColor() const;
+                /**
+                 * \brief Set a next text for the Message
+                 * \param text New text for the Message
+                 */
+                void setMessage(const std::string& text);
+                /**
+                 * \brief Set the color of the Message
+                 * \param color sf::Color for the Message
+                 */
+                void setColor(const sf::Color& color);
             };
 
-            class Stream
+            class Stream : public Types::Identifiable, public Types::Togglable
             {
             private:
-                std::string streamName;
-                Console* consolePointer;
-                sf::Color streamColor = sf::Color(255, 255, 255);
-                std::vector<std::string> queryList;
+                Console* m_consoleParent;
+                sf::Color m_color = sf::Color(255, 255, 255);
             public:
-                Stream(std::string streamName, Console* consolePointer);
-                Message* streamPush(std::string message, int r, int g, int b, int a);
-                Message* streamPush(std::string message);
-                void setColor(int r, int g, int b, int a = 255);
-                sf::Color getColor();
-                int getR();
-                int getG();
-                int getB();
-                int getA();
+                /**
+                 * \brief Creates a new Stream
+                 * \param id Id of the Stream
+                 * \param consoleParent Pointer to the Console
+                 */
+                Stream(const std::string& id, Console* consoleParent);
+                /**
+                 * \brief Push a new Message to the Console
+                 * \param message Text of the Message
+                 * \return A pointer to the created Message
+                 */
+                Message* push(const std::string& message) const;
+                /**
+                 * \brief Sets a new Color for the Stream
+                 * \param color Color of the Stream
+                 */
+                void setColor(const sf::Color& color);
+                /**
+                 * \brief Get the color of the Stream
+                 * \return A sf::Color containing the color of the Stream
+                 */
+                sf::Color getColor() const;
             };
 
+            /**
+             * \brief Creates a new Console
+             */
             Console();
-            void handleCommands(std::string text);
-            std::string getCommand();
-            bool hasCommand();
+            /**
+             * \brief Adds a timestamp to every message if equals to true
+             */
+            static const bool Timestamped = true;
+            /**
+             * \brief Executes a command (Sent to the Script::ScriptEngine)
+             * \param text A std::string containing the command to execute
+             */
+            void handleCommand(const std::string& text);
+            /**
+             * \brief Scrolls in the Console content
+             * \param power Amount of lines to scroll (Positive integer = Scrolling down, Negative integer = Scrolling up)
+             */
             void scroll(int power);
-            Message* pushMessage(std::string headerName, std::string message, int r = 255, int g = 255, int b = 255, int a = 255, std::string type = "DEFAULT", bool disableTimestamp = false);
+            /**
+             * \brief Push a new Message to the Console
+             * \param headerName Name of the Category of the Message you want to display
+             * \param message Text of the Message you want to display
+             * \param color Color of the Message you want to display
+             * \return A pointer to the newly created Message
+             */
+            Message* pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color);
+            /**
+             * \brief Add a new character to the input buffer
+             * \param keyCode ASCII number of the character to add
+             */
             void inputKey(int keyCode);
+            /**
+             * \brief Clears the input
+             */
             void clearInputBuffer();
-            std::string getInputBufferContent();
-            void setInputBufferContent(std::string content);
-            void insertInputBufferContent(std::string content);
-            Stream* createStream(std::string streamName, bool enabled = true);
-            Stream* getStream(std::string streamName);
+            /**
+             * \brief Get the current entered text
+             * \return A std::string containing the current text in the input
+             */
+            std::string getInputBufferContent() const;
+            /**
+             * \brief Set the content of the input
+             * \param content A std::string to put in the input buffer
+             */
+            void setInputBufferContent(const std::string& content);
+            /**
+             * \brief Insert content to the input
+             * \param content A std::stirng to insert in the input buffer
+             */
+            void insertInputBufferContent(const std::string& content);
+            /**
+             * \brief Creates a new Stream to use in the Console
+             * \param id Id of the new Stream to create
+             * \param enabled Is the Stream enabled at creation ?
+             * \return A pointed to the new Stream
+             */
+            Stream* createStream(const std::string& id, bool enabled = true);
+            /**
+             * \brief Get an existing Stream
+             * \param id Id of the Stream to get
+             * \return A pointer to the Stream
+             */
+            Stream* getStream(const std::string& id);
+            /**
+             * \brief Fill the buffer with the previous command
+             */
             void downHistory();
+            /**
+             * \brief Fill the buffer with the next command
+             */
             void upHistory();
-            void display(sf::RenderWindow* surf);
-            bool isConsoleVisible();
+            /**
+             * \brief Displays the Console on the screen
+             * \param target sf::RenderWindow where to display the Console
+             */
+            void display(sf::RenderWindow& target);
+            /**
+             * \brief Check the visibility of the Console
+             * \return true if the Console is visible, false otherwise
+             */
+            bool isConsoleVisible() const;
+            /**
+             * \brief Set if the Console is visible or not
+             * \param enabled Boolean containing if the Console should be displayed or not
+             */
             void setConsoleVisibility(bool enabled);
-            void moveCursor(int move);
-
+            /**
+             * \brief Moves the virtual cursor
+             * \param position Offset to move the virtual cursor
+             */
+            void moveCursor(int position);
         private:
-            Stream* scrEngineStream;
-            Stream* scrErrorStream;
-            int virtualCursor = 0;
-            bool consoleVisibility = false;
-            int consoleScroll = 0;
-            bool consoleAutoScroll = true;
-            bool consoleMuted = false;
-            bool commandReady = false;
-            int consoleHistoryIndex = 0;
-            std::vector<std::string> consoleHistory;
-            std::string currentCommand;
-            std::string currentTheme;
-            sf::Font font;
-            std::string inputBuffer;
-            std::map<std::string, Stream*> streamMap;
-            std::map<std::string, std::string> aliasMap;
-            std::vector<std::string> userCommandList;
-            std::vector<std::string> streamList;
-            std::vector<std::string> disabledStreams;
+            Stream* m_debugStream;
+            Stream* m_errorStream;
+            int m_virtualCursor = 0;
+            bool m_consoleVisibility = false;
+            int m_consoleScroll = 0;
+            bool m_consoleAutoScroll = true;
+            bool m_consoleMuted = false;
+            int m_consoleHistoryIndex = 0;
+            std::vector<std::string> m_consoleHistory;
+            sf::Font m_font;
+            std::string m_inputBuffer;
+            std::map<std::string, std::unique_ptr<Stream>> m_streamMap;
             std::vector<Message*> consoleText;
             Triggers::TriggerGroup::Ptr consoleTriggers;
         };
