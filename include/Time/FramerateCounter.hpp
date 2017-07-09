@@ -8,6 +8,9 @@ namespace obe
 {
     namespace Time
     {
+        /**
+         * \brief Class to display the amount of Frame and Update per Seconds
+         */
         class FPSCounter
         {
         private:

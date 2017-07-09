@@ -117,7 +117,7 @@ namespace obe
                     }
                 }
 
-                if (cursor.getClicked(System::CursorButton::Left) || cursor.getPressed(System::CursorButton::Left))
+                if (cursor.getClicked(System::MouseButton::Left) || cursor.getPressed(System::MouseButton::Left))
                 {
                     cursorCollider.setPosition(cursor.getX(), cursor.getY());
                     std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
@@ -129,9 +129,9 @@ namespace obe
                         {
                             if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
                             {
-                                if (cursor.getClicked(System::CursorButton::Left))
+                                if (cursor.getClicked(System::MouseButton::Left))
                                     world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
-                                if (cursor.getPressed(System::CursorButton::Left))
+                                if (cursor.getPressed(System::MouseButton::Left))
                                     world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
                             }
                         }
@@ -142,7 +142,7 @@ namespace obe
                 {
                     window.clear();
                     world.display(window);
-                    cursor.draw(window);
+                    cursor.display(window);
 
                     window.display();
                 }

@@ -11,6 +11,9 @@ namespace obe
 {
     namespace Editor
     {
+        /**
+         * \brief A grid for precise edition in the map editor
+         */
         class EditorGrid
         {
         private:

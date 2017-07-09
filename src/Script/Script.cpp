@@ -482,10 +482,6 @@ namespace obe
             {
                 (*lua)["Core"]["Console"]["Stream"].setClass(kaguya::UserdataMetatable<Debug::Console::Stream>()
                     .addFunction("setColor", &Debug::Console::Stream::setColor)
-                    .addFunction("getR", &Debug::Console::Stream::getR)
-                    .addFunction("getG", &Debug::Console::Stream::getG)
-                    .addFunction("getB", &Debug::Console::Stream::getB)
-                    .addFunction("getA", &Debug::Console::Stream::getA)
                 );
                 foundPart = true;
             }
@@ -494,11 +490,6 @@ namespace obe
                 (*lua)["Core"]["Console"]["Message"].setClass(kaguya::UserdataMetatable<Debug::Console::Message>()
                     .addFunction("getFormatedMessage", &Debug::Console::Message::getFormatedMessage)
                     .addFunction("getHeader", &Debug::Console::Message::getHeader)
-                    .addFunction("getMessage", &Debug::Console::Message::getMessage)
-                    .addFunction("getR", &Debug::Console::Message::getR)
-                    .addFunction("getG", &Debug::Console::Message::getG)
-                    .addFunction("getB", &Debug::Console::Message::getB)
-                    .addFunction("getA", &Debug::Console::Message::getA)
                     .addFunction("setMessage", &Debug::Console::Message::setMessage)
                     .addFunction("setColor", &Debug::Console::Message::setColor)
                 );
@@ -570,8 +561,8 @@ namespace obe
                     .addFunction("getReleased", &System::Cursor::getReleased)
                     .addFunction("getX", &System::Cursor::getX)
                     .addFunction("getY", &System::Cursor::getY)
-                    .addFunction("selectCursor", &System::Cursor::selectCursor)
-                    .addFunction("selectKey", &System::Cursor::selectKey)
+                    .addFunction("selectCursor", &System::Cursor::selectAnimatorPath)
+                    .addFunction("selectKey", &System::Cursor::selectAnimationKey)
                     .addFunction("setPosition", &System::Cursor::setPosition)
                     .addFunction("setX", &System::Cursor::setX)
                     .addFunction("setY", &System::Cursor::setY)

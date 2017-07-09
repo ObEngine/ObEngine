@@ -15,8 +15,8 @@ namespace obe
         }
 
         Cursor::Cursor(sf::RenderWindow* window) : 
-        m_cursorAnim(System::Path("Sprites/Cursors/Round")), 
-        m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"))
+        m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")), 
+        m_cursorAnim(System::Path("Sprites/Cursors/Round"))
         {
             m_constraint = Constraints::Default;
             m_window = window;
@@ -28,11 +28,7 @@ namespace obe
                             ->addTrigger("Released");
         }
 
-        Cursor::~Cursor()
-        {
-        }
-
-        void Cursor::selectCursor(std::string cursor)
+        void Cursor::selectAnimatorPath(const std::string& cursor)
         {
             m_cursorAnim.clear();
             m_cursorAnim = Animation::Animator(System::Path("Sprites/Cursors/").add(cursor));
@@ -42,7 +38,7 @@ namespace obe
             m_cursorSprite.setTexture(m_cursorAnim.getTexture());
         }
 
-        void Cursor::selectKey(std::string key)
+        void Cursor::selectAnimationKey(const std::string& key)
         {
             m_cursorAnim.setKey(key);
         }
@@ -67,19 +63,19 @@ namespace obe
             return m_y;
         }
 
-        void Cursor::setX(int newx)
+        void Cursor::setX(unsigned int newx)
         {
             m_x = newx;
             sf::Mouse::setPosition(sf::Vector2i(m_x, m_y));
         }
 
-        void Cursor::setY(int newy)
+        void Cursor::setY(unsigned int newy)
         {
             m_y = newy;
             sf::Mouse::setPosition(sf::Vector2i(m_x, m_y));
         }
 
-        void Cursor::setPosition(int newx, int newy)
+        void Cursor::setPosition(unsigned int newx, unsigned int newy)
         {
             m_x = newx;
             m_y = newy;
@@ -88,45 +84,45 @@ namespace obe
 
         void Cursor::update()
         {
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !m_leftclicked)
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !m_leftPressed)
             {
-                m_leftclicked = true;
-                m_leftfirstclic = true;
+                m_leftPressed = true;
+                m_leftClicked = true;
                 m_leftReleased = false;
                 m_cursorAnim.setKey("CLIC");
             }
-            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_leftclicked)
+            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_leftPressed)
             {
-                m_leftclicked = false;
-                m_leftfirstclic = false;
+                m_leftPressed = false;
+                m_leftClicked = false;
                 m_leftReleased = true;
                 m_cursorAnim.setKey("RELEASE");
             }
             else
             {
-                m_leftfirstclic = false;
+                m_leftClicked = false;
                 m_leftReleased = false;
             }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !m_rightclicked)
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !m_rightPressed)
             {
-                m_rightclicked = true;
-                m_rightfirstclic = true;
+                m_rightPressed = true;
+                m_rightClicked = true;
                 m_rightReleased = false;
                 m_cursorAnim.setKey("CLIC");
             }
-            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Right) && m_rightclicked)
+            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Right) && m_rightPressed)
             {
-                m_rightclicked = false;
-                m_rightfirstclic = false;
+                m_rightPressed = false;
+                m_rightClicked = false;
                 m_rightReleased = true;
                 m_cursorAnim.setKey("RELEASE");
             }
             else
             {
-                m_rightfirstclic = false;
+                m_rightClicked = false;
                 m_rightReleased = false;
             }
-            if (!m_leftclicked && !m_rightclicked && m_cursorAnim.getKey() == "HOLD")
+            if (!m_leftPressed && !m_rightPressed && m_cursorAnim.getKey() == "HOLD")
                 m_cursorAnim.setKey("RELEASE");
             m_cursorAnim.update();
             if (m_cursorAnim.textureChanged())
@@ -159,42 +155,42 @@ namespace obe
 
         void Cursor::handleTriggers() const
         {
-            if (this->getClicked(CursorButton::Left))
+            if (this->getClicked(MouseButton::Left))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Clicked");
             }
-            if (this->getClicked(CursorButton::Right))
+            if (this->getClicked(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Clicked");
             }
-            if (this->getPressed(CursorButton::Left))
+            if (this->getPressed(MouseButton::Left))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Pressed");
             }
-            if (this->getPressed(CursorButton::Right))
+            if (this->getPressed(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Pressed");
             }
-            if (this->getReleased(CursorButton::Left))
+            if (this->getReleased(MouseButton::Left))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
                 m_cursorTriggers->enableTrigger("Released");
             }
-            if (this->getReleased(CursorButton::Right))
+            if (this->getReleased(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
@@ -203,29 +199,29 @@ namespace obe
             }
         }
 
-        bool Cursor::getPressed(CursorButton button) const
+        bool Cursor::getPressed(MouseButton button) const
         {
-            if (button == CursorButton::Left)
-                return m_leftclicked;
-            if (button == CursorButton::Right)
-                return m_rightclicked;
+            if (button == MouseButton::Left)
+                return m_leftPressed;
+            if (button == MouseButton::Right)
+                return m_rightPressed;
             return false;
         }
 
-        bool Cursor::getClicked(CursorButton button) const
+        bool Cursor::getClicked(MouseButton button) const
         {
-            if (button == CursorButton::Left)
-                return m_leftfirstclic;
-            if (button == CursorButton::Right)
-                return m_rightfirstclic;
+            if (button == MouseButton::Left)
+                return m_leftClicked;
+            if (button == MouseButton::Right)
+                return m_rightClicked;
             return false;
         }
 
-        bool Cursor::getReleased(CursorButton button) const
+        bool Cursor::getReleased(MouseButton button) const
         {
-            if (button == CursorButton::Left)
+            if (button == MouseButton::Left)
                 return m_leftReleased;
-            if (button == CursorButton::Right)
+            if (button == MouseButton::Right)
                 return m_rightReleased;
             return false;
         }

@@ -2,6 +2,9 @@
 
 int main(int argc, char** argv);
 
+/**
+ * \brief The wonderful ObEngine's namespace !
+ */
 namespace obe
 {
     /**

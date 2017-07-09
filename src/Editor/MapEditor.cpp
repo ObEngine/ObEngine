@@ -72,7 +72,7 @@ namespace obe
 
             //Cursor
             System::Cursor cursor(&window);
-            cursor.selectCursor("RoundWhite");
+            cursor.selectAnimatorPath("RoundWhite");
             Collision::PolygonalCollider cursorCollider("cursor");
             cursorCollider.addPoint(0, 0);
             cursorCollider.addPoint(1, 0);
@@ -703,13 +703,13 @@ namespace obe
                 {
                     world.enableShowCollision(true, true, false, false);
 
-                    if (selectedHandlePoint != nullptr && cursor.getPressed(System::CursorButton::Left))
+                    if (selectedHandlePoint != nullptr && cursor.getPressed(System::MouseButton::Left))
                     {
                         std::cout << "Moving ref : " << selectedHandlePoint->getReferencial() << std::endl;
                         selectedHandlePoint->moveTo(cursor.getX(), cursor.getY());
                         
                     }
-                    else if (selectedHandlePoint != nullptr && cursor.getReleased(System::CursorButton::Left))
+                    else if (selectedHandlePoint != nullptr && cursor.getReleased(System::MouseButton::Left))
                     {
                         selectedHandlePoint = nullptr;
                     }
@@ -781,7 +781,7 @@ namespace obe
                         }
 
                         //Sprite Pick
-                        if (cursor.getClicked(System::CursorButton::Left))
+                        if (cursor.getClicked(System::MouseButton::Left))
                         {
                             if (selectedSprite != nullptr)
                             {
@@ -826,7 +826,7 @@ namespace obe
                             world.reorganizeLayers();
                         }*/
                         //Sprite Move
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && selectedHandlePoint == nullptr)
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && selectedHandlePoint == nullptr)
                         {
                             if (selectedSprite->getParentId().empty())
                             {
@@ -878,23 +878,23 @@ namespace obe
                         }*/
 
                         //Sprite Layer / Z-Depth
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
                         {
                             selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
                             world.reorganizeLayers();
                         }
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZDec"))
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZDec"))
                         {
                             selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
                             world.reorganizeLayers();
                         }
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerInc"))
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerInc"))
                         {
                             selectedSprite->setLayer(selectedSprite->getLayer() + 1);
                             currentLayer += 1;
                             world.reorganizeLayers();
                         }
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerDec"))
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerDec"))
                         {
                             selectedSprite->setLayer(selectedSprite->getLayer() - 1);
                             currentLayer -= 1;
@@ -902,7 +902,7 @@ namespace obe
                         }
 
                         //Sprite Cancel Offset
-                        if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("CancelOffset"))
+                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("CancelOffset"))
                         {
                             selectedSpriteOffsetX = 0;
                             selectedSpriteOffsetY = 0;
@@ -949,7 +949,7 @@ namespace obe
                         selectedMasterCollider->highlightPoint(secondClosestNode);
                     }
                     //Collision Point Grab
-                    if (cursor.getClicked(System::CursorButton::Left) && colliderPtGrabbed == -1 &&
+                    if (cursor.getClicked(System::MouseButton::Left) && colliderPtGrabbed == -1 &&
                         world.getCollisionPointByPos(cursor.getX() + pixelCamera.x,
                                                      cursor.getY() + pixelCamera.y).first != nullptr)
                     {
@@ -968,7 +968,7 @@ namespace obe
                         colliderPtGrabbed = selectedPtCollider.second;
                     }
                     //Collision Point Move
-                    if (cursor.getPressed(System::CursorButton::Left) && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
+                    if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                     {
                         selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                         if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
@@ -979,12 +979,12 @@ namespace obe
                         }
                     }
                     //Collision Point Release
-                    if (cursor.getReleased(System::CursorButton::Left))
+                    if (cursor.getReleased(System::MouseButton::Left))
                     {
                         colliderPtGrabbed = -1;
                     }
                     //Collision Master Grab
-                    if (cursor.getClicked(System::CursorButton::Left) && world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x,
+                    if (cursor.getClicked(System::MouseButton::Left) && world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x,
                                                                                    cursor.getY() + pixelCamera.y) != nullptr)
                     {
                         Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x,
@@ -1002,7 +1002,7 @@ namespace obe
                         masterColliderGrabbed = true;
                     }
                     //Collision Master Move
-                    if (cursor.getPressed(System::CursorButton::Left) && selectedMasterCollider != nullptr && masterColliderGrabbed)
+                    if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && masterColliderGrabbed)
                     {
                         selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                         if (selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
@@ -1015,12 +1015,12 @@ namespace obe
                         }
                     }
                     //Collision Master Release
-                    if (cursor.getReleased(System::CursorButton::Left) && masterColliderGrabbed)
+                    if (cursor.getReleased(System::MouseButton::Left) && masterColliderGrabbed)
                     {
                         masterColliderGrabbed = false;
                         if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
                     }
-                    if (cursor.getClicked(System::CursorButton::Right) && selectedMasterCollider != nullptr && !masterColliderGrabbed)
+                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider != nullptr && !masterColliderGrabbed)
                     {
                         int crPtX = cursor.getX() + pixelCamera.x;
                         int crPtY = cursor.getY() + pixelCamera.y;
@@ -1046,7 +1046,7 @@ namespace obe
                         }
                     }
                     //Collision Release
-                    if (cursor.getClicked(System::CursorButton::Left) && selectedMasterCollider != nullptr)
+                    if (cursor.getClicked(System::MouseButton::Left) && selectedMasterCollider != nullptr)
                     {
                         if (world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y) == nullptr)
                         {
@@ -1060,7 +1060,7 @@ namespace obe
                         }
                     }
                     //Collision Delete
-                    if (cursor.getClicked(System::CursorButton::Right) && selectedMasterCollider != nullptr && masterColliderGrabbed)
+                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider != nullptr && masterColliderGrabbed)
                     {
                         selectedMasterCollider->setSelected(false);
                         world.deleteCollisionByID(selectedMasterCollider->getId());
@@ -1070,7 +1070,7 @@ namespace obe
                         deletedCollision = true;
                     }
                     //Collision Create
-                    if (cursor.getClicked(System::CursorButton::Right) && selectedMasterCollider == nullptr && !deletedCollision)
+                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider == nullptr && !deletedCollision)
                     {
                         world.createCollisionAtPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                     }
@@ -1105,7 +1105,7 @@ namespace obe
                 //Click&Press Trigger
                 if (editMode->getSelectedItem() == "Play")
                 {
-                    if (cursor.getClicked(System::CursorButton::Left) || cursor.getPressed(System::CursorButton::Left))
+                    if (cursor.getClicked(System::MouseButton::Left) || cursor.getPressed(System::MouseButton::Left))
                     {
                         std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
                         std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
@@ -1116,9 +1116,9 @@ namespace obe
                             {
                                 if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
                                 {
-                                    if (cursor.getClicked(System::CursorButton::Left))
+                                    if (cursor.getClicked(System::MouseButton::Left))
                                         world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
-                                    if (cursor.getPressed(System::CursorButton::Left))
+                                    if (cursor.getPressed(System::MouseButton::Left))
                                         world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
                                 }
                             }
@@ -1242,7 +1242,7 @@ namespace obe
 
                     //Cursor
                     if (showCursor)
-                        cursor.draw(window);
+                        cursor.display(window);
                         
                     window.display();
                 }

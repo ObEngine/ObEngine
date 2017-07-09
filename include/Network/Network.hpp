@@ -9,7 +9,7 @@ namespace obe
     namespace Network
     {
 	    /**
-         * \brief Handle the Network Input / Output (Will be remade)
+         * \brief Handle the Network input / output (Will be remade)
          */
         class NetworkHandler
         {
