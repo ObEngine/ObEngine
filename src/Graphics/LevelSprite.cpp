@@ -13,7 +13,6 @@ namespace obe
         LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Identifiable(id)
         {
             m_id = id;
-            m_drawable = false;
 
             for (int i = 0; i < 9; i++)
             {
@@ -28,22 +27,14 @@ namespace obe
             {
                 m_path = path;
                 System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
-                m_returnSprite.setTexture(m_texture);
+                m_sprite.setTexture(m_texture);
             }
         }
 
-        void LevelSprite::setSprite(sf::Sprite* spr)
-        {
-            m_returnSprite.copyFromSprite(*spr);
-            int rotOrigX = static_cast<double>(getWidth()) / 2.0;
-            int rotOrigY = static_cast<double>(getHeight()) / 2.0;
-            this->setRotationOrigin(rotOrigX, rotOrigY);
-        }
-
-        void LevelSprite::setTexture(sf::Texture texture)
+        void LevelSprite::setTexture(const sf::Texture& texture)
         {
             m_texture = texture;
-            m_returnSprite = sfe::ComplexSprite(m_texture);
+            m_sprite.setTexture(m_texture);
         }
 
         sf::Texture& LevelSprite::getTexture()
@@ -84,7 +75,7 @@ namespace obe
         void LevelSprite::setRotation(double rotate)
         {
             m_rotation = rotate;
-            m_returnSprite.setRotation(m_rotation);
+            m_sprite.setRotation(m_rotation);
         }
 
         void LevelSprite::rotate(double addRotate)
@@ -92,14 +83,12 @@ namespace obe
             m_rotation += addRotate;
             if (m_rotation < 0) m_rotation += 360;
             m_rotation = (static_cast<int>(m_rotation) % 360) + (m_rotation - floor(m_rotation));
-            m_returnSprite.setRotation(m_rotation);
+            m_sprite.setRotation(m_rotation);
         }
 
         void LevelSprite::setScalingOrigin(int x, int y)
         {
-            m_originScaX = x;
-            m_originScaY = y;
-            m_returnSprite.setScalingOrigin(x, y);
+            m_sprite.setScalingOrigin(x, y);
         }
 
         void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY)
@@ -161,16 +150,12 @@ namespace obe
 
         void LevelSprite::setTranslationOrigin(int x, int y)
         {
-            m_originTraX = x;
-            m_originTraY = y;
-            m_returnSprite.setTranslationOrigin(m_originTraX, m_originTraY);
+            m_sprite.setTranslationOrigin(x, y);
         }
 
         void LevelSprite::setRotationOrigin(int x, int y)
         {
-            m_originRotX = x;
-            m_originRotY = y;
-            m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
+            m_sprite.setRotationOrigin(x, y);
         }
 
         void LevelSprite::applySize()
@@ -187,12 +172,17 @@ namespace obe
             //std::cout << "ISSCALE : " << widthScale << ", " << heightScale << std::endl;
             //std::cout << "ShiftTest : " << (pixelSize.x > 1 || pixelSize.x < -1) << ", " << (pixelSize.y > 1 || pixelSize.y < -1) << std::endl;
             if ((pixelSize.x >= 1 || pixelSize.x <= -1) && (pixelSize.y >= 1 || pixelSize.y <= -1))
-                m_returnSprite.scale(widthScale, heightScale);
+                m_sprite.scale(widthScale, heightScale);
         }
 
         void LevelSprite::setColor(sf::Color newColor)
         {
-            m_returnSprite.setColor(newColor);
+            m_sprite.setColor(newColor);
+        }
+
+        sf::Color LevelSprite::getColor() const
+        {
+            return m_sprite.getColor();
         }
 
         sfe::ComplexSprite& LevelSprite::getSprite()
@@ -202,20 +192,20 @@ namespace obe
             //std::cout << "Rect of LevelSprite : " << m_position << ", " << m_size << std::endl;
             //std::cout << "And real size is : " << m_returnSprite.getGlobalBounds().width << ", " << m_returnSprite.getGlobalBounds().height << std::endl;
             //std::cout << "From scale : " << m_returnSprite.getScale().x << ", " << m_returnSprite.getScale().y << std::endl;
-            return m_returnSprite;
+            return m_sprite;
         }
 
-        double LevelSprite::getSpriteWidth()
+        double LevelSprite::getSpriteWidth() const
         {
-            return m_returnSprite.getGlobalBounds().width;
+            return m_sprite.getGlobalBounds().width;
         }
 
-        double LevelSprite::getSpriteHeight()
+        double LevelSprite::getSpriteHeight() const
         {
-            return m_returnSprite.getGlobalBounds().height;
+            return m_sprite.getGlobalBounds().height;
         }
 
-        Transform::UnitVector LevelSprite::getDrawPosition(Transform::UnitVector& cameraPosition)
+        Transform::UnitVector LevelSprite::getDrawPosition(Transform::UnitVector& cameraPosition) const
         {
             Transform::UnitVector pixelPosition = m_position.to<Transform::Units::WorldPixels>();
 
@@ -250,10 +240,10 @@ namespace obe
                 layeredY = pixelPosition.y - cameraPosition.y;
             }
             
-            return Transform::UnitVector(layeredX, layeredY, Transform::Units::WorldPixels);
+            return Transform::UnitVector(layeredX, layeredY, Transform::Units::ViewPixels);
         }
 
-        float LevelSprite::getRotation() const
+        double LevelSprite::getRotation() const
         {
             return m_rotation;
         }
@@ -280,22 +270,14 @@ namespace obe
 
         sf::FloatRect LevelSprite::getRect()
         {
-            m_returnSprite.setTranslationOrigin(m_originTraX, m_originTraY);
-            m_returnSprite.setRotationOrigin(m_originRotX, m_originRotY);
-
             Transform::UnitVector realPosition = m_position.to<Transform::Units::WorldPixels>();
 
-            m_returnSprite.setPosition(realPosition.x, realPosition.y);
-            m_returnSprite.setRotation(m_rotation);
-            sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_returnSprite.getGlobalBounds().width, m_returnSprite.getGlobalBounds().height);
-            mrect.left = m_returnSprite.getGlobalBounds().left;
-            mrect.top = m_returnSprite.getGlobalBounds().top;
+            m_sprite.setPosition(realPosition.x, realPosition.y);
+            m_sprite.setRotation(m_rotation);
+            sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
+            mrect.left = m_sprite.getGlobalBounds().left;
+            mrect.top = m_sprite.getGlobalBounds().top;
             return mrect;
-        }
-
-        bool LevelSprite::isDrawable() const
-        {
-            return m_drawable;
         }
 
         void LevelSprite::setVisible(bool visible)
@@ -308,29 +290,24 @@ namespace obe
             return m_visible;
         }
 
-        std::string LevelSprite::getParentID() const
+        std::string LevelSprite::getParentId() const
         {
             return m_parentID;
         }
 
-        void LevelSprite::setParentID(const std::string& parent)
+        void LevelSprite::setParentId(const std::string& parent)
         {
             m_parentID = parent;
         }
 
-        int LevelSprite::getHandlePointRadius() const
+        int LevelSprite::getXScaleFactor() const
         {
-            return HandlePoint::radius;
-        }
-
-        int LevelSprite::getXScaleFactor()
-        {
-            return obe::Utils::Math::sign(m_returnSprite.getScale().x);
+            return obe::Utils::Math::sign(m_sprite.getScale().x);
         }
         
-        int LevelSprite::getYScaleFactor()
+        int LevelSprite::getYScaleFactor() const
         {
-            return obe::Utils::Math::sign(m_returnSprite.getScale().y);
+            return obe::Utils::Math::sign(m_sprite.getScale().y);
         }
 
         LevelSprite::HandlePoint::HandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)
@@ -339,7 +316,7 @@ namespace obe
             m_referencial = ref;
         }
 
-        void LevelSprite::HandlePoint::moveTo(int x, int y)
+        void LevelSprite::HandlePoint::moveTo(int x, int y) const
         {
             std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
             std::cout << "Set : " << x << ", " << y << std::endl;

@@ -39,7 +39,7 @@ namespace obe
             m_cursorAnim.loadAnimator();
             m_cursorAnim.setKey("IDLE");
             m_cursorAnim.update();
-            m_cursorSprite = m_cursorAnim.getSprite();
+            m_cursorSprite.setTexture(m_cursorAnim.getTexture());
         }
 
         void Cursor::selectKey(std::string key)
@@ -131,7 +131,7 @@ namespace obe
             m_cursorAnim.update();
             if (m_cursorAnim.textureChanged())
             {
-                m_cursorSprite = m_cursorAnim.getSprite();
+                m_cursorSprite.setTexture(m_cursorAnim.getTexture());
             }
             if (m_doesUpdateOutsideWindow)
             {
@@ -165,7 +165,7 @@ namespace obe
             std::pair<int, int> constrainedPosition = m_constraint(this);
             m_constrainedX = constrainedPosition.first;
             m_constrainedY = constrainedPosition.second;
-            m_cursorSprite->setPosition(m_constrainedX, m_constrainedY);
+            m_cursorSprite.setPosition(m_constrainedX, m_constrainedY);
         }
 
         void Cursor::handleTriggers() const
@@ -252,9 +252,9 @@ namespace obe
             m_constraint = constraint;
         }
 
-        sf::Sprite* Cursor::getSprite() const
+        void Cursor::draw(sf::RenderWindow& target) const
         {
-            return m_cursorSprite;
+            return target.draw(m_cursorSprite);
         }
     }
 }

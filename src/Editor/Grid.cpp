@@ -9,7 +9,7 @@ namespace obe
 {
     namespace Editor
     {
-        EditorGrid::EditorGrid(int sizeX, int sizeY, int offsetX, int offsetY)
+        EditorGrid::EditorGrid(unsigned int sizeX, unsigned int sizeY, int offsetX, int offsetY)
         {
             m_gridSizeX = sizeX;
             m_gridSizeY = sizeY;
@@ -17,17 +17,17 @@ namespace obe
             gridOffY = offsetY;
         }
 
-        void EditorGrid::setCellWidth(int sizeX)
+        void EditorGrid::setCellWidth(unsigned int sizeX)
         {
             m_gridSizeX = sizeX;
         }
 
-        void EditorGrid::setCellHeight(int sizeY)
+        void EditorGrid::setCellHeight(unsigned int sizeY)
         {
             m_gridSizeY = sizeY;
         }
 
-        void EditorGrid::setSize(int sizeX, int sizeY)
+        void EditorGrid::setSize(unsigned int sizeX, unsigned int sizeY)
         {
             this->setCellWidth(sizeX);
             this->setCellHeight(sizeY);
@@ -49,12 +49,12 @@ namespace obe
             this->setOffsetY(offsetY);
         }
 
-        int EditorGrid::getCellWidth() const
+        unsigned int EditorGrid::getCellWidth() const
         {
             return m_gridSizeX;
         }
 
-        int EditorGrid::getCellHeight() const
+        unsigned int EditorGrid::getCellHeight() const
         {
             return m_gridSizeY;
         }

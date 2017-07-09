@@ -72,6 +72,31 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
+    void BaseAttribute::operator=(int var)
+    {
+        this->set(var);
+    }
+
+    void BaseAttribute::operator=(double var)
+    {
+        this->set(var);
+    }
+
+    void BaseAttribute::operator=(const std::string& var)
+    {
+        this->set(var);
+    }
+
+    void BaseAttribute::operator=(const char* var)
+    {
+        this->set(var);
+    }
+
+    void BaseAttribute::operator=(bool var)
+    {
+        this->set(var);
+    }
+
     void BaseAttribute::autoset(const std::string& rawData)
     {
         std::string pop = m_id;

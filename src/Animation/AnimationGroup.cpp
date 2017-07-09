@@ -11,7 +11,7 @@ namespace obe
 
         void AnimationGroup::build()
         {
-            m_currentSprite = sf::Sprite(*m_groupList[0]);
+            m_texture = *m_groupList[0];
         }
 
         void AnimationGroup::setGroupDelay(unsigned int clock)
@@ -35,14 +35,14 @@ namespace obe
                 m_groupList.erase(m_groupList.begin() + index);
         }
 
-        sf::Sprite* AnimationGroup::returnSprite()
+        const sf::Texture& AnimationGroup::getTexture()
         {
-            return &m_currentSprite;
+            return m_texture;
         }
 
-        void AnimationGroup::updateSprite()
+        void AnimationGroup::update()
         {
-            m_currentSprite.setTexture(*m_groupList[m_groupIndex], true);
+            m_texture = *m_groupList[m_groupIndex];
         }
 
         void AnimationGroup::reset()
@@ -64,7 +64,7 @@ namespace obe
                     {
                         m_groupIndex = 0;
                         m_loopIndex++;
-                        this->updateSprite();
+                        this->update();
                     }
                     else
                     {
@@ -89,7 +89,7 @@ namespace obe
 				else
 					m_groupIndex--;
             }
-            this->updateSprite();
+            this->update();
         }
 
         void AnimationGroup::forcePrevious()

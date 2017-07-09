@@ -8,17 +8,49 @@ namespace obe
     {
         namespace Vector
         {
+            /**
+             * \brief Check if a given item is in the given std::vector
+             * \tparam V Type of the item you want to check
+             * \param item Item you want to search in the std::vector
+             * \param vector Reference of the std::vector you want to search the item in
+             * \return true if the item is found in the std::vector, false otherwise
+             */
             template <typename V>
             bool isInList(V item, const std::vector<V>& vector);
+            /**
+             * \brief Get the index of an item in a std::vector
+             * \tparam V Type of the item you want to check
+             * \param item Item you want to search in the std::vector
+             * \param vector Reference of the std::vector you want to search the item in
+             * \return Index of the item in the std::vector
+             */
             template <typename V>
             int indexOfElement(V item, const std::vector<V>& vector);
+            /**
+             * \brief Join all elements of a std::string into a std::string using a separator
+             * \param vector Vector you want to join
+             * \param sep Separator you want to use
+             * \param start From which index of the std::vector
+             * \param end From which index (starting at the end) of the std::vector
+             * \return A std::string which are all the elements of the std::vector joined
+             */
             std::string join(std::vector<std::string>& vector, std::string sep = "", int start = 0, int end = 0);
+            /**
+             * \brief Erases all occurences of a given element in the std::vector
+             * \tparam V Type of the item you want to erase
+             * \param vector Reference of the std::vector you want to erase the item from
+             * \param elem Element you want to erase from the std::vector
+             */
             template <typename V>
             void eraseAll(std::vector<V>& vector, V elem);
-            void joinBetween(std::vector<std::string>& vector, std::string joinValue, std::string sep = "");
-            void mergeNeighboors(std::vector<std::string>& vector, std::string n1, std::string n2, std::string sep = "", bool strict = false);
-            template <typename V>
-            int findSubVector(std::vector<V>& vector, std::vector<V>& find);
+            /**
+             * \brief Get a subpart of the given std::vector
+             * \tparam V Type of the content contained in the given std::vector
+             * \param vector Vector you want to get the subpart
+             * \param start From which index of the std::vector
+             * \param end From which index (starting at the end) of the std::vector
+             * \return The subvector from start index to end index of the initial std::vector 
+             */
             template <typename V>
             std::vector<V> getSubVector(const std::vector<V>& vector, int start = 0, int end = 0);
 
@@ -55,36 +87,6 @@ namespace obe
                 }
                 for (int i = toErase.size() - 1; i >= 0; i--)
                     vector.erase(vector.begin() + toErase[i]);
-            }
-
-            template <typename V>
-            int findSubVector(std::vector<V>& vector, std::vector<V>& find)
-            {
-                int occ = 0;
-                int potentialIndex = -1;
-                bool startedSearch = false;
-                if (find.size() < vector.size())
-                {
-                    for (int i = 0; i < vector.size(); i++)
-                    {
-                        if (find[occ] == vector[i])
-                        {
-                            if (!startedSearch)
-                            {
-                                potentialIndex = i;
-                                startedSearch = true;
-                            }
-                            occ++;
-                        }
-                        else if (startedSearch && find[occ] == vector[i])
-                        {
-                            startedSearch = false;
-                            occ = 0;
-                            potentialIndex = -1;
-                        }
-                    }
-                }
-                return potentialIndex;
             }
 
             template <typename V>

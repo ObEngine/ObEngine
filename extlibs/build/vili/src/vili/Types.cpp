@@ -5,16 +5,20 @@ namespace vili
 {
     namespace Types
     {
-        std::string getDefaultValueForType(DataType type)
+        constexpr const char* getDefaultValueForType(DataType type)
         {
-            std::string value = "";
-            if (type == DataType::String) value.clear();
-            else if (type == DataType::Int) value = "0";
-            else if (type == DataType::Float) value = "0.0";
-            else if (type == DataType::Bool) value = "False";
-            else if (type == DataType::Link) value = "&()";
-            else if (type == DataType::Template) value = "T()";
-            return value;
+            switch (type)
+            {
+            case DataType::String: return "\"\"";
+            case DataType::Int: return "0";
+            case DataType::Float: return "0.0";
+            case DataType::Bool: return "False";
+            case DataType::Range: return "0..1";
+            case DataType::Link: return "&()";
+            case DataType::Template: return "T()";
+            case DataType::Unknown: return "";
+            default: return "";
+            }
         }
 
         DataType getVarType(const std::string& var)

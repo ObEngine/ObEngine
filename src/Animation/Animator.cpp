@@ -20,7 +20,7 @@ namespace obe
             m_animatorPath = path;
         }
 
-        void Animator::setPath(std::string path)
+        void Animator::setPath(const std::string& path)
         {
             m_animatorPath = System::Path(path);
         }
@@ -31,13 +31,13 @@ namespace obe
             m_currentAnimation = nullptr;
             m_currentAnimationName = "NONE";
             m_animatorPath = System::Path("");
-            m_lastSpritePointer = nullptr;
+            m_lastTexturePointer = nullptr;
         }
 
-        Animation* Animator::getAnimation(std::string animationName)
+        Animation* Animator::getAnimation(const std::string& animationName) const
         {
             if (m_animationSet.find(animationName) != m_animationSet.end())
-                return m_animationSet[animationName].get();
+                return m_animationSet.at(animationName).get();
             throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
                                             {{"function", "getAnimation"}, {"animation", animationName}, {"%animator", m_animatorPath.toString()}
                                             });
@@ -131,20 +131,20 @@ namespace obe
                 m_currentAnimation->update();      
         }
 
-        sf::Sprite* Animator::getSprite()
+        const sf::Texture& Animator::getTexture()
         {
-            m_lastSpritePointer = m_currentAnimation->getSprite();
-            return m_currentAnimation->getSprite();
+            m_lastTexturePointer = &const_cast<sf::Texture&>(m_currentAnimation->getTexture());
+            return m_currentAnimation->getTexture();
         }
 
-        sf::Texture* Animator::getTextureAtKey(const std::string& key, int index)
+        const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
         {
             return this->getAnimation(key)->getTextureAtIndex(index);
         }
 
         bool Animator::textureChanged() const
         {
-            return (m_currentAnimation->getSprite() != m_lastSpritePointer);
+            return (&m_currentAnimation->getTexture() != m_lastTexturePointer);
         }
 
         int Animator::getSpriteOffsetX() const

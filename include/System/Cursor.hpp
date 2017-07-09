@@ -32,7 +32,7 @@ namespace obe
             bool m_doesUpdateOutsideWindow = false;
             Triggers::TriggerGroup::Ptr m_cursorTriggers;
             Animation::Animator m_cursorAnim;
-            sf::Sprite* m_cursorSprite = nullptr;
+            sf::Sprite m_cursorSprite;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
             friend class CoreHook;
         public:
@@ -54,7 +54,7 @@ namespace obe
             bool getClicked(CursorButton button) const;
             bool getReleased(CursorButton button) const;
             void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint);
-            sf::Sprite* getSprite() const;
+            void Cursor::draw(sf::RenderWindow& target) const;
         };
 
         namespace Constraints

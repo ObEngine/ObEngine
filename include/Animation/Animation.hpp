@@ -152,16 +152,16 @@ namespace obe
              */
             void reset();
 	        /**
-             * \brief Get the Sprite containing the current texture in the Animation
-             * \return A pointer to the currently displayed Sprite
+             * \brief Get the sf::Texture containing the current texture in the Animation
+             * \return A reference to the currently displayed Texture
              */
-            sf::Sprite* getSprite();
+            const sf::Texture& getTexture();
 	        /**
              * \brief Get the texture used in the Animation at the specified index
              * \param index Index of the texture to return.
-             * \return A pointer to the sf::Texture at the given index
+             * \return A reference to the sf::Texture at the given index
              */
-            sf::Texture* getTextureAtIndex(int index);
+            const sf::Texture& getTextureAtIndex(int index);
 	        /**
              * \brief Return whether the Animation is over or not
              * \return true if the Animation is over, false otherwise

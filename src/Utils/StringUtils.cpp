@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <clocale>
 #include <cctype>
-#include <iostream>
 #include <sstream>
 
 #include <Utils/MathUtils.hpp>
@@ -14,11 +13,6 @@ namespace obe
     {
         namespace String 
         {
-            void removeCharFromString(std::string& str, const std::string& charToRemove)
-            {
-                str.erase(std::remove(str.begin(), str.end(), charToRemove.c_str()[0]), str.end());
-            }
-
             std::vector<std::string> split(const std::string& str, const std::string& delimiters)
             {
                 std::vector<std::string> tokens;
@@ -33,13 +27,6 @@ namespace obe
                 return tokens;
             }
 
-            std::vector<std::string> multiSplit(std::string str, const std::vector<std::string>& seps)
-            {
-                for (unsigned int i = 0; i < seps.size(); i++)
-                    replaceStringInPlace(str, seps[i], "~" + seps[i] + "~");
-                return split(str, "~");
-            }
-
             int occurencesInString(const std::string& str, const std::string& occur)
             {
                 int occurrences = 0;
@@ -47,7 +34,7 @@ namespace obe
                 while ((start = str.find(occur, start)) != std::string::npos)
                 {
                     ++occurrences;
-                    start += occur.length(); // see the note
+                    start += occur.length();
                 }
                 return occurrences;
             }
@@ -88,7 +75,7 @@ namespace obe
                     if (occurencesInString(modifyStr, ".") == 1)
                     {
                         isFloat = true;
-                        removeCharFromString(modifyStr, ".");
+                        replaceInPlace(modifyStr, ".", "");
                     }
                     return (all_of(modifyStr.begin(), modifyStr.end(), isdigit) && isFloat);
                 }
@@ -100,7 +87,7 @@ namespace obe
                 return (isStringFloat(str) || isStringInt(str));
             }
 
-            void replaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace)
+            void replaceInPlace(std::string& subject, const std::string& search, const std::string& replace)
             {
                 size_t pos = 0;
                 while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -110,7 +97,7 @@ namespace obe
                 }
             }
 
-            std::string replaceString(std::string subject, const std::string& search, const std::string& replace)
+            std::string replace(std::string subject, const std::string& search, const std::string& replace)
             {
                 size_t pos = 0;
                 while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -121,145 +108,17 @@ namespace obe
                 return subject;
             }
 
-            bool isBetween(const std::string& string, const std::string& bet)
+            bool isSurroundedBy(const std::string& string, const std::string& bet)
             {
                 return (string.substr(0, bet.size()) == bet && string.substr(string.size() - bet.size(), bet.size()) == bet);
             }
 
-            std::string extract(const std::string& base, int start, int end)
-            {
-                return base.substr(start, base.size() - start - end);
-            }
-
-            std::vector<std::string> extractBetween(std::string& str, char delimiter1, char delimiter2)
-            {
-                std::vector<std::string> strings;
-                int start = 0;
-                int end = 0;
-                bool hasFindStart = false;
-                bool hasFind = false;
-                for (int i = 0; i < str.size(); i++)
-                {
-                    if (hasFindStart && str[i] == delimiter2)
-                    {
-                        hasFindStart = false;
-                        end = i;
-                        hasFind = true;
-                    }
-                    if (str[i] == delimiter1 && !hasFindStart && !hasFind)
-                    {
-                        start = i;
-                        hasFindStart = true;
-                    }
-                    if (hasFind)
-                    {
-                        strings.push_back(str.substr(start + 1, end - start - 1));
-                        hasFind = false;
-                    }
-                }
-                for (int i = 0; i < strings.size(); i++)
-                    replaceStringInPlace(str, strings[i], "");
-                return strings;
-            }
-
-            std::string getRandomKey(std::string set, int len)
+            std::string getRandomKey(const std::string& set, int len)
             {
                 std::string r;
                 for (int i = 0; i < len; i++) r.push_back(set.at(size_t(Math::randint(0, 100000) % set.size())));
                 return r;
-            }
-
-            void regenerateEncoding(std::string& str)
-            {
-                std::vector<int> data(str.begin(), str.end());
-                //for (int i = 0; i < data.size(); i++) { std::cout << data[i] << " "; }
-                //std::cout << std::endl;
-                int i = 0;
-                char ch;
-                str = "";
-                while (i < data.size())
-                {
-                    if (data[i] == -61)
-                    {
-                        if (i < data.size() - 1) { data[i] = data[i + 1] + 64; }
-                        data.erase(data.begin() + i + 1);
-                    }
-                    i++;
-                }
-                for (int j = 0; j < data.size(); j++)
-                {
-                    ch = data[j];
-                    str += ch;
-                }
-            }
-
-            std::string stringToAsciiCode(std::string& str)
-            {
-                std::vector<int> data(str.begin(), str.end());
-                std::vector<std::string> dataStr;
-                std::transform(data.begin(), data.end(), back_inserter(dataStr), [](const int& idata) { return std::to_string(idata); });
-                return Vector::join(dataStr, ",");
-            }
-
-            std::string cutBeforeAsciiCode(std::string& str, int asciiCode)
-            {
-                std::vector<int> data(str.begin(), str.end());
-                std::vector<std::string> dataStr;
-                for (int i = 0; i < data.size(); i++)
-                {
-                    if (data[i] != asciiCode)
-                    {
-                        char a = data[i];
-                        std::string strbuf;
-                        std::stringstream strbridge;
-                        strbridge << a;
-                        strbridge >> strbuf;
-                        //std::cout << "Trsf : " << strbuf << std::endl;
-                        dataStr.push_back(strbuf);
-                    }
-                    else
-                        break;
-                }
-                return Vector::join(dataStr, ",");
-            }
-
-            StringExtractor extractAllStrings(std::string string)
-            {
-                bool readingString = false;
-                std::vector<std::string> extractedStrings;
-                std::vector<std::string> otherComponents;
-                std::vector<std::pair<int, int>> indexes;
-                std::string currentStack = "";
-                for (unsigned int i = 0; i < string.size(); i++)
-                {
-                    std::string currentChar = string.substr(i, 1);
-                    if (currentChar == "\"")
-                    {
-                        if (readingString)
-                        {
-                            extractedStrings.push_back(currentStack);
-                            indexes.push_back(std::pair<int, int>(0, extractedStrings.size() - 1));
-                        }
-                        else if (currentStack.size() > 0)
-                        {
-                            otherComponents.push_back(currentStack);
-                            indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
-                        }
-                        readingString = !readingString;
-                        currentStack.clear();
-                    }
-                    else
-                    {
-                        currentStack += currentChar;
-                    }
-                }
-                if (!readingString)
-                {
-                    otherComponents.push_back(currentStack);
-                    indexes.push_back(std::pair<int, int>(1, otherComponents.size() - 1));
-                }
-                return make_tuple(extractedStrings, otherComponents, indexes);
-            }
+            }      
 
             bool contains(const std::string& string, const std::string& search)
             {

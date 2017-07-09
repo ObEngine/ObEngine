@@ -7,6 +7,9 @@ namespace obe
 {
 	namespace Types
 	{
+	    /**
+		 * \brief Can store any Type
+		 */
 		class Any 
 		{
 			public:

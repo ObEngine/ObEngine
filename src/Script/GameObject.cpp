@@ -354,7 +354,7 @@ namespace obe
                         m_objectAnimator->update();
                         if (m_hasLevelSprite)
                         {
-                            m_objectLevelSprite->setSprite(m_objectAnimator->getSprite());
+                            m_objectLevelSprite->setTexture(m_objectAnimator->getTexture());
                         }
                     }
                 }

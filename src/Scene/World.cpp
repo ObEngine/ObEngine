@@ -28,7 +28,7 @@ namespace obe
             Triggers::TriggerDatabase::GetInstance()->removeNamespace("Map");
         }
 
-        Graphics::LevelSprite* World::createLevelSprite(std::string id)
+        Graphics::LevelSprite* World::createLevelSprite(const std::string& id)
         {
             std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
 
@@ -39,7 +39,7 @@ namespace obe
             return returnLevelSprite;
         }
 
-        Collision::PolygonalCollider* World::createCollider(std::string id)
+        Collision::PolygonalCollider* World::createCollider(const std::string& id)
         {
             std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
             Collision::PolygonalCollider* returnCollider = newCollider.get();
@@ -235,7 +235,7 @@ namespace obe
             if (m_spriteArray.size() > 0) (*dataStore)->createComplexAttribute("LevelSprites");
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
             {
-                if (m_spriteArray[i]->getParentID() == "")
+                if (m_spriteArray[i]->getParentId() == "")
                 {
                     dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
                     dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("path", m_spriteArray[i]->getPath());
@@ -427,7 +427,7 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownGameObject", {{"id", id}, {"map", m_levelName}});
         }
 
-        std::vector<Script::GameObject*> World::getAllGameObjects(std::vector<std::string> filters)
+        std::vector<Script::GameObject*> World::getAllGameObjects(const std::vector<std::string>& filters)
         {
             std::vector<Script::GameObject*> returnVec;
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
@@ -445,7 +445,7 @@ namespace obe
             return returnVec;
         }
 
-        Script::GameObject* World::createGameObject(std::string id, std::string obj)
+        Script::GameObject* World::createGameObject(const std::string& id, const std::string& obj)
         {
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
             vili::DataParser getGameObjectFile;
@@ -462,7 +462,7 @@ namespace obe
             {
                 if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
                     newGameObject->getLevelSprite()->setPosition(0, 0);
-                newGameObject->getLevelSprite()->setParentID(id);
+                newGameObject->getLevelSprite()->setParentId(id);
             }
             if (newGameObject->m_hasCollider)
             {
@@ -561,7 +561,7 @@ namespace obe
             return returnSpr;
         }
 
-        Graphics::LevelSprite* World::getSpriteByID(std::string id)
+        Graphics::LevelSprite* World::getSpriteByID(const std::string& id)
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
@@ -581,7 +581,7 @@ namespace obe
             return false;
         }
 
-        void World::deleteSpriteByID(std::string sprID)
+        void World::deleteSpriteByID(const std::string& sprID)
         {
             this->deleteSprite(this->getSpriteByID(sprID));
         }
@@ -625,7 +625,7 @@ namespace obe
             return nullptr;
         }
 
-        Collision::PolygonalCollider* World::getCollisionByID(std::string id)
+        Collision::PolygonalCollider* World::getCollisionByID(const std::string& id)
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
@@ -650,7 +650,7 @@ namespace obe
             return returnVec;
         }
 
-        void World::deleteCollisionByID(std::string id)
+        void World::deleteCollisionByID(const std::string& id)
         {
             this->deleteCollision(this->getCollisionByID(id));
         }

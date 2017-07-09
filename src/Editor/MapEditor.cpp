@@ -835,14 +835,14 @@ namespace obe
                         //Sprite Move
                         if (cursor.getPressed(System::CursorButton::Left) && selectedSprite != nullptr && selectedHandlePoint == nullptr)
                         {
-                            if (selectedSprite->getParentID().empty())
+                            if (selectedSprite->getParentId().empty())
                             {
                                 selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
                                                                                     cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
                             }
                             else
                             {
-                                std::cout << "Not empty : '" << selectedSprite->getParentID() << "'" << std::endl;
+                                std::cout << "Not empty : '" << selectedSprite->getParentId() << "'" << std::endl;
                                 // What to do here ?
                             }
                             sdBoundingRect = selectedSprite->getRect();
@@ -1251,7 +1251,7 @@ namespace obe
 
                     //Cursor
                     if (showCursor)
-                        window.draw(*cursor.getSprite());
+                        cursor.draw(window);
                         
                     window.display();
                 }

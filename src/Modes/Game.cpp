@@ -141,7 +141,7 @@ namespace obe
                 {
                     window.clear();
                     world.display(window);
-                    window.draw(*cursor.getSprite());
+                    cursor.draw(window);
 
                     window.display();
                 }

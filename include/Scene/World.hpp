@@ -49,15 +49,15 @@ namespace obe
             void setUpdateState(bool state);
             //GameObjects
             Script::GameObject* getGameObject(std::string id);
-            std::vector<Script::GameObject*> getAllGameObjects(std::vector<std::string> filters = std::vector<std::string>());
-            Script::GameObject* createGameObject(std::string id, std::string obj);
+            std::vector<Script::GameObject*> getAllGameObjects(const std::vector<std::string>& filters = {});
+            Script::GameObject* createGameObject(const std::string& id, const std::string& obj);
             void orderUpdateScrArray();
             //Camera
             Camera* getCamera();
             void setCameraLock(bool state);
             bool isCameraLocked() const;
             //LevelSprites
-            Graphics::LevelSprite* createLevelSprite(std::string id);
+            Graphics::LevelSprite* createLevelSprite(const std::string& id);
             void reorganizeLayers();
             void displaySprites(sf::RenderWindow& target);
             Graphics::LevelSprite* getSpriteByIndex(int index);
@@ -65,18 +65,18 @@ namespace obe
             std::vector<Graphics::LevelSprite*> getAllSprites();
             std::vector<Graphics::LevelSprite*> getSpritesByLayer(int layer);
             Graphics::LevelSprite* getSpriteByPos(int x, int y, int layer);
-            Graphics::LevelSprite* getSpriteByID(std::string ID);
+            Graphics::LevelSprite* getSpriteByID(const std::string& ID);
             bool doesSpriteExists(const std::string& id);
-            void deleteSpriteByID(std::string sprID);
+            void deleteSpriteByID(const std::string& sprID);
             void deleteSprite(Graphics::LevelSprite* sprToDelete);
             //Colliders
-            Collision::PolygonalCollider* createCollider(std::string id);
+            Collision::PolygonalCollider* createCollider(const std::string& id);
             std::vector<Collision::PolygonalCollider*> getColliders() const;
             std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
             Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
-            Collision::PolygonalCollider* getCollisionByID(std::string id);
+            Collision::PolygonalCollider* getCollisionByID(const std::string& id);
             std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
-            void deleteCollisionByID(std::string id);
+            void deleteCollisionByID(const std::string& id);
             void deleteCollision(Collision::PolygonalCollider* colToDelete);
             void createCollisionAtPos(int x, int y);
             void enableShowCollision(bool drawLines = false, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);

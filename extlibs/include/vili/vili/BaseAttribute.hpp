@@ -35,6 +35,11 @@ namespace vili
         void set(const std::string& var);
         void set(const char* var);
         void set(bool var);
+        void operator=(int var);
+        void operator=(double var);
+        void operator=(const std::string& var);
+        void operator=(const char* var);
+        void operator=(bool var);
         void autoset(const std::string& rawData);
         DataType getDataType() const;
 

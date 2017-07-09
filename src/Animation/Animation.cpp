@@ -90,7 +90,7 @@ namespace obe
             {
                 std::string textureName = "";
                 if (imageList.get(i).getDataType() == vili::DataType::Int && model != "")
-                    textureName = Utils::String::replaceString(model, "%s", std::to_string(imageList.get(i).get<int>()));
+                    textureName = Utils::String::replace(model, "%s", std::to_string(imageList.get(i).get<int>()));
                 else if (imageList.get(i).getDataType() == vili::DataType::String)
                     textureName = imageList.get(i).get<std::string>();
                 m_animationTextures[i] = Graphics::ResourceManager::GetInstance()->getTexture(path.add(textureName).toString());
@@ -114,9 +114,9 @@ namespace obe
             for (vili::BaseAttribute* command : animation.at<vili::ListAttribute>("AnimationCode"))
             {
                 std::string curCom = command->get<std::string>();
-	            Utils::String::replaceStringInPlace(curCom, " ", "");
-                Utils::String::replaceStringInPlace(curCom, ")", "");
-                Utils::String::replaceStringInPlace(curCom, "(", ",");
+	            Utils::String::replaceInPlace(curCom, " ", "");
+                Utils::String::replaceInPlace(curCom, ")", "");
+                Utils::String::replaceInPlace(curCom, "(", ",");
                 std::vector<std::string> vecCurCom = Utils::String::split(curCom, ",");
                 m_animationCode.push_back(vecCurCom);
             }
@@ -171,7 +171,7 @@ namespace obe
                         {
                             m_askCommand = false;
 	                        std::string callAnimation = currentCommand[1];
-                            Utils::String::replaceStringInPlace(callAnimation, "'", "");
+                            Utils::String::replaceInPlace(callAnimation, "'", "");
                             m_currentStatus = AnimationStatus::Call;
 							m_animationToCall = callAnimation;
                         }
@@ -203,7 +203,7 @@ namespace obe
                             }
                         }
                         else
-                            m_animationGroupMap[m_currentGroupName]->updateSprite();
+                            m_animationGroupMap[m_currentGroupName]->update();
                     }
                 }
             }
@@ -219,14 +219,14 @@ namespace obe
             m_isOver = false;
         }
 
-        sf::Texture* Animation::getTextureAtIndex(int index)
+        const sf::Texture& Animation::getTextureAtIndex(int index)
         {
-            return m_animationTextures[index];
+            return *m_animationTextures[index];
         }
 
-        sf::Sprite* Animation::getSprite()
+        const sf::Texture& Animation::getTexture()
         {
-            return m_animationGroupMap[m_currentGroupName]->returnSprite();
+            return m_animationGroupMap[m_currentGroupName]->getTexture();
         }
 
         int Animation::getSpriteOffsetX() const

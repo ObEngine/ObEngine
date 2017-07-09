@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <string>
 #include <vector>
 
 #include <Animation/Animation.hpp>
@@ -52,7 +51,7 @@ namespace obe
             Animation* m_currentAnimation = nullptr;
             std::string m_currentAnimationName = "NONE";
             System::Path m_animatorPath;
-            sf::Sprite* m_lastSpritePointer = nullptr;
+            sf::Texture* m_lastTexturePointer = nullptr;
         public:
 	        /**
              * \brief Animator Class default constructor
@@ -72,7 +71,7 @@ namespace obe
              * \brief Sets the path of the Animator root
              * \param path std::string pointing to the Animator root (later converted to System::Path)
              */
-            void setPath(std::string path);
+            void setPath(const std::string& path);
 	        /**
              * \brief Clears the Animator of all Animation
              * \param clearMemory Delete the contained Animation in memory
@@ -84,7 +83,7 @@ namespace obe
              * \return A pointer to the wanted Animation.\n
              *		   Throws a ObEngine.Animation.Animator.AnimationNotFound if the Animation is not found
              */
-            Animation* getAnimation(std::string animationName);
+            Animation* getAnimation(const std::string& animationName) const;
 	        /**
              * \brief Get the name of all contained Animation
              * \return A std::vector of std::string containing the name of all contained Animation
@@ -115,14 +114,14 @@ namespace obe
              * \brief Get the current sf::Sprite of the current Animation
              * \return A pointer of the sf::Sprite currently played by the current Animation
              */
-            sf::Sprite* getSprite();
+            const sf::Texture& getTexture();
 	        /**
              * \brief Calls Animation::getTextureAtIndex
              * \param key Name of the Animation where the Texture is located
              * \param index Index of the Texture in the Animation
              * \return A pointer to the Texture
              */
-            sf::Texture* getTextureAtKey(const std::string& key, int index);
+            const sf::Texture& getTextureAtKey(const std::string& key, int index) const ;
 	        /**
              * \brief Return if the Texture changed since the last call to getTexture()
              * \return true if the Texture has changed, false otherwise

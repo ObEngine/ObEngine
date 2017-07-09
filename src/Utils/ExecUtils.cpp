@@ -8,10 +8,10 @@ namespace obe
     {
         namespace Exec 
         {
-            RunArgsParser::RunArgsParser(char** start, int size)
+            RunArgsParser::RunArgsParser(int size, char** start)
             {
-                this->start = start;
                 this->size = size;
+                this->start = start;
             }
 
             bool RunArgsParser::argumentExists(const std::string& arg) const

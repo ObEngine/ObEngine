@@ -13,73 +13,73 @@ namespace obe
 {
     namespace Editor
     {
-        Thumbnailer* Thumbnailer::_instance = nullptr;
+        Thumbnailer* Thumbnailer::m_instance = nullptr;
 
         Thumbnailer::Thumbnailer()
         {
-            System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
-            renderer.create(246, 246);
-            System::Path("Sprites/Others/folder.png").loadResource(&folderTexture, System::Loaders::textureLoader);
+            System::Path("Data/Fonts/arial.ttf").loadResource(&m_font, System::Loaders::fontLoader);
+            m_renderer.create(246, 246);
+            System::Path("Sprites/Others/folder.png").loadResource(&m_folderTexture, System::Loaders::textureLoader);
         }
 
-        sf::Texture* Thumbnailer::GetSpriteThumbnail(std::string path)
+        sf::Texture* Thumbnailer::GetSpriteThumbnail(const std::string& path)
         {
-            if (_instance == nullptr)
-                _instance = new Thumbnailer();
-            if (_instance->cache.find(path) != _instance->cache.end())
-                return _instance->cache[path];
+            if (m_instance == nullptr)
+                m_instance = new Thumbnailer();
+            if (m_instance->m_cache.find(path) != m_instance->m_cache.end())
+                return m_instance->m_cache[path];
             sf::Texture sprTexture;
             System::Path("Sprites/LevelSprites/" + path).loadResource(&sprTexture, System::Loaders::textureLoader);
             sf::Sprite sprite;
             sprite.setTexture(sprTexture);
             double texW = sprTexture.getSize().x;
             double texH = sprTexture.getSize().y;
-            double scale = (texW >= texH) ? size / texW : size / texH;
+            double scale = (texW >= texH) ? m_size / texW : m_size / texH;
             sprite.setScale(scale, scale);
-            sprite.setPosition(sf::Vector2f((size / 2) - (sprite.getGlobalBounds().width / 2), (size / 2) - (sprite.getGlobalBounds().height / 2)));
-            _instance->renderer.clear(sf::Color(0, 0, 0, 0));
-            sf::RectangleShape sprRec(sf::Vector2f(size, size));
+            sprite.setPosition(sf::Vector2f((m_size / 2) - (sprite.getGlobalBounds().width / 2), (m_size / 2) - (sprite.getGlobalBounds().height / 2)));
+            m_instance->m_renderer.clear(sf::Color(0, 0, 0, 0));
+            sf::RectangleShape sprRec(sf::Vector2f(m_size, m_size));
             sprRec.setFillColor(sf::Color(100, 100, 100));
             sprRec.setPosition(0, 0);
-            _instance->renderer.draw(sprRec);
-            _instance->renderer.draw(sprite);
-            sf::RectangleShape titleRec(sf::Vector2f(size, 20));
+            m_instance->m_renderer.draw(sprRec);
+            m_instance->m_renderer.draw(sprite);
+            sf::RectangleShape titleRec(sf::Vector2f(m_size, 20));
             titleRec.setPosition(0, 0);
             titleRec.setFillColor(sf::Color(0, 0, 0, 200));
-            _instance->renderer.draw(titleRec);
+            m_instance->m_renderer.draw(titleRec);
             sf::Text sprNameText;
-            sprNameText.setFont(_instance->font);
+            sprNameText.setFont(m_instance->m_font);
             std::vector<std::string> splittedPath = Utils::String::split(path, "/");
             sprNameText.setString(splittedPath[splittedPath.size() - 1]);
             sprNameText.setCharacterSize(16);
             sprNameText.setFillColor(sf::Color(255, 255, 255));
-            _instance->renderer.draw(sprNameText);
-            _instance->renderer.display();
-            _instance->cache[path] = new sf::Texture(_instance->renderer.getTexture());
-            return _instance->cache[path];
+            m_instance->m_renderer.draw(sprNameText);
+            m_instance->m_renderer.display();
+            m_instance->m_cache[path] = new sf::Texture(m_instance->m_renderer.getTexture());
+            return m_instance->m_cache[path];
         }
 
-        sf::Texture* Thumbnailer::GetFolderThumbnail(std::string path)
+        sf::Texture* Thumbnailer::GetFolderThumbnail(const std::string& path)
         {
-            if (_instance == nullptr)
-                _instance = new Thumbnailer();
-            if (_instance->cache.find(path) != _instance->cache.end())
-                return _instance->cache[path];
+            if (m_instance == nullptr)
+                m_instance = new Thumbnailer();
+            if (m_instance->m_cache.find(path) != m_instance->m_cache.end())
+                return m_instance->m_cache[path];
             sf::Sprite baseSpr;
-            baseSpr.setTexture(_instance->folderTexture);
+            baseSpr.setTexture(m_instance->m_folderTexture);
             baseSpr.setPosition(0, 0);
-            _instance->renderer.clear(sf::Color(0, 0, 0, 0));
-            _instance->renderer.draw(baseSpr);
+            m_instance->m_renderer.clear(sf::Color(0, 0, 0, 0));
+            m_instance->m_renderer.draw(baseSpr);
             sf::Text folderText;
-            folderText.setFont(_instance->font);
+            folderText.setFont(m_instance->m_font);
             folderText.setCharacterSize(16);
             std::vector<std::string> splittedPath = Utils::String::split(path, "/");
             folderText.setString(splittedPath[splittedPath.size() - 1]);
             folderText.setPosition(10, 45);
-            _instance->renderer.draw(folderText);
-            _instance->renderer.display();
-            _instance->cache[path] = new sf::Texture(_instance->renderer.getTexture());
-            return _instance->cache[path];
+            m_instance->m_renderer.draw(folderText);
+            m_instance->m_renderer.display();
+            m_instance->m_cache[path] = new sf::Texture(m_instance->m_renderer.getTexture());
+            return m_instance->m_cache[path];
         }
 
         void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme)

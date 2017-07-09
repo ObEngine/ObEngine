@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include <SFML/Graphics.hpp>
 
 #include <Time/TimeUtils.hpp>
@@ -36,9 +34,9 @@ namespace obe
              */
             std::vector<sf::Texture*> m_groupList;
 	        /**
-             * \brief The current sprite of the AnimationGroup
+             * \brief The current texture of the AnimationGroup
              */
-            sf::Sprite m_currentSprite;
+            sf::Texture m_texture;
 	        /**
              * \brief The current index of the AnimationGroup
              */
@@ -109,13 +107,13 @@ namespace obe
             void removeTextureByIndex(unsigned int index);
 	        /**
              * \brief Get the current Sprite of the AnimationGroup
-             * \return A pointer of the sf::Texture currently played by the AnimationGroup
+             * \return A reference to the sf::Texture currently played by the AnimationGroup
              */
-            sf::Sprite* returnSprite();
+            const sf::Texture& getTexture();
 	        /**
-             * \brief Updates the Sprite to display (Done automatically after previous / next)
+             * \brief Updates the Texture to display (Done automatically after previous / next)
              */
-            void updateSprite();
+            void update();
 	        /**
              * \brief Resets the AnimationGroup (Index to 0, Loops to 0, Delay to 0)
              */

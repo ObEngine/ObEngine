@@ -22,7 +22,7 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Utils::Exec::RunArgsParser runParser(argv, argc);
+    Utils::Exec::RunArgsParser runParser(argc, argv);
     std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
