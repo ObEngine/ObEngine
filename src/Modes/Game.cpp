@@ -1,4 +1,6 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
 #include <Input/KeyBind.hpp>
@@ -57,7 +59,6 @@ namespace obe
 
             //Cursor
             System::Cursor cursor(&window);
-            cursor.updateOutsideWindow(true);
             Collision::PolygonalCollider cursorCollider("cursor");
             cursorCollider.addPoint(0, 0);
             cursorCollider.addPoint(1, 0);
@@ -79,7 +80,7 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            Time::FramerateManager framerateManager(gameConfig);
+            Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
             world.setCameraLock(false);

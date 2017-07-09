@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Clock.hpp>
 #include <vili/Vili.hpp>
 
 namespace obe

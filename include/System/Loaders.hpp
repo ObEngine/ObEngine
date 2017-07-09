@@ -3,8 +3,10 @@
 #include <string>
 
 #include <kaguya/kaguya.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <vili/Vili.hpp>
 
 namespace obe

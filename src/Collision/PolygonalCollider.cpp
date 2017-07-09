@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <vili/ErrorHandler.hpp>
 
 #include <Collision/PolygonalCollider.hpp>

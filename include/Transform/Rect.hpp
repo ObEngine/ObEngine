@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <Transform/Referencial.hpp>
 
 namespace obe

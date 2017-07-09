@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/View.hpp>
 
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>

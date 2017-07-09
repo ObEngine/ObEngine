@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <vili/Vili.hpp>
 

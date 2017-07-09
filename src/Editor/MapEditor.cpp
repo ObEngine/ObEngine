@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
@@ -78,7 +77,6 @@ namespace obe
             cursorCollider.addPoint(1, 0);
             cursorCollider.addPoint(1, 1);
             cursorCollider.addPoint(0, 1);
-            cursor.updateOutsideWindow(true);
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
@@ -86,7 +84,7 @@ namespace obe
             Script::ScriptEngine["stream"] = gameConsole.createStream("World", true);
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
-                gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, 255, 0, 0);
+                gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
                 std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
             });
             Script::hookCore.dropValue("World", &world);
@@ -611,7 +609,7 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            Time::FramerateManager framerateManager(gameConfig);
+            Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
             world.loadFromFile(mapName);

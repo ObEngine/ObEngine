@@ -1,3 +1,5 @@
+#include <SFML/Graphics/CircleShape.hpp>
+
 #include <Graphics/DrawUtils.hpp>
 
 namespace obe

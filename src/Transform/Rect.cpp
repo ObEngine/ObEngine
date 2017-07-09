@@ -1,6 +1,4 @@
-#include <iostream> // <REMOVE>
-
-#include <SFML/Graphics.hpp> // <REMOVE>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Rect.hpp>
@@ -152,9 +150,6 @@ namespace obe
 		{
             UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
             UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
-            std::cout << "Position : " << position << std::endl;
-            std::cout << "Opposite Point Position : " << reverseReferencial(ref) << " : " << oppositePointPosition << std::endl;
-            std::cout << "New Size : " << newSize << std::endl;
 			if (isOnCorner(ref))
 			{
                 this->setPosition(position, ref);

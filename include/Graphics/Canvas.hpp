@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <kaguya/kaguya.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <Graphics/LevelSprite.hpp>
 

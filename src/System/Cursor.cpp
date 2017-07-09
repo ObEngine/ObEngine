@@ -1,3 +1,5 @@
+#include <SFML/Window/Mouse.hpp>
+
 #include <System/Cursor.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>

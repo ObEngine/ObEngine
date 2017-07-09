@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <System/Cursor.hpp>
 

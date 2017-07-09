@@ -1,7 +1,7 @@
 #pragma once
 
 #include <clipper/clipper.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>

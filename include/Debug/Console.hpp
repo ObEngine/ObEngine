@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Identifiable.hpp>

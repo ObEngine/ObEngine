@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include <vili/Vili.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <Editor/MapEditor.hpp>
 #include <Modes/Game.hpp>

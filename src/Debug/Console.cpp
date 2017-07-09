@@ -1,3 +1,6 @@
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
+
 #include <Debug/Console.hpp>
 #include <Script/GlobalState.hpp>
 #include <Transform/UnitVector.hpp>

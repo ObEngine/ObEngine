@@ -1,5 +1,4 @@
 #include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
 #include <vili/Vili.hpp>
 
 #include <Collision/PolygonalCollider.hpp>

@@ -1,5 +1,4 @@
 #include <kaguya/kaguya.hpp>
-#include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
 #include <Modes/Toolkit.hpp>
