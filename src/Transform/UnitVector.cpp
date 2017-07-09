@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <Transform/UnitVector.hpp>
 
 namespace obe
@@ -69,43 +67,43 @@ namespace obe
             return *this;
         }
 
-        UnitVector UnitVector::operator-(const UnitVector& add) const
+        UnitVector UnitVector::operator-(const UnitVector& sub) const
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = sub.to(unit);
             return UnitVector(x - pVec.x, y - pVec.y, unit);
         }
 
-        UnitVector& UnitVector::operator-=(const UnitVector& add)
+        UnitVector& UnitVector::operator-=(const UnitVector& sub)
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = sub.to(unit);
             x -= pVec.x;
             y -= pVec.y;
             return *this;
         }
 
-        UnitVector UnitVector::operator*(const UnitVector& add) const
+        UnitVector UnitVector::operator*(const UnitVector& mul) const
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = mul.to(unit);
             return UnitVector(x * pVec.x, y * pVec.y, unit);
         }
 
-        UnitVector& UnitVector::operator*=(const UnitVector& add)
+        UnitVector& UnitVector::operator*=(const UnitVector& mul)
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = mul.to(unit);
             x *= pVec.x;
             y *= pVec.y;
             return *this;
         }
 
-        UnitVector UnitVector::operator/(const UnitVector& add) const
+        UnitVector UnitVector::operator/(const UnitVector& div) const
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = div.to(unit);
             return UnitVector(x / pVec.x, y / pVec.y, unit);
         }
 
-        UnitVector& UnitVector::operator/=(const UnitVector& add)
+        UnitVector& UnitVector::operator/=(const UnitVector& div)
         {
-            UnitVector pVec = add.to(unit);
+            UnitVector pVec = div.to(unit);
             x /= pVec.x;
             y /= pVec.y;
             return *this;
@@ -195,6 +193,7 @@ namespace obe
                 default:
                     return UnitVector(0, 0);
                 }
+            default: return UnitVector(0, 0);;
             }
         }
 
