@@ -133,30 +133,19 @@ namespace obe
             {
                 m_cursorSprite.setTexture(m_cursorAnim.getTexture());
             }
-            if (m_doesUpdateOutsideWindow)
+
+            if (sf::Mouse::getPosition().x - m_window->getPosition().x > 0 && sf::Mouse::getPosition().y - m_window->getPosition().y > 0)
             {
-                m_x = sf::Mouse::getPosition().x - m_window->getPosition().x;
-                m_y = sf::Mouse::getPosition().y - m_window->getPosition().y;
-                if (m_x < 0) m_x = 0;
-                if (m_x > Transform::UnitVector::Screen.w) m_x = Transform::UnitVector::Screen.w;
-                if (m_y < 0) m_y = 0;
-                if (m_y > Transform::UnitVector::Screen.h) m_y = Transform::UnitVector::Screen.h;
-            }
-            else
-            {
-                if (sf::Mouse::getPosition().x - m_window->getPosition().x > 0 && sf::Mouse::getPosition().y - m_window->getPosition().y > 0)
+                if (sf::Mouse::getPosition().x - m_window->getPosition().x < Transform::UnitVector::Screen.w)
                 {
-                    if (sf::Mouse::getPosition().x - m_window->getPosition().x < Transform::UnitVector::Screen.w)
+                    if (sf::Mouse::getPosition().y - m_window->getPosition().y < Transform::UnitVector::Screen.h)
                     {
-                        if (sf::Mouse::getPosition().y - m_window->getPosition().y < Transform::UnitVector::Screen.h)
-                        {
-                            m_x = sf::Mouse::getPosition().x - m_window->getPosition().x;
-                            m_y = sf::Mouse::getPosition().y - m_window->getPosition().y;
-                            if (m_x < 0) m_x = 0;
-                            if (m_x > Transform::UnitVector::Screen.w) m_x = Transform::UnitVector::Screen.w;
-                            if (m_y < 0) m_y = 0;
-                            if (m_y > Transform::UnitVector::Screen.h) m_y = Transform::UnitVector::Screen.h;
-                        }
+                        m_x = sf::Mouse::getPosition().x - m_window->getPosition().x;
+                        m_y = sf::Mouse::getPosition().y - m_window->getPosition().y;
+                        if (m_x < 0) m_x = 0;
+                        if (m_x > Transform::UnitVector::Screen.w) m_x = Transform::UnitVector::Screen.w;
+                        if (m_y < 0) m_y = 0;
+                        if (m_y > Transform::UnitVector::Screen.h) m_y = Transform::UnitVector::Screen.h;
                     }
                 }
             }
@@ -170,7 +159,6 @@ namespace obe
 
         void Cursor::handleTriggers() const
         {
-            //<Rewrite> Dumb code, could do way shorter
             if (this->getClicked(CursorButton::Left))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
@@ -215,11 +203,6 @@ namespace obe
             }
         }
 
-        void Cursor::updateOutsideWindow(bool state)
-        {
-            m_doesUpdateOutsideWindow = state;
-        }
-
         bool Cursor::getPressed(CursorButton button) const
         {
             if (button == CursorButton::Left)
@@ -252,7 +235,7 @@ namespace obe
             m_constraint = constraint;
         }
 
-        void Cursor::draw(sf::RenderWindow& target) const
+        void Cursor::display(sf::RenderWindow& target) const
         {
             return target.draw(m_cursorSprite);
         }

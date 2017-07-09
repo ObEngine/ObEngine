@@ -7,9 +7,6 @@
 
 namespace obe
 {
-	/**
-     * \brief Various Animation Classes
-     */
     namespace Animation
     {
         /**

@@ -14,9 +14,15 @@ namespace obe
 {
     namespace Debug
     {
+        /**
+         * \brief An in-editor Console used to Debug
+         */
         class Console
         {
         public:
+            /**
+             * \brief A Message (line) displayed in the Console
+             */
             class Message
             {
             private:
@@ -64,6 +70,9 @@ namespace obe
                 void setColor(const sf::Color& color);
             };
 
+            /**
+             * \brief A Stream is a bridge to push Message to the Console
+             */
             class Stream : public Types::Identifiable, public Types::Togglable
             {
             private:

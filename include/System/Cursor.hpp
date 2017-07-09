@@ -29,7 +29,6 @@ namespace obe
             bool m_rightfirstclic = false;
             bool m_leftReleased = false;
             bool m_rightReleased = false;
-            bool m_doesUpdateOutsideWindow = false;
             Triggers::TriggerGroup::Ptr m_cursorTriggers;
             Animation::Animator m_cursorAnim;
             sf::Sprite m_cursorSprite;
@@ -49,12 +48,11 @@ namespace obe
             void setPosition(int newx, int newy);
             void update();
             void handleTriggers() const;
-            void updateOutsideWindow(bool state);
             bool getPressed(CursorButton button) const;
             bool getClicked(CursorButton button) const;
             bool getReleased(CursorButton button) const;
             void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint);
-            void Cursor::draw(sf::RenderWindow& target) const;
+            void display(sf::RenderWindow& target) const;
         };
 
         namespace Constraints
