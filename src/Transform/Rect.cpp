@@ -198,7 +198,7 @@ namespace obe
 			return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
 		}
 
-		void Rect::display(sf::RenderWindow& target)
+		void Rect::display(sf::RenderWindow& target) const
 		{
 			int r = 6;
 			std::map<std::string, Types::Any> drawOptions;

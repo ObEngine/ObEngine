@@ -1,6 +1,5 @@
 #pragma once
 
-#include <clipper/clipper.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Transform/UnitBasedObject.hpp>
@@ -12,10 +11,10 @@ namespace obe
 {
     namespace Collision
     {
-        bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
-        double pointsDistance(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt);
-        std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points);
-        int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B);
+        bool pointsCompare(const Transform::UnitVector& first, const Transform::UnitVector& second);
+        double pointsDistance(const Transform::UnitVector& first, const Transform::UnitVector& second);
+        std::vector<Transform::UnitVector&> convexHull(std::vector<Transform::UnitVector&> points);
+        double cross(const Transform::UnitVector& O, const Transform::UnitVector& A, const Transform::UnitVector& B);
 
         /**
          * \brief Enum used when manipulating tags in the Collider
@@ -36,6 +35,7 @@ namespace obe
             Rejected
         };
 
+        using PolygonPath = std::vector<Transform::UnitVector>;
         /**
          * \brief Class used for all Collisions in the engine, it's a Polygon containing n points
          */
@@ -47,8 +47,8 @@ namespace obe
             std::vector<std::string> m_acceptedTags;
             std::vector<std::string> m_rejectedTags;
 
-            ClipperLib::IntPoint m_masterPoint;
-            ClipperLib::Path m_allPoints;
+            Transform::UnitVector m_masterPoint;
+            PolygonPath m_allPoints;
 
             std::vector<int> m_highlightedPoints;
             std::vector<int> m_highlightedLines;
@@ -148,18 +148,13 @@ namespace obe
              * \brief Get all the Points of the Polygon
              * \return A Path containing all the Points of the Polygon
              */
-            ClipperLib::Path getAllPoints() const;
+            PolygonPath getAllPoints() const;
 
             //Collision Tests
-            PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
-            bool testAllColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy, bool opt = false);
-            std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy);
-            bool doesCollide(PolygonalCollider* other, int offsetX = 0, int offsetY = 0);
-            bool doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX = 0, int offsetY = 0, int toX = 0, int toY = 0);
-            bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
-            std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
+            //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
 
             std::pair<double, double> getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const;
+            bool doesCollide(PolygonalCollider* collider, double offX, double offY) const;
 
             //Parent
             /**
@@ -174,10 +169,10 @@ namespace obe
             void setParentId(const std::string& parent);
 
             //Position
-            ClipperLib::IntPoint getPosition();
-            ClipperLib::IntPoint getPointPosition(int index);
-            ClipperLib::IntPoint getPointRelativePosition(int index);
-            ClipperLib::IntPoint getMasterPointPosition() const;
+            Transform::UnitVector getPosition();
+            Transform::UnitVector getPointPosition(int index);
+            Transform::UnitVector getPointRelativePosition(int index);
+            Transform::UnitVector getMasterPointPosition() const;
 
             Transform::UnitVector u_getPosition();
             Transform::UnitVector u_getPointPosition(int index);

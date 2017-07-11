@@ -1,4 +1,5 @@
 #include <cmath>
+#include <functional>
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <vili/ErrorHandler.hpp>
@@ -13,54 +14,53 @@ namespace obe
 {
     namespace Collision
     {
-        bool pointsCompare(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt)
+        bool pointsCompare(const Transform::UnitVector& first, const Transform::UnitVector& second)
         {
-            if (firstPt->X < secondPt->X)
+            if (first.x < second.x)
                 return true;
-            if (firstPt->X == secondPt->X)
+            if (first.x == second.x)
             {
-                if (firstPt->Y <= secondPt->Y)
+                if (first.y <= second.y)
                     return false;
                 return true;
             }
             return false;
         }
-
-        double pointsDistance(const ClipperLib::IntPoint* firstPt, const ClipperLib::IntPoint* secondPt)
+        double pointsDistance(const Transform::UnitVector& first, const Transform::UnitVector& second)
         {
-            return std::sqrt(std::pow(secondPt->X - firstPt->X, 2) + std::pow(secondPt->Y - firstPt->Y, 2));
+            return std::sqrt(std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
         }
 
-        std::vector<ClipperLib::IntPoint*> convexHull(std::vector<ClipperLib::IntPoint*> points)
+        std::vector<Transform::UnitVector> convexHull(std::vector<Transform::UnitVector> points)
         {
             sort(points.begin(), points.end(), pointsCompare);
             if (points.size() <= 1)
                 return points;
-            std::vector<ClipperLib::IntPoint*> lowerHull;
-            for (ClipperLib::IntPoint* point : points)
+            std::vector<Transform::UnitVector> lowerHull;
+            for (Transform::UnitVector& point : points)
             {
                 while (lowerHull.size() >= 2 && cross(lowerHull[lowerHull.size() - 2], lowerHull[lowerHull.size() - 1], point) <= 0)
                     lowerHull.pop_back();
                 lowerHull.push_back(point);
             }
             reverse(points.begin(), points.end());
-            std::vector<ClipperLib::IntPoint*> upperHull;
-            for (ClipperLib::IntPoint* point : points)
+            std::vector<Transform::UnitVector> upperHull;
+            for (Transform::UnitVector& point : points)
             {
                 while (upperHull.size() >= 2 && cross(upperHull[upperHull.size() - 2], upperHull[upperHull.size() - 1], point) <= 0)
                     upperHull.pop_back();
                 upperHull.push_back(point);
             }
-            std::vector<ClipperLib::IntPoint*> fullHull;
+            std::vector<Transform::UnitVector> fullHull;
             fullHull.reserve(lowerHull.size() + upperHull.size() - 2);
             fullHull.insert(fullHull.end(), lowerHull.begin(), lowerHull.end() - 1);
             fullHull.insert(fullHull.end(), upperHull.begin(), upperHull.end() - 1);
             return fullHull;
         }
 
-        int cross(ClipperLib::IntPoint* O, ClipperLib::IntPoint* A, ClipperLib::IntPoint* B)
+        double cross(const Transform::UnitVector& O, const Transform::UnitVector& A, const Transform::UnitVector& B)
         {
-            return (A->X - O->X) * (B->Y - O->Y) - (A->Y - O->Y) * (B->X - O->X);
+            return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
         }
 
         PolygonalCollider::PolygonalCollider(const std::string& id) : Selectable(false), Identifiable(id)
@@ -78,17 +78,17 @@ namespace obe
             return m_allPoints.size();
         }
 
-        ClipperLib::IntPoint PolygonalCollider::getPointPosition(int index)
+        Transform::UnitVector PolygonalCollider::getPointPosition(int index)
         {
             return m_allPoints[index];
         }
 
-        ClipperLib::IntPoint PolygonalCollider::getPointRelativePosition(int index)
+        Transform::UnitVector PolygonalCollider::getPointRelativePosition(int index)
         {
-            return ClipperLib::IntPoint(m_allPoints[index].X - m_allPoints[0].X, m_allPoints[index].Y - m_allPoints[0].Y);
+            return m_allPoints[index] - m_allPoints[0];
         }
 
-        ClipperLib::IntPoint PolygonalCollider::getMasterPointPosition() const
+        Transform::UnitVector PolygonalCollider::getMasterPointPosition() const
         {
             return m_masterPoint;
         }
@@ -102,28 +102,28 @@ namespace obe
             int i;
             for (i = 0; i < m_allPoints.size() - 1; ++i)
             {
-                x0 = m_allPoints[i].X;
-                y0 = m_allPoints[i].Y;
-                x1 = m_allPoints[i + 1].X;
-                y1 = m_allPoints[i + 1].Y;
+                x0 = m_allPoints[i].x;
+                y0 = m_allPoints[i].y;
+                x1 = m_allPoints[i + 1].x;
+                y1 = m_allPoints[i + 1].y;
                 a = x0 * y1 - x1 * y0;
                 signedArea += a;
-                m_masterPoint.X += (x0 + x1) * a;
-                m_masterPoint.Y += (y0 + y1) * a;
+                m_masterPoint.x += (x0 + x1) * a;
+                m_masterPoint.y += (y0 + y1) * a;
             }
 
-            x0 = m_allPoints[i].X;
-            y0 = m_allPoints[i].Y;
-            x1 = m_allPoints[0].X;
-            y1 = m_allPoints[0].Y;
+            x0 = m_allPoints[i].x;
+            y0 = m_allPoints[i].y;
+            x1 = m_allPoints[0].x;
+            y1 = m_allPoints[0].y;
             a = x0 * y1 - x1 * y0;
             signedArea += a;
-            m_masterPoint.X += (x0 + x1) * a;
-            m_masterPoint.Y += (y0 + y1) * a;
+            m_masterPoint.x += (x0 + x1) * a;
+            m_masterPoint.y += (y0 + y1) * a;
 
             signedArea *= 0.5;
-            m_masterPoint.X /= (6.0 * signedArea);
-            m_masterPoint.Y /= (6.0 * signedArea);
+            m_masterPoint.x /= (6.0 * signedArea);
+            m_masterPoint.y /= (6.0 * signedArea);
         }
 
         std::vector<std::string>& PolygonalCollider::retrieveTagVector(ColliderTagType tagType)
@@ -142,7 +142,7 @@ namespace obe
             if (pointIndex == -1 || pointIndex == m_allPoints.size())
                 m_allPoints.emplace_back(x, y);
             else if (pointIndex >= 0 && pointIndex < m_allPoints.size())
-                m_allPoints.insert(m_allPoints.begin() + pointIndex, ClipperLib::IntPoint(x, y));
+                m_allPoints.insert(m_allPoints.begin() + pointIndex, Transform::UnitVector(x, y));
             if (m_allPoints.size() >= 3)
                 calculateMasterPoint();
         }
@@ -155,7 +155,7 @@ namespace obe
 
         double PolygonalCollider::getDistanceFromPoint(unsigned int pointIndex, int x, int y)
         {
-            return std::sqrt(std::pow((x - m_allPoints[pointIndex].X), 2) + std::pow((y - m_allPoints[pointIndex].Y), 2));
+            return std::sqrt(std::pow((x - m_allPoints[pointIndex].x), 2) + std::pow((y - m_allPoints[pointIndex].y), 2));
         }
 
         unsigned int PolygonalCollider::findClosestPoint(int x, int y, bool neighboor, std::vector<int> excludedNodes)
@@ -163,11 +163,10 @@ namespace obe
             if (m_allPoints.size() > 0)
             {
                 int closestNode = 0;
-                double currentPointDist;
                 double tiniestDist = -1;
                 for (unsigned int i = 0; i < m_allPoints.size(); i++)
                 {
-                    currentPointDist = this->getDistanceFromPoint(i, x, y);
+                    double currentPointDist = this->getDistanceFromPoint(i, x, y);
                     if ((tiniestDist == -1 || tiniestDist > currentPointDist) && !Utils::Vector::isInList(static_cast<int>(i), excludedNodes))
                     {
                         closestNode = i;
@@ -182,10 +181,10 @@ namespace obe
                         leftNeighbor = m_allPoints.size() - 1;
                     if (rightNeighbor >= m_allPoints.size())
                         rightNeighbor = 0;
-                    int leftNeighborDist = std::sqrt(std::pow((x - m_allPoints[leftNeighbor].X), 2) +
-                        std::pow((y - m_allPoints[leftNeighbor].Y), 2));
-                    int rightNeighborDist = std::sqrt(std::pow((x - m_allPoints[rightNeighbor].X), 2) +
-                        std::pow((y - m_allPoints[rightNeighbor].Y), 2));
+                    int leftNeighborDist = std::sqrt(std::pow((x - m_allPoints[leftNeighbor].x), 2) +
+                        std::pow((y - m_allPoints[leftNeighbor].y), 2));
+                    int rightNeighborDist = std::sqrt(std::pow((x - m_allPoints[rightNeighbor].x), 2) +
+                        std::pow((y - m_allPoints[rightNeighbor].y), 2));
                     if (leftNeighborDist > rightNeighborDist)
                     {
                         closestNode++;
@@ -197,85 +196,13 @@ namespace obe
             }
         }
 
-        bool PolygonalCollider::doesCollide(PolygonalCollider* other, int offsetX, int offsetY)
-        {
-            //std::cout << m_id << " Test collision with : " << other->getID() << std::endl;
-            if (this->doesHaveAnyTag(ColliderTagType::Rejected, other->getAllTags(ColliderTagType::Tag)))
-                return false;
-            if (!this->doesHaveAnyTag(ColliderTagType::Accepted, other->getAllTags(ColliderTagType::Tag)))
-                return false;
-
-            ClipperLib::Path pPath = this->getAllPoints();
-            //std::cout << "ME" << std::endl;
-            for (int i = 0; i < m_allPoints.size(); i++)
-            {
-                pPath[i].X += offsetX;
-                pPath[i].Y += offsetY;
-                //std::cout << "Point : " << pPath[i].X << ", " << pPath[i].X << std::endl;
-            }
-
-            //std::cout << "OTHER" << std::endl;
-            /*for (int i = 0; i < other->getAllPoints().size(); i++)
-                std::cout << other->getAllPoints()[i].X << ", " << other->getAllPoints()[i].Y << std::endl;*/
-            ClipperLib::Clipper clipper;
-            clipper.AddPath(pPath, ClipperLib::ptSubject, true);
-            clipper.AddPath(other->getAllPoints(), ClipperLib::ptClip, true);
-            ClipperLib::Paths solution;
-            clipper.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
-
-            other->clearHighlights(false, true);
-            if (solution.size() >= 1)
-            {
-                for (ClipperLib::Path& path : solution)
-                {
-                    for (ClipperLib::IntPoint& point : path)
-                        other->highlightLine(other->getSideContainingPoint(point.X, point.Y));
-                }
-            }
-            return (solution.size() >= 1);
-        }
-
-        bool PolygonalCollider::doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX, int offsetY, int toX, int toY)
-        {
-            std::vector<PolygonalCollider*> toExclude;
-            for (PolygonalCollider* other : others)
-            {
-                if (this->doesHaveAnyTag(ColliderTagType::Rejected, other->getAllTags(ColliderTagType::Tag)))
-                {
-                    toExclude.push_back(other);
-                }
-            }
-            for (PolygonalCollider* exclCol : toExclude)
-                Utils::Vector::eraseAll(others, exclCol);
-
-            PolygonalCollider projection(m_id + "_proj");
-            for (ClipperLib::IntPoint& point : m_allPoints)
-                projection.addPoint(point.X + toX, point.Y + toY);
-            this->move(offsetX, offsetY);
-            PolygonalCollider fullPath = this->joinPolygonalColliders(m_id + "_path", &projection);
-            this->move(-offsetX, -offsetY);
-
-            ClipperLib::Clipper clipper;
-            clipper.AddPath(fullPath.getAllPoints(), ClipperLib::ptSubject, true);
-            for (PolygonalCollider* other : others)
-            {
-                if (other != this)
-                    clipper.AddPath(other->getAllPoints(), ClipperLib::ptClip, true);
-            }
-
-            ClipperLib::Paths solution;
-            clipper.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
-
-            return (solution.size() >= 1);
-        }
-
         int PolygonalCollider::getSideContainingPoint(int x, int y)
         {
             double tolerance = 0.01;
             for (int i = 0; i < m_allPoints.size(); i++)
             {
                 int nextNode = (i != m_allPoints.size() - 1) ? i + 1 : 0;
-                double lineLength = this->getDistanceFromPoint(i, this->getPointPosition(nextNode).X, this->getPointPosition(nextNode).Y);
+                double lineLength = this->getDistanceFromPoint(i, this->getPointPosition(nextNode).x, this->getPointPosition(nextNode).y);
                 double firstLength = this->getDistanceFromPoint(i, x, y);
                 double secondLength = this->getDistanceFromPoint(nextNode, x, y);
                 if (Utils::Math::isBetween(lineLength, firstLength + secondLength - tolerance, firstLength + secondLength + tolerance))
@@ -284,7 +211,7 @@ namespace obe
             return -1;
         }
 
-        ClipperLib::Path PolygonalCollider::getAllPoints() const
+        std::vector<Transform::UnitVector> PolygonalCollider::getAllPoints() const
         {
             return m_allPoints;
         }
@@ -293,9 +220,9 @@ namespace obe
         {
             for (unsigned int i = 0; i < m_allPoints.size(); i++)
             {
-                if (Utils::Math::isBetween(x, static_cast<int>(m_allPoints[i].X) - tolerance, static_cast<int>(m_allPoints[i].X) + tolerance))
+                if (Utils::Math::isBetween(x, static_cast<int>(m_allPoints[i].x) - tolerance, static_cast<int>(m_allPoints[i].x) + tolerance))
                 {
-                    if (Utils::Math::isBetween(y, static_cast<int>(m_allPoints[i].Y) - tolerance, static_cast<int>(m_allPoints[i].Y) + tolerance))
+                    if (Utils::Math::isBetween(y, static_cast<int>(m_allPoints[i].y) - tolerance, static_cast<int>(m_allPoints[i].y) + tolerance))
                         return i;
                 }
             }
@@ -304,9 +231,9 @@ namespace obe
 
         bool PolygonalCollider::hasMasterPoint(int x, int y, int tolerance) const
         {
-            if (Utils::Math::isBetween(x, static_cast<int>(m_masterPoint.X) - tolerance, static_cast<int>(m_masterPoint.X) + tolerance))
+            if (Utils::Math::isBetween(x, static_cast<int>(m_masterPoint.x) - tolerance, static_cast<int>(m_masterPoint.x) + tolerance))
             {
-                if (Utils::Math::isBetween(y, static_cast<int>(m_masterPoint.Y) - tolerance, static_cast<int>(m_masterPoint.Y) + tolerance))
+                if (Utils::Math::isBetween(y, static_cast<int>(m_masterPoint.y) - tolerance, static_cast<int>(m_masterPoint.y) + tolerance))
                     return true;
             }
             return false;
@@ -314,29 +241,29 @@ namespace obe
 
         void PolygonalCollider::movePoint(int index, int x, int y)
         {
-            m_allPoints[index].X += x;
-            m_allPoints[index].Y += y;
+            m_allPoints[index].x += x;
+            m_allPoints[index].y += y;
             calculateMasterPoint();
         }
 
         void PolygonalCollider::setPointPosition(int index, int x, int y)
         {
-            m_allPoints[index].X = x;
-            m_allPoints[index].Y = y;
+            m_allPoints[index].x = x;
+            m_allPoints[index].y = y;
             calculateMasterPoint();
         }
 
         void PolygonalCollider::setPointRelativePosition(int index, int x, int y)
         {
-            m_allPoints[index].X = x + m_allPoints[0].X;
-            m_allPoints[index].Y = y + m_allPoints[0].Y;
+            m_allPoints[index].x = x + m_allPoints[0].x;
+            m_allPoints[index].y = y + m_allPoints[0].y;
             calculateMasterPoint();
         }
 
         void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y)
         {
-            m_allPoints[index].X = x + m_masterPoint.X;
-            m_allPoints[index].Y = y + m_masterPoint.Y;
+            m_allPoints[index].x = x + m_masterPoint.x;
+            m_allPoints[index].y = y + m_masterPoint.y;
             calculateMasterPoint();
         }
 
@@ -388,10 +315,10 @@ namespace obe
             int p2 = side + 1;
             if (p1 == m_allPoints.size() - 1)
                 p2 = 0;
-            ClipperLib::IntPoint p1coords = this->getPointPosition(p1);
-            ClipperLib::IntPoint p2coords = this->getPointPosition(p2);
-            int deltaX = p2coords.X - p1coords.X;
-            int deltaY = p2coords.Y - p1coords.Y;
+            Transform::UnitVector p1coords = this->getPointPosition(p1);
+            Transform::UnitVector p2coords = this->getPointPosition(p2);
+            int deltaX = p2coords.x - p1coords.x;
+            int deltaY = p2coords.y - p1coords.y;
             return (atan2(deltaY, deltaX) * 180 / Utils::Math::pi);
         }
 
@@ -401,9 +328,9 @@ namespace obe
             int p2 = side + 1;
             if (p1 == m_allPoints.size() - 1)
                 p2 = 0;
-            ClipperLib::IntPoint p1coords = this->getPointPosition(p1);
-            ClipperLib::IntPoint p2coords = this->getPointPosition(p2);
-            return std::sqrt(std::pow(p1coords.X - p2coords.X, 2) + std::pow(p1coords.Y - p2coords.Y, 2));
+            Transform::UnitVector p1coords = this->getPointPosition(p1);
+            Transform::UnitVector p2coords = this->getPointPosition(p2);
+            return std::sqrt(std::pow(p1coords.x - p2coords.x, 2) + std::pow(p1coords.y - p2coords.y, 2));
         }
 
         void PolygonalCollider::draw(sf::RenderWindow& target, int offsetX, int offsetY, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
@@ -423,13 +350,13 @@ namespace obe
 
                 for (int i = 0; i < m_allPoints.size(); i++)
                 {
-                    ClipperLib::IntPoint& point = m_allPoints[i];
+                    Transform::UnitVector& point = m_allPoints[i];
 
                     if (Utils::Vector::isInList(i, m_highlightedPoints) && m_selected)
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
                     else
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 255, 255);
-                    drawPoints.emplace_back(point.X + offsetX, point.Y + offsetY);
+                    drawPoints.emplace_back(point.x + offsetX, point.y + offsetY);
                 }
 
                 if (Utils::Vector::isInList(0, m_highlightedPoints) && m_selected)
@@ -440,19 +367,19 @@ namespace obe
                 if (drawMasterPoint)
                 {
                     sf::CircleShape polyPt;
-                    polyPt.setPosition(sf::Vector2f(m_masterPoint.X + offsetX - r, m_masterPoint.Y + offsetY - r));
+                    polyPt.setPosition(sf::Vector2f(m_masterPoint.x + offsetX - r, m_masterPoint.y + offsetY - r));
                     polyPt.setRadius(r);
                     sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
                     polyPt.setFillColor(polyPtColor);
                     target.draw(polyPt);
                     if (drawSkel)
                     {
-                        for (ClipperLib::IntPoint& point : m_allPoints)
+                        for (Transform::UnitVector& point : m_allPoints)
                         {
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
-                                point.X + offsetX, point.Y + offsetY,
-                                m_masterPoint.X + offsetX, m_masterPoint.Y + offsetY,
+                                point.x + offsetX, point.y + offsetY,
+                                m_masterPoint.x + offsetX, m_masterPoint.y + offsetY,
                                 2, currentLineColor);
                         }
                     }
@@ -461,29 +388,29 @@ namespace obe
             }
         }
 
-        ClipperLib::IntPoint PolygonalCollider::getPosition()
+        Transform::UnitVector PolygonalCollider::getPosition()
         {
             return m_allPoints[0];
         }
 
         Transform::UnitVector PolygonalCollider::u_getPosition()
         {
-            return Transform::UnitVector(m_allPoints[0].X, m_allPoints[0].Y, Transform::Units::WorldPixels).to(m_unit);
+            return Transform::UnitVector(m_allPoints[0].x, m_allPoints[0].y, Transform::Units::WorldPixels).to(m_unit);
         }
 
         Transform::UnitVector PolygonalCollider::u_getPointPosition(int index)
         {
-            return Transform::UnitVector(m_allPoints[index].X, m_allPoints[index].Y, Transform::Units::WorldPixels).to(m_unit);
+            return Transform::UnitVector(m_allPoints[index].x, m_allPoints[index].y, Transform::Units::WorldPixels).to(m_unit);
         }
 
         Transform::UnitVector PolygonalCollider::u_getPointRelativePosition(int index)
         {
-            return Transform::UnitVector(m_allPoints[index].X - m_allPoints[0].X, m_allPoints[index].Y - m_allPoints[0].Y, Transform::Units::WorldPixels).to(m_unit);
+            return Transform::UnitVector(m_allPoints[index].x - m_allPoints[0].x, m_allPoints[index].y - m_allPoints[0].y, Transform::Units::WorldPixels).to(m_unit);
         }
 
         Transform::UnitVector PolygonalCollider::u_getMasterPointPosition() const
         {
-            return Transform::UnitVector(m_masterPoint.X, m_masterPoint.Y, Transform::Units::WorldPixels).to(m_unit);
+            return Transform::UnitVector(m_masterPoint.x, m_masterPoint.y, Transform::Units::WorldPixels).to(m_unit);
         }
 
         void PolygonalCollider::move(int x, int y)
@@ -492,12 +419,12 @@ namespace obe
                 child->move(x, y);
             if (m_allPoints.size() > 0)
             {
-                m_masterPoint.X += x;
-                m_masterPoint.Y += y;
-                for (ClipperLib::IntPoint& point : m_allPoints)
+                m_masterPoint.x += x;
+                m_masterPoint.y += y;
+                for (Transform::UnitVector& point : m_allPoints)
                 {
-                    point.X += x;
-                    point.Y += y;
+                    point.x += x;
+                    point.y += y;
                 }
             }
         }
@@ -506,18 +433,18 @@ namespace obe
         {
             if (m_allPoints.size() > 0)
             {
-                double addX = x - m_allPoints[0].X;
-                double addY = y - m_allPoints[0].Y;
+                double addX = x - m_allPoints[0].x;
+                double addY = y - m_allPoints[0].y;
                 for (PolygonalCollider* child : m_originChildren)
                     child->move(addX, addY);
-                m_masterPoint.X += addX;
-                m_masterPoint.Y += addY;
-                m_allPoints[0].X = x;
-                m_allPoints[0].Y = y;
+                m_masterPoint.x += addX;
+                m_masterPoint.y += addY;
+                m_allPoints[0].x = x;
+                m_allPoints[0].y = y;
                 for (int i = 1; i < m_allPoints.size(); i++)
                 {
-                    m_allPoints[i].X += addX;
-                    m_allPoints[i].Y += addY;
+                    m_allPoints[i].x += addX;
+                    m_allPoints[i].y += addY;
                 }
             }
         }
@@ -526,16 +453,16 @@ namespace obe
         {
             if (m_allPoints.size() > 0)
             {
-                double addX = x - m_masterPoint.X;
-                double addY = y - m_masterPoint.Y;
+                double addX = x - m_masterPoint.x;
+                double addY = y - m_masterPoint.y;
                 for (PolygonalCollider* child : m_originChildren)
                     child->move(addX, addY);
-                m_masterPoint.X = x;
-                m_masterPoint.Y = y;
-                for (ClipperLib::IntPoint& point : m_allPoints)
+                m_masterPoint.x = x;
+                m_masterPoint.y = y;
+                for (Transform::UnitVector& point : m_allPoints)
                 {
-                    point.X += addX;
-                    point.Y += addY;
+                    point.x += addX;
+                    point.y += addY;
                 }
             }
         }
@@ -566,18 +493,18 @@ namespace obe
             m_parentID = parent;
         }
 
-        PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const
+        /*PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const
         {
-            ClipperLib::Path polyAPath = this->getAllPoints();
-            std::vector<ClipperLib::IntPoint*> polyA;
+            /*std::vector<Transform::UnitVector> polyAPath = this->getAllPoints();
+            std::vector<Transform::UnitVector> polyA;
             for (int i = 0; i < polyAPath.size(); i++)
-                polyA.push_back(&polyAPath.at(i));
-            ClipperLib::Path polyBPath = other->getAllPoints();
-            std::vector<ClipperLib::IntPoint*> polyB;
+                polyA.push_back(polyAPath.at(i));
+            std::vector<Transform::UnitVector> polyBPath = other->getAllPoints();
+            std::vector<Transform::UnitVector> polyB;
             for (int i = 0; i < polyBPath.size(); i++)
-                polyB.push_back(&polyBPath.at(i));
-            std::vector<std::vector<ClipperLib::IntPoint*>> polys = {polyA, polyB};
-            auto findFromAddress = [polyA, polyB](ClipperLib::IntPoint* addr) -> int
+                polyB.push_back(polyBPath.at(i));
+            std::vector<std::vector<Transform::UnitVector*>> polys = {polyA, polyB};
+            auto findFromAddress = [polyA, polyB](Transform::UnitVector* addr) -> int
             {
                 for (int i = 0; i < polyA.size(); i++)
                 {
@@ -591,13 +518,13 @@ namespace obe
                 }
                 return -1;
             };
-            std::vector<ClipperLib::IntPoint*> allPoints;
+            std::vector<Transform::UnitVector> allPoints;
             allPoints.reserve(polyA.size() + polyB.size());
             allPoints.insert(allPoints.end(), polyA.begin(), polyA.end());
             allPoints.insert(allPoints.end(), polyB.begin(), polyB.end());
-            std::vector<ClipperLib::IntPoint*> conv = convexHull(allPoints);
+            std::vector<Transform::UnitVector*> conv = convexHull(allPoints);
             PolygonalCollider result(joinID);
-            ClipperLib::Path finalPath;
+            std::vector<Transform::UnitVector> finalPath;
             for (int i = 0; i < conv.size(); i++)
             {
                 ClipperLib::IntPoint *a, *b;
@@ -621,40 +548,7 @@ namespace obe
                 }
             }
             return result;
-        }
-
-        bool PolygonalCollider::testAllColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy, bool opt)
-        {
-            for (PolygonalCollider* collider : collidersList)
-            {
-                if (collider != this)
-                {
-                    if (this->doesCollide(collider, offx, offy))
-                    {
-                        //if (opt && i != 0) std::swap(collidersList->at(0), collidersList->at(i)); //Won't work if sent by copy
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        std::vector<PolygonalCollider*> PolygonalCollider::getAllCollidedColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy)
-        {
-            std::vector<PolygonalCollider*> collided;
-            for (PolygonalCollider* collider : collidersList)
-            {
-                if (collider != this)
-                {
-                    if (this->doesCollide(collider, offx, offy))
-                    {
-                        //if (opt && i != 0) std::swap(collidersList->at(0), collidersList->at(i)); //Won't work if sent by copy
-                        collided.push_back(collider);
-                    }
-                }
-            }
-            return collided;
-        }
+        }*/
 
         void PolygonalCollider::addOriginChild(PolygonalCollider* child)
         {
@@ -747,89 +641,112 @@ namespace obe
             return this->retrieveTagVector(tagType);
         }
 
-        bool PolygonalCollider::doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy)
-        {
-            std::vector<std::string> acceptedTagsBuffer = m_acceptedTags;
-            std::vector<std::string> rejectedTagsBuffer = m_rejectedTags;
-            this->clearTags(ColliderTagType::Rejected);
-            m_acceptedTags = tags;
-            bool result = testAllColliders(collidersList, offx, offy, true);
-            m_acceptedTags = acceptedTagsBuffer;
-            m_rejectedTags = rejectedTagsBuffer;
-            return result;
-        }
-
-        std::vector<PolygonalCollider*> PolygonalCollider::getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy)
-        {
-            std::vector<std::string> acceptedTagsBuffer = m_acceptedTags;
-            std::vector<std::string> rejectedTagsBuffer = m_rejectedTags;
-            clearTags(ColliderTagType::Rejected);
-            m_acceptedTags = tags;
-            std::vector<PolygonalCollider*> collided = getAllCollidedColliders(collidersList, offx, offy);
-            m_acceptedTags = acceptedTagsBuffer;
-            m_rejectedTags = rejectedTagsBuffer;
-            return collided;
-        }
 
         std::pair<double, double> PolygonalCollider::getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const
         {
-            double minDistance = -1;
+            bool inFront = false;
             std::pair<double, double> minDep;
-            std::function<std::tuple<double, std::pair<double, double>>(ClipperLib::Path&, ClipperLib::Path&, int, int)> calcMinDistanceDep =
-                [](ClipperLib::Path& sol1, ClipperLib::Path& sol2, int offX, int offY) -> std::tuple<double, std::pair<double, double>> {
+            auto calcMinDistanceDep = [](PolygonPath& sol1, PolygonPath& sol2, double offX, double offY) -> std::tuple<double, std::pair<double, double>, bool> {
                 double minDistance = -1;
+                bool inFront = false;
                 std::pair<double, double> minDeplacement;
-                ClipperLib::IntPoint point1, point2, point3;
+                Transform::UnitVector point1, point2, point3;
                 int i_x, i_y, s1_x, s1_y, s2_x, s2_y;
                 double s, t, distance;
-                for (ClipperLib::IntPoint point0 : sol1)
+                for (Transform::UnitVector& point0 : sol1)
                 {
                     for (int i = 0; i < sol2.size(); i++)
                     {
-                        point1.X = point0.X + offX;
-                        point1.Y = point0.Y + offY;
+                        point1.x = point0.x + offX;
+                        point1.y = point0.y + offY;
                         point2 = sol2[i];
                         point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1];
 
-                        s1_x = point1.X - point0.X;
-                        s1_y = point1.Y - point0.Y;
-                        s2_x = point3.X - point2.X;
-                        s2_y = point3.Y - point2.Y;
+                        s1_x = point1.x - point0.x;
+                        s1_y = point1.y - point0.y;
+                        s2_x = point3.x - point2.x;
+                        s2_y = point3.y - point2.y;
 
-                        s = double((-s1_y * (point0.X - point2.X) + s1_x * (point0.Y - point2.Y))) / double((-s2_x * s1_y + s1_x * s2_y));
-                        t = double((s2_x * (point0.Y - point2.Y) - s2_y * (point0.X - point2.X))) / double((-s2_x * s1_y + s1_x * s2_y));
+                        s = double((-s1_y * (point0.x - point2.x) + s1_x * (point0.y - point2.y))) / double((-s2_x * s1_y + s1_x * s2_y));
+                        t = double((s2_x * (point0.y - point2.y) - s2_y * (point0.x - point2.x))) / double((-s2_x * s1_y + s1_x * s2_y));
 
                         if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                         {
-                            i_x = point0.X + (t * s1_x);
-                            i_y = point0.Y + (t * s1_y);
+                            inFront = true;
+                            i_x = point0.x + (t * s1_x);
+                            i_y = point0.y + (t * s1_y);
 
-                            distance = std::sqrt(std::pow((point0.X - i_x), 2) + std::pow((point0.Y - i_y), 2));
+                            distance = std::sqrt(std::pow((point0.x - i_x), 2) + std::pow((point0.y - i_y), 2));
                             if (distance < minDistance || minDistance == -1)
                             {
                                 minDistance = distance;
                                 minDeplacement = std::make_pair<double, double>((t * s1_x), (t * s1_y));
                             }
+
                         }
                     }
                 }
-                return std::make_tuple(minDistance, minDeplacement);
+                return std::make_tuple(minDistance, minDeplacement, inFront);
             };
-            ClipperLib::Path solution = this->getAllPoints();
-            ClipperLib::Path solutionInverse = collider->getAllPoints();
+            PolygonPath fPath = this->getAllPoints();
+            PolygonPath sPath = collider->getAllPoints();
 
-            auto tdm1 = calcMinDistanceDep(solution, solutionInverse, offX, offY);
-            auto tdm2 = calcMinDistanceDep(solutionInverse, solution, -offX, -offY);
+            auto tdm1 = calcMinDistanceDep(fPath, sPath, offX, offY);
+            auto tdm2 = calcMinDistanceDep(sPath, fPath, -offX, -offY);
             std::get<1>(tdm2).first = -std::get<1>(tdm2).first;
             std::get<1>(tdm2).second = -std::get<1>(tdm2).second;
-            auto minTdm = (std::get<0>(tdm1) > std::get<0>(tdm2) && std::get<0>(tdm2) > 0) ? tdm2 : tdm1;
-            if (std::get<0>(minTdm) < minDistance || minDistance == -1)
+            if (std::get<2>(tdm1))
+                inFront = std::get<2>(tdm1);
+            if (std::get<2>(tdm2))
+                inFront = std::get<2>(tdm2);
+
+            auto minTdm = (std::get<0>(tdm1) > std::get<0>(tdm2) && std::get<0>(tdm2) > 0 && std::get<2>(tdm2)) ? tdm2 : tdm1;
+            if (!inFront)
             {
-                minDistance = std::get<0>(minTdm);
+                minDep = std::make_pair<double, double>(double(offX), double(offY));
+            }
+            else
+            {
                 minDep = std::get<1>(minTdm);
             }
 
             return minDep;
+        }
+
+        bool PolygonalCollider::doesCollide(PolygonalCollider* collider, double offX, double offY) const
+        {
+            std::vector<Transform::UnitVector> fPath = this->getAllPoints();
+            std::vector<Transform::UnitVector> sPath = collider->getAllPoints();
+
+            Transform::UnitVector point1, point2, point3;
+            double s1_x, s1_y, s2_x, s2_y;
+            double s, t;
+            bool collided = false;
+            for (Transform::UnitVector point0 : fPath)
+            {
+                for (int i = 0; i < sPath.size(); i++)
+                {
+                    point1.x = point0.x + offX;
+                    point1.y = point0.y + offY;
+                    point2 = sPath[i];
+                    point3 = sPath[(i == sPath.size() - 1) ? 0 : i + 1];
+
+                    s1_x = point1.x - point0.x;
+                    s1_y = point1.y - point0.y;
+                    s2_x = point3.x - point2.x;
+                    s2_y = point3.y - point2.y;
+
+                    s = double((-s1_y * (point0.x - point2.x) + s1_x * (point0.y - point2.y))) / double((-s2_x * s1_y + s1_x * s2_y));
+                    t = double((s2_x * (point0.y - point2.y) - s2_y * (point0.x - point2.x))) / double((-s2_x * s1_y + s1_x * s2_y));
+
+                    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+                    {
+                        collided = true;
+                        break;
+                    }
+                }
+            }
+            return collided;
         }
     }
 }

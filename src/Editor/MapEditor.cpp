@@ -638,7 +638,7 @@ namespace obe
             Debug::Console::Stream* joinStream = gameConsole.createStream("ppp", true);
             Debug::Console::Message* joinMessage = joinStream->push("0 Points sur l'enveloppe convexe");
 
-            std::function<void()> drawConvexHull = [&window, &youpiCollider, &badCollider, &drawVoD, &world, &gameConsole, &joinMessage]()
+            /*std::function<void()> drawConvexHull = [&window, &youpiCollider, &badCollider, &drawVoD, &world, &gameConsole, &joinMessage]()
             {
                 std::vector<sf::Vector2i> allCHp;
                 std::vector<ClipperLib::IntPoint*> ngsf;
@@ -661,7 +661,7 @@ namespace obe
                 {
                     delete point;
                 }
-            };
+            };*/
                 
 
             //Game Starts
@@ -1053,11 +1053,11 @@ namespace obe
                         selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                         if (selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
                         {
-                            ClipperLib::IntPoint zeroCoords = selectedMasterCollider->getPointPosition(0);
-                            ClipperLib::IntPoint masterCoords = selectedMasterCollider->getMasterPointPosition();
+                            Transform::UnitVector zeroCoords = selectedMasterCollider->getPointPosition(0).to<Transform::Units::WorldPixels>();
+                            Transform::UnitVector masterCoords = selectedMasterCollider->getMasterPointPosition().to<Transform::Units::WorldPixels>();
                             world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
-                                cursor.getX() + pixelCamera.x + zeroCoords.X - masterCoords.X,
-                                cursor.getY() + pixelCamera.y + zeroCoords.Y - masterCoords.Y);
+                                cursor.getX() + pixelCamera.x + zeroCoords.x - masterCoords.x,
+                                cursor.getY() + pixelCamera.y + zeroCoords.y - masterCoords.y);
                         }
                     }
                     //Collision Master Release
@@ -1289,8 +1289,6 @@ namespace obe
                     //Cursor
                     if (showCursor)
                         cursor.display(window);
-
-                    drawConvexHull();
                         
                     window.display();
                 }

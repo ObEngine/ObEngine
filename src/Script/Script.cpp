@@ -421,11 +421,8 @@ namespace obe
                     .addFunction("clearHighlights", &Collision::PolygonalCollider::clearHighlights)
                     .addFunction("deletePoint", &Collision::PolygonalCollider::deletePoint)
                     .addFunction("doesCollide", &Collision::PolygonalCollider::doesCollide)
-                    .addFunction("doesCollideWithTag", &Collision::PolygonalCollider::doesCollideWithTags)
                     .addFunction("doesHaveTag", &Collision::PolygonalCollider::doesHaveTag)
-                    .addFunction("doesPathCollide", &Collision::PolygonalCollider::doesPathCollide)
                     .addFunction("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
-                    .addFunction("getCollidedCollidersWithTags", &Collision::PolygonalCollider::getCollidedCollidersWithTags)
                     .addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
                     .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::u_getMasterPointPosition)
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
@@ -451,7 +448,6 @@ namespace obe
                     .addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::u_setPointPositionFromMaster)
                     .addFunction("setPosition", &Collision::PolygonalCollider::u_setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::u_setPositionFromMaster)
-                    .addFunction("testAllColliders", &Collision::PolygonalCollider::testAllColliders)
                 );
                 foundPart = true;
             }

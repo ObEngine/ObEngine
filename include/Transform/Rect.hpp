@@ -202,13 +202,16 @@ namespace obe
 			 *         y attribute will be equal to -1 if the Rect is flipped vertically, 1 otherwise.
 			 */
 			UnitVector getScaleFactor() const;
-
 		    /**
 			 * \brief Draws the Rect for debug purposes <REMOVE>
 			 * \param target sf::RenderWindow where to render the Rect
 			 */
-			void display(sf::RenderWindow& target);
-
+			void display(sf::RenderWindow& target) const;
+		    /**
+             * \brief Check if two Rects intersects
+             * \param rect The other Rect to check
+             * \return true if the Rects intersects, false otherwise
+             */
             bool intersects(const Rect& rect) const;
 		};
 	}
