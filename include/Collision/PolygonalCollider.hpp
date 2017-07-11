@@ -151,13 +151,15 @@ namespace obe
             ClipperLib::Path getAllPoints() const;
 
             //Collision Tests
-            PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other);
+            PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
             bool testAllColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy, bool opt = false);
             std::vector<PolygonalCollider*> getAllCollidedColliders(std::vector<PolygonalCollider*> collidersList, int offx, int offy);
             bool doesCollide(PolygonalCollider* other, int offsetX = 0, int offsetY = 0);
             bool doesPathCollide(std::vector<PolygonalCollider*> others, int offsetX = 0, int offsetY = 0, int toX = 0, int toY = 0);
             bool doesCollideWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
             std::vector<PolygonalCollider*> getCollidedCollidersWithTags(std::vector<PolygonalCollider*> collidersList, std::vector<std::string> tags, int offx, int offy);
+
+            std::pair<double, double> getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const;
 
             //Parent
             /**

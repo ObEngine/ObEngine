@@ -566,7 +566,7 @@ namespace obe
             m_parentID = parent;
         }
 
-        PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, PolygonalCollider* other)
+        PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const
         {
             ClipperLib::Path polyAPath = this->getAllPoints();
             std::vector<ClipperLib::IntPoint*> polyA;
@@ -597,6 +597,7 @@ namespace obe
             allPoints.insert(allPoints.end(), polyB.begin(), polyB.end());
             std::vector<ClipperLib::IntPoint*> conv = convexHull(allPoints);
             PolygonalCollider result(joinID);
+            ClipperLib::Path finalPath;
             for (int i = 0; i < conv.size(); i++)
             {
                 ClipperLib::IntPoint *a, *b;
@@ -609,7 +610,7 @@ namespace obe
                     {
                         int iA = findFromAddress(a);
                         int iB = findFromAddress(b);
-                        int counter = 0;
+                        int counter = 1;
                         while ((iA + counter) % polys[poly].size() != iB)
                         {
                             int index = (iA + counter) % polys[poly].size();
@@ -768,6 +769,67 @@ namespace obe
             m_acceptedTags = acceptedTagsBuffer;
             m_rejectedTags = rejectedTagsBuffer;
             return collided;
+        }
+
+        std::pair<double, double> PolygonalCollider::getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const
+        {
+            double minDistance = -1;
+            std::pair<double, double> minDep;
+            std::function<std::tuple<double, std::pair<double, double>>(ClipperLib::Path&, ClipperLib::Path&, int, int)> calcMinDistanceDep =
+                [](ClipperLib::Path& sol1, ClipperLib::Path& sol2, int offX, int offY) -> std::tuple<double, std::pair<double, double>> {
+                double minDistance = -1;
+                std::pair<double, double> minDeplacement;
+                ClipperLib::IntPoint point1, point2, point3;
+                int i_x, i_y, s1_x, s1_y, s2_x, s2_y;
+                double s, t, distance;
+                for (ClipperLib::IntPoint point0 : sol1)
+                {
+                    for (int i = 0; i < sol2.size(); i++)
+                    {
+                        point1.X = point0.X + offX;
+                        point1.Y = point0.Y + offY;
+                        point2 = sol2[i];
+                        point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1];
+
+                        s1_x = point1.X - point0.X;
+                        s1_y = point1.Y - point0.Y;
+                        s2_x = point3.X - point2.X;
+                        s2_y = point3.Y - point2.Y;
+
+                        s = double((-s1_y * (point0.X - point2.X) + s1_x * (point0.Y - point2.Y))) / double((-s2_x * s1_y + s1_x * s2_y));
+                        t = double((s2_x * (point0.Y - point2.Y) - s2_y * (point0.X - point2.X))) / double((-s2_x * s1_y + s1_x * s2_y));
+
+                        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+                        {
+                            i_x = point0.X + (t * s1_x);
+                            i_y = point0.Y + (t * s1_y);
+
+                            distance = std::sqrt(std::pow((point0.X - i_x), 2) + std::pow((point0.Y - i_y), 2));
+                            if (distance < minDistance || minDistance == -1)
+                            {
+                                minDistance = distance;
+                                minDeplacement = std::make_pair<double, double>((t * s1_x), (t * s1_y));
+                            }
+                        }
+                    }
+                }
+                return std::make_tuple(minDistance, minDeplacement);
+            };
+            ClipperLib::Path solution = this->getAllPoints();
+            ClipperLib::Path solutionInverse = collider->getAllPoints();
+
+            auto tdm1 = calcMinDistanceDep(solution, solutionInverse, offX, offY);
+            auto tdm2 = calcMinDistanceDep(solutionInverse, solution, -offX, -offY);
+            std::get<1>(tdm2).first = -std::get<1>(tdm2).first;
+            std::get<1>(tdm2).second = -std::get<1>(tdm2).second;
+            auto minTdm = (std::get<0>(tdm1) > std::get<0>(tdm2) && std::get<0>(tdm2) > 0) ? tdm2 : tdm1;
+            if (std::get<0>(minTdm) < minDistance || minDistance == -1)
+            {
+                minDistance = std::get<0>(minTdm);
+                minDep = std::get<1>(minTdm);
+            }
+
+            return minDep;
         }
     }
 }

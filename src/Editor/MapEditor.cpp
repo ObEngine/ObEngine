@@ -5,6 +5,7 @@
 #include <Editor/Grid.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Editor/MapEditorTools.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Input/KeyBind.hpp>
 #include <Network/Network.hpp>
 #include <Scene/World.hpp>
@@ -615,6 +616,53 @@ namespace obe
             world.loadFromFile(mapName);
 
             mapNameInput->setText(world.getLevelName());
+
+            Collision::PolygonalCollider* youpiCollider = world.createCollider("youpiCollider");
+            youpiCollider->addPoint(10, 30);
+            youpiCollider->addPoint(40, 40);
+            youpiCollider->addPoint(60, 10);
+            youpiCollider->addPoint(110, 110);
+            youpiCollider->addPoint(10, 110);
+            std::map<std::string, Types::Any> drawVoD;
+            drawVoD["line_color"] = sf::Color::Magenta;
+            drawVoD["points"] = false;
+
+            Collision::PolygonalCollider* badCollider = world.createCollider("badCollider");
+            badCollider->addPoint(10, 30);
+            badCollider->addPoint(40, 40);
+            badCollider->addPoint(60, 10);
+            badCollider->addPoint(110, 110);
+            badCollider->addPoint(10, 110);
+            badCollider->move(300, 300);
+
+            Debug::Console::Stream* joinStream = gameConsole.createStream("ppp", true);
+            Debug::Console::Message* joinMessage = joinStream->push("0 Points sur l'enveloppe convexe");
+
+            std::function<void()> drawConvexHull = [&window, &youpiCollider, &badCollider, &drawVoD, &world, &gameConsole, &joinMessage]()
+            {
+                std::vector<sf::Vector2i> allCHp;
+                std::vector<ClipperLib::IntPoint*> ngsf;
+
+                for (ClipperLib::IntPoint& point : youpiCollider->getAllPoints())
+                {
+                    ngsf.push_back(new ClipperLib::IntPoint(point.X, point.Y));
+                }
+
+                Transform::UnitVector camdf = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                Collision::PolygonalCollider ppsef = youpiCollider->joinPolygonalColliders("segm", badCollider);
+                for (ClipperLib::IntPoint& point : ppsef.getAllPoints())
+                    allCHp.emplace_back(point.X - camdf.x, point.Y - camdf.y);
+
+                joinMessage->setMessage(std::to_string(ppsef.getAllPoints().size()) + " points sur l'enveloppe convexe !");
+
+                Graphics::Utils::drawPolygon(window, allCHp, drawVoD);
+
+                for (ClipperLib::IntPoint* point : ngsf)
+                {
+                    delete point;
+                }
+            };
+                
 
             //Game Starts
             while (window.isOpen())
@@ -1241,6 +1289,8 @@ namespace obe
                     //Cursor
                     if (showCursor)
                         cursor.display(window);
+
+                    drawConvexHull();
                         
                     window.display();
                 }

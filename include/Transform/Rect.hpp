@@ -208,6 +208,8 @@ namespace obe
 			 * \param target sf::RenderWindow where to render the Rect
 			 */
 			void display(sf::RenderWindow& target);
+
+            bool intersects(const Rect& rect) const;
 		};
 	}
 }

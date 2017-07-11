@@ -234,5 +234,15 @@ namespace obe
 
             Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
 		}
+
+	    bool Rect::intersects(const Rect& rect) const
+	    {
+            UnitVector p1 = m_position.to<Units::WorldUnits>();
+            UnitVector p2 = rect.getPosition().to<Units::WorldUnits>();
+            UnitVector s1 = m_size.to<Units::WorldUnits>();
+            UnitVector s2 = rect.getSize().to<Units::WorldUnits>();
+            return (abs(p1.x - p2.x) < (s1.x + s2.x) / 2) &&
+                (abs(p1.y - p2.y) < (s1.y + s2.y) / 2);
+	    }
 	}
 }
