@@ -59,11 +59,6 @@ namespace obe
 
             //Cursor
             System::Cursor cursor(&window);
-            Collision::PolygonalCollider cursorCollider("cursor");
-            cursorCollider.addPoint(0, 0);
-            cursorCollider.addPoint(1, 0);
-            cursorCollider.addPoint(1, 1);
-            cursorCollider.addPoint(0, 1);
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
@@ -115,27 +110,6 @@ namespace obe
                         if (event.key.code == sf::Keyboard::Escape)
                             window.close();
                         break;
-                    }
-                }
-
-                if (cursor.getClicked(System::MouseButton::Left) || cursor.getPressed(System::MouseButton::Left))
-                {
-                    cursorCollider.setPosition(cursor.getX(), cursor.getY());
-                    std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
-                    std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-                        &cursorCollider, -world.getCamera()->getX(), -world.getCamera()->getY());
-                    for (int i = 0; i < elementsCollidedByCursor.size(); i++)
-                    {
-                        for (int j = 0; j < clickableGameObjects.size(); j++)
-                        {
-                            if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
-                            {
-                                if (cursor.getClicked(System::MouseButton::Left))
-                                    world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
-                                if (cursor.getPressed(System::MouseButton::Left))
-                                    world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
-                            }
-                        }
                     }
                 }
 

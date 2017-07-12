@@ -131,6 +131,8 @@ namespace obe
             */
             UnitVector& operator/=(const UnitVector& div);
 
+            UnitVector operator*(double mul) const;
+
             /**
              * \brief Return an UnitVector with the converted values (x, y) to the Unit you want
              * \tparam E An enum value from Coord::Units

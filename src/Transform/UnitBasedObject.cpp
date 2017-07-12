@@ -7,6 +7,7 @@ namespace obe
         void UnitBasedObject::setWorkingUnit(Units unit)
         {
             m_unit = unit;
+            resetUnit(unit);
         }
 
         Units UnitBasedObject::getWorkingUnit() const

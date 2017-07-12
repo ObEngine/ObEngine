@@ -73,11 +73,6 @@ namespace obe
             //Cursor
             System::Cursor cursor(&window);
             cursor.selectAnimatorPath("RoundWhite");
-            Collision::PolygonalCollider cursorCollider("cursor");
-            cursorCollider.addPoint(0, 0);
-            cursorCollider.addPoint(1, 0);
-            cursorCollider.addPoint(1, 1);
-            cursorCollider.addPoint(0, 1);
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
@@ -275,7 +270,7 @@ namespace obe
             editorButton->setTextSize(mediumFontSize);
             editorButton->setRenderer(baseTheme.getRenderer("Button"));
 
-            editorButton->connect("pressed", [&guiEditorEnabled]() { guiEditorEnabled = !guiEditorEnabled; });
+            editorButton->connect("pressed", [&guiEditorEnabled]() { guiEditorEnabled = !guiEditorEnabled; }); // <REVISION>
 
             //Editor Menu Setup
             editorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
@@ -617,24 +612,6 @@ namespace obe
 
             mapNameInput->setText(world.getLevelName());
 
-            Collision::PolygonalCollider* youpiCollider = world.createCollider("youpiCollider");
-            youpiCollider->addPoint(10, 30);
-            youpiCollider->addPoint(40, 40);
-            youpiCollider->addPoint(60, 10);
-            youpiCollider->addPoint(110, 110);
-            youpiCollider->addPoint(10, 110);
-            std::map<std::string, Types::Any> drawVoD;
-            drawVoD["line_color"] = sf::Color::Magenta;
-            drawVoD["points"] = false;
-
-            Collision::PolygonalCollider* badCollider = world.createCollider("badCollider");
-            badCollider->addPoint(10, 30);
-            badCollider->addPoint(40, 40);
-            badCollider->addPoint(60, 10);
-            badCollider->addPoint(110, 110);
-            badCollider->addPoint(10, 110);
-            badCollider->move(300, 300);
-
             Debug::Console::Stream* joinStream = gameConsole.createStream("ppp", true);
             Debug::Console::Message* joinMessage = joinStream->push("0 Points sur l'enveloppe convexe");
 
@@ -662,7 +639,41 @@ namespace obe
                     delete point;
                 }
             };*/
-                
+            
+            double angleRot = 180;
+            double speed = 0;
+            bool triggerMe = false;
+
+            Script::ScriptEngine["boum"] = kaguya::function([&triggerMe]() {
+                triggerMe = true;
+            });
+
+            
+
+            Script::ScriptEngine["wow"] = kaguya::function([&world, &triggerMe, &speed, &angleRot, &framerateManager]() {
+                Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
+                Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
+                if (triggerMe && !collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
+                {
+                    double radAngle = (Utils::Math::pi / 180.0) * ((90 - angleRot) * -1);
+                    speed += 1000 * framerateManager.getGameSpeed();
+                    double addX = std::cos(radAngle) * (speed * framerateManager.getGameSpeed());
+                    double addY = std::sin(radAngle) * (speed * framerateManager.getGameSpeed());
+                    
+                    Transform::UnitVector tOffset(addX, addY, Transform::Units::WorldPixels);
+                    Transform::UnitVector maxDepDist = collider0->getMaximumDistanceBeforeCollision(*collider1, tOffset);
+                    collider0->move(maxDepDist);
+                    if (maxDepDist.y == 0)
+                    {
+                        triggerMe = false;
+                        speed = 0;
+                    }
+                }
+                else if (collider0 != nullptr && collider1 != nullptr && collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
+                {
+                    std::cout << "ON HOLD" << std::endl;
+                }
+            });
 
             //Game Starts
             while (window.isOpen())
@@ -980,18 +991,20 @@ namespace obe
                 //Collision Edition
                 if (editMode->getSelectedItem() == "Collisions")
                 {
+                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
                     bool deletedCollision = false;
                     world.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)
                     {
                         selectedMasterCollider->clearHighlights();
-                        int cursCoordX = cursor.getX() + pixelCamera.x;
-                        int cursCoordY = cursor.getY() + pixelCamera.y;
-                        int clNode = selectedMasterCollider->findClosestPoint(cursCoordX, cursCoordY);
+                        int clNode = selectedMasterCollider->findClosestPoint(cursCoord);
                         selectedMasterCollider->highlightPoint(clNode);
                         int gLeftNode = ((clNode - 1 != -1) ? clNode - 1 : selectedMasterCollider->getPointsAmount() - 1);
                         int gRghtNode = ((clNode + 1 != selectedMasterCollider->getPointsAmount()) ? clNode + 1 : 0);
-                        int secondClosestNode = (selectedMasterCollider->getDistanceFromPoint(gLeftNode, cursCoordX, cursCoordY) >= selectedMasterCollider->getDistanceFromPoint(gRghtNode, cursCoordX, cursCoordY)) ? gRghtNode : gLeftNode;
+                        unsigned int secondClosestNode = 
+                            (selectedMasterCollider->getDistanceFromPoint(gLeftNode, cursCoord) >= 
+                            selectedMasterCollider->getDistanceFromPoint(gRghtNode, cursCoord)) 
+                            ? gRghtNode : gLeftNode;
                         selectedMasterCollider->highlightPoint(secondClosestNode);
                     }
                     //Collision Point Grab
@@ -1016,7 +1029,7 @@ namespace obe
                     //Collision Point Move
                     if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                     {
-                        selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                        selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursCoord);
                         if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
                         {
                             world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
@@ -1050,7 +1063,7 @@ namespace obe
                     //Collision Master Move
                     if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && masterColliderGrabbed)
                     {
-                        selectedMasterCollider->setPositionFromMaster(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                        selectedMasterCollider->setPositionFromMaster(cursCoord);
                         if (selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
                         {
                             Transform::UnitVector zeroCoords = selectedMasterCollider->getPointPosition(0).to<Transform::Units::WorldPixels>();
@@ -1068,13 +1081,12 @@ namespace obe
                     }
                     if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider != nullptr && !masterColliderGrabbed)
                     {
-                        int crPtX = cursor.getX() + pixelCamera.x;
-                        int crPtY = cursor.getY() + pixelCamera.y;
-                        int rqPtRes = selectedMasterCollider->hasPoint(crPtX, crPtY, 6);
+                        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
+                        int rqPtRes = selectedMasterCollider->hasPoint(cursCoord, pTolerance);
                         //Collision Point Create
                         if (rqPtRes == -1)
                         {
-                            selectedMasterCollider->addPoint(crPtX, crPtY, selectedMasterCollider->findClosestPoint(crPtX, crPtY, true));
+                            selectedMasterCollider->addPoint(cursCoord, selectedMasterCollider->findClosestPoint(cursCoord, true));
                         }
                         //Collision Point Delete
                         else
@@ -1146,32 +1158,6 @@ namespace obe
                         editorGrid.magnetize(cursor);
                 }
 
-                //Console Command Handle
-
-                //Click&Press Trigger
-                if (editMode->getSelectedItem() == "Play")
-                {
-                    if (cursor.getClicked(System::MouseButton::Left) || cursor.getPressed(System::MouseButton::Left))
-                    {
-                        std::vector<Script::GameObject*> clickableGameObjects = world.getAllGameObjects({"Click"});
-                        std::vector<Collision::PolygonalCollider*> elementsCollidedByCursor = world.getAllCollidersByCollision(
-                            &cursorCollider, -pixelCamera.x, -pixelCamera.y);
-                        for (int i = 0; i < elementsCollidedByCursor.size(); i++)
-                        {
-                            for (int j = 0; j < clickableGameObjects.size(); j++)
-                            {
-                                if (elementsCollidedByCursor[i] == clickableGameObjects[j]->getCollider())
-                                {
-                                    if (cursor.getClicked(System::MouseButton::Left))
-                                        world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Click", true);
-                                    if (cursor.getPressed(System::MouseButton::Left))
-                                        world.getGameObject(clickableGameObjects[j]->getId())->getLocalTriggers()->setTriggerState("Press", true);
-                                }
-                            }
-                        }
-                    }
-                }
-
                 if (guiEditorEnabled)
                     editorPanel->show();
                 else
@@ -1189,6 +1175,7 @@ namespace obe
                 networkHandler.handleTriggers();
                 cursor.handleTriggers();
                 keybind.handleTriggers();
+                Script::ScriptEngine("wow()");
 
                 while (window.pollEvent(event))
                 {

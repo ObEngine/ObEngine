@@ -74,7 +74,6 @@ namespace obe
             std::pair<Collision::PolygonalCollider*, int> getCollisionPointByPos(int x, int y);
             Collision::PolygonalCollider* getCollisionMasterByPos(int x, int y);
             Collision::PolygonalCollider* getCollisionByID(const std::string& id);
-            std::vector<Collision::PolygonalCollider*> getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy);
             void deleteCollisionByID(const std::string& id);
             void deleteCollision(Collision::PolygonalCollider* colToDelete);
             void createCollisionAtPos(int x, int y);

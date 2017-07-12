@@ -156,9 +156,9 @@ namespace obe
                                 pointBuffer,
                                 colliderPoint->get<double>(),
                                 pBaseUnit
-                            ).to<Transform::Units::WorldPixels>();
+                            );
                             std::cout << "Add Vector Pt : " << pVector2 << std::endl;
-                            tempCollider->addPoint(pVector2.x, pVector2.y);
+                            tempCollider->addPoint(pVector2);
                         }
                         else
                             pointBuffer = colliderPoint->get<double>();
@@ -271,7 +271,7 @@ namespace obe
                     dataStore->at("Collisions", m_colliderArray[i]->getId()).createListAttribute("points");
                     for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
                     {
-                        Transform::UnitVector pVec = m_colliderArray[i]->u_getPointPosition(j);
+                        Transform::UnitVector pVec = m_colliderArray[i]->getPointPosition(j);
                         dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.x);
                         dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.y);
                     }
@@ -600,11 +600,13 @@ namespace obe
 
         std::pair<Collision::PolygonalCollider*, int> World::getCollisionPointByPos(int x, int y)
         {
+            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
+            const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (m_colliderArray[i]->hasPoint(x, y, 6) != -1)
+                if (m_colliderArray[i]->hasPoint(pPos, pTolerance) != -1)
                 {
-                    return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), m_colliderArray[i]->hasPoint(x, y, 6));
+                    return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), m_colliderArray[i]->hasPoint(pPos, pTolerance));
                 }
             }
             return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
@@ -612,9 +614,11 @@ namespace obe
 
         Collision::PolygonalCollider* World::getCollisionMasterByPos(int x, int y)
         {
+            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
+            const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                if (m_colliderArray[i]->hasMasterPoint(x, y, 6))
+                if (m_colliderArray[i]->hasMasterPoint(pPos, pTolerance))
                     return m_colliderArray[i].get();
             }
             return nullptr;
@@ -630,19 +634,6 @@ namespace obe
                 }
             }
             return nullptr;
-        }
-
-        std::vector<Collision::PolygonalCollider*> World::getAllCollidersByCollision(Collision::PolygonalCollider* col, int offx, int offy)
-        {
-            std::vector<Collision::PolygonalCollider*> returnVec;
-            for (int i = 0; i < m_colliderArray.size(); i++)
-            {
-                if (m_colliderArray[i]->doesCollide(col, offx, offy))
-                {
-                    returnVec.push_back(m_colliderArray[i].get());
-                }
-            }
-            return returnVec;
         }
 
         void World::deleteCollisionByID(const std::string& id)
@@ -664,6 +655,7 @@ namespace obe
         void World::createCollisionAtPos(int x, int y)
         {
             int i = 0;
+            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
             std::string testID = "collider" + std::to_string(m_colliderArray.size() + i);
             while (getCollisionByID(testID) != nullptr)
             {
@@ -671,10 +663,10 @@ namespace obe
                 testID = "collider" + std::to_string(m_colliderArray.size() + i);
             }
             Collision::PolygonalCollider* newCollider = this->createCollider(testID);
-            newCollider->addPoint(50, 0);
-            newCollider->addPoint(0, 50);
-            newCollider->addPoint(100, 50);
-            newCollider->setPositionFromMaster(x, y);
+            newCollider->addPoint(Transform::UnitVector(50, 0, Transform::Units::WorldPixels));
+            newCollider->addPoint(Transform::UnitVector(0, 50, Transform::Units::WorldPixels));
+            newCollider->addPoint(Transform::UnitVector(100, 50, Transform::Units::WorldPixels));
+            newCollider->setPositionFromMaster(pPos);
         }
 
         void loadWorldLib(kaguya::State* lua)
@@ -690,7 +682,6 @@ namespace obe
                 .addFunction("deleteCollisionByID", &World::deleteCollisionByID)
                 .addFunction("deleteSprite", &World::deleteSprite)
                 .addFunction("enableShowCollision", &World::enableShowCollision)
-                .addFunction("getAllCollidersByCollision", &World::getAllCollidersByCollision)
                 .addFunction("getAllGameObjects", &World::getAllGameObjects)
                 .addFunction("getAllSprites", &World::getAllSprites)
                 .addFunction("getCamera", &World::getCamera)

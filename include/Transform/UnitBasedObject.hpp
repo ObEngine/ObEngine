@@ -16,6 +16,7 @@ namespace obe
              * \brief Unit used in the Class
              */
             Units m_unit = Units::WorldUnits;
+            virtual void resetUnit(Units unit) = 0;
         public:
             /**
              * \brief Set the unit the Object should work with

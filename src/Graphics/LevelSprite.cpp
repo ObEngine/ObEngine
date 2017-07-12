@@ -31,6 +31,11 @@ namespace obe
             }
         }
 
+        void LevelSprite::resetUnit(Transform::Units unit)
+        {
+
+        }
+
         void LevelSprite::setTexture(const sf::Texture& texture)
         {
             m_texture = texture;

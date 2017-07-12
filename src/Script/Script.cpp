@@ -424,13 +424,14 @@ namespace obe
                     .addFunction("doesHaveTag", &Collision::PolygonalCollider::doesHaveTag)
                     .addFunction("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
                     .addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
-                    .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::u_getMasterPointPosition)
+                    .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::getMasterPointPosition)
+                    .addFunction("getMaximumDistanceBeforeCollision", &Collision::PolygonalCollider::getMaximumDistanceBeforeCollision)
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
                     .addFunction("getParentId", &Collision::PolygonalCollider::getParentId)
-                    .addFunction("getPointPosition", &Collision::PolygonalCollider::u_getPointPosition)
-                    .addFunction("getPointRelativePosition", &Collision::PolygonalCollider::u_getPointRelativePosition)
+                    .addFunction("getPointPosition", &Collision::PolygonalCollider::getPointPosition)
+                    .addFunction("getPointRelativePosition", &Collision::PolygonalCollider::getPointRelativePosition)
                     .addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
-                    .addFunction("getPosition", &Collision::PolygonalCollider::u_getPosition)
+                    .addFunction("getPosition", &Collision::PolygonalCollider::getPosition)
                     .addFunction("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
                     .addFunction("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)
                     .addFunction("getSideLength", &Collision::PolygonalCollider::getSideLength)
@@ -438,16 +439,16 @@ namespace obe
                     .addFunction("hasPoint", &Collision::PolygonalCollider::hasPoint)
                     .addFunction("highlightLine", &Collision::PolygonalCollider::highlightLine)
                     .addFunction("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
-                    .addFunction("move", &Collision::PolygonalCollider::u_move)
-                    .addFunction("movePoint", &Collision::PolygonalCollider::u_movePoint)
+                    .addFunction("move", &Collision::PolygonalCollider::move)
+                    .addFunction("movePoint", &Collision::PolygonalCollider::movePoint)
                     .addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
                     .addFunction("removeTag", &Collision::PolygonalCollider::removeTag)
                     .addFunction("setOrigin", &Collision::PolygonalCollider::setOrigin)
-                    .addFunction("setPointPosition", &Collision::PolygonalCollider::u_setPointPosition)
-                    .addFunction("setPointRelativePosition", &Collision::PolygonalCollider::u_setPointRelativePosition)
-                    .addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::u_setPointPositionFromMaster)
-                    .addFunction("setPosition", &Collision::PolygonalCollider::u_setPosition)
-                    .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::u_setPositionFromMaster)
+                    .addFunction("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
+                    .addFunction("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
+                    .addFunction("setPointPositionFromMaster", &Collision::PolygonalCollider::setPointPositionFromMaster)
+                    .addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
+                    .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
                 );
                 foundPart = true;
             }
@@ -642,11 +643,11 @@ namespace obe
                     .addFunction("load", &Graphics::LevelSprite::load)
                     .addOverloadedFunctions("move",
                                             &Graphics::LevelSprite::move,
-                                            &Graphics::LevelSprite::u_move
+                                            &Graphics::LevelSprite::move
                     )
                     .addOverloadedFunctions("moveOffset",
                                             &Graphics::LevelSprite::moveOffset,
-                                            &Graphics::LevelSprite::u_moveOffset
+                                            &Graphics::LevelSprite::moveOffset
                     )
                     .addFunction("removeAtrByIndex", &Graphics::LevelSprite::removeAtrByIndex)
                     .addFunction("removeAtrByName", &Graphics::LevelSprite::removeAtrByName)
@@ -657,12 +658,12 @@ namespace obe
                     .addFunction("setLayer", &Graphics::LevelSprite::setLayer)
                     .addOverloadedFunctions("setOffset",
                                             &Graphics::LevelSprite::setOffset,
-                                            &Graphics::LevelSprite::u_setOffset
+                                            &Graphics::LevelSprite::setOffset
                     )
                     .addFunction("setParentID", &Graphics::LevelSprite::setParentID)
                     .addOverloadedFunctions("setPosition",
                                             &Graphics::LevelSprite::setPosition,
-                                            &Graphics::LevelSprite::u_setPosition
+                                            &Graphics::LevelSprite::setPosition
                     )
                     .addFunction("setRotation", &Graphics::LevelSprite::setRotation)
                     .addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)

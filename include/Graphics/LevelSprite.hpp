@@ -70,6 +70,7 @@ namespace obe
             std::string m_parentID = "";
 
             void applySize();
+            void resetUnit(Transform::Units unit) override;
         public:
             /**
              * \brief Creates a new LevelSprite with the given Id

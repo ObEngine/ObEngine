@@ -174,7 +174,7 @@ namespace obe
                             colliderPoint->get<double>(),
                             pBaseUnit
                         ).to<Transform::Units::WorldPixels>();
-                        m_objectCollider->addPoint(pVector2.x, pVector2.y);
+                        m_objectCollider->addPoint(pVector2);
                     }
                     else
                         pointBuffer = colliderPoint->get<double>();

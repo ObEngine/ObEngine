@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include <functional>
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -73,24 +74,18 @@ namespace obe
             this->removeOrigin();
         }
 
+        void PolygonalCollider::resetUnit(Transform::Units unit)
+        {
+            for (Transform::UnitVector& point : m_allPoints)
+            {
+                point = point.to(unit);
+            }
+            std::cout << "Converted all Points" << std::endl;
+        }
+
         unsigned int PolygonalCollider::getPointsAmount() const
         {
             return m_allPoints.size();
-        }
-
-        Transform::UnitVector PolygonalCollider::getPointPosition(int index)
-        {
-            return m_allPoints[index];
-        }
-
-        Transform::UnitVector PolygonalCollider::getPointRelativePosition(int index)
-        {
-            return m_allPoints[index] - m_allPoints[0];
-        }
-
-        Transform::UnitVector PolygonalCollider::getMasterPointPosition() const
-        {
-            return m_masterPoint;
         }
 
         void PolygonalCollider::calculateMasterPoint()
@@ -137,12 +132,13 @@ namespace obe
             }
         }
 
-        void PolygonalCollider::addPoint(int x, int y, int pointIndex)
+        void PolygonalCollider::addPoint(const Transform::UnitVector& position, int pointIndex)
         {
+            Transform::UnitVector pVec = position.to(m_unit);
             if (pointIndex == -1 || pointIndex == m_allPoints.size())
-                m_allPoints.emplace_back(x, y);
+                m_allPoints.push_back(pVec);
             else if (pointIndex >= 0 && pointIndex < m_allPoints.size())
-                m_allPoints.insert(m_allPoints.begin() + pointIndex, Transform::UnitVector(x, y));
+                m_allPoints.insert(m_allPoints.begin() + pointIndex, pVec);
             if (m_allPoints.size() >= 3)
                 calculateMasterPoint();
         }
@@ -153,20 +149,22 @@ namespace obe
             this->calculateMasterPoint();
         }
 
-        double PolygonalCollider::getDistanceFromPoint(unsigned int pointIndex, int x, int y)
+        double PolygonalCollider::getDistanceFromPoint(unsigned int pointIndex, const Transform::UnitVector& position)
         {
-            return std::sqrt(std::pow((x - m_allPoints[pointIndex].x), 2) + std::pow((y - m_allPoints[pointIndex].y), 2));
+            Transform::UnitVector pVec = position.to(m_unit);
+            return std::sqrt(std::pow((pVec.x - m_allPoints[pointIndex].x), 2) + std::pow((pVec.y - m_allPoints[pointIndex].y), 2));
         }
 
-        unsigned int PolygonalCollider::findClosestPoint(int x, int y, bool neighboor, std::vector<int> excludedNodes)
+        unsigned int PolygonalCollider::findClosestPoint(const Transform::UnitVector& position, bool neighboor, std::vector<int> excludedNodes)
         {
             if (m_allPoints.size() > 0)
             {
+                Transform::UnitVector pVec = position.to(m_unit);
                 int closestNode = 0;
                 double tiniestDist = -1;
                 for (unsigned int i = 0; i < m_allPoints.size(); i++)
                 {
-                    double currentPointDist = this->getDistanceFromPoint(i, x, y);
+                    double currentPointDist = this->getDistanceFromPoint(i, pVec);
                     if ((tiniestDist == -1 || tiniestDist > currentPointDist) && !Utils::Vector::isInList(static_cast<int>(i), excludedNodes))
                     {
                         closestNode = i;
@@ -181,10 +179,10 @@ namespace obe
                         leftNeighbor = m_allPoints.size() - 1;
                     if (rightNeighbor >= m_allPoints.size())
                         rightNeighbor = 0;
-                    int leftNeighborDist = std::sqrt(std::pow((x - m_allPoints[leftNeighbor].x), 2) +
-                        std::pow((y - m_allPoints[leftNeighbor].y), 2));
-                    int rightNeighborDist = std::sqrt(std::pow((x - m_allPoints[rightNeighbor].x), 2) +
-                        std::pow((y - m_allPoints[rightNeighbor].y), 2));
+                    int leftNeighborDist = std::sqrt(std::pow((position.x - m_allPoints[leftNeighbor].x), 2) +
+                        std::pow((position.y - m_allPoints[leftNeighbor].y), 2));
+                    int rightNeighborDist = std::sqrt(std::pow((position.x - m_allPoints[rightNeighbor].x), 2) +
+                        std::pow((position.y - m_allPoints[rightNeighbor].y), 2));
                     if (leftNeighborDist > rightNeighborDist)
                     {
                         closestNode++;
@@ -196,15 +194,15 @@ namespace obe
             }
         }
 
-        int PolygonalCollider::getSideContainingPoint(int x, int y)
+        int PolygonalCollider::getSideContainingPoint(const Transform::UnitVector& position)
         {
             double tolerance = 0.01;
             for (int i = 0; i < m_allPoints.size(); i++)
             {
                 int nextNode = (i != m_allPoints.size() - 1) ? i + 1 : 0;
-                double lineLength = this->getDistanceFromPoint(i, this->getPointPosition(nextNode).x, this->getPointPosition(nextNode).y);
-                double firstLength = this->getDistanceFromPoint(i, x, y);
-                double secondLength = this->getDistanceFromPoint(nextNode, x, y);
+                double lineLength = this->getDistanceFromPoint(i, m_allPoints[nextNode]);
+                double firstLength = this->getDistanceFromPoint(i, position);
+                double secondLength = this->getDistanceFromPoint(nextNode, position);
                 if (Utils::Math::isBetween(lineLength, firstLength + secondLength - tolerance, firstLength + secondLength + tolerance))
                     return i;
             }
@@ -216,97 +214,55 @@ namespace obe
             return m_allPoints;
         }
 
-        int PolygonalCollider::hasPoint(int x, int y, int tolerance)
+        int PolygonalCollider::hasPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance)
         {
+            Transform::UnitVector pVec = position.to(m_unit);
+            Transform::UnitVector pTolerance = tolerance.to(m_unit);
             for (unsigned int i = 0; i < m_allPoints.size(); i++)
             {
-                if (Utils::Math::isBetween(x, static_cast<int>(m_allPoints[i].x) - tolerance, static_cast<int>(m_allPoints[i].x) + tolerance))
+                if (Utils::Math::isBetween(pVec.x, m_allPoints[i].x - pTolerance.x, m_allPoints[i].x + pTolerance.x))
                 {
-                    if (Utils::Math::isBetween(y, static_cast<int>(m_allPoints[i].y) - tolerance, static_cast<int>(m_allPoints[i].y) + tolerance))
+                    if (Utils::Math::isBetween(pVec.y, m_allPoints[i].y - pTolerance.y, m_allPoints[i].y + pTolerance.y))
                         return i;
                 }
             }
             return -1;
         }
 
-        bool PolygonalCollider::hasMasterPoint(int x, int y, int tolerance) const
+        bool PolygonalCollider::hasMasterPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const
         {
-            if (Utils::Math::isBetween(x, static_cast<int>(m_masterPoint.x) - tolerance, static_cast<int>(m_masterPoint.x) + tolerance))
+            Transform::UnitVector pVec = position.to(m_unit);
+            Transform::UnitVector pTolerance = tolerance.to(m_unit);
+            if (Utils::Math::isBetween(pVec.x, m_masterPoint.x - pTolerance.x, m_masterPoint.x + pTolerance.x))
             {
-                if (Utils::Math::isBetween(y, static_cast<int>(m_masterPoint.y) - tolerance, static_cast<int>(m_masterPoint.y) + tolerance))
+                if (Utils::Math::isBetween(pVec.y, m_masterPoint.y - pTolerance.x, m_masterPoint.y + pTolerance.y))
                     return true;
             }
             return false;
         }
 
-        void PolygonalCollider::movePoint(int index, int x, int y)
+        void PolygonalCollider::movePoint(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index].x += x;
-            m_allPoints[index].y += y;
+            m_allPoints[index] += vec;
             calculateMasterPoint();
         }
 
-        void PolygonalCollider::setPointPosition(int index, int x, int y)
+        void PolygonalCollider::setPointPosition(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index].x = x;
-            m_allPoints[index].y = y;
+            m_allPoints[index] = vec.to(m_unit);
             calculateMasterPoint();
         }
 
-        void PolygonalCollider::setPointRelativePosition(int index, int x, int y)
+        void PolygonalCollider::setPointRelativePosition(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index].x = x + m_allPoints[0].x;
-            m_allPoints[index].y = y + m_allPoints[0].y;
+            m_allPoints[index] = vec.to(m_unit) + m_allPoints[0];
             calculateMasterPoint();
         }
 
-        void PolygonalCollider::setPointPositionFromMaster(int index, int x, int y)
+        void PolygonalCollider::setPointPositionFromMaster(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index].x = x + m_masterPoint.x;
-            m_allPoints[index].y = y + m_masterPoint.y;
+            m_allPoints[index] = vec.to(m_unit) + m_masterPoint;
             calculateMasterPoint();
-        }
-
-        void PolygonalCollider::u_move(const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->move(pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_setPosition(const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->setPosition(pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_setPositionFromMaster(const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->setPositionFromMaster(pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_movePoint(int index, const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->movePoint(index, pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_setPointPosition(int index, const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->setPointPosition(index, pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_setPointRelativePosition(int index, const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->setPointRelativePosition(index, pVec.x, pVec.y);
-        }
-
-        void PolygonalCollider::u_setPointPositionFromMaster(int index, const Transform::UnitVector& vec)
-        {
-            Transform::UnitVector pVec = vec.to<Transform::Units::WorldPixels>();
-            this->setPointPositionFromMaster(index, pVec.x, pVec.y);
         }
 
         double PolygonalCollider::getSideAngle(unsigned int side)
@@ -317,9 +273,9 @@ namespace obe
                 p2 = 0;
             Transform::UnitVector p1coords = this->getPointPosition(p1);
             Transform::UnitVector p2coords = this->getPointPosition(p2);
-            int deltaX = p2coords.x - p1coords.x;
-            int deltaY = p2coords.y - p1coords.y;
-            return (atan2(deltaY, deltaX) * 180 / Utils::Math::pi);
+            double deltaX = p2coords.x - p1coords.x;
+            double deltaY = p2coords.y - p1coords.y;
+            return (atan2(deltaY, deltaX) * 180.0 / Utils::Math::pi);
         }
 
         double PolygonalCollider::getSideLength(unsigned int side)
@@ -350,7 +306,7 @@ namespace obe
 
                 for (int i = 0; i < m_allPoints.size(); i++)
                 {
-                    Transform::UnitVector& point = m_allPoints[i];
+                    Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
 
                     if (Utils::Vector::isInList(i, m_highlightedPoints) && m_selected)
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
@@ -367,19 +323,21 @@ namespace obe
                 if (drawMasterPoint)
                 {
                     sf::CircleShape polyPt;
-                    polyPt.setPosition(sf::Vector2f(m_masterPoint.x + offsetX - r, m_masterPoint.y + offsetY - r));
+                    Transform::UnitVector pMaster = m_masterPoint.to<Transform::Units::WorldPixels>();
+                    polyPt.setPosition(sf::Vector2f(pMaster.x + offsetX - r, pMaster.y + offsetY - r));
                     polyPt.setRadius(r);
                     sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
                     polyPt.setFillColor(polyPtColor);
                     target.draw(polyPt);
                     if (drawSkel)
                     {
-                        for (Transform::UnitVector& point : m_allPoints)
+                        for (int i = 0; i < m_allPoints.size(); i++)
                         {
+                            Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
                                 point.x + offsetX, point.y + offsetY,
-                                m_masterPoint.x + offsetX, m_masterPoint.y + offsetY,
+                                pMaster.x + offsetX, pMaster.y + offsetY,
                                 2, currentLineColor);
                         }
                     }
@@ -393,76 +351,64 @@ namespace obe
             return m_allPoints[0];
         }
 
-        Transform::UnitVector PolygonalCollider::u_getPosition()
+        Transform::UnitVector PolygonalCollider::getPointPosition(unsigned int index)
         {
-            return Transform::UnitVector(m_allPoints[0].x, m_allPoints[0].y, Transform::Units::WorldPixels).to(m_unit);
+            return m_allPoints[index];
         }
 
-        Transform::UnitVector PolygonalCollider::u_getPointPosition(int index)
+        Transform::UnitVector PolygonalCollider::getPointRelativePosition(unsigned int index)
         {
-            return Transform::UnitVector(m_allPoints[index].x, m_allPoints[index].y, Transform::Units::WorldPixels).to(m_unit);
+            return m_allPoints[index] - m_allPoints[0];
         }
 
-        Transform::UnitVector PolygonalCollider::u_getPointRelativePosition(int index)
+        Transform::UnitVector PolygonalCollider::getMasterPointPosition() const
         {
-            return Transform::UnitVector(m_allPoints[index].x - m_allPoints[0].x, m_allPoints[index].y - m_allPoints[0].y, Transform::Units::WorldPixels).to(m_unit);
+            return m_masterPoint;
         }
 
-        Transform::UnitVector PolygonalCollider::u_getMasterPointPosition() const
-        {
-            return Transform::UnitVector(m_masterPoint.x, m_masterPoint.y, Transform::Units::WorldPixels).to(m_unit);
-        }
-
-        void PolygonalCollider::move(int x, int y)
+        void PolygonalCollider::move(const Transform::UnitVector& position)
         {
             for (PolygonalCollider* child : m_originChildren)
-                child->move(x, y);
+                child->move(position);
             if (m_allPoints.size() > 0)
             {
-                m_masterPoint.x += x;
-                m_masterPoint.y += y;
+                m_masterPoint += position;
                 for (Transform::UnitVector& point : m_allPoints)
                 {
-                    point.x += x;
-                    point.y += y;
+                    point += position;
                 }
             }
         }
 
-        void PolygonalCollider::setPosition(int x, int y)
+        void PolygonalCollider::setPosition(const Transform::UnitVector& position)
         {
             if (m_allPoints.size() > 0)
             {
-                double addX = x - m_allPoints[0].x;
-                double addY = y - m_allPoints[0].y;
+                const Transform::UnitVector pVec = position.to(m_unit);
+                const Transform::UnitVector addPosition = pVec - m_allPoints[0];
                 for (PolygonalCollider* child : m_originChildren)
-                    child->move(addX, addY);
-                m_masterPoint.x += addX;
-                m_masterPoint.y += addY;
-                m_allPoints[0].x = x;
-                m_allPoints[0].y = y;
+                    child->move(addPosition);
+                m_masterPoint += addPosition;
+                m_allPoints[0] = pVec;
                 for (int i = 1; i < m_allPoints.size(); i++)
                 {
-                    m_allPoints[i].x += addX;
-                    m_allPoints[i].y += addY;
+                    m_allPoints[i] += addPosition;
                 }
             }
         }
 
-        void PolygonalCollider::setPositionFromMaster(int x, int y)
+        void PolygonalCollider::setPositionFromMaster(const Transform::UnitVector& position)
         {
             if (m_allPoints.size() > 0)
             {
-                double addX = x - m_masterPoint.x;
-                double addY = y - m_masterPoint.y;
+                const Transform::UnitVector pVec = position.to(m_unit);
+                const Transform::UnitVector addPosition = pVec - m_masterPoint;
                 for (PolygonalCollider* child : m_originChildren)
-                    child->move(addX, addY);
-                m_masterPoint.x = x;
-                m_masterPoint.y = y;
+                    child->move(addPosition);
+                m_masterPoint = pVec;
                 for (Transform::UnitVector& point : m_allPoints)
                 {
-                    point.x += addX;
-                    point.y += addY;
+                    point += addPosition;
                 }
             }
         }
@@ -642,111 +588,136 @@ namespace obe
         }
 
 
-        std::pair<double, double> PolygonalCollider::getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const
+        Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const
         {
-            bool inFront = false;
-            std::pair<double, double> minDep;
-            auto calcMinDistanceDep = [](PolygonPath& sol1, PolygonPath& sol2, double offX, double offY) -> std::tuple<double, std::pair<double, double>, bool> {
-                double minDistance = -1;
+            if (!doesCollide(collider, Transform::UnitVector(0, 0)))
+            {
+                std::cout << "Accept Chall ===============================>" << std::endl;
+                const Transform::UnitVector tOffset = offset.to(m_unit);
                 bool inFront = false;
-                std::pair<double, double> minDeplacement;
-                Transform::UnitVector point1, point2, point3;
-                int i_x, i_y, s1_x, s1_y, s2_x, s2_y;
-                double s, t, distance;
-                for (Transform::UnitVector& point0 : sol1)
-                {
-                    for (int i = 0; i < sol2.size(); i++)
+                Transform::UnitVector minDep;
+                auto calcMinDistanceDep = [this](PolygonPath& sol1, PolygonPath& sol2, const Transform::UnitVector& tOffset) -> std::tuple<double, Transform::UnitVector, bool> {
+                    double minDistance = -1;
+                    bool inFront = false;
+                    Transform::UnitVector minDeplacement(m_unit);
+                    Transform::UnitVector point1(m_unit);
+                    Transform::UnitVector point2(m_unit);
+                    Transform::UnitVector point3(m_unit);
+                    Transform::UnitVector s1(m_unit);
+                    Transform::UnitVector s2(m_unit);
+                    Transform::UnitVector ip(m_unit);
+                    double s, t, distance;
+                    for (Transform::UnitVector& point0 : sol1)
                     {
-                        point1.x = point0.x + offX;
-                        point1.y = point0.y + offY;
-                        point2 = sol2[i];
-                        point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1];
-
-                        s1_x = point1.x - point0.x;
-                        s1_y = point1.y - point0.y;
-                        s2_x = point3.x - point2.x;
-                        s2_y = point3.y - point2.y;
-
-                        s = double((-s1_y * (point0.x - point2.x) + s1_x * (point0.y - point2.y))) / double((-s2_x * s1_y + s1_x * s2_y));
-                        t = double((s2_x * (point0.y - point2.y) - s2_y * (point0.x - point2.x))) / double((-s2_x * s1_y + s1_x * s2_y));
-
-                        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+                        for (int i = 0; i < sol2.size(); i++)
                         {
-                            inFront = true;
-                            i_x = point0.x + (t * s1_x);
-                            i_y = point0.y + (t * s1_y);
+                            point1 = point0 + tOffset;
+                            point2 = sol2[i];
+                            point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1];
 
-                            distance = std::sqrt(std::pow((point0.x - i_x), 2) + std::pow((point0.y - i_y), 2));
-                            if (distance < minDistance || minDistance == -1)
+                            s1 = point1 - point0;
+                            s2 = point3 - point2;
+
+                            s = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y)) / (-s2.x * s1.y + s1.x * s2.y);
+                            t = (s2.x * (point0.y - point2.y) - s2.y * (point0.x - point2.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+                            //std::cout << "S/T : " << s << ", " << t << std::endl;
+
+                            if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                             {
-                                minDistance = distance;
-                                minDeplacement = std::make_pair<double, double>((t * s1_x), (t * s1_y));
-                            }
+                                inFront = true;
+                                ip = point0 + (s1 * t);
 
+                                distance = std::sqrt(std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
+                                if (distance < minDistance || minDistance == -1)
+                                {
+                                    minDistance = distance;
+                                    minDeplacement.set((t * s1.x), (t * s1.y));
+                                }
+
+                            }
                         }
                     }
+                    std::cout << minDistance << ", " << minDeplacement << ", " << inFront << std::endl;
+                    return std::make_tuple(minDistance, minDeplacement, inFront);
+                };
+                PolygonPath fPath = this->getAllPoints();
+                PolygonPath sPath = collider.getAllPoints();
+
+                auto tdm1 = calcMinDistanceDep(fPath, sPath, tOffset);
+                std::cout << "TDM1 : " << std::get<1>(tdm1) << std::endl;
+                auto tdm2 = calcMinDistanceDep(sPath, fPath, tOffset * -1.0);
+                std::cout << "TDM2 : " << std::get<1>(tdm2) << std::endl;
+                std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
+                std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
+                if (std::get<2>(tdm1) || std::get<2>(tdm2))
+                    inFront = true;
+                
+                
+                std::cout << "NONZERO : " << (std::get<0>(tdm1) > 0) << ", " << (std::get<0>(tdm2) > 0) << std::endl;
+                std::cout << "tdm1 less or equal : " << (std::get<0>(tdm1) <= std::get<0>(tdm2)) << std::endl;
+
+                if (!inFront)
+                    minDep = tOffset;
+                else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
+                {
+                    std::cout << "Accept Zero Binary Branch" << std::endl;
+                    return Transform::UnitVector(0, 0, m_unit);
                 }
-                return std::make_tuple(minDistance, minDeplacement, inFront);
-            };
-            PolygonPath fPath = this->getAllPoints();
-            PolygonPath sPath = collider->getAllPoints();
-
-            auto tdm1 = calcMinDistanceDep(fPath, sPath, offX, offY);
-            auto tdm2 = calcMinDistanceDep(sPath, fPath, -offX, -offY);
-            std::get<1>(tdm2).first = -std::get<1>(tdm2).first;
-            std::get<1>(tdm2).second = -std::get<1>(tdm2).second;
-            if (std::get<2>(tdm1))
-                inFront = std::get<2>(tdm1);
-            if (std::get<2>(tdm2))
-                inFront = std::get<2>(tdm2);
-
-            auto minTdm = (std::get<0>(tdm1) > std::get<0>(tdm2) && std::get<0>(tdm2) > 0 && std::get<2>(tdm2)) ? tdm2 : tdm1;
-            if (!inFront)
-            {
-                minDep = std::make_pair<double, double>(double(offX), double(offY));
+                else if (std::get<0>(tdm1) > 0 && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
+                {
+                    std::cout << "Accept first choice" << std::endl;
+                    minDep = std::get<1>(tdm1);
+                }
+                else if (std::get<0>(tdm2) > 0)
+                {
+                    std::cout << "Accept second choice" << std::endl;
+                    minDep = std::get<1>(tdm2);
+                }
+                else
+                {
+                    std::cout << "Accept none" << std::endl;
+                    return Transform::UnitVector(0, 0, m_unit);
+                }
+                    
+                std::cout << "MIN DEP IS : " << minDep << std::endl;
+                return minDep;
             }
             else
             {
-                minDep = std::get<1>(minTdm);
+                std::cout << "Ew Shit" << std::endl;
+                return Transform::UnitVector(0, 0, m_unit);
             }
-
-            return minDep;
         }
 
-        bool PolygonalCollider::doesCollide(PolygonalCollider* collider, double offX, double offY) const
+        bool PolygonalCollider::doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const
         {
-            std::vector<Transform::UnitVector> fPath = this->getAllPoints();
-            std::vector<Transform::UnitVector> sPath = collider->getAllPoints();
-
-            Transform::UnitVector point1, point2, point3;
-            double s1_x, s1_y, s2_x, s2_y;
-            double s, t;
-            bool collided = false;
-            for (Transform::UnitVector point0 : fPath)
-            {
-                for (int i = 0; i < sPath.size(); i++)
+            PolygonPath pSet1 = this->getAllPoints();
+            PolygonPath pSet2 = collider.getAllPoints();
+            for (Transform::UnitVector& applyOffset : pSet1)
+                applyOffset += offset;
+            auto pointInPolygon = [](const PolygonPath& poly, Transform::UnitVector& pTest) -> bool {
+                int i, j, c = 0;
+                unsigned int nPt = poly.size();
+                for (i = 0, j = nPt - 1; i < nPt; j = i++) 
                 {
-                    point1.x = point0.x + offX;
-                    point1.y = point0.y + offY;
-                    point2 = sPath[i];
-                    point3 = sPath[(i == sPath.size() - 1) ? 0 : i + 1];
-
-                    s1_x = point1.x - point0.x;
-                    s1_y = point1.y - point0.y;
-                    s2_x = point3.x - point2.x;
-                    s2_y = point3.y - point2.y;
-
-                    s = double((-s1_y * (point0.x - point2.x) + s1_x * (point0.y - point2.y))) / double((-s2_x * s1_y + s1_x * s2_y));
-                    t = double((s2_x * (point0.y - point2.y) - s2_y * (point0.x - point2.x))) / double((-s2_x * s1_y + s1_x * s2_y));
-
-                    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-                    {
-                        collided = true;
-                        break;
-                    }
+                    if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y)) && 
+                    (pTest.x < (poly[j].x - poly[i].x) * (pTest.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
+                        c = !c;
                 }
+                return c;
+            };
+            for (Transform::UnitVector& pTest : pSet1)
+            {
+                if (pointInPolygon(pSet2, pTest))
+                    return true;
             }
-            return collided;
+            for (Transform::UnitVector& pTest : pSet2)
+            {
+                if (pointInPolygon(pSet1, pTest))
+                    return true;
+            }
+            return false;
         }
     }
 }

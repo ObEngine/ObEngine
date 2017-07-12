@@ -59,6 +59,7 @@ namespace obe
 
             void calculateMasterPoint();
             std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
+            void resetUnit(Transform::Units unit) override;
         public:
             /**
              * \brief Constructs a PolygonalCollider
@@ -98,7 +99,7 @@ namespace obe
              * \param y y Coordinate of the Position to test
              * \return An unsigned int containing the index of the side containing the position or -1 if not found
              */
-            int getSideContainingPoint(int x, int y);
+            int getSideContainingPoint(const Transform::UnitVector& position);
             /**
              * \brief Check if a point of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
              * \param x x Coordinate of the Position to test
@@ -106,7 +107,7 @@ namespace obe
              * \param tolerance Position tolerance, bigger number means less precise
              * \return An unsigned int containing the index of the point containing the position or -1 if not found
              */
-            int hasPoint(int x, int y, int tolerance = 0);
+            int hasPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance);
             /**
              * \brief Check if the MasterPoint of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
              * \param x x Coordinate of the Position to test
@@ -114,14 +115,14 @@ namespace obe
              * \param tolerance Position tolerance, bigger number means less precise
              * \return true if the MasterPoint is on the given Positon, false otherwise
              */
-            bool hasMasterPoint(int x, int y, int tolerance = 0) const;
+            bool hasMasterPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const;
             /**
              * \brief Adds a new Point to the Polygon at Position (x, y)
              * \param x x Coordinate of the Position where to add the new Point
              * \param y y Coordinate of the Position where to add the new Point
              * \param pointIndex Index where to insert the new Point, Use pointIndex = -1 <DefaultArg> to insert at the end (between last and first Point)
              */
-            void addPoint(int x, int y, int pointIndex = -1);
+            void addPoint(const Transform::UnitVector& point, int pointIndex = -1);
             /**
              * \brief Deletes a Point of the Polygon
              * \param pointIndex Index of the Point to delete
@@ -134,7 +135,7 @@ namespace obe
              * \param y y Coordinate of the Position used to calculate the distance
              * \return Distance between the given Position and the Point of the Polygon
              */
-            double getDistanceFromPoint(unsigned int pointIndex, int x, int y);
+            double getDistanceFromPoint(unsigned int pointIndex, const Transform::UnitVector& position);
             /**
              * \brief Find the closest Point from the given Position(x, y)
              * \param x x Coordinate of the Position used to get the closest Point
@@ -143,7 +144,7 @@ namespace obe
              * \param excludedPoints A std::vector containing points you want to exclude from the calculus (Not used in neighboor check step)
              * \return The index of the Point (or one of its neighboor) that is the closest one of the given Position
              */
-            unsigned int findClosestPoint(int x, int y, bool neighboor = false, std::vector<int> excludedPoints = {});
+            unsigned int findClosestPoint(const Transform::UnitVector& position, bool neighboor = false, std::vector<int> excludedPoints = {});
             /**
              * \brief Get all the Points of the Polygon
              * \return A Path containing all the Points of the Polygon
@@ -153,8 +154,8 @@ namespace obe
             //Collision Tests
             //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
 
-            std::pair<double, double> getMaximumDistanceBeforeCollision(PolygonalCollider* collider, int offX, int offY) const;
-            bool doesCollide(PolygonalCollider* collider, double offX, double offY) const;
+            Transform::UnitVector getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            bool doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
 
             //Parent
             /**
@@ -170,30 +171,17 @@ namespace obe
 
             //Position
             Transform::UnitVector getPosition();
-            Transform::UnitVector getPointPosition(int index);
-            Transform::UnitVector getPointRelativePosition(int index);
+            Transform::UnitVector getPointPosition(unsigned int index);
+            Transform::UnitVector getPointRelativePosition(unsigned int index);
             Transform::UnitVector getMasterPointPosition() const;
 
-            Transform::UnitVector u_getPosition();
-            Transform::UnitVector u_getPointPosition(int index);
-            Transform::UnitVector u_getPointRelativePosition(int index);
-            Transform::UnitVector u_getMasterPointPosition() const;
-
-            void move(int x, int y);
-            void setPosition(int x, int y);
-            void setPositionFromMaster(int x, int y);
-            void movePoint(int index, int x, int y);
-            void setPointPosition(int index, int x, int y);
-            void setPointRelativePosition(int index, int x, int y);
-            void setPointPositionFromMaster(int index, int x, int y);
-
-            void u_move(const Transform::UnitVector& vec);
-            void u_setPosition(const Transform::UnitVector& vec);
-            void u_setPositionFromMaster(const Transform::UnitVector& vec);
-            void u_movePoint(int index, const Transform::UnitVector& vec);
-            void u_setPointPosition(int index, const Transform::UnitVector& vec);
-            void u_setPointRelativePosition(int index, const Transform::UnitVector& vec);
-            void u_setPointPositionFromMaster(int index, const Transform::UnitVector& vec);
+            void move(const Transform::UnitVector& vec);
+            void setPosition(const Transform::UnitVector& vec);
+            void setPositionFromMaster(const Transform::UnitVector& vec);
+            void movePoint(unsigned int index, const Transform::UnitVector& vec);
+            void setPointPosition(unsigned int index, const Transform::UnitVector& vec);
+            void setPointRelativePosition(unsigned int index, const Transform::UnitVector& vec);
+            void setPointPositionFromMaster(unsigned int index, const Transform::UnitVector& vec);
 
             //Origin
             /**
