@@ -5,7 +5,7 @@ namespace vili
 {
     namespace Types
     {
-        constexpr const char* getDefaultValueForType(DataType type)
+        std::string getDefaultValueForType(DataType type)
         {
             switch (type)
             {

@@ -612,33 +612,12 @@ namespace obe
 
             mapNameInput->setText(world.getLevelName());
 
-            Debug::Console::Stream* joinStream = gameConsole.createStream("ppp", true);
-            Debug::Console::Message* joinMessage = joinStream->push("0 Points sur l'enveloppe convexe");
-
-            /*std::function<void()> drawConvexHull = [&window, &youpiCollider, &badCollider, &drawVoD, &world, &gameConsole, &joinMessage]()
-            {
-                std::vector<sf::Vector2i> allCHp;
-                std::vector<ClipperLib::IntPoint*> ngsf;
-
-                for (ClipperLib::IntPoint& point : youpiCollider->getAllPoints())
-                {
-                    ngsf.push_back(new ClipperLib::IntPoint(point.X, point.Y));
-                }
-
-                Transform::UnitVector camdf = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                Collision::PolygonalCollider ppsef = youpiCollider->joinPolygonalColliders("segm", badCollider);
-                for (ClipperLib::IntPoint& point : ppsef.getAllPoints())
-                    allCHp.emplace_back(point.X - camdf.x, point.Y - camdf.y);
-
-                joinMessage->setMessage(std::to_string(ppsef.getAllPoints().size()) + " points sur l'enveloppe convexe !");
-
-                Graphics::Utils::drawPolygon(window, allCHp, drawVoD);
-
-                for (ClipperLib::IntPoint* point : ngsf)
-                {
-                    delete point;
-                }
-            };*/
+            Debug::Console::Stream* crashStream = gameConsole.createStream("CT", true);
+            Debug::Console::Message* collidingMessage = crashStream->push("Test de collision : Faux");
+            collidingMessage->setColor(sf::Color::Red);
+            Debug::Console::Message* p0Message = crashStream->push("Position basse du Collider 0 : ");
+            Debug::Console::Message* p1Message = crashStream->push("Position haute du Collider 1 : ");
+            Debug::Console::Message* speedMessage = crashStream->push("Vitesse actuelle : 0");
             
             double angleRot = 180;
             double speed = 0;
@@ -648,9 +627,7 @@ namespace obe
                 triggerMe = true;
             });
 
-            
-
-            Script::ScriptEngine["wow"] = kaguya::function([&world, &triggerMe, &speed, &angleRot, &framerateManager]() {
+            Script::ScriptEngine["wow"] = kaguya::function([&world, &triggerMe, &speed, &angleRot, &framerateManager, &collidingMessage, &p0Message, &p1Message, &speedMessage]() {
                 Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
                 Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
                 if (triggerMe && !collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
@@ -667,12 +644,18 @@ namespace obe
                     {
                         triggerMe = false;
                         speed = 0;
+                        collidingMessage->setColor(sf::Color::Red);
+                        collidingMessage->setMessage("Test de collision : Faux");
                     }
                 }
                 else if (collider0 != nullptr && collider1 != nullptr && collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
                 {
-                    std::cout << "ON HOLD" << std::endl;
+                    collidingMessage->setColor(sf::Color::Green);
+                    collidingMessage->setMessage("Test de collision : Vrai");
                 }
+                p0Message->setMessage("Position basse du Collider 0 : " + std::to_string(collider0->getPointPosition(1).y));
+                p1Message->setMessage("Position haute du Collider 1 : " + std::to_string(collider0->getPointPosition(0).y));
+                speedMessage->setMessage("Vitesse actuelle : " + std::to_string(speed));
             });
 
             //Game Starts

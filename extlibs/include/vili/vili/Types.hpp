@@ -31,7 +31,7 @@ namespace vili
     {
         DataType stringToDataType(const std::string& type);
         DataType getVarType(const std::string& var);
-        constexpr const char* getDefaultValueForType(DataType type);
+        std::string getDefaultValueForType(DataType type);
         std::string dataTypeToString(DataType type);
         std::string attributeTypeToString(AttributeType type);
     }
