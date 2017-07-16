@@ -9,9 +9,9 @@ namespace obe
         class TriggerDelay
         {
         public:
-            TriggerDelay(Trigger* trg, int del, bool sta);
+            TriggerDelay(Trigger* trg, unsigned int delay, bool state);
             Trigger* m_trigger;
-            int m_delay = 0;
+            unsigned int m_delay = 0;
             bool m_state = false;
             int m_delaytarget = 0;
         };

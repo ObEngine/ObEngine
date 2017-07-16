@@ -14,21 +14,31 @@ namespace obe
         class Trigger
         {
         private:
-            std::string m_group;
-            std::string m_triggerName;
-            std::string m_triggerNamespace;
+            TriggerGroup* m_parent;
+            std::string m_name;
             std::map<std::string, std::pair<std::string, Types::Any>> m_triggerParameters;
             bool m_enabled = false;
             bool m_toEnable = false;
             bool m_toDisable = false;
-            bool m_permanent;
+            bool m_permanent = false;
             void clearParameters();
             template <typename P>
             void pushParameter(std::string name, P parameter);
             friend class TriggerGroup;
             friend class TriggerDatabase;
         public:
-            Trigger(const TriggerGroup& parent, const std::string& name, bool startState = false, bool permanent = false);
+            /**
+             * \brief Creates a new Trigger
+             * \param parent Pointer to the parent TriggerGroup
+             * \param name Name of the Trigger
+             * \param startState State of the Trigger when created (enabled / disabled)
+             * \param permanent If equals to true, when the Trigger will be enabled it will stay enabled
+             */
+            explicit Trigger(TriggerGroup* parent, const std::string& name, bool startState = false, bool permanent = false);
+            /**
+             * \brief 
+             * \return 
+             */
             bool getState() const;
             bool isPermanent() const;
             std::string getGroup() const;

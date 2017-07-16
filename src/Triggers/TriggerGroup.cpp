@@ -5,69 +5,97 @@ namespace obe
 {
     namespace Triggers
     {
-        TriggerGroup::TriggerGroup(std::string triggerGroupName)
+        TriggerGroup::TriggerGroup(const std::string& triggerGroupName)
         {
             m_fromNsp = "";
-            m_triggerGroupName = triggerGroupName;
+            m_name = triggerGroupName;
         }
 
-        TriggerGroup::TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName)
+        TriggerGroup::TriggerGroup(const std::string& triggerGroupNamespace, const std::string& triggerGroupName)
         {
             m_fromNsp = triggerGroupNamespace;
-            m_triggerGroupName = triggerGroupName;
+            m_name = triggerGroupName;
         }
 
-        Trigger* TriggerGroup::getTrigger(std::string triggerName)
+        Trigger* TriggerGroup::getTrigger(const std::string& triggerName)
         {
             if (m_triggerMap.find(triggerName) != m_triggerMap.end())
             {
-                return m_triggerMap[triggerName];
+                return m_triggerMap[triggerName].get();
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerGroup.UnknownTrigger", {{"trigger", triggerName}, {"group", m_triggerGroupName}});
+            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerGroup.UnknownTrigger", {{"trigger", triggerName}, {"group", m_name}});
         }
 
-        TriggerGroup* TriggerGroup::addTrigger(std::string triggerName)
+        std::vector<std::string> TriggerDatabase::getAllTriggersNameFromTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
         {
-            m_triggerMap[triggerName] = new Trigger(*this, triggerName);
+            if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+            {
+                if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
+                    return m_allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
+                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
+                    { "function", "getAllTriggersNameFromTriggerGroup" },
+                    { "group", triggerGroupName },
+                    { "nsp", groupNamespace }
+                });
+            }
+            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
+                { "function", "getAllTriggersNameFromTriggerGroup" },
+                { "nsp", groupNamespace }
+            });
+        }
+
+        TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
+        {
+            m_triggerMap[triggerName] = std::make_unique<Trigger>(this, triggerName);
             return this;
         }
 
-        TriggerGroup* TriggerGroup::delayTriggerState(std::string triggerName, int delay, bool state)
+        TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, int delay, bool state)
         {
-            m_delayedTriggers.push_back(new TriggerDelay(getTrigger(triggerName), delay, state));
+            m_delayedTriggers.push_back(std::make_unique<TriggerDelay>(getTrigger(triggerName), delay, state));
             return this;
         }
 
-        TriggerGroup* TriggerGroup::enableTrigger(std::string triggerName)
+        TriggerGroup* TriggerGroup::enableTrigger(const std::string& triggerName)
         {
             this->getTrigger(triggerName)->m_toEnable = true;
             if (this->getTrigger(triggerName)->m_toDisable) this->getTrigger(triggerName)->m_toDisable = false;
             return this;
         }
 
-        TriggerGroup* TriggerGroup::disableTrigger(std::string triggerName)
+        TriggerGroup* TriggerGroup::disableTrigger(const std::string& triggerName)
         {
             this->getTrigger(triggerName)->m_toDisable = true;
             if (this->getTrigger(triggerName)->m_toEnable) this->getTrigger(triggerName)->m_toEnable = false;
             return this;
         }
 
-        TriggerGroup* TriggerGroup::setTriggerState(std::string triggerName, bool state)
+        TriggerGroup* TriggerGroup::setTriggerState(const std::string& triggerName, bool state)
         {
             if (state) this->enableTrigger(triggerName);
             else this->disableTrigger(triggerName);
             return this;
         }
 
-        bool TriggerGroup::getState(std::string triggerName)
+        bool TriggerGroup::getState(const std::string& triggerName)
         {
             return this->getTrigger(triggerName)->getState();
         }
 
-        TriggerGroup* TriggerGroup::setPermanent(std::string triggerName, bool permanent)
+        TriggerGroup* TriggerGroup::setPermanent(const std::string& triggerName, bool permanent)
         {
             this->getTrigger(triggerName)->m_permanent = permanent;
             return this;
+        }
+
+        void TriggerGroup::setJoinable(bool joinable)
+        {
+            m_joinable = joinable;
+        }
+
+        bool TriggerGroup::isJoinable() const
+        {
+            return m_joinable;
         }
 
         std::vector<std::string> TriggerGroup::getAllTriggersName()
@@ -85,7 +113,7 @@ namespace obe
             std::vector<Trigger*> returnVec;
             for (auto it = m_triggerMap.begin(); it != m_triggerMap.end(); ++it)
             {
-                returnVec.push_back(it->second);
+                returnVec.push_back(it->second.get());
             }
             return returnVec;
         }
@@ -97,7 +125,7 @@ namespace obe
 
         std::string TriggerGroup::getName() const
         {
-            return m_triggerGroupName;
+            return m_name;
         }
 
         unsigned int TriggerGroup::Ptr::amount = 0;

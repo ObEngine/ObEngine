@@ -4,8 +4,7 @@
 
 
 #define StartCheck if (false) {}
-#define AffectIfCorrectType(type) else if(affectIfCorrectType<type>(lua,parameter)){}
-#define _AffectIfCorrectType(type, ntype) else if(affectIfCorrectType<type, ntype>(lua,parameter)){}
+#define AffectIfCorrectType(...) else if(affectIfCorrectType<__VA_ARGS__>(lua,parameter)){}
 #define EndCheck else { return parameter.first; }
 
 namespace obe
@@ -36,32 +35,30 @@ namespace obe
                     AffectIfCorrectType(std::vector<std::string>)
                     AffectIfCorrectType(std::vector<double>)
                     AffectIfCorrectType(std::vector<bool>)
-                    _AffectIfCorrectType(std::map<int, int>)
-                    _AffectIfCorrectType(std::map<int, std::string>)
-                    _AffectIfCorrectType(std::map<int, double>)
-                    _AffectIfCorrectType(std::map<int, bool>)
-                    _AffectIfCorrectType(std::map<std::string, int>)
-                    _AffectIfCorrectType(std::map<std::string, std::string>)
-                    _AffectIfCorrectType(std::map<std::string, double>)
-                    _AffectIfCorrectType(std::map<std::string, bool>)
-                    _AffectIfCorrectType(std::map<double, int>)
-                    _AffectIfCorrectType(std::map<double, std::string>)
-                    _AffectIfCorrectType(std::map<double, double>)
-                    _AffectIfCorrectType(std::map<double, bool>)
-                    _AffectIfCorrectType(std::map<bool, int>)
-                    _AffectIfCorrectType(std::map<bool, std::string>)
-                    _AffectIfCorrectType(std::map<bool, double>)
-                    _AffectIfCorrectType(std::map<bool, bool>)
+                    AffectIfCorrectType(std::map<int, int>)
+                    AffectIfCorrectType(std::map<int, std::string>)
+                    AffectIfCorrectType(std::map<int, double>)
+                    AffectIfCorrectType(std::map<int, bool>)
+                    AffectIfCorrectType(std::map<std::string, int>)
+                    AffectIfCorrectType(std::map<std::string, std::string>)
+                    AffectIfCorrectType(std::map<std::string, double>)
+                    AffectIfCorrectType(std::map<std::string, bool>)
+                    AffectIfCorrectType(std::map<double, int>)
+                    AffectIfCorrectType(std::map<double, std::string>)
+                    AffectIfCorrectType(std::map<double, double>)
+                    AffectIfCorrectType(std::map<double, bool>)
+                    AffectIfCorrectType(std::map<bool, int>)
+                    AffectIfCorrectType(std::map<bool, std::string>)
+                    AffectIfCorrectType(std::map<bool, double>)
+                    AffectIfCorrectType(std::map<bool, bool>)
                 EndCheck
             }
             return "";
         }
 
-        Trigger::Trigger(const TriggerGroup& parent, const std::string& name, bool startState, bool permanent)
+        Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState, bool permanent)
         {
-            m_triggerNamespace = parent.getNamespace();
-            m_group = parent.getName();
-            m_triggerName = name;
+            m_parent = parent;
             m_permanent = permanent;
             m_enabled = startState;
         }
@@ -78,17 +75,17 @@ namespace obe
 
         std::string Trigger::getGroup() const
         {
-            return m_group;
+            return m_parent->getName();
         }
 
         std::string Trigger::getName() const
         {
-            return m_triggerName;
+            return m_name;
         }
 
         std::string Trigger::getNamespace() const
         {
-            return m_triggerNamespace;
+            return m_parent->getNamespace();
         }
 
         std::map<std::string, std::pair<std::string, Types::Any>>* Trigger::getParameters()

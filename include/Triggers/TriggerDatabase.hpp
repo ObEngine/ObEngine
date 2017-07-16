@@ -14,20 +14,20 @@ namespace obe
         {
         private:
             TriggerDatabase();
-            std::map<std::string, std::map<std::string, TriggerGroup*>> m_allTriggers;
+            std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>> m_allTriggers;
             Time::Chronometer m_databaseChrono;
-            std::vector<TriggerDelay*> m_delayedTriggers;
+            std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
             static TriggerDatabase* m_instance;
         public:
             static TriggerDatabase* GetInstance();
-            Trigger* getTrigger(std::string groupNamespace, std::string triggerGroupName, std::string triggerName);
-            void createNamespace(std::string groupNamespace);
-            TriggerGroup* createTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
-            TriggerGroup* joinTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            Trigger* getTrigger(const std::string& groupNamespace, const std::string& triggerGroupName, const std::string& triggerName);
+            void createNamespace(const std::string& groupNamespace);
+            TriggerGroup* createTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
+            TriggerGroup* joinTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
+            std::vector<std::string> getAllTriggersNameFromTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
             void removeNamespace(const std::string& namespaceId);
             void removeTriggerGroup(TriggerGroup* trgGroup);
-            bool doesTriggerGroupExists(std::string groupNamespace, std::string triggerGroupName);
-            std::vector<std::string> getAllTriggersNameFromTriggerGroup(std::string groupNamespace, std::string triggerGroupName);
+            bool doesTriggerGroupExists(const std::string& groupNamespace, const std::string& triggerGroupName);
             void update();
             void clear();
         };

@@ -10,25 +10,28 @@ namespace obe
         class TriggerGroup
         {
         private:
-            std::string m_triggerGroupName;
+            std::string m_name;
             std::string m_fromNsp;
-            std::map<std::string, Trigger*> m_triggerMap;
-            std::vector<TriggerDelay*> m_delayedTriggers;
+            std::map<std::string, std::unique_ptr<Trigger>> m_triggerMap;
+            std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
+            bool m_joinable = false;
 			unsigned int m_references = 0;
             friend class TriggerDatabase;
         public:
-            TriggerGroup(std::string triggerGroupName);
-            TriggerGroup(std::string triggerGroupNamespace, std::string triggerGroupName);
-            Trigger* getTrigger(std::string triggerName);
-            TriggerGroup* addTrigger(std::string triggerName);
-            TriggerGroup* delayTriggerState(std::string triggerName, int delay, bool state);
-            TriggerGroup* enableTrigger(std::string triggerName);
-            TriggerGroup* disableTrigger(std::string triggerName);
-            TriggerGroup* setTriggerState(std::string triggerName, bool state);
-            bool getState(std::string triggerName);
-            TriggerGroup* setPermanent(std::string triggerName, bool permanent);
+            TriggerGroup(const std::string& triggerGroupName);
+            TriggerGroup(const std::string& triggerGroupNamespace, const std::string& triggerGroupName);
+            void setJoinable(bool joinable);
+            bool isJoinable() const;
+            Trigger* getTrigger(const std::string& triggerName);
+            TriggerGroup* addTrigger(const std::string& triggerName);
+            TriggerGroup* delayTriggerState(const std::string& triggerName, int delay, bool state);
+            TriggerGroup* enableTrigger(const std::string& triggerName);
+            TriggerGroup* disableTrigger(const std::string& triggerName);
+            TriggerGroup* setTriggerState(const std::string& triggerName, bool state);
+            bool getState(const std::string& triggerName);
+            TriggerGroup* setPermanent(const std::string& triggerName, bool permanent);
             template <typename P>
-            void pushParameter(std::string triggerName, std::string parameterName, P parameter);
+            void pushParameter(const std::string& triggerName, const std::string& parameterName, P parameter);
             std::vector<std::string> getAllTriggersName();
             std::vector<Trigger*> getAllTriggers();
             std::string getNamespace() const;
@@ -50,7 +53,7 @@ namespace obe
         };
 
         template <typename P>
-        void TriggerGroup::pushParameter(std::string triggerName, std::string parameterName, P parameter)
+        void TriggerGroup::pushParameter(const std::string& triggerName, const std::string& parameterName, P parameter)
         {
             getTrigger(triggerName)->pushParameter(parameterName, parameter);
         }

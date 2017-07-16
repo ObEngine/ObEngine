@@ -1,4 +1,5 @@
 #include <cmath>
+#include <complex>
 #include <limits>
 #include <functional>
 
@@ -194,6 +195,57 @@ namespace obe
             }
         }
 
+        unsigned int PolygonalCollider::findClosestLine(const Transform::UnitVector& position)
+        {
+            Transform::UnitVector p3 = position.to(m_unit);
+            auto distanceLineFromPoint = [](const Transform::UnitVector& point, const Transform::UnitVector& lineP1, const Transform::UnitVector& lineP2)
+            {
+                Transform::UnitVector lineDiff = lineP2 - lineP1;
+                if (lineDiff.x == 0 && lineDiff.y == 0)
+                {
+                    lineDiff = point - lineP1;
+                    return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+                }
+
+                double t = ((point.x - lineP1.x) * lineDiff.x + (point.y - lineP1.y) * lineDiff.y) / (lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+
+                if (t < 0)
+                {
+                    //point is nearest to the first point i.e x1 and y1
+                    lineDiff = point - lineP1;
+                }
+                else if (t > 1)
+                {
+                    //point is nearest to the end point i.e x2 and y2
+                    lineDiff = point - lineP2;
+                }
+                else
+                {
+                    //if perpendicular line intersect the line segment.
+                    lineDiff.x = point.x - (lineP1.x + t * lineDiff.x);
+                    lineDiff.y = point.y - (lineP1.y + t * lineDiff.y);
+                }
+
+                //returning shortest distance
+                return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+            };
+            double shortestDistance = -1;
+            unsigned int shortestIndex;
+            for (unsigned int i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size(); j = i++)
+            {
+                Transform::UnitVector p1 = m_allPoints[i];
+                Transform::UnitVector p2 = m_allPoints[j];
+                std::complex<double> a(p2.x - p1.x, p2.y - p1.y);
+                double currentDistance = distanceLineFromPoint(p3, p1, p2);
+                if (shortestDistance == -1 || currentDistance < shortestDistance)
+                {
+                    shortestDistance = currentDistance;
+                    shortestIndex = i;
+                }
+            }
+            return shortestIndex;
+        }
+
         int PolygonalCollider::getSideContainingPoint(const Transform::UnitVector& position)
         {
             double tolerance = 0.01;
@@ -310,8 +362,9 @@ namespace obe
 
                     if (Utils::Vector::isInList(i, m_highlightedPoints) && m_selected)
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
-                    else
-                        drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 255, 255);
+                    if (Utils::Vector::isInList((i != m_allPoints.size() - 1 ) ? i + 1 : 0, m_highlightedLines) && m_selected)
+                        drawOptions["line_color_" + std::to_string(i)] = sf::Color(0, 255, 0);
+                        
                     drawPoints.emplace_back(point.x + offsetX, point.y + offsetY);
                 }
 
@@ -590,7 +643,7 @@ namespace obe
 
         Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const
         {
-            if (!doesCollide(collider, Transform::UnitVector(0, 0)))
+            if (/*!doesCollide(collider, Transform::UnitVector(0, 0))*/true)
             {
                 std::cout << "Accept Chall ===============================>" << std::endl;
                 const Transform::UnitVector tOffset = offset.to(m_unit);

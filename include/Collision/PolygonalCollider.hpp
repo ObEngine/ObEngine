@@ -145,6 +145,7 @@ namespace obe
              * \return The index of the Point (or one of its neighboor) that is the closest one of the given Position
              */
             unsigned int findClosestPoint(const Transform::UnitVector& position, bool neighboor = false, std::vector<int> excludedPoints = {});
+            unsigned int findClosestLine(const Transform::UnitVector& position);
             /**
              * \brief Get all the Points of the Polygon
              * \return A Path containing all the Points of the Polygon
@@ -155,6 +156,12 @@ namespace obe
             //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
 
             Transform::UnitVector getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            /**
+             * \brief Checks if two polygons are intersecting
+             * \param collider The other collider to test
+             * \param offset The offset to apply to the source collider
+             * \return true if the two polygons intersects, false otherwise
+             */
             bool doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
 
             //Parent
@@ -170,17 +177,67 @@ namespace obe
             void setParentId(const std::string& parent);
 
             //Position
+            /**
+             * \brief Get the Position of the first point (index 0) of the Polygon
+             * \return An UnitVector containing the position of the first point of the Polygon
+             */
             Transform::UnitVector getPosition();
+            /**
+             * \brief Get the Position of one of the points of the Polygon
+             * \param index Index of the point to get the position
+             * \return An UnitVector containing the position of one of the points of the Polygon
+             */
             Transform::UnitVector getPointPosition(unsigned int index);
+            /**
+             * \brief Get the Position of one of the points of the Polygon relative to the Position of the point at index 0
+             * \param index Index of the point to get the relative position
+             * \return An UnitVector containing the position of one of the points of the Polygon relative to the Position of the point at index 0
+             */
             Transform::UnitVector getPointRelativePosition(unsigned int index);
+            /**
+             * \brief Get the position of the Master Point (centroid) of the Polygon
+             * \return An UnitVector containing the position of the Master Point (centroid) of the Polygon
+             */
             Transform::UnitVector getMasterPointPosition() const;
 
+            /**
+             * \brief Moves the Polygon (relative to the current position)
+             * \param vec UnitVector containing the offset to move the Polygon
+             */
             void move(const Transform::UnitVector& vec);
+            /**
+             * \brief Sets the new position of the Polygon (using the point at index 0)
+             * \param vec UnitVector containing the new Position of the Polygon
+             */
             void setPosition(const Transform::UnitVector& vec);
+            /**
+             * \brief Sets the new position of the Polygon (using the centroid)
+             * \param vec UnitVector containing the new Position of the Polygon
+             */
             void setPositionFromMaster(const Transform::UnitVector& vec);
+            /**
+             * \brief Moves one of the points of the Polygons
+             * \param index Index of the point to move
+             * \param vec UnitVector containing the offset to move the point of the Polygon
+             */
             void movePoint(unsigned int index, const Transform::UnitVector& vec);
+            /**
+             * \brief Sets the new Position of one of the points of the Polygon
+             * \param index Index of the point to set the position
+             * \param vec UnitVector containing the new position of the point
+             */
             void setPointPosition(unsigned int index, const Transform::UnitVector& vec);
+            /**
+             * \brief Sets the position of one of the points of the Polygon relative to the Position of the point at index 0
+             * \param index Index of the point to set the position
+             * \param vec UnitVector containing the new position of one of the points of the Polygon relative to the Position of the point at index 0
+             */
             void setPointRelativePosition(unsigned int index, const Transform::UnitVector& vec);
+            /**
+            * \brief Sets the position of one of the points of the Polygon relative to the Position of the centroid
+            * \param index Index of the point to set the position
+            * \param vec UnitVector containing the new position of one of the points of the Polygon relative to the Position of the centroid
+            */
             void setPointPositionFromMaster(unsigned int index, const Transform::UnitVector& vec);
 
             //Origin

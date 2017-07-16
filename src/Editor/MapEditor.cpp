@@ -627,10 +627,21 @@ namespace obe
                 triggerMe = true;
             });
 
+            Script::ScriptEngine["yay"] = kaguya::function([&world]() {
+                Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
+                Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
+                double addX = 100;
+                double addY = 0;
+
+                Transform::UnitVector tOffset(addX, addY, Transform::Units::WorldPixels);
+                Transform::UnitVector maxDepDist = collider0->getMaximumDistanceBeforeCollision(*collider1, tOffset);
+                collider0->move(maxDepDist);
+            });
+
             Script::ScriptEngine["wow"] = kaguya::function([&world, &triggerMe, &speed, &angleRot, &framerateManager, &collidingMessage, &p0Message, &p1Message, &speedMessage]() {
                 Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
                 Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
-                if (triggerMe && !collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
+                if (triggerMe)
                 {
                     double radAngle = (Utils::Math::pi / 180.0) * ((90 - angleRot) * -1);
                     speed += 1000 * framerateManager.getGameSpeed();
@@ -653,8 +664,13 @@ namespace obe
                     collidingMessage->setColor(sf::Color::Green);
                     collidingMessage->setMessage("Test de collision : Vrai");
                 }
-                p0Message->setMessage("Position basse du Collider 0 : " + std::to_string(collider0->getPointPosition(1).y));
-                p1Message->setMessage("Position haute du Collider 1 : " + std::to_string(collider0->getPointPosition(0).y));
+                else
+                {
+                    collidingMessage->setColor(sf::Color::Red);
+                    collidingMessage->setMessage("Test de collision : Faux");
+                }
+                p0Message->setMessage("Position basse du Collider 0 : " + std::to_string(collider0->getPointPosition(2).y));
+                p1Message->setMessage("Position haute du Collider 1 : " + std::to_string(collider1->getPointPosition(0).y));
                 speedMessage->setMessage("Vitesse actuelle : " + std::to_string(speed));
             });
 
@@ -980,15 +996,8 @@ namespace obe
                     if (selectedMasterCollider != nullptr)
                     {
                         selectedMasterCollider->clearHighlights();
-                        int clNode = selectedMasterCollider->findClosestPoint(cursCoord);
-                        selectedMasterCollider->highlightPoint(clNode);
-                        int gLeftNode = ((clNode - 1 != -1) ? clNode - 1 : selectedMasterCollider->getPointsAmount() - 1);
-                        int gRghtNode = ((clNode + 1 != selectedMasterCollider->getPointsAmount()) ? clNode + 1 : 0);
-                        unsigned int secondClosestNode = 
-                            (selectedMasterCollider->getDistanceFromPoint(gLeftNode, cursCoord) >= 
-                            selectedMasterCollider->getDistanceFromPoint(gRghtNode, cursCoord)) 
-                            ? gRghtNode : gLeftNode;
-                        selectedMasterCollider->highlightPoint(secondClosestNode);
+                        selectedMasterCollider->highlightLine(selectedMasterCollider->findClosestLine(cursCoord));
+                        
                     }
                     //Collision Point Grab
                     if (cursor.getClicked(System::MouseButton::Left) && colliderPtGrabbed == -1 &&
@@ -1069,7 +1078,7 @@ namespace obe
                         //Collision Point Create
                         if (rqPtRes == -1)
                         {
-                            selectedMasterCollider->addPoint(cursCoord, selectedMasterCollider->findClosestPoint(cursCoord, true));
+                            selectedMasterCollider->addPoint(cursCoord, selectedMasterCollider->findClosestLine(cursCoord));
                         }
                         //Collision Point Delete
                         else
