@@ -32,16 +32,14 @@ namespace obe
         };
 
         /**
-         * \brief Exactly like Identifiable class except you can't change the Id after creation
-         */
-        class ProtectedIdentifiable : public Identifiable
+        * \brief Exactly like Identifiable class except you can't change the Id after creation
+        */
+        class ProtectedIdentifiable : protected Identifiable
         {
-        private:
-            /**
-            * \brief Set a new id for the Identifiable
-            * \param id Sets the id of the Identifiable
-            */
-            void setId(const std::string& id);
+        protected:
+            using Identifiable::Identifiable;
+        public:
+            using Identifiable::getId;
         };
     }
 }

@@ -5,12 +5,6 @@ namespace obe
 {
     namespace Triggers
     {
-        TriggerGroup::TriggerGroup(const std::string& triggerGroupName)
-        {
-            m_fromNsp = "";
-            m_name = triggerGroupName;
-        }
-
         TriggerGroup::TriggerGroup(const std::string& triggerGroupNamespace, const std::string& triggerGroupName)
         {
             m_fromNsp = triggerGroupNamespace;
@@ -50,7 +44,7 @@ namespace obe
             return this;
         }
 
-        TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, int delay, bool state)
+        TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, Time::TimeUnit delay, bool state)
         {
             m_delayedTriggers.push_back(std::make_unique<TriggerDelay>(getTrigger(triggerName), delay, state));
             return this;

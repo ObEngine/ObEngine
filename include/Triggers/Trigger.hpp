@@ -11,6 +11,9 @@ namespace obe
     namespace Triggers
     {
         class TriggerGroup;
+        /**
+         * \brief A Class that does represents a triggerable event
+         */
         class Trigger
         {
         private:
@@ -22,10 +25,17 @@ namespace obe
             bool m_toDisable = false;
             bool m_permanent = false;
             void clearParameters();
-            template <typename P>
-            void pushParameter(std::string name, P parameter);
             friend class TriggerGroup;
             friend class TriggerDatabase;
+        protected:
+            /**
+             * \brief Pushes a parameter to the Trigger
+             * \tparam P Type of the Parameter to push
+             * \param name Name of the Parameter
+             * \param parameter Value of the Parameter
+             */
+            template <typename P>
+            void pushParameter(std::string name, P parameter);
         public:
             /**
              * \brief Creates a new Trigger
@@ -36,17 +46,39 @@ namespace obe
              */
             explicit Trigger(TriggerGroup* parent, const std::string& name, bool startState = false, bool permanent = false);
             /**
-             * \brief 
-             * \return 
+             * \brief Get the State of the Trigger (enabled / disabled)
+             * \return true if the Trigger is enabled, false otherwise
              */
             bool getState() const;
+            /**
+             * \brief Get if the Trigger is in permanent state (stays enabled)
+             * \return true is the Trigger is permanent, false otherwise
+             */
             bool isPermanent() const;
+            /**
+             * \brief Get the name of the TriggerGroup which is the parent of the Trigger
+             * \return A std::string containing the name of the TriggerGroup which is the parent of the Trigger
+             */
             std::string getGroup() const;
+            /**
+             * \brief Get the name of the Trigger
+             * \return A std::string containing the name of the Trigger
+             */
             std::string getName() const;
+            /**
+             * \brief Get the name of the namespace of the parent (TriggerGroup) of the Trigger
+             * \return A std::string containing the name of the namespace of the parent (TriggerGroup) of the Trigger
+             */
             std::string getNamespace() const;
             std::map<std::string, std::pair<std::string, Types::Any>>* getParameters();
         };
 
+        /**
+         * \brief Injects the parameter contained in a Trigger to a Lua VM
+         * \param trigger Reference to the Trigger
+         * \param lua Lua VM where to inject the parameters
+         * \return Empty string if everything went fine, name of the parameter that caused a problem otherwise
+         */
         std::string injectParameters(Trigger& trigger, kaguya::State& lua);
 
         template <typename P>

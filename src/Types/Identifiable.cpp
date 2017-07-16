@@ -18,10 +18,5 @@ namespace obe
         {
             return m_id;
         }
-
-        void ProtectedIdentifiable::setId(const std::string& id)
-        {
-            Identifiable::setId(id);
-        }
     }
 }

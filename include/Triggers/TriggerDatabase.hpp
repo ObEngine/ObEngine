@@ -10,6 +10,9 @@ namespace obe
 {
     namespace Triggers
     {
+        /**
+         * \brief A TriggerDatabase that handles all Trigger / TriggerGroup
+         */
         class TriggerDatabase
         {
         private:
@@ -19,16 +22,69 @@ namespace obe
             std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
             static TriggerDatabase* m_instance;
         public:
+            /**
+             * \brief As TriggerDatabase is a Singleton, gets the single instance
+             * \return A pointer to the TriggerDatabase
+             */
             static TriggerDatabase* GetInstance();
-            Trigger* getTrigger(const std::string& groupNamespace, const std::string& triggerGroupName, const std::string& triggerName);
-            void createNamespace(const std::string& groupNamespace);
-            TriggerGroup* createTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
-            TriggerGroup* joinTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
-            std::vector<std::string> getAllTriggersNameFromTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName);
-            void removeNamespace(const std::string& namespaceId);
+            /**
+             * \brief Get a Trigger contained in the TriggerDatabase
+             * \param namespaceName Namespace of the Trigger
+             * \param triggerGroupName TriggerGroup of the Trigger
+             * \param triggerName Name of the Trigger
+             * \return A pointer of the Trigger if found
+             */
+            Trigger* getTrigger(const std::string& namespaceName, const std::string& triggerGroupName, const std::string& triggerName);
+            /**
+             * \brief Creates a new namespace (Throws an error if the namespace already exists)
+             * \param namespaceName Name of the namespace to create
+             */
+            void createNamespace(const std::string& namespaceName);
+            /**
+             * \brief Creates a new TriggerGroup (Throws an error if the TriggerGroup already exists)
+             * \param namespaceName Namespace where to create the TriggerGroup
+             * \param triggerGroupName Name of the new TriggerGroup
+             * \return Pointer to the newly created TriggerGroup
+             */
+            TriggerGroup* createTriggerGroup(const std::string& namespaceName, const std::string& triggerGroupName);
+            /**
+             * \brief Join an existing TriggerGroup (Throws an error if the TriggerGroup doesn't exists or isn't joinable)
+             * \param namespaceName Namespace of the existing TriggerGroup
+             * \param triggerGroupName Name of the TriggerGroup to join
+             * \return Pointer to the newly joined TriggerGroup
+             */
+            TriggerGroup* joinTriggerGroup(const std::string& namespaceName, const std::string& triggerGroupName);
+            /**
+             * \brief Gets all the names of the Trigger containing the groupNamespace.triggerGroupName
+             * \param namespaceName Name of the Namespace
+             * \param triggerGroupName Name of the TriggerGroup to get all the Trigger names
+             * \return A std::vector of std::string containing all the names of the Trigger in the TriggerGroup
+             */
+            std::vector<std::string> getAllTriggersNameFromTriggerGroup(const std::string& namespaceName, const std::string& triggerGroupName);
+            /**
+             * \brief Removes an existing namespace
+             * \param namespaceName Name of the namespace to delete
+             */
+            void removeNamespace(const std::string& namespaceName);
+            /**
+             * \brief Removes an existing TriggerGroup
+             * \param trgGroup Pointer to the TriggerGroup to delete
+             */
             void removeTriggerGroup(TriggerGroup* trgGroup);
+            /**
+             * \brief Check if a TriggerGroup exists in the TriggerDatabase
+             * \param groupNamespace Name of the Namespace where to search if the TriggerGroup exists
+             * \param triggerGroupName Name of the TriggerGroup to search
+             * \return 
+             */
             bool doesTriggerGroupExists(const std::string& groupNamespace, const std::string& triggerGroupName);
+            /**
+             * \brief Updates the TriggerDatabase (Already executed in the main loops)
+             */
             void update();
+            /**
+             * \brief Clears the TriggerDatabase
+             */
             void clear();
         };
     }
