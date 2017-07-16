@@ -17,21 +17,18 @@ namespace obe
             std::string m_returnChar;
             std::string m_type;
         public:
-            KeyClass()
-            {
-            }
-
-            KeyClass(sf::Keyboard::Key key, std::string name, std::string returnChar, std::string type);
+            KeyClass() {}
+            KeyClass(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar, const std::string& type);
             sf::Keyboard::Key getKey() const;
-            std::string getType();
-            bool isAlpha();
-            bool isNumeric();
-            bool isNumericNP();
-            bool isAlphaNumeric();
-            bool isArrow();
+            std::string getType() const;
+            bool isAlpha() const;
+            bool isNumeric() const;
+            bool isNumericNP() const;
+            bool isAlphaNumeric() const;
+            bool isArrow() const;
             bool isFunction();
             bool isOther();
-            bool isWritable();
+            bool isWritable() const;
         };
 
         class KeyBinder

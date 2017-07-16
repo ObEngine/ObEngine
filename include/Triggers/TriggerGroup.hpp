@@ -130,7 +130,7 @@ namespace obe
                 unsigned int m_id = 0;
 				friend class TriggerDatabase;
 			public:
-			    explicit Ptr(TriggerGroup* link);
+			    Ptr(TriggerGroup* link);
                 Ptr& operator=(const Ptr& link);
 				TriggerGroup* operator->() const;
 				~Ptr();

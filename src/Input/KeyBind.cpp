@@ -7,7 +7,7 @@ namespace obe
 {
     namespace Input
     {
-        KeyClass::KeyClass(sf::Keyboard::Key key, std::string name, std::string returnChar, std::string type)
+        KeyClass::KeyClass(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar, const std::string& type)
         {
             m_key = key;
             m_name = name;
@@ -18,6 +18,51 @@ namespace obe
         sf::Keyboard::Key KeyClass::getKey() const
         {
             return m_key;
+        }
+
+        std::string KeyClass::getType() const
+        {
+            return m_type;
+        }
+
+        bool KeyClass::isAlpha() const
+        {
+            return (m_name.size() == 1 && Utils::String::isStringAlpha(m_name));
+        }
+
+        bool KeyClass::isNumeric() const
+        {
+            return Utils::String::isStringInt(m_name);
+        }
+
+        bool KeyClass::isNumericNP() const
+        {
+            return (m_name.find("NumPad") == 0 && Utils::String::isStringNumeric(m_name.substr(6, 1)));
+        }
+
+        bool KeyClass::isAlphaNumeric() const
+        {
+            return (isAlpha() || isNumeric() || isNumericNP());
+        }
+
+        bool KeyClass::isArrow() const
+        {
+            return (Utils::Vector::isInList(m_name, { "Up", "Left", "Right", "Down" }));
+        }
+
+        bool KeyClass::isFunction()
+        {
+            return (m_name.size() >= 2 && m_name[0] == 'F' && Utils::String::isStringInt(Utils::String::split(m_name, "F")[0]));
+        }
+
+        bool KeyClass::isOther()
+        {
+            return (!isAlpha() && !isNumeric() && !isNumericNP() && !isArrow() && !isFunction());
+        }
+
+        bool KeyClass::isWritable() const
+        {
+            return (!m_returnChar.empty());
         }
 
         std::string KeyBinder::getActionKey(std::string action)
