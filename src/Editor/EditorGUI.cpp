@@ -12,7 +12,7 @@ namespace obe
             unsigned int smallFontSize;
             tgui::Theme baseTheme;
 
-            void GUI::init(sf::RenderWindow& window)
+            void init(sf::RenderWindow& window)
             {
                 bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
                 mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
@@ -20,7 +20,7 @@ namespace obe
                 baseTheme.load("Data/GUI/obe.style");
             }
 
-            void GUI::buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel)
+            void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel)
             {
                 tgui::Panel::Ptr titlePanel = tgui::Panel::create();
                 tgui::Label::Ptr titleLabel = tgui::Label::create();
