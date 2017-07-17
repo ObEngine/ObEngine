@@ -25,15 +25,12 @@ KeyBinding:
         Spell7:"C"
         Spell8:"V"
         Reset:"R"
-    controller:
-        A:"Jump"
     mapEditor:
         SpriteMode:"W"
         ObjectMode:"X"
         CollisionMode:"C"
-        CamFixed:"F10"
-        CamFollow:"F11"
-        CamZone:"F12"
+        CamMovable:"F10"
+        CamFree:"F11"
         CamUp:"Z"
         CamDown:"S"
         CamLeft:"Q"

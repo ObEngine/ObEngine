@@ -6,7 +6,7 @@
 #include <Editor/MapEditor.hpp>
 #include <Editor/MapEditorTools.hpp>
 #include <Graphics/DrawUtils.hpp>
-#include <Input/KeyBind.hpp>
+#include <Input/KeyManager.hpp>
 #include <Network/Network.hpp>
 #include <Scene/World.hpp>
 #include <Script/GameObject.hpp>
@@ -89,16 +89,18 @@ namespace obe
             Network::NetworkHandler networkHandler;
 
             //Keybinding
-            Input::KeyBinder keybind;
+            Input::KeyboardManager keybind;
             Script::hookCore.dropValue("KeyBinder", &keybind);
-            keybind.loadFromFile(configFile);
+            keybind.configure(configFile.at("KeyBinding"));
+            keybind.addContext("game")
+                   .addContext("mapEditor");
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
-            keybind.setActionDelay("MagnetizeUp", 200);
-            keybind.setActionDelay("MagnetizeRight", 200);
-            keybind.setActionDelay("MagnetizeDown", 200);
-            keybind.setActionDelay("MagnetizeLeft", 200);
+            keybind.getAction("MagnetizeUp").setRepeat(200);
+            keybind.getAction("MagnetizeDown").setRepeat(200);
+            keybind.getAction("MagnetizeLeft").setRepeat(200);
+            keybind.getAction("MagnetizeRight").setRepeat(200);
 
             //GUI
             sf::Event event;
@@ -166,7 +168,7 @@ namespace obe
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;
             bool guiEditorEnabled = false;
-            int cameraSpeed = 30;
+            int cameraSpeed = Transform::UnitVector::Screen.h;
             int currentLayer = 1;
             Collision::PolygonalCollider* selectedMasterCollider = nullptr;
             int colliderPtGrabbed = -1;
@@ -608,6 +610,77 @@ namespace obe
             Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
+            // KeyBind Actions
+            keybind.getAction("CamMovable").connect(Input::KeyState::Pressed, [&cameraMode](Input::KeyboardActionEvent event) {
+                cameraMode->setSelectedItemByIndex(0);
+            });                
+            keybind.getAction("CamFree").connect(Input::KeyState::Pressed, [&cameraMode](Input::KeyboardActionEvent event) {
+                cameraMode->setSelectedItemByIndex(1);
+            });
+            keybind.getAction("SpriteMode").connect(Input::KeyState::Pressed, [&editMode](Input::KeyboardActionEvent event) {
+                editMode->setSelectedItemByIndex(0);
+            });
+            keybind.getAction("CollisionMode").connect(Input::KeyState::Pressed, [&editMode](Input::KeyboardActionEvent event) {
+                editMode->setSelectedItemByIndex(1);
+            });
+            keybind.getAction("CamLeft").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event) {
+                world.getCamera()->move(Transform::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
+            });
+            keybind.getAction("CamRight").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event) {
+                world.getCamera()->move(Transform::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
+            });
+            keybind.getAction("CamUp").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event) {
+                world.getCamera()->move(Transform::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
+            });
+            keybind.getAction("CamDown").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event) {
+                world.getCamera()->move(Transform::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
+            });
+            keybind.getAction("CamDash").connect(Input::KeyState::Pressed, [&cameraSpeed](Input::KeyboardActionEvent event) {
+                cameraSpeed = Transform::UnitVector::Screen.h * 2.5;
+            });
+            keybind.getAction("CamDash").connect(Input::KeyState::Released, [&cameraSpeed](Input::KeyboardActionEvent event) {
+                cameraSpeed = Transform::UnitVector::Screen.h;
+            });
+            keybind.getAction("MagnetizeUp").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event) {
+                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, -1);
+            });
+            keybind.getAction("MagnetizeRight").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event) {
+                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 1, 0);
+            });
+            keybind.getAction("MagnetizeDown").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event) {
+                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, 1);
+            });
+            keybind.getAction("MagnetizeLeft").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event) {
+                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, -1, 0);
+            });
+            keybind.getAction("MagnetizeCursor").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event) {
+                if (enableGridCheckbox->isChecked()) editorGrid.magnetize(cursor);
+            });
+            keybind.getAction("CancelOffset").connect(Input::KeyState::Pressed, 
+            [&selectedSprite, &cursor, &editorGrid, &selectedSpriteOffsetX, &selectedSpriteOffsetY](Input::KeyboardActionEvent event) {
+                if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr)
+                {
+                    selectedSpriteOffsetX = 0;
+                    selectedSpriteOffsetY = 0;
+                }
+            });
+            keybind.getAction("DeleteSprite").connect(Input::KeyState::Pressed, 
+            [&selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY](Input::KeyboardActionEvent event) {
+                if (selectedSprite != nullptr)
+                {
+                    world.deleteSprite(selectedSprite);
+                    selectedSprite = nullptr;
+                    sprInfo.setString("");
+                    hoveredSprite = nullptr;
+                    selectedSpriteOffsetX = 0;
+                    selectedSpriteOffsetY = 0;
+                }
+            });
+            keybind.getAction("Attack").connect(Input::KeyState::Hold, [&world, &framerateManager](Input::KeyboardActionEvent event) {
+                Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
+                collider0->move(Transform::UnitVector(100.0 * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
+            });
+
             world.loadFromFile(mapName);
 
             mapNameInput->setText(world.getLevelName());
@@ -693,19 +766,6 @@ namespace obe
 
                 //GUI Actions
                 keybind.setEnabled(!gameConsole.isConsoleVisible());
-                if (keybind.isActionToggled("CamMovable"))
-                    cameraMode->setSelectedItemByIndex(0);
-                else if (keybind.isActionToggled("CamFree"))
-                    cameraMode->setSelectedItemByIndex(1);
-
-                if (keybind.isActionToggled("SpriteMode"))
-                {
-                    editMode->setSelectedItemByIndex(0);
-                }
-                else if (keybind.isActionToggled("CollisionMode"))
-                {
-                    editMode->setSelectedItemByIndex(1);
-                }
 
                 bool drawFPS = displayFramerateCheckbox->isChecked();
 
@@ -727,26 +787,6 @@ namespace obe
                     if (cameraMode->getSelectedItem() == "Movable Camera")
                     {
                         world.setCameraLock(true);
-                        if (keybind.isActionEnabled("CamLeft") && keybind.isActionEnabled("CamRight"))
-                        {
-                        }
-                        else if (keybind.isActionEnabled("CamLeft"))
-                            world.getCamera()->move(Transform::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
-                        else if (keybind.isActionEnabled("CamRight"))
-                            world.getCamera()->move(Transform::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
-
-                        if (keybind.isActionEnabled("CamUp") && keybind.isActionEnabled("CamDown"))
-                        {
-                        }
-                        else if (keybind.isActionEnabled("CamUp"))
-                            world.getCamera()->move(Transform::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
-                        else if (keybind.isActionEnabled("CamDown"))
-                            world.getCamera()->move(Transform::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
-
-                        if (keybind.isActionEnabled("CamDash"))
-                            cameraSpeed = 3000;
-                        else
-                            cameraSpeed = 900;
                     }
                     else
                     {
@@ -772,7 +812,7 @@ namespace obe
                     else
                     {
                         //Layer Change
-                        if (selectedSprite == nullptr && keybind.isActionToggled("LayerInc"))
+                        /*if (selectedSprite == nullptr && keybind.isActionToggled("LayerInc"))
                         {
                             currentLayer += 1;
                             world.getCamera()->scale(1.1);
@@ -793,7 +833,7 @@ namespace obe
                                 hoveredSprite = nullptr;
                                 sprInfo.setString("");
                             }
-                        }
+                        }*/
                         //Sprite Hover
                         if (hoveredSprite == nullptr)
                         {
@@ -910,7 +950,7 @@ namespace obe
                         }
 
                         //Sprite Rotate (Non-fonctionnal)
-                        if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
+                        /*if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
                         {
                             if (keybind.isActionEnabled("RotateLeft") && selectedSprite != nullptr)
                             {
@@ -923,7 +963,7 @@ namespace obe
                                 //selectedSprite->rotate(1 * framerateManager.getGameSpeed());
                                 selectedSprite->scale(-2 * framerateManager.getGameSpeed(), -2 * framerateManager.getGameSpeed());
                             }
-                        }
+                        }*/
 
                         /*if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
                         {
@@ -934,7 +974,7 @@ namespace obe
                         }*/
 
                         //Sprite Layer / Z-Depth
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
+                        /*if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
                         {
                             selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
                             world.reorganizeLayers();
@@ -955,25 +995,7 @@ namespace obe
                             selectedSprite->setLayer(selectedSprite->getLayer() - 1);
                             currentLayer -= 1;
                             world.reorganizeLayers();
-                        }
-
-                        //Sprite Cancel Offset
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("CancelOffset"))
-                        {
-                            selectedSpriteOffsetX = 0;
-                            selectedSpriteOffsetY = 0;
-                        }
-
-                        //Sprite Delete
-                        if (selectedSprite != nullptr && keybind.isActionToggled("DeleteSprite"))
-                        {
-                            world.deleteSprite(selectedSprite);
-                            selectedSprite = nullptr;
-                            sprInfo.setString("");
-                            hoveredSprite = nullptr;
-                            selectedSpriteOffsetX = 0;
-                            selectedSpriteOffsetY = 0;
-                        }
+                        }*/
                     }
                 }
                 else
@@ -1140,16 +1162,6 @@ namespace obe
                     std::string("   Layer : ") + std::to_string(currentLayer)
                 );
 
-                if (enableGridCheckbox->isChecked())
-                {
-                    if (keybind.isActionEnabled("MagnetizeUp")) editorGrid.moveMagnet(cursor, 0, -1);
-                    if (keybind.isActionEnabled("MagnetizeRight")) editorGrid.moveMagnet(cursor, 1, 0);
-                    if (keybind.isActionEnabled("MagnetizeDown")) editorGrid.moveMagnet(cursor, 0, 1);
-                    if (keybind.isActionEnabled("MagnetizeLeft")) editorGrid.moveMagnet(cursor, -1, 0);
-                    if (keybind.isActionEnabled("MagnetizeCursor"))
-                        editorGrid.magnetize(cursor);
-                }
-
                 if (guiEditorEnabled)
                     editorPanel->show();
                 else
@@ -1234,6 +1246,7 @@ namespace obe
                 {
                     window.clear();
                     world.display(window);
+                    pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")
                         world.enableShowCollision(true);
@@ -1250,7 +1263,7 @@ namespace obe
                         window.draw(sprBorder);
                     }
                     if (enableGridCheckbox->isChecked())
-                        editorGrid.draw(window, cursor, -pixelCamera.x, -pixelCamera.y);
+                        editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")
                     {

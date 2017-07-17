@@ -93,7 +93,12 @@ namespace obe
             int stackY = -1;
             sf::Color selectedLineColor(0, 125, 255, 255);
             sf::Color normalLineColor(125, 125, 125, 255);
-            for (int i = gridOffX + offsetX; i < Transform::UnitVector::Screen.w; i += m_gridSizeX)
+            while (offsetX < 0)
+                offsetX += m_gridSizeX;
+            while (offsetY < 0)
+                offsetY += m_gridSizeY;
+            int startGridX = (m_gridSizeX - ((gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX; //<REVISION>
+            for (int i = startGridX; i < Transform::UnitVector::Screen.w; i += m_gridSizeX)
             {
                 if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(std::floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(std::floor(m_gridSizeX / 2)) - 1)))
                 {
@@ -105,16 +110,17 @@ namespace obe
                     Graphics::Utils::drawLine(target, i, 0, i, Transform::UnitVector::Screen.h, 2, normalLineColor);
                 }
             }
-            for (int i = gridOffY + offsetY; i < Transform::UnitVector::Screen.h; i += m_gridSizeY)
+            int startGridY = (m_gridSizeY - ((gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
+            for (int i = startGridY; i < Transform::UnitVector::Screen.h; i += m_gridSizeY)
             {
                 if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(std::floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(std::floor(m_gridSizeY / 2)) - 1)))
                 {
-                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, normalLineColor);
+                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
                     stackY = i;
                 }
                 else
                 {
-                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
+                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, normalLineColor);
                 }
             }
             if (stackX != -1 && stackY != -1)

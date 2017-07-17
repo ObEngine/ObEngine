@@ -5,7 +5,7 @@
 #include <Debug/Console.hpp>
 #include <Graphics/Canvas.hpp>
 #include <Graphics/LevelSprite.hpp>
-#include <Input/KeyBind.hpp>
+#include <Input/KeyManager.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/Script.hpp>
 #include <Sound/Music.hpp>
@@ -37,8 +37,8 @@ namespace obe
                     (*lua)["Hook"][name] = containerMap[name].second->as<Debug::Console*>();
                 else if (hookType == Utils::Type::getClassType<System::Cursor*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
-                else if (hookType == Utils::Type::getClassType<Input::KeyBinder*>())
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyBinder*>();
+                else if (hookType == Utils::Type::getClassType<Input::KeyboardManager*>())
+                    (*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyboardManager*>();
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerDatabase*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerDatabase*>();
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerGroup*>())
@@ -594,7 +594,7 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["KeyBind"])) (*lua)["Core"]["KeyBind"] = kaguya::NewTable();
             if (importAll || args[1] == "KeyBinder")
             {
-                (*lua)["Core"]["KeyBind"]["KeyBinder"].setClass(kaguya::UserdataMetatable<Input::KeyBinder>()
+                /*(*lua)["Core"]["KeyBind"]["KeyBinder"].setClass(kaguya::UserdataMetatable<Input::KeyBinder>()
                     .addFunction("connectAction", &Input::KeyBinder::connectAction)
                     .addFunction("isActionDisabled", &Input::KeyBinder::isActionDisabled)
                     .addFunction("isActionEnabled", &Input::KeyBinder::isActionEnabled)
@@ -604,7 +604,7 @@ namespace obe
                     .addFunction("loadFromFile", &Input::KeyBinder::loadFromFile)
                     .addFunction("setActionDelay", &Input::KeyBinder::setActionDelay)
                     .addFunction("setEnabled", &Input::KeyBinder::setEnabled)
-                );
+                );*/
                 foundPart = true;
             }
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.KeyBindImportError", {{"lib", Utils::Vector::join(args, ".")}});

@@ -3,7 +3,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
-#include <Input/KeyBind.hpp>
+#include <Input/KeyManager.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/World.hpp>
 #include <Script/GlobalState.hpp>
@@ -66,9 +66,10 @@ namespace obe
             Script::hookCore.dropValue("World", &world);
 
             //Keybinding
-            Input::KeyBinder keybind;
+            Input::KeyboardManager keybind;
             Script::hookCore.dropValue("KeyBinder", &keybind);
-            keybind.loadFromFile(configFile);
+            keybind.configure(configFile.at("KeyBinding"));
+            keybind.addContext("game");
 
             sf::Event event;
 
