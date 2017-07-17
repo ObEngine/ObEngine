@@ -146,7 +146,6 @@ namespace obe
             sf::FloatRect sdBoundingRect;
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;
-            bool guiEditorEnabled = false;
             int cameraSpeed = Transform::UnitVector::Screen.h;
             int currentLayer = 1;
             Collision::PolygonalCollider* selectedMasterCollider = nullptr;
@@ -325,12 +324,12 @@ namespace obe
 
                 bool drawFPS = displayFramerateCheckbox->isChecked();
 
-                if (guiEditorEnabled && saveEditMode < 0)
+                if (editorPanel->isVisible() && saveEditMode < 0)
                 {
                     saveEditMode = editMode->getSelectedItemIndex();
                     editMode->setSelectedItemByIndex(3);
                 }
-                else if (!guiEditorEnabled && saveEditMode > 0)
+                else if (!editorPanel->isVisible() && saveEditMode > 0)
                 {
                     editMode->setSelectedItemByIndex(saveEditMode);
                     saveEditMode = -1;
@@ -717,11 +716,6 @@ namespace obe
                     ")" +
                     std::string("   Layer : ") + std::to_string(currentLayer)
                 );
-
-                if (guiEditorEnabled)
-                    editorPanel->show();
-                else
-                    editorPanel->hide();
 
                 //Events
                 Triggers::TriggerDatabase::GetInstance()->update();

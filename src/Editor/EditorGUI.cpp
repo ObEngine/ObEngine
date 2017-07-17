@@ -14,9 +14,9 @@ namespace obe
 
             void GUI::init(sf::RenderWindow& window)
             {
-                unsigned int bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
-                unsigned int mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
-                unsigned int smallFontSize = static_cast<double>(bigFontSize) / 2.0;
+                bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
+                mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
+                smallFontSize = static_cast<double>(bigFontSize) / 2.0;
                 baseTheme.load("Data/GUI/obe.style");
             }
 
@@ -83,7 +83,10 @@ namespace obe
                 editorButton->setTextSize(mediumFontSize);
                 editorButton->setRenderer(baseTheme.getRenderer("Button"));
 
-                editorButton->connect("pressed", [&editorPanel]() { editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show(); });
+                editorButton->connect("pressed", [&editorPanel]()
+                {
+                    editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
+                });
             }
 
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel)
@@ -102,6 +105,7 @@ namespace obe
                 editorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
                 editorPanel->setSize("&.w - 100", "&.h - 100");
                 editorPanel->setPosition(50, 70);
+                editorPanel->hide();
 
                 editorPanel->add(mapPanel, "mapPanel");
                 editorPanel->add(settingsPanel, "settingsPanel");
@@ -109,8 +113,8 @@ namespace obe
                 editorPanel->add(objectsPanel, "objectsPanel");
                 editorPanel->add(mapButton, "mapButton");
                 editorPanel->add(settingsButton, "settingsButton");
-                editorPanel->add(spritesButton, "spritesPanel");
-                editorPanel->add(objectsButton, "objectsPanel");
+                editorPanel->add(spritesButton, "spritesButton");
+                editorPanel->add(objectsButton, "objectsButton");
 
                 mapButton->setPosition(0, 0);
                 mapButton->setSize("&.w / 10", 30);
@@ -157,56 +161,52 @@ namespace obe
                 spritesPanel->hide();
                 objectsPanel->hide();
 
-                mapButton->connect("pressed", [&mapButton, &settingsButton, &spritesButton, &objectsButton,
-                    &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
+                mapButton->connect("pressed", [&mainPanel]()
                 {
-                    mapPanel->show();
-                    settingsPanel->hide();
-                    spritesPanel->hide();
-                    objectsPanel->hide();
-                    mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                    spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                    objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Panel>("mapPanel", true)->show();
+                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
                 });
 
-                settingsButton->connect("pressed", [&mapButton, &settingsButton, &spritesButton, &objectsButton,
-                    &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
+                settingsButton->connect("pressed", [&mainPanel]()
                 {
-                    mapPanel->hide();
-                    settingsPanel->show();
-                    spritesPanel->hide();
-                    objectsPanel->hide();
-                    mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                    settingsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                    objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("settingsPanel", true)->show();
+                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
                 });
 
-                spritesButton->connect("pressed", [&mapButton, &settingsButton, &spritesButton, &objectsButton,
-                    &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
+                spritesButton->connect("pressed", [&mainPanel]()
                 {
-                    mapPanel->hide();
-                    settingsPanel->hide();
-                    spritesPanel->show();
-                    objectsPanel->hide();
-                    mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                    settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                    spritesButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    objectsButton->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("spritesPanel", true)->show();
+                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
                 });
 
-                objectsButton->connect("pressed", [&mapButton, &settingsButton, &spritesButton, &objectsButton,
-                    &mapPanel, &settingsPanel, &spritesPanel, &objectsPanel]()
+                objectsButton->connect("pressed", [&mainPanel]()
                 {
-                    mapPanel->hide();
-                    settingsPanel->hide();
-                    spritesPanel->hide();
-                    objectsPanel->show();
-                    mapButton->setRenderer(baseTheme.getRenderer("Button"));
-                    settingsButton->setRenderer(baseTheme.getRenderer("Button"));
-                    spritesButton->setRenderer(baseTheme.getRenderer("Button"));
-                    objectsButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                    mainPanel->get<tgui::Panel>("objectsPanel", true)->show();
+                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
                 });
             }
 
@@ -239,8 +239,9 @@ namespace obe
                 mapNameButton->setPosition(bindRight(mapNameInput) + 20, bindTop(mapNameLabel) + 4);
                 mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 mapNameButton->setSize(16, 16);
-                mapNameButton->connect("pressed", [&world, &mapNameInput]()
+                mapNameButton->connect("pressed", [&world, &mapPanel]()
                 {
+                    tgui::TextBox::Ptr mapNameInput = mapPanel->get<tgui::TextBox>("mapNameInput", true);
                     if (mapNameInput->getText() != "")
                     {
                         world.setLevelName(mapNameInput->getText());
@@ -299,13 +300,13 @@ namespace obe
                 enableGridCheckbox->setTextSize(mediumFontSize);
                 enableGridCheckbox->setText("Enabled Grid ?");
 
-                enableGridCheckbox->connect("checked", [&snapGridCheckbox]()
+                enableGridCheckbox->connect("checked", [snapGridCheckbox]()
                 {
                     snapGridCheckbox->enable();
                     snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
                 });
 
-                enableGridCheckbox->connect("unchecked", [&snapGridCheckbox]()
+                enableGridCheckbox->connect("unchecked", [snapGridCheckbox]()
                 {
                     snapGridCheckbox->disable();
                     snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
@@ -330,7 +331,7 @@ namespace obe
                 gridDimensionButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 gridDimensionButton->setSize(16, 16);
 
-                gridDimensionButton->connect("pressed", [&gridDimensionXInput, &gridDimensionYInput, &editorGrid]()
+                gridDimensionButton->connect("pressed", [gridDimensionXInput, gridDimensionYInput, &editorGrid]()
                 {
                     gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                     gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
@@ -379,7 +380,7 @@ namespace obe
                 gridOffsetButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 gridOffsetButton->setSize(16, 16);
 
-                gridOffsetButton->connect("pressed", [&gridOffsetXInput, &gridOffsetYInput, &editorGrid]()
+                gridOffsetButton->connect("pressed", [gridOffsetXInput, gridOffsetYInput, &editorGrid]()
                 {
                     if (Utils::String::isStringInt(gridOffsetXInput->getText()) && Utils::String::isStringInt(gridOffsetYInput->getText()))
                     {
@@ -476,7 +477,7 @@ namespace obe
                 requiresCloseButton->setRenderer(baseTheme.getRenderer("CloseButton"));
                 requiresCloseButton->setSize("32", "32");
                 requiresCloseButton->setPosition("&.width - 40", "8");
-                requiresCloseButton->connect("pressed", [&requiresPanel]()
+                requiresCloseButton->connect("pressed", [requiresPanel]()
                 {
                     requiresPanel->hide();
                 });
