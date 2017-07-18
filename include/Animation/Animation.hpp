@@ -55,6 +55,7 @@ namespace obe
 
 	    /**
          * \brief A whole Animation that contains one or more AnimationGroup.
+         * @Bind
          */
         class Animation
         {

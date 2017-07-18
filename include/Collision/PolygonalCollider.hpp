@@ -38,6 +38,7 @@ namespace obe
         using PolygonPath = std::vector<Transform::UnitVector>;
         /**
          * \brief Class used for all Collisions in the engine, it's a Polygon containing n points
+         * @Bind
          */
         class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable, public Types::Identifiable
         {

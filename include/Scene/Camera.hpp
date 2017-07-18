@@ -12,6 +12,7 @@ namespace obe
     {
 	    /**
          * \brief The Camera that views the Scene (World)
+         * @Bind
          * 
          * Example :
          * 

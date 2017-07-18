@@ -10,6 +10,7 @@ namespace obe
     {
 	    /**
          * \brief A subpart of an Animation containing the Textures to display
+         * @Bind
          */
         class AnimationGroup
         {

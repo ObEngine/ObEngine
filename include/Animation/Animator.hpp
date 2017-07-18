@@ -12,6 +12,7 @@ namespace obe
     {
         /**
          * \brief A Class that will manage a set of Animation.\n
+         * @Bind
          * Example :
          * \code
          * using obe::Animation::Animator;

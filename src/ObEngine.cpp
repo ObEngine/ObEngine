@@ -13,6 +13,8 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
 
+#include <Bindings/Bindings.hpp>
+
 void LoadErrors()
 {
     vili::LoadErrors("Data/Errors.vili");
@@ -28,9 +30,9 @@ int main(int argc, char** argv)
 
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
-    std::ofstream out("debug.log");
+    /*std::ofstream out("debug.log");
     std::streambuf *coutbuf = std::cout.rdbuf();
-    std::cout.rdbuf(out.rdbuf());
+    std::cout.rdbuf(out.rdbuf());*/
 
     std::ofstream out_err("errors.log");
     std::streambuf *cerrbug = std::cerr.rdbuf();
@@ -41,6 +43,10 @@ int main(int argc, char** argv)
 
     LoadErrors();
     System::MountPaths();
+
+    kaguya::State luaP;
+    obe::Bindings::IndexBindings();
+    obe::Bindings::Load(luaP, "Core.Animation.Animation");
 
     if (startMode == "edit")
     {
