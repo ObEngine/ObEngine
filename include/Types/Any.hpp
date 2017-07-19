@@ -93,7 +93,7 @@ namespace obe
                 throw std::bad_cast();
             }
 
-            type_info const& type() const
+            std::type_info const& type() const
             {
                 if (_value) return _value->type();
                 return typeid(nullptr);
@@ -104,7 +104,7 @@ namespace obe
             {
                 virtual ~erasure();
                 virtual erasure* clone() = 0;
-                virtual type_info const& type() const = 0;
+                virtual std::type_info const& type() const = 0;
             };
 
             template <typename T>
@@ -116,7 +116,7 @@ namespace obe
                 }
 
                 erasure* clone() override { return new erasure_impl<T>(_value); }
-                type_info const& type() const override { return typeid(T); }
+                std::type_info const& type() const override { return typeid(T); }
                 T& value() { return _value; }
             private:
                 T _value;
