@@ -10,6 +10,7 @@ namespace obe
     {
         /**
         * \brief A Chronometer class to measure time
+        * @Bind
         */
         class Chronometer
         {

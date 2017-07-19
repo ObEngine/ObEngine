@@ -122,9 +122,9 @@ namespace obe
             return m_name;
         }
 
-        unsigned int TriggerGroup::Ptr::amount = 0;
+        unsigned int TriggerGroupPtr::amount = 0;
 
-        TriggerGroup::Ptr::Ptr(TriggerGroup* link)
+        TriggerGroupPtr::TriggerGroupPtr(TriggerGroup* link)
         {
             if (link != nullptr)
             {
@@ -134,7 +134,7 @@ namespace obe
             }
         }
 
-        TriggerGroup::Ptr& TriggerGroup::Ptr::operator=(const Ptr& link)
+        TriggerGroupPtr& TriggerGroupPtr::operator=(const TriggerGroupPtr& link)
         {
             if (link.m_link != nullptr)
             {
@@ -145,7 +145,7 @@ namespace obe
             return *this;
         }
 
-        TriggerGroup::Ptr::~Ptr()
+        TriggerGroupPtr::~TriggerGroupPtr()
         {
             if (m_link != nullptr)
             {
@@ -157,7 +157,7 @@ namespace obe
             }
         }
 
-        TriggerGroup* TriggerGroup::Ptr::operator->() const
+        TriggerGroup* TriggerGroupPtr::operator->() const
         {
             return m_link;
         }

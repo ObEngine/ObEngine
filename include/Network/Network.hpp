@@ -19,7 +19,7 @@ namespace obe
             size_t received;
             sf::Socket::Status status;
             char data[4096];
-            Triggers::TriggerGroup::Ptr socketTriggers;
+            Triggers::TriggerGroupPtr socketTriggers;
         public:
             NetworkHandler();
             void handleTriggers();

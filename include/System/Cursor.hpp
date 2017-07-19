@@ -21,6 +21,7 @@ namespace obe
 
         /**
          * \brief A Class to manipulate and display the Cursor in the Engine
+         * @Bind
          */
         class Cursor
         {
@@ -36,7 +37,7 @@ namespace obe
             bool m_rightClicked = false;
             bool m_leftReleased = false;
             bool m_rightReleased = false;
-            Triggers::TriggerGroup::Ptr m_cursorTriggers;
+            Triggers::TriggerGroupPtr m_cursorTriggers;
             Animation::Animator m_cursorAnim;
             sf::Sprite m_cursorSprite;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;

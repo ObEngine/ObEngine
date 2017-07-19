@@ -38,9 +38,9 @@ namespace obe
                 m_consoleScroll = 0;
         }
 
-        Console::Stream* Console::createStream(const std::string& id, bool enabled)
+        ConsoleStream* Console::createStream(const std::string& id, bool enabled)
         {
-            m_streamMap[id] = std::make_unique<Stream>(id, this);
+            m_streamMap[id] = std::make_unique<ConsoleStream>(id, this);
             if (!enabled)
                 m_streamMap[id]->disable();
             consoleTriggers->pushParameter("NewStream", "StreamName", id);
@@ -49,7 +49,7 @@ namespace obe
             return m_streamMap[id].get();
         }
 
-        Console::Stream* Console::getStream(const std::string& id)
+        ConsoleStream* Console::getStream(const std::string& id)
         {
             if (m_streamMap.find(id) != m_streamMap.end())
                 return m_streamMap[id].get();
@@ -82,9 +82,9 @@ namespace obe
             }
         }
 
-        Console::Message* Console::pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color)
+        ConsoleMessage* Console::pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color)
         {
-            Message* forgeMessage = nullptr;
+            ConsoleMessage* forgeMessage = nullptr;
             if (Utils::String::occurencesInString(message, "\n") > 0 && !m_consoleMuted)
             {
                 std::vector<std::string> splittedMessage = Utils::String::split(message, "\n");
@@ -93,7 +93,7 @@ namespace obe
             }
             else if (!m_consoleMuted)
             {
-                forgeMessage = new Message(headerName, message, color);
+                forgeMessage = new ConsoleMessage(headerName, message, color);
                 consoleText.push_back(forgeMessage);
                 if (m_consoleAutoScroll)
                 {
@@ -251,7 +251,7 @@ namespace obe
         }
 
         //ConsoleMessage
-        Console::Message::Message(const std::string& header, const std::string& message, const sf::Color& textColor)
+        ConsoleMessage::ConsoleMessage(const std::string& header, const std::string& message, const sf::Color& textColor)
         {
             this->m_header = header;
             this->m_text = message;
@@ -259,10 +259,10 @@ namespace obe
             this->timestamp = Time::getTickSinceEpoch();
         }
 
-        std::string Console::Message::getFormatedMessage() const
+        std::string ConsoleMessage::getFormatedMessage() const
         {
             std::string fMessage;
-            if (Timestamped)
+            if (Console::Timestamped)
             {
                 fMessage = "(TimeStamp:" + std::to_string(timestamp) + ")";
                 fMessage += " [" + m_header + "]";
@@ -273,49 +273,49 @@ namespace obe
             return fMessage;
         }
 
-        std::string Console::Message::getHeader() const
+        std::string ConsoleMessage::getHeader() const
         {
             return m_header;
         }
 
-        std::string Console::Message::getText() const
+        std::string ConsoleMessage::getText() const
         {
             return m_text;
         }
 
-        sf::Color Console::Message::getColor() const
+        sf::Color ConsoleMessage::getColor() const
         {
             return m_color;
         }
 
-        void Console::Message::setMessage(const std::string& text)
+        void ConsoleMessage::setMessage(const std::string& text)
         {
             m_text = text;
         }
 
-        void Console::Message::setColor(const sf::Color& color)
+        void ConsoleMessage::setColor(const sf::Color& color)
         {
             m_color = color;
         }
 
         //Stream
-        Console::Stream::Stream(const std::string& id, Console* consoleParent) : Identifiable(id), Togglable(true)
+        ConsoleStream::ConsoleStream(const std::string& id, Console* consoleParent) : Identifiable(id), Togglable(true)
         {
             m_consoleParent = consoleParent;
             m_color = sf::Color(255, 255, 255);
         }
 
-        Console::Message* Console::Stream::push(const std::string& message) const
+        ConsoleMessage* ConsoleStream::push(const std::string& message) const
         {
             return m_consoleParent->pushMessage(m_id, message, m_color);
         }
 
-        void Console::Stream::setColor(const sf::Color& color)
+        void ConsoleStream::setColor(const sf::Color& color)
         {
             m_color = color;
         }
 
-        sf::Color Console::Stream::getColor() const
+        sf::Color ConsoleStream::getColor() const
         {
             return m_color;
         }

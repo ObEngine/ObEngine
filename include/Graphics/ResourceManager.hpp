@@ -12,6 +12,7 @@ namespace obe
     {
         /**
          * \brief Singleton Class that manages and caches textures
+         * @Bind
          */
         class ResourceManager
         {

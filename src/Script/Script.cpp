@@ -457,7 +457,7 @@ namespace obe
 
         void CoreLib::loadConsole(kaguya::State* lua, std::vector<std::string> args)
         {
-            registerLib(lua, Utils::Vector::join(args, "."));
+            /*registerLib(lua, Utils::Vector::join(args, "."));
             bool importAll = args.size() == 1;
             bool foundPart = false;
             if (!static_cast<bool>((*lua)["Core"]["Console"])) (*lua)["Core"]["Console"] = kaguya::NewTable();
@@ -491,7 +491,7 @@ namespace obe
                 );
                 foundPart = true;
             }
-            if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConsoleImportError", {{"lib", Utils::Vector::join(args, ".")}});
+            if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ConsoleImportError", {{"lib", Utils::Vector::join(args, ".")}});*/
         }
 
         void CoreLib::loadConstants(kaguya::State* lua, std::vector<std::string> args)

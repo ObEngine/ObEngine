@@ -7,7 +7,15 @@ namespace obe
     {
         void LoadPolygonalCollider(kaguya::State& lua)
         {
-            lua["Core"]["Collision"]["PolygonalCollider"].setClass(kaguya::UserdataMetatable<Collision::PolygonalCollider>()
+            lua["Core"]["Collision"]["PolygonalCollider"].setClass(
+                kaguya::UserdataMetatable<
+                    Collision::PolygonalCollider, 
+                    kaguya::MultipleBase<
+                        Transform::UnitBasedObject, 
+                        Types::Selectable, 
+                        Types::Identifiable>
+                    >
+                ()
                 .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
                 .addFunction("addPoint", &Collision::PolygonalCollider::addPoint)
                 .addFunction("addTag", &Collision::PolygonalCollider::addTag)

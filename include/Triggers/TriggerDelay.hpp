@@ -9,6 +9,7 @@ namespace obe
     {
         /**
          * \brief Class used to enable / disable a Trigger after a delay
+         * @Bind
          */
         class TriggerDelay
         {

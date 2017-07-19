@@ -9,6 +9,7 @@ namespace obe
     {
         /**
          * \brief Class widely used in the Engine to scale and position elements in a Scene
+         * @Bind
          */
         class UnitVector
         {

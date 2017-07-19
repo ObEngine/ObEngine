@@ -38,7 +38,7 @@ namespace obe
             std::unique_ptr<kaguya::State> m_objectScript;
             Graphics::LevelSprite* m_objectLevelSprite = nullptr;
             Collision::PolygonalCollider* m_objectCollider = nullptr;
-            Triggers::TriggerGroup::Ptr m_localTriggers;
+            Triggers::TriggerGroupPtr m_localTriggers;
 
             std::vector<Triggers::Trigger*> m_registeredTriggers;
             std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;

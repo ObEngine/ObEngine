@@ -25,6 +25,7 @@ namespace obe
 
         /**
          * \brief Class used to encapsulate mounted Paths
+         * @Bind
          */
         class MountablePath
         {

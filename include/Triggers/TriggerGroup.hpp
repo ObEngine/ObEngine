@@ -9,6 +9,7 @@ namespace obe
     {
         /**
          * \brief Class used to manage multiple Trigger
+         * @Bind
          */
         class TriggerGroup
         {
@@ -120,24 +121,24 @@ namespace obe
              */
             std::string getName() const;
 
-            /**
-             * \brief Smart pointer for TriggerGroup
-             */
-            class Ptr
-            {
-            private:
-                TriggerGroup* m_link = nullptr;
-                static unsigned int amount;
-                unsigned int m_id = 0;
-                friend class TriggerDatabase;
-            public:
-                explicit Ptr(TriggerGroup* link);
-                Ptr& operator=(const Ptr& link);
-                TriggerGroup* operator->() const;
-                ~Ptr();
-            };
+            friend class TriggerGroupPtr;
+        };
 
-            friend class Ptr;
+        /**
+        * \brief Smart pointer for TriggerGroup
+        */
+        class TriggerGroupPtr
+        {
+        private:
+            TriggerGroup* m_link = nullptr;
+            static unsigned int amount;
+            unsigned int m_id = 0;
+            friend class TriggerDatabase;
+        public:
+            TriggerGroupPtr(TriggerGroup* link);
+            TriggerGroupPtr& operator=(const TriggerGroupPtr& link);
+            TriggerGroup* operator->() const;
+            ~TriggerGroupPtr();
         };
 
         template <typename P>

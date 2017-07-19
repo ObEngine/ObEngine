@@ -45,6 +45,7 @@ namespace obe
 
         /**
          * \brief Class that does represent a Keyboard key
+         * @Bind
          */
         class KeyClass
         {
@@ -141,6 +142,7 @@ namespace obe
 
         /**
          * \brief Model to send to KeyboardAction callbacks as only parameter
+         * @Bind
          */
         class KeyboardActionEvent
         {
@@ -178,6 +180,10 @@ namespace obe
          */
         using ActionCallback = std::function<void(KeyboardActionEvent event)>;
 
+        /**
+         * \brief Action triggered by one or more Keyboard key(s)
+         * @Bind
+         */
         class KeyboardAction : public Types::Identifiable
         {
         private:
@@ -254,6 +260,7 @@ namespace obe
 
         /**
          * \brief Class used to manage KeyClass and KeyboardAction
+         * @Bind
          */
         class KeyboardManager
         {
@@ -263,7 +270,7 @@ namespace obe
             std::unordered_map<std::string, std::unique_ptr<KeyClass>> m_keys;
 
             bool m_binderEnabled = true;
-            Triggers::TriggerGroup::Ptr m_keysTriggers;
+            Triggers::TriggerGroupPtr m_keysTriggers;
         public:
             /**
              * \brief Creates a new KeyboardManager

@@ -10,6 +10,7 @@ namespace obe
     {
         /**
          * \brief A Class that does represent a Rectangle with various methods to manipulate it
+         * @Bind
          */
         class Rect
         {

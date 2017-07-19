@@ -6,6 +6,7 @@ namespace obe
     {
         /**
          * \brief A Base Class that you can select or unselect
+         * @Bind
          */
         class Selectable
         {

@@ -101,7 +101,7 @@ namespace obe
 
             drawOptions["lines"] = true;
             drawOptions["points"] = m_selected;
-            drawOptions["radius"] = HandlePoint::radius;
+            drawOptions["radius"] = LevelSpriteHandlePoint::radius;
             drawOptions["point_color"] = sf::Color::White;
 
             std::vector<sf::Vector2i> drawPoints;
@@ -130,18 +130,18 @@ namespace obe
             Utils::drawPolygon(target, drawPoints, drawOptions);
         }
 
-        LevelSprite::HandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
+        LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
         {
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
                 Transform::UnitVector refPoint = this->getPosition(refIndex).to<Transform::Units::WorldPixels>();
-                int lowerXBound = std::min(refPoint.x - HandlePoint::radius, refPoint.x + HandlePoint::radius);
-                int upperXBound = std::max(refPoint.x - HandlePoint::radius, refPoint.x + HandlePoint::radius);
+                int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
+                int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
                 if (obe::Utils::Math::isBetween(posX, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
                 {
-                    int lowerYBound = std::min(refPoint.y - HandlePoint::radius, refPoint.y + HandlePoint::radius);
-                    int upperYBound = std::max(refPoint.y - HandlePoint::radius, refPoint.y + HandlePoint::radius);
+                    int lowerYBound = std::min(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
+                    int upperYBound = std::max(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
                     if (obe::Utils::Math::isBetween(posY, lowerYBound, upperYBound))
                         return &m_handlePoints[i];
                 }
@@ -311,13 +311,13 @@ namespace obe
             return obe::Utils::Math::sign(m_sprite.getScale().y);
         }
 
-        LevelSprite::HandlePoint::HandlePoint(Rect* parentRect, Transform::Referencial ref)
+        LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)
         {
             m_rect = parentRect;
             m_referencial = ref;
         }
 
-        void LevelSprite::HandlePoint::moveTo(int x, int y) const
+        void LevelSpriteHandlePoint::moveTo(int x, int y) const
         {
             std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
             std::cout << "Set : " << x << ", " << y << std::endl;
@@ -325,12 +325,12 @@ namespace obe
             std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
         }
 
-        Transform::Referencial LevelSprite::HandlePoint::getReferencial() const
+        Transform::Referencial LevelSpriteHandlePoint::getReferencial() const
         {
             return m_referencial;
         }
 
-        Transform::Rect& LevelSprite::HandlePoint::getRect() const
+        Transform::Rect& LevelSpriteHandlePoint::getRect() const
         {
             return *m_rect;
         }

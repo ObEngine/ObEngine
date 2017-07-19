@@ -12,6 +12,7 @@ namespace obe
     {
         /**
          * \brief A TriggerDatabase that handles all Trigger / TriggerGroup
+         * @Bind
          */
         class TriggerDatabase
         {

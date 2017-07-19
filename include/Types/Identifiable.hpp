@@ -8,6 +8,7 @@ namespace obe
     {
         /**
          * \brief A Base class that does carry an unique identifier for a given category (Sprites / Colliders etc..)
+         * @Bind
          */
         class Identifiable
         {

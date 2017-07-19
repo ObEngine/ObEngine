@@ -8,6 +8,7 @@ namespace obe
     {
         /**
          * \brief An UnitVector where you can't access the unit
+         * @Bind
          */
         class ProtectedUnitVector : public UnitVector
         {

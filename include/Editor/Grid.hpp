@@ -13,6 +13,7 @@ namespace obe
     {
         /**
          * \brief A grid for precise edition in the map editor
+         * @Bind
          */
         class EditorGrid
         {

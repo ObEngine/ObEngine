@@ -8,6 +8,7 @@ namespace obe
     {
         /**
          * \brief Classes that works with Units should herit from this Class
+         * @Bind
          */
         class UnitBasedObject
         {
@@ -18,6 +19,7 @@ namespace obe
             Units m_unit = Units::WorldUnits;
             virtual void resetUnit(Units unit) = 0;
         public:
+            virtual ~UnitBasedObject() = default;
             /**
              * \brief Set the unit the Object should work with
              * \param unit Unit you want the Object to work with

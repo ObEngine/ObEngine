@@ -142,7 +142,7 @@ namespace obe
             //Map Editor
             Graphics::LevelSprite* hoveredSprite = nullptr;
             Graphics::LevelSprite* selectedSprite = nullptr;
-            Graphics::LevelSprite::HandlePoint* selectedHandlePoint = nullptr;
+            Graphics::LevelSpriteHandlePoint* selectedHandlePoint = nullptr;
             sf::FloatRect sdBoundingRect;
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;

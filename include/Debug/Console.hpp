@@ -17,94 +17,114 @@ namespace obe
     namespace Debug
     {
         /**
+        * \brief A Message (line) displayed in the Console
+        * @Bind
+        */
+        class ConsoleMessage
+        {
+        private:
+            std::string m_header;
+            std::string m_text;
+            sf::Color m_color;
+            unsigned long long int timestamp;
+        public:
+            /**
+            * \brief Creates a Message
+            * \param header Name of the stream of the Message
+            * \param text Text of the Message
+            * \param textColor Color of the Message
+            */
+            ConsoleMessage(const std::string& header, const std::string& text, const sf::Color& textColor);
+            /**
+            * \brief Get the whole Message (with header and text)
+            * \return A std::string containing the whole Message
+            */
+            std::string getFormatedMessage() const;
+            /**
+            * \brief Get the header of the Message
+            * \return A std::string containing the header of the Message
+            */
+            std::string getHeader() const;
+            /**
+            * \brief Get the text of the Message
+            * \return A std::string containing the text of the Message
+            */
+            std::string getText() const;
+            /**
+            * \brief Get the Color of the Message
+            * \return A sf::Color containing the color of the Message
+            */
+            sf::Color getColor() const;
+            /**
+            * \brief Set a next text for the Message
+            * \param text New text for the Message
+            */
+            void setMessage(const std::string& text);
+            /**
+            * \brief Set the color of the Message
+            * \param color sf::Color for the Message
+            */
+            void setColor(const sf::Color& color);
+        };
+
+        class Console;
+
+        /**
+        * \brief A Stream is a bridge to push Message to the Console
+        * @Bind
+        */
+        class ConsoleStream : public Types::Identifiable, public Types::Togglable
+        {
+        private:
+            Console* m_consoleParent;
+            sf::Color m_color = sf::Color(255, 255, 255);
+        public:
+            /**
+            * \brief Creates a new Stream
+            * \param id Id of the Stream
+            * \param consoleParent Pointer to the Console
+            */
+            ConsoleStream(const std::string& id, Console* consoleParent);
+            /**
+            * \brief Push a new Message to the Console
+            * \param message Text of the Message
+            * \return A pointer to the created Message
+            */
+            ConsoleMessage* push(const std::string& message) const;
+            /**
+            * \brief Sets a new Color for the Stream
+            * \param color Color of the Stream
+            */
+            void setColor(const sf::Color& color);
+            /**
+            * \brief Get the color of the Stream
+            * \return A sf::Color containing the color of the Stream
+            */
+            sf::Color getColor() const;
+        };
+
+        /**
          * \brief An in-editor Console used to Debug
+         * @Bind
          */
         class Console
         {
+        private:
+            ConsoleStream* m_debugStream;
+            ConsoleStream* m_errorStream;
+            int m_virtualCursor = 0;
+            bool m_consoleVisibility = false;
+            int m_consoleScroll = 0;
+            bool m_consoleAutoScroll = true;
+            bool m_consoleMuted = false;
+            int m_consoleHistoryIndex = 0;
+            std::vector<std::string> m_consoleHistory;
+            sf::Font m_font;
+            std::string m_inputBuffer;
+            std::map<std::string, std::unique_ptr<ConsoleStream>> m_streamMap;
+            std::vector<ConsoleMessage*> consoleText;
+            Triggers::TriggerGroupPtr consoleTriggers;
         public:
-            /**
-             * \brief A Message (line) displayed in the Console
-             */
-            class Message
-            {
-            private:
-                std::string m_header;
-                std::string m_text;
-                sf::Color m_color;
-                unsigned long long int timestamp;
-            public:
-                /**
-                 * \brief Creates a Message
-                 * \param header Name of the stream of the Message
-                 * \param text Text of the Message
-                 * \param textColor Color of the Message
-                 */
-                Message(const std::string& header, const std::string& text, const sf::Color& textColor);
-                /**
-                 * \brief Get the whole Message (with header and text)
-                 * \return A std::string containing the whole Message
-                 */
-                std::string getFormatedMessage() const;
-                /**
-                 * \brief Get the header of the Message
-                 * \return A std::string containing the header of the Message
-                 */
-                std::string getHeader() const;
-                /**
-                 * \brief Get the text of the Message
-                 * \return A std::string containing the text of the Message
-                 */
-                std::string getText() const;
-                /**
-                 * \brief Get the Color of the Message
-                 * \return A sf::Color containing the color of the Message
-                 */
-                sf::Color getColor() const;
-                /**
-                 * \brief Set a next text for the Message
-                 * \param text New text for the Message
-                 */
-                void setMessage(const std::string& text);
-                /**
-                 * \brief Set the color of the Message
-                 * \param color sf::Color for the Message
-                 */
-                void setColor(const sf::Color& color);
-            };
-
-            /**
-             * \brief A Stream is a bridge to push Message to the Console
-             */
-            class Stream : public Types::Identifiable, public Types::Togglable
-            {
-            private:
-                Console* m_consoleParent;
-                sf::Color m_color = sf::Color(255, 255, 255);
-            public:
-                /**
-                 * \brief Creates a new Stream
-                 * \param id Id of the Stream
-                 * \param consoleParent Pointer to the Console
-                 */
-                Stream(const std::string& id, Console* consoleParent);
-                /**
-                 * \brief Push a new Message to the Console
-                 * \param message Text of the Message
-                 * \return A pointer to the created Message
-                 */
-                Message* push(const std::string& message) const;
-                /**
-                 * \brief Sets a new Color for the Stream
-                 * \param color Color of the Stream
-                 */
-                void setColor(const sf::Color& color);
-                /**
-                 * \brief Get the color of the Stream
-                 * \return A sf::Color containing the color of the Stream
-                 */
-                sf::Color getColor() const;
-            };
-
             /**
              * \brief Creates a new Console
              */
@@ -130,7 +150,7 @@ namespace obe
              * \param color Color of the Message you want to display
              * \return A pointer to the newly created Message
              */
-            Message* pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color);
+            ConsoleMessage* pushMessage(const std::string& headerName, const std::string& message, const sf::Color& color);
             /**
              * \brief Add a new character to the input buffer
              * \param keyCode ASCII number of the character to add
@@ -161,13 +181,13 @@ namespace obe
              * \param enabled Is the Stream enabled at creation ?
              * \return A pointed to the new Stream
              */
-            Stream* createStream(const std::string& id, bool enabled = true);
+            ConsoleStream* createStream(const std::string& id, bool enabled = true);
             /**
              * \brief Get an existing Stream
              * \param id Id of the Stream to get
              * \return A pointer to the Stream
              */
-            Stream* getStream(const std::string& id);
+            ConsoleStream* getStream(const std::string& id);
             /**
              * \brief Fill the buffer with the previous command
              */
@@ -196,21 +216,6 @@ namespace obe
              * \param position Offset to move the virtual cursor
              */
             void moveCursor(int position);
-        private:
-            Stream* m_debugStream;
-            Stream* m_errorStream;
-            int m_virtualCursor = 0;
-            bool m_consoleVisibility = false;
-            int m_consoleScroll = 0;
-            bool m_consoleAutoScroll = true;
-            bool m_consoleMuted = false;
-            int m_consoleHistoryIndex = 0;
-            std::vector<std::string> m_consoleHistory;
-            sf::Font m_font;
-            std::string m_inputBuffer;
-            std::map<std::string, std::unique_ptr<Stream>> m_streamMap;
-            std::vector<Message*> consoleText;
-            Triggers::TriggerGroup::Ptr consoleTriggers;
         };
     }
 }

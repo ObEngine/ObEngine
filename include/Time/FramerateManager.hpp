@@ -10,6 +10,7 @@ namespace obe
     {
         /**
          * \brief Class that handles Framerate, DeltaTime and stuff related to time
+         * @Bind
          */
         class FramerateManager
         {

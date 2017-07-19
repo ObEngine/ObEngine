@@ -97,31 +97,27 @@ namespace obe
             unsigned int getPointsAmount() const;
             /**
              * \brief Get if the Position (x, y) is on one of the side of the Polygon
-             * \param x x Coordinate of the Position to test
-             * \param y y Coordinate of the Position to test
+             * \param position Coordinate of the Position to test
              * \return An unsigned int containing the index of the side containing the position or -1 if not found
              */
             int getSideContainingPoint(const Transform::UnitVector& position);
             /**
              * \brief Check if a point of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
-             * \param x x Coordinate of the Position to test
-             * \param y y Coordinate of the Position to test
+             * \param position Coordinate of the Position to test
              * \param tolerance Position tolerance, bigger number means less precise
              * \return An unsigned int containing the index of the point containing the position or -1 if not found
              */
             int hasPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance);
             /**
              * \brief Check if the MasterPoint of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
-             * \param x x Coordinate of the Position to test
-             * \param y y Coordinate of the Position to test
+             * \param position Coordinate of the Position to test
              * \param tolerance Position tolerance, bigger number means less precise
              * \return true if the MasterPoint is on the given Positon, false otherwise
              */
             bool hasMasterPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const;
             /**
              * \brief Adds a new Point to the Polygon at Position (x, y)
-             * \param x x Coordinate of the Position where to add the new Point
-             * \param y y Coordinate of the Position where to add the new Point
+             * \param point Coordinate of the Position where to add the new Point
              * \param pointIndex Index where to insert the new Point, Use pointIndex = -1 <DefaultArg> to insert at the end (between last and first Point)
              */
             void addPoint(const Transform::UnitVector& point, int pointIndex = -1);
@@ -133,15 +129,13 @@ namespace obe
             /**
              * \brief Get the distance between a Point of the Polygon and the given Position(x, y)
              * \param pointIndex Index of the Point used to calculate the distance
-             * \param x x Coordinate of the Position used to calculate the distance
-             * \param y y Coordinate of the Position used to calculate the distance
+             * \param position Coordinate of the Position used to calculate the distance
              * \return Distance between the given Position and the Point of the Polygon
              */
             double getDistanceFromPoint(unsigned int pointIndex, const Transform::UnitVector& position);
             /**
              * \brief Find the closest Point from the given Position(x, y)
-             * \param x x Coordinate of the Position used to get the closest Point
-             * \param x y Coordinate of the Position used to get the closest Point
+             * \param position Coordinate of the Position used to get the closest Point
              * \param neighboor Get the closest neighboor of the closest Point instead of the Point
              * \param excludedPoints A std::vector containing points you want to exclude from the calculus (Not used in neighboor check step)
              * \return The index of the Point (or one of its neighboor) that is the closest one of the given Position

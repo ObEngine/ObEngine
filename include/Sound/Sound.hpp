@@ -10,6 +10,7 @@ namespace obe
     {
         /**
          * \brief A wrapper around sf::Sound
+         * @Bind
          */
         class SoundWrapper : public sf::Sound
         {

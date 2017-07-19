@@ -12,6 +12,7 @@ namespace obe
     {
         /**
          * \brief Class to display the amount of Frame and Update per Seconds
+         * @Bind
          */
         class FPSCounter
         {

@@ -11,6 +11,7 @@ namespace obe
     {
         /**
          * \brief Class used to manipulate paths and dynamically load resources (Based on multiple mounted paths)
+         * @Bind
          */
         class Path
         {

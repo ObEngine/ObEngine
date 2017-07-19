@@ -6,6 +6,30 @@ namespace obe
     {
         namespace AnimationBindings
         {
+            void LoadAnimation(kaguya::State& lua)
+            {
+                lua["Core"]["Animation"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
+                    .addFunction("applyParameters", &Animation::Animation::applyParameters)
+                    .addFunction("getAllAnimationGroupName", &Animation::Animation::getAllAnimationGroupName)
+                    .addFunction("getAnimationDelay", &Animation::Animation::getAnimationDelay)
+                    .addFunction("getAnimationGroup", &Animation::Animation::getAnimationGroup)
+                    .addFunction("getAnimationName", &Animation::Animation::getAnimationName)
+                    .addFunction("getAnimationPlayMode", &Animation::Animation::getAnimationPlayMode)
+                    .addFunction("getAnimationStatus", &Animation::Animation::getAnimationStatus)
+                    .addFunction("getCalledAnimation", &Animation::Animation::getCalledAnimation)
+                    .addFunction("getCurrentAnimationGroup", &Animation::Animation::getCurrentAnimationGroup)
+                    .addFunction("getPriority", &Animation::Animation::getPriority)
+                    .addFunction("getSpriteOffsetX", &Animation::Animation::getSpriteOffsetX)
+                    .addFunction("getSpriteOffsetY", &Animation::Animation::getSpriteOffsetY)
+                    .addFunction("getTexture", &Animation::Animation::getTexture)
+                    .addFunction("getTextureAtIndex", &Animation::Animation::getTextureAtIndex)
+                    .addFunction("isAnimationOver", &Animation::Animation::isAnimationOver)
+                    .addFunction("loadAnimation", &Animation::Animation::loadAnimation)
+                    .addFunction("reset", &Animation::Animation::reset)
+                    .addFunction("update", &Animation::Animation::update)
+                );
+            }
+
             void LoadAnimationGroup(kaguya::State& lua)
             {
                 lua["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
@@ -29,35 +53,11 @@ namespace obe
                 );
             }
 
-            void LoadAnimation(kaguya::State& lua)
-            {
-                lua["Core"]["Animation"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
-                    .setConstructors<Animation::Animation()>()
-                    .addFunction("applyParameters", &Animation::Animation::applyParameters)
-                    .addFunction("getAllAnimationGroupName", &Animation::Animation::getAllAnimationGroupName)
-                    .addFunction("getAnimationDelay", &Animation::Animation::getAnimationDelay)
-                    .addFunction("getAnimationGroup", &Animation::Animation::getAnimationGroup)
-                    .addFunction("getAnimationName", &Animation::Animation::getAnimationName)
-                    .addFunction("getAnimationPlayMode", &Animation::Animation::getAnimationPlayMode)
-                    .addFunction("getAnimationStatus", &Animation::Animation::getAnimationStatus)
-                    .addFunction("getCalledAnimation", &Animation::Animation::getCalledAnimation)
-                    .addFunction("getCurrentAnimationGroup", &Animation::Animation::getCurrentAnimationGroup)
-                    .addFunction("getPriority", &Animation::Animation::getPriority)
-                    .addFunction("getSpriteOffsetX", &Animation::Animation::getSpriteOffsetX)
-                    .addFunction("getSpriteOffsetY", &Animation::Animation::getSpriteOffsetY)
-                    .addFunction("getTexture", &Animation::Animation::getTexture)
-                    .addFunction("getTextureAtIndex", &Animation::Animation::getTextureAtIndex)
-                    .addFunction("isAnimationOver", &Animation::Animation::isAnimationOver)
-                    .addFunction("loadAnimation", &Animation::Animation::loadAnimation)
-                    .addFunction("reset", &Animation::Animation::reset)
-                    .addFunction("update", &Animation::Animation::update)
-                );
-            }
-
             void LoadAnimator(kaguya::State& lua)
             {
                 lua["Core"]["Animation"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()
                     .addFunction("clear", &Animation::Animator::clear)
+                    .addFunction("getAllAnimationName", &Animation::Animator::getAllAnimationName)
                     .addFunction("getAnimation", &Animation::Animator::getAnimation)
                     .addFunction("getKey", &Animation::Animator::getKey)
                     .addFunction("getSpriteOffsetX", &Animation::Animator::getSpriteOffsetX)
@@ -66,6 +66,10 @@ namespace obe
                     .addFunction("getTextureAtKey", &Animation::Animator::getTextureAtKey)
                     .addFunction("loadAnimator", &Animation::Animator::loadAnimator)
                     .addFunction("setKey", &Animation::Animator::setKey)
+                    .addOverloadedFunctions("setPath",
+                        static_cast<void (Animation::Animator::*)(System::Path)>(&Animation::Animator::setPath),
+                        static_cast<void (Animation::Animator::*)(const std::string&)>(&Animation::Animator::setPath)
+                    )
                     .addFunction("textureChanged", &Animation::Animator::textureChanged)
                     .addFunction("update", &Animation::Animator::update)
                 );

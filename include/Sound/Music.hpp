@@ -8,6 +8,7 @@ namespace obe
     {
         /**
          * \brief A Wrapper around sf::Music
+         * @Bind
          */
         class MusicWrapper : sf::Music
         {
