@@ -117,9 +117,6 @@ namespace obe
             drawOptions["point_color_7"] = sf::Color(0, 128, 255);
             drawOptions["point_color_8"] = sf::Color(0, 0, 255);
 
-            int pOffX = this->getXScaleFactor();
-            int pOffY = this->getYScaleFactor();
-
             Transform::UnitVector pixelPosition(spritePositionX, spritePositionY, Transform::Units::WorldPixels);
             drawPoints.emplace_back(pixelPosition.x, pixelPosition.y);
             drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y);

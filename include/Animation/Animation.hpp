@@ -11,8 +11,8 @@ namespace obe
     {
         /**
 		 * \brief The Play Mode of an Animation.\n
-		 *        It indicates whether an Animation can be interrupted or not and what to do when the Animation is over.
-		 */
+         *        It indicates whether an Animation can be interrupted or not and what to do when the Animation is over.
+         */
         enum class AnimationPlayMode
         {
             /**
@@ -47,7 +47,7 @@ namespace obe
             Play,
             /**
              * \brief The Animation will call another one.\n
-             *	      The name of the Animation to call is stored in m_animationToCall.\n
+             *        The name of the Animation to call is stored in m_animationToCall.\n
              *	      You can also get the Animation name to call by using Animation::getCalledAnimation().
              */
             Call
@@ -87,7 +87,7 @@ namespace obe
             std::string getAnimationName() const;
             /**
              * \brief Get the default delay of the Animation.\n 
-             *		  The delay will be transfered to AnimationGroup children if not specified.
+             *        The delay will be transfered to AnimationGroup children if not specified.
              * \return The default delay of the Animation in milliseconds.
              */
             unsigned int getAnimationDelay() const;
@@ -113,7 +113,7 @@ namespace obe
              * \return An enum value containing the AnimationPlayMode, it can be one of these modes :\n
              *		   - AnimationPlayMode::OneTime\n
              *		   - AnimationPlayMode::Loop\n
-             *		   - AnimationPlayMode::Force\n
+             *         - AnimationPlayMode::Force\n
              */
             AnimationPlayMode getAnimationPlayMode() const;
             /**
@@ -136,9 +136,9 @@ namespace obe
             /**
              * \brief Apply global Animation parameters (Sprite offset and priority)
              * \param parameters A vili::ComplexAttribute that contains the following facultative parameters :\n
-             *					 - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in pixels.\n
+             *                   - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in pixels.\n
              *					 - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in pixels.\n
-             *					 - priority : Priority of the Animation (A higher Animation priority can't be interrupted by an Animation with a lower one).
+             *                   - priority : Priority of the Animation (A higher Animation priority can't be interrupted by an Animation with a lower one).
              */
             void applyParameters(vili::ComplexAttribute& parameters);
             /**
@@ -178,7 +178,7 @@ namespace obe
             /**
              * \brief Returns the Animation priority
              * \return an int containing the priority of the Animation.\n
-             *		   Higher int is higher priority = Can't be interrupted by lower priority.
+             *         Higher int is higher priority = Can't be interrupted by lower priority.
              */
             int getPriority() const;
         };

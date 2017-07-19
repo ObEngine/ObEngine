@@ -118,8 +118,8 @@ namespace obe
             void reset();
             /**
              * \brief Decrement index of the current texture to be displayed.\n
-             *		  If index reach 0 and no more loops, the AnimationGroup index will stay at 0.\n
-             *		  If index reach 0 and there is some loops left, index will go at getGroupSize() - 1.
+             *        If index reach 0 and no more loops, the AnimationGroup index will stay at 0.\n
+             *        If index reach 0 and there is some loops left, index will go at getGroupSize() - 1.
              */
             void previous();
             /**

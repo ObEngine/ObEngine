@@ -33,8 +33,8 @@ namespace obe
          * Example : \n
          * "Path/To/Animator" : \n
          * - Walking/
-         *	- walking_01.png
-         *	- walking_02.png
+         *  - walking_01.png
+         *  - walking_02.png
          *	- Walking.ani.vili
          * - Running/
          *  - running_01.png
@@ -59,7 +59,7 @@ namespace obe
              * \brief Animator Class Path constructor (Equivalent to default constructor + Animation::setPath())
              * \param path Path to the Animator root
              */
-            Animator(System::Path path);
+            explicit Animator(System::Path path);
             /**
              * \brief Sets the path of the Animator root
              * \param path System::Path pointing to the Animator root
@@ -79,7 +79,7 @@ namespace obe
              * \brief Get the contained Animation pointer by Animation name
              * \param animationName Name of the Animation to get
              * \return A pointer to the wanted Animation.\n
-             *		   Throws a ObEngine.Animation.Animator.AnimationNotFound if the Animation is not found
+             *         Throws a ObEngine.Animation.Animator.AnimationNotFound if the Animation is not found
              */
             Animation* getAnimation(const std::string& animationName) const;
             /**
@@ -95,7 +95,7 @@ namespace obe
             /**
              * \brief Set the Animation to play by name
              * \param key A std::string containing the name of the Animation to play.\n
-             *			  Throws a ObEngine.Animation.Animator.AnimationNotFound exception if the Animation key is not found.
+             *            Throws a ObEngine.Animation.Animator.AnimationNotFound exception if the Animation key is not found.
              */
             void setKey(const std::string& key);
             /**

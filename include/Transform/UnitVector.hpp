@@ -72,7 +72,7 @@ namespace obe
             void set(double x, double y);
             /**
 			 * \brief Adds the values of the the given UnitVector but keeps base Unit
-			 * \param vec UnitVector containing the values to add
+             * \param vec UnitVector containing the values to add
 			 */
             void add(const UnitVector& vec);
             /**

@@ -228,10 +228,6 @@ namespace obe
                 int zdepth = currentSprite.contains(vili::AttributeType::BaseAttribute, "z-depth") ?
                                  currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
 
-                if (obj.at("LevelSprite").contains(vili::AttributeType::BaseAttribute, "offsetX"))
-                    sprOffX = obj.at("LevelSprite").getBaseAttribute("offsetX").get<int>();
-                if (obj.at("LevelSprite").contains(vili::AttributeType::BaseAttribute, "offsetY"))
-                    sprOffY = obj.at("LevelSprite").getBaseAttribute("offsetY").get<int>();
                 if (obj.at("LevelSprite").contains(vili::AttributeType::ListAttribute, "attributeList"))
                 {
                     int atrListSize = obj.at("LevelSprite").getListAttribute("attributeList").size();

@@ -192,7 +192,7 @@ namespace obe
             else
             {
                 std::string key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-                Script::GameObject* obj = Script::hookCore.getPointer("World")->as<Scene::World*>()->createGameObject(key, objName);
+                Script::hookCore.getPointer("World")->as<Scene::World*>()->createGameObject(key, objName);
             }
         }
 

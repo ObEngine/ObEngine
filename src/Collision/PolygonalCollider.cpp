@@ -130,7 +130,6 @@ namespace obe
             case ColliderTagType::Tag: return m_tags;
             case ColliderTagType::Accepted: return m_acceptedTags;
             case ColliderTagType::Rejected: return m_rejectedTags;
-            default: ;
             }
         }
 

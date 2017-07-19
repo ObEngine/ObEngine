@@ -70,9 +70,10 @@ namespace obe
             vili::ComplexAttribute* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
             {
                 std::cout << "Convert table : " << id << std::endl;
-                vili::ComplexAttribute* returnElement = new vili::ComplexAttribute(id);
+                vili::ComplexAttribute* returnElement = nullptr;
                 if (convert.type() == 0 || convert.type() == 5)
                 {
+                    returnElement = new vili::ComplexAttribute(id);
                     std::map<std::string, kaguya::LuaRef> tableMap = convert;
                     for (std::pair<std::string, kaguya::LuaRef> tableItem : tableMap)
                     {
@@ -92,14 +93,13 @@ namespace obe
                     }
                 }
                 else
-                    throw aube::ErrorHandler::Raise("ObEngine.ViliLuaBridge.LuaTableToComplexAttribute.NotATable", {{"id", id}});
+                    throw aube::ErrorHandler::Raise("ObEngine.ViliLuaBridge.LuaTableToComplexAttribute.NotATable", { { "id", id } });
                 return returnElement;
             }
 
             vili::BaseAttribute* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert)
             {
-                std::string convertType = "";
-                vili::BaseAttribute* returnAttribute;
+                vili::BaseAttribute* returnAttribute = nullptr;
                 if (convert.type() == 3 && Utils::String::isStringInt(convert))
                 {
                     returnAttribute = new vili::BaseAttribute(id, vili::DataType::Int);

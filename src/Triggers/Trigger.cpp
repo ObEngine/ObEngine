@@ -4,7 +4,7 @@
 
 
 #define StartCheck if (false) {}
-#define AffectIfCorrectType(...) else if(affectIfCorrectType<__VA_ARGS__>(lua,parameter)){}
+#define AffectIfCorrectType(...) else if (affectIfCorrectType<__VA_ARGS__>(lua,parameter)){}
 #define EndCheck else { return parameter.first; }
 
 namespace obe

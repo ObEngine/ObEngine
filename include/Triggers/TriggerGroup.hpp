@@ -121,8 +121,8 @@ namespace obe
             std::string getName() const;
 
             /**
-			 * \brief Smart pointer for TriggerGroup
-			 */
+             * \brief Smart pointer for TriggerGroup
+             */
             class Ptr
             {
             private:
@@ -131,7 +131,7 @@ namespace obe
                 unsigned int m_id = 0;
                 friend class TriggerDatabase;
             public:
-                Ptr(TriggerGroup* link);
+                explicit Ptr(TriggerGroup* link);
                 Ptr& operator=(const Ptr& link);
                 TriggerGroup* operator->() const;
                 ~Ptr();

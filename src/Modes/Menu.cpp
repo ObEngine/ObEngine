@@ -33,7 +33,7 @@ namespace obe
             middlePanel->removeAllWidgets();
 
             std::vector<std::string> allMapsTemp;
-            std::string fPath = System::Path("Data/Maps").loadResource(&allMapsTemp, System::Loaders::filePathLoader);
+            System::Path("Data/Maps").loadResource(&allMapsTemp, System::Loaders::filePathLoader);
             std::vector<std::string> allMaps;
             for (int i = 0; i < allMapsTemp.size(); i++)
             {
@@ -42,13 +42,10 @@ namespace obe
             }
             for (int i = 0; i < allMaps.size(); i++)
             {
-                std::string mapFile = allMaps[i];
                 vili::DataParser mapInfoParser;
                 System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
                 std::string filename = allMapsTemp[i];
                 std::string levelName = "???";
-                int mapSizeX = 0;
-                int mapSizeY = 0;
 
                 if (mapInfoParser->contains(vili::AttributeType::ComplexAttribute, "Meta"))
                 {

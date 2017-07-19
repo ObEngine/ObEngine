@@ -18,7 +18,7 @@ namespace obe
             std::vector<std::pair<std::string, std::string>> requires;
             std::string m_id;
         public:
-            Element(const std::string& id);
+            explicit Element(const std::string& id);
             virtual ~Element() = default;
             virtual void update(kaguya::State* state) = 0;
         };
@@ -28,7 +28,7 @@ namespace obe
         protected:
             kaguya::LuaTable m_tableWrapper;
         public:
-            Configurable(const std::string& id);
+            explicit Configurable(const std::string& id);
             kaguya::LuaTable& init(const kaguya::LuaTable& tableWrapper);
             kaguya::LuaTable& get();
             void update(kaguya::State* state) override;
@@ -39,7 +39,7 @@ namespace obe
         protected:
             unsigned int m_layer = 1;
         public:
-            Drawable(const std::string& id);
+            explicit Drawable(const std::string& id);
             virtual void draw(sf::RenderTexture& target) const = 0;
             void update(kaguya::State* state) override;
         };
@@ -49,7 +49,7 @@ namespace obe
         protected:
             sf::Color m_color;
         public:
-            Colorable(const std::string& id);
+            explicit Colorable(const std::string& id);
             void draw(sf::RenderTexture& target) const override = 0;
             void update(kaguya::State* state) override;
         };
@@ -67,14 +67,14 @@ namespace obe
             double m_rotationOriginX;
             double m_rotationOriginY;
         public:
-            Transformable(const std::string& id);
+            explicit Transformable(const std::string& id);
             void update(kaguya::State* state) override;
         };
 
         class CanvasElement : public virtual Drawable
         {
         public:
-            CanvasElement(const std::string& id);
+            explicit CanvasElement(const std::string& id);
             void draw(sf::RenderTexture& target) const override = 0;
             void update(kaguya::State* state) override;
         };
@@ -87,7 +87,7 @@ namespace obe
             int m_y1;
             int m_y2;
         public:
-            Line(const std::string& id);
+            explicit Line(const std::string& id);
             void draw(sf::RenderTexture& target) const override;
             void update(kaguya::State* state) override;
         };
@@ -95,7 +95,7 @@ namespace obe
         class Rectangle : public CanvasElement, public Colorable, public Transformable
         {
         public:
-            Rectangle(const std::string& id);
+            explicit Rectangle(const std::string& id);
             void draw(sf::RenderTexture& target) const override;
             void update(kaguya::State* state) override;
         };
@@ -107,7 +107,7 @@ namespace obe
             std::string m_text;
             std::string m_font;
         public:
-            Text(const std::string& id);
+            explicit Text(const std::string& id);
             void draw(sf::RenderTexture& target) const override;
             void update(kaguya::State* state) override;
         };
@@ -117,7 +117,7 @@ namespace obe
         private:
             double m_radius;
         public:
-            Circle(const std::string& id);
+            explicit Circle(const std::string& id);
             void draw(sf::RenderTexture& target) const override;
             void update(kaguya::State* state) override;
         };

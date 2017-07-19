@@ -18,7 +18,7 @@ namespace obe
              * \brief Creates a new ProtectedUnitVector
              * \param unit Unit of the ProtectedUnitVector
              */
-            ProtectedUnitVector(const Units& unit = Units::WorldUnits);
+            explicit ProtectedUnitVector(const Units& unit = Units::WorldUnits);
             /**
              * \brief Creates a new ProtectedUnitVector
              * \param x x Coordinate of the Position of the ProtectedUnitVector
