@@ -240,68 +240,6 @@ namespace obe
 
             mapNameInput->setText(world.getLevelName());
 
-            Debug::Console::Stream* crashStream = gameConsole.createStream("CT", true);
-            Debug::Console::Message* collidingMessage = crashStream->push("Test de collision : Faux");
-            collidingMessage->setColor(sf::Color::Red);
-            Debug::Console::Message* p0Message = crashStream->push("Position basse du Collider 0 : ");
-            Debug::Console::Message* p1Message = crashStream->push("Position haute du Collider 1 : ");
-            Debug::Console::Message* speedMessage = crashStream->push("Vitesse actuelle : 0");
-            
-            double angleRot = 180;
-            double speed = 0;
-            bool triggerMe = false;
-
-            Script::ScriptEngine["boum"] = kaguya::function([&triggerMe]() {
-                triggerMe = true;
-            });
-
-            Script::ScriptEngine["yay"] = kaguya::function([&world]() {
-                Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
-                Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
-                double addX = 100;
-                double addY = 0;
-
-                Transform::UnitVector tOffset(addX, addY, Transform::Units::WorldPixels);
-                Transform::UnitVector maxDepDist = collider0->getMaximumDistanceBeforeCollision(*collider1, tOffset);
-                collider0->move(maxDepDist);
-            });
-
-            Script::ScriptEngine["wow"] = kaguya::function([&world, &triggerMe, &speed, &angleRot, &framerateManager, &collidingMessage, &p0Message, &p1Message, &speedMessage]() {
-                Collision::PolygonalCollider* collider0 = world.getCollisionByID("collider0");
-                Collision::PolygonalCollider* collider1 = world.getCollisionByID("collider1");
-                if (triggerMe)
-                {
-                    double radAngle = (Utils::Math::pi / 180.0) * ((90 - angleRot) * -1);
-                    speed += 1000 * framerateManager.getGameSpeed();
-                    double addX = std::cos(radAngle) * (speed * framerateManager.getGameSpeed());
-                    double addY = std::sin(radAngle) * (speed * framerateManager.getGameSpeed());
-                    
-                    Transform::UnitVector tOffset(addX, addY, Transform::Units::WorldPixels);
-                    Transform::UnitVector maxDepDist = collider0->getMaximumDistanceBeforeCollision(*collider1, tOffset);
-                    collider0->move(maxDepDist);
-                    if (maxDepDist.y == 0)
-                    {
-                        triggerMe = false;
-                        speed = 0;
-                        collidingMessage->setColor(sf::Color::Red);
-                        collidingMessage->setMessage("Test de collision : Faux");
-                    }
-                }
-                else if (collider0 != nullptr && collider1 != nullptr && collider0->doesCollide(*collider1, Transform::UnitVector(0, 0)))
-                {
-                    collidingMessage->setColor(sf::Color::Green);
-                    collidingMessage->setMessage("Test de collision : Vrai");
-                }
-                else
-                {
-                    collidingMessage->setColor(sf::Color::Red);
-                    collidingMessage->setMessage("Test de collision : Faux");
-                }
-                p0Message->setMessage("Position basse du Collider 0 : " + std::to_string(collider0->getPointPosition(2).y));
-                p1Message->setMessage("Position haute du Collider 1 : " + std::to_string(collider1->getPointPosition(0).y));
-                speedMessage->setMessage("Vitesse actuelle : " + std::to_string(speed));
-            });
-
             //Game Starts
             while (window.isOpen())
             {
@@ -729,7 +667,6 @@ namespace obe
                 networkHandler.handleTriggers();
                 cursor.handleTriggers();
                 keybind.handleTriggers();
-                Script::ScriptEngine("wow()");
 
                 while (window.pollEvent(event))
                 {
