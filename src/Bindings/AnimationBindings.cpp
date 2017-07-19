@@ -1,3 +1,6 @@
+#include <Animation/Animation.hpp>
+#include <Animation/AnimationGroup.hpp>
+#include <Animation/Animator.hpp>
 #include <Bindings/AnimationBindings.hpp>
 
 namespace obe

@@ -2,11 +2,6 @@
 
 #include <kaguya/kaguya.hpp>
 
-#include <Animation/AnimationGroup.hpp>
-#include <Animation/Animation.hpp>
-#include <Animation/Animator.hpp>
-#include <Bindings/BindingUtils.hpp>
-
 namespace obe
 {
     namespace Bindings
