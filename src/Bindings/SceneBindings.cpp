@@ -16,15 +16,15 @@ namespace obe
                 .addFunction("getY", &Scene::Camera::getY)
                 .addFunction("lock", &Scene::Camera::lock)
                 .addOverloadedFunctions("move",
-                    static_cast<void (Scene::Camera::*)(const Transform::UnitVector&)>(&Scene::Camera::move),
-                    static_cast<void (Scene::Camera::*)(double, double)>(&Scene::Camera::move)
+                                        static_cast<void (Scene::Camera::*)(const Transform::UnitVector&)>(&Scene::Camera::move),
+                                        static_cast<void (Scene::Camera::*)(double, double)>(&Scene::Camera::move)
                 )
                 .addFunction("rotate", &Scene::Camera::rotate)
                 .addFunction("scale", &Scene::Camera::scale)
                 .addFunction("setAngle", &Scene::Camera::setAngle)
                 .addOverloadedFunctions("setPosition",
-                    static_cast<void (Scene::Camera::*)(const Transform::UnitVector&, Transform::Referencial)>(&Scene::Camera::setPosition),
-                    static_cast<void (Scene::Camera::*)(double, double, Transform::Referencial)>(&Scene::Camera::setPosition)
+                                        static_cast<void (Scene::Camera::*)(const Transform::UnitVector&, Transform::Referencial)>(&Scene::Camera::setPosition),
+                                        static_cast<void (Scene::Camera::*)(double, double, Transform::Referencial)>(&Scene::Camera::setPosition)
                 )
                 .addFunction("setSize", &Scene::Camera::setSize)
                 .addFunction("setX", &Scene::Camera::setX)

@@ -18,7 +18,7 @@ namespace obe
             std::map<std::string, std::unique_ptr<Trigger>> m_triggerMap;
             std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
             bool m_joinable = false;
-			unsigned int m_references = 0;
+            unsigned int m_references = 0;
             friend class TriggerDatabase;
         public:
             /**
@@ -89,7 +89,7 @@ namespace obe
              * \return true if the Trigger is enabled, false otherwise
              */
             bool getState(const std::string& triggerName);
-            
+
             /**
              * \brief Pushes a Parameter to a Trigger
              * \tparam P Type of the Parameter
@@ -119,23 +119,25 @@ namespace obe
              * \return A std::string containing the name of the TriggerGroup
              */
             std::string getName() const;
+
             /**
 			 * \brief Smart pointer for TriggerGroup
 			 */
-			class Ptr
-			{
-			private:
-				TriggerGroup* m_link = nullptr;
+            class Ptr
+            {
+            private:
+                TriggerGroup* m_link = nullptr;
                 static unsigned int amount;
                 unsigned int m_id = 0;
-				friend class TriggerDatabase;
-			public:
-			    Ptr(TriggerGroup* link);
+                friend class TriggerDatabase;
+            public:
+                Ptr(TriggerGroup* link);
                 Ptr& operator=(const Ptr& link);
-				TriggerGroup* operator->() const;
-				~Ptr();
-			};
-			friend class TriggerGroup::Ptr;
+                TriggerGroup* operator->() const;
+                ~Ptr();
+            };
+
+            friend class Ptr;
         };
 
         template <typename P>

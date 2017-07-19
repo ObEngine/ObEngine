@@ -19,12 +19,12 @@ namespace obe
             std::map<std::string, std::unique_ptr<sf::Texture>> m_textureDatabase;
             static ResourceManager* m_instance;
         public:
-	        /**
+            /**
              * \brief Access the Instance of the ResourceManager
              * \return A pointer to the Instance of the ResourceManager
              */
             static ResourceManager* GetInstance();
-	        /**
+            /**
              * \brief Get the texture at the given path.\n 
              *		  If it's already in cache it returns the cached version.\n
              *		  Otherwise it loads the texture and caches it.

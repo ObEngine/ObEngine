@@ -84,9 +84,9 @@ namespace obe
                 editorButton->setRenderer(baseTheme.getRenderer("Button"));
 
                 editorButton->connect("pressed", [&editorPanel]()
-                {
-                    editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
-                });
+                                  {
+                                      editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
+                                  });
             }
 
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel)
@@ -99,7 +99,7 @@ namespace obe
                 tgui::Button::Ptr mapButton = tgui::Button::create();
                 tgui::Button::Ptr settingsButton = tgui::Button::create();
                 tgui::Button::Ptr spritesButton = tgui::Button::create();
-                tgui::Button::Ptr objectsButton = tgui::Button::create(); 
+                tgui::Button::Ptr objectsButton = tgui::Button::create();
 
                 mainPanel->add(editorPanel, "editorPanel");
                 editorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
@@ -162,52 +162,52 @@ namespace obe
                 objectsPanel->hide();
 
                 mapButton->connect("pressed", [&mainPanel]()
-                {
-                    mainPanel->get<tgui::Panel>("mapPanel", true)->show();
-                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
-                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                });
+                               {
+                                   mainPanel->get<tgui::Panel>("mapPanel", true)->show();
+                                   mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                                   mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                                   mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                                   mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                                   mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                   mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                   mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                               });
 
                 settingsButton->connect("pressed", [&mainPanel]()
-                {
-                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("settingsPanel", true)->show();
-                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
-                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                });
+                                    {
+                                        mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                                        mainPanel->get<tgui::Panel>("settingsPanel", true)->show();
+                                        mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                                        mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                                        mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                        mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                                        mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                        mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                    });
 
                 spritesButton->connect("pressed", [&mainPanel]()
-                {
-                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("spritesPanel", true)->show();
-                    mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
-                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                });
+                                   {
+                                       mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                                       mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                                       mainPanel->get<tgui::Panel>("spritesPanel", true)->show();
+                                       mainPanel->get<tgui::Panel>("objectsPanel", true)->hide();
+                                       mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                       mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                       mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                                       mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                   });
 
                 objectsButton->connect("pressed", [&mainPanel]()
-                {
-                    mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
-                    mainPanel->get<tgui::Panel>("objectsPanel", true)->show();
-                    mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                    mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
-                });
+                                   {
+                                       mainPanel->get<tgui::Panel>("mapPanel", true)->hide();
+                                       mainPanel->get<tgui::Panel>("settingsPanel", true)->hide();
+                                       mainPanel->get<tgui::Panel>("spritesPanel", true)->hide();
+                                       mainPanel->get<tgui::Panel>("objectsPanel", true)->show();
+                                       mainPanel->get<tgui::Button>("mapButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                       mainPanel->get<tgui::Button>("settingsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                                       mainPanel->get<tgui::Button>("spritesButton", true)->setRenderer(baseTheme.getRenderer("Button"));
+                                       mainPanel->get<tgui::Button>("objectsButton", true)->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                                   });
             }
 
             void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::World& world)
@@ -240,21 +240,21 @@ namespace obe
                 mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 mapNameButton->setSize(16, 16);
                 mapNameButton->connect("pressed", [&world, &mapPanel]()
-                {
-                    tgui::TextBox::Ptr mapNameInput = mapPanel->get<tgui::TextBox>("mapNameInput", true);
-                    if (mapNameInput->getText() != "")
-                    {
-                        world.setLevelName(mapNameInput->getText());
-                        mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                    }
-                    else
-                    {
-                        mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                    }
-                });
+                                   {
+                                       tgui::TextBox::Ptr mapNameInput = mapPanel->get<tgui::TextBox>("mapNameInput", true);
+                                       if (mapNameInput->getText() != "")
+                                       {
+                                           world.setLevelName(mapNameInput->getText());
+                                           mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                       }
+                                       else
+                                       {
+                                           mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                                       }
+                                   });
             }
 
-            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, Editor::EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode)
+            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode)
             {
                 tgui::Label::Ptr settingsCatLabel = tgui::Label::create();
                 tgui::CheckBox::Ptr displayFramerateCheckbox = tgui::CheckBox::create();
@@ -301,16 +301,16 @@ namespace obe
                 enableGridCheckbox->setText("Enabled Grid ?");
 
                 enableGridCheckbox->connect("checked", [snapGridCheckbox]()
-                {
-                    snapGridCheckbox->enable();
-                    snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
-                });
+                                        {
+                                            snapGridCheckbox->enable();
+                                            snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+                                        });
 
                 enableGridCheckbox->connect("unchecked", [snapGridCheckbox]()
-                {
-                    snapGridCheckbox->disable();
-                    snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
-                });
+                                        {
+                                            snapGridCheckbox->disable();
+                                            snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
+                                        });
 
                 gridDimensionLabel->setPosition(60, bindBottom(enableGridCheckbox) + 20);
                 gridDimensionLabel->setTextSize(mediumFontSize);
@@ -332,34 +332,34 @@ namespace obe
                 gridDimensionButton->setSize(16, 16);
 
                 gridDimensionButton->connect("pressed", [gridDimensionXInput, gridDimensionYInput, &editorGrid]()
-                {
-                    gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                    gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                    if (Utils::String::isStringInt(gridDimensionXInput->getText()) && Utils::String::isStringInt(gridDimensionYInput->getText()))
-                    {
-                        std::string xGridSize = gridDimensionXInput->getText();
-                        std::string yGridSize = gridDimensionYInput->getText();
-                        if (stoi(xGridSize) < 2 || stoi(yGridSize) < 2)
-                        {
-                            editorGrid.setSize(2, 2);
-                            gridDimensionXInput->setText("2");
-                            gridDimensionYInput->setText("2");
-                        }
-                        else
-                            editorGrid.setSize(stoi(xGridSize), stoi(yGridSize));
-                        gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                        gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                        return;
-                    }
-                    if (!Utils::String::isStringInt(gridDimensionXInput->getText()))
-                    {
-                        gridDimensionXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                    }
-                    if (!Utils::String::isStringInt(gridDimensionYInput->getText()))
-                    {
-                        gridDimensionYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                    }
-                });
+                                         {
+                                             gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                             gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                             if (Utils::String::isStringInt(gridDimensionXInput->getText()) && Utils::String::isStringInt(gridDimensionYInput->getText()))
+                                             {
+                                                 std::string xGridSize = gridDimensionXInput->getText();
+                                                 std::string yGridSize = gridDimensionYInput->getText();
+                                                 if (stoi(xGridSize) < 2 || stoi(yGridSize) < 2)
+                                                 {
+                                                     editorGrid.setSize(2, 2);
+                                                     gridDimensionXInput->setText("2");
+                                                     gridDimensionYInput->setText("2");
+                                                 }
+                                                 else
+                                                     editorGrid.setSize(stoi(xGridSize), stoi(yGridSize));
+                                                 gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                                 gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                                 return;
+                                             }
+                                             if (!Utils::String::isStringInt(gridDimensionXInput->getText()))
+                                             {
+                                                 gridDimensionXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                                             }
+                                             if (!Utils::String::isStringInt(gridDimensionYInput->getText()))
+                                             {
+                                                 gridDimensionYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                                             }
+                                         });
 
                 gridOffsetLabel->setPosition(60, bindBottom(gridDimensionLabel) + 20);
                 gridOffsetLabel->setTextSize(mediumFontSize);
@@ -381,25 +381,25 @@ namespace obe
                 gridOffsetButton->setSize(16, 16);
 
                 gridOffsetButton->connect("pressed", [gridOffsetXInput, gridOffsetYInput, &editorGrid]()
-                {
-                    if (Utils::String::isStringInt(gridOffsetXInput->getText()) && Utils::String::isStringInt(gridOffsetYInput->getText()))
-                    {
-                        std::string xGridOffset = gridOffsetXInput->getText();
-                        std::string yGridOffset = gridOffsetYInput->getText();
-                        editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
-                        gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                        gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                        return;
-                    }
-                    if (!Utils::String::isStringInt(gridOffsetXInput->getText()))
-                    {
-                        gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                    }
-                    if (!Utils::String::isStringInt(gridOffsetYInput->getText()))
-                    {
-                        gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-                    }
-                });
+                                      {
+                                          if (Utils::String::isStringInt(gridOffsetXInput->getText()) && Utils::String::isStringInt(gridOffsetYInput->getText()))
+                                          {
+                                              std::string xGridOffset = gridOffsetXInput->getText();
+                                              std::string yGridOffset = gridOffsetYInput->getText();
+                                              editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
+                                              gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                              gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                                              return;
+                                          }
+                                          if (!Utils::String::isStringInt(gridOffsetXInput->getText()))
+                                          {
+                                              gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                                          }
+                                          if (!Utils::String::isStringInt(gridOffsetYInput->getText()))
+                                          {
+                                              gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                                          }
+                                      });
 
                 snapGridCheckbox->setPosition(60, bindBottom(gridOffsetLabel) + 20);
                 snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
@@ -409,26 +409,26 @@ namespace obe
                 snapGridCheckbox->disable();
 
                 snapGridCheckbox->connect("checked", [&editorGrid, &cursor, &editMode]()
-                {
-                    cursor.setConstraint([&editMode, &editorGrid](System::Cursor* cursor)
-                    {
-                        if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
-                        {
-                            int snappedX = cursor->getRawX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
-                            int snappedY = cursor->getRawY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
-                            return std::pair<int, int>(snappedX, snappedY);
-                        }
-                        else
-                        {
-                            return System::Constraints::Default(cursor);
-                        }
-                    });
-                });
+                                      {
+                                          cursor.setConstraint([&editMode, &editorGrid](System::Cursor* cursor)
+                                          {
+                                              if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
+                                              {
+                                                  int snappedX = cursor->getRawX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
+                                                  int snappedY = cursor->getRawY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
+                                                  return std::pair<int, int>(snappedX, snappedY);
+                                              }
+                                              else
+                                              {
+                                                  return System::Constraints::Default(cursor);
+                                              }
+                                          });
+                                      });
 
                 snapGridCheckbox->connect("unchecked", [&cursor]()
-                {
-                    cursor.setConstraint(System::Constraints::Default);
-                });
+                                      {
+                                          cursor.setConstraint(System::Constraints::Default);
+                                      });
             }
 
             void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel)
@@ -442,7 +442,7 @@ namespace obe
                 spritesCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 spritesCatLabel->setText("[ Sprites Settings ]");
 
-                Editor::loadSpriteFolder(spritesPanel, spritesCatLabel, "");
+                loadSpriteFolder(spritesPanel, spritesCatLabel, "");
             }
 
             void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel)
@@ -456,7 +456,7 @@ namespace obe
                 objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 objectsCatLabel->setText("[ Objects Settings ]");
 
-                Editor::buildObjectTab(objectsPanel, requiresPanel, baseTheme);
+                buildObjectTab(objectsPanel, requiresPanel, baseTheme);
             }
 
             void buildObjectCreationMenu(tgui::Panel::Ptr& mainPanel)
@@ -478,9 +478,9 @@ namespace obe
                 requiresCloseButton->setSize("32", "32");
                 requiresCloseButton->setPosition("&.width - 40", "8");
                 requiresCloseButton->connect("pressed", [requiresPanel]()
-                {
-                    requiresPanel->hide();
-                });
+                                         {
+                                             requiresPanel->hide();
+                                         });
                 requiresPanel->add(requiresCloseButton, "requiresCloseButton");
 
                 requiresTitleLabel->setPosition(30, 15);

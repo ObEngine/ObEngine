@@ -45,9 +45,9 @@ namespace obe
 
         std::vector<std::string> Animator::getAllAnimationName() const
         {
-			std::vector<std::string> allAnimationsNames;
-			for (auto& animationPair : m_animationSet)
-				allAnimationsNames.push_back(animationPair.first);
+            std::vector<std::string> allAnimationsNames;
+            for (auto& animationPair : m_animationSet)
+                allAnimationsNames.push_back(animationPair.first);
             return allAnimationsNames;
         }
 
@@ -95,7 +95,7 @@ namespace obe
             m_animatorPath.loadResource(&allFiles, System::Loaders::filePathLoader);
             vili::DataParser animatorCfgFile;
             std::map<std::string, vili::ComplexAttribute*> animationParameters;
-	        if (Utils::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
+            if (Utils::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
             {
                 System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
                 for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::AttributeType::ComplexAttribute))
@@ -128,7 +128,7 @@ namespace obe
                 m_currentAnimation = m_animationSet[m_currentAnimation->getCalledAnimation()].get();
             }
             if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
-                m_currentAnimation->update();      
+                m_currentAnimation->update();
         }
 
         const sf::Texture& Animator::getTexture()

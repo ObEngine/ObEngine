@@ -13,8 +13,7 @@ namespace obe
             {
                 if (options.find(key) == options.end())
                     return defaultValue;
-                else
-                    return options[key].as<T>();
+                return options[key].as<T>();
             }
 
             void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int w, sf::Color& col)

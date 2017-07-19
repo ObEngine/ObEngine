@@ -16,7 +16,7 @@ namespace obe
         class FPSCounter
         {
         private:
-            Time::TimeUnit m_lastTick = Time::getTickSinceEpoch();
+            TimeUnit m_lastTick = getTickSinceEpoch();
             int m_fpsCounter = 0;
             int m_updCounter = 0;
             int m_saveFPS = 0;

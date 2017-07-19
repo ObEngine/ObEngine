@@ -74,7 +74,7 @@ namespace obe
 			 * \brief Adds the values of the the given UnitVector but keeps base Unit
 			 * \param vec UnitVector containing the values to add
 			 */
-			void add(const UnitVector& vec);
+            void add(const UnitVector& vec);
             /**
              * \brief Add the new given values but keeps base Unit
              * \param x x Coordinate to add

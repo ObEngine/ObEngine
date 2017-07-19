@@ -232,7 +232,7 @@ namespace obe
 
         void startDevMenu()
         {
-            sf::RenderWindow window({ 636, 636 }, "ObEngine Development Window", sf::Style::None);
+            sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 
             tgui::Gui gui(window);
             gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -265,39 +265,39 @@ namespace obe
             closeButton->setSize("32", "32");
             closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
             closeButton->connect("pressed", [&window]()
-            {
-                window.close();
-            });
+                             {
+                                 window.close();
+                             });
 
             playButton->setRenderer(baseTheme.getRenderer("PlaySquareButton"));
             playButton->setSize("318", "286");
             playButton->setPosition("0", "0");
             playButton->connect("pressed", []()
-            {
-                startGame();
-            });
+                            {
+                                startGame();
+                            });
 
             editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
             editButton->setSize("318", "286");
-            editButton->setPosition(tgui::bindRight(playButton), "0");
+            editButton->setPosition(bindRight(playButton), "0");
             editButton->connect("pressed", []()
-            {
-                std::string editMapName = obe::Modes::chooseMapMenu();
-                if (editMapName != "")
-                    Editor::editMap(editMapName);
-            });
+                            {
+                                std::string editMapName = chooseMapMenu();
+                                if (editMapName != "")
+                                    Editor::editMap(editMapName);
+                            });
 
             toolkitButton->setRenderer(baseTheme.getRenderer("ToolkitSquareButton"));
             toolkitButton->setSize("318", "286");
-            toolkitButton->setPosition("0", tgui::bindBottom(playButton));
+            toolkitButton->setPosition("0", bindBottom(playButton));
             toolkitButton->connect("pressed", [&window]()
-            {
-                startToolkitMode();
-            });
+                               {
+                                   startToolkitMode();
+                               });
 
             helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));
             helpButton->setSize("318", "286");
-            helpButton->setPosition(tgui::bindLeft(editButton), tgui::bindBottom(playButton));
+            helpButton->setPosition(bindLeft(editButton), bindBottom(playButton));
             //helpButton->connect("pressed", [&window]()
 
             gui.add(topPanel);

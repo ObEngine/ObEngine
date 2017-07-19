@@ -7,7 +7,9 @@ namespace obe
 {
     namespace Bindings
     {
-        BindingTree BindTree("Root", [](kaguya::State& lua){});
+        BindingTree BindTree("Root", [](kaguya::State& lua)
+                         {
+                         });
 
         void BuildLuaLibPath(LuaTRef lua, std::vector<std::string>& path)
         {
@@ -57,11 +59,11 @@ namespace obe
             BindTree
                 .add("Core")
                 ["Core"]
-                    .add("Animation")
-                    ["Animation"]
-                        .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
-                        .add("Animation", &AnimationBindings::LoadAnimation)
-                        .add("Animator", &AnimationBindings::LoadAnimator);
+                .add("Animation")
+                ["Animation"]
+                .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
+                .add("Animation", &AnimationBindings::LoadAnimation)
+                .add("Animator", &AnimationBindings::LoadAnimator);
         }
     }
 }

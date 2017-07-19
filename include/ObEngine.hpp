@@ -10,65 +10,112 @@ namespace obe
     /**
      * \brief Classes to Handle Animation
      */
-    namespace Animation {}
+    namespace Animation
+    {
+    }
+
     /**
      * \brief Classes and Functions to Handle Collisions
      */
-    namespace Collision {}
+    namespace Collision
+    {
+    }
+
     /**
      * \brief Classes and Functions to Debug games created with the Engine
      */
-    namespace Debug {}
+    namespace Debug
+    {
+    }
+
     /**
      * \brief Classes and Functions related to the Map Editor
      */
-    namespace Editor {}
+    namespace Editor
+    {
+    }
+
     /**
      * \brief Classes and Functions related to Graphics in the Engine
      */
-    namespace Graphics {}
+    namespace Graphics
+    {
+    }
+
     /**
      * \brief Classes and Functions related to Input in the Engine
      */
-    namespace Input {}
+    namespace Input
+    {
+    }
+
     /**
      * \brief Classes and Functions to handle Network
      */
-    namespace Network {}
+    namespace Network
+    {
+    }
+
     /**
      * \brief Classes and Functions to work with the Scene
      */
-    namespace Scene {}
+    namespace Scene
+    {
+    }
+
     /**
      * \brief Classes and Functions about Scripting support
      */
-    namespace Script {}
+    namespace Script
+    {
+    }
+
     /**
      * \brief Classes to handle Sound
      */
-    namespace Sound {}
+    namespace Sound
+    {
+    }
+
     /**
      * \brief System Classes and Functions
      */
-    namespace System {}
+    namespace System
+    {
+    }
+
     /**
      * \brief Classes and Functions to handle Time in the Engine
      */
-    namespace Time {}
+    namespace Time
+    {
+    }
+
     /**
      * \brief Classes and Functions to handle all types of 2d Transformations in the Engine
      */
-    namespace Transform {}
+    namespace Transform
+    {
+    }
+
     /**
      * \brief Classes and Functions to handle Triggers (Events)
      */
-    namespace Triggers {}
+    namespace Triggers
+    {
+    }
+
     /**
      * \brief Various Classes representing abstract Types
      */
-    namespace Types {}
+    namespace Types
+    {
+    }
+
     /**
      * \brief Various General Functions
      */
-    namespace Utils {}
+    namespace Utils
+    {
+    }
 }

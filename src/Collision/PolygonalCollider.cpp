@@ -28,6 +28,7 @@ namespace obe
             }
             return false;
         }
+
         double pointsDistance(const Transform::UnitVector& first, const Transform::UnitVector& second)
         {
             return std::sqrt(std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
@@ -346,9 +347,9 @@ namespace obe
             if (m_allPoints.size() >= 1)
             {
                 std::map<std::string, Types::Any> drawOptions;
-                
+
                 int r = 6;
-                
+
                 drawOptions["lines"] = drawLines;
                 drawOptions["points"] = drawPoints;
                 drawOptions["radius"] = r;
@@ -362,9 +363,9 @@ namespace obe
 
                     if (Utils::Vector::isInList(i, m_highlightedPoints) && m_selected)
                         drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
-                    if (Utils::Vector::isInList((i != m_allPoints.size() - 1 ) ? i + 1 : 0, m_highlightedLines) && m_selected)
+                    if (Utils::Vector::isInList((i != m_allPoints.size() - 1) ? i + 1 : 0, m_highlightedLines) && m_selected)
                         drawOptions["line_color_" + std::to_string(i)] = sf::Color(0, 255, 0);
-                        
+
                     drawPoints.emplace_back(point.x + offsetX, point.y + offsetY);
                 }
 
@@ -389,9 +390,9 @@ namespace obe
                             Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
-                                point.x + offsetX, point.y + offsetY,
-                                pMaster.x + offsetX, pMaster.y + offsetY,
-                                2, currentLineColor);
+                                                      point.x + offsetX, point.y + offsetY,
+                                                      pMaster.x + offsetX, pMaster.y + offsetY,
+                                                      2, currentLineColor);
                         }
                     }
                 }
@@ -649,7 +650,8 @@ namespace obe
                 const Transform::UnitVector tOffset = offset.to(m_unit);
                 bool inFront = false;
                 Transform::UnitVector minDep;
-                auto calcMinDistanceDep = [this](PolygonPath& sol1, PolygonPath& sol2, const Transform::UnitVector& tOffset) -> std::tuple<double, Transform::UnitVector, bool> {
+                auto calcMinDistanceDep = [this](PolygonPath& sol1, PolygonPath& sol2, const Transform::UnitVector& tOffset) -> std::tuple<double, Transform::UnitVector, bool>
+                {
                     double minDistance = -1;
                     bool inFront = false;
                     Transform::UnitVector minDeplacement(m_unit);
@@ -687,7 +689,6 @@ namespace obe
                                     minDistance = distance;
                                     minDeplacement.set((t * s1.x), (t * s1.y));
                                 }
-
                             }
                         }
                     }
@@ -705,8 +706,8 @@ namespace obe
                 std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
                 if (std::get<2>(tdm1) || std::get<2>(tdm2))
                     inFront = true;
-                
-                
+
+
                 std::cout << "NONZERO : " << (std::get<0>(tdm1) > 0) << ", " << (std::get<0>(tdm2) > 0) << std::endl;
                 std::cout << "tdm1 less or equal : " << (std::get<0>(tdm1) <= std::get<0>(tdm2)) << std::endl;
 
@@ -732,15 +733,12 @@ namespace obe
                     std::cout << "Accept none" << std::endl;
                     return Transform::UnitVector(0, 0, m_unit);
                 }
-                    
+
                 std::cout << "MIN DEP IS : " << minDep << std::endl;
                 return minDep;
             }
-            else
-            {
-                std::cout << "Ew Shit" << std::endl;
-                return Transform::UnitVector(0, 0, m_unit);
-            }
+            std::cout << "Ew Shit" << std::endl;
+            return Transform::UnitVector(0, 0, m_unit);
         }
 
         bool PolygonalCollider::doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const
@@ -749,13 +747,14 @@ namespace obe
             PolygonPath pSet2 = collider.getAllPoints();
             for (Transform::UnitVector& applyOffset : pSet1)
                 applyOffset += offset;
-            auto pointInPolygon = [](const PolygonPath& poly, Transform::UnitVector& pTest) -> bool {
+            auto pointInPolygon = [](const PolygonPath& poly, Transform::UnitVector& pTest) -> bool
+            {
                 int i, j, c = 0;
                 unsigned int nPt = poly.size();
-                for (i = 0, j = nPt - 1; i < nPt; j = i++) 
+                for (i = 0 , j = nPt - 1; i < nPt; j = i++)
                 {
-                    if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y)) && 
-                    (pTest.x < (poly[j].x - poly[i].x) * (pTest.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
+                    if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y)) &&
+                        (pTest.x < (poly[j].x - poly[i].x) * (pTest.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x))
                         c = !c;
                 }
                 return c;

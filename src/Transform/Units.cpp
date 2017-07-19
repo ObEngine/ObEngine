@@ -16,8 +16,7 @@ namespace obe
                 return Units::WorldPixels;
             if (unit == "WorldUnits")
                 return Units::WorldUnits;
-            else
-                return Units::Unknown;
+            return Units::Unknown;
         }
 
         std::string unitsToString(Units unit)

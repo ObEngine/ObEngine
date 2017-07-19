@@ -14,7 +14,7 @@ namespace obe
         Console::Console() : consoleTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"))
         {
             m_font.loadFromFile("Data/Fonts/arial.ttf");
-            
+
             consoleTriggers->addTrigger("UserInput")
                            ->addTrigger("CursorMoved")
                            ->addTrigger("ConsoleScrolled")

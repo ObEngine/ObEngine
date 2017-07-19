@@ -100,7 +100,7 @@ namespace obe
             int startGridX = (m_gridSizeX - ((gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX; //<REVISION>
             for (int i = startGridX; i < Transform::UnitVector::Screen.w; i += m_gridSizeX)
             {
-                if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(std::floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(std::floor(m_gridSizeX / 2)) - 1)))
+                if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
                 {
                     Graphics::Utils::drawLine(target, i, 0, i, Transform::UnitVector::Screen.h, 2, selectedLineColor);
                     stackX = i;
@@ -113,7 +113,7 @@ namespace obe
             int startGridY = (m_gridSizeY - ((gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
             for (int i = startGridY; i < Transform::UnitVector::Screen.h; i += m_gridSizeY)
             {
-                if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(std::floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(std::floor(m_gridSizeY / 2)) - 1)))
+                if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))
                 {
                     Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
                     stackY = i;

@@ -94,10 +94,10 @@ namespace obe
             {
                 std::string currentObjName = allGameObjects[i];
                 int xpos = (i * (btnSize + btnOff));
-                int ypos = std::floor((double)xpos / (double)(1920 - (btnSize + btnOff))) * (btnSize + btnOff) + yOff;
+                int ypos = floor((double)xpos / (double)(1920 - (btnSize + btnOff))) * (btnSize + btnOff) + yOff;
                 while (xpos > (1920 - (btnSize + btnOff + xOff)))
                     xpos -= (1920 - (btnSize + btnOff + xOff));
-                xpos = std::floor((double)xpos / (double)(btnSize + btnOff)) * (btnSize + btnOff);
+                xpos = floor((double)xpos / (double)(btnSize + btnOff)) * (btnSize + btnOff);
                 xpos += xOff;
                 ypos += yOff;
                 tgui::Button::Ptr currentObj = tgui::Button::create();
@@ -108,10 +108,10 @@ namespace obe
                 currentObj->setSize(256, 256);
                 objectTab->add(currentObj);
                 currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
-                {
-                    std::cout << "Trying to build : " << currentObjName << std::endl;
-                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
-                });
+                                {
+                                    std::cout << "Trying to build : " << currentObjName << std::endl;
+                                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
+                                });
             }
         }
 
@@ -150,7 +150,8 @@ namespace obe
                     content->add(currentRequirementLabel, requireItem + "_label");
 
 
-                    if (requireInput.getPath(requireItem).contains(vili::AttributeType::BaseAttribute, "type")) {
+                    if (requireInput.getPath(requireItem).contains(vili::AttributeType::BaseAttribute, "type"))
+                    {
                         tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
                         currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
                         currentRequirementInput->setSize("&.width / 3", "32");
@@ -181,9 +182,10 @@ namespace obe
                 createObjectButton->setTextSize(22);
                 createObjectButton->setText("Create Object");
 
-                createObjectButton->connect("pressed", [objName]() {
-                    buildObjectThroughRequire(objName);
-                });
+                createObjectButton->connect("pressed", [objName]()
+                                        {
+                                            buildObjectThroughRequire(objName);
+                                        });
 
                 requiresPanel->add(createObjectButton);
             }
@@ -241,7 +243,7 @@ namespace obe
             const int yOff = 40;
             int elemIndex = 0;
             int xpos = (0 * (sprSize + sprOff)) + xOff;
-            int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
+            int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
             tgui::Button::Ptr backButton = tgui::Button::create();
             spritesPanel->add(backButton, "LS_ELEM_BACK");
             sf::Texture sprback;
@@ -259,10 +261,10 @@ namespace obe
             for (std::string element : folderList)
             {
                 int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-                int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+                int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
                 while (xpos > (1920 - (sprSize + sprOff)))
                     xpos -= (1920 - (sprSize + sprOff));
-                xpos = std::floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
+                xpos = floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
                 xpos += xOff;
                 ypos += yOff;
                 tgui::Button::Ptr currentFolder = tgui::Button::create();
@@ -283,10 +285,10 @@ namespace obe
                 if (textureLoadChecker.getSize().x != 0)
                 {
                     int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-                    int ypos = std::floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
+                    int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
                     while (xpos > (1920 - (sprSize + sprOff)))
                         xpos -= (1920 - (sprSize + sprOff));
-                    xpos = std::floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
+                    xpos = floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
                     xpos += xOff;
                     ypos += yOff;
                     std::cout << "MAMIA1 : " << xpos << ", " << ypos << std::endl;

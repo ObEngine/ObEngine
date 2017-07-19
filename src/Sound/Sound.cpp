@@ -7,6 +7,7 @@ namespace obe
     namespace Sound
     {
         std::map<std::string, sf::SoundBuffer> SoundWrapper::SoundBank = std::map<std::string, sf::SoundBuffer>();
+
         SoundWrapper::SoundWrapper()
         {
         }

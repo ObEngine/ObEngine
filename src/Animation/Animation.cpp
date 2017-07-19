@@ -8,20 +8,20 @@ namespace obe
     namespace Animation
     {
         AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode)
-	    {
-			if (animationPlayMode == "OneTime")
-				return AnimationPlayMode::OneTime;
-			if (animationPlayMode == "Loop")
-				return AnimationPlayMode::Loop;
-			if (animationPlayMode == "Force")
-				return AnimationPlayMode::Force;
-			throw aube::ErrorHandler::Raise("ObEngine.Animation.AnimationPlayMode.UnknownPlayMode", { {"playmode", animationPlayMode} });
-	    }
+        {
+            if (animationPlayMode == "OneTime")
+                return AnimationPlayMode::OneTime;
+            if (animationPlayMode == "Loop")
+                return AnimationPlayMode::Loop;
+            if (animationPlayMode == "Force")
+                return AnimationPlayMode::Force;
+            throw aube::ErrorHandler::Raise("ObEngine.Animation.AnimationPlayMode.UnknownPlayMode", {{"playmode", animationPlayMode}});
+        }
 
-	    std::string Animation::getCalledAnimation() const
-	    {
-			return m_animationToCall;
-	    }
+        std::string Animation::getCalledAnimation() const
+        {
+            return m_animationToCall;
+        }
 
         std::string Animation::getAnimationName() const
         {
@@ -114,7 +114,7 @@ namespace obe
             for (vili::BaseAttribute* command : animation.at<vili::ListAttribute>("AnimationCode"))
             {
                 std::string curCom = command->get<std::string>();
-	            Utils::String::replaceInPlace(curCom, " ", "");
+                Utils::String::replaceInPlace(curCom, " ", "");
                 Utils::String::replaceInPlace(curCom, ")", "");
                 Utils::String::replaceInPlace(curCom, "(", ",");
                 std::vector<std::string> vecCurCom = Utils::String::split(curCom, ",");
@@ -142,7 +142,7 @@ namespace obe
                 {
                     if (m_askCommand)
                     {
-	                    std::vector<std::string> currentCommand = m_animationCode[m_codeIndex];
+                        std::vector<std::string> currentCommand = m_animationCode[m_codeIndex];
                         if (currentCommand[0] == "DELAY")
                         {
                             m_askCommand = true;
@@ -170,10 +170,10 @@ namespace obe
                         else if (currentCommand[0] == "CALL")
                         {
                             m_askCommand = false;
-	                        std::string callAnimation = currentCommand[1];
+                            std::string callAnimation = currentCommand[1];
                             Utils::String::replaceInPlace(callAnimation, "'", "");
                             m_currentStatus = AnimationStatus::Call;
-							m_animationToCall = callAnimation;
+                            m_animationToCall = callAnimation;
                         }
                     }
                     if (m_currentGroupName != "NONE")

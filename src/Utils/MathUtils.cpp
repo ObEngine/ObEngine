@@ -7,7 +7,7 @@ namespace obe
 {
     namespace Utils
     {
-        namespace Math 
+        namespace Math
         {
             const double pi = 3.14159265359;
 
@@ -28,7 +28,7 @@ namespace obe
 
             bool isDoubleInt(const double& value)
             {
-                return (std::trunc(value) == value);
+                return (trunc(value) == value);
             }
         }
     }

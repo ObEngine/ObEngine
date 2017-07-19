@@ -7,7 +7,7 @@ namespace obe
         namespace Math
         {
             extern const double pi;
-            
+
             /**
              * \brief Get a random integer between the given bound
              * \param min Min bound
@@ -62,7 +62,7 @@ namespace obe
              * \param val Value to check the sign
              * \return -1 if negative, 0 if equal to 0, 1 if positive
              */
-            template <typename T> 
+            template <typename T>
             int sign(T val);
 
             template <typename N>
@@ -85,12 +85,11 @@ namespace obe
                 return false;
             }
 
-            template <typename T> 
+            template <typename T>
             int sign(T val)
             {
                 return (T(0) < val) - (val < T(0));
             }
-
         }
     }
 }

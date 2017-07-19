@@ -11,7 +11,7 @@ namespace obe
 {
     namespace Utils
     {
-        namespace String 
+        namespace String
         {
             std::vector<std::string> split(const std::string& str, const std::string& delimiters)
             {
@@ -42,7 +42,7 @@ namespace obe
             bool isStringAlpha(const std::string& str)
             {
                 if (str.size() > 0)
-                    return std::all_of(str.begin(), str.end(), isalpha);
+                    return all_of(str.begin(), str.end(), isalpha);
                 return false;
             }
 
@@ -118,7 +118,7 @@ namespace obe
                 std::string r;
                 for (int i = 0; i < len; i++) r.push_back(set.at(size_t(Math::randint(0, 100000) % set.size())));
                 return r;
-            }      
+            }
 
             bool contains(const std::string& string, const std::string& search)
             {

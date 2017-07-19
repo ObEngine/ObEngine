@@ -6,6 +6,7 @@ namespace obe
     namespace System
     {
         std::vector<MountablePath> Path::MountedPaths = std::vector<MountablePath>();
+
         Path::Path()
         {
             this->m_path = "";
@@ -34,15 +35,15 @@ namespace obe
 
         Path Path::getPath(int index)
         {
-			if (MountedPaths.size() > index)
-				return Path(MountedPaths[index].basePath).add(m_path);
+            if (MountedPaths.size() > index)
+                return Path(MountedPaths[index].basePath).add(m_path);
             throw aube::ErrorHandler::Raise("ObEngine.PathResolver.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", m_path}});
         }
 
-	    std::string Path::toString() const
-	    {
-			return m_path;
-	    }
+        std::string Path::toString() const
+        {
+            return m_path;
+        }
 
         void Path::Mount(MountablePath path)
         {

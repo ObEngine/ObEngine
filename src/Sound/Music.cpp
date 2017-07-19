@@ -17,7 +17,7 @@ namespace obe
 
         void MusicWrapper::load(const std::string& filename)
         {
-            System::Path(filename).loadResource(static_cast<sf::Music*>(this), System::Loaders::musicLoader);
+            System::Path(filename).loadResource(static_cast<Music*>(this), System::Loaders::musicLoader);
         }
     }
 }

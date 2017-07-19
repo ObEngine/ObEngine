@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     std::cout.rdbuf(out.rdbuf());*/
 
     std::ofstream out_err("errors.log");
-    std::streambuf *cerrbug = std::cerr.rdbuf();
+    std::streambuf* cerrbug = std::cerr.rdbuf();
     std::cerr.rdbuf(out_err.rdbuf());
 
     std::cout << "<Computer Configuration>" << std::endl;
@@ -45,8 +45,7 @@ int main(int argc, char** argv)
     System::MountPaths();
 
     kaguya::State luaP;
-    obe::Bindings::IndexBindings();
-    obe::Bindings::Load(luaP, "Core.Animation.Animation");
+    Bindings::IndexBindings();
 
     if (startMode == "edit")
     {

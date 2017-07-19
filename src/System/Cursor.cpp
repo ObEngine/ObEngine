@@ -16,9 +16,9 @@ namespace obe
             };
         }
 
-        Cursor::Cursor(sf::RenderWindow* window) : 
-        m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")), 
-        m_cursorAnim(System::Path("Sprites/Cursors/Round"))
+        Cursor::Cursor(sf::RenderWindow* window) :
+            m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")),
+            m_cursorAnim(Path("Sprites/Cursors/Round"))
         {
             m_constraint = Constraints::Default;
             m_window = window;
@@ -33,7 +33,7 @@ namespace obe
         void Cursor::selectAnimatorPath(const std::string& cursor)
         {
             m_cursorAnim.clear();
-            m_cursorAnim = Animation::Animator(System::Path("Sprites/Cursors/").add(cursor));
+            m_cursorAnim = Animation::Animator(Path("Sprites/Cursors/").add(cursor));
             m_cursorAnim.loadAnimator();
             m_cursorAnim.setKey("IDLE");
             m_cursorAnim.update();

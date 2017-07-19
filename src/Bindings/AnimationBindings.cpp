@@ -28,6 +28,7 @@ namespace obe
                     .addFunction("update", &Animation::AnimationGroup::update)
                 );
             }
+
             void LoadAnimation(kaguya::State& lua)
             {
                 lua["Core"]["Animation"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
@@ -52,6 +53,7 @@ namespace obe
                     .addFunction("update", &Animation::Animation::update)
                 );
             }
+
             void LoadAnimator(kaguya::State& lua)
             {
                 lua["Core"]["Animation"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()

@@ -5,12 +5,15 @@ namespace obe
 {
     namespace Bindings
     {
-        std::function<void(kaguya::State&)> NoLib = [](kaguya::State& lua){};
+        std::function<void(kaguya::State&)> NoLib = [](kaguya::State& lua)
+        {
+        };
 
         BindingTree::BindingTree(const std::string& id, std::function<void(kaguya::State&)> lib) : Identifiable(id)
         {
             m_lib = lib;
         }
+
         BindingTree& BindingTree::operator[](const std::string& id)
         {
             for (auto& tree : m_children)
@@ -20,6 +23,7 @@ namespace obe
             }
             // Add error <REVISION>
         }
+
         BindingTree& BindingTree::add(const std::string& id, std::function<void(kaguya::State&)> lib)
         {
             m_children.emplace_back(id, lib);
@@ -35,7 +39,7 @@ namespace obe
                     std::vector<std::string> subPath = Utils::Vector::getSubVector(path, 1, 0);
                     return this->operator[](path[0]).walkTo(subPath);
                 }
-                else if (path.size() == 1)
+                if (path.size() == 1)
                 {
                     return this->operator[](path[0]);
                 }

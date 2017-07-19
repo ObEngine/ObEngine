@@ -78,7 +78,7 @@ namespace obe
         {
             if (Time::getTickSinceEpoch() - m_groupClock > m_groupDelay)
             {
-                m_groupClock = Time::getTickSinceEpoch(); 
+                m_groupClock = Time::getTickSinceEpoch();
                 if (m_groupIndex == 0)
                 {
                     if (m_loopIndex != 0)
@@ -86,8 +86,8 @@ namespace obe
                     else
                         m_loopIndex = 0;
                 }
-				else
-					m_groupIndex--;
+                else
+                    m_groupIndex--;
             }
             this->update();
         }

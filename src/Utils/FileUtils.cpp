@@ -52,9 +52,9 @@ namespace obe
 
             bool directoryExists(const std::string& path)
             {
-            #ifdef _USE_CPP_NEW_FS
+#ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_directory(path);
-            #else
+#else
                 if (FsAccess(path.c_str(), 0) == 0) 
                 {
                     struct stat status;
@@ -62,20 +62,20 @@ namespace obe
                     return (status.st_mode & S_IFDIR) != 0;
                 }
                 return false;
-            #endif
+#endif
             }
 
             bool createDirectory(const std::string& path)
             {
-            #ifdef _USE_CPP_NEW_FS
+#ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::create_directory(path);
-            #else
-            #ifdef _WIN32
+#else
+#ifdef _WIN32
                 return bool(CreateDirectory(path.c_str(), LPSECURITY_ATTRIBUTES(NULL)));
-            #else
+#else
                 return bool(mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IXUSR));    //   grant owner access only
-            #endif
-            #endif
+#endif
+#endif
             }
 
             void createFile(const std::string& path)
@@ -86,20 +86,19 @@ namespace obe
 
             void copy(const std::string& source, const std::string& target)
             {
-                
-            #ifdef _USE_CPP_NEW_FS
+#ifdef _USE_CPP_NEW_FS
                 //std::experimental::filesystem::copy(source, target); (Doesn't work for now)
                 std::ifstream src(source, std::ios::binary);
                 std::ofstream dst(target, std::ios::binary);
 
                 dst << src.rdbuf();
-            #else
+#else
                 //Can Only Copy File (Fix it for fallback)
                 std::ifstream src(source, std::ios::binary);
                 std::ofstream dst(target, std::ios::binary);
 
                 dst << src.rdbuf();
-            #endif
+#endif
             }
 
             bool deleteFile(const std::string& path)
@@ -109,34 +108,33 @@ namespace obe
 
             bool deleteDirectory(const std::string& path)
             {
-            #ifdef _USE_CPP_NEW_FS
+#ifdef _USE_CPP_NEW_FS
                 if (directoryExists(path))
                     return std::experimental::filesystem::remove(path);
-                else
-                    return false;
-            #else
-            #endif
+                return false;
+#else
+#endif
             }
 
             std::string getCurrentDirectory()
             {
-            #ifdef _USE_CPP_NEW_FS
+#ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::current_path().string();
-            #else
+#else
                 char buff[FILENAME_MAX];
                 GetCurrentDir(buff, FILENAME_MAX);
                 std::string current_working_dir(buff);
                 return current_working_dir;
-            #endif
+#endif
             }
 
             std::string separator()
             {
-            #ifdef _WIN32
+#ifdef _WIN32
                 return "\\";
-            #else
+#else
 					return "/";
-            #endif
+#endif
             }
         }
     }

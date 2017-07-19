@@ -33,7 +33,6 @@ namespace obe
 
         void LevelSprite::resetUnit(Transform::Units unit)
         {
-
         }
 
         void LevelSprite::setTexture(const sf::Texture& texture)
@@ -167,8 +166,8 @@ namespace obe
         {
             //std::cout << "Applying Size of " << m_id << std::endl;
             Transform::UnitVector pixelSize = m_size.to<Transform::Units::WorldPixels>();
-            double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor(); 
-            double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor(); 
+            double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor();
+            double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor();
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
             std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
             std::cout << "From : " << pixelSize << std::endl;*/
@@ -244,7 +243,7 @@ namespace obe
                 layeredX = pixelPosition.x - cameraPosition.x;
                 layeredY = pixelPosition.y - cameraPosition.y;
             }
-            
+
             return Transform::UnitVector(layeredX, layeredY, Transform::Units::ViewPixels);
         }
 
@@ -309,13 +308,13 @@ namespace obe
         {
             return obe::Utils::Math::sign(m_sprite.getScale().x);
         }
-        
+
         int LevelSprite::getYScaleFactor() const
         {
             return obe::Utils::Math::sign(m_sprite.getScale().y);
         }
 
-        LevelSprite::HandlePoint::HandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)
+        LevelSprite::HandlePoint::HandlePoint(Rect* parentRect, Transform::Referencial ref)
         {
             m_rect = parentRect;
             m_referencial = ref;

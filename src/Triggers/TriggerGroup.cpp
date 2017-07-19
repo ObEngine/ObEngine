@@ -27,15 +27,15 @@ namespace obe
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
                     return m_allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
-                    { "function", "getAllTriggersNameFromTriggerGroup" },
-                    { "group", triggerGroupName },
-                    { "nsp", groupNamespace }
-                });
+                                                    {"function", "getAllTriggersNameFromTriggerGroup"},
+                                                    {"group", triggerGroupName},
+                                                    {"nsp", groupNamespace}
+                                                });
             }
             throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
-                { "function", "getAllTriggersNameFromTriggerGroup" },
-                { "nsp", groupNamespace }
-            });
+                                                {"function", "getAllTriggersNameFromTriggerGroup"},
+                                                {"nsp", groupNamespace}
+                                            });
         }
 
         TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
@@ -123,15 +123,16 @@ namespace obe
         }
 
         unsigned int TriggerGroup::Ptr::amount = 0;
-		TriggerGroup::Ptr::Ptr(TriggerGroup* link)
-		{
+
+        TriggerGroup::Ptr::Ptr(TriggerGroup* link)
+        {
             if (link != nullptr)
             {
                 m_link = link;
                 m_link->m_references++;
                 m_id = amount++;
             }
-		}
+        }
 
         TriggerGroup::Ptr& TriggerGroup::Ptr::operator=(const Ptr& link)
         {
@@ -145,7 +146,7 @@ namespace obe
         }
 
         TriggerGroup::Ptr::~Ptr()
-		{
+        {
             if (m_link != nullptr)
             {
                 m_link->m_references--;
@@ -154,10 +155,11 @@ namespace obe
                     TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
                 }
             }
-		}
-		TriggerGroup* TriggerGroup::Ptr::operator->() const
-		{
-			return m_link;
-		}
+        }
+
+        TriggerGroup* TriggerGroup::Ptr::operator->() const
+        {
+            return m_link;
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace obe
             class HandlePoint
             {
             private:
-                Transform::Rect* m_rect;
+                Rect* m_rect;
                 Transform::Referencial m_referencial;
             public:
                 /**
@@ -32,7 +32,7 @@ namespace obe
                  * \param parentRect Rect of the parent LevelSprite
                  * \param ref Referencial of the HandlePoint
                  */
-                HandlePoint(Transform::Rect* parentRect, Transform::Referencial ref);
+                HandlePoint(Rect* parentRect, Transform::Referencial ref);
                 /**
                  * \brief Move the HandlePoint to the given Position
                  * \param x x Coordinate of the Position where to move the HandlePoint
@@ -48,12 +48,13 @@ namespace obe
                  * \brief Get the rect of the parent LevelSprite
                  * \return The Rect of the parent LevelSprite
                  */
-                Transform::Rect& getRect() const;
+                Rect& getRect() const;
                 /**
                  * \brief The radius of a HandlePoint
                  */
                 static const int radius = 6;
             };
+
         private:
             std::string m_path = "";
 
@@ -132,7 +133,7 @@ namespace obe
              * \return 
              */
             double getRotation() const;
-            
+
             //Origins
             /**
              * \brief Set the translation origin of the LevelSprite
@@ -189,14 +190,14 @@ namespace obe
             std::vector<std::string> getAttributes() const;
             void removeAtrByIndex(int index);
             void removeAtrByName(std::string name);
-            
+
             //Sprite
             /**
              * \brief Get the internal Sprite of the LevelSprite
              * \return A reference to the internal Sprite of the LevelSprite
              */
             sfe::ComplexSprite& getSprite();
-            
+
             //Colors
             /**
              * \brief Apply a blend color to the LevelSprite
@@ -208,7 +209,7 @@ namespace obe
              * \return A sf::Color containing the blend color of the LevelSprite
              */
             sf::Color getColor() const;
- 
+
             //Rect
             /**
              * \brief Get the Bounding Rect of the internal Sprite

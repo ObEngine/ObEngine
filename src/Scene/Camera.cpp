@@ -30,76 +30,76 @@ namespace obe
             }
         }
 
-	    void Camera::setPosition(const Transform::UnitVector& position, Transform::Referencial ref)
+        void Camera::setPosition(const Transform::UnitVector& position, Transform::Referencial ref)
         {
-			if (!m_locked)
-			{
-				Rect::setPosition(position, ref);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setPosition(position, ref);
+                this->apply();
+            }
         }
 
         void Camera::setPosition(double x, double y, Transform::Referencial ref)
         {
-			if (!m_locked)
-			{
-				Rect::setPosition(x, y, ref);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setPosition(x, y, ref);
+                this->apply();
+            }
         }
 
         void Camera::move(const Transform::UnitVector& position)
         {
-			if (!m_locked)
-			{
-				Rect::move(position);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::move(position);
+                this->apply();
+            }
         }
 
         void Camera::move(double x, double y)
         {
-			if (!m_locked)
-			{
-				Rect::setPosition(x, y);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setPosition(x, y);
+                this->apply();
+            }
         }
 
         void Camera::setX(double x, Transform::Referencial ref)
         {
-			if (!m_locked)
-			{
-				Rect::setX(x, ref);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setX(x, ref);
+                this->apply();
+            }
         }
 
         void Camera::setY(double y, Transform::Referencial ref)
         {
-			if (!m_locked)
-			{
-				Rect::setY(y, ref);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setY(y, ref);
+                this->apply();
+            }
         }
 
         void Camera::setSize(double pSize)
         {
-			if (!m_locked)
-			{
-				Rect::setSize(pSize * 2 * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h), pSize * 2);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                Rect::setSize(pSize * 2 * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h), pSize * 2);
+                this->apply();
+            }
         }
 
         void Camera::scale(double pScale)
         {
-			if (!m_locked)
-			{
-				this->setSize((m_size.y / 2) * pScale);
-				this->apply();
-			}
+            if (!m_locked)
+            {
+                this->setSize((m_size.y / 2) * pScale);
+                this->apply();
+            }
         }
 
         void Camera::setAngle(double angle)

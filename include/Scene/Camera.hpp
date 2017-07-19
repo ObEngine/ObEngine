@@ -10,7 +10,7 @@ namespace obe
 {
     namespace Scene
     {
-	    /**
+        /**
          * \brief The Camera that views the Scene (World)
          * @Bind
          * 
@@ -41,21 +41,21 @@ namespace obe
             void lock();
             void unlock();
 
-			void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
-			void setPosition(double x, double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
-			void move(const Transform::UnitVector& position);
-			void move(double x, double y);
-			void setX(double x, Transform::Referencial ref = Transform::Referencial::TopLeft);
-			void setY(double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
-			double getX(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
-			double getY(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
-			Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+            void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void setPosition(double x, double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void move(const Transform::UnitVector& position);
+            void move(double x, double y);
+            void setX(double x, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void setY(double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            double getX(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+            double getY(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+            Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
 
-			void setSize(double pSize);
-			void scale(double pSize);
-			double getWidth() const;
-			double getHeight() const;
-			Transform::UnitVector getSize() const;
+            void setSize(double pSize);
+            void scale(double pSize);
+            double getWidth() const;
+            double getHeight() const;
+            Transform::UnitVector getSize() const;
 
             void setAngle(double angle);
             void rotate(double angle);

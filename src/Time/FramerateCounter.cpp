@@ -39,7 +39,7 @@ namespace obe
                 m_canUpdateFPS = false;
                 m_text.setString(std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
             }
-			target.draw(m_text);
+            target.draw(m_text);
         }
     }
 }

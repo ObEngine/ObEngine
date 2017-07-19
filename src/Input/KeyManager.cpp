@@ -11,21 +11,21 @@ namespace obe
         {
             switch (m)
             {
-                case KeyState::Hold:
-                    os << "Hold";
-                    break;
-                case KeyState::Idle:
-                    os << "Idle";
-                    break;
-                case KeyState::Pressed:
-                    os << "Pressed";
-                    break;
-                case KeyState::Released:
-                    os << "Released";
-                    break;
-                default:
-                    os << "Error";
-                    break;
+            case KeyState::Hold:
+                os << "Hold";
+                break;
+            case KeyState::Idle:
+                os << "Idle";
+                break;
+            case KeyState::Pressed:
+                os << "Pressed";
+                break;
+            case KeyState::Released:
+                os << "Released";
+                break;
+            default:
+                os << "Error";
+                break;
             }
             return os;
         }
@@ -104,14 +104,17 @@ namespace obe
             m_action = action;
             m_key = key;
         }
+
         KeyState KeyboardActionEvent::getState() const
         {
             return m_state;
         }
+
         KeyboardAction* KeyboardActionEvent::getAction() const
         {
             return m_action;
         }
+
         KeyClass* KeyboardActionEvent::getKey() const
         {
             return m_key;
@@ -213,7 +216,6 @@ namespace obe
                     else
                         m_callbacks[m_state](KeyboardActionEvent(m_state, this, key));
                 }
-                    
             }
         }
 
@@ -225,7 +227,7 @@ namespace obe
                 {
                     return *action.get();
                 }
-            } 
+            }
             throw aube::ErrorHandler::Raise("ObEngine.KeyBinder.KeyBinder.UnknownAction", {{"action", actionId}});
         }
 

@@ -121,7 +121,7 @@ namespace obe
                     const char* convertChar = convert;
                     returnAttribute->set(convertChar);
                 }
-                
+
                 return returnAttribute;
             }
 

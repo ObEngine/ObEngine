@@ -9,7 +9,7 @@ namespace obe
     {
         FramerateManager::FramerateManager(sf::RenderWindow& window, vili::ComplexAttribute& config)
         {
-            m_frameLimiterClock = Time::getTickSinceEpoch();
+            m_frameLimiterClock = getTickSinceEpoch();
             m_limitFPS = (config.contains(vili::AttributeType::BaseAttribute, "framerateLimit")) ? config.at<vili::BaseAttribute>("framerateLimit") : true;
             m_framerateTarget = (config.contains(vili::AttributeType::BaseAttribute, "framerateTarget")) ? config.at<vili::BaseAttribute>("framerateTarget") : 60;
             m_vsyncEnabled = (config.contains(vili::AttributeType::BaseAttribute, "vsync")) ? config.at<vili::BaseAttribute>("vsync") : true;
@@ -26,12 +26,12 @@ namespace obe
             m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
             if (m_limitFPS)
             {
-                if (Time::getTickSinceEpoch() - m_frameLimiterClock > 1000)
+                if (getTickSinceEpoch() - m_frameLimiterClock > 1000)
                 {
-                    m_frameLimiterClock = Time::getTickSinceEpoch();
+                    m_frameLimiterClock = getTickSinceEpoch();
                     m_currentFrame = 0;
                 }
-                m_frameProgression = std::round((Time::getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
+                m_frameProgression = round((getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
                 m_needToRender = false;
                 if (m_frameProgression > m_currentFrame)
                 {

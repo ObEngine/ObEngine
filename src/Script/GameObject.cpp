@@ -115,12 +115,12 @@ namespace obe
             {
                 requires.setID("Lua_ReqList");
                 kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]);
-                Script::DataBridge::complexAttributeToLuaTable(requireTable, requires);
+                DataBridge::complexAttributeToLuaTable(requireTable, requires);
             }
         }
 
         //GameObject
-        GameObject::GameObject(const std::string& type, const std::string& id) : m_localTriggers(nullptr), Identifiable(id)
+        GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr)
         {
             m_type = type;
             m_id = id;
@@ -319,7 +319,7 @@ namespace obe
                         for (int j = 0; j < m_registeredAliases.size(); j++)
                         {
                             std::string alNsp, alGrp, alRep;
-                            std::tie(alNsp, alGrp, alRep) = m_registeredAliases[j];
+                            tie(alNsp, alGrp, alRep) = m_registeredAliases[j];
                             if (alNsp == trigger->getNamespace() && alGrp == trigger->getGroup())
                                 useGrp = alRep;
                         }
@@ -327,15 +327,15 @@ namespace obe
                         m_queryCounter = 0;
                         (*m_objectScript)["cpp_param"] = kaguya::NewTable();
                         (*m_objectScript)["cpp_param"]["dt"] = dt;
-                        std::string triggerError = Triggers::injectParameters(*trigger, *m_objectScript);
+                        std::string triggerError = injectParameters(*trigger, *m_objectScript);
                         if (!triggerError.empty())
                         {
                             throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.UnknownTriggerParameterType", {
-                                { "parameter", triggerError },
-                                { "object", m_id },
-                                { "trigger", funcname }
-                            });
-                        }              
+                                                                {"parameter", triggerError},
+                                                                {"object", m_id},
+                                                                {"trigger", funcname}
+                                                            });
+                        }
                         if (funcname == "Local.Init")
                         {
                             m_objectScript->dostring("LuaCore.LocalInitMirrorInjector()");

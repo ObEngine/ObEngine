@@ -11,6 +11,7 @@ namespace obe
     namespace Triggers
     {
         class TriggerGroup;
+
         /**
          * \brief A Class that does represents a triggerable event
          */

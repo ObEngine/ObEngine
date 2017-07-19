@@ -239,8 +239,8 @@ namespace obe
                     dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("x", spritePositionRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("y", spritePositionRect.y);
                     Transform::UnitVector spriteSizeRect = Transform::UnitVector(
-                        m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(), 
-                        m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(), 
+                        m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(),
+                        m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(),
                         Transform::Units::WorldPixels).to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("w", spriteSizeRect.x);
                     dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("h", spriteSizeRect.y);
@@ -347,10 +347,10 @@ namespace obe
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
                     m_colliderArray[i]->draw(target, -pixelCamera.x, -pixelCamera.y,
-                        m_showCollisionModes["drawLines"],
-                        m_showCollisionModes["drawPoints"],
-                        m_showCollisionModes["drawMasterPoint"],
-                        m_showCollisionModes["drawSkel"]);
+                                             m_showCollisionModes["drawLines"],
+                                             m_showCollisionModes["drawPoints"],
+                                             m_showCollisionModes["drawMasterPoint"],
+                                             m_showCollisionModes["drawSkel"]);
                 }
             }
         }

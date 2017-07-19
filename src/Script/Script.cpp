@@ -529,9 +529,9 @@ namespace obe
                     .addProperty("y", &Transform::UnitVector::y)
                     .addProperty("unit", &Transform::UnitVector::unit)
                     .addFunction("to", static_cast<Transform::UnitVector (Transform::UnitVector::*)(Transform::Units) const>(&Transform::UnitVector::to))
-                    .addOverloadedFunctions("add", 
-                        static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add),
-                        static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::add)
+                    .addOverloadedFunctions("add",
+                                            static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add),
+                                            static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::add)
                     )
                     .addOverloadedFunctions("set",
                                             static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::set),
@@ -940,6 +940,7 @@ namespace obe
         }
 
         KAGUYA_MEMBER_FUNCTION_OVERLOADS(DataParser_parseFile_wrapper, vili::DataParser, parseFile, 1, 3)
+
         void CoreLib::loadVili(kaguya::State* lua, std::vector<std::string> args)
         {
             registerLib(lua, Utils::Vector::join(args, "."));

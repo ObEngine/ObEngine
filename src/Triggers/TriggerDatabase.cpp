@@ -72,10 +72,10 @@ namespace obe
                 {
                     // Add Error <REVISION>
                     throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.TriggerGroupNotJoinable", {
-                        { "function", "joinTriggerGroup" },
-                        { "group", triggerGroupName },
-                        { "nsp", groupNamespace }
-                    });
+                                                        {"function", "joinTriggerGroup"},
+                                                        {"group", triggerGroupName},
+                                                        {"nsp", groupNamespace}
+                                                    });
                 }
                 throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
                                                     {"function", "joinTriggerGroup"},
@@ -91,7 +91,7 @@ namespace obe
             if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
                 m_allTriggers.erase(m_allTriggers.find(namespaceId));
             else
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", { {"function", "removeNamespace"}, {"nsp", namespaceId} });
+                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "removeNamespace"}, {"nsp", namespaceId}});
         }
 
         void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
@@ -107,13 +107,10 @@ namespace obe
                     return false;
                 return true;
             }
-            else
-            {
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
-                    { "function", "doesTriggerGroupExists" },
-                    { "nsp", groupNamespace }
-                });
-            }
+            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
+                                                {"function", "doesTriggerGroupExists"},
+                                                {"nsp", groupNamespace}
+                                            });
         }
 
         void TriggerDatabase::update()
@@ -127,7 +124,7 @@ namespace obe
                         for (int i = 0; i < it2->second->m_delayedTriggers.size(); i++)
                         {
                             it2->second->m_delayedTriggers[i]->m_delaytarget = m_databaseChrono.getTime() + it2->second->m_delayedTriggers[i]->m_delay;
-                            m_delayedTriggers.push_back(std::move(it2->second->m_delayedTriggers[i]));
+                            m_delayedTriggers.push_back(move(it2->second->m_delayedTriggers[i]));
                         }
                         it2->second->m_delayedTriggers.clear();
                     }

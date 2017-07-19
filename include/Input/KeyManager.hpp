@@ -42,6 +42,7 @@ namespace obe
              */
             Others
         };
+
         /**
          * \brief Class that does represent a Keyboard key
          */
@@ -137,6 +138,7 @@ namespace obe
         std::ostream& operator<<(std::ostream& os, KeyState m);
 
         class KeyboardAction;
+
         /**
          * \brief Model to send to KeyboardAction callbacks as only parameter
          */
@@ -175,6 +177,7 @@ namespace obe
          * \brief Function callback type for KeyboardAction
          */
         using ActionCallback = std::function<void(KeyboardActionEvent event)>;
+
         class KeyboardAction : public Types::Identifiable
         {
         private:
@@ -258,7 +261,7 @@ namespace obe
             std::vector<std::unique_ptr<KeyboardAction>> m_allActions;
             std::vector<KeyboardAction*> m_currentActions;
             std::unordered_map<std::string, std::unique_ptr<KeyClass>> m_keys;
-            
+
             bool m_binderEnabled = true;
             Triggers::TriggerGroup::Ptr m_keysTriggers;
         public:

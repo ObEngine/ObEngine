@@ -131,6 +131,7 @@ namespace obe
             */
             BottomRight,
         };
+
         /**
          * \brief Get the opposite Referencial in a Rect
          * \param ref Referencial you want to get opposite
