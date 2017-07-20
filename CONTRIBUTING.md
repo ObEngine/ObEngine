@@ -51,3 +51,7 @@ If you feel like there is a missing feature come and discuss it with us on the D
 
 You're an adventurer ? Nice ! If you developped something for the engine you can do a pull request, 
 I'll try to validate it quickly if everything is in order :)
+
+### Help on `help wanted` issues
+
+You can find all the issues I need help on right there : [Issues `help wanted`](https://github.com/Sygmei/ObEngine/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
