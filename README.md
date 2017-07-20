@@ -5,6 +5,14 @@
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg)]()
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/81846da629d244f69f357568a2f8d690)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
 
+## Useful links
+
+- [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
+- [ÖbEngine's Website](https://www.obengine.io)
+- [ÖbEngine's Documentation](https://www.obengine.io/doc)
+- [ÖbEngine's Discord](https://discordapp.com)
+- [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
+
 ## What the hell is ÖbEngine ?
 ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML !
 
