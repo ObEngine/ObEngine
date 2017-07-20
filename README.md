@@ -238,6 +238,3 @@ function Local.Init()
   canvas:render(); -- Drawing all the stuff !
 end
 ```
-
-
-Please check https://www.meltingsaga.xyz/doc for some documentation.
