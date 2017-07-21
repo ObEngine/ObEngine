@@ -227,7 +227,7 @@ namespace obe
             }*/
         }
 
-        void loadSpriteFolder(tgui::Panel::Ptr& spritesPanel, tgui::Label::Ptr& spritesCatLabel, std::string path)
+        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, std::string path)
         {
             spritesPanel->removeAllWidgets();
             spritesPanel->add(spritesCatLabel);
@@ -252,11 +252,11 @@ namespace obe
             backButton->setSize(sprSize, sprSize);
             backButton->setPosition(xpos, ypos);
 
-            backButton->connect("pressed", [&spritesPanel, &spritesCatLabel, path]
-                            {
-                                std::vector<std::string> splittedPath = Utils::String::split(path, "/");
-                                loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1));
-                            });
+            backButton->connect("pressed", [spritesPanel, spritesCatLabel, path]
+            {
+                std::vector<std::string> splittedPath = Utils::String::split(path, "/");
+                loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1));
+            });
 
             for (std::string element : folderList)
             {
@@ -272,10 +272,10 @@ namespace obe
                 currentFolder->setPosition(xpos, ypos);
                 currentFolder->setSize(sprSize, sprSize);
                 currentFolder->getRenderer()->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
-                currentFolder->connect("pressed", [&spritesPanel, &spritesCatLabel, path, element]()
-                                   {
-                                       loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element);
-                                   });
+                currentFolder->connect("pressed", [spritesPanel, spritesCatLabel, path, element]()
+                {
+                    loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element);
+                });
             }
 
             for (std::string element : fileList)
