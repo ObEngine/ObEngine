@@ -318,7 +318,6 @@ namespace obe
             sf::Vector2u textureSize = sprToAdd->getTexture().getSize();
             Transform::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Transform::Units::WorldPixels);
             sprToAdd->setSize(initialSpriteSize);
-            sprToAdd->setAtr(std::vector<std::string>());
             sprToAdd->setLayer(1);
             sprToAdd->setZDepth(1);
         }

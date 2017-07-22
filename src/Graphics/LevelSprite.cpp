@@ -56,26 +56,6 @@ namespace obe
             m_zdepth = zdepth;
         }
 
-        void LevelSprite::setAtr(std::vector<std::string> atrList)
-        {
-            m_currentAtr = atrList;
-        }
-
-        void LevelSprite::addAtr(const std::string& atr)
-        {
-            m_currentAtr.push_back(atr);
-        }
-
-        void LevelSprite::removeAtrByIndex(int index)
-        {
-            m_currentAtr.erase(m_currentAtr.begin() + index);
-        }
-
-        void LevelSprite::removeAtrByName(std::string name)
-        {
-            m_currentAtr.erase(remove(m_currentAtr.begin(), m_currentAtr.end(), name), m_currentAtr.end());
-        }
-
         void LevelSprite::setRotation(double rotate)
         {
             m_rotation = rotate;
@@ -209,39 +189,11 @@ namespace obe
         Transform::UnitVector LevelSprite::getDrawPosition(Transform::UnitVector& cameraPosition) const
         {
             Transform::UnitVector pixelPosition = m_position.to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
 
-            int layeredX = (pixelPosition.x * m_layer -
-                cameraPosition.x) / m_layer;
-            int layeredY = (pixelPosition.y * m_layer -
-                cameraPosition.y) / m_layer;
-            if (obe::Utils::Vector::isInList(static_cast<std::string>("+FIX"), m_currentAtr))
-            {
-                layeredX = pixelPosition.x;
-                layeredY = pixelPosition.y;
-            }
-            else if (obe::Utils::Vector::isInList(static_cast<std::string>("+HFIX"), m_currentAtr))
-            {
-                layeredX = pixelPosition.x;
-            }
-            else if (obe::Utils::Vector::isInList(static_cast<std::string>("+VFIX"), m_currentAtr))
-            {
-                layeredY = pixelPosition.y;
-            }
-            else if (obe::Utils::Vector::isInList(static_cast<std::string>("+PHFIX"), m_currentAtr))
-            {
-                layeredX = pixelPosition.x - cameraPosition.x;
-            }
-            else if (obe::Utils::Vector::isInList(static_cast<std::string>("+PVFIX"), m_currentAtr))
-            {
-                layeredY = pixelPosition.y - cameraPosition.y;
-            }
-            else if (obe::Utils::Vector::isInList(static_cast<std::string>("+PFIX"), m_currentAtr))
-            {
-                layeredX = pixelPosition.x - cameraPosition.x;
-                layeredY = pixelPosition.y - cameraPosition.y;
-            }
+            Transform::UnitVector transformedPosition = m_positionTransformer(pixelPosition, pixelCamera, m_layer);
 
-            return Transform::UnitVector(layeredX, layeredY, Transform::Units::ViewPixels);
+            return Transform::UnitVector(transformedPosition.x, transformedPosition.y, Transform::Units::ViewPixels);
         }
 
         double LevelSprite::getRotation() const
@@ -262,11 +214,6 @@ namespace obe
         std::string LevelSprite::getPath() const
         {
             return m_path;
-        }
-
-        std::vector<std::string> LevelSprite::getAttributes() const
-        {
-            return m_currentAtr;
         }
 
         sf::FloatRect LevelSprite::getRect()
@@ -309,6 +256,16 @@ namespace obe
         int LevelSprite::getYScaleFactor() const
         {
             return obe::Utils::Math::sign(m_sprite.getScale().y);
+        }
+
+        void LevelSprite::setPositionTransformer(PositionTransformers::PositionTransformer transformer)
+        {
+            m_positionTransformer = transformer;
+        }
+
+        PositionTransformers::PositionTransformer LevelSprite::getPositionTransformer() const
+        {
+            return m_positionTransformer;
         }
 
         LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)

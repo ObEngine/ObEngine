@@ -181,105 +181,119 @@ namespace vili
         return false;
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const DataType& type, const std::string& data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, const DataType& type, const std::string& data)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, type);
         getBaseAttribute(attributeID).autoset(data);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const DataType& type)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, const DataType& type)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, type);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const std::string& data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, const std::string& data)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, DataType::String);
         getBaseAttribute(attributeID).set(data);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, const char* data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, const char* data)
     {
         this->createBaseAttribute(attributeID, std::string(data));
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, bool data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, bool data)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, DataType::Bool);
         getBaseAttribute(attributeID).set(data);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, int data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, int data)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, DataType::Int);
         getBaseAttribute(attributeID).set(data);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::createBaseAttribute(const std::string& attributeID, double data)
+    BaseAttribute& ComplexAttribute::createBaseAttribute(const std::string& attributeID, double data)
     {
         m_childAttributes[attributeID] = std::make_unique<BaseAttribute>(this, attributeID, DataType::Float);
         getBaseAttribute(attributeID).set(data);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getBaseAttribute(attributeID);
     }
 
-    void ComplexAttribute::pushBaseAttribute(BaseAttribute* attribute)
+    BaseAttribute& ComplexAttribute::pushBaseAttribute(BaseAttribute* attribute)
     {
         m_childAttributes[attribute->getID()] = std::unique_ptr<BaseAttribute>(attribute);
         if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
             m_childAttributesNames.push_back(attribute->getID());
+        return this->getBaseAttribute(attribute->getID());
     }
 
-    void ComplexAttribute::createListAttribute(const std::string& attributeID)
+    ListAttribute& ComplexAttribute::createListAttribute(const std::string& attributeID)
     {
         m_childAttributes[attributeID] = std::make_unique<ListAttribute>(this, attributeID);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getListAttribute(attributeID);
     }
 
-    void ComplexAttribute::pushListAttribute(ListAttribute* attribute)
+    ListAttribute& ComplexAttribute::pushListAttribute(ListAttribute* attribute)
     {
         m_childAttributes[attribute->getID()] = std::unique_ptr<ListAttribute>(attribute);
         if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
             m_childAttributesNames.push_back(attribute->getID());
+        return this->getListAttribute(attribute->getID());
     }
 
-    void ComplexAttribute::createComplexAttribute(const std::string& attributeID)
+    ComplexAttribute& ComplexAttribute::createComplexAttribute(const std::string& attributeID)
     {
         m_childAttributes[attributeID] = std::make_unique<ComplexAttribute>(this, attributeID);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getComplexAttribute(attributeID);
     }
 
-    void ComplexAttribute::pushComplexAttribute(ComplexAttribute* attribute)
+    ComplexAttribute& ComplexAttribute::pushComplexAttribute(ComplexAttribute* attribute)
     {
         m_childAttributes[attribute->getID()] = std::unique_ptr<ComplexAttribute>(attribute);
         if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
             m_childAttributesNames.push_back(attribute->getID());
+        return this->getComplexAttribute(attribute->getID());
     }
 
-    void ComplexAttribute::createLinkAttribute(const std::string& attributeID, const std::string& path)
+    LinkAttribute& ComplexAttribute::createLinkAttribute(const std::string& attributeID, const std::string& path)
     {
         m_childAttributes[attributeID] = std::make_unique<LinkAttribute>(this, attributeID, path);
         if (!Functions::Vector::isInList(attributeID, m_childAttributesNames))
             m_childAttributesNames.push_back(attributeID);
+        return this->getLinkAttribute(attributeID);
     }
 
-    void ComplexAttribute::pushLinkAttribute(LinkAttribute* attribute)
+    LinkAttribute& ComplexAttribute::pushLinkAttribute(LinkAttribute* attribute)
     {
         m_childAttributes[attribute->getID()] = std::unique_ptr<LinkAttribute>(attribute);
         if (!Functions::Vector::isInList(attribute->getID(), m_childAttributesNames))
             m_childAttributesNames.push_back(attribute->getID());
+        return this->getLinkAttribute(attribute->getID());
     }
 
     void ComplexAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const

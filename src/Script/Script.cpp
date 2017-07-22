@@ -976,12 +976,12 @@ namespace obe
                         vili::ComplexAttribute(std::string),
                         vili::ComplexAttribute(std::string, vili::ComplexAttribute*),
                         vili::ComplexAttribute(std::string, std::vector<vili::ComplexAttribute*>*)>()
-                    .addOverloadedFunctions("createBaseAttribute",
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, const vili::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, double)>(&vili::ComplexAttribute::createBaseAttribute),
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, bool)>(&vili::ComplexAttribute::createBaseAttribute),
-                                            static_cast<void (vili::ComplexAttribute::*)(const std::string&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute)
+                    /*.addOverloadedFunctions("createBaseAttribute",
+                        static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, const vili::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
+                        static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
+                        static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, double)>(&vili::ComplexAttribute::createBaseAttribute),
+                        static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, bool)>(&vili::ComplexAttribute::createBaseAttribute),
+                        static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute)
                     )
                     .addOverloadedFunctions("contains",
                                             static_cast<bool (vili::ComplexAttribute::*)(const std::string&) const>(&vili::ComplexAttribute::contains),
@@ -993,10 +993,10 @@ namespace obe
                     .addFunction("deleteComplexAttribute", &vili::ComplexAttribute::deleteComplexAttribute)
                     .addFunction("deleteListAttribute", &vili::ComplexAttribute::deleteListAttribute)
                     .addFunction("getAll", &vili::ComplexAttribute::getAll)
-                    .addFunction("heritage", &vili::ComplexAttribute::heritage)
-                    .addFunction("pushBaseAttribute", &vili::ComplexAttribute::pushBaseAttribute)
-                    .addFunction("pushComplexAttribute", &vili::ComplexAttribute::pushComplexAttribute)
-                    .addFunction("pushListAttribute", &vili::ComplexAttribute::pushListAttribute)
+                    .addFunction("heritage", &vili::ComplexAttribute::heritage)*/
+                    //.addFunction("pushBaseAttribute", &vili::ComplexAttribute::pushBaseAttribute)
+                    //.addFunction("pushComplexAttribute", &vili::ComplexAttribute::pushComplexAttribute)
+                    //.addFunction("pushListAttribute", &vili::ComplexAttribute::pushListAttribute)
                 );
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["at"] = kaguya::function(
                     [](vili::ComplexAttribute& attribute, kaguya::VariadicArgType args)

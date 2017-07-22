@@ -210,7 +210,8 @@ namespace obe
                 m_levelSpriteRelative = (obj.at("LevelSprite").getBaseAttribute("position").get<std::string>() == "relative") ? true : false;
                 int sprOffX = 0;
                 int sprOffY = 0;
-                std::vector<std::string> decoAtrList;
+                std::string spriteXTransformer;
+                std::string spriteYTransformer;
                 vili::ComplexAttribute& currentSprite = obj.at("LevelSprite");
 
                 std::string spritePath = currentSprite.contains(vili::AttributeType::BaseAttribute, "path") ?
@@ -228,18 +229,29 @@ namespace obe
                 int zdepth = currentSprite.contains(vili::AttributeType::BaseAttribute, "z-depth") ?
                                  currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
 
-                if (obj.at("LevelSprite").contains(vili::AttributeType::ListAttribute, "attributeList"))
+                if (currentSprite.contains(vili::AttributeType::BaseAttribute, "xTransform"))
                 {
-                    int atrListSize = obj.at("LevelSprite").getListAttribute("attributeList").size();
-                    for (int j = 0; j < atrListSize; j++)
-                        decoAtrList.push_back(obj.at("LevelSprite").getListAttribute("attributeList").get(j).get<std::string>());
+                    spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform");
+                }
+                else
+                {
+                    spriteXTransformer = "None";
+                }
+                if (currentSprite.contains(vili::AttributeType::BaseAttribute, "yTransform"))
+                {
+                    spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform");
+                }
+                else
+                {
+                    spriteYTransformer = "None";
                 }
 
                 m_objectLevelSprite->load(spritePath);
                 m_objectLevelSprite->setPosition(spritePos.x, spritePos.y);
                 m_objectLevelSprite->setRotation(spriteRot);
                 //ADD SPRITE SIZE
-                m_objectLevelSprite->setAtr(decoAtrList);
+                Graphics::PositionTransformers::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+                m_objectLevelSprite->setPositionTransformer(positionTransformer);
                 m_objectLevelSprite->setLayer(layer);
                 m_objectLevelSprite->setZDepth(zdepth);
                 m_hasLevelSprite = true;

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <functional>
+
 #include <sfe/ComplexSprite.hpp>
 
+#include <Graphics/PositionTransformers.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
@@ -63,12 +66,12 @@ namespace obe
             double m_rotation = 0;
 
             std::vector<LevelSpriteHandlePoint> m_handlePoints;
-            std::vector<std::string> m_currentAtr = {};
             int m_layer = 1;
             int m_zdepth = 0;
             sf::Texture m_texture;
             sfe::ComplexSprite m_sprite;
             std::string m_parentID = "";
+            PositionTransformers::PositionTransformer m_positionTransformer;
 
             void applySize();
             void resetUnit(Transform::Units unit) override;
@@ -184,12 +187,9 @@ namespace obe
             */
             int getYScaleFactor() const;
 
-            //Attributes
-            void setAtr(std::vector<std::string> atrList);
-            void addAtr(const std::string& atr);
-            std::vector<std::string> getAttributes() const;
-            void removeAtrByIndex(int index);
-            void removeAtrByName(std::string name);
+            //PositionTransformers
+            void setPositionTransformer(PositionTransformers::PositionTransformer transformer);
+            PositionTransformers::PositionTransformer getPositionTransformer() const;
 
             //Sprite
             /**

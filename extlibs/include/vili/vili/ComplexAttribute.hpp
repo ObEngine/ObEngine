@@ -63,23 +63,23 @@ namespace vili
         bool contains(const std::string& attributeID) const;
         bool contains(AttributeType searchType, const std::string& attributeID) const;
 
-        void createBaseAttribute(const std::string& attributeID, const DataType& type, const std::string& data);
-        void createBaseAttribute(const std::string& attributeID, const DataType& type);
-        void createBaseAttribute(const std::string& attributeID, const std::string& data);
-        void createBaseAttribute(const std::string& attributeID, const char* data);
-        void createBaseAttribute(const std::string& attributeID, bool data);
-        void createBaseAttribute(const std::string& attributeID, int data);
-        void createBaseAttribute(const std::string& attributeID, double data);
-        void pushBaseAttribute(BaseAttribute* attribute);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, const DataType& type, const std::string& data);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, const DataType& type);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, const std::string& data);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, const char* data);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, bool data);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, int data);
+        BaseAttribute& createBaseAttribute(const std::string& attributeID, double data);
+        BaseAttribute& pushBaseAttribute(BaseAttribute* attribute);
 
-        void createListAttribute(const std::string& attributeID);
-        void pushListAttribute(ListAttribute* attribute);
+        ListAttribute& createListAttribute(const std::string& attributeID);
+        ListAttribute& pushListAttribute(ListAttribute* attribute);
 
-        void createComplexAttribute(const std::string& attributeID);
-        void pushComplexAttribute(ComplexAttribute* attribute);
+        ComplexAttribute& createComplexAttribute(const std::string& attributeID);
+        ComplexAttribute& pushComplexAttribute(ComplexAttribute* attribute);
 
-        void createLinkAttribute(const std::string& attributeID, const std::string& path);
-        void pushLinkAttribute(LinkAttribute* attribute);
+        LinkAttribute& createLinkAttribute(const std::string& attributeID, const std::string& path);
+        LinkAttribute& pushLinkAttribute(LinkAttribute* attribute);
 
         void deleteBaseAttribute(const std::string& attributeID, bool freeMemory = false);
         void deleteComplexAttribute(const std::string& attributeID, bool freeMemory = false);

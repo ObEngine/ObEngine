@@ -85,7 +85,8 @@ namespace obe
                 for (std::string& currentSpriteName : levelSprites.getAll(vili::AttributeType::ComplexAttribute))
                 {
                     vili::ComplexAttribute& currentSprite = levelSprites.at(currentSpriteName);
-                    std::vector<std::string> spriteAtrList;
+                    std::string spriteXTransformer;
+                    std::string spriteYTransformer;
                     std::string spriteID = currentSpriteName;
                     std::string spriteUnits = currentSprite.contains(vili::AttributeType::ComplexAttribute, "rect") ?
                                                   currentSprite.at<vili::BaseAttribute>("rect", "unit").get<std::string>() : "WorldUnits";
@@ -113,10 +114,21 @@ namespace obe
                     int zdepth = currentSprite.contains(vili::AttributeType::BaseAttribute, "z-depth") ?
                                      currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
 
-                    if (currentSprite.contains(vili::AttributeType::ListAttribute, "attributeList"))
+                    if (currentSprite.contains(vili::AttributeType::BaseAttribute, "xTransform"))
                     {
-                        for (vili::BaseAttribute* attribute : currentSprite.at<vili::ListAttribute>("attributeList"))
-                            spriteAtrList.push_back(*attribute);
+                        spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform");
+                    }
+                    else
+                    {
+                        spriteXTransformer = "None";
+                    }
+                    if (currentSprite.contains(vili::AttributeType::BaseAttribute, "yTransform"))
+                    {
+                        spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform");
+                    }
+                    else
+                    {
+                        spriteYTransformer = "None";
                     }
 
                     std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
@@ -126,7 +138,8 @@ namespace obe
                     tempSprite->setSize(spriteSize.x, spriteSize.y);
                     tempSprite->setWorkingUnit(Transform::stringToUnits(spriteUnits));
                     tempSprite->setRotation(spriteRot);
-                    tempSprite->setAtr(spriteAtrList);
+                    Graphics::PositionTransformers::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+                    tempSprite->setPositionTransformer(positionTransformer);
                     tempSprite->setLayer(layer);
                     tempSprite->setZDepth(zdepth);
                     m_spriteArray.push_back(move(tempSprite));
@@ -232,30 +245,26 @@ namespace obe
             {
                 if (m_spriteArray[i]->getParentId() == "")
                 {
-                    dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("path", m_spriteArray[i]->getPath());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createComplexAttribute("rect");
+                    vili::ComplexAttribute& currentSprite = dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
+                    currentSprite.createBaseAttribute("path", m_spriteArray[i]->getPath());
+                    currentSprite.createComplexAttribute("rect");
                     Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("x", spritePositionRect.x);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("y", spritePositionRect.y);
+                    currentSprite.at("rect").createBaseAttribute("x", spritePositionRect.x);
+                    currentSprite.at("rect").createBaseAttribute("y", spritePositionRect.y);
                     Transform::UnitVector spriteSizeRect = Transform::UnitVector(
                         m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(),
                         m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(),
                         Transform::Units::WorldPixels).to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("w", spriteSizeRect.x);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").createBaseAttribute("h", spriteSizeRect.y);
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").useTemplate(
+                    currentSprite.at("rect").createBaseAttribute("w", spriteSizeRect.x);
+                    currentSprite.at("rect").createBaseAttribute("h", spriteSizeRect.y);
+                    currentSprite.at("rect").useTemplate(
                         dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
                     );
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("layer", m_spriteArray[i]->getLayer());
-                    dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
-                    if (m_spriteArray[i]->getAttributes().size() != 0)
-                    {
-                        dataStore->at("LevelSprites", m_spriteArray[i]->getId()).createListAttribute("attributeList");
-                        for (unsigned int j = 0; j < m_spriteArray[i]->getAttributes().size(); j++)
-                            dataStore->at("LevelSprites", m_spriteArray[i]->getId()).getListAttribute("attributeList").push(m_spriteArray[i]->getAttributes()[j]);
-                    }
+                    currentSprite.createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
+                    currentSprite.createBaseAttribute("layer", m_spriteArray[i]->getLayer());
+                    currentSprite.createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
+                    currentSprite.createBaseAttribute("xTransform", m_spriteArray[i]->getPositionTransformer().getXTransformerName());
+                    currentSprite.createBaseAttribute("yTransform", m_spriteArray[i]->getPositionTransformer().getYTransformerName());
                 }
             }
             if (m_colliderArray.size() > 0) (*dataStore)->createComplexAttribute("Collisions");
@@ -368,11 +377,15 @@ namespace obe
                 tAffSpr.setPosition(spritePosition.x, spritePosition.y);
                 //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
                 //tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
+                
                 if (m_spriteArray[i]->isVisible())
                 {
                     target.draw(tAffSpr);
-                    //if (m_spriteArray[i]->isSelected())
-                    m_spriteArray[i]->drawHandle(target, spritePosition.x, spritePosition.y);
+                    if (m_spriteArray[i]->isSelected())
+                    {
+                        m_spriteArray[i]->drawHandle(target, spritePosition.x, spritePosition.y);
+                    }
+                        
                 }
             }
         }

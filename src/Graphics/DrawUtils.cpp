@@ -16,22 +16,22 @@ namespace obe
                 return options[key].as<T>();
             }
 
-            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color& col)
+            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color& color)
             {
                 sf::CircleShape drawPt;
                 drawPt.setRadius(radius);
                 drawPt.setPosition(sf::Vector2f(x, y));
-                drawPt.setFillColor(col);
+                drawPt.setFillColor(color);
                 target.draw(drawPt);
             }
 
-            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int w, sf::Color& col)
+            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color& color)
             {
                 sf::Vertex line[] = {
-                    sf::Vertex(sf::Vector2f(x1, y1), col),
-                    sf::Vertex(sf::Vector2f(x2, y2), col)
+                    sf::Vertex(sf::Vector2f(x1, y1), color),
+                    sf::Vertex(sf::Vector2f(x2, y2), color)
                 };
-                target.draw(line, w, sf::Lines);
+                target.draw(line, thickness, sf::Lines);
             }
 
             void drawPolygon(sf::RenderWindow& target, std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options)

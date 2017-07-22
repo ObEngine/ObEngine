@@ -4,7 +4,9 @@
 #include <vili/Vili.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include <Bindings/Bindings.hpp>
 #include <Editor/MapEditor.hpp>
+#include <Graphics/LevelSprite.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
@@ -12,8 +14,6 @@
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
-
-#include <Bindings/Bindings.hpp>
 
 void LoadErrors()
 {
@@ -29,6 +29,7 @@ int main(int argc, char** argv)
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    obe::Graphics::PositionTransformers::Init();
 
     /*std::ofstream out("debug.log");
     std::streambuf *coutbuf = std::cout.rdbuf();
