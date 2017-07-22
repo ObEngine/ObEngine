@@ -298,9 +298,16 @@ template <typename T> struct lua_type_traits<standard::shared_ptr<T> > {
   static bool strictCheckType(lua_State *l, int index) {
     ObjectSharedPointerWrapper *wrapper =
         dynamic_cast<ObjectSharedPointerWrapper *>(object_wrapper(l, index));
+    if (!wrapper) {
+      return false;
+    }
     const std::type_info &type =
         metatableType<standard::shared_ptr<typename traits::decay<T>::type> >();
-    return wrapper && (wrapper->shared_ptr_type() == type);
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+    return strcmp(wrapper->shared_ptr_type().name(), type.name()) == 0;
+#else
+    return wrapper->shared_ptr_type() == type;
+#endif
   }
   static bool checkType(lua_State *l, int index) {
     return get_shared_pointer(l, index, types::typetag<T>()) ||

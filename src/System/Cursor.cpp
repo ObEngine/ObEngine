@@ -162,42 +162,42 @@ namespace obe
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Clicked");
+                m_cursorTriggers->trigger("Clicked");
             }
             if (this->getClicked(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Clicked", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Clicked", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Clicked", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Clicked");
+                m_cursorTriggers->trigger("Clicked");
             }
             if (this->getPressed(MouseButton::Left))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Pressed");
+                m_cursorTriggers->trigger("Pressed");
             }
             if (this->getPressed(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Pressed", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Pressed", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Pressed", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Pressed");
+                m_cursorTriggers->trigger("Pressed");
             }
             if (this->getReleased(MouseButton::Left))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Left"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Released");
+                m_cursorTriggers->trigger("Released");
             }
             if (this->getReleased(MouseButton::Right))
             {
                 m_cursorTriggers->pushParameter("Released", "Key", std::string("Right"));
                 m_cursorTriggers->pushParameter("Released", "X", m_constrainedX);
                 m_cursorTriggers->pushParameter("Released", "Y", m_constrainedY);
-                m_cursorTriggers->enableTrigger("Released");
+                m_cursorTriggers->trigger("Released");
             }
         }
 

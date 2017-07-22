@@ -36,8 +36,8 @@ namespace obe
         private:
             std::unique_ptr<Animation::Animator> m_objectAnimator;
             std::unique_ptr<kaguya::State> m_objectScript;
-            Graphics::LevelSprite* m_objectLevelSprite = nullptr;
-            Collision::PolygonalCollider* m_objectCollider = nullptr;
+            Graphics::LevelSprite* m_objectLevelSprite;
+            Collision::PolygonalCollider* m_objectCollider;
             Triggers::TriggerGroupPtr m_localTriggers;
 
             std::vector<Triggers::Trigger*> m_registeredTriggers;
@@ -59,7 +59,7 @@ namespace obe
             bool m_initialised = false;
             bool m_updated = true;
 
-            int m_queryCounter = 0;
+            //int m_queryCounter = 0;
 
             friend class Scene::World;
         public:
@@ -122,9 +122,9 @@ namespace obe
         {
             if (Utils::Vector::isInList(m_localTriggers->getTrigger("Query"), m_registeredTriggers))
             {
-                m_localTriggers->pushParameter("Query", std::to_string(m_queryCounter), query);
-                m_localTriggers->setTriggerState("Query", true);
-                m_queryCounter++;
+                m_localTriggers->pushParameter("Query", std::to_string(0), query);
+                m_localTriggers->trigger("Query");
+                //m_queryCounter++;
             }
         }
     };

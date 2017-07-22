@@ -462,7 +462,7 @@ template <typename T, typename A> struct lua_type_traits<std::vector<T, A> > {
     int count = 1; // array is 1 origin in Lua
     for (typename std::vector<T, A>::const_iterator it = v.begin();
          it != v.end(); ++it) {
-      util::one_push(l, *it);
+      util::one_push(l, static_cast<const T &>(*it));
       lua_rawseti(l, -2, count++);
     }
     return 1;

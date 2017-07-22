@@ -73,7 +73,11 @@ struct ErrorHandler {
       function_type *funptr = getFunctionPointer(state);
       if (!funptr) {
         util::ScopedSavedStack save(state);
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+        lua_pushstring(state, handlerRegistryKey());
+#else
         lua_pushlightuserdata(state, handlerRegistryKey());
+#endif
         void *ptr = lua_newuserdata(
             state, sizeof(function_type)); // dummy data for gc call
         funptr = new (ptr) function_type();
@@ -95,38 +99,49 @@ struct ErrorHandler {
   static void throwDefaultError(int status, const char *message = 0) {
     switch (status) {
     case LUA_ERRSYNTAX:
-      throw LuaSyntaxError(status, message ? std::string(message)
-                                           : "unknown syntax error");
+      throw LuaSyntaxError(
+          status, message ? std::string(message) : "unknown syntax error");
     case LUA_ERRRUN:
-      throw LuaRuntimeError(status, message ? std::string(message)
-                                            : "unknown runtime error");
+      throw LuaRuntimeError(
+          status, message ? std::string(message) : "unknown runtime error");
     case LUA_ERRMEM:
-      throw LuaMemoryError(status, message ? std::string(message)
-                                           : "lua memory allocation error");
+      throw LuaMemoryError(status,
+                           message ? std::string(message)
+                                   : "lua memory allocation error");
     case LUA_ERRERR:
-      throw LuaErrorRunningError(status, message
-                                             ? std::string(message)
-                                             : "unknown error running error");
+      throw LuaErrorRunningError(status,
+                                 message ? std::string(message)
+                                         : "unknown error running error");
 #if LUA_VERSION_NUM >= 502
     case LUA_ERRGCMM:
       throw LuaGCError(status,
                        message ? std::string(message) : "unknown gc error");
 #endif
     default:
-      throw LuaUnknownError(status, message ? std::string(message)
-                                            : "lua unknown error");
+      throw LuaUnknownError(
+          status, message ? std::string(message) : "lua unknown error");
     }
   }
 
 private:
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+  static const char *handlerRegistryKey() {
+    return "\x80KAGUYA_ERROR_HANDLER_REGISTRY_KEY";
+  }
+#else
   static void *handlerRegistryKey() {
     static void *key;
     return key;
   }
+#endif
   static function_type *getFunctionPointer(lua_State *state) {
     if (state) {
       util::ScopedSavedStack save(state);
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+      lua_pushstring(state, handlerRegistryKey());
+#else
       lua_pushlightuserdata(state, handlerRegistryKey());
+#endif
       lua_rawget(state, LUA_REGISTRYINDEX);
       function_type *ptr = (function_type *)lua_touserdata(state, -1);
       return ptr;

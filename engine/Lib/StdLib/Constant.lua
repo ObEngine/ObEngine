@@ -1,12 +1,5 @@
-Core = {}; -- Core Lib
-Core.ImportedLibs = {} -- List of Imported Lib names
-Hook = {}; -- Core Objects
-
--- All Core Events Group
-KeyPress = {}
-
-local protected = {};
-function protect(key, value)
+const_protected = {};
+function const(key, value)
     if _G[key] then
         protected[key] = _G[key];
         _G[key] = nil;
@@ -27,10 +20,4 @@ local meta = {
 
 setmetatable(_G, meta)
 
-function Import(lib)
-    CPP_Import(This, lib);
-end
-
-function GetHook(hook)
-    CPP_Hook(This, hook);
-end
+return const;

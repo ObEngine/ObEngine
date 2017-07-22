@@ -20,18 +20,18 @@ namespace obe
             if (listener.accept(client) == sf::Socket::Done)
             {
                 socketTriggers->pushParameter("Connected", "IP", client.getRemoteAddress().toString());
-                socketTriggers->enableTrigger("Connected");
+                socketTriggers->trigger("Connected");
                 std::cout << "[Network] Client Accepted" << std::endl;
             }
             status = client.receive(data, 100, received);
             if (status == sf::Socket::Done)
             {
                 socketTriggers->pushParameter("DataReceived", "Content", std::string(data).substr(0, received));
-                socketTriggers->enableTrigger("DataReceived");
+                socketTriggers->trigger("DataReceived");
             }
             else if (status == sf::Socket::Disconnected)
             {
-                socketTriggers->enableTrigger("Disconnected");
+                socketTriggers->trigger("Disconnected");
             }
         }
     }

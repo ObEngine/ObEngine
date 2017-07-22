@@ -13,7 +13,9 @@
 #include <ObEngine.hpp>
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
+#include <Types/Any.hpp>
 #include <Utils/ExecUtils.hpp>
+#include <Utils/TypeUtils.hpp>
 
 void LoadErrors()
 {
@@ -22,6 +24,17 @@ void LoadErrors()
 
 using namespace obe;
 
+class Injectore
+{
+    private:
+        kaguya::detail::LuaVariantImpl<kaguya::TableKeyReferenceProxy<char const *>> injectValue;
+    public:
+        Injectore();
+        void inject(kaguya::detail::LuaVariantImpl<kaguya::TableKeyReferenceProxy<char const *>> value);
+        void get(kaguya::State* lua);
+        
+};
+
 int main(int argc, char** argv)
 {
     Utils::Exec::RunArgsParser runParser(argc, argv);
@@ -29,15 +42,15 @@ int main(int argc, char** argv)
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
-    obe::Graphics::PositionTransformers::Init();
+    Graphics::PositionTransformers::Init();
 
     /*std::ofstream out("debug.log");
     std::streambuf *coutbuf = std::cout.rdbuf();
     std::cout.rdbuf(out.rdbuf());*/
 
-    std::ofstream out_err("errors.log");
+    /*std::ofstream out_err("errors.log");
     std::streambuf* cerrbug = std::cerr.rdbuf();
-    std::cerr.rdbuf(out_err.rdbuf());
+    std::cerr.rdbuf(out_err.rdbuf());*/
 
     std::cout << "<Computer Configuration>" << std::endl;
     std::cout << "Screen Resolution : " << Transform::UnitVector::Screen.w << ", " << Transform::UnitVector::Screen.h << std::endl;
@@ -45,7 +58,6 @@ int main(int argc, char** argv)
     LoadErrors();
     System::MountPaths();
 
-    kaguya::State luaP;
     Bindings::IndexBindings();
 
     if (startMode == "edit")

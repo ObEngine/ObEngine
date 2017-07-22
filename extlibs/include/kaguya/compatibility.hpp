@@ -13,6 +13,9 @@ namespace compat {
 inline int lua_rawgetp_rtype(lua_State *L, int idx, const void *ptr) {
   return lua_rawgetp(L, idx, ptr);
 }
+inline int lua_rawget_rtype(lua_State *L, int idx) {
+  return lua_rawget(L, idx);
+}
 inline int lua_getfield_rtype(lua_State *L, int idx, const char *k) {
   return lua_getfield(L, idx, k);
 }
@@ -111,6 +114,10 @@ inline int lua_getfield_rtype(lua_State *L, int idx, const char *k) {
 }
 inline int lua_gettable_rtype(lua_State *L, int idx) {
   lua_gettable(L, idx);
+  return lua_type(L, -1);
+}
+inline int lua_rawget_rtype(lua_State *L, int idx) {
+  lua_rawget(L, idx);
   return lua_type(L, -1);
 }
 #endif

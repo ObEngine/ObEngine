@@ -1,9 +1,12 @@
 #pragma once
 
+#include <queue>
+
 #include <kaguya/kaguya.hpp>
 
 #include <Types/Any.hpp>
 #include <Utils/StringUtils.hpp>
+#include <Utils/TypeUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe
@@ -12,6 +15,7 @@ namespace obe
     {
         class TriggerGroup;
 
+        using ParameterTable = std::map<std::string, std::pair<std::string, Types::Any>>;
         /**
          * \brief A Class that does represents a triggerable event
          * @Bind
@@ -21,12 +25,9 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
-            std::map<std::string, std::pair<std::string, Types::Any>> m_triggerParameters;
+            std::vector<ParameterTable> m_triggerParameters;
             bool m_enabled = false;
             bool m_toEnable = false;
-            bool m_toDisable = false;
-            bool m_permanent = false;
-            void clearParameters();
             friend class TriggerGroup;
             friend class TriggerDatabase;
         protected:
@@ -37,7 +38,8 @@ namespace obe
              * \param parameter Value of the Parameter
              */
             template <typename P>
-            void pushParameter(std::string name, P parameter);
+            void pushParameter(const std::string& name, P parameter);
+            void pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter);
         public:
             /**
              * \brief Creates a new Trigger
@@ -53,11 +55,6 @@ namespace obe
              */
             bool getState() const;
             /**
-             * \brief Get if the Trigger is in permanent state (stays enabled)
-             * \return true is the Trigger is permanent, false otherwise
-             */
-            bool isPermanent() const;
-            /**
              * \brief Get the name of the TriggerGroup which is the parent of the Trigger
              * \return A std::string containing the name of the TriggerGroup which is the parent of the Trigger
              */
@@ -72,23 +69,34 @@ namespace obe
              * \return A std::string containing the name of the namespace of the parent (TriggerGroup) of the Trigger
              */
             std::string getNamespace() const;
-            std::map<std::string, std::pair<std::string, Types::Any>>* getParameters();
+            void clear();
+
+            template <class T>
+            void execute(kaguya::State& lua, T callback);
         };
 
         /**
-         * \brief Injects the parameter contained in a Trigger to a Lua VM
-         * \param trigger Reference to the Trigger
+         * \brief Injects the current ParameterTable contained in a Trigger to a Lua VM
+         * \param parameters Reference to the Trigger ParameterTable
          * \param lua Lua VM where to inject the parameters
-         * \return Empty string if everything went fine, name of the parameter that caused a problem otherwise
          */
-        std::string injectParameters(Trigger& trigger, kaguya::State& lua);
+        void injectParameters(const std::string& triggerName, ParameterTable& parameters, kaguya::State& lua);
 
         template <typename P>
-        void Trigger::pushParameter(std::string name, P parameter)
+        void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            std::vector<std::string> splittedTypeName = Utils::String::split(typeid(parameter).name(), " ");
-            std::string datatype = Utils::Vector::join(splittedTypeName, "", 1);
-            m_triggerParameters[name] = std::pair<std::string, Types::Any>(datatype, Types::Any(parameter));
+            //m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getClassType<P>(), Types::Any(parameter));
+        }
+
+        template <class T>
+        void Trigger::execute(kaguya::State& lua, T callback)
+        {
+            unsigned int index = 0;
+            for (ParameterTable& pTable : m_triggerParameters)
+            {
+                injectParameters(m_name, pTable, lua);
+                T(index++);
+            }
         }
     }
 }

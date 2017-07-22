@@ -14,7 +14,7 @@ namespace obe
         {
             loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
             Script::ScriptEngine["World"] = this;
-            System::Path("Lib/GameLib/WScrInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+            System::Path("Lib/Internal/WorldInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::loadLib(&Script::ScriptEngine, "Core.*");
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;

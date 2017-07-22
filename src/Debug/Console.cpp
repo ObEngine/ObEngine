@@ -40,7 +40,7 @@ namespace obe
             if (m_consoleScroll != oldScroll)
             {
                 consoleTriggers->pushParameter("ConsoleScrolled", "Scroll", power);
-                consoleTriggers->enableTrigger("ConsoleScrolled");
+                consoleTriggers->trigger("ConsoleScrolled");
             }
         }
 
@@ -51,7 +51,7 @@ namespace obe
                 m_streamMap[id]->disable();
             consoleTriggers->pushParameter("NewStream", "StreamName", id);
             consoleTriggers->pushParameter("NewStream", "Enabled", enabled);
-            consoleTriggers->enableTrigger("NewStream");
+            consoleTriggers->trigger("NewStream");
             return m_streamMap[id].get();
         }
 
@@ -103,7 +103,7 @@ namespace obe
                 consoleText.push_back(forgeMessage);
                 consoleTriggers->pushParameter("NewMessage", "HeaderName", headerName);
                 consoleTriggers->pushParameter("NewMessage", "Message", message);
-                consoleTriggers->enableTrigger("NewMessage");
+                consoleTriggers->trigger("NewMessage");
                 if (m_consoleAutoScroll)
                 {
                     if (consoleText.size() >= 52)
@@ -123,7 +123,7 @@ namespace obe
             m_consoleHistoryIndex = m_consoleHistory.size();
             Script::ScriptEngine(text);
             consoleTriggers->pushParameter("UserInput", "inpput", text);
-            consoleTriggers->enableTrigger("UserInput");
+            consoleTriggers->trigger("UserInput");
         }
 
         void Console::inputKey(int keyCode)
@@ -191,7 +191,7 @@ namespace obe
             if (m_consoleVisibility != enabled)
             {
                 consoleTriggers->pushParameter("ConsoleToggled", "state", enabled);
-                consoleTriggers->enableTrigger("ConsoleToggled");
+                consoleTriggers->trigger("ConsoleToggled");
             }
             m_consoleVisibility = enabled;
         }

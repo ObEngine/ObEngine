@@ -107,7 +107,7 @@ namespace obe
              * \brief Get the current Sprite of the AnimationGroup
              * \return A reference to the sf::Texture currently played by the AnimationGroup
              */
-            const sf::Texture& getTexture();
+            const sf::Texture& getTexture() const;
             /**
              * \brief Updates the Texture to display (Done automatically after previous / next)
              */

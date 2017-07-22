@@ -18,9 +18,8 @@ namespace obe
              * \brief Creates a new TriggerDelay
              * \param trigger Pointer to the Trigger to delay 
              * \param delay Delay until the Trigger activation (in ms)
-             * \param state 
              */
-            TriggerDelay(Trigger* trigger, Time::TimeUnit delay, bool state);
+            TriggerDelay(Trigger* trigger, Time::TimeUnit delay);
             /**
              * \brief Trigger to enable /disable after the delay
              */
@@ -29,10 +28,6 @@ namespace obe
              * \brief Delay the Trigger should be enabled / disabled (in milliseconds)
              */
             Time::TimeUnit m_delay = 0;
-            /**
-             * \brief State to set to the Trigger
-             */
-            bool m_state = false;
             /**
              * \brief Internal use only
              */

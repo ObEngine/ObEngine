@@ -4,11 +4,10 @@ namespace obe
 {
     namespace Triggers
     {
-        TriggerDelay::TriggerDelay(Trigger* trigger, Time::TimeUnit delay, bool state)
+        TriggerDelay::TriggerDelay(Trigger* trigger, Time::TimeUnit delay)
         {
             m_trigger = trigger;
             m_delay = delay;
-            m_state = state;
         }
     }
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Triggers/TriggerDelay.hpp>
-#include <Triggers/TriggerGroup.hpp>
 
 namespace obe
 {
@@ -54,36 +53,15 @@ namespace obe
              * \brief Delays activation of a Trigger
              * \param triggerName Name of the Trigger to delay
              * \param delay Time in ms used to delay the Trigger
-             * \param state State to affect to the Trigger after delay
              * \return Pointer to the TriggerGroup to chain calls
              */
-            TriggerGroup* delayTriggerState(const std::string& triggerName, Time::TimeUnit delay, bool state);
+            TriggerGroup* delayTriggerState(const std::string& triggerName, Time::TimeUnit delay);
             /**
              * \brief Enables a Trigger
              * \param triggerName Name of the Trigger to enable
              * \return Pointer to the TriggerGroup to chain calls
              */
-            TriggerGroup* enableTrigger(const std::string& triggerName);
-            /**
-             * \brief Disables a Trigger
-             * \param triggerName Name of the Trigger to disable
-             * \return Pointer to the TriggerGroup to chain calls
-             */
-            TriggerGroup* disableTrigger(const std::string& triggerName);
-            /**
-             * \brief Sets the new state of a Trigger
-             * \param triggerName Name of the Trigger to change the state
-             * \param state New State of the Trigger
-             * \return Pointer to the TriggerGroup to chain calls
-             */
-            TriggerGroup* setTriggerState(const std::string& triggerName, bool state);
-            /**
-            * \brief Adds / Removes permanent attribute to a Trigger
-            * \param triggerName Name of the Trigger to add / remove permanent attribute
-            * \param permanent true if the Trigger should be permanently enabled, false otherwise
-            * \return PMinter to the TriggerGroup to chain calls
-            */
-            TriggerGroup* setPermanent(const std::string& triggerName, bool permanent);
+            TriggerGroup* trigger(const std::string& triggerName);
             /**
              * \brief Get the current state of a Trigger
              * \param triggerName Name of the Trigger to get the state

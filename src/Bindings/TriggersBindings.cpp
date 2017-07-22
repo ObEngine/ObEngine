@@ -15,9 +15,7 @@ namespace obe
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
-                    .addFunction("getParameters", &Triggers::Trigger::getParameters)
                     .addFunction("getState", &Triggers::Trigger::getState)
-                    .addFunction("isPermanent", &Triggers::Trigger::isPermanent)
                 );
             }
             void LoadTriggerDatabase(kaguya::State& lua)
@@ -46,8 +44,7 @@ namespace obe
                 lua["Core"]["Triggers"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
                     .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                     .addFunction("delayTriggerState", &Triggers::TriggerGroup::delayTriggerState)
-                    .addFunction("disableTrigger", &Triggers::TriggerGroup::disableTrigger)
-                    .addFunction("enableTrigger", &Triggers::TriggerGroup::enableTrigger)
+                    .addFunction("enableTrigger", &Triggers::TriggerGroup::trigger)
                     .addFunction("getAllTriggers", &Triggers::TriggerGroup::getAllTriggers)
                     .addFunction("getAllTriggersName", &Triggers::TriggerGroup::getAllTriggersName)
                     .addFunction("getName", &Triggers::TriggerGroup::getName)
@@ -82,8 +79,6 @@ namespace obe
                         &Triggers::TriggerGroup::pushParameter<std::map<bool, bool>>
                     )
                     .addFunction("setJoinable", &Triggers::TriggerGroup::setJoinable)
-                    .addFunction("setPermanent", &Triggers::TriggerGroup::setPermanent)
-                    .addFunction("setTriggerState", &Triggers::TriggerGroup::setTriggerState)
                 );
             }
         }

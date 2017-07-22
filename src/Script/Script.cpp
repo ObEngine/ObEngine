@@ -876,11 +876,8 @@ namespace obe
                     .addFunction("getTrigger", &Triggers::TriggerGroup::getTrigger)
                     .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                     .addFunction("delayTriggerState", &Triggers::TriggerGroup::delayTriggerState)
-                    .addFunction("enableTrigger", &Triggers::TriggerGroup::enableTrigger)
-                    .addFunction("disableTrigger", &Triggers::TriggerGroup::disableTrigger)
-                    .addFunction("setTriggerState", &Triggers::TriggerGroup::setTriggerState)
+                    .addFunction("enableTrigger", &Triggers::TriggerGroup::trigger)
                     .addFunction("getState", &Triggers::TriggerGroup::getState)
-                    .addFunction("setPermanent", &Triggers::TriggerGroup::setPermanent)
                     .addFunction("getAllTriggersName", &Triggers::TriggerGroup::getAllTriggersName)
                     .addFunction("getAllTriggers", &Triggers::TriggerGroup::getAllTriggers)
                     .addOverloadedFunctions("pushParameter",
@@ -908,7 +905,6 @@ namespace obe
             {
                 (*lua)["Core"]["Trigger"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
                     .addFunction("getState", &Triggers::Trigger::getState)
-                    .addFunction("isPermanent", &Triggers::Trigger::isPermanent)
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)

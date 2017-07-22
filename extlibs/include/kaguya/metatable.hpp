@@ -188,17 +188,27 @@ inline int call_constructor_function(lua_State *L) {
   return lua_gettop(L);
 }
 inline void get_call_constructor_metatable(lua_State *L) {
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+  static const char *key = "KAGUYA_CALL_CONSTRUCTOR_METATABLE_KEY";
+  lua_pushstring(L, key);
+#else
   static int key = 0;
-
-  int ttype = lua_rawgetp_rtype(L, LUA_REGISTRYINDEX, &key);
+  lua_pushlightuserdata(L, &key);
+#endif
+  int ttype = lua_rawget_rtype(L, LUA_REGISTRYINDEX);
   if (ttype != LUA_TTABLE) {
     lua_pop(L, 1);
     lua_createtable(L, 0, 1);
     lua_pushstring(L, "__call");
     lua_pushcfunction(L, &call_constructor_function);
     lua_rawset(L, -3);
-    lua_pushvalue(L, -1);
-    lua_rawsetp(L, LUA_REGISTRYINDEX, &key);
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+    lua_pushstring(L, key);
+#else
+    lua_pushlightuserdata(L, &key);
+#endif
+    lua_pushvalue(L, -2);
+    lua_rawset(L, LUA_REGISTRYINDEX);
   }
 }
 
@@ -275,8 +285,9 @@ public:
   LuaTable createMatatable(lua_State *state) const {
     util::ScopedSavedStack save(state);
     if (!class_userdata::newmetatable<class_type>(state)) {
-      except::OtherError(state, typeid(class_type *).name() +
-                                    std::string(" is already registered"));
+      except::OtherError(state,
+                         typeid(class_type *).name() +
+                             std::string(" is already registered"));
       return LuaTable();
     }
     int metatable_index = lua_gettop(state);

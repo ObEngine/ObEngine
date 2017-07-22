@@ -35,7 +35,7 @@ namespace obe
                 m_groupList.erase(m_groupList.begin() + index);
         }
 
-        const sf::Texture& AnimationGroup::getTexture()
+        const sf::Texture& AnimationGroup::getTexture() const
         {
             return m_texture;
         }

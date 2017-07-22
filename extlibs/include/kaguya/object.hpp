@@ -18,7 +18,10 @@ namespace kaguya {
 namespace types {
 template <typename T> struct typetag {};
 }
-
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+inline const char *metatable_name_key() { return "\x80KAGUYA_N_KEY"; }
+inline const char *metatable_type_table_key() { return "\x80KAGUYA_T_KEY"; }
+#else
 inline void *metatable_name_key() {
   static int key;
   return &key;
@@ -27,6 +30,7 @@ inline void *metatable_type_table_key() {
   static int key;
   return &key;
 }
+#endif
 
 template <typename T> const std::type_info &metatableType() {
   return typeid(typename traits::decay<T>::type);
@@ -228,7 +232,7 @@ struct PointerConverter {
     //			if (to_type == from->type())
     //			{
     //				return
-    //standard::static_pointer_cast<TO>(from->object());
+    // standard::static_pointer_cast<TO>(from->object());
     //			}
     const std::type_info &from_type = from->shared_ptr_type();
     std::map<convert_map_key,
@@ -271,9 +275,17 @@ struct PointerConverter {
   }
 
   static PointerConverter &get(lua_State *state) {
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+    const char *kaguya_ptrcvt_key_ptr = "\x80KAGUYA_CVT_KEY";
+#else
     static char kaguya_ptrcvt_key_ptr;
+#endif
     util::ScopedSavedStack save(state);
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+    lua_pushstring(state, kaguya_ptrcvt_key_ptr);
+#else
     lua_pushlightuserdata(state, &kaguya_ptrcvt_key_ptr);
+#endif
     lua_rawget(state, LUA_REGISTRYINDEX);
     if (lua_isuserdata(state, -1)) {
       return *static_cast<PointerConverter *>(lua_touserdata(state, -1));
@@ -288,7 +300,11 @@ struct PointerConverter {
       lua_pushvalue(state, -1);
       lua_setfield(state, -2, "__index");
       lua_setmetatable(state, -2); // set to userdata
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+      lua_pushstring(state, kaguya_ptrcvt_key_ptr);
+#else
       lua_pushlightuserdata(state, &kaguya_ptrcvt_key_ptr);
+#endif
       lua_pushvalue(state, -2);
       lua_rawset(state, LUA_REGISTRYINDEX);
       return *converter;
@@ -380,7 +396,12 @@ inline bool object_wrapper_type_check(lua_State *l, int index) {
   return lua_isuserdata(l, index) && !lua_islightuserdata(l, index);
 #endif
   if (lua_getmetatable(l, index)) {
-    int type = lua_rawgetp_rtype(l, -1, metatable_name_key());
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+    lua_pushstring(l, metatable_name_key());
+#else
+    lua_pushlightuserdata(l, metatable_name_key());
+#endif
+    int type = lua_rawget_rtype(l, -2);
     lua_pop(l, 2);
     return type == LUA_TSTRING;
   }
@@ -404,8 +425,11 @@ object_wrapper(lua_State *l, int index, bool convert = true,
   if (detail::object_wrapper_type_check(l, index)) {
     ObjectWrapperBase *ptr =
         static_cast<ObjectWrapperBase *>(lua_touserdata(l, index));
-
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+    if (strcmp(ptr->type().name(), metatableType<RequireType>().name()) == 0) {
+#else
     if (ptr->type() == metatableType<RequireType>()) {
+#endif
       return ptr;
     } else if (convert) {
       PointerConverter &pcvt = PointerConverter::get(l);
@@ -427,7 +451,11 @@ template <class T> T *get_pointer(lua_State *l, int index, types::typetag<T>) {
     ObjectWrapperBase *objwrapper = object_wrapper(l, index);
     if (objwrapper) {
       const std::type_info &to_type = metatableType<T>();
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+      if (strcmp(objwrapper->type().name(), to_type.name()) == 0) {
+#else
       if (objwrapper->type() == to_type) {
+#endif
         return static_cast<T *>(objwrapper->get());
       }
       if (objwrapper->native_type() == to_type) {
@@ -451,7 +479,11 @@ const T *get_const_pointer(lua_State *l, int index, types::typetag<T>) {
   } else {
     ObjectWrapperBase *objwrapper = object_wrapper(l, index);
     if (objwrapper) {
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+      if (strcmp(objwrapper->type().name(), metatableType<T>().name()) == 0) {
+#else
       if (objwrapper->type() == metatableType<T>()) {
+#endif
         return static_cast<const T *>(objwrapper->cget());
       } else {
         PointerConverter &pcvt = PointerConverter::get(l);
@@ -475,7 +507,11 @@ standard::shared_ptr<T> get_shared_pointer(lua_State *l, int index,
     const std::type_info &from_type = ptr->shared_ptr_type();
     const std::type_info &to_type =
         metatableType<standard::shared_ptr<typename traits::decay<T>::type> >();
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+    if (strcmp(from_type.name(), to_type.name()) == 0) {
+#else
     if (from_type == to_type) {
+#endif
       if (standard::is_const<T>::value) {
         return standard::static_pointer_cast<T>(
             standard::const_pointer_cast<void>(ptr->const_object()));
@@ -514,15 +550,29 @@ template <typename T> inline void destructor(T *pointer) {
   }
 }
 inline bool get_metatable(lua_State *l, const std::type_info &typeinfo) {
-  int ttype = lua_rawgetp_rtype(
-      l, LUA_REGISTRYINDEX,
-      metatable_type_table_key()); // get metatable registry table
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+  lua_pushstring(l, metatable_type_table_key());
+#else
+  lua_pushlightuserdata(l, metatable_type_table_key());
+#endif
+  int ttype =
+      lua_rawget_rtype(l, LUA_REGISTRYINDEX); // get metatable registry table
   if (ttype != LUA_TTABLE) {
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+    lua_pushstring(l, metatable_type_table_key());
+#else
+    lua_pushlightuserdata(l, metatable_type_table_key());
+#endif
     lua_newtable(l);
-    lua_rawsetp(l, LUA_REGISTRYINDEX, metatable_type_table_key());
+    lua_rawset(l, LUA_REGISTRYINDEX);
     return false;
   }
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+  lua_pushstring(l, typeinfo.name());
+  int type = lua_rawget_rtype(l, -2);
+#else
   int type = lua_rawgetp_rtype(l, -1, &typeinfo);
+#endif
   lua_remove(l, -2); // remove metatable registry table
   return type != LUA_TNIL;
 }
@@ -541,17 +591,35 @@ inline bool newmetatable(lua_State *l, const std::type_info &typeinfo,
     return false; //
   }
   lua_pop(l, 1);
-  lua_rawgetp_rtype(l, LUA_REGISTRYINDEX,
-                    metatable_type_table_key()); // get metatable registry table
+
+// get metatable registry table
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+  lua_getfield(l, LUA_REGISTRYINDEX, metatable_type_table_key());
+#else
+  lua_rawgetp_rtype(l, LUA_REGISTRYINDEX, metatable_type_table_key());
+#endif
+
   int metaregindex = lua_absindex(l, -1);
 
   lua_createtable(l, 0, 2);
   lua_pushstring(l, name);
-  lua_pushvalue(l, -1);
-  lua_setfield(l, -3, "__name"); // metatable.__name = name
-  lua_rawsetp(l, -2, metatable_name_key());
+  lua_setfield(l, -2, "__name"); // metatable.__name = name
+
+#if KAGUYA_SUPPORT_MULTIPLE_SHARED_LIBRARY
+  lua_pushstring(l, metatable_name_key());
+#else
+  lua_pushlightuserdata(l, metatable_name_key());
+#endif
+  lua_pushstring(l, name);
+  lua_rawset(l, -3);
+#if KAGUYA_NAME_BASED_TYPE_CHECK
+  lua_pushstring(l, typeinfo.name());
+  lua_pushvalue(l, -2);
+  lua_rawset(l, metaregindex);
+#else
   lua_pushvalue(l, -1);
   lua_rawsetp(l, metaregindex, &typeinfo);
+#endif
   lua_remove(l, metaregindex); // remove metatable registry table
 
   return true;

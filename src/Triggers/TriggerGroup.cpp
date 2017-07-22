@@ -44,42 +44,22 @@ namespace obe
             return this;
         }
 
-        TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, Time::TimeUnit delay, bool state)
+        TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, Time::TimeUnit delay)
         {
-            m_delayedTriggers.push_back(std::make_unique<TriggerDelay>(getTrigger(triggerName), delay, state));
+            m_delayedTriggers.push_back(std::make_unique<TriggerDelay>(getTrigger(triggerName), delay));
             return this;
         }
 
-        TriggerGroup* TriggerGroup::enableTrigger(const std::string& triggerName)
+        TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
         {
             this->getTrigger(triggerName)->m_toEnable = true;
-            if (this->getTrigger(triggerName)->m_toDisable) this->getTrigger(triggerName)->m_toDisable = false;
-            return this;
-        }
-
-        TriggerGroup* TriggerGroup::disableTrigger(const std::string& triggerName)
-        {
-            this->getTrigger(triggerName)->m_toDisable = true;
-            if (this->getTrigger(triggerName)->m_toEnable) this->getTrigger(triggerName)->m_toEnable = false;
-            return this;
-        }
-
-        TriggerGroup* TriggerGroup::setTriggerState(const std::string& triggerName, bool state)
-        {
-            if (state) this->enableTrigger(triggerName);
-            else this->disableTrigger(triggerName);
+            this->getTrigger(triggerName)->m_triggerParameters.emplace_back();
             return this;
         }
 
         bool TriggerGroup::getState(const std::string& triggerName)
         {
             return this->getTrigger(triggerName)->getState();
-        }
-
-        TriggerGroup* TriggerGroup::setPermanent(const std::string& triggerName, bool permanent)
-        {
-            this->getTrigger(triggerName)->m_permanent = permanent;
-            return this;
         }
 
         void TriggerGroup::setJoinable(bool joinable)

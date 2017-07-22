@@ -269,15 +269,14 @@ namespace obe
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
                 m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
 
-                System::Path("Lib/GameLib/ScrInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+                System::Path("Lib/Internal/ScriptInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
                 loadScrGameObject(this, m_objectScript.get());
 
                 m_localTriggers
                     ->addTrigger("Init")
-                    ->setTriggerState("Init", true)
+                    ->trigger("Init")
                     ->addTrigger("Update")
-                    ->setPermanent("Update", true)
-                    ->setTriggerState("Update", true)
+                    ->trigger("Update")
                     ->addTrigger("Query")
                     ->addTrigger("Collide")
                     ->addTrigger("Click")
@@ -285,7 +284,7 @@ namespace obe
                     ->addTrigger("Delete")
                     ->addTrigger("Save");
 
-                System::Path("Lib/GameLib/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+                System::Path("Lib/Internal/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 
                 (*m_objectScript)["ID"] = m_id;
                 (*m_objectScript)["Private"] = m_privateKey;
@@ -332,9 +331,9 @@ namespace obe
                                 useGrp = alRep;
                         }
                         std::string funcname = useGrp + "." + trigger->getName();
-                        m_queryCounter = 0;
                         (*m_objectScript)["cpp_param"] = kaguya::NewTable();
                         (*m_objectScript)["cpp_param"]["dt"] = dt;
+                        /*trigger->execute(*m_objectScript, )
                         std::string triggerError = injectParameters(*trigger, *m_objectScript);
                         if (!triggerError.empty())
                         {
@@ -352,7 +351,7 @@ namespace obe
                         {
                             m_objectScript->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
                         }
-                        (*m_objectScript)["cpp_param"] = nullptr;
+                        (*m_objectScript)["cpp_param"] = nullptr;*/
                     }
                 }
                 if (m_initialised)

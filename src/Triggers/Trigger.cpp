@@ -5,7 +5,7 @@
 
 #define StartCheck if (false) {}
 #define AffectIfCorrectType(...) else if (affectIfCorrectType<__VA_ARGS__>(lua,parameter)){}
-#define EndCheck else { return parameter.first; }
+#define EndCheck else { throw aube::ErrorHandler::Raise("ObEngine.Triggers.Trigger.BadInjection", { { "triggerName", triggerName }, { "parameterName", parameter.first} }); }
 
 namespace obe
 {
@@ -22,9 +22,9 @@ namespace obe
             return false;
         }
 
-        std::string injectParameters(Trigger& trigger, kaguya::State& lua)
+        void injectParameters(const std::string& triggerName, ParameterTable& parameters, kaguya::State& lua)
         {
-            for (auto& parameter : *trigger.getParameters())
+            for (auto& parameter : parameters)
             {
                 StartCheck
                 AffectIfCorrectType(int)
@@ -53,24 +53,22 @@ namespace obe
                 AffectIfCorrectType(std::map<bool, bool>)
                 EndCheck
             }
-            return "";
+        }
+
+        void Trigger::pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter)
+        {
+            m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getObjectType(parameter), Types::Any(parameter));
         }
 
         Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState, bool permanent)
         {
             m_parent = parent;
-            m_permanent = permanent;
             m_enabled = startState;
         }
 
         bool Trigger::getState() const
         {
             return m_enabled;
-        }
-
-        bool Trigger::isPermanent() const
-        {
-            return m_permanent;
         }
 
         std::string Trigger::getGroup() const
@@ -88,12 +86,7 @@ namespace obe
             return m_parent->getNamespace();
         }
 
-        std::map<std::string, std::pair<std::string, Types::Any>>* Trigger::getParameters()
-        {
-            return &m_triggerParameters;
-        }
-
-        void Trigger::clearParameters()
+        void Trigger::clear()
         {
             m_triggerParameters.clear();
         }
