@@ -16,6 +16,15 @@ namespace obe
                 return options[key].as<T>();
             }
 
+            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color& col)
+            {
+                sf::CircleShape drawPt;
+                drawPt.setRadius(radius);
+                drawPt.setPosition(sf::Vector2f(x, y));
+                drawPt.setFillColor(col);
+                target.draw(drawPt);
+            }
+
             void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int w, sf::Color& col)
             {
                 sf::Vertex line[] = {

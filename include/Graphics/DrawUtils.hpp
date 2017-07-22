@@ -17,6 +17,15 @@ namespace obe
         namespace Utils
         {
             /**
+             * \brief Draws a Point
+             * \param target Window you want to draw the Point on
+             * \param x x Coordinate of the position of the Point
+             * \param y y Coordinate of the position of the Point
+             * \param radius Radius of the Point to draw
+             * \param col Color of the new Point
+             */
+            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned int radius, sf::Color& col);
+            /**
              * \brief Draws a Line
              * \param target Window you want to draw the Line on
              * \param x1 x Coordinate of the first point of the line

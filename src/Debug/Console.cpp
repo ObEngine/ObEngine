@@ -29,6 +29,7 @@ namespace obe
 
         void Console::scroll(int power)
         {
+            int oldScroll = m_consoleScroll;
             if (m_consoleScroll + power > 0)
             {
                 if (m_consoleScroll + power <= static_cast<int>(consoleText.size()) - 52)
@@ -36,6 +37,11 @@ namespace obe
             }
             else
                 m_consoleScroll = 0;
+            if (m_consoleScroll != oldScroll)
+            {
+                consoleTriggers->pushParameter("ConsoleScrolled", "Scroll", power);
+                consoleTriggers->enableTrigger("ConsoleScrolled");
+            }
         }
 
         ConsoleStream* Console::createStream(const std::string& id, bool enabled)
@@ -95,6 +101,9 @@ namespace obe
             {
                 forgeMessage = new ConsoleMessage(headerName, message, color);
                 consoleText.push_back(forgeMessage);
+                consoleTriggers->pushParameter("NewMessage", "HeaderName", headerName);
+                consoleTriggers->pushParameter("NewMessage", "Message", message);
+                consoleTriggers->enableTrigger("NewMessage");
                 if (m_consoleAutoScroll)
                 {
                     if (consoleText.size() >= 52)
@@ -113,6 +122,8 @@ namespace obe
                 m_consoleHistory.push_back(text);
             m_consoleHistoryIndex = m_consoleHistory.size();
             Script::ScriptEngine(text);
+            consoleTriggers->pushParameter("UserInput", "inpput", text);
+            consoleTriggers->enableTrigger("UserInput");
         }
 
         void Console::inputKey(int keyCode)
@@ -177,6 +188,11 @@ namespace obe
 
         void Console::setConsoleVisibility(bool enabled)
         {
+            if (m_consoleVisibility != enabled)
+            {
+                consoleTriggers->pushParameter("ConsoleToggled", "state", enabled);
+                consoleTriggers->enableTrigger("ConsoleToggled");
+            }
             m_consoleVisibility = enabled;
         }
 

@@ -35,7 +35,7 @@ namespace obe
             WorldPixels,
             /**
             * \brief WorldUnits is an Unit used to place / scale an element using the World. \n
-            * Exemple : x = 4.5, y = 2.5\n
+            * Exemple : x = 4.5, y = 2.5
             */
             WorldUnits,
             /**
