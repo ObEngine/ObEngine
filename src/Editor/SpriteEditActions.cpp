@@ -88,7 +88,6 @@ namespace obe
                 &sdBoundingRect]
             (Input::InputActionEvent event)
             {
-                std::cout << "Trigger Action SpritePick" << std::endl;
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
                     std::cout << "Picky picky :D" << std::endl;

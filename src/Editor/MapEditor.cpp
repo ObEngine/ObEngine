@@ -2,6 +2,7 @@
 
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Console.hpp>
+#include <Editor/CollidersEditActions.hpp>
 #include <Editor/EditorGUI.hpp>
 #include <Editor/Grid.hpp>
 #include <Editor/MapEditor.hpp>
@@ -178,6 +179,8 @@ namespace obe
             connectSpriteLayerActions(inputManager, selectedSprite, world, currentLayer);
             connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
                 world, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sdBoundingRect, sprInfoBackground);
+            connectCollidersActions(inputManager, world, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
+
             editMode->connect("itemselected", [&inputManager, editMode]()
             {
                 if (editMode->getSelectedItem() == "LevelSprites")
@@ -187,6 +190,14 @@ namespace obe
                 else
                 {
                     inputManager.removeContext("spriteEditing");
+                }
+                if (editMode->getSelectedItem() == "Collisions")
+                {
+                    inputManager.addContext("colliderEditing");
+                }
+                else
+                {
+                    inputManager.removeContext("colliderEditing");
                 }
             });
 
@@ -295,142 +306,17 @@ namespace obe
                 }
 
                 //Collision Edition
-                /*if (editMode->getSelectedItem() == "Collisions")
+                if (editMode->getSelectedItem() == "Collisions")
                 {
                     Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
-                    bool deletedCollision = false;
+
                     world.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)
                     {
                         selectedMasterCollider->clearHighlights();
                         selectedMasterCollider->highlightLine(selectedMasterCollider->findClosestLine(cursCoord));
-                    }
-                    //Collision Point Grab
-                    if (cursor.getClicked(System::MouseButton::Left) && colliderPtGrabbed == -1 &&
-                        world.getCollisionPointByPos(cursor.getX() + pixelCamera.x,
-                                                     cursor.getY() + pixelCamera.y).first != nullptr)
-                    {
-                        std::pair<Collision::PolygonalCollider*, int> selectedPtCollider;
-                        selectedPtCollider = world.getCollisionPointByPos(cursor.getX() + pixelCamera.x,
-                                                                          cursor.getY() + pixelCamera.y);
-                        if (selectedMasterCollider != nullptr && selectedMasterCollider != selectedPtCollider.first)
-                        {
-                            selectedMasterCollider->setSelected(false);
-                            selectedMasterCollider = nullptr;
-                            masterColliderGrabbed = false;
-                            colliderPtGrabbed = -1;
-                        }
-                        selectedMasterCollider = selectedPtCollider.first;
-                        selectedMasterCollider->setSelected(true);
-                        colliderPtGrabbed = selectedPtCollider.second;
-                    }
-                    //Collision Point Move
-                    if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
-                    {
-                        selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursCoord);
-                        if (colliderPtGrabbed == 0 && selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
-                        {
-                            world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
-                                cursor.getX() + pixelCamera.x,
-                                cursor.getY() + pixelCamera.y);
-                        }
-                    }
-                    //Collision Point Release
-                    if (cursor.getReleased(System::MouseButton::Left))
-                    {
-                        colliderPtGrabbed = -1;
-                    }
-                    //Collision Master Grab
-                    if (cursor.getClicked(System::MouseButton::Left) && world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x,
-                                                                                                      cursor.getY() + pixelCamera.y) != nullptr)
-                    {
-                        Collision::PolygonalCollider* tempCol = world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x,
-                                                                                              cursor.getY() + pixelCamera.y);
-                        if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
-                        {
-                            selectedMasterCollider->setSelected(false);
-                            selectedMasterCollider = nullptr;
-                            masterColliderGrabbed = false;
-                            colliderPtGrabbed = -1;
-                        }
-                        selectedMasterCollider = tempCol;
-                        selectedMasterCollider->setSelected(true);
-                        if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
-                        masterColliderGrabbed = true;
-                    }
-                    //Collision Master Move
-                    if (cursor.getPressed(System::MouseButton::Left) && selectedMasterCollider != nullptr && masterColliderGrabbed)
-                    {
-                        selectedMasterCollider->setPositionFromMaster(cursCoord);
-                        if (selectedMasterCollider->getParentId() != "" && world.getGameObject(selectedMasterCollider->getParentId())->canDisplay())
-                        {
-                            Transform::UnitVector zeroCoords = selectedMasterCollider->getPointPosition(0).to<Transform::Units::WorldPixels>();
-                            Transform::UnitVector masterCoords = selectedMasterCollider->getMasterPointPosition().to<Transform::Units::WorldPixels>();
-                            world.getGameObject(selectedMasterCollider->getParentId())->getLevelSprite()->setPosition(
-                                cursor.getX() + pixelCamera.x + zeroCoords.x - masterCoords.x,
-                                cursor.getY() + pixelCamera.y + zeroCoords.y - masterCoords.y);
-                        }
-                    }
-                    //Collision Master Release
-                    if (cursor.getReleased(System::MouseButton::Left) && masterColliderGrabbed)
-                    {
-                        masterColliderGrabbed = false;
-                        if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
-                    }
-                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider != nullptr && !masterColliderGrabbed)
-                    {
-                        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
-                        int rqPtRes = selectedMasterCollider->hasPoint(cursCoord, pTolerance);
-                        //Collision Point Create
-                        if (rqPtRes == -1)
-                        {
-                            selectedMasterCollider->addPoint(cursCoord, selectedMasterCollider->findClosestLine(cursCoord));
-                        }
-                        //Collision Point Delete
-                        else
-                        {
-                            selectedMasterCollider->deletePoint(rqPtRes);
-                            if (selectedMasterCollider->getPointsAmount() <= 2)
-                            {
-                                selectedMasterCollider->setSelected(false);
-                                world.deleteCollisionByID(selectedMasterCollider->getId());
-                                selectedMasterCollider = nullptr;
-                                masterColliderGrabbed = false;
-                                colliderPtGrabbed = -1;
-                                deletedCollision = true;
-                            }
-                        }
-                    }
-                    //Collision Release
-                    if (cursor.getClicked(System::MouseButton::Left) && selectedMasterCollider != nullptr)
-                    {
-                        if (world.getCollisionMasterByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y) == nullptr)
-                        {
-                            if (world.getCollisionPointByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y).first == nullptr)
-                            {
-                                selectedMasterCollider->setSelected(false);
-                                selectedMasterCollider = nullptr;
-                                masterColliderGrabbed = false;
-                                colliderPtGrabbed = -1;
-                            }
-                        }
-                    }
-                    //Collision Delete
-                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider != nullptr && masterColliderGrabbed)
-                    {
-                        selectedMasterCollider->setSelected(false);
-                        world.deleteCollisionByID(selectedMasterCollider->getId());
-                        selectedMasterCollider = nullptr;
-                        masterColliderGrabbed = false;
-                        colliderPtGrabbed = -1;
-                        deletedCollision = true;
-                    }
-                    //Collision Create
-                    if (cursor.getClicked(System::MouseButton::Right) && selectedMasterCollider == nullptr && !deletedCollision)
-                    {
-                        world.createCollisionAtPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
-                    }
-                }*/
+                    }     
+                }
 
                 //GUI Update
                 infoLabel->setText(
