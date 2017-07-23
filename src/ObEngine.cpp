@@ -7,15 +7,14 @@
 #include <Bindings/Bindings.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
+#include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
 #include <ObEngine.hpp>
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Types/Any.hpp>
 #include <Utils/ExecUtils.hpp>
-#include <Utils/TypeUtils.hpp>
 
 void LoadErrors()
 {
@@ -43,6 +42,7 @@ int main(int argc, char** argv)
 
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
     Graphics::PositionTransformers::Init();
+    Input::InitKeyList();
 
     /*std::ofstream out("debug.log");
     std::streambuf *coutbuf = std::cout.rdbuf();

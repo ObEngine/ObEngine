@@ -3,7 +3,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
-#include <Input/KeyManager.hpp>
+#include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/World.hpp>
 #include <Script/GlobalState.hpp>
@@ -58,7 +58,7 @@ namespace obe
             vili::ComplexAttribute& gameConfig = configFile.at("GameConfig");
 
             //Cursor
-            System::Cursor cursor(&window);
+            System::Cursor cursor;
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
@@ -66,7 +66,7 @@ namespace obe
             Script::hookCore.dropValue("World", &world);
 
             //Keybinding
-            Input::KeyboardManager keybind;
+            Input::InputManager keybind;
             Script::hookCore.dropValue("KeyBinder", &keybind);
             keybind.configure(configFile.at("KeyBinding"));
             keybind.addContext("game");
@@ -96,7 +96,6 @@ namespace obe
                 cursor.update();
 
                 //Triggers Handling
-                cursor.handleTriggers();
                 keybind.handleTriggers();
 
                 while (window.pollEvent(event))

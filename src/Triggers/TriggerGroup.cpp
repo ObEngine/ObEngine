@@ -41,6 +41,7 @@ namespace obe
         TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
         {
             m_triggerMap[triggerName] = std::make_unique<Trigger>(this, triggerName);
+            m_triggerMap[triggerName]->clear();
             return this;
         }
 

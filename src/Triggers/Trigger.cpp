@@ -62,6 +62,7 @@ namespace obe
 
         Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState, bool permanent)
         {
+            m_name = name;
             m_parent = parent;
             m_enabled = startState;
         }
@@ -89,6 +90,7 @@ namespace obe
         void Trigger::clear()
         {
             m_triggerParameters.clear();
+            m_triggerParameters.emplace_back();
         }
     }
 }

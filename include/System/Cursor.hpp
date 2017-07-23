@@ -19,6 +19,14 @@ namespace obe
             Right
         };
 
+        enum class MouseButtonState
+        {
+            Idle,
+            Hold,
+            Pressed,
+            Released
+        };
+
         /**
          * \brief A Class to manipulate and display the Cursor in the Engine
          * @Bind
@@ -30,13 +38,6 @@ namespace obe
             int m_y = 0;
             int m_constrainedX = 0;
             int m_constrainedY = 0;
-            sf::RenderWindow* m_window = nullptr;
-            bool m_leftPressed = false;
-            bool m_rightPressed = false;
-            bool m_leftClicked = false;
-            bool m_rightClicked = false;
-            bool m_leftReleased = false;
-            bool m_rightReleased = false;
             Triggers::TriggerGroupPtr m_cursorTriggers;
             Animation::Animator m_cursorAnim;
             sf::Sprite m_cursorSprite;
@@ -44,9 +45,8 @@ namespace obe
         public:
             /**
              * \brief Creates a Cursor
-             * \param window Pointer to the sf::RenderWindow stored for internal usage
              */
-            explicit Cursor(sf::RenderWindow* window);
+            explicit Cursor();
             /**
              * \brief Sets the root path to the Cursor Animator
              * \param cursor Path to the Cursor Animator (Base root is Sprites/Cursors)
@@ -97,28 +97,6 @@ namespace obe
              * \brief Updates the Cursor
              */
             void update();
-            /**
-             * \brief Handles the internal Cursor Triggers
-             */
-            void handleTriggers() const;
-            /**
-             * \brief Gets if one MouseButton is pressed
-             * \param button The MouseButton to check (Left / Right)
-             * \return true if the MouseButton is pressed, false otherwise
-             */
-            bool getPressed(MouseButton button) const;
-            /**
-            * \brief Gets if one MouseButton is clicked
-            * \param button The MouseButton to check (Left / Right)
-            * \return true if the MouseButton is clicked, false otherwise
-            */
-            bool getClicked(MouseButton button) const;
-            /**
-            * \brief Gets if one MouseButton is released
-            * \param button The MouseButton to check (Left / Right)
-            * \return true if the MouseButton is released, false otherwise
-            */
-            bool getReleased(MouseButton button) const;
             /**
              * \brief Sets the Cursor's constraint
              * \param constraint A function returning the constrained Position of the Cursor (a std::pair<int, int>) and taking the Cursor pointer in parameter

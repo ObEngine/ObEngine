@@ -6,8 +6,10 @@
 #include <Editor/Grid.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Editor/MapEditorTools.hpp>
+#include <Editor/EditorGlobalActions.hpp>
+#include <Editor/SpriteEditActions.hpp>
+#include <Input/InputManager.hpp>
 #include <Graphics/DrawUtils.hpp>
-#include <Input/KeyManager.hpp>
 #include <Network/Network.hpp>
 #include <Scene/World.hpp>
 #include <Script/GameObject.hpp>
@@ -72,7 +74,7 @@ namespace obe
             bool showCursor = developpement.at<vili::BaseAttribute>("showCursor");
 
             //Cursor
-            System::Cursor cursor(&window);
+            System::Cursor cursor;
             cursor.selectAnimatorPath("RoundWhite");
             Script::hookCore.dropValue("Cursor", &cursor);
 
@@ -90,18 +92,18 @@ namespace obe
             Network::NetworkHandler networkHandler;
 
             //Keybinding
-            Input::KeyboardManager keybind;
-            Script::hookCore.dropValue("KeyBinder", &keybind);
-            keybind.configure(configFile.at("KeyBinding"));
-            keybind.addContext("game")
+            Input::InputManager inputManager;
+            Script::hookCore.dropValue("KeyBinder", &inputManager);
+            inputManager.configure(configFile.at("KeyBinding"));
+            inputManager.addContext("game")
                    .addContext("mapEditor");
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
-            keybind.getAction("MagnetizeUp").setRepeat(200);
-            keybind.getAction("MagnetizeDown").setRepeat(200);
-            keybind.getAction("MagnetizeLeft").setRepeat(200);
-            keybind.getAction("MagnetizeRight").setRepeat(200);
+            inputManager.getAction("MagnetizeUp").setRepeat(200);
+            inputManager.getAction("MagnetizeDown").setRepeat(200);
+            inputManager.getAction("MagnetizeLeft").setRepeat(200);
+            inputManager.getAction("MagnetizeRight").setRepeat(200);
 
             //GUI
             sf::Event event;
@@ -165,94 +167,28 @@ namespace obe
             Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
-            // KeyBind Actions
-            keybind.getAction("CamMovable").connect(Input::KeyState::Pressed, [&cameraMode](Input::KeyboardActionEvent event)
-            {
-                cameraMode->setSelectedItemByIndex(0);
-            });
-            keybind.getAction("CamFree").connect(Input::KeyState::Pressed, [&cameraMode](Input::KeyboardActionEvent event)
-            {
-                cameraMode->setSelectedItemByIndex(1);
-            });
-            keybind.getAction("SpriteMode").connect(Input::KeyState::Pressed, [&editMode](Input::KeyboardActionEvent event)
-            {
-                editMode->setSelectedItemByIndex(0);
-            });
-            keybind.getAction("CollisionMode").connect(Input::KeyState::Pressed, [&editMode](Input::KeyboardActionEvent event)
-            {
-                editMode->setSelectedItemByIndex(1);
-            });
-            keybind.getAction("CamLeft").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event)
-            {
-                world.getCamera()->move(Transform::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
-            });
-            keybind.getAction("CamRight").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event)
-            {
-                world.getCamera()->move(Transform::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
-            });
-            keybind.getAction("CamUp").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event)
-            {
-                world.getCamera()->move(Transform::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
-            });
-            keybind.getAction("CamDown").connect(Input::KeyState::Hold, [&world, &cameraSpeed, &framerateManager](Input::KeyboardActionEvent event)
-            {
-                world.getCamera()->move(Transform::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
-            });
-            keybind.getAction("CamDash").connect(Input::KeyState::Pressed, [&cameraSpeed](Input::KeyboardActionEvent event)
-            {
-                cameraSpeed = Transform::UnitVector::Screen.h * 2.5;
-            });
-            keybind.getAction("CamDash").connect(Input::KeyState::Released, [&cameraSpeed](Input::KeyboardActionEvent event)
-            {
-                cameraSpeed = Transform::UnitVector::Screen.h;
-            });
-            keybind.getAction("MagnetizeUp").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event)
-            {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, -1);
-            });
-            keybind.getAction("MagnetizeRight").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event)
-            {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 1, 0);
-            });
-            keybind.getAction("MagnetizeDown").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event)
-            {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, 1);
-            });
-            keybind.getAction("MagnetizeLeft").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event)
-            {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, -1, 0);
-            });
-            keybind.getAction("MagnetizeCursor").connect(Input::KeyState::Hold, [&enableGridCheckbox, &cursor, &editorGrid](Input::KeyboardActionEvent event)
-            {
-                if (enableGridCheckbox->isChecked()) editorGrid.magnetize(cursor);
-            });
-            keybind.getAction("CancelOffset").connect(Input::KeyState::Pressed,
-            [&selectedSprite, &cursor, &editorGrid, &selectedSpriteOffsetX, &selectedSpriteOffsetY](Input::KeyboardActionEvent event)
-            {
-                if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr)
-                {
-                    selectedSpriteOffsetX = 0;
-                    selectedSpriteOffsetY = 0;
-                }
-            });
-            keybind.getAction("DeleteSprite").connect(Input::KeyState::Pressed,
-            [&selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
-            (Input::KeyboardActionEvent event)
-            {
-                if (selectedSprite != nullptr)
-                {
-                    world.deleteSprite(selectedSprite);
-                    selectedSprite = nullptr;
-                    sprInfo.setString("");
-                    hoveredSprite = nullptr;
-                    selectedSpriteOffsetX = 0;
-                    selectedSpriteOffsetY = 0;
-                }
-            });
-
             world.loadFromFile(mapName);
 
             mapNameInput->setText(world.getLevelName());
+
+            //Connect InputManager Actions
+            connectCamMovementActions(inputManager, world, cameraSpeed, framerateManager);
+            connectMagnetActions(inputManager, enableGridCheckbox, cursor, editorGrid);
+            connectMenuActions(inputManager, editMode, cameraMode);
+            connectSpriteLayerActions(inputManager, selectedSprite, world, currentLayer);
+            connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
+                world, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sdBoundingRect, sprInfoBackground);
+            editMode->connect("itemselected", [&inputManager, editMode]()
+            {
+                if (editMode->getSelectedItem() == "LevelSprites")
+                {
+                    inputManager.addContext("spriteEditing");
+                }
+                else
+                {
+                    inputManager.removeContext("spriteEditing");
+                }
+            });
 
             //Game Starts
             while (window.isOpen())
@@ -272,7 +208,7 @@ namespace obe
 
 
                 //GUI Actions
-                keybind.setEnabled(!gameConsole.isConsoleVisible());
+                inputManager.setEnabled(!gameConsole.isConsoleVisible());
 
                 bool drawFPS = displayFramerateCheckbox->isChecked();
 
@@ -306,203 +242,46 @@ namespace obe
                 {
                     world.enableShowCollision(true, true, false, false);
 
-                    if (selectedHandlePoint != nullptr && cursor.getPressed(System::MouseButton::Left))
+                    if (hoveredSprite == nullptr)
                     {
-                        std::cout << "Moving ref : " << selectedHandlePoint->getReferencial() << std::endl;
-                        selectedHandlePoint->moveTo(cursor.getX(), cursor.getY());
-                    }
-                    else if (selectedHandlePoint != nullptr && cursor.getReleased(System::MouseButton::Left))
-                    {
-                        selectedHandlePoint = nullptr;
-                    }
-                    else
-                    {
-                        //Layer Change
-                        /*if (selectedSprite == nullptr && keybind.isActionToggled("LayerInc"))
+                        hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer);
+                        if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
-                            currentLayer += 1;
-                            world.getCamera()->scale(1.1);
-                            if (hoveredSprite != nullptr)
-                            {
-                                hoveredSprite->setColor(sf::Color::White);
-                                hoveredSprite = nullptr;
-                                sprInfo.setString("");
-                            }
-                        }
-                        if (selectedSprite == nullptr && keybind.isActionToggled("LayerDec"))
-                        {
-                            world.getCamera()->scale(0.9);
-                            currentLayer -= 1;
-                            if (hoveredSprite != nullptr)
-                            {
-                                hoveredSprite->setColor(sf::Color::White);
-                                hoveredSprite = nullptr;
-                                sprInfo.setString("");
-                            }
-                        }*/
-                        //Sprite Hover
-                        if (hoveredSprite == nullptr)
-                        {
-                            hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer);
-                            if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
-                            {
-                                hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
-                                                                     cursor.getY() + pixelCamera.y, currentLayer);
-                                sdBoundingRect = hoveredSprite->getRect();
-                                hoveredSprite->setColor(sf::Color(0, 255, 255));
-                                std::string sprInfoStr;
-                                sprInfoStr = "Hovered Sprite : \n";
-                                sprInfoStr += "    ID : " + hoveredSprite->getId() + "\n";
-                                sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
-                                sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
-                                sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
-                                sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
-                                sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
-                                sprInfo.setString(sprInfoStr);
-                                sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
-                            }
-                            else
-                                hoveredSprite == nullptr;
-                        }
-                        else if (hoveredSprite != nullptr)
-                        {
-                            sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                            sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
-                            bool outHover = false;
-                            Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
-                                                                                          cursor.getY() + pixelCamera.y, currentLayer);
-                            if (testHoverSprite != hoveredSprite)
-                                outHover = true;
-                            if (outHover)
-                            {
-                                if (hoveredSprite != selectedSprite)
-                                    hoveredSprite->setColor(sf::Color::White);
-                                hoveredSprite = nullptr;
-                                sprInfo.setString("");
-                            }
-                        }
-
-                        //Sprite Pick
-                        if (cursor.getClicked(System::MouseButton::Left))
-                        {
-                            if (selectedSprite != nullptr)
-                            {
-                                std::cout << "Picky picky :D" << std::endl;
-                                selectedHandlePoint = selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
-                                std::cout << selectedHandlePoint << ", " << hoveredSprite << ", " << selectedSprite << std::endl;
-                                if (selectedHandlePoint != nullptr)
-                                {
-                                    std::cout << "POINT POINT POINT" << std::endl;
-                                    hoveredSprite = nullptr;
-                                }
-                                else if (hoveredSprite != selectedSprite)
-                                {
-                                    std::cout << "Unselect" << std::endl;
-                                    selectedSprite->setColor(sf::Color::White);
-                                    selectedSprite->unselect();
-                                    sprInfo.setString("");
-                                    selectedSprite = nullptr;
-                                    selectedSpriteOffsetX = 0;
-                                    selectedSpriteOffsetY = 0;
-                                }
-                                std::cout << "Ended NonEf" << std::endl;
-                            }
-                            if (hoveredSprite != nullptr)
-                            {
-                                std::cout << "MUCH WOW" << std::endl;
-                                selectedSprite = hoveredSprite;
-                                selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
-                                selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
-                                selectedSprite->select();
-
-                                sdBoundingRect = selectedSprite->getRect();
-                                selectedSprite->setColor(sf::Color(100, 255, 100));
-                            }
-                        }
-
-
-                        //Sprite Scale
-                        /*if (cursor.getPressed("Left") && selectedSprite != nullptr)
-                        {
-                            selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
-                            world.reorganizeLayers();
-                        }*/
-                        //Sprite Move
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && selectedHandlePoint == nullptr)
-                        {
-                            if (selectedSprite->getParentId().empty())
-                            {
-                                selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
-                                                                                  cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
-                            }
-                            else
-                            {
-                                std::cout << "Not empty : '" << selectedSprite->getParentId() << "'" << std::endl;
-                                // What to do here ?
-                            }
-                            sdBoundingRect = selectedSprite->getRect();
+                            hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
+                                cursor.getY() + pixelCamera.y, currentLayer);
+                            sdBoundingRect = hoveredSprite->getRect();
+                            hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
-                            sprInfoStr += "    ID : " + selectedSprite->getId() + "\n";
-                            sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
-                            sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
-                            sprInfoStr += "    Size : " + std::to_string(selectedSprite->getWidth()) + "," + std::to_string(selectedSprite->getHeight()) + "\n";
-                            sprInfoStr += "    Rot : " + std::to_string(selectedSprite->getRotation()) + "\n";
-                            sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
+                            sprInfoStr += "    ID : " + hoveredSprite->getId() + "\n";
+                            sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
+                            sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
+                            sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
+                            sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
+                            sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
                             sprInfo.setString(sprInfoStr);
                             sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
-                            sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                            sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
                         }
-
-                        //Sprite Rotate (Non-fonctionnal)
-                        /*if ((keybind.isActionEnabled("RotateLeft") || keybind.isActionEnabled("RotateRight")) && selectedSprite != nullptr)
-                        {
-                            if (keybind.isActionEnabled("RotateLeft") && selectedSprite != nullptr)
-                            {
-                                //selectedSprite->rotate(-1 * framerateManager.getGameSpeed());
-                                selectedSprite->scale(2 * framerateManager.getGameSpeed(), 2 * framerateManager.getGameSpeed());
-                            }
-                                
-                            if (keybind.isActionEnabled("RotateRight") && selectedSprite != nullptr)
-                            {
-                                //selectedSprite->rotate(1 * framerateManager.getGameSpeed());
-                                selectedSprite->scale(-2 * framerateManager.getGameSpeed(), -2 * framerateManager.getGameSpeed());
-                            }
-                        }*/
-
-                        /*if ((keybind.isActionEnabled("ScaleInc") || keybind.isActionEnabled("ScaleDec")) && selectedSprite != nullptr)
-                        {
-                            if (keybind.isActionEnabled("ScaleDec"))
-                                selectedSprite->scale(-0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), -0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
-                            if (keybind.isActionEnabled("ScaleInc"))
-                                selectedSprite->scale(0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleX(), 0.05 * framerateManager.getGameSpeed() * selectedSprite->getScaleY());
-                        }*/
-
-                        //Sprite Layer / Z-Depth
-                        /*if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZInc"))
-                        {
-                            selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
-                            world.reorganizeLayers();
-                        }
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("ZDec"))
-                        {
-                            selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
-                            world.reorganizeLayers();
-                        }
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerInc"))
-                        {
-                            selectedSprite->setLayer(selectedSprite->getLayer() + 1);
-                            currentLayer += 1;
-                            world.reorganizeLayers();
-                        }
-                        if (cursor.getPressed(System::MouseButton::Left) && selectedSprite != nullptr && keybind.isActionToggled("LayerDec"))
-                        {
-                            selectedSprite->setLayer(selectedSprite->getLayer() - 1);
-                            currentLayer -= 1;
-                            world.reorganizeLayers();
-                        }*/
+                        else
+                            hoveredSprite == nullptr;
                     }
+                    else if (hoveredSprite != nullptr)
+                    {
+                        sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
+                        sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                        bool outHover = false;
+                        Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
+                            cursor.getY() + pixelCamera.y, currentLayer);
+                        if (testHoverSprite != hoveredSprite)
+                            outHover = true;
+                        if (outHover)
+                        {
+                            if (hoveredSprite != selectedSprite)
+                                hoveredSprite->setColor(sf::Color::White);
+                            hoveredSprite = nullptr;
+                            sprInfo.setString("");
+                        }
+                    }                      
                 }
                 else
                 {
@@ -516,7 +295,7 @@ namespace obe
                 }
 
                 //Collision Edition
-                if (editMode->getSelectedItem() == "Collisions")
+                /*if (editMode->getSelectedItem() == "Collisions")
                 {
                     Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
                     bool deletedCollision = false;
@@ -651,7 +430,7 @@ namespace obe
                     {
                         world.createCollisionAtPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                     }
-                }
+                }*/
 
                 //GUI Update
                 infoLabel->setText(
@@ -670,15 +449,15 @@ namespace obe
                 //Events
                 Triggers::TriggerDatabase::GetInstance()->update();
                 world.update(framerateManager.getGameSpeed());
-                keybind.update();
+                inputManager.update();
                 cursor.update();
                 if (drawFPS) fps.uTick();
                 if (drawFPS && framerateManager.doRender()) fps.tick();
 
                 //Triggers Handling
                 networkHandler.handleTriggers();
-                cursor.handleTriggers();
-                keybind.handleTriggers();
+                //cursor.handleTriggers();
+                inputManager.handleTriggers();
 
                 while (window.pollEvent(event))
                 {
@@ -691,18 +470,6 @@ namespace obe
                     case sf::Event::KeyPressed:
                         if (event.key.code == sf::Keyboard::Escape)
                             window.close();
-                        if (event.key.code == sf::Keyboard::S)
-                        {
-                            if (event.key.control)
-                            {
-                                world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
-                                if (waitForMapSaving < 0)
-                                {
-                                    savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
-                                    waitForMapSaving = 0;
-                                }
-                            }
-                        }
                         if (event.key.code == sf::Keyboard::V)
                         {
                             if (event.key.control)

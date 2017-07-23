@@ -122,7 +122,7 @@ namespace obe
                 m_consoleHistory.push_back(text);
             m_consoleHistoryIndex = m_consoleHistory.size();
             Script::ScriptEngine(text);
-            consoleTriggers->pushParameter("UserInput", "inpput", text);
+            consoleTriggers->pushParameter("UserInput", "Input", text);
             consoleTriggers->trigger("UserInput");
         }
 

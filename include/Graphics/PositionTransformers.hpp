@@ -24,8 +24,8 @@ namespace obe
             class PositionTransformer
             {
             private:
-                std::string m_xTransformerName = "Position";
-                std::string m_yTransformerName = "Position";
+                std::string m_xTransformerName = "Camera";
+                std::string m_yTransformerName = "Camera";
                 CoordinateTransformer m_xTransformer;
                 CoordinateTransformer m_yTransformer;
             public:

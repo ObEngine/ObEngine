@@ -85,7 +85,8 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            //m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getClassType<P>(), Types::Any(parameter));
+            std::cout << "Pushed Parameter " << name << " at " << this->getNamespace() << "." << this->getGroup() << "." << m_name << std::endl;
+            m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getClassType<P>(), Types::Any(parameter));
         }
 
         template <class T>

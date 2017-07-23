@@ -231,7 +231,7 @@ namespace obe
 
                 if (currentSprite.contains(vili::AttributeType::BaseAttribute, "xTransform"))
                 {
-                    spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform");
+                    spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform").get<std::string>();
                 }
                 else
                 {
@@ -239,7 +239,7 @@ namespace obe
                 }
                 if (currentSprite.contains(vili::AttributeType::BaseAttribute, "yTransform"))
                 {
-                    spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform");
+                    spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform").get<std::string>();
                 }
                 else
                 {

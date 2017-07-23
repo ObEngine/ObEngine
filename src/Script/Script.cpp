@@ -5,7 +5,7 @@
 #include <Debug/Console.hpp>
 #include <Graphics/Canvas.hpp>
 #include <Graphics/LevelSprite.hpp>
-#include <Input/KeyManager.hpp>
+#include <Input/InputManager.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/Script.hpp>
 #include <Sound/Music.hpp>
@@ -37,8 +37,8 @@ namespace obe
                     (*lua)["Hook"][name] = containerMap[name].second->as<Debug::Console*>();
                 else if (hookType == Utils::Type::getClassType<System::Cursor*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
-                else if (hookType == Utils::Type::getClassType<Input::KeyboardManager*>())
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Input::KeyboardManager*>();
+                else if (hookType == Utils::Type::getClassType<Input::InputManager*>())
+                    (*lua)["Hook"][name] = containerMap[name].second->as<Input::InputManager*>();
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerDatabase*>())
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerDatabase*>();
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerGroup*>())
@@ -552,9 +552,6 @@ namespace obe
             if (importAll || args[1] == "Cursor")
             {
                 (*lua)["Core"]["Cursor"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
-                    .addFunction("getClicked", &System::Cursor::getClicked)
-                    .addFunction("getPressed", &System::Cursor::getPressed)
-                    .addFunction("getReleased", &System::Cursor::getReleased)
                     .addFunction("getX", &System::Cursor::getX)
                     .addFunction("getY", &System::Cursor::getY)
                     .addFunction("selectCursor", &System::Cursor::selectAnimatorPath)
