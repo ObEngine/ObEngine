@@ -57,7 +57,7 @@ namespace obe
 
             std::vector<PolygonalCollider*> m_originChildren;
             PolygonalCollider* m_origin = nullptr;
-            std::string m_parentID = "";
+            std::string m_parentId = "";
 
             void calculateMasterPoint();
             std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);

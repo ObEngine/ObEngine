@@ -5,7 +5,7 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <System/Cursor.hpp>
@@ -62,7 +62,7 @@ namespace obe
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
-            Scene::World world;
+            Scene::Scene world;
             Script::hookCore.dropValue("World", &world);
 
             //Keybinding

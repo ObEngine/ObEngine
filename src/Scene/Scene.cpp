@@ -1,4 +1,4 @@
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
@@ -10,7 +10,7 @@ namespace obe
 {
     namespace Scene
     {
-        World::World()
+        Scene::Scene()
         {
             loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
             Script::ScriptEngine["World"] = this;
@@ -23,12 +23,12 @@ namespace obe
             m_showCollisionModes["drawSkel"] = false;
         }
 
-        World::~World()
+        Scene::~Scene()
         {
             Triggers::TriggerDatabase::GetInstance()->removeNamespace("Map");
         }
 
-        Graphics::LevelSprite* World::createLevelSprite(const std::string& id)
+        Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id)
         {
             std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
 
@@ -39,7 +39,7 @@ namespace obe
             return returnLevelSprite;
         }
 
-        Collision::PolygonalCollider* World::createCollider(const std::string& id)
+        Collision::PolygonalCollider* Scene::createCollider(const std::string& id)
         {
             std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
             Collision::PolygonalCollider* returnCollider = newCollider.get();
@@ -47,12 +47,17 @@ namespace obe
             return returnCollider;
         }
 
-        std::string World::getBaseFolder() const
+        unsigned Scene::getColliderAmount()
+        {
+            return m_colliderArray.size();
+        }
+
+        std::string Scene::getBaseFolder() const
         {
             return m_baseFolder;
         }
 
-        void World::loadFromFile(std::string filename)
+        void Scene::loadFromFile(const std::string& filename)
         {
             this->clearWorld();
             vili::DataParser mapParse;
@@ -87,7 +92,7 @@ namespace obe
                     vili::ComplexAttribute& currentSprite = levelSprites.at(currentSpriteName);
                     std::string spriteXTransformer;
                     std::string spriteYTransformer;
-                    std::string spriteID = currentSpriteName;
+                    std::string spriteId = currentSpriteName;
                     std::string spriteUnits = currentSprite.contains(vili::AttributeType::ComplexAttribute, "rect") ?
                                                   currentSprite.at<vili::BaseAttribute>("rect", "unit").get<std::string>() : "WorldUnits";
                     std::cout << "SpriteUnit : " << spriteUnits << std::endl;
@@ -131,7 +136,7 @@ namespace obe
                         spriteYTransformer = "None";
                     }
 
-                    std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteID);
+                    std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteId);
                     if (spritePath != "")
                         tempSprite->load(spritePath);
                     tempSprite->setPosition(spritePos.x, spritePos.y);
@@ -193,7 +198,7 @@ namespace obe
                     {
                         vili::ComplexAttribute& objectRequirements = currentObject.at("Requires");
                         currentObject.removeOwnership(&objectRequirements);
-                        Script::GameObjectRequires::ApplyRequirements(this->getGameObject(currentObjectName), objectRequirements);
+                        Script::GameObjectRequires::ApplyRequirements(this->getGameObjectById(currentObjectName), objectRequirements);
                         objectRequirements.setParent(&currentObject);
                     }
                 }
@@ -210,7 +215,7 @@ namespace obe
             }
         }
 
-        void World::clearWorld()
+        void Scene::clearWorld()
         {
             m_spriteArray.clear();
             m_colliderArray.clear();
@@ -219,7 +224,7 @@ namespace obe
             m_scriptArray.clear();
         }
 
-        vili::DataParser* World::saveData()
+        vili::DataParser* Scene::dump()
         {
             vili::DataParser* dataStore = new vili::DataParser;
             dataStore->createFlag("Map");
@@ -314,7 +319,7 @@ namespace obe
             return dataStore;
         }
 
-        void World::update(double dt)
+        void Scene::update(double dt)
         {
             if (m_cameraLocked)
                 m_camera.lock();
@@ -322,10 +327,9 @@ namespace obe
                 m_camera.unlock();
             if (m_updateState)
             {
-                m_gameSpeed = dt;
                 if (m_needToOrderUpdateArray)
                 {
-                    this->orderUpdateScrArray();
+                    this->orderGameObjectExecutionByPriority();
                     m_needToOrderUpdateArray = false;
                 }
 
@@ -339,7 +343,7 @@ namespace obe
                         /*if (updateObjArray[i]->hasCollider)
                             this->deleteCollision(updateObjArray[i]->getCollider(), false);*/
                         if (m_updateObjArray[i]->m_hasLevelSprite)
-                            this->deleteSprite(m_updateObjArray[i]->getLevelSprite());
+                            this->removeLevelSpriteById(m_updateObjArray[i]->getLevelSprite()->getId());
                         m_updateObjArray.erase(m_updateObjArray.begin() + i);
                     }
                 }
@@ -347,7 +351,7 @@ namespace obe
             m_camera.unlock();
         }
 
-        void World::display(sf::RenderWindow& target)
+        void Scene::display(sf::RenderWindow& target)
         {
             this->displaySprites(target);
             Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
@@ -364,7 +368,7 @@ namespace obe
             }
         }
 
-        void World::displaySprites(sf::RenderWindow& target)
+        void Scene::displaySprites(sf::RenderWindow& target)
         {
             Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
@@ -390,17 +394,17 @@ namespace obe
             }
         }
 
-        std::string World::getLevelName() const
+        std::string Scene::getLevelName() const
         {
             return m_levelName;
         }
 
-        void World::setLevelName(std::string newName)
+        void Scene::setLevelName(const std::string& newName)
         {
             m_levelName = newName;
         }
 
-        std::vector<Collision::PolygonalCollider*> World::getColliders() const
+        std::vector<Collision::PolygonalCollider*> Scene::getAllColliders() const
         {
             std::vector<Collision::PolygonalCollider*> allColliders;
             for (auto& collider : m_colliderArray)
@@ -408,34 +412,44 @@ namespace obe
             return allColliders;
         }
 
-        Camera* World::getCamera()
+        Camera* Scene::getCamera()
         {
             return &m_camera;
         }
 
-        void World::setCameraLock(bool state)
+        void Scene::setCameraLock(bool state)
         {
             m_cameraLocked = state;
         }
 
-        bool World::isCameraLocked() const
+        bool Scene::isCameraLocked() const
         {
             return m_cameraLocked;
         }
 
-        void World::setUpdateState(bool state)
+        void Scene::setUpdateState(bool state)
         {
             m_updateState = state;
         }
 
-        Script::GameObject* World::getGameObject(std::string id)
+        Script::GameObject* Scene::getGameObjectById(const std::string& id)
         {
             if (m_gameObjectMap.find(id) != m_gameObjectMap.end())
                 return m_gameObjectMap[id].get();
             throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownGameObject", {{"id", id}, {"map", m_levelName}});
         }
 
-        std::vector<Script::GameObject*> World::getAllGameObjects(const std::vector<std::string>& filters)
+        bool Scene::doesGameObjectExists(const std::string& id)
+        {
+            return (m_gameObjectMap.find(id) != m_gameObjectMap.end());
+        }
+
+        void Scene::removeGameObjectById(const std::string& id)
+        {
+            m_gameObjectMap.erase(id);
+        }
+
+        std::vector<Script::GameObject*> Scene::getAllGameObjects(const std::vector<std::string>& filters)
         {
             std::vector<Script::GameObject*> returnVec;
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
@@ -453,7 +467,7 @@ namespace obe
             return returnVec;
         }
 
-        Script::GameObject* World::createGameObject(const std::string& id, const std::string& obj)
+        Script::GameObject* Scene::createGameObject(const std::string& id, const std::string& obj)
         {
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
             vili::DataParser getGameObjectFile;
@@ -485,7 +499,12 @@ namespace obe
             return m_gameObjectMap[id].get();
         }
 
-        void World::orderUpdateScrArray()
+        unsigned Scene::getGameObjectAmount()
+        {
+            return m_gameObjectMap.size();
+        }
+
+        void Scene::orderGameObjectExecutionByPriority()
         {
             m_updateObjArray.clear();
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
@@ -493,7 +512,7 @@ namespace obe
             sort(m_updateObjArray.begin(), m_updateObjArray.end(), Script::orderScrPriority);
         }
 
-        void World::reorganizeLayers()
+        void Scene::reorganizeLayers()
         {
             bool noChange = false;
             while (noChange == false)
@@ -523,17 +542,12 @@ namespace obe
             }
         }
 
-        Graphics::LevelSprite* World::getSpriteByIndex(int index)
-        {
-            return m_spriteArray[index].get();
-        }
-
-        int World::getSpriteArraySize() const
+        unsigned int Scene::getLevelSpriteAmount() const
         {
             return m_spriteArray.size();
         }
 
-        std::vector<Graphics::LevelSprite*> World::getAllSprites()
+        std::vector<Graphics::LevelSprite*> Scene::getAllLevelSprites()
         {
             std::vector<Graphics::LevelSprite*> allSprites;
             for (int i = 0; i < m_spriteArray.size(); i++)
@@ -541,7 +555,7 @@ namespace obe
             return allSprites;
         }
 
-        std::vector<Graphics::LevelSprite*> World::getSpritesByLayer(int layer)
+        std::vector<Graphics::LevelSprite*> Scene::getLevelSpritesByLayer(int layer)
         {
             std::vector<Graphics::LevelSprite*> returnLayer;
 
@@ -554,22 +568,23 @@ namespace obe
             return returnLayer;
         }
 
-        Graphics::LevelSprite* World::getSpriteByPos(int x, int y, int layer)
+        Graphics::LevelSprite* Scene::getLevelSpriteByPosition(const Transform::UnitVector& position, int layer)
         {
             Graphics::LevelSprite* returnSpr = nullptr;
-            std::vector<Graphics::LevelSprite*> getSpriteVec = getSpritesByLayer(layer);
+            Transform::UnitVector pixelPosition = position.to<Transform::Units::WorldPixels>();
+            std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);
             for (unsigned int i = 0; i < getSpriteVec.size(); i++)
             {
-                if (x > getSpriteVec[i]->getRect().left && x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getSpriteWidth())
+                if (pixelPosition.x > getSpriteVec[i]->getRect().left && pixelPosition.x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getSpriteWidth())
                 {
-                    if (y > getSpriteVec[i]->getRect().top && y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getSpriteHeight())
+                    if (pixelPosition.y > getSpriteVec[i]->getRect().top && pixelPosition.y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getSpriteHeight())
                         returnSpr = getSpriteVec[i];
                 }
             }
             return returnSpr;
         }
 
-        Graphics::LevelSprite* World::getSpriteByID(const std::string& id)
+        Graphics::LevelSprite* Scene::getLevelSpriteById(const std::string& id)
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
@@ -579,7 +594,7 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownLevelSprite", {{"id", id}, {"map", m_levelName}});
         }
 
-        bool World::doesSpriteExists(const std::string& id)
+        bool Scene::doesLevelSpriteExists(const std::string& id)
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
@@ -589,21 +604,15 @@ namespace obe
             return false;
         }
 
-        void World::deleteSpriteByID(const std::string& sprID)
+        void Scene::removeLevelSpriteById(const std::string& id)
         {
-            this->deleteSprite(this->getSpriteByID(sprID));
-        }
-
-        void World::deleteSprite(Graphics::LevelSprite* spriteToDelete)
-        {
-            for (int i = 0; i < m_spriteArray.size(); i++)
+            m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(), [&id](std::unique_ptr<Graphics::LevelSprite>& levelSprite)
             {
-                if (m_spriteArray[i].get()->getId() == spriteToDelete->getId())
-                    m_spriteArray.erase(m_spriteArray.begin() + i);
-            }
+                return (levelSprite->getId() == id);
+            }), m_spriteArray.end());
         }
 
-        void World::enableShowCollision(bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+        void Scene::enableShowCollision(bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
             m_showCollisionModes["drawLines"] = drawLines;
             m_showCollisionModes["drawPoints"] = drawPoints;
@@ -611,9 +620,9 @@ namespace obe
             m_showCollisionModes["drawSkel"] = drawSkel;
         }
 
-        std::pair<Collision::PolygonalCollider*, int> World::getCollisionPointByPos(int x, int y)
+        std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(const Transform::UnitVector& position)
         {
-            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
+            Transform::UnitVector pPos = position.to<Transform::Units::WorldPixels>();
             const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
@@ -625,9 +634,9 @@ namespace obe
             return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
         }
 
-        Collision::PolygonalCollider* World::getCollisionMasterByPos(int x, int y)
+        Collision::PolygonalCollider* Scene::getColliderCentroidByPosition(const Transform::UnitVector& position)
         {
-            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
+            Transform::UnitVector pPos = position.to<Transform::Units::WorldPixels>();
             const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
@@ -637,7 +646,7 @@ namespace obe
             return nullptr;
         }
 
-        Collision::PolygonalCollider* World::getCollisionByID(const std::string& id)
+        Collision::PolygonalCollider* Scene::getColliderById(const std::string& id)
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
@@ -649,70 +658,32 @@ namespace obe
             return nullptr;
         }
 
-        void World::deleteCollisionByID(const std::string& id)
+        bool Scene::doesColliderExists(const std::string& id)
         {
-            this->deleteCollision(this->getCollisionByID(id));
+            for (auto& collider : m_colliderArray)
+            {
+                if (collider->getId() == id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        void World::deleteCollision(Collision::PolygonalCollider* colToDelete)
+        void Scene::removeColliderById(const std::string& id)
         {
-            int indexToDelete = 0;
-            for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+            m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(), [&id](std::unique_ptr<Collision::PolygonalCollider>& collider)
             {
-                if (colToDelete == m_colliderArray[i].get())
-                    indexToDelete = i;
-            }
-            m_colliderArray.erase(m_colliderArray.begin() + indexToDelete);
+                return (collider->getId() == id);
+            }), m_colliderArray.end());
         }
 
-        void World::createCollisionAtPos(int x, int y)
-        {
-            int i = 0;
-            Transform::UnitVector pPos(x, y, Transform::Units::WorldPixels);
-            std::string testID = "collider" + std::to_string(m_colliderArray.size() + i);
-            while (getCollisionByID(testID) != nullptr)
-            {
-                ++i;
-                testID = "collider" + std::to_string(m_colliderArray.size() + i);
-            }
-            Collision::PolygonalCollider* newCollider = this->createCollider(testID);
-            newCollider->addPoint(Transform::UnitVector(50, 0, Transform::Units::WorldPixels));
-            newCollider->addPoint(Transform::UnitVector(0, 50, Transform::Units::WorldPixels));
-            newCollider->addPoint(Transform::UnitVector(100, 50, Transform::Units::WorldPixels));
-            newCollider->setPositionFromMaster(pPos);
-        }
 
         void loadWorldLib(kaguya::State* lua)
         {
             if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
             (*lua)["Core"]["World"] = kaguya::NewTable();
-            (*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<World>()
-                .addFunction("addCollider", &World::createCollider)
-                .addFunction("clearWorld", &World::clearWorld)
-                .addFunction("createCollisionAtPos", &World::createCollisionAtPos)
-                .addFunction("createGameObject", &World::createGameObject)
-                .addFunction("createLevelSprite", &World::createLevelSprite)
-                .addFunction("deleteCollisionByID", &World::deleteCollisionByID)
-                .addFunction("deleteSprite", &World::deleteSprite)
-                .addFunction("enableShowCollision", &World::enableShowCollision)
-                .addFunction("getAllGameObjects", &World::getAllGameObjects)
-                .addFunction("getAllSprites", &World::getAllSprites)
-                .addFunction("getCamera", &World::getCamera)
-                .addFunction("getColliders", &World::getColliders)
-                .addFunction("getCollisionByID", &World::getCollisionByID)
-                .addFunction("getCollisionMasterByPos", &World::getCollisionMasterByPos)
-                .addFunction("getCollisionPointByPos", &World::getCollisionPointByPos)
-                .addFunction("getGameObject", &World::getGameObject)
-                .addFunction("getSpriteArraySize", &World::getSpriteArraySize)
-                .addFunction("getSpriteByID", &World::getSpriteByID)
-                .addFunction("getSpriteByIndex", &World::getSpriteByIndex)
-                .addFunction("getSpriteByPos", &World::getSpriteByPos)
-                .addFunction("getSpritesByLayer", &World::getSpritesByLayer)
-                .addFunction("loadFromFile", &World::loadFromFile)
-                .addFunction("orderUpdateScrArray", &World::orderUpdateScrArray)
-                .addFunction("reorganizeLayers", &World::reorganizeLayers)
-                .addFunction("saveData", &World::saveData)
-                .addFunction("setUpdateState", &World::setUpdateState)
+            (*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<Scene>()
             );
         }
 

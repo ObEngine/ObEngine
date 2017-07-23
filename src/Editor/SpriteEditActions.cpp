@@ -4,7 +4,7 @@ namespace obe
 {
     namespace Editor
     {
-        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::World& world, int& currentLayer)
+        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::Scene& world, int& currentLayer)
         {
             inputManager.getAction("SpriteZDepthInc").connect([&selectedSprite, &world](Input::InputActionEvent event)
             {
@@ -48,7 +48,7 @@ namespace obe
             Graphics::LevelSprite*& hoveredSprite,
             Graphics::LevelSprite*& selectedSprite,
             Graphics::LevelSpriteHandlePoint*& selectedHandlePoint,
-            Scene::World& world,
+            Scene::Scene& world,
             System::Cursor &cursor,
             Editor::EditorGrid& editorGrid,
             int& selectedSpriteOffsetX,
@@ -150,7 +150,7 @@ namespace obe
                     sdBoundingRect = selectedSprite->getRect();
                     std::string sprInfoStr;
                     sprInfoStr = "Hovered Sprite : \n";
-                    sprInfoStr += "    ID : " + selectedSprite->getId() + "\n";
+                    sprInfoStr += "    Id : " + selectedSprite->getId() + "\n";
                     sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
                     sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
                     sprInfoStr += "    Size : " + std::to_string(selectedSprite->getWidth()) + "," + std::to_string(selectedSprite->getHeight()) + "\n";
@@ -169,7 +169,7 @@ namespace obe
             {
                 if (selectedSprite != nullptr)
                 {
-                    world.deleteSprite(selectedSprite);
+                    world.removeLevelSpriteById(selectedSprite->getId());
                     selectedSprite = nullptr;
                     sprInfo.setString("");
                     hoveredSprite = nullptr;

@@ -70,7 +70,7 @@ namespace obe
             int m_zdepth = 0;
             sf::Texture m_texture;
             sfe::ComplexSprite m_sprite;
-            std::string m_parentID = "";
+            std::string m_parentId = "";
             PositionTransformers::PositionTransformer m_positionTransformer;
 
             void applySize();

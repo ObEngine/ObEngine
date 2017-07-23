@@ -12,7 +12,7 @@ namespace obe
 {
     namespace Scene
     {
-        class World;
+        class Scene;
     }
 
     namespace Script
@@ -61,7 +61,7 @@ namespace obe
 
             //int m_queryCounter = 0;
 
-            friend class Scene::World;
+            friend class Scene::Scene;
         public:
             explicit GameObject(const std::string& type, const std::string& id);
             ~GameObject();
@@ -98,7 +98,7 @@ namespace obe
             void sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const;
 
             void registerTrigger(Triggers::Trigger* trg);
-            void loadGameObject(Scene::World& world, vili::ComplexAttribute& obj);
+            void loadGameObject(Scene::Scene& world, vili::ComplexAttribute& obj);
             void update(double dt);
 
             void deleteObject();

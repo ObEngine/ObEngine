@@ -1,4 +1,4 @@
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
@@ -137,7 +137,7 @@ namespace obe
             m_registeredTriggers.push_back(trg);
         }
 
-        void GameObject::loadGameObject(Scene::World& world, vili::ComplexAttribute& obj)
+        void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexAttribute& obj)
         {
             //Animator
             std::string animatorPath;
@@ -286,10 +286,10 @@ namespace obe
 
                 System::Path("Lib/Internal/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 
-                (*m_objectScript)["ID"] = m_id;
+                (*m_objectScript)["Id"] = m_id;
                 (*m_objectScript)["Private"] = m_privateKey;
                 (*m_objectScript)["Public"] = m_publicKey;
-                (*m_objectScript)("protect(\"ID\")");
+                (*m_objectScript)("protect(\"Id\")");
                 (*m_objectScript)("protect(\"Private\")");
                 (*m_objectScript)("protect(\"Public\")");
 

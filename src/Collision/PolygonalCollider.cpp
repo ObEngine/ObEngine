@@ -484,12 +484,12 @@ namespace obe
 
         std::string PolygonalCollider::getParentId() const
         {
-            return m_parentID;
+            return m_parentId;
         }
 
         void PolygonalCollider::setParentId(const std::string& parent)
         {
-            m_parentID = parent;
+            m_parentId = parent;
         }
 
         /*PolygonalCollider PolygonalCollider::joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <TGUI/TGUI.hpp>
-#include "Scene/World.hpp"
+#include "Scene/Scene.hpp"
 #include "Grid.hpp"
 
 namespace obe
@@ -17,7 +17,7 @@ namespace obe
             void init(sf::RenderWindow& window);
             void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel);
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel);
-            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::World& world);
+            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world);
             void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode);
             void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel);
             void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel);

@@ -7,7 +7,7 @@ namespace obe
 {
     namespace Editor
     {
-        void connectCamMovementActions(Input::InputManager& inputManager, Scene::World& world, int& cameraSpeed, Time::FramerateManager& framerateManager)
+        void connectCamMovementActions(Input::InputManager& inputManager, Scene::Scene& world, int& cameraSpeed, Time::FramerateManager& framerateManager)
         {
             inputManager.getAction("CamLeft").connect([&world, &cameraSpeed, &framerateManager](Input::InputActionEvent event)
             {
@@ -79,11 +79,11 @@ namespace obe
             });
         }
 
-        void connectSaveActions(Input::InputManager& inputManager, const std::string& mapName, Scene::World& world, double& waitForMapSaving, tgui::Label::Ptr savedLabel)
+        void connectSaveActions(Input::InputManager& inputManager, const std::string& mapName, Scene::Scene& world, double& waitForMapSaving, tgui::Label::Ptr savedLabel)
         {
             inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel](Input::InputActionEvent event)
             {
-                world.saveData()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+                world.dump()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
                 if (waitForMapSaving < 0)
                 {
                     savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));

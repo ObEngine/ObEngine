@@ -240,12 +240,12 @@ namespace obe
 
         std::string LevelSprite::getParentId() const
         {
-            return m_parentID;
+            return m_parentId;
         }
 
         void LevelSprite::setParentId(const std::string& parent)
         {
-            m_parentID = parent;
+            m_parentId = parent;
         }
 
         int LevelSprite::getXScaleFactor() const

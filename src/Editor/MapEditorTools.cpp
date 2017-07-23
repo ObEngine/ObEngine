@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include <Editor/MapEditorTools.hpp>
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/Script.hpp>
 #include <System/Loaders.hpp>
@@ -192,7 +192,7 @@ namespace obe
             else
             {
                 std::string key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-                Script::hookCore.getPointer("World")->as<Scene::World*>()->createGameObject(key, objName);
+                Script::hookCore.getPointer("World")->as<Scene::Scene*>()->createGameObject(key, objName);
             }
         }
 
@@ -305,11 +305,14 @@ namespace obe
         void addSpriteToWorld(std::string geid)
         {
             std::cout << "Recv geid : " << geid << std::endl;
-            Scene::World* world = Script::hookCore.getPointer("World")->as<Scene::World*>();
-            std::string key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-            while (world->doesSpriteExists(key))
-                key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-            Graphics::LevelSprite* sprToAdd = world->createLevelSprite(key);
+            Scene::Scene* world = Script::hookCore.getPointer("World")->as<Scene::Scene*>();
+            int i = 0;
+            std::string testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i);
+            while (world->doesLevelSpriteExists(testId))
+            {
+                testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i++);
+            }
+            Graphics::LevelSprite* sprToAdd = world->createLevelSprite(testId);
             Transform::UnitVector pixelCamera = world->getCamera()->getPosition().to<Transform::Units::WorldPixels>();
             sprToAdd->load("Sprites/LevelSprites/" + geid);
             sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);

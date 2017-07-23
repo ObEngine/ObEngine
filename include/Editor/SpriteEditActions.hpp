@@ -3,20 +3,20 @@
 #include <Editor/Grid.hpp>
 #include <Input/InputManager.hpp>
 #include <Graphics/LevelSprite.hpp>
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
 
 namespace obe
 {
     namespace Editor
     {
-        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::World& world, int& currentLayer);
+        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::Scene& world, int& currentLayer);
         void connectSpriteActions(
             Input::InputManager& inputManager, 
             Graphics::LevelSprite*& hoveredSprite,
             Graphics::LevelSprite*& selectedSprite, 
             Graphics::LevelSpriteHandlePoint*& selectedHandlePoint,
-            Scene::World& world,
+            Scene::Scene& world,
             System::Cursor &cursor, 
             Editor::EditorGrid& editorGrid, 
             int& selectedSpriteOffsetX, 

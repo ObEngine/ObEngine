@@ -12,7 +12,7 @@
 #include <Input/InputManager.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Network/Network.hpp>
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
@@ -80,7 +80,7 @@ namespace obe
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //World Creation / Loading
-            Scene::World world;
+            Scene::Scene world;
             Script::ScriptEngine["stream"] = gameConsole.createStream("World", true);
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
@@ -248,6 +248,7 @@ namespace obe
                     }
                 }
 
+                Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
                 //Sprite Editing
                 if (editMode->getSelectedItem() == "LevelSprites")
                 {
@@ -255,16 +256,15 @@ namespace obe
 
                     if (hoveredSprite == nullptr)
                     {
-                        hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, currentLayer);
+                        hoveredSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
                         if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
-                            hoveredSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
-                                cursor.getY() + pixelCamera.y, currentLayer);
+                            hoveredSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
                             sdBoundingRect = hoveredSprite->getRect();
                             hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
-                            sprInfoStr += "    ID : " + hoveredSprite->getId() + "\n";
+                            sprInfoStr += "    Id : " + hoveredSprite->getId() + "\n";
                             sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
                             sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
                             sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
@@ -281,8 +281,7 @@ namespace obe
                         sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
                         sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
                         bool outHover = false;
-                        Graphics::LevelSprite* testHoverSprite = world.getSpriteByPos(cursor.getX() + pixelCamera.x,
-                            cursor.getY() + pixelCamera.y, currentLayer);
+                        Graphics::LevelSprite* testHoverSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
                         if (testHoverSprite != hoveredSprite)
                             outHover = true;
                         if (outHover)

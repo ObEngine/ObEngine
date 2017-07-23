@@ -210,7 +210,7 @@ namespace obe
                 });
             }
 
-            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::World& world)
+            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world)
             {
                 tgui::Label::Ptr mapNameLabel = tgui::Label::create();
                 tgui::TextBox::Ptr mapNameInput = tgui::TextBox::create();

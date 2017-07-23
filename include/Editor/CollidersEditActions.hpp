@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Input/InputManager.hpp>
-#include <Scene/World.hpp>
+#include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
 
 namespace obe
@@ -10,7 +10,7 @@ namespace obe
     {
         void connectCollidersActions(
             Input::InputManager& inputManager, 
-            Scene::World& world, 
+            Scene::Scene& world, 
             System::Cursor& cursor, 
             int& colliderPtGrabbed, 
             Collision::PolygonalCollider*& selectedMasterCollider,
