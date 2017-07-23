@@ -22,7 +22,8 @@ namespace obe
             {
                 m_xTransformerName = xTransformer;
                 m_yTransformerName = yTransformer;
-                PositionTransformer();
+                m_xTransformer = Transformers[m_xTransformerName];
+                m_yTransformer = Transformers[m_yTransformerName];
             }
 
             Transform::UnitVector PositionTransformer::operator()(Transform::UnitVector& position, Transform::UnitVector& camera, int layer) const

@@ -66,10 +66,10 @@ namespace obe
             Script::hookCore.dropValue("World", &world);
 
             //Keybinding
-            Input::InputManager keybind;
-            Script::hookCore.dropValue("KeyBinder", &keybind);
-            keybind.configure(configFile.at("KeyBinding"));
-            keybind.addContext("game");
+            Input::InputManager inputManager;
+            Script::hookCore.dropValue("KeyBinder", &inputManager);
+            inputManager.configure(configFile.at("KeyBinding"));
+            inputManager.addContext("game");
 
             sf::Event event;
 
@@ -84,6 +84,36 @@ namespace obe
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
 
+            sf::Text keyPressed;
+            keyPressed.setCharacterSize(42);
+            keyPressed.setFont(font);
+            keyPressed.setPosition(0, 0);
+
+            inputManager.getAction("Left").connect([&keyPressed](Input::InputActionEvent event)
+            {
+                keyPressed.setString("Action : " + event.getAction()->getId());
+            });
+
+            inputManager.getAction("Right").connect([&keyPressed](Input::InputActionEvent event)
+            {
+                keyPressed.setString("Action : " + event.getAction()->getId());
+            });
+
+            inputManager.getAction("Jump").connect([&keyPressed](Input::InputActionEvent event)
+            {
+                keyPressed.setString("Action : " + event.getAction()->getId());
+            });
+
+            inputManager.getAction("Crouch").connect([&keyPressed](Input::InputActionEvent event)
+            {
+                keyPressed.setString("Action : " + event.getAction()->getId());
+            });
+
+            inputManager.getAction("Attack").connect([&keyPressed](Input::InputActionEvent event)
+            {
+                keyPressed.setString("KeyPressed : " + event.getAction()->getId());
+            });
+
             //Game Starts
             while (window.isOpen())
             {
@@ -92,11 +122,11 @@ namespace obe
                 //Events
                 Triggers::TriggerDatabase::GetInstance()->update();
                 world.update(framerateManager.getGameSpeed());
-                keybind.update();
+                inputManager.update();
                 cursor.update();
 
                 //Triggers Handling
-                keybind.handleTriggers();
+                inputManager.handleTriggers();
 
                 while (window.pollEvent(event))
                 {
@@ -118,6 +148,7 @@ namespace obe
                     window.clear();
                     world.display(window);
                     cursor.display(window);
+                    window.draw(keyPressed);
 
                     window.display();
                 }

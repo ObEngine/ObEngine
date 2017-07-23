@@ -37,7 +37,6 @@ namespace obe
             {
                 lua["Core"]["Input"]["KeyboardAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
                     .addFunction("addContext", &Input::InputAction::addContext)
-                    .addFunction("connect", &Input::InputAction::connect)
                     .addFunction("getContexts", &Input::InputAction::getContexts)
                     .addFunction("getRepeat", &Input::InputAction::getRepeat)
                     .addFunction("setRepeat", &Input::InputAction::setRepeat)

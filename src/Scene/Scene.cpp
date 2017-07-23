@@ -47,7 +47,7 @@ namespace obe
             return returnCollider;
         }
 
-        unsigned Scene::getColliderAmount()
+        unsigned Scene::getColliderAmount() const
         {
             return m_colliderArray.size();
         }
@@ -499,7 +499,7 @@ namespace obe
             return m_gameObjectMap[id].get();
         }
 
-        unsigned Scene::getGameObjectAmount()
+        unsigned Scene::getGameObjectAmount() const
         {
             return m_gameObjectMap.size();
         }
@@ -684,6 +684,7 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
             (*lua)["Core"]["World"] = kaguya::NewTable();
             (*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<Scene>()
+                .addFunction("loadFromFile", &Scene::loadFromFile)
             );
         }
 

@@ -69,7 +69,7 @@ namespace obe
 
 
             toolkitEngine["This"] = &toolkitEngine;
-            toolkitEngine.dofile("Lib/GameLib/WScrInit.lua");
+            toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
             Script::loadLib(&toolkitEngine, "Core.*");
             Script::loadBaseLib(&toolkitEngine);
             toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)

@@ -146,7 +146,6 @@ namespace obe
             Graphics::LevelSprite* hoveredSprite = nullptr;
             Graphics::LevelSprite* selectedSprite = nullptr;
             Graphics::LevelSpriteHandlePoint* selectedHandlePoint = nullptr;
-            sf::FloatRect sdBoundingRect;
             int selectedSpriteOffsetX = 0;
             int selectedSpriteOffsetY = 0;
             int cameraSpeed = Transform::UnitVector::Screen.h;
@@ -173,12 +172,13 @@ namespace obe
             mapNameInput->setText(world.getLevelName());
 
             //Connect InputManager Actions
+            connectSaveActions(inputManager, mapName, world, waitForMapSaving, savedLabel);
             connectCamMovementActions(inputManager, world, cameraSpeed, framerateManager);
             connectMagnetActions(inputManager, enableGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, cameraMode);
             connectSpriteLayerActions(inputManager, selectedSprite, world, currentLayer);
             connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
-                world, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sdBoundingRect, sprInfoBackground);
+                world, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
             connectCollidersActions(inputManager, world, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
 
             editMode->connect("itemselected", [&inputManager, editMode]()
@@ -260,7 +260,6 @@ namespace obe
                         if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
                             hoveredSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
-                            sdBoundingRect = hoveredSprite->getRect();
                             hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
@@ -402,16 +401,6 @@ namespace obe
                         world.enableShowCollision(true);
                     else
                         world.enableShowCollision(false);
-                    //Game Display
-                    if (hoveredSprite != nullptr)
-                    {
-                        sf::RectangleShape sprBorder = sf::RectangleShape(sf::Vector2f(sdBoundingRect.width, sdBoundingRect.height));
-                        sprBorder.setPosition(sdBoundingRect.left - pixelCamera.x, sdBoundingRect.top - pixelCamera.y);
-                        sprBorder.setFillColor(sf::Color(0, 0, 0, 0));
-                        sprBorder.setOutlineColor(sf::Color(255, 0, 0));
-                        sprBorder.setOutlineThickness(2);
-                        window.draw(sprBorder);
-                    }
                     if (enableGridCheckbox->isChecked())
                         editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI

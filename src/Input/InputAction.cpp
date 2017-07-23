@@ -45,11 +45,6 @@ namespace obe
             return m_repeat.getDelay();
         }
 
-        void InputAction::connect(ActionCallback callback)
-        {
-            m_callback = callback;
-        }
-
         void InputAction::update()
         {
             for (InputCondition& combination : m_combinations)

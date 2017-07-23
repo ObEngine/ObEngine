@@ -54,11 +54,8 @@ namespace obe
             int& selectedSpriteOffsetX,
             int& selectedSpriteOffsetY,
             sf::Text& sprInfo,
-            sf::FloatRect& sdBoundingRect,
             sf::RectangleShape& sprInfoBackground)
         {
-            Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-
             inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor](Input::InputActionEvent event)
             {
                 if (selectedHandlePoint != nullptr)
@@ -70,7 +67,7 @@ namespace obe
 
             inputManager.getAction("ReleaseHandlePoint").connect([&selectedHandlePoint](Input::InputActionEvent event)
             {
-                if (selectedHandlePoint == nullptr)
+                if (selectedHandlePoint != nullptr)
                 {
                     selectedHandlePoint = nullptr;
                 }
@@ -83,11 +80,11 @@ namespace obe
                 &cursor, 
                 &selectedHandlePoint, 
                 &hoveredSprite,
-                &pixelCamera,
                 &sprInfo,
-                &sdBoundingRect]
+                &world]
             (Input::InputActionEvent event)
             {
+                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
                     std::cout << "Picky picky :D" << std::endl;
@@ -118,7 +115,6 @@ namespace obe
                     selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
                     selectedSprite->select();
 
-                    sdBoundingRect = selectedSprite->getRect();
                     selectedSprite->setColor(sf::Color(100, 255, 100));
                 }
             });
@@ -129,16 +125,16 @@ namespace obe
                 &selectedSpriteOffsetX, 
                 &selectedSpriteOffsetY, 
                 &selectedHandlePoint, 
-                &pixelCamera,
-                &sdBoundingRect,
                 &sprInfo,
-                &sprInfoBackground]
+                &sprInfoBackground,
+                &world]
             (Input::InputActionEvent event)
             {
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
                     if (selectedSprite->getParentId().empty())
                     {
+                        Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                         selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
                             cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
                     }
@@ -147,7 +143,6 @@ namespace obe
                         std::cout << "Not empty : '" << selectedSprite->getParentId() << "'" << std::endl;
                         // What to do here ? <REVISION>
                     }
-                    sdBoundingRect = selectedSprite->getRect();
                     std::string sprInfoStr;
                     sprInfoStr = "Hovered Sprite : \n";
                     sprInfoStr += "    Id : " + selectedSprite->getId() + "\n";

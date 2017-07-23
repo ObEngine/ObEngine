@@ -33,21 +33,45 @@ namespace obe
             void orderGameObjectExecutionByPriority();
             void displaySprites(sf::RenderWindow& target);
         public:
-            //World
+            /**
+             * \brief Creates a new Scene
+             */
             Scene();
+            /**
+             * \brief Default destructor of Scene (Removes Map Namespace in TriggerDatabase)
+             */
             ~Scene();
 
+            /**
+             * \brief Loads the Scene from a .map.vili file
+             * \param filename Name of the file located in Data/Maps (using System::Loaders)
+             */
             void loadFromFile(const std::string& filename);
+            /**
+             * \brief Removes all elements in the Scene
+             */
             void clearWorld();
+            /**
+             * \brief Dumps all elements of the Scene in a vili tree
+             * \return 
+             */
             vili::DataParser* dump();
+            /**
+             * \brief Updates all elements in the Scene
+             * \param dt DeltaTime used to update the Scene
+             */
             void update(double dt);
+            /**
+             * \brief 
+             * \param target 
+             */
             void display(sf::RenderWindow& target);
             std::string getLevelName() const;
             void setLevelName(const std::string& newName);
             void setUpdateState(bool state);
             //GameObjects
             Script::GameObject* createGameObject(const std::string& id, const std::string& object);
-            unsigned int getGameObjectAmount();
+            unsigned int getGameObjectAmount() const;
             std::vector<Script::GameObject*> getAllGameObjects(const std::vector<std::string>& filters = {});
             Script::GameObject* getGameObjectById(const std::string& id);
             bool doesGameObjectExists(const std::string& id);
@@ -68,7 +92,7 @@ namespace obe
             void removeLevelSpriteById(const std::string& id);
             //Colliders
             Collision::PolygonalCollider* createCollider(const std::string& id);
-            unsigned int getColliderAmount();
+            unsigned int getColliderAmount() const;
             std::vector<Collision::PolygonalCollider*> getAllColliders() const;
             std::pair<Collision::PolygonalCollider*, int> getColliderPointByPosition(const Transform::UnitVector& position);
             Collision::PolygonalCollider* getColliderCentroidByPosition(const Transform::UnitVector& position);

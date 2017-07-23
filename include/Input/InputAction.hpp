@@ -42,7 +42,8 @@ namespace obe
             * \brief Adds a new Callback
             * \param callback A function that will be called when the Action is triggered
             */
-            void connect(ActionCallback callback);
+            template <class Func>
+            void connect(Func callback);
             /**
             * \brief Adds a context to the KeyboardAction
             * \param context New context for the KeyboardAction
@@ -78,5 +79,11 @@ namespace obe
             */
             void update();
         };
+
+        template <class Func>
+        void InputAction::connect(Func callback)
+        {
+            m_callback = callback;
+        }
     }
 }

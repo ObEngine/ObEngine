@@ -81,8 +81,10 @@ namespace obe
 
         void connectSaveActions(Input::InputManager& inputManager, const std::string& mapName, Scene::Scene& world, double& waitForMapSaving, tgui::Label::Ptr savedLabel)
         {
+            std::cout << "CONNECTED SAVE ACTIONS" << std::endl;
             inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel](Input::InputActionEvent event)
             {
+                std::cout << "Save Map" << std::endl;
                 world.dump()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
                 if (waitForMapSaving < 0)
                 {

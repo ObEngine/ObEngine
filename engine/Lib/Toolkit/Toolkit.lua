@@ -297,7 +297,7 @@ function evaluate(command)
             end
         end
         print(inspect(identifiedArgs));
-        local ArgMirror = require('Lib/StdLib/ArgMirror');
+        local ArgMirror = require('Lib/Internal/ArgMirror');
         local argList = ArgMirror.GetArgs(callFunction);
         local callArgs = {};
         for _, arg in pairs(argList) do

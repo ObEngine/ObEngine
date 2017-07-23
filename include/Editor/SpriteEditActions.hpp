@@ -22,7 +22,6 @@ namespace obe
             int& selectedSpriteOffsetX, 
             int& selectedSpriteOffsetY,
             sf::Text& sprInfo,
-            sf::FloatRect& sdBoundingRect,
             sf::RectangleShape& sprInfoBackground);
     }
 }
