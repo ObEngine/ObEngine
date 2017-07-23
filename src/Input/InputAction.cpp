@@ -14,6 +14,11 @@ namespace obe
             m_combinations.push_back(condition);
         }
 
+        void InputAction::connect(ActionCallback callback)
+        {
+            m_callback = callback;
+        }
+
         std::vector<std::string> InputAction::getContexts() const
         {
             return m_contexts;

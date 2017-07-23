@@ -14,7 +14,7 @@ namespace obe
         {
             inputManager.getAction("ColliderPointPick").connect(
                 [&world, &cursor, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed]
-            (Input::InputActionEvent event)
+            (const Input::InputActionEvent& event)
             {
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
@@ -37,7 +37,7 @@ namespace obe
             
             inputManager.getAction("ColliderPointMove").connect(
                 [&selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &world, &cursor]
-            (Input::InputActionEvent event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                 {
@@ -47,21 +47,21 @@ namespace obe
                 }
             });
 
-            inputManager.getAction("ColliderPointRelease").connect([&colliderPtGrabbed](Input::InputActionEvent& event)
+            inputManager.getAction("ColliderPointRelease").connect([&colliderPtGrabbed](const Input::InputActionEvent& event)
             {
                 colliderPtGrabbed = -1;
             });
 
             inputManager.getAction("ColliderMasterPick").connect(
                 [&world, &cursor, &selectedMasterCollider, &colliderPtGrabbed, &masterColliderGrabbed]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
 
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
-                if (world.getColliderCentroidByPosition(cursCoord) != nullptr)
+                if (world.getColliderByCentroidPosition(cursCoord) != nullptr)
                 {
-                    Collision::PolygonalCollider* tempCol = world.getColliderCentroidByPosition(cursCoord);
+                    Collision::PolygonalCollider* tempCol = world.getColliderByCentroidPosition(cursCoord);
                     if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
                     {
                         selectedMasterCollider->setSelected(false);
@@ -79,7 +79,7 @@ namespace obe
             //Collision Master Move
             inputManager.getAction("ColliderMasterMove").connect(
                 [&selectedMasterCollider, &masterColliderGrabbed, &world, &cursor]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && masterColliderGrabbed)
                 {
@@ -91,7 +91,7 @@ namespace obe
 
             inputManager.getAction("ColliderMasterRelease").connect(
                 [&masterColliderGrabbed, &selectedMasterCollider, &world]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (masterColliderGrabbed)
                 {
@@ -103,7 +103,7 @@ namespace obe
 
             inputManager.getAction("ColliderPointCreate").connect(
                 [&selectedMasterCollider, &masterColliderGrabbed, &world, &cursor]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed)
                 {
@@ -120,7 +120,7 @@ namespace obe
 
             inputManager.getAction("ColliderPointDelete").connect(
                 [&selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &world]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                 {
@@ -139,13 +139,13 @@ namespace obe
 
             inputManager.getAction("ColliderRelease").connect(
                 [&selectedMasterCollider, &world, &cursor, &masterColliderGrabbed, &colliderPtGrabbed]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr)
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
-                    if (world.getColliderCentroidByPosition(cursCoord) == nullptr)
+                    if (world.getColliderByCentroidPosition(cursCoord) == nullptr)
                     {
                         if (world.getColliderPointByPosition(cursCoord).first == nullptr)
                         {
@@ -160,7 +160,7 @@ namespace obe
 
             inputManager.getAction("ColliderDelete").connect(
                 [&selectedMasterCollider, &masterColliderGrabbed, &world, &colliderPtGrabbed]
-            (Input::InputActionEvent& event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && masterColliderGrabbed)
                 {
@@ -172,7 +172,7 @@ namespace obe
                 }
             });
 
-            inputManager.getAction("ColliderCreate").connect([&selectedMasterCollider, &world, &cursor](Input::InputActionEvent& event)
+            inputManager.getAction("ColliderCreate").connect([&selectedMasterCollider, &world, &cursor](const Input::InputActionEvent& event)
             {
                 std::cout << "Called : " << (selectedMasterCollider == nullptr) << std::endl;
                 if (selectedMasterCollider == nullptr)

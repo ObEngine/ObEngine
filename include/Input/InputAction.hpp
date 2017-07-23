@@ -16,7 +16,7 @@ namespace obe
         /**
         * \brief Function callback type for KeyboardAction
         */
-        using ActionCallback = std::function<void(InputActionEvent event)>;
+        using ActionCallback = std::function<void(const InputActionEvent& event)>;
 
         /**
         * \brief Action triggered by one or more Keyboard key(s)
@@ -25,7 +25,7 @@ namespace obe
         class InputAction : public Types::Identifiable
         {
         private:
-            ActionCallback m_callback = [](InputActionEvent event){};
+            ActionCallback m_callback = [](const InputActionEvent& event){};
             std::vector<std::string> m_contexts;
             std::vector<InputCondition> m_combinations;
             bool m_state = false;
@@ -42,8 +42,7 @@ namespace obe
             * \brief Adds a new Callback
             * \param callback A function that will be called when the Action is triggered
             */
-            template <class Func>
-            void connect(Func callback);
+            void connect(ActionCallback callback);
             /**
             * \brief Adds a context to the KeyboardAction
             * \param context New context for the KeyboardAction
@@ -79,11 +78,5 @@ namespace obe
             */
             void update();
         };
-
-        template <class Func>
-        void InputAction::connect(Func callback)
-        {
-            m_callback = callback;
-        }
     }
 }

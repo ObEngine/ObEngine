@@ -6,7 +6,7 @@ namespace obe
     {
         void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::Scene& world, int& currentLayer)
         {
-            inputManager.getAction("SpriteZDepthInc").connect([&selectedSprite, &world](Input::InputActionEvent event)
+            inputManager.getAction("SpriteZDepthInc").connect([&selectedSprite, &world](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -14,7 +14,7 @@ namespace obe
                     world.reorganizeLayers();
                 }
             });
-            inputManager.getAction("SpriteZDepthDec").connect([&selectedSprite, &world](Input::InputActionEvent event)
+            inputManager.getAction("SpriteZDepthDec").connect([&selectedSprite, &world](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -22,7 +22,7 @@ namespace obe
                     world.reorganizeLayers();
                 }
             });
-            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](Input::InputActionEvent event)
+            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -32,7 +32,7 @@ namespace obe
                 }
                 currentLayer += 1;
             });
-            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](Input::InputActionEvent event)
+            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -56,7 +56,7 @@ namespace obe
             sf::Text& sprInfo,
             sf::RectangleShape& sprInfoBackground)
         {
-            inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor](Input::InputActionEvent event)
+            inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor](const Input::InputActionEvent& event)
             {
                 if (selectedHandlePoint != nullptr)
                 {
@@ -65,7 +65,7 @@ namespace obe
                 }
             });
 
-            inputManager.getAction("ReleaseHandlePoint").connect([&selectedHandlePoint](Input::InputActionEvent event)
+            inputManager.getAction("ReleaseHandlePoint").connect([&selectedHandlePoint](const Input::InputActionEvent& event)
             {
                 if (selectedHandlePoint != nullptr)
                 {
@@ -82,7 +82,7 @@ namespace obe
                 &hoveredSprite,
                 &sprInfo,
                 &world]
-            (Input::InputActionEvent event)
+            (const Input::InputActionEvent& event)
             {
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
@@ -128,7 +128,7 @@ namespace obe
                 &sprInfo,
                 &sprInfoBackground,
                 &world]
-            (Input::InputActionEvent event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
@@ -160,7 +160,7 @@ namespace obe
 
             inputManager.getAction("SpriteDelete").connect(
                 [&selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
-            (Input::InputActionEvent event)
+            (const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -174,7 +174,7 @@ namespace obe
             });
 
             inputManager.getAction("SpriteCancelOffset").connect(
-                [&selectedSprite, &cursor, &editorGrid, &selectedSpriteOffsetX, &selectedSpriteOffsetY, &selectedHandlePoint](Input::InputActionEvent event)
+                [&selectedSprite, &cursor, &editorGrid, &selectedSpriteOffsetX, &selectedSpriteOffsetY, &selectedHandlePoint](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {

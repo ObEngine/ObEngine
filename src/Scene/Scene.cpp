@@ -458,7 +458,7 @@ namespace obe
                 else
                 {
                     bool allFilters = true;
-                    if (Utils::Vector::isInList(std::string("Display"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
+                    if (Utils::Vector::isInList(std::string("Animatable"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
                     if (Utils::Vector::isInList(std::string("Collide"), filters)) { if (!it->second->canCollide()) allFilters = false; }
                     if (Utils::Vector::isInList(std::string("Click"), filters)) { if (!it->second->canClick()) allFilters = false; }
                     if (allFilters) returnVec.push_back(it->second.get());
@@ -634,7 +634,7 @@ namespace obe
             return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
         }
 
-        Collision::PolygonalCollider* Scene::getColliderCentroidByPosition(const Transform::UnitVector& position)
+        Collision::PolygonalCollider* Scene::getColliderByCentroidPosition(const Transform::UnitVector& position)
         {
             Transform::UnitVector pPos = position.to<Transform::Units::WorldPixels>();
             const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);

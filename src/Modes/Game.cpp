@@ -84,36 +84,6 @@ namespace obe
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
 
-            sf::Text keyPressed;
-            keyPressed.setCharacterSize(42);
-            keyPressed.setFont(font);
-            keyPressed.setPosition(0, 0);
-
-            inputManager.getAction("Left").connect([&keyPressed](Input::InputActionEvent event)
-            {
-                keyPressed.setString("Action : " + event.getAction()->getId());
-            });
-
-            inputManager.getAction("Right").connect([&keyPressed](Input::InputActionEvent event)
-            {
-                keyPressed.setString("Action : " + event.getAction()->getId());
-            });
-
-            inputManager.getAction("Jump").connect([&keyPressed](Input::InputActionEvent event)
-            {
-                keyPressed.setString("Action : " + event.getAction()->getId());
-            });
-
-            inputManager.getAction("Crouch").connect([&keyPressed](Input::InputActionEvent event)
-            {
-                keyPressed.setString("Action : " + event.getAction()->getId());
-            });
-
-            inputManager.getAction("Attack").connect([&keyPressed](Input::InputActionEvent event)
-            {
-                keyPressed.setString("KeyPressed : " + event.getAction()->getId());
-            });
-
             //Game Starts
             while (window.isOpen())
             {
@@ -148,7 +118,6 @@ namespace obe
                     window.clear();
                     world.display(window);
                     cursor.display(window);
-                    window.draw(keyPressed);
 
                     window.display();
                 }
