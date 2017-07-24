@@ -275,6 +275,7 @@ namespace obe
                 m_localTriggers
                     ->addTrigger("Init")
                     ->addTrigger("Update")
+                    ->setPermanent("Update", true)
                     ->trigger("Update")
                     ->addTrigger("Query")
                     ->addTrigger("Collide")
@@ -304,6 +305,13 @@ namespace obe
                 }
                 if (obj.at("Script").contains(vili::AttributeType::BaseAttribute, "priority"))
                     m_scrPriority = obj.at("Script").getBaseAttribute("priority").get<int>();
+
+                m_localTriggers->pushParameter("Init", "Lol", 3);
+                m_localTriggers->pushParameter("Init", "Mdr", 10);
+                m_localTriggers->trigger("Init");
+                m_localTriggers->pushParameter("Init", "Lol", 22);
+                m_localTriggers->pushParameter("Init", "Mdr", 44);
+                m_localTriggers->trigger("Init");
             }
         }
 
@@ -311,13 +319,6 @@ namespace obe
         {
             if (m_updated)
             {
-                std::cout << "UPDATE" << std::endl;
-                m_localTriggers->pushParameter("Init", "Lol", 3);
-                m_localTriggers->pushParameter("Init", "Mdr", 10);
-                m_localTriggers->trigger("Init");
-                m_localTriggers->pushParameter("Init", "Lol", 22);
-                m_localTriggers->pushParameter("Init", "Mdr", 44);
-                m_localTriggers->trigger("Init");
                 for (int i = 0; i < m_registeredTriggers.size(); i++)
                 {
                     Triggers::Trigger* trigger = m_registeredTriggers[i];
@@ -332,8 +333,12 @@ namespace obe
                                 useGrp = alRep;
                         }
                         std::string funcname = useGrp + "." + trigger->getName();
-                        (*m_objectScript)["cpp_param"] = kaguya::NewTable();
-                        (*m_objectScript)["cpp_param"]["dt"] = dt;
+                        if (funcname == "Local.Update")
+                        {
+                            m_localTriggers->pushParameter("Update", "dt", dt);
+                        }
+                        if (funcname == "Console.UserInput")
+                            std::cout << "USERINPUT BEING EXECUTED" << std::endl;
                         trigger->execute(m_objectScript.get(), funcname);
                         if (funcname == "Local.Init")
                         {
@@ -461,15 +466,28 @@ namespace obe
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs)
         {
+            std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << useAs << std::endl;
             if (trName == "*")
             {
                 std::vector<std::string> allEv = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
                 for (int i = 0; i < allEv.size(); i++)
                 {
-                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]));
+                    if (!Utils::Vector::isInList(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]), m_registeredTriggers))
+                    {
+                        this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]));
+                        Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i])->registerState(m_objectScript.get());
+                    }
                 }
             }
-            else this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName));
+            else 
+            {
+                std::cout << "Registering Single Trigger" << std::endl;
+                if (!Utils::Vector::isInList(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), m_registeredTriggers))
+                {
+                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName));
+                    Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get());
+                }
+            }
             if (useAs != "")
             {
                 m_registeredAliases.push_back(std::tuple<std::string, std::string, std::string>(trNsp, trGrp, useAs));

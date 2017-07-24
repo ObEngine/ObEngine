@@ -25,9 +25,9 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
-            std::vector<std::pair<bool, kaguya::State*>> m_registeredStates;
+            std::vector<kaguya::State*> m_registeredStates;
             bool m_enabled = false;
-            bool m_toEnable = false;
+            bool m_permanent = false;
             unsigned int m_stackSize = 0;
             friend class TriggerGroup;
             friend class TriggerDatabase;
@@ -90,15 +90,12 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            //std::cout << "Pushed Parameter " << name << " at " << this->getTriggerLuaTableName() << std::endl;
-            //std::cout << "  StackSize : " << m_stackSize << std::endl;
+            if (m_name == "Console.UserInput") std::cout << "USERINPUT PUSH PARAMETER" << std::endl;
+
             for (auto& registeredState : m_registeredStates)
             {
-                if (registeredState.first)
-                {
-                    // Future Trigger Call Parameters
-                    (*registeredState.second)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
-                }
+                // Future Trigger Call Parameters
+                (*registeredState)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
                 
             }
         }

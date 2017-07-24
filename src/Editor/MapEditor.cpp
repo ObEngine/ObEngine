@@ -331,8 +331,8 @@ namespace obe
                 );
 
                 //Events
-                Triggers::TriggerDatabase::GetInstance()->update();
                 world.update(framerateManager.getGameSpeed());
+                Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
                 if (drawFPS) fps.uTick();

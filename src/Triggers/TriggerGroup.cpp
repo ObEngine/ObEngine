@@ -53,7 +53,9 @@ namespace obe
 
         TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
         {
-            this->getTrigger(triggerName)->m_toEnable = true;
+            if (triggerName == "Init")
+                std::cout << "INIT BEING TRIGGERED" << std::endl;
+            this->getTrigger(triggerName)->m_enabled = true;
             this->getTrigger(triggerName)->prepareNewCall();
             return this;
         }
@@ -61,6 +63,12 @@ namespace obe
         bool TriggerGroup::getState(const std::string& triggerName)
         {
             return this->getTrigger(triggerName)->getState();
+        }
+
+        TriggerGroup* TriggerGroup::setPermanent(const std::string& triggerName, bool permanent)
+        {
+            this->getTrigger(triggerName)->m_permanent = permanent;
+            return this;
         }
 
         void TriggerGroup::setJoinable(bool joinable)

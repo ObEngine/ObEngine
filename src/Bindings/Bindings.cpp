@@ -1,4 +1,16 @@
 #include <Bindings/AnimationBindings.hpp>
+#include <Bindings/CollisionBindings.hpp>
+#include <Bindings/DebugBindings.hpp>
+#include <Bindings/EditorBindings.hpp>
+#include <Bindings/GraphicsBindings.hpp>
+#include <Bindings/InputBindings.hpp>
+#include <Bindings/SceneBindings.hpp>
+#include <Bindings/SoundBindings.hpp>
+#include <Bindings/SystemBindings.hpp>
+#include <Bindings/TimeBindings.hpp>
+#include <Bindings/TransformBindings.hpp>
+#include <Bindings/TriggersBindings.hpp>
+#include <Bindings/TypesBindings.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
@@ -56,14 +68,23 @@ namespace obe
 
         void IndexBindings()
         {
-            BindTree
-                .add("Core")
-                ["Core"]
-                .add("Animation")
-                ["Animation"]
+            BindTree.add("Core");
+            BindTree["Core"].add("Animation")["Animation"]
                 .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
                 .add("Animation", &AnimationBindings::LoadAnimation)
                 .add("Animator", &AnimationBindings::LoadAnimator);
+            BindTree["Core"].add("Collision")["Collision"]
+                .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider);
+            BindTree["Core"].add("Debug")["Debug"]
+                .add("Console", &DebugBindings::LoadConsole)
+                .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
+                .add("ConsoleStrea", &DebugBindings::LoadConsoleStream);
+            BindTree["Core"].add("Editor")["Editor"]
+                .add("EditorGrid", EditorBindings::LoadEditorGrid);
+            BindTree["Core"].add("Graphics")["Graphics"]
+                .add("LevelSprite", GraphicsBindings::LoadLevelSprite)
+                .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
+                .add("ResourceManager", GraphicsBindings::LoadResourceManager);
         }
     }
 }

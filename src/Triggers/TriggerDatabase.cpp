@@ -131,15 +131,16 @@ namespace obe
                     std::vector<Trigger*> trgList = it2->second->getAllTriggers();
                     for (int i = 0; i < trgList.size(); i++)
                     {
-                        if (trgList[i]->m_toEnable)
+                        if (trgList[i]->m_enabled && trgList[i]->m_permanent)
                         {
                             trgList[i]->clear();
-                            trgList[i]->m_enabled = true;
-                            trgList[i]->m_toEnable = false;
                         }
                         else if (trgList[i]->m_enabled)
                         {
+                            if (trgList[i]->getName() == "Init")
+                                std::cout << "INIT BEING CLEARED" << std::endl;
                             trgList[i]->m_enabled = false;
+                            trgList[i]->clear();
                         }
                     }
                 }
@@ -149,7 +150,7 @@ namespace obe
             {
                 if (m_delayedTriggers[i]->m_delaytarget <= m_databaseChrono.getTime())
                 {
-                    m_delayedTriggers[i]->m_trigger->m_toEnable = true;
+                    m_delayedTriggers[i]->m_trigger->m_enabled = true;
                     triggeredDelayedTriggers.push_back(i);
                 }
             }
