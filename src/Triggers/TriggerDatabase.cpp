@@ -133,13 +133,13 @@ namespace obe
                     {
                         if (trgList[i]->m_toEnable)
                         {
+                            trgList[i]->clear();
                             trgList[i]->m_enabled = true;
                             trgList[i]->m_toEnable = false;
                         }
                         else if (trgList[i]->m_enabled)
                         {
                             trgList[i]->m_enabled = false;
-                            trgList[i]->clear();
                         }
                     }
                 }

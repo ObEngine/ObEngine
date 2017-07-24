@@ -54,7 +54,7 @@ namespace obe
         TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
         {
             this->getTrigger(triggerName)->m_toEnable = true;
-            this->getTrigger(triggerName)->m_triggerParameters.emplace_back();
+            this->getTrigger(triggerName)->prepareNewCall();
             return this;
         }
 

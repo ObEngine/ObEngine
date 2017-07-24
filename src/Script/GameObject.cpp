@@ -274,7 +274,6 @@ namespace obe
 
                 m_localTriggers
                     ->addTrigger("Init")
-                    ->trigger("Init")
                     ->addTrigger("Update")
                     ->trigger("Update")
                     ->addTrigger("Query")
@@ -286,13 +285,8 @@ namespace obe
 
                 System::Path("Lib/Internal/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 
-                (*m_objectScript)["Id"] = m_id;
                 (*m_objectScript)["Private"] = m_privateKey;
                 (*m_objectScript)["Public"] = m_publicKey;
-                (*m_objectScript)("protect(\"Id\")");
-                (*m_objectScript)("protect(\"Private\")");
-                (*m_objectScript)("protect(\"Public\")");
-
 
                 if (obj.at("Script").contains(vili::AttributeType::BaseAttribute, "source"))
                 {
@@ -317,6 +311,13 @@ namespace obe
         {
             if (m_updated)
             {
+                std::cout << "UPDATE" << std::endl;
+                m_localTriggers->pushParameter("Init", "Lol", 3);
+                m_localTriggers->pushParameter("Init", "Mdr", 10);
+                m_localTriggers->trigger("Init");
+                m_localTriggers->pushParameter("Init", "Lol", 22);
+                m_localTriggers->pushParameter("Init", "Mdr", 44);
+                m_localTriggers->trigger("Init");
                 for (int i = 0; i < m_registeredTriggers.size(); i++)
                 {
                     Triggers::Trigger* trigger = m_registeredTriggers[i];
@@ -333,25 +334,11 @@ namespace obe
                         std::string funcname = useGrp + "." + trigger->getName();
                         (*m_objectScript)["cpp_param"] = kaguya::NewTable();
                         (*m_objectScript)["cpp_param"]["dt"] = dt;
-                        /*trigger->execute(*m_objectScript, )
-                        std::string triggerError = injectParameters(*trigger, *m_objectScript);
-                        if (!triggerError.empty())
-                        {
-                            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.UnknownTriggerParameterType", {
-                                                                {"parameter", triggerError},
-                                                                {"object", m_id},
-                                                                {"trigger", funcname}
-                                                            });
-                        }
+                        trigger->execute(m_objectScript.get(), funcname);
                         if (funcname == "Local.Init")
                         {
-                            m_objectScript->dostring("LuaCore.LocalInitMirrorInjector()");
+                            this->setInitialised(true);
                         }
-                        else
-                        {
-                            m_objectScript->dostring("if type(" + funcname + ") == \"function\" then " + funcname + "(cpp_param) end");
-                        }
-                        (*m_objectScript)["cpp_param"] = nullptr;*/
                     }
                 }
                 if (m_initialised)
@@ -469,6 +456,7 @@ namespace obe
         void GameObject::useLocalTrigger(const std::string& trName)
         {
             this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName));
+            Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerState(m_objectScript.get());
         }
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs)

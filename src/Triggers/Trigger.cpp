@@ -16,10 +16,15 @@ namespace obe
         {
             if (parameter.second.first == Utils::Type::getClassType<T>())
             {
-                lua["cpp_param"][parameter.first] = parameter.second.second.as<T>();
+                lua["_FTCP"][parameter.first] = parameter.second.second.as<T>();
                 return true;
             }
             return false;
+        }
+
+        std::string Trigger::getTriggerLuaTableName() const
+        {
+            return this->getNamespace() + "__" + this->getGroup() + "__" + m_name;
         }
 
         void injectParameters(const std::string& triggerName, ParameterTable& parameters, kaguya::State& lua)
@@ -55,11 +60,6 @@ namespace obe
             }
         }
 
-        void Trigger::pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter)
-        {
-            m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getObjectType(parameter), Types::Any(parameter));
-        }
-
         Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState, bool permanent)
         {
             m_name = name;
@@ -87,10 +87,45 @@ namespace obe
             return m_parent->getNamespace();
         }
 
+        void Trigger::registerState(kaguya::State* state)
+        {
+            //std::cout << "REGISTER STATE : " << this->getTriggerLuaTableName() << std::endl;
+            m_registeredStates.push_back(std::pair<bool, kaguya::State*>(false, state));
+            (*state)["__FTCP__"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+        }
+
+        void Trigger::prepareNewCall()
+        {
+            //std::cout << "PREPARE NEW CALL : " << this->getTriggerLuaTableName() << std::endl;
+            m_stackSize++;
+            for (auto& registeredState : m_registeredStates)
+            {
+                (*registeredState.second)("Local.Save(\"BFPREPARENEWCALL\")");
+                (*registeredState.second)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize] = kaguya::NewTable();
+                (*registeredState.second)("Local.Save(\"AFPREPARENEWCALL\")");
+            }
+        }
+
+        void Trigger::execute(kaguya::State* lua, const std::string& funcName) const
+        {
+            //std::cout << "EXECUTE TRIGGER : " << this->getTriggerLuaTableName() << std::endl;
+            for (unsigned int i = 1; i < m_stackSize; i++)
+            {
+                (*lua)["LuaCore"]["FuncInjector"](funcName, this->getTriggerLuaTableName(), i);
+            }
+        }
+
         void Trigger::clear()
         {
-            m_triggerParameters.clear();
-            m_triggerParameters.emplace_back();
+            //std::cout << "CLEAR : " << this->getTriggerLuaTableName() << std::endl;
+            m_stackSize = 1;
+            for (auto& registeredState : m_registeredStates)
+            {
+                (*registeredState.second)["__FTCP__"][this->getTriggerLuaTableName()] = kaguya::NewTable();
+                (*registeredState.second)["__FTCP__"][this->getTriggerLuaTableName()][1] = kaguya::NewTable();
+                registeredState.first = true;
+                (*registeredState.second)("Local.Save(\"CLEAR\")");
+            }
         }
     }
 }

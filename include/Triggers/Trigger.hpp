@@ -25,9 +25,10 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
-            std::vector<ParameterTable> m_triggerParameters;
+            std::vector<std::pair<bool, kaguya::State*>> m_registeredStates;
             bool m_enabled = false;
             bool m_toEnable = false;
+            unsigned int m_stackSize = 0;
             friend class TriggerGroup;
             friend class TriggerDatabase;
         protected:
@@ -40,6 +41,7 @@ namespace obe
             template <typename P>
             void pushParameter(const std::string& name, P parameter);
             void pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter);
+            std::string getTriggerLuaTableName() const;
         public:
             /**
              * \brief Creates a new Trigger
@@ -71,8 +73,11 @@ namespace obe
             std::string getNamespace() const;
             void clear();
 
-            template <class T>
-            void execute(kaguya::State& lua, T callback);
+            void registerState(kaguya::State* state);
+
+            void prepareNewCall();
+
+            void execute(kaguya::State* lua, const std::string& funcName) const;
         };
 
         /**
@@ -85,18 +90,16 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            std::cout << "Pushed Parameter " << name << " at " << this->getNamespace() << "." << this->getGroup() << "." << m_name << std::endl;
-            m_triggerParameters.back()[name] = std::pair<std::string, Types::Any>(Utils::Type::getClassType<P>(), Types::Any(parameter));
-        }
-
-        template <class T>
-        void Trigger::execute(kaguya::State& lua, T callback)
-        {
-            unsigned int index = 0;
-            for (ParameterTable& pTable : m_triggerParameters)
+            //std::cout << "Pushed Parameter " << name << " at " << this->getTriggerLuaTableName() << std::endl;
+            //std::cout << "  StackSize : " << m_stackSize << std::endl;
+            for (auto& registeredState : m_registeredStates)
             {
-                injectParameters(m_name, pTable, lua);
-                T(index++);
+                if (registeredState.first)
+                {
+                    // Future Trigger Call Parameters
+                    (*registeredState.second)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
+                }
+                
             }
         }
     }
