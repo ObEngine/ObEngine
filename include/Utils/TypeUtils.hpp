@@ -7,6 +7,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Functions to work with Types
+         * @Bind
+         */
         namespace Type
         {
             /**

@@ -29,6 +29,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Various functions related to filesystem manipulation
+         * @Bind
+         */
         namespace File
         {
             /**

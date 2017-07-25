@@ -219,7 +219,7 @@ namespace obe
 
 
                 //GUI Actions
-                inputManager.setEnabled(!gameConsole.isConsoleVisible());
+                inputManager.setEnabled(!gameConsole.isVisible());
 
                 bool drawFPS = displayFramerateCheckbox->isChecked();
 
@@ -236,7 +236,7 @@ namespace obe
 
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 //Updates
-                if (!gameConsole.isConsoleVisible())
+                if (!gameConsole.isVisible())
                 {
                     if (cameraMode->getSelectedItem() == "Movable Camera")
                     {
@@ -363,18 +363,18 @@ namespace obe
                             }
                         }
                         if (event.key.code == sf::Keyboard::F1)
-                            gameConsole.setConsoleVisibility(!gameConsole.isConsoleVisible());
+                            gameConsole.setVisible(!gameConsole.isVisible());
                         if (event.key.code == sf::Keyboard::Up)
                             gameConsole.upHistory();
                         if (event.key.code == sf::Keyboard::Down)
                             gameConsole.downHistory();
-                        if (event.key.code == sf::Keyboard::Left && gameConsole.isConsoleVisible())
+                        if (event.key.code == sf::Keyboard::Left && gameConsole.isVisible())
                             gameConsole.moveCursor(-1);
-                        if (event.key.code == sf::Keyboard::Right && gameConsole.isConsoleVisible())
+                        if (event.key.code == sf::Keyboard::Right && gameConsole.isVisible())
                             gameConsole.moveCursor(1);
                         break;
                     case sf::Event::TextEntered:
-                        if (gameConsole.isConsoleVisible())
+                        if (gameConsole.isVisible())
                             gameConsole.inputKey(event.text.unicode);
                         break;
                     case sf::Event::MouseWheelMoved:
@@ -414,7 +414,7 @@ namespace obe
                         fps.draw(window);
 
                     //Console
-                    if (gameConsole.isConsoleVisible())
+                    if (gameConsole.isVisible())
                         gameConsole.display(window);
 
                     //Cursor

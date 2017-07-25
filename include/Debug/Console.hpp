@@ -205,12 +205,12 @@ namespace obe
              * \brief Check the visibility of the Console
              * \return true if the Console is visible, false otherwise
              */
-            bool isConsoleVisible() const;
+            bool isVisible() const;
             /**
              * \brief Set if the Console is visible or not
              * \param enabled Boolean containing if the Console should be displayed or not
              */
-            void setConsoleVisibility(bool enabled);
+            void setVisible(bool enabled);
             /**
              * \brief Moves the virtual cursor
              * \param position Offset to move the virtual cursor

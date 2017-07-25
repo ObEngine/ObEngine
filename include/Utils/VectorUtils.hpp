@@ -6,6 +6,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Functions to work with vectors (C++ Arrays)
+         * @Bind
+         */
         namespace Vector
         {
             /**

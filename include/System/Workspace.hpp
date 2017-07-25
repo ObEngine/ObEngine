@@ -7,7 +7,8 @@ namespace obe
     namespace System
     {
         /**
-         * \brief A Class contained static functions to work with the Workspaces
+         * \brief Various functions to work with Workspaces
+         * @Bind
          */
         namespace Workspace
         {

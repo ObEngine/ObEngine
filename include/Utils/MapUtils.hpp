@@ -2,6 +2,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Some functions to handle maps
+         * @Bind
+         */
         namespace Map
         {
             /**

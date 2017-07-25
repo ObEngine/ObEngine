@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Bindings/BindingTree.hpp>
-#include <Bindings/BindingUtils.hpp>
 
 namespace obe
 {

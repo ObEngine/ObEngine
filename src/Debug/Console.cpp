@@ -181,12 +181,12 @@ namespace obe
             return m_inputBuffer;
         }
 
-        bool Console::isConsoleVisible() const
+        bool Console::isVisible() const
         {
             return m_consoleVisibility;
         }
 
-        void Console::setConsoleVisibility(bool enabled)
+        void Console::setVisible(bool enabled)
         {
             if (m_consoleVisibility != enabled)
             {

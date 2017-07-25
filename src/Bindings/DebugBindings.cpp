@@ -18,6 +18,7 @@ namespace obe
                     .addFunction("setMessage", &Debug::ConsoleMessage::setMessage)
                 );
             }
+
             void LoadConsoleStream(kaguya::State* lua)
             {
                 (*lua)["Core"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
@@ -26,6 +27,7 @@ namespace obe
                     .addFunction("setColor", &Debug::ConsoleStream::setColor)
                 );
             }
+
             void LoadConsole(kaguya::State* lua)
             {
                 (*lua)["Core"]["Debug"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
@@ -38,12 +40,12 @@ namespace obe
                     .addFunction("handleCommand", &Debug::Console::handleCommand)
                     .addFunction("inputKey", &Debug::Console::inputKey)
                     .addFunction("insertInputBufferContent", &Debug::Console::insertInputBufferContent)
-                    .addFunction("isConsoleVisible", &Debug::Console::isConsoleVisible)
+                    .addFunction("isVisible", &Debug::Console::isVisible)
                     .addFunction("moveCursor", &Debug::Console::moveCursor)
                     .addFunction("pushMessage", &Debug::Console::pushMessage)
                     .addFunction("scroll", &Debug::Console::scroll)
-                    .addFunction("setConsoleVisibility", &Debug::Console::setConsoleVisibility)
                     .addFunction("setInputBufferContent", &Debug::Console::setInputBufferContent)
+                    .addFunction("setVisible", &Debug::Console::setVisible)
                     .addFunction("upHistory", &Debug::Console::upHistory)
                 );
             }

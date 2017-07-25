@@ -35,9 +35,6 @@ namespace obe
 
             void LoadAnimationGroup(kaguya::State* lua)
             {
-                std::cout << "Start AnimationGroup indexation" << std::endl;
-                (*lua)("print(\"One\", Core)");
-                (*lua)("print(\"Two\", Core.Animation)");
                 (*lua)["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
                     .addFunction("build", &Animation::AnimationGroup::build)
                     .addFunction("forceNext", &Animation::AnimationGroup::forceNext)
@@ -57,7 +54,6 @@ namespace obe
                     .addFunction("setGroupLoop", &Animation::AnimationGroup::setGroupLoop)
                     .addFunction("update", &Animation::AnimationGroup::update)
                 );
-                std::cout << "Stop indexation" << std::endl;
             }
 
             void LoadAnimator(kaguya::State* lua)

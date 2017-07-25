@@ -8,6 +8,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Functions to work with Strings
+         * @Bind
+         */
         namespace String
         {
             /**

@@ -4,6 +4,10 @@ namespace obe
 {
     namespace Utils
     {
+        /**
+         * \brief Functions to work with maths
+         * @Bind
+         */
         namespace Math
         {
             extern const double pi;

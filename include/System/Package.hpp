@@ -15,6 +15,10 @@ namespace obe
 {
     namespace System
     {
+        /**
+         * \brief Various functions to manipulate Packages
+         * @Bind
+         */
         namespace Package
         {
             /**

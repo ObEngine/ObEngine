@@ -11,6 +11,7 @@ namespace obe
             void LoadLevelSpriteHandlePoint(kaguya::State* lua);
             void LoadLevelSprite(kaguya::State* lua);
             void LoadResourceManager(kaguya::State* lua);
+            void LoadCanvas(kaguya::State* lua);
         }
     }
 }

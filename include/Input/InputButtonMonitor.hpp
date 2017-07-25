@@ -12,6 +12,7 @@ namespace obe
     {
         /**
         * \brief A class to monitor and update states of an InputButton
+        * @Bind
         */
         class InputButtonMonitor
         {
@@ -30,6 +31,7 @@ namespace obe
 
         /**
          * \brief A class to get the states determined by InputButtonMonitor
+         * @Bind
          */
         class InputButtonMonitorPtr
         {
