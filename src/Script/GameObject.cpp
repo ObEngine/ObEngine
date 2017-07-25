@@ -1,3 +1,4 @@
+#include <Bindings/Bindings.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/Script.hpp>
@@ -66,7 +67,7 @@ namespace obe
 
         void loadLibBridge(GameObject* object, std::string lib)
         {
-            loadLib(object->getScript(), lib);
+            Bindings::Load(object->getScript(), lib);
         }
 
         void loadHookBridge(GameObject* object, std::string hookname)
@@ -337,8 +338,6 @@ namespace obe
                         {
                             m_localTriggers->pushParameter("Update", "dt", dt);
                         }
-                        if (funcname == "Console.UserInput")
-                            std::cout << "USERINPUT BEING EXECUTED" << std::endl;
                         trigger->execute(m_objectScript.get(), funcname);
                         if (funcname == "Local.Init")
                         {
@@ -466,7 +465,7 @@ namespace obe
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs)
         {
-            std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << useAs << std::endl;
+            //std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << useAs << std::endl;
             if (trName == "*")
             {
                 std::vector<std::string> allEv = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
@@ -481,7 +480,7 @@ namespace obe
             }
             else 
             {
-                std::cout << "Registering Single Trigger" << std::endl;
+                //std::cout << "Registering Single Trigger" << std::endl;
                 if (!Utils::Vector::isInList(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), m_registeredTriggers))
                 {
                     this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName));

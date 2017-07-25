@@ -61,9 +61,9 @@ namespace obe
             System::Cursor cursor;
             Script::hookCore.dropValue("Cursor", &cursor);
 
-            //World Creation / Loading
-            Scene::Scene world;
-            Script::hookCore.dropValue("World", &world);
+            //Scene Creation / Loading
+            Scene::Scene scene;
+            Script::hookCore.dropValue("Scene", &scene);
 
             //Keybinding
             Input::InputManager inputManager;
@@ -79,7 +79,7 @@ namespace obe
             Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
-            world.setCameraLock(false);
+            scene.setCameraLock(false);
 
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
@@ -91,7 +91,7 @@ namespace obe
 
                 //Events
                 Triggers::TriggerDatabase::GetInstance()->update();
-                world.update(framerateManager.getGameSpeed());
+                scene.update(framerateManager.getGameSpeed());
                 inputManager.update();
                 cursor.update();
 
@@ -116,7 +116,7 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     window.clear();
-                    world.display(window);
+                    scene.display(window);
                     cursor.display(window);
 
                     window.display();

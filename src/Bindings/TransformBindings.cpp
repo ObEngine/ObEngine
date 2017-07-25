@@ -10,26 +10,26 @@ namespace obe
     {
         namespace TransformBindings
         {
-            void LoadProtectedUnitVector(kaguya::State& lua)
+            void LoadProtectedUnitVector(kaguya::State* lua)
             {
-                lua["Core"]["Transform"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
+                (*lua)["Core"]["Transform"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
                 );
             }
-            void LoadRect(kaguya::State& lua)
+            void LoadRect(kaguya::State* lua)
             {
-                lua["Core"]["Transform"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect>()
+                (*lua)["Core"]["Transform"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect>()
                 );
             }
-            void LoadUnitBasedObject(kaguya::State& lua)
+            void LoadUnitBasedObject(kaguya::State* lua)
             {
-                lua["Core"]["Transform"]["UnitBasedObject"].setClass(kaguya::UserdataMetatable<Transform::UnitBasedObject>()
+                (*lua)["Core"]["Transform"]["UnitBasedObject"].setClass(kaguya::UserdataMetatable<Transform::UnitBasedObject>()
                     .addFunction("getWorkingUnit", &Transform::UnitBasedObject::getWorkingUnit)
                     .addFunction("setWorkingUnit", &Transform::UnitBasedObject::setWorkingUnit)
                 );
             }
-            void LoadUnitVector(kaguya::State& lua)
+            void LoadUnitVector(kaguya::State* lua)
             {
-                lua["Core"]["Transform"]["UnitVector"].setClass(kaguya::UserdataMetatable<Transform::UnitVector>()
+                (*lua)["Core"]["Transform"]["UnitVector"].setClass(kaguya::UserdataMetatable<Transform::UnitVector>()
                     .addOverloadedFunctions("add",
                         static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::add),
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add)

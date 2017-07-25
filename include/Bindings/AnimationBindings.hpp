@@ -8,9 +8,9 @@ namespace obe
     {
         namespace AnimationBindings
         {
-            void LoadAnimationGroup(kaguya::State& lua);
-            void LoadAnimation(kaguya::State& lua);
-            void LoadAnimator(kaguya::State& lua);
+            void LoadAnimationGroup(kaguya::State* lua);
+            void LoadAnimation(kaguya::State* lua);
+            void LoadAnimator(kaguya::State* lua);
         }
     }
 }

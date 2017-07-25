@@ -8,7 +8,7 @@ namespace obe
     {
         namespace EditorBindings
         {
-            void LoadEditorGrid(kaguya::State& lua);
+            void LoadEditorGrid(kaguya::State* lua);
         }
     }
 }

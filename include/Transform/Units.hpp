@@ -29,12 +29,12 @@ namespace obe
             */
             ViewUnits,
             /**
-            * \brief ViewPercentage is an Unit used to place / scale an element using the pixels of the World. \n
+            * \brief ViewPercentage is an Unit used to place / scale an element using the pixels of the Scene. \n
             * Exemple : x = 4000, y = 10000
             */
             WorldPixels,
             /**
-            * \brief WorldUnits is an Unit used to place / scale an element using the World. \n
+            * \brief WorldUnits is an Unit used to place / scale an element using the Scene. \n
             * Exemple : x = 4.5, y = 2.5
             */
             WorldUnits,

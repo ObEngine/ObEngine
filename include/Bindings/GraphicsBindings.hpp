@@ -8,9 +8,9 @@ namespace obe
     {
         namespace GraphicsBindings
         {
-            void LoadLevelSpriteHandlePoint(kaguya::State& lua);
-            void LoadLevelSprite(kaguya::State& lua);
-            void LoadResourceManager(kaguya::State& lua);
+            void LoadLevelSpriteHandlePoint(kaguya::State* lua);
+            void LoadLevelSprite(kaguya::State* lua);
+            void LoadResourceManager(kaguya::State* lua);
         }
     }
 }

@@ -53,8 +53,6 @@ namespace obe
 
         TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
         {
-            if (triggerName == "Init")
-                std::cout << "INIT BEING TRIGGERED" << std::endl;
             this->getTrigger(triggerName)->m_enabled = true;
             this->getTrigger(triggerName)->prepareNewCall();
             return this;

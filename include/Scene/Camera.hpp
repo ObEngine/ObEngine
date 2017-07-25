@@ -11,13 +11,13 @@ namespace obe
     namespace Scene
     {
         /**
-         * \brief The Camera that views the Scene (World)
+         * \brief The Camera that views the Scene
          * @Bind
          * 
          * Example :
          * 
          * \code
-         * Camera& camera = World.getCamera();
+         * Camera& camera = scene.getCamera();
          * camera.setPosition(0, 0); //Set TopLeft Corner of the Camera at Position (0, 0)::WorldUnits
          * Transform::UnitVector newPosition(200, 1000, Transform::WorldPixels);
          * camera.setPosition(newPosition, Camera::Center); // Set Center of the Camera at Position(200, 100)::WorldPixels

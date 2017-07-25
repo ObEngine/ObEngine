@@ -1,3 +1,4 @@
+#include <Bindings/Bindings.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
@@ -13,9 +14,9 @@ namespace obe
         Scene::Scene()
         {
             loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
-            Script::ScriptEngine["World"] = this;
-            System::Path("Lib/Internal/WorldInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-            Script::loadLib(&Script::ScriptEngine, "Core.*");
+            Script::ScriptEngine["Scene"] = this;
+            System::Path("Lib/Internal/ScriptInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+            System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;
             m_showCollisionModes["drawPoints"] = false;
@@ -477,7 +478,7 @@ namespace obe
             if (newGameObject->m_hasScriptEngine)
             {
                 loadWorldLib(newGameObject->m_objectScript.get());
-                (*newGameObject.get()->m_objectScript)["World"] = this;
+                (*newGameObject.get()->m_objectScript)["Scene"] = this;
             }
 
             if (newGameObject->canDisplay())
@@ -682,15 +683,16 @@ namespace obe
         void loadWorldLib(kaguya::State* lua)
         {
             if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
-            (*lua)["Core"]["World"] = kaguya::NewTable();
-            (*lua)["Core"]["World"]["World"].setClass(kaguya::UserdataMetatable<Scene>()
+            (*lua)["Core"]["Scene"] = kaguya::NewTable();
+            (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene>()
                 .addFunction("loadFromFile", &Scene::loadFromFile)
             );
         }
 
         void loadWorldScriptEngineBaseLib(kaguya::State* lua)
         {
-            (*lua)["CPP_Import"] = &Script::loadLib;
+            //TOB
+            (*lua)["CPP_Import"] = &Bindings::Load;
             (*lua)["CPP_Hook"] = &Script::loadHook;
             loadWorldLib(lua);
             Script::loadScrGameObjectLib(lua);

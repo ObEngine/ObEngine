@@ -9,9 +9,9 @@ namespace obe
     {
         namespace TimeBindings
         {
-            void LoadChronometer(kaguya::State& lua)
+            void LoadChronometer(kaguya::State* lua)
             {
-                lua["Core"]["Time"]["Chronometer"].setClass(kaguya::UserdataMetatable<Time::Chronometer>()
+                (*lua)["Core"]["Time"]["Chronometer"].setClass(kaguya::UserdataMetatable<Time::Chronometer>()
                     .addFunction("getTime", &Time::Chronometer::getTime)
                     .addFunction("limitExceeded", &Time::Chronometer::limitExceeded)
                     .addFunction("setLimit", &Time::Chronometer::setLimit)
@@ -19,18 +19,18 @@ namespace obe
                     .addFunction("stop", &Time::Chronometer::stop)
                 );
             }
-            void LoadFPSCounter(kaguya::State& lua)
+            void LoadFPSCounter(kaguya::State* lua)
             {
-                lua["Core"]["Time"]["FPSCounter"].setClass(kaguya::UserdataMetatable<Time::FPSCounter>()
+                (*lua)["Core"]["Time"]["FPSCounter"].setClass(kaguya::UserdataMetatable<Time::FPSCounter>()
                     .addFunction("draw", &Time::FPSCounter::draw)
                     .addFunction("loadFont", &Time::FPSCounter::loadFont)
                     .addFunction("tick", &Time::FPSCounter::tick)
                     .addFunction("uTick", &Time::FPSCounter::uTick)
                 );
             }
-            void LoadFramerateManager(kaguya::State& lua)
+            void LoadFramerateManager(kaguya::State* lua)
             {
-                lua["Core"]["Time"]["FramerateManager"].setClass(kaguya::UserdataMetatable<Time::FramerateManager>()
+                (*lua)["Core"]["Time"]["FramerateManager"].setClass(kaguya::UserdataMetatable<Time::FramerateManager>()
                     .addFunction("doRender", &Time::FramerateManager::doRender)
                     .addFunction("getDeltaTime", &Time::FramerateManager::getDeltaTime)
                     .addFunction("getFramerateTarget", &Time::FramerateManager::getFramerateTarget)

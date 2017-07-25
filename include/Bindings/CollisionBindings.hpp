@@ -8,7 +8,7 @@ namespace obe
     {
         namespace CollisionBindings
         {
-            void LoadPolygonalCollider(kaguya::State& lua);
+            void LoadPolygonalCollider(kaguya::State* lua);
         }
     }
 }

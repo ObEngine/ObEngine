@@ -7,9 +7,9 @@ namespace obe
     {
         namespace CollisionBindings
         {
-            void LoadPolygonalCollider(kaguya::State& lua)
+            void LoadPolygonalCollider(kaguya::State* lua)
             {
-                lua["Core"]["Collision"]["PolygonalCollider"].setClass(
+                (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
                     Collision::PolygonalCollider,
                     kaguya::MultipleBase<

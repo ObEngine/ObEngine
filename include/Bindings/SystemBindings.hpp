@@ -8,9 +8,9 @@ namespace obe
     {
         namespace SystemBindings
         {
-            void LoadCursor(kaguya::State& lua);
-            void LoadMountablePath(kaguya::State& lua);
-            void LoadPath(kaguya::State& lua);
+            void LoadCursor(kaguya::State* lua);
+            void LoadMountablePath(kaguya::State* lua);
+            void LoadPath(kaguya::State* lua);
         }
     }
 }

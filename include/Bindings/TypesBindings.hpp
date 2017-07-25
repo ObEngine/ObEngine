@@ -8,9 +8,9 @@ namespace obe
     {
         namespace TypesBindings
         {
-            void LoadIdentifiable(kaguya::State& lua);
-            void LoadSelectable(kaguya::State& lua);
-            void LoadTogglable(kaguya::State& lua);
+            void LoadIdentifiable(kaguya::State* lua);
+            void LoadSelectable(kaguya::State* lua);
+            void LoadTogglable(kaguya::State* lua);
         }
     }
 }

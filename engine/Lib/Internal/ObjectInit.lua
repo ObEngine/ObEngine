@@ -10,9 +10,8 @@ Local__Meta = {
 setmetatable(Local, Local__Meta);
 
 Global = {}; -- Global Events
-LuaCore = {};
 LuaCore.Lua_ReqList = {}; -- Require Parameters
-__FTCP__ = {}; -- Future Trigger Call Parameters
+LuaCore.FTCP = {}; -- Future Trigger Call Parameters
 
 function Require(param)
     if (LuaCore.Lua_ReqList[param] ~= nil) then
@@ -24,22 +23,20 @@ end
 
 inspect = require("Lib/StdLib/inspect");
 
-
 function LuaCore.FuncInjector(funcName, triggerRegisterName, triggerStackIndex)
-    print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
+    --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
     local funcToCall = load("return " .. funcName)();
     if type(funcToCall) == "function" then
         local ArgMirror = require('Lib/Internal/ArgMirror');
         local Lua_Func_ArgList = ArgMirror.GetArgs(funcToCall);
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
-            if (__FTCP__[triggerRegisterName][triggerStackIndex]) then
-                table.insert(Lua_Func_CallArgs, __FTCP__[triggerRegisterName][triggerStackIndex][i]);
+            if (LuaCore.FTCP[triggerRegisterName][triggerStackIndex]) then
+                table.insert(Lua_Func_CallArgs, LuaCore.FTCP[triggerRegisterName][triggerStackIndex][i]);
             end
         end
         funcToCall(ArgMirror.Unpack(Lua_Func_CallArgs));
     end
-    
 end
 
 function IsArgumentInRequireList(paramName)

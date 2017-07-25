@@ -7,9 +7,9 @@ namespace obe
     {
         namespace DebugBindings
         {
-            void LoadConsoleMessage(kaguya::State& lua)
+            void LoadConsoleMessage(kaguya::State* lua)
             {
-                lua["Core"]["Debug"]["ConsoleMessage"].setClass(kaguya::UserdataMetatable<Debug::ConsoleMessage>()
+                (*lua)["Core"]["Debug"]["ConsoleMessage"].setClass(kaguya::UserdataMetatable<Debug::ConsoleMessage>()
                     .addFunction("getColor", &Debug::ConsoleMessage::getColor)
                     .addFunction("getFormatedMessage", &Debug::ConsoleMessage::getFormatedMessage)
                     .addFunction("getHeader", &Debug::ConsoleMessage::getHeader)
@@ -18,17 +18,17 @@ namespace obe
                     .addFunction("setMessage", &Debug::ConsoleMessage::setMessage)
                 );
             }
-            void LoadConsoleStream(kaguya::State& lua)
+            void LoadConsoleStream(kaguya::State* lua)
             {
-                lua["Core"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
+                (*lua)["Core"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
                     .addFunction("getColor", &Debug::ConsoleStream::getColor)
                     .addFunction("push", &Debug::ConsoleStream::push)
                     .addFunction("setColor", &Debug::ConsoleStream::setColor)
                 );
             }
-            void LoadConsole(kaguya::State& lua)
+            void LoadConsole(kaguya::State* lua)
             {
-                lua["Core"]["Debug"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
+                (*lua)["Core"]["Debug"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
                     .addFunction("clearInputBuffer", &Debug::Console::clearInputBuffer)
                     .addFunction("createStream", &Debug::Console::createStream)
                     .addFunction("display", &Debug::Console::display)

@@ -79,15 +79,15 @@ namespace obe
             cursor.selectAnimatorPath("RoundWhite");
             Script::hookCore.dropValue("Cursor", &cursor);
 
-            //World Creation / Loading
-            Scene::Scene world;
-            Script::ScriptEngine["stream"] = gameConsole.createStream("World", true);
+            //Scene Creation / Loading
+            Scene::Scene scene;
+            Script::ScriptEngine["stream"] = gameConsole.createStream("Scene", true);
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
                 gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
                 std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
             });
-            Script::hookCore.dropValue("World", &world);
+            Script::hookCore.dropValue("Scene", &scene);
 
             //Socket
             Network::NetworkHandler networkHandler;
@@ -131,7 +131,7 @@ namespace obe
             tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode", true);
             tgui::ComboBox::Ptr cameraMode = gui.get<tgui::ComboBox>("cameraMode", true);
 
-            GUI::buildEditorMapMenu(mapPanel, world);
+            GUI::buildEditorMapMenu(mapPanel, scene);
             GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode);
             GUI::buildEditorSpritesMenu(spritesPanel);
             GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel);
@@ -167,19 +167,19 @@ namespace obe
             Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
-            world.loadFromFile(mapName);
+            scene.loadFromFile(mapName);
 
-            mapNameInput->setText(world.getLevelName());
+            mapNameInput->setText(scene.getLevelName());
 
             //Connect InputManager Actions
-            connectSaveActions(inputManager, mapName, world, waitForMapSaving, savedLabel);
-            connectCamMovementActions(inputManager, world, cameraSpeed, framerateManager);
+            connectSaveActions(inputManager, mapName, scene, waitForMapSaving, savedLabel);
+            connectCamMovementActions(inputManager, scene, cameraSpeed, framerateManager);
             connectMagnetActions(inputManager, enableGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, cameraMode);
-            connectSpriteLayerActions(inputManager, selectedSprite, world, currentLayer);
+            connectSpriteLayerActions(inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
-                world, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
-            connectCollidersActions(inputManager, world, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
+                scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
+            connectCollidersActions(inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
 
             editMode->connect("itemselected", [&inputManager, editMode]()
             {
@@ -234,17 +234,17 @@ namespace obe
                     saveEditMode = -1;
                 }
 
-                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 //Updates
                 if (!gameConsole.isConsoleVisible())
                 {
                     if (cameraMode->getSelectedItem() == "Movable Camera")
                     {
-                        world.setCameraLock(true);
+                        scene.setCameraLock(true);
                     }
                     else
                     {
-                        world.setCameraLock(false);
+                        scene.setCameraLock(false);
                     }
                 }
 
@@ -252,14 +252,14 @@ namespace obe
                 //Sprite Editing
                 if (editMode->getSelectedItem() == "LevelSprites")
                 {
-                    world.enableShowCollision(true, true, false, false);
+                    scene.enableShowCollision(true, true, false, false);
 
                     if (hoveredSprite == nullptr)
                     {
-                        hoveredSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
+                        hoveredSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
                         if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
-                            hoveredSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
+                            hoveredSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
                             hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr;
                             sprInfoStr = "Hovered Sprite : \n";
@@ -280,7 +280,7 @@ namespace obe
                         sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
                         sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
                         bool outHover = false;
-                        Graphics::LevelSprite* testHoverSprite = world.getLevelSpriteByPosition(cursCoord, currentLayer);
+                        Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
                         if (testHoverSprite != hoveredSprite)
                             outHover = true;
                         if (outHover)
@@ -308,7 +308,7 @@ namespace obe
                 {
                     Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
 
-                    world.enableShowCollision(true, true, true, true);
+                    scene.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)
                     {
                         selectedMasterCollider->clearHighlights();
@@ -331,7 +331,7 @@ namespace obe
                 );
 
                 //Events
-                world.update(framerateManager.getGameSpeed());
+                scene.update(framerateManager.getGameSpeed());
                 Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
@@ -394,13 +394,13 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     window.clear();
-                    world.display(window);
-                    pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
+                    scene.display(window);
+                    pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")
-                        world.enableShowCollision(true);
+                        scene.enableShowCollision(true);
                     else
-                        world.enableShowCollision(false);
+                        scene.enableShowCollision(false);
                     if (enableGridCheckbox->isChecked())
                         editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI

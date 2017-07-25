@@ -8,9 +8,9 @@ namespace obe
     {
         namespace SystemBindings
         {
-            void BindCursor(kaguya::State& lua)
+            void BindCursor(kaguya::State* lua)
             {
-                lua["Core"]["System"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
+                (*lua)["Core"]["System"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
                     .addFunction("display", &System::Cursor::display)
                     .addFunction("getRawX", &System::Cursor::getRawX)
                     .addFunction("getRawY", &System::Cursor::getRawY)
@@ -25,15 +25,15 @@ namespace obe
                     .addFunction("update", &System::Cursor::update)
                 );
             }
-            void BindMountablePath(kaguya::State& lua)
+            void BindMountablePath(kaguya::State* lua)
             {
-                lua["Core"]["System"]["MountablePath"].setClass(kaguya::UserdataMetatable<System::MountablePath>()
+                (*lua)["Core"]["System"]["MountablePath"].setClass(kaguya::UserdataMetatable<System::MountablePath>()
                 );
             }
-            void BindPath(kaguya::State& lua)
+            void BindPath(kaguya::State* lua)
             {
                 //Missing LoadResource <REVISION>
-                lua["Core"]["System"]["Path"].setClass(kaguya::UserdataMetatable<System::Path>()
+                (*lua)["Core"]["System"]["Path"].setClass(kaguya::UserdataMetatable<System::Path>()
                     .addStaticFunction("Mount", &System::Path::Mount)
                     .addStaticFunction("Paths", &System::Path::Paths)
                     .addFunction("add", &System::Path::add)

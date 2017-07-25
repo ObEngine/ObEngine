@@ -8,10 +8,10 @@ namespace obe
     {
         namespace InputBindings
         {
-            void LoadKeyClass(kaguya::State& lua);
-            void LoadKeyboardActionEvent(kaguya::State& lua);
-            void LoadKeyboardAction(kaguya::State& lua);
-            void LoadKeyboardManager(kaguya::State& lua);
+            void LoadKeyClass(kaguya::State* lua);
+            void LoadKeyboardActionEvent(kaguya::State* lua);
+            void LoadKeyboardAction(kaguya::State* lua);
+            void LoadKeyboardManager(kaguya::State* lua);
         }
     }
 }

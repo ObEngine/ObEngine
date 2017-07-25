@@ -137,8 +137,6 @@ namespace obe
                         }
                         else if (trgList[i]->m_enabled)
                         {
-                            if (trgList[i]->getName() == "Init")
-                                std::cout << "INIT BEING CLEARED" << std::endl;
                             trgList[i]->m_enabled = false;
                             trgList[i]->clear();
                         }

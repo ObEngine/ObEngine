@@ -29,10 +29,10 @@ Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project
 - ObEngine : main function inside
 - Package & Workspace : Pretty much the same thing, works with the PathResolver
 - PathResolver : Really important class that "mounts" (see wiki) folders
+- Scene : Scene-like container
 - Script : All the Lua binding stuff in there
 - Toolkit : Nice terminal to help with project management
 - Triggers : Triggers / Events for the GameObjects
-- World : Scene-like container
 
 ## How can I contribute
 

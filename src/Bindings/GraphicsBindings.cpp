@@ -8,17 +8,17 @@ namespace obe
     {
         namespace GraphicsBindings
         {
-            void LoadLevelSpriteHandlePoint(kaguya::State& lua)
+            void LoadLevelSpriteHandlePoint(kaguya::State* lua)
             {
-                lua["Core"]["Graphics"]["LevelSpriteHandlePoint"].setClass(kaguya::UserdataMetatable<Graphics::LevelSpriteHandlePoint>()
+                (*lua)["Core"]["Graphics"]["LevelSpriteHandlePoint"].setClass(kaguya::UserdataMetatable<Graphics::LevelSpriteHandlePoint>()
                     .addFunction("getRect", &Graphics::LevelSpriteHandlePoint::getRect)
                     .addFunction("getReferencial", &Graphics::LevelSpriteHandlePoint::getReferencial)
                     .addFunction("moveTo", &Graphics::LevelSpriteHandlePoint::moveTo)
                 );
             }
-            void LoadLevelSprite(kaguya::State& lua)
+            void LoadLevelSprite(kaguya::State* lua)
             {
-                lua["Core"]["Graphics"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite, kaguya::MultipleBase<Transform::UnitBasedObject, Types::Selectable, Transform::Rect, Types::Identifiable>>()
+                (*lua)["Core"]["Graphics"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite, kaguya::MultipleBase<Transform::UnitBasedObject, Types::Selectable, Transform::Rect, Types::Identifiable>>()
                     .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
                     .addFunction("getColor", &Graphics::LevelSprite::getColor)
                     .addFunction("getDrawPosition", &Graphics::LevelSprite::getDrawPosition)
@@ -52,9 +52,9 @@ namespace obe
                     .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
                 );
             }
-            void LoadResourceManager(kaguya::State& lua)
+            void LoadResourceManager(kaguya::State* lua)
             {
-                lua["Core"]["Graphics"]["ResourceManager"].setClass(kaguya::UserdataMetatable<Graphics::ResourceManager>()
+                (*lua)["Core"]["Graphics"]["ResourceManager"].setClass(kaguya::UserdataMetatable<Graphics::ResourceManager>()
                     .addStaticFunction("GetInstance", &Graphics::ResourceManager::GetInstance)
                     .addFunction("getTexture", &Graphics::ResourceManager::getTexture)
                 );

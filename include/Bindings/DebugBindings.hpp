@@ -8,9 +8,9 @@ namespace obe
     {
         namespace DebugBindings
         {
-            void LoadConsoleMessage(kaguya::State& lua);
-            void LoadConsoleStream(kaguya::State& lua);
-            void LoadConsole(kaguya::State& lua);
+            void LoadConsoleMessage(kaguya::State* lua);
+            void LoadConsoleStream(kaguya::State* lua);
+            void LoadConsole(kaguya::State* lua);
         }
     }
 }

@@ -7,9 +7,9 @@ namespace obe
     {
         namespace SceneBindings
         {
-            void LoadCamera(kaguya::State& lua)
+            void LoadCamera(kaguya::State* lua)
             {
-                lua["Core"]["Scene"]["Camera"].setClass(kaguya::UserdataMetatable<Scene::Camera>()
+                (*lua)["Core"]["Scene"]["Camera"].setClass(kaguya::UserdataMetatable<Scene::Camera>()
                     .addFunction("getHeight", &Scene::Camera::getHeight)
                     .addFunction("getPosition", &Scene::Camera::getPosition)
                     .addFunction("getSize", &Scene::Camera::getSize)

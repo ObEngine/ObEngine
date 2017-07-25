@@ -8,10 +8,10 @@ namespace obe
     {
         namespace TriggersBindings
         {
-            void LoadTrigger(kaguya::State& lua);
-            void LoadTriggerDatabase(kaguya::State& lua);
-            void LoadTriggerDelay(kaguya::State& lua);
-            void LoadTriggerGroup(kaguya::State& lua);
+            void LoadTrigger(kaguya::State* lua);
+            void LoadTriggerDatabase(kaguya::State* lua);
+            void LoadTriggerDelay(kaguya::State* lua);
+            void LoadTriggerGroup(kaguya::State* lua);
         }
     }
 }

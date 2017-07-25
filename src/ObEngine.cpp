@@ -15,6 +15,7 @@
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
+#include <Utils/VectorUtils.hpp>
 
 void LoadErrors()
 {
@@ -54,6 +55,40 @@ int main(int argc, char** argv)
 
     std::cout << "<Computer Configuration>" << std::endl;
     std::cout << "Screen Resolution : " << Transform::UnitVector::Screen.w << ", " << Transform::UnitVector::Screen.h << std::endl;
+
+    kaguya::State vl;
+    std::function<bool(kaguya::LuaRef ref, std::vector<std::string> path)> check = [&check](kaguya::LuaRef ref, std::vector<std::string> path) -> bool {
+        std::cout << "Step" << std::endl;
+        if (path.size() > 1)
+        {
+            std::cout << "Size is cool" << std::endl;
+            std::vector<std::string> subPath = Utils::Vector::getSubVector(path, 1, 0);
+            std::cout << "Subvector ok Test4 " << path[0] << std::endl;
+            if (ref[path[0]])
+            {
+                std::cout << "it exists" << std::endl;
+                kaguya::LuaRef refd = ref[path[0]];
+                std::cout << "Created Unsb" << std::endl;
+                return check(refd, subPath);
+            }
+            else
+            {
+                std::cout << "Doesn't, is false'" << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            std::cout << "last step TEST4 " << path[0] << ": " << (ref[path[0]]) << std::endl;
+            return (ref[path[0]]);
+        }
+    };
+    vl("a = {}; a.b = {}; a.b.c = {}; a.b.c.d = 44;");
+    bool c = 0;
+    std::cout << "C IS " << c << std::endl;
+    kaguya::LuaRef bnh = vl["a"];
+    kaguya::LuaRef bnj = bnh["b"];
+    std::cout << "Checking : " << check(bnh, {"b", "c", "k"}) << std::endl;
 
     LoadErrors();
     System::MountPaths();

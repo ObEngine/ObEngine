@@ -8,9 +8,9 @@ namespace obe
     {
         namespace TimeBindings
         {
-            void LoadChronometer(kaguya::State& lua);
-            void LoadFPSCounter(kaguya::State& lua);
-            void LoadFramerateManager(kaguya::State& lua);
+            void LoadChronometer(kaguya::State* lua);
+            void LoadFPSCounter(kaguya::State* lua);
+            void LoadFramerateManager(kaguya::State* lua);
         }
     }
 }

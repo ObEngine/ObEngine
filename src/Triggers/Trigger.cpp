@@ -89,25 +89,22 @@ namespace obe
 
         void Trigger::registerState(kaguya::State* state)
         {
-            if (m_name == "UserInput") std::cout << "USERINPUT BEING REGISTERED" << std::endl;
             m_registeredStates.push_back(state);
-            (*state)["__FTCP__"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
-            (*state)["__FTCP__"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name][m_stackSize] = kaguya::NewTable();
+            (*state)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+            (*state)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name][m_stackSize] = kaguya::NewTable();
         }
 
         void Trigger::prepareNewCall()
         {
-            if (m_name == "UserInput") std::cout << "USERINPUT PREPARES NEW CALL" << std::endl;
             m_stackSize++;
             for (auto& registeredState : m_registeredStates)
             {
-                (*registeredState)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize] = kaguya::NewTable();
+                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize] = kaguya::NewTable();
             }
         }
 
         void Trigger::execute(kaguya::State* lua, const std::string& funcName) const
         {
-            if (m_name == "UserInput") std::cout << "USERINPUT BEING EXECUTED" << std::endl;
             for (unsigned int i = 1; i < m_stackSize; i++)
             {
                 (*lua)["LuaCore"]["FuncInjector"](funcName, this->getTriggerLuaTableName(), i);
@@ -117,11 +114,10 @@ namespace obe
         void Trigger::clear()
         {
             m_stackSize = 1;
-            if (m_name == "UserInput") std::cout << "USERINPUT BEING CLEARED" << std::endl;
             for (auto& registeredState : m_registeredStates)
             {
-                (*registeredState)["__FTCP__"][this->getTriggerLuaTableName()] = kaguya::NewTable();
-                (*registeredState)["__FTCP__"][this->getTriggerLuaTableName()][1] = kaguya::NewTable();
+                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NewTable();
+                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][1] = kaguya::NewTable();
             }
         }
     }

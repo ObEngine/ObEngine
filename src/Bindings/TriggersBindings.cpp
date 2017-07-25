@@ -9,18 +9,18 @@ namespace obe
     {
         namespace TriggersBindings
         {
-            void LoadTrigger(kaguya::State& lua)
+            void LoadTrigger(kaguya::State* lua)
             {
-                lua["Core"]["Triggers"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
+                (*lua)["Core"]["Triggers"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
                     .addFunction("getState", &Triggers::Trigger::getState)
                 );
             }
-            void LoadTriggerDatabase(kaguya::State& lua)
+            void LoadTriggerDatabase(kaguya::State* lua)
             {
-                lua["Core"]["Triggers"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDatabase>()
+                (*lua)["Core"]["Triggers"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDatabase>()
                     .addStaticFunction("GetInstance", &Triggers::TriggerDatabase::GetInstance)
                     .addFunction("clear", &Triggers::TriggerDatabase::clear)
                     .addFunction("createNamespace", &Triggers::TriggerDatabase::createNamespace)
@@ -34,14 +34,14 @@ namespace obe
                     .addFunction("update", &Triggers::TriggerDatabase::update)
                 );
             }
-            void LoadTriggerDelay(kaguya::State& lua)
+            void LoadTriggerDelay(kaguya::State* lua)
             {
-                lua["Core"]["Triggers"]["TriggerDelay"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDelay>()
+                (*lua)["Core"]["Triggers"]["TriggerDelay"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDelay>()
                 );
             }
-            void LoadTriggerGroup(kaguya::State& lua)
+            void LoadTriggerGroup(kaguya::State* lua)
             {
-                lua["Core"]["Triggers"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
+                (*lua)["Core"]["Triggers"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
                     .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                     .addFunction("delayTriggerState", &Triggers::TriggerGroup::delayTriggerState)
                     .addFunction("enableTrigger", &Triggers::TriggerGroup::trigger)

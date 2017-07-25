@@ -90,13 +90,10 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            if (m_name == "Console.UserInput") std::cout << "USERINPUT PUSH PARAMETER" << std::endl;
-
             for (auto& registeredState : m_registeredStates)
             {
                 // Future Trigger Call Parameters
-                (*registeredState)["__FTCP__"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
-                
+                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
             }
         }
     }
