@@ -1,4 +1,4 @@
-#include "vili/ComplexAttribute.hpp"
+#include "vili/ComplexNode.hpp"
 #include "vili/NodeIterator.hpp"
 #include "ErrorHandler.hpp"
 
@@ -8,7 +8,7 @@ namespace vili
     {
     }
 
-    NodeIterator::NodeIterator(ComplexAttribute* node)
+    NodeIterator::NodeIterator(ComplexNode* node)
     {
         node->walk([this](NodeIterator& node) { m_cache.push_back(node.get()); });
     }
@@ -21,7 +21,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.NodeIterator.NoCache", {{"class", "NodeIterator"},{"function", "next"}});
     }
 
-    void NodeIterator::next(ComplexAttribute* node)
+    void NodeIterator::next(ComplexNode* node)
     {
         if (!hasCache())
             m_node = node;
@@ -34,12 +34,12 @@ namespace vili
         return (m_cache.size() > 0);
     }
 
-    ComplexAttribute* NodeIterator::operator->() const
+    ComplexNode* NodeIterator::operator->() const
     {
         return m_node;
     }
 
-    ComplexAttribute* NodeIterator::get() const
+    ComplexNode* NodeIterator::get() const
     {
         return m_node;
     }

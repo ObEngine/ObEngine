@@ -58,7 +58,7 @@ namespace obe
              * \brief Dumps all elements of the Scene in a vili tree
              * \return 
              */
-            vili::DataParser* dump();
+            vili::ViliParser* dump();
             /**
              * \brief Updates all elements in the Scene
              * \param dt DeltaTime used to update the Scene

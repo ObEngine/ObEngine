@@ -77,7 +77,7 @@ namespace obe
                     if (item == vector[k])
                         return k;
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.FunctionsHeader.Vector.UnknownIndexOfElement", {{"element", std::to_string(item)}});
+                throw aube::ErrorHandler::Raise("ObEngine.FunctionsHeader.Vector.UnknownIndexOfElement");
             }
 
             template <typename V>

@@ -87,12 +87,12 @@ namespace obe
             }
         }
 
-        void InputManager::configure(vili::ComplexAttribute& config)
+        void InputManager::configure(vili::ComplexNode& config)
         {
-            std::vector<std::string> contexts = config.getAll(vili::AttributeType::ComplexAttribute);
+            std::vector<std::string> contexts = config.getAll(vili::NodeType::ComplexNode);
             for (std::string& context : contexts)
             {
-                std::vector<std::string> allContextKeys = config.at(context).getAll(vili::AttributeType::BaseAttribute);
+                std::vector<std::string> allContextKeys = config.at(context).getAll(vili::NodeType::DataNode);
                 for (std::string& action : allContextKeys)
                 {
                     if (!this->actionExists(action))

@@ -1,4 +1,4 @@
-#include "vili/ComplexAttribute.hpp"
+#include "vili/ComplexNode.hpp"
 #include "vili/NodeValidator.hpp"
 
 namespace vili
@@ -9,7 +9,7 @@ namespace vili
 
     }
     template <class T>
-    NodeValidator<T>::NodeValidator(ComplexAttribute* node)
+    NodeValidator<T>::NodeValidator(ComplexNode* node)
     {
         node->walk([this](NodeIterator& node) { m_cache.push_back(node.get()); });
     }

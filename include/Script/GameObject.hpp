@@ -23,12 +23,12 @@ namespace obe
         {
         private:
             static GameObjectRequires* instance;
-            vili::DataParser allRequires;
+            vili::ViliParser allRequires;
         public:
             static GameObjectRequires* getInstance();
-            vili::ComplexAttribute* getRequiresForObjectType(std::string type) const;
-            void applyBaseRequires(GameObject* obj, vili::ComplexAttribute& requires);
-            static void ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires);
+            vili::ComplexNode* getRequiresForObjectType(std::string type) const;
+            void applyBaseRequires(GameObject* obj, vili::ComplexNode& requires);
+            static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         };
 
         class GameObject : public Types::Identifiable
@@ -98,7 +98,7 @@ namespace obe
             void sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const;
 
             void registerTrigger(Triggers::Trigger* trg);
-            void loadGameObject(Scene::Scene& world, vili::ComplexAttribute& obj);
+            void loadGameObject(Scene::Scene& world, vili::ComplexNode& obj);
             void update(double dt);
 
             void deleteObject();

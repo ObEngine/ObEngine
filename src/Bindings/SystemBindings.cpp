@@ -57,7 +57,7 @@ namespace obe
                 });
                 (*lua)["Core"]["System"]["Path"]["DataLoader"] = kaguya::function([](const std::string& path)
                 {
-                    vili::DataParser parsedFile;
+                    vili::ViliParser parsedFile;
                     System::Path(path).loadResource(&parsedFile, System::Loaders::dataLoader);
                     return parsedFile;
                 });

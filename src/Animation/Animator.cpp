@@ -93,12 +93,12 @@ namespace obe
             m_animatorPath.loadResource(&listDir, System::Loaders::dirPathLoader);
             std::vector<std::string> allFiles;
             m_animatorPath.loadResource(&allFiles, System::Loaders::filePathLoader);
-            vili::DataParser animatorCfgFile;
-            std::map<std::string, vili::ComplexAttribute*> animationParameters;
+            vili::ViliParser animatorCfgFile;
+            std::map<std::string, vili::ComplexNode*> animationParameters;
             if (Utils::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
             {
                 System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
-                for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::AttributeType::ComplexAttribute))
+                for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::NodeType::ComplexNode))
                     animationParameters[currentAnimParameters] = &animatorCfgFile.at("Animator", currentAnimParameters);
             }
             for (unsigned int i = 0; i < listDir.size(); i++)

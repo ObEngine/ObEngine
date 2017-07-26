@@ -7,12 +7,12 @@ namespace obe
 {
     namespace Time
     {
-        FramerateManager::FramerateManager(sf::RenderWindow& window, vili::ComplexAttribute& config)
+        FramerateManager::FramerateManager(sf::RenderWindow& window, vili::ComplexNode& config)
         {
             m_frameLimiterClock = getTickSinceEpoch();
-            m_limitFPS = (config.contains(vili::AttributeType::BaseAttribute, "framerateLimit")) ? config.at<vili::BaseAttribute>("framerateLimit") : true;
-            m_framerateTarget = (config.contains(vili::AttributeType::BaseAttribute, "framerateTarget")) ? config.at<vili::BaseAttribute>("framerateTarget") : 60;
-            m_vsyncEnabled = (config.contains(vili::AttributeType::BaseAttribute, "vsync")) ? config.at<vili::BaseAttribute>("vsync") : true;
+            m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit")) ? config.at<vili::DataNode>("framerateLimit") : true;
+            m_framerateTarget = (config.contains(vili::NodeType::DataNode, "framerateTarget")) ? config.at<vili::DataNode>("framerateTarget") : 60;
+            m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync")) ? config.at<vili::DataNode>("vsync") : true;
             m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
             m_currentFrame = 0;
             m_frameProgression = 0;

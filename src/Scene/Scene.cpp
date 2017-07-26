@@ -61,76 +61,76 @@ namespace obe
         void Scene::loadFromFile(const std::string& filename)
         {
             this->clearWorld();
-            vili::DataParser mapParse;
+            vili::ViliParser mapParse;
             m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
             std::cout << "Base Folder : " << m_baseFolder << std::endl;
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "Meta"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "Meta"))
             {
-                vili::ComplexAttribute& meta = mapParse.at("Meta");
+                vili::ComplexNode& meta = mapParse.at("Meta");
                 m_levelName = meta.getBaseAttribute("name").get<std::string>();
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", {{"map", filename}});
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "View"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "View"))
             {
-                vili::ComplexAttribute& view = mapParse.at("View");
-                m_camera.setSize(view.at<vili::BaseAttribute>("size").get<double>());
+                vili::ComplexNode& view = mapParse.at("View");
+                m_camera.setSize(view.at<vili::DataNode>("size").get<double>());
                 m_cameraInitialPosition = Transform::UnitVector(
-                    view.at<vili::BaseAttribute>("pos", "x").get<double>(),
-                    view.at<vili::BaseAttribute>("pos", "y").get<double>(),
-                    Transform::stringToUnits(view.at<vili::BaseAttribute>("pos", "unit").get<std::string>()));
+                    view.at<vili::DataNode>("pos", "x").get<double>(),
+                    view.at<vili::DataNode>("pos", "y").get<double>(),
+                    Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.World.World.NoView", {{"map", filename}});
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "LevelSprites"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "LevelSprites"))
             {
-                vili::ComplexAttribute& levelSprites = mapParse.at("LevelSprites");
-                for (std::string& currentSpriteName : levelSprites.getAll(vili::AttributeType::ComplexAttribute))
+                vili::ComplexNode& levelSprites = mapParse.at("LevelSprites");
+                for (std::string& currentSpriteName : levelSprites.getAll(vili::NodeType::ComplexNode))
                 {
-                    vili::ComplexAttribute& currentSprite = levelSprites.at(currentSpriteName);
+                    vili::ComplexNode& currentSprite = levelSprites.at(currentSpriteName);
                     std::string spriteXTransformer;
                     std::string spriteYTransformer;
                     std::string spriteId = currentSpriteName;
-                    std::string spriteUnits = currentSprite.contains(vili::AttributeType::ComplexAttribute, "rect") ?
-                                                  currentSprite.at<vili::BaseAttribute>("rect", "unit").get<std::string>() : "WorldUnits";
+                    std::string spriteUnits = currentSprite.contains(vili::NodeType::ComplexNode, "rect") ?
+                                                  currentSprite.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
                     std::cout << "SpriteUnit : " << spriteUnits << std::endl;
-                    std::string spritePath = currentSprite.contains(vili::AttributeType::BaseAttribute, "path") ?
+                    std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
                                                  currentSprite.getBaseAttribute("path").get<std::string>() : "";
                     Transform::UnitVector spritePos(0, 0);
                     Transform::UnitVector spriteSize(1, 1);
-                    if (currentSprite.contains(vili::AttributeType::ComplexAttribute, "rect"))
+                    if (currentSprite.contains(vili::NodeType::ComplexNode, "rect"))
                     {
                         Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
                         spritePos.unit = rectUnit;
-                        spritePos.x = currentSprite.at<vili::BaseAttribute>("rect", "x").get<double>();
-                        spritePos.y = currentSprite.at<vili::BaseAttribute>("rect", "y").get<double>();
+                        spritePos.x = currentSprite.at<vili::DataNode>("rect", "x").get<double>();
+                        spritePos.y = currentSprite.at<vili::DataNode>("rect", "y").get<double>();
                         spriteSize.unit = rectUnit;
-                        spriteSize.x = currentSprite.at<vili::BaseAttribute>("rect", "w").get<double>();
-                        spriteSize.y = currentSprite.at<vili::BaseAttribute>("rect", "h").get<double>();
+                        spriteSize.x = currentSprite.at<vili::DataNode>("rect", "w").get<double>();
+                        spriteSize.y = currentSprite.at<vili::DataNode>("rect", "h").get<double>();
                         spritePos = spritePos.to<Transform::Units::WorldUnits>();
                         spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
                     }
-                    int spriteRot = currentSprite.contains(vili::AttributeType::BaseAttribute, "rotation") ?
+                    int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
                                         currentSprite.getBaseAttribute("rotation").get<int>() : 0;
-                    int layer = currentSprite.contains(vili::AttributeType::BaseAttribute, "layer") ?
+                    int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
                                     currentSprite.getBaseAttribute("layer").get<int>() : 1;
-                    int zdepth = currentSprite.contains(vili::AttributeType::BaseAttribute, "z-depth") ?
+                    int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
                                      currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
 
-                    if (currentSprite.contains(vili::AttributeType::BaseAttribute, "xTransform"))
+                    if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
                     {
-                        spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform").get<std::string>();
+                        spriteXTransformer = currentSprite.at<vili::DataNode>("xTransform").get<std::string>();
                     }
                     else
                     {
                         spriteXTransformer = "None";
                     }
-                    if (currentSprite.contains(vili::AttributeType::BaseAttribute, "yTransform"))
+                    if (currentSprite.contains(vili::NodeType::DataNode, "yTransform"))
                     {
-                        spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform").get<std::string>();
+                        spriteYTransformer = currentSprite.at<vili::DataNode>("yTransform").get<std::string>();
                     }
                     else
                     {
@@ -154,20 +154,20 @@ namespace obe
 
             this->reorganizeLayers();
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "Collisions"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "Collisions"))
             {
-                vili::ComplexAttribute& collisions = mapParse.at("Collisions");
-                for (std::string& collisionName : collisions.getAll(vili::AttributeType::ComplexAttribute))
+                vili::ComplexNode& collisions = mapParse.at("Collisions");
+                for (std::string& collisionName : collisions.getAll(vili::NodeType::ComplexNode))
                 {
-                    vili::ComplexAttribute& currentCollision = collisions.at(collisionName);
+                    vili::ComplexNode& currentCollision = collisions.at(collisionName);
                     std::cout << "New Collider : " << collisionName << std::endl;
                     std::unique_ptr<Collision::PolygonalCollider> tempCollider = std::make_unique<Collision::PolygonalCollider>(collisionName);
 
-                    std::string pointsUnit = currentCollision.at<vili::BaseAttribute>("unit", "unit").get<std::string>();
+                    std::string pointsUnit = currentCollision.at<vili::DataNode>("unit", "unit").get<std::string>();
                     bool completePoint = true;
                     double pointBuffer = 0;
                     Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                    for (vili::BaseAttribute* colliderPoint : currentCollision.getListAttribute("points"))
+                    for (vili::DataNode* colliderPoint : currentCollision.getListAttribute("points"))
                     {
                         if ((completePoint = !completePoint))
                         {
@@ -187,17 +187,17 @@ namespace obe
                 }
             }
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "LevelObjects"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "LevelObjects"))
             {
-                vili::ComplexAttribute& levelObjects = mapParse.at("LevelObjects");
-                for (std::string& currentObjectName : levelObjects.getAll(vili::AttributeType::ComplexAttribute))
+                vili::ComplexNode& levelObjects = mapParse.at("LevelObjects");
+                for (std::string& currentObjectName : levelObjects.getAll(vili::NodeType::ComplexNode))
                 {
-                    vili::ComplexAttribute& currentObject = levelObjects.at(currentObjectName);
+                    vili::ComplexNode& currentObject = levelObjects.at(currentObjectName);
                     std::string levelObjectType = currentObject.getBaseAttribute("type").get<std::string>();
                     this->createGameObject(currentObjectName, levelObjectType);
-                    if (currentObject.contains(vili::AttributeType::ComplexAttribute, "Requires"))
+                    if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
                     {
-                        vili::ComplexAttribute& objectRequirements = currentObject.at("Requires");
+                        vili::ComplexNode& objectRequirements = currentObject.at("Requires");
                         currentObject.removeOwnership(&objectRequirements);
                         Script::GameObjectRequires::ApplyRequirements(this->getGameObjectById(currentObjectName), objectRequirements);
                         objectRequirements.setParent(&currentObject);
@@ -205,10 +205,10 @@ namespace obe
                 }
             }
 
-            if (mapParse->contains(vili::AttributeType::ComplexAttribute, "Script"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "Script"))
             {
-                vili::ComplexAttribute& script = mapParse.at("Script");
-                for (vili::BaseAttribute* scriptName : script.getListAttribute("gameScripts"))
+                vili::ComplexNode& script = mapParse.at("Script");
+                for (vili::DataNode* scriptName : script.getListAttribute("gameScripts"))
                 {
                     System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
                     m_scriptArray.push_back(*scriptName);
@@ -225,9 +225,9 @@ namespace obe
             m_scriptArray.clear();
         }
 
-        vili::DataParser* Scene::dump()
+        vili::ViliParser* Scene::dump()
         {
-            vili::DataParser* dataStore = new vili::DataParser;
+            vili::ViliParser* dataStore = new vili::ViliParser;
             dataStore->createFlag("Map");
             dataStore->createFlag("Lock");
             dataStore->includeFile("Obe");
@@ -251,7 +251,7 @@ namespace obe
             {
                 if (m_spriteArray[i]->getParentId() == "")
                 {
-                    vili::ComplexAttribute& currentSprite = dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
+                    vili::ComplexNode& currentSprite = dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
                     currentSprite.createBaseAttribute("path", m_spriteArray[i]->getPath());
                     currentSprite.createComplexAttribute("rect");
                     Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
@@ -302,7 +302,7 @@ namespace obe
                 (*it->second->m_objectScript)("print('Saving : ', This:getId())");
                 (*it->second->m_objectScript)("print(inspect(Local.Save()));");
                 (*it->second->m_objectScript)("print('Processing...')");
-                vili::ComplexAttribute* saveRequirements = Script::DataBridge::luaTableToComplexAttribute(
+                vili::ComplexNode* saveRequirements = Script::DataBridge::luaTableToComplexAttribute(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
                     dataStore->at("LevelObjects", it->first).pushComplexAttribute(saveRequirements);
@@ -471,9 +471,9 @@ namespace obe
         Script::GameObject* Scene::createGameObject(const std::string& id, const std::string& obj)
         {
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
-            vili::DataParser getGameObjectFile;
+            vili::ViliParser getGameObjectFile;
             System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-            vili::ComplexAttribute& gameObjectData = getGameObjectFile.at(obj);
+            vili::ComplexNode& gameObjectData = getGameObjectFile.at(obj);
             newGameObject->loadGameObject(*this, gameObjectData);
             if (newGameObject->m_hasScriptEngine)
             {

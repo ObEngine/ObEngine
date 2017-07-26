@@ -1,18 +1,18 @@
-#include "vili/Attribute.hpp"
-#include "vili/ContainerAttribute.hpp"
+#include "vili/Node.hpp"
+#include "vili/ContainerNode.hpp"
 #include "ErrorHandler.hpp"
 #include "Functions.hpp"
 
 namespace vili
 {
-    Attribute::Attribute(ContainerAttribute* parent, const std::string& id, const AttributeType& type)
+    Node::Node(ContainerNode* parent, const std::string& id, const NodeType& type)
     {
         m_id = id;
         m_type = type;
         m_parent = parent;
     }
 
-    void Attribute::removeParent(ContainerAttribute* currentParent)
+    void Node::removeParent(ContainerNode* currentParent)
     {
         if (m_parent == currentParent || m_parent == nullptr)
             m_parent = nullptr;
@@ -23,32 +23,32 @@ namespace vili
                                             });
     }
 
-    void Attribute::setAnnotation(const std::string& annotation)
+    void Node::setAnnotation(const std::string& annotation)
     {
         m_annotation = annotation;
     }
 
-    std::string Attribute::getAnnotation() const
+    std::string Node::getAnnotation() const
     {
         return m_annotation;
     }
 
-    std::string Attribute::getID() const
+    std::string Node::getId() const
     {
         return m_id;
     }
 
-    AttributeType Attribute::getType() const
+    NodeType Node::getType() const
     {
         return m_type;
     }
 
-    ContainerAttribute* Attribute::getParent() const
+    ContainerNode* Node::getParent() const
     {
         return m_parent;
     }
 
-    void Attribute::setParent(ContainerAttribute* parent)
+    void Node::setParent(ContainerNode* parent)
     {
         if (m_parent == nullptr)
             m_parent = parent;
@@ -56,24 +56,24 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.Attribute.AlreadyHaveParent", {{"path", getNodePath()},{"parent", parent->getNodePath()}});
     }
 
-    std::string Attribute::getNodePath() const
+    std::string Node::getNodePath() const
     {
         std::vector<std::string> parentChain;
-        ContainerAttribute* currentParent = this->getParent();
+        ContainerNode* currentParent = this->getParent();
         while (currentParent != nullptr)
         {
-            parentChain.push_back(currentParent->getID() +
+            parentChain.push_back(currentParent->getId() +
                 (!currentParent->getAnnotation().empty() ? "<" + currentParent->getAnnotation() + ">" : ""));
             currentParent = currentParent->getParent();
         }
         reverse(parentChain.begin(), parentChain.end());
-        parentChain.push_back(this->getID() + (!this->getAnnotation().empty() ? "<" + this->getAnnotation() + ">" : ""));
+        parentChain.push_back(this->getId() + (!this->getAnnotation().empty() ? "<" + this->getAnnotation() + ">" : ""));
         return Functions::Vector::join(parentChain, "/");
     }
 
-    unsigned int Attribute::getDepth() const
+    unsigned int Node::getDepth() const
     {
-        ContainerAttribute* currentParent = this->getParent();
+        ContainerNode* currentParent = this->getParent();
         unsigned int depth = 0;
         while (currentParent != nullptr)
         {
@@ -83,17 +83,17 @@ namespace vili
         return depth;
     }
 
-    bool Attribute::isVisible() const
+    bool Node::isVisible() const
     {
         return m_visible;
     }
 
-    void Attribute::setVisible(bool visible)
+    void Node::setVisible(bool visible)
     {
         m_visible = visible;
     }
 
-    void Attribute::setID(const std::string& id)
+    void Node::setId(const std::string& id)
     {
         if (m_parent == nullptr)
             m_id = id;

@@ -1,13 +1,13 @@
 #include <fstream>
 
-#include "vili/BaseAttribute.hpp"
-#include "vili/ComplexAttribute.hpp"
-#include "vili/ListAttribute.hpp"
+#include "vili/DataNode.hpp"
+#include "vili/ComplexNode.hpp"
+#include "vili/ArrayNode.hpp"
 #include "Functions.hpp"
 
 namespace vili
 {
-    std::ostream& operator<<(std::ostream& stream, const BaseAttribute& attribute)
+    std::ostream& operator<<(std::ostream& stream, const DataNode& attribute)
     {
         if (attribute.getDataType() == DataType::Int)
             stream << attribute.Int;
@@ -20,19 +20,19 @@ namespace vili
         return stream;
     }
 
-    BaseAttribute::BaseAttribute(ContainerAttribute* parent, const std::string& id, const DataType& dataType) : Attribute(parent, id, AttributeType::BaseAttribute)
+    DataNode::DataNode(ContainerNode* parent, const std::string& id, const DataType& dataType) : Node(parent, id, NodeType::DataNode)
     {
         new(static_cast<void*>(&String)) std::string();
         m_dataType = dataType;
     }
 
-    BaseAttribute::BaseAttribute(const std::string& id, const DataType& dataType) : Attribute(nullptr, id, AttributeType::BaseAttribute)
+    DataNode::DataNode(const std::string& id, const DataType& dataType) : Node(nullptr, id, NodeType::DataNode)
     {
         m_dataType = dataType;
         new(static_cast<void*>(&String)) std::string();
     }
 
-    void BaseAttribute::set(int var)
+    void DataNode::set(int var)
     {
         if (m_dataType == DataType::Int)
             Int = var;
@@ -40,7 +40,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
-    void BaseAttribute::set(double var)
+    void DataNode::set(double var)
     {
         if (m_dataType == DataType::Float)
             Float = var;
@@ -48,7 +48,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
-    void BaseAttribute::set(const std::string& var)
+    void DataNode::set(const std::string& var)
     {
         if (m_dataType == DataType::String)
             String = var;
@@ -56,7 +56,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
-    void BaseAttribute::set(const char* var)
+    void DataNode::set(const char* var)
     {
         if (m_dataType == DataType::String)
             String = std::string(var);
@@ -64,7 +64,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
-    void BaseAttribute::set(bool var)
+    void DataNode::set(bool var)
     {
         if (m_dataType == DataType::Bool)
             Bool = var;
@@ -72,32 +72,32 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
-    void BaseAttribute::operator=(int var)
+    void DataNode::operator=(int var)
     {
         this->set(var);
     }
 
-    void BaseAttribute::operator=(double var)
+    void DataNode::operator=(double var)
     {
         this->set(var);
     }
 
-    void BaseAttribute::operator=(const std::string& var)
+    void DataNode::operator=(const std::string& var)
     {
         this->set(var);
     }
 
-    void BaseAttribute::operator=(const char* var)
+    void DataNode::operator=(const char* var)
     {
         this->set(var);
     }
 
-    void BaseAttribute::operator=(bool var)
+    void DataNode::operator=(bool var)
     {
         this->set(var);
     }
 
-    void BaseAttribute::autoset(const std::string& rawData)
+    void DataNode::autoset(const std::string& rawData)
     {
         std::string pop = m_id;
         if (Types::getVarType(rawData) == m_dataType)
@@ -115,7 +115,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongAutoset", {{"data", rawData},{"path", getNodePath()}});
     }
 
-    std::string BaseAttribute::returnData() const
+    std::string DataNode::dumpData() const
     {
         if (m_dataType == DataType::String)
             return "\"" + String + "\"";
@@ -128,28 +128,28 @@ namespace vili
         return "?TypeError?";
     }
 
-    DataType BaseAttribute::getDataType() const
+    DataType DataNode::getDataType() const
     {
         return m_dataType;
     }
 
-    void BaseAttribute::copy(ContainerAttribute* newParent, const std::string& newid) const
+    void DataNode::copy(ContainerNode* newParent, const std::string& newid) const
     {
-        if (newParent->getType() == AttributeType::ListAttribute)
+        if (newParent->getType() == NodeType::ArrayNode)
         {
             if (m_dataType == DataType::Int)
-                static_cast<ListAttribute*>(newParent)->push(this->get<int>());
+                static_cast<ArrayNode*>(newParent)->push(this->get<int>());
             else if (m_dataType == DataType::Float)
-                static_cast<ListAttribute*>(newParent)->push(this->get<double>());
+                static_cast<ArrayNode*>(newParent)->push(this->get<double>());
             else if (m_dataType == DataType::Bool)
-                static_cast<ListAttribute*>(newParent)->push(this->get<bool>());
+                static_cast<ArrayNode*>(newParent)->push(this->get<bool>());
             else if (m_dataType == DataType::String)
-                static_cast<ListAttribute*>(newParent)->push(this->get<std::string>());
+                static_cast<ArrayNode*>(newParent)->push(this->get<std::string>());
         }
-        else if (newParent->getType() == AttributeType::ComplexAttribute)
+        else if (newParent->getType() == NodeType::ComplexNode)
         {
-            dynamic_cast<ComplexAttribute*>(newParent)->createBaseAttribute(newid.empty() ? m_id : newid, m_dataType);
-            BaseAttribute* newCopy = &dynamic_cast<ComplexAttribute*>(newParent)->getBaseAttribute(newid.empty() ? m_id : newid);
+            dynamic_cast<ComplexNode*>(newParent)->createBaseAttribute(newid.empty() ? m_id : newid, m_dataType);
+            DataNode* newCopy = &dynamic_cast<ComplexNode*>(newParent)->getBaseAttribute(newid.empty() ? m_id : newid);
             if (m_dataType == DataType::Int)
                 newCopy->set(Int);
             else if (m_dataType == DataType::Float)
@@ -161,13 +161,13 @@ namespace vili
         }
     }
 
-    void BaseAttribute::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const
+    void DataNode::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const
     {
         if (m_visible)
         {
             for (unsigned int j = 0; j < depth - 1; j++)
                 (*file) << spacing;
-            std::string returnedData = returnData();
+            std::string returnedData = dumpData();
             if (m_dataType == DataType::Float)
             {
                 while (returnedData.size() > 2 && returnedData.back() == '0' && returnedData[returnedData.size() - 2] != '.')
@@ -180,33 +180,33 @@ namespace vili
         }
     }
 
-    BaseAttribute::operator std::string() const
+    DataNode::operator std::string() const
     {
         if (m_dataType == DataType::String)
             return String;
         throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringCastOperator", {{"path", getNodePath()}});
     }
 
-	BaseAttribute::operator unsigned int() const
+	DataNode::operator unsigned int() const
 	{
 		return int(*this);
 	}
 
-	BaseAttribute::operator int() const
+	DataNode::operator int() const
     {
         if (m_dataType == DataType::Int)
             return Int;
         throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntCastOperator", {{"path", getNodePath()}});
     }
 
-    BaseAttribute::operator double() const
+    DataNode::operator double() const
     {
         if (m_dataType == DataType::Float)
             return Float;
         throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatCastOperator", {{"path", getNodePath()}});
     }
 
-    BaseAttribute::operator bool() const
+    DataNode::operator bool() const
     {
         if (m_dataType == DataType::Bool)
             return Bool;

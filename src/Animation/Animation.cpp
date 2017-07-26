@@ -70,19 +70,19 @@ namespace obe
 
         void Animation::loadAnimation(const System::Path& path)
         {
-            vili::DataParser animFile;
+            vili::ViliParser animFile;
             path.add(path.last() + ".ani.vili").loadResource(&animFile, System::Loaders::dataLoader);
             //Meta
-            vili::ComplexAttribute& meta = animFile.at("Meta");
-            m_animationName = meta.at<vili::BaseAttribute>("name").get<std::string>();
-            if (meta.contains(vili::AttributeType::BaseAttribute, "clock"))
-                m_animationDelay = meta.at<vili::BaseAttribute>("clock").get<int>();
-            if (meta.contains(vili::AttributeType::BaseAttribute, "play-mode"))
-                m_animationPlayMode = stringToAnimationPlayMode(meta.at<vili::BaseAttribute>("play-mode").get<std::string>());
+            vili::ComplexNode& meta = animFile.at("Meta");
+            m_animationName = meta.at<vili::DataNode>("name").get<std::string>();
+            if (meta.contains(vili::NodeType::DataNode, "clock"))
+                m_animationDelay = meta.at<vili::DataNode>("clock").get<int>();
+            if (meta.contains(vili::NodeType::DataNode, "play-mode"))
+                m_animationPlayMode = stringToAnimationPlayMode(meta.at<vili::DataNode>("play-mode").get<std::string>());
             //Images
-            vili::ListAttribute& imageList = animFile.at<vili::ListAttribute>("Images", "ImageList");
+            vili::ArrayNode& imageList = animFile.at<vili::ArrayNode>("Images", "ImageList");
             std::string model = "";
-            if (animFile.at("Images").contains(vili::AttributeType::BaseAttribute, "model"))
+            if (animFile.at("Images").contains(vili::NodeType::DataNode, "model"))
             {
                 model = animFile.at("Images").getBaseAttribute("model").get<std::string>();
             }
@@ -96,22 +96,22 @@ namespace obe
                 m_animationTextures[i] = Graphics::ResourceManager::GetInstance()->getTexture(path.add(textureName).toString());
             }
             //Groups
-            vili::ComplexAttribute& groups = animFile.at("Groups");
-            for (std::string complexName : groups.getAll(vili::AttributeType::ComplexAttribute))
+            vili::ComplexNode& groups = animFile.at("Groups");
+            for (std::string complexName : groups.getAll(vili::NodeType::ComplexNode))
             {
                 m_animationGroupMap.emplace(complexName, std::make_unique<AnimationGroup>(complexName));
-                vili::ComplexAttribute& currentGroup = groups.at(complexName);
-                for (vili::BaseAttribute* currentTexture : currentGroup.at<vili::ListAttribute>("content"))
+                vili::ComplexNode& currentGroup = groups.at(complexName);
+                for (vili::DataNode* currentTexture : currentGroup.at<vili::ArrayNode>("content"))
                     m_animationGroupMap[complexName]->pushTexture(m_animationTextures[*currentTexture]);
-                if (currentGroup.contains(vili::AttributeType::BaseAttribute, "clock"))
-                    m_animationGroupMap[complexName]->setGroupDelay(currentGroup.at<vili::BaseAttribute>("clock"));
+                if (currentGroup.contains(vili::NodeType::DataNode, "clock"))
+                    m_animationGroupMap[complexName]->setGroupDelay(currentGroup.at<vili::DataNode>("clock"));
                 else
                     m_animationGroupMap[complexName]->setGroupDelay(m_animationDelay);
                 m_animationGroupMap[complexName]->build();
             }
             //Animation Code
-            vili::ComplexAttribute& animation = animFile.at("Animation");
-            for (vili::BaseAttribute* command : animation.at<vili::ListAttribute>("AnimationCode"))
+            vili::ComplexNode& animation = animFile.at("Animation");
+            for (vili::DataNode* command : animation.at<vili::ArrayNode>("AnimationCode"))
             {
                 std::string curCom = command->get<std::string>();
                 Utils::String::replaceInPlace(curCom, " ", "");
@@ -122,14 +122,14 @@ namespace obe
             }
         }
 
-        void Animation::applyParameters(vili::ComplexAttribute& parameters)
+        void Animation::applyParameters(vili::ComplexNode& parameters)
         {
-            if (parameters.contains(vili::AttributeType::BaseAttribute, "spriteOffsetX"))
-                m_sprOffsetX = parameters.at<vili::BaseAttribute>("spriteOffsetX").get<int>();
-            if (parameters.contains(vili::AttributeType::BaseAttribute, "spriteOffsetY"))
-                m_sprOffsetY = parameters.at<vili::BaseAttribute>("spriteOffsetY").get<int>();
-            if (parameters.contains(vili::AttributeType::BaseAttribute, "priority"))
-                m_priority = parameters.at<vili::BaseAttribute>("priority").get<int>();
+            if (parameters.contains(vili::NodeType::DataNode, "spriteOffsetX"))
+                m_sprOffsetX = parameters.at<vili::DataNode>("spriteOffsetX").get<int>();
+            if (parameters.contains(vili::NodeType::DataNode, "spriteOffsetY"))
+                m_sprOffsetY = parameters.at<vili::DataNode>("spriteOffsetY").get<int>();
+            if (parameters.contains(vili::NodeType::DataNode, "priority"))
+                m_priority = parameters.at<vili::DataNode>("priority").get<int>();
         }
 
         void Animation::update()

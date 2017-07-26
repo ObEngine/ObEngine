@@ -3,7 +3,8 @@
 #include <functional>
 #include <vector>
 
-#include <Bindings/BindingUtils.hpp>
+#include <kaguya/kaguya.hpp>
+
 #include <Types/Identifiable.hpp>
 
 namespace obe

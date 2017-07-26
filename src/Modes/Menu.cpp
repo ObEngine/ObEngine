@@ -42,14 +42,14 @@ namespace obe
             }
             for (int i = 0; i < allMaps.size(); i++)
             {
-                vili::DataParser mapInfoParser;
+                vili::ViliParser mapInfoParser;
                 System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
                 std::string filename = allMapsTemp[i];
                 std::string levelName = "???";
 
-                if (mapInfoParser->contains(vili::AttributeType::ComplexAttribute, "Meta"))
+                if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
                 {
-                    if (mapInfoParser.at("Meta").contains(vili::AttributeType::BaseAttribute, "name"))
+                    if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode, "name"))
                         levelName = mapInfoParser.at("Meta").getBaseAttribute("name").get<std::string>();
                 }
 
@@ -74,7 +74,7 @@ namespace obe
                 if (!Utils::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString()))
                 {
                     std::cout << "Creating new level : " << newLevelName << std::endl;
-                    vili::DataParser newFileParser;
+                    vili::ViliParser newFileParser;
                     newFileParser.createFlag("Map");
                     newFileParser.createFlag("Lock");
                     newFileParser.includeFile("Obe");

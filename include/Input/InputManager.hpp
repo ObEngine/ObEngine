@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include <vili/vili/ComplexAttribute.hpp>
+#include <vili/vili/ComplexNode.hpp>
 
 #include <Input/InputAction.hpp>
 #include <Input/InputButtonMonitor.hpp>
@@ -66,7 +66,7 @@ namespace obe
             * \brief Configure KeyboardAction from a vili configuration file
             * \param config Reference to the vili ComplexAttribute used to configure the KeyboardManager
             */
-            void configure(vili::ComplexAttribute& config);
+            void configure(vili::ComplexNode& config);
             /**
             * \brief Updates the KeyboardManager
             */

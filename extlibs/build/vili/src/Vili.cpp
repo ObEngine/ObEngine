@@ -7,26 +7,26 @@ namespace vili
 {
     void LoadErrors(const std::string& errorFile)
     {
-        DataParser errors(errorFile);
+        ViliParser errors(errorFile);
 
         errors->walk([](NodeIterator& node) -> void
         {
-            if (node->contains(AttributeType::BaseAttribute, "message"))
+            if (node->contains(NodeType::DataNode, "message"))
             {
                 std::vector<std::string> location;
                 std::vector<std::string> errorIdParts;
                 std::string filename = "";
                 std::string message = node->getBaseAttribute("message").get<std::string>();
-                ComplexAttribute* currentParent = node.get();
+                ComplexNode* currentParent = node.get();
                 while (currentParent != nullptr)
                 {
-                    if (currentParent->contains(AttributeType::BaseAttribute, "where"))
+                    if (currentParent->contains(NodeType::DataNode, "where"))
                         location.insert(location.begin(), currentParent->getBaseAttribute("where").get<std::string>());
-                    if (currentParent->contains(AttributeType::BaseAttribute, "file") && filename.empty())
+                    if (currentParent->contains(NodeType::DataNode, "file") && filename.empty())
                         filename = currentParent->getBaseAttribute("file").get<std::string>();
-                    errorIdParts.push_back(currentParent->getID());
+                    errorIdParts.push_back(currentParent->getId());
                     if (currentParent->getParent() != nullptr)
-                        currentParent = static_cast<ComplexAttribute*>(currentParent->getParent());
+                        currentParent = static_cast<ComplexNode*>(currentParent->getParent());
                     else
                         currentParent = nullptr;
                 }

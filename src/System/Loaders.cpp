@@ -8,7 +8,7 @@ namespace obe
         namespace Loaders
         {
             std::function<int(sf::Texture*, std::string)> textureLoader = [](sf::Texture* obj, std::string path) -> int { return obj->loadFromFile(path); };
-            std::function<int(vili::DataParser*, std::string)> dataLoader = [](vili::DataParser* obj, std::string path) -> int { return obj->parseFile(path); };
+            std::function<int(vili::ViliParser*, std::string)> dataLoader = [](vili::ViliParser* obj, std::string path) -> int { return obj->parseFile(path); };
             std::function<int(sf::Font*, std::string)> fontLoader = [](sf::Font* obj, std::string path) -> int { return obj->loadFromFile(path); };
             std::function<int(std::vector<std::string>*, std::string)> dirPathLoader = [](std::vector<std::string>* obj, std::string path) -> int
             {

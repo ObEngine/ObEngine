@@ -11,7 +11,7 @@ namespace vili
         T m_result;
     public:
         NodeValidator();
-        NodeValidator(ComplexAttribute* node);
+        NodeValidator(ComplexNode* node);
         void validate(T result);
         T result();
     };

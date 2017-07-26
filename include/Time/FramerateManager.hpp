@@ -32,7 +32,7 @@ namespace obe
              * \param window Reference to the window to initialize the VerticalSync
              * \param config Initial configuration of the FramerateManager
              */
-            FramerateManager(sf::RenderWindow& window, vili::ComplexAttribute& config);
+            FramerateManager(sf::RenderWindow& window, vili::ComplexNode& config);
             /**
              * \brief Updates the FramerateManager (done everytime in the main loop)
              */

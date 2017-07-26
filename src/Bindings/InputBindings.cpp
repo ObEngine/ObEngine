@@ -77,14 +77,15 @@ namespace obe
             }
             void LoadInputManager(kaguya::State* lua)
             {
+                //Correct function through lambda (Returning a class that contains unique_ptr cause a problem) <REVISION>
                 (*lua)["Core"]["Input"]["InputManager"].setClass(kaguya::UserdataMetatable<Input::InputManager>()
                     .addFunction("actionExists", &Input::InputManager::actionExists)
-                    .addFunction("addContext", &Input::InputManager::addContext)
+                    //.addFunction("addContext", &Input::InputManager::addContext)
                     .addFunction("clearContexts", &Input::InputManager::clearContexts)
                     .addFunction("configure", &Input::InputManager::configure)
                     .addFunction("getAction", &Input::InputManager::getAction)
                     .addFunction("handleTriggers", &Input::InputManager::handleTriggers)
-                    .addFunction("removeContext", &Input::InputManager::removeContext)
+                    //.addFunction("removeContext", &Input::InputManager::removeContext)
                     .addFunction("setContext", &Input::InputManager::setContext)
                     .addFunction("setEnabled", &Input::InputManager::setEnabled)
                     .addFunction("update", &Input::InputManager::update)

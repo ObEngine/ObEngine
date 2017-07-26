@@ -1,5 +1,7 @@
 #pragma once
 
+#include <kaguya/kaguya.hpp>
+
 #include <Bindings/BindingTree.hpp>
 
 namespace obe

@@ -1,30 +1,30 @@
-#include "vili/DataTemplate.hpp"
+#include "vili/NodeTemplate.hpp"
 
 namespace vili
 {
-    AttributeConstraintManager::AttributeConstraintManager(ComplexAttribute* parent, std::string path) : m_attribute(parent, "link", path)
+    AttributeConstraintManager::AttributeConstraintManager(ComplexNode* parent, std::string path) : m_attribute(parent, "link", path)
     {
     }
 
-    void AttributeConstraintManager::addConstraint(std::function<bool(BaseAttribute*)> constraint)
+    void AttributeConstraintManager::addConstraint(std::function<bool(DataNode*)> constraint)
     {
         m_constraints.push_back(constraint);
     }
 
     bool AttributeConstraintManager::checkAllConstraints()
     {
-        for (std::function<bool(BaseAttribute*)>& constraint : m_constraints)
+        for (std::function<bool(DataNode*)>& constraint : m_constraints)
         {
-            if (!constraint(m_attribute.get<BaseAttribute*>()))
+            if (!constraint(m_attribute.get<DataNode*>()))
                 return false;
         }
-        if (m_attribute.get<BaseAttribute*>()->getAnnotation() != "Set")
+        if (m_attribute.get<DataNode*>()->getAnnotation() != "Set")
             return false;
-        m_attribute.get<BaseAttribute*>()->setAnnotation("UnSet");
+        m_attribute.get<DataNode*>()->setAnnotation("UnSet");
         return true;
     }
 
-    LinkAttribute* AttributeConstraintManager::getLinkAttribute()
+    LinkNode* AttributeConstraintManager::getLinkAttribute()
     {
         return &m_attribute;
     }
@@ -34,32 +34,32 @@ namespace vili
         return m_attribute.getFullPath();
     }
 
-    DataTemplate::DataTemplate(const std::string& name) : m_body("root")
+    NodeTemplate::NodeTemplate(const std::string& name) : m_body("root")
     {
         m_name = name;
     }
 
-    ComplexAttribute* DataTemplate::getBody()
+    ComplexNode* NodeTemplate::getBody()
     {
         return &m_body;
     }
 
-    void DataTemplate::build(ComplexAttribute* parent, const std::string& id)
+    void NodeTemplate::build(ComplexNode* parent, const std::string& id)
     {
         if (checkSignature())
         {
             m_body.at("__body__").copy(parent, id);
-            std::vector<LinkAttribute*> attributeAddresses;
+            std::vector<LinkNode*> attributeAddresses;
             for (AttributeConstraintManager& constraintManager : m_signature)
                 attributeAddresses.push_back(constraintManager.getLinkAttribute());
             parent->getComplexAttribute(id).walk([attributeAddresses](NodeIterator& complex)
             {
-                for (int i = 0; i < complex->getAll(AttributeType::LinkAttribute).size(); i++)
+                for (int i = 0; i < complex->getAll(NodeType::LinkNode).size(); i++)
                 {
                     for (int j = 0; j < attributeAddresses.size(); j++)
                     {
-                        if (complex->getLinkAttribute(complex->getAll(AttributeType::LinkAttribute)[i]) == (*attributeAddresses[j]))
-                            complex->getLinkAttribute(complex->getAll(AttributeType::LinkAttribute)[i]).apply();
+                        if (complex->getLinkAttribute(complex->getAll(NodeType::LinkNode)[i]) == (*attributeAddresses[j]))
+                            complex->getLinkAttribute(complex->getAll(NodeType::LinkNode)[i]).apply();
                     }
                 }
             });
@@ -70,7 +70,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.DataTemplate.BuildError", {{"element", id},{"parent", parent->getNodePath()}});
     }
 
-    bool DataTemplate::checkSignature()
+    bool NodeTemplate::checkSignature()
     {
         for (AttributeConstraintManager& constraintManager : m_signature)
         {
@@ -80,7 +80,7 @@ namespace vili
         return true;
     }
 
-    void DataTemplate::addConstraintManager(const AttributeConstraintManager& constraintManager, bool facultative)
+    void NodeTemplate::addConstraintManager(const AttributeConstraintManager& constraintManager, bool facultative)
     {
         if (facultative)
         {
@@ -93,27 +93,27 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.DataTemplate.WrongFacultativeParameterOrder", {{"index", std::to_string(m_signature.size())}});
     }
 
-    void DataTemplate::useDefaultLinkRoot()
+    void NodeTemplate::useDefaultLinkRoot()
     {
         m_defaultLinkRoot = true;
     }
 
-    unsigned int DataTemplate::getArgumentCount() const
+    unsigned int NodeTemplate::getArgumentCount() const
     {
         return m_signature.size();
     }
 
-    std::string DataTemplate::getName() const
+    std::string NodeTemplate::getName() const
     {
         return m_name;
     }
 
-    void DataTemplate::setVisible(bool visible)
+    void NodeTemplate::setVisible(bool visible)
     {
         m_visible = visible;
     }
 
-    bool DataTemplate::isVisible()
+    bool NodeTemplate::isVisible()
     {
         return m_visible;
     }

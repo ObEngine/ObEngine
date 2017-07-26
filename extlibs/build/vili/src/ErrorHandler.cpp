@@ -2,7 +2,7 @@
 
 namespace aube
 {
-    ErrorMessage::ErrorMessage(std::string file, std::vector<std::string> location, std::string message, std::vector<std::string> hints)
+    ErrorMessage::ErrorMessage(const std::string& file, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints = {})
     {
         m_file = file;
         m_location = location;

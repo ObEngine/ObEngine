@@ -1,30 +1,30 @@
 #pragma once
 
-#include "ComplexAttribute.hpp"
-#include "DataTemplate.hpp"
+#include "ComplexNode.hpp"
+#include "NodeTemplate.hpp"
 
 namespace vili
 {
-    class DataParser
+    class ViliParser
     {
     private:
-        std::unique_ptr<ComplexAttribute> m_root = nullptr;
-        std::map<std::string, DataTemplate*> m_templateList;
+        std::unique_ptr<ComplexNode> m_root = nullptr;
+        std::map<std::string, NodeTemplate*> m_templateList;
         std::vector<std::string> m_flagList;
         unsigned int m_spacing = 4;
         std::vector<std::string> m_includes;
-        ComplexAttribute& getPath(std::string path) const;
-        ComplexAttribute& getRootChild(std::string child) const;
+        ComplexNode& getPath(std::string path) const;
+        ComplexNode& getRootChild(std::string child) const;
     public:
-        DataParser();
-        DataParser(std::string file);
-        ComplexAttribute* operator->() const;
-        ComplexAttribute& root() const;
+        ViliParser();
+        ViliParser(std::string file);
+        ComplexNode* operator->() const;
+        ComplexNode& root() const;
         void createFlag(const std::string& flag);
-        ComplexAttribute& operator[](const std::string& cPath) const;
-        ComplexAttribute& at(std::string cPath) const;
+        ComplexNode& operator[](const std::string& cPath) const;
+        ComplexNode& at(std::string cPath) const;
         template <class ...Args>
-        ComplexAttribute& at(const std::string& cPath, Args ...pathParts);
+        ComplexNode& at(const std::string& cPath, Args ...pathParts);
         template <class T, class ...Args>
         T& at(const std::string& cPath, Args ...pathParts);
         bool parseFile(const std::string& filename, bool verbose = false, bool visible = true);
@@ -37,17 +37,17 @@ namespace vili
         unsigned int getSpacing() const;
         void includeFile(const std::string& filename, bool verbose = false);
         std::vector<std::string> getIncludes() const;
-        DataTemplate* getTemplate(const std::string& templateId) const;
+        NodeTemplate* getTemplate(const std::string& templateId) const;
     };
 
     template <class ...Args>
-    ComplexAttribute& DataParser::at(const std::string& cPath, Args ...pathParts)
+    ComplexNode& ViliParser::at(const std::string& cPath, Args ...pathParts)
     {
         return m_root->at(cPath, pathParts...);
     }
 
     template <class T, class ...Args>
-    T& DataParser::at(const std::string& cPath, Args ...pathParts)
+    T& ViliParser::at(const std::string& cPath, Args ...pathParts)
     {
         return m_root->at<T>(cPath, pathParts...);
     }

@@ -25,7 +25,7 @@ namespace obe
             /**
              * \brief Load a vili::DataParser from a file
              */
-            extern std::function<int(vili::DataParser*, std::string)> dataLoader;
+            extern std::function<int(vili::ViliParser*, std::string)> dataLoader;
             /**
              * \brief Load a sf::Font from a file
              */

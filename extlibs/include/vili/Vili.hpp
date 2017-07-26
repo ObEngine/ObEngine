@@ -3,14 +3,20 @@
 
 #pragma once
 
-#include "vili/DataParser.hpp"
-#include "vili/LinkAttribute.hpp"
+#include "vili/ViliParser.hpp"
+#include "vili/LinkNode.hpp"
 
 #include "ErrorHandler.hpp"
 #include "Functions.hpp"
 
+/**
+ * \brief A nice and readable data format language !
+ */
 namespace vili
 {
+    /**
+     * \brief Loads all Aube Errors located in the given path
+     * \param errorFile File where to load Aube Errors
+     */
     void LoadErrors(const std::string& errorFile);
-    std::vector<std::string> convertPath(const std::string& path);
 }

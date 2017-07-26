@@ -22,15 +22,15 @@ namespace obe
         void MountPaths()
         {
             Path::MountedPaths.clear();
-            vili::DataParser mountedPaths;
+            vili::ViliParser mountedPaths;
             mountedPaths.parseFile("Mount.vili", true);
             mountedPaths.writeFile("MountExport.vili");
-            for (std::string path : mountedPaths.at("Mount").getAll(vili::AttributeType::ComplexAttribute))
+            for (std::string path : mountedPaths.at("Mount").getAll(vili::NodeType::ComplexNode))
             {
-                vili::ComplexAttribute& currentElement = mountedPaths.at("Mount", path);
-                std::string currentType = currentElement.at<vili::BaseAttribute>("type").get<std::string>();
-                std::string currentPath = currentElement.at<vili::BaseAttribute>("path").get<std::string>();
-                int currentPriority = currentElement.at<vili::BaseAttribute>("priority").get<int>();
+                vili::ComplexNode& currentElement = mountedPaths.at("Mount", path);
+                std::string currentType = currentElement.at<vili::DataNode>("type").get<std::string>();
+                std::string currentPath = currentElement.at<vili::DataNode>("path").get<std::string>();
+                int currentPriority = currentElement.at<vili::DataNode>("priority").get<int>();
                 if (currentType == "Path")
                 {
                     Path::Mount(MountablePath(PathType::Path, currentPath, currentPriority));

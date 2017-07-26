@@ -91,17 +91,17 @@ namespace obe
             return instance;
         }
 
-        vili::ComplexAttribute* GameObjectRequires::getRequiresForObjectType(std::string type) const
+        vili::ComplexNode* GameObjectRequires::getRequiresForObjectType(std::string type) const
         {
-            if (!Utils::Vector::isInList(type, allRequires->getAll(vili::AttributeType::ComplexAttribute)))
+            if (!Utils::Vector::isInList(type, allRequires->getAll(vili::NodeType::ComplexNode)))
             {
-                vili::DataParser getGameObjectFile;
+                vili::ViliParser getGameObjectFile;
                 System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
                 if (getGameObjectFile->contains("Requires"))
                 {
-                    vili::ComplexAttribute& requiresData = getGameObjectFile.at<vili::ComplexAttribute>("Requires");
-                    getGameObjectFile->extractElement(&getGameObjectFile.at<vili::ComplexAttribute>("Requires"));
-                    requiresData.setID(type);
+                    vili::ComplexNode& requiresData = getGameObjectFile.at<vili::ComplexNode>("Requires");
+                    getGameObjectFile->extractElement(&getGameObjectFile.at<vili::ComplexNode>("Requires"));
+                    requiresData.setId(type);
                     allRequires->pushComplexAttribute(&requiresData);
                     return &requiresData;
                 }
@@ -110,11 +110,11 @@ namespace obe
             return &allRequires.at(type);
         }
 
-        void GameObjectRequires::ApplyRequirements(GameObject* obj, vili::ComplexAttribute& requires)
+        void GameObjectRequires::ApplyRequirements(GameObject* obj, vili::ComplexNode& requires)
         {
             for (std::string currentRequirement : requires.getAll())
             {
-                requires.setID("Lua_ReqList");
+                requires.setId("Lua_ReqList");
                 kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]);
                 DataBridge::complexAttributeToLuaTable(requireTable, requires);
             }
@@ -138,11 +138,11 @@ namespace obe
             m_registeredTriggers.push_back(trg);
         }
 
-        void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexAttribute& obj)
+        void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
         {
             //Animator
             std::string animatorPath;
-            if (obj.contains(vili::AttributeType::ComplexAttribute, "Animator"))
+            if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
             {
                 m_objectAnimator = std::make_unique<Animation::Animator>();
                 animatorPath = obj.at("Animator").getBaseAttribute("path").get<std::string>();
@@ -151,14 +151,14 @@ namespace obe
                     m_objectAnimator->setPath(animatorPath);
                     m_objectAnimator->loadAnimator();
                 }
-                if (obj.at("Animator").contains(vili::AttributeType::BaseAttribute, "default"))
+                if (obj.at("Animator").contains(vili::NodeType::DataNode, "default"))
                 {
                     m_objectAnimator->setKey(obj.at("Animator").getBaseAttribute("default").get<std::string>());
                 }
                 m_hasAnimator = true;
             }
             //Collider
-            if (obj.contains(vili::AttributeType::ComplexAttribute, "Collider"))
+            if (obj.contains(vili::NodeType::ComplexNode, "Collider"))
             {
                 m_objectCollider = world.createCollider(m_id);
 
@@ -166,7 +166,7 @@ namespace obe
                 bool completePoint = true;
                 double pointBuffer;
                 Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                for (vili::BaseAttribute* colliderPoint : obj.at("Collider").getListAttribute("points"))
+                for (vili::DataNode* colliderPoint : obj.at("Collider").getListAttribute("points"))
                 {
                     if (completePoint = !completePoint)
                     {
@@ -180,32 +180,32 @@ namespace obe
                     else
                         pointBuffer = colliderPoint->get<double>();
                 }
-                if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "tag"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Tag, obj.at<vili::BaseAttribute>("Collider", "tag").get<std::string>());
-                else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "tags"))
+                if (obj.at("Collider").contains(vili::NodeType::DataNode, "tag"))
+                    m_objectCollider->addTag(Collision::ColliderTagType::Tag, obj.at<vili::DataNode>("Collider", "tag").get<std::string>());
+                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "tags"))
                 {
-                    for (vili::BaseAttribute* cTag : obj.at<vili::ListAttribute>("Collider", "tags"))
+                    for (vili::DataNode* cTag : obj.at<vili::ArrayNode>("Collider", "tags"))
                         m_objectCollider->addTag(Collision::ColliderTagType::Tag, cTag->get<std::string>());
                 }
-                if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "accept"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Accepted, obj.at<vili::BaseAttribute>("Collider", "accept").get<std::string>());
-                else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "accept"))
+                if (obj.at("Collider").contains(vili::NodeType::DataNode, "accept"))
+                    m_objectCollider->addTag(Collision::ColliderTagType::Accepted, obj.at<vili::DataNode>("Collider", "accept").get<std::string>());
+                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "accept"))
                 {
-                    for (vili::BaseAttribute* aTag : obj.at<vili::ListAttribute>("Collider", "accept"))
+                    for (vili::DataNode* aTag : obj.at<vili::ArrayNode>("Collider", "accept"))
                         m_objectCollider->addTag(Collision::ColliderTagType::Accepted, aTag->get<std::string>());
                 }
-                if (obj.at("Collider").contains(vili::AttributeType::BaseAttribute, "reject"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Rejected, obj.at<vili::BaseAttribute>("Collider", "reject").get<std::string>());
-                else if (obj.at("Collider").contains(vili::AttributeType::ListAttribute, "reject"))
+                if (obj.at("Collider").contains(vili::NodeType::DataNode, "reject"))
+                    m_objectCollider->addTag(Collision::ColliderTagType::Rejected, obj.at<vili::DataNode>("Collider", "reject").get<std::string>());
+                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "reject"))
                 {
-                    for (vili::BaseAttribute* rTag : obj.at<vili::ListAttribute>("Collider", "reject"))
+                    for (vili::DataNode* rTag : obj.at<vili::ArrayNode>("Collider", "reject"))
                         m_objectCollider->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
                 }
 
                 m_hasCollider = true;
             }
             //LevelSprite
-            if (obj.contains(vili::AttributeType::ComplexAttribute, "LevelSprite"))
+            if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id);
                 m_levelSpriteRelative = (obj.at("LevelSprite").getBaseAttribute("position").get<std::string>() == "relative") ? true : false;
@@ -213,34 +213,34 @@ namespace obe
                 int sprOffY = 0;
                 std::string spriteXTransformer;
                 std::string spriteYTransformer;
-                vili::ComplexAttribute& currentSprite = obj.at("LevelSprite");
+                vili::ComplexNode& currentSprite = obj.at("LevelSprite");
 
-                std::string spritePath = currentSprite.contains(vili::AttributeType::BaseAttribute, "path") ?
+                std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
                                              currentSprite.getBaseAttribute("path").get<std::string>() : "";
                 Transform::UnitVector spritePos = Transform::UnitVector(
-                    currentSprite.contains(vili::AttributeType::ComplexAttribute, "pos") ?
-                        currentSprite.at<vili::BaseAttribute>("pos", "x").get<double>() : 0,
-                    currentSprite.contains(vili::AttributeType::ComplexAttribute, "pos") ?
-                        currentSprite.at<vili::BaseAttribute>("pos", "y").get<double>() : 0
+                    currentSprite.contains(vili::NodeType::ComplexNode, "pos") ?
+                        currentSprite.at<vili::DataNode>("pos", "x").get<double>() : 0,
+                    currentSprite.contains(vili::NodeType::ComplexNode, "pos") ?
+                        currentSprite.at<vili::DataNode>("pos", "y").get<double>() : 0
                 );
-                int spriteRot = currentSprite.contains(vili::AttributeType::BaseAttribute, "rotation") ?
+                int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
                                     currentSprite.getBaseAttribute("rotation").get<int>() : 0;
-                int layer = currentSprite.contains(vili::AttributeType::BaseAttribute, "layer") ?
+                int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
                                 currentSprite.getBaseAttribute("layer").get<int>() : 1;
-                int zdepth = currentSprite.contains(vili::AttributeType::BaseAttribute, "z-depth") ?
+                int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
                                  currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
 
-                if (currentSprite.contains(vili::AttributeType::BaseAttribute, "xTransform"))
+                if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
                 {
-                    spriteXTransformer = currentSprite.at<vili::BaseAttribute>("xTransform").get<std::string>();
+                    spriteXTransformer = currentSprite.at<vili::DataNode>("xTransform").get<std::string>();
                 }
                 else
                 {
                     spriteXTransformer = "None";
                 }
-                if (currentSprite.contains(vili::AttributeType::BaseAttribute, "yTransform"))
+                if (currentSprite.contains(vili::NodeType::DataNode, "yTransform"))
                 {
-                    spriteYTransformer = currentSprite.at<vili::BaseAttribute>("yTransform").get<std::string>();
+                    spriteYTransformer = currentSprite.at<vili::DataNode>("yTransform").get<std::string>();
                 }
                 else
                 {
@@ -259,7 +259,7 @@ namespace obe
                 world.reorganizeLayers();
             }
             //Script
-            if (obj.contains(vili::AttributeType::ComplexAttribute, "Script"))
+            if (obj.contains(vili::NodeType::ComplexNode, "Script"))
             {
                 m_objectScript = std::make_unique<kaguya::State>();
                 m_hasScriptEngine = true;
@@ -290,12 +290,12 @@ namespace obe
                 (*m_objectScript)["Private"] = m_privateKey;
                 (*m_objectScript)["Public"] = m_publicKey;
 
-                if (obj.at("Script").contains(vili::AttributeType::BaseAttribute, "source"))
+                if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
                 {
                     std::string getScrName = obj.at("Script").getBaseAttribute("source").get<std::string>();
                     System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
                 }
-                else if (obj.at("Script").contains(vili::AttributeType::ListAttribute, "sources"))
+                else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
                 {
                     int scriptListSize = obj.at("Script").getListAttribute("sources").size();
                     for (int i = 0; i < scriptListSize; i++)
@@ -304,7 +304,7 @@ namespace obe
                         System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
                     }
                 }
-                if (obj.at("Script").contains(vili::AttributeType::BaseAttribute, "priority"))
+                if (obj.at("Script").contains(vili::NodeType::DataNode, "priority"))
                     m_scrPriority = obj.at("Script").getBaseAttribute("priority").get<int>();
 
                 m_localTriggers->pushParameter("Init", "Lol", 3);

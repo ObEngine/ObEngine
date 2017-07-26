@@ -1,6 +1,6 @@
 #include <fstream>
 
-#include "vili/DataParser.hpp"
+#include "vili/ViliParser.hpp"
 #include "Functions.hpp"
 
 namespace
@@ -59,50 +59,50 @@ namespace
 
 namespace vili
 {
-    DataParser::DataParser()
+    ViliParser::ViliParser()
     {
-        m_root = std::make_unique<ComplexAttribute>("root");
+        m_root = std::make_unique<ComplexNode>("root");
         m_root->setAnnotation("NoFile");
     }
 
-    DataParser::DataParser(std::string file)
+    ViliParser::ViliParser(std::string file)
     {
-        m_root = std::make_unique<ComplexAttribute>("root");
+        m_root = std::make_unique<ComplexNode>("root");
         m_root->setAnnotation("NoFile");
         parseFile(file);
     }
 
-    ComplexAttribute* DataParser::operator->() const
+    ComplexNode* ViliParser::operator->() const
     {
         return m_root.get();
     }
 
-    ComplexAttribute& DataParser::root() const
+    ComplexNode& ViliParser::root() const
     {
         return *m_root.get();
     }
 
-    void DataParser::createFlag(const std::string& flag)
+    void ViliParser::createFlag(const std::string& flag)
     {
         m_flagList.push_back(flag);
     }
 
-    bool DataParser::hasFlag(const std::string& flagName) const
+    bool ViliParser::hasFlag(const std::string& flagName) const
     {
         return find(m_flagList.begin(), m_flagList.end(), flagName) != m_flagList.end();
     }
 
-    unsigned int DataParser::getAmountOfFlags() const
+    unsigned int ViliParser::getAmountOfFlags() const
     {
         return m_flagList.size();
     }
 
-    std::string DataParser::getFlagAtIndex(int index) const
+    std::string ViliParser::getFlagAtIndex(int index) const
     {
         return m_flagList.at(index);
     }
 
-    ComplexAttribute& DataParser::getPath(std::string path) const
+    ComplexNode& ViliParser::getPath(std::string path) const
     {
         if (path.size() > 0 && Functions::String::extract(path, path.size() - 1, 0) == "/")
             path = Functions::String::extract(path, 0, 1);
@@ -115,26 +115,26 @@ namespace vili
         return getRootChild(path);
     }
 
-    ComplexAttribute& DataParser::getRootChild(std::string child) const
+    ComplexNode& ViliParser::getRootChild(std::string child) const
     {
         if (child.empty())
             return *m_root.get();
         return m_root->getComplexAttribute(child);
     }
 
-    ComplexAttribute& DataParser::operator[](const std::string& cPath) const
+    ComplexNode& ViliParser::operator[](const std::string& cPath) const
     {
         return getPath(cPath);
     }
 
-    ComplexAttribute& DataParser::at(std::string cPath) const
+    ComplexNode& ViliParser::at(std::string cPath) const
     {
         if (cPath.size() > 0 && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
             cPath = Functions::String::extract(cPath, 0, 1);
         return getPath(cPath);
     }
 
-    bool DataParser::parseFile(const std::string& filename, bool verbose, bool visible)
+    bool ViliParser::parseFile(const std::string& filename, bool verbose, bool visible)
     {
         std::ifstream useFile;
         useFile.open(filename);
@@ -281,7 +281,7 @@ namespace vili
                         {
                             std::string complexElementID = parsedLine.substr(0, parsedLine.size() - 1);
                             std::vector<std::string> complexToHeritIDList;
-                            std::vector<ComplexAttribute*> complexToHerit;
+                            std::vector<ComplexNode*> complexToHerit;
                             if (Functions::String::occurencesInString(complexElementID, "(") == 1 &&
                                 Functions::String::occurencesInString(complexElementID, ")") == 1 &&
                                 Functions::String::split(complexElementID, "(").size() == 2)
@@ -294,7 +294,7 @@ namespace vili
                                 {
                                     m_root->walk([currentHerit, &complexToHerit](NodeIterator& node)
                                     {
-                                        if (node->getID() == currentHerit)
+                                        if (node->getId() == currentHerit)
                                         {
                                             complexToHerit.push_back(node.get());
                                             node.terminate();
@@ -344,7 +344,7 @@ namespace vili
                                     int i = 0;
                                     for (std::string& arg : templateArgs)
                                     {
-                                        ComplexAttribute& cArg = getRootChild(templateName).at("__init__", std::to_string(i));
+                                        ComplexNode& cArg = getRootChild(templateName).at("__init__", std::to_string(i));
                                         cArg.deleteBaseAttribute("value", true);
                                         cArg.createBaseAttribute("value", Types::getVarType(arg), arg);
                                         cArg.getBaseAttribute("value").setAnnotation("Set");
@@ -425,30 +425,30 @@ namespace vili
         throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.FileNotFound", {{"file", filename}});
     }
 
-    void DataParser::generateTemplate(const std::string& templateName, bool visible)
+    void ViliParser::generateTemplate(const std::string& templateName, bool visible)
     {
-        ComplexAttribute* templateBase = &getRootChild(templateName);
-        DataTemplate* newTemplate = new DataTemplate(templateName);
+        ComplexNode* templateBase = &getRootChild(templateName);
+        NodeTemplate* newTemplate = new NodeTemplate(templateName);
         if (templateBase != nullptr)
         {
-            if (templateBase->contains(AttributeType::ComplexAttribute, "__init__") && templateBase->contains(AttributeType::ComplexAttribute, "__body__"))
+            if (templateBase->contains(NodeType::ComplexNode, "__init__") && templateBase->contains(NodeType::ComplexNode, "__body__"))
             {
-                if (!templateBase->contains(AttributeType::BaseAttribute, "__linkroot__"))
+                if (!templateBase->contains(NodeType::DataNode, "__linkroot__"))
                 {
                     templateBase->at("__body__").createBaseAttribute("__linkroot__", "/" + templateName + "/__init__");
-                    templateBase->at<BaseAttribute>("__body__", "__linkroot__").setVisible(false);
+                    templateBase->at<DataNode>("__body__", "__linkroot__").setVisible(false);
                     newTemplate->useDefaultLinkRoot();
                 }
 
                 int i = 0;
                 while (true)
                 {
-                    if (templateBase->at("__init__").contains(AttributeType::ComplexAttribute, std::to_string(i)))
+                    if (templateBase->at("__init__").contains(NodeType::ComplexNode, std::to_string(i)))
                     {
                         AttributeConstraintManager newConstraint(templateBase, templateName + "/__init__/" + std::to_string(i) + "/value");
                         std::vector<std::string> requiredTypes;
-                        ComplexAttribute& currentArgument = templateBase->at("__init__", std::to_string(i));
-                        if (currentArgument.contains(AttributeType::BaseAttribute, "type"))
+                        ComplexNode& currentArgument = templateBase->at("__init__", std::to_string(i));
+                        if (currentArgument.contains(NodeType::DataNode, "type"))
                             requiredTypes.push_back(
                                 currentArgument.getBaseAttribute("type").get<std::string>()
                             );
@@ -464,14 +464,14 @@ namespace vili
                         {
                             requiredConstraintTypes.push_back(Types::stringToDataType(reqType));
                         }
-                        newConstraint.addConstraint([requiredConstraintTypes](BaseAttribute* attribute) -> bool
+                        newConstraint.addConstraint([requiredConstraintTypes](DataNode* attribute) -> bool
                         {
                             return (Functions::Vector::isInList(attribute->getDataType(), requiredConstraintTypes));
                         });
-                        if (templateBase->at("__init__", std::to_string(i)).contains(AttributeType::BaseAttribute, "defaultValue"))
+                        if (templateBase->at("__init__", std::to_string(i)).contains(NodeType::DataNode, "defaultValue"))
                         {
-                            std::string defaultValue = templateBase->at<BaseAttribute>("__init__", std::to_string(i), "defaultValue").returnData();
-                            newConstraint.addConstraint([defaultValue](BaseAttribute* attribute) -> bool
+                            std::string defaultValue = templateBase->at<DataNode>("__init__", std::to_string(i), "defaultValue").dumpData();
+                            newConstraint.addConstraint([defaultValue](DataNode* attribute) -> bool
                             {
                                 if (attribute->getAnnotation() != "Set")
                                 {
@@ -489,7 +489,7 @@ namespace vili
                 }
                 templateBase->at("__body__").copy(newTemplate->getBody());
                 newTemplate->setVisible(visible);
-                m_templateList[templateBase->getID()] = newTemplate;
+                m_templateList[templateBase->getId()] = newTemplate;
             }
             else
                 throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.TemplateMissingInitOrBody", {{"template", templateName},{"file", m_root->getAnnotation()}});
@@ -498,7 +498,7 @@ namespace vili
             throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.WrongTemplateBase", {{"attribute", templateName},{"file", m_root->getAnnotation()}});
     }
 
-    void DataParser::writeFile(const std::string& filename, bool verbose) const
+    void ViliParser::writeFile(const std::string& filename, bool verbose) const
     {
         std::ofstream outFile;
         outFile.open(filename);
@@ -530,7 +530,7 @@ namespace vili
         if (m_templateList.size() > 0)
             outFile << std::endl;
 
-        for (std::pair<std::string, DataTemplate*> templatePair : m_templateList)
+        for (std::pair<std::string, NodeTemplate*> templatePair : m_templateList)
         {
             if (templatePair.second->isVisible())
                 outFile << "Template (" << templatePair.first << ");" << std::endl;
@@ -540,28 +540,28 @@ namespace vili
         outFile.close();
     }
 
-    void DataParser::setSpacing(unsigned int spacing)
+    void ViliParser::setSpacing(unsigned int spacing)
     {
         m_spacing = spacing;
     }
 
-    unsigned DataParser::getSpacing() const
+    unsigned ViliParser::getSpacing() const
     {
         return m_spacing;
     }
 
-    void DataParser::includeFile(const std::string& filename, bool verbose)
+    void ViliParser::includeFile(const std::string& filename, bool verbose)
     {
         m_includes.push_back(filename);
         this->parseFile(filename + ".vili", verbose, false);
     }
 
-    std::vector<std::string> DataParser::getIncludes() const
+    std::vector<std::string> ViliParser::getIncludes() const
     {
         return m_includes;
     }
 
-    DataTemplate* DataParser::getTemplate(const std::string& templateId) const
+    NodeTemplate* ViliParser::getTemplate(const std::string& templateId) const
     {
         if (m_templateList.find(templateId) != m_templateList.end())
             return m_templateList.at(templateId);

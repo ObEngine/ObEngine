@@ -38,9 +38,9 @@ namespace obe
             loadingText.setFont(loadingFont);
             loadingText.setCharacterSize(70.0);
             loadingText.setPosition(348.0, 595.0);
-            vili::DataParser loadingStrDP("Sprites/Menus/loading.vili");
-            std::string loadingRandomStr = loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr").get(
-                Utils::Math::randint(0, loadingStrDP.at<vili::ListAttribute>("Loading", "loadingStr").size() - 1));
+            vili::ViliParser loadingStrDP("Sprites/Menus/loading.vili");
+            std::string loadingRandomStr = loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").get(
+                Utils::Math::randint(0, loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").size() - 1));
             loadingText.setString(loadingRandomStr);
             window.draw(loadingSprite);
             window.draw(loadingText);
@@ -53,9 +53,9 @@ namespace obe
             font.loadFromFile("Data/Fonts/arial.ttf");
 
             //Config
-            vili::DataParser configFile;
+            vili::ViliParser configFile;
             System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
-            vili::ComplexAttribute& gameConfig = configFile.at("GameConfig");
+            vili::ComplexNode& gameConfig = configFile.at("GameConfig");
 
             //Cursor
             System::Cursor cursor;

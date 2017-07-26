@@ -77,21 +77,21 @@ namespace vili
             return "Error-Unknown";
         }
 
-        std::string attributeTypeToString(AttributeType type)
+        std::string nodeTypeToString(NodeType type)
         {
-            if (type == AttributeType::Attribute) return "Attribute";
-            if (type == AttributeType::ContainerAttribute) return "ContainerAttribute";
-            if (type == AttributeType::BaseAttribute) return "BaseAttribute";
-            if (type == AttributeType::ListAttribute) return "ListAttribute";
-            if (type == AttributeType::ComplexAttribute) return "ComplexAttribute";
-            if (type == AttributeType::LinkAttribute) return "LinkAttribute";
+            if (type == NodeType::Node) return "Attribute";
+            if (type == NodeType::ContainerNode) return "ContainerAttribute";
+            if (type == NodeType::DataNode) return "BaseAttribute";
+            if (type == NodeType::ArrayNode) return "ListAttribute";
+            if (type == NodeType::ComplexNode) return "ComplexAttribute";
+            if (type == NodeType::LinkNode) return "LinkAttribute";
             return "Error-Unknown";
         }
     }
 
-    std::ostream& operator<<(std::ostream& os, const AttributeType& m)
+    std::ostream& operator<<(std::ostream& os, const NodeType& m)
     {
-        os << Types::attributeTypeToString(m);
+        os << Types::nodeTypeToString(m);
         return os;
     }
 

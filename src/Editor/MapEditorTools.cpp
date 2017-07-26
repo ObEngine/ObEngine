@@ -118,8 +118,8 @@ namespace obe
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, std::string objName)
         {
             std::cout << "Call Require Creation for : " << objName << std::endl;
-            vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
-            vili::ComplexAttribute& requireInput = requires->at("Input");
+            vili::ComplexNode* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+            vili::ComplexNode& requireInput = requires->at("Input");
             std::cout << "Requires is : " << requires << std::endl;
             if (requires != nullptr)
             {
@@ -137,10 +137,10 @@ namespace obe
                 content->add(newObjectTitleLabel);
 
                 int widgetVerticalPosition = 70;
-                for (std::string& requireItem : requireInput.getAll(vili::AttributeType::ComplexAttribute))
+                for (std::string& requireItem : requireInput.getAll(vili::NodeType::ComplexNode))
                 {
                     std::cout << "Require item is : " << requireItem << std::endl;
-                    std::cout << requires->contains(vili::AttributeType::ComplexAttribute, "Color") << std::endl;
+                    std::cout << requires->contains(vili::NodeType::ComplexNode, "Color") << std::endl;
 
                     tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                     currentRequirementLabel->setPosition(50, widgetVerticalPosition);
@@ -150,7 +150,7 @@ namespace obe
                     content->add(currentRequirementLabel, requireItem + "_label");
 
 
-                    if (requireInput.getPath(requireItem).contains(vili::AttributeType::BaseAttribute, "type"))
+                    if (requireInput.getPath(requireItem).contains(vili::NodeType::DataNode, "type"))
                     {
                         tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
                         currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
@@ -158,7 +158,7 @@ namespace obe
                         currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
                         content->add(currentRequirementInput, requireItem + "_input");
                     }
-                    else if (requireInput.getPath(requireItem).contains(vili::AttributeType::ListAttribute, "choices"))
+                    else if (requireInput.getPath(requireItem).contains(vili::NodeType::ArrayNode, "choices"))
                     {
                         tgui::ComboBox::Ptr currentRequirementList = tgui::ComboBox::create();
                         currentRequirementList->setSize(200, 32);

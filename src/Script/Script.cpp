@@ -932,7 +932,7 @@ namespace obe
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.UtilsImportError", {{"lib", Utils::Vector::join(args, ".")}});
         }
 
-        KAGUYA_MEMBER_FUNCTION_OVERLOADS(DataParser_parseFile_wrapper, vili::DataParser, parseFile, 1, 3)
+        KAGUYA_MEMBER_FUNCTION_OVERLOADS(DataParser_parseFile_wrapper, vili::ViliParser, parseFile, 1, 3)
 
         void CoreLib::loadVili(kaguya::State* lua, std::vector<std::string> args)
         {
@@ -942,33 +942,33 @@ namespace obe
             if (!static_cast<bool>((*lua)["Core"]["Vili"])) (*lua)["Core"]["Vili"] = kaguya::NewTable();
             if (importAll || args[1] == "DataParser")
             {
-                (*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::DataParser>()
-                    .setConstructors<vili::DataParser(), vili::DataParser(std::string)>()
-                    .addFunction("createFlag", &vili::DataParser::createFlag)
-                    .addFunction("root", &vili::DataParser::operator->)
-                    .addFunction("getAmountOfFlags", &vili::DataParser::getAmountOfFlags)
-                    .addFunction("getFlagAtIndex", &vili::DataParser::getFlagAtIndex)
-                    .addFunction("hasFlag", &vili::DataParser::hasFlag)
+                (*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::ViliParser>()
+                    .setConstructors<vili::ViliParser(), vili::ViliParser(std::string)>()
+                    .addFunction("createFlag", &vili::ViliParser::createFlag)
+                    .addFunction("root", &vili::ViliParser::operator->)
+                    .addFunction("getAmountOfFlags", &vili::ViliParser::getAmountOfFlags)
+                    .addFunction("getFlagAtIndex", &vili::ViliParser::getFlagAtIndex)
+                    .addFunction("hasFlag", &vili::ViliParser::hasFlag)
                     .addFunction("parseFile", DataParser_parseFile_wrapper())
-                    .addFunction("writeFile", &vili::DataParser::writeFile)
+                    .addFunction("writeFile", &vili::ViliParser::writeFile)
                 );
                 foundPart = true;
             }
             if (importAll || Utils::String::contains(args[1], "Attribute"))
             {
-                (*lua)["Core"]["Vili"]["Attribute"].setClass(kaguya::UserdataMetatable<vili::Attribute>()
-                    .addFunction("getID", &vili::Attribute::getID)
-                    .addFunction("getType", &vili::Attribute::getType)
+                (*lua)["Core"]["Vili"]["Attribute"].setClass(kaguya::UserdataMetatable<vili::Node>()
+                    .addFunction("getID", &vili::Node::getId)
+                    .addFunction("getType", &vili::Node::getType)
                 );
                 foundPart = true;
             }
             if (importAll || args[1] == "ComplexAttribute")
             {
-                (*lua)["Core"]["Vili"]["ComplexAttribute"].setClass(kaguya::UserdataMetatable<vili::ComplexAttribute, vili::Attribute>()
+                (*lua)["Core"]["Vili"]["ComplexAttribute"].setClass(kaguya::UserdataMetatable<vili::ComplexNode, vili::Node>()
                     .setConstructors<
-                        vili::ComplexAttribute(std::string),
-                        vili::ComplexAttribute(std::string, vili::ComplexAttribute*),
-                        vili::ComplexAttribute(std::string, std::vector<vili::ComplexAttribute*>*)>()
+                        vili::ComplexNode(std::string),
+                        vili::ComplexNode(std::string, vili::ComplexNode*),
+                        vili::ComplexNode(std::string, std::vector<vili::ComplexNode*>*)>()
                     /*.addOverloadedFunctions("createBaseAttribute",
                         static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, const vili::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
                         static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
@@ -992,7 +992,7 @@ namespace obe
                     //.addFunction("pushListAttribute", &vili::ComplexAttribute::pushListAttribute)
                 );
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["at"] = kaguya::function(
-                    [](vili::ComplexAttribute& attribute, kaguya::VariadicArgType args)
+                    [](vili::ComplexNode& attribute, kaguya::VariadicArgType args)
                 {
                     std::vector<std::string> fullPath;
                     for (auto arg : args)
@@ -1003,17 +1003,17 @@ namespace obe
                     return &attribute.at(stringPath);
                 });
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getBaseAttribute"] = kaguya::function(
-                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                    [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
                     return &attribute.getBaseAttribute(attributeID);
                 });
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getComplexAttribute"] = kaguya::function(
-                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                    [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
                     return &attribute.getComplexAttribute(attributeID);
                 });
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getListAttribute"] = kaguya::function(
-                    [](vili::ComplexAttribute& attribute, const std::string& attributeID)
+                    [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
                     return &attribute.getListAttribute(attributeID);
                 });
@@ -1021,25 +1021,25 @@ namespace obe
             }
             if (importAll || args[1] == "ListAttribute")
             {
-                (*lua)["Core"]["Vili"]["ListAttribute"].setClass(kaguya::UserdataMetatable<vili::ListAttribute, vili::Attribute>()
-                    .setConstructors<vili::ListAttribute(std::string)>()
+                (*lua)["Core"]["Vili"]["ListAttribute"].setClass(kaguya::UserdataMetatable<vili::ArrayNode, vili::Node>()
+                    .setConstructors<vili::ArrayNode(std::string)>()
                     .addOverloadedFunctions("push",
-                                            static_cast<void (vili::ListAttribute::*)(int)>(&vili::ListAttribute::push),
-                                            static_cast<void (vili::ListAttribute::*)(bool)>(&vili::ListAttribute::push),
-                                            static_cast<void (vili::ListAttribute::*)(double)>(&vili::ListAttribute::push),
-                                            static_cast<void (vili::ListAttribute::*)(const std::string&)>(&vili::ListAttribute::push)
+                                            static_cast<void (vili::ArrayNode::*)(int)>(&vili::ArrayNode::push),
+                                            static_cast<void (vili::ArrayNode::*)(bool)>(&vili::ArrayNode::push),
+                                            static_cast<void (vili::ArrayNode::*)(double)>(&vili::ArrayNode::push),
+                                            static_cast<void (vili::ArrayNode::*)(const std::string&)>(&vili::ArrayNode::push)
                     )
-                    .addFunction("clear", &vili::ListAttribute::clear)
+                    .addFunction("clear", &vili::ArrayNode::clear)
                     .addOverloadedFunctions("insert",
-                                            static_cast<void (vili::ListAttribute::*)(unsigned int, int)>(&vili::ListAttribute::insert),
-                                            static_cast<void (vili::ListAttribute::*)(unsigned int, bool)>(&vili::ListAttribute::insert),
-                                            static_cast<void (vili::ListAttribute::*)(unsigned int, double)>(&vili::ListAttribute::insert),
-                                            static_cast<void (vili::ListAttribute::*)(unsigned int, const std::string&)>(&vili::ListAttribute::insert)
+                                            static_cast<void (vili::ArrayNode::*)(unsigned int, int)>(&vili::ArrayNode::insert),
+                                            static_cast<void (vili::ArrayNode::*)(unsigned int, bool)>(&vili::ArrayNode::insert),
+                                            static_cast<void (vili::ArrayNode::*)(unsigned int, double)>(&vili::ArrayNode::insert),
+                                            static_cast<void (vili::ArrayNode::*)(unsigned int, const std::string&)>(&vili::ArrayNode::insert)
                     )
-                    .addFunction("erase", &vili::ListAttribute::erase)
-                    .addFunction("size", &vili::ListAttribute::size)
+                    .addFunction("erase", &vili::ArrayNode::erase)
+                    .addFunction("size", &vili::ArrayNode::size)
                 );
-                (*lua)["Core"]["Vili"]["ListAttribute"]["get"] = kaguya::function([](vili::ListAttribute& attribute, int index)
+                (*lua)["Core"]["Vili"]["ListAttribute"]["get"] = kaguya::function([](vili::ArrayNode& attribute, int index)
                 {
                     return &attribute.get(index);
                 });
@@ -1047,19 +1047,19 @@ namespace obe
             }
             if (importAll || args[1] == "BaseAttribute")
             {
-                (*lua)["Core"]["Vili"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<vili::BaseAttribute, vili::Attribute>()
-                    .setConstructors<vili::BaseAttribute(std::string, vili::DataType)>()
-                    .addFunction("get_int", &vili::BaseAttribute::get<int>)
-                    .addFunction("get_float", &vili::BaseAttribute::get<double>)
-                    .addFunction("get_bool", &vili::BaseAttribute::get<bool>)
-                    .addFunction("get_string", &vili::BaseAttribute::get<std::string>)
-                    .addFunction("getDataType", &vili::BaseAttribute::getDataType)
-                    .addFunction("returnData", &vili::BaseAttribute::returnData)
+                (*lua)["Core"]["Vili"]["BaseAttribute"].setClass(kaguya::UserdataMetatable<vili::DataNode, vili::Node>()
+                    .setConstructors<vili::DataNode(std::string, vili::DataType)>()
+                    .addFunction("get_int", &vili::DataNode::get<int>)
+                    .addFunction("get_float", &vili::DataNode::get<double>)
+                    .addFunction("get_bool", &vili::DataNode::get<bool>)
+                    .addFunction("get_string", &vili::DataNode::get<std::string>)
+                    .addFunction("getDataType", &vili::DataNode::getDataType)
+                    .addFunction("returnData", &vili::DataNode::dumpData)
                     .addOverloadedFunctions("set",
-                                            static_cast<void (vili::BaseAttribute::*)(int)>(&vili::BaseAttribute::set),
-                                            static_cast<void (vili::BaseAttribute::*)(double)>(&vili::BaseAttribute::set),
-                                            static_cast<void (vili::BaseAttribute::*)(bool)>(&vili::BaseAttribute::set),
-                                            static_cast<void (vili::BaseAttribute::*)(const std::string&)>(&vili::BaseAttribute::set)
+                                            static_cast<void (vili::DataNode::*)(int)>(&vili::DataNode::set),
+                                            static_cast<void (vili::DataNode::*)(double)>(&vili::DataNode::set),
+                                            static_cast<void (vili::DataNode::*)(bool)>(&vili::DataNode::set),
+                                            static_cast<void (vili::DataNode::*)(const std::string&)>(&vili::DataNode::set)
                     )
                 );
                 foundPart = true;
@@ -1067,9 +1067,9 @@ namespace obe
             if (importAll || args[1] == "AttributeType")
             {
                 (*lua)["Core"]["Vili"]["AttributeType"] = kaguya::NewTable();
-                (*lua)["Core"]["Vili"]["AttributeType"]["BaseAttribute"] = vili::AttributeType::BaseAttribute;
-                (*lua)["Core"]["Vili"]["AttributeType"]["ComplexAttribute"] = vili::AttributeType::ComplexAttribute;
-                (*lua)["Core"]["Vili"]["AttributeType"]["ListAttribute"] = vili::AttributeType::ListAttribute;
+                (*lua)["Core"]["Vili"]["AttributeType"]["BaseAttribute"] = vili::NodeType::DataNode;
+                (*lua)["Core"]["Vili"]["AttributeType"]["ComplexAttribute"] = vili::NodeType::ComplexNode;
+                (*lua)["Core"]["Vili"]["AttributeType"]["ListAttribute"] = vili::NodeType::ArrayNode;
             }
             if (!foundPart) throw aube::ErrorHandler::Raise("ObEngine.Script.Lib.ViliImportError", {{"lib", Utils::Vector::join(args, ".")}});
         }

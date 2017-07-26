@@ -13,13 +13,13 @@ namespace obe
             std::string GetWorkspaceLocation(const std::string& workspaceName)
             {
                 if (WorkspaceExists(workspaceName))
-                    return (vili::DataParser("Workspace/Workspaces.vili")->at<vili::BaseAttribute>(workspaceName, "path").get<std::string>());
+                    return (vili::ViliParser("Workspace/Workspaces.vili")->at<vili::DataNode>(workspaceName, "path").get<std::string>());
                 throw aube::ErrorHandler::Raise("ObEngine.Workspace.Workspace.InexistantWorkspace", {{"workspace", workspaceName}});
             }
 
             bool WorkspaceExists(const std::string& workspaceName)
             {
-                return (vili::DataParser("Workspace/Workspaces.vili")->contains(vili::AttributeType::ComplexAttribute, workspaceName));
+                return (vili::ViliParser("Workspace/Workspaces.vili")->contains(vili::NodeType::ComplexNode, workspaceName));
             }
 
             bool Load(const std::string& workspaceName, unsigned int priority)

@@ -140,7 +140,7 @@ namespace obe
              *					 - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in pixels.\n
              *                   - priority : Priority of the Animation (A higher Animation priority can't be interrupted by an Animation with a lower one).
              */
-            void applyParameters(vili::ComplexAttribute& parameters);
+            void applyParameters(vili::ComplexNode& parameters);
             /**
              * \brief Updates the Animation (Updates the current AnimationGroup, executes the AnimationCode)
              */
