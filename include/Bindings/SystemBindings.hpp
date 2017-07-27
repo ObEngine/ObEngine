@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to System related classes and functions
+        */
         namespace SystemBindings
         {
             void LoadSCursor(kaguya::State* lua);

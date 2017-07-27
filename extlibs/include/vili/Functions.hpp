@@ -13,8 +13,14 @@
 
 namespace vili
 {
+    /**
+     * \brief Internal functions used by Vili
+     */
     namespace Functions
     {
+        /**
+         * \brief String functions used by Vili
+         */
         namespace String
         {
             std::vector<std::string> split(const std::string& str, const std::string& delimiters = " ");
@@ -35,6 +41,9 @@ namespace vili
             bool contains(const std::string& string, const std::string& search);
         }
 
+        /**
+         * \brief Vector functions used by Vili
+         */
         namespace Vector
         {
             template <typename V>

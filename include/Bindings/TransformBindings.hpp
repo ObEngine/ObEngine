@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Transform related classes and functions
+        */
         namespace TransformBindings
         {
             void LoadProtectedUnitVector(kaguya::State* lua);

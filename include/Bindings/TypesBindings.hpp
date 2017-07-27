@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Types related classes and functions
+        */
         namespace TypesBindings
         {
             void LoadIdentifiable(kaguya::State* lua);

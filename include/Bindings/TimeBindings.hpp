@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Time related classes and functions
+        */
         namespace TimeBindings
         {
             void LoadChronometer(kaguya::State* lua);

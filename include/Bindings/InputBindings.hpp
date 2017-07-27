@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Input related classes and functions
+        */
         namespace InputBindings
         {
             void LoadInputAction(kaguya::State* lua);

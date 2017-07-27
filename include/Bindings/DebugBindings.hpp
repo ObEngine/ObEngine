@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Debug related classes and functions
+        */
         namespace DebugBindings
         {
             void LoadConsoleMessage(kaguya::State* lua);

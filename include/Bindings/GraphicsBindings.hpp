@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Graphics related classes and functions
+        */
         namespace GraphicsBindings
         {
             void LoadLevelSpriteHandlePoint(kaguya::State* lua);

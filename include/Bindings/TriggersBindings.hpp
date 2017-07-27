@@ -6,6 +6,9 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Triggers related classes and functions
+        */
         namespace TriggersBindings
         {
             void LoadTrigger(kaguya::State* lua);
