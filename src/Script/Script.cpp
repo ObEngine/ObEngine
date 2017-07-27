@@ -944,7 +944,7 @@ namespace obe
             {
                 (*lua)["Core"]["Vili"]["DataParser"].setClass(kaguya::UserdataMetatable<vili::ViliParser>()
                     .setConstructors<vili::ViliParser(), vili::ViliParser(std::string)>()
-                    .addFunction("createFlag", &vili::ViliParser::createFlag)
+                    .addFunction("createFlag", &vili::ViliParser::addFlag)
                     .addFunction("root", &vili::ViliParser::operator->)
                     .addFunction("getAmountOfFlags", &vili::ViliParser::getAmountOfFlags)
                     .addFunction("getFlagAtIndex", &vili::ViliParser::getFlagAtIndex)
@@ -966,9 +966,7 @@ namespace obe
             {
                 (*lua)["Core"]["Vili"]["ComplexAttribute"].setClass(kaguya::UserdataMetatable<vili::ComplexNode, vili::Node>()
                     .setConstructors<
-                        vili::ComplexNode(std::string),
-                        vili::ComplexNode(std::string, vili::ComplexNode*),
-                        vili::ComplexNode(std::string, std::vector<vili::ComplexNode*>*)>()
+                        vili::ComplexNode(std::string)>()
                     /*.addOverloadedFunctions("createBaseAttribute",
                         static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, const vili::DataType&, const std::string&)>(&vili::ComplexAttribute::createBaseAttribute),
                         static_cast<vili::BaseAttribute& (vili::ComplexAttribute::*)(const std::string&, int)>(&vili::ComplexAttribute::createBaseAttribute),
@@ -1005,17 +1003,17 @@ namespace obe
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getBaseAttribute"] = kaguya::function(
                     [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
-                    return &attribute.getBaseAttribute(attributeID);
+                    return &attribute.getDataNode(attributeID);
                 });
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getComplexAttribute"] = kaguya::function(
                     [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
-                    return &attribute.getComplexAttribute(attributeID);
+                    return &attribute.getComplexNode(attributeID);
                 });
                 (*lua)["Core"]["Vili"]["ComplexAttribute"]["getListAttribute"] = kaguya::function(
                     [](vili::ComplexNode& attribute, const std::string& attributeID)
                 {
-                    return &attribute.getListAttribute(attributeID);
+                    return &attribute.getArrayNode(attributeID);
                 });
                 foundPart = true;
             }

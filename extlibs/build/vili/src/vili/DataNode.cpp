@@ -148,8 +148,8 @@ namespace vili
         }
         else if (newParent->getType() == NodeType::ComplexNode)
         {
-            dynamic_cast<ComplexNode*>(newParent)->createBaseAttribute(newid.empty() ? m_id : newid, m_dataType);
-            DataNode* newCopy = &dynamic_cast<ComplexNode*>(newParent)->getBaseAttribute(newid.empty() ? m_id : newid);
+            dynamic_cast<ComplexNode*>(newParent)->createDataNode(newid.empty() ? m_id : newid, m_dataType);
+            DataNode* newCopy = &dynamic_cast<ComplexNode*>(newParent)->getDataNode(newid.empty() ? m_id : newid);
             if (m_dataType == DataType::Int)
                 newCopy->set(Int);
             else if (m_dataType == DataType::Float)

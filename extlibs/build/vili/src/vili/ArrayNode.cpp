@@ -30,6 +30,11 @@ namespace vili
                                         });
     }
 
+    DataNode& ArrayNode::operator[](unsigned index) const
+    {
+        return this->get(index);
+    }
+
     std::vector<DataNode*>::iterator ArrayNode::begin()
     {
         m_iteratorCache.clear();
@@ -122,9 +127,9 @@ namespace vili
         if (newParent->getType() == NodeType::ComplexNode)
         {
             std::string useID = newid.empty() ? m_id : newid;
-            dynamic_cast<ComplexNode*>(newParent)->createListAttribute(useID);
+            dynamic_cast<ComplexNode*>(newParent)->createArrayNode(useID);
             for (int i = 0; i < m_dataList.size(); i++)
-                m_dataList[i]->copy(&dynamic_cast<ComplexNode*>(newParent)->getListAttribute(useID));
+                m_dataList[i]->copy(&dynamic_cast<ComplexNode*>(newParent)->getArrayNode(useID));
         }
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.ListAttribute.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});

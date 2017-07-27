@@ -2,16 +2,16 @@
 
 namespace vili
 {
-    AttributeConstraintManager::AttributeConstraintManager(ComplexNode* parent, std::string path) : m_attribute(parent, "link", path)
+    NodeConstraintManager::NodeConstraintManager(ComplexNode* parent, const std::string& path) : m_attribute(parent, "link", path)
     {
     }
 
-    void AttributeConstraintManager::addConstraint(std::function<bool(DataNode*)> constraint)
+    void NodeConstraintManager::addConstraint(std::function<bool(DataNode*)> constraint)
     {
         m_constraints.push_back(constraint);
     }
 
-    bool AttributeConstraintManager::checkAllConstraints()
+    bool NodeConstraintManager::checkAllConstraints()
     {
         for (std::function<bool(DataNode*)>& constraint : m_constraints)
         {
@@ -24,12 +24,12 @@ namespace vili
         return true;
     }
 
-    LinkNode* AttributeConstraintManager::getLinkAttribute()
+    LinkNode* NodeConstraintManager::getLinkNode()
     {
         return &m_attribute;
     }
 
-    std::string AttributeConstraintManager::getArgumentPath() const
+    std::string NodeConstraintManager::getArgumentPath() const
     {
         return m_attribute.getFullPath();
     }
@@ -50,21 +50,21 @@ namespace vili
         {
             m_body.at("__body__").copy(parent, id);
             std::vector<LinkNode*> attributeAddresses;
-            for (AttributeConstraintManager& constraintManager : m_signature)
-                attributeAddresses.push_back(constraintManager.getLinkAttribute());
-            parent->getComplexAttribute(id).walk([attributeAddresses](NodeIterator& complex)
+            for (NodeConstraintManager& constraintManager : m_signature)
+                attributeAddresses.push_back(constraintManager.getLinkNode());
+            parent->getComplexNode(id).walk([attributeAddresses](NodeIterator& complex)
             {
                 for (int i = 0; i < complex->getAll(NodeType::LinkNode).size(); i++)
                 {
                     for (int j = 0; j < attributeAddresses.size(); j++)
                     {
-                        if (complex->getLinkAttribute(complex->getAll(NodeType::LinkNode)[i]) == (*attributeAddresses[j]))
-                            complex->getLinkAttribute(complex->getAll(NodeType::LinkNode)[i]).apply();
+                        if (complex->getLinkNode(complex->getAll(NodeType::LinkNode)[i]) == (*attributeAddresses[j]))
+                            complex->getLinkNode(complex->getAll(NodeType::LinkNode)[i]).apply();
                     }
                 }
             });
             if (m_defaultLinkRoot)
-                parent->at(id).deleteBaseAttribute("__linkroot__");
+                parent->at(id).removeNode(NodeType::DataNode, "__linkroot__");
         }
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataTemplate.BuildError", {{"element", id},{"parent", parent->getNodePath()}});
@@ -72,7 +72,7 @@ namespace vili
 
     bool NodeTemplate::checkSignature()
     {
-        for (AttributeConstraintManager& constraintManager : m_signature)
+        for (NodeConstraintManager& constraintManager : m_signature)
         {
             if (!constraintManager.checkAllConstraints())
                 return false;
@@ -80,7 +80,7 @@ namespace vili
         return true;
     }
 
-    void NodeTemplate::addConstraintManager(const AttributeConstraintManager& constraintManager, bool facultative)
+    void NodeTemplate::addConstraintManager(const NodeConstraintManager& constraintManager, bool facultative)
     {
         if (facultative)
         {

@@ -38,9 +38,9 @@ namespace obe
                     std::cout << "<Package> Package <" << packageName << "> has been successfully installed !" << std::endl;
 
                     vili::ViliParser packages("Package/Packages.vili");
-                    packages->createComplexAttribute(realPackageName);
-                    packages.at(realPackageName).createBaseAttribute("version", packageVersion);
-                    packages.at(realPackageName).createBaseAttribute("path", "Package/" + realPackageName);
+                    packages->createComplexNode(realPackageName);
+                    packages.at(realPackageName).createDataNode("version", packageVersion);
+                    packages.at(realPackageName).createDataNode("path", "Package/" + realPackageName);
                     packages.writeFile("Package/Packages.vili");
                     return true;
                 }

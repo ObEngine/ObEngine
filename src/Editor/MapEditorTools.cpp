@@ -150,7 +150,7 @@ namespace obe
                     content->add(currentRequirementLabel, requireItem + "_label");
 
 
-                    if (requireInput.getPath(requireItem).contains(vili::NodeType::DataNode, "type"))
+                    if (requireInput.at(requireItem).contains(vili::NodeType::DataNode, "type"))
                     {
                         tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
                         currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
@@ -158,7 +158,7 @@ namespace obe
                         currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
                         content->add(currentRequirementInput, requireItem + "_input");
                     }
-                    else if (requireInput.getPath(requireItem).contains(vili::NodeType::ArrayNode, "choices"))
+                    else if (requireInput.at(requireItem).contains(vili::NodeType::ArrayNode, "choices"))
                     {
                         tgui::ComboBox::Ptr currentRequirementList = tgui::ComboBox::create();
                         currentRequirementList->setSize(200, 32);
@@ -167,8 +167,8 @@ namespace obe
                         currentRequirementList->setItemsToDisplay(4);
                         currentRequirementList->setRenderer(baseTheme.getRenderer("ComboBox"));
                         content->add(currentRequirementList, requireItem + "_input");
-                        for (int reqI = 0; reqI < requireInput.getPath(requireItem).getListAttribute("choices").size(); reqI++)
-                            currentRequirementList->addItem(requireInput.getPath(requireItem).getListAttribute("choices").get(reqI).get<std::string>());
+                        for (int reqI = 0; reqI < requireInput.at(requireItem).getArrayNode("choices").size(); reqI++)
+                            currentRequirementList->addItem(requireInput.at(requireItem).getArrayNode("choices").get(reqI).get<std::string>());
                         currentRequirementList->setSelectedItem(currentRequirementList->getItems()[0]);
                     }
                     widgetVerticalPosition += 50;

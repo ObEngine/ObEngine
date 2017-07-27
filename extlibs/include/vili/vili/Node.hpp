@@ -60,8 +60,8 @@ namespace vili
          */
         virtual std::string getId() const;
         /**
-         * \brief Returns the ClassType of the Node (All Types in vili::AttributeType)
-         * \return An AttributeType enum value defining the AttributeType of the Node
+         * \brief Returns the ClassType of the Node (All Types in vili::NodeType)
+         * \return An NodeType enum value defining the NodeType of the Node
          */
         virtual NodeType getType() const;
         /**
@@ -95,7 +95,7 @@ namespace vili
          */
         virtual void setId(const std::string& id);
         /**
-         * \brief Copies the Node into a new ContainerAttribute (Abstract method, must be implemented by derived nodes)
+         * \brief Copies the Node into a new ContainerNode (Abstract method, must be implemented by derived nodes)
          * \param newParent Parent of the new copied Node
          * \param newid Id to set to the newly created Node
          */

@@ -99,7 +99,7 @@ namespace obe
                     {
                         m_allActions.push_back(std::make_unique<InputAction>(action));
                     }
-                    std::string associatedKeys = config.at(context).getBaseAttribute(action);
+                    std::string associatedKeys = config.at(context).getDataNode(action);
                     InputCondition actionCondition;
                     actionCondition.setCombinationCode(associatedKeys);
                     std::cout << "Associated Key : " << associatedKeys << " for action " << action << std::endl;

@@ -16,14 +16,14 @@ namespace vili
                 std::vector<std::string> location;
                 std::vector<std::string> errorIdParts;
                 std::string filename = "";
-                std::string message = node->getBaseAttribute("message").get<std::string>();
+                std::string message = node->getDataNode("message").get<std::string>();
                 ComplexNode* currentParent = node.get();
                 while (currentParent != nullptr)
                 {
                     if (currentParent->contains(NodeType::DataNode, "where"))
-                        location.insert(location.begin(), currentParent->getBaseAttribute("where").get<std::string>());
+                        location.insert(location.begin(), currentParent->getDataNode("where").get<std::string>());
                     if (currentParent->contains(NodeType::DataNode, "file") && filename.empty())
-                        filename = currentParent->getBaseAttribute("file").get<std::string>();
+                        filename = currentParent->getDataNode("file").get<std::string>();
                     errorIdParts.push_back(currentParent->getId());
                     if (currentParent->getParent() != nullptr)
                         currentParent = static_cast<ComplexNode*>(currentParent->getParent());

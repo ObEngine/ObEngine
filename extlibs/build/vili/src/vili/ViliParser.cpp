@@ -65,7 +65,7 @@ namespace vili
         m_root->setAnnotation("NoFile");
     }
 
-    ViliParser::ViliParser(std::string file)
+    ViliParser::ViliParser(const std::string& file)
     {
         m_root = std::make_unique<ComplexNode>("root");
         m_root->setAnnotation("NoFile");
@@ -82,7 +82,7 @@ namespace vili
         return *m_root.get();
     }
 
-    void ViliParser::createFlag(const std::string& flag)
+    void ViliParser::addFlag(const std::string& flag)
     {
         m_flagList.push_back(flag);
     }
@@ -97,7 +97,7 @@ namespace vili
         return m_flagList.size();
     }
 
-    std::string ViliParser::getFlagAtIndex(int index) const
+    std::string ViliParser::getFlagAtIndex(unsigned int index) const
     {
         return m_flagList.at(index);
     }
@@ -119,7 +119,7 @@ namespace vili
     {
         if (child.empty())
             return *m_root.get();
-        return m_root->getComplexAttribute(child);
+        return m_root->getComplexNode(child);
     }
 
     ComplexNode& ViliParser::operator[](const std::string& cPath) const
@@ -127,11 +127,12 @@ namespace vili
         return getPath(cPath);
     }
 
-    ComplexNode& ViliParser::at(std::string cPath) const
+    ComplexNode& ViliParser::at(const std::string& cPath) const
     {
+        std::string path = cPath;
         if (cPath.size() > 0 && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
-            cPath = Functions::String::extract(cPath, 0, 1);
-        return getPath(cPath);
+            path = Functions::String::extract(cPath, 0, 1);
+        return getPath(path);
     }
 
     bool ViliParser::parseFile(const std::string& filename, bool verbose, bool visible)
@@ -268,8 +269,8 @@ namespace vili
                         if (!Functions::Vector::isInList(parsedLine.substr(0, 1), symbolExclusion) && Functions::String::occurencesInString(parsedLine, ":[") == 1)
                         {
                             std::string listElementID = Functions::String::split(parsedLine, ":")[0];
-                            getPath(Path(addPath)).createListAttribute(listElementID);
-                            getPath(Path(addPath)).getListAttribute(listElementID).setVisible(visible);
+                            getPath(Path(addPath)).createArrayNode(listElementID);
+                            getPath(Path(addPath)).getArrayNode(listElementID).setVisible(visible);
                             curList = listElementID;
                             curListIndent = currentIndent;
                             if (verbose)
@@ -302,15 +303,15 @@ namespace vili
                                     });
                                 }
                             }
-                            getPath(Path(addPath)).createComplexAttribute(complexElementID);
-                            getPath(Path(addPath)).getComplexAttribute(complexElementID).setVisible(visible);
+                            getPath(Path(addPath)).createComplexNode(complexElementID);
+                            getPath(Path(addPath)).getComplexNode(complexElementID).setVisible(visible);
                             if (verbose)
                                 std::cout << indenter() << "Create ComplexAttribute " << complexElementID << " inside "
                                     << pushIndicator << std::endl;
                             for (unsigned int i = 0; i < complexToHerit.size(); i++)
                             {
                                 if (verbose) std::cout << indenter() << "    {Herit from : " << complexToHeritIDList[i] << "}" << std::endl;
-                                getPath(Path(addPath)).getComplexAttribute(complexElementID).heritage(complexToHerit[i]);
+                                getPath(Path(addPath)).getComplexNode(complexElementID).heritage(complexToHerit[i]);
                             }
 
                             addPath.push_back(complexElementID);
@@ -324,8 +325,8 @@ namespace vili
 
                             if (attributeType == DataType::Link)
                             {
-                                getPath(Path(addPath)).createLinkAttribute(attributeID, Functions::String::extract(attributeValue, 2, 1));
-                                getPath(Path(addPath)).getLinkAttribute(attributeID).setVisible(visible);
+                                getPath(Path(addPath)).createLinkNode(attributeID, Functions::String::extract(attributeValue, 2, 1));
+                                getPath(Path(addPath)).getLinkNode(attributeID).setVisible(visible);
                                 if (verbose)
                                 {
                                     std::cout << indenter() << "Create LinkAttribute " << attributeID << " linking to " << attributeValue
@@ -345,13 +346,13 @@ namespace vili
                                     for (std::string& arg : templateArgs)
                                     {
                                         ComplexNode& cArg = getRootChild(templateName).at("__init__", std::to_string(i));
-                                        cArg.deleteBaseAttribute("value", true);
-                                        cArg.createBaseAttribute("value", Types::getVarType(arg), arg);
-                                        cArg.getBaseAttribute("value").setAnnotation("Set");
+                                        cArg.removeNode(NodeType::DataNode, "value", true);
+                                        cArg.createDataNode("value", Types::getVarType(arg), arg);
+                                        cArg.getDataNode("value").setAnnotation("Set");
                                         i++;
                                     }
                                     m_templateList[templateName]->build(&getPath(Path(addPath)), attributeID);
-                                    getPath(Path(addPath)).getComplexAttribute(attributeID).useTemplate(m_templateList[templateName]);
+                                    getPath(Path(addPath)).getComplexNode(attributeID).useTemplate(m_templateList[templateName]);
 
                                     if (verbose)
                                     {
@@ -364,9 +365,9 @@ namespace vili
                             }
                             else
                             {
-                                getPath(Path(addPath)).createBaseAttribute(attributeID, attributeType);
-                                getPath(Path(addPath)).getBaseAttribute(attributeID).setVisible(visible);
-                                getPath(Path(addPath)).getBaseAttribute(attributeID).autoset(attributeValue);
+                                getPath(Path(addPath)).createDataNode(attributeID, attributeType);
+                                getPath(Path(addPath)).getDataNode(attributeID).setVisible(visible);
+                                getPath(Path(addPath)).getDataNode(attributeID).autoset(attributeValue);
                                 if (verbose)
                                 {
                                     std::cout << indenter() << "Create BaseAttribute " << attributeID << "(" << attributeValue;
@@ -379,24 +380,24 @@ namespace vili
                             std::string attributeValue = parsedLine;
                             DataType attributeType = Types::getVarType(attributeValue);
                             if (verbose)
-                                std::cout << indenter() << "Create Element #" << getPath(Path(addPath)).getListAttribute(curList).size()
+                                std::cout << indenter() << "Create Element #" << getPath(Path(addPath)).getArrayNode(curList).size()
                                     << "(" << attributeValue << ") of ListAttribute " << curList << std::endl;
                             if (attributeType == DataType::String)
                             {
                                 attributeValue = Functions::String::extract(attributeValue, 1, 1);
-                                getPath(Path(addPath)).getListAttribute(curList).push(attributeValue);
+                                getPath(Path(addPath)).getArrayNode(curList).push(attributeValue);
                             }
                             else if (attributeType == DataType::Int)
                             {
-                                getPath(Path(addPath)).getListAttribute(curList).push(stoi(attributeValue));
+                                getPath(Path(addPath)).getArrayNode(curList).push(stoi(attributeValue));
                             }
                             else if (attributeType == DataType::Float)
                             {
-                                getPath(Path(addPath)).getListAttribute(curList).push(stod(attributeValue));
+                                getPath(Path(addPath)).getArrayNode(curList).push(stod(attributeValue));
                             }
                             else if (attributeType == DataType::Bool)
                             {
-                                getPath(Path(addPath)).getListAttribute(curList).push(((attributeValue == "True") ? true : false));
+                                getPath(Path(addPath)).getArrayNode(curList).push(((attributeValue == "True") ? true : false));
                             }
                             else if (attributeType == DataType::Range)
                             {
@@ -408,7 +409,7 @@ namespace vili
                                 rEnd += step;
                                 for (int i = rStart; i != rEnd; i += step)
                                 {
-                                    getPath(Path(addPath)).getListAttribute(curList).push(i);
+                                    getPath(Path(addPath)).getArrayNode(curList).push(i);
                                 }
                             }
                             else
@@ -435,7 +436,7 @@ namespace vili
             {
                 if (!templateBase->contains(NodeType::DataNode, "__linkroot__"))
                 {
-                    templateBase->at("__body__").createBaseAttribute("__linkroot__", "/" + templateName + "/__init__");
+                    templateBase->at("__body__").createDataNode("__linkroot__", "/" + templateName + "/__init__");
                     templateBase->at<DataNode>("__body__", "__linkroot__").setVisible(false);
                     newTemplate->useDefaultLinkRoot();
                 }
@@ -445,18 +446,18 @@ namespace vili
                 {
                     if (templateBase->at("__init__").contains(NodeType::ComplexNode, std::to_string(i)))
                     {
-                        AttributeConstraintManager newConstraint(templateBase, templateName + "/__init__/" + std::to_string(i) + "/value");
+                        NodeConstraintManager newConstraint(templateBase, templateName + "/__init__/" + std::to_string(i) + "/value");
                         std::vector<std::string> requiredTypes;
                         ComplexNode& currentArgument = templateBase->at("__init__", std::to_string(i));
                         if (currentArgument.contains(NodeType::DataNode, "type"))
                             requiredTypes.push_back(
-                                currentArgument.getBaseAttribute("type").get<std::string>()
+                                currentArgument.getDataNode("type").get<std::string>()
                             );
                         else
                         {
-                            for (unsigned int j = 0; j < currentArgument.getListAttribute("types").size(); j++)
+                            for (unsigned int j = 0; j < currentArgument.getArrayNode("types").size(); j++)
                             {
-                                requiredTypes.push_back(currentArgument.getListAttribute("types").get(j).get<std::string>());
+                                requiredTypes.push_back(currentArgument.getArrayNode("types").get(j).get<std::string>());
                             }
                         }
                         std::vector<DataType> requiredConstraintTypes;

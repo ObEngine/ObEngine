@@ -25,17 +25,17 @@ namespace obe
                 kaguya::State olol;
                 for (std::string elementName : convert.getAll())
                 {
-                    if (convert.getAttributeType(elementName) == vili::NodeType::DataNode)
+                    if (convert.getNodeType(elementName) == vili::NodeType::DataNode)
                     {
-                        baseAttributeToLuaElement(injectTable, convert.getBaseAttribute(elementName));
+                        baseAttributeToLuaElement(injectTable, convert.getDataNode(elementName));
                     }
-                    else if (convert.getAttributeType(elementName) == vili::NodeType::ComplexNode)
+                    else if (convert.getNodeType(elementName) == vili::NodeType::ComplexNode)
                     {
-                        complexAttributeToLuaTable(injectTable, convert.getComplexAttribute(elementName));
+                        complexAttributeToLuaTable(injectTable, convert.getComplexNode(elementName));
                     }
-                    else if (convert.getAttributeType(elementName) == vili::NodeType::ArrayNode)
+                    else if (convert.getNodeType(elementName) == vili::NodeType::ArrayNode)
                     {
-                        listAttributeToLuaTable(injectTable, convert.getListAttribute(elementName));
+                        listAttributeToLuaTable(injectTable, convert.getArrayNode(elementName));
                     }
                 }
                 target[convert.getId()] = injectTable;
@@ -82,13 +82,13 @@ namespace obe
                         {
                             std::cout << "Push subtable : " << tableKey << std::endl;
                             kaguya::LuaRef tempTableRef = convert[tableKey];
-                            returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));
+                            returnElement->pushComplexNode(luaTableToComplexAttribute(tableKey, tempTableRef));
                         }
                         else if (Utils::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
                         {
                             std::cout << "Push subelement : " << tableKey << std::endl;
                             kaguya::LuaRef tempElemRef = convert[tableKey];
-                            returnElement->pushBaseAttribute(luaElementToBaseAttribute(tableKey, tempElemRef));
+                            returnElement->pushDataNode(luaElementToBaseAttribute(tableKey, tempElemRef));
                         }
                     }
                 }

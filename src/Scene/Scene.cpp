@@ -68,7 +68,7 @@ namespace obe
             if (mapParse->contains(vili::NodeType::ComplexNode, "Meta"))
             {
                 vili::ComplexNode& meta = mapParse.at("Meta");
-                m_levelName = meta.getBaseAttribute("name").get<std::string>();
+                m_levelName = meta.getDataNode("name").get<std::string>();
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", {{"map", filename}});
@@ -98,7 +98,7 @@ namespace obe
                                                   currentSprite.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
                     std::cout << "SpriteUnit : " << spriteUnits << std::endl;
                     std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
-                                                 currentSprite.getBaseAttribute("path").get<std::string>() : "";
+                                                 currentSprite.getDataNode("path").get<std::string>() : "";
                     Transform::UnitVector spritePos(0, 0);
                     Transform::UnitVector spriteSize(1, 1);
                     if (currentSprite.contains(vili::NodeType::ComplexNode, "rect"))
@@ -114,11 +114,11 @@ namespace obe
                         spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
                     }
                     int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
-                                        currentSprite.getBaseAttribute("rotation").get<int>() : 0;
+                                        currentSprite.getDataNode("rotation").get<int>() : 0;
                     int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
-                                    currentSprite.getBaseAttribute("layer").get<int>() : 1;
+                                    currentSprite.getDataNode("layer").get<int>() : 1;
                     int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
-                                     currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
+                                     currentSprite.getDataNode("z-depth").get<int>() : 1;
 
                     if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
                     {
@@ -167,7 +167,7 @@ namespace obe
                     bool completePoint = true;
                     double pointBuffer = 0;
                     Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                    for (vili::DataNode* colliderPoint : currentCollision.getListAttribute("points"))
+                    for (vili::DataNode* colliderPoint : currentCollision.getArrayNode("points"))
                     {
                         if ((completePoint = !completePoint))
                         {
@@ -193,7 +193,7 @@ namespace obe
                 for (std::string& currentObjectName : levelObjects.getAll(vili::NodeType::ComplexNode))
                 {
                     vili::ComplexNode& currentObject = levelObjects.at(currentObjectName);
-                    std::string levelObjectType = currentObject.getBaseAttribute("type").get<std::string>();
+                    std::string levelObjectType = currentObject.getDataNode("type").get<std::string>();
                     this->createGameObject(currentObjectName, levelObjectType);
                     if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
                     {
@@ -208,7 +208,7 @@ namespace obe
             if (mapParse->contains(vili::NodeType::ComplexNode, "Script"))
             {
                 vili::ComplexNode& script = mapParse.at("Script");
-                for (vili::DataNode* scriptName : script.getListAttribute("gameScripts"))
+                for (vili::DataNode* scriptName : script.getArrayNode("gameScripts"))
                 {
                     System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
                     m_scriptArray.push_back(*scriptName);
@@ -228,75 +228,75 @@ namespace obe
         vili::ViliParser* Scene::dump()
         {
             vili::ViliParser* dataStore = new vili::ViliParser;
-            dataStore->createFlag("Map");
-            dataStore->createFlag("Lock");
+            dataStore->addFlag("Map");
+            dataStore->addFlag("Lock");
             dataStore->includeFile("Obe");
 
             //Meta
-            (*dataStore)->createComplexAttribute("Meta");
-            dataStore->at("Meta").createBaseAttribute("name", m_levelName);
+            (*dataStore)->createComplexNode("Meta");
+            dataStore->at("Meta").createDataNode("name", m_levelName);
 
             //View
-            (*dataStore)->createComplexAttribute("View");
-            dataStore->at("View").createBaseAttribute("size", m_camera.getSize().y / 2);
-            dataStore->at("View").createComplexAttribute("pos");
-            dataStore->at("View", "pos").createBaseAttribute("unit", unitsToString(m_cameraInitialPosition.unit));
-            dataStore->at("View", "pos").createBaseAttribute("x", m_cameraInitialPosition.x);
-            dataStore->at("View", "pos").createBaseAttribute("y", m_cameraInitialPosition.y);
+            (*dataStore)->createComplexNode("View");
+            dataStore->at("View").createDataNode("size", m_camera.getSize().y / 2);
+            dataStore->at("View").createComplexNode("pos");
+            dataStore->at("View", "pos").createDataNode("unit", unitsToString(m_cameraInitialPosition.unit));
+            dataStore->at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
+            dataStore->at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
             dataStore->at("View", "pos").useTemplate(dataStore->getTemplate("Vector2<WorldUnits>"));
 
             //LevelSprites
-            if (m_spriteArray.size() > 0) (*dataStore)->createComplexAttribute("LevelSprites");
+            if (m_spriteArray.size() > 0) (*dataStore)->createComplexNode("LevelSprites");
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
             {
                 if (m_spriteArray[i]->getParentId() == "")
                 {
-                    vili::ComplexNode& currentSprite = dataStore->at("LevelSprites").createComplexAttribute(m_spriteArray[i]->getId());
-                    currentSprite.createBaseAttribute("path", m_spriteArray[i]->getPath());
-                    currentSprite.createComplexAttribute("rect");
+                    vili::ComplexNode& currentSprite = dataStore->at("LevelSprites").createComplexNode(m_spriteArray[i]->getId());
+                    currentSprite.createDataNode("path", m_spriteArray[i]->getPath());
+                    currentSprite.createComplexNode("rect");
                     Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    currentSprite.at("rect").createBaseAttribute("x", spritePositionRect.x);
-                    currentSprite.at("rect").createBaseAttribute("y", spritePositionRect.y);
+                    currentSprite.at("rect").createDataNode("x", spritePositionRect.x);
+                    currentSprite.at("rect").createDataNode("y", spritePositionRect.y);
                     Transform::UnitVector spriteSizeRect = Transform::UnitVector(
                         m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(),
                         m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(),
                         Transform::Units::WorldPixels).to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
-                    currentSprite.at("rect").createBaseAttribute("w", spriteSizeRect.x);
-                    currentSprite.at("rect").createBaseAttribute("h", spriteSizeRect.y);
+                    currentSprite.at("rect").createDataNode("w", spriteSizeRect.x);
+                    currentSprite.at("rect").createDataNode("h", spriteSizeRect.y);
                     currentSprite.at("rect").useTemplate(
                         dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
                     );
-                    currentSprite.createBaseAttribute("rotation", m_spriteArray[i]->getRotation());
-                    currentSprite.createBaseAttribute("layer", m_spriteArray[i]->getLayer());
-                    currentSprite.createBaseAttribute("z-depth", m_spriteArray[i]->getZDepth());
-                    currentSprite.createBaseAttribute("xTransform", m_spriteArray[i]->getPositionTransformer().getXTransformerName());
-                    currentSprite.createBaseAttribute("yTransform", m_spriteArray[i]->getPositionTransformer().getYTransformerName());
+                    currentSprite.createDataNode("rotation", m_spriteArray[i]->getRotation());
+                    currentSprite.createDataNode("layer", m_spriteArray[i]->getLayer());
+                    currentSprite.createDataNode("z-depth", m_spriteArray[i]->getZDepth());
+                    currentSprite.createDataNode("xTransform", m_spriteArray[i]->getPositionTransformer().getXTransformerName());
+                    currentSprite.createDataNode("yTransform", m_spriteArray[i]->getPositionTransformer().getYTransformerName());
                 }
             }
-            if (m_colliderArray.size() > 0) (*dataStore)->createComplexAttribute("Collisions");
+            if (m_colliderArray.size() > 0) (*dataStore)->createComplexNode("Collisions");
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
                 if (m_colliderArray[i]->getParentId() == "")
                 {
-                    dataStore->at("Collisions").createComplexAttribute(m_colliderArray[i]->getId());
-                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createComplexAttribute("unit");
+                    dataStore->at("Collisions").createComplexNode(m_colliderArray[i]->getId());
+                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createComplexNode("unit");
                     dataStore->at("Collisions", m_colliderArray[i]->getId(), "unit").useTemplate(
                         dataStore->getTemplate("Unit<" + unitsToString(m_colliderArray[i]->getWorkingUnit()) + ">")
                     );
-                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createListAttribute("points");
+                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createArrayNode("points");
                     for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
                     {
                         Transform::UnitVector pVec = m_colliderArray[i]->getPointPosition(j);
-                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.x);
-                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getListAttribute("points").push(pVec.y);
+                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.x);
+                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.y);
                     }
                 }
             }
-            if (m_gameObjectMap.size() > 0) (*dataStore)->createComplexAttribute("LevelObjects");
+            if (m_gameObjectMap.size() > 0) (*dataStore)->createComplexNode("LevelObjects");
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
             {
-                dataStore->at("LevelObjects").createComplexAttribute(it->first);
-                dataStore->at("LevelObjects", it->first).createBaseAttribute("type", it->second->getType());
+                dataStore->at("LevelObjects").createComplexNode(it->first);
+                dataStore->at("LevelObjects", it->first).createDataNode("type", it->second->getType());
                 (*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
                 kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
                 (*it->second->m_objectScript)("print('Saving : ', This:getId())");
@@ -305,16 +305,16 @@ namespace obe
                 vili::ComplexNode* saveRequirements = Script::DataBridge::luaTableToComplexAttribute(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
-                    dataStore->at("LevelObjects", it->first).pushComplexAttribute(saveRequirements);
+                    dataStore->at("LevelObjects", it->first).pushComplexNode(saveRequirements);
                 (*it->second->m_objectScript)("print('Saving over for : ', This:getId())");
             }
             if (m_scriptArray.size() > 0)
             {
-                (*dataStore)->createComplexAttribute("Script");
-                dataStore->at("Script").createListAttribute("gameScripts");
+                (*dataStore)->createComplexNode("Script");
+                dataStore->at("Script").createArrayNode("gameScripts");
                 for (int i = 0; i < m_scriptArray.size(); i++)
                 {
-                    dataStore->at("Script").getListAttribute("gameScripts").push(m_scriptArray[i]);
+                    dataStore->at("Script").getArrayNode("gameScripts").push(m_scriptArray[i]);
                 }
             }
             return dataStore;

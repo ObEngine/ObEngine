@@ -50,7 +50,7 @@ namespace obe
                 if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
                 {
                     if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode, "name"))
-                        levelName = mapInfoParser.at("Meta").getBaseAttribute("name").get<std::string>();
+                        levelName = mapInfoParser.at("Meta").getDataNode("name").get<std::string>();
                 }
 
                 tgui::Button::Ptr selectMapButton = tgui::Button::create();
@@ -75,18 +75,18 @@ namespace obe
                 {
                     std::cout << "Creating new level : " << newLevelName << std::endl;
                     vili::ViliParser newFileParser;
-                    newFileParser.createFlag("Map");
-                    newFileParser.createFlag("Lock");
+                    newFileParser.addFlag("Map");
+                    newFileParser.addFlag("Lock");
                     newFileParser.includeFile("Obe");
-                    newFileParser->createComplexAttribute("Meta");
-                    newFileParser.at("Meta").createBaseAttribute("name", newLevelName);
-                    newFileParser->createComplexAttribute("View");
-                    newFileParser.at("View").createComplexAttribute("pos");
-                    newFileParser.at("View", "pos").createBaseAttribute("unit", "WorldUnits");
-                    newFileParser.at("View", "pos").createBaseAttribute("x", 0);
-                    newFileParser.at("View", "pos").createBaseAttribute("y", 0);
+                    newFileParser->createComplexNode("Meta");
+                    newFileParser.at("Meta").createDataNode("name", newLevelName);
+                    newFileParser->createComplexNode("View");
+                    newFileParser.at("View").createComplexNode("pos");
+                    newFileParser.at("View", "pos").createDataNode("unit", "WorldUnits");
+                    newFileParser.at("View", "pos").createDataNode("x", 0);
+                    newFileParser.at("View", "pos").createDataNode("y", 0);
                     newFileParser.at("View", "pos").useTemplate(newFileParser.getTemplate("Vector2<WorldUnits>"));
-                    newFileParser.at("View").createBaseAttribute("size", 1);
+                    newFileParser.at("View").createDataNode("size", 1);
                     newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString(), true);
                     input->setText("");
                 }

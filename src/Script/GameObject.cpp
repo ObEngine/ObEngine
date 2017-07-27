@@ -102,7 +102,7 @@ namespace obe
                     vili::ComplexNode& requiresData = getGameObjectFile.at<vili::ComplexNode>("Requires");
                     getGameObjectFile->extractElement(&getGameObjectFile.at<vili::ComplexNode>("Requires"));
                     requiresData.setId(type);
-                    allRequires->pushComplexAttribute(&requiresData);
+                    allRequires->pushComplexNode(&requiresData);
                     return &requiresData;
                 }
                 return nullptr;
@@ -145,7 +145,7 @@ namespace obe
             if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
             {
                 m_objectAnimator = std::make_unique<Animation::Animator>();
-                animatorPath = obj.at("Animator").getBaseAttribute("path").get<std::string>();
+                animatorPath = obj.at("Animator").getDataNode("path").get<std::string>();
                 if (animatorPath != "")
                 {
                     m_objectAnimator->setPath(animatorPath);
@@ -153,7 +153,7 @@ namespace obe
                 }
                 if (obj.at("Animator").contains(vili::NodeType::DataNode, "default"))
                 {
-                    m_objectAnimator->setKey(obj.at("Animator").getBaseAttribute("default").get<std::string>());
+                    m_objectAnimator->setKey(obj.at("Animator").getDataNode("default").get<std::string>());
                 }
                 m_hasAnimator = true;
             }
@@ -162,11 +162,11 @@ namespace obe
             {
                 m_objectCollider = world.createCollider(m_id);
 
-                std::string pointsUnit = obj.at("Collider", "unit").getBaseAttribute("unit").get<std::string>();
+                std::string pointsUnit = obj.at("Collider", "unit").getDataNode("unit").get<std::string>();
                 bool completePoint = true;
                 double pointBuffer;
                 Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                for (vili::DataNode* colliderPoint : obj.at("Collider").getListAttribute("points"))
+                for (vili::DataNode* colliderPoint : obj.at("Collider").getArrayNode("points"))
                 {
                     if (completePoint = !completePoint)
                     {
@@ -208,7 +208,7 @@ namespace obe
             if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id);
-                m_levelSpriteRelative = (obj.at("LevelSprite").getBaseAttribute("position").get<std::string>() == "relative") ? true : false;
+                m_levelSpriteRelative = (obj.at("LevelSprite").getDataNode("position").get<std::string>() == "relative") ? true : false;
                 int sprOffX = 0;
                 int sprOffY = 0;
                 std::string spriteXTransformer;
@@ -216,7 +216,7 @@ namespace obe
                 vili::ComplexNode& currentSprite = obj.at("LevelSprite");
 
                 std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
-                                             currentSprite.getBaseAttribute("path").get<std::string>() : "";
+                                             currentSprite.getDataNode("path").get<std::string>() : "";
                 Transform::UnitVector spritePos = Transform::UnitVector(
                     currentSprite.contains(vili::NodeType::ComplexNode, "pos") ?
                         currentSprite.at<vili::DataNode>("pos", "x").get<double>() : 0,
@@ -224,11 +224,11 @@ namespace obe
                         currentSprite.at<vili::DataNode>("pos", "y").get<double>() : 0
                 );
                 int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
-                                    currentSprite.getBaseAttribute("rotation").get<int>() : 0;
+                                    currentSprite.getDataNode("rotation").get<int>() : 0;
                 int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
-                                currentSprite.getBaseAttribute("layer").get<int>() : 1;
+                                currentSprite.getDataNode("layer").get<int>() : 1;
                 int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
-                                 currentSprite.getBaseAttribute("z-depth").get<int>() : 1;
+                                 currentSprite.getDataNode("z-depth").get<int>() : 1;
 
                 if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
                 {
@@ -292,20 +292,20 @@ namespace obe
 
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
                 {
-                    std::string getScrName = obj.at("Script").getBaseAttribute("source").get<std::string>();
+                    std::string getScrName = obj.at("Script").getDataNode("source").get<std::string>();
                     System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
                 }
                 else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
                 {
-                    int scriptListSize = obj.at("Script").getListAttribute("sources").size();
+                    int scriptListSize = obj.at("Script").getArrayNode("sources").size();
                     for (int i = 0; i < scriptListSize; i++)
                     {
-                        std::string getScrName = obj.at("Script").getListAttribute("sources").get(i).get<std::string>();
+                        std::string getScrName = obj.at("Script").getArrayNode("sources").get(i).get<std::string>();
                         System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
                     }
                 }
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "priority"))
-                    m_scrPriority = obj.at("Script").getBaseAttribute("priority").get<int>();
+                    m_scrPriority = obj.at("Script").getDataNode("priority").get<int>();
 
                 m_localTriggers->pushParameter("Init", "Lol", 3);
                 m_localTriggers->pushParameter("Init", "Mdr", 10);

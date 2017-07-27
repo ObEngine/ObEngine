@@ -15,7 +15,7 @@ namespace vili
         std::string linkroot = "";
         ComplexNode* complexParent = dynamic_cast<ComplexNode*>(m_parent);
         if (complexParent->contains(NodeType::DataNode, "__linkroot__"))
-            linkroot = complexParent->getBaseAttribute("__linkroot__").get<std::string>();
+            linkroot = complexParent->getDataNode("__linkroot__").get<std::string>();
         ContainerNode* root = this->getParent();
         while (root->getParent() != nullptr)
             root = root->getParent();
@@ -28,14 +28,14 @@ namespace vili
             {
                 ComplexNode* complexLocation = static_cast<ComplexNode*>(location);
                 if (complexLocation->contains(NodeType::ComplexNode, pathPart))
-                    location = &complexLocation->getComplexAttribute(pathPart);
+                    location = &complexLocation->getComplexNode(pathPart);
                 else if (complexLocation->contains(NodeType::DataNode, pathPart))
                 {
-                    location = &complexLocation->getBaseAttribute(pathPart);
+                    location = &complexLocation->getDataNode(pathPart);
                     break;
                 }
                 else if (complexLocation->contains(NodeType::ArrayNode, pathPart))
-                    location = &complexLocation->getListAttribute(pathPart);
+                    location = &complexLocation->getArrayNode(pathPart);
                 else
                     throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongLinkPath", {{"path", getNodePath()},{"target", m_path},{"pathpart", pathPart}});
             }
@@ -61,14 +61,14 @@ namespace vili
         std::string linkroot = "";
         ComplexNode* complexParent = dynamic_cast<ComplexNode*>(m_parent);
         if (complexParent->contains(NodeType::DataNode, "__linkroot__"))
-            linkroot = complexParent->getBaseAttribute("__linkroot__").get<std::string>();
+            linkroot = complexParent->getDataNode("__linkroot__").get<std::string>();
         return linkroot + "/" + m_path;
     }
 
     void LinkNode::apply()
     {
         ComplexNode* complexParent = dynamic_cast<ComplexNode*>(m_parent);
-        complexParent->deleteLinkAttribute(m_id);
+        complexParent->removeNode(NodeType::LinkNode, m_id);
 
         if (getTarget()->getType() == NodeType::ComplexNode)
             dynamic_cast<ComplexNode*>(getTarget())->copy(complexParent, m_id);
@@ -88,7 +88,7 @@ namespace vili
     void LinkNode::copy(ContainerNode* newParent, const std::string& newid) const
     {
         if (newParent->getType() == NodeType::ComplexNode)
-            dynamic_cast<ComplexNode*>(newParent)->createLinkAttribute(newid.empty() ? m_id : newid, m_path);
+            dynamic_cast<ComplexNode*>(newParent)->createLinkNode(newid.empty() ? m_id : newid, m_path);
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
     }

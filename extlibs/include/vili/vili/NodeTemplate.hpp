@@ -13,10 +13,31 @@ namespace vili
         LinkNode m_attribute;
         std::vector<std::function<bool(DataNode*)>> m_constraints;
     public:
-        NodeConstraintManager(ComplexNode* parent, std::string path);
+        /**
+         * \brief Creates a new NodeConstraintManager
+         * \param parent Parent of the contained LinkNode
+         * \param path Path that the LinkNode should point to
+         */
+        NodeConstraintManager(ComplexNode* parent, const std::string& path);
+        /**
+         * \brief Adds a new constraint to the NodeConstraintManager
+         * \param constraint A function with one DataNode parameter that should return true if the constraint is respected, false otherwise
+         */
         void addConstraint(std::function<bool(DataNode*)> constraint);
+        /**
+         * \brief Checks if all constraints on the Argument value are accepted
+         * \return true if the value for the argument respects all the constraints, false otherwise 
+         */
         bool checkAllConstraints();
-        LinkNode* getLinkAttribute();
+        /**
+         * \brief Get the LinkNode linked to the argument
+         * \return A pointer to the LinkNode
+         */
+        LinkNode* getLinkNode();
+        /**
+         * \brief Get the path (in the tree of NodeTemplate body) of the Argument
+         * \return A std::string containing the path to the Argument
+         */
         std::string getArgumentPath() const;
     };
 
@@ -62,7 +83,7 @@ namespace vili
         void useDefaultLinkRoot();
         /**
          * \brief Gets the amount of arguments of the NodeTemplate
-         * \return 
+         * \return An unsigned int containing the amount of arguments of the NodeTemplate
          */
         unsigned int getArgumentCount() const;
         /**

@@ -84,7 +84,7 @@ namespace obe
             std::string model = "";
             if (animFile.at("Images").contains(vili::NodeType::DataNode, "model"))
             {
-                model = animFile.at("Images").getBaseAttribute("model").get<std::string>();
+                model = animFile.at("Images").getDataNode("model").get<std::string>();
             }
             for (unsigned int i = 0; i < imageList.size(); i++)
             {
