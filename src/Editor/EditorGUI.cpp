@@ -308,6 +308,7 @@ namespace obe
 
                 enableGridCheckbox->connect("unchecked", [snapGridCheckbox]()
                 {
+                    snapGridCheckbox->uncheck();
                     snapGridCheckbox->disable();
                     snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
                 });

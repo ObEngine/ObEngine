@@ -42,6 +42,8 @@ KeyBinding:
         MagnetizeDown:"Hold:Down"
         MagnetizeLeft:"Hold:Left"
         Save:"Hold:LControl + Pressed:S"
+        ToggleGrid:"Pressed:G"
+        ToggleGridSnap:"Pressed:H"
     spriteEditing:
         SpriteCancelOffset:"Hold:LMB + Pressed:O"
         SpriteDelete:"Pressed:Delete"

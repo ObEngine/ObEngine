@@ -8,7 +8,9 @@
 
 namespace vili
 {
-    //ListAttribute
+    /**
+     * \brief An ArrayNode is a Node that can contains multiple DataNodes with an index
+     */
     class ArrayNode : public ContainerNode
     {
     private:

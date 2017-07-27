@@ -137,6 +137,7 @@ namespace obe
             GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel);
 
             tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox", true);
+            tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox", true);
             tgui::TextBox::Ptr mapNameInput = gui.get<tgui::TextBox>("mapNameInput", true);
             tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel", true);
             tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel", true);
@@ -174,7 +175,7 @@ namespace obe
             //Connect InputManager Actions
             connectSaveActions(inputManager, mapName, scene, waitForMapSaving, savedLabel);
             connectCamMovementActions(inputManager, scene, cameraSpeed, framerateManager);
-            connectMagnetActions(inputManager, enableGridCheckbox, cursor, editorGrid);
+            connectGridActions(inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, cameraMode);
             connectSpriteLayerActions(inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
