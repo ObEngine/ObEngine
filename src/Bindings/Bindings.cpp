@@ -5,6 +5,7 @@
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
+#include <Bindings/SFMLBindings.hpp>
 #include <Bindings/SoundBindings.hpp>
 #include <Bindings/SystemBindings.hpp>
 #include <Bindings/TimeBindings.hpp>
@@ -44,11 +45,14 @@ namespace obe
                 .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
                 .add("ConsoleStream", &DebugBindings::LoadConsoleStream);
             BindTree["Core"].add("Editor")["Editor"]
-                .add("EditorGrid", EditorBindings::LoadEditorGrid);
+                .add("EditorGrid", &EditorBindings::LoadEditorGrid);
             BindTree["Core"].add("Graphics")["Graphics"]
-                .add("LevelSprite", GraphicsBindings::LoadLevelSprite)
+                .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
                 .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
-                .add("ResourceManager", GraphicsBindings::LoadResourceManager);
+                .add("ResourceManager", &GraphicsBindings::LoadResourceManager);
+            BindTree.add("SFML");
+            BindTree["SFML"]
+                .add("Color", SFMLBindings::LoadColor);
         }
     }
 }
