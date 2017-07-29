@@ -8,6 +8,7 @@ namespace vili
 {
     /**
      * \brief A terminal Node that contains data (One of the types defined in vili::DataType)
+     * @Bind
      */
     class DataNode : public Node
     {

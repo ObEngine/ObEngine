@@ -6,12 +6,13 @@ namespace obe
 {
     namespace Bindings
     {
+        /**
+        * \brief Bindings to Scene related classes and functions
+        */
         namespace SceneBindings
         {
-            /**
-            * \brief Bindings to Scene related classes and functions
-            */
             void LoadCamera(kaguya::State* lua);
+            void LoadScene(kaguya::State* lua);
         }
     }
 }

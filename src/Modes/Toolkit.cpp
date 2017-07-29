@@ -3,6 +3,7 @@
 
 #include <Modes/Toolkit.hpp>
 #include <Script/Script.hpp>
+#include "Bindings/Bindings.hpp"
 
 namespace obe
 {
@@ -69,9 +70,10 @@ namespace obe
 
 
             toolkitEngine["This"] = &toolkitEngine;
+            toolkitEngine["CPP_Import"] = &Bindings::Load;
+            toolkitEngine["CPP_Hook"] = &Script::loadHook;
             toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
-            Script::loadLib(&toolkitEngine, "Core.*");
-            Script::loadBaseLib(&toolkitEngine);
+            Bindings::BindTree(&toolkitEngine);
             toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)
             {
                 inputColor.r = r;

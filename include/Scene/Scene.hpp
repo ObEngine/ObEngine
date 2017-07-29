@@ -14,6 +14,7 @@ namespace obe
 
         /**
          * \brief The Scene class is a container of all the game elements
+         * @Bind
          */
         class Scene
         {

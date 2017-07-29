@@ -6,6 +6,7 @@ namespace vili
 {
     /**
      * \brief Abstract base class for ArrayNode and ComplexNode (A ContainerNode can contains other nodes)
+     * @Bind
      */
     class ContainerNode : public Node
     {

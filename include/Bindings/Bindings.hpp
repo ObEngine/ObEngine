@@ -6,6 +6,9 @@
 
 namespace obe
 {
+    /**
+     * \brief Bind C++ Classes and Functions to Lua VMs
+     */
     namespace Bindings
     {
         extern BindingTree BindTree;

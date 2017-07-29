@@ -49,6 +49,7 @@ namespace obe
                     .addFunction("isWritable", &Input::InputButton::isWritable)
                 );
             }
+
             void LoadInputButtonMonitor(kaguya::State* lua)
             {
                 (*lua)["Core"]["Input"]["InputButtonMonitor"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitor>()
@@ -57,9 +58,7 @@ namespace obe
                     .addFunction("getState", &Input::InputButtonMonitor::getState)
                     .addFunction("update", &Input::InputButtonMonitor::update)
                 );
-            }
-            void LoadInputButtonMonitorPtr(kaguya::State* lua)
-            {
+
                 (*lua)["Core"]["Input"]["InputButtonMonitorPtr"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitorPtr>()
                     .addFunction("getButton", &Input::InputButtonMonitorPtr::getButton)
                     .addFunction("getState", &Input::InputButtonMonitorPtr::getState)
@@ -75,21 +74,31 @@ namespace obe
                     .addFunction("setCombinationCode", &Input::InputCondition::setCombinationCode)
                 );
             }
+
             void LoadInputManager(kaguya::State* lua)
             {
-                //Correct function through lambda (Returning a class that contains unique_ptr cause a problem) <REVISION>
                 (*lua)["Core"]["Input"]["InputManager"].setClass(kaguya::UserdataMetatable<Input::InputManager>()
                     .addFunction("actionExists", &Input::InputManager::actionExists)
-                    //.addFunction("addContext", &Input::InputManager::addContext)
                     .addFunction("clearContexts", &Input::InputManager::clearContexts)
                     .addFunction("configure", &Input::InputManager::configure)
                     .addFunction("getAction", &Input::InputManager::getAction)
                     .addFunction("handleTriggers", &Input::InputManager::handleTriggers)
-                    //.addFunction("removeContext", &Input::InputManager::removeContext)
                     .addFunction("setContext", &Input::InputManager::setContext)
                     .addFunction("setEnabled", &Input::InputManager::setEnabled)
                     .addFunction("update", &Input::InputManager::update)
                 );
+
+                (*lua)["Core"]["Input"]["InputManager"]["addContext"] = kaguya::function(
+                    [](Input::InputManager& manager, const std::string& context)
+                {
+                    return &manager.addContext(context);
+                });
+
+                (*lua)["Core"]["Input"]["InputManager"]["removeContext"] = kaguya::function(
+                    [](Input::InputManager& manager, const std::string& context)
+                {
+                    return &manager.removeContext(context);
+                });
             }
 
             void LoadInputFunctions(kaguya::State* lua)

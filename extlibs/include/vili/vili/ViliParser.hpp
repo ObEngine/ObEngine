@@ -7,6 +7,7 @@ namespace vili
 {
     /**
      * \brief A Class that can parse .vili files and create a Node Tree
+     * @Bind
      */
     class ViliParser
     {

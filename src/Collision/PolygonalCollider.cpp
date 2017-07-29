@@ -680,7 +680,7 @@ namespace obe
                             if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                             {
                                 inFront = true;
-                                ip = point0 + (s1 * t);
+                                ip = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
 
                                 distance = std::sqrt(std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
                                 if (distance < minDistance || minDistance == -1)
@@ -699,7 +699,7 @@ namespace obe
 
                 auto tdm1 = calcMinDistanceDep(fPath, sPath, tOffset);
                 std::cout << "TDM1 : " << std::get<1>(tdm1) << std::endl;
-                auto tdm2 = calcMinDistanceDep(sPath, fPath, tOffset * -1.0);
+                auto tdm2 = calcMinDistanceDep(sPath, fPath, tOffset * Transform::UnitVector(-1.0, -1.0, tOffset.unit));
                 std::cout << "TDM2 : " << std::get<1>(tdm2) << std::endl;
                 std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
                 std::get<1>(tdm2).y = -std::get<1>(tdm2).y;

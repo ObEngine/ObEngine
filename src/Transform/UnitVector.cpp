@@ -111,11 +111,6 @@ namespace obe
             return *this;
         }
 
-        UnitVector UnitVector::operator*(double mul) const
-        {
-            return UnitVector(x * mul, y * mul, unit);
-        }
-
         UnitVector UnitVector::to(Units pUnit) const
         {
             switch (pUnit)

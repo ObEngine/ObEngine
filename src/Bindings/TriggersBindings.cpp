@@ -12,10 +12,14 @@ namespace obe
             void LoadTrigger(kaguya::State* lua)
             {
                 (*lua)["Core"]["Triggers"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
+                    .addFunction("clear", &Triggers::Trigger::clear)
+                    .addFunction("execute", &Triggers::Trigger::execute)
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
                     .addFunction("getState", &Triggers::Trigger::getState)
+                    .addFunction("prepareNewCall", &Triggers::Trigger::prepareNewCall)
+                    .addFunction("registerState", &Triggers::Trigger::registerState)
                 );
             }
             void LoadTriggerDatabase(kaguya::State* lua)
@@ -44,7 +48,6 @@ namespace obe
                 (*lua)["Core"]["Triggers"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
                     .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                     .addFunction("delayTriggerState", &Triggers::TriggerGroup::delayTriggerState)
-                    .addFunction("enableTrigger", &Triggers::TriggerGroup::trigger)
                     .addFunction("getAllTriggers", &Triggers::TriggerGroup::getAllTriggers)
                     .addFunction("getAllTriggersName", &Triggers::TriggerGroup::getAllTriggersName)
                     .addFunction("getName", &Triggers::TriggerGroup::getName)
@@ -79,6 +82,8 @@ namespace obe
                         &Triggers::TriggerGroup::pushParameter<std::map<bool, bool>>
                     )
                     .addFunction("setJoinable", &Triggers::TriggerGroup::setJoinable)
+                    .addFunction("setPermanent", &Triggers::TriggerGroup::setPermanent)
+                    .addFunction("trigger", &Triggers::TriggerGroup::trigger)
                 );
             }
         }

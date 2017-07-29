@@ -30,26 +30,28 @@ namespace obe
             void LoadUnitVector(kaguya::State* lua)
             {
                 (*lua)["Core"]["Transform"]["UnitVector"].setClass(kaguya::UserdataMetatable<Transform::UnitVector>()
+                    .setConstructors<
+                    Transform::UnitVector(),
+                    Transform::UnitVector(Transform::Units),
+                    Transform::UnitVector(double, double), 
+                    Transform::UnitVector(double, double, Transform::Units)
+                    >()
                     .addOverloadedFunctions("add",
                         static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::add),
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add)
                     )
-                    .addOverloadedFunctions("operator*",
-                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator*),
-                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(double) const>(&Transform::UnitVector::operator*)
-                    )
-                    .addFunction("operator*=", &Transform::UnitVector::operator*=)
-                    .addFunction("operator+", &Transform::UnitVector::operator+)
-                    .addFunction("operator+=", &Transform::UnitVector::operator+=)
-                    .addFunction("operator-", &Transform::UnitVector::operator-)
-                    .addFunction("operator-=", &Transform::UnitVector::operator-=)
-                    .addFunction("operator/", &Transform::UnitVector::operator/)
-                    .addFunction("operator/=", &Transform::UnitVector::operator/=)
+                    .addFunction("__add", &Transform::UnitVector::operator+)
+                    .addFunction("__sub", &Transform::UnitVector::operator-)
+                    .addFunction("__div", &Transform::UnitVector::operator/)
+                    .addFunction("__mul", &Transform::UnitVector::operator*)
                     .addOverloadedFunctions("set",
                         static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::set),
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::set)
                     )
                     .addFunction("to", static_cast<Transform::UnitVector (Transform::UnitVector::*)(Transform::Units) const>(&Transform::UnitVector::to))
+                    .addProperty("x", &Transform::UnitVector::x)
+                    .addProperty("y", &Transform::UnitVector::y)
+                    .addProperty("unit", &Transform::UnitVector::unit)
                 );
             }
         }
