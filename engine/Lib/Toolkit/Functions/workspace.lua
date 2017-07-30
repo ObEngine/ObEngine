@@ -3,7 +3,7 @@ local Route = require("Lib/Toolkit/Route");
 
 local Functions = {};
 
-Functions.use = function(workspaceName)
+Functions.mount = function(workspaceName)
     local parser = Core.Vili.DataParser.new();
     parser:parseFile("Workspace/Workspaces.vili", true);
     if (parser:root():contains(Core.Vili.AttributeType.ComplexAttribute, workspaceName)) then
@@ -51,17 +51,21 @@ end
 return {
     Functions = Functions,
     Routes = {
+        Route.Help("Commands to work with Workspaces");
         Route.Arg("create", {
+            Route.Help("Creates a new Workspace");
             Route.Arg("workspaceName", Route.Types.Any, {
                 Route.Call("create");
             });
         }),
-        Route.Arg("use", {
+        Route.Arg("mount", {
+            Route.Help("Mounts a Workspace");
             Route.Arg("workspaceName", Route.Types.Any, {
-                Route.Call("use");
+                Route.Call("mount");
             });
         }),
         Route.Arg("list", {
+            Route.Help("Lists all exsiting Workspaces");
             Route.Call("list");
         })
     }

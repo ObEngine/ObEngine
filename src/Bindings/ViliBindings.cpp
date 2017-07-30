@@ -1,7 +1,10 @@
-#include <Bindings/ViliBindings.hpp>
+#include <fstream>
+
 #include <vili/vili/Types.hpp>
 #include <vili/vili/ViliParser.hpp>
-#include "Script/Script.hpp"
+
+#include <Bindings/ViliBindings.hpp>
+#include <Utils/VectorUtils.hpp>
 
 namespace obe
 {

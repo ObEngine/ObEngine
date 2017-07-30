@@ -14,5 +14,9 @@ return {
     },
     Routes = {
         Route.Call("help");
+        Route.Help("Well, it.. helps you ?");
+        Route.Arg("command", Route.Types.Any, {
+            Route.Help("Gets the help for a specific command");
+        });
     }
 };

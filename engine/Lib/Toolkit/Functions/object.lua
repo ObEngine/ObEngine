@@ -85,7 +85,9 @@ end
 return {
     Functions = Functions,
     Routes = {
+        Route.Help("Commands to work with GameObjects");
         Route.Arg("create", {
+            Route.Help("Creates a new GameObject");
             Route.Arg("objectName", Route.Types.Any, {
                 Route.Arg("components", Route.Types.Any, {
                     Route.Call("create");
@@ -93,6 +95,7 @@ return {
             })
         }),
         Route.Arg("list", {
+            Route.Help("List all existing GameObjects");
             Route.Call("list");
         });
     }

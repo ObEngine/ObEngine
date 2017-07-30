@@ -18,7 +18,7 @@ function Functions.install(packageName)
     end
 end
 
-function Functions.use(packageName)
+function Functions.mount(packageName)
     if Package.PackageExists(packageName) then
         Core.Filesystem.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
         Color.print({ text = "Package '" .. packageName .. "' has been successfully mounted", color = {0, 255, 0}}, 1);
@@ -30,14 +30,17 @@ end
 return {
     Functions = Functions,
     Routes = {
+        Route.Help("Commands to work with Packages");
         Route.Arg("install", {
+            Route.Help("Installs a Package");
             Route.Arg("packageName", Route.Types.Any, {
                 Route.Call("install");
             }, function() return { "bob", "ana" }; end);
         }),
-        Route.Arg("use", {
+        Route.Arg("mount", {
+            Route.Help("Mount a Package");
             Route.Arg("packageName", Route.Types.Any, {
-                Route.Call("use");
+                Route.Call("mount");
             });
         })
     }

@@ -8,5 +8,6 @@ return {
     },
     Routes = {
         Route.Call("exit");
+        Route.Help("Exits the Toolkit Console");
     }
 };
