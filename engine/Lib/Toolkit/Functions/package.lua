@@ -1,6 +1,6 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 local Route = require("Lib/Toolkit/Route");
-local Package = Core.Package.Package;
+local Package = Core.System.Package;
 
 local Functions = {};
 

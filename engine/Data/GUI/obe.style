@@ -130,9 +130,9 @@ Scrollbar {
 }
 
 ChatBox {
-    BackgroundColor = rgb(0, 0, 0);
+    BackgroundColor = rgb(20, 20, 20);
     BorderColor     = White;
-    Borders         = (2, 2, 2, 2);
+    Borders         = (1, 1, 1, 1);
     Scrollbar       = &Scrollbar;
 }
 

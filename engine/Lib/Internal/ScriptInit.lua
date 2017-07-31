@@ -1,5 +1,4 @@
 Core = {}; -- Core Lib
-Core.ImportedLibs = {} -- List of Imported Lib names
 Hook = {}; -- Core Objects
 LuaCore = {};
 

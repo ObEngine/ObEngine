@@ -19,6 +19,7 @@ namespace obe
         {
             void LoadExecUtils(kaguya::State* lua)
             {
+                (*lua)["Core"]["Utils"]["Exec"] = kaguya::NewTable();
                 (*lua)["Core"]["Utils"]["Exec"]["RunArgsParser"].setClass(kaguya::UserdataMetatable<Utils::Exec::RunArgsParser>()
                     .addFunction("argumentExists", &Utils::Exec::RunArgsParser::argumentExists)
                     .addFunction("getArgumentValue", &Utils::Exec::RunArgsParser::getArgumentValue)
@@ -27,6 +28,7 @@ namespace obe
 
             void LoadFileUtils(kaguya::State* lua)
             {
+                (*lua)["Core"]["Utils"]["File"] = kaguya::NewTable();
                 (*lua)["Core"]["Utils"]["File"]["getDirectoryList"] = kaguya::function(Utils::File::getDirectoryList);
                 (*lua)["Core"]["Utils"]["File"]["getFileList"] = kaguya::function(Utils::File::getFileList);
                 (*lua)["Core"]["Utils"]["File"]["fileExists"] = kaguya::function(Utils::File::fileExists);
@@ -42,6 +44,7 @@ namespace obe
 
             void LoadMathUtils(kaguya::State* lua)
             {
+                (*lua)["Core"]["Utils"]["Math"] = kaguya::NewTable();
                 (*lua)["Core"]["Utils"]["Math"]["randint"] = kaguya::function(Utils::Math::randint);
                 (*lua)["Core"]["Utils"]["Math"]["randfloat"] = kaguya::function(Utils::Math::randfloat);
                 (*lua)["Core"]["Utils"]["Math"]["getMin"] = kaguya::function(Utils::Math::getMin<double>);
@@ -53,6 +56,7 @@ namespace obe
 
             void loadStringUtils(kaguya::State* lua)
             {
+                (*lua)["Core"]["Utils"]["String"] = kaguya::NewTable();
                 (*lua)["Core"]["Utils"]["String"]["split"] = kaguya::function(Utils::String::split);
                 (*lua)["Core"]["Utils"]["String"]["occurencesInString"] = kaguya::function(Utils::String::occurencesInString);
                 (*lua)["Core"]["Utils"]["String"]["isStringAlpha"] = kaguya::function(Utils::String::isStringAlpha);
@@ -69,6 +73,7 @@ namespace obe
 
             void loadVectorUtils(kaguya::State* lua)
             {
+                (*lua)["Core"]["Utils"]["Vector"] = kaguya::NewTable();
                 UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Vector", "isInList", Utils::Vector::isInList);
                 UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Vector", "indexOfElement", Utils::Vector::indexOfElement);
                 UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Vector", "eraseAll", Utils::Vector::eraseAll);

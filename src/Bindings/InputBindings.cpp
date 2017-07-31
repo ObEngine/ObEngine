@@ -103,6 +103,7 @@ namespace obe
 
             void LoadInputFunctions(kaguya::State* lua)
             {
+                (*lua)["Core"]["Input"]["Monitors"] = kaguya::NewTable();
                 (*lua)["Core"]["Input"]["Monitors"]["UpdateMonitors"] = kaguya::function(Input::Monitors::UpdateMonitors);
                 (*lua)["Core"]["Input"]["Monitors"]["UpdateMonitorsAndRemoveIfNoReferences"] = kaguya::function(Input::Monitors::UpdateMonitorsAndRemoveIfNoReferences);
                 (*lua)["Core"]["Input"]["Monitors"]["Monitor"] = kaguya::overload(

@@ -41,10 +41,16 @@ Functions.create = function(workspaceName)
 end
 
 function Functions.list()
-    local parser = Core.Vili.DataParser.new();
+    local parser = Vili.ViliParser.new();
     parser:parseFile("Workspace/Workspaces.vili", false);
-    for _, key in pairs(parser:root():getAll(Core.Vili.AttributeType.ComplexAttribute)) do 
-        Color.print({ text = "- Workspace : " .. key, color = {0, 255, 255}}, 2);
+    Color.print({
+        { text = "All Registered Workspaces : ", color = {140, 210, 80}}
+    }, 1);
+    for _, key in pairs(parser:root():getAll(Vili.NodeType.ComplexNode)) do 
+        Color.print({
+            { text = "- Workspace : ", color = {255, 255, 255}},
+            { text = key, color = {255, 192, 255}}
+        }, 2);
     end
 end
 
@@ -54,9 +60,16 @@ return {
         Route.Help("Commands to work with Workspaces");
         Route.Arg("create", {
             Route.Help("Creates a new Workspace");
-            Route.Arg("workspaceName", Route.Types.Any, {
-                Route.Call("create");
-            });
+            Route.Arg("lol", {
+
+            }),
+            Route.Arg("mdr", {
+                
+            })
+            --[[Route.Arg("workspaceName", Route.Types.Any, {
+                --Route.Call("create");
+                
+            });]]--
         }),
         Route.Arg("mount", {
             Route.Help("Mounts a Workspace");

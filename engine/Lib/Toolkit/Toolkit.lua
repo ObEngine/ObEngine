@@ -6,12 +6,20 @@ local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
 
 function loadToolkitFunctions()
-    local fileList = Core.Filesystem.getFileList("Lib/Toolkit/Functions");
+    local fileList = Core.Utils.File.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
     for _, content in pairs(fileList) do
         allFunctions[String.split(content, ".")[1]] = require("Lib/Toolkit/Functions/" .. String.split(content, ".")[1]);
     end
     return allFunctions;
+end
+
+function askForCompletion(command)
+    Color.print({
+        {text = "> ", color = {255, 255, 255}},
+        {text = command, color = {0, 200, 200}},
+        {text = " ...", color = {255, 0, 255}}
+    });
 end
 
 function autocompleteArgs(command, query)
@@ -58,19 +66,29 @@ function autocompleteArgs(command, query)
         for _, arg in pairs(command) do
             if arg.type == "Path" then
                 if start ~= nil and string.sub(arg.id, 1, string.len(start)) == start then
-                    table.insert(arglist, arg.id);
+                    arglist[arg.id] = arg;
                 elseif start == nil then
-                    table.insert(arglist, arg.id);
+                    arglist[arg.id] = arg;
                 end
             elseif arg.type == "Arg" then
                 print("FOUND ARG", arg.autocomplete, start);
-                if arg.autocomplete then
-                    local autocompleteResult = arg.autocomplete(start);
+                local autocompleteFunction;
+                for _, searchFunction in pairs(arg.children) do
+                    if searchFunction.type == "Autocomplete" then
+                        print("FOUND AUTOCOMPLETE FUNCTION");
+                        autocompleteFunction = searchFunction.ref;
+                        break;
+                    end
+                end
+                if autocompleteFunction then
+                    local autocompleteResult = autocompleteFunction(start);
                     for _, content in pairs(autocompleteResult) do
                         if start ~= nil and content:sub(1, string.len(start)) == start then
-                            table.insert(arglist, content);
+                            -- Add help ?
+                            arglist[content] = {};
                         elseif start == nil then
-                            table.insert(arglist, content);
+                            -- Add help ?
+                            arglist[content] = {};
                         end
                     end
                     print("GOT ACR : ", inspect(arglist));
@@ -153,6 +171,22 @@ function decomposeCommand(command)
     return commandName, cargs;
 end
 
+function getTableSize(mtable)
+    local size = 0;
+    for _, v in pairs(mtable) do
+        size = size + 1;
+    end
+    return size;
+end
+
+function getTableKeys(mtable)
+    local keys = {};
+    for k, v in pairs(mtable) do
+        table.insert(keys, k);
+    end
+    return keys;
+end
+
 function autocompleteHandle(ToolkitFunctions, command)
     if #command > 0 then
         local commandName, cargs = decomposeCommand(command);
@@ -162,16 +196,16 @@ function autocompleteHandle(ToolkitFunctions, command)
                 useQuery = useQuery .. " ";
             end
             local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, useQuery);
-            if #completions == 1 then
+            if getTableSize(completions) == 1 then
                 while command:sub(#command, #command) ~= " " do
                     command = command:sub(1, -2);
                 end
-                command = command .. completions[1];
-            elseif #completions > 1 then
+                command = command .. getTableKeys(completions)[1];
+            elseif getTableSize(completions) > 1 then
                 while command:sub(#command, #command) ~= " " do
                     command = command:sub(1, -2);
                 end
-                local commonRoot = getBiggestCommonRoot(getLastArgument(command), completions);
+                local commonRoot = getBiggestCommonRoot(getLastArgument(command), getTableKeys(completions));
                 command = command .. commonRoot;
             end
         end
@@ -179,26 +213,66 @@ function autocompleteHandle(ToolkitFunctions, command)
     return command;
 end
 
+function isUniqueValidCommand(command, commandName)
+    local obfuscatedCommand = 0;
+    for key, func in pairs(ToolkitFunctions) do
+        if key:sub(0, #command) == commandName then
+            obfuscatedCommand = obfuscatedCommand + 1;
+        end
+    end
+    return obfuscatedCommand == 1;
+end
+
+function getHelp(arg)
+    for _, child in pairs(arg) do
+        if child.type == "Help" then
+            return child.help;
+        end
+    end
+    return "";
+end
+
 ToolkitFunctions = loadToolkitFunctions();
 
 function autocomplete(command)
     local commandName, cargs = decomposeCommand(command);
     _term_last();
-    if ToolkitFunctions[commandName] then   
-        if #cargs == 0 and command:sub(#command, #command) ~= " " then
-            command = command .. " ";
-            _term_write(" ");
-        end
-        local checkCurrentInput = autocompleteHandle(ToolkitFunctions, command);
-        if command == checkCurrentInput then
-            local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " "));
-            Color.print({text = "> " .. command, color = {0, 128, 128}});
-            for _, completion in pairs(completions) do
-                Color.print({text = "    > " .. completion, color = {255, 255, 0}});
+    if ToolkitFunctions[commandName] then
+        if isUniqueValidCommand(command, commandName) then
+            if #cargs == 0 and command:sub(#command, #command) ~= " " then
+                command = command .. " ";
+                _term_write(" ");
+            end
+            local checkCurrentInput = autocompleteHandle(ToolkitFunctions, command);
+            print("Check Current Input : '" .. checkCurrentInput .. "'")
+            if command == checkCurrentInput then
+                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " "));
+                askForCompletion(command);
+                for compId, completion in pairs(completions) do
+                    Color.print({
+                        {text = "> ", color = {255, 255, 255}},
+                        {text = compId, color = {140, 210, 80}},
+                        {text = " : ", color = {255, 255, 255}},
+                        {text = getHelp(completion.children), color = {230, 125, 50}}
+                    }, 2);
+                end
+            else
+                _term_clear();
+                _term_write(checkCurrentInput);
             end
         else
-            _term_clear();
-            _term_write(checkCurrentInput);
+            -- When commands overlaps
+            askForCompletion(command);
+            for key, func in pairs(ToolkitFunctions) do
+                if key:sub(0, #command) == command then
+                    Color.print({
+                        {text = "> ", color = {255, 255, 255}},
+                        {text = key, color = {255, 192, 0}},
+                        {text = " : ", color = {255, 255, 255}},
+                        {text = getHelp(func.Routes), color = {230, 125, 50}}
+                    }, 2);
+                end
+            end
         end
     else
         local allFunctions = {};
@@ -206,8 +280,24 @@ function autocomplete(command)
             table.insert(allFunctions, key);
         end
         local newCurrentInput = getBiggestCommonRoot(command, excludeNonMatchingWords(command, allFunctions));
+        print("NCI : ", newCurrentInput)
         if #newCurrentInput ~= #command then
             _term_write(newCurrentInput:sub(#command + 1));
+            if isUniqueValidCommand(command, commandName) then
+                _term_write(" ");
+            end
+        else
+            askForCompletion(command);
+            for key, func in pairs(ToolkitFunctions) do
+                if key:sub(0, #command) == command then
+                    Color.print({
+                        {text = "> ", color = {255, 255, 255}},
+                        {text = key, color = {255, 192, 0}},
+                        {text = " : ", color = {255, 255, 255}},
+                        {text = getHelp(func.Routes), color = {230, 125, 50}}
+                    }, 2);
+                end
+            end
         end
     end
 end
@@ -221,6 +311,7 @@ function getIdentifiedArgArraySize(idargs)
 end
 
 function reachCommand(command, branch, args, idargs)
+    print("Reach Command : ", command, inspect(branch), inspect(args), inspect(idargs));
     local identifiedArgs = idargs or {};
     local entries = 0;
     local subargs = {};
@@ -255,7 +346,11 @@ function reachCommand(command, branch, args, idargs)
         if recurseIn then
             return reachCommand(command, recurseIn, subargs, identifiedArgs);
         else
-            Color.print({text = "Invalid argument '" .. nextJump .. "'", color = {255, 0, 0}});
+            -- Invalid Argument
+            Color.print({
+                {text = "Invalid argument ", color = {255, 0, 0}},
+                {text = nextJump, color = {140, 210, 80}}
+            }, 2);
         end
     else
         local futureCall = nil;
@@ -271,7 +366,14 @@ function reachCommand(command, branch, args, idargs)
             end
             return futureCall.ref, identifiedArgs;
         else
-            Color.print({text = "Nothing to call with argument '" .. branch.id .. "' in command '" .. command .. "'", color = {255, 0, 0}});
+            -- No callable function found
+            Color.print({
+                {text = "Nothing to call with argument ", color = {255, 0, 0}},
+                {text = branch.id, color = {140, 210, 80}},
+                {text = " in command ", color = {255, 0, 0}},
+                {text = command, color = {255, 192, 0}}
+            }, 2);
+            return nil, nil
         end
     end
 end
@@ -288,26 +390,39 @@ function evaluate(command)
     local commandName, cargs = decomposeCommand(command);
     print("Evaluate : " .. command);
     if ToolkitFunctions[commandName] then
+        -- Command found
+        print("Cargs is ", cargs);
         local callFunction, identifiedArgs = reachCommand(commandName, {id = "{root}", children = ToolkitFunctions[commandName].Routes}, cargs);
-        for key, content in pairs(identifiedArgs) do
-            if content.type == "Path" then
-                identifiedArgs[key].value = getAtIndex(identifiedArgs, content.index + 1);
-            elseif content.type == "Arg" then
-                identifiedArgs[key].value = cargs[content.index + 1];
+        if callFunction and identifiedArgs then
+            -- Successful Reach Command Call
+            for key, content in pairs(identifiedArgs) do
+                if content.type == "Path" then
+                    identifiedArgs[key].value = getAtIndex(identifiedArgs, content.index + 1);
+                elseif content.type == "Arg" then
+                    identifiedArgs[key].value = cargs[content.index + 1];
+                end
             end
+            local ArgMirror = require('Lib/Internal/ArgMirror');
+            local argList = ArgMirror.GetArgs(callFunction);
+            local callArgs = {};
+            for _, arg in pairs(argList) do
+                table.insert(callArgs, identifiedArgs[arg].value);
+            end
+            callFunction(ArgMirror.Unpack(callArgs));
         end
-        print(inspect(identifiedArgs));
-        local ArgMirror = require('Lib/Internal/ArgMirror');
-        local argList = ArgMirror.GetArgs(callFunction);
-        local callArgs = {};
-        for _, arg in pairs(argList) do
-            table.insert(callArgs, identifiedArgs[arg].value);
-        end
-        callFunction(ArgMirror.Unpack(callArgs));
     else
-        Color.print({text = "Command '" .. commandName .. "' not found.", color = {255, 0, 0}});
+        -- Command not found
+        Color.print({
+            {text = "Command ", color = {255, 0, 0}},
+            {text = commandName, color = {255, 192, 0}},
+            {text = " not found.", color = {255, 0, 0}}
+        }, 2);
     end
     
 end
 
-Color.print({text = "-- ObEngine Toolkit v1.0 --", color = {0, 255, 0}});
+Color.print({
+    {text = "@", color = {0, 255, 0}},
+    {text = "ObEngine Toolkit ", color = {0, 170, 240}},
+    {text = " (v1.0)", color = {0, 255, 255}}
+});

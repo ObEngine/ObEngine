@@ -4,6 +4,7 @@
 #include <Modes/Toolkit.hpp>
 #include <Script/Script.hpp>
 #include "Bindings/Bindings.hpp"
+#include <Modes/ToolkitContentBox.hpp>
 
 namespace obe
 {
@@ -15,6 +16,8 @@ namespace obe
             sf::RenderWindow window({636, 636}, "ObEngine Toolkit", sf::Style::None);
             sf::Color inputColor(255, 255, 255);
 
+            sf::Font toolkitFont;
+            toolkitFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
             tgui::Gui gui(window);
             gui.setFont("Data/Fonts/weblysleekuil.ttf");
             tgui::Theme baseTheme;
@@ -22,7 +25,7 @@ namespace obe
             std::string currentMap = "";
 
             tgui::Panel::Ptr mainPanel = tgui::Panel::create();
-            tgui::ChatBox::Ptr content = tgui::ChatBox::create();
+            tgui::ToolkitContentBox::Ptr content = tgui::ToolkitContentBox::create();
             tgui::Scrollbar::Ptr scrollbar = tgui::Scrollbar::create();
             tgui::Label::Ptr titleLabel = tgui::Label::create();
             tgui::Button::Ptr closeButton = tgui::Button::create();
@@ -50,9 +53,9 @@ namespace obe
             closeButton->setSize("32", "32");
             closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
             closeButton->connect("pressed", [&window]()
-                             {
-                                 window.close();
-                             });
+            {
+                window.close();
+            });
             mainPanel->add(closeButton);
 
             toolkitInput->setRenderer(baseTheme.getRenderer("TextBox"));
@@ -61,28 +64,42 @@ namespace obe
             mainPanel->add(toolkitInput);
 
             kaguya::State toolkitEngine;
-            toolkitInput->connect("returnkeypressed", [&content, &toolkitInput, inputColor, &toolkitEngine]()
-                              {
-                                  content->addLine("> " + toolkitInput->getText(), inputColor);
-                                  toolkitEngine["evaluate"](toolkitInput->getText().toAnsiString());
-                                  toolkitInput->setText("");
-                              });
-
+            toolkitInput->connect("returnkeypressed", [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine]()
+            {
+                sfe::RichText newtext(toolkitFont);
+                newtext.setCharacterSize(16);
+                newtext << ">> " + toolkitInput->getText().toAnsiString();
+                newtext << inputColor;
+                content->addLine(newtext);
+                toolkitEngine["evaluate"](toolkitInput->getText().toAnsiString());
+                toolkitInput->setText("");
+            });
 
             toolkitEngine["This"] = &toolkitEngine;
             toolkitEngine["CPP_Import"] = &Bindings::Load;
             toolkitEngine["CPP_Hook"] = &Script::loadHook;
             toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
-            Bindings::BindTree(&toolkitEngine);
+            Bindings::BindTree["Core"](&toolkitEngine);
+            Bindings::BindTree["SFML"](&toolkitEngine);
+            Bindings::BindTree["Vili"](&toolkitEngine);
             toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)
             {
                 inputColor.r = r;
                 inputColor.g = g;
                 inputColor.b = b;
             });
-            toolkitEngine["_term_display"] = kaguya::function([&content](const std::string& string, unsigned int r, unsigned int g, unsigned int b)
+            toolkitEngine["_term_display"] = kaguya::function(
+                [&content, &toolkitFont]
+            (const std::vector<std::string>& strings, const std::vector<sf::Color>& colors)
             {
-                content->addLine(string, sf::Color(r, g, b));
+                sfe::RichText newtext(toolkitFont);
+                newtext.setCharacterSize(16);
+                for (int i = 0; i < strings.size(); i++)
+                {
+                    newtext << colors.at(i);
+                    newtext << strings.at(i);
+                }
+                content->addLine(newtext);
             });
             toolkitEngine["_term_clear"] = kaguya::function([&toolkitInput]()
             {
@@ -131,6 +148,11 @@ namespace obe
                             }
                         }
                     }
+                    else if (event.type == sf::Event::MouseWheelMoved)
+                    {
+                        content->mouseWheelScrolled(event.mouseWheel.delta, 0, 0);
+                        std::cout << event.mouseWheel.delta << std::endl;
+                    }
                     else if (event.type == sf::Event::MouseButtonReleased)
                     {
                         if (event.mouseButton.button == sf::Mouse::Left)
@@ -142,6 +164,11 @@ namespace obe
                             window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
                     }
                     gui.handleEvent(event);
+                    if (event.type == sf::Event::TextEntered && event.text.unicode == 63)
+                    {
+                        toolkitInput->setText(Utils::String::replace(toolkitInput->getText().toAnsiString(), "?", ""));
+                        toolkitEngine["getHelp"](toolkitInput->getText().toAnsiString());
+                    }
                 }
 
                 window.clear();

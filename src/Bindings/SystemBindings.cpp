@@ -76,6 +76,7 @@ namespace obe
 
             void LoadPackage(kaguya::State* lua)
             {
+                (*lua)["Core"]["System"]["Package"] = kaguya::NewTable();
                 (*lua)["Core"]["System"]["Package"]["GetPackageLocation"] = kaguya::function(System::Package::GetPackageLocation);
                 (*lua)["Core"]["System"]["Package"]["PackageExists"] = kaguya::function(System::Package::PackageExists);
                 (*lua)["Core"]["System"]["Package"]["Install"] = kaguya::function(System::Package::Install);
@@ -84,6 +85,7 @@ namespace obe
 
             void LoadWorkspace(kaguya::State* lua)
             {
+                (*lua)["Core"]["System"]["Workspace"] = kaguya::NewTable();
                 (*lua)["Core"]["System"]["Workspace"]["GetWorkspaceLocation"] = kaguya::function(System::Workspace::GetWorkspaceLocation);
                 (*lua)["Core"]["System"]["Workspace"]["WorkspaceExists"] = kaguya::function(System::Workspace::WorkspaceExists);
                 (*lua)["Core"]["System"]["Workspace"]["Load"] = kaguya::function(System::Workspace::Load);
