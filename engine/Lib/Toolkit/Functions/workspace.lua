@@ -7,7 +7,7 @@ Functions.mount = function(workspaceName)
     local parser = Core.Vili.DataParser.new();
     parser:parseFile("Workspace/Workspaces.vili", true);
     if (parser:root():contains(Core.Vili.AttributeType.ComplexAttribute, workspaceName)) then
-        Core.Filesystem.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
+        Core.Utils.File.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
         Color.print({ text = "Workspace '" .. workspaceName .. "' has  been successfully mounted !", color = {0, 255, 0}}, 1);
         Core.Path.MountPaths();
     else
@@ -16,16 +16,16 @@ Functions.mount = function(workspaceName)
 end
 
 Functions.create = function(workspaceName)
-    local parser = Core.Vili.DataParser.new();
+    local parser = Vili.DataParser.new();
     parser:parseFile("Workspace/Workspaces.vili", true);
-    os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Filesystem.separator()));
-    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Filesystem.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Utils.File.separator()));
     parser:root():createComplexAttribute(workspaceName);
     parser:root():at(workspaceName):createBaseAttribute("path", "Workspace/" .. workspaceName);
     parser:writeFile("Workspace/Workspaces.vili", true);
@@ -60,16 +60,9 @@ return {
         Route.Help("Commands to work with Workspaces");
         Route.Arg("create", {
             Route.Help("Creates a new Workspace");
-            Route.Arg("lol", {
-
-            }),
-            Route.Arg("mdr", {
-                
-            })
-            --[[Route.Arg("workspaceName", Route.Types.Any, {
-                --Route.Call("create");
-                
-            });]]--
+            Route.Arg("workspaceName", Route.Types.Any, {
+                Route.Call("create");
+            });
         }),
         Route.Arg("mount", {
             Route.Help("Mounts a Workspace");

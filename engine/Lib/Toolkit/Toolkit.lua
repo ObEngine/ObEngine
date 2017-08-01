@@ -24,6 +24,7 @@ function askForCompletion(command)
 end
 
 function autocompleteArgs(command, query)
+    print("AUTOCOMPLETE ARGS CALLED");
     local path = {};
     local currentWord = "";
     local start = "";
@@ -49,6 +50,7 @@ function autocompleteArgs(command, query)
     end
     table.insert(subpath, start);
     print("SUBPATH : ", inspect(subpath));
+    print("Entries : ", entries);
     if entries > 0 then
         local recurseIn = nil;
         for _, content in pairs(command) do
@@ -61,9 +63,11 @@ function autocompleteArgs(command, query)
             print("RECURSION")
             return autocompleteArgs(recurseIn.children, String.join(subpath, " "));
         else
+            print("NOT FOUND HURR DURR");
             return {};
         end
     else
+        print("Start inspection in ", inspect(command))
         local arglist = {};
         for _, arg in pairs(command) do
             if arg.type == "Path" then
@@ -178,6 +182,7 @@ function getTableKeys(mtable)
 end
 
 function autocompleteHandle(ToolkitFunctions, command)
+    print("AUTOCOMPLETE HANDLE CALLED")
     if #command > 0 then
         local commandName, cargs = decomposeCommand(command);
         if ToolkitFunctions[commandName] then
@@ -185,13 +190,16 @@ function autocompleteHandle(ToolkitFunctions, command)
             if command:sub(#command, #command) == " " then
                 useQuery = useQuery .. " ";
             end
+            print("Use Query : <" .. useQuery .. ">");
             local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, useQuery);
             if getTableSize(completions) == 1 then
-                -- Only one completion found, complete and add space
-                while command:sub(#command, #command) ~= " " do
-                    command = command:sub(1, -2);
+                -- Only one completion found, complete and add space (if not a variable)
+                if getTableKeys(completions)[1] ~= "<Variable>" then
+                    while command:sub(#command, #command) ~= " " do
+                        command = command:sub(1, -2);
+                    end
+                    command = command .. getTableKeys(completions)[1] .. " ";
                 end
-                command = command .. getTableKeys(completions)[1] .. " ";
             elseif getTableSize(completions) > 1 then
                 -- Multiple completions found, completing with biggest common root
                 while command:sub(#command, #command) ~= " " do
@@ -221,14 +229,16 @@ function getHelp(arg)
             return child.help;
         end
     end
-    return "";
+    return "No help section provided";
 end
 
 function autocomplete(command)
+    print("AUTOCOMPLETE CALLED --------------------------------------------")
     local commandName, cargs = decomposeCommand(command);
     _term_last();
     if ToolkitFunctions[commandName] then
         if isUniqueValidCommand(command, commandName) then
+            -- Adding a space when command is valid
             if #cargs == 0 and command:sub(#command, #command) ~= " " then
                 command = command .. " ";
                 _term_write(" ");
@@ -236,7 +246,11 @@ function autocomplete(command)
             local checkCurrentInput = autocompleteHandle(ToolkitFunctions, command);
             print("Check Current Input : '" .. checkCurrentInput .. "'")
             if command == checkCurrentInput then
-                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " "));
+                local addSpace = "";
+                if command:sub(#command, #command) == " " then
+                    addSpace = " ";
+                end
+                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " ") .. addSpace);
                 if getTableSize(completions) == 1 and getTableKeys(completions)[1] == getLastArgument(command) then
                     command = command .. " ";
                     _term_write(" ");
