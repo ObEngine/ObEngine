@@ -4,6 +4,7 @@ local Table = require("Lib/StdLib/Table");
 local Color = require("Lib/StdLib/ConsoleColor");
 local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
+local Style = require("Lib/Toolkit/Stylesheet");
 
 function loadToolkitFunctions()
     local fileList = Core.Utils.File.getFileList("Lib/Toolkit/Functions");
@@ -16,9 +17,9 @@ end
 
 function askForCompletion(command)
     Color.print({
-        {text = "> ", color = {255, 255, 255}},
-        {text = command, color = {0, 200, 200}},
-        {text = " ...", color = {255, 0, 255}}
+        {text = "> ", color = Style.CompletionPrompt.Prompt},
+        {text = command, color = Style.CompletionPrompt.Text},
+        {text = " ...", color = Style.CompletionPrompt.TripleDot}
     });
 end
 
@@ -36,7 +37,7 @@ function autocompleteArgs(command, query)
         end
     end
     print("PATH : ", inspect(path));
-    print("CW : ", currentWord);
+    print("CURRENTWORD : ", currentWord);
     if currentWord ~= "" then start = currentWord end
     local entries = 0;
     local subpath = {};
@@ -47,7 +48,7 @@ function autocompleteArgs(command, query)
         entries = entries + 1;
     end
     table.insert(subpath, start);
-    print("SP : ", inspect(subpath));
+    print("SUBPATH : ", inspect(subpath));
     if entries > 0 then
         local recurseIn = nil;
         for _, content in pairs(command) do
@@ -57,6 +58,7 @@ function autocompleteArgs(command, query)
             end
         end
         if recurseIn then
+            print("RECURSION")
             return autocompleteArgs(recurseIn.children, String.join(subpath, " "));
         else
             return {};
@@ -85,13 +87,15 @@ function autocompleteArgs(command, query)
                     for _, content in pairs(autocompleteResult) do
                         if start ~= nil and content:sub(1, string.len(start)) == start then
                             -- Add help ?
-                            arglist[content] = {};
+                            arglist[content] = { children = {{ type = "Help", help = "Argument suggestion for <" .. arg.id .. "> parameter" }}};
                         elseif start == nil then
                             -- Add help ?
-                            arglist[content] = {};
+                            arglist[content] = { children = {{ type = "Help", help = "Argument suggestion for <" .. arg.id .. "> parameter" }}};
                         end
                     end
                     print("GOT ACR : ", inspect(arglist));
+                else
+                    arglist["<Variable>"] = { children = {{ type = "Help", help = "Variable of type (" .. arg.argtype .. ") for argument <" .. arg.id .. ">" }}};
                 end
             end
         end
@@ -99,6 +103,7 @@ function autocompleteArgs(command, query)
     end
 end
 
+-- Returns a table with only the elements from matchList that starts like baseWord
 function excludeNonMatchingWords(baseWord, matchList)
     local newMatchList = {};
     for _, content in pairs(matchList) do
@@ -143,21 +148,6 @@ function getLastArgument(command)
   return lastArg;
 end
 
-function getCommandArgsLength(command)
-    if command ~= nil then
-        local required = 0;
-        local total = 0;
-        for k, v in pairs(command) do
-            if v.optional then total = total + 1;
-            else total = total + 1; required = required + 1;
-            end
-        end
-        return {required, total};
-    else
-        return {0, 0};
-    end
-end
-
 function decomposeCommand(command)
     local commandName = "";
     local cargs = {};
@@ -197,11 +187,13 @@ function autocompleteHandle(ToolkitFunctions, command)
             end
             local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, useQuery);
             if getTableSize(completions) == 1 then
+                -- Only one completion found, complete and add space
                 while command:sub(#command, #command) ~= " " do
                     command = command:sub(1, -2);
                 end
-                command = command .. getTableKeys(completions)[1];
+                command = command .. getTableKeys(completions)[1] .. " ";
             elseif getTableSize(completions) > 1 then
+                -- Multiple completions found, completing with biggest common root
                 while command:sub(#command, #command) ~= " " do
                     command = command:sub(1, -2);
                 end
@@ -232,8 +224,6 @@ function getHelp(arg)
     return "";
 end
 
-ToolkitFunctions = loadToolkitFunctions();
-
 function autocomplete(command)
     local commandName, cargs = decomposeCommand(command);
     _term_last();
@@ -247,15 +237,21 @@ function autocomplete(command)
             print("Check Current Input : '" .. checkCurrentInput .. "'")
             if command == checkCurrentInput then
                 local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " "));
-                askForCompletion(command);
-                for compId, completion in pairs(completions) do
-                    Color.print({
-                        {text = "> ", color = {255, 255, 255}},
-                        {text = compId, color = {140, 210, 80}},
-                        {text = " : ", color = {255, 255, 255}},
-                        {text = getHelp(completion.children), color = {230, 125, 50}}
-                    }, 2);
+                if getTableSize(completions) == 1 and getTableKeys(completions)[1] == getLastArgument(command) then
+                    command = command .. " ";
+                    _term_write(" ");
+                else
+                    askForCompletion(command);
+                    for compId, completion in pairs(completions) do
+                        Color.print({
+                            {text = "> ", color = Style.Default},
+                            {text = compId, color = Style.Argument},
+                            {text = " : ", color = Style.Default},
+                            {text = getHelp(completion.children), color = Style.Help}
+                        }, 2);
+                    end
                 end
+                print("Completions gathered");
             else
                 _term_clear();
                 _term_write(checkCurrentInput);
@@ -266,10 +262,10 @@ function autocomplete(command)
             for key, func in pairs(ToolkitFunctions) do
                 if key:sub(0, #command) == command then
                     Color.print({
-                        {text = "> ", color = {255, 255, 255}},
-                        {text = key, color = {255, 192, 0}},
-                        {text = " : ", color = {255, 255, 255}},
-                        {text = getHelp(func.Routes), color = {230, 125, 50}}
+                        {text = "> ", color = Style.Default},
+                        {text = key, color = Style.Command},
+                        {text = " : ", color = Style.Default},
+                        {text = getHelp(func.Routes), color = Style.Help}
                     }, 2);
                 end
             end
@@ -291,10 +287,10 @@ function autocomplete(command)
             for key, func in pairs(ToolkitFunctions) do
                 if key:sub(0, #command) == command then
                     Color.print({
-                        {text = "> ", color = {255, 255, 255}},
-                        {text = key, color = {255, 192, 0}},
-                        {text = " : ", color = {255, 255, 255}},
-                        {text = getHelp(func.Routes), color = {230, 125, 50}}
+                        {text = "> ", color = Style.Default},
+                        {text = key, color = Style.Command},
+                        {text = " : ", color = Style.Default},
+                        {text = getHelp(func.Routes), color = Style.Help}
                     }, 2);
                 end
             end
@@ -324,6 +320,7 @@ function reachCommand(command, branch, args, idargs)
         end
         entries = entries + 1;
     end
+    print("Next JUmp", nextJump);
     if nextJump ~= "" then
         local recurseIn = nil;
         for _, content in pairs(branch.children) do
@@ -348,8 +345,8 @@ function reachCommand(command, branch, args, idargs)
         else
             -- Invalid Argument
             Color.print({
-                {text = "Invalid argument ", color = {255, 0, 0}},
-                {text = nextJump, color = {140, 210, 80}}
+                {text = "Invalid argument ", color = Style.Error},
+                {text = nextJump, color = Style.Argument}
             }, 2);
         end
     else
@@ -368,10 +365,10 @@ function reachCommand(command, branch, args, idargs)
         else
             -- No callable function found
             Color.print({
-                {text = "Nothing to call with argument ", color = {255, 0, 0}},
-                {text = branch.id, color = {140, 210, 80}},
-                {text = " in command ", color = {255, 0, 0}},
-                {text = command, color = {255, 192, 0}}
+                {text = "Nothing to call with argument ", color = Style.Error},
+                {text = branch.id, color = Style.Argument},
+                {text = " in command ", color = Style.Error},
+                {text = command, color = Style.Command}
             }, 2);
             return nil, nil
         end
@@ -413,16 +410,17 @@ function evaluate(command)
     else
         -- Command not found
         Color.print({
-            {text = "Command ", color = {255, 0, 0}},
-            {text = commandName, color = {255, 192, 0}},
-            {text = " not found.", color = {255, 0, 0}}
+            {text = "Command ", color = Style.Error},
+            {text = commandName, color = Style.Command},
+            {text = " not found.", color = Style.Error}
         }, 2);
     end
     
 end
 
+ToolkitFunctions = loadToolkitFunctions();
 Color.print({
-    {text = "@", color = {0, 255, 0}},
-    {text = "ObEngine Toolkit ", color = {0, 170, 240}},
-    {text = " (v1.0)", color = {0, 255, 255}}
+    {text = "@", color = Style.Boot.At},
+    {text = "ObEngine Toolkit ", color = Style.Boot.Text},
+    {text = " (v1.0)", color = Style.Boot.Version}
 });

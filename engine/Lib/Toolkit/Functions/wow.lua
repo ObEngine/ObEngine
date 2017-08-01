@@ -24,7 +24,14 @@ return {
                 end);
             }),
             Route.Arg("mdr", {
-                
+                Route.Call(function()
+                    print("MDR CALLED");
+                end)
+            }),
+            Route.Arg("mdma", {
+                Route.Call(function()
+                    print("MDMA CALLED");
+                end)
             })
             --[[Route.Arg("workspaceName", Route.Types.Any, {
                 --Route.Call("create");
