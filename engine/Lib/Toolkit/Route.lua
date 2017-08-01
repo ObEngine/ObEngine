@@ -1,17 +1,17 @@
 return {
-    Arg = function(id, type, children, autocomplete)
-        local ntype, argtype;
-        if children then ntype = "Arg"; argtype = type;
-        else ntype = "Path";
-        end
-        children = children or type;
-
+    Node = function(id, children)
         return {
             id = id,
             children = children,
-            type = ntype,
-            argtype = argtype,
-            autocomplete = autocomplete
+            type = "Node",
+        };
+    end,
+    
+    Arg = function(id, children)
+        return {
+            id = id,
+            children = children,
+            type = "Argument",
         };
     end,
 

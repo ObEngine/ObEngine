@@ -31,11 +31,15 @@ namespace obe
             void LoadMountablePath(kaguya::State* lua)
             {
                 (*lua)["Core"]["System"]["MountablePath"].setClass(kaguya::UserdataMetatable<System::MountablePath>()
+                    .addProperty("basePath", &System::MountablePath::basePath)
+                    .addProperty("priority", &System::MountablePath::priority)
+                    .addProperty("pathType", &System::MountablePath::pathType)
                 );
             }
             void LoadPath(kaguya::State* lua)
             {
                 (*lua)["Core"]["System"]["Path"].setClass(kaguya::UserdataMetatable<System::Path>()
+                    .setConstructors<System::Path(), System::Path(const std::string&)>()
                     .addStaticFunction("Mount", &System::Path::Mount)
                     .addStaticFunction("Paths", &System::Path::Paths)
                     .addFunction("add", &System::Path::add)
@@ -43,33 +47,33 @@ namespace obe
                     .addFunction("last", &System::Path::last)
                     .addFunction("toString", &System::Path::toString)
                 );
-                (*lua)["Core"]["System"]["Path"]["FileListLoader"] = kaguya::function([](const std::string& path)
+                (*lua)["Core"]["System"]["Path"]["FileListLoader"] = kaguya::function([](const System::Path& path)
                 {
                     std::vector<std::string> fileList;
-                    System::Path(path).loadResource(&fileList, System::Loaders::filePathLoader);
+                    path.loadResource(&fileList, System::Loaders::filePathLoader);
                     return fileList;
                 });
-                (*lua)["Core"]["System"]["Path"]["DirectoryListLoader"] = kaguya::function([](const std::string& path)
+                (*lua)["Core"]["System"]["Path"]["DirectoryListLoader"] = kaguya::function([](const System::Path& path)
                 {
                     std::vector<std::string> dirList;
-                    System::Path(path).loadResource(&dirList, System::Loaders::dirPathLoader);
+                    path.loadResource(&dirList, System::Loaders::dirPathLoader);
                     return dirList;
                 });
-                (*lua)["Core"]["System"]["Path"]["DataLoader"] = kaguya::function([](const std::string& path)
+                (*lua)["Core"]["System"]["Path"]["DataLoader"] = kaguya::function([](const System::Path& path)
                 {
                     vili::ViliParser parsedFile;
-                    System::Path(path).loadResource(&parsedFile, System::Loaders::dataLoader);
+                    path.loadResource(&parsedFile, System::Loaders::dataLoader);
                     return parsedFile;
                 });
-                (*lua)["Core"]["System"]["Path"]["FontLoader"] = kaguya::function([](const std::string& path)
+                (*lua)["Core"]["System"]["Path"]["FontLoader"] = kaguya::function([](const System::Path& path)
                 {
                     sf::Font loadedFont;
-                    System::Path(path).loadResource(&loadedFont, System::Loaders::fontLoader);
+                    path.loadResource(&loadedFont, System::Loaders::fontLoader);
                     return loadedFont;
                 });
-                (*lua)["Core"]["System"]["Path"]["LuaLoader"] = kaguya::function([](kaguya::State* lua, const std::string& path)
+                (*lua)["Core"]["System"]["Path"]["LuaLoader"] = kaguya::function([](const System::Path& path, kaguya::State* lua)
                 {
-                    System::Path(path).loadResource(lua, System::Loaders::luaLoader);
+                    path.loadResource(lua, System::Loaders::luaLoader);
                 });
                 // Add missing loaders <REVISION>
             }

@@ -54,9 +54,11 @@ function autocompleteArgs(command, query)
     if entries > 0 then
         local recurseIn = nil;
         for _, content in pairs(command) do
-            if (content.type == "Path" or content.type == "Arg") and content.id == path[1] then
+            if content.type == "Node" and content.id == path[1] then
                 recurseIn = content;
                 break;
+            elseif content.type == "Argument" then
+                recurseIn = content;
             end
         end
         if recurseIn then
@@ -70,13 +72,13 @@ function autocompleteArgs(command, query)
         print("Start inspection in ", inspect(command))
         local arglist = {};
         for _, arg in pairs(command) do
-            if arg.type == "Path" then
+            if arg.type == "Node" then
                 if start ~= nil and string.sub(arg.id, 1, string.len(start)) == start then
                     arglist[arg.id] = arg;
                 elseif start == nil then
                     arglist[arg.id] = arg;
                 end
-            elseif arg.type == "Arg" then
+            elseif arg.type == "Argument" then
                 print("FOUND ARG", arg.autocomplete, start);
                 local autocompleteFunction;
                 for _, searchFunction in pairs(arg.children) do
@@ -99,7 +101,13 @@ function autocompleteArgs(command, query)
                     end
                     print("GOT ACR : ", inspect(arglist));
                 else
-                    arglist["<Variable>"] = { children = {{ type = "Help", help = "Variable of type (" .. arg.argtype .. ") for argument <" .. arg.id .. ">" }}};
+                    local defaultHelp = "Variable for argument <" .. arg.id .. ">";
+                    print("Arg inspect : ", inspect(arg));
+                    print("Help Got : ", getHelp(arg.children))
+                    if getHelp(arg.children) ~= "" then
+                        defaultHelp = getHelp(arg.children);
+                    end
+                    arglist["<" .. arg.id .. ">"] = { children = {{ type = "Help", help = defaultHelp }}};
                 end
             end
         end
@@ -194,7 +202,10 @@ function autocompleteHandle(ToolkitFunctions, command)
             local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, useQuery);
             if getTableSize(completions) == 1 then
                 -- Only one completion found, complete and add space (if not a variable)
-                if getTableKeys(completions)[1] ~= "<Variable>" then
+                local onlyCompletion = getTableKeys(completions)[1];
+                if onlyCompletion:sub(1, 1) == "<" and onlyCompletion:sub(#onlyCompletion, #onlyCompletion) == ">" then
+                    -- Variable Parameter, do nothing
+                else
                     while command:sub(#command, #command) ~= " " do
                         command = command:sub(1, -2);
                     end
@@ -229,7 +240,7 @@ function getHelp(arg)
             return child.help;
         end
     end
-    return "No help section provided";
+    return "";
 end
 
 function autocomplete(command)
@@ -247,7 +258,7 @@ function autocomplete(command)
             print("Check Current Input : '" .. checkCurrentInput .. "'")
             if command == checkCurrentInput then
                 local addSpace = "";
-                if command:sub(#command, #command) == " " then
+                if command:sub(#command, #command) == " " and #cargs > 0 then
                     addSpace = " ";
                 end
                 local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " ") .. addSpace);
@@ -338,18 +349,18 @@ function reachCommand(command, branch, args, idargs)
     if nextJump ~= "" then
         local recurseIn = nil;
         for _, content in pairs(branch.children) do
-            if content.type == "Path" and content.id == nextJump then
+            if content.type == "Node" and content.id == nextJump then
                 recurseIn = content;
-                identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Path" };
+                identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Node" };
                 break;
             end
         end
         if recurseIn == nil then
             for _, content in pairs(branch.children) do
-                if content.type == "Arg" then
+                if content.type == "Argument" then
                     -- ADD TYPE CHECK
                     recurseIn = content;
-                    identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Arg" };
+                    identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Argument" };
                     break;
                 end
             end
@@ -401,15 +412,16 @@ function evaluate(command)
     local commandName, cargs = decomposeCommand(command);
     print("Evaluate : " .. command);
     if ToolkitFunctions[commandName] then
+        print("===========> COMMAND", inspect(ToolkitFunctions[commandName]));
         -- Command found
         print("Cargs is ", cargs);
         local callFunction, identifiedArgs = reachCommand(commandName, {id = "{root}", children = ToolkitFunctions[commandName].Routes}, cargs);
         if callFunction and identifiedArgs then
             -- Successful Reach Command Call
             for key, content in pairs(identifiedArgs) do
-                if content.type == "Path" then
+                if content.type == "Node" then
                     identifiedArgs[key].value = getAtIndex(identifiedArgs, content.index + 1);
-                elseif content.type == "Arg" then
+                elseif content.type == "Argument" then
                     identifiedArgs[key].value = cargs[content.index + 1];
                 end
             end

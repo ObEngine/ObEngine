@@ -256,6 +256,7 @@ namespace obe
                 );
             }
 
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(ViliParser_parseFile_wrapper, vili::ViliParser, parseFile, 1, 3)
             void LoadViliViliParser(kaguya::State* lua)
             {
                 (*lua)["Vili"]["ViliParser"].setClass(kaguya::UserdataMetatable<vili::ViliParser>()
@@ -269,7 +270,7 @@ namespace obe
                     .addFunction("getTemplate", &vili::ViliParser::getTemplate)
                     .addFunction("hasFlag", &vili::ViliParser::hasFlag)
                     .addFunction("includeFile", &vili::ViliParser::includeFile)
-                    .addFunction("parseFile", &vili::ViliParser::parseFile)
+                    .addFunction("parseFile", ViliParser_parseFile_wrapper())
                     .addFunction("root", &vili::ViliParser::operator->)
                     .addFunction("setSpacing", &vili::ViliParser::setSpacing)
                     .addFunction("writeFile", &vili::ViliParser::writeFile)
