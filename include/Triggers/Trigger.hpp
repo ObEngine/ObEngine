@@ -71,21 +71,27 @@ namespace obe
              * \return A std::string containing the name of the namespace of the parent (TriggerGroup) of the Trigger
              */
             std::string getNamespace() const;
+            /**
+             * \brief Resets the Trigger
+             */
             void clear();
-
+            /**
+             * \brief Registers a Lua State that will be triggered
+             * \param state Pointer to the Lua State to register
+             */
             void registerState(kaguya::State* state);
 
+            /**
+             * \brief Prepares a new Trigger call
+             */
             void prepareNewCall();
-
+            /**
+             * \brief Triggers callback on the given Lua State
+             * \param lua Lua State where to call the callback
+             * \param funcName Name of the Callback
+             */
             void execute(kaguya::State* lua, const std::string& funcName) const;
         };
-
-        /**
-         * \brief Injects the current ParameterTable contained in a Trigger to a Lua VM
-         * \param parameters Reference to the Trigger ParameterTable
-         * \param lua Lua VM where to inject the parameters
-         */
-        void injectParameters(const std::string& triggerName, ParameterTable& parameters, kaguya::State& lua);
 
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)

@@ -102,6 +102,6 @@ namespace vili
          * \brief Gets the visibility of the NodeTemplate
          * \return true if the NodeTemplate is visible, false otherwise
          */
-        bool isVisible();
+        bool isVisible() const;
     };
 }

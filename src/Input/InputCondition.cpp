@@ -51,19 +51,18 @@ namespace obe
                                 m_triggerConditions.emplace_back(monitor, buttonStates);
                             else
                             {
-                                std::cout << "<Error> Key already in combination" << std::endl; //Add Error <REVISION>
+                                throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonAlreadyInCombination", { {"button", button->getName()} });
                             }
                         }
                         else
                         {
-                            std::cout << "<Error> Key Button not found : " << keyId << std::endl;
-                            //Add Error <REVISION>
+                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonNotFound", { { "button", keyId } });
                         }
                     }
                 }
                 else
                 {
-                    std::cout << "<Error> Key State not found : " << stateAndButton[0] << std::endl;// Add Error <REVISION>
+                    throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.UnknownState", { { "state", stateAndButton[0] } });
                 }
             }
         }

@@ -15,24 +15,17 @@ namespace aube
     class ErrorMessage
     {
     private:
-        std::string m_file;
         std::vector<std::string> m_location;
         std::string m_message;
         std::vector<std::string> m_hints;
     public:
         /**
          * \brief Creates a new ErrorMessage
-         * \param file File where is located the ErrorMessage when raised
          * \param location Location of the ErrorMessage when raised
          * \param message Message displayed when the ErrorMessage is raised
          * \param hints Optional hints to remove the Error
          */
-        ErrorMessage(const std::string& file, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints = {});
-        /**
-         * \brief Gets the File where is located the ErrorMessage when raised
-         * \return A std::string containing the path to the file where is located the ErrorMessage when raised
-         */
-        std::string getFile() const;
+        ErrorMessage(const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints = {});
         /**
          * \brief Gets the location of the error in the code
          * \return A std::string containing the location of the error in the code
@@ -62,12 +55,11 @@ namespace aube
         /**
          * \brief Loads an ErrorMessage into the Aube Error Database (AED)
          * \param errorId Id of the ErrorMessage
-         * \param filename Filename where is located the ErrorMessage when raised
          * \param location Location of the ErrorMessage when raised
          * \param message Message displayed when the ErrorMessage is raised
          * \param hints Optional hints to remove the Error
          */
-        static void Load(const std::string& errorId, const std::string& filename, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints = {});
+        static void Load(const std::string& errorId, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints = {});
         /**
          * \brief Raises an Error loaded in the Aube Error Database (AED)
          * \param errorId Id of the Error to raise

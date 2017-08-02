@@ -121,7 +121,7 @@ namespace obe
         {
             if (AllKeys.find(keyId) != AllKeys.end())
                 return AllKeys[keyId].get();
-            throw aube::ErrorHandler::Raise("ObEngine.Input.KeyList.UnknownKey", { { "key", keyId } }); //Add Error to Errors.vili <REVISION>
+            throw aube::ErrorHandler::Raise("ObEngine.Input.KeyList.UnknownButton", { { "button", keyId } });
         }
     }
 }

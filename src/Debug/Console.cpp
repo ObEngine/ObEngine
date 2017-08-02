@@ -10,7 +10,6 @@ namespace obe
 {
     namespace Debug
     {
-        //Console
         Console::Console() : consoleTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"))
         {
             m_font.loadFromFile("Data/Fonts/arial.ttf");
@@ -264,76 +263,6 @@ namespace obe
             textInput.setPosition(2, Transform::UnitVector::Screen.h - 40);
             textInput.setString(m_inputBuffer);
             target.draw(textInput);
-        }
-
-        //ConsoleMessage
-        ConsoleMessage::ConsoleMessage(const std::string& header, const std::string& message, const sf::Color& textColor)
-        {
-            this->m_header = header;
-            this->m_text = message;
-            this->m_color = textColor;
-            this->timestamp = Time::getTickSinceEpoch();
-        }
-
-        std::string ConsoleMessage::getFormatedMessage() const
-        {
-            std::string fMessage;
-            if (Console::Timestamped)
-            {
-                fMessage = "(TimeStamp:" + std::to_string(timestamp) + ")";
-                fMessage += " [" + m_header + "]";
-                fMessage += " : " + m_text;
-            }
-            else
-                fMessage = m_text;
-            return fMessage;
-        }
-
-        std::string ConsoleMessage::getHeader() const
-        {
-            return m_header;
-        }
-
-        std::string ConsoleMessage::getText() const
-        {
-            return m_text;
-        }
-
-        sf::Color ConsoleMessage::getColor() const
-        {
-            return m_color;
-        }
-
-        void ConsoleMessage::setMessage(const std::string& text)
-        {
-            m_text = text;
-        }
-
-        void ConsoleMessage::setColor(const sf::Color& color)
-        {
-            m_color = color;
-        }
-
-        //Stream
-        ConsoleStream::ConsoleStream(const std::string& id, Console* consoleParent) : Identifiable(id), Togglable(true)
-        {
-            m_consoleParent = consoleParent;
-            m_color = sf::Color(255, 255, 255);
-        }
-
-        ConsoleMessage* ConsoleStream::push(const std::string& message) const
-        {
-            return m_consoleParent->pushMessage(m_id, message, m_color);
-        }
-
-        void ConsoleStream::setColor(const sf::Color& color)
-        {
-            m_color = color;
-        }
-
-        sf::Color ConsoleStream::getColor() const
-        {
-            return m_color;
         }
     }
 }

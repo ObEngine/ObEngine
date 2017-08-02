@@ -29,7 +29,7 @@ namespace obe
                         m_textureDatabase[path] = move(tempTexture);
                         return m_textureDatabase[path].get();
                     }
-                    throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture_NETD", {{"file", path}});
+                    throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
                 }
                 return m_textureDatabase[path].get();
             }
@@ -41,7 +41,7 @@ namespace obe
                 m_textureDatabase[path] = move(tempTexture);
                 return m_textureDatabase[path].get();
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture_ETD", {{"file", path}});
+            throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
         }
     }
 }

@@ -2,17 +2,11 @@
 
 namespace aube
 {
-    ErrorMessage::ErrorMessage(const std::string& file, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints)
+    ErrorMessage::ErrorMessage(const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints)
     {
-        m_file = file;
         m_location = location;
         m_message = message;
         m_hints = hints;
-    }
-
-    std::string ErrorMessage::getFile() const
-    {
-        return m_file;
     }
 
     std::string ErrorMessage::getLocation()
@@ -37,9 +31,9 @@ namespace aube
 
     std::map<std::string, ErrorMessage*> ErrorHandler::m_errors = std::map<std::string, ErrorMessage*>();
 
-    void ErrorHandler::Load(const std::string& errorId, const std::string& filename, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints)
+    void ErrorHandler::Load(const std::string& errorId, const std::vector<std::string>& location, const std::string& message, const std::vector<std::string>& hints)
     {
-        m_errors[errorId] = new ErrorMessage(filename, location, message, hints);
+        m_errors[errorId] = new ErrorMessage(location, message, hints);
     }
 
     std::runtime_error ErrorHandler::Raise(const std::string& errorId, const std::map<std::string, std::string>& parameters)
@@ -47,7 +41,7 @@ namespace aube
         if (m_errors.find(errorId) != m_errors.end())
         {
             ErrorMessage* currentError = m_errors[errorId];
-            std::string errorMessage = "[" + errorId + "]{" + currentError->getFile() + "}";
+            std::string errorMessage = "[" + errorId + "]";
             errorMessage += "<" + currentError->getLocation() + "> : " + currentError->getMessage();
             for (std::pair<std::string, std::string> parameter : parameters)
             {

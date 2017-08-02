@@ -144,7 +144,7 @@ namespace obe
 
             void setTarget(LevelSprite* target);
             void render();
-            const sf::Texture& getTexture();
+            const sf::Texture& getTexture() const;
         };
     }
 }

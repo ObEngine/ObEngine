@@ -93,7 +93,7 @@ namespace obe
                     }
                 }
                 else
-                    throw aube::ErrorHandler::Raise("ObEngine.ViliLuaBridge.LuaTableToComplexAttribute.NotATable", { { "id", id } });
+                    throw aube::ErrorHandler::Raise("ObEngine.Script.ViliLuaBridge.NotATable", { { "id", id } });
                 return returnElement;
             }
 

@@ -37,7 +37,7 @@ namespace vili
                 else if (complexLocation->contains(NodeType::ArrayNode, pathPart))
                     location = &complexLocation->getArrayNode(pathPart);
                 else
-                    throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongLinkPath", {{"path", getNodePath()},{"target", m_path},{"pathpart", pathPart}});
+                    throw aube::ErrorHandler::Raise("Vili.Vili.LinkNode.WrongLinkPath", {{"path", getNodePath()},{"target", m_path},{"pathpart", pathPart}});
             }
             else if (location->getType() == NodeType::ArrayNode)
             {
@@ -45,7 +45,7 @@ namespace vili
                 if (Functions::String::isStringInt(pathPart) && stoi(pathPart) < listLocation->size())
                     location = &listLocation->get(stoi(pathPart));
                 else
-                    throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongLinkListIndex", {{"path", getNodePath()},{"target", m_path},{"index", pathPart}});
+                    throw aube::ErrorHandler::Raise("Vili.Vili.LinkNode.WrongLinkListIndex", {{"path", getNodePath()},{"target", m_path},{"index", pathPart}});
             }
         }
         return location;
@@ -90,7 +90,7 @@ namespace vili
         if (newParent->getType() == NodeType::ComplexNode)
             dynamic_cast<ComplexNode*>(newParent)->createLinkNode(newid.empty() ? m_id : newid, m_path);
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.LinkAttribute.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.LinkNode.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
     }
 
     void LinkNode::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const

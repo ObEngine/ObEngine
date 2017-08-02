@@ -87,7 +87,7 @@ namespace vili
     {
         if (getTarget()->getType() == NodeType::DataNode)
             return static_cast<DataNode*>(getTarget());
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongBaseAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkNode.WrongBaseAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }
 
     template <>
@@ -95,7 +95,7 @@ namespace vili
     {
         if (getTarget()->getType() == NodeType::ComplexNode)
             return static_cast<ComplexNode*>(getTarget());
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongComplexAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkNode.WrongComplexAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }
 
     template <>
@@ -103,6 +103,6 @@ namespace vili
     {
         if (getTarget()->getType() == NodeType::ArrayNode)
             return static_cast<ArrayNode*>(getTarget());
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkAttribute.WrongListAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.LinkNode.WrongListAttributeLink", {{"path", getNodePath()},{"targetpath", m_path}});
     }
 }

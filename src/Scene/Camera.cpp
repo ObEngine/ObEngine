@@ -1,4 +1,5 @@
 #include <Scene/Camera.hpp>
+#include <iostream>
 
 namespace obe
 {
@@ -7,6 +8,11 @@ namespace obe
         Camera::Camera()
         {
             Transform::UnitVector::Init(m_camera);
+        }
+
+        void Camera::bindView(sf::RenderWindow& window) const
+        {
+            window.setView(m_view);
         }
 
         void Camera::lock()
@@ -19,7 +25,7 @@ namespace obe
             m_locked = false;
         }
 
-        void Camera::apply() const
+        void Camera::apply()
         {
             if (!m_locked)
             {
@@ -27,6 +33,11 @@ namespace obe
                 m_camera->y = m_position.y;
                 m_camera->w = m_size.x;
                 m_camera->h = m_size.y;
+                //Transform::UnitVector pixelPos = m_position.to<Transform::Units::WorldPixels>();
+                Transform::UnitVector pixelSize = m_size.to<Transform::Units::WorldPixels>();
+                std::cout << "Set Camera Size : " << pixelSize << std::endl;
+                //m_view.setSize(pixelSize.x, pixelSize.y);
+                //m_view.setCenter(pixelPos.x + pixelSize.x / 2, pixelPos.y + pixelSize.y / 2);
             }
         }
 

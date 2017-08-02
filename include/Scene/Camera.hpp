@@ -34,9 +34,11 @@ namespace obe
 
             double m_angle = 0;
 
-            void apply() const;
+            void apply();
         public:
             Camera();
+
+            void bindView(sf::RenderWindow& window) const;
 
             void lock();
             void unlock();

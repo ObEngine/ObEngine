@@ -23,11 +23,11 @@ namespace vili
     {
         if (index < m_dataList.size())
             return *m_dataList[index].get();
-        throw aube::ErrorHandler::Raise("Vili.Vili.ListAttribute.WrongIndex", {
-                                            {"index", std::to_string(index)},
-                                            {"path", getNodePath()},
-                                            {"size", std::to_string(m_dataList.size())}
-                                        });
+        throw aube::ErrorHandler::Raise("Vili.Vili.ArrayNode.WrongIndex", {
+            {"index", std::to_string(index)},
+            {"path", getNodePath()},
+            {"size", std::to_string(m_dataList.size())}
+        });
     }
 
     DataNode& ArrayNode::operator[](unsigned index) const
@@ -132,7 +132,7 @@ namespace vili
                 m_dataList[i]->copy(&dynamic_cast<ComplexNode*>(newParent)->getArrayNode(useID));
         }
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.ListAttribute.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.ArrayNode.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
     }
 
     void ArrayNode::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const

@@ -37,7 +37,7 @@ namespace vili
         if (m_dataType == DataType::Int)
             Int = var;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongIntSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     void DataNode::set(double var)
@@ -45,7 +45,7 @@ namespace vili
         if (m_dataType == DataType::Float)
             Float = var;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongFloatSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     void DataNode::set(const std::string& var)
@@ -53,7 +53,7 @@ namespace vili
         if (m_dataType == DataType::String)
             String = var;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     void DataNode::set(const char* var)
@@ -61,7 +61,7 @@ namespace vili
         if (m_dataType == DataType::String)
             String = std::string(var);
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     void DataNode::set(bool var)
@@ -69,7 +69,7 @@ namespace vili
         if (m_dataType == DataType::Bool)
             Bool = var;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongBoolSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     void DataNode::operator=(int var)
@@ -112,7 +112,7 @@ namespace vili
                 Bool = (rawData == "True" ? true : false);
         }
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongAutoset", {{"data", rawData},{"path", getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongAutoset", {{"data", rawData},{"path", getNodePath()}});
     }
 
     std::string DataNode::dumpData() const
@@ -184,7 +184,7 @@ namespace vili
     {
         if (m_dataType == DataType::String)
             return String;
-        throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongStringCastOperator", {{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringCastOperator", {{"path", getNodePath()}});
     }
 
 	DataNode::operator unsigned int() const
@@ -196,20 +196,20 @@ namespace vili
     {
         if (m_dataType == DataType::Int)
             return Int;
-        throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongIntCastOperator", {{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongIntCastOperator", {{"path", getNodePath()}});
     }
 
     DataNode::operator double() const
     {
         if (m_dataType == DataType::Float)
             return Float;
-        throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongFloatCastOperator", {{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongFloatCastOperator", {{"path", getNodePath()}});
     }
 
     DataNode::operator bool() const
     {
         if (m_dataType == DataType::Bool)
             return Bool;
-        throw aube::ErrorHandler::Raise("Vili.Vili.BaseAttribute.WrongBoolCastOperator", {{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongBoolCastOperator", {{"path", getNodePath()}});
     }
 }

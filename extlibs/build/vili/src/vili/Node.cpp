@@ -17,10 +17,10 @@ namespace vili
         if (m_parent == currentParent || m_parent == nullptr)
             m_parent = nullptr;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.Attribute.WrongParentRemover", {
-                                                {"wrongparent", currentParent->getNodePath()},
-                                                {"path", getNodePath()}
-                                            });
+            throw aube::ErrorHandler::Raise("Vili.Vili.Node.WrongParentRemover", {
+                {"wrongparent", currentParent->getNodePath()},
+                {"path", getNodePath()}
+            });
     }
 
     void Node::setAnnotation(const std::string& annotation)
@@ -53,7 +53,7 @@ namespace vili
         if (m_parent == nullptr)
             m_parent = parent;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.Attribute.AlreadyHaveParent", {{"path", getNodePath()},{"parent", parent->getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.Node.AlreadyHaveParent", {{"path", getNodePath()},{"parent", parent->getNodePath()}});
     }
 
     std::string Node::getNodePath() const
@@ -98,6 +98,6 @@ namespace vili
         if (m_parent == nullptr)
             m_id = id;
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.Attribute.ChangeIDWithParent", {{"path", getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.Node.ChangeIDWithParent", {{"path", getNodePath()}});
     }
 }

@@ -65,7 +65,7 @@ namespace obe
                 if (tree->getId() == id)
                     return *tree.get();
             }
-            // Add error <REVISION>
+            throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound", { {"id", getNodePath()}, {"child", id}, {"function", "operator[]"} });
         }
 
         BindingTree& BindingTree::add(const std::string& id, std::function<void(kaguya::State*)> lib)
@@ -77,7 +77,7 @@ namespace obe
             }
             else
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild");
+                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild", {{"id", getNodePath()}});
             }
             
         }
@@ -91,7 +91,7 @@ namespace obe
             }
             else
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild");
+                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild", { { "id", getNodePath() } });
             }
         }
 
@@ -111,9 +111,7 @@ namespace obe
             }
             else
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound", { {"id", this->getNodePath() }, {"child", path[0] }
-            });
-                // Raise Error <REVISION>
+                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound", { {"id", this->getNodePath() }, {"child", path[0] }, { "function", "walkTo" } });
             }
         }
 

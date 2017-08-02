@@ -428,28 +428,28 @@ namespace obe
         {
             if (m_hasLevelSprite)
                 return m_objectLevelSprite;
-            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoLevelSprite", {{"id", m_id}});
+            throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoLevelSprite", {{"id", m_id}});
         }
 
         Collision::PolygonalCollider* GameObject::getCollider()
         {
             if (m_hasCollider)
                 return m_objectCollider;
-            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoCollider", {{"id", m_id}});
+            throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoCollider", {{"id", m_id}});
         }
 
         Animation::Animator* GameObject::getAnimator()
         {
             if (m_hasAnimator)
                 return m_objectAnimator.get();
-            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoAnimator", {{"id", m_id}});
+            throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoAnimator", {{"id", m_id}});
         }
 
         kaguya::State* GameObject::getScript()
         {
             if (m_hasScriptEngine)
                 return m_objectScript.get();
-            throw aube::ErrorHandler::Raise("ObEngine.GameObject.GameObject.NoScript", {{"id", m_id}});
+            throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoScript", {{"id", m_id}});
         }
 
         Triggers::TriggerGroup* GameObject::getLocalTriggers() const

@@ -30,7 +30,7 @@ namespace obe
                     std::cout << "<System> Mounting Workspace : " << workspaceName << " : " << GetWorkspaceLocation(workspaceName) << std::endl;
                     return true;
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Workspace.Workspace.InexistantWorkspace", {{"workspace", workspaceName}});
+                throw aube::ErrorHandler::Raise("ObEngine.System.Workspace.InexistantWorkspace", {{"workspace", workspaceName}});
             }
         }
     }

@@ -25,11 +25,11 @@ namespace obe
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
                     return m_allTriggers[groupNamespace][triggerGroupName]->getTrigger(triggerName);
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
-                                                    {"function", "getTrigger"},
-                                                    {"group", triggerGroupName},
-                                                    {"nsp", groupNamespace}
-                                                });
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup", {
+                    {"function", "getTrigger"},
+                    {"group", triggerGroupName},
+                    {"nsp", groupNamespace}
+                });
             }
             throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "getTrigger"}, {"nsp", groupNamespace}});
         }
@@ -43,7 +43,7 @@ namespace obe
                 if (m_allTriggers.find(groupNamespace) == m_allTriggers.end())
                     m_allTriggers[groupNamespace] = std::map<std::string, std::unique_ptr<TriggerGroup>>();
                 else
-                    throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.NamespaceAlreadyExists", {{"nsp", groupNamespace}});
+                    throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.NamespaceAlreadyExists", {{"nsp", groupNamespace}});
             }
         }
 
@@ -56,9 +56,9 @@ namespace obe
                     m_allTriggers[groupNamespace][triggerGroupName] = std::make_unique<TriggerGroup>(groupNamespace, triggerGroupName);
                     return m_allTriggers[groupNamespace][triggerGroupName].get();
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.TriggerGroupAlreadyExists", {{"group", triggerGroupName}, {"nsp", groupNamespace}});
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.TriggerGroupAlreadyExists", {{"group", triggerGroupName}, {"nsp", groupNamespace}});
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "createTriggerGroup"},{"nsp", groupNamespace}});
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {{"function", "createTriggerGroup"},{"nsp", groupNamespace}});
         }
 
         TriggerGroup* TriggerDatabase::joinTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
@@ -70,20 +70,18 @@ namespace obe
                     return m_allTriggers[groupNamespace][triggerGroupName].get();
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
                 {
-                    // Add Error <REVISION>
-                    throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.TriggerGroupNotJoinable", {
-                                                        {"function", "joinTriggerGroup"},
-                                                        {"group", triggerGroupName},
-                                                        {"nsp", groupNamespace}
-                                                    });
+                    throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.TriggerGroupNotJoinable", {
+                        {"group", triggerGroupName},
+                        {"nsp", groupNamespace}
+                    });
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
-                                                    {"function", "joinTriggerGroup"},
-                                                    {"group", triggerGroupName},
-                                                    {"nsp", groupNamespace}
-                                                });
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup", {
+                    {"function", "joinTriggerGroup"},
+                    {"group", triggerGroupName},
+                    {"nsp", groupNamespace}
+                });
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "joinTriggerGroup"},{"nsp", groupNamespace}});
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {{"function", "joinTriggerGroup"},{"nsp", groupNamespace}});
         }
 
         void TriggerDatabase::removeNamespace(const std::string& namespaceId)
@@ -91,7 +89,25 @@ namespace obe
             if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
                 m_allTriggers.erase(m_allTriggers.find(namespaceId));
             else
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {{"function", "removeNamespace"}, {"nsp", namespaceId}});
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {{"function", "removeNamespace"}, {"nsp", namespaceId}});
+        }
+
+        std::vector<std::string> TriggerDatabase::getAllTriggersNameFromTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
+        {
+            if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+            {
+                if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
+                    return m_allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup", {
+                    { "function", "getAllTriggersNameFromTriggerGroup" },
+                    { "group", triggerGroupName },
+                    { "nsp", groupNamespace }
+                });
+            }
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {
+                { "function", "getAllTriggersNameFromTriggerGroup" },
+                { "nsp", groupNamespace }
+            });
         }
 
         void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
@@ -107,10 +123,10 @@ namespace obe
                     return false;
                 return true;
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
-                                                {"function", "doesTriggerGroupExists"},
-                                                {"nsp", groupNamespace}
-                                            });
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {
+                {"function", "doesTriggerGroupExists"},
+                {"nsp", groupNamespace}
+            });
         }
 
         void TriggerDatabase::update()

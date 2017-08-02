@@ -361,7 +361,7 @@ namespace vili
                                     }
                                 }
                                 else
-                                    throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.UnknownTemplate", {{"template", templateName},{"id", attributeID},{"file", filename}});
+                                    throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.UnknownTemplate", {{"template", templateName},{"id", attributeID},{"file", filename}});
                             }
                             else
                             {
@@ -413,7 +413,7 @@ namespace vili
                                 }
                             }
                             else
-                                throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.UnknownTypeInList", {{"list", attributeValue},{"file", filename}});
+                                throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.UnknownTypeInList", {{"list", attributeValue},{"file", filename}});
                         }
                     }
                 }
@@ -423,7 +423,7 @@ namespace vili
             if (verbose) std::cout << "Parsed over.." << std::endl;
             return true;
         }
-        throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.FileNotFound", {{"file", filename}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.FileNotFound", {{"file", filename}});
     }
 
     void ViliParser::generateTemplate(const std::string& templateName, bool visible)
@@ -493,17 +493,17 @@ namespace vili
                 m_templateList[templateBase->getId()] = newTemplate;
             }
             else
-                throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.TemplateMissingInitOrBody", {{"template", templateName},{"file", m_root->getAnnotation()}});
+                throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.TemplateMissingInitOrBody", {{"template", templateName},{"file", m_root->getAnnotation()}});
         }
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.WrongTemplateBase", {{"attribute", templateName},{"file", m_root->getAnnotation()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.WrongTemplateBase", {{"attribute", templateName},{"file", m_root->getAnnotation()}});
     }
 
     void ViliParser::writeFile(const std::string& filename, bool verbose) const
     {
         std::ofstream outFile;
         outFile.open(filename);
-        if (verbose) std::cout << "Writing DataParser's content on file : " << filename << std::endl;
+        if (verbose) std::cout << "Writing ViliParser's content on file : " << filename << std::endl;
         if (m_spacing != 4)
         {
             outFile << "Spacing (" << m_spacing << ");" << std::endl;
@@ -566,6 +566,6 @@ namespace vili
     {
         if (m_templateList.find(templateId) != m_templateList.end())
             return m_templateList.at(templateId);
-        throw aube::ErrorHandler::Raise("Vili.Vili.DataParser.TemplateNotFound", {{"templateName", templateId}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.TemplateNotFound", {{"templateName", templateId}});
     }
 }

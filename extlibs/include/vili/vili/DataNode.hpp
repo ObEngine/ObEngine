@@ -178,7 +178,7 @@ namespace vili
             return Int;
         if (m_dataType == DataType::Float)
             return Float;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongIntCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongIntCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
@@ -188,7 +188,7 @@ namespace vili
             return Float;
         if (m_dataType == DataType::Int)
             return Int;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongFloatCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongFloatCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
@@ -196,7 +196,7 @@ namespace vili
     {
         if (m_dataType == DataType::Bool)
             return Bool;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongBoolCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongBoolCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
     template <>
@@ -204,6 +204,6 @@ namespace vili
     {
         if (m_dataType == DataType::String)
             return String;
-        throw aube::ErrorHandler::Raise("Vili.ViliHeader.BaseAttribute.WrongStringCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
+        throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongStringCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 }

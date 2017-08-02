@@ -246,7 +246,7 @@ namespace obe
             m_target->setTexture(m_canvas.getTexture());
         }
 
-        const sf::Texture& Canvas::getTexture()
+        const sf::Texture& Canvas::getTexture() const
         {
             return m_canvas.getTexture();
         }

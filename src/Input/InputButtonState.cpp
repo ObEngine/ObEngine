@@ -1,4 +1,5 @@
 #include <Input/InputButtonState.hpp>
+#include "vili/ErrorHandler.hpp"
 
 #define OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STREAM(TYPE) case InputButtonState::TYPE: os << #TYPE; break;
 #define OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(TYPE) if (state == InputButtonState::TYPE) { return #TYPE; }
@@ -15,7 +16,7 @@ namespace obe
                 OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STREAM(Hold)
                 OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STREAM(Pressed)
                 OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STREAM(Released)
-                default: os << "Error";
+                default: throw aube::ErrorHandler::Raise("ObEngine.Input.InputButtonState.WrongEnumState");
             }
             return os;
         }
@@ -30,7 +31,7 @@ namespace obe
                 return InputButtonState::Pressed;
             if (state == "Released")
                 return InputButtonState::Released;
-            //Add Error <REVISION>
+            throw aube::ErrorHandler::Raise("ObEngine.Input.InputButtonState.WrongStringState", { {"state", state} });
         }
 
         std::string inputButtonStateToString(InputButtonState state)

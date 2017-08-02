@@ -81,6 +81,7 @@ namespace obe
 
             //Scene Creation / Loading
             Scene::Scene scene;
+            //scene.getCamera()->bindView(window);
             Script::ScriptEngine["stream"] = gameConsole.createStream("Scene", true);
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
@@ -200,6 +201,15 @@ namespace obe
                 {
                     inputManager.removeContext("colliderEditing");
                 }
+            });
+
+            inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
+            {
+                scene.getCamera()->scale(1.1);
+            });
+            inputManager.getAction("MagnetizeDown").connect([&scene](const Input::InputActionEvent& event)
+            {
+                scene.getCamera()->scale(0.9);
             });
 
             //Game Starts

@@ -39,8 +39,8 @@ namespace obe
             if (m_animationSet.find(animationName) != m_animationSet.end())
                 return m_animationSet.at(animationName).get();
             throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
-                                            {{"function", "getAnimation"}, {"animation", animationName}, {"%animator", m_animatorPath.toString()}
-                                            });
+                {{"function", "getAnimation"}, {"animation", animationName}, {"%animator", m_animatorPath.toString()}
+            });
         }
 
         std::vector<std::string> Animator::getAllAnimationName() const
@@ -61,8 +61,8 @@ namespace obe
             if (m_animationSet.find(key) == m_animationSet.end())
             {
                 throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", {
-                                                    {"function", "setKey"},{"animation", key},{"%animator", m_animatorPath.toString()}
-                                                });
+                    {"function", "setKey"},{"animation", key},{"%animator", m_animatorPath.toString()}
+                });
             }
 
             if (key != m_currentAnimationName)

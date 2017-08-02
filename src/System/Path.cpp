@@ -37,7 +37,7 @@ namespace obe
         {
             if (MountedPaths.size() > index)
                 return Path(MountedPaths[index].basePath).add(m_path);
-            throw aube::ErrorHandler::Raise("ObEngine.PathResolver.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", m_path}});
+            throw aube::ErrorHandler::Raise("ObEngine.System.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", m_path}});
         }
 
         std::string Path::toString() const

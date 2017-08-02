@@ -305,7 +305,7 @@ namespace obe
         void addSpriteToWorld(std::string geid)
         {
             std::cout << "Recv geid : " << geid << std::endl;
-            Scene::Scene* world = Script::hookCore.getPointer("World")->as<Scene::Scene*>();
+            Scene::Scene* world = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
             int i = 0;
             std::string testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i);
             while (world->doesLevelSpriteExists(testId))

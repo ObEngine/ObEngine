@@ -67,7 +67,7 @@ namespace vili
                 parent->at(id).removeNode(NodeType::DataNode, "__linkroot__");
         }
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.DataTemplate.BuildError", {{"element", id},{"parent", parent->getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.NodeTemplate.BuildError", {{"element", id},{"parent", parent->getNodePath()}});
     }
 
     bool NodeTemplate::checkSignature()
@@ -90,7 +90,7 @@ namespace vili
         else if (!facultative && !m_signatureEnd)
             m_signature.push_back(constraintManager);
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.DataTemplate.WrongFacultativeParameterOrder", {{"index", std::to_string(m_signature.size())}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.NodeTemplate.WrongFacultativeParameterOrder", {{"index", std::to_string(m_signature.size())}});
     }
 
     void NodeTemplate::useDefaultLinkRoot()
@@ -113,7 +113,7 @@ namespace vili
         m_visible = visible;
     }
 
-    bool NodeTemplate::isVisible()
+    bool NodeTemplate::isVisible() const
     {
         return m_visible;
     }

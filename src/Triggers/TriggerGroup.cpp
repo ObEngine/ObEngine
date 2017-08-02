@@ -17,25 +17,7 @@ namespace obe
             {
                 return m_triggerMap[triggerName].get();
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerGroup.UnknownTrigger", {{"trigger", triggerName}, {"group", m_name}});
-        }
-
-        std::vector<std::string> TriggerDatabase::getAllTriggersNameFromTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
-        {
-            if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
-            {
-                if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end())
-                    return m_allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
-                throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownCustomTriggerGroup", {
-                                                    {"function", "getAllTriggersNameFromTriggerGroup"},
-                                                    {"group", triggerGroupName},
-                                                    {"nsp", groupNamespace}
-                                                });
-            }
-            throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace", {
-                                                {"function", "getAllTriggersNameFromTriggerGroup"},
-                                                {"nsp", groupNamespace}
-                                            });
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", {{"trigger", triggerName}, {"group", m_name}});
         }
 
         TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)

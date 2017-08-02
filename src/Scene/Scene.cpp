@@ -71,7 +71,7 @@ namespace obe
                 m_levelName = meta.getDataNode("name").get<std::string>();
             }
             else
-                throw aube::ErrorHandler::Raise("ObEngine.World.World.NoMeta", {{"map", filename}});
+                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoMeta", {{"map", filename}});
 
             if (mapParse->contains(vili::NodeType::ComplexNode, "View"))
             {
@@ -83,7 +83,7 @@ namespace obe
                     Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
             }
             else
-                throw aube::ErrorHandler::Raise("ObEngine.World.World.NoView", {{"map", filename}});
+                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", {{"map", filename}});
 
             if (mapParse->contains(vili::NodeType::ComplexNode, "LevelSprites"))
             {
@@ -437,7 +437,7 @@ namespace obe
         {
             if (m_gameObjectMap.find(id) != m_gameObjectMap.end())
                 return m_gameObjectMap[id].get();
-            throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownGameObject", {{"id", id}, {"map", m_levelName}});
+            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownGameObject", {{"id", id}, {"map", m_levelName}});
         }
 
         bool Scene::doesGameObjectExists(const std::string& id)
@@ -592,7 +592,7 @@ namespace obe
                 if (m_spriteArray[i].get()->getId() == id)
                     return m_spriteArray[i].get();
             }
-            throw aube::ErrorHandler::Raise("ObEngine.World.World.UnknownLevelSprite", {{"id", id}, {"map", m_levelName}});
+            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownLevelSprite", {{"id", id}, {"map", m_levelName}});
         }
 
         bool Scene::doesLevelSpriteExists(const std::string& id)
@@ -656,7 +656,7 @@ namespace obe
                     return m_colliderArray[i].get();
                 }
             }
-            return nullptr;
+            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider", { {"id", id}, {"scene", m_levelName} });
         }
 
         bool Scene::doesColliderExists(const std::string& id)

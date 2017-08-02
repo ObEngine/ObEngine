@@ -100,7 +100,7 @@ namespace obe
             }
             if (loadSum > 0)
                 return "*";
-            throw aube::ErrorHandler::Raise("ObEngine.PathResolverHeader.Path.CantFindResource", {{"path", m_path}});
+            throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", {{"path", m_path}});
         }
     }
 }

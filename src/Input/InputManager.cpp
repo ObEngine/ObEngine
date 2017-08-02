@@ -19,7 +19,7 @@ namespace obe
                     return *action.get();
                 }
             }
-            throw aube::ErrorHandler::Raise("ObEngine.KeyBinder.KeyBinder.UnknownAction", { { "action", actionId } });
+            throw aube::ErrorHandler::Raise("ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
         }
 
         void InputManager::setEnabled(bool state)

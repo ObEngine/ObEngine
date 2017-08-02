@@ -1,25 +1,15 @@
 Include(Obe);
 
 ObEngine:
+    where:"obe"
     Animation:
         where:"Animation"
-        file:"src/Animation.cpp"
-        RessourceManager:
-            where:"RessourceManager"
-            LoadTexture_NETD:
-                where:"getTexture"
-                message:"Can't open file '%file%'"
-                hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
-            LoadTexture_ETD:
-                where:"getTexture"
-                message:"Can't open file '%file%'"
-                hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
         AnimationPlayMode:
             where:"AnimationPlayMode"
             UnknownPlayMode:
                 where:"stringToAnimationPlayMode"
                 message:"Unknown Play Mode '%playmode%', it can be either one of those : 'OneTime', 'Loop' or 'Force'"
-                hint:"Check in your Animation if the play-mode parameter is correct"
+                hint:"Check in your Animation if the play-mode parameter is correct"   
         Animation:
             where:"Animation"
             AnimationGroupNotFound:
@@ -36,37 +26,92 @@ ObEngine:
                 where:"update"
                 message:"Can't update NULL Animation in animator : '%animator%'"
                 hint:"Assign an Animation to the Animator with This:Animator():setKey in Local.Init"
-    Console:
-        where:"Console"
-        file:"src/Console.cpp"
+    Bindings:
+        where:"Bindings":
+        BindingTree:
+            where:"BindingTree"
+            TerminalNodeCantHaveChild:
+                where:"add"
+                message:"Can't add a child to a BindingTree Node %id% with a lib linked to it"
+            ChildNotFound:
+                where:"%function%"
+                message:"BindingTree node %id% does not contains the following node : %child%"
+    Collision:
+        where:"Collision"
+    Debug:
+        where:"Debug"
         Console:
             where:"Console"
             UnknownStream:
                 where:"getStream"
                 message:"Can't find Stream : %stream%"
-    ViliLuaBridge:
-        where:"ViliLuaBridge"
-        file:"src/ViliLuaBridge.cpp"
-        LuaTableToComplexAttribute:
-            where:"luaTableToComplexAttribute"
-            NotATable:
-                message:"LuaElement %id% is not a table"
-    FunctionsHeader:
-        where:"Functions"
-        file:"src/Functions.hpp"
-        Vector:
-            where:"Vector"
-            UnknownIndexOfElement:
-                where:"indexOfElement"
-                message:"Can't find element %element% in std::vector"
-    GameObject:
-        where:"GameObject"
-        file:"src/GameObject.cpp"
+    Editor:
+        where:"Editor"
+    Graphics:
+        where:"Graphics"
+        RessourceManager:
+            where:"RessourceManager"
+            LoadTexture:
+                where:"getTexture"
+                message:"Can't open file '%file%'"
+                hint:"Search for occurences of '%file%' in your project and correct the wrong paths"
+    Input:
+        where:"Input"
+        InputButtonState:
+            where:"InputButtonState"
+            WrongStringState:
+                where:"stringToInputButtonState"
+                message:"String %state% can't be converted to an InputButtonState"
+            WrongEnumState:
+                where:"operator<<"
+                message:"Received incorrect InputButtonState enum value"
+        InputCondition:
+            ButtonAlreadyInCombination:
+                where:"setCombinationCode"
+                message:"The InputButton %button% is already in the combination"
+            ButtonNotFound:
+                where:"setCombinationCode"
+                message:"The InputButton %button% does not exists"
+            UnknownState:
+                where:"setCombinationCode"
+                message:"The InputButtonState %state% does not exists"
+        InputManager:
+            where:"InputManager"
+            UnknownAction:
+                where:"getAction"
+                message:"Can't find Action %action%"
+        KeyList:
+            where:"KeyList"
+            UnknownButton:
+                where:"GetKey"
+                message:"Can't find InputButton %button%"
+    Modes:
+        where:"Modes"
+    Network:
+        where:"Network"
+    Scene:
+        where:"Scene"
+        Scene:
+            where:"Scene"
+            NoMeta:
+                where:"loadFromFile"
+                message:"Map file %map% does not have any 'Meta' ComplexNode"
+            NoView:
+                where:"loadFromFile"
+                message:"Map file %map% does not have any 'View' ComplexNode"
+            UnknownGameObject:
+                where:"getGameObjectById"
+                messsage:"Can't find GameObject %id% in Scene %map%"
+            UnknownLevelSprite:
+                where:"getLevelSpriteByID"
+                message:"Can't find LevelSprite %id% in Scene %map%"
+            UnknownCollider:
+                where:"getColliderByID"
+                message:"Can't find Collider %id% in Scene %map%"
+    Script:
+        where:"Script"
         GameObject:
             where:"GameObject"
-            UnknownTriggerParameterType:
-                where:"update"
-                message:"Unknown type for parameter %parameter% in GameObject %object% triggering %trigger%"
             NoLevelSprite:
                 where:"getLevelSprite"
                 message:"GameObject %id% doesn't have a LevelSprite Component"
@@ -79,50 +124,6 @@ ObEngine:
             NoScript:
                 where:"getScript"
                 message:"GameObject %id% doesn't have a Script Component"
-    KeyBinder:
-        where:"KeyBinder"
-        file:"src/KeyBinder.cpp"
-        KeyBinder:
-            where:"KeyBinder"
-            UnknownAction:
-                where:"getActionKey"
-                message:"Can't find Key for Action %action%"
-            UnknownKey:
-                where:"getKey"
-                message:"Can't find KeyClass for Key %key%"
-    Package:
-        where:"Package"
-        file:"src/Package.cpp"
-        Package:
-            where:"Package"
-            AlreadyInstalled:
-                where:"Install"
-                message:"Package <%package%> has already been installed"
-            CantFindPackage:
-                where:"Install"
-                message:"Package <%package%> file is not in Package/ folder"
-            InexistantPackage:
-                where:"%function%"
-                message:"Package <%package%> does not exists"
-    PathResolverHeader:
-        where:"PathResolverHeader"
-        file:"include/PathResolver.hpp"
-        Path:
-            where:"Path"
-            CantFindResource:
-                where:"loadResource"
-                message:"Can't find Resource at %path%"
-    PathResolver:
-        where:"PathResolver"
-        file:"src/PathResolver.cpp"
-        Path:
-            where:"Path"
-            UnknownPathAtIndex:
-                where:"getPath"
-                message:"Can't find BasePath at index %index% for Path %path%"
-    Script:
-        where:"Script"
-        file:"src/Script.cpp"
         CoreHook:
             where:"CoreHook"
             UnknownHookType:
@@ -134,98 +135,53 @@ ObEngine:
             UnknownPointerName:
                 where:"getPointer"
                 message:"Can't find Pointer for : %name%"
-        Lib:
-            NoNamespaceProvided:
-                where:"loadLib"
-                message:"Please provide a namespace"
-            UnknownNamespace:
-                where:"loadLib"
-                message:"%name% is not a known Lib Namespace"
-            UnknownCoreLib:
-                where:"loadCoreLib"
-                message:"Can't find Core.%lib%"
-            AnimationImportError:
-                where:"loadAnimation"
-                message:"Can't import %lib%"
-            CameraImportError:
-                where:"loadCamera"
-                message:"Can't import %lib%"
-            CanvasImportError:
-                where:"loadCanvas"
-                message:"Can't import %lib%"
-            CollisionImportError:
-                where:"loadCollision"
-                message:"Can't import %lib%"
-            ConsoleImportError:
-                where:"loadConsole"
-                message:"Can't import %lib%"
-            ConstantsImportError:
-                where:"loadConstants"
-                message:"Can't import %lib%"
-            CoordinatesImportError:
-                where:"loadCoordinates"
-                message:"Can't import %lib%"
-            CursorImportError:
-                where:"loadCursor"
-                message:"Can't import %lib%"
-            DialogImportError:
-                where:"loadDialog"
-                message:"Can't import %lib%"
-            KeyBindImportError:
-                where:"loadKeyBind"
-                message:"Can't import %lib%"
-            LevelSpriteImportError:
-                where:"loadLevelSprite"
-                message:"Can't import %lib%"
-            LightImportError:
-                where:"loadLight"
-                message:"Can't import %lib%"
-            MathExpImportError:
-                where:"loadMathExp"
-                message:"Can't import %lib%"
-            PackageImportError:
-                where:"loadPackage"
-                message:"Can't import %lib%"
-            PathImportError:
-                where:"loadPath"
-                message:"Can't import %lib%"
-            ParticleImportError:
-                where:"loadParticle"
-                message:"Can't import %lib%"
-            SFMLImportError:
-                where:"loadSFML"
-                message:"Can't import %lib%"
-            SoundImportError:
-                where:"loadSound"
-                message:"Can't import %lib%"
-            STDImportError:
-                where:"loadSTD"
-                message:"Can't import %lib%"
-            TriggerImportError:
-                where:"loadTrigger"
-                message:"Can't import %lib%"
-            UtilsImportError:
-                where:"loadUtils"
-                message:"Can't import %lib%"
-            ViliImportError:
-                where:"loadVili"
-                message:"Can't import %lib%"
-    Sound:
-        file:"src/SoundManager.cpp"
-        where:"SoundManager"
-        MusicWrapper:
-            where:"MusicWrapper"
-            IncorrectStatus:
-                where:"getStatus"
-                message:"Music returned an incorrect status"
-        SoundWrapper:
-            where:"SoundWrapper"
-            IncorrectStatus:
-                where:"getStatus"
-                message:"Music returned an incorrect status"
-    Trigger:
-        file:"src/Triggers.cpp"
-        where:"Trigger"
+        ViliLuaBridge:
+            where:"ViliLuaBridge"
+            NotATable:
+                where:"luaTableToComplexNode"
+                message:"LuaElement %id% is not a table"
+    FunctionsHeader:
+        where:"Functions"
+        file:"src/Functions.hpp"
+        Vector:
+            where:"Vector"
+            UnknownIndexOfElement:
+                where:"indexOfElement"
+                message:"Can't find element %element% in std::vector"
+    System:
+        where:"System"
+        Package:
+            where:"Package"
+            AlreadyInstalled:
+                where:"Install"
+                message:"Package <%package%> has already been installed"
+            CantFindPackage:
+                where:"Install"
+                message:"Package <%package%> file is not in Package/ folder"
+            InexistantPackage:
+                where:"%function%"
+                message:"Package <%package%> does not exists"
+        Workspace:
+            where:"Workspace"
+            InexistantWorkspace:
+                where:"%function%"
+                message:"Workspace <%workspace%> does not exists"
+        Path:
+            where:"Path"
+            UnknownPathAtIndex:
+                where:"getPath"
+                message:"Can't find BasePath at index %index% for Path %path%"
+            CantFindResource:
+                where:"loadResource"
+                message:"Can't find Resource at %path%"
+    Time:
+        where:"Time"
+    Transform:
+        where:"Transform"
+    Triggers:
+        where:"Triggers"
+        Trigger:
+            where:"Trigger"
         TriggerGroup:
             where:"TriggerGroup"
             UnknownTrigger:
@@ -245,177 +201,153 @@ ObEngine:
             TriggerGroupAlreadyExists:
                 where:"createTriggerGroup"
                 message:"TriggerGroup %group% already exists in Namespace %nsp%"
-    Workspace:
-        where:"Workspace"
-        file:"src/Workspace.cpp"
-        Workspace:
-            where:"Workspace"
-            InexistantWorkspace:
-                where:"%function%"
-                message:"Workspace <%workspace%> does not exists"
-    World:
-        where:"World"
-        file:"src/World.cpp"
-        World:
-            where:"World"
-            NoMeta:
-                where:"loadFromFile"
-                message:"Map file %map% does not have any 'Meta' RootAttribute"
-            NoView:
-                where:"loadFromFile"
-                message:"Map file %map% does not have any 'View' RootAttribute"
-            UnknownGameObject:
-                where:"getGameObject"
-                messsage:"Can't find GameObject %id% in World %map%"
-            UnknownLevelSprite:
-                where:"getSpriteByID"
-                message:"Can't find LevelSprite %id% in World %map%"
+            TriggerGroupNotJoinable:
+                where:"joinTriggerGroup"
+                message:"TriggerGroup %group% is not joinable in Namespace %nsp%"
 
 Vili:
     ViliHeader:
         where:"ViliHeader"
-        file:"extlibs/include/vili/Vili.hpp"
-        BaseAttribute:
-            where:"BaseAttribute"
+        DataNode:
+            where:"DataNode"
             WrongIntCast:
                 where:"get<int>"
-                message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <int> DataNode, it is a <%type%> DataNode"
             WrongFloatCast:
                 where:"get<float>"
-                message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <float> DataNode, it is a <%type%> DataNode"
             WrongBoolCast:
                 where:"get<bool>"
-                message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <bool> DataNode, it is a <%type%> DataNode"
             WrongStringCast:
                 where:"get<string>"
-                message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
-        LinkAttribute:
-            where:"LinkAttribute"
-            WrongBaseAttributeLink:
-                where:"get<BaseAttribute>"
-                message:"LinkAttribute's (%path%) target (%targetpath%) is not a BaseAttribute"
-            WrongComplexAttributeLink:
-                where:"get<ComplexAttribute>"
-                message:"LinkAttribute's (%path%) target (%targetpath%) is not a ComplexAttribute"
-            WrongListAttributeLink:
-                where:"get<ListAttribute>"
-                message:"LinkAttribute's (%path%) target (%targetpath%) is not a ListAttribute"
+                message:"%path% is not a <string> DataNode, it is a <%type%> DataNode"
+        LinkNode:
+            where:"LinkNode"
+            WrongDataNodeLink:
+                where:"get<DataNode>"
+                message:"LinkNode's (%path%) target (%targetpath%) is not a DataNode"
+            WrongComplexNodeLink:
+                where:"get<ComplexNode>"
+                message:"LinkNode's (%path%) target (%targetpath%) is not a ComplexNode"
+            WrongArrayNodeLink:
+                where:"get<ArrayNode>"
+                message:"LinkNode's (%path%) target (%targetpath%) is not a ArrayNode"
     Vili:
         where:"Vili"
-        file:"extlibs/build/vili/src/Vili.cpp"
-        Attribute:
-            where:"Attribute"
+        Node:
+            where:"Node"
             WrongParentRemover:
                 where:"removeParent"
                 message:"%wrongparent% is not %path% parent"
             AlreadyHaveParent:
                 where:"setParent"
-                message:"Attribute %path% already has a parent : %parent"
+                message:"Node %path% already has a parent : %parent"
             ChangeIDWithParent:
                 where:"setID"
                 message:"Can't change ID of %path% when it has a parent"
-        BaseAttribute:
-            where:"BaseAttribute"
+        DataNode:
+            where:"DataNode"
             WrongIntSet:
                 where:"set(int)"
-                message:"%path% is not a <int> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <int> DataNode, it is a <%type%> DataNode"
             WrongFloatSet:
                 where:"set(float)"
-                message:"%path% is not a <float> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <float> DataNode, it is a <%type%> DataNode"
             WrongStringSet:
                 where:"set(string)"
-                message:"%path% is not a <string> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <string> DataNode, it is a <%type%> DataNode"
             WrongBoolSet:
                 where:"set(bool)"
-                message:"%path% is not a <bool> BaseAttribute, it is a <%type%> BaseAttribute"
+                message:"%path% is not a <bool> DataNode, it is a <%type%> DataNode"
             WrongIntCastOperator:
                 where:"operator<int>"
-                message:"BaseAttribute %path% can't be casted into a int"
+                message:"DataNode %path% can't be casted into a int"
             WrongFloatCastOperator:
                 where:"operator<float>"
-                message:"BaseAttribute %path% can't be casted into a float"
+                message:"DataNode %path% can't be casted into a float"
             WrongStringCastOperator:
                 where:"operator<string>"
-                message:"BaseAttribute %path% can't be casted into a string"
+                message:"DataNode %path% can't be casted into a string"
             WrongBoolCastOperator:
                 where:"operator<bool>"
-                message:"BaseAttribute %path% can't be casted into a bool"
+                message:"DataNode %path% can't be casted into a bool"
             WrongAutoset
                 where:"autoset"
-                message:"Can't autoset raw value %data% for BaseAttribute %path%"
-        LinkAttribute:
-            where:"LinkAttribute"
+                message:"Can't autoset raw value %data% for DataNode %path%"
+        LinkNode:
+            where:"LinkNode"
             WrongLinkPath:
                 where:"getTarget"
-                message:"LinkAttribute (%path%) can't find target (%target%) with PathPart %pathpart%"
+                message:"LinkNode (%path%) can't find target (%target%) with PathPart %pathpart%"
             WrongLinkListIndex:
                 where:"getTarget"
-                message:"LinkAttribute (%path%) can't find ListAttribute item target (%target%) with index %pathpart%"
+                message:"LinkNode (%path%) can't find ArrayNode item target (%target%) with index %pathpart%"
             WrongCopyTarget:
                 where:"copy"
-                message:"LinkAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
-        ListAttribute:
-            where:"ListAttribute"
+                message:"LinkNode (%path%) can't be copied in (%target%) because it's not a ComplexNode"
+        ArrayNode:
+            where:"ArrayNode"
             WrongIndex:
                 where:"get"
                 message:"Can't access index %index% of %path% (Size : %size%)"
             WrongCopyTarget:
                 where:"copy"
-                message:"ListAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
-        ComplexAttribute:
-            where:"ComplexAttribute"
+                message:"ArrayNode (%path%) can't be copied in (%target%) because it's not a ComplexNode"
+        ComplexNode:
+            where:"ComplexNode"
             WrongExtraction:
                 where:"extractElement"
-                message:"%path% doesn't contain Attribute %element%"
-            WrongGetAttributeKey:
+                message:"%path% doesn't contain Node %element%"
+            WrongGetNodeKey:
                 where:"get"
-                message:"Can't find Attribute %attribute% in %path%"
-            WrongGetBaseAttributeKey:
-                where:"getBaseAttribute"
-                message:"Can't find BaseAttribute %attribute% in %path%"
-            WrongGetListAttributeKey:
-                where:"getListAttribute"
-                message:"Can't find ListAttribute %attribute% in %path%"
-            WrongGetLinkAttributeKey:
-                where:"getLinkAttribute"
-                message:"Can't find LinkAttribute %attribute% in %path%"
-            WrongGetComplexAttributeKey:
-                where:"getComplexAttribute"
-                message:"Can't find ComplexAttribute %attribute% in %path%"
+                message:"Can't find Node %node% in %path%"
+            WrongGetDataNodeKey:
+                where:"getDataNode"
+                message:"Can't find DataNode %node% in %path%"
+            WrongGetArrayNodeKey:
+                where:"getArrayNode"
+                message:"Can't find ArrayNode %node% in %path%"
+            WrongGetLinkNodeKey:
+                where:"getLinkNode"
+                message:"Can't find LinkNode %node% in %path%"
+            WrongGetComplexNodeKey:
+                where:"getComplexNode"
+                message:"Can't find ComplexNode %node% in %path%"
             WrongGetTypeKey:
-                where:"getAttributeType"
-                message:"Can't find Attribute %attribute% in %path%"
+                where:"getNodeType"
+                message:"Can't find Node %node% in %path%"
             WrongCopyTarget:
                 where:"copy"
-                message:"ComplexAttribute (%path%) can't be copied in (%target%) because it's not a ComplexAttribute"
+                message:"ComplexNode (%path%) can't be copied in (%target%) because it's not a ComplexNode"
             EmptyPath:
                 where:"getPath"
-                message:"Can't get empty path in ComplexAttribute %path%"
-        DataTemplate:
-            where:"DataTemplate"
+                message:"Can't get empty path in ComplexNode %path%"
+        NodeTemplate:
+            where:"NodeTemplate"
             BuildError:
                 where:"build"
                 message:"Type / Constraint mismatch in Template building for element %element% in %parent%"
             WrongFacultativeParameterOrder:
                 where:"addConstraintManager"
                 message:"Can't use a facultative arguement after a non-facultative argument (index : %size%)"
-        DataParser:
-            where:"DataParser"
+        ViliParser:
+            where:"ViliParser"
             TemplateMissingInitOrBody:
                 where:"parseFile"
                 message:"Can't create Template %template% without __init__ or __body__ in (File : %file%)"
             WrongTemplateBase:
                 where:"parseFile"
-                message:"Can't create Template from non-existant RootAttribute %attribute% (File : %file)"
+                message:"Can't create Template from non-existant RootNode %node% (File : %file)"
             UnknownTemplate:
                 where:"parseFile"
-                message:"Can't build object from inexistant Template : %template% for attribute : %id% (File : %file%)"
+                message:"Can't build object from inexistant Template : %template% for Node : %id% (File : %file%)"
             UnknownTypeInList:
                 where:"parseFile"
-                message:"Can't push unknown type to ListAttribute %list% (File : %file%)"
+                message:"Can't push unknown type to ArrayNode %list% (File : %file%)"
             FileNotFound:
                 where:"parseFile"
                 message:"Can't open %file%"
             TemplateNotFound:
                 where:"getTemplate"
-                message:"Can't find DataTemplate %templateName%"
+                message:"Can't find NodeTemplate %templateName%"

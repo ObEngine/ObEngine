@@ -15,7 +15,7 @@ namespace obe
                 {
                     return (vili::ViliParser("Package/Packages.vili")->at<vili::DataNode>(packageName, "path").get<std::string>());
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Package.Package.InexistantPackage", {{"function", "GetPackageLocation"},{"package", packageName}});
+                throw aube::ErrorHandler::Raise("ObEngine.System.Package.InexistantPackage", {{"function", "GetPackageLocation"},{"package", packageName}});
             }
 
             bool PackageExists(const std::string& packageName)
@@ -26,7 +26,7 @@ namespace obe
             bool Install(const std::string& packageName)
             {
                 if (!Utils::Vector::isInList(packageName + ".opaque", Utils::File::getFileList("Package")))
-                    throw aube::ErrorHandler::Raise("ObEngine.Package.Package.CantFindPackage", {{"package", packageName}});
+                    throw aube::ErrorHandler::Raise("ObEngine.System.Package.CantFindPackage", {{"package", packageName}});
                 if (!PackageExists(packageName))
                 {
                     elz::extractFile("Package/" + packageName + ".opaque", "Opaque.vili", "Package/Opaque.vili");
@@ -44,7 +44,7 @@ namespace obe
                     packages.writeFile("Package/Packages.vili");
                     return true;
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Package.Package.AlreadyInstalled", {{"package", packageName}});
+                throw aube::ErrorHandler::Raise("ObEngine.System.Package.AlreadyInstalled", {{"package", packageName}});
             }
 
             bool Load(const std::string& packageName, unsigned int priority)
@@ -55,7 +55,7 @@ namespace obe
                     std::cout << "<System> Mounting Package : " << packageName << " : " << GetPackageLocation(packageName) << std::endl;
                     return true;
                 }
-                throw aube::ErrorHandler::Raise("ObEngine.Package.Package.InexistantPackage", {{"function", "Load"}, {"package", packageName}});
+                throw aube::ErrorHandler::Raise("ObEngine.System.Package.InexistantPackage", {{"function", "Load"}, {"package", packageName}});
             }
         }
     }

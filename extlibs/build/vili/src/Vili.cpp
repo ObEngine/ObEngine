@@ -15,15 +15,12 @@ namespace vili
             {
                 std::vector<std::string> location;
                 std::vector<std::string> errorIdParts;
-                std::string filename = "";
                 std::string message = node->getDataNode("message").get<std::string>();
                 ComplexNode* currentParent = node.get();
                 while (currentParent != nullptr)
                 {
                     if (currentParent->contains(NodeType::DataNode, "where"))
                         location.insert(location.begin(), currentParent->getDataNode("where").get<std::string>());
-                    if (currentParent->contains(NodeType::DataNode, "file") && filename.empty())
-                        filename = currentParent->getDataNode("file").get<std::string>();
                     errorIdParts.push_back(currentParent->getId());
                     if (currentParent->getParent() != nullptr)
                         currentParent = static_cast<ComplexNode*>(currentParent->getParent());
@@ -33,7 +30,7 @@ namespace vili
                 errorIdParts.pop_back();
                 reverse(errorIdParts.begin(), errorIdParts.end());
                 std::string errorId = Functions::Vector::join(errorIdParts, ".");
-                aube::ErrorHandler::Load(errorId, filename, location, message);
+                aube::ErrorHandler::Load(errorId, location, message);
             }
         });
     }

@@ -38,7 +38,7 @@ namespace vili
             Functions::Vector::eraseAll(m_childAttributesNames, element->getId());
             return element;
         }
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongExtraction", {{"path", getNodePath()},{"element", element->getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongExtraction", {{"path", getNodePath()},{"element", element->getNodePath()}});
     }
 
     void ComplexNode::heritage(ComplexNode* heritTarget)
@@ -79,42 +79,42 @@ namespace vili
             }
             return *getToPath;
         }
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.EmptyPath", {{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.EmptyPath", {{"path", getNodePath()}});
     }
 
     Node* ComplexNode::get(const std::string& id) const
     {
         if (m_childAttributes.find(id) != m_childAttributes.end())
             return m_childAttributes.at(id).get();
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongGetAttributeKey", {{"attribute", id},{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetAttributeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     DataNode& ComplexNode::getDataNode(const std::string& id) const
     {
         if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::DataNode)
             return *static_cast<DataNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongGetBaseAttributeKey", {{"attribute", id},{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetBaseAttributeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     ArrayNode& ComplexNode::getArrayNode(const std::string& id) const
     {
         if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::ArrayNode)
             return *static_cast<ArrayNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongGetListAttributeKey", {{"attribute", id},{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetListAttributeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     LinkNode& ComplexNode::getLinkNode(const std::string& id) const
     {
         if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::LinkNode)
             return *static_cast<LinkNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongGetLinkAttributeKey", {{"attribute", id},{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetLinkAttributeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     ComplexNode& ComplexNode::getComplexNode(const std::string& id) const
     {
         if (!m_childAttributes.empty() && m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::ComplexNode)
             return *static_cast<ComplexNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongGetComplexAttributeKey", {{"attribute", id},{"path", getNodePath()}});
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetComplexNodeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     NodeType ComplexNode::getNodeType(const std::string& id) const
@@ -353,7 +353,7 @@ namespace vili
             }
         }
         else
-            throw aube::ErrorHandler::Raise("Vili.Vili.ComplexAttribute.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
+            throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongCopyTarget", {{"path", getNodePath()},{"target", newParent->getNodePath()}});
     }
 
     void ComplexNode::walk(std::function<void(NodeIterator&)> walkFunction, bool useCache)
