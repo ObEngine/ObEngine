@@ -1,4 +1,4 @@
-# ÖbEngine
+# ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/title.png)
 
 [![Build Status](https://travis-ci.org/Sygmei/ObEngine.svg?branch=master)](https://travis-ci.org/Sygmei/ObEngine)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
@@ -10,7 +10,7 @@
 - [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
 - [ÖbEngine's Website](https://www.obengine.io)
 - [ÖbEngine's Documentation](https://www.obengine.io/doc)
-- [ÖbEngine's Discord](https://discordapp.com)
+- [ÖbEngine's Discord](https://discord.gg/D6JvZzM)
 - [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
 
 ## What the hell is ÖbEngine ?
