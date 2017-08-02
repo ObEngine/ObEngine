@@ -426,6 +426,7 @@ namespace obe
                 }
             }
             window.close();
+            gui.removeAllWidgets();
         }
     }
 }

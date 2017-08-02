@@ -17,6 +17,7 @@ namespace obe
                 bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
                 mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
                 smallFontSize = static_cast<double>(bigFontSize) / 2.0;
+                baseTheme = tgui::Theme();
                 baseTheme.load("Data/GUI/obe.style");
             }
 
