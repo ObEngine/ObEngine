@@ -35,6 +35,7 @@ namespace obe
                     .addProperty("priority", &System::MountablePath::priority)
                     .addProperty("pathType", &System::MountablePath::pathType)
                 );
+                (*lua)["Core"]["System"]["MountPaths"] = kaguya::function(System::MountPaths);
             }
             void LoadPath(kaguya::State* lua)
             {

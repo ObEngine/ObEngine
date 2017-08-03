@@ -55,6 +55,7 @@ function Functions.mount(packageName)
             { text = packageName, color = Style.Package},
             { text = "> has been successfully mounted", color = Style.Success}
         }, 2);
+        Core.System.MountPaths();
     else
         Color.print({
             { text = "Package <", color = Style.Error},

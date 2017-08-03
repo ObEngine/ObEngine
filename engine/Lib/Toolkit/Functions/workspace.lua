@@ -29,7 +29,7 @@ Functions.mount = function(workspaceName)
             { text = workspaceName, color = Style.Workspace},
             { text = "> has  been successfully mounted !", color = Style.Success},
         }, 2);
-        Core.Path.MountPaths();
+        Core.System.MountPaths();
     else
         Color.print({
             { text = "Workspace <", color = Style.Error},

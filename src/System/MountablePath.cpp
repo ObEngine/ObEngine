@@ -24,7 +24,6 @@ namespace obe
             Path::MountedPaths.clear();
             vili::ViliParser mountedPaths;
             mountedPaths.parseFile("Mount.vili", true);
-            mountedPaths.writeFile("MountExport.vili");
             for (std::string path : mountedPaths.at("Mount").getAll(vili::NodeType::ComplexNode))
             {
                 vili::ComplexNode& currentElement = mountedPaths.at("Mount", path);
