@@ -282,9 +282,12 @@ namespace obe
             if (Transform::isOnCorner(m_referencial))
             {
                 Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
-                double xBaseDist = std::abs(oppositePos.x - x);
-                double xCurrDist = m_rect->getSize().to<Transform::Units::WorldPixels>().x;
-                m_rect->scale(xBaseDist / xCurrDist, xBaseDist / xCurrDist, Transform::reverseReferencial(m_referencial));
+                Transform::UnitVector baseDist = oppositePos - Transform::UnitVector(x, y, Transform::Units::WorldPixels);
+                Transform::UnitVector scaleVector = baseDist / m_rect->getSize().to<Transform::Units::WorldPixels>();
+                scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
+                double vScale = std::max(scaleVector.x, scaleVector.y);
+                if (baseDist.x != 0 && baseDist.y != 0)
+                    m_rect->scale(vScale, vScale, Transform::reverseReferencial(m_referencial));
             }
             else
             {
