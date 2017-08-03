@@ -112,17 +112,18 @@ namespace obe
 
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
         {
+            Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
                 Transform::UnitVector refPoint = this->getPosition(refIndex).to<Transform::Units::WorldPixels>();
                 int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
                 int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
-                if (obe::Utils::Math::isBetween(posX, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
+                if (obe::Utils::Math::isBetween(posX + pixelCamera.x, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
                 {
                     int lowerYBound = std::min(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
                     int upperYBound = std::max(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
-                    if (obe::Utils::Math::isBetween(posY, lowerYBound, upperYBound))
+                    if (obe::Utils::Math::isBetween(posY + pixelCamera.y, lowerYBound, upperYBound))
                         return &m_handlePoints[i];
                 }
             }
@@ -276,10 +277,20 @@ namespace obe
 
         void LevelSpriteHandlePoint::moveTo(int x, int y) const
         {
-            std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
-            std::cout << "Set : " << x << ", " << y << std::endl;
-            m_rect->setPointPosition(Transform::UnitVector(x, y, Transform::Units::WorldPixels), m_referencial);
-            std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
+            //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
+            //std::cout << "Set : " << x << ", " << y << std::endl;
+            if (Transform::isOnCorner(m_referencial))
+            {
+                Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
+                double xBaseDist = std::abs(oppositePos.x - x);
+                double xCurrDist = m_rect->getSize().to<Transform::Units::WorldPixels>().x;
+                m_rect->scale(xBaseDist / xCurrDist, xBaseDist / xCurrDist, Transform::reverseReferencial(m_referencial));
+            }
+            else
+            {
+                m_rect->setPointPosition(Transform::UnitVector(x, y, Transform::Units::WorldPixels), m_referencial);
+            }
+            //std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
         }
 
         Transform::Referencial LevelSpriteHandlePoint::getReferencial() const

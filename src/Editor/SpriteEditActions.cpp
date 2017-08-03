@@ -56,12 +56,13 @@ namespace obe
             sf::Text& sprInfo,
             sf::RectangleShape& sprInfoBackground)
         {
-            inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor](const Input::InputActionEvent& event)
+            inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
             {
+                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedHandlePoint != nullptr)
                 {
                     std::cout << "Moving ref : " << selectedHandlePoint->getReferencial() << std::endl;
-                    selectedHandlePoint->moveTo(cursor.getX(), cursor.getY());
+                    selectedHandlePoint->moveTo(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                 }
             });
 
