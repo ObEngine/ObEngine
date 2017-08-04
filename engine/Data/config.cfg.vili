@@ -74,7 +74,6 @@ Developpement:
     showCharacter:True
     showLevelSprites:True
     showOverlay:True
-    showCursor:True
     showCollisions:False
     showFPS:True
     COMM:"COM9"

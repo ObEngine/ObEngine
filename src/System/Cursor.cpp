@@ -18,33 +18,15 @@ namespace obe
         }
 
         Cursor::Cursor() :
-            m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor")),
-            m_cursorAnim(Path("Sprites/Cursors/Round"))
+            m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"))
         {
             m_constraint = Constraints::Default;
-            m_cursorAnim.loadAnimator();
-            m_cursorAnim.setKey("IDLE");
 
             m_cursorTriggers->addTrigger("Pressed")
                             ->addTrigger("Hold")
                             ->addTrigger("Released")
                             ->addTrigger("Idle");
 
-        }
-
-        void Cursor::selectAnimatorPath(const std::string& cursor)
-        {
-            m_cursorAnim.clear();
-            m_cursorAnim = Animation::Animator(Path("Sprites/Cursors/").add(cursor));
-            m_cursorAnim.loadAnimator();
-            m_cursorAnim.setKey("IDLE");
-            m_cursorAnim.update();
-            m_cursorSprite.setTexture(m_cursorAnim.getTexture());
-        }
-
-        void Cursor::selectAnimationKey(const std::string& key)
-        {
-            m_cursorAnim.setKey(key);
         }
 
         int Cursor::getX() const
@@ -99,12 +81,6 @@ namespace obe
             if (!m_leftHold && !m_rightHold && m_cursorAnim.getKey() == "HOLD")
                 m_cursorAnim.setKey("RELEASE");*/
 
-            m_cursorAnim.update();
-
-            if (m_cursorAnim.textureChanged())
-            {
-                m_cursorSprite.setTexture(m_cursorAnim.getTexture());
-            }
 
             sf::Vector2i mousePos = sf::Mouse::getPosition();
             m_x = mousePos.x;
@@ -112,17 +88,11 @@ namespace obe
             std::pair<int, int> constrainedPosition = m_constraint(this);
             m_constrainedX = constrainedPosition.first;
             m_constrainedY = constrainedPosition.second;
-            m_cursorSprite.setPosition(m_constrainedX, m_constrainedY);
         }
 
         void Cursor::setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint)
         {
             m_constraint = constraint;
-        }
-
-        void Cursor::display(sf::RenderWindow& target) const
-        {
-            return target.draw(m_cursorSprite);
         }
     }
 }

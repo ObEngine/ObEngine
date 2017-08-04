@@ -26,7 +26,6 @@ namespace obe
             //Creating Window
             sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
             window.setKeyRepeatEnabled(false);
-            window.setMouseCursorVisible(false);
             sf::Texture loadingTexture;
             loadingTexture.loadFromFile("Sprites/Menus/loading.png");
             loadingTexture.setSmooth(true);
@@ -117,7 +116,6 @@ namespace obe
                 {
                     window.clear();
                     scene.display(window);
-                    cursor.display(window);
 
                     window.display();
                 }

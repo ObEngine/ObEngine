@@ -39,24 +39,12 @@ namespace obe
             int m_constrainedX = 0;
             int m_constrainedY = 0;
             Triggers::TriggerGroupPtr m_cursorTriggers;
-            Animation::Animator m_cursorAnim;
-            sf::Sprite m_cursorSprite;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
         public:
             /**
              * \brief Creates a Cursor
              */
             explicit Cursor();
-            /**
-             * \brief Sets the root path to the Cursor Animator
-             * \param cursor Path to the Cursor Animator (Base root is Sprites/Cursors)
-             */
-            void selectAnimatorPath(const std::string& cursor);
-            /**
-             * \brief Sets the Animation Key (CLIC, HOLD, IDLE, RELEASE)
-             * \param key Key of the Animation to set
-             */
-            void selectAnimationKey(const std::string& key);
             /**
              * \brief Gets the x Coordinate of the Cursor Position (Constrained)
              * \return An int containing the x Coordinate of the Cursor Position
@@ -102,11 +90,6 @@ namespace obe
              * \param constraint A function returning the constrained Position of the Cursor (a std::pair<int, int>) and taking the Cursor pointer in parameter
              */
             void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint);
-            /**
-             * \brief Displays the Cursor
-             * \param target sf::RenderWindow where to render the Cursor
-             */
-            void display(sf::RenderWindow& target) const;
         };
 
         /**

@@ -35,7 +35,6 @@ namespace obe
             //Creating Window
             sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
             window.setKeyRepeatEnabled(false);
-            window.setMouseCursorVisible(false);
             sf::Texture loadingTexture;
             loadingTexture.loadFromFile("Sprites/Menus/loading.png");
             loadingTexture.setSmooth(true);
@@ -72,11 +71,8 @@ namespace obe
             int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
             vili::ComplexNode& developpement = configFile.at("Developpement");
 
-            bool showCursor = developpement.at<vili::DataNode>("showCursor");
-
             //Cursor
             System::Cursor cursor;
-            cursor.selectAnimatorPath("RoundWhite");
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //Scene Creation / Loading
@@ -427,10 +423,6 @@ namespace obe
                     //Console
                     if (gameConsole.isVisible())
                         gameConsole.display(window);
-
-                    //Cursor
-                    if (showCursor)
-                        cursor.display(window);
 
                     window.display();
                 }

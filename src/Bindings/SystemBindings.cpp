@@ -14,13 +14,10 @@ namespace obe
             void LoadSCursor(kaguya::State* lua)
             {
                 (*lua)["Core"]["System"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
-                    .addFunction("display", &System::Cursor::display)
                     .addFunction("getRawX", &System::Cursor::getRawX)
                     .addFunction("getRawY", &System::Cursor::getRawY)
                     .addFunction("getX", &System::Cursor::getX)
                     .addFunction("getY", &System::Cursor::getY)
-                    .addFunction("selectAnimationKey", &System::Cursor::selectAnimationKey)
-                    .addFunction("selectAnimatorPath", &System::Cursor::selectAnimatorPath)
                     .addFunction("setConstraint", &System::Cursor::setConstraint)
                     .addFunction("setPosition", &System::Cursor::setPosition)
                     .addFunction("setX", &System::Cursor::setX)
