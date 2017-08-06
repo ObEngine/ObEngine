@@ -88,6 +88,7 @@ namespace obe
             if (mapParse->contains(vili::NodeType::ComplexNode, "LevelSprites"))
             {
                 vili::ComplexNode& levelSprites = mapParse.at("LevelSprites");
+
                 for (std::string& currentSpriteName : levelSprites.getAll(vili::NodeType::ComplexNode))
                 {
                     vili::ComplexNode& currentSprite = levelSprites.at(currentSpriteName);
@@ -137,7 +138,7 @@ namespace obe
                         spriteYTransformer = "None";
                     }
 
-                    std::unique_ptr<Graphics::LevelSprite> tempSprite = std::make_unique<Graphics::LevelSprite>(spriteId);
+					Graphics::LevelSprite* tempSprite = this->createLevelSprite(spriteId);
                     if (spritePath != "")
                         tempSprite->load(spritePath);
                     tempSprite->setPosition(spritePos.x, spritePos.y);
@@ -148,7 +149,6 @@ namespace obe
                     tempSprite->setPositionTransformer(positionTransformer);
                     tempSprite->setLayer(layer);
                     tempSprite->setZDepth(zdepth);
-                    m_spriteArray.push_back(move(tempSprite));
                 }
             }
 

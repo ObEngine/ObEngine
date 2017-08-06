@@ -1,4 +1,5 @@
 #include <Graphics/LevelSprite.hpp>
+#include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Types/Any.hpp>
@@ -26,8 +27,8 @@ namespace obe
             if (path != "")
             {
                 m_path = path;
-                System::Path(path).loadResource(&m_texture, System::Loaders::textureLoader);
-                m_sprite.setTexture(m_texture);
+				m_texture = *ResourceManager::GetInstance()->getTexture(System::Path(path).find());
+				m_sprite.setTexture(m_texture);
             }
         }
 

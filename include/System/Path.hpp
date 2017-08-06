@@ -50,6 +50,7 @@ namespace obe
              * \return The full path based on the current path and the BasePath at index
              */
             Path getPath(int index);
+			std::string find() const;
             /**
              * \brief Get the current path in string form
              * \return The Path in std::string form
