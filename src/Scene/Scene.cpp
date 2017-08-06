@@ -138,7 +138,7 @@ namespace obe
                         spriteYTransformer = "None";
                     }
 
-					Graphics::LevelSprite* tempSprite = this->createLevelSprite(spriteId);
+                    Graphics::LevelSprite* tempSprite = this->createLevelSprite(spriteId);
                     if (spritePath != "")
                         tempSprite->load(spritePath);
                     tempSprite->setPosition(spritePos.x, spritePos.y);

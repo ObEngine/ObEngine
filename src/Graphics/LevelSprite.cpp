@@ -27,8 +27,8 @@ namespace obe
             if (path != "")
             {
                 m_path = path;
-				m_texture = *ResourceManager::GetInstance()->getTexture(System::Path(path).find());
-				m_sprite.setTexture(m_texture);
+                m_texture = *ResourceManager::GetInstance()->getTexture(System::Path(path).find());
+                m_sprite.setTexture(m_texture);
             }
         }
 

@@ -33,7 +33,6 @@ namespace obe
                 }
                 return m_textureDatabase[path].get();
             }
-
             std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
             System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
             if (tempTexture != nullptr)
