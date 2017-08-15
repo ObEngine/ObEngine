@@ -63,6 +63,12 @@ namespace obe
              */
             std::vector<std::string> getAllTriggersNameFromTriggerGroup(const std::string& namespaceName, const std::string& triggerGroupName);
             /**
+             * \brief Get all the names of the TriggerGroup in the given Namespace
+             * \param namespaceName Namespace where to get all the TriggerGroup names
+             * \return A std::vector of std::string containing the names of all contained TriggerGroup
+             */
+            std::vector<std::string> getAllTriggersGroupNames(const std::string& namespaceName);
+            /**
              * \brief Removes an existing namespace
              * \param namespaceName Name of the namespace to delete
              */

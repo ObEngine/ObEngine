@@ -31,6 +31,9 @@ namespace obe
             static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         };
 
+        /**
+         * \brief A GameObject is a set of Components used in the Scene
+         */
         class GameObject : public Types::Identifiable
         {
         private:
@@ -40,7 +43,7 @@ namespace obe
             Collision::PolygonalCollider* m_objectCollider;
             Triggers::TriggerGroupPtr m_localTriggers;
 
-            std::vector<Triggers::Trigger*> m_registeredTriggers;
+            std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
             std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
 
             std::string m_id;
@@ -51,7 +54,6 @@ namespace obe
 
             bool m_hasAnimator = false;
             bool m_hasCollider = false;
-            bool m_levelSpriteRelative = true;
             bool m_hasLevelSprite = false;
             bool m_hasScriptEngine = false;
             bool m_initialised = false;
@@ -59,28 +61,102 @@ namespace obe
 
             friend class Scene::Scene;
         public:
+            /**
+             * \brief Creates a new GameObject
+             * \param type Type of the GameObject
+             * \param id Id of the GameObject you want to create
+             */
             explicit GameObject(const std::string& type, const std::string& id);
+            /**
+             * \brief Destructor of the GameObject
+             */
             ~GameObject();
 
+            /**
+             * \brief Get the Type of the GameObject
+             * \return A std::string containing the type of the GameObject
+             */
             std::string getType() const;
+            /**
+             * \brief Get the public key of the GameObject
+             * \return A std::string containing the public key of the GameObject
+             */
             std::string getPublicKey() const;
+            /**
+             * \brief Get the script execution priority of the GameObject
+             * \return An int containing the script execution priority of the GameObject
+             */
             int getPriority() const;
+            /**
+             * \brief Checks if the GameObject has an Animator Component
+             * \return true if the GameObject contains an Animator Component, false otherwise
+             */
             bool doesHaveAnimator() const;
+            /**
+             * \brief Checks if the GameObject has a Collider Component
+             * \return true if the GameObejct contains the Collider Component, false otherwise
+             */
             bool doesHaveCollider() const;
+            /**
+             * \brief Checks if the GameObject has a LevelSprite Component
+             * \return true if the GameObject contains the LevelSprite Component, false otherwise
+             */
             bool doesHaveLevelSprite() const;
+            /**
+             * \brief Checks if the GameObject has a Script Component
+             * \return true if the GameObject contains the Script Component, false otherwise
+             */
             bool doesHaveScriptEngine() const;
-            bool isLevelSpriteRelative() const;
+            /**
+             * \brief Is the GameObject updated
+             * \return true if the GameObject is updated, false otherwise
+             */
             bool getUpdateState() const;
+            /**
+             * \brief Sets if the GameObject should be otherwise or not
+             * \param state Should be equal to true if the GameObject must updates, false otherwise
+             */
             void setUpdateState(bool state);
 
+            /**
+             * \brief Gets the Animator Component of the GameObject (Raises ObEngine.Script.GameObject.NoAnimator if no Animator Component)
+             * \return A pointer to the Animator Component of the GameObject
+             */
             Animation::Animator* getAnimator();
+            /**
+            * \brief Gets the Collider Component of the GameObject (Raises ObEngine.Script.GameObject.NoCollider if no Collider Component)
+            * \return A pointer to the Collider Component of the GameObject
+            */
             Collision::PolygonalCollider* getCollider();
+            /**
+            * \brief Gets the LevelSprite Component of the GameObject (Raises ObEngine.Script.GameObject.NoLevelSprite if no LevelSprite Component)
+            * \return A pointer to the LevelSprite Component of the GameObject
+            */
             Graphics::LevelSprite* getLevelSprite();
+            /**
+            * \brief Gets the Script Component of the GameObject (Raises ObEngine.Script.GameObject.NoScript if no Script Component)
+            * \return A pointer to the Script Component of the GameObject
+            */
             kaguya::State* getScript();
 
+            /**
+             * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
+             * \return A pointer to the TriggerGroup of the GameObject
+             */
             Triggers::TriggerGroup* getLocalTriggers() const;
+            /**
+             * \brief Enables the use of a LocalTrigger (Internal Use Only)
+             * \param trName Name of the Local Trigger to enable (Init, Update, etc..)
+             */
             void useLocalTrigger(const std::string& trName);
-            void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs = "");
+            /**
+             * \brief 
+             * \param trNsp 
+             * \param trGrp 
+             * \param trName 
+             * \param useAs 
+             */
+            void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias = "");
             void setInitialised(bool init);
             bool getInitialised() const;
             void exec(const std::string& query) const;
@@ -88,7 +164,7 @@ namespace obe
             void sendInitArg(const std::string& argName, U value);
             void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value);
 
-            void registerTrigger(Triggers::Trigger* trg);
+            void registerTrigger(Triggers::Trigger* trg, const std::string& callbackName);
             void loadGameObject(Scene::Scene& world, vili::ComplexNode& obj);
             void update(double dt);
 

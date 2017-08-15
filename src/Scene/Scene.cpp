@@ -475,8 +475,7 @@ namespace obe
 
             if (newGameObject->doesHaveLevelSprite())
             {
-                if (newGameObject->isLevelSpriteRelative())
-                    newGameObject->getLevelSprite()->setPosition(0, 0);
+                newGameObject->getLevelSprite()->setPosition(0, 0);
                 newGameObject->getLevelSprite()->setParentId(id);
             }
 

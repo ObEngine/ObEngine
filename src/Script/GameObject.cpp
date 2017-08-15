@@ -116,9 +116,9 @@ namespace obe
 
         }
 
-        void GameObject::registerTrigger(Triggers::Trigger* trg)
+        void GameObject::registerTrigger(Triggers::Trigger* trg, const std::string& callbackName)
         {
-            m_registeredTriggers.push_back(trg);
+            m_registeredTriggers.emplace_back(trg, callbackName);
         }
 
         void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
@@ -191,7 +191,6 @@ namespace obe
             if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id);
-                m_levelSpriteRelative = (obj.at("LevelSprite").getDataNode("position").get<std::string>() == "relative") ? true : false;
                 int sprOffX = 0;
                 int sprOffY = 0;
                 std::string spriteXTransformer;
@@ -305,18 +304,10 @@ namespace obe
             {
                 for (int i = 0; i < m_registeredTriggers.size(); i++)
                 {
-                    Triggers::Trigger* trigger = m_registeredTriggers[i];
+                    Triggers::Trigger* trigger = m_registeredTriggers[i].first;
                     if (trigger->getState())
                     {
-                        std::string useGrp = trigger->getGroup();
-                        for (int j = 0; j < m_registeredAliases.size(); j++)
-                        {
-                            std::string alNsp, alGrp, alRep;
-                            tie(alNsp, alGrp, alRep) = m_registeredAliases[j];
-                            if (alNsp == trigger->getNamespace() && alGrp == trigger->getGroup())
-                                useGrp = alRep;
-                        }
-                        std::string funcname = useGrp + "." + trigger->getName();
+                        std::string funcname = m_registeredTriggers[i].second;
                         if (funcname == "Local.Update")
                         {
                             m_localTriggers->pushParameter("Update", "dt", dt);
@@ -377,11 +368,6 @@ namespace obe
             return m_hasScriptEngine;
         }
 
-        bool GameObject::isLevelSpriteRelative() const
-        {
-            return m_levelSpriteRelative;
-        }
-
         bool GameObject::getUpdateState() const
         {
             return m_canUpdate;
@@ -427,37 +413,40 @@ namespace obe
 
         void GameObject::useLocalTrigger(const std::string& trName)
         {
-            this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName));
+            this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName), "Local." + trName);
             Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerState(m_objectScript.get());
         }
 
-        void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs)
+        void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
         {
             //std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << useAs << std::endl;
             if (trName == "*")
             {
-                std::vector<std::string> allEv = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
-                for (int i = 0; i < allEv.size(); i++)
+                std::vector<std::string> allTrg = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
+                for (int i = 0; i < allTrg.size(); i++)
                 {
-                    if (!Utils::Vector::isInList(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]), m_registeredTriggers))
-                    {
-                        this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i]));
-                        Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, allEv[i])->registerState(m_objectScript.get());
-                    }
+                    this->useExternalTrigger(trNsp, trGrp, trName, 
+                        (Utils::String::occurencesInString(callAlias, "*")) ? 
+                        Utils::String::replace(callAlias, "*", allTrg[i]) : 
+                        "");
                 }
             }
             else 
             {
-                //std::cout << "Registering Single Trigger" << std::endl;
-                if (!Utils::Vector::isInList(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), m_registeredTriggers))
+                bool triggerNotFound = true;
+                for (auto& triggerPair : m_registeredTriggers)
                 {
-                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName));
+                    if (triggerPair.first == Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName))
+                    {
+                        triggerNotFound = false;
+                    }
+                }
+                if (triggerNotFound)
+                {
+                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), 
+                        (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName : callAlias);
                     Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get());
                 }
-            }
-            if (useAs != "")
-            {
-                m_registeredAliases.push_back(std::tuple<std::string, std::string, std::string>(trNsp, trGrp, useAs));
             }
         }
 

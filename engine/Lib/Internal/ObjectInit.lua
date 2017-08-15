@@ -1,4 +1,7 @@
+GetHook("TriggerDatabase");
+
 Local = {}; -- Local Events
+Global = {}; -- External Global Events
 
 Local__Meta = {
     __newindex = function(object, index, value)
@@ -9,7 +12,31 @@ Local__Meta = {
 
 setmetatable(Local, Local__Meta);
 
-Global = {}; -- Global Events
+Global__Trigger__Meta = {
+    __newindex = function(object, index, value)
+        print("Register new Global Trigger", object.triggerGroupId, index);
+        This:useExternalTrigger("Global", object.triggerGroupId, index);
+        rawset(object, index, value);
+    end
+};
+
+Global__Meta = {
+    __index = function(table, key)
+        for _, v in pairs(Hook.TriggerDatabase:GetInstance():getAllTriggersGroupNames("Global")) do
+            if v == key then
+                if rawget(table, key) == nil then
+                    rawset(table, key, { triggerGroupId = key });
+                    setmetatable(rawget(table, key), Global__Trigger__Meta);
+                end
+                return rawget(table, key);
+            end
+        end
+        error("Global Trigger " .. key .. " doesn't exists !");
+    end
+};
+
+setmetatable(Global, Global__Meta);
+
 LuaCore.Lua_ReqList = {}; -- Require Parameters
 LuaCore.FTCP = {}; -- Future Trigger Call Parameters
 

@@ -31,6 +31,7 @@ namespace obe
                     .addFunction("createTriggerGroup", &Triggers::TriggerDatabase::createTriggerGroup)
                     .addFunction("doesTriggerGroupExists", &Triggers::TriggerDatabase::doesTriggerGroupExists)
                     .addFunction("getAllTriggersNameFromTriggerGroup", &Triggers::TriggerDatabase::getAllTriggersNameFromTriggerGroup)
+                    .addFunction("getAllTriggersGroupNames", &Triggers::TriggerDatabase::getAllTriggersGroupNames)
                     .addFunction("getTrigger", &Triggers::TriggerDatabase::getTrigger)
                     .addFunction("joinTriggerGroup", &Triggers::TriggerDatabase::joinTriggerGroup)
                     .addFunction("removeNamespace", &Triggers::TriggerDatabase::removeNamespace)

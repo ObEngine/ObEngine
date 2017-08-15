@@ -110,6 +110,23 @@ namespace obe
             });
         }
 
+        std::vector<std::string> TriggerDatabase::getAllTriggersGroupNames(const std::string& namespaceName)
+        {
+            if (m_allTriggers.find(namespaceName) != m_allTriggers.end())
+            {
+                std::cout << "  Entering NSP Seek" << std::endl;
+                std::vector<std::string> allNames;
+                for (auto& nsp : m_allTriggers[namespaceName])
+                {
+                    std::cout << "    <foreach>" << std::endl;
+                    allNames.push_back(nsp.first);
+                }
+                return allNames;
+            }
+            else
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", { { "function", "getAllTriggersGroupNames" },{ "nsp", namespaceName } });
+        }
+
         void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
         {
             m_allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());

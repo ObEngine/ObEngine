@@ -208,6 +208,12 @@ namespace obe
                 scene.getCamera()->scale(0.9);
             });
 
+            std::cout << "=> LISTING GLOBAL NAMESPACE TRIGGERGROUP CONTENT" << std::endl;
+            for (auto& truc : Triggers::TriggerDatabase::GetInstance()->getAllTriggersGroupNames("Global"))
+            {
+                std::cout << "GLOBAL POSITIONING NAMESPACE LISTING : " << truc << std::endl;
+            }
+
             //Game Starts
             while (window.isOpen())
             {

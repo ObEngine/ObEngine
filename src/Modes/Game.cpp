@@ -47,6 +47,13 @@ namespace obe
 
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
+            //Game Triggers
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
+                ->addTrigger("Start")
+                ->addTrigger("End")
+                ->addTrigger("Update")
+                ->addTrigger("Render");
+
             //Font
             sf::Font font;
             font.loadFromFile("Data/Fonts/arial.ttf");
