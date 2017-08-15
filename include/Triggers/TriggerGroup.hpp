@@ -79,6 +79,13 @@ namespace obe
             template <typename P>
             void pushParameter(const std::string& triggerName, const std::string& parameterName, P parameter);
             /**
+             * \brief Pushes a Lua Parameter to a Trigger
+             * \param triggerName Name of the Trigger to push the parameter
+             * \param parameterName Name of the parameter
+             * \param parameter Lua Value of the Parameter
+             */
+            void pushParameterFromLua(const std::string& triggerName, const std::string& parameterName, kaguya::LuaRef parameter);
+            /**
              * \brief Get the name of all Trigger contained in the TriggerGroup
              * \return A std::vector of std::string containing the name of all Trigger contained in the TriggerGroup
              */

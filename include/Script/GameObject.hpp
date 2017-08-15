@@ -26,7 +26,7 @@ namespace obe
             vili::ViliParser allRequires;
         public:
             static GameObjectRequires* getInstance();
-            vili::ComplexNode* getRequiresForObjectType(std::string type) const;
+            vili::ComplexNode* getRequiresForObjectType(const std::string& type) const;
             void applyBaseRequires(GameObject* obj, vili::ComplexNode& requires);
             static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         };
@@ -51,15 +51,11 @@ namespace obe
 
             bool m_hasAnimator = false;
             bool m_hasCollider = false;
-            bool m_colliderSolid = false;
-            bool m_colliderClick = false;
             bool m_levelSpriteRelative = true;
             bool m_hasLevelSprite = false;
             bool m_hasScriptEngine = false;
             bool m_initialised = false;
-            bool m_updated = true;
-
-            //int m_queryCounter = 0;
+            bool m_canUpdate = true;
 
             friend class Scene::Scene;
         public:
@@ -69,9 +65,6 @@ namespace obe
             std::string getType() const;
             std::string getPublicKey() const;
             int getPriority() const;
-            bool canDisplay() const;
-            bool canCollide() const;
-            bool canClick() const;
             bool doesHaveAnimator() const;
             bool doesHaveCollider() const;
             bool doesHaveLevelSprite() const;
@@ -90,12 +83,10 @@ namespace obe
             void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& useAs = "");
             void setInitialised(bool init);
             bool getInitialised() const;
-            void exec(std::string query) const;
+            void exec(const std::string& query) const;
             template <typename U>
-            void sendQuery(U query);
-            template <typename U>
-            void sendRequireArgumentFromCPP(const std::string& argName, U value);
-            void sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const;
+            void sendInitArg(const std::string& argName, U value);
+            void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value);
 
             void registerTrigger(Triggers::Trigger* trg);
             void loadGameObject(Scene::Scene& world, vili::ComplexNode& obj);
@@ -112,20 +103,9 @@ namespace obe
         void loadHookBridge(GameObject* object, std::string hookname);
 
         template <typename U>
-        void GameObject::sendRequireArgumentFromCPP(const std::string& argName, U value)
+        void GameObject::sendInitArg(const std::string& argName, U value)
         {
-            (*m_objectScript.get())["LuaCore"]["Lua_ReqList"][argName] = value;
-        }
-
-        template <typename U>
-        void GameObject::sendQuery(U query)
-        {
-            if (Utils::Vector::isInList(m_localTriggers->getTrigger("Query"), m_registeredTriggers))
-            {
-                m_localTriggers->pushParameter("Query", std::to_string(0), query);
-                m_localTriggers->trigger("Query");
-                //m_queryCounter++;
-            }
+            m_localTriggers->pushParameter("Init", argName, value);
         }
     };
 };

@@ -450,20 +450,12 @@ namespace obe
             m_gameObjectMap.erase(id);
         }
 
-        std::vector<Script::GameObject*> Scene::getAllGameObjects(const std::vector<std::string>& filters)
+        std::vector<Script::GameObject*> Scene::getAllGameObjects()
         {
             std::vector<Script::GameObject*> returnVec;
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
             {
-                if (filters.size() == 0) returnVec.push_back(it->second.get());
-                else
-                {
-                    bool allFilters = true;
-                    if (Utils::Vector::isInList(std::string("Animatable"), filters)) { if (!it->second->canDisplay()) allFilters = false; }
-                    if (Utils::Vector::isInList(std::string("Collide"), filters)) { if (!it->second->canCollide()) allFilters = false; }
-                    if (Utils::Vector::isInList(std::string("Click"), filters)) { if (!it->second->canClick()) allFilters = false; }
-                    if (allFilters) returnVec.push_back(it->second.get());
-                }
+                it->second.get();
             }
             return returnVec;
         }
@@ -481,13 +473,14 @@ namespace obe
                 (*newGameObject.get()->m_objectScript)["Scene"] = this;
             }
 
-            if (newGameObject->canDisplay())
+            if (newGameObject->doesHaveLevelSprite())
             {
-                if (newGameObject->canDisplay() && newGameObject->isLevelSpriteRelative())
+                if (newGameObject->isLevelSpriteRelative())
                     newGameObject->getLevelSprite()->setPosition(0, 0);
                 newGameObject->getLevelSprite()->setParentId(id);
             }
-            if (newGameObject->m_hasCollider)
+
+            if (newGameObject->doesHaveCollider())
             {
                 newGameObject->getCollider()->setParentId(id);
             }

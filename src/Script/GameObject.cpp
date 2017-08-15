@@ -32,9 +32,6 @@ namespace obe
                 .addFunction("Collider", &GameObject::getCollider)
                 .addFunction("Animator", &GameObject::getAnimator)
                 .addFunction("State", &GameObject::getScript)
-                .addFunction("canCollide", &GameObject::canCollide)
-                .addFunction("canClick", &GameObject::canClick)
-                .addFunction("canDisplay", &GameObject::canDisplay)
                 .addFunction("delete", &GameObject::deleteObject)
                 .addFunction("exec", &GameObject::exec)
                 .addFunction("getInitialised", &GameObject::getInitialised)
@@ -42,25 +39,6 @@ namespace obe
                 .addFunction("getPublicKey", &GameObject::getPublicKey)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
-                .addOverloadedFunctions("sendQuery",
-                                        &GameObject::sendQuery<int>,
-                                        &GameObject::sendQuery<float>,
-                                        &GameObject::sendQuery<std::string>,
-                                        &GameObject::sendQuery<bool>,
-                                        &GameObject::sendQuery<std::vector<int>>,
-                                        &GameObject::sendQuery<std::vector<float>>,
-                                        &GameObject::sendQuery<std::vector<std::string>>,
-                                        &GameObject::sendQuery<std::vector<bool>>,
-                                        &GameObject::sendQuery<std::map<int, int>>,
-                                        &GameObject::sendQuery<std::map<int, float>>,
-                                        &GameObject::sendQuery<std::map<int, std::string>>,
-                                        &GameObject::sendQuery<std::map<int, bool>>,
-                                        &GameObject::sendQuery<std::map<std::string, int>>,
-                                        &GameObject::sendQuery<std::map<std::string, float>>,
-                                        &GameObject::sendQuery<std::map<std::string, std::string>>,
-                                        &GameObject::sendQuery<std::map<std::string, bool>>
-                )
-                .addFunction("sendRequireArgument", &GameObject::sendRequireArgumentFromLua)
                 .addFunction("setInitialised", &GameObject::setInitialised)
             );
         }
@@ -91,7 +69,7 @@ namespace obe
             return instance;
         }
 
-        vili::ComplexNode* GameObjectRequires::getRequiresForObjectType(std::string type) const
+        vili::ComplexNode* GameObjectRequires::getRequiresForObjectType(const std::string& type) const
         {
             if (!Utils::Vector::isInList(type, allRequires->getAll(vili::NodeType::ComplexNode)))
             {
@@ -131,6 +109,11 @@ namespace obe
         {
             Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
             Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
+        }
+
+        void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value)
+        {
+
         }
 
         void GameObject::registerTrigger(Triggers::Trigger* trg)
@@ -318,7 +301,7 @@ namespace obe
 
         void GameObject::update(double dt)
         {
-            if (m_updated)
+            if (m_canUpdate)
             {
                 for (int i = 0; i < m_registeredTriggers.size(); i++)
                 {
@@ -374,21 +357,6 @@ namespace obe
             return m_scrPriority;
         }
 
-        bool GameObject::canDisplay() const
-        {
-            return m_hasLevelSprite;
-        }
-
-        bool GameObject::canCollide() const
-        {
-            return (m_hasCollider && m_colliderSolid);
-        }
-
-        bool GameObject::canClick() const
-        {
-            return (m_hasCollider && m_colliderClick);
-        }
-
         bool GameObject::doesHaveAnimator() const
         {
             return m_hasAnimator;
@@ -416,12 +384,12 @@ namespace obe
 
         bool GameObject::getUpdateState() const
         {
-            return m_updated;
+            return m_canUpdate;
         }
 
         void GameObject::setUpdateState(bool state)
         {
-            m_updated = state;
+            m_canUpdate = state;
         }
 
         Graphics::LevelSprite* GameObject::getLevelSprite()
@@ -503,14 +471,9 @@ namespace obe
             return m_initialised;
         }
 
-        void GameObject::exec(std::string query) const
+        void GameObject::exec(const std::string& query) const
         {
             m_objectScript->dostring(query);
-        }
-
-        void GameObject::sendRequireArgumentFromLua(const std::string& argName, kaguya::LuaRef value) const
-        {
-            (*m_objectScript)["LuaCore"]["Lua_ReqList"][argName] = value;
         }
 
         void GameObject::deleteObject()

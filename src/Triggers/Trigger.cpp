@@ -73,5 +73,14 @@ namespace obe
                 (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][1] = kaguya::NewTable();
             }
         }
+
+        void Trigger::pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter)
+        {
+            for (auto& registeredState : m_registeredStates)
+            {
+                // Future Trigger Call Parameters
+                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
+            }
+        }
     }
 }

@@ -100,11 +100,10 @@ namespace obe
              */
             unsigned int getGameObjectAmount() const;
             /**
-             * \brief Get all the GameObjects present in the Scene <REVISION>
-             * \param filters 
+             * \brief Get all the GameObjects present in the Scene
              * \return 
              */
-            std::vector<Script::GameObject*> getAllGameObjects(const std::vector<std::string>& filters = {});
+            std::vector<Script::GameObject*> getAllGameObjects();
             /**
              * \brief Get a GameObject by Id (Raises an exception if not found)
              * \param id Id of the GameObject to retrieve

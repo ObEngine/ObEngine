@@ -61,6 +61,11 @@ namespace obe
             return m_joinable;
         }
 
+        void TriggerGroup::pushParameterFromLua(const std::string& triggerName, const std::string& parameterName, kaguya::LuaRef parameter)
+        {
+            this->getTrigger(triggerName)->pushParameterFromLua(parameterName, parameter);
+        }
+
         std::vector<std::string> TriggerGroup::getAllTriggersName()
         {
             std::vector<std::string> returnVec;
