@@ -10,7 +10,7 @@
 - [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
 - [ÖbEngine's Website](https://www.obengine.io)
 - [ÖbEngine's Documentation](https://www.obengine.io/doc)
-- [ÖbEngine's Discord](https://discord.gg/D6JvZzM)
+- [ÖbEngine's Discord](https://discord.gg/HkM6zdT)
 - [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
 
 ## What the hell is ÖbEngine ?
