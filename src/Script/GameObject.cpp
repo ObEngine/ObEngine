@@ -218,7 +218,7 @@ namespace obe
                 }
                 else
                 {
-                    spriteXTransformer = "None";
+                    spriteXTransformer = "Position";
                 }
                 if (currentSprite.contains(vili::NodeType::DataNode, "yTransform"))
                 {
@@ -226,7 +226,7 @@ namespace obe
                 }
                 else
                 {
-                    spriteYTransformer = "None";
+                    spriteYTransformer = "Position";
                 }
 
                 m_objectLevelSprite->load(spritePath);
@@ -257,15 +257,7 @@ namespace obe
 
                 m_localTriggers
                     ->addTrigger("Init")
-                    ->addTrigger("Update")
-                    ->setPermanent("Update", true)
-                    ->trigger("Update")
-                    ->addTrigger("Query")
-                    ->addTrigger("Collide")
-                    ->addTrigger("Click")
-                    ->addTrigger("Press")
-                    ->addTrigger("Delete")
-                    ->addTrigger("Save");
+                    ->addTrigger("Delete");
 
                 System::Path("Lib/Internal/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
 

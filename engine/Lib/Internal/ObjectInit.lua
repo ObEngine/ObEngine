@@ -2,6 +2,7 @@ GetHook("TriggerDatabase");
 
 Local = {}; -- Local Events
 Global = {}; -- External Global Events
+Object = {};
 
 Local__Meta = {
     __newindex = function(object, index, value)
@@ -74,14 +75,6 @@ function IsArgumentInRequireList(paramName)
     end
 end
 
--- Local.Init
--- Local.Update
--- Local.Collide
--- Local.Query
--- Local.Click
--- Local.Delete
--- Local.Save
-
-function Local.Save(yolo)
+function Object.Save()
     return {};
 end

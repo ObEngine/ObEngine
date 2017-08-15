@@ -34,6 +34,7 @@ namespace obe
         class Cursor
         {
         private:
+            sf::Vector2i m_saveOldPos;
             int m_x = 0;
             int m_y = 0;
             int m_constrainedX = 0;

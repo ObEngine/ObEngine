@@ -193,7 +193,7 @@ namespace obe
         {
             m_state = state;
             m_canvas.create(width, height);
-            m_state->dofile("Lib/StdLib/CanvasConfig.lua");
+            m_state->dofile("Lib/Internal/CanvasConfig.lua");
         }
 
         Line* Canvas::line(const std::string& id)

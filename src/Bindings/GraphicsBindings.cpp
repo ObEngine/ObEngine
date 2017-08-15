@@ -64,39 +64,40 @@ namespace obe
 
             void LoadCanvas(kaguya::State* lua)
             {
-                (*lua)["Core"]["Canvas"]["RequirePair"].setClass(kaguya::UserdataMetatable<std::pair<std::string, std::string>>()
+                (*lua)["Core"]["Graphics"]["Canvas"] = kaguya::NewTable();
+                (*lua)["Core"]["Graphics"]["Canvas"]["RequirePair"].setClass(kaguya::UserdataMetatable<std::pair<std::string, std::string>>()
                     .addFunction("first", &std::pair<std::string, std::string>::first)
                     .addFunction("second", &std::pair<std::string, std::string>::second)
                 );
-                (*lua)["Core"]["Canvas"]["Element"].setClass(kaguya::UserdataMetatable<Graphics::Element>());
-                (*lua)["Core"]["Canvas"]["Configurable"].setClass(kaguya::UserdataMetatable<Graphics::Configurable, Graphics::Element>()
+                (*lua)["Core"]["Graphics"]["Canvas"]["Element"].setClass(kaguya::UserdataMetatable<Graphics::Element>());
+                (*lua)["Core"]["Graphics"]["Canvas"]["Configurable"].setClass(kaguya::UserdataMetatable<Graphics::Configurable, Graphics::Element>()
                     .addFunction("init", &Graphics::Configurable::init)
                 );
-                (*lua)["Core"]["Canvas"]["Drawable"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Drawable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Drawable, Graphics::Configurable>()
                 );
-                (*lua)["Core"]["Canvas"]["Colorable"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Colorable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Colorable, Graphics::Drawable>()
                 );
-                (*lua)["Core"]["Canvas"]["Transformable"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Transformable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Transformable, Graphics::Configurable>()
                 );
-                (*lua)["Core"]["Canvas"]["CanvasElement"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["CanvasElement"].setClass(
                     kaguya::UserdataMetatable<Graphics::CanvasElement, Graphics::Drawable>()
                 );
-                (*lua)["Core"]["Canvas"]["Line"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Line"].setClass(
                     kaguya::UserdataMetatable<Graphics::Line, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable>>()
                 );
-                (*lua)["Core"]["Canvas"]["Rectangle"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Rectangle"].setClass(
                     kaguya::UserdataMetatable<Graphics::Rectangle, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
                 );
-                (*lua)["Core"]["Canvas"]["Text"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Text"].setClass(
                     kaguya::UserdataMetatable<Graphics::Text, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
                 );
-                (*lua)["Core"]["Canvas"]["Circle"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Circle"].setClass(
                     kaguya::UserdataMetatable<Graphics::Circle, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
                 );
-                (*lua)["Core"]["Canvas"]["Canvas"].setClass(
+                (*lua)["Core"]["Graphics"]["Canvas"]["Canvas"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas>()
                     .setConstructors<Graphics::Canvas(kaguya::State*, unsigned int, unsigned int)>()
                     .addFunction("Line", &Graphics::Canvas::line)

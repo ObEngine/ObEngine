@@ -22,11 +22,8 @@ namespace obe
         {
             m_constraint = Constraints::Default;
 
-            m_cursorTriggers->addTrigger("Pressed")
-                            ->addTrigger("Hold")
-                            ->addTrigger("Released")
-                            ->addTrigger("Idle");
-
+            m_cursorTriggers->addTrigger("CursorMoved");
+            m_saveOldPos = sf::Mouse::getPosition();
         }
 
         int Cursor::getX() const
@@ -70,21 +67,18 @@ namespace obe
 
         void Cursor::update()
         {
-            /*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                m_cursorAnim.setKey("CLIC");
-            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_leftHold)
-                m_cursorAnim.setKey("RELEASE");
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !m_rightHold)
-                m_cursorAnim.setKey("CLIC");
-            else if (!sf::Mouse::isButtonPressed(sf::Mouse::Right) && m_rightHold)
-                m_cursorAnim.setKey("RELEASE");
-            if (!m_leftHold && !m_rightHold && m_cursorAnim.getKey() == "HOLD")
-                m_cursorAnim.setKey("RELEASE");*/
-
-
             sf::Vector2i mousePos = sf::Mouse::getPosition();
             m_x = mousePos.x;
             m_y = mousePos.y;
+            if (mousePos != m_saveOldPos)
+            {
+                m_cursorTriggers->pushParameter("CursorMoved", "x", m_x);
+                m_cursorTriggers->pushParameter("CursorMoved", "y", m_y);
+                m_cursorTriggers->pushParameter("CursorMoved", "oldX", m_saveOldPos.x);
+                m_cursorTriggers->pushParameter("CursorMoved", "oldY", m_saveOldPos.y);
+                m_cursorTriggers->trigger("CursorMoved");
+                m_saveOldPos = mousePos;
+            }
             std::pair<int, int> constrainedPosition = m_constraint(this);
             m_constrainedX = constrainedPosition.first;
             m_constrainedY = constrainedPosition.second;

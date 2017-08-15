@@ -48,8 +48,9 @@ namespace obe
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
             //Game Triggers
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
+            Triggers::TriggerGroup* gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
                 ->addTrigger("Start")
+                ->trigger("Start")
                 ->addTrigger("End")
                 ->addTrigger("Update")
                 ->addTrigger("Render");
@@ -94,10 +95,12 @@ namespace obe
             while (window.isOpen())
             {
                 framerateManager.update();
+                gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
+                gameTriggers->trigger("Update");
 
                 //Events
-                Triggers::TriggerDatabase::GetInstance()->update();
                 scene.update(framerateManager.getGameSpeed());
+                Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
 
@@ -121,12 +124,16 @@ namespace obe
 
                 if (framerateManager.doRender())
                 {
+                    gameTriggers->trigger("Render");
                     window.clear();
                     scene.display(window);
 
                     window.display();
                 }
             }
+            gameTriggers->trigger("End");
+            Triggers::TriggerDatabase::GetInstance()->update();
+            scene.update(framerateManager.getGameSpeed());
             window.close();
         }
     }

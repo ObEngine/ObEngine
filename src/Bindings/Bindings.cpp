@@ -50,6 +50,7 @@ namespace obe
             BindTree["Core"].add("Editor")["Editor"]
                 .add("EditorGrid", &EditorBindings::LoadEditorGrid);
             BindTree["Core"].add("Graphics")["Graphics"]
+                .add("Canvas", &GraphicsBindings::LoadCanvas)
                 .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
                 .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
                 .add("ResourceManager", &GraphicsBindings::LoadResourceManager);
