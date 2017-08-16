@@ -38,7 +38,7 @@ namespace obe
                 m_consoleScroll = 0;
             if (m_consoleScroll != oldScroll)
             {
-                consoleTriggers->pushParameter("ConsoleScrolled", "Scroll", power);
+                consoleTriggers->pushParameter("ConsoleScrolled", "scroll", power);
                 consoleTriggers->trigger("ConsoleScrolled");
             }
         }
@@ -48,8 +48,8 @@ namespace obe
             m_streamMap[id] = std::make_unique<ConsoleStream>(id, this);
             if (!enabled)
                 m_streamMap[id]->disable();
-            consoleTriggers->pushParameter("NewStream", "StreamName", id);
-            consoleTriggers->pushParameter("NewStream", "Enabled", enabled);
+            consoleTriggers->pushParameter("NewStream", "streamName", id);
+            consoleTriggers->pushParameter("NewStream", "enabled", enabled);
             consoleTriggers->trigger("NewStream");
             return m_streamMap[id].get();
         }
@@ -100,8 +100,8 @@ namespace obe
             {
                 forgeMessage = new ConsoleMessage(headerName, message, color);
                 consoleText.push_back(forgeMessage);
-                consoleTriggers->pushParameter("NewMessage", "HeaderName", headerName);
-                consoleTriggers->pushParameter("NewMessage", "Message", message);
+                consoleTriggers->pushParameter("NewMessage", "headerName", headerName);
+                consoleTriggers->pushParameter("NewMessage", "message", message);
                 consoleTriggers->trigger("NewMessage");
                 if (m_consoleAutoScroll)
                 {
@@ -121,7 +121,7 @@ namespace obe
                 m_consoleHistory.push_back(text);
             m_consoleHistoryIndex = m_consoleHistory.size();
             Script::ScriptEngine(text);
-            consoleTriggers->pushParameter("UserInput", "Input", text);
+            consoleTriggers->pushParameter("UserInput", "input", text);
             consoleTriggers->trigger("UserInput");
         }
 

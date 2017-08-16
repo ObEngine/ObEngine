@@ -84,8 +84,7 @@ function Functions.create(objectName, components)
             }, 2);
             objSaveFile:root():at(objectName):createComplexNode("Script");
             objSaveFile:root():at(objectName .. "/Script"):createDataNode("priority", 0);
-            objSaveFile:root():at(objectName .. "/Script"):createArrayNode("scriptList", "string");
-            objSaveFile:root():at(objectName .. "/Script"):getArrayNode("scriptList"):push("Data/GameObjects/" .. 
+            objSaveFile:root():at(objectName .. "/Script"):createDataNode("source", "Data/GameObjects/" .. 
                 objectName .. "/" .. objectName .. ".lua");
         end
     end
