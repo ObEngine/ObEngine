@@ -283,7 +283,7 @@ namespace obe
             }
         }
 
-        void GameObject::update(double dt)
+        void GameObject::update()
         {
             if (m_canUpdate)
             {
@@ -297,10 +297,6 @@ namespace obe
                         if (trigger->getName() == "Mirror")
                         {
                             std::cout << "BABOUM : " << funcname << std::endl;
-                        }
-                        if (funcname == "Local.Update")
-                        {
-                            m_localTriggers->pushParameter("Update", "dt", dt);
                         }
                         trigger->execute(m_objectScript.get(), funcname);
                         if (funcname == "Local.Init")

@@ -177,11 +177,30 @@ namespace obe
              */
             void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value);
 
+            /**
+             * \brief Register a Trigger in the GameObject
+             * \param trg Pointer to the Trigger
+             * \param callbackName Name of the callback to call when Trigger will be enabled
+             */
             void registerTrigger(Triggers::Trigger* trg, const std::string& callbackName);
-            void loadGameObject(Scene::Scene& world, vili::ComplexNode& obj);
-            void update(double dt);
+            /**
+             * \brief Loads the GameObject through the GameObject Definition File
+             * \param scene Scene reference to create components
+             * \param obj Vili ComplexNode containing the GameObject components
+             */
+            void loadGameObject(Scene::Scene& scene, vili::ComplexNode& obj);
+            /**
+             * \brief Updates the GameObject
+             */
+            void update();
 
+            /**
+             * \brief Deletes the GameObject
+             */
             void deleteObject();
+            /**
+             * \brief Delete State of the GameObject (false = not deleted)
+             */
             bool deletable = false;
         };
 

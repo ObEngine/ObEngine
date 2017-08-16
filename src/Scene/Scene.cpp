@@ -337,7 +337,7 @@ namespace obe
                 for (int i = 0; i < m_updateObjArray.size(); i++)
                 {
                     if (!m_updateObjArray[i]->deletable)
-                        m_updateObjArray[i]->update(dt);
+                        m_updateObjArray[i]->update();
                     else
                     {
                         //BUGGY
