@@ -34,9 +34,6 @@ namespace tgui
     Picture::Picture()
     {
         m_type = "Picture";
-        m_callback.widgetType = "Picture";
-
-        addSignal("DoubleClicked");
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,11 +53,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Picture::Ptr Picture::copy(ConstPtr picture)
+    Picture::Ptr Picture::copy(Picture::ConstPtr picture)
     {
         if (picture)
             return std::static_pointer_cast<Picture>(picture->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,13 +108,16 @@ namespace tgui
 
     bool Picture::mouseOnWidget(sf::Vector2f pos) const
     {
+        pos -= getPosition();
+
         // Check if the mouse is on top of the picture
         if (sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos))
         {
             // We sometimes want clicks to go through transparent parts of the picture
             if (!m_fullyClickable && m_sprite.isTransparentPixel(pos))
                 return false;
-            return true;
+            else
+                return true;
         }
 
         return false;
@@ -126,7 +127,7 @@ namespace tgui
 
     void Picture::leftMouseReleased(sf::Vector2f pos)
     {
-        bool mouseDown = m_mouseDown;
+        const bool mouseDown = m_mouseDown;
 
         ClickableWidget::leftMouseReleased(pos);
 
@@ -136,10 +137,7 @@ namespace tgui
             if (m_possibleDoubleClick)
             {
                 m_possibleDoubleClick = false;
-
-                m_callback.mouse.x = static_cast<int>(pos.x);
-                m_callback.mouse.y = static_cast<int>(pos.y);
-                sendSignal("DoubleClicked", pos);
+                onDoubleClick->emit(this, pos - getPosition());
             }
             else // This is the first click
             {
@@ -147,6 +145,16 @@ namespace tgui
                 m_possibleDoubleClick = true;
             }
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Picture::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onDoubleClick->getName()))
+            return *onDoubleClick;
+        else
+            return ClickableWidget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

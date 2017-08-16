@@ -30,28 +30,25 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"bordercolor", Color{60, 60, 60}},
-        {"bordercolorhover", sf::Color::Black},
-        {"bordercolordown", sf::Color::Black},
-        {"textcolor", Color{60, 60, 60}},
-        {"textcolorhover", sf::Color::Black},
-        {"textcolordown", sf::Color::Black},
-        {"backgroundcolor", Color{245, 245, 245}},
-        {"backgroundcolorhover", sf::Color::White},
-        {"backgroundcolordown", sf::Color::White}
-        ///TODO: Define default disabled colors
-    };
+            {
+                {"borders", Borders{2}},
+                {"bordercolor", Color{60, 60, 60}},
+                {"bordercolorhover", sf::Color::Black},
+                {"bordercolordown", sf::Color::Black},
+                {"textcolor", Color{60, 60, 60}},
+                {"textcolorhover", sf::Color::Black},
+                {"textcolordown", sf::Color::Black},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"backgroundcolorhover", sf::Color::White},
+                {"backgroundcolordown", sf::Color::White}
+                ///TODO: Define default disabled colors
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Button::Button()
     {
-        m_callback.widgetType = "Button";
         m_type = "Button";
-
-        addSignal<sf::String>("Pressed");
 
         m_renderer = aurora::makeCopied<ButtonRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -61,7 +58,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Button::Ptr Button::create(sf::String text)
+    Button::Ptr Button::create(const sf::String& text)
     {
         auto button = std::make_shared<Button>();
 
@@ -73,11 +70,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Button::Ptr Button::copy(ConstPtr button)
+    Button::Ptr Button::copy(Button::ConstPtr button)
     {
         if (button)
             return std::static_pointer_cast<Button>(button->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,6 +83,8 @@ namespace tgui
     void Button::setSize(const Layout2d& size)
     {
         Widget::setSize(size);
+
+        m_bordersCached.updateParentSize(getSize());
 
         // Reset the texture sizes
         m_sprite.setSize(getInnerSize());
@@ -119,7 +119,6 @@ namespace tgui
     void Button::setText(const sf::String& text)
     {
         m_string = text;
-        m_callback.text = text;
 
         // Set the text size when the text has a fixed size
         if (m_textSize != 0)
@@ -133,7 +132,7 @@ namespace tgui
             // Auto size the text when necessary
             if (m_textSize == 0)
             {
-                unsigned int textSize = Text::findBestTextSize(m_fontCached, getInnerSize().y * 0.8f);
+                const unsigned int textSize = Text::findBestTextSize(m_fontCached, getInnerSize().y * 0.8f);
                 m_text.setCharacterSize(textSize);
 
                 // Make the text smaller when it's too width
@@ -206,7 +205,7 @@ namespace tgui
     void Button::leftMouseReleased(sf::Vector2f pos)
     {
         if (m_mouseDown)
-            sendSignal("Pressed", m_text.getString());
+            onPress->emit(this, m_text.getString());
 
         ClickableWidget::leftMouseReleased(pos);
 
@@ -218,7 +217,7 @@ namespace tgui
     void Button::keyPressed(const sf::Event::KeyEvent& event)
     {
         if ((event.code == sf::Keyboard::Space) || (event.code == sf::Keyboard::Return))
-            sendSignal("Pressed", m_text.getString());
+            onPress->emit(this, m_text.getString());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -250,6 +249,16 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    Signal& Button::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onPress->getName()))
+            return *onPress;
+        else
+            return ClickableWidget::getSignal(std::move(signalName));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     void Button::rendererChanged(const std::string& property)
     {
         if (property == "borders")
@@ -258,7 +267,7 @@ namespace tgui
             updateSize();
         }
         else if ((property == "textcolor") || (property == "textcolorhover") || (property == "textcolordown") || (property == "textcolordisabled")
-            || (property == "textstyle") || (property == "textstylehover") || (property == "textstyledown") || (property == "textstyledisabled"))
+              || (property == "textstyle") || (property == "textstylehover") || (property == "textstyledown") || (property == "textstyledisabled"))
         {
             updateTextColorAndStyle();
         }
@@ -342,7 +351,8 @@ namespace tgui
 
     sf::Vector2f Button::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,11 +361,12 @@ namespace tgui
     {
         if (!m_enabled && m_backgroundColorDisabledCached.isSet())
             return m_backgroundColorDisabledCached;
-        if (m_mouseHover && m_mouseDown && m_backgroundColorDownCached.isSet())
+        else if (m_mouseHover && m_mouseDown && m_backgroundColorDownCached.isSet())
             return m_backgroundColorDownCached;
-        if (m_mouseHover && m_backgroundColorHoverCached.isSet())
+        else if (m_mouseHover && m_backgroundColorHoverCached.isSet())
             return m_backgroundColorHoverCached;
-        return m_backgroundColorCached;
+        else
+            return m_backgroundColorCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -364,11 +375,12 @@ namespace tgui
     {
         if (!m_enabled && m_borderColorDisabledCached.isSet())
             return m_borderColorDisabledCached;
-        if (m_mouseHover && m_mouseDown && m_borderColorDownCached.isSet())
+        else if (m_mouseHover && m_mouseDown && m_borderColorDownCached.isSet())
             return m_borderColorDownCached;
-        if (m_mouseHover && m_borderColorHoverCached.isSet())
+        else if (m_mouseHover && m_borderColorHoverCached.isSet())
             return m_borderColorHoverCached;
-        return m_borderColorCached;
+        else
+            return m_borderColorCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +419,7 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), getCurrentBorderColor());
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Check if there is a background texture

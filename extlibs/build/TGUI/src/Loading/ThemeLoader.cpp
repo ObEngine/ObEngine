@@ -26,7 +26,6 @@
 #include <TGUI/Loading/Deserializer.hpp>
 #include <TGUI/Loading/ThemeLoader.hpp>
 #include <TGUI/Loading/DataIO.hpp>
-#include <TGUI/Exception.hpp>
 #include <TGUI/Global.hpp>
 
 #include <cassert>
@@ -44,7 +43,7 @@
 
 // Ignore warning "C4503: decorated name length exceeded, name was truncated" in Visual Studio
 #if defined _MSC_VER
-#pragma warning(disable : 4503)
+    #pragma warning(disable : 4503)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ namespace tgui
 
     namespace
     {
-        void injectRelativePathInTextures(std::set<std::shared_ptr<DataIO::Node>>& handledSections, std::shared_ptr<DataIO::Node> node, const std::string& path)
+        void injectRelativePathInTextures(std::set<const DataIO::Node*>& handledSections, const std::unique_ptr<DataIO::Node>& node, const std::string& path)
         {
             for (const auto& pair : node->propertyValuePairs)
             {
@@ -69,17 +68,17 @@ namespace tgui
                     if (quotePos != std::string::npos)
                     {
                         ///TODO: Detect absolute pathname on windows
-                        if ((pair.second->value.getSize() > quotePos + 1) && (pair.second->value[quotePos + 1] != '/'))
-                            pair.second->value = pair.second->value.substring(0, quotePos + 1) + path + pair.second->value.substring(quotePos + 1);
+                        if ((pair.second->value.getSize() > quotePos + 1) && (pair.second->value[quotePos+1] != '/'))
+                            pair.second->value = pair.second->value.substring(0, quotePos+1) + path + pair.second->value.substring(quotePos+1);
                     }
                 }
             }
 
             for (const auto& child : node->children)
             {
-                if (handledSections.find(child) == handledSections.end())
+                if (handledSections.find(child.get()) == handledSections.end())
                 {
-                    handledSections.insert(child);
+                    handledSections.insert(child.get());
                     injectRelativePathInTextures(handledSections, child, path);
                 }
             }
@@ -87,7 +86,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        void resolveReferences(std::map<std::string, std::shared_ptr<DataIO::Node>>& sections, std::shared_ptr<DataIO::Node> node)
+        void resolveReferences(std::map<std::string, std::reference_wrapper<const std::unique_ptr<DataIO::Node>>>& sections, const std::unique_ptr<DataIO::Node>& node)
         {
             for (const auto& pair : node->propertyValuePairs)
             {
@@ -152,12 +151,12 @@ namespace tgui
             std::string resourcePath;
             auto slashPos = filename.find_last_of("/\\");
             if (slashPos != std::string::npos)
-                resourcePath = filename.substr(0, slashPos + 1);
+                resourcePath = filename.substr(0, slashPos+1);
 
             std::stringstream fileContents;
             readFile(filename, fileContents);
 
-            std::shared_ptr<DataIO::Node> root = DataIO::parse(fileContents);
+            std::unique_ptr<DataIO::Node> root = DataIO::parse(fileContents);
 
             if (root->propertyValuePairs.size() != 0)
                 throw Exception{"Unexpected result while loading theme file '" + filename + "'. Root property-value pair found."};
@@ -165,16 +164,16 @@ namespace tgui
             // Inject relative path to the theme file into texture filenames
             if (!resourcePath.empty())
             {
-                std::set<std::shared_ptr<DataIO::Node>> handledSections;
+                std::set<const DataIO::Node*> handledSections;
                 injectRelativePathInTextures(handledSections, root, resourcePath);
             }
 
             // Get a list of section names and map them to their nodes (needed for resolving references)
-            std::map<std::string, std::shared_ptr<DataIO::Node>> sections;
+            std::map<std::string, std::reference_wrapper<const std::unique_ptr<DataIO::Node>>> sections;
             for (const auto& child : root->children)
             {
                 std::string name = toLower(Deserializer::deserialize(ObjectConverter::Type::String, child->name).getString());
-                sections[name] = child;
+                sections.emplace(name, std::cref(child));
             }
 
             // Resolve references to sections
@@ -183,12 +182,12 @@ namespace tgui
             // Cache all propery value pairs
             for (const auto& section : sections)
             {
-                auto& child = section.second;
+                const auto& child = section.second;
                 const std::string& name = section.first;
-                for (const auto& pair : child->propertyValuePairs)
+                for (const auto& pair : child.get()->propertyValuePairs)
                     m_propertiesCache[filename][name][toLower(pair.first)] = pair.second->value;
 
-                for (const auto& nestedProperty : child->children)
+                for (const auto& nestedProperty : child.get()->children)
                 {
                     std::stringstream ss;
                     DataIO::emit(nestedProperty, ss);
@@ -222,7 +221,7 @@ namespace tgui
     {
         std::string fullFilename = getResourcePath() + filename;
 
-#ifdef SFML_SYSTEM_ANDROID
+    #ifdef SFML_SYSTEM_ANDROID
         // If the file does not start with a slash then load it from the assets
         if (!fullFilename.empty() && (fullFilename[0] != '/'))
         {
@@ -256,7 +255,7 @@ namespace tgui
             activity->vm->DetachCurrentThread();
         }
         else
-#endif
+    #endif
         {
             std::ifstream file{fullFilename};
             if (!file.is_open())

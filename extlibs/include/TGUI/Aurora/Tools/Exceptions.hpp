@@ -37,52 +37,54 @@
 
 namespace aurora
 {
-    /// @addtogroup Tools
-    /// @{
 
-    // MSVC: Disable DLL warning because we derive from std::runtime_error
+/// @addtogroup Tools
+/// @{
+
+// MSVC: Disable DLL warning because we derive from std::runtime_error
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4275)
+	#pragma warning(push)
+	#pragma warning(disable: 4275)
 #endif
 
-    /// @brief %Exception base class.
-    /// @details All exceptions thrown by the Aurora Library are derived from this class. Exception inherits from
-    ///  std::runtime_error, hence all Aurora exceptions contain a (here undocumented) virtual function what().
-    class Exception : public std::runtime_error
-    {
-        // ---------------------------------------------------------------------------------------------------------------------------
-        // Public member functions
-    public:
-        /// @brief Constructor
-        /// @param message The exception message (how the error occurred).
-        explicit Exception(const std::string& message)
-            : runtime_error(message)
-        {
-        }
-    };
+/// @brief %Exception base class.
+/// @details All exceptions thrown by the Aurora Library are derived from this class. Exception inherits from
+///  std::runtime_error, hence all Aurora exceptions contain a (here undocumented) virtual function what().
+class Exception : public std::runtime_error
+{
+	// ---------------------------------------------------------------------------------------------------------------------------
+	// Public member functions
+	public:
+		/// @brief Constructor
+		/// @param message The exception message (how the error occurred).
+		explicit Exception(const std::string& message)
+		: std::runtime_error(message)
+		{
+		}
+};
 
 
-    /// @brief %Exception class for failed function calls.
-    /// @details Is used inside aurora::SingleDispatcher and aurora::DoubleDispatcher.
-    class FunctionCallException : public Exception
-    {
-        // ---------------------------------------------------------------------------------------------------------------------------
-        // Public member functions
-    public:
-        /// @brief Constructor
-        /// @param message The exception message (how the error occurred).
-        explicit FunctionCallException(const std::string& message)
-            : Exception(message)
-        {
-        }
-    };
+/// @brief %Exception class for failed function calls.
+/// @details Is used inside aurora::SingleDispatcher and aurora::DoubleDispatcher.
+class FunctionCallException : public Exception
+{
+	// ---------------------------------------------------------------------------------------------------------------------------
+	// Public member functions
+	public:
+		/// @brief Constructor
+		/// @param message The exception message (how the error occurred).
+		explicit FunctionCallException(const std::string& message)
+		: Exception(message)
+		{
+		}
+};
 
 #ifdef _MSC_VER
-#pragma warning(pop)
+	#pragma warning(pop)
 #endif
 
-    /// @}
+/// @}
+
 } // namespace aurora
 
 #endif // AURORA_EXCEPTIONS_HPP

@@ -41,18 +41,6 @@ namespace tgui
     ///
     /// An edit box is a single line input field. It has options like setting a password character or displaying a default text.
     /// If you are looking for something with multiple lines, word-wrap and a scrollbar then check out the TextBox class.
-    ///
-    /// Signals:
-    ///     - TextChanged
-    ///         * Optional parameter sf::String: current text in the edit box
-    ///         * Uses Callback member 'text'
-    ///
-    ///     - ReturnKeyPressed (the return/enter key was pressed while the edit box was focused)
-    ///         * Optional parameter sf::String: current text in the edit box
-    ///         * Uses Callback member 'text'
-    ///
-    ///     - Inherited signals from ClickableWidget
-    ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API EditBox : public ClickableWidget
     {
@@ -83,9 +71,9 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         struct Validator
         {
-            static TGUI_API std::string All; ///< Accept any input
-            static TGUI_API std::string Int; ///< Accept negative and positive integers
-            static TGUI_API std::string UInt; ///< Accept only positive integers
+            static TGUI_API std::string All;   ///< Accept any input
+            static TGUI_API std::string Int;   ///< Accept negative and positive integers
+            static TGUI_API std::string UInt;  ///< Accept only positive integers
             static TGUI_API std::string Float; ///< Accept decimal numbers
         };
 
@@ -102,7 +90,7 @@ namespace tgui
         /// @return The new edit box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr create();
+        static EditBox::Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +101,7 @@ namespace tgui
         /// @return The new edit box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr copy(ConstPtr editBox);
+        static EditBox::Ptr copy(EditBox::ConstPtr editBox);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +133,7 @@ namespace tgui
         /// All widgets are enabled by default.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void enable() override;
+        virtual void enable() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +143,7 @@ namespace tgui
         /// All widgets are enabled by default.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void disable() override;
+        virtual void disable() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +202,7 @@ namespace tgui
         /// When no parameters are provided, the entire text is selected.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void selectText(size_t start = 0, size_t length = sf::String::InvalidPos);
+        void selectText(std::size_t start = 0, std::size_t length = sf::String::InvalidPos);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,12 +321,36 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Makes the edit box read-only or make it writable again
+        ///
+        /// @param readOnly  Should the edit box be read-only?
+        ///
+        /// When the edit box is read-only, you can no longer delete characters and type text.
+        /// Selecting text, copying text and even calling the setText function will still work.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setReadOnly(bool readOnly = true);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Checks if the edit box read-only or writable
+        ///
+        /// @return Is the edit box read-only?
+        ///
+        /// When the edit box is read-only, you can no longer delete characters and type text.
+        /// Selecting text, copying text and even calling the setText function will still work.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isReadOnly() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Sets the blinking caret to after a specific character
         ///
         /// @param charactersBeforeCaret  The new position
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setCaretPosition(size_t charactersBeforeCaret);
+        void setCaretPosition(std::size_t charactersBeforeCaret);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,7 +359,7 @@ namespace tgui
         /// @return Characters before the caret
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        size_t getCaretPosition() const;
+        std::size_t getCaretPosition() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,32 +391,32 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMousePressed(sf::Vector2f pos) override;
+        virtual void leftMousePressed(sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseMoved(sf::Vector2f pos) override;
+        virtual void mouseMoved(sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void keyPressed(const sf::Event::KeyEvent& event) override;
+        virtual void keyPressed(const sf::Event::KeyEvent& event) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void textEntered(sf::Uint32 Key) override;
+        virtual void textEntered(sf::Uint32 Key) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void widgetFocused() override;
+        virtual void widgetFocused() override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void widgetUnfocused() override;
+        virtual void widgetUnfocused() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,11 +426,23 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Retrieves a signal based on its name
+        ///
+        /// @param signalName  Name of the signal
+        ///
+        /// @return Signal that corresponds to the name
+        ///
+        /// @throw Exception when the name does not match any signal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Signal& getSignal(std::string&& signalName) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Function called when one of the properties of the renderer is changed
@@ -426,7 +450,7 @@ namespace tgui
         /// @param property  Lowercase name of the property that was changed
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void rendererChanged(const std::string& property) override;
+        virtual void rendererChanged(const std::string& property) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,7 +468,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function will search after which character the caret should be placed. It will not change the caret position.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        size_t findCaretPosition(float posX);
+        std::size_t findCaretPosition(float posX);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -463,61 +487,70 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function is called every frame with the time passed since the last frame.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void update(sf::Time elapsedTime) override;
+        virtual void update(sf::Time elapsedTime) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr clone() const override
+        virtual Widget::Ptr clone() const override
         {
             return std::make_shared<EditBox>(*this);
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
+
+        SignalWrapper<SignalString> onTextChange     = {"TextChanged"};        ///< The text was changed. Optional parameter: new text
+        SignalWrapper<SignalString> onReturnKeyPress = {"ReturnKeyPressed"};   ///< The return key was pressed. Optional parameter: text in the edit box
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
         // Is the caret visible or not?
-        bool m_caretVisible = true;
+        bool          m_caretVisible = true;
 
         // When this boolean is true then you can no longer add text when the EditBox is full.
         // Changing it to false will allow you to scroll the text (default).
         // You can change the boolean with the limitTextWidth(bool) function.
-        bool m_limitTextWidth = false;
+        bool          m_limitTextWidth = false;
+
+        bool          m_readOnly = false;
 
         // The text inside the edit box
-        sf::String m_text;
+        sf::String    m_text;
 
-        std::string m_regexString = ".*";
-        std::regex m_regex = std::regex{m_regexString};
+        std::string   m_regexString = ".*";
+        std::regex    m_regex = std::regex{m_regexString};
 
         // This will store the size of the text ( 0 to auto size )
-        unsigned int m_textSize = 0;
+        unsigned int  m_textSize = 0;
 
         // The text alignment
-        Alignment m_textAlignment = Alignment::Left;
+        Alignment     m_textAlignment = Alignment::Left;
 
         // The selection
-        size_t m_selChars = 0;
-        size_t m_selStart = 0;
-        size_t m_selEnd = 0;
+        std::size_t   m_selChars = 0;
+        std::size_t   m_selStart = 0;
+        std::size_t   m_selEnd = 0;
 
         // The password character
-        char m_passwordChar = '\0';
+        char          m_passwordChar = '\0';
 
         // The maximum allowed characters.
         // Zero by default, meaning no limit.
-        unsigned int m_maxChars = 0;
+        unsigned int  m_maxChars = 0;
 
         // When the text width is not limited, you can scroll the edit box and only a part will be visible.
-        unsigned int m_textCropPosition = 0;
+        unsigned int  m_textCropPosition = 0;
 
         // The rectangle behind the selected text
-        FloatRect m_selectedTextBackground;
+        FloatRect     m_selectedTextBackground;
 
         // The blinking caret
-        FloatRect m_caret;
+        FloatRect     m_caret;
 
         // Is there a possibility that the user is going to double click?
         bool m_possibleDoubleClick = false;
@@ -537,16 +570,16 @@ namespace tgui
         // Cached renderer properties
         Borders m_bordersCached;
         Padding m_paddingCached;
-        Color m_borderColorCached;
-        Color m_borderColorHoverCached;
-        Color m_borderColorDisabledCached;
-        Color m_backgroundColorCached;
-        Color m_backgroundColorHoverCached;
-        Color m_backgroundColorDisabledCached;
-        Color m_caretColorCached;
-        Color m_caretColorHoverCached;
-        Color m_caretColorDisabledCached;
-        Color m_selectedTextBackgroundColorCached;
+        Color   m_borderColorCached;
+        Color   m_borderColorHoverCached;
+        Color   m_borderColorDisabledCached;
+        Color   m_backgroundColorCached;
+        Color   m_backgroundColorHoverCached;
+        Color   m_backgroundColorDisabledCached;
+        Color   m_caretColorCached;
+        Color   m_caretColorHoverCached;
+        Color   m_caretColorDisabledCached;
+        Color   m_selectedTextBackgroundColorCached;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

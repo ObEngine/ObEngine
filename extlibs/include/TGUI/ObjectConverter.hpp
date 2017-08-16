@@ -54,6 +54,7 @@ namespace tgui
             Color,
             String,
             Number,
+            Layout,
             Outline,
             Texture,
             TextStyle,
@@ -77,11 +78,11 @@ namespace tgui
         /// @param string  String to store
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ObjectConverter(const sf::String& string) :
-            m_type {Type::String},
-            m_value {string},
+        ObjectConverter(const sf::String& string)  :
+            m_type      {Type::String},
+            m_value     {string},
             m_serialized{true},
-            m_string {string}
+            m_string    {string}
         {
         }
 
@@ -138,7 +139,20 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Stores a outline object for later retrieval
+        /// @brief Stores a layout object for later retrieval
+        ///
+        /// @param layout  Layout to store
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ObjectConverter(const Layout& layout) :
+            m_type {Type::Layout},
+            m_value{layout}
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Stores an outline object for later retrieval
         ///
         /// @param outline  Outline to store
         ///
@@ -198,7 +212,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ObjectConverter(std::shared_ptr<RendererData> data) :
             m_type {Type::RendererData},
-            m_value{data}
+            m_value{std::move(data)}
         {
         }
 
@@ -232,6 +246,17 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         const Color& getColor();
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Retrieves the saved outline
+        ///
+        /// @return The saved outline
+        ///
+        /// This function will assert when something other than a outline was saved
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        const Layout& getLayout();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +326,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private:
         Type m_type = Type::None;
-        Any m_value;
+        Any  m_value;
 
         bool m_serialized = false;
         sf::String m_string;

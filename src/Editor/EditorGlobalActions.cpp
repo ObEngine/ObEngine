@@ -7,7 +7,12 @@ namespace obe
 {
     namespace Editor
     {
-        void connectCamMovementActions(Input::InputManager& inputManager, Scene::Scene& world, int& cameraSpeed, Time::FramerateManager& framerateManager)
+        void connectCamMovementActions(
+            Triggers::TriggerGroup* editorTriggers, 
+            Input::InputManager& inputManager, 
+            Scene::Scene& world, 
+            int& cameraSpeed, 
+            Time::FramerateManager& framerateManager)
         {
             inputManager.getAction("CamLeft").connect([&world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
             {
@@ -36,6 +41,7 @@ namespace obe
         }
 
         void connectGridActions(
+            Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager, 
             tgui::CheckBox::Ptr& enableGridCheckbox, 
             tgui::CheckBox::Ptr& snapGridCheckbox, 
@@ -83,7 +89,10 @@ namespace obe
             });
         }
 
-        void connectMenuActions(Input::InputManager& inputManager, tgui::ComboBox::Ptr editMode, tgui::ComboBox::Ptr cameraMode)
+        void connectMenuActions(
+            Input::InputManager& inputManager, 
+            tgui::ComboBox::Ptr editMode, 
+            tgui::ComboBox::Ptr cameraMode)
         {
             inputManager.getAction("CamMovable").connect([cameraMode](const Input::InputActionEvent& event)
             {
@@ -93,17 +102,23 @@ namespace obe
             {
                 cameraMode->setSelectedItemByIndex(1);
             });
-            inputManager.getAction("SpriteMode").connect([editMode](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteMode").connect([editMode, &inputManager](const Input::InputActionEvent& event)
             {
                 editMode->setSelectedItemByIndex(0);
             });
-            inputManager.getAction("CollisionMode").connect([editMode](const Input::InputActionEvent& event)
+            inputManager.getAction("CollisionMode").connect([&inputManager, editMode](const Input::InputActionEvent& event)
             {
                 editMode->setSelectedItemByIndex(1);
             });
         }
 
-        void connectSaveActions(Input::InputManager& inputManager, const std::string& mapName, Scene::Scene& world, double& waitForMapSaving, tgui::Label::Ptr savedLabel)
+        void connectSaveActions(
+            Triggers::TriggerGroup* editorTriggers, 
+            Input::InputManager& inputManager, 
+            const std::string& mapName, 
+            Scene::Scene& world, 
+            double& waitForMapSaving, 
+            tgui::Label::Ptr savedLabel)
         {
             std::cout << "CONNECTED SAVE ACTIONS" << std::endl;
             inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel](const Input::InputActionEvent& event)

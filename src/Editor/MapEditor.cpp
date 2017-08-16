@@ -87,7 +87,9 @@ namespace obe
                 ->addTrigger("SpriteHandlePointMoved")
                 ->addTrigger("SpriteHandlePointReleased")
                 ->addTrigger("SpriteCreated")
+                ->addTrigger("SpriteSelect")
                 ->addTrigger("SpriteMoved")
+                ->addTrigger("SpriteUnselect")
                 ->addTrigger("SpriteRemoved");
 
             //Game Triggers
@@ -157,29 +159,29 @@ namespace obe
             GUI::buildEditorMenu(mainPanel);
             GUI::buildObjectCreationMenu(mainPanel);
 
-            tgui::Panel::Ptr editorPanel = gui.get<tgui::Panel>("editorPanel", true);
-            tgui::Panel::Ptr mapPanel = gui.get<tgui::Panel>("mapPanel", true);
-            tgui::Panel::Ptr settingsPanel = gui.get<tgui::Panel>("settingsPanel", true);
-            tgui::Panel::Ptr spritesPanel = gui.get<tgui::Panel>("spritesPanel", true);
-            tgui::Panel::Ptr objectsPanel = gui.get<tgui::Panel>("objectsPanel", true);
-            tgui::Panel::Ptr requiresPanel = gui.get<tgui::Panel>("requiresPanel", true);
+            tgui::Panel::Ptr editorPanel = gui.get<tgui::Panel>("editorPanel");
+            tgui::Panel::Ptr mapPanel = gui.get<tgui::Panel>("mapPanel");
+            tgui::Panel::Ptr settingsPanel = gui.get<tgui::Panel>("settingsPanel");
+            tgui::Panel::Ptr spritesPanel = gui.get<tgui::Panel>("spritesPanel");
+            tgui::Panel::Ptr objectsPanel = gui.get<tgui::Panel>("objectsPanel");
+            tgui::Panel::Ptr requiresPanel = gui.get<tgui::Panel>("requiresPanel");
 
             GUI::buildToolbar(mainPanel, editorPanel);
 
-            tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode", true);
-            tgui::ComboBox::Ptr cameraMode = gui.get<tgui::ComboBox>("cameraMode", true);
+            tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode");
+            tgui::ComboBox::Ptr cameraMode = gui.get<tgui::ComboBox>("cameraMode");
 
             GUI::buildEditorMapMenu(mapPanel, scene);
             GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode);
             GUI::buildEditorSpritesMenu(spritesPanel);
             GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel);
 
-            tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox", true);
-            tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox", true);
-            tgui::TextBox::Ptr mapNameInput = gui.get<tgui::TextBox>("mapNameInput", true);
-            tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel", true);
-            tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel", true);
-            tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox", true);
+            tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
+            tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");
+            tgui::TextBox::Ptr mapNameInput = gui.get<tgui::TextBox>("mapNameInput");
+            tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
+            tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
+            tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
 
             //Map Editor
             Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -211,16 +213,16 @@ namespace obe
             mapNameInput->setText(scene.getLevelName());
 
             //Connect InputManager Actions
-            connectSaveActions(inputManager, mapName, scene, waitForMapSaving, savedLabel);
-            connectCamMovementActions(inputManager, scene, cameraSpeed, framerateManager);
-            connectGridActions(inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
+            connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
+            connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
+            connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, cameraMode);
             connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
 
-            editMode->connect("itemselected", [&inputManager, editMode]()
+            auto editModeCallback = [&inputManager, editMode]()
             {
                 if (editMode->getSelectedItem() == "LevelSprites")
                 {
@@ -238,7 +240,9 @@ namespace obe
                 {
                     inputManager.removeContext("colliderEditing");
                 }
-            });
+            };
+
+            editMode->connect("itemselected", editModeCallback);
 
             inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
             {

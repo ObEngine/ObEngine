@@ -150,7 +150,7 @@ namespace obe
                     }
                     else if (event.type == sf::Event::MouseWheelMoved)
                     {
-                        content->mouseWheelScrolled(event.mouseWheel.delta, 0, 0);
+                        content->mouseWheelScrolled(event.mouseWheel.delta, sf::Vector2f(0, 0));
                         std::cout << event.mouseWheel.delta << std::endl;
                     }
                     else if (event.type == sf::Event::MouseButtonReleased)

@@ -31,24 +31,20 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"bordercolor", sf::Color::Black},
-        {"textcolor", sf::Color::Black},
-        {"textcolorfilled", sf::Color::White},
-        {"backgroundcolor", Color{245, 245, 245}},
-        {"fillcolor", Color{0, 110, 255}}
-    };
+            {
+                {"borders", Borders{2}},
+                {"bordercolor", sf::Color::Black},
+                {"textcolor", sf::Color::Black},
+                {"textcolorfilled", sf::Color::White},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"fillcolor", Color{0, 110, 255}}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ProgressBar::ProgressBar()
     {
-        m_callback.widgetType = "ProgressBar";
         m_type = "ProgressBar";
-
-        addSignal<int>("ValueChanged");
-        addSignal<int>("Full");
 
         m_renderer = aurora::makeCopied<ProgressBarRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -65,11 +61,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ProgressBar::Ptr ProgressBar::copy(ConstPtr progressBar)
+    ProgressBar::Ptr ProgressBar::copy(ProgressBar::ConstPtr progressBar)
     {
         if (progressBar)
             return std::static_pointer_cast<ProgressBar>(progressBar->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +74,8 @@ namespace tgui
     void ProgressBar::setSize(const Layout2d& size)
     {
         Widget::setSize(size);
+
+        m_bordersCached.updateParentSize(getSize());
 
         if (m_spriteBackground.isSet())
             m_spriteBackground.setSize(getInnerSize());
@@ -154,11 +153,10 @@ namespace tgui
         {
             m_value = value;
 
-            m_callback.value = static_cast<int>(m_value);
-            sendSignal("ValueChanged", m_value);
+            onValueChange->emit(this, m_value);
 
             if (m_value == m_maximum)
-                sendSignal("Full", m_value);
+                onFull->emit(this);
 
             // Recalculate the size of the front image (the size of the part that will be drawn)
             recalculateFillSize();
@@ -256,6 +254,18 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    Signal& ProgressBar::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onValueChange->getName()))
+            return *onValueChange;
+        else if (signalName == toLower(onFull->getName()))
+            return *onFull;
+        else
+            return ClickableWidget::getSignal(std::move(signalName));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     void ProgressBar::rendererChanged(const std::string& property)
     {
         if (property == "borders")
@@ -324,77 +334,80 @@ namespace tgui
 
     sf::Vector2f ProgressBar::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void ProgressBar::recalculateFillSize()
     {
-        sf::Vector2f size = getInnerSize();
-
+        sf::Vector2f size;
         if (m_spriteFill.isSet())
         {
-            sf::Vector2f frontSize;
-            if (m_spriteBackground.isSet())
-            {
-                switch (m_spriteBackground.getScalingType())
-                {
-                case Sprite::ScalingType::Normal:
-                    frontSize.x = m_spriteFill.getTexture().getImageSize().x * getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x;
-                    frontSize.y = m_spriteFill.getTexture().getImageSize().y * getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y;
-                    break;
-
-                case Sprite::ScalingType::Horizontal:
-                    frontSize.x = getInnerSize().x - ((m_spriteBackground.getTexture().getImageSize().x - m_spriteFill.getTexture().getImageSize().x) * (getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y));
-                    frontSize.y = m_spriteFill.getTexture().getImageSize().y * getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y;
-                    break;
-
-                case Sprite::ScalingType::Vertical:
-                    frontSize.x = m_spriteFill.getTexture().getImageSize().x * getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x;
-                    frontSize.y = getInnerSize().y - ((m_spriteBackground.getTexture().getImageSize().y - m_spriteFill.getTexture().getImageSize().y) * (getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x));
-                    break;
-
-                case Sprite::ScalingType::NineSlice:
-                    frontSize.x = getInnerSize().x - (m_spriteBackground.getTexture().getImageSize().x - m_spriteFill.getTexture().getImageSize().x);
-                    frontSize.y = getInnerSize().y - (m_spriteBackground.getTexture().getImageSize().y - m_spriteFill.getTexture().getImageSize().y);
-                    break;
-                }
-            }
-            else // There is a fill texture but not a background one
-                frontSize = getInnerSize();
-
+            const sf::Vector2f frontSize = getFrontImageSize();
             m_spriteFill.setSize(frontSize);
             size = frontSize;
         }
+        else
+            size = getInnerSize();
 
         switch (getFillDirection())
         {
-        case FillDirection::LeftToRight:
-            m_frontRect = {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
-            m_backRect = {m_frontRect.width, 0, size.x - m_frontRect.width, size.y};
-            break;
+            case FillDirection::LeftToRight:
+                m_frontRect =  {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
+                m_backRect = {m_frontRect.width, 0, size.x - m_frontRect.width, size.y};
+                break;
 
-        case FillDirection::RightToLeft:
-            m_frontRect = {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
-            m_frontRect.left = size.x - m_frontRect.width;
-            m_backRect = {0, 0, size.x - m_frontRect.width, size.y};
-            break;
+            case FillDirection::RightToLeft:
+                m_frontRect =  {0, 0, size.x * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)), size.y};
+                m_frontRect.left = size.x - m_frontRect.width;
+                m_backRect = {0, 0, size.x - m_frontRect.width, size.y};
+                break;
 
-        case FillDirection::TopToBottom:
-            m_frontRect = {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
-            m_backRect = {0, m_frontRect.height, size.x, size.y - m_frontRect.height};
-            break;
+            case FillDirection::TopToBottom:
+                m_frontRect =  {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
+                m_backRect = {0, m_frontRect.height, size.x, size.y - m_frontRect.height};
+                break;
 
-        case FillDirection::BottomToTop:
-            m_frontRect = {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
-            m_frontRect.top = size.y - m_frontRect.height;
-            m_backRect = {0, 0, size.x, size.y - m_frontRect.height};
-            break;
+            case FillDirection::BottomToTop:
+                m_frontRect =  {0, 0, size.x, size.y * ((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum))};
+                m_frontRect.top = size.y - m_frontRect.height;
+                m_backRect = {0, 0, size.x, size.y - m_frontRect.height};
+                break;
         }
 
         if (m_spriteFill.isSet())
             m_spriteFill.setVisibleRect(m_frontRect);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    sf::Vector2f ProgressBar::getFrontImageSize() const
+    {
+        if (m_spriteBackground.isSet())
+        {
+            switch (m_spriteBackground.getScalingType())
+            {
+            case Sprite::ScalingType::Normal:
+                return {m_spriteFill.getTexture().getImageSize().x * getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x,
+                        m_spriteFill.getTexture().getImageSize().y * getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y};
+
+            case Sprite::ScalingType::Horizontal:
+                return {getInnerSize().x - ((m_spriteBackground.getTexture().getImageSize().x - m_spriteFill.getTexture().getImageSize().x) * (getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y)),
+                        m_spriteFill.getTexture().getImageSize().y * getInnerSize().y / m_spriteBackground.getTexture().getImageSize().y};
+
+            case Sprite::ScalingType::Vertical:
+                return {m_spriteFill.getTexture().getImageSize().x * getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x,
+                        getInnerSize().y - ((m_spriteBackground.getTexture().getImageSize().y - m_spriteFill.getTexture().getImageSize().y) * (getInnerSize().x / m_spriteBackground.getTexture().getImageSize().x))};
+
+            case Sprite::ScalingType::NineSlice:
+                return {getInnerSize().x - (m_spriteBackground.getTexture().getImageSize().x - m_spriteFill.getTexture().getImageSize().x),
+                        getInnerSize().y - (m_spriteBackground.getTexture().getImageSize().y - m_spriteFill.getTexture().getImageSize().y)};
+            }
+        }
+
+        return getInnerSize();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +420,7 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Draw the background

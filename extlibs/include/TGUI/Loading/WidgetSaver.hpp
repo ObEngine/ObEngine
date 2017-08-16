@@ -41,7 +41,7 @@ namespace tgui
     class TGUI_API WidgetSaver
     {
     public:
-        using SaveFunction = std::function<std::shared_ptr<DataIO::Node>(Widget::Ptr)>;
+        using SaveFunction = std::function<std::unique_ptr<DataIO::Node>(Widget::Ptr)>;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ namespace tgui
         ///       instead of calling this function directly.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static void save(Container::Ptr widget, std::stringstream& stream);
+        static void save(Container::ConstPtr widget, std::stringstream& stream);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -31,24 +31,22 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"trackcolor", Color{245, 245, 245}},
-        {"thumbcolor", Color{220, 220, 220}},
-        {"thumbcolorhover", Color{230, 230, 230}},
-        {"arrowbackgroundcolor", Color{245, 245, 245}},
-        {"arrowbackgroundcolorhover", Color{255, 255, 255}},
-        {"arrowcolor", Color{60, 60, 60}},
-        {"arrowcolorhover", Color{0, 0, 0}}
-    };
+            {
+                {"trackcolor", Color{245, 245, 245}},
+                {"thumbcolor", Color{220, 220, 220}},
+                {"thumbcolorhover", Color{230, 230, 230}},
+                {"arrowbackgroundcolor", Color{245, 245, 245}},
+                {"arrowbackgroundcolorhover", Color{255, 255, 255}},
+                {"arrowcolor", Color{60, 60, 60}},
+                {"arrowcolorhover", Color{0, 0, 0}}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Scrollbar::Scrollbar()
     {
-        m_callback.widgetType = "Scrollbar";
         m_type = "Scrollbar";
 
-        addSignal<int>("ValueChanged");
         m_draggableWidget = true;
 
         m_renderer = aurora::makeCopied<ScrollbarRenderer>();
@@ -66,11 +64,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Scrollbar::Ptr Scrollbar::copy(ConstPtr scrollbar)
+    Scrollbar::Ptr Scrollbar::copy(Scrollbar::ConstPtr scrollbar)
     {
         if (scrollbar)
             return std::static_pointer_cast<Scrollbar>(scrollbar->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,8 +248,7 @@ namespace tgui
         {
             m_value = value;
 
-            m_callback.value = static_cast<int>(m_value);
-            sendSignal("ValueChanged", static_cast<int>(m_value));
+            onValueChange->emit(this, m_value);
 
             // Recalculate the size and position of the thumb image
             updateSize();
@@ -324,13 +322,15 @@ namespace tgui
         if (m_autoHide && (m_maximum <= m_lowValue))
             return false;
 
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Scrollbar::leftMousePressed(sf::Vector2f pos)
     {
+        pos -= getPosition();
+
         m_mouseDown = true;
         m_mouseDownOnArrow = false;
 
@@ -372,7 +372,7 @@ namespace tgui
 
         // Refresh the scrollbar value
         if (!m_mouseDownOnArrow)
-            mouseMoved(pos);
+            mouseMoved(pos + getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,6 +387,8 @@ namespace tgui
             {
                 bool valueDown = false;
                 bool valueUp = false;
+
+                pos -= getPosition();
 
                 // Check in which direction the scrollbar lies
                 if (m_verticalScroll)
@@ -470,6 +472,8 @@ namespace tgui
 
     void Scrollbar::mouseMoved(sf::Vector2f pos)
     {
+        pos -= getPosition();
+
         if (!m_mouseHover)
             mouseEnteredWidget();
 
@@ -490,8 +494,8 @@ namespace tgui
                     if ((pos.y - m_mouseDownOnThumbPos.y - m_arrowUp.height) > 0)
                     {
                         // Calculate the new value
-                        unsigned int value = static_cast<unsigned int>((((pos.y - m_mouseDownOnThumbPos.y - m_arrowUp.height)
-                            / (getSize().y - m_arrowUp.height - m_arrowDown.height)) * m_maximum) + 0.5f);
+                        const unsigned int value = static_cast<unsigned int>((((pos.y - m_mouseDownOnThumbPos.y - m_arrowUp.height)
+                                                                               / (getSize().y - m_arrowUp.height - m_arrowDown.height)) * m_maximum) + 0.5f);
 
                         // If the value isn't too high then change it
                         if (value <= (m_maximum - m_lowValue))
@@ -503,7 +507,7 @@ namespace tgui
                         setValue(0);
 
                     // Set the thumb position for smooth scrolling
-                    float thumbTop = pos.y - m_mouseDownOnThumbPos.y;
+                    const float thumbTop = pos.y - m_mouseDownOnThumbPos.y;
                     if ((thumbTop - m_arrowUp.height > 0) && (thumbTop + m_thumb.height + m_arrowDown.height < getSize().y))
                         m_thumb.top = thumbTop;
                     else // Prevent the thumb from going outside the scrollbar
@@ -518,12 +522,12 @@ namespace tgui
                         if (pos.y <= getSize().y - m_arrowUp.height)
                         {
                             // Calculate the exact position (a number between 0 and maximum)
-                            float value = (((pos.y - m_arrowUp.height) / (getSize().y - m_arrowUp.height - m_arrowDown.height)) * m_maximum);
+                            const float value = (((pos.y - m_arrowUp.height) / (getSize().y - m_arrowUp.height - m_arrowDown.height)) * m_maximum);
 
                             // Check if you clicked above the thumb
                             if (value <= m_value)
                             {
-                                float subtractValue = m_lowValue / 3.0f;
+                                const float subtractValue = m_lowValue / 3.0f;
 
                                 // Try to place the thumb on 2/3 of the clicked position
                                 if (value >= subtractValue)
@@ -533,7 +537,7 @@ namespace tgui
                             }
                             else // The click occurred below the thumb
                             {
-                                float subtractValue = m_lowValue * 2.0f / 3.0f;
+                                const float subtractValue = m_lowValue * 2.0f / 3.0f;
 
                                 // Try to place the thumb on 2/3 of the clicked position
                                 if (value <= (m_maximum - m_lowValue + subtractValue))
@@ -558,8 +562,8 @@ namespace tgui
                     if (pos.x - m_mouseDownOnThumbPos.x - m_arrowUp.width > 0)
                     {
                         // Calculate the new value
-                        unsigned int value = static_cast<unsigned int>((((pos.x - m_mouseDownOnThumbPos.x - m_arrowUp.width)
-                            / (getSize().x - m_arrowUp.width - m_arrowDown.width)) * m_maximum) + 0.5f);
+                        const unsigned int value = static_cast<unsigned int>((((pos.x - m_mouseDownOnThumbPos.x - m_arrowUp.width)
+                                                                               / (getSize().x - m_arrowUp.width - m_arrowDown.width)) * m_maximum) + 0.5f);
                         // If the value isn't too high then change it
                         if (value <= (m_maximum - m_lowValue))
                             setValue(value);
@@ -570,7 +574,7 @@ namespace tgui
                         setValue(0);
 
                     // Set the thumb position for smooth scrolling
-                    float thumbLeft = pos.x - m_mouseDownOnThumbPos.x;
+                    const float thumbLeft = pos.x - m_mouseDownOnThumbPos.x;
                     if ((thumbLeft - m_arrowUp.width > 0) && (thumbLeft + m_thumb.width + m_arrowDown.width < getSize().x))
                         m_thumb.left = thumbLeft;
                     else // Prevent the thumb from going outside the scrollbar
@@ -585,12 +589,12 @@ namespace tgui
                         if (pos.x <= getSize().x - m_arrowUp.width)
                         {
                             // Calculate the exact position (a number between 0 and maximum)
-                            float value = (((pos.x - m_arrowUp.width) / (getSize().x - m_arrowUp.width - m_arrowDown.width)) * m_maximum);
+                            const float value = (((pos.x - m_arrowUp.width) / (getSize().x - m_arrowUp.width - m_arrowDown.width)) * m_maximum);
 
                             // Check if you clicked to the left of the thumb
                             if (value <= m_value)
                             {
-                                float subtractValue = m_lowValue / 3.0f;
+                                const float subtractValue = m_lowValue / 3.0f;
 
                                 // Try to place the thumb on 2/3 of the clicked position
                                 if (value >= subtractValue)
@@ -600,7 +604,7 @@ namespace tgui
                             }
                             else // The click occurred to the right of the thumb
                             {
-                                float subtractValue = m_lowValue * 2.0f / 3.0f;
+                                const float subtractValue = m_lowValue * 2.0f / 3.0f;
 
                                 // Try to place the thumb on 2/3 of the clicked position
                                 if (value <= (m_maximum - m_lowValue + subtractValue))
@@ -630,7 +634,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Scrollbar::mouseWheelScrolled(float delta, int x, int y)
+    void Scrollbar::mouseWheelScrolled(float delta, sf::Vector2f pos)
     {
         if (static_cast<int>(m_value) - static_cast<int>(delta * m_scrollAmount) < 0)
             setValue(0);
@@ -638,7 +642,7 @@ namespace tgui
             setValue(static_cast<unsigned int>(m_value - (delta * m_scrollAmount)));
 
         // Update over which part the mouse is hovering
-        mouseMoved({static_cast<float>(x), static_cast<float>(y)});
+        mouseMoved(pos - getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -658,6 +662,16 @@ namespace tgui
             updateThumbPosition();
 
         Widget::mouseNoLongerDown();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Scrollbar::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onValueChange->getName()))
+            return *onValueChange;
+        else
+            return Widget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -782,35 +796,35 @@ namespace tgui
         // Draw arrow up/left
         if (textured)
         {
-            if (m_mouseHover && m_spriteArrowUpHover.isSet() && (m_mouseHoverOverPart == Part::ArrowUp))
+            if (m_mouseHover && m_spriteArrowUpHover.isSet() && (m_mouseHoverOverPart == Scrollbar::Part::ArrowUp))
                 m_spriteArrowUpHover.draw(target, states);
             else
                 m_spriteArrowUp.draw(target, states);
         }
         else
         {
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::ArrowUp) && m_arrowBackgroundColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::ArrowUp) && m_arrowBackgroundColorHoverCached.isSet())
                 drawRectangleShape(target, states, {m_arrowUp.width, m_arrowUp.height}, m_arrowBackgroundColorHoverCached);
             else
                 drawRectangleShape(target, states, {m_arrowUp.width, m_arrowUp.height}, m_arrowBackgroundColorCached);
 
             sf::ConvexShape arrow{3};
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::ArrowUp) && m_arrowColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::ArrowUp) && m_arrowColorHoverCached.isSet())
                 arrow.setFillColor(Color::calcColorOpacity(m_arrowColorHoverCached, m_opacityCached));
             else
                 arrow.setFillColor(Color::calcColorOpacity(m_arrowColorCached, m_opacityCached));
 
             if (m_verticalScroll)
             {
-                arrow.setPoint(0, {m_arrowUp.width / 5, m_arrowUp.height * 4 / 5});
+                arrow.setPoint(0, {m_arrowUp.width / 5, m_arrowUp.height * 4/5});
                 arrow.setPoint(1, {m_arrowUp.width / 2, m_arrowUp.height / 5});
-                arrow.setPoint(2, {m_arrowUp.width * 4 / 5, m_arrowUp.height * 4 / 5});
+                arrow.setPoint(2, {m_arrowUp.width * 4/5, m_arrowUp.height * 4/5});
             }
             else
             {
-                arrow.setPoint(0, {m_arrowUp.width * 4 / 5, m_arrowUp.height / 5});
+                arrow.setPoint(0, {m_arrowUp.width * 4/5, m_arrowUp.height / 5});
                 arrow.setPoint(1, {m_arrowUp.width / 5, m_arrowUp.height / 2});
-                arrow.setPoint(2, {m_arrowUp.width * 4 / 5, m_arrowUp.height * 4 / 5});
+                arrow.setPoint(2, {m_arrowUp.width * 4/5, m_arrowUp.height * 4/5});
             }
 
             target.draw(arrow, states);
@@ -820,14 +834,14 @@ namespace tgui
         states.transform.translate({m_track.left, m_track.top});
         if (textured)
         {
-            if (m_mouseHover && m_spriteTrackHover.isSet() && (m_mouseHoverOverPart == Part::Track))
+            if (m_mouseHover && m_spriteTrackHover.isSet() && (m_mouseHoverOverPart == Scrollbar::Part::Track))
                 m_spriteTrackHover.draw(target, states);
             else
                 m_spriteTrack.draw(target, states);
         }
         else
         {
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::Track) && m_trackColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::Track) && m_trackColorHoverCached.isSet())
                 drawRectangleShape(target, states, {m_track.width, m_track.height}, m_trackColorHoverCached);
             else
                 drawRectangleShape(target, states, {m_track.width, m_track.height}, m_trackColorCached);
@@ -838,14 +852,14 @@ namespace tgui
         states.transform.translate({m_thumb.left, m_thumb.top});
         if (textured)
         {
-            if (m_mouseHover && m_spriteThumbHover.isSet() && (m_mouseHoverOverPart == Part::Thumb))
+            if (m_mouseHover && m_spriteThumbHover.isSet() && (m_mouseHoverOverPart == Scrollbar::Part::Thumb))
                 m_spriteThumbHover.draw(target, states);
             else
                 m_spriteThumb.draw(target, states);
         }
         else
         {
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::Thumb) && m_thumbColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::Thumb) && m_thumbColorHoverCached.isSet())
                 drawRectangleShape(target, states, {m_thumb.width, m_thumb.height}, m_thumbColorHoverCached);
             else
                 drawRectangleShape(target, states, {m_thumb.width, m_thumb.height}, m_thumbColorCached);
@@ -856,20 +870,20 @@ namespace tgui
         states.transform.translate({m_arrowDown.left, m_arrowDown.top});
         if (textured)
         {
-            if (m_mouseHover && m_spriteArrowDownHover.isSet() && (m_mouseHoverOverPart == Part::ArrowDown))
+            if (m_mouseHover && m_spriteArrowDownHover.isSet() && (m_mouseHoverOverPart == Scrollbar::Part::ArrowDown))
                 m_spriteArrowDownHover.draw(target, states);
             else
                 m_spriteArrowDown.draw(target, states);
         }
         else
         {
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::ArrowDown) && m_arrowBackgroundColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::ArrowDown) && m_arrowBackgroundColorHoverCached.isSet())
                 drawRectangleShape(target, states, {m_arrowDown.width, m_arrowDown.height}, m_arrowBackgroundColorHoverCached);
             else
                 drawRectangleShape(target, states, {m_arrowDown.width, m_arrowDown.height}, m_arrowBackgroundColorCached);
 
             sf::ConvexShape arrow{3};
-            if (m_mouseHover && (m_mouseHoverOverPart == Part::ArrowDown) && m_arrowColorHoverCached.isSet())
+            if (m_mouseHover && (m_mouseHoverOverPart == Scrollbar::Part::ArrowDown) && m_arrowColorHoverCached.isSet())
                 arrow.setFillColor(Color::calcColorOpacity(m_arrowColorHoverCached, m_opacityCached));
             else
                 arrow.setFillColor(Color::calcColorOpacity(m_arrowColorCached, m_opacityCached));
@@ -877,14 +891,14 @@ namespace tgui
             if (m_verticalScroll)
             {
                 arrow.setPoint(0, {m_arrowDown.width / 5, m_arrowDown.height / 5});
-                arrow.setPoint(1, {m_arrowDown.width / 2, m_arrowDown.height * 4 / 5});
-                arrow.setPoint(2, {m_arrowDown.width * 4 / 5, m_arrowDown.height / 5});
+                arrow.setPoint(1, {m_arrowDown.width / 2, m_arrowDown.height * 4/5});
+                arrow.setPoint(2, {m_arrowDown.width * 4/5, m_arrowDown.height / 5});
             }
             else // Spin button lies horizontal
             {
                 arrow.setPoint(0, {m_arrowDown.width / 5, m_arrowDown.height / 5});
-                arrow.setPoint(1, {m_arrowDown.width * 4 / 5, m_arrowDown.height / 2});
-                arrow.setPoint(2, {m_arrowDown.width / 5, m_arrowDown.height * 4 / 5});
+                arrow.setPoint(1, {m_arrowDown.width * 4/5, m_arrowDown.height / 2});
+                arrow.setPoint(2, {m_arrowDown.width / 5, m_arrowDown.height * 4/5});
             }
 
             target.draw(arrow, states);

@@ -32,44 +32,45 @@
 
 namespace aurora
 {
-    namespace detail
-    {
-        // Helpers for Safe-Bool idiom (use member-function pointers since they support quite few operators)
-        struct SafeBoolHolder
-        {
-            // Dummy function
-            void function()
-            {
-            }
-        };
-    } // namespace detail
+namespace detail
+{
 
-    // ---------------------------------------------------------------------------------------------------------------------------
+	// Helpers for Safe-Bool idiom (use member-function pointers since they support quite few operators)
+	struct SafeBoolHolder
+	{
+		// Dummy function
+		void function() {}
+	};
+
+} // namespace detail
+
+// ---------------------------------------------------------------------------------------------------------------------------
 
 
-    /// @addtogroup Tools
-    /// @{
+/// @addtogroup Tools
+/// @{
 
-    /// @brief SafeBool type
-    /// @hideinitializer
-    typedef void (detail::SafeBoolHolder::*SafeBool)();
+/// @brief SafeBool type
+/// @hideinitializer
+typedef void (detail::SafeBoolHolder::*SafeBool)();
 
-    /// @brief SafeBool literal, evaluates to true
-    /// @hideinitializer
-    const SafeBool SafeBoolTrue = &detail::SafeBoolHolder::function;
+/// @brief SafeBool literal, evaluates to true
+/// @hideinitializer
+const SafeBool SafeBoolTrue = &detail::SafeBoolHolder::function;
 
-    /// @brief SafeBool literal, evaluates to false
-    /// @hideinitializer
-    const SafeBool SafeBoolFalse = nullptr;
+/// @brief SafeBool literal, evaluates to false
+/// @hideinitializer
+const SafeBool SafeBoolFalse = nullptr;
 
-    /// @brief Conversion function from bool to SafeBool
-    ///
-    inline SafeBool toSafeBool(bool condition)
-    {
-        return condition ? SafeBoolTrue : SafeBoolFalse;
-    }
+/// @brief Conversion function from bool to SafeBool
+///
+inline SafeBool toSafeBool(bool condition)
+{
+	return condition ? SafeBoolTrue : SafeBoolFalse;
+}
 
-    /// @}
+/// @}
+
 } // namespace aurora
 
 #endif // AURORA_SAFEBOOL_HPP

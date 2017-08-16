@@ -15,14 +15,29 @@ namespace obe
 {
     namespace Editor
     {
-        void connectCamMovementActions(Input::InputManager& inputManager, Scene::Scene& world, int& cameraSpeed, Time::FramerateManager& framerateManager);
+        void connectCamMovementActions(
+            Triggers::TriggerGroup* editorTriggers,
+            Input::InputManager& inputManager, 
+            Scene::Scene& world, 
+            int& cameraSpeed, 
+            Time::FramerateManager& framerateManager);
         void connectGridActions(
+            Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager, 
             tgui::CheckBox::Ptr& enableGridCheckbox, 
             tgui::CheckBox::Ptr& snapGridCheckbox, 
             System::Cursor& cursor, 
             Editor::EditorGrid& editorGrid);
-        void connectMenuActions(Input::InputManager& inputManager, tgui::ComboBox::Ptr editMode, tgui::ComboBox::Ptr cameraMode);
-        void connectSaveActions(Input::InputManager& inputManager, const std::string& mapName, Scene::Scene& world, double& waitForMapSaving, tgui::Label::Ptr savedLabel);
+        void connectMenuActions(
+            Input::InputManager& inputManager, 
+            tgui::ComboBox::Ptr editMode, 
+            tgui::ComboBox::Ptr cameraMode);
+        void connectSaveActions(
+            Triggers::TriggerGroup* editorTriggers, 
+            Input::InputManager& inputManager, 
+            const std::string& mapName, 
+            Scene::Scene& world, 
+            double& waitForMapSaving, 
+            tgui::Label::Ptr savedLabel);
     }
 }

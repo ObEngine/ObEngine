@@ -33,7 +33,6 @@ namespace tgui
 
     RadioButtonGroup::RadioButtonGroup()
     {
-        m_callback.widgetType = "RadioButtonGroup";
         m_type = "RadioButtonGroup";
     }
 
@@ -46,11 +45,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    RadioButtonGroup::Ptr RadioButtonGroup::copy(ConstPtr group)
+    RadioButtonGroup::Ptr RadioButtonGroup::copy(RadioButtonGroup::ConstPtr group)
     {
         if (group)
             return std::static_pointer_cast<RadioButtonGroup>(group->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

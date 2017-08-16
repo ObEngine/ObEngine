@@ -56,8 +56,8 @@ namespace tgui
         struct Node
         {
             Node* parent = nullptr;
-            std::vector<std::shared_ptr<Node>> children;
-            std::map<std::string, std::shared_ptr<ValueNode>> propertyValuePairs;
+            std::vector<std::unique_ptr<Node>> children;
+            std::map<std::string, std::unique_ptr<ValueNode>> propertyValuePairs;
             std::string name;
         };
 
@@ -67,9 +67,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         struct ValueNode
         {
-            ValueNode(const sf::String& v = "") : value(v)
-            {
-            }
+            ValueNode(const sf::String& v = "") : value(v) {}
 
             sf::String value;
             bool listNode = false;
@@ -85,7 +83,7 @@ namespace tgui
         /// @return Root node of the tree of nodes
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static std::shared_ptr<Node> parse(std::stringstream& stream);
+        static std::unique_ptr<Node> parse(std::stringstream& stream);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +93,7 @@ namespace tgui
         /// @param stream   Stream to which the widget file will be added
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static void emit(std::shared_ptr<Node> rootNode, std::stringstream& stream);
+        static void emit(const std::unique_ptr<Node>& rootNode, std::stringstream& stream);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,10 @@
 #include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/EditBox.hpp>
+#include <TGUI/Widgets/Grid.hpp>
 #include <TGUI/Widgets/Group.hpp>
+#include <TGUI/Widgets/HorizontalLayout.hpp>
+#include <TGUI/Widgets/HorizontalWrap.hpp>
 #include <TGUI/Widgets/Knob.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/ListBox.hpp>
@@ -49,6 +52,7 @@
 #include <TGUI/Widgets/SpinButton.hpp>
 #include <TGUI/Widgets/Tabs.hpp>
 #include <TGUI/Widgets/TextBox.hpp>
+#include <TGUI/Widgets/VerticalLayout.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,10 +62,10 @@ namespace tgui
     {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define DESERIALIZE_STRING(property) Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs[property]->value).getString()
+        #define DESERIALIZE_STRING(property) Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs[property]->value).getString()
 
-#define REMOVE_CHILD(childName) node->children.erase(std::remove_if(node->children.begin(), node->children.end(), \
-                                            [](std::shared_ptr<DataIO::Node> child){ return toLower(child->name) == childName; }), node->children.end());
+        #define REMOVE_CHILD(childName) node->children.erase(std::remove_if(node->children.begin(), node->children.end(), \
+                                            [](const std::unique_ptr<DataIO::Node>& child){ return toLower(child->name) == childName; }), node->children.end());
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,9 +74,10 @@ namespace tgui
             str = toLower(str);
             if (str == "true" || str == "yes" || str == "on" || str == "1")
                 return true;
-            if (str == "false" || str == "no" || str == "off" || str == "0")
+            else if (str == "false" || str == "no" || str == "off" || str == "0")
                 return false;
-            throw Exception{"Failed to parse boolean in '" + str + "'"};
+            else
+                throw Exception{"Failed to parse boolean in '" + str + "'"};
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,67 +87,24 @@ namespace tgui
             if (str.empty())
                 throw Exception{"Failed to parse layout. String was empty."};
 
-            // Check if the layout is an (x, y) vector or a quoted string
-            if ((str.front() == '(') && (str.back() == ')'))
-            {
+            // Remove the brackets around the value
+            if (((str.front() == '(') && (str.back() == ')')) || ((str.front() == '{') && (str.back() == '}')))
                 str = str.substr(1, str.length() - 2);
-                if (str.empty())
-                    return {0, 0};
 
-                Layout x;
-                Layout y;
+            if (str.empty())
+                return {0, 0};
 
-                auto commaPos = str.find(',');
-                if (commaPos == std::string::npos)
-                    throw Exception{"Failed to parse layout '" + str + "'. Expected numbers separated with a comma."};
+            auto commaPos = str.find(',');
+            if (commaPos == std::string::npos)
+                throw Exception{"Failed to parse layout '" + str + "'. Expected numbers separated with a comma."};
 
-                // Check if the first part is quoted
-                auto openingQuotePos = str.find('"');
-                if (commaPos > openingQuotePos)
-                {
-                    auto closingQuotePos = str.find('"', openingQuotePos + 1);
-                    if (closingQuotePos == std::string::npos)
-                        throw Exception{"Failed to parse layout '" + str + "'. Expected closing quote."};
-
-                    // Make sure we didn't select a quote inside the string
-                    if (commaPos < closingQuotePos)
-                    {
-                        commaPos = str.find(',', closingQuotePos + 1);
-                        if (commaPos == std::string::npos)
-                            throw Exception{"Failed to parse layout '" + str + "'. Expected numbers separated with a comma."};
-                    }
-
-                    x = {str.substr(openingQuotePos + 1, closingQuotePos - openingQuotePos - 1)};
-                }
-                else // Normal value
-                    x = {tgui::stof(trim(str.substr(0, commaPos)))};
-
-                // Check if the second part is quoted
-                openingQuotePos = str.find('"', commaPos + 1);
-                if (openingQuotePos != std::string::npos)
-                {
-                    auto closingQuotePos = str.find('"', openingQuotePos + 1);
-                    if (closingQuotePos == std::string::npos)
-                        throw Exception{"Failed to parse layout '" + str + "'. Expected closing quote."};
-
-                    y = {str.substr(openingQuotePos + 1, closingQuotePos - openingQuotePos - 1)};
-                }
-                else // Normal value
-                    y = {tgui::stof(trim(str.substr(commaPos + 1)))};
-
-                return {x, y};
-            }
-            if ((str.front() == '"') && (str.back() == '"'))
-            {
-                str = str.substr(1, str.length() - 2);
-                return {str};
-            }
-            throw Exception{"Failed to parse layout '" + str + "'. Expected (x,y) or a quoted layout string."};
+            return {trim(str.substr(0, commaPos)),
+                    trim(str.substr(commaPos + 1))};
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadWidget(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadWidget(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             assert(widget != nullptr);
 
@@ -174,7 +136,7 @@ namespace tgui
                     for (const auto& pair : childNode->propertyValuePairs)
                     {
                         if (pair.first == "timetodisplay")
-                            ToolTip::setTimeToDisplay(sf::seconds(stof(pair.second->value)));
+                            ToolTip::setTimeToDisplay(sf::seconds(tgui::stof(pair.second->value)));
                         else if (pair.first == "distancetomouse")
                             ToolTip::setDistanceToMouse(parseLayout(pair.second->value).getValue());
                     }
@@ -185,8 +147,8 @@ namespace tgui
                         if (childNode->children.size() > 1)
                             throw Exception{"ToolTip section contained multiple children."};
 
-                        auto toolTipWidgetNode = childNode->children[0];
-                        auto& loadFunction = WidgetLoader::getLoadFunction(toolTipWidgetNode->name);
+                        const auto& toolTipWidgetNode = childNode->children[0];
+                        const auto& loadFunction = WidgetLoader::getLoadFunction(toolTipWidgetNode->name);
                         if (loadFunction)
                             widget->setToolTip(loadFunction(toolTipWidgetNode, nullptr));
                         else
@@ -202,7 +164,7 @@ namespace tgui
                     auto rendererData = RendererData::create();
 
                     for (const auto& pair : childNode->propertyValuePairs)
-                        rendererData->propertyValuePairs[pair.first] = ObjectConverter(pair.second->value); // Did not compile in VS2013 when just assigning "{pair.second->value}"
+                        rendererData->propertyValuePairs[pair.first] = {pair.second->value};
 
                     for (const auto& nestedProperty : childNode->children)
                     {
@@ -222,7 +184,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadContainer(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadContainer(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             assert(widget != nullptr);
             Container::Ptr container = std::static_pointer_cast<Container>(widget);
@@ -230,16 +192,16 @@ namespace tgui
 
             for (const auto& childNode : node->children)
             {
-                auto nameSeparator = childNode->name.find('.');
-                auto widgetType = childNode->name.substr(0, nameSeparator);
-                auto& loadFunction = WidgetLoader::getLoadFunction(widgetType);
+                const auto nameSeparator = childNode->name.find('.');
+                const auto widgetType = childNode->name.substr(0, nameSeparator);
+                const auto& loadFunction = WidgetLoader::getLoadFunction(widgetType);
                 if (loadFunction)
                 {
                     std::string className;
                     if (nameSeparator != std::string::npos)
                         className = Deserializer::deserialize(ObjectConverter::Type::String, childNode->name.substr(nameSeparator + 1)).getString();
 
-                    Widget::Ptr childWidget = loadFunction(childNode, nullptr);
+                    tgui::Widget::Ptr childWidget = loadFunction(childNode, nullptr);
                     container->add(childWidget, className);
                 }
                 else
@@ -251,7 +213,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadButton(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadButton(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Button::Ptr button;
             if (widget)
@@ -263,23 +225,24 @@ namespace tgui
             if (node->propertyValuePairs["text"])
                 button->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                button->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                button->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
 
             return button;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadCanvas(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadCanvas(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             if (widget)
                 return loadWidget(node, widget);
-            return loadWidget(node, std::make_shared<Canvas>());
+            else
+                return loadWidget(node, Canvas::create());
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadChatBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadChatBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             ChatBox::Ptr chatBox;
             if (widget)
@@ -290,11 +253,11 @@ namespace tgui
             loadWidget(node, chatBox);
 
             if (node->propertyValuePairs["textsize"])
-                chatBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                chatBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["textcolor"])
                 chatBox->setTextColor(Deserializer::deserialize(ObjectConverter::Type::Color, node->propertyValuePairs["textcolor"]->value).getColor());
             if (node->propertyValuePairs["linelimit"])
-                chatBox->setLineLimit(stoi(node->propertyValuePairs["linelimit"]->value));
+                chatBox->setLineLimit(tgui::stoi(node->propertyValuePairs["linelimit"]->value));
 
             for (const auto& childNode : node->children)
             {
@@ -304,7 +267,7 @@ namespace tgui
                     sf::Color lineTextColor = chatBox->getTextColor();
 
                     if (childNode->propertyValuePairs["textsize"])
-                        lineTextSize = stoi(childNode->propertyValuePairs["textsize"]->value);
+                        lineTextSize = tgui::stoi(childNode->propertyValuePairs["textsize"]->value);
                     if (childNode->propertyValuePairs["color"])
                         lineTextColor = Deserializer::deserialize(ObjectConverter::Type::Color, childNode->propertyValuePairs["color"]->value).getColor();
 
@@ -330,7 +293,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadCheckBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadCheckBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             CheckBox::Ptr checkbox;
             if (widget)
@@ -342,7 +305,7 @@ namespace tgui
             if (node->propertyValuePairs["text"])
                 checkbox->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                checkbox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                checkbox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["textclickable"])
                 checkbox->setTextClickable(parseBoolean(node->propertyValuePairs["textclickable"]->value));
             if (node->propertyValuePairs["checked"])
@@ -356,7 +319,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadChildWindow(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadChildWindow(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             ChildWindow::Ptr childWindow;
             if (widget)
@@ -410,16 +373,17 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadClickableWidget(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadClickableWidget(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             if (widget)
                 return loadWidget(node, widget);
-            return loadWidget(node, std::make_shared<ClickableWidget>());
+            else
+                return loadWidget(node, ClickableWidget::create());
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadComboBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadComboBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             ComboBox::Ptr comboBox;
             if (widget)
@@ -442,7 +406,7 @@ namespace tgui
                     if (node->propertyValuePairs["items"]->valueList.size() != node->propertyValuePairs["itemids"]->valueList.size())
                         throw Exception{"Amounts of values for 'Items' differs from the amount in 'ItemIds'"};
 
-                    for (size_t i = 0; i < node->propertyValuePairs["items"]->valueList.size(); ++i)
+                    for (std::size_t i = 0; i < node->propertyValuePairs["items"]->valueList.size(); ++i)
                     {
                         comboBox->addItem(Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs["items"]->valueList[i]).getString(),
                                           Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs["itemids"]->valueList[i]).getString());
@@ -467,18 +431,18 @@ namespace tgui
             }
 
             if (node->propertyValuePairs["itemstodisplay"])
-                comboBox->setItemsToDisplay(stoi(node->propertyValuePairs["itemstodisplay"]->value));
+                comboBox->setItemsToDisplay(tgui::stoi(node->propertyValuePairs["itemstodisplay"]->value));
             if (node->propertyValuePairs["textsize"])
-                comboBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                comboBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["maximumitems"])
-                comboBox->setMaximumItems(stoi(node->propertyValuePairs["maximumitems"]->value));
+                comboBox->setMaximumItems(tgui::stoi(node->propertyValuePairs["maximumitems"]->value));
 
             return comboBox;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadEditBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadEditBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             EditBox::Ptr editBox;
             if (widget)
@@ -493,9 +457,9 @@ namespace tgui
             if (node->propertyValuePairs["defaulttext"])
                 editBox->setDefaultText(DESERIALIZE_STRING("defaulttext"));
             if (node->propertyValuePairs["textsize"])
-                editBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                editBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["maximumcharacters"])
-                editBox->setMaximumCharacters(stoi(node->propertyValuePairs["maximumcharacters"]->value));
+                editBox->setMaximumCharacters(tgui::stoi(node->propertyValuePairs["maximumcharacters"]->value));
             if (node->propertyValuePairs["textwidthlimited"])
                 editBox->limitTextWidth(parseBoolean(node->propertyValuePairs["textwidthlimited"]->value));
             if (node->propertyValuePairs["passwordcharacter"])
@@ -532,16 +496,145 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadGroup(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadGrid(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
+            Grid::Ptr grid;
             if (widget)
-                return loadContainer(node, std::static_pointer_cast<Group>(widget));
-            return loadContainer(node, std::make_shared<Group>());
+                grid = std::static_pointer_cast<Grid>(widget);
+            else
+                grid = Grid::create();
+
+            loadContainer(node, grid);
+
+            if (node->propertyValuePairs["autosize"])
+                grid->setAutoSize(parseBoolean(node->propertyValuePairs["autosize"]->value));
+
+            if (node->propertyValuePairs["gridwidgets"])
+            {
+                if (!node->propertyValuePairs["gridwidgets"]->listNode)
+                    throw Exception{"Failed to parse 'GridWidgets' property, expected a list as value"};
+
+                const auto& elements = node->propertyValuePairs["gridwidgets"]->valueList;
+                if (elements.size() != grid->getWidgets().size())
+                    throw Exception{"Failed to parse 'GridWidgets' property, the amount of items has to match with the amount of child widgets"};
+
+                for (unsigned int i = 0; i < elements.size(); ++i)
+                {
+                    std::string str = elements[i].toAnsiString();
+
+                    // Remove quotes
+                    if ((str.size() >= 2) && (str[0] == '"') && (str[str.size()-1] == '"'))
+                        str = str.substr(1, str.size()-2);
+
+                    // Remove brackets
+                    if ((str.size() >= 2) && (str[0] == '(') && (str[str.size()-1] == ')'))
+                        str = str.substr(1, str.size()-2);
+
+                    // Ignore empty values (which are widgets that have not been given a location in the grid)
+                    if (str.empty())
+                        continue;
+
+                    int row;
+                    int col;
+                    Borders borders;
+                    auto alignment = Grid::Alignment::Center;
+
+                    std::size_t index = 0;
+                    std::size_t pos = str.find(',');
+                    if (pos == std::string::npos)
+                        throw Exception{"Failed to parse 'GridWidgets' property. Expected list values to be in the form of '\"(row, column, (borders), alignment)\"'. Missing comma after row."};
+
+                    row = tgui::stoi(str.substr(index, pos - index));
+                    index = pos + 1;
+
+                    pos = str.find(',', index);
+                    if (pos == std::string::npos)
+                        throw Exception{"Failed to parse 'GridWidgets' property. Expected list values to be in the form of '\"(row, column, (borders), alignment)\"'. Missing comma after column."};
+
+                    col = tgui::stoi(str.substr(index, pos - index));
+                    index = pos + 1;
+
+                    if (row < 0 || col < 0)
+                        throw Exception{"Failed to parse 'GridWidgets' property, row and column have to be positive integers"};
+
+                    pos = str.find('(', index);
+                    if (pos == std::string::npos)
+                        throw Exception{"Failed to parse 'GridWidgets' property. Expected list values to be in the form of '\"(row, column, (borders), alignment)\"'. Missing opening bracket for borders."};
+
+                    index = pos;
+                    pos = str.find(')', index);
+                    if (pos == std::string::npos)
+                        throw Exception{"Failed to parse 'GridWidgets' property. Expected list values to be in the form of '\"(row, column, (borders), alignment)\"'. Missing closing bracket for borders."};
+
+                    borders = Deserializer::deserialize(ObjectConverter::Type::Outline, str.substr(index, pos+1 - index)).getOutline();
+                    index = pos + 1;
+
+                    pos = str.find(',', index);
+                    if (pos == std::string::npos)
+                        throw Exception{"Failed to parse 'GridWidgets' property. Expected list values to be in the form of '\"(row, column, (borders), alignment)\"'. Missing comma after borders."};
+
+                    std::string alignmentStr = toLower(trim(str.substr(pos + 1)));
+                    if (alignmentStr == "center")
+                        alignment = Grid::Alignment::Center;
+                    else if (alignmentStr == "upperleft")
+                        alignment = Grid::Alignment::UpperLeft;
+                    else if (alignmentStr == "up")
+                        alignment = Grid::Alignment::Up;
+                    else if (alignmentStr == "upperright")
+                        alignment = Grid::Alignment::UpperRight;
+                    else if (alignmentStr == "right")
+                        alignment = Grid::Alignment::Right;
+                    else if (alignmentStr == "bottomright")
+                        alignment = Grid::Alignment::BottomRight;
+                    else if (alignmentStr == "bottom")
+                        alignment = Grid::Alignment::Bottom;
+                    else if (alignmentStr == "bottomleft")
+                        alignment = Grid::Alignment::BottomLeft;
+                    else if (alignmentStr == "left")
+                        alignment = Grid::Alignment::Left;
+                    else
+                        throw Exception{"Failed to parse 'GridWidgets' property. Invalid alignment '" + alignmentStr + "'."};
+
+                    grid->addWidget(grid->getWidgets()[i], static_cast<std::size_t>(row), static_cast<std::size_t>(col), borders, alignment);
+                }
+            }
+
+            return grid;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadKnob(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadGroup(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
+        {
+            if (widget)
+                return loadContainer(node, std::static_pointer_cast<Group>(widget));
+            else
+                return loadContainer(node, Group::create());
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Widget::Ptr loadHorizontalLayout(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
+        {
+            if (widget)
+                return loadContainer(node, std::static_pointer_cast<HorizontalLayout>(widget));
+            else
+                return loadContainer(node, HorizontalLayout::create());
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Widget::Ptr loadHorizontalWrap(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
+        {
+            if (widget)
+                return loadContainer(node, std::static_pointer_cast<HorizontalWrap>(widget));
+            else
+                return loadContainer(node, HorizontalWrap::create());
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Widget::Ptr loadKnob(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Knob::Ptr knob;
             if (widget)
@@ -551,15 +644,15 @@ namespace tgui
 
             loadWidget(node, knob);
             if (node->propertyValuePairs["startrotation"])
-                knob->setStartRotation(stof(node->propertyValuePairs["startrotation"]->value));
+                knob->setStartRotation(tgui::stof(node->propertyValuePairs["startrotation"]->value));
             if (node->propertyValuePairs["endrotation"])
-                knob->setEndRotation(stof(node->propertyValuePairs["endrotation"]->value));
+                knob->setEndRotation(tgui::stof(node->propertyValuePairs["endrotation"]->value));
             if (node->propertyValuePairs["minimum"])
-                knob->setMinimum(stoi(node->propertyValuePairs["minimum"]->value));
+                knob->setMinimum(tgui::stoi(node->propertyValuePairs["minimum"]->value));
             if (node->propertyValuePairs["maximum"])
-                knob->setMaximum(stoi(node->propertyValuePairs["maximum"]->value));
+                knob->setMaximum(tgui::stoi(node->propertyValuePairs["maximum"]->value));
             if (node->propertyValuePairs["value"])
-                knob->setValue(stoi(node->propertyValuePairs["value"]->value));
+                knob->setValue(tgui::stoi(node->propertyValuePairs["value"]->value));
             if (node->propertyValuePairs["clockwiseturning"])
                 knob->setClockwiseTurning(parseBoolean(node->propertyValuePairs["clockwiseturning"]->value));
 
@@ -568,7 +661,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadLabel(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadLabel(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Label::Ptr label;
             if (widget)
@@ -603,9 +696,9 @@ namespace tgui
             if (node->propertyValuePairs["text"])
                 label->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                label->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                label->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["maximumtextwidth"])
-                label->setMaximumTextWidth(stof(node->propertyValuePairs["maximumtextwidth"]->value));
+                label->setMaximumTextWidth(tgui::stof(node->propertyValuePairs["maximumtextwidth"]->value));
             if (node->propertyValuePairs["autosize"])
                 label->setAutoSize(parseBoolean(node->propertyValuePairs["autosize"]->value));
 
@@ -614,7 +707,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadListBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadListBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             ListBox::Ptr listBox;
             if (widget)
@@ -637,7 +730,7 @@ namespace tgui
                     if (node->propertyValuePairs["items"]->valueList.size() != node->propertyValuePairs["itemids"]->valueList.size())
                         throw Exception{"Amounts of values for 'Items' differs from the amount in 'ItemIds'"};
 
-                    for (size_t i = 0; i < node->propertyValuePairs["items"]->valueList.size(); ++i)
+                    for (std::size_t i = 0; i < node->propertyValuePairs["items"]->valueList.size(); ++i)
                     {
                         listBox->addItem(Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs["items"]->valueList[i]).getString(),
                                          Deserializer::deserialize(ObjectConverter::Type::String, node->propertyValuePairs["itemids"]->valueList[i]).getString());
@@ -664,18 +757,18 @@ namespace tgui
             if (node->propertyValuePairs["autoscroll"])
                 listBox->setAutoScroll(parseBoolean(node->propertyValuePairs["autoscroll"]->value));
             if (node->propertyValuePairs["textsize"])
-                listBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                listBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["itemheight"])
-                listBox->setItemHeight(stoi(node->propertyValuePairs["itemheight"]->value));
+                listBox->setItemHeight(tgui::stoi(node->propertyValuePairs["itemheight"]->value));
             if (node->propertyValuePairs["maximumitems"])
-                listBox->setMaximumItems(stoi(node->propertyValuePairs["maximumitems"]->value));
+                listBox->setMaximumItems(tgui::stoi(node->propertyValuePairs["maximumitems"]->value));
 
             return listBox;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadMenuBar(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadMenuBar(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             MenuBar::Ptr menuBar;
             if (widget)
@@ -686,9 +779,9 @@ namespace tgui
             loadWidget(node, menuBar);
 
             if (node->propertyValuePairs["textsize"])
-                menuBar->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                menuBar->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["minimumsubmenuwidth"])
-                menuBar->setMinimumSubMenuWidth(stof(node->propertyValuePairs["minimumsubmenuwidth"]->value));
+                menuBar->setMinimumSubMenuWidth(tgui::stof(node->propertyValuePairs["minimumsubmenuwidth"]->value));
 
             for (const auto& childNode : node->children)
             {
@@ -703,7 +796,7 @@ namespace tgui
                             if (!childNode->propertyValuePairs["items"]->listNode)
                                 throw Exception{"Failed to parse 'Items' property inside 'Menu' property, expected a list as value"};
 
-                            for (size_t i = 0; i < childNode->propertyValuePairs["items"]->valueList.size(); ++i)
+                            for (std::size_t i = 0; i < childNode->propertyValuePairs["items"]->valueList.size(); ++i)
                                 menuBar->addMenuItem(Deserializer::deserialize(ObjectConverter::Type::String, childNode->propertyValuePairs["items"]->valueList[i]).getString());
                         }
                     }
@@ -716,7 +809,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadMessageBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadMessageBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             MessageBox::Ptr messageBox;
             if (widget)
@@ -730,24 +823,25 @@ namespace tgui
             loadChildWindow(node, messageBox);
 
             if (node->propertyValuePairs["textsize"])
-                messageBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                messageBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
 
             // Make a copy because the label and buttons are identified when doing so
-            return MessageBox::copy(messageBox);
+            return tgui::MessageBox::copy(messageBox);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadPanel(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadPanel(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             if (widget)
                 return loadContainer(node, std::static_pointer_cast<Panel>(widget));
-            return loadContainer(node, std::make_shared<Panel>());
+            else
+                return loadContainer(node, Panel::create());
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadPicture(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadPicture(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Picture::Ptr picture;
             if (widget)
@@ -756,7 +850,7 @@ namespace tgui
                 picture = Picture::create();
 
             if (node->propertyValuePairs["filename"])
-                picture = std::make_shared<Picture>(DESERIALIZE_STRING("filename"));
+                picture = Picture::create(DESERIALIZE_STRING("filename"));
 
             loadWidget(node, picture);
 
@@ -768,7 +862,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadProgressBar(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadProgressBar(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             ProgressBar::Ptr progressBar;
             if (widget)
@@ -778,27 +872,27 @@ namespace tgui
 
             loadWidget(node, progressBar);
             if (node->propertyValuePairs["minimum"])
-                progressBar->setMinimum(stoi(node->propertyValuePairs["minimum"]->value));
+                progressBar->setMinimum(tgui::stoi(node->propertyValuePairs["minimum"]->value));
             if (node->propertyValuePairs["maximum"])
-                progressBar->setMaximum(stoi(node->propertyValuePairs["maximum"]->value));
+                progressBar->setMaximum(tgui::stoi(node->propertyValuePairs["maximum"]->value));
             if (node->propertyValuePairs["value"])
-                progressBar->setValue(stoi(node->propertyValuePairs["value"]->value));
+                progressBar->setValue(tgui::stoi(node->propertyValuePairs["value"]->value));
             if (node->propertyValuePairs["text"])
                 progressBar->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                progressBar->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                progressBar->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
 
             if (node->propertyValuePairs["filldirection"])
             {
                 std::string requestedStyle = toLower(trim(node->propertyValuePairs["filldirection"]->value));
                 if (requestedStyle == "lefttoright")
-                    progressBar->setFillDirection(ProgressBar::FillDirection::LeftToRight);
+                    progressBar->setFillDirection(tgui::ProgressBar::FillDirection::LeftToRight);
                 else if (requestedStyle == "righttoleft")
-                    progressBar->setFillDirection(ProgressBar::FillDirection::RightToLeft);
+                    progressBar->setFillDirection(tgui::ProgressBar::FillDirection::RightToLeft);
                 else if (requestedStyle == "toptobottom")
-                    progressBar->setFillDirection(ProgressBar::FillDirection::TopToBottom);
-                else if (requestedStyle == "toptobottom")
-                    progressBar->setFillDirection(ProgressBar::FillDirection::TopToBottom);
+                    progressBar->setFillDirection(tgui::ProgressBar::FillDirection::TopToBottom);
+                else if (requestedStyle == "bottomtotop")
+                    progressBar->setFillDirection(tgui::ProgressBar::FillDirection::BottomToTop);
                 else
                     throw Exception{"Failed to parse FillDirection property, found unknown value."};
             }
@@ -808,7 +902,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadRadioButton(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadRadioButton(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             RadioButton::Ptr radioButton;
             if (widget)
@@ -820,7 +914,7 @@ namespace tgui
             if (node->propertyValuePairs["text"])
                 radioButton->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                radioButton->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                radioButton->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["textclickable"])
                 radioButton->setTextClickable(parseBoolean(node->propertyValuePairs["textclickable"]->value));
             if (node->propertyValuePairs["checked"])
@@ -834,16 +928,17 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadRadioButtonGroup(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadRadioButtonGroup(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             if (widget)
                 return loadContainer(node, std::static_pointer_cast<RadioButtonGroup>(widget));
-            return loadContainer(node, std::make_shared<RadioButtonGroup>());
+            else
+                return loadContainer(node, RadioButtonGroup::create());
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadScrollbar(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadScrollbar(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Scrollbar::Ptr scrollbar;
             if (widget)
@@ -853,13 +948,13 @@ namespace tgui
 
             loadWidget(node, scrollbar);
             if (node->propertyValuePairs["lowvalue"])
-                scrollbar->setLowValue(stoi(node->propertyValuePairs["lowvalue"]->value));
+                scrollbar->setLowValue(tgui::stoi(node->propertyValuePairs["lowvalue"]->value));
             if (node->propertyValuePairs["maximum"])
-                scrollbar->setMaximum(stoi(node->propertyValuePairs["maximum"]->value));
+                scrollbar->setMaximum(tgui::stoi(node->propertyValuePairs["maximum"]->value));
             if (node->propertyValuePairs["value"])
-                scrollbar->setValue(stoi(node->propertyValuePairs["value"]->value));
+                scrollbar->setValue(tgui::stoi(node->propertyValuePairs["value"]->value));
             if (node->propertyValuePairs["scrollamount"])
-                scrollbar->setScrollAmount(stoi(node->propertyValuePairs["scrollamount"]->value));
+                scrollbar->setScrollAmount(tgui::stoi(node->propertyValuePairs["scrollamount"]->value));
             if (node->propertyValuePairs["autohide"])
                 scrollbar->setAutoHide(parseBoolean(node->propertyValuePairs["autohide"]->value));
 
@@ -868,7 +963,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadSlider(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadSlider(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Slider::Ptr slider;
             if (widget)
@@ -878,18 +973,18 @@ namespace tgui
 
             loadWidget(node, slider);
             if (node->propertyValuePairs["minimum"])
-                slider->setMinimum(stoi(node->propertyValuePairs["minimum"]->value));
+                slider->setMinimum(tgui::stoi(node->propertyValuePairs["minimum"]->value));
             if (node->propertyValuePairs["maximum"])
-                slider->setMaximum(stoi(node->propertyValuePairs["maximum"]->value));
+                slider->setMaximum(tgui::stoi(node->propertyValuePairs["maximum"]->value));
             if (node->propertyValuePairs["value"])
-                slider->setValue(stoi(node->propertyValuePairs["value"]->value));
+                slider->setValue(tgui::stoi(node->propertyValuePairs["value"]->value));
 
             return slider;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadSpinButton(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadSpinButton(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             SpinButton::Ptr spinButton;
             if (widget)
@@ -899,11 +994,11 @@ namespace tgui
 
             loadWidget(node, spinButton);
             if (node->propertyValuePairs["minimum"])
-                spinButton->setMinimum(stoi(node->propertyValuePairs["minimum"]->value));
+                spinButton->setMinimum(tgui::stoi(node->propertyValuePairs["minimum"]->value));
             if (node->propertyValuePairs["maximum"])
-                spinButton->setMaximum(stoi(node->propertyValuePairs["maximum"]->value));
+                spinButton->setMaximum(tgui::stoi(node->propertyValuePairs["maximum"]->value));
             if (node->propertyValuePairs["value"])
-                spinButton->setValue(stoi(node->propertyValuePairs["value"]->value));
+                spinButton->setValue(tgui::stoi(node->propertyValuePairs["value"]->value));
             if (node->propertyValuePairs["verticalscroll"])
                 spinButton->setVerticalScroll(parseBoolean(node->propertyValuePairs["verticalscroll"]->value));
 
@@ -912,7 +1007,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadTabs(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadTabs(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             Tabs::Ptr tabs;
             if (widget)
@@ -932,20 +1027,20 @@ namespace tgui
             }
 
             if (node->propertyValuePairs["maximumtabwidth"])
-                tabs->setMaximumTabWidth(stof(node->propertyValuePairs["maximumtabwidth"]->value));
+                tabs->setMaximumTabWidth(tgui::stof(node->propertyValuePairs["maximumtabwidth"]->value));
             if (node->propertyValuePairs["textsize"])
-                tabs->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                tabs->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["tabheight"])
-                tabs->setTabHeight(stof(node->propertyValuePairs["tabheight"]->value));
+                tabs->setTabHeight(tgui::stof(node->propertyValuePairs["tabheight"]->value));
             if (node->propertyValuePairs["selected"])
-                tabs->select(stoi(node->propertyValuePairs["selected"]->value));
+                tabs->select(tgui::stoi(node->propertyValuePairs["selected"]->value));
 
             return tabs;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Widget::Ptr loadTextBox(std::shared_ptr<DataIO::Node> node, Widget::Ptr widget)
+        Widget::Ptr loadTextBox(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
         {
             TextBox::Ptr textBox;
             if (widget)
@@ -958,9 +1053,9 @@ namespace tgui
             if (node->propertyValuePairs["text"])
                 textBox->setText(DESERIALIZE_STRING("text"));
             if (node->propertyValuePairs["textsize"])
-                textBox->setTextSize(stoi(node->propertyValuePairs["textsize"]->value));
+                textBox->setTextSize(tgui::stoi(node->propertyValuePairs["textsize"]->value));
             if (node->propertyValuePairs["maximumcharacters"])
-                textBox->setMaximumCharacters(stoi(node->propertyValuePairs["maximumcharacters"]->value));
+                textBox->setMaximumCharacters(tgui::stoi(node->propertyValuePairs["maximumcharacters"]->value));
             if (node->propertyValuePairs["readonly"])
                 textBox->setReadOnly(parseBoolean(node->propertyValuePairs["readonly"]->value));
             if (node->propertyValuePairs["verticalscrollbarpresent"])
@@ -968,39 +1063,55 @@ namespace tgui
 
             return textBox;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Widget::Ptr loadVerticalLayout(const std::unique_ptr<DataIO::Node>& node, Widget::Ptr widget)
+        {
+            if (widget)
+                return loadContainer(node, std::static_pointer_cast<VerticalLayout>(widget));
+            else
+                return loadContainer(node, VerticalLayout::create());
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::map<std::string, WidgetLoader::LoadFunction> WidgetLoader::m_loadFunctions =
-    {
-        {"widget", loadWidget},
-        {"container", loadContainer},
-        {"button", loadButton},
-        {"canvas", loadCanvas},
-        {"chatbox", loadChatBox},
-        {"checkbox", loadCheckBox},
-        {"childwindow", loadChildWindow},
-        {"clickablewidget", loadClickableWidget},
-        {"combobox", loadComboBox},
-        {"editbox", loadEditBox},
-        {"group", loadGroup},
-        {"knob", loadKnob},
-        {"label", loadLabel},
-        {"listbox", loadListBox},
-        {"menubar", loadMenuBar},
-        {"messagebox", loadMessageBox},
-        {"panel", loadPanel},
-        {"picture", loadPicture},
-        {"progressbar", loadProgressBar},
-        {"radiobutton", loadRadioButton},
-        {"radiobuttongroup", loadRadioButtonGroup},
-        {"scrollbar", loadScrollbar},
-        {"slider", loadSlider},
-        {"spinbutton", loadSpinButton},
-        {"tabs", loadTabs},
-        {"textbox", loadTextBox}
-    };
+        {
+            {"widget", loadWidget},
+            {"container", loadContainer},
+            {"button", loadButton},
+            {"canvas", loadCanvas},
+            {"chatbox", loadChatBox},
+            {"checkbox", loadCheckBox},
+            {"childwindow", loadChildWindow},
+            {"clickablewidget", loadClickableWidget},
+            {"combobox", loadComboBox},
+            {"editbox", loadEditBox},
+            {"grid", loadGrid},
+            {"group", loadGroup},
+            {"horizontallayout", loadHorizontalLayout},
+            {"horizontalwrap", loadHorizontalWrap},
+            {"knob", loadKnob},
+            {"label", loadLabel},
+            {"listbox", loadListBox},
+            {"menubar", loadMenuBar},
+            {"messagebox", loadMessageBox},
+            {"panel", loadPanel},
+            {"picture", loadPicture},
+            {"progressbar", loadProgressBar},
+            {"radiobutton", loadRadioButton},
+            {"radiobuttongroup", loadRadioButtonGroup},
+            {"scrollbar", loadScrollbar},
+            {"slider", loadSlider},
+            {"spinbutton", loadSpinButton},
+            {"tabs", loadTabs},
+            {"textbox", loadTextBox},
+            {"verticallayout", loadVerticalLayout}
+        };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1022,7 +1133,7 @@ namespace tgui
                 if (nameSeparator != std::string::npos)
                     className = Deserializer::deserialize(ObjectConverter::Type::String, node->name.substr(nameSeparator + 1)).getString();
 
-                Widget::Ptr widget = loadFunction(node, nullptr);
+                tgui::Widget::Ptr widget = loadFunction(node, nullptr);
                 parent->add(widget, className);
             }
             else

@@ -24,7 +24,6 @@
 
 
 #include <TGUI/Widgets/VerticalLayout.hpp>
-#include <numeric>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,65 +31,56 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    VerticalLayout::VerticalLayout()
+    VerticalLayout::VerticalLayout(const Layout2d& size) :
+        BoxLayout{size}
     {
-        m_callback.widgetType = "VerticalLayout";
+        m_type = "VerticalLayout";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    VerticalLayout::Ptr VerticalLayout::create()
+    VerticalLayout::Ptr VerticalLayout::create(const Layout2d& size)
     {
-        return std::make_shared<VerticalLayout>();
+        return std::make_shared<VerticalLayout>(size);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    VerticalLayout::Ptr VerticalLayout::copy(ConstPtr layout)
+    VerticalLayout::Ptr VerticalLayout::copy(VerticalLayout::ConstPtr layout)
     {
         if (layout)
             return std::static_pointer_cast<VerticalLayout>(layout->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void VerticalLayout::updateWidgetPositions()
+    void VerticalLayout::updateWidgets()
     {
-        float sumRatio = 0;
-        for (size_t i = 0; i < m_widgetsRatio.size(); ++i)
-        {
-            if (m_widgetsFixedSizes[i] == 0)
-                sumRatio += m_widgetsRatio[i];
-        }
+        const sf::Vector2f contentSize = getContentSize();
+        const float totalSpaceBetweenWidgets = (m_spaceBetweenWidgetsCached * m_widgets.size()) - m_spaceBetweenWidgetsCached;
 
-        float currentRatio = 0;
         float currentOffset = 0;
-        const float sumFixedSize = accumulate(m_widgetsFixedSizes.begin(), m_widgetsFixedSizes.end(), 0.f);
-        for (size_t i = 0; i < m_widgets.size(); ++i)
+        for (auto& widget : m_widgets)
         {
-            m_widgets[i]->setPosition(0.f, (getSize().y - sumFixedSize) * currentRatio + currentOffset);
-            if (m_widgetsFixedSizes[i])
-            {
-                m_widgets[i]->setSize(getSize().x, m_widgetsFixedSizes[i]);
-                currentOffset += m_widgetsFixedSizes[i];
-            }
-            else
-            {
-                m_widgets[i]->setSize(getSize().x, (getSize().y - sumFixedSize) * m_widgetsRatio[i] / sumRatio);
-                currentRatio += m_widgetsRatio[i] / sumRatio;
-            }
+            const float height = (contentSize.y - totalSpaceBetweenWidgets) / m_widgets.size();
 
-            // Correct the size for widgets that have borders around it or a text next to them
-            if (m_widgets[i]->getFullSize() != m_widgets[i]->getSize())
+            widget->setSize({contentSize.x, height});
+            widget->setPosition({0, currentOffset});
+
+            // Correct the size for widgets that are bigger than what you set (e.g. have borders around it or a text next to them)
+            if (widget->getFullSize() != widget->getSize())
             {
-                sf::Vector2f newSize = m_widgets[i]->getSize() - (m_widgets[i]->getFullSize() - m_widgets[i]->getSize());
+                const sf::Vector2f newSize = widget->getSize() - (widget->getFullSize() - widget->getSize());
                 if (newSize.x > 0 && newSize.y > 0)
                 {
-                    m_widgets[i]->setSize(newSize);
-                    m_widgets[i]->setPosition(m_widgets[i]->getPosition() - m_widgets[i]->getWidgetOffset());
+                    widget->setSize(newSize);
+                    widget->setPosition(widget->getPosition() - widget->getWidgetOffset());
                 }
             }
+
+            currentOffset += height + m_spaceBetweenWidgetsCached;
         }
     }
 

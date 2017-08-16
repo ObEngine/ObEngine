@@ -33,28 +33,25 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"padding", Padding{2, 0, 0, 0}},
-        {"bordercolor", sf::Color::Black},
-        {"textcolor", sf::Color::Black},
-        {"backgroundcolor", Color{245, 245, 245}},
-        {"arrowcolor", Color{60, 60, 60}},
-        {"arrowcolorhover", sf::Color::Black},
-        {"arrowbackgroundcolor", Color{245, 245, 245}},
-        {"arrowbackgroundcolorhover", sf::Color::White}
-    };
+            {
+                {"borders", Borders{2}},
+                {"padding", Padding{0}},
+                {"bordercolor", sf::Color::Black},
+                {"textcolor", sf::Color::Black},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"arrowcolor", Color{60, 60, 60}},
+                {"arrowcolorhover", sf::Color::Black},
+                {"arrowbackgroundcolor", Color{245, 245, 245}},
+                {"arrowbackgroundcolorhover", sf::Color::White}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ComboBox::ComboBox()
     {
-        m_callback.widgetType = "ComboBox";
         m_type = "ComboBox";
 
         m_draggableWidget = true;
-
-        addSignal<sf::String, TypeSet<sf::String, sf::String>>("ItemSelected");
 
         initListBox();
 
@@ -67,83 +64,78 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ComboBox::ComboBox(const ComboBox& other) :
-        Widget {other},
-        m_nrOfItemsToDisplay {other.m_nrOfItemsToDisplay},
-        m_listBox {ListBox::copy(other.m_listBox)},
-        m_text {other.m_text},
-        m_spriteBackground {other.m_spriteBackground},
-        m_spriteArrowUp {other.m_spriteArrowUp},
-        m_spriteArrowDown {other.m_spriteArrowDown},
-        m_spriteArrowUpHover {other.m_spriteArrowUpHover},
-        m_spriteArrowDownHover {other.m_spriteArrowDownHover},
-        m_bordersCached {other.m_bordersCached},
-        m_paddingCached {other.m_paddingCached},
-        m_borderColorCached {other.m_borderColorCached},
-        m_backgroundColorCached {other.m_backgroundColorCached},
-        m_arrowColorCached {other.m_arrowColorCached},
-        m_arrowColorHoverCached {other.m_arrowColorHoverCached},
-        m_arrowBackgroundColorCached {other.m_arrowBackgroundColorCached},
+        Widget                           {other},
+        onItemSelect                     {other.onItemSelect},
+        m_nrOfItemsToDisplay             {other.m_nrOfItemsToDisplay},
+        m_listBox                        {ListBox::copy(other.m_listBox)},
+        m_text                           {other.m_text},
+        m_spriteBackground               {other.m_spriteBackground},
+        m_spriteArrowUp                  {other.m_spriteArrowUp},
+        m_spriteArrowDown                {other.m_spriteArrowDown},
+        m_spriteArrowUpHover             {other.m_spriteArrowUpHover},
+        m_spriteArrowDownHover           {other.m_spriteArrowDownHover},
+        m_bordersCached                  {other.m_bordersCached},
+        m_paddingCached                  {other.m_paddingCached},
+        m_borderColorCached              {other.m_borderColorCached},
+        m_backgroundColorCached          {other.m_backgroundColorCached},
+        m_arrowColorCached               {other.m_arrowColorCached},
+        m_arrowColorHoverCached          {other.m_arrowColorHoverCached},
+        m_arrowBackgroundColorCached     {other.m_arrowBackgroundColorCached},
         m_arrowBackgroundColorHoverCached{other.m_arrowBackgroundColorHoverCached}
     {
-        if (m_listBox != nullptr)
-        {
-            m_listBox->disconnectAll();
-            initListBox();
-        }
+        initListBox();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ComboBox::ComboBox(ComboBox&& other) :
-        Widget {std::move(other)},
-        m_nrOfItemsToDisplay {std::move(other.m_nrOfItemsToDisplay)},
-        m_listBox {std::move(other.m_listBox)},
-        m_text {std::move(other.m_text)},
-        m_spriteBackground {std::move(other.m_spriteBackground)},
-        m_spriteArrowUp {std::move(other.m_spriteArrowUp)},
-        m_spriteArrowDown {std::move(other.m_spriteArrowDown)},
-        m_spriteArrowUpHover {std::move(other.m_spriteArrowUpHover)},
-        m_spriteArrowDownHover {std::move(other.m_spriteArrowDownHover)},
-        m_bordersCached {std::move(other.m_bordersCached)},
-        m_paddingCached {std::move(other.m_paddingCached)},
-        m_borderColorCached {std::move(other.m_borderColorCached)},
-        m_backgroundColorCached {std::move(other.m_backgroundColorCached)},
-        m_arrowColorCached {std::move(other.m_arrowColorCached)},
-        m_arrowColorHoverCached {std::move(other.m_arrowColorHoverCached)},
-        m_arrowBackgroundColorCached {std::move(other.m_arrowBackgroundColorCached)},
+        Widget                           {std::move(other)},
+        onItemSelect                     {std::move(other.onItemSelect)},
+        m_nrOfItemsToDisplay             {std::move(other.m_nrOfItemsToDisplay)},
+        m_listBox                        {std::move(other.m_listBox)},
+        m_text                           {std::move(other.m_text)},
+        m_spriteBackground               {std::move(other.m_spriteBackground)},
+        m_spriteArrowUp                  {std::move(other.m_spriteArrowUp)},
+        m_spriteArrowDown                {std::move(other.m_spriteArrowDown)},
+        m_spriteArrowUpHover             {std::move(other.m_spriteArrowUpHover)},
+        m_spriteArrowDownHover           {std::move(other.m_spriteArrowDownHover)},
+        m_bordersCached                  {std::move(other.m_bordersCached)},
+        m_paddingCached                  {std::move(other.m_paddingCached)},
+        m_borderColorCached              {std::move(other.m_borderColorCached)},
+        m_backgroundColorCached          {std::move(other.m_backgroundColorCached)},
+        m_arrowColorCached               {std::move(other.m_arrowColorCached)},
+        m_arrowColorHoverCached          {std::move(other.m_arrowColorHoverCached)},
+        m_arrowBackgroundColorCached     {std::move(other.m_arrowBackgroundColorCached)},
         m_arrowBackgroundColorHoverCached{std::move(other.m_arrowBackgroundColorHoverCached)}
     {
-        if (m_listBox != nullptr)
-        {
-            m_listBox->disconnectAll();
-            initListBox();
-        }
+        initListBox();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ComboBox& ComboBox::operator=(const ComboBox& other)
+    ComboBox& ComboBox::operator= (const ComboBox& other)
     {
         if (this != &other)
         {
             ComboBox temp{other};
             Widget::operator=(other);
 
-            std::swap(m_nrOfItemsToDisplay, temp.m_nrOfItemsToDisplay);
-            swap(m_listBox, temp.m_listBox);
-            std::swap(m_text, temp.m_text);
-            std::swap(m_spriteBackground, temp.m_spriteBackground);
-            std::swap(m_spriteArrowUp, temp.m_spriteArrowUp);
-            std::swap(m_spriteArrowDown, temp.m_spriteArrowDown);
-            std::swap(m_spriteArrowUpHover, temp.m_spriteArrowUpHover);
-            std::swap(m_spriteArrowDownHover, temp.m_spriteArrowDownHover);
-            std::swap(m_bordersCached, temp.m_bordersCached);
-            std::swap(m_paddingCached, temp.m_paddingCached);
-            std::swap(m_borderColorCached, temp.m_borderColorCached);
-            std::swap(m_backgroundColorCached, temp.m_backgroundColorCached);
-            std::swap(m_arrowColorCached, temp.m_arrowColorCached);
-            std::swap(m_arrowColorHoverCached, temp.m_arrowColorHoverCached);
-            std::swap(m_arrowBackgroundColorCached, temp.m_arrowBackgroundColorCached);
+            std::swap(onItemSelect,                      temp.onItemSelect);
+            std::swap(m_nrOfItemsToDisplay,              temp.m_nrOfItemsToDisplay);
+            std::swap(m_listBox,                         temp.m_listBox);
+            std::swap(m_text,                            temp.m_text);
+            std::swap(m_spriteBackground,                temp.m_spriteBackground);
+            std::swap(m_spriteArrowUp,                   temp.m_spriteArrowUp);
+            std::swap(m_spriteArrowDown,                 temp.m_spriteArrowDown);
+            std::swap(m_spriteArrowUpHover,              temp.m_spriteArrowUpHover);
+            std::swap(m_spriteArrowDownHover,            temp.m_spriteArrowDownHover);
+            std::swap(m_bordersCached,                   temp.m_bordersCached);
+            std::swap(m_paddingCached,                   temp.m_paddingCached);
+            std::swap(m_borderColorCached,               temp.m_borderColorCached);
+            std::swap(m_backgroundColorCached,           temp.m_backgroundColorCached);
+            std::swap(m_arrowColorCached,                temp.m_arrowColorCached);
+            std::swap(m_arrowColorHoverCached,           temp.m_arrowColorHoverCached);
+            std::swap(m_arrowBackgroundColorCached,      temp.m_arrowBackgroundColorCached);
             std::swap(m_arrowBackgroundColorHoverCached, temp.m_arrowBackgroundColorHoverCached);
         }
 
@@ -152,27 +144,28 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ComboBox& ComboBox::operator=(ComboBox&& other)
+    ComboBox& ComboBox::operator= (ComboBox&& other)
     {
         if (this != &other)
         {
             Widget::operator=(std::move(other));
-            std::swap(m_nrOfItemsToDisplay, other.m_nrOfItemsToDisplay);
-            swap(m_listBox, other.m_listBox);
-            std::swap(m_text, other.m_text);
-            std::swap(m_spriteBackground, other.m_spriteBackground);
-            std::swap(m_spriteArrowUp, other.m_spriteArrowUp);
-            std::swap(m_spriteArrowDown, other.m_spriteArrowDown);
-            std::swap(m_spriteArrowUpHover, other.m_spriteArrowUpHover);
-            std::swap(m_spriteArrowDownHover, other.m_spriteArrowDownHover);
-            std::swap(m_bordersCached, other.m_bordersCached);
-            std::swap(m_paddingCached, other.m_paddingCached);
-            std::swap(m_borderColorCached, other.m_borderColorCached);
-            std::swap(m_backgroundColorCached, other.m_backgroundColorCached);
-            std::swap(m_arrowColorCached, other.m_arrowColorCached);
-            std::swap(m_arrowColorHoverCached, other.m_arrowColorHoverCached);
-            std::swap(m_arrowBackgroundColorCached, other.m_arrowBackgroundColorCached);
-            std::swap(m_arrowBackgroundColorHoverCached, other.m_arrowBackgroundColorHoverCached);
+            onItemSelect                      = std::move(other.onItemSelect);
+            m_nrOfItemsToDisplay              = std::move(other.m_nrOfItemsToDisplay);
+            m_listBox                         = std::move(other.m_listBox);
+            m_text                            = std::move(other.m_text);
+            m_spriteBackground                = std::move(other.m_spriteBackground);
+            m_spriteArrowUp                   = std::move(other.m_spriteArrowUp);
+            m_spriteArrowDown                 = std::move(other.m_spriteArrowDown);
+            m_spriteArrowUpHover              = std::move(other.m_spriteArrowUpHover);
+            m_spriteArrowDownHover            = std::move(other.m_spriteArrowDownHover);
+            m_bordersCached                   = std::move(other.m_bordersCached);
+            m_paddingCached                   = std::move(other.m_paddingCached);
+            m_borderColorCached               = std::move(other.m_borderColorCached);
+            m_backgroundColorCached           = std::move(other.m_backgroundColorCached);
+            m_arrowColorCached                = std::move(other.m_arrowColorCached);
+            m_arrowColorHoverCached           = std::move(other.m_arrowColorHoverCached);
+            m_arrowBackgroundColorCached      = std::move(other.m_arrowBackgroundColorCached);
+            m_arrowBackgroundColorHoverCached = std::move(other.m_arrowBackgroundColorHoverCached);
         }
 
         return *this;
@@ -187,11 +180,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ComboBox::Ptr ComboBox::copy(ConstPtr comboBox)
+    ComboBox::Ptr ComboBox::copy(ComboBox::ConstPtr comboBox)
     {
         if (comboBox)
             return std::static_pointer_cast<ComboBox>(comboBox->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,9 +194,12 @@ namespace tgui
     {
         Widget::setSize(size);
 
+        m_bordersCached.updateParentSize(getSize());
+        m_paddingCached.updateParentSize(getSize());
+
         m_spriteBackground.setSize(getInnerSize());
 
-        float height = getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom;
+        const float height = getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom();
 
         if (height > 0)
         {
@@ -224,7 +221,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ComboBox::setItemsToDisplay(size_t nrOfItemsInList)
+    void ComboBox::setItemsToDisplay(std::size_t nrOfItemsInList)
     {
         m_nrOfItemsToDisplay = nrOfItemsInList;
 
@@ -234,14 +231,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ComboBox::getItemCount() const
+    std::size_t ComboBox::getItemCount() const
     {
         return m_listBox->getItemCount();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ComboBox::getItemsToDisplay() const
+    std::size_t ComboBox::getItemsToDisplay() const
     {
         return m_nrOfItemsToDisplay;
     }
@@ -250,18 +247,16 @@ namespace tgui
 
     bool ComboBox::addItem(const sf::String& item, const sf::String& id)
     {
-        // Make room to add another item, until there are enough items
-        if ((m_nrOfItemsToDisplay == 0) || (m_listBox->getItemCount() < m_nrOfItemsToDisplay))
-            updateListBoxHeight();
-
-        return m_listBox->addItem(item, id);
+        const bool ret = m_listBox->addItem(item, id);
+        updateListBoxHeight();
+        return ret;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool ComboBox::setSelectedItem(const sf::String& itemName)
     {
-        bool ret = m_listBox->setSelectedItem(itemName);
+        const bool ret = m_listBox->setSelectedItem(itemName);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
@@ -270,16 +265,16 @@ namespace tgui
 
     bool ComboBox::setSelectedItemById(const sf::String& id)
     {
-        bool ret = m_listBox->setSelectedItemById(id);
+        const bool ret = m_listBox->setSelectedItemById(id);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ComboBox::setSelectedItemByIndex(size_t index)
+    bool ComboBox::setSelectedItemByIndex(std::size_t index)
     {
-        bool ret = m_listBox->setSelectedItemByIndex(index);
+        const bool ret = m_listBox->setSelectedItemByIndex(index);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
@@ -298,7 +293,7 @@ namespace tgui
     {
         // Implemented like removeItemByIndex instead of like removeItemById because m_listBox->getItems() may be slow
 
-        bool ret = m_listBox->removeItem(itemName);
+        const bool ret = m_listBox->removeItem(itemName);
 
         m_text.setString(m_listBox->getSelectedItem());
 
@@ -314,7 +309,7 @@ namespace tgui
     bool ComboBox::removeItemById(const sf::String& id)
     {
         const auto& ids = m_listBox->getItemIds();
-        for (size_t i = 0; i < ids.size(); ++i)
+        for (std::size_t i = 0; i < ids.size(); ++i)
         {
             if (ids[i] == id)
                 return removeItemByIndex(i);
@@ -325,9 +320,9 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ComboBox::removeItemByIndex(size_t index)
+    bool ComboBox::removeItemByIndex(std::size_t index)
     {
-        bool ret = m_listBox->removeItemByIndex(index);
+        const bool ret = m_listBox->removeItemByIndex(index);
 
         m_text.setString(m_listBox->getSelectedItem());
 
@@ -380,7 +375,7 @@ namespace tgui
 
     bool ComboBox::changeItem(const sf::String& originalValue, const sf::String& newValue)
     {
-        bool ret = m_listBox->changeItem(originalValue, newValue);
+        const bool ret = m_listBox->changeItem(originalValue, newValue);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
@@ -389,16 +384,16 @@ namespace tgui
 
     bool ComboBox::changeItemById(const sf::String& id, const sf::String& newValue)
     {
-        bool ret = m_listBox->changeItemById(id, newValue);
+        const bool ret = m_listBox->changeItemById(id, newValue);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ComboBox::changeItemByIndex(size_t index, const sf::String& newValue)
+    bool ComboBox::changeItemByIndex(std::size_t index, const sf::String& newValue)
     {
-        bool ret = m_listBox->changeItemByIndex(index, newValue);
+        const bool ret = m_listBox->changeItemByIndex(index, newValue);
         m_text.setString(m_listBox->getSelectedItem());
         return ret;
     }
@@ -419,14 +414,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ComboBox::setMaximumItems(size_t maximumItems)
+    void ComboBox::setMaximumItems(std::size_t maximumItems)
     {
         m_listBox->setMaximumItems(maximumItems);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ComboBox::getMaximumItems() const
+    std::size_t ComboBox::getMaximumItems() const
     {
         return m_listBox->getMaximumItems();
     }
@@ -458,7 +453,7 @@ namespace tgui
 
     bool ComboBox::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -483,7 +478,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ComboBox::mouseWheelScrolled(float delta, int, int)
+    void ComboBox::mouseWheelScrolled(float delta, sf::Vector2f)
     {
         // Only act to scrolling when the list is not being shown
         if (!m_listBox->isVisible())
@@ -492,9 +487,9 @@ namespace tgui
             if (delta < 0)
             {
                 // Select the next item
-                if (static_cast<size_t>(m_listBox->getSelectedItemIndex() + 1) < m_listBox->getItemCount())
+                if (static_cast<std::size_t>(m_listBox->getSelectedItemIndex() + 1) < m_listBox->getItemCount())
                 {
-                    m_listBox->setSelectedItemByIndex(static_cast<size_t>(m_listBox->getSelectedItemIndex() + 1));
+                    m_listBox->setSelectedItemByIndex(static_cast<std::size_t>(m_listBox->getSelectedItemIndex() + 1));
                     m_text.setString(m_listBox->getSelectedItem());
                 }
             }
@@ -503,11 +498,21 @@ namespace tgui
                 // Select the previous item
                 if (m_listBox->getSelectedItemIndex() > 0)
                 {
-                    m_listBox->setSelectedItemByIndex(static_cast<size_t>(m_listBox->getSelectedItemIndex() - 1));
+                    m_listBox->setSelectedItemByIndex(static_cast<std::size_t>(m_listBox->getSelectedItemIndex() - 1));
                     m_text.setString(m_listBox->getSelectedItem());
                 }
             }
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& ComboBox::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onItemSelect->getName()))
+            return *onItemSelect;
+        else
+            return Widget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -613,22 +618,24 @@ namespace tgui
 
     sf::Vector2f ComboBox::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void ComboBox::updateListBoxHeight()
     {
-        Borders borders = m_listBox->getRenderer()->getBorders();
-        Padding padding = m_listBox->getRenderer()->getPadding();
+        const Borders borders = m_listBox->getRenderer()->getBorders();
+        const Padding padding = m_listBox->getRenderer()->getPadding();
 
         if (m_nrOfItemsToDisplay > 0)
-            m_listBox->setSize({getSize().x, (m_listBox->getItemHeight() * (std::min<size_t>(m_nrOfItemsToDisplay, std::max<size_t>(m_listBox->getItemCount(), 1))))
-                + borders.top + borders.bottom + padding.top + padding.bottom});
+            m_listBox->setSize({getSize().x, (m_listBox->getItemHeight() * (std::min<std::size_t>(m_nrOfItemsToDisplay, std::max<std::size_t>(m_listBox->getItemCount(), 1))))
+                                             + borders.getTop() + borders.getBottom() + padding.getTop() + padding.getBottom()});
         else
-            m_listBox->setSize({getSize().x, (m_listBox->getItemHeight() * std::max<size_t>(m_listBox->getItemCount(), 1))
-                + borders.top + borders.bottom + padding.top + padding.bottom});
+            m_listBox->setSize({getSize().x, (m_listBox->getItemHeight() * std::max<std::size_t>(m_listBox->getItemCount(), 1))
+                                             + borders.getTop() + borders.getBottom() + padding.getTop() + padding.getBottom()});
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -644,7 +651,7 @@ namespace tgui
             while (container->getParent() != nullptr)
                 container = container->getParent();
 
-            m_listBox->setPosition({getAbsolutePosition().x, getAbsolutePosition().y + getSize().y - m_bordersCached.bottom});
+            m_listBox->setPosition({getAbsolutePosition().x, getAbsolutePosition().y + getSize().y - m_bordersCached.getBottom()});
             container->add(m_listBox, "#TGUI_INTERNAL$ComboBoxListBox#");
             m_listBox->focus();
         }
@@ -675,28 +682,18 @@ namespace tgui
     void ComboBox::initListBox()
     {
         m_listBox->hide();
-        m_listBox->connect("ItemSelected", &ComboBox::newItemSelectedCallbackFunction, this);
-        m_listBox->connect("Unfocused", &ComboBox::listBoxUnfocusedCallbackFunction, this);
-        m_listBox->connect("MouseReleased", &ComboBox::hideListBox, this);
-    }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        m_listBox->onItemSelect->connect([this](){
+                                            m_text.setString(m_listBox->getSelectedItem());
+                                            onItemSelect->emit(this, m_listBox->getSelectedItem(), m_listBox->getSelectedItemId());
+                                        });
 
-    void ComboBox::newItemSelectedCallbackFunction()
-    {
-        m_text.setString(m_listBox->getSelectedItem());
+        m_listBox->onUnfocus->connect([this](){
+                                            if (!m_mouseHover)
+                                                hideListBox();
+                                        });
 
-        m_callback.text = m_listBox->getSelectedItem();
-        m_callback.itemId = m_listBox->getSelectedItemId();
-        sendSignal("ItemSelected", m_listBox->getSelectedItem(), m_listBox->getSelectedItem(), m_listBox->getSelectedItemId());
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void ComboBox::listBoxUnfocusedCallbackFunction()
-    {
-        if (!m_mouseHover)
-            hideListBox();
+        m_listBox->onMouseRelease->connect([this](){ hideListBox(); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -709,7 +706,7 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         sf::RenderStates statesForText = states;
@@ -728,7 +725,7 @@ namespace tgui
             if (m_listBox->isVisible())
             {
                 arrowSize = m_spriteArrowUp.getSize().x;
-                states.transform.translate({getInnerSize().x - m_paddingCached.right - arrowSize, m_paddingCached.top});
+                states.transform.translate({getInnerSize().x - m_paddingCached.getRight() - arrowSize, m_paddingCached.getTop()});
 
                 if (m_mouseHover && m_spriteArrowUpHover.isSet())
                     m_spriteArrowUpHover.draw(target, states);
@@ -738,7 +735,7 @@ namespace tgui
             else
             {
                 arrowSize = m_spriteArrowDown.getSize().x;
-                states.transform.translate({getInnerSize().x - m_paddingCached.right - arrowSize, m_paddingCached.top});
+                states.transform.translate({getInnerSize().x - m_paddingCached.getRight() - arrowSize, m_paddingCached.getTop()});
 
                 if (m_mouseHover && m_spriteArrowDownHover.isSet())
                     m_spriteArrowDownHover.draw(target, states);
@@ -748,8 +745,8 @@ namespace tgui
         }
         else // There are no textures for the arrow
         {
-            arrowSize = getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom;
-            states.transform.translate({getInnerSize().x - m_paddingCached.right - arrowSize, m_paddingCached.top});
+            arrowSize = getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom();
+            states.transform.translate({getInnerSize().x - m_paddingCached.getRight() - arrowSize, m_paddingCached.getTop()});
 
             if (m_mouseHover && m_arrowBackgroundColorHoverCached.isSet())
                 drawRectangleShape(target, states, {arrowSize, arrowSize}, m_arrowBackgroundColorHoverCached);
@@ -759,15 +756,15 @@ namespace tgui
             sf::ConvexShape arrow{3};
             if (m_listBox->isVisible())
             {
-                arrow.setPoint(0, {arrowSize / 5, arrowSize * 4 / 5});
+                arrow.setPoint(0, {arrowSize / 5, arrowSize * 4/5});
                 arrow.setPoint(1, {arrowSize / 2, arrowSize / 5});
-                arrow.setPoint(2, {arrowSize * 4 / 5, arrowSize * 4 / 5});
+                arrow.setPoint(2, {arrowSize * 4/5, arrowSize * 4/5});
             }
             else // The listbox is not visible, the arrow points down
             {
                 arrow.setPoint(0, {arrowSize / 5, arrowSize / 5});
-                arrow.setPoint(1, {arrowSize / 2, arrowSize * 4 / 5});
-                arrow.setPoint(2, {arrowSize * 4 / 5, arrowSize / 5});
+                arrow.setPoint(1, {arrowSize / 2, arrowSize * 4/5});
+                arrow.setPoint(2, {arrowSize * 4/5, arrowSize / 5});
             }
 
             if (m_mouseHover && m_arrowColorHoverCached.isSet())
@@ -781,9 +778,9 @@ namespace tgui
         // Draw the selected item
         if (!m_text.getString().isEmpty())
         {
-            Clipping clipping{target, statesForText, {m_paddingCached.left, m_paddingCached.top}, {getInnerSize().x - m_paddingCached.left - m_paddingCached.right - arrowSize, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}};
+            const Clipping clipping{target, statesForText, {m_paddingCached.getLeft(), m_paddingCached.getTop()}, {getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight() - arrowSize, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()}};
 
-            statesForText.transform.translate(m_paddingCached.left, m_paddingCached.top + (((getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom) - m_text.getSize().y) / 2.0f));
+            statesForText.transform.translate(m_paddingCached.getLeft(), m_paddingCached.getTop() + (((getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()) - m_text.getSize().y) / 2.0f));
             m_text.draw(target, statesForText);
         }
     }

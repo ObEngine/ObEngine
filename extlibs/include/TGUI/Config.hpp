@@ -27,8 +27,31 @@
 
 #include <SFML/Config.hpp>
 
+#ifndef SFML_STATIC
+
+    #ifdef SFML_SYSTEM_WINDOWS
+
+        // Windows compilers need specific (and different) keywords for export and import
 #define TGUI_API
-#define TGUI_API
+
+    #else // Linux, FreeBSD, Mac OS X
+
+        // GCC 4 has special keywords for showing/hidding symbols
+        #if __GNUC__ >= 4
+            #define TGUI_API __attribute__ ((__visibility__ ("default")))
+        #else
+            #define TGUI_API
+        #endif
+
+    #endif
+
+#else
+
+    // Static build doesn't need import/export macros
+    #define TGUI_API
+    #define TGUI_API
+
+#endif
 
 
 // Version of the library
@@ -36,5 +59,11 @@
 #define TGUI_VERSION_MINOR 8
 #define TGUI_VERSION_PATCH 0
 
+// The constexpr keyword is not widely supported enough to be enabled by default
+#ifdef TGUI_ENABLE_CONSTEXPR
+    #define TGUI_CONSTEXPR constexpr
+#else
+    #define TGUI_CONSTEXPR
+#endif
 
 #endif // TGUI_CONFIG_HPP

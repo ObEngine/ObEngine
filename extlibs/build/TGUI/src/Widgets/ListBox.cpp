@@ -31,32 +31,26 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"padding", Padding{2, 0, 0, 0}},
-        {"bordercolor", sf::Color::Black},
-        {"textcolor", Color{60, 60, 60}},
-        {"textcolorhover", sf::Color::Black},
-        {"selectedtextcolor", sf::Color::White},
-        {"backgroundcolor", Color{245, 245, 245}},
-        {"backgroundcolorhover", sf::Color::White},
-        {"selectedbackgroundcolor", Color{0, 110, 255}},
-        {"selectedbackgroundcolorhover", Color{30, 150, 255}}
-    };
+            {
+                {"borders", Borders{2}},
+                {"padding", Padding{0}},
+                {"bordercolor", sf::Color::Black},
+                {"textcolor", Color{60, 60, 60}},
+                {"textcolorhover", sf::Color::Black},
+                {"selectedtextcolor", sf::Color::White},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"backgroundcolorhover", sf::Color::White},
+                {"selectedbackgroundcolor", Color{0, 110, 255}},
+                {"selectedbackgroundcolorhover", Color{30, 150, 255}}
+            };
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ListBox::ListBox()
     {
-        m_callback.widgetType = "ListBox";
         m_type = "ListBox";
 
         m_draggableWidget = true;
-
-        addSignal<sf::String, TypeSet<sf::String, sf::String>>("ItemSelected");
-        addSignal<sf::String, TypeSet<sf::String, sf::String>>("MousePressed");
-        addSignal<sf::String, TypeSet<sf::String, sf::String>>("MouseReleased");
-        addSignal<sf::String, TypeSet<sf::String, sf::String>>("DoubleClicked");
 
         m_renderer = aurora::makeCopied<ListBoxRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -74,11 +68,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ListBox::Ptr ListBox::copy(ConstPtr listBox)
+    ListBox::Ptr ListBox::copy(ListBox::ConstPtr listBox)
     {
         if (listBox)
             return std::static_pointer_cast<ListBox>(listBox->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,10 +82,10 @@ namespace tgui
     {
         Widget::setPosition(position);
 
-        for (size_t i = 0; i < m_items.size(); ++i)
+        for (std::size_t i = 0; i < m_items.size(); ++i)
             m_items[i].setPosition({0, (i * m_itemHeight) + ((m_itemHeight - m_items[i].getSize().y) / 2.0f)});
 
-        m_scroll.setPosition(getSize().x - m_bordersCached.right - m_paddingCached.right - m_scroll.getSize().x, m_bordersCached.top + m_paddingCached.top);
+        m_scroll.setPosition(getSize().x - m_bordersCached.getRight() - m_paddingCached.getRight() - m_scroll.getSize().x, m_bordersCached.getTop() + m_paddingCached.getTop());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +94,12 @@ namespace tgui
     {
         Widget::setSize(size);
 
+        m_bordersCached.updateParentSize(getSize());
+        m_paddingCached.updateParentSize(getSize());
+
         m_spriteBackground.setSize(getInnerSize());
 
-        m_scroll.setSize({m_scroll.getSize().x, std::max(0.f, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom)});
+        m_scroll.setSize({m_scroll.getSize().x, std::max(0.f, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom())});
         m_scroll.setLowValue(static_cast<unsigned int>(m_scroll.getSize().y));
 
         updatePosition();
@@ -135,15 +133,15 @@ namespace tgui
             m_itemIds.push_back(id);
             return true;
         }
-        // The item limit was reached
-        return false;
+        else // The item limit was reached
+            return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool ListBox::setSelectedItem(const sf::String& itemName)
     {
-        for (size_t i = 0; i < m_items.size(); ++i)
+        for (std::size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == itemName)
                 return setSelectedItemByIndex(i);
@@ -158,7 +156,7 @@ namespace tgui
 
     bool ListBox::setSelectedItemById(const sf::String& id)
     {
-        for (size_t i = 0; i < m_itemIds.size(); ++i)
+        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return setSelectedItemByIndex(i);
@@ -171,7 +169,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::setSelectedItemByIndex(size_t index)
+    bool ListBox::setSelectedItemByIndex(std::size_t index)
     {
         if (index >= m_items.size())
         {
@@ -201,7 +199,7 @@ namespace tgui
 
     bool ListBox::removeItem(const sf::String& itemName)
     {
-        for (size_t i = 0; i < m_items.size(); ++i)
+        for (std::size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == itemName)
                 return removeItemByIndex(i);
@@ -214,7 +212,7 @@ namespace tgui
 
     bool ListBox::removeItemById(const sf::String& id)
     {
-        for (size_t i = 0; i < m_itemIds.size(); ++i)
+        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return removeItemByIndex(i);
@@ -225,7 +223,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::removeItemByIndex(size_t index)
+    bool ListBox::removeItemByIndex(std::size_t index)
     {
         if (index >= m_items.size())
             return false;
@@ -242,11 +240,9 @@ namespace tgui
 
         // Check if the selected item should change
         if (m_selectedItem == static_cast<int>(index))
-            m_selectedItem = -1;
+            updateSelectedItem(-1);
         else if (m_selectedItem > static_cast<int>(index))
-        {
             updateSelectedItem(m_selectedItem - 1);
-        }
 
         return true;
     }
@@ -260,8 +256,8 @@ namespace tgui
         m_itemIds.clear();
 
         // Unselect any selected item
-        m_selectedItem = -1;
-        m_hoveringItem = -1;
+        updateSelectedItem(-1);
+        updateHoveringItem(-1);
 
         m_scroll.setMaximum(0);
     }
@@ -270,7 +266,7 @@ namespace tgui
 
     sf::String ListBox::getItemById(const sf::String& id) const
     {
-        for (size_t i = 0; i < m_itemIds.size(); ++i)
+        for (std::size_t i = 0; i < m_itemIds.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return m_items[i].getString();
@@ -304,7 +300,7 @@ namespace tgui
 
     bool ListBox::changeItem(const sf::String& originalValue, const sf::String& newValue)
     {
-        for (size_t i = 0; i < m_items.size(); ++i)
+        for (std::size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_items[i].getString() == originalValue)
                 return changeItemByIndex(i, newValue);
@@ -317,7 +313,7 @@ namespace tgui
 
     bool ListBox::changeItemById(const sf::String& id, const sf::String& newValue)
     {
-        for (size_t i = 0; i < m_items.size(); ++i)
+        for (std::size_t i = 0; i < m_items.size(); ++i)
         {
             if (m_itemIds[i] == id)
                 return changeItemByIndex(i, newValue);
@@ -328,7 +324,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ListBox::changeItemByIndex(size_t index, const sf::String& newValue)
+    bool ListBox::changeItemByIndex(std::size_t index, const sf::String& newValue)
     {
         if (index >= m_items.size())
             return false;
@@ -339,7 +335,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ListBox::getItemCount() const
+    std::size_t ListBox::getItemCount() const
     {
         return m_items.size();
     }
@@ -413,7 +409,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ListBox::setMaximumItems(size_t maximumItems)
+    void ListBox::setMaximumItems(std::size_t maximumItems)
     {
         // Set the new limit
         m_maxItems = maximumItems;
@@ -432,7 +428,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ListBox::getMaximumItems() const
+    std::size_t ListBox::getMaximumItems() const
     {
         return m_maxItems;
     }
@@ -455,25 +451,27 @@ namespace tgui
 
     bool ListBox::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void ListBox::leftMousePressed(sf::Vector2f pos)
     {
+        pos -= getPosition();
+
         m_mouseDown = true;
 
-        if (m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
+        if (m_scroll.mouseOnWidget(pos))
         {
-            m_scroll.leftMousePressed(pos - m_scroll.getPosition());
+            m_scroll.leftMousePressed(pos);
         }
         else
         {
-            if (sf::FloatRect{m_bordersCached.left + m_paddingCached.left, m_bordersCached.top + m_paddingCached.top,
-                getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
+            if (sf::FloatRect{m_bordersCached.getLeft() + m_paddingCached.getLeft(), m_bordersCached.getTop() + m_paddingCached.getTop(),
+                              getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight(), getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()}.contains(pos))
             {
-                pos.y -= m_bordersCached.top + m_paddingCached.top;
+                pos.y -= m_bordersCached.getTop() + m_paddingCached.getTop();
 
                 int hoveringItem = static_cast<int>(((pos.y - (m_itemHeight - (m_scroll.getValue() % m_itemHeight))) / m_itemHeight) + (m_scroll.getValue() / m_itemHeight) + 1);
                 if (hoveringItem < static_cast<int>(m_items.size()))
@@ -482,30 +480,13 @@ namespace tgui
                     updateHoveringItem(-1);
 
                 if (m_hoveringItem >= 0)
-                {
-                    m_callback.text = m_items[m_hoveringItem].getString();
-                    m_callback.itemId = m_itemIds[m_hoveringItem];
-                    sendSignal("MousePressed", m_items[m_hoveringItem].getString(), m_items[m_hoveringItem].getString(), m_itemIds[m_hoveringItem]);
-                }
+                    onMousePress->emit(this, m_items[m_hoveringItem].getString(), m_itemIds[m_hoveringItem]);
 
                 if (m_selectedItem != m_hoveringItem)
                 {
                     m_possibleDoubleClick = false;
 
                     updateSelectedItem(m_hoveringItem);
-
-                    if (m_selectedItem >= 0)
-                    {
-                        m_callback.text = m_items[m_selectedItem].getString();
-                        m_callback.itemId = m_itemIds[m_selectedItem];
-                        sendSignal("ItemSelected", m_items[m_selectedItem].getString(), m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
-                    }
-                    else
-                    {
-                        m_callback.text = "";
-                        m_callback.itemId = "";
-                        sendSignal("ItemSelected", "", "", "");
-                    }
                 }
             }
         }
@@ -518,11 +499,7 @@ namespace tgui
         if (m_mouseDown && !m_scroll.isMouseDown())
         {
             if (m_selectedItem >= 0)
-            {
-                m_callback.text = m_items[m_selectedItem].getString();
-                m_callback.itemId = m_itemIds[m_selectedItem];
-                sendSignal("MouseReleased", m_items[m_selectedItem].getString(), m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
-            }
+                onMouseRelease->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
 
             // Check if you double-clicked
             if (m_possibleDoubleClick)
@@ -530,7 +507,7 @@ namespace tgui
                 m_possibleDoubleClick = false;
 
                 if (m_selectedItem >= 0)
-                    sendSignal("DoubleClicked", m_items[m_selectedItem].getString(), m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
+                    onDoubleClick->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
             }
             else // This is the first click
             {
@@ -539,32 +516,34 @@ namespace tgui
             }
         }
 
-        m_scroll.leftMouseReleased(pos - m_scroll.getPosition());
+        m_scroll.leftMouseReleased(pos - getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void ListBox::mouseMoved(sf::Vector2f pos)
     {
+        pos -= getPosition();
+
         if (!m_mouseHover)
             mouseEnteredWidget();
 
         updateHoveringItem(-1);
 
         // Check if the mouse event should go to the scrollbar
-        if ((m_scroll.isMouseDown() && m_scroll.isMouseDownOnThumb()) || m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
+        if ((m_scroll.isMouseDown() && m_scroll.isMouseDownOnThumb()) || m_scroll.mouseOnWidget(pos))
         {
-            m_scroll.mouseMoved(pos - m_scroll.getPosition());
+            m_scroll.mouseMoved(pos);
         }
         else // Mouse not on scrollbar or dragging the scrollbar thumb
         {
             m_scroll.mouseNoLongerOnWidget();
 
             // Find out on which item the mouse is hovering
-            if (sf::FloatRect{m_bordersCached.left + m_paddingCached.left,
-                m_bordersCached.top + m_paddingCached.top, getInnerSize().x - m_paddingCached.left - m_paddingCached.right, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}.contains(pos))
+            if (sf::FloatRect{m_bordersCached.getLeft() + m_paddingCached.getLeft(),
+                              m_bordersCached.getTop() + m_paddingCached.getTop(), getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight(), getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()}.contains(pos))
             {
-                pos.y -= m_bordersCached.top + m_paddingCached.top;
+                pos.y -= m_bordersCached.getTop() + m_paddingCached.getTop();
 
                 int hoveringItem = static_cast<int>(((pos.y - (m_itemHeight - (m_scroll.getValue() % m_itemHeight))) / m_itemHeight) + (m_scroll.getValue() / m_itemHeight) + 1);
                 if (hoveringItem < static_cast<int>(m_items.size()))
@@ -580,19 +559,6 @@ namespace tgui
                         m_possibleDoubleClick = false;
 
                         updateSelectedItem(m_hoveringItem);
-
-                        if (m_selectedItem >= 0)
-                        {
-                            m_callback.text = m_items[m_selectedItem].getString();
-                            m_callback.itemId = m_itemIds[m_selectedItem];
-                            sendSignal("ItemSelected", m_items[m_selectedItem].getString(), m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
-                        }
-                        else
-                        {
-                            m_callback.text = "";
-                            m_callback.itemId = "";
-                            sendSignal("ItemSelected", "", "", "");
-                        }
                     }
                 }
             }
@@ -601,14 +567,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ListBox::mouseWheelScrolled(float delta, int x, int y)
+    void ListBox::mouseWheelScrolled(float delta, sf::Vector2f pos)
     {
         if (m_scroll.isShown())
         {
-            m_scroll.mouseWheelScrolled(delta, 0, 0);
+            m_scroll.mouseWheelScrolled(delta, pos - getPosition());
 
             // Update on which item the mouse is hovering
-            mouseMoved({static_cast<float>(x), static_cast<float>(y)});
+            mouseMoved(pos);
         }
     }
 
@@ -630,6 +596,22 @@ namespace tgui
     {
         Widget::mouseNoLongerDown();
         m_scroll.mouseNoLongerDown();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& ListBox::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onItemSelect->getName()))
+            return *onItemSelect;
+        else if (signalName == toLower(onMousePress->getName()))
+            return *onMousePress;
+        else if (signalName == toLower(onMouseRelease->getName()))
+            return *onMouseRelease;
+        else if (signalName == toLower(onDoubleClick->getName()))
+            return *onDoubleClick;
+        else
+            return Widget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -750,7 +732,7 @@ namespace tgui
 
     sf::Vector2f ListBox::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(), getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -825,6 +807,10 @@ namespace tgui
             }
 
             m_selectedItem = item;
+            if (m_selectedItem >= 0)
+                onItemSelect->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
+            else
+                onItemSelect->emit(this, "", "");
 
             updateSelectedAndHoveringItemColorsAndStyle();
         }
@@ -849,13 +835,13 @@ namespace tgui
     void ListBox::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform.translate(getPosition());
-        sf::RenderStates statesForScrollbar = states;
+        const sf::RenderStates statesForScrollbar = states;
 
         // Draw the borders
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Draw the background
@@ -867,14 +853,14 @@ namespace tgui
         // Draw the items and their selected/hover backgrounds
         {
             // Set the clipping for all draw calls that happen until this clipping object goes out of scope
-            float maxItemWidth = getInnerSize().x - m_paddingCached.left - m_paddingCached.right;
+            float maxItemWidth = getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight();
             if (m_scroll.isShown())
                 maxItemWidth -= m_scroll.getSize().x;
-            Clipping clipping{target, states, {m_paddingCached.left, m_paddingCached.top}, {maxItemWidth, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}};
+            const Clipping clipping{target, states, {m_paddingCached.getLeft(), m_paddingCached.getTop()}, {maxItemWidth, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()}};
 
             // Find out which items are visible
-            size_t firstItem = 0;
-            size_t lastItem = m_items.size();
+            std::size_t firstItem = 0;
+            std::size_t lastItem = m_items.size();
             if (m_scroll.getLowValue() < m_scroll.getMaximum())
             {
                 firstItem = m_scroll.getValue() / m_itemHeight;
@@ -885,14 +871,14 @@ namespace tgui
                     ++lastItem;
             }
 
-            states.transform.translate({m_paddingCached.left, m_paddingCached.top - m_scroll.getValue()});
+            states.transform.translate({m_paddingCached.getLeft(), m_paddingCached.getTop() - m_scroll.getValue()});
 
             // Draw the background of the selected item
             if (m_selectedItem >= 0)
             {
                 states.transform.translate({0, static_cast<float>(m_selectedItem * m_itemHeight)});
 
-                sf::Vector2f size = {getInnerSize().x - m_paddingCached.left - m_paddingCached.right, static_cast<float>(m_itemHeight)};
+                const sf::Vector2f size = {getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight(), static_cast<float>(m_itemHeight)};
                 if ((m_selectedItem == m_hoveringItem) && m_selectedBackgroundColorHoverCached.isSet())
                     drawRectangleShape(target, states, size, m_selectedBackgroundColorHoverCached);
                 else
@@ -905,12 +891,12 @@ namespace tgui
             if ((m_hoveringItem >= 0) && (m_hoveringItem != m_selectedItem) && m_backgroundColorHoverCached.isSet())
             {
                 states.transform.translate({0, static_cast<float>(m_hoveringItem * m_itemHeight)});
-                drawRectangleShape(target, states, {getInnerSize().x - m_paddingCached.left - m_paddingCached.right, static_cast<float>(m_itemHeight)}, m_backgroundColorHoverCached);
+                drawRectangleShape(target, states, {getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight(), static_cast<float>(m_itemHeight)}, m_backgroundColorHoverCached);
                 states.transform.translate({0, -static_cast<float>(m_hoveringItem * m_itemHeight)});
             }
 
             // Draw the items
-            for (size_t i = firstItem; i < lastItem; ++i)
+            for (std::size_t i = firstItem; i < lastItem; ++i)
                 m_items[i].draw(target, states);
         }
 

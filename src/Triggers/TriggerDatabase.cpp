@@ -164,11 +164,7 @@ namespace obe
                     std::vector<Trigger*> trgList = it2->second->getAllTriggers();
                     for (int i = 0; i < trgList.size(); i++)
                     {
-                        if (trgList[i]->m_enabled && trgList[i]->m_permanent)
-                        {
-                            trgList[i]->clear();
-                        }
-                        else if (trgList[i]->m_enabled)
+                        if (trgList[i]->m_enabled)
                         {
                             trgList[i]->m_enabled = false;
                             trgList[i]->clear();

@@ -24,6 +24,9 @@
 
 // Code based on http://codereview.stackexchange.com/questions/20058/c11-any-class
 
+#ifndef TGUI_ANY_HPP
+#define TGUI_ANY_HPP
+
 #include <type_traits>
 #include <utility>
 #include <typeinfo>
@@ -32,7 +35,7 @@ namespace tgui
 {
     struct Any
     {
-        template <class T>
+        template<class T>
         using StorageType = typename std::decay<T>::type;
 
         bool is_null() const
@@ -45,20 +48,20 @@ namespace tgui
             return ptr != nullptr;
         }
 
-        template <typename U>
+        template<typename U>
         Any(U&& value)
             : ptr{new Derived<StorageType<U>>(std::forward<U>(value))}
         {
         }
 
-        template <class U>
+        template<class U>
         bool is() const
         {
             typedef StorageType<U> T;
             return dynamic_cast<Derived<T>*>(ptr);
         }
 
-        template <class U>
+        template<class U>
         StorageType<U>& as() const
         {
             typedef StorageType<U> T;
@@ -69,7 +72,7 @@ namespace tgui
             return derived->value;
         }
 
-        template <class U>
+        template<class U>
         operator U()
         {
             return as<StorageType<U>>();
@@ -124,23 +127,20 @@ namespace tgui
     private:
         struct Base
         {
-            virtual ~Base()
-            {
-            }
-
+            virtual ~Base() {}
             virtual Base* clone() const = 0;
         };
 
-        template <typename T>
+        template<typename T>
         struct Derived : Base
         {
-            template <typename U>
+            template<typename U>
             Derived(U&& val) :
                 value(std::forward<U>(val))
             {
             }
 
-            Base* clone() const override
+            Base* clone() const
             {
                 return new Derived<T>(value);
             }
@@ -152,9 +152,12 @@ namespace tgui
         {
             if (ptr)
                 return ptr->clone();
-            return nullptr;
+            else
+                return nullptr;
         }
 
         Base* ptr;
     };
 }
+
+#endif // TGUI_ANY_HPP

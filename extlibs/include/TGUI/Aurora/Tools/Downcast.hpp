@@ -35,32 +35,34 @@
 
 namespace aurora
 {
-    /// @addtogroup Tools
-    /// @{
 
-    /// @brief Safe polymorphic downcast for references
-    /// @details Can be used in place of a static_cast from a base class to a derived class -- that is,
-    /// you expect the downcast to succeed. In debug mode, types are checked at runtime using dynamic_cast.
-    /// In release mode (with the NDBEBUG macro defined), a static_cast at full speed is used.
-    template <typename To, typename From>
-    To downcast(From& base)
-    {
-        assert(dynamic_cast<typename std::remove_reference<To>::type*>(&base));
-        return static_cast<To>(base);
-    }
+/// @addtogroup Tools
+/// @{
 
-    /// @brief Safe polymorphic downcast for pointers
-    /// @details Can be used in place of a static_cast from a base class to a derived class -- that is,
-    /// you expect the downcast to succeed. In debug mode, types are checked at runtime using dynamic_cast.
-    /// In release mode (with the NDBEBUG macro defined), a static_cast at full speed is used.
-    template <typename To, typename From>
-    To downcast(From* base)
-    {
-        assert(dynamic_cast<To>(base));
-        return static_cast<To>(base);
-    }
+/// @brief Safe polymorphic downcast for references
+/// @details Can be used in place of a static_cast from a base class to a derived class -- that is,
+/// you expect the downcast to succeed. In debug mode, types are checked at runtime using dynamic_cast.
+/// In release mode (with the NDBEBUG macro defined), a static_cast at full speed is used.
+template <typename To, typename From>
+To downcast(From& base)
+{
+	assert(dynamic_cast<typename std::remove_reference<To>::type*>(&base));
+	return static_cast<To>(base);
+}
 
-    /// @}
+/// @brief Safe polymorphic downcast for pointers
+/// @details Can be used in place of a static_cast from a base class to a derived class -- that is,
+/// you expect the downcast to succeed. In debug mode, types are checked at runtime using dynamic_cast.
+/// In release mode (with the NDBEBUG macro defined), a static_cast at full speed is used.
+template <typename To, typename From>
+To downcast(From* base)
+{
+	assert(dynamic_cast<To>(base));
+	return static_cast<To>(base);
+}
+
+/// @}
+
 } // namespace aurora
 
 #endif // AURORA_DOWNCAST_HPP

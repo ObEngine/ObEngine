@@ -118,16 +118,20 @@ namespace obe
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
-                    std::cout << "Picky picky :D" << std::endl;
                     selectedHandlePoint = selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
                     std::cout << selectedHandlePoint << ", " << hoveredSprite << ", " << selectedSprite << std::endl;
                     if (selectedHandlePoint != nullptr)
                     {
-                        std::cout << "POINT POINT POINT" << std::endl;
+                        editorTriggers->pushParameter("SpriteHandlePointPicked", "handlePoint", selectedHandlePoint);
+                        editorTriggers->pushParameter("SpriteHandlePointPicked", "pos", 
+                            pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));
+                        editorTriggers->trigger("SpriteHandlePointPicked");
                         hoveredSprite = nullptr;
                     }
                     else if (hoveredSprite != selectedSprite)
                     {
+                        editorTriggers->pushParameter("SpriteUnselect", "sprite", selectedSprite);
+                        editorTriggers->trigger("SpriteUnselect");
                         std::cout << "Unselect" << std::endl;
                         selectedSprite->setColor(sf::Color::White);
                         selectedSprite->unselect();
@@ -135,6 +139,7 @@ namespace obe
                         selectedSprite = nullptr;
                         selectedSpriteOffsetX = 0;
                         selectedSpriteOffsetY = 0;
+
                     }
                     std::cout << "Ended NonEf" << std::endl;
                 }
@@ -144,6 +149,11 @@ namespace obe
                     selectedSprite = hoveredSprite;
                     selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
                     selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
+                    editorTriggers->pushParameter("SpriteSelect", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteSelect", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                    editorTriggers->pushParameter("SpriteSelect", "pos",
+                        pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));
+                    editorTriggers->trigger("SpriteSelect");
                     selectedSprite->select();
 
                     selectedSprite->setColor(sf::Color(100, 255, 100));
@@ -151,7 +161,8 @@ namespace obe
             });
 
             inputManager.getAction("SpriteMove").connect(
-                [&selectedSprite, 
+                [editorTriggers,
+                &selectedSprite, 
                 &cursor, 
                 &selectedSpriteOffsetX, 
                 &selectedSpriteOffsetY, 
@@ -165,9 +176,14 @@ namespace obe
                 {
                     if (selectedSprite->getParentId().empty())
                     {
+                        editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
+                        editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
                         Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                         selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
                             cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                        editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
+                        editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                        editorTriggers->trigger("SpriteMoved");
                     }
                     else
                     {
@@ -190,17 +206,20 @@ namespace obe
             });
 
             inputManager.getAction("SpriteRemove").connect(
-                [&selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
+                [editorTriggers, &selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
             (const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
+                    editorTriggers->pushParameter("SpriteRemoved", "id", selectedSprite->getId());
+                    editorTriggers->trigger("SpriteRemoved");
                     world.removeLevelSpriteById(selectedSprite->getId());
                     selectedSprite = nullptr;
                     sprInfo.setString("");
                     hoveredSprite = nullptr;
                     selectedSpriteOffsetX = 0;
                     selectedSpriteOffsetY = 0;
+
                 }
             });
 

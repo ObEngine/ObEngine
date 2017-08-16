@@ -23,58 +23,67 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TGUI_CALLBACK_HPP
-#define TGUI_CALLBACK_HPP
-
-#include <TGUI/Config.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/String.hpp>
-#include <string>
+#include <TGUI/Widgets/HorizontalWrap.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
-    class Widget;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // @brief Struct that tells more about the callback that happened
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    struct TGUI_API Callback
+    HorizontalWrap::HorizontalWrap(const Layout2d& size) :
+        BoxLayout{size}
     {
-        // The callback id that was passed to the widget. It is used to identify from what widget the callback came from
-        unsigned int id = 0;
+        m_type = "HorizontalWrap";
+    }
 
-        // How did the callback occur?
-        std::string trigger;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Pointer to the widget
-        Widget* widget = nullptr;
+    HorizontalWrap::Ptr HorizontalWrap::create(const Layout2d& size)
+    {
+        return std::make_shared<HorizontalWrap>(size);
+    }
 
-        // The type of the widget
-        std::string widgetType = "Unknown";
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // When the mouse has something to do with the callback then this data will be filled
-        sf::Vector2i mouse;
+    HorizontalWrap::Ptr HorizontalWrap::copy(HorizontalWrap::ConstPtr layout)
+    {
+        if (layout)
+            return std::static_pointer_cast<HorizontalWrap>(layout->clone());
+        else
+            return nullptr;
+    }
 
-        // This text is only used by some widgets, but it can be set together with some other member
-        sf::String text;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Used to identify an item
-        sf::String itemId;
+    void HorizontalWrap::updateWidgets()
+    {
+        const sf::Vector2f contentSize = getContentSize();
 
-        // Only one of these things can be filled at a given time
-        bool checked = false;
-        int value = 0;
-        unsigned int index = 0;
-        sf::Vector2f value2d;
-        sf::Vector2f position;
-        sf::Vector2f size;
-    };
+        float currentHorizontalOffset = 0;
+        float currentVerticalOffset = 0;
+        float lineHeight = 0;
+        for (const auto& widget : m_widgets)
+        {
+            const auto size = widget->getSize();
+
+            if (currentHorizontalOffset + size.x > contentSize.x)
+            {
+                currentVerticalOffset += lineHeight + m_spaceBetweenWidgetsCached;
+                currentHorizontalOffset = 0;
+                lineHeight = 0;
+            }
+
+            widget->setPosition({currentHorizontalOffset, currentVerticalOffset});
+
+            currentHorizontalOffset += size.x + m_spaceBetweenWidgetsCached;
+
+            if (lineHeight < size.y)
+                lineHeight = size.y;
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#endif // TGUI_CALLBACK_HPP

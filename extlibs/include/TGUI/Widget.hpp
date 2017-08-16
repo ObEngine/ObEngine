@@ -27,6 +27,7 @@
 #define TGUI_WIDGET_HPP
 
 
+#include <TGUI/Global.hpp>
 #include <TGUI/Signal.hpp>
 #include <TGUI/Sprite.hpp>
 #include <TGUI/Transformable.hpp>
@@ -45,7 +46,6 @@ namespace tgui
     class Container;
 
     enum class ShowAnimationType;
-
     namespace priv
     {
         class Animation;
@@ -54,21 +54,6 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief The parent class for every widget
-    ///
-    /// Signals
-    ///     - PositionChanged (Position of the widget has changed)
-    ///         * Optional parameter sf::Vector2f: New widget position
-    ///         * Uses Callback member 'position'
-    ///
-    ///     - SizeChanged (Size of the widget has changed)
-    ///         * Optional parameter sf::Vector2f: New widget size
-    ///         * Uses Callback member 'size'
-    ///
-    ///     - Focused (Widget gained focus)
-    ///     - Unfocused (Widget lost focus)
-    ///     - MouseEntered (Mouse cursor entered in the Widget area)
-    ///     - MouseLeft (Mouse cursor left the Widget area)
-    ///
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Widget : public Transformable, public SignalWidgetBase, public std::enable_shared_from_this<Widget>
     {
@@ -116,7 +101,7 @@ namespace tgui
         /// @param rendererData  new renderer data
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setRenderer(std::shared_ptr<RendererData> rendererData);
+        void setRenderer(const std::shared_ptr<RendererData>& rendererData);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +137,7 @@ namespace tgui
         /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setPosition(const Layout2d& position) override;
+        virtual void setPosition(const Layout2d& position) override;
         using Transformable::setPosition;
 
 
@@ -174,7 +159,7 @@ namespace tgui
         /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(const Layout2d& size) override;
+        virtual void setSize(const Layout2d& size) override;
         using Transformable::setSize;
 
 
@@ -308,9 +293,7 @@ namespace tgui
         ///
         /// The previously focused widget will be unfocused.
         ///
-        /// @see unfocus
-        /// @see focusNextWidget
-        ///
+        /// @warning This function only has an effect when the widget was already added to its parent (e.g. the Gui).
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void focus();
 
@@ -318,9 +301,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Unfocus the widget
         ///
-        /// @see focus
-        /// @see focusNextWidget
-        ///
+        /// @warning This function only has an effect when the widget was already added to its parent (e.g. the Gui).
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unfocus();
 
@@ -361,6 +342,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Places the widget before all other widgets
         ///
+        /// @warning This function only has an effect when the widget was already added to its parent (e.g. the Gui).
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void moveToFront();
 
@@ -368,6 +350,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Places the widget behind all other widgets
         ///
+        /// @warning This function only has an effect when the widget was already added to its parent (e.g. the Gui).
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void moveToBack();
 
@@ -378,7 +361,7 @@ namespace tgui
         /// @param toolTip  Any widget that you want to use as a tool tip (usually a Label)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setToolTip(Ptr toolTip);
+        void setToolTip(Widget::Ptr toolTip);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +370,7 @@ namespace tgui
         /// @return The widget that is used as tool tip or nullptr when no tool tip has been set
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Ptr getToolTip();
+        Widget::Ptr getToolTip();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,7 +389,10 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @internal
+        /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
+        ///
+        /// @return Is the mouse on top of the widget?
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool mouseOnWidget(sf::Vector2f pos) const = 0;
 
@@ -438,7 +424,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void mouseWheelScrolled(float delta, int x, int y);
+        virtual void mouseWheelScrolled(float delta, sf::Vector2f pos);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
@@ -467,7 +453,14 @@ namespace tgui
         // Returns its tool tip or the tool tip from a child widget if the mouse is on top of the widget.
         // A nullptr is returned when the mouse is not on top of the widget or when the tool tip is empty.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Ptr askToolTip(sf::Vector2f mousePos);
+        virtual Widget::Ptr askToolTip(sf::Vector2f mousePos);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        // Inform the widget that the size of its parent has been changed.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void updateParentSize(sf::Vector2f size);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -491,11 +484,23 @@ namespace tgui
         /// @return Copy of the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Ptr clone() const = 0;
+        virtual Widget::Ptr clone() const = 0;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Retrieves a signal based on its name
+        ///
+        /// @param signalName  Name of the signal
+        ///
+        /// @return Signal that corresponds to the name
+        ///
+        /// @throw Exception when the name does not match any signal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Signal& getSignal(std::string&& signalName) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Function called when one of the properties of the renderer is changed
@@ -549,6 +554,17 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
+
+        SignalWrapper<SignalVector2f> onPositionChange = {"PositionChanged"};  ///< The position of the widget changed. Optional parameter: new position
+        SignalWrapper<SignalVector2f> onSizeChange     = {"SizeChanged"};      ///< The size of the widget changed. Optional parameter: new size
+        SignalWrapper<Signal>         onFocus          = {"Focused"};          ///< The widget was focused
+        SignalWrapper<Signal>         onUnfocus        = {"Unfocused"};        ///< The widget was unfocused
+        SignalWrapper<Signal>         onMouseEnter     = {"MouseEntered"};     ///< The mouse entered the widget
+        SignalWrapper<Signal>         onMouseLeave     = {"MouseLeft"};        ///< The mouse left the widget
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
         std::string m_type;
@@ -582,7 +598,7 @@ namespace tgui
         bool m_containerWidget = false;
 
         // The tool tip connected to the widget
-        Ptr m_toolTip = nullptr;
+        Widget::Ptr m_toolTip = nullptr;
 
         // Renderer of the widget
         aurora::CopiedPtr<WidgetRenderer> m_renderer = aurora::makeCopied<WidgetRenderer>();
@@ -591,7 +607,7 @@ namespace tgui
         std::vector<std::shared_ptr<priv::Animation>> m_showAnimations;
 
         // Cached renderer properties
-        Font m_fontCached;
+        Font  m_fontCached;
         float m_opacityCached;
 
 

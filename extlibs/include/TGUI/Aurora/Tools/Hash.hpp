@@ -36,61 +36,63 @@
 
 namespace aurora
 {
-    /// @addtogroup Tools
-    /// @{
 
-    /// @brief Computes the hash value of an object (short-hand notation).
-    ///
-    template <typename T>
-    size_t hashValue(const T& object
-                     AURORA_ENABLE_IF(!std::is_enum<T>::value))
-    {
-        std::hash<T> hasher;
-        return hasher(object);
-    }
+/// @addtogroup Tools
+/// @{
 
-    // Overload for enums
-    template <typename T>
-    size_t hashValue(const T& enumerator
-                     AURORA_ENABLE_IF(std::is_enum<T>::value))
-    {
-        return hashValue(static_cast<typename std::underlying_type<T>::type>(enumerator));
-    }
+/// @brief Computes the hash value of an object (short-hand notation).
+///
+template <typename T>
+std::size_t hashValue(const T& object
+	AURORA_ENABLE_IF(!std::is_enum<T>::value))
+{
+	std::hash<T> hasher;
+	return hasher(object);
+}
 
-    /// @brief Combines a hash with the hash value of another object.
-    ///
-    template <typename T>
-    void hashCombine(size_t& seed, const T& object)
-    {
-        // Implementation from Boost.Functional/Hash
-        seed ^= hashValue(object) + 0x9e3779b9u + (seed << 6) + (seed >> 2);
-    }
+// Overload for enums
+template <typename T>
+std::size_t hashValue(const T& enumerator
+	AURORA_ENABLE_IF(std::is_enum<T>::value))
+{
+	return hashValue(static_cast<typename std::underlying_type<T>::type>(enumerator));
+}
 
-    /// @brief Combines a hash with the hash value of a range of objects.
-    ///
-    template <typename Itr>
-    void hashRange(size_t& seed, Itr begin, Itr end)
-    {
-        for (; begin != end; ++begin)
-            hashCombine(seed, *begin);
-    }
+/// @brief Combines a hash with the hash value of another object.
+///
+template <typename T>
+void hashCombine(std::size_t& seed, const T& object)
+{
+	// Implementation from Boost.Functional/Hash
+	seed ^= hashValue(object) + 0x9e3779b9u + (seed << 6) + (seed >> 2);
+}
 
-    /// @brief Hash object for std::pair
-    ///
-    struct PairHasher
-    {
-        template <typename T, typename U>
-        size_t operator()(const std::pair<T, U>& pair) const
-        {
-            size_t hash = 0u;
-            hashCombine(hash, pair.first);
-            hashCombine(hash, pair.second);
+/// @brief Combines a hash with the hash value of a range of objects.
+///
+template <typename Itr>
+void hashRange(std::size_t& seed, Itr begin, Itr end)
+{
+	for (; begin != end; ++begin)
+		hashCombine(seed, *begin);
+}
 
-            return hash;
-        }
-    };
+/// @brief Hash object for std::pair
+///
+struct PairHasher
+{
+	template <typename T, typename U>
+	std::size_t operator() (const std::pair<T, U>& pair) const
+	{
+		std::size_t hash = 0u;
+		hashCombine(hash, pair.first);
+		hashCombine(hash, pair.second);
 
-    /// @}
+		return hash;
+	}
+};
+
+/// @}
+
 } // namespace aurora
 
 #endif // AURORA_HASH_HPP

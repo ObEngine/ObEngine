@@ -26,7 +26,6 @@
 #include <TGUI/Loading/Deserializer.hpp>
 #include <TGUI/Loading/DataIO.hpp>
 #include <TGUI/Renderers/WidgetRenderer.hpp>
-#include <TGUI/Exception.hpp>
 #include <TGUI/Global.hpp>
 #include <cassert>
 
@@ -36,31 +35,31 @@ namespace tgui
     {
         unsigned char hexToDec(char c)
         {
-            assert((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'));
+            assert((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')  || (c >= 'a' && c <= 'f'));
 
             if (c == 'A' || c == 'a')
                 return 10;
-            if (c == 'B' || c == 'b')
+            else if (c == 'B' || c == 'b')
                 return 11;
-            if (c == 'C' || c == 'c')
+            else if (c == 'C' || c == 'c')
                 return 12;
-            if (c == 'D' || c == 'd')
+            else if (c == 'D' || c == 'd')
                 return 13;
-            if (c == 'E' || c == 'e')
+            else if (c == 'E' || c == 'e')
                 return 14;
-            if (c == 'F' || c == 'f')
+            else if (c == 'F' || c == 'f')
                 return 15;
-            // if (c >= '0' && c <= '9')
-            return c - '0';
+            else // if (c >= '0' && c <= '9')
+                return c - '0';
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         bool readIntRect(std::string value, sf::IntRect& rect)
         {
-            if (!value.empty() && (value[0] == '(') && (value[value.length() - 1] == ')'))
+            if (!value.empty() && (value[0] == '(') && (value[value.length()-1] == ')'))
             {
-                std::vector<std::string> tokens = Deserializer::split(value.substr(1, value.size() - 2), ',');
+                std::vector<std::string> tokens = Deserializer::split(value.substr(1, value.size()-2), ',');
                 if (tokens.size() == 4)
                 {
                     rect = {tgui::stoi(tokens[0]), tgui::stoi(tokens[1]), tgui::stoi(tokens[2]), tgui::stoi(tokens[3])};
@@ -106,7 +105,7 @@ namespace tgui
             if (!str.empty())
             {
                 // Check if the color is represented by a string with its name
-                auto it = colorMap.find(toLower(str));
+                const auto it = colorMap.find(toLower(str));
                 if (it != colorMap.end())
                     return Color(it->second);
 
@@ -114,9 +113,9 @@ namespace tgui
                 if (str[0] == '#')
                 {
                     // You can only have hex characters
-                    for (size_t i = 1; i < value.length(); ++i)
+                    for (std::size_t i = 1; i < value.length(); ++i)
                     {
-                        if (!((value[i] >= '0' && value[i] <= '9') || (value[i] >= 'A' && value[i] <= 'F') || (value[i] >= 'a' && value[i] <= 'f')))
+                        if (!((value[i] >= '0' && value[i] <= '9') || (value[i] >= 'A' && value[i] <= 'F')  || (value[i] >= 'a' && value[i] <= 'f')))
                             throw Exception{"Failed to deserialize color '" + value + "'. Value started but '#' but contained an invalid character afterwards."};
                     }
 
@@ -124,30 +123,31 @@ namespace tgui
                     if (value.length() == 4)
                     {
                         return Color{static_cast<sf::Uint8>(hexToDec(value[1]) * 16 + hexToDec(value[1])),
-                            static_cast<sf::Uint8>(hexToDec(value[2]) * 16 + hexToDec(value[2])),
-                            static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[3]))};
+                                     static_cast<sf::Uint8>(hexToDec(value[2]) * 16 + hexToDec(value[2])),
+                                     static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[3]))};
                     }
-                    if (value.length() == 5)
+                    else if (value.length() == 5)
                     {
                         return Color{static_cast<sf::Uint8>(hexToDec(value[1]) * 16 + hexToDec(value[1])),
-                            static_cast<sf::Uint8>(hexToDec(value[2]) * 16 + hexToDec(value[2])),
-                            static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[3])),
-                            static_cast<sf::Uint8>(hexToDec(value[4]) * 16 + hexToDec(value[4]))};
+                                     static_cast<sf::Uint8>(hexToDec(value[2]) * 16 + hexToDec(value[2])),
+                                     static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[3])),
+                                     static_cast<sf::Uint8>(hexToDec(value[4]) * 16 + hexToDec(value[4]))};
                     }
-                    if (value.length() == 7)
+                    else if (value.length() == 7)
                     {
                         return Color{static_cast<sf::Uint8>(hexToDec(value[1]) * 16 + hexToDec(value[2])),
-                            static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[4])),
-                            static_cast<sf::Uint8>(hexToDec(value[5]) * 16 + hexToDec(value[6]))};
+                                     static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[4])),
+                                     static_cast<sf::Uint8>(hexToDec(value[5]) * 16 + hexToDec(value[6]))};
                     }
-                    if (value.length() == 9)
+                    else if (value.length() == 9)
                     {
                         return Color{static_cast<sf::Uint8>(hexToDec(value[1]) * 16 + hexToDec(value[2])),
-                            static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[4])),
-                            static_cast<sf::Uint8>(hexToDec(value[5]) * 16 + hexToDec(value[6])),
-                            static_cast<sf::Uint8>(hexToDec(value[7]) * 16 + hexToDec(value[8]))};
+                                     static_cast<sf::Uint8>(hexToDec(value[3]) * 16 + hexToDec(value[4])),
+                                     static_cast<sf::Uint8>(hexToDec(value[5]) * 16 + hexToDec(value[6])),
+                                     static_cast<sf::Uint8>(hexToDec(value[7]) * 16 + hexToDec(value[8]))};
                     }
-                    throw Exception{"Failed to deserialize color '" + value + "'. Value started but '#' but has the wrong length."};
+                    else
+                        throw Exception{"Failed to deserialize color '" + value + "'. Value started but '#' but has the wrong length."};
                 }
 
                 // The string can optionally start with "rgb" or "rgba", but this is ignored
@@ -157,16 +157,16 @@ namespace tgui
                     str.erase(0, 3);
 
                 // Remove the first and last characters when they are brackets
-                if ((str[0] == '(') && (str[str.length() - 1] == ')'))
-                    str = str.substr(1, str.length() - 2);
+                if ((str[0] == '(') && (str[str.length()-1] == ')'))
+                    str = str.substr(1, str.length()-2);
 
-                std::vector<std::string> tokens = Deserializer::split(str, ',');
+                const std::vector<std::string> tokens = Deserializer::split(str, ',');
                 if (tokens.size() == 3 || tokens.size() == 4)
                 {
                     return Color{static_cast<sf::Uint8>(tgui::stoi(tokens[0])),
-                        static_cast<sf::Uint8>(tgui::stoi(tokens[1])),
-                        static_cast<sf::Uint8>(tgui::stoi(tokens[2])),
-                        static_cast<sf::Uint8>((tokens.size() == 4) ? tgui::stoi(tokens[3]) : 255)};
+                                 static_cast<sf::Uint8>(tgui::stoi(tokens[1])),
+                                 static_cast<sf::Uint8>(tgui::stoi(tokens[2])),
+                                 static_cast<sf::Uint8>((tokens.size() == 4) ? tgui::stoi(tokens[3]) : 255)};
                 }
             }
 
@@ -178,12 +178,12 @@ namespace tgui
         ObjectConverter deserializeString(const std::string& value)
         {
             // Only deserialize the string when it is surrounded with quotes
-            if (!value.empty() && ((value[0] == '"') && (value[value.length() - 1] == '"')))
+            if (!value.empty() && ((value[0] == '"') && (value[value.length()-1] == '"')))
             {
-                std::string result = value.substr(1, value.length() - 2);
+                std::string result = value.substr(1, value.length()-2);
 
-                size_t backslashPos = 0;
-                while ((backslashPos = result.find('\\', backslashPos)) < result.size() - 1)
+                std::size_t backslashPos = 0;
+                while ((backslashPos = result.find('\\', backslashPos)) < result.size()-1)
                 {
                     result.erase(backslashPos, 1);
 
@@ -199,7 +199,8 @@ namespace tgui
 
                 return {sf::String{result}};
             }
-            return {sf::String{value}};
+            else
+                return {sf::String{value}};
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,27 +212,104 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        ObjectConverter deserializeLayout(const std::string& value)
+        {
+            std::string expression = tgui::trim(value);
+            if (expression.empty())
+                return {0.f};
+
+            // First calculate expressions withing brackets
+            auto openBracketPos = expression.rfind('(');
+            while (openBracketPos != std::string::npos)
+            {
+                auto closeBracketPos = expression.find(')', openBracketPos + 1);
+                if (closeBracketPos == std::string::npos)
+                    return {0.f}; // Opening bracket without matching closing bracket
+
+                std::string newExpression = expression.substr(0, openBracketPos)
+                                          + deserializeLayout(expression.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1)).getLayout().toString()
+                                          + expression.substr(closeBracketPos + 1);
+
+                expression = newExpression;
+                openBracketPos = expression.rfind('(');
+            }
+
+            // All brackets should be remove by now
+            if (expression.find(')') != std::string::npos)
+                return {0.f};
+
+            float ratioTerm = 0;
+            float constantTerm = 0;
+
+            // Split the expression in terms
+            // We can't split on '+' and '-' simultaniously, so we first split on '+' which gives a list of elements
+            // that may still be an expression containing '-'. When we split this expression on '-', the first term in the list
+            // is always positive (because it came first after the original split on '+'), while all the other terms have to be
+            // negative (because there can only be more terms when a '-' was found in the expression)
+            std::vector<std::string> temp = Deserializer::split(expression, '+');
+            for (auto& element : temp)
+            {
+                auto terms = Deserializer::split(element, '-');
+
+                // The first term in the list is always the positive one
+                if (!terms[0].empty())
+                {
+                    if (terms[0].back() == '%')
+                    {
+                        terms[0].pop_back();
+                        ratioTerm += std::stof(terms[0]);
+                    }
+                    else
+                        constantTerm += std::stof(terms[0]);
+                }
+
+                // All other elements are negative
+                for (unsigned int i = 1; i < terms.size(); ++i)
+                {
+                    if (!terms[i].empty())
+                    {
+                        if (terms[i].back() == '%')
+                        {
+                            terms[i].pop_back();
+                            ratioTerm -= std::stof(terms[i]);
+                        }
+                        else
+                            constantTerm -= std::stof(terms[i]);
+                    }
+                }
+            }
+
+            if (ratioTerm)
+                return {RelLayout{ratioTerm / 100.f, constantTerm}};
+            else
+                return {Layout{constantTerm}};
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         ObjectConverter deserializeOutline(const std::string& value)
         {
             std::string str = trim(value);
 
-            // Make sure that the line isn't empty
-            if (!str.empty())
-            {
-                // Remove the first and last characters when they are brackets
-                if ((str[0] == '(') && (str[str.length() - 1] == ')'))
-                    str = str.substr(1, str.length() - 2);
+            if (str.empty())
+                throw Exception{"Failed to deserialize outline '" + value + "'. String was empty."};
 
-                std::vector<std::string> tokens = Deserializer::split(str, ',');
-                if (tokens.size() == 1)
-                    return Outline{tgui::stof(tokens[0])};
-                if (tokens.size() == 2)
-                    return Outline{tgui::stof(tokens[0]), tgui::stof(tokens[1])};
-                if (tokens.size() == 4)
-                    return Outline{tgui::stof(tokens[0]), tgui::stof(tokens[1]), tgui::stof(tokens[2]), tgui::stof(tokens[3])};
-            }
+            // Remove the brackets around the value
+            if (((str.front() == '(') && (str.back() == ')')) || ((str.front() == '{') && (str.back() == '}')))
+                str = str.substr(1, str.length() - 2);
 
-            throw Exception{"Failed to deserialize outlines '" + value + "'."};
+            if (str.empty())
+                return {Outline{0}};
+
+            const std::vector<std::string> tokens = Deserializer::split(str, ',');
+            if (tokens.size() == 1)
+                return {Outline{tokens[0]}};
+            else if (tokens.size() == 2)
+                return {Outline{tokens[0], tokens[1]}};
+            else if (tokens.size() == 4)
+                return {Outline{tokens[0], tokens[1], tokens[2], tokens[3]}};
+            else
+                throw tgui::Exception{"Failed to deserialize outline '" + value + "'. Expected numbers separated with a comma."};
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,18 +374,19 @@ namespace tgui
                 if ((word == "Part") || (word == "part"))
                 {
                     rect = &partRect;
-                    advance(c, 4);
+                    std::advance(c, 4);
                 }
                 else if ((word == "Middle") || (word == "middle"))
                 {
                     rect = &middleRect;
-                    advance(c, 6);
+                    std::advance(c, 6);
                 }
                 else
                 {
                     if (word.empty())
                         throw Exception{"Failed to deserialize texture '" + value + "'. Expected 'Part' or 'Middle' in front of opening bracket."};
-                    throw Exception{"Failed to deserialize texture '" + value + "'. Unexpected word '" + word + "' in front of opening bracket. Expected 'Part' or 'Middle'."};
+                    else
+                        throw Exception{"Failed to deserialize texture '" + value + "'. Unexpected word '" + word + "' in front of opening bracket. Expected 'Part' or 'Middle'."};
                 }
 
                 auto closeBracketPos = value.find(')', c - value.begin());
@@ -319,7 +398,7 @@ namespace tgui
                 else
                     throw Exception{"Failed to deserialize texture '" + value + "'. Failed to find closing bracket for " + word + " rectangle."};
 
-                advance(c, closeBracketPos - (c - value.begin()) + 1);
+                std::advance(c, closeBracketPos - (c - value.begin()) + 1);
             }
 
             return Texture{getResourcePath() + filename, partRect, middleRect};
@@ -333,7 +412,7 @@ namespace tgui
             std::vector<std::string> styles = Deserializer::split(style, '|');
             for (const auto& elem : styles)
             {
-                std::string requestedStyle = toLower(trim(elem));
+                std::string requestedStyle = toLower(elem);
                 if (requestedStyle == "bold")
                     decodedStyle |= sf::Text::Bold;
                 else if (requestedStyle == "italic")
@@ -356,11 +435,11 @@ namespace tgui
 
             // The root node should contain exactly one child which is the node we need
             if (node->propertyValuePairs.empty() && (node->children.size() == 1))
-                node = node->children[0];
+                node = std::move(node->children[0]);
 
             auto rendererData = RendererData::create();
             for (const auto& pair : node->propertyValuePairs)
-                rendererData->propertyValuePairs[pair.first] = ObjectConverter(pair.second->value); // Did not compile in VS2013 when just assigning "{pair.second->value}"
+                rendererData->propertyValuePairs[pair.first] = {pair.second->value};
 
             for (const auto& child : node->children)
             {
@@ -378,16 +457,17 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::map<ObjectConverter::Type, Deserializer::DeserializeFunc> Deserializer::m_deserializers =
-    {
-        {ObjectConverter::Type::Font, deserializeFont},
-        {ObjectConverter::Type::Color, deserializeColor},
-        {ObjectConverter::Type::String, deserializeString},
-        {ObjectConverter::Type::Number, deserializeNumber},
-        {ObjectConverter::Type::Outline, deserializeOutline},
-        {ObjectConverter::Type::Texture, deserializeTexture},
-        {ObjectConverter::Type::TextStyle, deserializeTextStyle},
-        {ObjectConverter::Type::RendererData, deserializeRendererData}
-    };
+        {
+            {ObjectConverter::Type::Font, deserializeFont},
+            {ObjectConverter::Type::Color, deserializeColor},
+            {ObjectConverter::Type::String, deserializeString},
+            {ObjectConverter::Type::Number, deserializeNumber},
+            {ObjectConverter::Type::Layout, deserializeLayout},
+            {ObjectConverter::Type::Outline, deserializeOutline},
+            {ObjectConverter::Type::Texture, deserializeTexture},
+            {ObjectConverter::Type::TextStyle, deserializeTextStyle},
+            {ObjectConverter::Type::RendererData, deserializeRendererData}
+        };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -417,15 +497,14 @@ namespace tgui
     {
         std::vector<std::string> tokens;
 
-        size_t start = 0;
-        size_t end = 0;
-        while ((end = str.find(delim, start)) != std::string::npos)
-        {
-            tokens.push_back(str.substr(start, end - start));
+        std::size_t start = 0;
+        std::size_t end = 0;
+        while ((end = str.find(delim, start)) != std::string::npos) {
+            tokens.push_back(trim(str.substr(start, end - start)));
             start = end + 1;
         }
 
-        tokens.push_back(str.substr(start));
+        tokens.push_back(trim(str.substr(start)));
         return tokens;
     }
 

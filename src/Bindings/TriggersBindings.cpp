@@ -83,7 +83,6 @@ namespace obe
                         &Triggers::TriggerGroup::pushParameter<std::map<bool, bool>>
                     )
                     .addFunction("setJoinable", &Triggers::TriggerGroup::setJoinable)
-                    .addFunction("setPermanent", &Triggers::TriggerGroup::setPermanent)
                     .addFunction("trigger", &Triggers::TriggerGroup::trigger)
                 );
             }

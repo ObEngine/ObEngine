@@ -37,34 +37,10 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief List box widget
-    ///
-    /// Signals:
-    ///     - ItemSelected (a new item was selected)
-    ///         * Optional parameter sf::String: Name of the item (the text that is visible)
-    ///         * Optional parameters sf::String and sf::String: Name and id of the item
-    ///         * Uses Callback member 'text' and 'itemId'
-    ///
-    ///     - MousePressed (left mouse went down on top of an item)
-    ///         * Optional parameter sf::String: Name of the item (the text that is visible)
-    ///         * Optional parameters sf::String and sf::String: Name and id of the item
-    ///         * Uses Callback member 'text' and 'itemId'
-    ///
-    ///     - MouseReleased (left mouse went up on top of an item after it went down on of the items of the list box)
-    ///         * Optional parameter sf::String: Name of the item (the text that is visible)
-    ///         * Optional parameters sf::String and sf::String: Name and id of the item
-    ///         * Uses Callback member 'text' and 'itemId'
-    ///
-    ///     - DoubleClicked (double clicked on an item with the left mouse button)
-    ///         * Optional parameter sf::String: Name of the item (the text that is visible)
-    ///         * Optional parameters sf::String and sf::String: Name and id of the item
-    ///         * Uses Callback member 'text' and 'itemId'
-    ///
-    ///     - Inherited signals from Widget
-    ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API ListBox : public Widget
     {
-    public:
+      public:
 
         typedef std::shared_ptr<ListBox> Ptr; ///< Shared widget pointer
         typedef std::shared_ptr<const ListBox> ConstPtr; ///< Shared constant widget pointer
@@ -82,7 +58,7 @@ namespace tgui
         /// @return The new list box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr create();
+        static ListBox::Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +69,7 @@ namespace tgui
         /// @return The new list box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr copy(ConstPtr listBox);
+        static ListBox::Ptr copy(ListBox::ConstPtr listBox);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +90,7 @@ namespace tgui
         /// @param position  New position
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setPosition(const Layout2d& position) override;
+        virtual void setPosition(const Layout2d& position) override;
         using Transformable::setPosition;
 
 
@@ -192,7 +168,7 @@ namespace tgui
         /// @see setSelectedItemById
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool setSelectedItemByIndex(size_t index);
+        bool setSelectedItemByIndex(std::size_t index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +221,7 @@ namespace tgui
         /// @see removeItemById
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool removeItemByIndex(size_t index);
+        bool removeItemByIndex(std::size_t index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,7 +316,7 @@ namespace tgui
         ///        - false when the index was too high
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool changeItemByIndex(size_t index, const sf::String& newValue);
+        bool changeItemByIndex(std::size_t index, const sf::String& newValue);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +325,7 @@ namespace tgui
         /// @return Number of items inside the list box
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        size_t getItemCount() const;
+        std::size_t getItemCount() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +400,7 @@ namespace tgui
         /// If no scrollbar was loaded then there is always a limitation because there will be a limited space for the items.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setMaximumItems(size_t maximumItems = 0);
+        void setMaximumItems(std::size_t maximumItems = 0);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -434,7 +410,7 @@ namespace tgui
         ///         If the function returns 0 then there is no limit
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        size_t getMaximumItems() const;
+        std::size_t getMaximumItems() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,39 +435,42 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @internal
+        /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
+        ///
+        /// @return Is the mouse on top of the widget?
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        virtual bool mouseOnWidget(sf::Vector2f pos) const override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMousePressed(sf::Vector2f pos) override;
+        virtual void leftMousePressed(sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMouseReleased(sf::Vector2f pos) override;
+        virtual void leftMouseReleased(sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseMoved(sf::Vector2f pos) override;
+        virtual void mouseMoved(sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseWheelScrolled(float delta, int x, int y) override;
+        virtual void mouseWheelScrolled(float delta, sf::Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseNoLongerOnWidget() override;
+        virtual void mouseNoLongerOnWidget() override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseNoLongerDown() override;
+        virtual void mouseNoLongerDown() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -501,11 +480,23 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Retrieves a signal based on its name
+        ///
+        /// @param signalName  Name of the signal
+        ///
+        /// @return Signal that corresponds to the name
+        ///
+        /// @throw Exception when the name does not match any signal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Signal& getSignal(std::string&& signalName) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Function called when one of the properties of the renderer is changed
@@ -513,7 +504,7 @@ namespace tgui
         /// @param property  Lowercase name of the property that was changed
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void rendererChanged(const std::string& property) override;
+        virtual void rendererChanged(const std::string& property) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -549,23 +540,32 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function is called every frame with the time passed since the last frame.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void update(sf::Time elapsedTime) override;
+        virtual void update(sf::Time elapsedTime) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr clone() const override
+        virtual Widget::Ptr clone() const override
         {
             return std::make_shared<ListBox>(*this);
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
+
+        SignalWrapper<SignalItem> onItemSelect   = {"ItemSelected"};   ///< An item was selected in the list box. Optional parameter: selected item
+        SignalWrapper<SignalItem> onMousePress   = {"MousePressed"};   ///< The mouse went down on an item. Optional parameter: selected item
+        SignalWrapper<SignalItem> onMouseRelease = {"MouseReleased"};  ///< The mouse was released on one of the items. Optional parameter: selected item
+        SignalWrapper<SignalItem> onDoubleClick  = {"DoubleClicked"};  ///< An item was double clicked. Optional parameter: selected item
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
         // This contains the different items in the list box
-        std::vector<Text> m_items;
+        std::vector<Text>       m_items;
         std::vector<sf::String> m_itemIds;
 
         // What is the index of the selected item?
@@ -580,7 +580,7 @@ namespace tgui
         unsigned int m_textSize = 18;
 
         // This will store the maximum number of items in the list box (zero by default, meaning that there is no limit)
-        size_t m_maxItems = 0;
+        std::size_t m_maxItems = 0;
 
         // When there are too many items a scrollbar will be shown
         ScrollbarChildWidget m_scroll;
@@ -593,17 +593,17 @@ namespace tgui
         Sprite m_spriteBackground;
 
         // Cached renderer properties
-        Borders m_bordersCached;
-        Borders m_paddingCached;
-        Color m_borderColorCached;
-        Color m_backgroundColorCached;
-        Color m_backgroundColorHoverCached;
-        Color m_selectedBackgroundColorCached;
-        Color m_selectedBackgroundColorHoverCached;
-        Color m_textColorCached;
-        Color m_textColorHoverCached;
-        Color m_selectedTextColorCached;
-        Color m_selectedTextColorHoverCached;
+        Borders   m_bordersCached;
+        Borders   m_paddingCached;
+        Color     m_borderColorCached;
+        Color     m_backgroundColorCached;
+        Color     m_backgroundColorHoverCached;
+        Color     m_selectedBackgroundColorCached;
+        Color     m_selectedBackgroundColorHoverCached;
+        Color     m_textColorCached;
+        Color     m_textColorHoverCached;
+        Color     m_selectedTextColorCached;
+        Color     m_selectedTextColorHoverCached;
         TextStyle m_textStyleCached;
         TextStyle m_selectedTextStyleCached;
 

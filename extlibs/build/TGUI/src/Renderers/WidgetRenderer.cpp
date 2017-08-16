@@ -58,7 +58,8 @@ namespace tgui
         auto it = m_data->propertyValuePairs.find("font");
         if (it != m_data->propertyValuePairs.end())
             return it->second.getFont();
-        return {};
+        else
+            return {};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +88,8 @@ namespace tgui
         auto it = m_data->propertyValuePairs.find(toLower(property));
         if (it != m_data->propertyValuePairs.end())
             return it->second;
-        return {};
+        else
+            return {};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +115,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void WidgetRenderer::setData(std::shared_ptr<RendererData> data)
+    void WidgetRenderer::setData(const std::shared_ptr<RendererData>& data)
     {
         m_data = data;
     }

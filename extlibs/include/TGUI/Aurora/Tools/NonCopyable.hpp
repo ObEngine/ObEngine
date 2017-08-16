@@ -32,37 +32,34 @@
 
 namespace aurora
 {
-    /// @addtogroup Tools
-    /// @{
 
-    /// @brief Non-copyable base class.
-    /// @details Copy constructor and copy assignment operator are not accessible.
-    ///  Derive from this class to prevent copying of your class.
-    class NonCopyable
-    {
-        // ---------------------------------------------------------------------------------------------------------------------------
-        // Protected member functions
-    protected:
-        // Default constructor
-        NonCopyable()
-        {
-        }
+/// @addtogroup Tools
+/// @{
 
-        ~NonCopyable()
-        {
-        }
+/// @brief Non-copyable base class.
+/// @details Copy constructor and copy assignment operator are not accessible.
+///  Derive from this class to prevent copying of your class.
+class NonCopyable
+{
+	// ---------------------------------------------------------------------------------------------------------------------------
+	// Protected member functions
+	protected:
+		// Default constructor
+									NonCopyable() {}
+									~NonCopyable() {}
 
-        // ---------------------------------------------------------------------------------------------------------------------------
-        // Private member functions
-    private:
-        // Copy constructor (forbidden)
-        NonCopyable(const NonCopyable& origin);
+	// ---------------------------------------------------------------------------------------------------------------------------
+	// Private member functions
+	private:
+		// Copy constructor (forbidden)
+									NonCopyable(const NonCopyable& origin);
 
-        // Assignment operator (forbidden)
-        NonCopyable& operator=(const NonCopyable& origin);
-    };
+		// Assignment operator (forbidden)
+		NonCopyable&				operator= (const NonCopyable& origin);
+};
 
-    /// @}
+/// @}
+
 } // namespace aurora
 
 #endif // AURORA_NONCOPYABLE_HPP

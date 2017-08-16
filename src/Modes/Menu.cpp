@@ -7,6 +7,7 @@
 #include <Modes/Toolkit.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
+#include "Editor/TGUIFallback.hpp"
 
 namespace obe
 {
@@ -57,7 +58,8 @@ namespace obe
                 selectMapButton->setText(levelName + " (" + filename.substr(0, allMapsTemp[i].size() - 9) + ")");
                 selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
                 selectMapButton->setSize("630", "100");
-                selectMapButton->setPosition("0", std::to_string(i) + " * (&.height - 14) / 5");
+                selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
+                std::cout << "Adding map file : " << levelName << selectMapButton->getPosition().x << ", " << selectMapButton->getPosition().y << std::endl;
                 selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
                 middlePanel->add(selectMapButton);
                 scrollBoxSize += selectMapButton->getSize().y - 1;
@@ -117,43 +119,43 @@ namespace obe
             tgui::EditBox::Ptr createMapInput = tgui::EditBox::create();
 
             topPanel->setRenderer(baseTheme.getRenderer("Panel"));
-            topPanel->setSize("&.width", "&.height / 10");
+            topPanel->setSize("100%", "10%");
             topPanel->setPosition("0", "0");
 
             bottomPanel->setRenderer(baseTheme.getRenderer("Panel"));
-            bottomPanel->setSize("&.width", "&.height / 10");
-            bottomPanel->setPosition("0", "&.height - height");
+            bottomPanel->setSize("100%", "10%");
+            bottomPanel->setPosition("0", "90%");
 
             middlePanel->setRenderer(baseTheme.getRenderer("LightPanel"));
-            middlePanel->setSize("&.width", "&.height - (&.height / 5)");
-            middlePanel->setPosition("0", "&.height / 10");
+            middlePanel->setSize("100%", "80%");
+            middlePanel->setPosition("0", "10%");
 
-            scrollbar->setPosition("&.width - width", "&.height / 10");
-            scrollbar->setSize("16", "&.height - (&.height / 5)");
+            scrollbar->setPosition("620", "10% - 1");
+            scrollbar->setSize("16", "80% + 1");
             scrollbar->connect("ValueChanged", scrollPanel, middlePanel, scrollbar);
 
             titleLabel->setRenderer(baseTheme.getRenderer("Label"));
             titleLabel->setText("ObEngine");
             titleLabel->setTextSize(34);
-            titleLabel->setPosition("&.width / 40", "(&.height / 2) - (height / 2)");
+            titleLabel->setPosition("2.5%", "25%");
 
             mapEditorLabel->setRenderer(baseTheme.getRenderer("Label"));
             mapEditorLabel->setText("<Map Editor>");
             mapEditorLabel->setTextSize(22);
-            mapEditorLabel->setPosition("&.width / 3", "&.height / 25");
+            mapEditorLabel->setPosition("25%", "40%");
 
             closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
             closeButton->setSize("32", "32");
-            closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+            closeButton->setPosition("92%", "25%");
             closeButton->connect("pressed", [&window]()
-                             {
-                                 window.close();
-                             });
+            {
+                window.close();
+            });
 
             createMapLabel->setRenderer(baseTheme.getRenderer("Label"));
             createMapLabel->setText("Create Level : ");
             createMapLabel->setTextSize(30);
-            createMapLabel->setPosition("&.&.width / 40", "(&.height / 2) - (height / 2)");
+            createMapLabel->setPosition("2.5%", "20%");
 
             auto createMapLambda = [createMapInput, middlePanel, scrollbar, &baseTheme, &currentMap]()
             {
@@ -163,12 +165,12 @@ namespace obe
 
             createMapButton->setRenderer(baseTheme.getRenderer("AddButton"));
             createMapButton->setSize("32", "32");
-            createMapButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+            createMapButton->setPosition("90%", "25%");
             createMapButton->connect("pressed", createMapLambda);
 
             createMapInput->setRenderer(baseTheme.getRenderer("TextBox"));
             createMapInput->setSize("300", "32");
-            createMapInput->setPosition("(&.width / 2) - (width / 4)", "(&.height / 2) - (height / 2)");
+            createMapInput->setPosition("35%", "25%");
             createMapInput->connect("returnkeypressed", createMapLambda);
 
             gui.add(topPanel);
@@ -211,6 +213,10 @@ namespace obe
                         if (event.mouseButton.button == sf::Mouse::Left)
                             grabbedWindow = false;
                     }
+                    else if (event.type == sf::Event::MouseWheelScrolled)
+                    {
+                        scrollbar->mouseWheelScrolled(event.mouseWheelScroll.delta * 30, sf::Vector2f(0, 0));
+                    }
                     else if (event.type == sf::Event::MouseMoved)
                     {
                         if (grabbedWindow)
@@ -246,55 +252,55 @@ namespace obe
             tgui::Button::Ptr helpButton = tgui::Button::create();
 
             topPanel->setRenderer(baseTheme.getRenderer("Panel"));
-            topPanel->setSize("&.width", "&.height / 10");
+            topPanel->setSize("100%", "10%");
             topPanel->setPosition("0", "0");
 
             middlePanel->setRenderer(baseTheme.getRenderer("LightPanel"));
-            middlePanel->setSize("&.width", "&.height - (&.height / 10)");
-            middlePanel->setPosition("0", "&.height / 10");
+            middlePanel->setSize("100%", "90%");
+            middlePanel->setPosition("0", "10%");
 
             titleLabel->setRenderer(baseTheme.getRenderer("Label"));
             titleLabel->setText("ObEngine Development Menu");
             titleLabel->setTextSize(34);
-            titleLabel->setPosition("&.width / 40", "(&.height / 2) - (height / 2)");
+            titleLabel->setPosition("2.5%", "15%");
 
             closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
             closeButton->setSize("32", "32");
-            closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+            closeButton->setPosition("92%", "25%");
             closeButton->connect("pressed", [&window]()
-                             {
-                                 window.close();
-                             });
+            {
+                window.close();
+            });
 
             playButton->setRenderer(baseTheme.getRenderer("PlaySquareButton"));
             playButton->setSize("318", "286");
             playButton->setPosition("0", "0");
             playButton->connect("pressed", []()
-                            {
-                                startGame();
-                            });
+            {
+                startGame();
+            });
 
             editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
             editButton->setSize("318", "286");
-            editButton->setPosition(bindRight(playButton), "0");
+            editButton->setPosition(tguif::bindRight(playButton), "0");
             editButton->connect("pressed", []()
-                            {
-                                std::string editMapName = chooseMapMenu();
-                                if (editMapName != "")
-                                    Editor::editMap(editMapName);
-                            });
+            {
+                std::string editMapName = chooseMapMenu();
+                if (editMapName != "")
+                    Editor::editMap(editMapName);
+            });
 
             toolkitButton->setRenderer(baseTheme.getRenderer("ToolkitSquareButton"));
             toolkitButton->setSize("318", "286");
-            toolkitButton->setPosition("0", bindBottom(playButton));
+            toolkitButton->setPosition("0", tguif::bindBottom(playButton));
             toolkitButton->connect("pressed", [&window]()
-                               {
-                                   startToolkitMode();
-                               });
+            {
+                startToolkitMode();
+            });
 
             helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));
             helpButton->setSize("318", "286");
-            helpButton->setPosition(bindLeft(editButton), bindBottom(playButton));
+            helpButton->setPosition(tguif::bindLeft(editButton), tguif::bindBottom(playButton));
             //helpButton->connect("pressed", [&window]()
 
             gui.add(topPanel);

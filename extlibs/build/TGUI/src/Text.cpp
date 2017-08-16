@@ -74,7 +74,12 @@ namespace tgui
     void Text::setColor(Color color)
     {
         m_color = color;
+
+    #if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 4)
         m_text.setFillColor(Color::calcColorOpacity(color, m_opacity));
+    #else
+        m_text.setColor(Color::calcColorOpacity(color, m_opacity));
+    #endif
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +94,12 @@ namespace tgui
     void Text::setOpacity(float opacity)
     {
         m_opacity = opacity;
+
+    #if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 4)
         m_text.setFillColor(Color::calcColorOpacity(m_color, opacity));
+    #else
+        m_text.setColor(Color::calcColorOpacity(m_color, opacity));
+    #endif
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +147,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::Vector2f Text::findCharacterPos(size_t index) const
+    sf::Vector2f Text::findCharacterPos(std::size_t index) const
     {
         return m_text.findCharacterPos(index);
     }
@@ -150,9 +160,9 @@ namespace tgui
 
         // Round the position to avoid blurry text
         const float* matrix = states.transform.getMatrix();
-        states.transform = sf::Transform{matrix[0], matrix[4], round(matrix[12]),
-            matrix[1], matrix[5], floor(matrix[13]),
-            matrix[3], matrix[7], matrix[15]};
+        states.transform = sf::Transform{matrix[0], matrix[4], std::round(matrix[12]),
+                                         matrix[1], matrix[5], std::floor(matrix[13]),
+                                         matrix[3], matrix[7], matrix[15]};
 
         target.draw(m_text, states);
     }
@@ -161,7 +171,7 @@ namespace tgui
 
     void Text::recalculateSize()
     {
-        std::shared_ptr<sf::Font> font = m_font;
+        const std::shared_ptr<sf::Font> font = m_font;
         if (font == nullptr)
         {
             m_size = {0, 0};
@@ -173,11 +183,11 @@ namespace tgui
         unsigned int lines = 1;
         sf::Uint32 prevChar = 0;
         const sf::String& string = m_text.getString();
-        bool bold = (m_text.getStyle() & sf::Text::Bold) != 0;
-        unsigned int textSize = m_text.getCharacterSize();
-        for (size_t i = 0; i < string.getSize(); ++i)
+        const bool bold = (m_text.getStyle() & sf::Text::Bold) != 0;
+        const unsigned int textSize = m_text.getCharacterSize();
+        for (std::size_t i = 0; i < string.getSize(); ++i)
         {
-            float kerning = static_cast<float>(font->getKerning(prevChar, string[i], textSize));
+            const float kerning = static_cast<float>(font->getKerning(prevChar, string[i], textSize));
             if (string[i] == '\n')
             {
                 maxWidth = std::max(maxWidth, width);
@@ -192,7 +202,7 @@ namespace tgui
             prevChar = string[i];
         }
 
-        float extraVerticalSpace = calculateExtraVerticalSpace(m_font, m_text.getCharacterSize(), m_text.getStyle());
+        const float extraVerticalSpace = Text::calculateExtraVerticalSpace(m_font, m_text.getCharacterSize(), m_text.getStyle());
         m_size = {std::max(maxWidth, width), lines * font->getLineSpacing(m_text.getCharacterSize()) + extraVerticalSpace};
     }
 
@@ -200,52 +210,55 @@ namespace tgui
 
     unsigned int Text::findBestTextSize(Font fontWrapper, float height, int fit)
     {
-        std::shared_ptr<sf::Font> font = fontWrapper.getFont();
+        const std::shared_ptr<sf::Font> font = fontWrapper.getFont();
         if (!font)
             return 0;
 
         if (height < 2)
             return 1;
 
-        std::vector<unsigned int> textSizes(static_cast<size_t>(height));
+        std::vector<unsigned int> textSizes(static_cast<std::size_t>(height));
         for (unsigned int i = 0; i < static_cast<unsigned int>(height); ++i)
             textSizes[i] = i + 1;
 
-        auto high = std::lower_bound(textSizes.begin(), textSizes.end(), height,
-                                     [&](unsigned int charSize, float h) { return font->getLineSpacing(charSize) + calculateExtraVerticalSpace(font, charSize) < h; });
+        const auto high = std::lower_bound(textSizes.begin(), textSizes.end(), height,
+                                           [&](unsigned int charSize, float h) { return font->getLineSpacing(charSize) + Text::calculateExtraVerticalSpace(font, charSize) < h; });
         if (high == textSizes.end())
             return static_cast<unsigned int>(height);
 
-        float highLineSpacing = font->getLineSpacing(*high);
+        const float highLineSpacing = font->getLineSpacing(*high);
         if (highLineSpacing == height)
             return *high;
 
-        auto low = high - 1;
-        float lowLineSpacing = font->getLineSpacing(*low);
+        const auto low = high - 1;
+        const float lowLineSpacing = font->getLineSpacing(*low);
 
         if (fit < 0)
             return *low;
-        if (fit > 0)
+        else if (fit > 0)
             return *high;
-        if (abs(height - lowLineSpacing) < abs(height - highLineSpacing))
-            return *low;
         else
-            return *high;
+        {
+            if (std::abs(height - lowLineSpacing) < std::abs(height - highLineSpacing))
+                return *low;
+            else
+                return *high;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     float Text::calculateExtraVerticalSpace(Font font, unsigned int characterSize, TextStyle style)
     {
-        bool bold = (style & sf::Text::Bold) != 0;
+        const bool bold = (style & sf::Text::Bold) != 0;
 
         // Calculate the height of the first line (char size = everything above baseline, height + top = part below baseline)
-        float lineHeight = characterSize
-            + font.getFont()->getGlyph('g', characterSize, bold).bounds.height
-            + font.getFont()->getGlyph('g', characterSize, bold).bounds.top;
+        const float lineHeight = characterSize
+                                 + font.getFont()->getGlyph('g', characterSize, bold).bounds.height
+                                 + font.getFont()->getGlyph('g', characterSize, bold).bounds.top;
 
         // Get the line spacing sfml returns
-        float lineSpacing = font.getFont()->getLineSpacing(characterSize);
+        const float lineSpacing = font.getFont()->getLineSpacing(characterSize);
 
         // Calculate the offset of the text
         return lineHeight - lineSpacing;
@@ -259,29 +272,29 @@ namespace tgui
             return "";
 
         sf::String result;
-        size_t index = 0;
+        std::size_t index = 0;
         while (index < text.getSize())
         {
-            size_t oldIndex = index;
+            const std::size_t oldIndex = index;
 
             // Find out how many characters we can get on this line
             float width = 0;
             sf::Uint32 prevChar = 0;
-            for (size_t i = index; i < text.getSize(); ++i)
+            for (std::size_t i = index; i < text.getSize(); ++i)
             {
                 float charWidth;
-                sf::Uint32 curChar = text[i];
+                const sf::Uint32 curChar = text[i];
                 if (curChar == '\n')
                 {
                     index++;
                     break;
                 }
-                if (curChar == '\t')
+                else if (curChar == '\t')
                     charWidth = font.getFont()->getGlyph(' ', textSize, bold).advance * 4;
                 else
                     charWidth = font.getFont()->getGlyph(curChar, textSize, bold).advance;
 
-                float kerning = font.getFont()->getKerning(prevChar, curChar, textSize);
+                const float kerning = font.getFont()->getKerning(prevChar, curChar, textSize);
                 if ((maxWidth == 0) || (width + charWidth + kerning <= maxWidth))
                 {
                     width += kerning + charWidth;
@@ -298,12 +311,12 @@ namespace tgui
                 index++;
 
             // Implement the word-wrap by removing the last few characters from the line
-            if (text[index - 1] != '\n')
+            if (text[index-1] != '\n')
             {
-                size_t indexWithoutWordWrap = index;
+                const std::size_t indexWithoutWordWrap = index;
                 if ((index < text.getSize()) && (!isWhitespace(text[index])))
                 {
-                    size_t wordWrapCorrection = 0;
+                    std::size_t wordWrapCorrection = 0;
                     while ((index > oldIndex) && (!isWhitespace(text[index - 1])))
                     {
                         wordWrapCorrection++;
@@ -321,7 +334,7 @@ namespace tgui
             {
                 if ((index < text.getSize()) && (text[index] == ' '))
                 {
-                    if ((index == 0) || (!isWhitespace(text[index - 1])))
+                    if ((index == 0) || (!isWhitespace(text[index-1])))
                     {
                         // But two or more spaces indicate that it is not a normal text and the spaces should not be ignored
                         if (((index + 1 < text.getSize()) && (!isWhitespace(text[index + 1]))) || (index + 1 == text.getSize()))
@@ -331,7 +344,7 @@ namespace tgui
             }
 
             result += text.substring(oldIndex, index - oldIndex);
-            if ((index < text.getSize()) && (text[index - 1] != '\n'))
+            if ((index < text.getSize()) && (text[index-1] != '\n'))
                 result += "\n";
         }
 

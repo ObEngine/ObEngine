@@ -27,7 +27,6 @@ namespace obe
             std::string m_name;
             std::vector<kaguya::State*> m_registeredStates;
             bool m_enabled = false;
-            bool m_permanent = false;
             unsigned int m_stackSize = 0;
             friend class TriggerGroup;
             friend class TriggerDatabase;

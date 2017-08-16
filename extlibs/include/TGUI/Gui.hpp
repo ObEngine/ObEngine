@@ -23,8 +23,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TGUI_WINDOW_HPP
-#define TGUI_WINDOW_HPP
+#ifndef TGUI_GUI_HPP
+#define TGUI_GUI_HPP
 
 
 #include <TGUI/Container.hpp>
@@ -41,37 +41,37 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Gui
     {
-    public:
+      public:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Default constructor
         ///
-        /// If you use this constructor then you will still have to call the setWindow yourself.
+        /// If you use this constructor then you will still have to call the setTarget yourself.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Gui();
 
-
+#if SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR < 5
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructs the gui and set the window on which the gui should be drawn
         ///
         /// @param window  The sfml window that will be used by the gui
         ///
-        /// If you use this constructor then you will no longer have to call setWindow yourself.
+        /// If you use this constructor then you will no longer have to call setTarget yourself.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Gui(sf::RenderWindow& window);
-
+#endif
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructs the gui and set the target on which the gui should be drawn
         ///
-        /// @param window  The render target that will be used by the gui
+        /// @param target  The render target (typically sf::RenderWindow) that will be used by the gui
         ///
-        /// If you use this constructor then you will no longer have to call setWindow yourself.
+        /// If you use this constructor then you will no longer have to call setTarget yourself.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Gui(sf::RenderTarget& window);
+        Gui(sf::RenderTarget& target);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,32 +85,32 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Gui& operator=(const Gui& right) = delete;
 
-
+#if SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR < 5
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Sets the window on which the gui should be drawn
         ///
         /// @param window  The sfml window that will be used by the gui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWindow(sf::RenderWindow& window);
-
+        void setTarget(sf::RenderWindow& window);
+#endif
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Sets the target on which the gui should be drawn
         ///
-        /// @param window  The render target that will be used by the gui
+        /// @param target  The render target (typically sf::RenderWindow) that will be used by the gui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWindow(sf::RenderTarget& window);
+        void setTarget(sf::RenderTarget& target);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the window on which the gui is being drawn
+        /// @brief Returns the render target on which the gui is being drawn
         ///
-        /// @return The sfml that is used by the gui
+        /// @return The sfml render target that is used by the gui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::RenderTarget* getWindow() const;
+        sf::RenderTarget* getTarget() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,13 +208,6 @@ namespace tgui
         /// @param widgetPtr   Pointer to the widget you would like to add
         /// @param widgetName  If you want to access the widget later then you must do this with this name
         ///
-        /// Usage example:
-        /// @code
-        /// tgui::Picture::Ptr pic(container); // Create a picture and add it to the container
-        /// container.remove(pic);             // Remove the picture from the container
-        /// container.add(pic);                // Add the picture to the container again
-        /// @endcode
-        ///
         /// @warning The widget name should not contain whitespace
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,16 +222,13 @@ namespace tgui
         ///
         /// @return Pointer to the earlier created widget
         ///
+        /// The gui will first search for widgets that are direct children of it, but when none of the child widgets match
+        /// the given name, a recursive search will be performed.
+        ///
         /// @warning This function will return nullptr when an unknown widget name was passed
         ///
-        /// Usage example:
-        /// @code
-        /// tgui::Picture::Ptr pic(container, "picName");
-        /// tgui::Picture::Ptr pic2 = container.get("picName");
-        /// @endcode
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr get(const sf::String& widgetName, bool recursive = false) const;
+        Widget::Ptr get(const sf::String& widgetName) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -250,19 +240,16 @@ namespace tgui
         /// @return Pointer to the earlier created widget.
         ///         The pointer will already be casted to the desired type
         ///
-        /// @warning This function will return nullptr when an unknown widget name was passed
+        /// The gui will first search for widgets that are direct children of it, but when none of the child widgets match
+        /// the given name, a recursive search will be performed.
         ///
-        /// Usage example:
-        /// @code
-        /// tgui::Picture::Ptr pic(container, "picName");
-        /// tgui::Picture::Ptr pic2 = container.get<tgui::Picture>("picName");
-        /// @endcode
+        /// @warning This function will return nullptr when an unknown widget name was passed
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        typename T::Ptr get(const sf::String& widgetName, bool recursive = false) const
+        typename T::Ptr get(const sf::String& widgetName) const
         {
-            return m_container->get<T>(widgetName, recursive);
+            return m_container->get<T>(widgetName);
         }
 
 
@@ -270,14 +257,6 @@ namespace tgui
         /// @brief Removes a single widget that was added to the container
         ///
         /// @param widget  Pointer to the widget to remove
-        ///
-        /// Usage example:
-        /// @code
-        /// tgui::Picture::Ptr pic(container, "picName");
-        /// tgui::Picture::Ptr pic2(container, "picName2");
-        /// container.remove(pic);
-        /// container.remove(container.get("picName2"));
-        /// @endcode
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool remove(const Widget::Ptr& widget);
@@ -404,12 +383,21 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Loads the child widgets from a string stream
+        ///
+        /// @param stream  stringstream that contains the widget file
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void loadWidgetsFromStream(std::stringstream&& stream);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Saves this the child widgets to a text file
         ///
         /// @param stream  stringstream to which the widget file will be added
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void saveWidgetsToStream(std::stringstream& stream);
+        void saveWidgetsToStream(std::stringstream& stream) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,16 +409,18 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected:
+      protected:
 
         // The internal clock which is used for animation of widgets
         sf::Clock m_clock;
 
-        // The sfml window or other target to draw on
-        sf::RenderTarget* m_window;
+        // The sfml render target to draw on
+        sf::RenderTarget* m_target;
 
-        // Does m_Window contains a sf::RenderWindow?
+    #if SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR < 5
+        // Does m_target contains a sf::RenderWindow?
         bool m_accessToWindow;
+    #endif
 
         // Internal container to store all widgets
         GuiContainer::Ptr m_container = std::make_shared<GuiContainer>();
@@ -447,8 +437,9 @@ namespace tgui
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // TGUI_WINDOW_HPP
+#endif // TGUI_GUI_HPP

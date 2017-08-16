@@ -33,21 +33,18 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{}},
-        {"bordercolor", Color{60, 60, 60}},
-        {"textcolor", Color{60, 60, 60}},
-        {"backgroundcolor", sf::Color::Transparent}
-    };
+            {
+                {"borders", Borders{}},
+                {"bordercolor", Color{60, 60, 60}},
+                {"textcolor", Color{60, 60, 60}},
+                {"backgroundcolor", sf::Color::Transparent}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Label::Label()
     {
         m_type = "Label";
-        m_callback.widgetType = "Label";
-
-        addSignal<sf::String>("DoubleClicked");
 
         m_renderer = aurora::makeCopied<LabelRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -67,11 +64,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Label::Ptr Label::copy(ConstPtr label)
+    Label::Ptr Label::copy(Label::ConstPtr label)
     {
         if (label)
             return std::static_pointer_cast<Label>(label->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +77,9 @@ namespace tgui
     void Label::setSize(const Layout2d& size)
     {
         Widget::setSize(size);
+
+        m_bordersCached.updateParentSize(getSize());
+        m_paddingCached.updateParentSize(getSize());
 
         // You are no longer auto-sizing
         m_autoSize = false;
@@ -183,14 +184,15 @@ namespace tgui
     {
         if (m_autoSize)
             return m_maximumTextWidth;
-        return getSize().x;
+        else
+            return getSize().x;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Label::setParent(Container* parent)
     {
-        bool autoSize = getAutoSize();
+        const bool autoSize = getAutoSize();
         Widget::setParent(parent);
         setAutoSize(autoSize);
     }
@@ -199,7 +201,7 @@ namespace tgui
 
     void Label::leftMouseReleased(sf::Vector2f pos)
     {
-        bool mouseDown = m_mouseDown;
+        const bool mouseDown = m_mouseDown;
 
         ClickableWidget::leftMouseReleased(pos);
 
@@ -209,9 +211,7 @@ namespace tgui
             if (m_possibleDoubleClick)
             {
                 m_possibleDoubleClick = false;
-
-                m_callback.text = m_string;
-                sendSignal("DoubleClicked", m_string);
+                onDoubleClick->emit(this, m_string);
             }
             else // This is the first click
             {
@@ -223,16 +223,28 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    Signal& Label::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onDoubleClick->getName()))
+            return *onDoubleClick;
+        else
+            return ClickableWidget::getSignal(std::move(signalName));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     void Label::rendererChanged(const std::string& property)
     {
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
+            m_bordersCached.updateParentSize(getSize());
             rearrangeText();
         }
         else if (property == "padding")
         {
             m_paddingCached = getRenderer()->getPadding();
+            m_paddingCached.updateParentSize(getSize());
             rearrangeText();
         }
         else if (property == "textstyle")
@@ -297,20 +309,20 @@ namespace tgui
             maxWidth = m_maximumTextWidth;
         else
         {
-            if (getSize().x > m_bordersCached.left + m_bordersCached.right + m_paddingCached.left + m_paddingCached.right)
-                maxWidth = getSize().x - m_bordersCached.left - m_bordersCached.right - m_paddingCached.left - m_paddingCached.right;
+            if (getSize().x > m_bordersCached.getLeft() + m_bordersCached.getRight() + m_paddingCached.getLeft() + m_paddingCached.getRight())
+                maxWidth = getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight() - m_paddingCached.getLeft() - m_paddingCached.getRight();
             else // There is no room for text
                 return;
         }
 
         // Fit the text in the available space
-        sf::String string = Text::wordWrap(maxWidth, m_string, m_fontCached, m_textSize, m_textStyleCached & sf::Text::Bold);
+        const sf::String string = Text::wordWrap(maxWidth, m_string, m_fontCached, m_textSize, m_textStyleCached & sf::Text::Bold);
 
         // Split the string in multiple lines
         m_lines.clear();
         float width = 0;
-        size_t searchPosStart = 0;
-        size_t newLinePos = 0;
+        std::size_t searchPosStart = 0;
+        std::size_t newLinePos = 0;
         while (newLinePos != sf::String::InvalidPos)
         {
             newLinePos = string.find('\n', searchPosStart);
@@ -333,26 +345,32 @@ namespace tgui
             searchPosStart = newLinePos + 1;
         }
 
-        Outline outline = m_paddingCached + m_bordersCached;
+        const Outline outline = {m_paddingCached.getLeft() + m_bordersCached.getLeft(),
+                                 m_paddingCached.getTop() + m_bordersCached.getTop(),
+                                 m_paddingCached.getRight() + m_bordersCached.getRight(),
+                                 m_paddingCached.getBottom() + m_bordersCached.getBottom()};
 
         // Update the size of the label
         if (m_autoSize)
         {
-            m_size = {std::max(width, maxWidth) + outline.left + outline.right,
-                (std::max<size_t>(m_lines.size(), 1) * m_fontCached.getLineSpacing(m_textSize)) + Text::calculateExtraVerticalSpace(m_fontCached, m_textSize, m_textStyleCached) + outline.top + outline.bottom};
+            Widget::setSize({std::max(width, maxWidth) + outline.getLeft() + outline.getRight(),
+                            (std::max<std::size_t>(m_lines.size(), 1) * m_fontCached.getLineSpacing(m_textSize)) + Text::calculateExtraVerticalSpace(m_fontCached, m_textSize, m_textStyleCached) + outline.getTop() + outline.getBottom()});
+
+            m_bordersCached.updateParentSize(getSize());
+            m_paddingCached.updateParentSize(getSize());
         }
 
         // Update the line positions
         {
-            if ((getSize().x <= outline.left + outline.right) || (getSize().y <= outline.top + outline.bottom))
+            if ((getSize().x <= outline.getLeft() + outline.getRight()) || (getSize().y <= outline.getTop() + outline.getBottom()))
                 return;
 
-            sf::Vector2f pos{outline.left, outline.top};
+            sf::Vector2f pos{outline.getLeft(), outline.getTop()};
 
             if (m_verticalAlignment != VerticalAlignment::Top)
             {
-                float totalHeight = getSize().y - outline.top - outline.bottom;
-                float totalTextHeight = m_lines.size() * m_fontCached.getLineSpacing(m_textSize);
+                const float totalHeight = getSize().y - outline.getTop() - outline.getBottom();
+                const float totalTextHeight = m_lines.size() * m_fontCached.getLineSpacing(m_textSize);
 
                 if (m_verticalAlignment == VerticalAlignment::Center)
                     pos.y += (totalHeight - totalTextHeight) / 2.f;
@@ -362,7 +380,7 @@ namespace tgui
 
             if (m_horizontalAlignment == HorizontalAlignment::Left)
             {
-                float lineSpacing = m_fontCached.getLineSpacing(m_textSize);
+                const float lineSpacing = m_fontCached.getLineSpacing(m_textSize);
                 for (auto& line : m_lines)
                 {
                     line.setPosition(pos.x, pos.y);
@@ -371,17 +389,17 @@ namespace tgui
             }
             else // Center or Right alignment
             {
-                float totalWidth = getSize().x - outline.left - outline.right;
+                const float totalWidth = getSize().x - outline.getLeft() - outline.getRight();
 
                 for (auto& line : m_lines)
                 {
                     line.setPosition(0, 0);
 
-                    size_t lastChar = line.getString().getSize();
-                    while (lastChar > 0 && isWhitespace(line.getString()[lastChar - 1]))
+                    std::size_t lastChar = line.getString().getSize();
+                    while (lastChar > 0 && isWhitespace(line.getString()[lastChar-1]))
                         lastChar--;
 
-                    float textWidth = line.findCharacterPos(lastChar).x;
+                    const float textWidth = line.findCharacterPos(lastChar).x;
 
                     if (m_horizontalAlignment == HorizontalAlignment::Center)
                         line.setPosition(pos.x + ((totalWidth - textWidth) / 2.f), pos.y);
@@ -398,15 +416,16 @@ namespace tgui
 
     void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.transform.translate(round(getPosition().x), round(getPosition().y));
+        states.transform.translate(std::round(getPosition().x), std::round(getPosition().y));
 
-        sf::Vector2f innerSize = {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        sf::Vector2f innerSize = {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                                  getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
 
         // Draw the borders
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Draw the background
@@ -417,10 +436,10 @@ namespace tgui
         std::unique_ptr<Clipping> clipping;
         if (!m_autoSize)
         {
-            innerSize.x -= m_paddingCached.left + m_paddingCached.right;
-            innerSize.y -= m_paddingCached.top + m_paddingCached.bottom;
+            innerSize.x -= m_paddingCached.getLeft() + m_paddingCached.getRight();
+            innerSize.y -= m_paddingCached.getTop() + m_paddingCached.getBottom();
 
-            clipping = std::make_unique<Clipping>(target, states, sf::Vector2f{m_paddingCached.left, m_paddingCached.top}, innerSize);
+            clipping = std::make_unique<Clipping>(target, states, sf::Vector2f{m_paddingCached.getLeft(), m_paddingCached.getTop()}, innerSize);
         }
 
         // Draw the text

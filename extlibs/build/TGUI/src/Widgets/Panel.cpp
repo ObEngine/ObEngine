@@ -31,21 +31,16 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"bordercolor", sf::Color::Black},
-        {"backgroundcolor", sf::Color::Transparent}
-    };
+            {
+                {"bordercolor", sf::Color::Black},
+                {"backgroundcolor", sf::Color::Transparent}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Panel::Panel(const Layout2d& size)
     {
-        m_callback.widgetType = "Panel";
         m_type = "Panel";
-
-        addSignal<sf::Vector2f>("MousePressed");
-        addSignal<sf::Vector2f>("MouseReleased");
-        addSignal<sf::Vector2f>("Clicked");
 
         m_renderer = aurora::makeCopied<PanelRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -62,25 +57,44 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Panel::Ptr Panel::copy(ConstPtr panel)
+    Panel::Ptr Panel::copy(Panel::ConstPtr panel)
     {
         if (panel)
             return std::static_pointer_cast<Panel>(panel->clone());
-        return nullptr;
+        else
+            return nullptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Panel::setSize(const Layout2d& size)
+    {
+        m_bordersCached.updateParentSize(size.getValue());
+
+        Group::setSize(size);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    sf::Vector2f Panel::getContentSize() const
+    {
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight() - m_paddingCached.getLeft() - m_paddingCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom() - m_paddingCached.getTop() - m_paddingCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     sf::Vector2f Panel::getChildWidgetsOffset() const
     {
-        return {m_paddingCached.left + m_bordersCached.left, m_paddingCached.top + m_bordersCached.top};
+        return {m_paddingCached.getLeft() + m_bordersCached.getLeft(),
+                m_paddingCached.getTop() + m_bordersCached.getTop()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool Panel::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,9 +103,7 @@ namespace tgui
     {
         m_mouseDown = true;
 
-        m_callback.mouse.x = static_cast<int>(pos.x);
-        m_callback.mouse.y = static_cast<int>(pos.y);
-        sendSignal("MousePressed", pos);
+        onMousePress->emit(this, pos - getPosition());
 
         Container::leftMousePressed(pos);
     }
@@ -100,16 +112,28 @@ namespace tgui
 
     void Panel::leftMouseReleased(sf::Vector2f pos)
     {
-        m_callback.mouse.x = static_cast<int>(pos.x);
-        m_callback.mouse.y = static_cast<int>(pos.y);
-        sendSignal("MouseReleased", pos);
+        onMouseRelease->emit(this, pos - getPosition());
 
         if (m_mouseDown)
-            sendSignal("Clicked", pos);
+            onClick->emit(this, pos - getPosition());
 
         m_mouseDown = false;
 
         Container::leftMouseReleased(pos);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Panel::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onMousePress->getName()))
+            return *onMousePress;
+        else if (signalName == toLower(onMouseRelease->getName()))
+            return *onMouseRelease;
+        else if (signalName == toLower(onClick->getName()))
+            return *onClick;
+        else
+            return Group::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +143,7 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
+            updateSize();
         }
         else if (property == "bordercolor")
         {
@@ -142,19 +167,20 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Draw the background
-        sf::Vector2f innerSize = {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        const sf::Vector2f innerSize = {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                                        getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
         drawRectangleShape(target, states, innerSize, m_backgroundColorCached);
 
-        states.transform.translate(m_paddingCached.left, m_paddingCached.top);
-        innerSize.x -= m_paddingCached.left + m_paddingCached.right;
-        innerSize.y -= m_paddingCached.top + m_paddingCached.bottom;
+        states.transform.translate(m_paddingCached.getLeft(), m_paddingCached.getTop());
+        const sf::Vector2f contentSize = {innerSize.x - m_paddingCached.getLeft() - m_paddingCached.getRight(),
+                                          innerSize.y - m_paddingCached.getTop() - m_paddingCached.getBottom()};
 
         // Draw the child widgets
-        Clipping clipping{target, states, {}, innerSize};
+        const Clipping clipping{target, states, {}, contentSize};
         drawWidgetContainer(&target, states);
     }
 

@@ -68,7 +68,6 @@ namespace obe
              * \return true if the Trigger is enabled, false otherwise
              */
             bool getState(const std::string& triggerName);
-            TriggerGroup* setPermanent(const std::string& triggerName, bool permanent);
             /**
              * \brief Pushes a Parameter to a Trigger
              * \tparam P Type of the Parameter

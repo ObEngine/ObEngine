@@ -53,151 +53,144 @@
 
 namespace aurora
 {
-    namespace detail
-    {
-        // Types to differ between copy, move and emplacement semantics
-        struct CopyTag
-        {
-        };
+namespace detail
+{
 
-        struct MoveTag
-        {
-        };
+	// Types to differ between copy, move and emplacement semantics
+	struct CopyTag {};
+	struct MoveTag {};
+	struct EmplaceTag {};
 
-        struct EmplaceTag
-        {
-        };
+	// Abstract base class for pointer owners
+	template <typename T>
+	struct PtrOwnerBase
+	{
+		virtual ~PtrOwnerBase() {}
 
-        // Abstract base class for pointer owners
-        template <typename T>
-        struct PtrOwnerBase
-        {
-            virtual ~PtrOwnerBase()
-            {
-            }
+		// Returns an independent polymorphic copy
+		virtual PtrOwnerBase<T>*	clone() const = 0;
 
-            // Returns an independent polymorphic copy
-            virtual PtrOwnerBase<T>* clone() const = 0;
-
-            // Returns the stored pointer
-            virtual T* getPointer() const = 0;
-        };
+		// Returns the stored pointer
+		virtual T*					getPointer() const = 0;
+	};
 
 
-        // Default pointer owner
-        template <typename T, typename U, typename C, typename D>
-        struct PtrOwner : PtrOwnerBase<T>
-        {
-            PtrOwner(U* pointer_, C cloner_, D deleter_, bool doClone = false)
-                : pointer(pointer_)
-                  , cloner(cloner_)
-                  , deleter(deleter_)
-            {
-                assert(pointer);
+	// Default pointer owner
+	template <typename T, typename U, typename C, typename D>
+	struct PtrOwner : PtrOwnerBase<T>
+	{
+		PtrOwner(U* pointer_, C cloner_, D deleter_, bool doClone = false)
+		: pointer(pointer_)
+		, cloner(cloner_)
+		, deleter(deleter_)
+		{
+			assert(pointer);
 
-                // Exception safety: If cloning fails, constructor will be aborted, reverting surrounding new operator
-                if (doClone)
-                    this->pointer = cloner(pointer);
-            }
+			// Exception safety: If cloning fails, constructor will be aborted, reverting surrounding new operator
+			if (doClone)
+				this->pointer = cloner(pointer);
+		}
 
-            virtual ~PtrOwner()
-            {
-                if (pointer)
-                    deleter(pointer);
-            }
+		virtual ~PtrOwner()
+		{
+			if (pointer)
+				deleter(pointer);
+		}
 
-            PtrOwner* clone() const override
-            {
-                return new PtrOwner(pointer, cloner, deleter, true);
-            }
+		virtual PtrOwner* clone() const
+		{
+			return new PtrOwner(pointer, cloner, deleter, true);
+		}
 
-            T* getPointer() const override
-            {
-                return pointer;
-            }
+		virtual T* getPointer() const
+		{
+			return pointer;
+		}
 
-            U* pointer;
-            C cloner;
-            D deleter;
-        };
+		U* pointer;
+		C cloner;
+		D deleter;
+	};
 
 
 #ifdef AURORA_HAS_VARIADIC_TEMPLATES
 
-        // Owner for makeCopied() optimization: Object is stored directly, no cloner or deleter
-        template <typename T>
-        struct CompactOwner : PtrOwnerBase<T>
-        {
-            template <typename... Args>
-            explicit CompactOwner(EmplaceTag, Args&&... args)
-                : object(std::forward<Args>(args)...) // construct in-place
-            {
-            }
+	// Owner for makeCopied() optimization: Object is stored directly, no cloner or deleter
+	template <typename T>
+	struct CompactOwner : PtrOwnerBase<T>
+	{
+		template <typename... Args>
+		explicit CompactOwner(EmplaceTag, Args&&... args)
+		: object(std::forward<Args>(args)...) // construct in-place
+		{
+		}
 
-            CompactOwner(CopyTag, const T& origin) // separate constructor to maintain const
-                : object(origin) // copy-construct
-            {
-            }
+		CompactOwner(CopyTag, const T& origin) // separate constructor to maintain const
+		: object(origin) // copy-construct
+		{
+		}
 
-            CompactOwner* clone() const override
-            {
-                return new CompactOwner(CopyTag(), object);
-            }
+		virtual CompactOwner* clone() const
+		{
+			return new CompactOwner(CopyTag(), object);
+		}
 
-            T* getPointer() const override
-            {
-                return const_cast<T*>(&object);
-            }
+		virtual T* getPointer() const
+		{
+			return const_cast<T*>(&object);
+		}
 
-            T object;
-        };
+		T object;
+	};
 
 #endif // AURORA_HAS_VARIADIC_TEMPLATES
 
 
-        // Used for U* -> T* derived-to-base conversion
-        // See notes at the beginning of the document
-        template <typename T, typename U>
-        struct PtrIndirection : PtrOwnerBase<T>
-        {
-            explicit PtrIndirection(const PtrOwnerBase<U>* originBase, CopyTag)
-                : base(originBase->clone())
-            {
-            }
+	// Used for U* -> T* derived-to-base conversion
+	// See notes at the beginning of the document
+	template <typename T, typename U>
+	struct PtrIndirection : PtrOwnerBase<T>
+	{
+		explicit PtrIndirection(const PtrOwnerBase<U>* originBase, CopyTag)
+		: base(originBase->clone())
+		{
+		}
 
-            explicit PtrIndirection(PtrOwnerBase<U>* sourceBase, MoveTag)
-                : base(sourceBase)
-            {
-            }
+		explicit PtrIndirection(PtrOwnerBase<U>* sourceBase, MoveTag)
+		: base(sourceBase)
+		{
+		}
 
-            virtual ~PtrIndirection()
-            {
-                delete base;
-            }
+		virtual ~PtrIndirection()
+		{
+			delete base;
+		}
 
-            PtrIndirection<T, U>* clone() const override
-            {
-                return new PtrIndirection<T, U>(base, CopyTag());
-            }
+		virtual PtrIndirection<T, U>* clone() const
+		{
+			return new PtrIndirection<T, U>(base, CopyTag());
+		}
 
-            T* getPointer() const override
-            {
-                return base->getPointer();
-            }
+		virtual T* getPointer() const
+		{
+			return base->getPointer();
+		}
 
-            PtrOwnerBase<U>* base;
-        };
+		PtrOwnerBase<U>* base;
+	};
 
 
-        // Maker (object generator) idiom for PtrOwner
-        template <typename T, typename U, typename C, typename D>
-        PtrOwnerBase<T>* newPtrOwner(U* pointer, C cloner, D deleter)
-        {
-            if (pointer)
-                return new PtrOwner<T, U, C, D>(pointer, cloner, deleter);
-            return nullptr;
-        }
-    } // namespace detail
+	// Maker (object generator) idiom for PtrOwner
+	template <typename T, typename U, typename C, typename D>
+	PtrOwnerBase<T>* newPtrOwner(U* pointer, C cloner, D deleter)
+	{
+		if (pointer)
+			return new PtrOwner<T, U, C, D>(pointer, cloner, deleter);
+		else
+			return nullptr;
+	}
+
+} // namespace detail
 } // namespace aurora
 
 #endif // AURORA_PTROWNER_HPP

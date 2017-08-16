@@ -46,10 +46,10 @@ inline void swap(Class& lhs, Class& rhs)	\
 /// @brief %swap() function with argument-dependent lookup
 /// @details Chooses the best overload of <tt>swap(lhs, rhs)</tt> with argument-dependent lookup. If none is found, @c std::swap() will be called.
 template <typename T>
-void adlSwap(T& lhs, T& rhs)
+inline void adlSwap(T& lhs, T& rhs)
 {
-    using namespace std;
-    swap(lhs, rhs);
+	using namespace std;
+	swap(lhs, rhs);
 }
 
 /// @}

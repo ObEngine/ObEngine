@@ -51,6 +51,7 @@
 #include <TGUI/Widgets/Group.hpp>
 #include <TGUI/Widgets/Grid.hpp>
 #include <TGUI/Widgets/HorizontalLayout.hpp>
+#include <TGUI/Widgets/HorizontalWrap.hpp>
 #include <TGUI/Widgets/Knob.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/ListBox.hpp>
@@ -68,6 +69,9 @@
 #include <TGUI/Widgets/TextBox.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
 
+#include <SFML/Graphics.hpp>
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif // TGUI_TGUI_HPP
+

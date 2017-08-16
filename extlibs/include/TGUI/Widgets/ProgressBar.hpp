@@ -37,18 +37,6 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Progress bar widget
-    ///
-    /// Signals:
-    ///     - ValueChanged (The value of the progress bar has changed)
-    ///         * Optional parameter int: New value
-    ///         * Uses Callback member 'value'
-    ///
-    ///     - Full (The new value equals the maximum value)
-    ///         * Optional parameter int: The maximum value
-    ///         * Uses Callback member 'value'
-    ///
-    ///     - Inherited signals from ClickableWidget
-    ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API ProgressBar : public ClickableWidget
     {
@@ -66,10 +54,10 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         enum class FillDirection
         {
-            LeftToRight, ///< Start filling at the left side and go to the right
-            RightToLeft, ///< Start filling at the right side and go to the left
-            TopToBottom, ///< Start filling at the top an go downward
-            BottomToTop ///< Start filling at the bottom and go upward
+            LeftToRight,  ///< Start filling at the left side and go to the right
+            RightToLeft,  ///< Start filling at the right side and go to the left
+            TopToBottom,  ///< Start filling at the top an go downward
+            BottomToTop   ///< Start filling at the bottom and go upward
         };
 
 
@@ -85,7 +73,7 @@ namespace tgui
         /// @return The new progress bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr create();
+        static ProgressBar::Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,7 +84,7 @@ namespace tgui
         /// @return The new progress bar
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr copy(ConstPtr progressBar);
+        static ProgressBar::Ptr copy(ProgressBar::ConstPtr progressBar);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,11 +248,23 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Retrieves a signal based on its name
+        ///
+        /// @param signalName  Name of the signal
+        ///
+        /// @return Signal that corresponds to the name
+        ///
+        /// @throw Exception when the name does not match any signal
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual Signal& getSignal(std::string&& signalName) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Function called when one of the properties of the renderer is changed
@@ -272,7 +272,7 @@ namespace tgui
         /// @param property  Lowercase name of the property that was changed
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void rendererChanged(const std::string& property) override;
+        virtual void rendererChanged(const std::string& property) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,12 +289,25 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Returns the size of the front image.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        sf::Vector2f getFrontImageSize() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr clone() const override
+        virtual Widget::Ptr clone() const override
         {
             return std::make_shared<ProgressBar>(*this);
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
+
+        SignalWrapper<SignalUInt> onValueChange = {"ValueChanged"}; ///< Value of the progress bar changed. Optional parameter: new value
+        SignalWrapper<Signal>     onFull        = {"Full"};         ///< Value of the progress bar changed and he progress bar became full
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,9 +331,9 @@ namespace tgui
 
         // Cached renderer properties
         Borders m_bordersCached;
-        Color m_borderColorCached;
-        Color m_backgroundColorCached;
-        Color m_fillColorCached;
+        Color   m_borderColorCached;
+        Color   m_backgroundColorCached;
+        Color   m_fillColorCached;
     };
 
 

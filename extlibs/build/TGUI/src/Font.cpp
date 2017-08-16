@@ -34,7 +34,7 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Font::Font(nullptr_t)
+    Font::Font(std::nullptr_t)
     {
     }
 
@@ -42,7 +42,7 @@ namespace tgui
 
     Font::Font(const std::string& id) :
         m_font{Deserializer::deserialize(ObjectConverter::Type::Font, id).getFont()},
-        m_id(Deserializer::deserialize(ObjectConverter::Type::String, id).getString()) // Did not compile in VS2013 when using braces
+        m_id  {Deserializer::deserialize(ObjectConverter::Type::String, id).getString()}
     {
     }
 
@@ -55,7 +55,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Font::Font(std::shared_ptr<sf::Font> font) :
+    Font::Font(const std::shared_ptr<sf::Font>& font) :
         m_font{font}
     {
     }
@@ -97,14 +97,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Font::operator==(nullptr_t) const
+    bool Font::operator==(std::nullptr_t) const
     {
         return m_font == nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Font::operator!=(nullptr_t) const
+    bool Font::operator!=(std::nullptr_t) const
     {
         return m_font != nullptr;
     }
@@ -114,7 +114,13 @@ namespace tgui
     const sf::Glyph& Font::getGlyph(sf::Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
     {
         assert(m_font != nullptr);
+
+    #if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 4)
         return m_font->getGlyph(codePoint, characterSize, bold, outlineThickness);
+    #else
+        (void)outlineThickness;
+        return m_font->getGlyph(codePoint, characterSize, bold);
+    #endif
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +129,8 @@ namespace tgui
     {
         if (m_font)
             return m_font->getKerning(first, second, characterSize);
-        return 0;
+        else
+            return 0;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +139,8 @@ namespace tgui
     {
         if (m_font)
             return m_font->getLineSpacing(characterSize);
-        return 0;
+        else
+            return 0;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

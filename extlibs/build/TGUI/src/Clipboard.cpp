@@ -26,8 +26,12 @@
 
 #include <TGUI/Clipboard.hpp>
 
-#ifdef SFML_SYSTEM_WINDOWS
-#include <windows.h>
+#if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 5)
+    #include <SFML/Window/Clipboard.hpp>
+#else
+    #ifdef SFML_SYSTEM_WINDOWS
+        #include <windows.h>
+    #endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,24 +40,29 @@ namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR < 5
     sf::String Clipboard::m_contents;
     sf::WindowHandle Clipboard::m_windowHandle = sf::WindowHandle();
     bool Clipboard::m_isWindowHandleSet = false;
+#endif
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     sf::String Clipboard::get()
     {
-#ifdef SFML_SYSTEM_WINDOWS
+#if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 5)
+        return sf::Clipboard::getString();
+#else
+    #ifdef SFML_SYSTEM_WINDOWS
         if (m_isWindowHandleSet)
         {
             if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(m_windowHandle))
             {
                 HGLOBAL hGlobal = GetClipboardData(CF_TEXT);
-                if (hGlobal != nullptr)
+                if (hGlobal != NULL)
                 {
                     const char* lpszData = static_cast<const char*>(GlobalLock(hGlobal));
-                    if (lpszData != nullptr)
+                    if (lpszData != NULL)
                     {
                         m_contents = lpszData;
 
@@ -64,18 +73,22 @@ namespace tgui
                 CloseClipboard();
             }
         }
-#endif
+    #endif
 
         return m_contents;
+#endif
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Clipboard::set(const sf::String& contents)
     {
+#if SFML_VERSION_MAJOR > 2 || (SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR >= 5)
+        sf::Clipboard::setString(contents);
+#else
         m_contents = contents;
 
-#ifdef SFML_SYSTEM_WINDOWS
+    #ifdef SFML_SYSTEM_WINDOWS
         if (m_isWindowHandleSet)
         {
             if (OpenClipboard(m_windowHandle))
@@ -83,10 +96,10 @@ namespace tgui
                 EmptyClipboard();
 
                 HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, m_contents.getSize() + 1);
-                if (hGlobal != nullptr)
+                if (hGlobal != NULL)
                 {
                     char* pchData = static_cast<char*>(GlobalLock(hGlobal));
-                    if (pchData != nullptr)
+                    if (pchData != NULL)
                     {
                         memcpy(pchData, m_contents.toAnsiString().c_str(), m_contents.getSize() + 1);
                         SetClipboardData(CF_TEXT, hGlobal);
@@ -100,18 +113,20 @@ namespace tgui
                 CloseClipboard();
             }
         }
+    #endif
 #endif
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+#if SFML_VERSION_MAJOR == 2 && SFML_VERSION_MINOR < 5
     void Clipboard::setWindowHandle(const sf::WindowHandle& windowHandle)
     {
         m_windowHandle = windowHandle;
         m_isWindowHandleSet = true;
     }
-
+#endif
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+

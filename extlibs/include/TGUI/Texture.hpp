@@ -40,7 +40,8 @@ namespace tgui
     {
     public:
 
-        using ImageLoaderFunc = std::function<std::shared_ptr<sf::Image>(const sf::String&)>;
+        using CallbackFunc = std::function<void(std::shared_ptr<TextureData>)>;
+        using ImageLoaderFunc = std::function<std::unique_ptr<sf::Image>(const sf::String&)>;
         using TextureLoaderFunc = std::function<std::shared_ptr<TextureData>(Texture&, const sf::String&, const sf::IntRect&)>;
 
 
@@ -48,9 +49,7 @@ namespace tgui
         /// @brief Default constructor
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Texture()
-        {
-        }
+        Texture() {}
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +78,7 @@ namespace tgui
         /// This constructor just calls the corresponding load function.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Texture(std::string id,
+        Texture(const std::string& id,
                 const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0),
                 const sf::IntRect& middlePart = sf::IntRect(0, 0, 0, 0))
             : Texture(sf::String{id}, partRect, middlePart)
@@ -254,7 +253,7 @@ namespace tgui
         /// This function can be useful when implementing a resource manager.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setCopyCallback(const std::function<void(std::shared_ptr<TextureData>)> func);
+        void setCopyCallback(const CallbackFunc& func);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +264,7 @@ namespace tgui
         /// This function can be useful when implementing a resource manager.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setDestructCallback(const std::function<void(std::shared_ptr<TextureData>)> func);
+        void setDestructCallback(const CallbackFunc& func);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +288,7 @@ namespace tgui
         /// @see setImageLoader
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static ImageLoaderFunc getImageLoader();
+        static const ImageLoaderFunc& getImageLoader();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -313,7 +312,7 @@ namespace tgui
         /// @see setTextureLoader
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static TextureLoaderFunc getTextureLoader();
+        static const TextureLoaderFunc& getTextureLoader();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,10 +334,10 @@ namespace tgui
         std::shared_ptr<TextureData> m_data = nullptr;
 
         sf::IntRect m_middleRect;
-        sf::String m_id;
+        sf::String  m_id;
 
-        std::function<void(std::shared_ptr<TextureData>)> m_copyCallback;
-        std::function<void(std::shared_ptr<TextureData>)> m_destructCallback;
+        CallbackFunc m_copyCallback;
+        CallbackFunc m_destructCallback;
 
         static TextureLoaderFunc m_textureLoader;
         static ImageLoaderFunc m_imageLoader;

@@ -87,11 +87,32 @@ namespace tgui
 
         if (m_type == Type::String)
         {
-            m_value = Deserializer::deserialize(Type::Number, m_string).getNumber();
+            m_value = Deserializer::deserialize(ObjectConverter::Type::Number, m_string).getNumber();
             m_type = Type::Number;
         }
 
         return m_value.as<float>();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const Layout& ObjectConverter::getLayout()
+    {
+        assert(m_type != Type::None);
+        assert(m_type == Type::Number || m_type == Type::String || m_type == Type::Layout);
+
+        if (m_type == Type::String)
+        {
+            m_value = Layout{m_string};
+            m_type = Type::Layout;
+        }
+        else if (m_type == Type::Number)
+        {
+            m_value = Layout{m_value.as<float>()};
+            m_type = Type::Layout;
+        }
+
+        return m_value.as<Layout>();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +124,7 @@ namespace tgui
 
         if (m_type == Type::String)
         {
-            m_value = Deserializer::deserialize(Type::Outline, m_string).getOutline();
+            m_value = Deserializer::deserialize(ObjectConverter::Type::Outline, m_string).getOutline();
             m_type = Type::Outline;
         }
 
@@ -119,7 +140,7 @@ namespace tgui
 
         if (m_type == Type::String)
         {
-            m_value = Deserializer::deserialize(Type::Texture, m_string).getTexture();
+            m_value = Deserializer::deserialize(ObjectConverter::Type::Texture, m_string).getTexture();
             m_type = Type::Texture;
         }
 
@@ -135,7 +156,7 @@ namespace tgui
 
         if (m_type == Type::String)
         {
-            m_value = Deserializer::deserialize(Type::TextStyle, m_string).getTextStyle();
+            m_value = Deserializer::deserialize(ObjectConverter::Type::TextStyle, m_string).getTextStyle();
             m_type = Type::TextStyle;
         }
 
@@ -151,7 +172,7 @@ namespace tgui
 
         if (m_type == Type::String)
         {
-            m_value = Deserializer::deserialize(Type::RendererData, m_string).getRenderer();
+            m_value = Deserializer::deserialize(ObjectConverter::Type::RendererData, m_string).getRenderer();
             m_type = Type::RendererData;
         }
 

@@ -25,80 +25,84 @@
 
 namespace aurora
 {
-    template <typename Signature, typename Traits>
-    SingleDispatcher<Signature, Traits>::SingleDispatcher()
-        : mMap()
-          , mFallback()
-    {
-    }
 
-    template <typename Signature, typename Traits>
-    SingleDispatcher<Signature, Traits>::SingleDispatcher(SingleDispatcher&& source)
-        : mMap(std::move(source.mMap))
-          , mFallback(std::move(source.mFallback))
-    {
-    }
+template <typename Signature, typename Traits>
+SingleDispatcher<Signature, Traits>::SingleDispatcher()
+: mMap()
+, mFallback()
+{
+}
 
-    template <typename Signature, typename Traits>
-    SingleDispatcher<Signature, Traits>& SingleDispatcher<Signature, Traits>::operator=(SingleDispatcher&& source)
-    {
-        mMap = std::move(source.mMap);
-        mFallback = std::move(source.mFallback);
+template <typename Signature, typename Traits>
+SingleDispatcher<Signature, Traits>::SingleDispatcher(SingleDispatcher&& source)
+: mMap(std::move(source.mMap))
+, mFallback(std::move(source.mFallback))
+{
+}
 
-        return *this;
-    }
+template <typename Signature, typename Traits>
+SingleDispatcher<Signature, Traits>& SingleDispatcher<Signature, Traits>::operator= (SingleDispatcher&& source)
+{
+	mMap = std::move(source.mMap);
+	mFallback = std::move(source.mFallback);
 
-    template <typename Signature, typename Traits>
-    SingleDispatcher<Signature, Traits>::~SingleDispatcher()
-    {
-    }
+	return *this;
+}
 
-    template <typename Signature, typename Traits>
-    template <typename Id, typename Fn>
-    void SingleDispatcher<Signature, Traits>::bind(const Id& identifier, Fn function)
-    {
-        mMap[Traits::keyFromId(identifier)] = Traits::template trampoline1<Id>(function);
-    }
+template <typename Signature, typename Traits>
+SingleDispatcher<Signature, Traits>::~SingleDispatcher()
+{
+}
 
-    template <typename Signature, typename Traits>
-    typename SingleDispatcher<Signature, Traits>::Result SingleDispatcher<Signature, Traits>::call(Parameter arg) const
-    {
-        Key key = Traits::keyFromBase(arg);
+template <typename Signature, typename Traits>
+template <typename Id, typename Fn>
+void SingleDispatcher<Signature, Traits>::bind(const Id& identifier, Fn function)
+{
+	mMap[Traits::keyFromId(identifier)] = Traits::template trampoline1<Id>(function);
+}
 
-        // If no corresponding class (or base class) has been found, throw exception
-        auto itr = mMap.find(key);
-        if (itr == mMap.end())
-        {
-            if (mFallback)
-                return mFallback(arg);
-            throw FunctionCallException(std::string("SingleDispatcher::call() - function with parameter \"") + Traits::name(key) + "\" not registered");
-        }
+template <typename Signature, typename Traits>
+typename SingleDispatcher<Signature, Traits>::Result SingleDispatcher<Signature, Traits>::call(Parameter arg) const
+{
+	Key key = Traits::keyFromBase(arg);
 
-        // Otherwise, call dispatched function
-        return itr->second(arg);
-    }
+	// If no corresponding class (or base class) has been found, throw exception
+	auto itr = mMap.find(key);
+	if (itr == mMap.end())
+	{
+		if (mFallback)
+			return mFallback(arg);
+		else
+			throw FunctionCallException(std::string("SingleDispatcher::call() - function with parameter \"") + Traits::name(key) + "\" not registered");
+	}
 
-    template <typename Signature, typename Traits>
-    typename SingleDispatcher<Signature, Traits>::Result SingleDispatcher<Signature, Traits>::call(Parameter arg, UserData data) const
-    {
-        Key key = Traits::keyFromBase(arg);
+	// Otherwise, call dispatched function
+	return itr->second(arg);
+}
 
-        // If no corresponding class (or base class) has been found, throw exception
-        auto itr = mMap.find(key);
-        if (itr == mMap.end())
-        {
-            if (mFallback)
-                return mFallback(arg, data);
-            throw FunctionCallException(std::string("SingleDispatcher::call() - function with parameter \"") + Traits::name(key) + "\" not registered");
-        }
+template <typename Signature, typename Traits>
+typename SingleDispatcher<Signature, Traits>::Result SingleDispatcher<Signature, Traits>::call(Parameter arg, UserData data) const
+{
+	Key key = Traits::keyFromBase(arg);
 
-        // Otherwise, call dispatched function
-        return itr->second(arg, data);
-    }
+	// If no corresponding class (or base class) has been found, throw exception
+	auto itr = mMap.find(key);
+	if (itr == mMap.end())
+	{
+		if (mFallback)
+			return mFallback(arg, data);
+		else
+			throw FunctionCallException(std::string("SingleDispatcher::call() - function with parameter \"") + Traits::name(key) + "\" not registered");
+	}
 
-    template <typename Signature, typename Traits>
-    void SingleDispatcher<Signature, Traits>::fallback(std::function<Signature> function)
-    {
-        mFallback = std::move(function);
-    }
+	// Otherwise, call dispatched function
+	return itr->second(arg, data);
+}
+
+template <typename Signature, typename Traits>
+void SingleDispatcher<Signature, Traits>::fallback(std::function<Signature> function)
+{
+	mFallback = std::move(function);
+}
+
 } // namespace aurora

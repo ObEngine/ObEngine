@@ -38,21 +38,20 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined SFML_SYSTEM_WINDOWS && defined _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4275)
+    #pragma warning(push)
+    #pragma warning(disable:4275)
 #endif
 
-    class TGUI_API Exception : public std::runtime_error
-    {
+    class TGUI_API Exception : public std::runtime_error {
     public:
         explicit Exception(const std::string& argument) :
-            runtime_error(argument)
+            std::runtime_error(argument)
         {
         }
     };
 
 #if defined SFML_SYSTEM_WINDOWS && defined _MSC_VER
-#pragma warning(pop)
+    #pragma warning(pop)
 #endif
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,3 +60,4 @@ namespace tgui
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif // TGUI_EXCEPTION_HPP
+

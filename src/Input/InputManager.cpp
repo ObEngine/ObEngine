@@ -32,9 +32,11 @@ namespace obe
             if (m_binderEnabled)
             {
                 Monitors::UpdateMonitors();
-                for (auto& action : m_currentActions)
+                std::cout << "UPDATING INPUTMANAGER" << std::endl;
+                unsigned int actionsAmount = m_currentActions.size();
+                for (unsigned int i = 0; i < actionsAmount; i++)
                 {
-                    action->update();
+                    m_currentActions[i]->update();
                 }
             }
         }

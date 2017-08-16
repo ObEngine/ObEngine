@@ -25,7 +25,6 @@
 
 #include <TGUI/Global.hpp>
 #include <TGUI/Clipboard.hpp>
-#include <TGUI/Exception.hpp>
 #include <functional>
 #include <sstream>
 #include <locale>
@@ -64,7 +63,7 @@ namespace tgui
 
         if (!TGUI_ResourcePath.empty())
         {
-            if (TGUI_ResourcePath[TGUI_ResourcePath.length() - 1] != '/')
+            if (TGUI_ResourcePath[TGUI_ResourcePath.length()-1] != '/')
                 TGUI_ResourcePath.push_back('/');
         }
     }
@@ -80,7 +79,7 @@ namespace tgui
 
     bool compareFloats(float x, float y)
     {
-        return (abs(x - y) < 0.0000001f);
+        return (std::abs(x - y) < 0.0000001f);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +88,8 @@ namespace tgui
     {
         if (character == ' ' || character == '\t' || character == '\r' || character == '\n')
             return true;
-        return false;
+        else
+            return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +130,10 @@ namespace tgui
     {
         if ((value == "true") || (value == "True") || (value == "TRUE") || (value == "1"))
             return true;
-        if ((value == "false") || (value == "False") || (value == "FALSE") || (value == "0"))
+        else if ((value == "false") || (value == "False") || (value == "FALSE") || (value == "0"))
             return false;
-        throw Exception{"Failed to parse boolean value of property '" + property + "'."};
+        else
+            throw Exception{"Failed to parse boolean value of property '" + property + "'."};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +165,8 @@ namespace tgui
 
     std::string trim(std::string str)
     {
-        str.erase(str.begin(), find_if(str.begin(), str.end(), not1(std::ptr_fun<int, int>(std::isspace))));
-        str.erase(find_if(str.rbegin(), str.rend(), not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+        str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+        str.erase(std::find_if(str.rbegin(), str.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
         return str;
     }
 

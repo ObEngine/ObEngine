@@ -45,12 +45,6 @@ namespace obe
             return this->getTrigger(triggerName)->getState();
         }
 
-        TriggerGroup* TriggerGroup::setPermanent(const std::string& triggerName, bool permanent)
-        {
-            this->getTrigger(triggerName)->m_permanent = permanent;
-            return this;
-        }
-
         void TriggerGroup::setJoinable(bool joinable)
         {
             m_joinable = joinable;

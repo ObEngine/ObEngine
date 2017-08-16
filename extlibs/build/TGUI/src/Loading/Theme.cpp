@@ -24,7 +24,6 @@
 
 
 #include <TGUI/Loading/Theme.hpp>
-#include <TGUI/Exception.hpp>
 #include <TGUI/Loading/Serializer.hpp>
 #include <TGUI/Global.hpp>
 
@@ -169,7 +168,8 @@ namespace tgui
             m_renderers.erase(it);
             return true;
         }
-        return false;
+        else
+            return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -31,24 +31,24 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"bordercolor", sf::Color::Black},
-        {"textcolor", sf::Color::Black},
-        {"selectedtextcolor", sf::Color::White},
-        {"backgroundcolor", sf::Color::White},
-        {"selectedbackgroundcolor", Color{0, 110, 255}},
-        {"distancetoside", 1.f}
-    };
+            {
+                {"borders", Borders{2}},
+                {"bordercolor", sf::Color::Black},
+                {"textcolor", Color{60, 60, 60}},
+                {"textcolorhover", sf::Color::Black},
+                {"selectedtextcolor", sf::Color::White},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"backgroundcolorhover", sf::Color::White},
+                {"selectedbackgroundcolor", Color{0, 110, 255}},
+                {"selectedbackgroundcolorhover", Color{30, 150, 255}},
+                {"distancetoside", 1.f}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Tabs::Tabs()
     {
         m_type = "Tabs";
-        m_callback.widgetType = "Tabs";
-
-        addSignal<sf::String>("TabSelected");
 
         m_renderer = aurora::makeCopied<TabsRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -65,33 +65,57 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Tabs::Ptr Tabs::copy(ConstPtr tabs)
+    Tabs::Ptr Tabs::copy(Tabs::ConstPtr tabs)
     {
         if (tabs)
             return std::static_pointer_cast<Tabs>(tabs->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::setSize(const Layout2d&)
+    void Tabs::setSize(const Layout2d& size)
     {
+        Widget::setSize(size);
+
+        // Tabs is no longer auto-sizing
+        m_autoSize = false;
+        recalculateTabsWidth();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t Tabs::add(const sf::String& text, bool selectTab)
+    void Tabs::setAutoSize(bool autoSize)
+    {
+        if (m_autoSize != autoSize)
+        {
+            m_autoSize = autoSize;
+            recalculateTabsWidth();
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    bool Tabs::getAutoSize() const
+    {
+        return m_autoSize;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    std::size_t Tabs::add(const sf::String& text, bool selectTab)
     {
         // Use the insert function to put the tab in the right place
         insert(m_tabTexts.size(), text, selectTab);
 
         // Return the index of the new tab
-        return m_tabTexts.size() - 1;
+        return m_tabTexts.size()-1;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::insert(size_t index, const sf::String& text, bool selectTab)
+    void Tabs::insert(std::size_t index, const sf::String& text, bool selectTab)
     {
         // If the index is too high then just insert at the end
         if (index > m_tabWidth.size())
@@ -105,19 +129,12 @@ namespace tgui
         newTab.setCharacterSize(getTextSize());
         newTab.setString(text);
 
-        // Calculate the width of the tab
-        float tabWidth = newTab.getSize().x + (2 * m_distanceToSideCached);
-        if ((m_maximumTabWidth > 0) && (m_maximumTabWidth < tabWidth))
-            tabWidth = m_maximumTabWidth;
-
-        if (m_tabWidth.empty())
-            m_width += tabWidth;
-        else
-            m_width += tabWidth + ((m_bordersCached.left + m_bordersCached.right) / 2.f);
-
-        m_tabWidth.insert(m_tabWidth.begin() + index, tabWidth);
+        m_tabWidth.insert(m_tabWidth.begin() + index, 0);
         m_tabTexts.insert(m_tabTexts.begin() + index, std::move(newTab));
+        recalculateTabsWidth();
 
+        if (m_hoveringTab >= static_cast<int>(index))
+            m_hoveringTab++;
         if (m_selectedTab >= static_cast<int>(index))
             m_selectedTab++;
 
@@ -128,31 +145,23 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::String Tabs::getText(size_t index) const
+    sf::String Tabs::getText(std::size_t index) const
     {
         if (index >= m_tabTexts.size())
             return "";
-        return m_tabTexts[index].getString();
+        else
+            return m_tabTexts[index].getString();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Tabs::changeText(size_t index, const sf::String& text)
+    bool Tabs::changeText(std::size_t index, const sf::String& text)
     {
         if (index >= m_tabTexts.size())
             return false;
 
-        // Update the width
-        {
-            m_tabTexts[index].setString(text);
-
-            float tabWidth = m_tabTexts[index].getSize().x + (2 * m_distanceToSideCached);
-            if ((m_maximumTabWidth > 0) && (m_maximumTabWidth < tabWidth))
-                tabWidth = m_maximumTabWidth;
-
-            m_width -= m_tabWidth[index];
-            m_width += tabWidth;
-        }
+        m_tabTexts[index].setString(text);
+        recalculateTabsWidth();
 
         return true;
     }
@@ -173,7 +182,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::select(size_t index)
+    void Tabs::select(std::size_t index)
     {
         // If the index is too big then do nothing
         if (index > m_tabTexts.size() - 1)
@@ -191,8 +200,7 @@ namespace tgui
         m_tabTexts[m_selectedTab].setColor(m_selectedTextColorCached);
 
         // Send the callback
-        m_callback.text = m_tabTexts[index].getString();
-        sendSignal("TabSelected", m_tabTexts[index].getString());
+        onTabSelect->emit(this, m_tabTexts[index].getString());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,26 +229,24 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::remove(size_t index)
+    void Tabs::remove(std::size_t index)
     {
         // The index can't be too high
         if (index > m_tabTexts.size() - 1)
             return;
 
-        if (m_tabWidth.size() > 1)
-            m_width -= m_tabWidth[index] + ((m_bordersCached.left + m_bordersCached.right) / 2.0f);
-        else
-            m_width -= m_tabWidth[index];
-
         // Remove the tab
         m_tabTexts.erase(m_tabTexts.begin() + index);
         m_tabWidth.erase(m_tabWidth.begin() + index);
 
-        // Check if the selected tab should change
+        // Check if the selected tab should be updated
         if (m_selectedTab == static_cast<int>(index))
             m_selectedTab = -1;
         else if (m_selectedTab > static_cast<int>(index))
             --m_selectedTab;
+
+        // New hovered tab depends on several factors, we keep it simple and just remove the hover state
+        m_hoveringTab = -1;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -250,8 +256,9 @@ namespace tgui
         m_tabTexts.clear();
         m_tabWidth.clear();
         m_selectedTab = -1;
+        m_hoveringTab = -1;
 
-        m_width = m_bordersCached.left + m_bordersCached.right;
+        recalculateTabsWidth();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +267,8 @@ namespace tgui
     {
         if (m_selectedTab >= 0)
             return m_tabTexts[m_selectedTab].getString();
-        return "";
+        else
+            return "";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,10 +287,8 @@ namespace tgui
             m_requestedTextSize = size;
 
             if (size == 0)
-            {
-                m_textSize = Text::findBestTextSize(m_fontCached, (m_tabHeight - m_bordersCached.top - m_bordersCached.bottom) * 0.8f);
-            }
-            else // An exact size was given
+                m_textSize = Text::findBestTextSize(m_fontCached, (getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()) * 0.8f);
+            else
                 m_textSize = size;
 
             for (auto& text : m_tabTexts)
@@ -303,18 +309,12 @@ namespace tgui
 
     void Tabs::setTabHeight(float height)
     {
-        m_tabHeight = height;
+        Widget::setSize({getSizeLayout().x, height});
+        m_bordersCached.updateParentSize(getSize());
 
-        // Recalculate the size when auto sizing
+        // Recalculate the size when the text is auto sizing
         if (m_requestedTextSize == 0)
             setTextSize(0);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    float Tabs::getTabHeight() const
-    {
-        return m_tabHeight;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,7 +335,23 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t Tabs::getTabsCount() const
+    void Tabs::setMinimumTabWidth(float minimumWidth)
+    {
+        m_minimumTabWidth = minimumWidth;
+
+        recalculateTabsWidth();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    float Tabs::getMinimumTabWidth() const
+    {
+        return m_minimumTabWidth;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    std::size_t Tabs::getTabsCount() const
     {
         return m_tabTexts.size();
     }
@@ -344,20 +360,22 @@ namespace tgui
 
     bool Tabs::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Tabs::leftMousePressed(sf::Vector2f pos)
     {
-        float width = m_bordersCached.left / 2.f;
+        pos -= getPosition();
+
+        float width = m_bordersCached.getLeft() / 2.f;
 
         // Loop through all tabs
         for (unsigned int i = 0; i < m_tabWidth.size(); ++i)
         {
             // Append the width of the tab
-            width += (m_bordersCached.left / 2.f) + m_tabWidth[i] + (m_bordersCached.right / 2.0f);
+            width += (m_bordersCached.getLeft() / 2.f) + m_tabWidth[i] + (m_bordersCached.getRight() / 2.0f);
 
             // If the mouse went down on this tab then select it
             if (pos.x < width)
@@ -370,24 +388,83 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Tabs::recalculateTabsWidth()
+    void Tabs::mouseMoved(sf::Vector2f pos)
     {
-        // First calculate the width of the tabs as if there aren't any borders
-        m_width = 0;
+        Widget::mouseMoved(pos);
+
+        pos -= getPosition();
+        m_hoveringTab = -1;
+        float width = m_bordersCached.getLeft() / 2.f;
+
+        // Loop through all tabs
         for (unsigned int i = 0; i < m_tabWidth.size(); ++i)
         {
-            m_tabWidth[i] = m_tabTexts[i].getSize().x + (2 * m_distanceToSideCached);
-            if ((m_maximumTabWidth > 0) && (m_maximumTabWidth < m_tabWidth[i]))
-                m_tabWidth[i] = m_maximumTabWidth;
+            // Append the width of the tab
+            width += (m_bordersCached.getLeft() / 2.f) + m_tabWidth[i] + (m_bordersCached.getRight() / 2.0f);
 
-            m_width += m_tabWidth[i];
+            // If the mouse is on top of this tab then remember it
+            if (pos.x < width)
+            {
+                m_hoveringTab = i;
+                break;
+            }
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Tabs::mouseNoLongerOnWidget()
+    {
+        Widget::mouseNoLongerOnWidget();
+
+        m_hoveringTab = -1;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Tabs::recalculateTabsWidth()
+    {
+        if (m_autoSize)
+        {
+            if (m_tabWidth.empty())
+                Widget::setSize({m_bordersCached.getLeft() + m_bordersCached.getRight(), getSizeLayout().y});
+            else
+            {
+                // First calculate the width of the tabs as if there aren't any borders
+                float totalWidth = 0;
+                for (unsigned int i = 0; i < m_tabWidth.size(); ++i)
+                {
+                    m_tabWidth[i] = m_tabTexts[i].getSize().x + std::max(m_minimumTabWidth, 2 * m_distanceToSideCached);
+                    if ((m_maximumTabWidth > 0) && (m_maximumTabWidth < m_tabWidth[i]))
+                        m_tabWidth[i] = m_maximumTabWidth;
+
+                    totalWidth += m_tabWidth[i];
+                }
+
+                // Now add the borders to the tabs
+                totalWidth += (m_tabWidth.size() + 1) * ((m_bordersCached.getLeft() + m_bordersCached.getRight()) / 2.f);
+
+                Widget::setSize({totalWidth, getSizeLayout().y});
+            }
+        }
+        else // A size was provided
+        {
+            const float tabWidth = (getSize().x - ((m_tabWidth.size() + 1) * ((m_bordersCached.getLeft() + m_bordersCached.getRight()) / 2.f))) / m_tabWidth.size();
+            for (unsigned int i = 0; i < m_tabWidth.size(); ++i)
+                m_tabWidth[i] = tabWidth;
         }
 
-        // Now add the borders to the tabs
-        if (!m_tabWidth.empty())
-            m_width += (m_tabWidth.size() + 1) * ((m_bordersCached.left + m_bordersCached.right) / 2.f);
+        m_bordersCached.updateParentSize(getSize());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Tabs::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onTabSelect->getName()))
+            return *onTabSelect;
         else
-            m_width = m_bordersCached.left + m_bordersCached.right;
+            return Widget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,24 +474,27 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            recalculateTabsWidth();
         }
         else if (property == "textcolor")
         {
             m_textColorCached = getRenderer()->getTextColor();
-
-            for (auto& tabText : m_tabTexts)
-                tabText.setColor(m_textColorCached);
-
-            if (m_selectedTab >= 0)
-                m_tabTexts[m_selectedTab].setColor(m_selectedTextColorCached);
+            updateTextColors();
+        }
+        else if (property == "textcolorhover")
+        {
+            m_textColorHoverCached = getRenderer()->getTextColorHover();
+            updateTextColors();
         }
         else if (property == "selectedtextcolor")
         {
             m_selectedTextColorCached = getRenderer()->getSelectedTextColor();
-
-            if (m_selectedTab >= 0)
-                m_tabTexts[m_selectedTab].setColor(m_selectedTextColorCached);
+            updateTextColors();
+        }
+        else if (property == "selectedtextcolorhover")
+        {
+            m_selectedTextColorHoverCached = getRenderer()->getSelectedTextColorHover();
+            updateTextColors();
         }
         else if (property == "texturetab")
         {
@@ -433,9 +513,17 @@ namespace tgui
         {
             m_backgroundColorCached = getRenderer()->getBackgroundColor();
         }
+        else if (property == "backgroundcolorhover")
+        {
+            m_backgroundColorHoverCached = getRenderer()->getBackgroundColorHover();
+        }
         else if (property == "selectedbackgroundcolor")
         {
             m_selectedBackgroundColorCached = getRenderer()->getSelectedBackgroundColor();
+        }
+        else if (property == "selectedbackgroundcolorhover")
+        {
+            m_selectedBackgroundColorHoverCached = getRenderer()->getSelectedBackgroundColorHover();
         }
         else if (property == "bordercolor")
         {
@@ -458,7 +546,7 @@ namespace tgui
             for (auto& tab : m_tabTexts)
                 tab.setFont(m_fontCached);
 
-            // Recalculate the size when auto sizing
+            // Recalculate the size when the text is auto sizing
             if (m_requestedTextSize == 0)
                 setTextSize(0);
             else
@@ -466,6 +554,28 @@ namespace tgui
         }
         else
             Widget::rendererChanged(property);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Tabs::updateTextColors()
+    {
+        for (auto& tabText : m_tabTexts)
+            tabText.setColor(m_textColorCached);
+
+        if (m_selectedTab >= 0)
+        {
+            if ((m_selectedTab == m_hoveringTab) && m_selectedTextColorHoverCached.isSet())
+                m_tabTexts[m_selectedTab].setColor(m_selectedTextColorHoverCached);
+            else if (m_selectedTextColorCached.isSet())
+                m_tabTexts[m_selectedTab].setColor(m_selectedTextColorCached);
+        }
+
+        if ((m_hoveringTab >= 0) && (m_selectedTab != m_hoveringTab))
+        {
+            if (m_textColorHoverCached.isSet())
+                m_tabTexts[m_hoveringTab].setColor(m_textColorHoverCached);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -479,10 +589,10 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
-        float usableHeight = m_tabHeight - m_bordersCached.top - m_bordersCached.bottom;
+        const float usableHeight = getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom();
         for (unsigned int i = 0; i < m_tabTexts.size(); ++i)
         {
             sf::RenderStates textStates = states;
@@ -498,7 +608,10 @@ namespace tgui
                 }
                 else // No texture was loaded
                 {
-                    drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_selectedBackgroundColorCached);
+                    if ((m_hoveringTab == static_cast<int>(i)) && m_selectedBackgroundColorHoverCached.isSet())
+                        drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_selectedBackgroundColorHoverCached);
+                    else
+                        drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_selectedBackgroundColorCached);
                 }
             }
             else // This tab is not selected
@@ -511,27 +624,30 @@ namespace tgui
                 }
                 else // No texture was loaded
                 {
-                    drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_backgroundColorCached);
+                    if ((m_hoveringTab == static_cast<int>(i)) && m_backgroundColorHoverCached.isSet())
+                        drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_backgroundColorHoverCached);
+                    else
+                        drawRectangleShape(target, states, {m_tabWidth[i], usableHeight}, m_backgroundColorCached);
                 }
+            }
+
+            // Draw the borders between the tabs
+            states.transform.translate({m_tabWidth[i], 0});
+            if ((m_bordersCached != Borders{0}) && (i < m_tabWidth.size() - 1))
+            {
+                drawRectangleShape(target, states, {(m_bordersCached.getLeft() + m_bordersCached.getRight()) / 2.f, usableHeight}, m_borderColorCached);
+                states.transform.translate({(m_bordersCached.getLeft() + m_bordersCached.getRight()) / 2.f, 0});
             }
 
             // Apply clipping if required for the text in this tab
             std::unique_ptr<Clipping> clipping;
-            float usableWidth = m_tabWidth[i] - (2 * m_distanceToSideCached);
+            const float usableWidth = m_tabWidth[i] - (2 * m_distanceToSideCached);
             if (m_tabTexts[i].getSize().x > usableWidth)
                 clipping = std::make_unique<Clipping>(target, textStates, sf::Vector2f{m_distanceToSideCached, 0}, sf::Vector2f{usableWidth, usableHeight});
 
             // Draw the text
             textStates.transform.translate({m_distanceToSideCached + ((usableWidth - m_tabTexts[i].getSize().x) / 2.f), ((usableHeight - m_tabTexts[i].getSize().y) / 2.f)});
             m_tabTexts[i].draw(target, textStates);
-
-            // Draw the borders between the tabs
-            states.transform.translate({m_tabWidth[i], 0});
-            if ((m_bordersCached != Borders{0}) && (i < m_tabWidth.size() - 1))
-            {
-                drawRectangleShape(target, states, {(m_bordersCached.left + m_bordersCached.right) / 2.f, usableHeight}, m_borderColorCached);
-                states.transform.translate({(m_bordersCached.left + m_bordersCached.right) / 2.f, 0});
-            }
         }
     }
 

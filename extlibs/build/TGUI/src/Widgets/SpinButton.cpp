@@ -31,24 +31,21 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"bordercolor", sf::Color::Black},
-        {"backgroundcolor", Color{245, 245, 245}},
-        {"backgroundcolorhover", sf::Color::White},
-        {"arrowcolor", Color{60, 60, 60}},
-        {"arrowcolorhover", sf::Color::Black},
-        {"spacebetweenarrows", 2.f}
-    };
+            {
+                {"borders", Borders{2}},
+                {"bordercolor", sf::Color::Black},
+                {"backgroundcolor", Color{245, 245, 245}},
+                {"backgroundcolorhover", sf::Color::White},
+                {"arrowcolor", Color{60, 60, 60}},
+                {"arrowcolorhover", sf::Color::Black},
+                {"spacebetweenarrows", 2.f}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     SpinButton::SpinButton()
     {
-        m_callback.widgetType = "SpinButton";
         m_type = "SpinButton";
-
-        addSignal<int>("ValueChanged");
 
         m_renderer = aurora::makeCopied<SpinButtonRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -70,11 +67,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    SpinButton::Ptr SpinButton::copy(ConstPtr spinButton)
+    SpinButton::Ptr SpinButton::copy(SpinButton::ConstPtr spinButton)
     {
         if (spinButton)
             return std::static_pointer_cast<SpinButton>(spinButton->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +81,9 @@ namespace tgui
     {
         Widget::setSize(size);
 
-        sf::Vector2f arrowSize = getArrowSize();
+        m_bordersCached.updateParentSize(getSize());
+
+        const sf::Vector2f arrowSize = getArrowSize();
         m_spriteArrowUp.setSize(arrowSize);
         m_spriteArrowUpHover.setSize(arrowSize);
         m_spriteArrowDown.setSize(arrowSize);
@@ -148,9 +148,7 @@ namespace tgui
         if (m_value != value)
         {
             m_value = value;
-
-            m_callback.value = m_value;
-            sendSignal("ValueChanged", value);
+            onValueChange->emit(this, value);
         }
     }
 
@@ -201,14 +199,14 @@ namespace tgui
         // Check if the mouse is on top of the upper/right arrow
         if (m_verticalScroll)
         {
-            if (sf::FloatRect{0, 0, getSize().x, getSize().y / 2.0f}.contains(pos))
+            if (sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y / 2.0f}.contains(pos))
                 m_mouseDownOnTopArrow = true;
             else
                 m_mouseDownOnTopArrow = false;
         }
         else
         {
-            if (sf::FloatRect{0, 0, getSize().x / 2.0f, getSize().y}.contains(pos))
+            if (sf::FloatRect{getPosition().x, getPosition().y, getSize().x / 2.0f, getSize().y}.contains(pos))
                 m_mouseDownOnTopArrow = false;
             else
                 m_mouseDownOnTopArrow = true;
@@ -226,8 +224,8 @@ namespace tgui
             if (m_mouseDownOnTopArrow)
             {
                 // Check if the mouse went up on the same arrow
-                if ((m_verticalScroll && (sf::FloatRect{0, 0, getSize().x, getSize().y / 2.f}.contains(pos)))
-                    || (!m_verticalScroll && (!sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
+                if ((m_verticalScroll && (sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y / 2.f}.contains(pos)))
+                 || (!m_verticalScroll && (!sf::FloatRect{getPosition().x, getPosition().y, getSize().x / 2.f, getSize().y}.contains(pos))))
                 {
                     // Increment the value
                     if (m_value < m_maximum)
@@ -241,8 +239,8 @@ namespace tgui
             else // The mouse went down on the bottom/left arrow
             {
                 // Check if the mouse went up on the same arrow
-                if ((m_verticalScroll && (!sf::FloatRect{0, 0, getSize().x, getSize().y / 2.f}.contains(pos)))
-                    || (!m_verticalScroll && (sf::FloatRect{0, 0, getSize().x / 2.f, getSize().y}.contains(pos))))
+                if ((m_verticalScroll && (!sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y / 2.f}.contains(pos)))
+                 || (!m_verticalScroll && (sf::FloatRect{getPosition().x, getPosition().y, getSize().x / 2.f, getSize().y}.contains(pos))))
                 {
                     // Decrement the value
                     if (m_value > m_minimum)
@@ -265,14 +263,14 @@ namespace tgui
         // Check if the mouse is on top of the upper/right arrow
         if (m_verticalScroll)
         {
-            if (sf::FloatRect{0, 0, getSize().x, getSize().y / 2.0f}.contains(pos))
+            if (sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y / 2.0f}.contains(pos))
                 m_mouseHoverOnTopArrow = true;
             else
                 m_mouseHoverOnTopArrow = false;
         }
         else
         {
-            if (sf::FloatRect{0, 0, getSize().x / 2.0f, getSize().y}.contains(pos))
+            if (sf::FloatRect{getPosition().x, getPosition().y, getSize().x / 2.0f, getSize().y}.contains(pos))
                 m_mouseHoverOnTopArrow = true;
             else
                 m_mouseHoverOnTopArrow = false;
@@ -288,6 +286,16 @@ namespace tgui
     {
         // A spin button can't be focused
         unfocus();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& SpinButton::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onValueChange->getName()))
+            return *onValueChange;
+        else
+            return ClickableWidget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,8 +366,11 @@ namespace tgui
     sf::Vector2f SpinButton::getArrowSize() const
     {
         if (m_verticalScroll)
-            return {getSize().x - m_bordersCached.left - m_bordersCached.right, (getSize().y - m_bordersCached.top - m_bordersCached.bottom - m_spaceBetweenArrowsCached) / 2.0f};
-        return {getSize().y - m_bordersCached.top - m_bordersCached.bottom, (getSize().x - m_bordersCached.left - m_bordersCached.right - m_spaceBetweenArrowsCached) / 2.0f};
+            return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                    (getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom() - m_spaceBetweenArrowsCached) / 2.0f};
+        else
+            return {getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom(),
+                    (getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight() - m_spaceBetweenArrowsCached) / 2.0f};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,10 +383,10 @@ namespace tgui
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
-        sf::Vector2f arrowSize = getArrowSize();
+        const sf::Vector2f arrowSize = getArrowSize();
 
         // Draw the top/left arrow
         if (m_spriteArrowUp.isSet() && m_spriteArrowDown.isSet())
@@ -394,17 +405,17 @@ namespace tgui
             {
                 arrowBack.setSize(arrowSize);
 
-                arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4 / 5});
+                arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4/5});
                 arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y / 5});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y * 4 / 5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y * 4/5});
             }
             else // Spin button lies horizontal
             {
                 arrowBack.setSize({arrowSize.y, arrowSize.x});
 
-                arrow.setPoint(0, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 5});
+                arrow.setPoint(0, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 5});
                 arrow.setPoint(1, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 2});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y * 4 / 5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y * 4/5});
             }
 
             if (m_mouseHover && m_mouseHoverOnTopArrow && m_backgroundColorHoverCached.isSet())
@@ -461,16 +472,16 @@ namespace tgui
                 arrowBack.setSize(arrowSize);
 
                 arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 5});
-                arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y * 4 / 5});
-                arrow.setPoint(2, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 5});
+                arrow.setPoint(1, {arrowBack.getSize().x / 2, arrowBack.getSize().y * 4/5});
+                arrow.setPoint(2, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 5});
             }
             else // Spin button lies horizontal
             {
                 arrowBack.setSize({arrowSize.y, arrowSize.x});
 
                 arrow.setPoint(0, {arrowBack.getSize().x / 5, arrowBack.getSize().y / 5});
-                arrow.setPoint(1, {arrowBack.getSize().x * 4 / 5, arrowBack.getSize().y / 2});
-                arrow.setPoint(2, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4 / 5});
+                arrow.setPoint(1, {arrowBack.getSize().x * 4/5, arrowBack.getSize().y / 2});
+                arrow.setPoint(2, {arrowBack.getSize().x / 5, arrowBack.getSize().y * 4/5});
             }
 
             if (m_mouseHover && !m_mouseHoverOnTopArrow && m_backgroundColorHoverCached.isSet())

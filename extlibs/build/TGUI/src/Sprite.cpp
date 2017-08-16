@@ -91,7 +91,7 @@ namespace tgui
     {
         m_vertexColor = color;
 
-        sf::Color vertexColor = Color::calcColorOpacity(m_vertexColor, m_opacity);
+        const sf::Color vertexColor = Color::calcColorOpacity(m_vertexColor, m_opacity);
         for (auto& vertex : m_vertices)
             vertex.color = vertexColor;
     }
@@ -148,13 +148,13 @@ namespace tgui
         const sf::Texture& texture = m_texture.getData()->texture;
         switch (m_scalingType)
         {
-        case ScalingType::Normal:
+            case ScalingType::Normal:
             {
                 pixel.x = static_cast<unsigned int>(pos.x / m_size.x * texture.getSize().x);
                 pixel.y = static_cast<unsigned int>(pos.y / m_size.y * texture.getSize().y);
                 break;
             }
-        case ScalingType::Horizontal:
+            case ScalingType::Horizontal:
             {
                 if (pos.x >= m_size.x - (texture.getSize().x - middleRect.left - middleRect.width) * (m_size.y / texture.getSize().y))
                 {
@@ -174,7 +174,7 @@ namespace tgui
                 pixel.y = static_cast<unsigned int>(pos.y / m_size.y * texture.getSize().y);
                 break;
             }
-        case ScalingType::Vertical:
+            case ScalingType::Vertical:
             {
                 if (pos.y >= m_size.y - (texture.getSize().y - middleRect.top - middleRect.height) * (m_size.x / texture.getSize().x))
                 {
@@ -194,7 +194,7 @@ namespace tgui
                 pixel.x = static_cast<unsigned int>(pos.x / m_size.x * texture.getSize().x);
                 break;
             }
-        case ScalingType::NineSlice:
+            case ScalingType::NineSlice:
             {
                 if (pos.x < middleRect.left)
                     pixel.x = static_cast<unsigned int>(pos.x);
@@ -218,7 +218,7 @@ namespace tgui
 
                 break;
             }
-        }
+        };
 
         return m_texture.isTransparentPixel(pixel);
     }
@@ -362,7 +362,7 @@ namespace tgui
             m_vertices[20] = m_vertices[8];
             m_vertices[21] = {{m_size.x, m_size.y}, m_vertexColor, {textureSize.x, textureSize.y}};
             break;
-        }
+        };
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,7 +373,7 @@ namespace tgui
         if (getRotation() != 0)
         {
             sf::Vector2f pos = {getTransform().transformRect(sf::FloatRect({}, getSize())).left,
-                getTransform().transformRect(sf::FloatRect({}, getSize())).top};
+                                getTransform().transformRect(sf::FloatRect({}, getSize())).top};
 
             states.transform.translate(getPosition() - pos);
         }

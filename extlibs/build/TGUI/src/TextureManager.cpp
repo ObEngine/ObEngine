@@ -89,7 +89,8 @@ namespace tgui
 
             if (loadFromImageSuccess)
                 return data;
-            return nullptr;
+            else
+                return nullptr;
         }
 
         // The image could not be loaded

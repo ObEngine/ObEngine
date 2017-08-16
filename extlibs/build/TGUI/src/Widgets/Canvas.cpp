@@ -33,7 +33,6 @@ namespace tgui
 
     Canvas::Canvas(const Layout2d& size)
     {
-        m_callback.widgetType = "Canvas";
         m_type = "Canvas";
 
         setSize(size);
@@ -49,11 +48,35 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Canvas& Canvas::operator=(const Canvas& right)
+    Canvas::Canvas(Canvas&& other) :
+        ClickableWidget{std::move(other)}
+    {
+        // sf::RenderTexture does not support move yet
+        setSize(other.getSize());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Canvas& Canvas::operator= (const Canvas& right)
     {
         if (this != &right)
         {
             ClickableWidget::operator=(right);
+            setSize(right.getSize());
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Canvas& Canvas::operator= (Canvas&& right)
+    {
+        if (this != &right)
+        {
+            ClickableWidget::operator=(std::move(right));
+
+            // sf::RenderTexture does not support move yet
             setSize(right.getSize());
         }
 
@@ -69,11 +92,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Canvas::Ptr Canvas::copy(ConstPtr canvas)
+    Canvas::Ptr Canvas::copy(Canvas::ConstPtr canvas)
     {
         if (canvas)
             return std::static_pointer_cast<Canvas>(canvas->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,11 +106,14 @@ namespace tgui
     {
         Widget::setSize(size);
 
-        m_renderTexture.create(static_cast<unsigned int>(getSize().x), static_cast<unsigned int>(getSize().y));
-        m_sprite.setTexture(m_renderTexture.getTexture(), true);
+        if (getSize() != sf::Vector2f{})
+        {
+            m_renderTexture.create(static_cast<unsigned int>(getSize().x), static_cast<unsigned int>(getSize().y));
+            m_sprite.setTexture(m_renderTexture.getTexture(), true);
 
-        m_renderTexture.clear();
-        m_renderTexture.display();
+            m_renderTexture.clear();
+            m_renderTexture.display();
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +132,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Canvas::draw(const sf::Vertex* vertices, size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states)
+    void Canvas::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states)
     {
         m_renderTexture.draw(vertices, vertexCount, type, states);
     }

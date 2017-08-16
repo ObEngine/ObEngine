@@ -24,7 +24,6 @@
 
 
 #include <TGUI/Loading/DataIO.hpp>
-#include <TGUI/Exception.hpp>
 #include <TGUI/Global.hpp>
 
 #include <cctype>
@@ -92,7 +91,7 @@ namespace tgui
     namespace
     {
         // Forward declare one of the functions to solve circular dependency
-        std::string parseSection(std::stringstream& stream, std::shared_ptr<DataIO::Node> node, const std::string& sectionName);
+        std::string parseSection(std::stringstream& stream, const std::unique_ptr<DataIO::Node>& node, const std::string& sectionName);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +106,7 @@ namespace tgui
                     stream.read(&c, 1);
                     return word;
                 }
-                if (!isspace(c) && (c != '=') && (c != ';') && (c != '{') && (c != '}'))
+                else if (!::isspace(c) && (c != '=') && (c != ';') && (c != '{') && (c != '}'))
                 {
                     stream.read(&c, 1);
 
@@ -203,6 +202,7 @@ namespace tgui
                                 }
                             }
                         }
+                        continue;
                     }
                     else
                         return "";
@@ -238,13 +238,13 @@ namespace tgui
 
                 if ((c == '=') || (c == '{'))
                     return "";
-                if ((c == ';') || (c == '}'))
+                else if ((c == ';') || (c == '}'))
                 {
                     // Remove trailing whitespace before returning the line
-                    line.erase(line.find_last_not_of(" \n\r\t") + 1);
+                    line.erase(line.find_last_not_of(" \n\r\t")+1);
                     return line;
                 }
-                if (isspace(c))
+                else if (::isspace(c))
                 {
                     stream.read(&c, 1);
                     if (!whitespaceFound)
@@ -266,7 +266,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        std::string parseKeyValue(std::stringstream& stream, std::shared_ptr<DataIO::Node> node, const std::string& key)
+        std::string parseKeyValue(std::stringstream& stream, std::unique_ptr<DataIO::Node>& node, const std::string& key)
         {
             // Read the assignment symbol from the stream and remove the whitespace behind it
             char chr;
@@ -287,9 +287,8 @@ namespace tgui
                     stream.read(&chr, 1);
 
                 // Create a value node to store the value
-                auto valueNode = std::make_shared<DataIO::ValueNode>();
+                auto valueNode = std::make_unique<DataIO::ValueNode>();
                 valueNode->value = line;
-                node->propertyValuePairs[toLower(key)] = valueNode;
 
                 // It might be a list node
                 if ((line.size() >= 2) && (line[0] == '[') && (line.back() == ']'))
@@ -299,8 +298,8 @@ namespace tgui
                     {
                         valueNode->valueList.push_back("");
 
-                        size_t i = 1;
-                        while (i < line.size() - 1)
+                        std::size_t i = 1;
+                        while (i < line.size()-1)
                         {
                             if (line[i] == ',')
                             {
@@ -314,7 +313,7 @@ namespace tgui
                                 i++;
 
                                 bool backslash = false;
-                                while (i < line.size() - 1)
+                                while (i < line.size()-1)
                                 {
                                     valueNode->valueList.back().insert(valueNode->valueList.back().getSize(), line[i]);
 
@@ -343,29 +342,34 @@ namespace tgui
                     }
                 }
 
+                node->propertyValuePairs[toLower(key)] = std::move(valueNode);
                 return "";
             }
-            if (stream.peek() == EOF)
-                return "Found EOF while trying to read a value.";
-            chr = stream.peek();
-            if (chr == '=')
-                return "Found '=' while trying to read a value.";
-            else if (chr == '{')
-                return "Found '{' while trying to read a value.";
             else
-                return "Found empty value.";
+            {
+                if (stream.peek() == EOF)
+                    return "Found EOF while trying to read a value.";
+                else
+                {
+                    chr = stream.peek();
+                    if (chr == '=')
+                        return "Found '=' while trying to read a value.";
+                    else if (chr == '{')
+                        return "Found '{' while trying to read a value.";
+                    else
+                        return "Found empty value.";
+                }
+            }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        std::string parseSection(std::stringstream& stream, std::shared_ptr<DataIO::Node> node, const std::string& sectionName)
+        std::string parseSection(std::stringstream& stream, const std::unique_ptr<DataIO::Node>& node, const std::string& sectionName)
         {
             // Create a new node for this section
-            auto sectionNode = std::make_shared<DataIO::Node>();
+            auto sectionNode = std::make_unique<DataIO::Node>();
             sectionNode->parent = node.get();
             sectionNode->name = sectionName;
-            node->children.push_back(sectionNode);
-            node = sectionNode;
 
             // Read the brace from the stream
             char chr;
@@ -380,8 +384,10 @@ namespace tgui
                 {
                     if (stream.peek() == EOF)
                         return "Found EOF while trying to read property or nested section name.";
-                    if (stream.peek() == '}')
+                    else if (stream.peek() == '}')
                     {
+                        node->children.push_back(std::move(sectionNode));
+
                         stream.read(&chr, 1);
 
                         // Ignore semicolon behind closing brace
@@ -392,20 +398,20 @@ namespace tgui
                         REMOVE_WHITESPACE_AND_COMMENTS(false)
                         return "";
                     }
-                    if (stream.peek() != '{')
+                    else if (stream.peek() != '{')
                         return "Expected property or nested section name, found '" + std::string(1, stream.peek()) + "' instead.";
                 }
 
                 REMOVE_WHITESPACE_AND_COMMENTS(true)
                 if (stream.peek() == '{')
                 {
-                    std::string error = parseSection(stream, node, word);
+                    std::string error = parseSection(stream, sectionNode, word);
                     if (!error.empty())
                         return error;
                 }
                 else if (stream.peek() == '=')
                 {
-                    std::string error = parseKeyValue(stream, node, word);
+                    std::string error = parseKeyValue(stream, sectionNode, word);
                     if (!error.empty())
                         return error;
                 }
@@ -418,7 +424,7 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        std::string parseRootSection(std::stringstream& stream, std::shared_ptr<DataIO::Node> root)
+        std::string parseRootSection(std::stringstream& stream, std::unique_ptr<DataIO::Node>& root)
         {
             REMOVE_WHITESPACE_AND_COMMENTS(false)
 
@@ -433,14 +439,15 @@ namespace tgui
             REMOVE_WHITESPACE_AND_COMMENTS(true)
             if (stream.peek() == '{')
                 return parseSection(stream, root, word);
-            if (stream.peek() == '=')
+            else if (stream.peek() == '=')
                 return parseKeyValue(stream, root, word);
-            return "Expected '{' or '=', found '" + std::string(1, stream.peek()) + "' instead.";
+            else
+                return "Expected '{' or '=', found '" + std::string(1, stream.peek()) + "' instead.";
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        std::vector<std::string> convertNodesToLines(std::shared_ptr<DataIO::Node> node)
+        std::vector<std::string> convertNodesToLines(const std::unique_ptr<DataIO::Node>& node)
         {
             std::vector<std::string> output;
             if (node->name.empty())
@@ -459,7 +466,7 @@ namespace tgui
 
             if (!node->children.empty())
             {
-                for (size_t i = 0; i < node->children.size(); ++i)
+                for (std::size_t i = 0; i < node->children.size(); ++i)
                 {
                     for (const auto& line : convertNodesToLines(node->children[i]))
                         output.emplace_back("    " + line);
@@ -478,9 +485,9 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<DataIO::Node> DataIO::parse(std::stringstream& stream)
+    std::unique_ptr<DataIO::Node> DataIO::parse(std::stringstream& stream)
     {
-        auto root = std::make_shared<Node>();
+        auto root = std::make_unique<Node>();
 
         std::string error;
         while (stream.peek() != EOF)
@@ -491,10 +498,12 @@ namespace tgui
                 if (stream.tellg() != std::stringstream::pos_type(-1))
                 {
                     std::string str = stream.str();
-                    size_t lineNumber = count(str.begin(), str.begin() + stream.tellg(), '\n') + 1;
+                    auto position = static_cast<std::iterator_traits<std::string::const_iterator>::difference_type>(stream.tellg());
+                    std::size_t lineNumber = std::count(str.begin(), str.begin() + position, '\n') + 1;
                     throw Exception{"Error while parsing input at line " + std::to_string(lineNumber) + ". " + error};
                 }
-                throw Exception{"Error while parsing input. " + error};
+                else
+                    throw Exception{"Error while parsing input. " + error};
             }
         }
 
@@ -503,7 +512,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void DataIO::emit(std::shared_ptr<Node> rootNode, std::stringstream& stream)
+    void DataIO::emit(const std::unique_ptr<Node>& rootNode, std::stringstream& stream)
     {
         for (const auto& pair : rootNode->propertyValuePairs)
             stream << pair.first << " = " << pair.second->value.toAnsiString() << ";" << std::endl;
@@ -512,12 +521,12 @@ namespace tgui
             stream << std::endl;
 
         std::vector<std::string> output;
-        for (size_t i = 0; i < rootNode->children.size(); ++i)
+        for (std::size_t i = 0; i < rootNode->children.size(); ++i)
         {
             for (const auto& line : convertNodesToLines(rootNode->children[i]))
-                output.emplace_back(move(line));
+                output.emplace_back(std::move(line));
 
-            if (i < rootNode->children.size() - 1)
+            if (i < rootNode->children.size()-1)
                 output.emplace_back("");
         }
 

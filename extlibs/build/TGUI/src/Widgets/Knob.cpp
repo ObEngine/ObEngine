@@ -39,23 +39,20 @@ namespace
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{5}},
-        {"imagerotation", 0.f},
-        {"bordercolor", sf::Color::Black},
-        {"thumbcolor", sf::Color::Black},
-        {"backgroundcolor", sf::Color::White}
-    };
+            {
+                {"borders", Borders{5}},
+                {"imagerotation", 0.f},
+                {"bordercolor", sf::Color::Black},
+                {"thumbcolor", sf::Color::Black},
+                {"backgroundcolor", sf::Color::White}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Knob::Knob()
     {
         m_type = "Knob";
-        m_callback.widgetType = "Knob";
         m_draggableWidget = true;
-
-        addSignal<int>("ValueChanged");
 
         m_renderer = aurora::makeCopied<KnobRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
@@ -72,11 +69,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Knob::Ptr Knob::copy(ConstPtr knob)
+    Knob::Ptr Knob::copy(Knob::ConstPtr knob)
     {
         if (knob)
             return std::static_pointer_cast<Knob>(knob->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,11 +83,13 @@ namespace tgui
     {
         Widget::setSize(size);
 
+        m_bordersCached.updateParentSize(getSize());
+
         if (m_spriteBackground.isSet() && m_spriteForeground.isSet())
         {
             m_spriteBackground.setSize(getInnerSize());
             m_spriteForeground.setSize({m_spriteForeground.getTexture().getImageSize().x / m_spriteBackground.getTexture().getImageSize().x * getInnerSize().x,
-                m_spriteForeground.getTexture().getImageSize().y / m_spriteBackground.getTexture().getImageSize().y * getInnerSize().y});
+                                        m_spriteForeground.getTexture().getImageSize().y / m_spriteBackground.getTexture().getImageSize().y * getInnerSize().y});
         }
     }
 
@@ -216,8 +216,7 @@ namespace tgui
             // The knob might have to point in a different direction
             recalculateRotation();
 
-            m_callback.value = m_value;
-            sendSignal("ValueChanged", m_value);
+            onValueChange->emit(this, m_value);
         }
     }
 
@@ -249,6 +248,8 @@ namespace tgui
 
     bool Knob::mouseOnWidget(sf::Vector2f pos) const
     {
+        pos -= getPosition();
+
         // Check if the mouse is on top of the widget
         if (sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos))
         {
@@ -260,8 +261,8 @@ namespace tgui
             }
             else // There is no texture, the widget has a circle shape
             {
-                sf::Vector2f centerPoint = getSize() / 2.f;
-                float distance = sqrt(pow(centerPoint.x - pos.x, 2) + pow(centerPoint.y - pos.y, 2));
+                const sf::Vector2f centerPoint = getSize() / 2.f;
+                const float distance = std::sqrt(std::pow(centerPoint.x - pos.x, 2) + std::pow(centerPoint.y - pos.y, 2));
                 return (distance <= std::min(getSize().x, getSize().y));
             }
         }
@@ -291,10 +292,12 @@ namespace tgui
 
     void Knob::mouseMoved(sf::Vector2f pos)
     {
+        pos -= getPosition();
+
         if (!m_mouseHover)
             mouseEnteredWidget();
 
-        sf::Vector2f centerPosition = getSize() / 2.0f;
+        const sf::Vector2f centerPosition = getSize() / 2.0f;
 
         // Check if the mouse button is down
         if (m_mouseDown)
@@ -309,7 +312,7 @@ namespace tgui
             }
             else
             {
-                m_angle = atan2(centerPosition.y - pos.y, pos.x - centerPosition.x) * 180.0f / pi;
+                m_angle = std::atan2(centerPosition.y - pos.y, pos.x - centerPosition.x) * 180.0f / pi;
                 if (m_angle < 0)
                     m_angle += 360;
             }
@@ -327,7 +330,7 @@ namespace tgui
                 else if (m_angle > m_endRotation)
                 {
                     if (((m_startRotation > m_endRotation) && (m_clockwiseTurning))
-                        || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
+                     || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
                     {
                         if (std::min(m_angle - m_startRotation, 360 - m_angle + m_startRotation) <= std::min(m_angle - m_endRotation, 360 - m_angle + m_endRotation))
                             m_angle = m_startRotation;
@@ -341,9 +344,9 @@ namespace tgui
                 if (m_angle < m_endRotation)
                 {
                     if (((m_startRotation > m_endRotation) && (m_clockwiseTurning))
-                        || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
+                     || ((m_startRotation < m_endRotation) && (!m_clockwiseTurning)))
                     {
-                        if (std::min(m_startRotation - m_angle, 360 - m_startRotation + m_angle) <= std::min(m_endRotation - m_angle, 360 - m_endRotation + m_angle))
+                        if (std::min(m_startRotation - m_angle, 360 - m_startRotation + m_angle) <= std::min(m_endRotation - m_angle, 360 -m_endRotation + m_angle))
                             m_angle = m_startRotation;
                         else
                             m_angle = m_endRotation;
@@ -365,12 +368,12 @@ namespace tgui
             else
             {
                 if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
-                    || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
+                 || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
                 {
                     allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
                 }
                 else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
-                    || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
+                      || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
                 {
                     allowedAngle = std::abs(m_endRotation - m_startRotation);
                 }
@@ -420,12 +423,12 @@ namespace tgui
         else
         {
             if (((m_endRotation > m_startRotation) && (m_clockwiseTurning))
-                || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
+             || ((m_endRotation < m_startRotation) && (!m_clockwiseTurning)))
             {
                 allowedAngle = 360 - std::abs(m_endRotation - m_startRotation);
             }
             else if (((m_endRotation > m_startRotation) && (!m_clockwiseTurning))
-                || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
+                  || ((m_endRotation < m_startRotation) && (m_clockwiseTurning)))
             {
                 allowedAngle = std::abs(m_endRotation - m_startRotation);
             }
@@ -443,6 +446,16 @@ namespace tgui
         {
             m_angle = (((m_value - m_minimum) / static_cast<float>(m_maximum - m_minimum)) * allowedAngle) + m_startRotation;
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Knob::getSignal(std::string&& signalName)
+    {
+        if (signalName == toLower(onValueChange->getName()))
+            return *onValueChange;
+        else
+            return Widget::getSignal(std::move(signalName));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -495,7 +508,7 @@ namespace tgui
 
     sf::Vector2f Knob::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(), getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -504,10 +517,10 @@ namespace tgui
     {
         states.transform.translate(getPosition());
 
-        float size = std::min(getInnerSize().x, getInnerSize().y);
+        const float size = std::min(getInnerSize().x, getInnerSize().y);
 
         // Draw the borders
-        float borderThickness = std::min({m_bordersCached.left, m_bordersCached.top, m_bordersCached.right, m_bordersCached.bottom});
+        const float borderThickness = std::min({m_bordersCached.getLeft(), m_bordersCached.getTop(), m_bordersCached.getRight(), m_bordersCached.getBottom()});
         if (borderThickness > 0)
         {
             states.transform.translate({borderThickness, borderThickness});
@@ -546,8 +559,8 @@ namespace tgui
         {
             sf::CircleShape thumb{size / 10.0f};
             thumb.setFillColor(Color::calcColorOpacity(m_thumbColorCached, m_opacityCached));
-            thumb.setPosition({(size / 2.0f) - thumb.getRadius() + (cos(m_angle / 180 * pi) * (size / 2) * 3 / 5),
-                (size / 2.0f) - thumb.getRadius() + (-sin(m_angle / 180 * pi) * (size / 2) * 3 / 5)});
+            thumb.setPosition({(size / 2.0f) - thumb.getRadius() + (std::cos(m_angle / 180 * pi) * (size / 2) * 3/5),
+                               (size / 2.0f) - thumb.getRadius() + (-std::sin(m_angle / 180 * pi) * (size / 2) * 3/5)});
             target.draw(thumb, states);
         }
     }

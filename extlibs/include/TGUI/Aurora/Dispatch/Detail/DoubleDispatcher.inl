@@ -25,125 +25,132 @@
 
 namespace aurora
 {
-    template <typename Signature, typename Traits>
-    DoubleDispatcher<Signature, Traits>::DoubleDispatcher(bool symmetric)
-        : mMap()
-          , mFallback()
-          , mSymmetric(symmetric)
-    {
-    }
 
-    template <typename Signature, typename Traits>
-    DoubleDispatcher<Signature, Traits>::DoubleDispatcher(DoubleDispatcher&& source)
-        : mMap(std::move(source.mMap))
-          , mFallback(std::move(source.mFallback))
-          , mSymmetric(std::move(source.mSymmetric))
-    {
-    }
+template <typename Signature, typename Traits>
+DoubleDispatcher<Signature, Traits>::DoubleDispatcher(bool symmetric)
+: mMap()
+, mFallback()
+, mSymmetric(symmetric)
+{
+}
 
-    template <typename Signature, typename Traits>
-    DoubleDispatcher<Signature, Traits>& DoubleDispatcher<Signature, Traits>::operator=(DoubleDispatcher&& source)
-    {
-        mMap = std::move(source.mMap);
-        mFallback = std::move(source.mFallback);
-        mSymmetric = std::move(source.mSymmetric);
+template <typename Signature, typename Traits>
+DoubleDispatcher<Signature, Traits>::DoubleDispatcher(DoubleDispatcher&& source)
+: mMap(std::move(source.mMap))
+, mFallback(std::move(source.mFallback))
+, mSymmetric(std::move(source.mSymmetric))
+{
+}
 
-        return *this;
-    }
+template <typename Signature, typename Traits>
+DoubleDispatcher<Signature, Traits>& DoubleDispatcher<Signature, Traits>::operator= (DoubleDispatcher&& source)
+{
+	mMap = std::move(source.mMap);
+	mFallback = std::move(source.mFallback);
+	mSymmetric = std::move(source.mSymmetric);
 
-    template <typename Signature, typename Traits>
-    DoubleDispatcher<Signature, Traits>::~DoubleDispatcher()
-    {
-    }
+	return *this;
+}
 
-    template <typename Signature, typename Traits>
-    template <typename Id1, typename Id2, typename Fn>
-    void DoubleDispatcher<Signature, Traits>::bind(const Id1& identifier1, const Id2& identifier2, Fn function)
-    {
-        SingleKey key1 = Traits::keyFromId(identifier1);
-        SingleKey key2 = Traits::keyFromId(identifier2);
+template <typename Signature, typename Traits>
+DoubleDispatcher<Signature, Traits>::~DoubleDispatcher()
+{
+}
 
-        mMap[makeKey(key1, key2)] = Traits::template trampoline2<Id1, Id2>(function);
-    }
+template <typename Signature, typename Traits>
+template <typename Id1, typename Id2, typename Fn>
+void DoubleDispatcher<Signature, Traits>::bind(const Id1& identifier1, const Id2& identifier2, Fn function)
+{
+	SingleKey key1 = Traits::keyFromId(identifier1);
+	SingleKey key2 = Traits::keyFromId(identifier2);
 
-    template <typename Signature, typename Traits>
-    typename DoubleDispatcher<Signature, Traits>::Result DoubleDispatcher<Signature, Traits>::call(Parameter arg1, Parameter arg2) const
-    {
-        SingleKey key1 = Traits::keyFromBase(arg1);
-        SingleKey key2 = Traits::keyFromBase(arg2);
+	mMap[makeKey(key1, key2)] = Traits::template trampoline2<Id1, Id2>(function);
+}
 
-        // If no corresponding class (or base class) has been found: Invoke fallback if available, otherwise throw exception
-        Key key = makeKey(key1, key2);
-        auto itr = mMap.find(key);
-        if (itr == mMap.end())
-        {
-            if (mFallback)
-                return mFallback(arg1, arg2);
-            throw FunctionCallException(std::string("DoubleDispatcher::call() - function with parameters \"") + Traits::name(key1)
-                + "\" and \"" + Traits::name(key2) + "\" not registered");
-        }
+template <typename Signature, typename Traits>
+typename DoubleDispatcher<Signature, Traits>::Result DoubleDispatcher<Signature, Traits>::call(Parameter arg1, Parameter arg2) const
+{
+	SingleKey key1 = Traits::keyFromBase(arg1);
+	SingleKey key2 = Traits::keyFromBase(arg2);
 
-        // Call function (swap-flag equal for stored entry and passed arguments means the order was the same; otherwise swap arguments)
-        if (itr->first.swapped == key.swapped)
-            return itr->second(arg1, arg2);
-        return itr->second(arg2, arg1);
-    }
+	// If no corresponding class (or base class) has been found: Invoke fallback if available, otherwise throw exception
+	Key key = makeKey(key1, key2);
+	auto itr = mMap.find(key);
+	if (itr == mMap.end())
+	{
+		if (mFallback)
+			return mFallback(arg1, arg2);
+		else
+			throw FunctionCallException(std::string("DoubleDispatcher::call() - function with parameters \"") + Traits::name(key1)
+				+ "\" and \"" + Traits::name(key2) + "\" not registered");
+	}
 
-    template <typename Signature, typename Traits>
-    typename DoubleDispatcher<Signature, Traits>::Result DoubleDispatcher<Signature, Traits>::call(Parameter arg1, Parameter arg2, UserData data) const
-    {
-        SingleKey key1 = Traits::keyFromBase(arg1);
-        SingleKey key2 = Traits::keyFromBase(arg2);
+	// Call function (swap-flag equal for stored entry and passed arguments means the order was the same; otherwise swap arguments)
+	if (itr->first.swapped == key.swapped)
+		return itr->second(arg1, arg2);
+	else
+		return itr->second(arg2, arg1);
+}
 
-        // If no corresponding class (or base class) has been found: Invoke fallback if available, otherwise throw exception
-        Key key = makeKey(key1, key2);
-        auto itr = mMap.find(key);
-        if (itr == mMap.end())
-        {
-            if (mFallback)
-                return mFallback(arg1, arg2, data);
-            throw FunctionCallException(std::string("DoubleDispatcher::call() - function with parameters \"") + Traits::name(key1)
-                + "\" and \"" + Traits::name(key2) + "\" not registered");
-        }
+template <typename Signature, typename Traits>
+typename DoubleDispatcher<Signature, Traits>::Result DoubleDispatcher<Signature, Traits>::call(Parameter arg1, Parameter arg2, UserData data) const
+{
+	SingleKey key1 = Traits::keyFromBase(arg1);
+	SingleKey key2 = Traits::keyFromBase(arg2);
 
-        // Call function (swap-flag equal for stored entry and passed arguments means the order was the same; otherwise swap arguments)
-        if (itr->first.swapped == key.swapped)
-            return itr->second(arg1, arg2, data);
-        return itr->second(arg2, arg1, data);
-    }
+	// If no corresponding class (or base class) has been found: Invoke fallback if available, otherwise throw exception
+	Key key = makeKey(key1, key2);
+	auto itr = mMap.find(key);
+	if (itr == mMap.end())
+	{
+		if (mFallback)
+			return mFallback(arg1, arg2, data);
+		else
+			throw FunctionCallException(std::string("DoubleDispatcher::call() - function with parameters \"") + Traits::name(key1)
+			+ "\" and \"" + Traits::name(key2) + "\" not registered");
+	}
 
-    template <typename Signature, typename Traits>
-    void DoubleDispatcher<Signature, Traits>::fallback(std::function<Signature> function)
-    {
-        mFallback = std::move(function);
-    }
+	// Call function (swap-flag equal for stored entry and passed arguments means the order was the same; otherwise swap arguments)
+	if (itr->first.swapped == key.swapped)
+		return itr->second(arg1, arg2, data);
+	else
+		return itr->second(arg2, arg1, data);
+}
 
-    template <typename Signature, typename Traits>
-    typename DoubleDispatcher<Signature, Traits>::Key DoubleDispatcher<Signature, Traits>::makeKey(SingleKey key1, SingleKey key2) const
-    {
-        // When symmetric, (key1,key2) and (key2,key1) are the same -> sort so that we always have (key1,key2)
-        if (mSymmetric && hashValue(key2) < hashValue(key1))
-            return Key(key2, key1, true);
-        return Key(key1, key2, false);
-    }
+template <typename Signature, typename Traits>
+void DoubleDispatcher<Signature, Traits>::fallback(std::function<Signature> function)
+{
+	mFallback = std::move(function);
+}
 
-    template <typename Signature, typename Traits>
-    DoubleDispatcher<Signature, Traits>::Key::Key(const SingleKey& key1, const SingleKey& key2, bool swapped)
-        : keyPair(key1, key2)
-          , swapped(swapped)
-    {
-    }
+template <typename Signature, typename Traits>
+typename DoubleDispatcher<Signature, Traits>::Key DoubleDispatcher<Signature, Traits>::makeKey(SingleKey key1, SingleKey key2) const
+{
+	// When symmetric, (key1,key2) and (key2,key1) are the same -> sort so that we always have (key1,key2)
+	if (mSymmetric && hashValue(key2) < hashValue(key1))
+		return Key(key2, key1, true);
+	else
+		return Key(key1, key2, false);
+}
 
-    template <typename Signature, typename Traits>
-    bool DoubleDispatcher<Signature, Traits>::Key::operator==(const Key& rhs) const
-    {
-        // Member 'swapped' not relevant for key lookup
-        return keyPair == rhs.keyPair;
-    }
+template <typename Signature, typename Traits>
+DoubleDispatcher<Signature, Traits>::Key::Key(const SingleKey& key1, const SingleKey& key2, bool swapped)
+: keyPair(key1, key2)
+, swapped(swapped)
+{
+}
 
-    template <typename Signature, typename Traits>
-    size_t DoubleDispatcher<Signature, Traits>::Hasher::operator()(const Key& k) const
-    {
-        return PairHasher()(k.keyPair);
-    }
+template <typename Signature, typename Traits>
+bool DoubleDispatcher<Signature, Traits>::Key::operator== (const Key& rhs) const
+{
+	// Member 'swapped' not relevant for key lookup
+	return keyPair == rhs.keyPair;
+}
+
+template <typename Signature, typename Traits>
+std::size_t DoubleDispatcher<Signature, Traits>::Hasher::operator() (const Key& k) const
+{
+	return PairHasher()(k.keyPair);
+}
+
 } // namespace aurora

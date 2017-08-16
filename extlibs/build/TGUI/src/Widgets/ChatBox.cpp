@@ -33,19 +33,18 @@
 namespace tgui
 {
     static std::map<std::string, ObjectConverter> defaultRendererValues =
-    {
-        {"borders", Borders{2}},
-        {"padding", Padding{2, 0, 0, 0}},
-        {"bordercolor", sf::Color::Black},
-        {"backgroundcolor", Color{245, 245, 245}}
-    };
+            {
+                {"borders", Borders{2}},
+                {"padding", Padding{2, 0, 0, 0}},
+                {"bordercolor", sf::Color::Black},
+                {"backgroundcolor", Color{245, 245, 245}}
+            };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ChatBox::ChatBox()
     {
         m_type = "ChatBox";
-        m_callback.widgetType = "ChatBox";
         m_draggableWidget = true;
 
         m_renderer = aurora::makeCopied<ChatBoxRenderer>();
@@ -64,11 +63,12 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ChatBox::Ptr ChatBox::copy(ConstPtr chatBox)
+    ChatBox::Ptr ChatBox::copy(ChatBox::ConstPtr chatBox)
     {
         if (chatBox)
             return std::static_pointer_cast<ChatBox>(chatBox->clone());
-        return nullptr;
+        else
+            return nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,8 @@ namespace tgui
     {
         Widget::setPosition(position);
 
-        m_scroll.setPosition(getSize().x - m_bordersCached.right - m_paddingCached.right - m_scroll.getSize().x, m_bordersCached.top + m_paddingCached.top);
+        m_scroll.setPosition(getSize().x - m_bordersCached.getRight() - m_paddingCached.getRight() - m_scroll.getSize().x,
+                             m_bordersCached.getTop() + m_paddingCached.getTop());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +88,9 @@ namespace tgui
         Widget::setSize(size);
 
         m_spriteBackground.setSize(getInnerSize());
+
+        m_bordersCached.updateParentSize(getSize());
+        m_paddingCached.updateParentSize(getSize());
 
         updateRendering();
         updatePosition();
@@ -123,7 +127,7 @@ namespace tgui
             if (m_newLinesBelowOthers)
                 removeLine(0);
             else
-                removeLine(m_maxLines - 1);
+                removeLine(m_maxLines-1);
         }
 
         Line line;
@@ -146,55 +150,55 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::String ChatBox::getLine(size_t lineIndex) const
+    sf::String ChatBox::getLine(std::size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].string;
         }
-        // Index too high
-        return "";
+        else // Index too high
+            return "";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::Color ChatBox::getLineColor(size_t lineIndex) const
+    sf::Color ChatBox::getLineColor(std::size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getColor();
         }
-        // Index too high
-        return m_textColor;
+        else // Index too high
+            return m_textColor;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    unsigned int ChatBox::getLineTextSize(size_t lineIndex) const
+    unsigned int ChatBox::getLineTextSize(std::size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getCharacterSize();
         }
-        // Index too high
-        return m_textSize;
+        else // Index too high
+            return m_textSize;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<sf::Font> ChatBox::getLineFont(size_t lineIndex) const
+    std::shared_ptr<sf::Font> ChatBox::getLineFont(std::size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
             return m_lines[lineIndex].text.getFont();
         }
-        // Index too high
-        return m_fontCached;
+        else // Index too high
+            return m_fontCached;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool ChatBox::removeLine(size_t lineIndex)
+    bool ChatBox::removeLine(std::size_t lineIndex)
     {
         if (lineIndex < m_lines.size())
         {
@@ -203,8 +207,8 @@ namespace tgui
             recalculateFullTextHeight();
             return true;
         }
-        // Index too high
-        return false;
+        else // Index too high
+            return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,14 +222,14 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ChatBox::getLineAmount()
+    std::size_t ChatBox::getLineAmount()
     {
         return m_lines.size();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ChatBox::setLineLimit(size_t maxLines)
+    void ChatBox::setLineLimit(std::size_t maxLines)
     {
         m_maxLines = maxLines;
 
@@ -243,7 +247,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    size_t ChatBox::getLineLimit()
+    std::size_t ChatBox::getLineLimit()
     {
         return m_maxLines;
     }
@@ -316,7 +320,7 @@ namespace tgui
 
     bool ChatBox::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{getPosition().x, getPosition().y, getSize().x, getSize().y}.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,8 +331,8 @@ namespace tgui
         m_mouseDown = true;
 
         // Pass the event to the scrollbar
-        if (m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
-            m_scroll.leftMousePressed(pos - m_scroll.getPosition());
+        if (m_scroll.mouseOnWidget(pos - getPosition()))
+            m_scroll.leftMousePressed(pos - getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,7 +340,7 @@ namespace tgui
     void ChatBox::leftMouseReleased(sf::Vector2f pos)
     {
         if (m_scroll.isMouseDown())
-            m_scroll.leftMouseReleased(pos - m_scroll.getPosition());
+            m_scroll.leftMouseReleased(pos - getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,8 +351,8 @@ namespace tgui
             mouseEnteredWidget();
 
         // Pass the event to the scrollbar when the mouse is on top of it or when we are dragging its thumb
-        if (((m_scroll.isMouseDown()) && (m_scroll.isMouseDownOnThumb())) || m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
-            m_scroll.mouseMoved(pos - m_scroll.getPosition());
+        if (((m_scroll.isMouseDown()) && (m_scroll.isMouseDownOnThumb())) || m_scroll.mouseOnWidget(pos - getPosition()))
+            m_scroll.mouseMoved(pos - getPosition());
         else
             m_scroll.mouseNoLongerOnWidget();
     }
@@ -371,10 +375,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ChatBox::mouseWheelScrolled(float delta, int, int)
+    void ChatBox::mouseWheelScrolled(float delta, sf::Vector2f pos)
     {
         if (m_scroll.getLowValue() < m_scroll.getMaximum())
-            m_scroll.mouseWheelScrolled(delta, 0, 0);
+            m_scroll.mouseWheelScrolled(delta, pos - getPosition());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -384,7 +388,7 @@ namespace tgui
         line.text.setString("");
 
         // Find the maximum width of one line
-        float maxWidth = getInnerSize().x - m_scroll.getSize().x - m_paddingCached.left - m_paddingCached.right;
+        const float maxWidth = getInnerSize().x - m_scroll.getSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight();
         if (maxWidth < 0)
             return;
 
@@ -410,14 +414,14 @@ namespace tgui
             m_fullTextHeight += line.text.getSize().y;
 
         // Update the maximum of the scrollbar
-        unsigned int oldMaximum = m_scroll.getMaximum();
+        const unsigned int oldMaximum = m_scroll.getMaximum();
         m_scroll.setMaximum(static_cast<unsigned int>(m_fullTextHeight));
 
         // Scroll down to the last item when there is a scrollbar and it is at the bottom
         if (m_newLinesBelowOthers)
         {
             if (((oldMaximum >= m_scroll.getLowValue()) && (m_scroll.getValue() == oldMaximum - m_scroll.getLowValue()))
-                || ((oldMaximum <= m_scroll.getLowValue()) && (m_scroll.getMaximum() > m_scroll.getLowValue())))
+             || ((oldMaximum <= m_scroll.getLowValue()) && (m_scroll.getMaximum() > m_scroll.getLowValue())))
             {
                 m_scroll.setValue(m_scroll.getMaximum() - m_scroll.getLowValue());
             }
@@ -428,8 +432,8 @@ namespace tgui
 
     void ChatBox::updateRendering()
     {
-        m_scroll.setSize({m_scroll.getSize().x, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom});
-        m_scroll.setLowValue(static_cast<unsigned int>(getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom));
+        m_scroll.setSize({m_scroll.getSize().x, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()});
+        m_scroll.setLowValue(static_cast<unsigned int>(getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()));
 
         recalculateAllLines();
     }
@@ -503,7 +507,8 @@ namespace tgui
 
     sf::Vector2f ChatBox::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.left - m_bordersCached.right, getSize().y - m_bordersCached.top - m_bordersCached.bottom};
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom()};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -512,13 +517,13 @@ namespace tgui
     {
         states.transform.translate(getPosition());
 
-        sf::RenderStates scrollbarStates = states;
+        const sf::RenderStates scrollbarStates = states;
 
         // Draw the borders
         if (m_bordersCached != Borders{0})
         {
             drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
-            states.transform.translate({m_bordersCached.left, m_bordersCached.top});
+            states.transform.translate({m_bordersCached.getLeft(), m_bordersCached.getTop()});
         }
 
         // Draw the background
@@ -527,19 +532,19 @@ namespace tgui
         else
             drawRectangleShape(target, states, getInnerSize(), m_backgroundColorCached);
 
-        states.transform.translate({m_paddingCached.left, m_paddingCached.top});
+        states.transform.translate({m_paddingCached.getLeft(), m_paddingCached.getTop()});
 
         // Draw the scrollbar
         m_scroll.draw(target, scrollbarStates);
 
         // Set the clipping for all draw calls that happen until this clipping object goes out of scope
-        Clipping clipping{target, states, {}, {getInnerSize().x - m_paddingCached.left - m_paddingCached.right - m_scroll.getSize().x, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom}};
+        const Clipping clipping{target, states, {}, {getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight() - m_scroll.getSize().x, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()}};
 
         states.transform.translate({0, -static_cast<float>(m_scroll.getValue())});
 
         // Put the lines at the bottom of the chat box if needed
-        if (!m_linesStartFromTop && (m_fullTextHeight < getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom))
-            states.transform.translate(0, getInnerSize().y - m_paddingCached.top - m_paddingCached.bottom - m_fullTextHeight);
+        if (!m_linesStartFromTop && (m_fullTextHeight < getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()))
+            states.transform.translate(0, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom() - m_fullTextHeight);
 
         for (const auto& line : m_lines)
         {

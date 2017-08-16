@@ -52,15 +52,15 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         enum class Alignment
         {
-            Center, ///< Center the widget in the cell
-            UpperLeft, ///< Draw the widget in the upper left corner of the cell
-            Up, ///< Draw the widget at the upper side of the cell (horizontally centered)
-            UpperRight, ///< Draw the widget in the upper right corner of the cell
-            Right, ///< Draw the widget at the right side of the cell (vertically centered)
+            Center,      ///< Center the widget in the cell
+            UpperLeft,   ///< Draw the widget in the upper left corner of the cell
+            Up,          ///< Draw the widget at the upper side of the cell (horizontally centered)
+            UpperRight,  ///< Draw the widget in the upper right corner of the cell
+            Right,       ///< Draw the widget at the right side of the cell (vertically centered)
             BottomRight, ///< Draw the widget in the bottom right corner of the cell
-            Bottom, ///< Draw the widget at the bottom of the cell (horizontally centered)
-            BottomLeft, ///< Draw the widget in the bottom left corner of the cell
-            Left ///< Draw the widget at the left side of the cell (vertically centered)
+            Bottom,      ///< Draw the widget at the bottom of the cell (horizontally centered)
+            BottomLeft,  ///< Draw the widget in the bottom left corner of the cell
+            Left         ///< Draw the widget at the left side of the cell (vertically centered)
         };
 
 
@@ -76,27 +76,31 @@ namespace tgui
         /// @return The new grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr create();
+        static Grid::Ptr create();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Copy constructor
-        ///
-        /// @param copy  Instance to copy
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Grid(const Grid& copy);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Overload of assignment operator
-        ///
-        /// @param right  Instance to assign
-        ///
-        /// @return Reference to itself
-        ///
+        /// @brief Move constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Grid& operator=(const Grid& right);
+        Grid(Grid&& copy);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Overload of assignment operator
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Grid& operator= (const Grid& right);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Overload of move assignment operator
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Grid& operator= (Grid&& right);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +111,7 @@ namespace tgui
         /// @return The new grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Ptr copy(ConstPtr grid);
+        static Grid::Ptr copy(Grid::ConstPtr grid);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,22 +119,36 @@ namespace tgui
         ///
         /// @param size   New size of the grid
         ///
-        /// Widgets in the grid will be repositionned to fill in the best way the available space of the grid.
-        /// If the size is too small to have all Widgets correctly placed, the size will be ignored and the grid auto-sized until
-        /// some Widgets are removed of the grid and the size was become valid again.
+        /// When this function is called, the grid will no longer be auto-sizing and widgets in the grid will be repositioned
+        /// to fill the available space.
         ///
+        /// @see setAutoSize
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(const Layout2d& size) override;
+        virtual void setSize(const Layout2d& size) override;
         using Transformable::setSize;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the size of the grid
+        /// @brief Changes whether the grid is auto-sized or not
         ///
-        /// @return Size of the grid
+        /// @param autoSize  Should the size of the grid depend on the widgets inside it?
         ///
+        /// When the grid is in auto-size mode, size is defined by the widgets that were added to the grid.
+        /// Otherwise, the size is given and the widgets are positioned to fill the provided size.
+        ///
+        /// The grid is auto-sized by default.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Vector2f getSize() const override;
+        void setAutoSize(bool autoSize);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the grid is auto-sized or not
+        ///
+        /// @return Does the size of the grid depend on the widgets inside it?
+        ///
+        /// @see setAutoSize
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool getAutoSize() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,14 +159,14 @@ namespace tgui
         /// @see remove(sf::String)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool remove(const Widget::Ptr& widget) override;
+        virtual bool remove(const Widget::Ptr& widget) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Removes all widgets that were added to the container
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void removeAllWidgets() override;
+        virtual void removeAllWidgets() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,10 +180,10 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void addWidget(const Widget::Ptr& widget,
-                       size_t row,
-                       size_t column,
-                       const Borders& borders = Borders{0},
-                       Alignment alignment = Alignment::Center);
+                       std::size_t        row,
+                       std::size_t        column,
+                       const Borders&     borders   = Borders{0},
+                       Alignment          alignment = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +195,17 @@ namespace tgui
         /// @return The widget inside the given cell, or nullptr when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr getWidget(size_t row, size_t column) const;
+        Widget::Ptr getWidget(std::size_t row, std::size_t column) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns a list of widgets and the cell they are in
+        ///
+        /// @return A mapping of each widget to its row and cell. The first element of the pair is the row while the second
+        ///         element in the pair is the column.
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::map<Widget::Ptr, std::pair<std::size_t, std::size_t>> getWidgetLocations() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +226,7 @@ namespace tgui
         /// @param borders The new borders around the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetBorders(size_t row, size_t column, const Borders& borders = Borders(0, 0, 0, 0));
+        void setWidgetBorders(std::size_t row, std::size_t column, const Borders& borders = Borders(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +249,7 @@ namespace tgui
         /// @return The borders inside the given cell, or Borders{0} when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Borders getWidgetBorders(size_t row, size_t column) const;
+        Borders getWidgetBorders(std::size_t row, std::size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +270,7 @@ namespace tgui
         /// @param alignment The new alignment
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetAlignment(size_t row, size_t column, Alignment alignment = Alignment::Center);
+        void setWidgetAlignment(std::size_t row, std::size_t column, Alignment alignment = Alignment::Center);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +293,7 @@ namespace tgui
         /// @return The alignment inside the given cell, or Grid::Alignment::Center when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Alignment getWidgetAlignment(size_t row, size_t column) const;
+        Alignment getWidgetAlignment(std::size_t row, std::size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,9 +306,12 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @internal
+        /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
+        ///
+        /// @return Is the mouse on top of the widget?
+        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        virtual bool mouseOnWidget(sf::Vector2f pos) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +321,7 @@ namespace tgui
         /// @param states Current render states
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +331,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Returns the minimum size required by the grid to display correctly all widgets.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Vector2f getMinSize();
+        sf::Vector2f getMinimumSize() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +349,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr clone() const override
+        virtual Widget::Ptr clone() const override
         {
             return std::make_shared<Grid>(*this);
         }
@@ -327,16 +358,16 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
+        bool m_autoSize = true;
+
         std::vector<std::vector<Widget::Ptr>> m_gridWidgets;
-        std::vector<std::vector<Borders>> m_objBorders;
-        std::vector<std::vector<Alignment>> m_objAlignment;
+        std::vector<std::vector<Borders>>     m_objBorders;
+        std::vector<std::vector<Alignment>>   m_objAlignment;
 
         std::vector<float> m_rowHeight;
         std::vector<float> m_columnWidth;
 
         std::map<Widget::Ptr, unsigned int> m_connectedCallbacks;
-
-        sf::Vector2f m_realSize; // Actual size of the grid, while m_size contains the intended size
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
