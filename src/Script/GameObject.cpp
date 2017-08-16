@@ -34,12 +34,10 @@ namespace obe
                 .addFunction("State", &GameObject::getScript)
                 .addFunction("delete", &GameObject::deleteObject)
                 .addFunction("exec", &GameObject::exec)
-                .addFunction("getInitialised", &GameObject::getInitialised)
                 .addFunction("getPriority", &GameObject::getPriority)
                 .addFunction("getPublicKey", &GameObject::getPublicKey)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
-                .addFunction("setInitialised", &GameObject::setInitialised)
             );
         }
 
@@ -281,11 +279,6 @@ namespace obe
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "priority"))
                     m_scrPriority = obj.at("Script").getDataNode("priority").get<int>();
 
-                m_localTriggers->pushParameter("Init", "Lol", 3);
-                m_localTriggers->pushParameter("Init", "Mdr", 10);
-                m_localTriggers->trigger("Init");
-                m_localTriggers->pushParameter("Init", "Lol", 22);
-                m_localTriggers->pushParameter("Init", "Mdr", 44);
                 m_localTriggers->trigger("Init");
             }
         }
@@ -294,12 +287,17 @@ namespace obe
         {
             if (m_canUpdate)
             {
-                for (int i = 0; i < m_registeredTriggers.size(); i++)
+                unsigned int triggersAmount = m_registeredTriggers.size();
+                for (int i = 0; i < triggersAmount; i++)
                 {
                     Triggers::Trigger* trigger = m_registeredTriggers[i].first;
                     if (trigger->getState())
                     {
                         std::string funcname = m_registeredTriggers[i].second;
+                        if (trigger->getName() == "Mirror")
+                        {
+                            std::cout << "BABOUM : " << funcname << std::endl;
+                        }
                         if (funcname == "Local.Update")
                         {
                             m_localTriggers->pushParameter("Update", "dt", dt);
@@ -307,7 +305,7 @@ namespace obe
                         trigger->execute(m_objectScript.get(), funcname);
                         if (funcname == "Local.Init")
                         {
-                            this->setInitialised(true);
+                            m_initialised = true;
                         }
                     }
                 }
@@ -411,7 +409,7 @@ namespace obe
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
         {
-            //std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << useAs << std::endl;
+            std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << callAlias << std::endl;
             if (trName == "*")
             {
                 std::vector<std::string> allTrg = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
@@ -440,16 +438,6 @@ namespace obe
                     Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get());
                 }
             }
-        }
-
-        void GameObject::setInitialised(bool init)
-        {
-            m_initialised = init;
-        }
-
-        bool GameObject::getInitialised() const
-        {
-            return m_initialised;
         }
 
         void GameObject::exec(const std::string& query) const

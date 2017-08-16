@@ -74,6 +74,7 @@ namespace obe
             editorTriggers
                 ->addTrigger("CameraMoved")
                 ->addTrigger("GridCursorMoved")
+                ->addTrigger("CursorMagnetized")
                 ->addTrigger("GridToggled")
                 ->addTrigger("GridSnapToggled")
                 ->addTrigger("CameraModeChanged")
@@ -222,8 +223,10 @@ namespace obe
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
 
-            auto editModeCallback = [&inputManager, editMode]()
+            auto editModeCallback = [&editorTriggers, &inputManager, editMode]()
             {
+                editorTriggers->pushParameter("EditModeChanged", "mode", editMode->getSelectedItem());
+                editorTriggers->trigger("EditModeChanged");
                 if (editMode->getSelectedItem() == "LevelSprites")
                 {
                     inputManager.addContext("spriteEditing");

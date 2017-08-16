@@ -150,18 +150,31 @@ namespace obe
              */
             void useLocalTrigger(const std::string& trName);
             /**
-             * \brief 
-             * \param trNsp 
-             * \param trGrp 
-             * \param trName 
-             * \param useAs 
+             * \brief Register a non-local Trigger for the GameObject
+             * \param trNsp Namespace where the Trigger to register is
+             * \param trGrp TriggerGroup where the Trigger to register is
+             * \param trName Name of the Trigger to register
+             * \param callAlias Alias (name of the callback) associated with the Trigger
              */
             void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias = "");
-            void setInitialised(bool init);
-            bool getInitialised() const;
+            /**
+             * \brief Execute a Lua String in the Lua State of the GameObject
+             * \param query String to execute
+             */
             void exec(const std::string& query) const;
+            /**
+             * \brief Send a parameter to the Local.Init trigger
+             * \tparam U Template Type of the Parameter
+             * \param argName Name of the Parameter to push
+             * \param value Value of the Parameter
+             */
             template <typename U>
             void sendInitArg(const std::string& argName, U value);
+            /**
+             * \brief Send a parameter to the Local.Init trigger from a Lua VM
+             * \param argName Name of the Parameter to push
+             * \param value Value of the Parameter
+             */
             void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value);
 
             void registerTrigger(Triggers::Trigger* trg, const std::string& callbackName);

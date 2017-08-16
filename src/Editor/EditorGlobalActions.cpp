@@ -14,21 +14,41 @@ namespace obe
             int& cameraSpeed, 
             Time::FramerateManager& framerateManager)
         {
-            inputManager.getAction("CamLeft").connect([&world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
+            inputManager.getAction("CamLeft").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
             {
-                world.getCamera()->move(Transform::UnitVector(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
+                Transform::UnitVector moveVec(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels);
+                world.getCamera()->move(moveVec);
+                editorTriggers->pushParameter("CameraMoved", "direction", "Left");
+                editorTriggers->pushParameter("CameraMoved", "move", moveVec);
+                editorTriggers->pushParameter("CameraMoved", "camera", world.getCamera());
+                editorTriggers->trigger("CameraMoved");
             });
-            inputManager.getAction("CamRight").connect([&world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
+            inputManager.getAction("CamRight").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
             {
-                world.getCamera()->move(Transform::UnitVector(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels));
+                Transform::UnitVector moveVec(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels);
+                world.getCamera()->move(moveVec);
+                editorTriggers->pushParameter("CameraMoved", "direction", "Left");
+                editorTriggers->pushParameter("CameraMoved", "move", moveVec);
+                editorTriggers->pushParameter("CameraMoved", "camera", world.getCamera());
+                editorTriggers->trigger("CameraMoved");
             });
-            inputManager.getAction("CamUp").connect([&world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
+            inputManager.getAction("CamUp").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
             {
-                world.getCamera()->move(Transform::UnitVector(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
+                Transform::UnitVector moveVec(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels);
+                world.getCamera()->move(moveVec);
+                editorTriggers->pushParameter("CameraMoved", "direction", "Left");
+                editorTriggers->pushParameter("CameraMoved", "move", moveVec);
+                editorTriggers->pushParameter("CameraMoved", "camera", world.getCamera());
+                editorTriggers->trigger("CameraMoved");
             });
-            inputManager.getAction("CamDown").connect([&world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
+            inputManager.getAction("CamDown").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
             {
-                world.getCamera()->move(Transform::UnitVector(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels));
+                Transform::UnitVector moveVec(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels);
+                world.getCamera()->move(moveVec);
+                editorTriggers->pushParameter("CameraMoved", "direction", "Left");
+                editorTriggers->pushParameter("CameraMoved", "move", moveVec);
+                editorTriggers->pushParameter("CameraMoved", "camera", world.getCamera());
+                editorTriggers->trigger("CameraMoved");
             });
             inputManager.getAction("CamDash").connect([&cameraSpeed](const Input::InputActionEvent& event)
             {
@@ -48,34 +68,84 @@ namespace obe
             System::Cursor& cursor, 
             Editor::EditorGrid& editorGrid)
         {
-            inputManager.getAction("MagnetizeUp").connect([enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeUp").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
             {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, -1);
+                if (enableGridCheckbox->isChecked()) 
+                {
+                    editorTriggers->pushParameter("GridCursorMoved", "direction", "Up");
+                    editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->trigger("GridCursorMoved");
+                    editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->trigger("CursorMagnetized");
+                    editorGrid.moveMagnet(cursor, 0, -1);
+                }
             });
-            inputManager.getAction("MagnetizeRight").connect([enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeRight").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
             {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 1, 0);
+                if (enableGridCheckbox->isChecked())
+                {
+                    editorGrid.moveMagnet(cursor, 1, 0);
+                    editorTriggers->pushParameter("GridCursorMoved", "direction", "Right");
+                    editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->trigger("GridCursorMoved");
+                    editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->trigger("CursorMagnetized");
+                }
             });
-            inputManager.getAction("MagnetizeDown").connect([enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeDown").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
             {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, 0, 1);
+                if (enableGridCheckbox->isChecked())
+                {
+                    editorGrid.moveMagnet(cursor, 0, 1);
+                    editorTriggers->pushParameter("GridCursorMoved", "direction", "Down");
+                    editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->trigger("GridCursorMoved");
+                    editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->trigger("CursorMagnetized");
+                }
             });
-            inputManager.getAction("MagnetizeLeft").connect([enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeLeft").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
             {
-                if (enableGridCheckbox->isChecked()) editorGrid.moveMagnet(cursor, -1, 0);
+                if (enableGridCheckbox->isChecked())
+                {
+                    editorGrid.moveMagnet(cursor, -1, 0);
+                    editorTriggers->pushParameter("GridCursorMoved", "direction", "Left");
+                    editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->trigger("GridCursorMoved");
+                    editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->trigger("CursorMagnetized");
+                }
             });
-            inputManager.getAction("MagnetizeCursor").connect([enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeCursor").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
             {
-                if (enableGridCheckbox->isChecked()) editorGrid.magnetize(cursor);
+                if (enableGridCheckbox->isChecked())
+                {
+                    editorGrid.magnetize(cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->trigger("CursorMagnetized");
+                }
             });
-            inputManager.getAction("ToggleGrid").connect([enableGridCheckbox](const Input::InputActionEvent& event)
+            inputManager.getAction("ToggleGrid").connect([editorTriggers, enableGridCheckbox](const Input::InputActionEvent& event)
             {
+                editorTriggers->pushParameter("GridToggled", "state", enableGridCheckbox->isChecked());
+                editorTriggers->trigger("GridToggled");
                 enableGridCheckbox->isChecked() ? enableGridCheckbox->uncheck() : enableGridCheckbox->check();
             });
-            inputManager.getAction("ToggleGridSnap").connect([snapGridCheckbox](const Input::InputActionEvent& event)
+            inputManager.getAction("ToggleGridSnap").connect([editorTriggers, snapGridCheckbox](const Input::InputActionEvent& event)
             {
                 if (snapGridCheckbox->isEnabled())
                 {
+                    editorTriggers->pushParameter("GridSnapToggled", "state", snapGridCheckbox->isChecked());
+                    editorTriggers->trigger("GridSnapToggled");
                     if (snapGridCheckbox->isChecked())
                     {
                         snapGridCheckbox->uncheck();
