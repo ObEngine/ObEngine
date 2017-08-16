@@ -80,6 +80,7 @@ namespace obe
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
                 .add("Rect", &TransformBindings::LoadRect)
                 .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
+                .add("Units", &TransformBindings::LoadUnits)
                 .add("UnitVector", &TransformBindings::LoadUnitVector);
             BindTree["Core"].add("Triggers")["Triggers"]
                 .add("Trigger", &TriggersBindings::LoadTrigger)

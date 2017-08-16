@@ -54,6 +54,17 @@ namespace obe
                     .addProperty("unit", &Transform::UnitVector::unit)
                 );
             }
+
+            void LoadUnits(kaguya::State* lua)
+            {
+                (*lua)["Core"]["Transform"]["Units"] = kaguya::NewTable();
+                (*lua)["Core"]["Transform"]["Units"]["ViewPercentage"] = Transform::Units::ViewPercentage;
+                (*lua)["Core"]["Transform"]["Units"]["ViewPixels"] = Transform::Units::ViewPixels;
+                (*lua)["Core"]["Transform"]["Units"]["ViewUnits"] = Transform::Units::ViewUnits;
+                (*lua)["Core"]["Transform"]["Units"]["WorldPixels"] = Transform::Units::WorldPixels;
+                (*lua)["Core"]["Transform"]["Units"]["WorldUnits"] = Transform::Units::WorldUnits;
+                (*lua)["Core"]["Transform"]["Units"]["Unknown"] = Transform::Units::Unknown;
+            }
         }
     }
 }

@@ -123,6 +123,7 @@ namespace obe
             TriggerGroupPtr(TriggerGroup* link);
             TriggerGroupPtr& operator=(const TriggerGroupPtr& link);
             TriggerGroup* operator->() const;
+            TriggerGroup* get() const;
             ~TriggerGroupPtr();
         };
 

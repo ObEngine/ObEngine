@@ -56,6 +56,48 @@ namespace obe
 
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
+            //Editor Triggers
+            Triggers::TriggerGroupPtr editorTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor");
+            //Editor Collider Triggers
+            editorTriggers
+                ->addTrigger("ColliderCreated")
+                ->addTrigger("ColliderRemoved")
+                ->addTrigger("ColliderPicked")
+                ->addTrigger("ColliderMoved")
+                ->addTrigger("ColliderReleased")
+                ->addTrigger("ColliderPointCreated")
+                ->addTrigger("ColliderPointRemoved")
+                ->addTrigger("ColliderPointPicked")
+                ->addTrigger("ColliderPointMoved")
+                ->addTrigger("ColliderPointReleased");
+            //Editor Various Triggers
+            editorTriggers
+                ->addTrigger("CameraMoved")
+                ->addTrigger("GridCursorMoved")
+                ->addTrigger("GridToggled")
+                ->addTrigger("GridSnapToggled")
+                ->addTrigger("CameraModeChanged")
+                ->addTrigger("EditModeChanged")
+                ->addTrigger("SceneSaved");
+            //Editor Sprite Triggers
+            editorTriggers
+                ->addTrigger("SpriteZDepthChanged")
+                ->addTrigger("SpriteLayerChanged")
+                ->addTrigger("SpriteHandlePointPicked")
+                ->addTrigger("SpriteHandlePointMoved")
+                ->addTrigger("SpriteHandlePointReleased")
+                ->addTrigger("SpriteCreated")
+                ->addTrigger("SpriteMoved")
+                ->addTrigger("SpriteRemoved");
+
+            //Game Triggers
+            Triggers::TriggerGroupPtr gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
+                ->addTrigger("Start")
+                ->trigger("Start")
+                ->addTrigger("End")
+                ->addTrigger("Update")
+                ->addTrigger("Render");
+
             //Console
             Debug::Console gameConsole;
             Script::hookCore.dropValue("Console", &gameConsole);
@@ -69,7 +111,6 @@ namespace obe
             System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
             vili::ComplexNode& gameConfig = configFile->at("GameConfig");
             int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
-            vili::ComplexNode& developpement = configFile.at("Developpement");
 
             //Cursor
             System::Cursor cursor;
@@ -174,10 +215,10 @@ namespace obe
             connectCamMovementActions(inputManager, scene, cameraSpeed, framerateManager);
             connectGridActions(inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, cameraMode);
-            connectSpriteLayerActions(inputManager, selectedSprite, scene, currentLayer);
-            connectSpriteActions(inputManager, hoveredSprite, selectedSprite, selectedHandlePoint, 
+            connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
+            connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
-            connectCollidersActions(inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
+            connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
 
             editMode->connect("itemselected", [&inputManager, editMode]()
             {
@@ -218,6 +259,13 @@ namespace obe
             while (window.isOpen())
             {
                 framerateManager.update();
+
+                gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
+                gameTriggers->trigger("Update");
+
+                if (framerateManager.doRender())
+                    gameTriggers->trigger("Render");
+
                 if (waitForMapSaving >= 0)
                 {
                     waitForMapSaving += framerateManager.getDeltaTime();
@@ -433,6 +481,10 @@ namespace obe
                     window.display();
                 }
             }
+            gameTriggers->trigger("End");
+            Triggers::TriggerDatabase::GetInstance()->update();
+            scene.update(framerateManager.getGameSpeed());
+
             window.close();
             gui.removeAllWidgets();
         }

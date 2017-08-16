@@ -9,6 +9,7 @@ namespace obe
     namespace Editor
     {
         void connectCollidersActions(
+            Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager, 
             Scene::Scene& world, 
             System::Cursor& cursor, 

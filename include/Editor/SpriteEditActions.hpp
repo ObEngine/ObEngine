@@ -10,8 +10,14 @@ namespace obe
 {
     namespace Editor
     {
-        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::Scene& world, int& currentLayer);
+        void connectSpriteLayerActions(
+            Triggers::TriggerGroup* editorTriggers,
+            Input::InputManager& inputManager, 
+            Graphics::LevelSprite*& selectedSprite, 
+            Scene::Scene& world, 
+            int& currentLayer);
         void connectSpriteActions(
+            Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager, 
             Graphics::LevelSprite*& hoveredSprite,
             Graphics::LevelSprite*& selectedSprite, 

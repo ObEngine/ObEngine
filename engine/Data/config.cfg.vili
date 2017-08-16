@@ -46,7 +46,7 @@ KeyBinding:
         ToggleGridSnap:"Pressed:H"
     spriteEditing:
         SpriteCancelOffset:"Hold:LMB + Pressed:O"
-        SpriteDelete:"Pressed:Delete"
+        SpriteRemove:"Pressed:Delete"
         SpriteZDepthInc:"Pressed:NumPad8"
         SpriteZDepthDec:"Pressed:NumPad2"
         SpriteLayerInc:"Pressed:NumPad6"
@@ -65,9 +65,9 @@ KeyBinding:
         ColliderMasterMove:"Hold:LMB"
         ColliderMasterRelease:"Released:LMB"
         ColliderPointCreate:"Pressed:RMB"
-        ColliderPointDelete:"Hold:LMB + Pressed:Delete"
+        ColliderPointRemove:"Hold:LMB + Pressed:Delete"
         ColliderRelease:"Pressed:LMB"
-        ColliderDelete:"Hold:LMB + Pressed:Delete"
+        ColliderRemove:"Hold:LMB + Pressed:Delete"
         ColliderCreate:"Pressed:RMB"
     
 Developpement:

@@ -135,5 +135,10 @@ namespace obe
         {
             return m_link;
         }
+
+        TriggerGroup* TriggerGroupPtr::get() const
+        {
+            return m_link;
+        }
     }
 }

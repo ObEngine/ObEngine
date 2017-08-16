@@ -48,7 +48,7 @@ namespace obe
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
             //Game Triggers
-            Triggers::TriggerGroup* gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
+            Triggers::TriggerGroupPtr gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
                 ->addTrigger("Start")
                 ->trigger("Start")
                 ->addTrigger("End")
@@ -98,6 +98,9 @@ namespace obe
                 gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
                 gameTriggers->trigger("Update");
 
+                if (framerateManager.doRender())
+                    gameTriggers->trigger("Render");
+
                 //Events
                 scene.update(framerateManager.getGameSpeed());
                 Triggers::TriggerDatabase::GetInstance()->update();
@@ -124,7 +127,7 @@ namespace obe
 
                 if (framerateManager.doRender())
                 {
-                    gameTriggers->trigger("Render");
+                    
                     window.clear();
                     scene.display(window);
 

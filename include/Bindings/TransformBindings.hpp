@@ -15,6 +15,7 @@ namespace obe
             void LoadRect(kaguya::State* lua);
             void LoadUnitBasedObject(kaguya::State* lua);
             void LoadUnitVector(kaguya::State* lua);
+            void LoadUnits(kaguya::State* lua);
         }
     }
 }

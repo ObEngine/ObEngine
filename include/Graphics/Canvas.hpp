@@ -124,15 +124,15 @@ namespace obe
         class Transformable : public virtual Configurable
         {
         protected:
-            double m_x;
-            double m_y;
-            double m_width;
-            double m_height;
-            double m_rotation;
-            double m_translationOriginX;
-            double m_translationOriginY;
-            double m_rotationOriginX;
-            double m_rotationOriginY;
+            float m_x;
+            float m_y;
+            float m_width;
+            float m_height;
+            float m_rotation;
+            float m_translationOriginX;
+            float m_translationOriginY;
+            float m_rotationOriginX;
+            float m_rotationOriginY;
         public:
             /**
              * \brief Creates a new Transformable
@@ -175,10 +175,10 @@ namespace obe
         class Line : public CanvasElement, public Colorable
         {
         private:
-            int m_x1;
-            int m_x2;
-            int m_y1;
-            int m_y2;
+            float m_x1;
+            float m_x2;
+            float m_y1;
+            float m_y2;
         public:
             /**
              * \brief Creates a new Line
@@ -253,7 +253,7 @@ namespace obe
         class Circle : public CanvasElement, public Colorable, public Transformable
         {
         private:
-            double m_radius;
+            float m_radius;
         public:
             /**
              * \brief Creates a new Circle

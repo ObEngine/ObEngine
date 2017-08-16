@@ -4,39 +4,63 @@ namespace obe
 {
     namespace Editor
     {
-        void connectSpriteLayerActions(Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite, Scene::Scene& world, int& currentLayer)
+        void connectSpriteLayerActions(
+            Triggers::TriggerGroup* editorTriggers, 
+            Input::InputManager& inputManager, 
+            Graphics::LevelSprite*& selectedSprite, 
+            Scene::Scene& world, 
+            int& currentLayer)
         {
-            inputManager.getAction("SpriteZDepthInc").connect([&selectedSprite, &world](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteZDepthInc").connect([editorTriggers, &selectedSprite, &world](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
                     world.reorganizeLayers();
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "zdepth", selectedSprite->getZDepth());
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "operation", "Increase");
+                    editorTriggers->trigger("SpriteZDepthChanged");
                 }
             });
-            inputManager.getAction("SpriteZDepthDec").connect([&selectedSprite, &world](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteZDepthDec").connect([editorTriggers, &selectedSprite, &world](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
                     world.reorganizeLayers();
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "zdepth", selectedSprite->getZDepth());
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteZDepthChanged", "operation", "Decrease");
+                    editorTriggers->trigger("SpriteZDepthChanged");
                 }
             });
-            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteLayerInc").connect([editorTriggers, &selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setLayer(selectedSprite->getLayer() + 1);
+
+                    editorTriggers->pushParameter("SpriteLayerChanged", "layer", selectedSprite->getLayer());
+                    editorTriggers->pushParameter("SpriteLayerChanged", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteLayerChanged", "operation", "Increase");
+                    editorTriggers->trigger("SpriteLayerChanged");
                     
                     world.reorganizeLayers();
                 }
                 currentLayer += 1;
             });
-            inputManager.getAction("SpriteLayerInc").connect([&selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteLayerDec").connect([editorTriggers, &selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setLayer(selectedSprite->getLayer() - 1);
+
+                    editorTriggers->pushParameter("SpriteLayerChanged", "layer", selectedSprite->getLayer());
+                    editorTriggers->pushParameter("SpriteLayerChanged", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteLayerChanged", "operation", "Decrease");
+                    editorTriggers->trigger("SpriteLayerChanged");
+
                     world.reorganizeLayers();
                 }
                 currentLayer -= 1;
@@ -44,6 +68,7 @@ namespace obe
         }
 
         void connectSpriteActions(
+            Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager,
             Graphics::LevelSprite*& hoveredSprite,
             Graphics::LevelSprite*& selectedSprite,
@@ -56,26 +81,31 @@ namespace obe
             sf::Text& sprInfo,
             sf::RectangleShape& sprInfoBackground)
         {
-            inputManager.getAction("MoveHandlePoint").connect([&selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
+            inputManager.getAction("MoveHandlePoint").connect([editorTriggers, &selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
             {
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedHandlePoint != nullptr)
                 {
                     std::cout << "Moving ref : " << selectedHandlePoint->getReferencial() << std::endl;
                     selectedHandlePoint->moveTo(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                    editorTriggers->pushParameter("SpriteHandlePointMoved", "handlePoint", selectedHandlePoint);
+                    editorTriggers->trigger("SpriteHandlePointMoved");
                 }
             });
 
-            inputManager.getAction("ReleaseHandlePoint").connect([&selectedHandlePoint](const Input::InputActionEvent& event)
+            inputManager.getAction("ReleaseHandlePoint").connect([editorTriggers, &selectedHandlePoint](const Input::InputActionEvent& event)
             {
                 if (selectedHandlePoint != nullptr)
                 {
+                    editorTriggers->pushParameter("SpriteHandlePointReleased", "handlePoint", selectedHandlePoint);
+                    editorTriggers->trigger("SpriteHandlePointReleased");
                     selectedHandlePoint = nullptr;
                 }
             });
 
             inputManager.getAction("SpritePick").connect(
-                [&selectedSprite, 
+                [editorTriggers,
+                &selectedSprite, 
                 &selectedSpriteOffsetX, 
                 &selectedSpriteOffsetY, 
                 &cursor, 
@@ -159,7 +189,7 @@ namespace obe
                 }
             });
 
-            inputManager.getAction("SpriteDelete").connect(
+            inputManager.getAction("SpriteRemove").connect(
                 [&selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
             (const Input::InputActionEvent& event)
             {

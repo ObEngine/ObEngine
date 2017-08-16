@@ -11,13 +11,13 @@ namespace obe
             {
                 (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
-                    Collision::PolygonalCollider,
-                    kaguya::MultipleBase<
-                    Transform::UnitBasedObject,
-                    Types::Selectable,
-                    Types::Identifiable>
-                    >
-                    ()
+                        Collision::PolygonalCollider,
+                        kaguya::MultipleBase<
+                            Transform::UnitBasedObject,
+                            Types::Selectable,
+                            Types::Identifiable
+                        >
+                    >()
                     .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
                     .addFunction("addPoint", &Collision::PolygonalCollider::addPoint)
                     .addFunction("addTag", &Collision::PolygonalCollider::addTag)
