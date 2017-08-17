@@ -1,12 +1,18 @@
 #include <Input/InputAction.hpp>
+#include <Triggers/TriggerDatabase.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe
 {
     namespace Input
     {
-        InputAction::InputAction(const std::string& id) : Identifiable(id), m_interval(0), m_repeat(0)
+        InputAction::InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id) :
+        Identifiable(id), 
+        m_interval(0), 
+        m_repeat(0)
         {
+            m_actionTrigger = triggerPtr;
+            triggerPtr->addTrigger(id);
         }
 
         void InputAction::addCondition(InputCondition condition)
@@ -60,7 +66,10 @@ namespace obe
                     {
                         if (m_repeat.resetIfOver())
                         {
-                            m_callback(InputActionEvent(this, &combination));
+                            InputActionEvent ev(this, &combination);
+                            m_callback(ev);
+                            m_actionTrigger->pushParameter(m_id, "event", ev);
+                            m_actionTrigger->trigger(m_id);
                         }
                     }
                     else

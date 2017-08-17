@@ -15,6 +15,15 @@ namespace obe
         namespace String
         {
             /**
+             * \brief A std::string containing all the letters of the Alphabet
+             */
+            extern std::string Alphabet;
+            /**
+             * \brief A std::string containing all the numbers from 0 to 9
+             */
+            extern std::string Numbers;
+
+            /**
              * \brief Splits a std::string using a delimited
              * \param str String you want to split
              * \param delimiters Delimiter used to split the string

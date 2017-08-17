@@ -38,7 +38,7 @@ namespace obe
             mainPanel->setPosition("0", "0");
 
             content->setRenderer(baseTheme.getRenderer("ChatBox"));
-            content->setSize("&.width", "534");
+            content->setSize("100%", "534");
             content->setPosition("0", "70");
             content->setLinesStartFromTop();
             mainPanel->add(content, "contentPanel");
@@ -51,7 +51,7 @@ namespace obe
 
             closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
             closeButton->setSize("32", "32");
-            closeButton->setPosition("&.width - width - (&.&.width / 40)", "&.&.height / 40");
+            closeButton->setPosition("92%", "3%");
             closeButton->connect("pressed", [&window]()
             {
                 window.close();
@@ -59,8 +59,8 @@ namespace obe
             mainPanel->add(closeButton);
 
             toolkitInput->setRenderer(baseTheme.getRenderer("TextBox"));
-            toolkitInput->setSize("&.width", "32");
-            toolkitInput->setPosition("0", "&.height - height");
+            toolkitInput->setSize("100%", "32");
+            toolkitInput->setPosition("0", "100% - 32");
             mainPanel->add(toolkitInput);
 
             kaguya::State toolkitEngine;

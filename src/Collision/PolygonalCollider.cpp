@@ -9,6 +9,8 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Types/Any.hpp>
 #include <Graphics/DrawUtils.hpp>
+#include <Scene/Scene.hpp>
+#include <Script/Script.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -769,6 +771,46 @@ namespace obe
                     return true;
             }
             return false;
+        }
+
+        void mergePolygons(std::vector<PolygonalCollider*> colliders)
+        {
+            ClipperLib::Paths subj(colliders.size()), solution;
+
+            unsigned int index = 0;
+            for (PolygonalCollider* collider : colliders)
+            {
+                for (Transform::UnitVector& pt : collider->getAllPoints())
+                {
+                    Transform::UnitVector pxPt = pt.to<Transform::Units::WorldPixels>();
+                    subj[index] << ClipperLib::IntPoint(pxPt.x, pxPt.y);
+                }
+                index++;
+            }
+
+            ClipperLib::Clipper c;
+            for (unsigned int i = 0; i < colliders.size(); i++)
+            {
+                c.AddPath(subj[0], ClipperLib::ptSubject, true);
+            }
+            
+            c.Execute(ClipperLib::ctUnion, solution, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
+
+            for (PolygonalCollider* collider : colliders)
+            {
+                Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeColliderById(collider->getId());
+            }
+            
+            for (ClipperLib::Path& sol : solution)
+            {
+                PolygonalCollider* newCol = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createCollider(
+                    Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 10)
+                );
+                for (ClipperLib::IntPoint& pt : sol)
+                {
+                    newCol->addPoint(Transform::UnitVector(pt.X, pt.Y, Transform::Units::WorldPixels));
+                }
+            }
         }
     }
 }

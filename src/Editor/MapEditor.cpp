@@ -142,6 +142,7 @@ namespace obe
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
+            Script::hookCore.dropValue("Grid", &editorGrid);
             inputManager.getAction("MagnetizeUp").setRepeat(200);
             inputManager.getAction("MagnetizeDown").setRepeat(200);
             inputManager.getAction("MagnetizeLeft").setRepeat(200);
@@ -469,7 +470,7 @@ namespace obe
                         scene.enableShowCollision(true);
                     else
                         scene.enableShowCollision(false);
-                    if (enableGridCheckbox->isChecked())
+                    if (editorGrid.getState())
                         editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")

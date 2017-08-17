@@ -6,8 +6,8 @@
 #include <Input/InputActionEvent.hpp>
 #include <Input/InputCondition.hpp>
 #include <Time/TimeCheck.hpp>
+#include <Triggers/TriggerGroup.hpp>
 #include <Types/Identifiable.hpp>
-
 
 namespace obe
 {
@@ -26,6 +26,7 @@ namespace obe
         {
         private:
             ActionCallback m_callback = [](const InputActionEvent& event){};
+            Triggers::TriggerGroup* m_actionTrigger;
             std::vector<std::string> m_contexts;
             std::vector<InputCondition> m_combinations;
             bool m_state = false;
@@ -36,7 +37,7 @@ namespace obe
             * \brief Creates a new KeyboardAction
             * \param id Id of the KeyboardAction
             */
-            explicit InputAction(const std::string& id);
+            explicit InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id);
             void addCondition(InputCondition condition);
             /**
             * \brief Adds a new Callback

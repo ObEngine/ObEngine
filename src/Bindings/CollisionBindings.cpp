@@ -7,6 +7,8 @@ namespace obe
     {
         namespace CollisionBindings
         {
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_addPoint_wrapper, Collision::PolygonalCollider, addPoint, 1, 2);
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
             void LoadPolygonalCollider(kaguya::State* lua)
             {
                 (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
@@ -19,16 +21,15 @@ namespace obe
                         >
                     >()
                     .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
-                    .addFunction("addPoint", &Collision::PolygonalCollider::addPoint)
+                    .addFunction("addPoint", PolygonalCollider_addPoint_wrapper())
                     .addFunction("addTag", &Collision::PolygonalCollider::addTag)
-                    .addFunction("clearHighlights", &Collision::PolygonalCollider::clearHighlights)
+                    .addFunction("clearHighlights", PolygonalCollider_clearHighlights_wrapper())
                     .addFunction("clearOriginChildren", &Collision::PolygonalCollider::clearOriginChildren)
                     .addFunction("clearTags", &Collision::PolygonalCollider::clearTags)
                     .addFunction("deletePoint", &Collision::PolygonalCollider::deletePoint)
                     .addFunction("doesCollide", &Collision::PolygonalCollider::doesCollide)
                     .addFunction("doesHaveAnyTag", &Collision::PolygonalCollider::doesHaveAnyTag)
                     .addFunction("doesHaveTag", &Collision::PolygonalCollider::doesHaveTag)
-                    .addFunction("draw", &Collision::PolygonalCollider::draw)
                     .addFunction("findClosestLine", &Collision::PolygonalCollider::findClosestLine)
                     .addFunction("findClosestPoint", &Collision::PolygonalCollider::findClosestPoint)
                     .addFunction("getAllPoints", &Collision::PolygonalCollider::getAllPoints)
@@ -62,6 +63,8 @@ namespace obe
                     .addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
                 );
+
+                (*lua)["Core"]["Collision"]["MergePolygons"] = kaguya::function(Collision::mergePolygons);
             }
         }
     }

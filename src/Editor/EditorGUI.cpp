@@ -307,17 +307,19 @@ namespace obe
                 enableGridCheckbox->setTextSize(mediumFontSize);
                 enableGridCheckbox->setText("Enabled Grid ?");
 
-                enableGridCheckbox->connect("checked", [snapGridCheckbox]()
+                enableGridCheckbox->connect("checked", [&editorGrid, snapGridCheckbox]()
                 {
+                    editorGrid.enable();
                     snapGridCheckbox->enable();
-                    snapGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+                    snapGridCheckbox->getRenderer()->setTextColor(sf::Color(255, 255, 255));
                 });
 
-                enableGridCheckbox->connect("unchecked", [snapGridCheckbox]()
+                enableGridCheckbox->connect("unchecked", [&editorGrid, snapGridCheckbox]()
                 {
+                    editorGrid.disable();
+                    snapGridCheckbox->getRenderer()->setTextColor(sf::Color(100, 100, 100));
                     snapGridCheckbox->uncheck();
                     snapGridCheckbox->disable();
-                    snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
                 });
 
                 gridDimensionLabel->setPosition(60, tguif::bindBottom(enableGridCheckbox) + 20);
@@ -416,9 +418,9 @@ namespace obe
                 snapGridCheckbox->setText("Snap to Grid ?");
                 snapGridCheckbox->disable();
 
-                snapGridCheckbox->connect("checked", [&editorGrid, &cursor, &editMode]()
+                snapGridCheckbox->connect("checked", [&editorGrid, &cursor, editMode]()
                 {
-                    cursor.setConstraint([&editMode, &editorGrid](System::Cursor* cursor)
+                    cursor.setConstraint([editMode, &editorGrid](System::Cursor* cursor)
                     {
                         if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
                         {

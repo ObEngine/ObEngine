@@ -1,5 +1,6 @@
 #pragma once
 
+#include <clipper/clipper.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Transform/UnitBasedObject.hpp>
@@ -335,5 +336,7 @@ namespace obe
              */
             void clearHighlights(bool points = true, bool lines = true);
         };
+
+        void mergePolygons(std::vector<PolygonalCollider*> colliders); 
     }
 }

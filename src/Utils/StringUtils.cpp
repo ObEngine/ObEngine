@@ -13,6 +13,9 @@ namespace obe
     {
         namespace String
         {
+            std::string Alphabet = "abcdefghijklmnopqrstuvwxyz";
+            std::string Numbers = "0123456789";
+
             std::vector<std::string> split(const std::string& str, const std::string& delimiters)
             {
                 std::vector<std::string> tokens;

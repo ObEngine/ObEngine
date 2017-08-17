@@ -9,7 +9,7 @@ namespace obe
 {
     namespace Editor
     {
-        EditorGrid::EditorGrid(unsigned int sizeX, unsigned int sizeY, int offsetX, int offsetY)
+        EditorGrid::EditorGrid(unsigned int sizeX, unsigned int sizeY, int offsetX, int offsetY) : Types::Togglable(false)
         {
             m_gridSizeX = sizeX;
             m_gridSizeY = sizeY;

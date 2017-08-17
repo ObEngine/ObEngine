@@ -22,6 +22,7 @@ namespace obe
         private:
             std::vector<std::unique_ptr<InputAction>> m_allActions;
             std::vector<InputAction*> m_currentActions;
+            Triggers::TriggerGroupPtr m_actionTriggers;
             
             bool m_binderEnabled = true;
         public:

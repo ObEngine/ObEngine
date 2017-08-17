@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
+#include <Triggers/TriggerGroup.hpp>
+
 namespace obe
 {
     namespace Graphics
@@ -19,6 +21,8 @@ namespace obe
         private:
             std::map<std::string, std::unique_ptr<sf::Texture>> m_textureDatabase;
             static ResourceManager* m_instance;
+            Triggers::TriggerGroupPtr m_resourceManagerTriggers;
+            ResourceManager();
         public:
             /**
              * \brief Access the Instance of the ResourceManager

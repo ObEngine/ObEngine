@@ -3,6 +3,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Console.hpp>
+#include <Editor/Grid.hpp>
 #include <Graphics/Canvas.hpp>
 #include <Input/InputManager.hpp>
 #include <Script/Script.hpp>
@@ -46,6 +47,11 @@ namespace obe
                 {
                     Bindings::Load(lua, "Core.Triggers.TriggerGroup");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerGroup*>();
+                }
+                else if (hookType == Utils::Type::getClassType<Editor::EditorGrid*>())
+                {
+                    Bindings::Load(lua, "Core.Editor.EditorGrid");
+                    (*lua)["Hook"][name] = containerMap[name].second->as<Editor::EditorGrid*>();
                 }
                 else
                     throw aube::ErrorHandler::Raise("ObEngine.Script.CoreHook.UnknownHookType", {{"type", hookType}, {"name", name}});

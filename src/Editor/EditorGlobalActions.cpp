@@ -134,7 +134,7 @@ namespace obe
                     editorTriggers->trigger("CursorMagnetized");
                 }
             });
-            inputManager.getAction("ToggleGrid").connect([editorTriggers, enableGridCheckbox](const Input::InputActionEvent& event)
+            inputManager.getAction("ToggleGrid").connect([editorTriggers, &editorGrid, enableGridCheckbox](const Input::InputActionEvent& event)
             {
                 editorTriggers->pushParameter("GridToggled", "state", enableGridCheckbox->isChecked());
                 editorTriggers->trigger("GridToggled");

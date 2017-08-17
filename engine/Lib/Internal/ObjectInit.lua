@@ -2,6 +2,7 @@ GetHook("TriggerDatabase");
 
 Local = {}; -- Local Events
 Global = {}; -- External Global Events
+Actions = {}; -- Actions Events
 Object = {};
 
 Local__Meta = {

@@ -1,12 +1,18 @@
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
+#include <Triggers/TriggerDatabase.hpp>
 
 namespace obe
 {
     namespace Graphics
     {
         ResourceManager* ResourceManager::m_instance = nullptr;
+
+        ResourceManager::ResourceManager() : m_resourceManagerTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "ResourceManager"))
+        {
+            m_resourceManagerTriggers->addTrigger("TextureLoaded");
+        }
 
         ResourceManager* ResourceManager::GetInstance()
         {
@@ -23,10 +29,13 @@ namespace obe
                 {
                     std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
                     System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
+                    
                     if (tempTexture != nullptr)
                     {
                         tempTexture->setSmooth(true);
                         m_textureDatabase[path] = move(tempTexture);
+                        m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
+                        m_resourceManagerTriggers->trigger("TextureLoaded");
                         return m_textureDatabase[path].get();
                     }
                     throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
@@ -39,6 +48,8 @@ namespace obe
             {
                 tempTexture->setSmooth(true);
                 m_textureDatabase[path] = move(tempTexture);
+                m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
+                m_resourceManagerTriggers->trigger("TextureLoaded");
                 return m_textureDatabase[path].get();
             }
             throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});

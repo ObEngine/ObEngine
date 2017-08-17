@@ -6,7 +6,7 @@ namespace obe
 {
     namespace Input
     {
-        InputManager::InputManager()
+        InputManager::InputManager() : m_actionTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Actions"))
         {
         }
 
@@ -98,7 +98,7 @@ namespace obe
                 {
                     if (!this->actionExists(action))
                     {
-                        m_allActions.push_back(std::make_unique<InputAction>(action));
+                        m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), action));
                     }
                     std::string associatedKeys = config.at(context).getDataNode(action);
                     InputCondition actionCondition;
