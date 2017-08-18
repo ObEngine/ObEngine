@@ -72,14 +72,15 @@ namespace obe
             {
                 if (enableGridCheckbox->isChecked()) 
                 {
+                    std::cout << "YOLOBITCH" << std::endl;
+                    editorGrid.moveMagnet(cursor, 0, -1);
                     editorTriggers->pushParameter("GridCursorMoved", "direction", "Up");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
-                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", &cursor);
                     editorTriggers->trigger("GridCursorMoved");
                     editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
-                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", &cursor);
                     editorTriggers->trigger("CursorMagnetized");
-                    editorGrid.moveMagnet(cursor, 0, -1);
                 }
             });
             inputManager.getAction("MagnetizeRight").connect([editorTriggers, enableGridCheckbox, &cursor, &editorGrid](const Input::InputActionEvent& event)
@@ -89,10 +90,10 @@ namespace obe
                     editorGrid.moveMagnet(cursor, 1, 0);
                     editorTriggers->pushParameter("GridCursorMoved", "direction", "Right");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
-                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", &cursor);
                     editorTriggers->trigger("GridCursorMoved");
                     editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
-                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", &cursor);
                     editorTriggers->trigger("CursorMagnetized");
                 }
             });
@@ -103,10 +104,10 @@ namespace obe
                     editorGrid.moveMagnet(cursor, 0, 1);
                     editorTriggers->pushParameter("GridCursorMoved", "direction", "Down");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
-                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", &cursor);
                     editorTriggers->trigger("GridCursorMoved");
                     editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
-                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", &cursor);
                     editorTriggers->trigger("CursorMagnetized");
                 }
             });
@@ -117,10 +118,10 @@ namespace obe
                     editorGrid.moveMagnet(cursor, -1, 0);
                     editorTriggers->pushParameter("GridCursorMoved", "direction", "Left");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
-                    editorTriggers->pushParameter("GridCursorMoved", "cursor", cursor);
+                    editorTriggers->pushParameter("GridCursorMoved", "cursor", &cursor);
                     editorTriggers->trigger("GridCursorMoved");
                     editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
-                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", &cursor);
                     editorTriggers->trigger("CursorMagnetized");
                 }
             });
@@ -130,7 +131,7 @@ namespace obe
                 {
                     editorGrid.magnetize(cursor);
                     editorTriggers->pushParameter("CursorMagnetized", "grid", editorGrid);
-                    editorTriggers->pushParameter("CursorMagnetized", "cursor", cursor);
+                    editorTriggers->pushParameter("CursorMagnetized", "cursor", &cursor);
                     editorTriggers->trigger("CursorMagnetized");
                 }
             });

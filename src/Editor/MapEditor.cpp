@@ -248,14 +248,14 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
+            /*inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
             {
                 scene.getCamera()->scale(1.1);
             });
             inputManager.getAction("MagnetizeDown").connect([&scene](const Input::InputActionEvent& event)
             {
                 scene.getCamera()->scale(0.9);
-            });
+            });*/
 
             std::cout << "=> LISTING GLOBAL NAMESPACE TRIGGERGROUP CONTENT" << std::endl;
             for (auto& truc : Triggers::TriggerDatabase::GetInstance()->getAllTriggersGroupNames("Global"))

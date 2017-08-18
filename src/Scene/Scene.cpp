@@ -302,7 +302,7 @@ namespace obe
                 (*it->second->m_objectScript)("print('Saving : ', This:getId())");
                 (*it->second->m_objectScript)("print(inspect(Local.Save()));");
                 (*it->second->m_objectScript)("print('Processing...')");
-                vili::ComplexNode* saveRequirements = Script::DataBridge::luaTableToComplexAttribute(
+                vili::ComplexNode* saveRequirements = Script::DataBridge::luaTableToComplexNode(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
                     dataStore->at("LevelObjects", it->first).pushComplexNode(saveRequirements);

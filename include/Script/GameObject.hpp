@@ -175,7 +175,7 @@ namespace obe
              * \param argName Name of the Parameter to push
              * \param value Value of the Parameter
              */
-            void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value);
+            void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const;
 
             /**
              * \brief Register a Trigger in the GameObject

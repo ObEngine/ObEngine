@@ -36,6 +36,7 @@ namespace obe
                 .addFunction("exec", &GameObject::exec)
                 .addFunction("getPriority", &GameObject::getPriority)
                 .addFunction("getPublicKey", &GameObject::getPublicKey)
+                .addFunction("sendInitArg", &GameObject::sendInitArgFromLua)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
             );
@@ -88,11 +89,10 @@ namespace obe
 
         void GameObjectRequires::ApplyRequirements(GameObject* obj, vili::ComplexNode& requires)
         {
-            for (std::string currentRequirement : requires.getAll())
+            for (const std::string& currentRequirement : requires.getAll())
             {
-                requires.setId("Lua_ReqList");
-                kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]);
-                DataBridge::complexAttributeToLuaTable(requireTable, requires);
+                kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]["ObjectInitInjectionTable"]);
+                DataBridge::dataToLua(requireTable, requires.get(currentRequirement));
             }
         }
 
@@ -109,9 +109,10 @@ namespace obe
             Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
         }
 
-        void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value)
+        void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const
         {
-
+            std::cout << "Pushing Parameter : " << argName << std::endl;
+            m_localTriggers->pushParameterFromLua("Init", argName, value);
         }
 
         void GameObject::registerTrigger(Triggers::Trigger* trg, const std::string& callbackName)
@@ -278,8 +279,6 @@ namespace obe
                 }
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "priority"))
                     m_scrPriority = obj.at("Script").getDataNode("priority").get<int>();
-
-                m_localTriggers->trigger("Init");
             }
         }
 
@@ -287,6 +286,8 @@ namespace obe
         {
             if (m_canUpdate)
             {
+                if (!m_initialised)
+                    m_localTriggers->trigger("Init");
                 unsigned int triggersAmount = m_registeredTriggers.size();
                 for (int i = 0; i < triggersAmount; i++)
                 {

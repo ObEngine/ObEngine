@@ -211,7 +211,7 @@ namespace obe
                     mainPanel->get<tgui::Panel>("spritesPanel")->hide();
                     mainPanel->get<tgui::Panel>("objectsPanel")->show();
                     mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
-                    mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                 });

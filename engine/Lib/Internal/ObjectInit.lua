@@ -41,16 +41,15 @@ setmetatable(Global, Global__Meta);
 
 LuaCore.Lua_ReqList = {}; -- Require Parameters
 LuaCore.FTCP = {}; -- Future Trigger Call Parameters
-
-function Require(param)
-    if (LuaCore.Lua_ReqList[param] ~= nil) then
-        return LuaCore.Lua_ReqList[param];
-    else
-        error("Can't find requirement : " .. param);
-    end
-end
+LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
 
 inspect = require("Lib/StdLib/inspect");
+
+function LuaCore.InjectInitInjectionTable()
+    for k, v in pairs(LuaCore.ObjectInitInjectionTable) do
+        This:sendInitArg(k, v);
+    end
+end
 
 function LuaCore.FuncInjector(funcName, triggerRegisterName, triggerStackIndex)
     --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));

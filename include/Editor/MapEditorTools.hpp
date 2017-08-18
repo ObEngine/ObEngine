@@ -5,6 +5,11 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <TGUI/TGUI.hpp>
 
+namespace vili 
+{
+    class ComplexNode;
+}
+
 namespace obe
 {
     namespace Editor
@@ -38,9 +43,9 @@ namespace obe
         };
 
         void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme);
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, std::string objName);
-        void buildObjectThroughRequire(std::string objName);
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, std::string path);
+        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName);
+        void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires);
+        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path);
         void addSpriteToWorld(std::string geid);
     }
 }

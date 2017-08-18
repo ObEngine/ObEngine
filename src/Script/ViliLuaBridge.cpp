@@ -8,8 +8,20 @@ namespace obe
     {
         namespace DataBridge
         {
-            void dataToLua(kaguya::LuaTable& target, vili::Node& convert)
+            void dataToLua(kaguya::LuaTable& target, vili::Node* convert)
             {
+                if (convert->getType() == vili::NodeType::ArrayNode)
+                {
+                    arrayNodeToLuaTable(target, static_cast<vili::ArrayNode*>(convert));
+                }
+                else if (convert->getType() == vili::NodeType::ComplexNode)
+                {
+                    complexNodeToLuaTable(target, static_cast<vili::ComplexNode*>(convert));
+                }
+                else if (convert->getType() == vili::NodeType::DataNode)
+                {
+                    dataNodeToLuaElement(target, static_cast<vili::DataNode*>(convert));
+                }
             }
 
             vili::Node* luaToData(kaguya::LuaRef& convert)
@@ -18,56 +30,52 @@ namespace obe
                 return nullptr;
             }
 
-            void complexAttributeToLuaTable(kaguya::LuaTable& target, vili::ComplexNode& convert)
+            void complexNodeToLuaTable(kaguya::LuaTable& target, vili::ComplexNode* convert)
             {
-                target[convert.getId()] = kaguya::NewTable();
-                kaguya::LuaTable injectTable = target[convert.getId()];
+                target[convert->getId()] = kaguya::NewTable();
+                kaguya::LuaTable injectTable = target[convert->getId()];
                 kaguya::State olol;
-                for (std::string elementName : convert.getAll())
+                for (std::string elementName : convert->getAll())
                 {
-                    if (convert.getNodeType(elementName) == vili::NodeType::DataNode)
+                    if (convert->getNodeType(elementName) == vili::NodeType::DataNode)
                     {
-                        baseAttributeToLuaElement(injectTable, convert.getDataNode(elementName));
+                        dataNodeToLuaElement(injectTable, &convert->getDataNode(elementName));
                     }
-                    else if (convert.getNodeType(elementName) == vili::NodeType::ComplexNode)
+                    else if (convert->getNodeType(elementName) == vili::NodeType::ComplexNode)
                     {
-                        complexAttributeToLuaTable(injectTable, convert.getComplexNode(elementName));
+                        complexNodeToLuaTable(injectTable, &convert->getComplexNode(elementName));
                     }
-                    else if (convert.getNodeType(elementName) == vili::NodeType::ArrayNode)
+                    else if (convert->getNodeType(elementName) == vili::NodeType::ArrayNode)
                     {
-                        listAttributeToLuaTable(injectTable, convert.getArrayNode(elementName));
+                        arrayNodeToLuaTable(injectTable, &convert->getArrayNode(elementName));
                     }
                 }
-                target[convert.getId()] = injectTable;
+                target[convert->getId()] = injectTable;
             }
 
-            void baseAttributeToLuaElement(kaguya::LuaTable& target, vili::DataNode& convert)
+            void dataNodeToLuaElement(kaguya::LuaTable& target, vili::DataNode* convert)
             {
-                if (convert.getDataType() == vili::DataType::Int)
-                    target[convert.getId()] = convert.get<int>();
-                else if (convert.getDataType() == vili::DataType::String)
-                    target[convert.getId()] = convert.get<std::string>();
-                else if (convert.getDataType() == vili::DataType::Bool)
-                    target[convert.getId()] = convert.get<bool>();
-                else if (convert.getDataType() == vili::DataType::Float)
-                {
-                    double val = convert.get<double>();
-                    std::string vid = convert.getId();
-                    target[vid] = val;
-                }
+                if (convert->getDataType() == vili::DataType::Int)
+                    target[convert->getId()] = convert->get<int>();
+                else if (convert->getDataType() == vili::DataType::String)
+                    target[convert->getId()] = convert->get<std::string>();
+                else if (convert->getDataType() == vili::DataType::Bool)
+                    target[convert->getId()] = convert->get<bool>();
+                else if (convert->getDataType() == vili::DataType::Float)
+                    target[convert->getId()] = convert->get<double>();
             }
 
-            void listAttributeToLuaTable(kaguya::LuaTable& target, vili::ArrayNode& convert)
+            void arrayNodeToLuaTable(kaguya::LuaTable& target, vili::ArrayNode* convert)
             {
                 kaguya::LuaTable injectList;
-                for (int i = 0; i < convert.size(); i++)
+                for (int i = 0; i < convert->size(); i++)
                 {
-                    injectList[i] = &convert.get(i);
+                    injectList[i] = &convert->get(i);
                 }
-                target[convert.getId()] = injectList;
+                target[convert->getId()] = injectList;
             }
 
-            vili::ComplexNode* luaTableToComplexAttribute(std::string id, kaguya::LuaRef& convert)
+            vili::ComplexNode* luaTableToComplexNode(const std::string& id, kaguya::LuaRef& convert)
             {
                 std::cout << "Convert table : " << id << std::endl;
                 vili::ComplexNode* returnElement = nullptr;
@@ -82,13 +90,13 @@ namespace obe
                         {
                             std::cout << "Push subtable : " << tableKey << std::endl;
                             kaguya::LuaRef tempTableRef = convert[tableKey];
-                            returnElement->pushComplexNode(luaTableToComplexAttribute(tableKey, tempTableRef));
+                            returnElement->pushComplexNode(luaTableToComplexNode(tableKey, tempTableRef));
                         }
                         else if (Utils::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
                         {
                             std::cout << "Push subelement : " << tableKey << std::endl;
                             kaguya::LuaRef tempElemRef = convert[tableKey];
-                            returnElement->pushDataNode(luaElementToBaseAttribute(tableKey, tempElemRef));
+                            returnElement->pushDataNode(luaElementToDataNode(tableKey, tempElemRef));
                         }
                     }
                 }
@@ -97,7 +105,7 @@ namespace obe
                 return returnElement;
             }
 
-            vili::DataNode* luaElementToBaseAttribute(std::string id, kaguya::LuaRef& convert)
+            vili::DataNode* luaElementToDataNode(const std::string& id, kaguya::LuaRef& convert)
             {
                 vili::DataNode* returnAttribute = nullptr;
                 if (convert.type() == 3 && Utils::String::isStringInt(convert))
@@ -125,7 +133,7 @@ namespace obe
                 return returnAttribute;
             }
 
-            vili::ArrayNode* luaTableToListAttribute(std::string id, kaguya::LuaTable& convert)
+            vili::ArrayNode* luaTableToArrayNode(const std::string& id, kaguya::LuaTable& convert)
             {
                 /*ListAttribute* returnElement = new ListAttribute(id, dataType);
                 std::cout << "Table Type : " << convert.type() << std::endl;

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <unordered_map>
 
 #include <Editor/MapEditorTools.hpp>
 #include <Scene/Scene.hpp>
@@ -108,21 +109,25 @@ namespace obe
                 currentObj->setSize(256, 256);
                 objectTab->add(currentObj);
                 currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
-                                {
-                                    std::cout << "Trying to build : " << currentObjName << std::endl;
-                                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
-                                });
+                {
+                    std::cout << "Trying to build : " << currentObjName << std::endl;
+                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
+                });
             }
         }
 
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, std::string objName)
+        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
         {
             std::cout << "Call Require Creation for : " << objName << std::endl;
             vili::ComplexNode* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
-            vili::ComplexNode& requireInput = requires->at("Input");
+            std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+            vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
+            requires->getComplexNode("Input").copy(requireCopy, "Input");
+            requires->getComplexNode("Output").copy(requireCopy, "Output");
             std::cout << "Requires is : " << requires << std::endl;
             if (requires != nullptr)
             {
+                vili::ComplexNode& requireInput = requires->at("Input");
                 std::cout << "Show Requires Panel !" << std::endl;
                 requiresPanel->show();
                 tgui::Panel::Ptr content = requiresPanel->get<tgui::Panel>("content");
@@ -136,11 +141,13 @@ namespace obe
 
                 content->add(newObjectTitleLabel);
 
+                std::unordered_map<std::string, tgui::ComboBox::Ptr> requireComboBoxes;
+                std::unordered_map<std::string, tgui::EditBox::Ptr> requireEditBoxes;
+
                 int widgetVerticalPosition = 70;
                 for (std::string& requireItem : requireInput.getAll(vili::NodeType::ComplexNode))
                 {
                     std::cout << "Require item is : " << requireItem << std::endl;
-                    std::cout << requires->contains(vili::NodeType::ComplexNode, "Color") << std::endl;
 
                     tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                     currentRequirementLabel->setPosition(50, widgetVerticalPosition);
@@ -154,9 +161,10 @@ namespace obe
                     {
                         tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
                         currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                        currentRequirementInput->setSize("&.width / 3", "32");
+                        currentRequirementInput->setSize("33%", "32");
                         currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
                         content->add(currentRequirementInput, requireItem + "_input");
+                        requireEditBoxes[requireItem] = currentRequirementInput;
                     }
                     else if (requireInput.at(requireItem).contains(vili::NodeType::ArrayNode, "choices"))
                     {
@@ -170,64 +178,62 @@ namespace obe
                         for (int reqI = 0; reqI < requireInput.at(requireItem).getArrayNode("choices").size(); reqI++)
                             currentRequirementList->addItem(requireInput.at(requireItem).getArrayNode("choices").get(reqI).get<std::string>());
                         currentRequirementList->setSelectedItem(currentRequirementList->getItems()[0]);
+                        requireComboBoxes[requireItem] = currentRequirementList;
                     }
                     widgetVerticalPosition += 50;
                 }
+
                 tgui::Button::Ptr createObjectButton = tgui::Button::create();
 
-                createObjectButton->setPosition(10, "&.height - 60");
-                createObjectButton->setSize("&.w - 20", 50);
+                createObjectButton->setPosition(10, "100% - 60");
+                createObjectButton->setSize("100% - 20", 50);
                 createObjectButton->setRenderer(baseTheme.getRenderer("Button"));
-                createObjectButton->setText("Sprites");
                 createObjectButton->setTextSize(22);
                 createObjectButton->setText("Create Object");
 
-                createObjectButton->connect("pressed", [objName]()
-                                        {
-                                            buildObjectThroughRequire(objName);
-                                        });
+                createObjectButton->connect("pressed", [objName, requireComboBoxes, requireEditBoxes, key, requireCopy]() mutable
+                {
+                    for (auto& cReq : requireComboBoxes)
+                    {
+                        requireCopy->at("Input", cReq.first).createDataNode("value", cReq.second->getSelectedItem());
+                    }
+                    for (auto& cReq : requireEditBoxes)
+                    {
+                        requireCopy->at("Input", cReq.first).createDataNode("value", cReq.second->getText());
+                    }
+                    buildObjectThroughRequire(objName, requireCopy);
+                });
 
                 requiresPanel->add(createObjectButton);
             }
             else
             {
-                std::string key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
+                std::string key = Utils::String::getRandomKey(key, 8);
                 Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
             }
         }
 
-        void buildObjectThroughRequire(std::string objName)
+        void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires)
         {
-            /*vili::ComplexAttribute* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
-            GUI::Container* gui = Script::hookCore.getPointer("GUI")->as<GUI::Container*>();
-            Cursor::Cursor* cursor = Script::hookCore.getPointer("Cursor")->as<Cursor::Cursor*>();
-            Scene::World* world = Script::hookCore.getPointer("World")->as<Scene::World*>();
-            GUI::WidgetContainer* requireGUI = gui->getContainerByContainerName("Requires");
-            std::string key = Utils::String::getRandomKey("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
-            Script::GameObject* newGameObject = world->createGameObject(key, objName);
-                
-            for (std::string& requireItem : requires->getAll(vili::Types::ComplexAttribute))
+            Scene::Scene* scene = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
+            std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+            Script::GameObject* newGameObject = scene->createGameObject(key, objName);
+            
+            requires->at("Output").walk([](vili::NodeIterator& node)
             {
-                std::string requirementName = requires->getPath(requireItem)->getBaseAttribute("name")->get<std::string>();
-                bool optionalRequirement = requires->getPath(requireItem)->contains(vili::Types::BaseAttribute, "optional");
-                if (optionalRequirement)
-                    optionalRequirement = requires->getPath(requireItem)->getBaseAttribute("optional")->get<bool>();
-                if (objName + "_" + requireItem + "_Input" != "" || optionalRequirement)
+                for (const std::string& linkId : node->getAll(vili::NodeType::LinkNode))
                 {
-                    if (requires->getPath(requireItem)->contains(vili::Types::ListAttribute, "choices"))
-                        newGameObject->sendRequireArgumentFromCPP(requirementName, GUI::Widget::getWidgetByID<GUI::Droplist>(objName + "_" + requireItem + "_Input")->getCurrentSelected());
+                    node->createDataNode("__linkroot__", "Input");
+                    node->getLinkNode(linkId).apply();
+                    node->removeNode(vili::NodeType::DataNode, "__linkroot__", true);
                 }
-            }
-            if (newGameObject->doesHaveCollider()) {
-                std::cout << "Position of GO set !" << std::endl;
-                //FIX CURSOR POS
-            }
-            else if (newGameObject->doesHaveLevelSprite()) {
-                std::cout << "Position of GO::LS set !" << std::endl;
-            }*/
+            });
+
+            Script::GameObjectRequires::ApplyRequirements(newGameObject, requires->at("Output"));
+            newGameObject->exec("LuaCore.InjectInitInjectionTable()");
         }
 
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, std::string path)
+        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path)
         {
             spritesPanel->removeAllWidgets();
             spritesPanel->add(spritesCatLabel);
