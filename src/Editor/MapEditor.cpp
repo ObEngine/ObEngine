@@ -180,7 +180,7 @@ namespace obe
 
             tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
             tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");
-            tgui::TextBox::Ptr mapNameInput = gui.get<tgui::TextBox>("mapNameInput");
+            tgui::EditBox::Ptr mapNameInput = gui.get<tgui::EditBox>("mapNameInput");
             tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
             tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
             tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");

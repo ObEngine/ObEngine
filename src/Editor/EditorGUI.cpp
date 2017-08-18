@@ -220,7 +220,7 @@ namespace obe
             void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world)
             {
                 tgui::Label::Ptr mapNameLabel = tgui::Label::create();
-                tgui::TextBox::Ptr mapNameInput = tgui::TextBox::create();
+                tgui::EditBox::Ptr mapNameInput = tgui::EditBox::create();
                 tgui::Button::Ptr mapNameButton = tgui::Button::create();
                 tgui::Label::Ptr mapCatLabel = tgui::Label::create();
 
@@ -239,16 +239,9 @@ namespace obe
                 mapNameLabel->setRenderer(baseTheme.getRenderer("Label"));
                 mapNameLabel->setText("Map Name : ");
 
-                mapNameInput->setPosition(tguif::bindRight(mapNameLabel) + 20, tguif::bindTop(mapNameLabel));
-                mapNameInput->setSize(160, mediumFontSize + 4);
-                mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
-
-                mapNameButton->setPosition(tguif::bindRight(mapNameInput) + 20, tguif::bindTop(mapNameLabel) + 4);
-                mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
-                mapNameButton->setSize(16, 16);
-                mapNameButton->connect("pressed", [&world, mapPanel]()
+                auto& changeMapNameLambda = [&world, mapPanel]()
                 {
-                    tgui::TextBox::Ptr mapNameInput = mapPanel->get<tgui::TextBox>("mapNameInput");
+                    tgui::EditBox::Ptr mapNameInput = mapPanel->get<tgui::EditBox>("mapNameInput");
                     if (mapNameInput->getText() != "")
                     {
                         world.setLevelName(mapNameInput->getText());
@@ -258,7 +251,17 @@ namespace obe
                     {
                         mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
                     }
-                });
+                };
+
+                mapNameInput->setPosition(tguif::bindRight(mapNameLabel) + 20, tguif::bindTop(mapNameLabel));
+                mapNameInput->setSize(160, mediumFontSize + 4);
+                mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                mapNameInput->connect("returnkeypressed", changeMapNameLambda);
+
+                mapNameButton->setPosition(tguif::bindRight(mapNameInput) + 20, tguif::bindTop(mapNameLabel) + 4);
+                mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+                mapNameButton->setSize(16, 16);
+                mapNameButton->connect("pressed", changeMapNameLambda);
             }
 
             void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode)
@@ -267,12 +270,12 @@ namespace obe
                 tgui::CheckBox::Ptr displayFramerateCheckbox = tgui::CheckBox::create();
                 tgui::CheckBox::Ptr enableGridCheckbox = tgui::CheckBox::create();
                 tgui::Label::Ptr gridDimensionLabel = tgui::Label::create();
-                tgui::TextBox::Ptr gridDimensionXInput = tgui::TextBox::create();
-                tgui::TextBox::Ptr gridDimensionYInput = tgui::TextBox::create();
+                tgui::EditBox::Ptr gridDimensionXInput = tgui::EditBox::create();
+                tgui::EditBox::Ptr gridDimensionYInput = tgui::EditBox::create();
                 tgui::Button::Ptr gridDimensionButton = tgui::Button::create();
                 tgui::Label::Ptr gridOffsetLabel = tgui::Label::create();
-                tgui::TextBox::Ptr gridOffsetXInput = tgui::TextBox::create();
-                tgui::TextBox::Ptr gridOffsetYInput = tgui::TextBox::create();
+                tgui::EditBox::Ptr gridOffsetXInput = tgui::EditBox::create();
+                tgui::EditBox::Ptr gridOffsetYInput = tgui::EditBox::create();
                 tgui::Button::Ptr gridOffsetButton = tgui::Button::create();
                 tgui::CheckBox::Ptr snapGridCheckbox = tgui::CheckBox::create();
 
@@ -331,11 +334,13 @@ namespace obe
                 gridDimensionXInput->setSize(80, mediumFontSize + 4);
                 gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridDimensionXInput->setText(std::to_string(editorGrid.getCellWidth()));
+                gridDimensionXInput->setInputValidator(tgui::EditBox::Validator::UInt);
 
                 gridDimensionYInput->setPosition(tguif::bindRight(gridDimensionXInput) + 20, tguif::bindTop(gridDimensionLabel));
                 gridDimensionYInput->setSize(80, mediumFontSize + 4);
                 gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridDimensionYInput->setText(std::to_string(editorGrid.getCellHeight()));
+                gridDimensionYInput->setInputValidator(tgui::EditBox::Validator::UInt);
 
                 gridDimensionButton->setPosition(tguif::bindRight(gridDimensionYInput) + 20, tguif::bindTop(gridDimensionLabel) + 4);
                 gridDimensionButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
