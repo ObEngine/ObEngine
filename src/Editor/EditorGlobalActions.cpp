@@ -72,7 +72,6 @@ namespace obe
             {
                 if (enableGridCheckbox->isChecked()) 
                 {
-                    std::cout << "YOLOBITCH" << std::endl;
                     editorGrid.moveMagnet(cursor, 0, -1);
                     editorTriggers->pushParameter("GridCursorMoved", "direction", "Up");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
@@ -212,22 +211,7 @@ namespace obe
         void connectGameConsoleActions(Input::InputManager& inputManager, Debug::Console& gameConsole)
         {
             inputManager.getAction("ConsoleToggle").connect([&gameConsole, &inputManager](const Input::InputActionEvent& event)
-            {
-                static std::vector<std::string> backupContexts;
-                if (gameConsole.isVisible())
-                {
-                    inputManager.clearContexts();
-                    for (std::string& context : backupContexts)
-                    {
-                        inputManager.addContext(context);
-                    }
-                    backupContexts.clear();
-                }
-                else
-                {
-                    backupContexts = inputManager.getContexts();
-                    inputManager.setContext("gameConsole");
-                }
+            {   
                 gameConsole.setVisible(!gameConsole.isVisible());
             });
             inputManager.getAction("ConsoleCursorLeft").connect([&gameConsole](const Input::InputActionEvent& event)

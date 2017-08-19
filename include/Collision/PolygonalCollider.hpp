@@ -336,7 +336,5 @@ namespace obe
              */
             void clearHighlights(bool points = true, bool lines = true);
         };
-
-        void mergePolygons(std::vector<PolygonalCollider*> colliders); 
     }
 }

@@ -103,6 +103,8 @@ namespace obe
 
             //Console
             Debug::Console gameConsole;
+            bool oldConsoleVisibility = false;
+            std::vector<std::string> backupContexts;
             Script::hookCore.dropValue("Console", &gameConsole);
 
             //Font
@@ -309,6 +311,26 @@ namespace obe
                     {
                         scene.setCameraLock(false);
                     }
+                }
+
+                if (oldConsoleVisibility != gameConsole.isVisible())
+                {
+                    std::cout << "Swap console Visibility" << std::endl;
+                    if (oldConsoleVisibility)
+                    {
+                        inputManager.clearContexts();
+                        for (std::string& context : backupContexts)
+                        {
+                            inputManager.addContext(context);
+                        }
+                        backupContexts.clear();
+                    }
+                    else
+                    {
+                        backupContexts = inputManager.getContexts();
+                        inputManager.setContext("gameConsole");
+                    }
+                    oldConsoleVisibility = gameConsole.isVisible();
                 }
 
                 Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);

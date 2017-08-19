@@ -63,8 +63,6 @@ namespace obe
                     .addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
                 );
-
-                (*lua)["Core"]["Collision"]["MergePolygons"] = kaguya::function(Collision::mergePolygons);
             }
         }
     }
