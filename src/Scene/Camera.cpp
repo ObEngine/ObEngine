@@ -72,7 +72,7 @@ namespace obe
             }
         }
 
-        void Camera::setAngle(double angle)
+        /*void Camera::setAngle(double angle)
         {
             if (!m_locked) m_angle = angle;
         }
@@ -80,7 +80,7 @@ namespace obe
         void Camera::rotate(double angle)
         {
             if (!m_locked) m_angle += angle;
-        }
+        }*/
 
         Transform::UnitVector Camera::getPosition(Transform::Referencial ref) const
         {

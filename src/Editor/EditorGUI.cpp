@@ -239,7 +239,7 @@ namespace obe
                 mapNameLabel->setRenderer(baseTheme.getRenderer("Label"));
                 mapNameLabel->setText("Map Name : ");
 
-                auto& changeMapNameLambda = [&world, mapPanel]()
+                auto changeMapNameLambda = [&world, mapPanel]()
                 {
                     tgui::EditBox::Ptr mapNameInput = mapPanel->get<tgui::EditBox>("mapNameInput");
                     if (mapNameInput->getText() != "")

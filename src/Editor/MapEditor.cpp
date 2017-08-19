@@ -248,15 +248,6 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
-            {
-                scene.getCamera()->scale(1.1, Transform::Referencial::Center);
-            });
-            inputManager.getAction("MagnetizeDown").connect([&scene](const Input::InputActionEvent& event)
-            {
-                scene.getCamera()->scale(0.9, Transform::Referencial::Center);
-            });
-
             std::cout << "=> LISTING GLOBAL NAMESPACE TRIGGERGROUP CONTENT" << std::endl;
             for (auto& truc : Triggers::TriggerDatabase::GetInstance()->getAllTriggersGroupNames("Global"))
             {
@@ -441,10 +432,12 @@ namespace obe
                     case sf::Event::MouseWheelMoved:
                         if (event.mouseWheel.delta >= scrollSensitive)
                         {
+                            scene.getCamera()->scale(0.9, Transform::Referencial::Center);
                             gameConsole.scroll(-1);
                         }
                         else if (event.mouseWheel.delta <= -scrollSensitive)
                         {
+                            scene.getCamera()->scale(1.1, Transform::Referencial::Center);
                             gameConsole.scroll(1);
                         }
                         break;
