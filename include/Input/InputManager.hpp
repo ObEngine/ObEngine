@@ -58,6 +58,7 @@ namespace obe
             * \param context Name of the only context to use
             */
             void setContext(const std::string& context);
+            std::vector<std::string> getContexts();
             /**
             * \brief Enables or disables the KeyboardManager
             * \param state true if the KeyboardManager should be enabled, false otherwise

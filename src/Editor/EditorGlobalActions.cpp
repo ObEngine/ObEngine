@@ -163,7 +163,8 @@ namespace obe
         void connectMenuActions(
             Input::InputManager& inputManager, 
             tgui::ComboBox::Ptr editMode, 
-            tgui::ComboBox::Ptr cameraMode)
+            tgui::ComboBox::Ptr cameraMode,
+            tgui::Panel::Ptr editorPanel)
         {
             inputManager.getAction("CamMovable").connect([cameraMode](const Input::InputActionEvent& event)
             {
@@ -173,13 +174,17 @@ namespace obe
             {
                 cameraMode->setSelectedItemByIndex(1);
             });
-            inputManager.getAction("SpriteMode").connect([editMode, &inputManager](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteMode").connect([editMode](const Input::InputActionEvent& event)
             {
                 editMode->setSelectedItemByIndex(0);
             });
-            inputManager.getAction("CollisionMode").connect([&inputManager, editMode](const Input::InputActionEvent& event)
+            inputManager.getAction("CollisionMode").connect([editMode](const Input::InputActionEvent& event)
             {
                 editMode->setSelectedItemByIndex(1);
+            });
+            inputManager.getAction("ToggleEditorMenu").connect([editorPanel](const Input::InputActionEvent& event)
+            {
+                editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
             });
         }
 
@@ -201,6 +206,45 @@ namespace obe
                     savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
                     waitForMapSaving = 0;
                 }
+            });
+        }
+
+        void connectGameConsoleActions(Input::InputManager& inputManager, Debug::Console& gameConsole)
+        {
+            inputManager.getAction("ConsoleToggle").connect([&gameConsole, &inputManager](const Input::InputActionEvent& event)
+            {
+                static std::vector<std::string> backupContexts;
+                if (gameConsole.isVisible())
+                {
+                    inputManager.clearContexts();
+                    for (std::string& context : backupContexts)
+                    {
+                        inputManager.addContext(context);
+                    }
+                    backupContexts.clear();
+                }
+                else
+                {
+                    backupContexts = inputManager.getContexts();
+                    inputManager.setContext("gameConsole");
+                }
+                gameConsole.setVisible(!gameConsole.isVisible());
+            });
+            inputManager.getAction("ConsoleCursorLeft").connect([&gameConsole](const Input::InputActionEvent& event)
+            {
+                gameConsole.moveCursor(-1);
+            });
+            inputManager.getAction("ConsoleCursorRight").connect([&gameConsole](const Input::InputActionEvent& event)
+            {
+                gameConsole.moveCursor(1);
+            });
+            inputManager.getAction("ConsoleUpHistory").connect([&gameConsole](const Input::InputActionEvent& event)
+            {
+                gameConsole.upHistory();
+            });
+            inputManager.getAction("ConsoleDownHistory").connect([&gameConsole](const Input::InputActionEvent& event)
+            {
+                gameConsole.downHistory();
             });
         }
     }

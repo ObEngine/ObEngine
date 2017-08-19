@@ -44,6 +44,8 @@ KeyBinding:
         Save:"Hold:LControl + Pressed:S"
         ToggleGrid:"Pressed:G"
         ToggleGridSnap:"Pressed:H"
+        ToggleEditorMenu:"Pressed:E"
+        ExitEditor:"Pressed:Escape"
     spriteEditing:
         SpriteCancelOffset:"Hold:LMB + Pressed:O"
         SpriteRemove:"Pressed:Delete"
@@ -69,6 +71,12 @@ KeyBinding:
         ColliderRelease:"Pressed:LMB"
         ColliderRemove:"Hold:LMB + Pressed:Delete"
         ColliderCreate:"Pressed:RMB"
+    gameConsole:
+        ConsoleCursorLeft:"Pressed:Left"
+        ConsoleCursorRight:"Pressed:Right"
+        ConsoleUpHistory:"Pressed:Up"
+        ConsoleDownHistory:"Pressed:Down"
+        ConsoleToggle:"Pressed:F1"
     
 Developpement:
     showCharacter:True

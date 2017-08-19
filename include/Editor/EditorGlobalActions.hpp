@@ -3,13 +3,14 @@
 #include <TGUI/Widgets/CheckBox.hpp>
 #include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
+#include <TGUI/Widgets/Panel.hpp>
 
+#include <Debug/Console.hpp>
 #include <Editor/Grid.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
 #include <Time/FramerateManager.hpp>
-
 
 namespace obe
 {
@@ -31,7 +32,8 @@ namespace obe
         void connectMenuActions(
             Input::InputManager& inputManager, 
             tgui::ComboBox::Ptr editMode, 
-            tgui::ComboBox::Ptr cameraMode);
+            tgui::ComboBox::Ptr cameraMode,
+            tgui::Panel::Ptr editorPanel);
         void connectSaveActions(
             Triggers::TriggerGroup* editorTriggers, 
             Input::InputManager& inputManager, 
@@ -39,5 +41,10 @@ namespace obe
             Scene::Scene& world, 
             double& waitForMapSaving, 
             tgui::Label::Ptr savedLabel);
+
+        void connectGameConsoleActions(
+            Input::InputManager& inputManager,
+            Debug::Console& gameConsole
+        );
     }
 }

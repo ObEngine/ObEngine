@@ -24,6 +24,7 @@ namespace obe
 
         void InputButtonMonitor::update()
         {
+            std::cout << "UPDATING BUTTON : " << m_button->getName() << std::endl;
             bool keyPressed = m_button->isPressed();
             if (keyPressed && (m_buttonState == InputButtonState::Idle || m_buttonState == InputButtonState::Released))
             {

@@ -35,7 +35,8 @@ namespace obe
                 unsigned int actionsAmount = m_currentActions.size();
                 for (unsigned int i = 0; i < actionsAmount; i++)
                 {
-                    m_currentActions[i]->update();
+                    if (i < m_currentActions.size()) // Performance issue ? <REVISION>
+                        m_currentActions[i]->update();
                 }
             }
         }
@@ -147,6 +148,22 @@ namespace obe
         {
             this->clearContexts();
             this->addContext(context);
+        }
+
+        std::vector<std::string> InputManager::getContexts()
+        {
+            std::vector<std::string> allContexts;
+            for (const InputAction* action : m_currentActions)
+            {
+                for (const std::string& context : action->getContexts())
+                {
+                    if (!Utils::Vector::isInList(context, allContexts))
+                    {
+                        allContexts.push_back(context);
+                    }
+                }
+            }
+            return allContexts;
         }
     }
 }

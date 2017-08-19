@@ -137,8 +137,10 @@ namespace obe
             Input::InputManager inputManager;
             Script::hookCore.dropValue("KeyBinder", &inputManager);
             inputManager.configure(configFile.at("KeyBinding"));
-            inputManager.addContext("game")
-                   .addContext("mapEditor");
+            inputManager
+                .addContext("game")
+                .addContext("mapEditor")
+                .addContext("gameConsole");
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
@@ -218,11 +220,16 @@ namespace obe
             connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
             connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
             connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
-            connectMenuActions(inputManager, editMode, cameraMode);
+            connectMenuActions(inputManager, editMode, cameraMode, editorPanel);
             connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
+            connectGameConsoleActions(inputManager, gameConsole);
+            inputManager.getAction("ExitEditor").connect([&window](const Input::InputActionEvent& event)
+            {
+                window.close();
+            });
 
             auto editModeCallback = [&editorTriggers, &inputManager, editMode]()
             {
@@ -276,10 +283,6 @@ namespace obe
                     else if (waitForMapSaving > 3)
                         waitForMapSaving = -1;
                 }
-
-
-                //GUI Actions
-                inputManager.setEnabled(!gameConsole.isVisible());
 
                 bool drawFPS = displayFramerateCheckbox->isChecked();
 
@@ -409,21 +412,6 @@ namespace obe
                     {
                     case sf::Event::Closed:
                         window.close();
-                        break;
-
-                    case sf::Event::KeyPressed:
-                        if (event.key.code == sf::Keyboard::Escape)
-                            window.close();
-                        if (event.key.code == sf::Keyboard::F1)
-                            gameConsole.setVisible(!gameConsole.isVisible());
-                        if (event.key.code == sf::Keyboard::Up)
-                            gameConsole.upHistory();
-                        if (event.key.code == sf::Keyboard::Down)
-                            gameConsole.downHistory();
-                        if (event.key.code == sf::Keyboard::Left && gameConsole.isVisible())
-                            gameConsole.moveCursor(-1);
-                        if (event.key.code == sf::Keyboard::Right && gameConsole.isVisible())
-                            gameConsole.moveCursor(1);
                         break;
                     case sf::Event::TextEntered:
                         if (gameConsole.isVisible())
