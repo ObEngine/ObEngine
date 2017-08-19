@@ -34,33 +34,57 @@ namespace obe
 
             double m_angle = 0;
 
-            void apply();
+            void apply() const;
         public:
             Camera();
 
-            void bindView(sf::RenderWindow& window) const;
-
+            /**
+             * \brief Locks the Camera so it can't be modified until unlock
+             */
             void lock();
+            /**
+             * \brief Unlock the Camera so it can be modified again
+             */
             void unlock();
 
+            /**
+             * \brief Sets the Position of the Camera
+             * \param position New Position of the Camera
+             * \param ref Referencial used to position the Camera
+             */
             void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
-            void setPosition(double x, double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            /**
+             * \brief Moves the Camera
+             * \param position Position to add to the Camera
+             */
             void move(const Transform::UnitVector& position);
-            void move(double x, double y);
-            void setX(double x, Transform::Referencial ref = Transform::Referencial::TopLeft);
-            void setY(double y, Transform::Referencial ref = Transform::Referencial::TopLeft);
-            double getX(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
-            double getY(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+            /**
+             * \brief Gets the Position of the Camera
+             * \param ref Referencial used to get the Position of the Camera
+             * \return The Position of the Camera
+             */
             Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
 
-            void setSize(double pSize);
-            void scale(double pSize);
-            double getWidth() const;
-            double getHeight() const;
+            /**
+             * \brief Sets the size of the Camera
+             * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 WorldUnits)
+             * \param ref Referencial used to resize the Camera
+             */
+            void setSize(double pSize, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            /**
+             * \brief Scales the Camera
+             * \param pSize Factor used to multiply the current size
+             * \param ref Referencial used to resize the Camera
+             */
+            void scale(double pSize, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            /**
+             * \brief Gets an UnitVector containing the size of the Camera (Width and Height)
+             * \return An UnitVector containing the size of the Camera (Width and Height)
+             */
             Transform::UnitVector getSize() const;
 
-            void setAngle(double angle);
-            void rotate(double angle);
+            /*void setAngle(double angle);
+            void rotate(double angle);*/
         };
     }
 }

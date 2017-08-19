@@ -385,11 +385,13 @@ namespace obe
                 gridOffsetXInput->setSize(80, mediumFontSize + 4);
                 gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridOffsetXInput->setText(std::to_string(editorGrid.getOffsetX()));
+                gridOffsetXInput->setInputValidator(tgui::EditBox::Validator::Int);
 
                 gridOffsetYInput->setPosition(tguif::bindRight(gridOffsetXInput) + 20, tguif::bindTop(gridOffsetLabel));
                 gridOffsetYInput->setSize(80, mediumFontSize + 4);
                 gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridOffsetYInput->setText(std::to_string(editorGrid.getOffsetY()));
+                gridOffsetYInput->setInputValidator(tgui::EditBox::Validator::Int);
 
                 gridOffsetButton->setPosition(tguif::bindRight(gridOffsetYInput) + 20, tguif::bindTop(gridOffsetLabel) + 4);
                 gridOffsetButton->setRenderer(baseTheme.getRenderer("ApplyButton"));

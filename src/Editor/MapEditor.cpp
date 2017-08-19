@@ -248,14 +248,14 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            /*inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
+            inputManager.getAction("MagnetizeUp").connect([&scene](const Input::InputActionEvent& event)
             {
-                scene.getCamera()->scale(1.1);
+                scene.getCamera()->scale(1.1, Transform::Referencial::Center);
             });
             inputManager.getAction("MagnetizeDown").connect([&scene](const Input::InputActionEvent& event)
             {
-                scene.getCamera()->scale(0.9);
-            });*/
+                scene.getCamera()->scale(0.9, Transform::Referencial::Center);
+            });
 
             std::cout << "=> LISTING GLOBAL NAMESPACE TRIGGERGROUP CONTENT" << std::endl;
             for (auto& truc : Triggers::TriggerDatabase::GetInstance()->getAllTriggersGroupNames("Global"))
@@ -423,14 +423,6 @@ namespace obe
                     case sf::Event::KeyPressed:
                         if (event.key.code == sf::Keyboard::Escape)
                             window.close();
-                        if (event.key.code == sf::Keyboard::V)
-                        {
-                            if (event.key.control)
-                            {
-                                std::string clipboard_content = "";
-                                gameConsole.insertInputBufferContent(clipboard_content);
-                            }
-                        }
                         if (event.key.code == sf::Keyboard::F1)
                             gameConsole.setVisible(!gameConsole.isVisible());
                         if (event.key.code == sf::Keyboard::Up)
