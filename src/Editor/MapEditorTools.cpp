@@ -122,11 +122,11 @@ namespace obe
             vili::ComplexNode* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
             vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
-            requires->getComplexNode("Input").copy(requireCopy, "Input");
-            requires->getComplexNode("Output").copy(requireCopy, "Output");
             std::cout << "Requires is : " << requires << std::endl;
             if (requires != nullptr)
             {
+                requires->getComplexNode("Input").copy(requireCopy, "Input");
+                requires->getComplexNode("Output").copy(requireCopy, "Output");
                 vili::ComplexNode& requireInput = requires->at("Input");
                 std::cout << "Show Requires Panel !" << std::endl;
                 requiresPanel->show();
@@ -208,7 +208,6 @@ namespace obe
             }
             else
             {
-                std::string key = Utils::String::getRandomKey(key, 8);
                 Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
             }
         }
