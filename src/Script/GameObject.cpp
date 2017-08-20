@@ -17,6 +17,11 @@ namespace obe
         KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useExternalTriggerProxy, GameObject, useExternalTrigger, 3, 4,
             void(GameObject::*)(std::string, std::string, std::string, std::string));
 
+        kaguya::LuaTable GameObject::access() const
+        {
+            return (*m_objectScript)["Object"];
+        }
+
         void loadScrGameObject(GameObject* obj, kaguya::State* lua)
         {
             (*lua)["CPP_Import"] = &loadLibBridge;
@@ -27,7 +32,8 @@ namespace obe
 
         void loadScrGameObjectLib(kaguya::State* lua)
         {
-            (*lua)["CPP_GameObject"].setClass(kaguya::UserdataMetatable<GameObject>()
+            Bindings::Load(lua, "Core.Types.Identifiable");
+            (*lua)["CPP_GameObject"].setClass(kaguya::UserdataMetatable<GameObject, Types::Identifiable>()
                 .addFunction("LevelSprite", &GameObject::getLevelSprite)
                 .addFunction("Collider", &GameObject::getCollider)
                 .addFunction("Animator", &GameObject::getAnimator)
@@ -39,6 +45,7 @@ namespace obe
                 .addFunction("sendInitArg", &GameObject::sendInitArgFromLua)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
+                .addFunction("access", &GameObject::access)
             );
         }
 

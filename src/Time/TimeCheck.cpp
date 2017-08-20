@@ -45,5 +45,13 @@ namespace obe
                 return false;
             }
         }
+
+        void TimeCheck::goToOver()
+        {
+            if (m_waitFor != 0)
+            {
+                m_clock = Time::getTickSinceEpoch() - m_waitFor;
+            }
+        }
     }
 }

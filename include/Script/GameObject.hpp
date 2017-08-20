@@ -201,6 +201,8 @@ namespace obe
              * \brief Delete State of the GameObject (false = not deleted)
              */
             bool deletable = false;
+
+            void access(kaguya::State* lua) const;
         };
 
         void loadScrGameObject(GameObject* obj, kaguya::State* lua);

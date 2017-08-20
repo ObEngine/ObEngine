@@ -29,7 +29,7 @@ namespace obe
             Triggers::TriggerGroup* m_actionTrigger;
             std::vector<std::string> m_contexts;
             std::vector<InputCondition> m_combinations;
-            bool m_state = false;
+            bool m_state = true;
             Time::TimeCheck m_interval;
             Time::TimeCheck m_repeat;
         public:

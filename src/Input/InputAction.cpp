@@ -64,7 +64,7 @@ namespace obe
                 {
                     if (m_state)
                     {
-                        if (m_repeat.resetIfOver())
+                        if (m_repeat.resetIfOver()) // Reset repeat when combination is unchecked <REVISION>
                         {
                             InputActionEvent ev(this, &combination);
                             m_callback(ev);
@@ -74,12 +74,16 @@ namespace obe
                     }
                     else
                     {
-                        if (m_interval.resetIfOver())
+                        if (m_interval.resetIfOver()) // What is this for, when does m_state goes back to false ? <REVISION>
                         {
                             m_state = true;
                             m_callback(InputActionEvent(this, &combination));
                         }
                     }
+                }
+                else
+                {
+                    m_repeat.goToOver();
                 }
             }
         }

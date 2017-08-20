@@ -18,6 +18,7 @@ namespace obe
             void reset();
             bool over() const;
             bool resetIfOver();
+            void goToOver();
         };
     }
 }
