@@ -46,6 +46,7 @@ namespace vili
 
     void NodeTemplate::build(ComplexNode* parent, const std::string& id)
     {
+        std::cout << "BUILD TEMPLATE @" << this << std::endl;
         if (checkSignature())
         {
             m_body.at("__body__").copy(parent, id);

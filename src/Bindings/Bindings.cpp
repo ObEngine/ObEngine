@@ -79,6 +79,7 @@ namespace obe
             BindTree["Core"].add("Transform")["Transform"]
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
                 .add("Rect", &TransformBindings::LoadRect)
+                .add("Referencial", &TransformBindings::LoadReferencial)
                 .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
                 .add("Units", &TransformBindings::LoadUnits)
                 .add("UnitVector", &TransformBindings::LoadUnitVector);

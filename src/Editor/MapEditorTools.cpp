@@ -119,7 +119,7 @@ namespace obe
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
         {
             std::cout << "Call Require Creation for : " << objName << std::endl;
-            vili::ComplexNode* requires = Script::GameObjectRequires::getInstance()->getRequiresForObjectType(objName);
+            vili::ComplexNode* requires = Script::GameObjectDatabase::GetRequirementsForGameObject(objName);
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
             vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
             std::cout << "Requires is : " << requires << std::endl;
@@ -228,7 +228,7 @@ namespace obe
                 }
             });
 
-            Script::GameObjectRequires::ApplyRequirements(newGameObject, requires->at("Output"));
+            Script::GameObjectDatabase::ApplyRequirements(newGameObject, requires->at("Output"));
             newGameObject->exec("LuaCore.InjectInitInjectionTable()");
         }
 

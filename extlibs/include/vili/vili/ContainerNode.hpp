@@ -29,9 +29,9 @@ namespace vili
          */
         virtual Node* removeOwnership(Node* element);
 
-        virtual ~ContainerNode()
-        {
-        }
+        ContainerNode(const ContainerNode& copy);
+
+        ~ContainerNode() override;
 
         /**
          * \brief Removes ownership and child Node from ContainerNode (Node won't be memory managed anymore, be cautious)

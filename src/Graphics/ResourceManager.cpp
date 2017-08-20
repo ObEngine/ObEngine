@@ -21,7 +21,7 @@ namespace obe
             return m_instance;
         }
 
-        sf::Texture* ResourceManager::getTexture(const std::string& path)
+        sf::Texture* ResourceManager::getTexture(const std::string& path, bool antiAliasing)
         {
             if (m_textureDatabase.size() != 0)
             {
@@ -32,7 +32,7 @@ namespace obe
                     
                     if (tempTexture != nullptr)
                     {
-                        tempTexture->setSmooth(true);
+                        tempTexture->setSmooth(antiAliasing);
                         m_textureDatabase[path] = move(tempTexture);
                         m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
                         m_resourceManagerTriggers->trigger("TextureLoaded");
@@ -46,7 +46,7 @@ namespace obe
             System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
             if (tempTexture != nullptr)
             {
-                tempTexture->setSmooth(true);
+                tempTexture->setSmooth(antiAliasing);
                 m_textureDatabase[path] = move(tempTexture);
                 m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
                 m_resourceManagerTriggers->trigger("TextureLoaded");

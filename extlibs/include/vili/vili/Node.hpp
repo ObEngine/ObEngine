@@ -38,6 +38,8 @@ namespace vili
          */
         Node(ContainerNode* parent, const std::string& id, const NodeType& type);
 
+        Node(const Node& copy);
+
         /**
          * \brief Virtual Destructor for proper memory management
          */

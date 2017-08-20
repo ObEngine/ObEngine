@@ -91,64 +91,7 @@ namespace obe
 
                 for (std::string& currentSpriteName : levelSprites.getAll(vili::NodeType::ComplexNode))
                 {
-                    vili::ComplexNode& currentSprite = levelSprites.at(currentSpriteName);
-                    std::string spriteXTransformer;
-                    std::string spriteYTransformer;
-                    std::string spriteId = currentSpriteName;
-                    std::string spriteUnits = currentSprite.contains(vili::NodeType::ComplexNode, "rect") ?
-                                                  currentSprite.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
-                    std::cout << "SpriteUnit : " << spriteUnits << std::endl;
-                    std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
-                                                 currentSprite.getDataNode("path").get<std::string>() : "";
-                    Transform::UnitVector spritePos(0, 0);
-                    Transform::UnitVector spriteSize(1, 1);
-                    if (currentSprite.contains(vili::NodeType::ComplexNode, "rect"))
-                    {
-                        Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
-                        spritePos.unit = rectUnit;
-                        spritePos.x = currentSprite.at<vili::DataNode>("rect", "x").get<double>();
-                        spritePos.y = currentSprite.at<vili::DataNode>("rect", "y").get<double>();
-                        spriteSize.unit = rectUnit;
-                        spriteSize.x = currentSprite.at<vili::DataNode>("rect", "w").get<double>();
-                        spriteSize.y = currentSprite.at<vili::DataNode>("rect", "h").get<double>();
-                        spritePos = spritePos.to<Transform::Units::WorldUnits>();
-                        spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
-                    }
-                    int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
-                                        currentSprite.getDataNode("rotation").get<int>() : 0;
-                    int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
-                                    currentSprite.getDataNode("layer").get<int>() : 1;
-                    int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
-                                     currentSprite.getDataNode("z-depth").get<int>() : 1;
-
-                    if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
-                    {
-                        spriteXTransformer = currentSprite.at<vili::DataNode>("xTransform").get<std::string>();
-                    }
-                    else
-                    {
-                        spriteXTransformer = "None";
-                    }
-                    if (currentSprite.contains(vili::NodeType::DataNode, "yTransform"))
-                    {
-                        spriteYTransformer = currentSprite.at<vili::DataNode>("yTransform").get<std::string>();
-                    }
-                    else
-                    {
-                        spriteYTransformer = "None";
-                    }
-
-                    Graphics::LevelSprite* tempSprite = this->createLevelSprite(spriteId);
-                    if (spritePath != "")
-                        tempSprite->load(spritePath);
-                    tempSprite->setPosition(spritePos.x, spritePos.y);
-                    tempSprite->setSize(spriteSize.x, spriteSize.y);
-                    tempSprite->setWorkingUnit(Transform::stringToUnits(spriteUnits));
-                    tempSprite->setRotation(spriteRot);
-                    Graphics::PositionTransformers::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
-                    tempSprite->setPositionTransformer(positionTransformer);
-                    tempSprite->setLayer(layer);
-                    tempSprite->setZDepth(zdepth);
+                    this->createLevelSprite(currentSpriteName)->configure(levelSprites.at(currentSpriteName));
                 }
             }
 
@@ -199,7 +142,7 @@ namespace obe
                     {
                         vili::ComplexNode& objectRequirements = currentObject.at("Requires");
                         currentObject.removeOwnership(&objectRequirements);
-                        Script::GameObjectRequires::ApplyRequirements(this->getGameObjectById(currentObjectName), objectRequirements);
+                        Script::GameObjectDatabase::ApplyRequirements(this->getGameObjectById(currentObjectName), objectRequirements);
                         objectRequirements.setParent(&currentObject);
                     }
                 }
@@ -464,8 +407,7 @@ namespace obe
         {
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
             vili::ViliParser getGameObjectFile;
-            System::Path("Data/GameObjects/").add(obj).add(obj + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
-            vili::ComplexNode& gameObjectData = getGameObjectFile.at(obj);
+            vili::ComplexNode& gameObjectData = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
             newGameObject->loadGameObject(*this, gameObjectData);
             if (newGameObject->m_hasScriptEngine)
             {

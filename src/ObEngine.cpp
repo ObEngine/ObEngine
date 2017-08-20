@@ -30,6 +30,8 @@ int main(int argc, char** argv)
     std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
+    vili::ViliParser::StoreInCache("Obe.vili");
+
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
     Graphics::PositionTransformers::Init();
     Input::InitKeyList();

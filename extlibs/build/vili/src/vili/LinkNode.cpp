@@ -10,6 +10,15 @@ namespace vili
         m_path = path;
     }
 
+    LinkNode::~LinkNode()
+    {
+    }
+
+    LinkNode::LinkNode(const LinkNode& copy) : Node(copy)
+    {
+        m_path = copy.m_path;
+    }
+
     Node* LinkNode::getTarget()
     {
         std::string linkroot = "";

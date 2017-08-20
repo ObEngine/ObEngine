@@ -11,4 +11,12 @@ namespace vili
         element->removeParent(this);
         return element;
     }
+
+    ContainerNode::ContainerNode(const ContainerNode& copy) : Node(copy)
+    {
+    }
+
+    ContainerNode::~ContainerNode()
+    {
+    }
 }

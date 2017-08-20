@@ -31,6 +31,8 @@ namespace vili
          * \param path Path of the Node the LinkNode is pointing to
          */
         LinkNode(ComplexNode* parent, const std::string& id, const std::string& path);
+        ~LinkNode() override;
+        LinkNode(const LinkNode& copy);
         /**
          * \brief Get the Node the LinkNode is pointing to
          * \return A pointer to the Node the LinkNode is pointing to

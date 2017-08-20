@@ -48,9 +48,9 @@ namespace vili
          */
         ComplexNode(const std::string& id);
 
-        virtual ~ComplexNode()
-        {
-        }
+        ComplexNode(const ComplexNode& copy);
+
+        ~ComplexNode() override;
 
         /**
         * \brief Removes ownership and child Node from ComplexNode (Node won't be memory managed anymore, be cautious)

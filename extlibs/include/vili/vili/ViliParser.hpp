@@ -12,6 +12,7 @@ namespace vili
     class ViliParser
     {
     private:
+        static std::map<std::string, std::unique_ptr<ViliParser>> ViliCache;
         std::unique_ptr<ComplexNode> m_root = nullptr;
         std::map<std::string, NodeTemplate*> m_templateList;
         std::vector<std::string> m_flagList;
@@ -102,16 +103,10 @@ namespace vili
          */
         bool hasFlag(const std::string& flagName) const;
         /**
-         * \brief Gets how many Flags the ViliParser object contains
-         * \return An unsigned int containing the amount of Flag inside the ViliParser
+         * \brief Gets all the Flags of the ViliParser
+         * \return All the flags of the ViliParser
          */
-        unsigned int getAmountOfFlags() const;
-        /**
-         * \brief Gets the flag at the given index (Ordered by date of creation)
-         * \param index Index of the Flag to get
-         * \return A std::string containing the value of the Flag at the given index
-         */
-        std::string getFlagAtIndex(unsigned int index) const;
+        std::vector<std::string> getAllFlags() const;
         /**
          * \brief Sets the new spacing of the vili file (default 4)
          * \param spacing New spacing of the vili file
@@ -139,6 +134,11 @@ namespace vili
          * \return A pointer to the NodeTemplate if found (raises an exception otherwise)
          */
         NodeTemplate* getTemplate(const std::string& templateId) const;
+
+        std::vector<std::string> getAllTemplates() const;
+
+        static void StoreInCache(const std::string& path);
+        static bool CheckCache(ViliParser* parser, const std::string& path);
     };
 
     template <class ...Args>

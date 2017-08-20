@@ -8,6 +8,7 @@
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
+#include <Types/Configurable.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
 
@@ -56,7 +57,7 @@ namespace obe
          * \brief An element meant to be displayed in a Scene
          * @Bind
          */
-        class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect, public Types::Identifiable
+        class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect, public Types::Identifiable, Types::Configurable
         {
         private:
             std::string m_path = "";
@@ -93,6 +94,8 @@ namespace obe
              * \return A std::string containing the path of the sf::Texture loaded by the Sprite (if any)
              */
             std::string getPath() const;
+
+            void configure(vili::ComplexNode& configuration) override;
 
             //Texture
             void setTexture(const sf::Texture& texture);

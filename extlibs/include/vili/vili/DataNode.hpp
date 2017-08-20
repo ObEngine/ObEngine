@@ -13,13 +13,15 @@ namespace vili
     class DataNode : public Node
     {
     protected:
-        union
+        union Data
         {
             int Int;
             double Float;
             bool Bool;
             std::string String;
-        };
+            Data() {}
+            ~Data() {};
+        } m_data;
 
         /**
          * \brief The DataType of the DataNode
@@ -48,9 +50,9 @@ namespace vili
          */
         DataNode(const std::string& id, const DataType& dataType);
 
-        virtual ~DataNode()
-        {
-        }
+        DataNode(const DataNode& copy);
+
+        ~DataNode() override;
 
         /**
          * \brief Gets a dumpable representation of the contained data
@@ -175,9 +177,9 @@ namespace vili
     inline int DataNode::get() const
     {
         if (m_dataType == DataType::Int)
-            return Int;
+            return m_data.Int;
         if (m_dataType == DataType::Float)
-            return Float;
+            return m_data.Float;
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongIntCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
@@ -185,9 +187,9 @@ namespace vili
     inline double DataNode::get() const
     {
         if (m_dataType == DataType::Float)
-            return Float;
+            return m_data.Float;
         if (m_dataType == DataType::Int)
-            return Int;
+            return m_data.Int;
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongFloatCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
@@ -195,7 +197,7 @@ namespace vili
     inline bool DataNode::get() const
     {
         if (m_dataType == DataType::Bool)
-            return Bool;
+            return m_data.Bool;
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongBoolCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 
@@ -203,7 +205,7 @@ namespace vili
     inline std::string DataNode::get() const
     {
         if (m_dataType == DataType::String)
-            return String;
+            return m_data.String;
         throw aube::ErrorHandler::Raise("Vili.ViliHeader.DataNode.WrongStringCast", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
 }

@@ -19,15 +19,14 @@ namespace obe
     {
         class GameObject;
 
-        class GameObjectRequires
+        class GameObjectDatabase
         {
         private:
-            static GameObjectRequires* instance;
-            vili::ViliParser allRequires;
+            static vili::ViliParser allRequires;
+            static vili::ViliParser allDefinitions;
         public:
-            static GameObjectRequires* getInstance();
-            vili::ComplexNode* getRequiresForObjectType(const std::string& type) const;
-            void applyBaseRequires(GameObject* obj, vili::ComplexNode& requires);
+            static vili::ComplexNode* GetRequirementsForGameObject(const std::string& type);
+            static vili::ComplexNode* GetDefinitionForGameObject(const std::string& type);
             static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         };
 

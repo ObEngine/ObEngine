@@ -35,9 +35,9 @@ namespace vili
          */
         ArrayNode(const std::string& id);
 
-        virtual ~ArrayNode()
-        {
-        }
+        ArrayNode(const ArrayNode& copy);
+
+        ~ArrayNode() override;
 
         /**
          * \brief Gets the size of the ArrayNode (Amount of contained Nodes)

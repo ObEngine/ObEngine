@@ -12,6 +12,15 @@ namespace vili
         m_parent = parent;
     }
 
+    Node::Node(const Node& copy)
+    {
+        m_id = copy.m_id;
+        m_type = copy.m_type;
+        m_annotation = copy.m_annotation;
+        m_parent = copy.m_parent;
+        m_visible = copy.m_visible;
+    }
+
     void Node::removeParent(ContainerNode* currentParent)
     {
         if (m_parent == currentParent || m_parent == nullptr)

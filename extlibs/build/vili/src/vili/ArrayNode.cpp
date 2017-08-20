@@ -14,6 +14,19 @@ namespace vili
     {
     }
 
+    ArrayNode::ArrayNode(const ArrayNode& copy) : ContainerNode(copy)
+    {
+        /*for (auto& data : copy.m_dataList)
+        {
+            m_dataList.emplace_back(*data);
+            m_dataList.end()->get()->setParent(this);
+        }*/
+    }
+
+    ArrayNode::~ArrayNode()
+    {
+    }
+
     unsigned int ArrayNode::size() const
     {
         return m_dataList.size();

@@ -59,6 +59,7 @@ namespace
 
 namespace vili
 {
+    std::map<std::string, std::unique_ptr<ViliParser>> ViliParser::ViliCache;
     ViliParser::ViliParser()
     {
         m_root = std::make_unique<ComplexNode>("root");
@@ -92,14 +93,9 @@ namespace vili
         return find(m_flagList.begin(), m_flagList.end(), flagName) != m_flagList.end();
     }
 
-    unsigned int ViliParser::getAmountOfFlags() const
+    std::vector<std::string> ViliParser::getAllFlags() const
     {
-        return m_flagList.size();
-    }
-
-    std::string ViliParser::getFlagAtIndex(unsigned int index) const
-    {
-        return m_flagList.at(index);
+        return m_flagList;
     }
 
     ComplexNode& ViliParser::getPath(std::string path) const
@@ -137,14 +133,19 @@ namespace vili
 
     bool ViliParser::parseFile(const std::string& filename, bool verbose, bool visible)
     {
-        std::ifstream useFile;
-        useFile.open(filename);
         m_root->setAnnotation(filename);
+
+        if (CheckCache(this, filename))
+            return true;
+
         std::string currentLine;
         std::vector<std::string> addPath = {};
         std::string curList = "None";
         int curListIndent = 0;
         bool inList = false;
+        std::ifstream useFile;
+        useFile.open(filename);
+
         if (useFile.is_open())
         {
             if (verbose) std::cout << "Start Parsing File : " << filename << std::endl;
@@ -429,7 +430,7 @@ namespace vili
     void ViliParser::generateTemplate(const std::string& templateName, bool visible)
     {
         ComplexNode* templateBase = &getRootChild(templateName);
-        NodeTemplate* newTemplate = new NodeTemplate(templateName);
+        NodeTemplate* newTemplate =  new NodeTemplate(templateName); 
         if (templateBase != nullptr)
         {
             if (templateBase->contains(NodeType::ComplexNode, "__init__") && templateBase->contains(NodeType::ComplexNode, "__body__"))
@@ -514,15 +515,15 @@ namespace vili
             outFile << "Include (" << include << ");" << std::endl;
             if (verbose) std::cout << "        Add New Include : " << include << std::endl;
         }
-        if (verbose && this->getAmountOfFlags() > 0) std::cout << "    Writing Flags..." << std::endl;
-        for (unsigned int i = 0; i < this->getAmountOfFlags(); i++)
+        if (verbose && m_flagList.size() > 0) std::cout << "    Writing Flags..." << std::endl;
+        for (const std::string& flag : m_flagList)
         {
-            outFile << "Flag (" << this->getFlagAtIndex(i) << ");" << std::endl;
-            if (verbose) std::cout << "        Write New Flag : " << this->getFlagAtIndex(i) << std::endl;
+            outFile << "Flag (" << flag << ");" << std::endl;
+            if (verbose) std::cout << "        Write New Flag : " << flag << std::endl;
         }
 
 
-        if (this->getAmountOfFlags() > 0 || m_spacing != 4 || m_includes.size() > 0) outFile << std::endl;
+        if (m_flagList.size() > 0 || m_spacing != 4 || m_includes.size() > 0) outFile << std::endl;
         std::string writeSpacing = "";
         for (unsigned int i = 0; i < m_spacing; i++)
             writeSpacing += " ";
@@ -531,7 +532,7 @@ namespace vili
         if (m_templateList.size() > 0)
             outFile << std::endl;
 
-        for (std::pair<std::string, NodeTemplate*> templatePair : m_templateList)
+        for (auto& templatePair : m_templateList)
         {
             if (templatePair.second->isVisible())
                 outFile << "Template (" << templatePair.first << ");" << std::endl;
@@ -567,5 +568,41 @@ namespace vili
         if (m_templateList.find(templateId) != m_templateList.end())
             return m_templateList.at(templateId);
         throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.TemplateNotFound", {{"templateName", templateId}});
+    }
+
+    std::vector<std::string> ViliParser::getAllTemplates() const
+    {
+        std::vector<std::string> allTemplateNames;
+        for (auto& cTemplate : m_templateList)
+        {
+            allTemplateNames.push_back(cTemplate.first);
+        }
+        return allTemplateNames;
+    }
+
+    void ViliParser::StoreInCache(const std::string& path)
+    {
+        ViliCache[path] = std::make_unique<ViliParser>(path);
+    }
+
+    bool ViliParser::CheckCache(ViliParser* parser, const std::string& path)
+    {
+        if (ViliCache.find(path) != ViliCache.end())
+        {
+            ComplexNode& cacheRoot = ViliCache[path]->root();
+            for (const std::string& currentNode : cacheRoot.getAll())
+            {
+                cacheRoot.get(currentNode)->copy(parser->operator->());
+            }
+            for (const std::string& currentTemplate : ViliCache[path]->getAllTemplates())
+            {
+                parser->generateTemplate(currentTemplate);
+            }
+            parser->m_flagList = ViliCache[path]->m_flagList;
+            parser->m_includes = ViliCache[path]->m_includes;
+            parser->m_spacing = ViliCache[path]->m_spacing;
+            return true;
+        }
+        return false;
     }
 }

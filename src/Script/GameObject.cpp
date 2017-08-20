@@ -57,20 +57,11 @@ namespace obe
             return (g1->getPriority() > g2->getPriority());
         }
 
-
-        //GameObjectRequires
-        GameObjectRequires* GameObjectRequires::instance = nullptr;
-
-        GameObjectRequires* GameObjectRequires::getInstance()
+        vili::ViliParser GameObjectDatabase::allDefinitions;
+        vili::ViliParser GameObjectDatabase::allRequires;
+        vili::ComplexNode* GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
         {
-            if (!instance)
-                instance = new GameObjectRequires();
-            return instance;
-        }
-
-        vili::ComplexNode* GameObjectRequires::getRequiresForObjectType(const std::string& type) const
-        {
-            if (!Utils::Vector::isInList(type, allRequires->getAll(vili::NodeType::ComplexNode)))
+            if (!allRequires.root().contains(type))
             {
                 vili::ViliParser getGameObjectFile;
                 System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
@@ -87,7 +78,26 @@ namespace obe
             return &allRequires.at(type);
         }
 
-        void GameObjectRequires::ApplyRequirements(GameObject* obj, vili::ComplexNode& requires)
+        vili::ComplexNode* GameObjectDatabase::GetDefinitionForGameObject(const std::string& type)
+        {
+            if (!allDefinitions.root().contains(type))
+            {
+                vili::ViliParser getGameObjectFile;
+                System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
+                if (getGameObjectFile->contains(type))
+                {
+                    vili::ComplexNode& definitionData = getGameObjectFile.at<vili::ComplexNode>(type);
+                    getGameObjectFile->extractElement(&getGameObjectFile.at<vili::ComplexNode>(type));
+                    definitionData.setId(type);
+                    allDefinitions->pushComplexNode(&definitionData);
+                    return &definitionData;
+                }
+                return nullptr;
+            }
+            return &allDefinitions.at(type);
+        }
+
+        void GameObjectDatabase::ApplyRequirements(GameObject* obj, vili::ComplexNode& requires)
         {
             for (const std::string& currentRequirement : requires.getAll())
             {
@@ -105,8 +115,11 @@ namespace obe
 
         GameObject::~GameObject()
         {
-            Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
-            Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
+            if (m_hasScriptEngine)
+            {
+                Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
+                Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
+            }
         }
 
         void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const
@@ -190,52 +203,7 @@ namespace obe
             if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id);
-                int sprOffX = 0;
-                int sprOffY = 0;
-                std::string spriteXTransformer;
-                std::string spriteYTransformer;
-                vili::ComplexNode& currentSprite = obj.at("LevelSprite");
-
-                std::string spritePath = currentSprite.contains(vili::NodeType::DataNode, "path") ?
-                                             currentSprite.getDataNode("path").get<std::string>() : "";
-                Transform::UnitVector spritePos = Transform::UnitVector(
-                    currentSprite.contains(vili::NodeType::ComplexNode, "pos") ?
-                        currentSprite.at<vili::DataNode>("pos", "x").get<double>() : 0,
-                    currentSprite.contains(vili::NodeType::ComplexNode, "pos") ?
-                        currentSprite.at<vili::DataNode>("pos", "y").get<double>() : 0
-                );
-                int spriteRot = currentSprite.contains(vili::NodeType::DataNode, "rotation") ?
-                                    currentSprite.getDataNode("rotation").get<int>() : 0;
-                int layer = currentSprite.contains(vili::NodeType::DataNode, "layer") ?
-                                currentSprite.getDataNode("layer").get<int>() : 1;
-                int zdepth = currentSprite.contains(vili::NodeType::DataNode, "z-depth") ?
-                                 currentSprite.getDataNode("z-depth").get<int>() : 1;
-
-                if (currentSprite.contains(vili::NodeType::DataNode, "xTransform"))
-                {
-                    spriteXTransformer = currentSprite.at<vili::DataNode>("xTransform").get<std::string>();
-                }
-                else
-                {
-                    spriteXTransformer = "Position";
-                }
-                if (currentSprite.contains(vili::NodeType::DataNode, "yTransform"))
-                {
-                    spriteYTransformer = currentSprite.at<vili::DataNode>("yTransform").get<std::string>();
-                }
-                else
-                {
-                    spriteYTransformer = "Position";
-                }
-
-                m_objectLevelSprite->load(spritePath);
-                m_objectLevelSprite->setPosition(spritePos.x, spritePos.y);
-                m_objectLevelSprite->setRotation(spriteRot);
-                //ADD SPRITE SIZE
-                Graphics::PositionTransformers::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
-                m_objectLevelSprite->setPositionTransformer(positionTransformer);
-                m_objectLevelSprite->setLayer(layer);
-                m_objectLevelSprite->setZDepth(zdepth);
+                m_objectLevelSprite->configure(obj.at("LevelSprite"));
                 m_hasLevelSprite = true;
                 world.reorganizeLayers();
             }
@@ -286,25 +254,32 @@ namespace obe
         {
             if (m_canUpdate)
             {
-                if (!m_initialised)
-                    m_localTriggers->trigger("Init");
-                unsigned int triggersAmount = m_registeredTriggers.size();
-                for (int i = 0; i < triggersAmount; i++)
+                if (m_hasScriptEngine)
                 {
-                    Triggers::Trigger* trigger = m_registeredTriggers[i].first;
-                    if (trigger->getState())
+                    if (!m_initialised)
+                        m_localTriggers->trigger("Init");
+                    unsigned int triggersAmount = m_registeredTriggers.size();
+                    for (int i = 0; i < triggersAmount; i++)
                     {
-                        std::string funcname = m_registeredTriggers[i].second;
-                        if (trigger->getName() == "Mirror")
+                        Triggers::Trigger* trigger = m_registeredTriggers[i].first;
+                        if (trigger->getState())
                         {
-                            std::cout << "BABOUM : " << funcname << std::endl;
-                        }
-                        trigger->execute(m_objectScript.get(), funcname);
-                        if (funcname == "Local.Init")
-                        {
-                            m_initialised = true;
+                            std::string funcname = m_registeredTriggers[i].second;
+                            if (trigger->getName() == "Mirror")
+                            {
+                                std::cout << "BABOUM : " << funcname << std::endl;
+                            }
+                            trigger->execute(m_objectScript.get(), funcname);
+                            if (funcname == "Local.Init")
+                            {
+                                m_initialised = true;
+                            }
                         }
                     }
+                }
+                else if (!m_initialised)
+                {
+                    m_initialised = true;
                 }
                 if (m_initialised)
                 {

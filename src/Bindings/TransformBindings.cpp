@@ -15,11 +15,67 @@ namespace obe
                 (*lua)["Core"]["Transform"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
                 );
             }
+
             void LoadRect(kaguya::State* lua)
             {
                 (*lua)["Core"]["Transform"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect>()
+                    .addFunction("display", &Transform::Rect::display)
+                    .addFunction("getHeight", &Transform::Rect::getHeight)
+                    .addFunction("getPosition", &Transform::Rect::getPosition)
+                    .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
+                    .addFunction("getSize", &Transform::Rect::getSize)
+                    .addFunction("getWidth", &Transform::Rect::getWidth)
+                    .addFunction("getX", &Transform::Rect::getX)
+                    .addFunction("getY", &Transform::Rect::getY)
+                    .addFunction("intersects", &Transform::Rect::intersects)
+                    .addOverloadedFunctions("move",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&)>(&Transform::Rect::move),
+                        static_cast<void (Transform::Rect::*)(double, double)>(&Transform::Rect::move)
+                    )
+                    .addOverloadedFunctions("movePoint",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::movePoint),
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::movePoint)
+                    )
+                    .addOverloadedFunctions("scale",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::scale),
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::scale)
+                    )
+                    .addFunction("setHeight", &Transform::Rect::setHeight)
+                    .addOverloadedFunctions("setPointPosition",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setPointPosition),
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPointPosition)
+                    )
+                    .addFunction("setPointX", &Transform::Rect::setPointX)
+                    .addFunction("setPointY", &Transform::Rect::setPointY)
+                    .addOverloadedFunctions("setPosition",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setPosition),
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPosition)
+                    )
+                    .addOverloadedFunctions("setSize",
+                        static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setSize),
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setSize)
+                    )
+                    .addFunction("setWidth", &Transform::Rect::setWidth)
+                    .addFunction("setX", &Transform::Rect::setX)
+                    .addFunction("setY", &Transform::Rect::setY)
+                    .addFunction("transformRef", &Transform::Rect::transformRef)
                 );
             }
+
+            void LoadReferencial(kaguya::State* lua)
+            {
+                (*lua)["Core"]["Transform"]["Referencial"] = kaguya::NewTable();
+                (*lua)["Core"]["Transform"]["Referencial"]["Bottom"] = Transform::Referencial::Bottom;
+                (*lua)["Core"]["Transform"]["Referencial"]["BottomLeft"] = Transform::Referencial::BottomLeft;
+                (*lua)["Core"]["Transform"]["Referencial"]["BottomRight"] = Transform::Referencial::BottomRight;
+                (*lua)["Core"]["Transform"]["Referencial"]["Center"] = Transform::Referencial::Center;
+                (*lua)["Core"]["Transform"]["Referencial"]["Left"] = Transform::Referencial::Left;
+                (*lua)["Core"]["Transform"]["Referencial"]["Right"] = Transform::Referencial::Right;
+                (*lua)["Core"]["Transform"]["Referencial"]["Top"] = Transform::Referencial::Top;
+                (*lua)["Core"]["Transform"]["Referencial"]["TopLeft"] = Transform::Referencial::TopLeft;
+                (*lua)["Core"]["Transform"]["Referencial"]["TopRight"] = Transform::Referencial::TopRight;
+            }
+
             void LoadUnitBasedObject(kaguya::State* lua)
             {
                 (*lua)["Core"]["Transform"]["UnitBasedObject"].setClass(kaguya::UserdataMetatable<Transform::UnitBasedObject>()

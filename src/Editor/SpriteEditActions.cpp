@@ -174,22 +174,15 @@ namespace obe
             {
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
-                    if (selectedSprite->getParentId().empty())
-                    {
-                        editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
-                        editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
-                        Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                        selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
-                            cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
-                        editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
-                        editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
-                        editorTriggers->trigger("SpriteMoved");
-                    }
-                    else
-                    {
-                        std::cout << "Not empty : '" << selectedSprite->getParentId() << "'" << std::endl;
-                        // What to do here ? <REVISION>
-                    }
+                    editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
+                    editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
+                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
+                        cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                    editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
+                    editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                    editorTriggers->trigger("SpriteMoved");
+
                     std::string sprInfoStr;
                     sprInfoStr = "Hovered Sprite : \n";
                     sprInfoStr += "    Id : " + selectedSprite->getId() + "\n";

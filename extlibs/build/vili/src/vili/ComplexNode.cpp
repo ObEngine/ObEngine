@@ -28,6 +28,17 @@ namespace vili
     {
     }
 
+    ComplexNode::ComplexNode(const ComplexNode& copy) : ContainerNode(copy)
+    {
+        for (auto& child : copy.m_childAttributes)
+        {
+            m_childAttributes[child.first]->copy(this);
+        }
+        m_childAttributesNames = copy.m_childAttributesNames;
+        m_heritFrom = copy.m_heritFrom;
+        m_template = nullptr;
+    }
+
     Node* ComplexNode::extractElement(Node* element)
     {
         if (Functions::Vector::isInList(element->getId(), m_childAttributesNames))
@@ -409,5 +420,9 @@ namespace vili
     NodeTemplate* ComplexNode::getCurrentTemplate() const
     {
         return m_template;
+    }
+
+    ComplexNode::~ComplexNode()
+    {
     }
 }

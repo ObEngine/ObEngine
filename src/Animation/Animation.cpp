@@ -91,6 +91,8 @@ namespace obe
                 std::string textureName = "";
                 if (imageList.get(i).getDataType() == vili::DataType::Int && model != "")
                     textureName = Utils::String::replace(model, "%s", std::to_string(imageList.get(i).get<int>()));
+                else if (imageList.get(i).getDataType() == vili::DataType::String && model != "")
+                    textureName = Utils::String::replace(model, "%s", imageList.get(i).get<std::string>());
                 else if (imageList.get(i).getDataType() == vili::DataType::String)
                     textureName = imageList.get(i).get<std::string>();
                 m_animationTextures[i] = Graphics::ResourceManager::GetInstance()->getTexture(path.add(textureName).toString());
