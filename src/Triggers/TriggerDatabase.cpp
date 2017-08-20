@@ -161,15 +161,6 @@ namespace obe
                         }
                         it2->second->m_delayedTriggers.clear();
                     }
-                    std::vector<Trigger*> trgList = it2->second->getAllTriggers();
-                    for (int i = 0; i < trgList.size(); i++)
-                    {
-                        if (trgList[i]->m_enabled)
-                        {
-                            trgList[i]->m_enabled = false;
-                            trgList[i]->clear();
-                        }
-                    }
                 }
             }
             std::vector<int> triggeredDelayedTriggers;

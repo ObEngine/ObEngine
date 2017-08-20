@@ -191,7 +191,7 @@ namespace obe
             /**
              * \brief Updates the GameObject
              */
-            void update();
+            void update() const;
 
             /**
              * \brief Deletes the GameObject
@@ -203,6 +203,8 @@ namespace obe
             bool deletable = false;
 
             void access(kaguya::State* lua) const;
+
+            void initialize();
         };
 
         void loadScrGameObject(GameObject* obj, kaguya::State* lua);

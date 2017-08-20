@@ -12,13 +12,11 @@ namespace obe
             void LoadTrigger(kaguya::State* lua)
             {
                 (*lua)["Core"]["Triggers"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
-                    .addFunction("clear", &Triggers::Trigger::clear)
                     .addFunction("execute", &Triggers::Trigger::execute)
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
                     .addFunction("getState", &Triggers::Trigger::getState)
-                    .addFunction("prepareNewCall", &Triggers::Trigger::prepareNewCall)
                     .addFunction("registerState", &Triggers::Trigger::registerState)
                 );
             }

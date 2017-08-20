@@ -40,37 +40,18 @@ namespace obe
             return m_parent->getNamespace();
         }
 
-        void Trigger::registerState(kaguya::State* state)
+        void Trigger::registerState(kaguya::State* state, const std::string& callbackName)
         {
-            m_registeredStates.push_back(state);
+            m_registeredStates.emplace_back(state, callbackName);
             (*state)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
-            (*state)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name][m_stackSize] = kaguya::NewTable();
         }
 
-        void Trigger::prepareNewCall()
+        void Trigger::execute() const
         {
-            m_stackSize++;
-            for (auto& registeredState : m_registeredStates)
+            for (auto& rState : m_registeredStates)
             {
-                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize] = kaguya::NewTable();
-            }
-        }
-
-        void Trigger::execute(kaguya::State* lua, const std::string& funcName) const
-        {
-            for (unsigned int i = 1; i < m_stackSize; i++)
-            {
-                (*lua)["LuaCore"]["FuncInjector"](funcName, this->getTriggerLuaTableName(), i);
-            }
-        }
-
-        void Trigger::clear()
-        {
-            m_stackSize = 1;
-            for (auto& registeredState : m_registeredStates)
-            {
-                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NewTable();
-                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][1] = kaguya::NewTable();
+                (*rState.first)["LuaCore"]["FuncInjector"](rState.second, this->getTriggerLuaTableName());
+                (*rState.first)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
             }
         }
 
@@ -78,8 +59,7 @@ namespace obe
         {
             for (auto& registeredState : m_registeredStates)
             {
-                // Future Trigger Call Parameters
-                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
+                (*registeredState.first)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
             }
         }
     }

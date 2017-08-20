@@ -51,7 +51,7 @@ function LuaCore.InjectInitInjectionTable()
     end
 end
 
-function LuaCore.FuncInjector(funcName, triggerRegisterName, triggerStackIndex)
+function LuaCore.FuncInjector(funcName, triggerRegisterName)
     --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
     local funcToCall = load("return " .. funcName)();
     if type(funcToCall) == "function" then
@@ -59,8 +59,8 @@ function LuaCore.FuncInjector(funcName, triggerRegisterName, triggerStackIndex)
         local Lua_Func_ArgList = ArgMirror.GetArgs(funcToCall);
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
-            if (LuaCore.FTCP[triggerRegisterName][triggerStackIndex]) then
-                table.insert(Lua_Func_CallArgs, LuaCore.FTCP[triggerRegisterName][triggerStackIndex][i]);
+            if (LuaCore.FTCP[triggerRegisterName]) then
+                table.insert(Lua_Func_CallArgs, LuaCore.FTCP[triggerRegisterName][i]);
             end
         end
         funcToCall(ArgMirror.Unpack(Lua_Func_CallArgs));

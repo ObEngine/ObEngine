@@ -25,9 +25,8 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
-            std::vector<kaguya::State*> m_registeredStates;
+            std::vector<std::pair<kaguya::State*, std::string>> m_registeredStates;
             bool m_enabled = false;
-            unsigned int m_stackSize = 0;
             friend class TriggerGroup;
             friend class TriggerDatabase;
         protected:
@@ -71,25 +70,14 @@ namespace obe
              */
             std::string getNamespace() const;
             /**
-             * \brief Resets the Trigger
-             */
-            void clear();
-            /**
              * \brief Registers a Lua State that will be triggered
              * \param state Pointer to the Lua State to register
              */
-            void registerState(kaguya::State* state);
-
+            void registerState(kaguya::State* state, const std::string& callbackName);
             /**
-             * \brief Prepares a new Trigger call
+             * \brief Triggers callbacks
              */
-            void prepareNewCall();
-            /**
-             * \brief Triggers callback on the given Lua State
-             * \param lua Lua State where to call the callback
-             * \param funcName Name of the Callback
-             */
-            void execute(kaguya::State* lua, const std::string& funcName) const;
+            void execute() const;
         };
 
         template <typename P>
@@ -98,7 +86,7 @@ namespace obe
             for (auto& registeredState : m_registeredStates)
             {
                 // Future Trigger Call Parameters
-                (*registeredState)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][m_stackSize][name] = parameter;
+                (*registeredState.first)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
             }
         }
     }

@@ -17,10 +17,10 @@ namespace obe
         KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useExternalTriggerProxy, GameObject, useExternalTrigger, 3, 4,
             void(GameObject::*)(std::string, std::string, std::string, std::string));
 
-        kaguya::LuaTable GameObject::access() const
+        /*kaguya::LuaTable GameObject::access(kaguya::State* lua) const
         {
             return (*m_objectScript)["Object"];
-        }
+        }*/
 
         void loadScrGameObject(GameObject* obj, kaguya::State* lua)
         {
@@ -45,7 +45,7 @@ namespace obe
                 .addFunction("sendInitArg", &GameObject::sendInitArgFromLua)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
-                .addFunction("access", &GameObject::access)
+                //.addFunction("access", &GameObject::access)
             );
         }
 
@@ -118,6 +118,15 @@ namespace obe
         {
             m_type = type;
             m_id = id;
+        }
+
+        void GameObject::initialize()
+        {
+            if (!m_initialised)
+            {
+                m_initialised = true;
+                m_localTriggers->trigger("Init");
+            }
         }
 
         GameObject::~GameObject()
@@ -257,37 +266,10 @@ namespace obe
             }
         }
 
-        void GameObject::update()
+        void GameObject::update() const
         {
             if (m_canUpdate)
             {
-                if (m_hasScriptEngine)
-                {
-                    if (!m_initialised)
-                        m_localTriggers->trigger("Init");
-                    unsigned int triggersAmount = m_registeredTriggers.size();
-                    for (int i = 0; i < triggersAmount; i++)
-                    {
-                        Triggers::Trigger* trigger = m_registeredTriggers[i].first;
-                        if (trigger->getState())
-                        {
-                            std::string funcname = m_registeredTriggers[i].second;
-                            if (trigger->getName() == "Mirror")
-                            {
-                                std::cout << "BABOUM : " << funcname << std::endl;
-                            }
-                            trigger->execute(m_objectScript.get(), funcname);
-                            if (funcname == "Local.Init")
-                            {
-                                m_initialised = true;
-                            }
-                        }
-                    }
-                }
-                else if (!m_initialised)
-                {
-                    m_initialised = true;
-                }
                 if (m_initialised)
                 {
                     if (m_hasAnimator)
@@ -383,7 +365,7 @@ namespace obe
         void GameObject::useLocalTrigger(const std::string& trName)
         {
             this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName), "Local." + trName);
-            Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerState(m_objectScript.get());
+            Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerState(m_objectScript.get(), "Local." + trName);
         }
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
@@ -412,9 +394,9 @@ namespace obe
                 }
                 if (triggerNotFound)
                 {
-                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), 
-                        (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName : callAlias);
-                    Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get());
+                    std::string callbackName = (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName : callAlias;
+                    this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), callbackName);
+                    Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get(), callbackName);
                 }
             }
         }

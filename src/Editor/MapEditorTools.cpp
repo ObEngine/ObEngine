@@ -208,7 +208,8 @@ namespace obe
             }
             else
             {
-                Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
+                Script::GameObject* newGameObject = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
+                newGameObject->initialize();
             }
         }
 
@@ -230,6 +231,7 @@ namespace obe
 
             Script::GameObjectDatabase::ApplyRequirements(newGameObject, requires->at("Output"));
             newGameObject->exec("LuaCore.InjectInitInjectionTable()");
+            newGameObject->initialize();
         }
 
         void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path)
