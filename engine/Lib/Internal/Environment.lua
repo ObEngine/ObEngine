@@ -15,17 +15,17 @@ function CreateNewEnv()
 end
 
 function ExecuteFileOnEnv(file, envIndex)
-    print("Call file : ", file, "with index", envIndex);
-    print(inspect(__ENVIRONMENTS[envIndex]));
+    --print("Call file : ", file, "with index", envIndex);
+    --print(inspect(__ENVIRONMENTS[envIndex]));
     assert(loadfile(file, "t", __ENVIRONMENTS[envIndex]))();
-    print("CALL RESULT : ", f, err);
-    print("Call file : ", file, " is over");
+    --print("CALL RESULT : ", f, err);
+    --print("Call file : ", file, " is over");
 end
 
 function ExecuteStringOnEnv(code, envIndex)
-    print("Call string : ", code, "with index", envIndex);
+    --print("Call string : ", code, "with index", envIndex);
     --print(inspect(__ENVIRONMENTS[envIndex]));
     assert(load(code, nil, "t", __ENVIRONMENTS[envIndex]))();
-    print("CALL RESULT : ", f, err);
-    print("Call file : ", file, " is over");
+    --print("CALL RESULT : ", f, err);
+    --print("Call file : ", file, " is over");
 end

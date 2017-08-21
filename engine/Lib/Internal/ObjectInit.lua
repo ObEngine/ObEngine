@@ -48,11 +48,8 @@ function LuaCore.InjectInitInjectionTable()
     end
 end
 
-function LuaCore.FuncInjector(funcName, triggerRegisterName)
+function LuaCore.FuncInjector(funcToCall, triggerRegisterName)
     --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
-    print("Preloading <...>")
-    local funcToCall = funcName--assert(load("return " .. funcName))();
-    print("Failed <> ?")
     if type(funcToCall) == "function" then
         local ArgMirror = require('Lib/Internal/ArgMirror');
         local Lua_Func_ArgList = ArgMirror.GetArgs(funcToCall);
