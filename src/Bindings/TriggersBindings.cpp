@@ -17,7 +17,7 @@ namespace obe
                     .addFunction("getName", &Triggers::Trigger::getName)
                     .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
                     .addFunction("getState", &Triggers::Trigger::getState)
-                    .addFunction("registerState", &Triggers::Trigger::registerState)
+                    .addFunction("registerState", &Triggers::Trigger::registerEnvironment)
                 );
             }
             void LoadTriggerDatabase(kaguya::State* lua)

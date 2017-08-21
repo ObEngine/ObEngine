@@ -1,6 +1,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
@@ -9,6 +10,8 @@
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/VectorUtils.hpp>
+
+#define GAMEOBJECTENV ScriptEngine["__ENVIRONMENTS"][m_envIndex]
 
 namespace obe
 {
@@ -22,10 +25,15 @@ namespace obe
             return (*m_objectScript)["Object"];
         }*/
 
+        unsigned GameObject::getEnvIndex() const
+        {
+            return m_envIndex;
+        }
+
         void loadScrGameObject(GameObject* obj, kaguya::State* lua)
         {
-            (*lua)["CPP_Import"] = &loadLibBridge;
-            (*lua)["CPP_Hook"] = &loadHookBridge;
+            //(*lua)["CPP_Import"] = &loadLibBridge;
+            //(*lua)["CPP_Hook"] = &loadHookBridge;
             loadScrGameObjectLib(lua);
             (*lua)["This"] = obj;
         }
@@ -37,31 +45,15 @@ namespace obe
                 .addFunction("LevelSprite", &GameObject::getLevelSprite)
                 .addFunction("Collider", &GameObject::getCollider)
                 .addFunction("Animator", &GameObject::getAnimator)
-                .addFunction("State", &GameObject::getScript)
                 .addFunction("delete", &GameObject::deleteObject)
                 .addFunction("exec", &GameObject::exec)
-                .addFunction("getPriority", &GameObject::getPriority)
+                //.addFunction("getPriority", &GameObject::getPriority)
                 .addFunction("getPublicKey", &GameObject::getPublicKey)
                 .addFunction("sendInitArg", &GameObject::sendInitArgFromLua)
                 .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
                 .addFunction("useExternalTrigger", useExternalTriggerProxy())
                 //.addFunction("access", &GameObject::access)
             );
-        }
-
-        void loadLibBridge(GameObject* object, std::string lib)
-        {
-            Bindings::Load(object->getScript(), lib);
-        }
-
-        void loadHookBridge(GameObject* object, std::string hookname)
-        {
-            loadHook(object->getScript(), hookname);
-        }
-
-        bool orderScrPriority(GameObject* g1, GameObject* g2)
-        {
-            return (g1->getPriority() > g2->getPriority());
         }
 
         vili::ViliParser GameObjectDatabase::allDefinitions;
@@ -108,7 +100,7 @@ namespace obe
         {
             for (const std::string& currentRequirement : requires.getAll())
             {
-                kaguya::LuaTable requireTable = ((*obj->getScript())["LuaCore"]["ObjectInitInjectionTable"]);
+                kaguya::LuaTable requireTable = ScriptEngine["__ENVIRONMENTS"][obj->getEnvIndex()]["LuaCore"]["ObjectInitInjectionTable"];
                 DataBridge::dataToLua(requireTable, requires.get(currentRequirement));
             }
         }
@@ -226,31 +218,34 @@ namespace obe
             //Script
             if (obj.contains(vili::NodeType::ComplexNode, "Script"))
             {
-                m_objectScript = std::make_unique<kaguya::State>();
                 m_hasScriptEngine = true;
-                m_objectScript = std::make_unique<kaguya::State>();
                 m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
                 m_publicKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
                 m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
 
-                System::Path("Lib/Internal/ScriptInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
-                loadScrGameObject(this, m_objectScript.get());
+                m_envIndex = ScriptEngine["CreateNewEnv"]();
+                std::cout << "Environment Index is : " << m_envIndex << std::endl;
+
+                //executeFile(m_envIndex, System::Path("Lib/Internal/ScriptInit.lua").find());
+                //loadScrGameObject(this, m_objectScript.get());
+
+                GAMEOBJECTENV["This"] = this;
 
                 m_localTriggers
                     ->addTrigger("Init")
                     ->addTrigger("Delete");
 
-                System::Path("Lib/Internal/ObjectInit.lua").loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+                executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
 
-                (*m_objectScript)["Private"] = m_privateKey;
-                (*m_objectScript)["Public"] = m_publicKey;
+                GAMEOBJECTENV["Private"] = m_privateKey;
+                GAMEOBJECTENV["Public"] = m_publicKey;
 
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
                 {
                     std::string getScrName = obj.at("Script").getDataNode("source").get<std::string>();
-                    System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+                    executeFile(m_envIndex, System::Path(getScrName).find());
                 }
                 else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
                 {
@@ -258,11 +253,9 @@ namespace obe
                     for (int i = 0; i < scriptListSize; i++)
                     {
                         std::string getScrName = obj.at("Script").getArrayNode("sources").get(i).get<std::string>();
-                        System::Path(getScrName).loadResource(m_objectScript.get(), System::Loaders::luaLoader);
+                        executeFile(m_envIndex, System::Path(getScrName).find());
                     }
                 }
-                if (obj.at("Script").contains(vili::NodeType::DataNode, "priority"))
-                    m_scrPriority = obj.at("Script").getDataNode("priority").get<int>();
             }
         }
 
@@ -292,11 +285,6 @@ namespace obe
         std::string GameObject::getPublicKey() const
         {
             return m_publicKey;
-        }
-
-        int GameObject::getPriority() const
-        {
-            return m_scrPriority;
         }
 
         bool GameObject::doesHaveAnimator() const
@@ -350,13 +338,6 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoAnimator", {{"id", m_id}});
         }
 
-        kaguya::State* GameObject::getScript()
-        {
-            if (m_hasScriptEngine)
-                return m_objectScript.get();
-            throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoScript", {{"id", m_id}});
-        }
-
         Triggers::TriggerGroup* GameObject::getLocalTriggers() const
         {
             return m_localTriggers.operator->();
@@ -365,7 +346,7 @@ namespace obe
         void GameObject::useLocalTrigger(const std::string& trName)
         {
             this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName), "Local." + trName);
-            Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerState(m_objectScript.get(), "Local." + trName);
+            Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerEnvironment(m_envIndex, "Local." + trName);
         }
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
@@ -396,14 +377,13 @@ namespace obe
                 {
                     std::string callbackName = (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName : callAlias;
                     this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), callbackName);
-                    Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerState(m_objectScript.get(), callbackName);
+                    Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerEnvironment(m_envIndex, callbackName);
                 }
             }
         }
 
         void GameObject::exec(const std::string& query) const
         {
-            m_objectScript->dostring(query);
         }
 
         void GameObject::deleteObject()

@@ -52,6 +52,7 @@ PlaySquareButton {
     Texture      = "Button/Play/idle.png";
     TextureHover = "Button/Play/hover.png";
     TextureDown  = "Button/Play/pushed.png";
+    TextureDisabled = "Button/Play/disabled.png";
     TextColor    = rgb(255, 255, 255);
 }
 

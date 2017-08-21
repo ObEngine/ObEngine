@@ -1,8 +1,7 @@
-local inspect ={
-  _VERSION = 'inspect.lua 3.1.0',
-  _URL     = 'http://github.com/kikito/inspect.lua',
-  _DESCRIPTION = 'human-readable representations of tables',
-  _LICENSE = [[
+--[[
+    inspect.lua 3.1.0
+    http://github.com/kikito/inspect.lua
+    human-readable representations of tables
     MIT LICENSE
 
     Copyright (c) 2013 Enrique García Cota
@@ -25,7 +24,9 @@ local inspect ={
     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  ]]
+]]--
+
+local inspect = {
 }
 
 local tostring = tostring

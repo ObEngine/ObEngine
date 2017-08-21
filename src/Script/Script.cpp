@@ -25,32 +25,26 @@ namespace obe
                 std::string hookType = containerMap[name].first;
                 if (hookType == Utils::Type::getClassType<Debug::Console*>())
                 {
-                    Bindings::Load(lua, "Core.Debug.Console");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Debug::Console*>();
                 }
                 else if (hookType == Utils::Type::getClassType<System::Cursor*>())
                 {
-                    Bindings::Load(lua, "Core.System.Cursor");
                     (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
                 }
                 else if (hookType == Utils::Type::getClassType<Input::InputManager*>())
                 {
-                    Bindings::Load(lua, "Core.Input.InputManager");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Input::InputManager*>();
                 }
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerDatabase*>())
                 {
-                    Bindings::Load(lua, "Core.Triggers.TriggerDatabase");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerDatabase*>();
                 }
                 else if (hookType == Utils::Type::getClassType<Triggers::TriggerGroup*>())
                 {
-                    Bindings::Load(lua, "Core.Triggers.TriggerGroup");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerGroup*>();
                 }
                 else if (hookType == Utils::Type::getClassType<Editor::EditorGrid*>())
                 {
-                    Bindings::Load(lua, "Core.Editor.EditorGrid");
                     (*lua)["Hook"][name] = containerMap[name].second->as<Editor::EditorGrid*>();
                 }
                 else

@@ -1,3 +1,4 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/EditorBindings.hpp>
 #include <Editor/Grid.hpp>
 
@@ -9,6 +10,7 @@ namespace obe
         {
             void LoadEditorGrid(kaguya::State* lua)
             {
+                Load(lua, "Core.Types.Togglable");
                 (*lua)["Core"]["Editor"]["EditorGrid"].setClass(kaguya::UserdataMetatable<Editor::EditorGrid, Types::Togglable>()
                     .addFunction("draw", &Editor::EditorGrid::draw)
                     .addFunction("getCellHeight", &Editor::EditorGrid::getCellHeight)

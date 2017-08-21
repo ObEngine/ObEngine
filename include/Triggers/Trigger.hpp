@@ -4,6 +4,7 @@
 
 #include <kaguya/kaguya.hpp>
 
+#include <Script/GlobalState.hpp>
 #include <Types/Any.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/TypeUtils.hpp>
@@ -25,7 +26,7 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
-            std::vector<std::pair<kaguya::State*, std::string>> m_registeredStates;
+            std::vector<std::pair<unsigned int, std::string>> m_registeredEnvs;
             bool m_enabled = false;
             friend class TriggerGroup;
             friend class TriggerDatabase;
@@ -48,7 +49,7 @@ namespace obe
              * \param startState State of the Trigger when created (enabled / disabled)
              * \param permanent If equals to true, when the Trigger will be enabled it will stay enabled
              */
-            explicit Trigger(TriggerGroup* parent, const std::string& name, bool startState = false, bool permanent = false);
+            explicit Trigger(TriggerGroup* parent, const std::string& name, bool startState = false);
             /**
              * \brief Get the State of the Trigger (enabled / disabled)
              * \return true if the Trigger is enabled, false otherwise
@@ -71,9 +72,9 @@ namespace obe
             std::string getNamespace() const;
             /**
              * \brief Registers a Lua State that will be triggered
-             * \param state Pointer to the Lua State to register
+             * \param envIndex Index of the Lua Env to register
              */
-            void registerState(kaguya::State* state, const std::string& callbackName);
+            void registerEnvironment(unsigned int envIndex, const std::string& callbackName);
             /**
              * \brief Triggers callbacks
              */
@@ -83,10 +84,10 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
-            for (auto& registeredState : m_registeredStates)
+            for (auto& rEnv : m_registeredEnvs)
             {
                 // Future Trigger Call Parameters
-                (*registeredState.first)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
+                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
             }
         }
     }

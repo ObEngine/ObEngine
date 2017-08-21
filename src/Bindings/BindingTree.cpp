@@ -12,7 +12,7 @@ namespace obe
 
         bool checkIfLuaElementExists(kaguya::State* lua, const std::string& path)
         {
-            bool exists = (*lua)["LuaCore"]["Exists"](path);
+            bool exists = (*lua)["LuaUtil"]["Exists"](path);
             return exists;
         }
 

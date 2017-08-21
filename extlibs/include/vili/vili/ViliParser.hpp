@@ -138,7 +138,7 @@ namespace vili
         std::vector<std::string> getAllTemplates() const;
 
         static void StoreInCache(const std::string& path);
-        static bool CheckCache(ViliParser* parser, const std::string& path);
+        static bool CheckCache(ViliParser* parser, const std::string& path, bool visibility);
     };
 
     template <class ...Args>

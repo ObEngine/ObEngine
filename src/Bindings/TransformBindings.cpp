@@ -1,3 +1,4 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/TransformBindings.hpp>
 #include <Transform/ProtectedUnitVector.hpp>
 #include <Transform/Rect.hpp>
@@ -12,6 +13,7 @@ namespace obe
         {
             void LoadProtectedUnitVector(kaguya::State* lua)
             {
+                Load(lua, "Core.Transform.UnitVector");
                 (*lua)["Core"]["Transform"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
                 );
             }

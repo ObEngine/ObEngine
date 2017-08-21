@@ -1,3 +1,4 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/DebugBindings.hpp>
 #include <Debug/Console.hpp>
 
@@ -21,6 +22,8 @@ namespace obe
 
             void LoadConsoleStream(kaguya::State* lua)
             {
+                Load(lua, "Core.Types.Identifiable");
+                Load(lua, "Core.Types.Togglable");
                 (*lua)["Core"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
                     .addFunction("getColor", &Debug::ConsoleStream::getColor)
                     .addFunction("push", &Debug::ConsoleStream::push)

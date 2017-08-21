@@ -3,6 +3,7 @@
 #include <vili/vili/Types.hpp>
 #include <vili/vili/ViliParser.hpp>
 
+#include <Bindings/Bindings.hpp>
 #include <Bindings/ViliBindings.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -56,6 +57,7 @@ namespace obe
 
             void LoadViliContainerNode(kaguya::State* lua)
             {
+                Load(lua, "Vili.Node");
                 (*lua)["Vili"]["ContainerNode"].setClass(kaguya::UserdataMetatable<vili::ContainerNode, vili::Node>()
                     .addFunction("copy", &vili::ContainerNode::copy)
                     .addFunction("extractElement", &vili::ContainerNode::extractElement)
@@ -66,6 +68,7 @@ namespace obe
 
             void LoadViliDataNode(kaguya::State* lua)
             {
+                Load(lua, "Vili.Node");
                 (*lua)["Vili"]["DataNode"].setClass(kaguya::UserdataMetatable<vili::DataNode, vili::Node>()
                     .addFunction("autoset", &vili::DataNode::autoset)
                     .addFunction("copy", &vili::DataNode::copy)
@@ -87,6 +90,7 @@ namespace obe
 
             void LoadViliLinkNode(kaguya::State* lua)
             {
+                Load(lua, "Vili.Node");
                 (*lua)["Vili"]["LinkNode"].setClass(kaguya::UserdataMetatable<vili::LinkNode, vili::Node>()
                     .addFunction("apply", &vili::LinkNode::apply)
                     .addFunction("copy", &vili::LinkNode::copy)
@@ -100,6 +104,7 @@ namespace obe
 
             void LoadViliArrayNode(kaguya::State* lua)
             {
+                Load(lua, "Vili.ContainerNode");
                 (*lua)["Vili"]["ArrayNode"].setClass(kaguya::UserdataMetatable<vili::ArrayNode, vili::ContainerNode>()
                     .addFunction("clear", &vili::ArrayNode::clear)
                     .addFunction("copy", &vili::ArrayNode::copy)
@@ -130,6 +135,7 @@ namespace obe
 
             void LoadViliComplexNode(kaguya::State* lua)
             {
+                Load(lua, "Vili.ContainerNode");
                 (*lua)["Vili"]["ComplexNode"].setClass(kaguya::UserdataMetatable<vili::ComplexNode, vili::ContainerNode>()
                     .addOverloadedFunctions("contains",
                         static_cast<bool (vili::ComplexNode::*)(const std::string&) const>(&vili::ComplexNode::contains),

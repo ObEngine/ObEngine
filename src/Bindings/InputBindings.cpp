@@ -1,9 +1,11 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/InputBindings.hpp>
 #include <Input/InputButton.hpp>
 #include <Input/InputActionEvent.hpp>
 #include <Input/InputManager.hpp>
+#include <Input/KeyList.hpp>
 #include <Types/Identifiable.hpp>
-#include "Input/KeyList.hpp"
+
 
 namespace obe
 {
@@ -13,6 +15,7 @@ namespace obe
         {
             void LoadInputAction(kaguya::State* lua)
             {
+                Load(lua, "Core.Types.Identifiable");
                 (*lua)["Core"]["Input"]["InputAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
                     .addFunction("addCondition", &Input::InputAction::addCondition)
                     .addFunction("addContext", &Input::InputAction::addContext)

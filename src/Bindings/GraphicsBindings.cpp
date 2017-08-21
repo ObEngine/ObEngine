@@ -1,8 +1,8 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Graphics/Canvas.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
-
 
 namespace obe
 {
@@ -20,7 +20,20 @@ namespace obe
             }
             void LoadLevelSprite(kaguya::State* lua)
             {
-                (*lua)["Core"]["Graphics"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite, kaguya::MultipleBase<Transform::UnitBasedObject, Types::Selectable, Transform::Rect, Types::Identifiable>>()
+                Load(lua, "Core.Transform.UnitBasedObject");
+                Load(lua, "Core.Types.Selectable");
+                Load(lua, "Core.Transform.Rect");
+                Load(lua, "Core.Types.Identifiable");
+                (*lua)["Core"]["Graphics"]["LevelSprite"].setClass(
+                kaguya::UserdataMetatable<
+                    Graphics::LevelSprite, 
+                    kaguya::MultipleBase<
+                        Transform::UnitBasedObject, 
+                        Types::Selectable, 
+                        Transform::Rect, 
+                        Types::Identifiable
+                    >
+                >()
                     .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
                     .addFunction("getColor", &Graphics::LevelSprite::getColor)
                     .addFunction("getDrawPosition", &Graphics::LevelSprite::getDrawPosition)

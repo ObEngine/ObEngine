@@ -2,7 +2,6 @@
 #include <Triggers/TriggerGroup.hpp>
 #include <Utils/TypeUtils.hpp>
 
-
 namespace obe
 {
     namespace Triggers
@@ -13,7 +12,7 @@ namespace obe
         }
 
 
-        Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState, bool permanent)
+        Trigger::Trigger(TriggerGroup* parent, const std::string& name, bool startState)
         {
             m_name = name;
             m_parent = parent;
@@ -40,26 +39,28 @@ namespace obe
             return m_parent->getNamespace();
         }
 
-        void Trigger::registerState(kaguya::State* state, const std::string& callbackName)
+        void Trigger::registerEnvironment(unsigned int envIndex, const std::string& callbackName)
         {
-            m_registeredStates.emplace_back(state, callbackName);
-            (*state)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+            m_registeredEnvs.emplace_back(envIndex, callbackName);
+            std::cout << "Registering : " << envIndex << std::endl;
+            Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
         }
 
         void Trigger::execute() const
         {
-            for (auto& rState : m_registeredStates)
+            for (auto& rEnv : m_registeredEnvs)
             {
-                (*rState.first)["LuaCore"]["FuncInjector"](rState.second, this->getTriggerLuaTableName());
-                (*rState.first)["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+                Script::ScriptEngine["ExecuteStringOnEnv"]("LuaCore.FuncInjector(" + rEnv.second +", \"" + this->getTriggerLuaTableName() +"\")", rEnv.first);
+                //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
+                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
             }
         }
 
         void Trigger::pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter)
         {
-            for (auto& registeredState : m_registeredStates)
+            for (auto& rEnv : m_registeredEnvs)
             {
-                (*registeredState.first)["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
+                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
             }
         }
     }

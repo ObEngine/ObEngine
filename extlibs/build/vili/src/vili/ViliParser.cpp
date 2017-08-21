@@ -135,7 +135,7 @@ namespace vili
     {
         m_root->setAnnotation(filename);
 
-        if (CheckCache(this, filename))
+        if (CheckCache(this, filename, visible))
             return true;
 
         std::string currentLine;
@@ -585,21 +585,26 @@ namespace vili
         ViliCache[path] = std::make_unique<ViliParser>(path);
     }
 
-    bool ViliParser::CheckCache(ViliParser* parser, const std::string& path)
+    bool ViliParser::CheckCache(ViliParser* parser, const std::string& path, bool visibility)
     {
+        std::cout << "Checking Cache for " << path << " with visibility : " << visibility << std::endl;
         if (ViliCache.find(path) != ViliCache.end())
         {
             ComplexNode& cacheRoot = ViliCache[path]->root();
             for (const std::string& currentNode : cacheRoot.getAll())
             {
                 cacheRoot.get(currentNode)->copy(parser->operator->());
+                parser->root().get(currentNode)->setVisible(visibility);
             }
             for (const std::string& currentTemplate : ViliCache[path]->getAllTemplates())
             {
                 parser->generateTemplate(currentTemplate);
+                parser->getTemplate(currentTemplate)->setVisible(visibility);
             }
-            parser->m_flagList = ViliCache[path]->m_flagList;
-            parser->m_includes = ViliCache[path]->m_includes;
+            for (auto& flag : ViliCache[path]->m_flagList)
+                parser->m_flagList.push_back(flag);
+            for (auto& include : ViliCache[path]->m_includes)
+                parser->m_flagList.push_back(include);
             parser->m_spacing = ViliCache[path]->m_spacing;
             return true;
         }

@@ -6,6 +6,7 @@
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
 #include <Graphics/LevelSprite.hpp>
+#include <Script/GlobalState.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
 namespace obe
@@ -36,8 +37,8 @@ namespace obe
         class GameObject : public Types::Identifiable
         {
         private:
+            unsigned int m_envIndex;
             std::unique_ptr<Animation::Animator> m_objectAnimator;
-            std::unique_ptr<kaguya::State> m_objectScript;
             Graphics::LevelSprite* m_objectLevelSprite;
             Collision::PolygonalCollider* m_objectCollider;
             Triggers::TriggerGroupPtr m_localTriggers;
@@ -49,7 +50,6 @@ namespace obe
             std::string m_type;
             std::string m_privateKey;
             std::string m_publicKey;
-            int m_scrPriority = 0;
 
             bool m_hasAnimator = false;
             bool m_hasCollider = false;
@@ -81,11 +81,6 @@ namespace obe
              * \return A std::string containing the public key of the GameObject
              */
             std::string getPublicKey() const;
-            /**
-             * \brief Get the script execution priority of the GameObject
-             * \return An int containing the script execution priority of the GameObject
-             */
-            int getPriority() const;
             /**
              * \brief Checks if the GameObject has an Animator Component
              * \return true if the GameObject contains an Animator Component, false otherwise
@@ -132,11 +127,6 @@ namespace obe
             * \return A pointer to the LevelSprite Component of the GameObject
             */
             Graphics::LevelSprite* getLevelSprite();
-            /**
-            * \brief Gets the Script Component of the GameObject (Raises ObEngine.Script.GameObject.NoScript if no Script Component)
-            * \return A pointer to the Script Component of the GameObject
-            */
-            kaguya::State* getScript();
 
             /**
              * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
@@ -204,14 +194,13 @@ namespace obe
 
             void access(kaguya::State* lua) const;
 
+            unsigned int getEnvIndex() const;
+
             void initialize();
         };
 
         void loadScrGameObject(GameObject* obj, kaguya::State* lua);
         void loadScrGameObjectLib(kaguya::State* lua);
-        bool orderScrPriority(GameObject* g1, GameObject* g2);
-        void loadLibBridge(GameObject* object, std::string lib);
-        void loadHookBridge(GameObject* object, std::string hookname);
 
         template <typename U>
         void GameObject::sendInitArg(const std::string& argName, U value)

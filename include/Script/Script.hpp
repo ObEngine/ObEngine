@@ -25,6 +25,7 @@ namespace obe
         template <typename T>
         void CoreHook::dropValue(std::string name, T val)
         {
+            ScriptEngine["Hook"][name] = val;
             containerMap[name] = std::pair<std::string, Types::Any*>(Utils::Type::getObjectType(val), new Types::Any(val));
         }
 

@@ -279,6 +279,10 @@ namespace obe
             {
                 startGame();
             });
+            if (System::Path("boot.lua").find() == "")
+            {
+                playButton->disable();
+            }
 
             editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
             editButton->setSize("318", "286");

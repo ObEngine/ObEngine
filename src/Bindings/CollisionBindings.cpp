@@ -1,5 +1,7 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
 #include <Collision/PolygonalCollider.hpp>
+
 
 namespace obe
 {
@@ -11,6 +13,9 @@ namespace obe
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
             void LoadPolygonalCollider(kaguya::State* lua)
             {
+                Load(lua, "Core.Transform.UnitBasedObject");
+                Load(lua, "Core.Types.Selectable");
+                Load(lua, "Core.Types.Identifiable");
                 (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
                         Collision::PolygonalCollider,

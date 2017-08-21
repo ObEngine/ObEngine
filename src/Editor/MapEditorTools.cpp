@@ -208,6 +208,8 @@ namespace obe
             }
             else
             {
+                std::cout << "LOADING CORE LIB RESULT AFTERALL ===============>" << std::endl;
+                Script::ScriptEngine("print(inspect(Core))");
                 Script::GameObject* newGameObject = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
                 newGameObject->initialize();
             }

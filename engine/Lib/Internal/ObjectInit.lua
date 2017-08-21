@@ -1,5 +1,3 @@
-GetHook("TriggerDatabase");
-
 Local = {}; -- Local Events
 Global = {}; -- External Global Events
 Actions = {}; -- Actions Events
@@ -39,11 +37,10 @@ Global__Meta = {
 
 setmetatable(Global, Global__Meta);
 
+LuaCore = {};
 LuaCore.Lua_ReqList = {}; -- Require Parameters
 LuaCore.FTCP = {}; -- Future Trigger Call Parameters
 LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
-
-inspect = require("Lib/StdLib/inspect");
 
 function LuaCore.InjectInitInjectionTable()
     for k, v in pairs(LuaCore.ObjectInitInjectionTable) do
@@ -53,7 +50,9 @@ end
 
 function LuaCore.FuncInjector(funcName, triggerRegisterName)
     --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
-    local funcToCall = load("return " .. funcName)();
+    print("Preloading <...>")
+    local funcToCall = funcName--assert(load("return " .. funcName))();
+    print("Failed <> ?")
     if type(funcToCall) == "function" then
         local ArgMirror = require('Lib/Internal/ArgMirror');
         local Lua_Func_ArgList = ArgMirror.GetArgs(funcToCall);

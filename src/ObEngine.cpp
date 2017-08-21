@@ -12,6 +12,7 @@
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
 #include <ObEngine.hpp>
+#include <Script/GlobalState.hpp>
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
@@ -51,6 +52,7 @@ int main(int argc, char** argv)
     System::MountPaths();
 
     Bindings::IndexBindings();
+    Script::InitScriptEngine();
 
     if (startMode == "edit")
     {

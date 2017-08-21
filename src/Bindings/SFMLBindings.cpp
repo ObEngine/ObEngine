@@ -66,9 +66,8 @@ namespace obe
 
             void LoadSfShape(kaguya::State* lua)
             {
-                // Dependencies
-                BindTree["SFML"]["Drawable"](lua);
-                BindTree["SFML"]["Transformable"](lua);
+                Load(lua, "SFML.Drawable");
+                Load(lua, "SFML.Transformable");
 
                 (*lua)["SFML"]["Shape"].setClass(kaguya::UserdataMetatable<sf::Shape, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
                     .addFunction("getFillColor", &sf::Shape::getFillColor)
@@ -114,11 +113,9 @@ namespace obe
 
             void LoadSfSprite(kaguya::State* lua)
             {
-                // Dependencies
-                BindTree["SFML"]["Drawable"](lua);
-                BindTree["SFML"]["Transformable"](lua);
+                Load(lua, "SFML.Drawable");
+                Load(lua, "SFML.Transformable");
 
-                //Requires Drawable and Transformable
                 (*lua)["SFML"]["Sprite"].setClass(kaguya::UserdataMetatable<sf::Sprite, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
                     .setConstructors<sf::Sprite(), sf::Sprite(const sf::Texture&)>()
                     .addFunction("getColor", &sf::Sprite::getColor)

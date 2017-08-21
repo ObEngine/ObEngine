@@ -6,6 +6,7 @@
 #include <Bindings/InputBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
+#include <Bindings/ScriptBindings.hpp>
 #include <Bindings/SoundBindings.hpp>
 #include <Bindings/SystemBindings.hpp>
 #include <Bindings/TimeBindings.hpp>
@@ -65,6 +66,8 @@ namespace obe
             BindTree["Core"].add("Scene")["Scene"]
                 .add("Camera", &SceneBindings::LoadCamera)
                 .add("Scene", &SceneBindings::LoadScene);
+            BindTree["Core"].add("Script")["Script"]
+                .add("Script", &ScriptBindings::LoadGameObject);
             BindTree["Core"].add("Sound")["Sound"];
             BindTree["Core"].add("System")["System"]
                 .add("MountablePath", &SystemBindings::LoadMountablePath)

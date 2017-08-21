@@ -15,7 +15,6 @@ namespace obe
         {
             loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
             Script::ScriptEngine["Scene"] = this;
-            System::Path("Lib/Internal/ScriptInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;
@@ -240,16 +239,16 @@ namespace obe
             {
                 dataStore->at("LevelObjects").createComplexNode(it->first);
                 dataStore->at("LevelObjects", it->first).createDataNode("type", it->second->getType());
-                (*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
-                kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
-                (*it->second->m_objectScript)("print('Saving : ', This:getId())");
-                (*it->second->m_objectScript)("print(inspect(Local.Save()));");
-                (*it->second->m_objectScript)("print('Processing...')");
+                /*(*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
+                //kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
+                //(*it->second->m_objectScript)("print('Saving : ', This:getId())");
+                //(*it->second->m_objectScript)("print(inspect(Local.Save()));");
+                //(*it->second->m_objectScript)("print('Processing...')");
                 vili::ComplexNode* saveRequirements = Script::DataBridge::luaTableToComplexNode(
                     "Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
                     dataStore->at("LevelObjects", it->first).pushComplexNode(saveRequirements);
-                (*it->second->m_objectScript)("print('Saving over for : ', This:getId())");
+                //(*it->second->m_objectScript)("print('Saving over for : ', This:getId())");*/
             }
             if (m_scriptArray.size() > 0)
             {
@@ -411,8 +410,8 @@ namespace obe
             newGameObject->loadGameObject(*this, gameObjectData);
             if (newGameObject->m_hasScriptEngine)
             {
-                loadWorldLib(newGameObject->m_objectScript.get());
-                (*newGameObject.get()->m_objectScript)["Scene"] = this;
+                //loadWorldLib(newGameObject->m_objectScript.get());
+                //(*newGameObject.get()->m_objectScript)["Scene"] = this;
             }
 
             if (newGameObject->doesHaveLevelSprite())
@@ -444,7 +443,7 @@ namespace obe
             m_updateObjArray.clear();
             for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
                 m_updateObjArray.push_back(it->second.get());
-            sort(m_updateObjArray.begin(), m_updateObjArray.end(), Script::orderScrPriority);
+            //sort(m_updateObjArray.begin(), m_updateObjArray.end(), Script::orderScrPriority);
         }
 
         void Scene::reorganizeLayers()

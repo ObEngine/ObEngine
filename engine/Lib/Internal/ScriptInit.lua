@@ -1,8 +1,9 @@
 Core = {}; -- Core Lib
-Hook = {}; -- Core Objects
-LuaCore = {};
+LuaUtil = {};
 
-function LuaCore.Exists(path)
+inspect = require("Lib/StdLib/inspect");
+
+function LuaUtil.Exists(path)
     local pathToTest = load("return " .. path);
     noError, noNil = pcall(pathToTest);
     if not noError or noNil == nil then
@@ -11,9 +12,7 @@ function LuaCore.Exists(path)
     return true;
 end
 
-function Import(lib)
-    CPP_Import(This, lib);
-end
+inspect = require("Lib/StdLib/Inspect");
 
 function GetHook(hook)
     CPP_Hook(This, hook);
