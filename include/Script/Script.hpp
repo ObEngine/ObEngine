@@ -2,7 +2,7 @@
 
 #include <kaguya/kaguya.hpp>
 
-#include <Script/Script.hpp>
+#include <Script/GlobalState.hpp>
 #include <Types/Any.hpp>
 #include <Utils/TypeUtils.hpp>
 
