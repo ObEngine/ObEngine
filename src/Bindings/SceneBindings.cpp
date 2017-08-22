@@ -27,7 +27,7 @@ namespace obe
                 (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
                     .addFunction("clearWorld", &Scene::Scene::clearWorld)
                     .addFunction("createCollider", &Scene::Scene::createCollider)
-                    .addFunction("createGameObject", &Scene::Scene::createGameObject)
+                    //.addFunction("createGameObject", &Scene::Scene::createGameObject)
                     .addFunction("createLevelSprite", &Scene::Scene::createLevelSprite)
                     .addFunction("display", &Scene::Scene::display)
                     .addFunction("doesColliderExists", &Scene::Scene::doesColliderExists)
@@ -44,7 +44,7 @@ namespace obe
                     .addFunction("getColliderById", &Scene::Scene::getColliderById)
                     .addFunction("getColliderPointByPosition", &Scene::Scene::getColliderPointByPosition)
                     .addFunction("getGameObjectAmount", &Scene::Scene::getGameObjectAmount)
-                    .addFunction("getGameObjectById", &Scene::Scene::getGameObjectById)
+                    //.addFunction("getGameObjectById", &Scene::Scene::getGameObjectById)
                     .addFunction("getLevelName", &Scene::Scene::getLevelName)
                     .addFunction("getLevelSpriteAmount", &Scene::Scene::getLevelSpriteAmount)
                     .addFunction("getLevelSpriteById", &Scene::Scene::getLevelSpriteById)
@@ -61,6 +61,17 @@ namespace obe
                     .addFunction("setUpdateState", &Scene::Scene::setUpdateState)
                     .addFunction("update", &Scene::Scene::update)
                 );
+
+                (*lua)["Core"]["Scene"]["Scene"]["getGameObjectById"] = kaguya::function([](Scene::Scene* scene, const std::string& objectId)
+                {
+                    return scene->getGameObjectById(objectId)->access();
+                });
+
+                (*lua)["Core"]["Scene"]["Scene"]["createGameObject"] = kaguya::function(
+                    [](Scene::Scene* scene, const std::string& objectId, const std::string& objectType)
+                {
+                    return scene->createGameObject(objectId, objectType)->getConstructor();
+                });
             }
         }  
     }

@@ -22,6 +22,17 @@ namespace obe
                 baseTheme.load("Data/GUI/obe.style");
             }
 
+            void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
+            {
+                static int previousScrolbarValue = 0;
+                int distanceToMove = previousScrolbarValue - scrollbar->getValue();
+
+                for (auto& widget : panel->getWidgets())
+                    widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
+
+                previousScrolbarValue = scrollbar->getValue();
+            }
+
             void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel)
             {
                 tgui::Panel::Ptr titlePanel = tgui::Panel::create();
@@ -102,7 +113,9 @@ namespace obe
                 tgui::Panel::Ptr mapPanel = tgui::Panel::create();
                 tgui::Panel::Ptr settingsPanel = tgui::Panel::create();
                 tgui::Panel::Ptr spritesPanel = tgui::Panel::create();
+                tgui::Scrollbar::Ptr spritesScrollbar = tgui::Scrollbar::create();
                 tgui::Panel::Ptr objectsPanel = tgui::Panel::create();
+                tgui::Scrollbar::Ptr objectsScrollbar = tgui::Scrollbar::create();
                 tgui::Button::Ptr mapButton = tgui::Button::create();
                 tgui::Button::Ptr settingsButton = tgui::Button::create();
                 tgui::Button::Ptr spritesButton = tgui::Button::create();
@@ -117,7 +130,9 @@ namespace obe
                 editorPanel->add(mapPanel, "mapPanel");
                 editorPanel->add(settingsPanel, "settingsPanel");
                 editorPanel->add(spritesPanel, "spritesPanel");
+                editorPanel->add(spritesScrollbar, "spritesScrollbar");
                 editorPanel->add(objectsPanel, "objectsPanel");
+                editorPanel->add(objectsScrollbar, "objectsScrollbar");
                 editorPanel->add(mapButton, "mapButton");
                 editorPanel->add(settingsButton, "settingsButton");
                 editorPanel->add(spritesButton, "spritesButton");
@@ -159,16 +174,26 @@ namespace obe
                 spritesPanel->setSize("100%", "100% - 30");
                 spritesPanel->setPosition(0, 30);
 
+                spritesScrollbar->setPosition("100% - 16", "30");
+                spritesScrollbar->setSize("16", "100% - 30");
+                spritesScrollbar->connect("ValueChanged", scrollPanel, spritesPanel, spritesScrollbar);
+                spritesScrollbar->setLowValue(spritesPanel->getSize().y);
+
                 objectsPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
                 objectsPanel->setSize("100%", "100% - 30");
                 objectsPanel->setPosition(0, 30);
+
+                objectsScrollbar->setPosition("100% - 16", "30");
+                objectsScrollbar->setSize("16", "100% - 30");
+                objectsScrollbar->connect("ValueChanged", scrollPanel, objectsPanel, objectsScrollbar);
+                objectsScrollbar->setLowValue(objectsPanel->getSize().y);
 
                 mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
                 settingsPanel->hide();
                 spritesPanel->hide();
                 objectsPanel->hide();
 
-                mapButton->connect("pressed", [mainPanel]()
+                mapButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->show();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
@@ -178,9 +203,11 @@ namespace obe
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    spritesScrollbar->hide();
+                    objectsScrollbar->hide();
                 });
 
-                settingsButton->connect("pressed", [mainPanel]()
+                settingsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->show();
@@ -190,9 +217,11 @@ namespace obe
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    spritesScrollbar->hide();
+                    objectsScrollbar->hide();
                 });
 
-                spritesButton->connect("pressed", [mainPanel]()
+                spritesButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
@@ -202,9 +231,11 @@ namespace obe
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    spritesScrollbar->show();
+                    objectsScrollbar->hide();
                 });
 
-                objectsButton->connect("pressed", [mainPanel]()
+                objectsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
@@ -214,6 +245,8 @@ namespace obe
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    spritesScrollbar->hide();
+                    objectsScrollbar->show();
                 });
             }
 
@@ -448,7 +481,7 @@ namespace obe
                 });
             }
 
-            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel)
+            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar)
             {
                 tgui::Label::Ptr spritesCatLabel = tgui::Label::create();
 
@@ -459,10 +492,10 @@ namespace obe
                 spritesCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 spritesCatLabel->setText("[ Sprites Settings ]");
 
-                loadSpriteFolder(spritesPanel, spritesCatLabel, "");
+                loadSpriteFolder(spritesPanel, spritesCatLabel, "", spritesScrollbar);
             }
 
-            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel)
+            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel, tgui::Scrollbar::Ptr& objectsScrollbar)
             {
                 tgui::Label::Ptr objectsCatLabel = tgui::Label::create();
 
@@ -473,7 +506,7 @@ namespace obe
                 objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 objectsCatLabel->setText("[ Objects Settings ]");
 
-                buildObjectTab(objectsPanel, requiresPanel, baseTheme);
+                buildObjectTab(objectsPanel, requiresPanel, baseTheme, objectsScrollbar);
             }
 
             void buildObjectCreationMenu(tgui::Panel::Ptr& mainPanel)

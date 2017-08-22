@@ -171,6 +171,8 @@ namespace obe
             tgui::Panel::Ptr spritesPanel = gui.get<tgui::Panel>("spritesPanel");
             tgui::Panel::Ptr objectsPanel = gui.get<tgui::Panel>("objectsPanel");
             tgui::Panel::Ptr requiresPanel = gui.get<tgui::Panel>("requiresPanel");
+            tgui::Scrollbar::Ptr spritesScrollbar = gui.get<tgui::Scrollbar>("spritesScrollbar");
+            tgui::Scrollbar::Ptr objectsScrollbar = gui.get<tgui::Scrollbar>("objectsScrollbar");
 
             GUI::buildToolbar(mainPanel, editorPanel);
 
@@ -179,8 +181,8 @@ namespace obe
 
             GUI::buildEditorMapMenu(mapPanel, scene);
             GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode);
-            GUI::buildEditorSpritesMenu(spritesPanel);
-            GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel);
+            GUI::buildEditorSpritesMenu(spritesPanel, spritesScrollbar);
+            GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar);
 
             tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
             tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");

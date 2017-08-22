@@ -192,7 +192,8 @@ namespace obe
              */
             bool deletable = false;
 
-            void access(kaguya::State* lua) const;
+            kaguya::LuaTable access() const;
+            kaguya::LuaFunction getConstructor() const;
 
             unsigned int getEnvIndex() const;
 

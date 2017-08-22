@@ -19,8 +19,8 @@ namespace obe
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel);
             void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world);
             void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode);
-            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel);
-            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel);
+            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar);
+            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel, tgui::Scrollbar::Ptr& objectsScrollbar);
             void buildObjectCreationMenu(tgui::Panel::Ptr& mainPanel);
         }
     }

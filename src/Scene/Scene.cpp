@@ -405,7 +405,6 @@ namespace obe
         Script::GameObject* Scene::createGameObject(const std::string& id, const std::string& obj)
         {
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
-            vili::ViliParser getGameObjectFile;
             vili::ComplexNode& gameObjectData = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
             newGameObject->loadGameObject(*this, gameObjectData);
             if (newGameObject->m_hasScriptEngine)

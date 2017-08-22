@@ -30,6 +30,16 @@ namespace obe
             return m_envIndex;
         }
 
+        kaguya::LuaTable GameObject::access() const
+        {
+            return GAMEOBJECTENV["Object"];
+        }
+
+        kaguya::LuaFunction GameObject::getConstructor() const
+        {
+            return GAMEOBJECTENV["ObjectInit"];
+        }
+
         void loadScrGameObject(GameObject* obj, kaguya::State* lua)
         {
             //(*lua)["CPP_Import"] = &loadLibBridge;
@@ -91,6 +101,7 @@ namespace obe
                     allDefinitions->pushComplexNode(&definitionData);
                     return &definitionData;
                 }
+                aube::ErrorHandler::Raise("ObEngine.Script.GameObjectDatabase.ObjectDefinitionNotFound", { { "objectType", type } });
                 return nullptr;
             }
             return &allDefinitions.at(type);
@@ -143,6 +154,50 @@ namespace obe
 
         void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
         {
+            //Script
+            if (obj.contains(vili::NodeType::ComplexNode, "Script"))
+            {
+                m_hasScriptEngine = true;
+                m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
+                m_publicKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
+                Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
+                Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
+                m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
+
+                m_envIndex = ScriptEngine["CreateNewEnv"]();
+                std::cout << "Environment Index is : " << m_envIndex << std::endl;
+
+                //executeFile(m_envIndex, System::Path("Lib/Internal/ScriptInit.lua").find());
+                //loadScrGameObject(this, m_objectScript.get());
+
+                GAMEOBJECTENV["This"] = this;
+
+                m_localTriggers
+                    ->addTrigger("Init")
+                    ->addTrigger("Delete");
+
+                executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
+
+                GAMEOBJECTENV["__OBJECT_TYPE"] = m_type;
+                GAMEOBJECTENV["__OBJECT_ID"] = m_id;
+                GAMEOBJECTENV["Private"] = m_privateKey;
+                GAMEOBJECTENV["Public"] = m_publicKey;
+
+                if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
+                {
+                    std::string getScrName = obj.at("Script").getDataNode("source").get<std::string>();
+                    executeFile(m_envIndex, System::Path(getScrName).find());
+                }
+                else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
+                {
+                    int scriptListSize = obj.at("Script").getArrayNode("sources").size();
+                    for (int i = 0; i < scriptListSize; i++)
+                    {
+                        std::string getScrName = obj.at("Script").getArrayNode("sources").get(i).get<std::string>();
+                        executeFile(m_envIndex, System::Path(getScrName).find());
+                    }
+                }
+            }
             //Animator
             std::string animatorPath;
             if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
@@ -158,6 +213,8 @@ namespace obe
                 {
                     m_objectAnimator->setKey(obj.at("Animator").getDataNode("default").get<std::string>());
                 }
+                if (m_hasScriptEngine)
+                    GAMEOBJECTENV["Object"]["Animation"] = m_objectAnimator.get();
                 m_hasAnimator = true;
             }
             //Collider
@@ -205,6 +262,8 @@ namespace obe
                         m_objectCollider->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
                 }
 
+                if (m_hasScriptEngine)
+                    GAMEOBJECTENV["Object"]["Collider"] = m_objectCollider;
                 m_hasCollider = true;
             }
             //LevelSprite
@@ -212,50 +271,10 @@ namespace obe
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id);
                 m_objectLevelSprite->configure(obj.at("LevelSprite"));
+                if (m_hasScriptEngine)
+                    GAMEOBJECTENV["Object"]["LevelSprite"] = m_objectLevelSprite;
                 m_hasLevelSprite = true;
                 world.reorganizeLayers();
-            }
-            //Script
-            if (obj.contains(vili::NodeType::ComplexNode, "Script"))
-            {
-                m_hasScriptEngine = true;
-                m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
-                m_publicKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
-                Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
-                Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
-                m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
-
-                m_envIndex = ScriptEngine["CreateNewEnv"]();
-                std::cout << "Environment Index is : " << m_envIndex << std::endl;
-
-                //executeFile(m_envIndex, System::Path("Lib/Internal/ScriptInit.lua").find());
-                //loadScrGameObject(this, m_objectScript.get());
-
-                GAMEOBJECTENV["This"] = this;
-
-                m_localTriggers
-                    ->addTrigger("Init")
-                    ->addTrigger("Delete");
-
-                executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
-
-                GAMEOBJECTENV["Private"] = m_privateKey;
-                GAMEOBJECTENV["Public"] = m_publicKey;
-
-                if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
-                {
-                    std::string getScrName = obj.at("Script").getDataNode("source").get<std::string>();
-                    executeFile(m_envIndex, System::Path(getScrName).find());
-                }
-                else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
-                {
-                    int scriptListSize = obj.at("Script").getArrayNode("sources").size();
-                    for (int i = 0; i < scriptListSize; i++)
-                    {
-                        std::string getScrName = obj.at("Script").getArrayNode("sources").get(i).get<std::string>();
-                        executeFile(m_envIndex, System::Path(getScrName).find());
-                    }
-                }
             }
         }
 
@@ -384,6 +403,7 @@ namespace obe
 
         void GameObject::exec(const std::string& query) const
         {
+            ScriptEngine["ExecuteStringOnEnv"](query, m_envIndex);
         }
 
         void GameObject::deleteObject()

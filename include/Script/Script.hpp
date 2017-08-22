@@ -2,6 +2,7 @@
 
 #include <kaguya/kaguya.hpp>
 
+#include <Script/Script.hpp>
 #include <Types/Any.hpp>
 #include <Utils/TypeUtils.hpp>
 

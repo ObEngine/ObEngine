@@ -42,10 +42,10 @@ namespace obe
             static sf::Texture* GetFolderThumbnail(const std::string& path);
         };
 
-        void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme);
+        void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, tgui::Scrollbar::Ptr objectsScrollbar);
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName);
         void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires);
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path);
+        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path, tgui::Scrollbar::Ptr spritesScrollbar);
         void addSpriteToWorld(std::string geid);
     }
 }

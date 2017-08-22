@@ -57,6 +57,7 @@ namespace obe
             m_instance->m_renderer.draw(sprNameText);
             m_instance->m_renderer.display();
             m_instance->m_cache[path] = new sf::Texture(m_instance->m_renderer.getTexture());
+            m_instance->m_cache[path]->setSmooth(true);
             return m_instance->m_cache[path];
         }
 
@@ -80,33 +81,42 @@ namespace obe
             m_instance->m_renderer.draw(folderText);
             m_instance->m_renderer.display();
             m_instance->m_cache[path] = new sf::Texture(m_instance->m_renderer.getTexture());
+            m_instance->m_cache[path]->setSmooth(true);
             return m_instance->m_cache[path];
         }
 
-        void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme)
+        void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, tgui::Scrollbar::Ptr objectsScrollbar)
         {
             std::vector<std::string> allGameObjects;
             System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
-            const int btnSize = 256;
-            const int btnOff = 10;
-            const int xOff = 15;
-            const int yOff = 40;
-            for (int i = 0; i < allGameObjects.size(); i++)
+            const unsigned int panelWidth = objectTab->getSize().x;
+            const int btnSize = float(panelWidth) * 0.115;
+            const unsigned int btnOff = 10;
+            const unsigned int maxElementsPerRow = float(panelWidth) / (float(btnSize) + float(btnOff));
+            const unsigned int xOff = 15;
+            const unsigned int yOff = 70;
+            unsigned int xpos, ypos;
+
+            auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
+            {
+                unsigned int ixPos = (index % maxElementsPerRow) * (btnSize + btnOff) + xOff;
+                unsigned int iyPos = index / maxElementsPerRow * (btnSize + btnOff) + yOff;
+
+                std::cout << "On Index " << index << " determined pos : " << ixPos << ", " << iyPos << std::endl;
+                return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
+            };
+
+            for (unsigned int i = 0; i < allGameObjects.size(); i++)
             {
                 std::string currentObjName = allGameObjects[i];
-                int xpos = (i * (btnSize + btnOff));
-                int ypos = floor((double)xpos / (double)(1920 - (btnSize + btnOff))) * (btnSize + btnOff) + yOff;
-                while (xpos > (1920 - (btnSize + btnOff + xOff)))
-                    xpos -= (1920 - (btnSize + btnOff + xOff));
-                xpos = floor((double)xpos / (double)(btnSize + btnOff)) * (btnSize + btnOff);
-                xpos += xOff;
-                ypos += yOff;
+                std::tie(xpos, ypos) = getBtnPos(i);
+                std::cout << currentObjName << ":" << xpos << "," << ypos << std::endl;
                 tgui::Button::Ptr currentObj = tgui::Button::create();
                 currentObj->setRenderer(baseTheme.getRenderer("ObjectButton"));
                 currentObj->setTextSize(18);
                 currentObj->setText(currentObjName);
                 currentObj->setPosition(xpos, ypos);
-                currentObj->setSize(256, 256);
+                currentObj->setSize(btnSize, btnSize);
                 objectTab->add(currentObj);
                 currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
                 {
@@ -114,6 +124,8 @@ namespace obe
                     buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
                 });
             }
+
+            objectsScrollbar->setMaximum(ypos + btnSize + yOff + 30);
         }
 
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
@@ -236,7 +248,7 @@ namespace obe
             newGameObject->initialize();
         }
 
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path)
+        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path, tgui::Scrollbar::Ptr spritesScrollbar)
         {
             spritesPanel->removeAllWidgets();
             spritesPanel->add(spritesCatLabel);
@@ -246,44 +258,52 @@ namespace obe
             System::Path("Sprites/LevelSprites" + path).loadResource(&folderList, System::Loaders::dirPathLoader);
             System::Path("Sprites/LevelSprites" + path).loadResource(&fileList, System::Loaders::filePathLoader);
 
-            const int sprSize = 246;
+            const int sprSize = spritesPanel->getSize().x * 0.115;
+            const int panelWidth = spritesPanel->getSize().x;
+            
             const int sprOff = 10;
             const int xOff = 15;
-            const int yOff = 40;
-            int elemIndex = 0;
-            int xpos = (0 * (sprSize + sprOff)) + xOff;
-            int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff) + yOff;
+            const int yOff = 70;
+            unsigned int maxElementsPerRow = float(panelWidth) / (float(sprSize) + float(sprOff));
+            unsigned int elemIndex = 0;
+            std::cout << "Spr Size : " << sprSize << std::endl;
+            auto getSpritePos = [&sprSize, &sprOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
+            {
+                unsigned int ixPos = (index % maxElementsPerRow) * (sprSize + sprOff) + xOff;
+                unsigned int iyPos = index / maxElementsPerRow * (sprSize + sprOff) + yOff;
+                index++;
+
+                std::cout << "On Index " << index << " determined pos : " << ixPos << ", " << iyPos << std::endl;
+                return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
+            };
+            unsigned int xpos, ypos; 
+            std::tie(xpos, ypos) = getSpritePos(elemIndex);
             tgui::Button::Ptr backButton = tgui::Button::create();
             spritesPanel->add(backButton, "LS_ELEM_BACK");
             sf::Texture sprback;
             sprback.loadFromFile("Sprites/Others/back.png");
+            sprback.setSmooth(true);
             backButton->getRenderer()->setTexture(sprback);
             backButton->setSize(sprSize, sprSize);
             backButton->setPosition(xpos, ypos);
 
-            backButton->connect("pressed", [spritesPanel, spritesCatLabel, path]
+            backButton->connect("pressed", [spritesPanel, spritesCatLabel, path, spritesScrollbar]
             {
                 std::vector<std::string> splittedPath = Utils::String::split(path, "/");
-                loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1));
+                loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1), spritesScrollbar);
             });
 
             for (std::string element : folderList)
             {
-                int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-                int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
-                while (xpos > (1920 - (sprSize + sprOff)))
-                    xpos -= (1920 - (sprSize + sprOff));
-                xpos = floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
-                xpos += xOff;
-                ypos += yOff;
+                std::tie(xpos, ypos) = getSpritePos(elemIndex);
                 tgui::Button::Ptr currentFolder = tgui::Button::create();
                 spritesPanel->add(currentFolder, "LS_FOLDER_" + element);
-                currentFolder->setPosition(xpos, ypos);
                 currentFolder->setSize(sprSize, sprSize);
+                currentFolder->setPosition(xpos, ypos);
                 currentFolder->getRenderer()->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
-                currentFolder->connect("pressed", [spritesPanel, spritesCatLabel, path, element]()
+                currentFolder->connect("pressed", [spritesPanel, spritesCatLabel, path, element, spritesScrollbar]()
                 {
-                    loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element);
+                    loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element, spritesScrollbar);
                 });
             }
 
@@ -293,13 +313,7 @@ namespace obe
                 System::Path("Sprites/LevelSprites").add(path).add(element).loadResource(&textureLoadChecker, System::Loaders::textureLoader);
                 if (textureLoadChecker.getSize().x != 0)
                 {
-                    int xpos = (++elemIndex * (sprSize + sprOff)) + xOff;
-                    int ypos = floor(static_cast<double>(xpos) / static_cast<double>(1920 - (sprSize + sprOff))) * (sprSize + sprOff);
-                    while (xpos > (1920 - (sprSize + sprOff)))
-                        xpos -= (1920 - (sprSize + sprOff));
-                    xpos = floor(static_cast<double>(xpos) / static_cast<double>(sprSize + sprOff)) * (sprSize + sprOff);
-                    xpos += xOff;
-                    ypos += yOff;
+                    std::tie(xpos, ypos) = getSpritePos(elemIndex);
                     std::cout << "MAMIA1 : " << xpos << ", " << ypos << std::endl;
                     tgui::Button::Ptr currentSprite = tgui::Button::create();
                     spritesPanel->add(currentSprite, "LS_FILE_" + element);
@@ -309,6 +323,8 @@ namespace obe
                     currentSprite->connect("pressed", [path, element] { addSpriteToWorld(path + "/" + element); });
                 }
             }
+
+            spritesScrollbar->setMaximum(ypos + sprSize + yOff + 30);
         }
 
         void addSpriteToWorld(std::string geid)

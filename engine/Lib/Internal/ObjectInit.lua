@@ -1,7 +1,22 @@
 Local = {}; -- Local Events
 Global = {}; -- External Global Events
 Actions = {}; -- Actions Events
-Object = {};
+
+Object = {
+    type = __OBJECT_TYPE;
+    id = __OBJECT_ID;
+};
+
+function ObjectInit(argtable)
+    print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
+    for k, v in pairs(argtable) do
+        This:sendInitArg(k, v);
+        print("Pushing Arg", k, v);
+    end
+    print("Initialisation done");
+    This:initialize();
+    return Object;
+end
 
 Local__Meta = {
     __newindex = function(object, index, value)

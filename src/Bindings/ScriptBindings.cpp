@@ -19,12 +19,14 @@ namespace obe
                     .addFunction("Animator", &Script::GameObject::getAnimator)
                     .addFunction("delete", &Script::GameObject::deleteObject)
                     .addFunction("exec", &Script::GameObject::exec)
+                    .addFunction("initialize", &Script::GameObject::initialize)
+                    .addFunction("getConstructor", &Script::GameObject::getConstructor)
                     //.addFunction("getPriority", &GameObject::getPriority)
                     .addFunction("getPublicKey", &Script::GameObject::getPublicKey)
                     .addFunction("sendInitArg", &Script::GameObject::sendInitArgFromLua)
                     .addFunction("useLocalTrigger", &Script::GameObject::useLocalTrigger)
                     .addFunction("useExternalTrigger", useExternalTriggerProxy())
-                    //.addFunction("access", &GameObject::access)
+                    .addFunction("access", &Script::GameObject::access)
                 );
             }
         }
