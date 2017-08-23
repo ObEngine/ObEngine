@@ -136,14 +136,16 @@ namespace obe
                 {
                     vili::ComplexNode& currentObject = levelObjects.at(currentObjectName);
                     std::string levelObjectType = currentObject.getDataNode("type").get<std::string>();
-                    this->createGameObject(currentObjectName, levelObjectType);
+                    Script::GameObject* newObject = this->createGameObject(currentObjectName, levelObjectType);
                     if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
                     {
                         vili::ComplexNode& objectRequirements = currentObject.at("Requires");
                         currentObject.removeOwnership(&objectRequirements);
-                        Script::GameObjectDatabase::ApplyRequirements(this->getGameObjectById(currentObjectName), objectRequirements);
+                        Script::GameObjectDatabase::ApplyRequirements(newObject, objectRequirements);
                         objectRequirements.setParent(&currentObject);
                     }
+                    newObject->exec("LuaCore.InjectInitInjectionTable()");
+                    newObject->initialize();
                 }
             }
 
@@ -280,15 +282,6 @@ namespace obe
                 {
                     if (!m_updateObjArray[i]->deletable)
                         m_updateObjArray[i]->update();
-                    else
-                    {
-                        //BUGGY
-                        /*if (updateObjArray[i]->hasCollider)
-                            this->deleteCollision(updateObjArray[i]->getCollider(), false);*/
-                        if (m_updateObjArray[i]->m_hasLevelSprite)
-                            this->removeLevelSpriteById(m_updateObjArray[i]->getLevelSprite()->getId());
-                        m_updateObjArray.erase(m_updateObjArray.begin() + i);
-                    }
                 }
             }
             m_camera.unlock();

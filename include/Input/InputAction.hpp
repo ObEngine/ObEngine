@@ -78,6 +78,11 @@ namespace obe
             * \brief Updates the KeyboardAction
             */
             void update();
+            /**
+             * \brief Check if the InputAction is enabled
+             * \return true if the InputAction is enabled, false otherwise
+             */
+            bool check() const;
         };
     }
 }

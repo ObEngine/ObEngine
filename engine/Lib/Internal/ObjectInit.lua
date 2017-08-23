@@ -9,7 +9,8 @@ Object = {
 
 function ObjectInit(argtable)
     print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
-    for k, v in pairs(argtable) do
+    local argt = argtable or {};
+    for k, v in pairs(argt) do
         This:sendInitArg(k, v);
         print("Pushing Arg", k, v);
     end

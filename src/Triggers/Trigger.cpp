@@ -46,6 +46,13 @@ namespace obe
             Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
         }
 
+        void Trigger::unregisterEnvironment(unsigned envIndex)
+        {
+            m_registeredEnvs.erase(std::remove_if(m_registeredEnvs.begin(), m_registeredEnvs.end(), 
+                [&envIndex](const std::pair<unsigned int, std::string>& env) { return env.first == envIndex; }
+            ), m_registeredEnvs.end());
+        }
+
         void Trigger::execute() const
         {
             for (auto& rEnv : m_registeredEnvs)

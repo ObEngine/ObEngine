@@ -12,6 +12,7 @@ namespace obe
             void LoadChronometer(kaguya::State* lua)
             {
                 (*lua)["Core"]["Time"]["Chronometer"].setClass(kaguya::UserdataMetatable<Time::Chronometer>()
+                    .setConstructors<Time::Chronometer()>()
                     .addFunction("getTime", &Time::Chronometer::getTime)
                     .addFunction("limitExceeded", &Time::Chronometer::limitExceeded)
                     .addFunction("setLimit", &Time::Chronometer::setLimit)

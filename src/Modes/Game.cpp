@@ -74,7 +74,7 @@ namespace obe
 
             //Keybinding
             Input::InputManager inputManager;
-            Script::hookCore.dropValue("KeyBinder", &inputManager);
+            Script::hookCore.dropValue("InputManager", &inputManager);
             inputManager.configure(configFile.at("KeyBinding"));
             inputManager.addContext("game");
 

@@ -87,5 +87,23 @@ namespace obe
                 }
             }
         }
+
+        bool InputAction::check() const
+        {
+            for (const InputCondition& combination : m_combinations)
+            {
+                if (combination.check())
+                {
+                    if (m_state)
+                    {
+                        if (m_repeat.over())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

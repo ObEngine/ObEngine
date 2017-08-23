@@ -75,6 +75,8 @@ namespace obe
              * \param envIndex Index of the Lua Env to register
              */
             void registerEnvironment(unsigned int envIndex, const std::string& callbackName);
+
+            void unregisterEnvironment(unsigned int envIndex);
             /**
              * \brief Triggers callbacks
              */

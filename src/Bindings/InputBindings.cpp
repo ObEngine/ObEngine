@@ -19,6 +19,7 @@ namespace obe
                 (*lua)["Core"]["Input"]["InputAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
                     .addFunction("addCondition", &Input::InputAction::addCondition)
                     .addFunction("addContext", &Input::InputAction::addContext)
+                    .addFunction("check", &Input::InputAction::check)
                     .addFunction("connect", &Input::InputAction::connect)
                     .addFunction("getContexts", &Input::InputAction::getContexts)
                     .addFunction("getInterval", &Input::InputAction::getInterval)

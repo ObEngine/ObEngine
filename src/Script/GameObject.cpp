@@ -409,6 +409,15 @@ namespace obe
         void GameObject::deleteObject()
         {
             this->deletable = true;
+            for (auto& trigger : m_registeredTriggers)
+            {
+                trigger.first->unregisterEnvironment(m_envIndex);
+            }
+            if (m_hasLevelSprite)
+                hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeLevelSpriteById(m_objectLevelSprite->getId());
+            if (m_hasCollider)
+                hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeColliderById(m_objectCollider->getId());
+            //GAMEOBJECTENV = nullptr;
         }
     }
 }
