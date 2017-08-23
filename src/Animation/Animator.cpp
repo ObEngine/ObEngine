@@ -125,7 +125,8 @@ namespace obe
             if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
-                m_currentAnimation = m_animationSet[m_currentAnimation->getCalledAnimation()].get();
+                m_currentAnimationName = m_currentAnimation->getCalledAnimation();
+                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
             }
             if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
                 m_currentAnimation->update();

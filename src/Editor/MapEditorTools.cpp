@@ -95,7 +95,8 @@ namespace obe
             const unsigned int maxElementsPerRow = float(panelWidth) / (float(btnSize) + float(btnOff));
             const unsigned int xOff = 15;
             const unsigned int yOff = 70;
-            unsigned int xpos, ypos;
+            unsigned int xpos;
+            unsigned int ypos = xpos = 0;
 
             auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
             {
@@ -276,7 +277,8 @@ namespace obe
                 std::cout << "On Index " << index << " determined pos : " << ixPos << ", " << iyPos << std::endl;
                 return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
             };
-            unsigned int xpos, ypos; 
+            unsigned int xpos;
+            unsigned ypos = xpos = 0;
             std::tie(xpos, ypos) = getSpritePos(elemIndex);
             tgui::Button::Ptr backButton = tgui::Button::create();
             spritesPanel->add(backButton, "LS_ELEM_BACK");
