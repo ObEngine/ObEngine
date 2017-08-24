@@ -24,6 +24,7 @@ namespace obe
              */
             UnitVector m_position;
         public:
+            Rect();
             /**
             * \brief Conversion Type for Referencial Usage
             */

@@ -147,6 +147,7 @@ namespace obe
             Transform::UnitVector pixelSize = m_size.to<Transform::Units::WorldPixels>();
             double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor();
             double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor();
+            sf::Vector2u texSize = m_texture.getSize();
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
             std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
             std::cout << "From : " << pixelSize << std::endl;*/
@@ -154,8 +155,10 @@ namespace obe
             double heightScale = pixelSize.y / spriteHeight;
             //std::cout << "ISSCALE : " << widthScale << ", " << heightScale << std::endl;
             //std::cout << "ShiftTest : " << (pixelSize.x > 1 || pixelSize.x < -1) << ", " << (pixelSize.y > 1 || pixelSize.y < -1) << std::endl;
-            if ((pixelSize.x >= 1 || pixelSize.x <= -1) && (pixelSize.y >= 1 || pixelSize.y <= -1))
+            if ((pixelSize.x >= 1 || pixelSize.x <= -1) && (pixelSize.y >= 1 || pixelSize.y <= -1) && (texSize.x >= 1 && texSize.y >= 1))
+            {
                 m_sprite.scale(widthScale, heightScale);
+            }
         }
 
         void LevelSprite::setColor(sf::Color newColor)

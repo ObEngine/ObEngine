@@ -86,7 +86,3 @@ function IsArgumentInRequireList(paramName)
         return false;
     end
 end
-
-function Object.Save()
-    return {};
-end

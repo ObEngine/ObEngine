@@ -266,6 +266,21 @@ namespace obe
 
         void Scene::update(double dt)
         {
+            //std::cout << "LevelSprite Array Size (" << m_spriteArray.size() << ")" << std::endl;
+            for (auto& sprite : m_spriteArray)
+            {
+                /*if (Utils::String::contains(sprite->getId(), "bomb_") && sprite->getId().at(0) != '_')
+                {
+                    std::cout << "  Id : " << sprite->getId() << std::endl;
+                    std::cout << "  Position : " << sprite->getPosition() << std::endl;
+                    std::cout << "  Size : " << sprite->getSize() << std::endl;
+                    std::cout << "  Texture : " << sprite->getTexture().getSize().x << ", " << sprite->getTexture().getSize().y << std::endl;
+                    std::cout << "  Visible : " << sprite->isVisible() << std::endl;
+                    std::cout << "  Alpha : " << sprite->getColor().a << std::endl;
+                    std::cout << "  Camera Position : " << sprite->getDrawPosition(m_camera.getPosition()).to<Transform::Units::WorldPixels>() << std::endl;
+                    std::cout << "  SpriteSize : " << sprite->getSpriteWidth() << ", " << sprite->getSpriteHeight() << std::endl;
+                }*/
+            }
             if (m_cameraLocked)
                 m_camera.lock();
             else

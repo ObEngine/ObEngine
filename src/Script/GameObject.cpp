@@ -408,6 +408,7 @@ namespace obe
 
         void GameObject::deleteObject()
         {
+            m_localTriggers->trigger("Delete");
             this->deletable = true;
             for (auto& trigger : m_registeredTriggers)
             {

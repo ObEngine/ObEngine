@@ -35,8 +35,6 @@ namespace obe
 
         bool Chronometer::limitExceeded()
         {
-            std::cout << "Limit : " << m_limit << std::endl;
-            std::cout << "Current : " << this->getTime() << std::endl;
             return (m_started && this->getTime() > m_limit);
         }
     }
