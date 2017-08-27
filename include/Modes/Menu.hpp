@@ -4,6 +4,9 @@
 
 namespace obe
 {
+    /**
+     * \brief Different Modes or Menus that ObEngine can launch
+     */
     namespace Modes
     {
         /**

@@ -85,6 +85,9 @@ namespace obe
             ~InputButtonMonitorPtr();
         };
 
+        /**
+         * \brief Various functions used to manage InputButtonMonitor
+         */
         namespace Monitors
         {
             /**

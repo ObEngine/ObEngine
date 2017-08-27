@@ -5,6 +5,9 @@
 
 namespace obe
 {
+    /**
+     * \brief TGUI Fallback
+     */
     namespace tguif
     {
         int bindRight(tgui::Widget::Ptr widget);
