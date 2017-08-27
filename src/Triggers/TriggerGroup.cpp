@@ -17,7 +17,7 @@ namespace obe
             {
                 return m_triggerMap[triggerName].get();
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", {{"trigger", triggerName}, {"group", m_name}});
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", { {"function", "removeTrigger"}, {"trigger", triggerName}, {"group", m_name}});
         }
 
         TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)

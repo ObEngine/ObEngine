@@ -42,7 +42,11 @@ namespace obe
             /**
              * \brief All Gamepad buttons
              */
-            Gamepad
+            GamepadButton,
+            /**
+             * \brief All Gamepad Axis (Joysticks, triggers)
+             */
+            GamepadAxis
         };
 
         std::ostream& operator<<(std::ostream& os, InputType m);

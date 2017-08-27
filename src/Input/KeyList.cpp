@@ -139,11 +139,113 @@ namespace obe
                 std::cout << "Button count : " << sf::Joystick::getButtonCount(gamepadIndex) << std::endl;
                 for (unsigned int buttonIndex = 0; buttonIndex < sf::Joystick::getButtonCount(gamepadIndex); buttonIndex++)
                 {
-                    std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex) + "_Button" + std::to_string(buttonIndex);
+                    std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex) + "_BTN_" + std::to_string(buttonIndex);
                     std::cout << "========================= > Adding : " << gamepadButtonName << std::endl;
                     AllKeys[gamepadButtonName] = std::make_unique<InputButton>(gamepadIndex, buttonIndex, gamepadButtonName);
                 }
-
+                auto addHorizontalAxis = [&gamepadIndex](sf::Joystick::Axis axis, const std::string& axisName)
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                    std::pair<AxisCompareType, float> leftX(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> rightX(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, axis, leftX, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, axis, rightX, gamepadAxisName + "_RIGHT");
+                };
+                auto addVerticalAxis = [&gamepadIndex](sf::Joystick::Axis axis, const std::string& axisName)
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                    std::pair<AxisCompareType, float> upY(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> downY(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(gamepadIndex, axis, upY, gamepadAxisName + "_UP");
+                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(gamepadIndex, axis, downY, gamepadAxisName + "_DOWN");
+                };
+                /*auto addHorizontalAxis = [&gamepadIndex](sf::Joystick::Axis axis, const std::string& axisName) 
+                // I KNOW THIS CODE COULD BE SHORTER BUT IT CRASHES FOR NO REASON
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                    std::pair<AxisCompareType, float> leftX(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> rightX(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, axis, leftX, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, axis, rightX, gamepadAxisName + "_RIGHT");
+                };
+                auto addVerticalAxis = [&gamepadIndex](sf::Joystick::Axis axis, const std::string& axisName)
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                    std::pair<AxisCompareType, float> upY(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> downY(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(gamepadIndex, axis, upY, gamepadAxisName + "_UP");
+                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(gamepadIndex, axis, downY, gamepadAxisName + "_DOWN");
+                };
+                addHorizontalAxis(sf::Joystick::Axis::X, "X");
+                addVerticalAxis(sf::Joystick::Axis::Y, "Y");
+                addHorizontalAxis(sf::Joystick::Axis::PovX, "PovX");
+                addVerticalAxis(sf::Joystick::Axis::PovY, "PovY");
+                //addHorizontalAxis(sf::Joystick::Axis::U, "U");
+                /*addVerticalAxis(sf::Joystick::Axis::R, "R");
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::Z))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_Z";
+                    std::pair<AxisCompareType, float> leftT(AxisCompareType::MORE, 80);
+                    std::pair<AxisCompareType, float> rightT(AxisCompareType::LESS, -80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z, leftT, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z, rightT, gamepadAxisName + "_RIGHT");
+                }*/
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::X))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_X";
+                    std::pair<AxisCompareType, float> leftX(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> rightX(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::X, leftX, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::X, rightX, gamepadAxisName + "_RIGHT");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::Y))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_Y";
+                    std::pair<AxisCompareType, float> upY(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> downY(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Y, upY, gamepadAxisName + "_UP");
+                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Y, downY, gamepadAxisName + "_DOWN");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::PovX))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_PovX";
+                    std::pair<AxisCompareType, float> leftX(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> rightX(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::PovX, leftX, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::PovX, rightX, gamepadAxisName + "_RIGHT");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::PovY))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_PovY";
+                    std::pair<AxisCompareType, float> upY(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> downY(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::PovY, upY, gamepadAxisName + "_UP");
+                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::PovY, downY, gamepadAxisName + "_DOWN");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::U))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_U";
+                    std::pair<AxisCompareType, float> leftX(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> rightX(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::U, leftX, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::U, rightX, gamepadAxisName + "_RIGHT");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::R))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_R";
+                    std::pair<AxisCompareType, float> upY(AxisCompareType::LESS, -80);
+                    std::pair<AxisCompareType, float> downY(AxisCompareType::MORE, 80);
+                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::R, upY, gamepadAxisName + "_UP");
+                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::R, downY, gamepadAxisName + "_DOWN");
+                }
+                if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::Z))
+                {
+                    std::string gamepadAxisName = "GP_" + std::to_string(gamepadIndex) + "_AXIS_Z";
+                    std::pair<AxisCompareType, float> leftT(AxisCompareType::MORE, 80);
+                    std::pair<AxisCompareType, float> rightT(AxisCompareType::LESS, -80);
+                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z, leftT, gamepadAxisName + "_LEFT");
+                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z, rightT, gamepadAxisName + "_RIGHT");
+                }
             }
         }
 

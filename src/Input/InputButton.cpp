@@ -5,6 +5,12 @@ namespace obe
 {
     namespace Input
     {
+        std::ostream& operator<<(std::ostream& os, const AxisCompareType& m)
+        {
+            (m == AxisCompareType::LESS) ? os << "LESS" : os << "MORE";
+            return os;
+        }
+
         InputButton::InputButton(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar, InputType type): m_mb()
         {
             m_key = key;
@@ -26,8 +32,18 @@ namespace obe
             m_gamepadIndex = gamepadIndex;
             m_gamepadButtonIndex = buttonIndex;
             m_returnChar = "";
-            m_type = InputType::Gamepad;
+            m_type = InputType::GamepadButton;
             m_name = name;
+        }
+
+        InputButton::InputButton(unsigned gamepadIndex, sf::Joystick::Axis gamepadAxis, std::pair<AxisCompareType, float> detect, const std::string& name)
+        {
+            m_gamepadIndex = gamepadIndex;
+            m_type = InputType::GamepadAxis;
+            m_gamepadAxis = gamepadAxis;
+            m_returnChar = "";
+            m_name = name;
+            m_detectAxis = detect;
         }
 
         sf::Keyboard::Key InputButton::getKey() const
@@ -59,8 +75,14 @@ namespace obe
         {
             if (m_type == InputType::Mouse)
                 return sf::Mouse::isButtonPressed(m_mb);
-            if (m_type == InputType::Gamepad)
+            if (m_type == InputType::GamepadButton)
                 return sf::Joystick::isButtonPressed(m_gamepadIndex, m_gamepadButtonIndex);
+            if (m_type == InputType::GamepadAxis)
+            {
+                float axisValue = sf::Joystick::getAxisPosition(m_gamepadIndex, m_gamepadAxis);
+                return (m_detectAxis.first == AxisCompareType::LESS) ? axisValue < m_detectAxis.second : axisValue > m_detectAxis.second;
+            }
+                
             return sf::Keyboard::isKeyPressed(m_key);
         }
     }

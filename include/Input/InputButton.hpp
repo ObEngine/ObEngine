@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
@@ -11,6 +12,14 @@ namespace obe
 {
     namespace Input
     {
+        enum class AxisCompareType
+        {
+            LESS,
+            MORE
+        };
+
+        std::ostream& operator<<(std::ostream& os, const AxisCompareType& m);
+
         /**
         * \brief Class that does represent an Input button
         * @Bind
@@ -18,13 +27,15 @@ namespace obe
         class InputButton
         {
         private:
+            std::string m_name;
             sf::Keyboard::Key m_key;
             sf::Mouse::Button m_mb;
-            std::string m_name;
+            unsigned int m_gamepadButtonIndex;
+            sf::Joystick::Axis m_gamepadAxis;
+            std::pair<AxisCompareType, float> m_detectAxis;
             std::string m_returnChar;
             InputType m_type;
             unsigned int m_gamepadIndex;
-            unsigned int m_gamepadButtonIndex;
         public:
             /**
             * \brief Creates a new InputButton representing a Keyboard key
@@ -44,8 +55,16 @@ namespace obe
              * \brief Creates a new InputButton representing a Gamepad Button
              * \param gamepadIndex Index of the gamepad
              * \param buttonIndex Index of the button of the gamepad
+             * \param name Name of the Gameepad Button
              */
             InputButton(unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name);
+            /**
+            * \brief Creates a new InputButton representing a Gamepad Axis
+            * \param gamepadIndex Index of the gamepad
+            * \param gamepadAxis Enum value of the Gamepad Axis
+            * \param name Name of the Gamepad Axis
+            */
+            InputButton(unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis, std::pair<AxisCompareType, float> detect, const std::string& name);
             /**
             * \brief Get the SFML Keyboard Key
             * \return SFML Keyboard Key
