@@ -42,13 +42,7 @@ namespace obe
                     .addFunction("getKey", &Input::InputButton::getKey)
                     .addFunction("getName", &Input::InputButton::getName)
                     .addFunction("getType", &Input::InputButton::getType)
-                    .addFunction("isAlpha", &Input::InputButton::isAlpha)
-                    .addFunction("isAlphaNumeric", &Input::InputButton::isAlphaNumeric)
-                    .addFunction("isArrow", &Input::InputButton::isArrow)
-                    .addFunction("isFunction", &Input::InputButton::isFunction)
-                    .addFunction("isNumeric", &Input::InputButton::isNumeric)
-                    .addFunction("isNumericNP", &Input::InputButton::isNumericNP)
-                    .addFunction("isOther", &Input::InputButton::isOther)
+                    .addFunction("is", &Input::InputButton::is)
                     .addFunction("isPressed", &Input::InputButton::isPressed)
                     .addFunction("isWritable", &Input::InputButton::isWritable)
                 );
@@ -114,6 +108,8 @@ namespace obe
                     static_cast<Input::InputButtonMonitorPtr(*)(const std::string&)>(Input::Monitors::Monitor),
                     static_cast<Input::InputButtonMonitorPtr(*)(Input::InputButton*)>(Input::Monitors::Monitor));
                 (*lua)["Core"]["Input"]["InitKeyList"] = kaguya::function(Input::InitKeyList);
+                (*lua)["Core"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
+                (*lua)["Core"]["Input"]["GetAllPressedButtons"] = kaguya::function(Input::GetAllPressedButtons);
                 (*lua)["Core"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
             }
             

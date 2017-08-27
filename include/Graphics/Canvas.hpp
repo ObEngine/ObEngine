@@ -34,7 +34,7 @@ namespace obe
              * \brief Abstract update method
              * \param state Lua VM to update
              */
-            virtual void update(kaguya::State* state) = 0;
+            virtual void update() = 0;
         };
 
         /**
@@ -65,7 +65,7 @@ namespace obe
              * \brief Updates the Configurable
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -90,7 +90,7 @@ namespace obe
              * \brief Updates the Drawable
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -115,7 +115,7 @@ namespace obe
              * \brief Updates the Colorable
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -143,7 +143,7 @@ namespace obe
              * \brief Updates the Transformable
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -166,7 +166,7 @@ namespace obe
              * \brief Updates the CanvasElement
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -194,7 +194,7 @@ namespace obe
              * \brief Updates the Line
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -217,7 +217,7 @@ namespace obe
              * \brief Updates the Rectangle
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -244,7 +244,7 @@ namespace obe
              * \brief Updates the Text
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -269,7 +269,7 @@ namespace obe
              * \brief Updates the Circle
              * \param state Lua VM to update
              */
-            void update(kaguya::State* state) override;
+            void update() override;
         };
 
         /**
@@ -278,7 +278,6 @@ namespace obe
         class Canvas
         {
         private:
-            kaguya::State* m_state;
             LevelSprite* m_target;
             sf::RenderTexture m_canvas;
             std::map<std::string, CanvasElement*> elements;
@@ -289,7 +288,7 @@ namespace obe
              * \param width Width of the Canvas (in pixels)
              * \param height Height of the Canvas (in pixels)
              */
-            Canvas(kaguya::State* state, unsigned int width, unsigned int height);
+            Canvas(unsigned int width, unsigned int height);
 
             /**
              * \brief Adds a new Line to the Canvas

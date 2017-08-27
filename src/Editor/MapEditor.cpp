@@ -23,6 +23,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/MathUtils.hpp>
+#include "Input/KeyList.hpp"
 
 namespace obe
 {
@@ -436,6 +437,12 @@ namespace obe
                     {
                     case sf::Event::Closed:
                         window.close();
+                        break;
+                    case sf::Event::JoystickConnected:
+                        Input::SetGamepadList();
+                        break;
+                    case sf::Event::JoystickDisconnected:
+                        Input::SetGamepadList();
                         break;
                     case sf::Event::TextEntered:
                         if (gameConsole.isVisible())

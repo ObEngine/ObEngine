@@ -21,6 +21,7 @@ namespace obe
         private:
             std::string m_levelName = "";
             std::string m_baseFolder = "";
+            std::string m_futureLoad = "";
             Camera m_camera;
             bool m_cameraLocked = true;
             Transform::UnitVector m_cameraInitialPosition;
@@ -51,6 +52,11 @@ namespace obe
              * \param filename Name of the file located in Data/Maps (using System::Loaders)
              */
             void loadFromFile(const std::string& filename);
+            /**
+             * \brief Same that loadFromFile excepts the map will load at the next update
+             * \param filename Name of the file located in Data/Maps (using System::Loaders)
+             */
+            void setFutureLoadFromFile(const std::string& filename);
             /**
              * \brief Removes all elements in the Scene
              */

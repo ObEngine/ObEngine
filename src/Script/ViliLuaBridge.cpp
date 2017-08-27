@@ -67,12 +67,19 @@ namespace obe
 
             void arrayNodeToLuaTable(kaguya::LuaTable& target, vili::ArrayNode* convert)
             {
-                kaguya::LuaTable injectList;
+                target[convert->getId()] = kaguya::NewTable();
+                kaguya::LuaTable mTable = target[convert->getId()];
                 for (int i = 0; i < convert->size(); i++)
                 {
-                    injectList[i] = &convert->get(i);
+                    if (convert->get(i).getDataType() == vili::DataType::Int)
+                        mTable[i + 1] = convert->get(i).get<int>();
+                    else if (convert->get(i).getDataType() == vili::DataType::String)
+                        mTable[i + 1] = convert->get(i).get<std::string>();
+                    else if (convert->get(i).getDataType() == vili::DataType::Bool)
+                        mTable[i + 1] = convert->get(i).get<bool>();
+                    else if (convert->get(i).getDataType() == vili::DataType::Float)
+                        mTable[i + 1] = convert->get(i).get<double>();
                 }
-                target[convert->getId()] = injectList;
             }
 
             vili::ComplexNode* luaTableToComplexNode(const std::string& id, kaguya::LuaRef& convert)

@@ -1,4 +1,5 @@
 #include <Graphics/Canvas.hpp>
+#include <Script/GlobalState.hpp>
 
 namespace obe
 {
@@ -15,22 +16,23 @@ namespace obe
             requires.push_back({"layer", "1"});
         }
 
-        void Drawable::update(kaguya::State* state)
+        void Drawable::update()
         {
-            Configurable::update(state);
+            Configurable::update();
             m_layer = m_tableWrapper["layer"];
         }
 
         Colorable::Colorable(const std::string& id) : Drawable(id), Configurable(id), Element(id)
         {
-            requires.insert(requires.end(), {
-                                {"color", "{ r = 255, g = 255, b = 255, a = 255}"}
-                            });
+            requires.insert(requires.end(), 
+            {
+                {"color", "{ r = 255, g = 255, b = 255, a = 255}"}
+            });
         }
 
-        void Colorable::update(kaguya::State* state)
+        void Colorable::update()
         {
-            Drawable::update(state);
+            Drawable::update();
             m_color = sf::Color(m_tableWrapper["color"]["r"],
                                 m_tableWrapper["color"]["g"],
                                 m_tableWrapper["color"]["b"],
@@ -39,19 +41,20 @@ namespace obe
 
         Transformable::Transformable(const std::string& id) : Element(id), Configurable(id)
         {
-            requires.insert(requires.end(), {
-                                {"x", "0"},
-                                {"y", "0"},
-                                {"width", "0"},
-                                {"height", "0"},
-                                {"rotation", "0"},
-                                {"origin", "{ translation = { x = 0, y = 0 }, rotation = { x = 0, y = 0 }}"}
-                            });
+            requires.insert(requires.end(),
+            {
+                {"x", "0"},
+                {"y", "0"},
+                {"width", "0"},
+                {"height", "0"},
+                {"rotation", "0"},
+                {"origin", "{ translation = { x = 0, y = 0 }, rotation = { x = 0, y = 0 }}"}
+            });
         }
 
-        void Transformable::update(kaguya::State* state)
+        void Transformable::update()
         {
-            Configurable::update(state);
+            Configurable::update();
             m_x = m_tableWrapper["x"];
             m_y = m_tableWrapper["y"];
             m_width = m_tableWrapper["width"];
@@ -79,26 +82,27 @@ namespace obe
             return m_tableWrapper;
         }
 
-        void Configurable::update(kaguya::State* state)
+        void Configurable::update()
         {
-            (*state)["Core"]["Canvas"]["DefaultValues"](m_tableWrapper, requires);
+            Script::ScriptEngine["Core"]["Canvas"]["DefaultValues"](m_tableWrapper, requires);
         }
 
         CanvasElement::CanvasElement(const std::string& id) : Drawable(id), Configurable(id), Element(id)
         {
         }
 
-        void CanvasElement::update(kaguya::State* state)
+        void CanvasElement::update()
         {
-            Drawable::update(state);
+            Drawable::update();
         }
 
         Line::Line(const std::string& id) : CanvasElement(id), Drawable(id), Colorable(id), Configurable(id), Element(id)
         {
-            requires.insert(requires.end(), {
-                                {"x1", "0"},{"y1", "0"},
-                                {"x2", "0"},{"y2", "0"}
-                            });
+            requires.insert(requires.end(), 
+            {
+                {"x1", "0"},{"y1", "0"},
+                {"x2", "0"},{"y2", "0"}
+            });
         }
 
         void Line::draw(sf::RenderTexture& target) const
@@ -111,9 +115,9 @@ namespace obe
             target.draw(line, 2, sf::Lines);
         }
 
-        void Line::update(kaguya::State* state)
+        void Line::update()
         {
-            Colorable::update(state);
+            Colorable::update();
 
             m_x1 = m_tableWrapper["x1"];
             m_y1 = m_tableWrapper["y1"];
@@ -133,17 +137,18 @@ namespace obe
             target.draw(rectangle);
         }
 
-        void Rectangle::update(kaguya::State* state)
+        void Rectangle::update()
         {
-            Transformable::update(state);
-            Colorable::update(state);
+            Transformable::update();
+            Colorable::update();
         }
 
         Text::Text(const std::string& id) : CanvasElement(id), Transformable(id), Drawable(id), Colorable(id), Configurable(id), Element(id)
         {
-            requires.insert(requires.end(), {
-                                {"text", "\"\""},{"font", "\"arial.ttf\""},{"size", "12"}
-                            });
+            requires.insert(requires.end(), 
+            {
+                {"text", "\"\""},{"font", "\"arial.ttf\""},{"size", "12"}
+            });
         }
 
         void Text::draw(sf::RenderTexture& target) const
@@ -156,10 +161,10 @@ namespace obe
             target.draw(text);
         }
 
-        void Text::update(kaguya::State* state)
+        void Text::update()
         {
-            Transformable::update(state);
-            Colorable::update(state);
+            Transformable::update();
+            Colorable::update();
 
             m_font = static_cast<const char*>(m_tableWrapper["font"]);
             m_text = static_cast<const char*>(m_tableWrapper["text"]);
@@ -181,19 +186,17 @@ namespace obe
             target.draw(circle);
         }
 
-        void Circle::update(kaguya::State* state)
+        void Circle::update()
         {
-            Transformable::update(state);
-            Colorable::update(state);
+            Transformable::update();
+            Colorable::update();
 
             m_radius = m_tableWrapper["radius"];
         }
 
-        Canvas::Canvas(kaguya::State* state, unsigned int width, unsigned int height)
+        Canvas::Canvas(unsigned int width, unsigned int height)
         {
-            m_state = state;
             m_canvas.create(width, height);
-            m_state->dofile("Lib/Internal/CanvasConfig.lua");
         }
 
         Line* Canvas::line(const std::string& id)
@@ -239,7 +242,7 @@ namespace obe
             m_canvas.clear(sf::Color(0, 0, 0, 0));
             for (auto& element : elements)
             {
-                element.second->update(m_state);
+                element.second->update();
                 element.second->draw(m_canvas);
             }
             m_canvas.display();

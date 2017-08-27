@@ -22,6 +22,13 @@ namespace obe
             }
         }
 
+        void LevelSprite::useTextureSize()
+        {
+            sf::Vector2u textureSize = this->getTexture().getSize();
+            Transform::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Transform::Units::WorldPixels);
+            this->setSize(initialSpriteSize);
+        }
+
         void LevelSprite::load(const std::string& path)
         {
             if (path != "")

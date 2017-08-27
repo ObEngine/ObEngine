@@ -4,6 +4,7 @@
 #include <System/Package.hpp>
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
+#include <Transform/UnitVector.hpp>
 
 namespace obe
 {
@@ -11,6 +12,33 @@ namespace obe
     {
         namespace SystemBindings
         {
+
+            std::string getOsName()
+            {
+                #ifdef _WIN32
+                return "Windows 32-bit";
+                #elif _WIN64
+                return "Windows 64-bit";
+                #elif __unix || __unix__
+                return "Unix";
+                #elif __APPLE__ || __MACH__
+                return "Mac OSX";
+                #elif __linux__
+                return "Linux";
+                #elif __FreeBSD__
+                return "FreeBSD";
+                #else
+                return "Other";
+                #endif
+            }
+            void LoadSystemConstants(kaguya::State* lua)
+            {
+                (*lua)["Core"]["System"]["OS"] = getOsName();
+                (*lua)["Core"]["System"]["Screen"] = kaguya::NewTable();
+                (*lua)["Core"]["System"]["Screen"]["Width"] = Transform::UnitVector::Screen.w;
+                (*lua)["Core"]["System"]["Screen"]["Height"] = Transform::UnitVector::Screen.h;
+            }
+
             void LoadSCursor(kaguya::State* lua)
             {
                 (*lua)["Core"]["System"]["Cursor"].setClass(kaguya::UserdataMetatable<System::Cursor>()
@@ -41,6 +69,7 @@ namespace obe
                     .addStaticFunction("Mount", &System::Path::Mount)
                     .addStaticFunction("Paths", &System::Path::Paths)
                     .addFunction("add", &System::Path::add)
+                    .addFunction("find", &System::Path::find)
                     .addFunction("getPath", &System::Path::getPath)
                     .addFunction("last", &System::Path::last)
                     .addFunction("toString", &System::Path::toString)

@@ -18,17 +18,74 @@ namespace obe
                 );
             }
 
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_getPosition_proxy, Transform::Rect, getPosition, 0, 1, Transform::UnitVector(Transform::Rect::*)(Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_getX_proxy, Transform::Rect, getX, 0, 1, double(Transform::Rect::*)(Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_getY_proxy, Transform::Rect, getY, 0, 1, double(Transform::Rect::*)(Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_movePoint_uv_proxy, Transform::Rect, movePoint, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_movePoint_dd_proxy, Transform::Rect, movePoint, 2, 3, void(Transform::Rect::*)(double, double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_scale_uv_proxy, Transform::Rect, scale, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_scale_dd_proxy, Transform::Rect, scale, 2, 3, void(Transform::Rect::*)(double, double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setHeight_proxy, Transform::Rect, setHeight, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPointPosition_uv_proxy, Transform::Rect, setPointPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPointPosition_dd_proxy, Transform::Rect, setPointPosition, 2, 3, void(Transform::Rect::*)(double, double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPosition_uv_proxy, Transform::Rect, setPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPosition_dd_proxy, Transform::Rect, setPosition, 2, 3, void(Transform::Rect::*)(double, double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPointX_proxy, Transform::Rect, setPointX, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setPointY_proxy, Transform::Rect, setPointY, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setWidth_proxy, Transform::Rect, setWidth, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setSize_uv_proxy, Transform::Rect, setSize, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setSize_dd_proxy, Transform::Rect, setSize, 2, 3, void(Transform::Rect::*)(double, double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setX_proxy, Transform::Rect, setX, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
+                Rect_setY_proxy, Transform::Rect, setY, 1, 2, void(Transform::Rect::*)(double, Transform::Referencial)
+            );
             void LoadRect(kaguya::State* lua)
             {
                 (*lua)["Core"]["Transform"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect>()
                     .addFunction("display", &Transform::Rect::display)
                     .addFunction("getHeight", &Transform::Rect::getHeight)
-                    .addFunction("getPosition", &Transform::Rect::getPosition)
+                    .addFunction("getPosition", Rect_getPosition_proxy())
                     .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
                     .addFunction("getSize", &Transform::Rect::getSize)
                     .addFunction("getWidth", &Transform::Rect::getWidth)
-                    .addFunction("getX", &Transform::Rect::getX)
-                    .addFunction("getY", &Transform::Rect::getY)
+                    .addFunction("getX", Rect_getX_proxy())
+                    .addFunction("getY", Rect_getY_proxy())
                     .addFunction("intersects", &Transform::Rect::intersects)
                     .addOverloadedFunctions("move",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&)>(&Transform::Rect::move),
@@ -36,30 +93,40 @@ namespace obe
                     )
                     .addOverloadedFunctions("movePoint",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::movePoint),
-                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::movePoint)
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::movePoint),
+                        Rect_movePoint_uv_proxy(),
+                        Rect_movePoint_dd_proxy()
                     )
                     .addOverloadedFunctions("scale",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::scale),
-                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::scale)
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::scale),
+                        Rect_scale_uv_proxy(),
+                        Rect_scale_dd_proxy()
                     )
-                    .addFunction("setHeight", &Transform::Rect::setHeight)
+                    .addFunction("setHeight", Rect_setHeight_proxy())
                     .addOverloadedFunctions("setPointPosition",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setPointPosition),
-                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPointPosition)
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPointPosition),
+                        Rect_setPointPosition_uv_proxy(),
+                        Rect_setPointPosition_dd_proxy()
                     )
-                    .addFunction("setPointX", &Transform::Rect::setPointX)
-                    .addFunction("setPointY", &Transform::Rect::setPointY)
+                    .addFunction("setPointX", Rect_setPointX_proxy())
+                    .addFunction("setPointY", Rect_setPointY_proxy())
                     .addOverloadedFunctions("setPosition",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setPosition),
-                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPosition)
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setPosition),
+                        Rect_setPosition_uv_proxy(),
+                        Rect_setPosition_dd_proxy()
                     )
                     .addOverloadedFunctions("setSize",
                         static_cast<void (Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)>(&Transform::Rect::setSize),
-                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setSize)
+                        static_cast<void (Transform::Rect::*)(double, double, Transform::Referencial)>(&Transform::Rect::setSize),
+                        Rect_setSize_uv_proxy(),
+                        Rect_setSize_dd_proxy()
                     )
-                    .addFunction("setWidth", &Transform::Rect::setWidth)
-                    .addFunction("setX", &Transform::Rect::setX)
-                    .addFunction("setY", &Transform::Rect::setY)
+                    .addFunction("setWidth", Rect_setWidth_proxy())
+                    .addFunction("setX", Rect_setX_proxy())
+                    .addFunction("setY", Rect_setY_proxy())
                     .addFunction("transformRef", &Transform::Rect::transformRef)
                 );
             }

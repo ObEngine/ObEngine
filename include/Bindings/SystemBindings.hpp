@@ -11,6 +11,7 @@ namespace obe
         */
         namespace SystemBindings
         {
+            void LoadSystemConstants(kaguya::State* lua);
             void LoadSCursor(kaguya::State* lua);
             void LoadMountablePath(kaguya::State* lua);
             void LoadPath(kaguya::State* lua);

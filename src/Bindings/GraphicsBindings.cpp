@@ -25,15 +25,15 @@ namespace obe
                 Load(lua, "Core.Transform.Rect");
                 Load(lua, "Core.Types.Identifiable");
                 (*lua)["Core"]["Graphics"]["LevelSprite"].setClass(
-                kaguya::UserdataMetatable<
-                    Graphics::LevelSprite, 
+                    kaguya::UserdataMetatable<
+                    Graphics::LevelSprite,
                     kaguya::MultipleBase<
-                        Transform::UnitBasedObject, 
-                        Types::Selectable, 
-                        Transform::Rect, 
-                        Types::Identifiable
+                    Transform::UnitBasedObject,
+                    Types::Selectable,
+                    Transform::Rect,
+                    Types::Identifiable
                     >
-                >()
+                    >()
                     .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
                     .addFunction("getColor", &Graphics::LevelSprite::getColor)
                     .addFunction("getDrawPosition", &Graphics::LevelSprite::getDrawPosition)
@@ -65,6 +65,7 @@ namespace obe
                     .addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
                     .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
                     .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
+                    .addFunction("useTextureSize", &Graphics::LevelSprite::useTextureSize)
                 );
             }
             void LoadResourceManager(kaguya::State* lua)
@@ -112,7 +113,7 @@ namespace obe
                 );
                 (*lua)["Core"]["Graphics"]["Canvas"]["Canvas"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas>()
-                    .setConstructors<Graphics::Canvas(kaguya::State*, unsigned int, unsigned int)>()
+                    .setConstructors<Graphics::Canvas(unsigned int, unsigned int)>()
                     .addFunction("Line", &Graphics::Canvas::line)
                     .addFunction("Rectangle", &Graphics::Canvas::rectangle)
                     .addFunction("Text", &Graphics::Canvas::text)

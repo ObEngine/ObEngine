@@ -1,9 +1,9 @@
---[[if Core == nil then
+if Core == nil then
     Core = {};
     Core.Canvas = {};
 elseif Core.Canvas == nil then
     Core.Canvas = {};
-end]]--
+end
 
 function Core.Canvas.DefaultValues(self, requires)
     for k, v in pairs(requires) do

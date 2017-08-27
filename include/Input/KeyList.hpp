@@ -15,11 +15,17 @@ namespace obe
          */
         void InitKeyList();
         /**
+         * \brief Initialize (or reinitialize) the list of all gamepad buttons and axis
+         */
+        void SetGamepadList();
+        /**
         * \brief Get a InputButton that is inside the AllKeys Map
         * \param keyId Id of the InputButton to retrieve
         * \return A pointer to the InputButton if found
         * @Bind
         */
         InputButton* GetKey(const std::string& keyId);
+
+        std::vector<InputButton*> GetAllPressedButtons();
     }
 }

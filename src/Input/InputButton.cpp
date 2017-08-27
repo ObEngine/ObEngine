@@ -1,4 +1,5 @@
 #include <Input/InputButton.hpp>
+#include <SFML/Window/Joystick.hpp>
 
 namespace obe
 {
@@ -20,6 +21,15 @@ namespace obe
             m_type = InputType::Mouse;
         }
 
+        InputButton::InputButton(unsigned gamepadIndex, unsigned buttonIndex, const std::string& name)
+        {
+            m_gamepadIndex = gamepadIndex;
+            m_gamepadButtonIndex = buttonIndex;
+            m_returnChar = "";
+            m_type = InputType::Gamepad;
+            m_name = name;
+        }
+
         sf::Keyboard::Key InputButton::getKey() const
         {
             return m_key;
@@ -35,39 +45,9 @@ namespace obe
             return m_type;
         }
 
-        bool InputButton::isAlpha() const
+        bool InputButton::is(InputType inputType) const
         {
-            return (m_type == InputType::Alpha);
-        }
-
-        bool InputButton::isNumeric() const
-        {
-            return (m_type == InputType::Numeric);
-        }
-
-        bool InputButton::isNumericNP() const
-        {
-            return (m_type == InputType::NumericNP);
-        }
-
-        bool InputButton::isAlphaNumeric() const
-        {
-            return (isAlpha() || isNumeric() || isNumericNP());
-        }
-
-        bool InputButton::isArrow() const
-        {
-            return (m_type == InputType::Arrows);
-        }
-
-        bool InputButton::isFunction() const
-        {
-            return (m_type == InputType::Functions);
-        }
-
-        bool InputButton::isOther() const
-        {
-            return (m_type == InputType::Others);
+            return inputType == m_type;
         }
 
         bool InputButton::isWritable() const
@@ -77,10 +57,11 @@ namespace obe
 
         bool InputButton::isPressed() const
         {
-            if (m_type != InputType::Mouse)
-                return sf::Keyboard::isKeyPressed(m_key);
-            else
+            if (m_type == InputType::Mouse)
                 return sf::Mouse::isButtonPressed(m_mb);
+            if (m_type == InputType::Gamepad)
+                return sf::Joystick::isButtonPressed(m_gamepadIndex, m_gamepadButtonIndex);
+            return sf::Keyboard::isKeyPressed(m_key);
         }
     }
 }

@@ -68,6 +68,10 @@ namespace obe
                     .addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
                 );
+                (*lua)["Core"]["Collision"]["ColliderTagType"] = kaguya::NewTable();
+                (*lua)["Core"]["Collision"]["ColliderTagType"]["Accepted"] = Collision::ColliderTagType::Accepted;
+                (*lua)["Core"]["Collision"]["ColliderTagType"]["Rejected"] = Collision::ColliderTagType::Rejected;
+                (*lua)["Core"]["Collision"]["ColliderTagType"]["Tag"] = Collision::ColliderTagType::Tag;
             }
         }
     }

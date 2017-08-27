@@ -38,7 +38,11 @@ namespace obe
             /**
             * \brief Other keys (Symbols etc..)
             */
-            Others
+            Others,
+            /**
+             * \brief All Gamepad buttons
+             */
+            Gamepad
         };
 
         std::ostream& operator<<(std::ostream& os, InputType m);

@@ -9,12 +9,6 @@ namespace obe
 {
     namespace Transform
     {
-        Rect::Rect()
-        {
-            m_position.set(0, 0);
-            m_size.set(1, 1);
-        }
-
         void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;

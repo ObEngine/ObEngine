@@ -83,6 +83,8 @@ namespace obe
              */
             explicit LevelSprite(const std::string& id);
 
+            void useTextureSize();
+
             //Loading
             /**
              * \brief The LevelSprite will load the sf::Texture at the given path

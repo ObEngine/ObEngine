@@ -23,9 +23,11 @@ namespace obe
             std::string m_name;
             std::string m_returnChar;
             InputType m_type;
+            unsigned int m_gamepadIndex;
+            unsigned int m_gamepadButtonIndex;
         public:
             /**
-            * \brief Creates a new KeyClass representing a Keyboard key
+            * \brief Creates a new InputButton representing a Keyboard key
             * \param key SFML Keyboard Key
             * \param name Name of the Key
             * \param returnChar The character printed when the key is pressed
@@ -33,11 +35,17 @@ namespace obe
             */
             InputButton(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar, InputType type);
             /**
-            * \brief Creates a new KeyClass representing a Mouse Button
+            * \brief Creates a new InputButton representing a Mouse Button
             * \param key SFML Mouse Button
             * \param name Name of the Mouse Button
             */
             InputButton(sf::Mouse::Button key, const std::string& name);
+            /**
+             * \brief Creates a new InputButton representing a Gamepad Button
+             * \param gamepadIndex Index of the gamepad
+             * \param buttonIndex Index of the button of the gamepad
+             */
+            InputButton(unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name);
             /**
             * \brief Get the SFML Keyboard Key
             * \return SFML Keyboard Key
@@ -53,42 +61,12 @@ namespace obe
             * \return An enum value from KeyType which is the type of the key
             */
             InputType getType() const;
-            // Type
             /**
-            * \brief Get if the key is a letter
-            * \return true if the key is a letter from the Alphabet (A-Z), false otherwise
-            */
-            bool isAlpha() const;
-            /**
-            * \brief Get if the key is a number
-            * \return true if the key is a number (not from the numpad), false otherwise
-            */
-            bool isNumeric() const;
-            /**
-            * \brief Get if the key is a number from the NumPad
-            * \return true if the key is a number (from the numpad), false otherwise
-            */
-            bool isNumericNP() const;
-            /**
-            * \brief Get if the key is either isAlpha() or isNumeric()
-            * \return true if the key is a number or a letter, false otherwise
-            */
-            bool isAlphaNumeric() const;
-            /**
-            * \brief Get if the key is an arrow key
-            * \return true if the key is an arrow key, false other wise
-            */
-            bool isArrow() const;
-            /**
-            * \brief Get if the key is a function key
-            * \return true if the key is a function key (From F1 to F12 on most keyboards), false otherwise
-            */
-            bool isFunction() const;
-            /**
-            * \brief Get if the key is not any of the type above
-            * \return true if the key is not one of the other type, false otherwise
-            */
-            bool isOther() const;
+             * \brief Equivalent to InputButton::getType() == inputType
+             * \param inputType Type to test the equivalence
+             * \return true if InputButton is of type inputType, false otherwise
+             */
+            bool is(InputType inputType) const;
             // Write
             /**
             * \brief Get if the key prints a writable character

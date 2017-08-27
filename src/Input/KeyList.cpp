@@ -1,6 +1,7 @@
 #include <vili/ErrorHandler.hpp>
 
 #include <Input/KeyList.hpp>
+#include <SFML/Window/Joystick.hpp>
 
 namespace obe
 {
@@ -75,6 +76,8 @@ namespace obe
             AllKeys["F10"] = std::make_unique<InputButton>(sf::Keyboard::F10, "F10", "", InputType::Functions);
             AllKeys["F11"] = std::make_unique<InputButton>(sf::Keyboard::F11, "F11", "", InputType::Functions);
             AllKeys["F12"] = std::make_unique<InputButton>(sf::Keyboard::F12, "F12", "", InputType::Functions);
+            //Gamepad
+            SetGamepadList();
             //Mouse
             AllKeys["LMB"] = std::make_unique<InputButton>(sf::Mouse::Left, "LMB");
             AllKeys["RMB"] = std::make_unique<InputButton>(sf::Mouse::Right, "RMB");
@@ -117,11 +120,51 @@ namespace obe
             AllKeys["Tilde"] = std::make_unique<InputButton>(sf::Keyboard::Tilde, "Tilde", "~", InputType::Others);
         }
 
+        void SetGamepadList()
+        {
+            auto cKey = AllKeys.begin();
+            while (cKey != AllKeys.end()) 
+            {
+                if (cKey->first.rfind("GP_", 0) == 0) 
+                    cKey = AllKeys.erase(cKey);
+                else 
+                    ++cKey;
+            }
+            sf::Joystick::update();
+            std::cout << "STARTING GAMEPAD DETECTION =========================>" << std::endl;
+            for (int i = 0; i < sf::Joystick::Count; i++)
+                std::cout << sf::Joystick::isConnected(i) << std::endl;
+            for (int gamepadIndex = 0; gamepadIndex < sf::Joystick::Count; gamepadIndex++)
+            {
+                std::cout << "Button count : " << sf::Joystick::getButtonCount(gamepadIndex) << std::endl;
+                for (unsigned int buttonIndex = 0; buttonIndex < sf::Joystick::getButtonCount(gamepadIndex); buttonIndex++)
+                {
+                    std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex) + "_Button" + std::to_string(buttonIndex);
+                    std::cout << "========================= > Adding : " << gamepadButtonName << std::endl;
+                    AllKeys[gamepadButtonName] = std::make_unique<InputButton>(gamepadIndex, buttonIndex, gamepadButtonName);
+                }
+
+            }
+        }
+
         InputButton* GetKey(const std::string& keyId)
         {
             if (AllKeys.find(keyId) != AllKeys.end())
                 return AllKeys[keyId].get();
             throw aube::ErrorHandler::Raise("ObEngine.Input.KeyList.UnknownButton", { { "button", keyId } });
+        }
+
+        std::vector<InputButton*> GetAllPressedButtons()
+        {
+            std::vector<InputButton*> allPressedButtons;
+            for (auto& keyIterator : AllKeys)
+            {
+                if (keyIterator.second->isPressed())
+                {
+                    allPressedButtons.push_back(keyIterator.second.get());
+                }
+            }
+            return allPressedButtons;
         }
     }
 }

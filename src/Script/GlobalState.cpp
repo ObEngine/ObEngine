@@ -19,6 +19,7 @@ namespace obe
             Bindings::Load(&ScriptEngine, "SFML");
             Bindings::Load(&ScriptEngine, "Vili");
             ScriptEngine["Hook"] = kaguya::NewTable();
+            ScriptEngine.dofile("Lib/Internal/CanvasConfig.lua");
         }
 
         unsigned int createNewEnvironment()

@@ -160,11 +160,20 @@ namespace obe
             }
         }
 
+        void Scene::setFutureLoadFromFile(const std::string& filename)
+        {
+            m_futureLoad = filename;
+        }
+
         void Scene::clearWorld()
         {
+            for (auto& object : m_gameObjectMap)
+            {
+                object.second->deleteObject();
+            }
+            m_gameObjectMap.clear();
             m_spriteArray.clear();
             m_colliderArray.clear();
-            m_gameObjectMap.clear();
             m_updateObjArray.clear();
             m_scriptArray.clear();
         }
@@ -266,6 +275,12 @@ namespace obe
 
         void Scene::update(double dt)
         {
+            if (m_futureLoad != "")
+            {
+                std::cout << "FUTURE LOAD NOW : " << m_futureLoad << std::endl;
+                this->loadFromFile(m_futureLoad);
+                m_futureLoad.clear();
+            }
             //std::cout << "LevelSprite Array Size (" << m_spriteArray.size() << ")" << std::endl;
             for (auto& sprite : m_spriteArray)
             {

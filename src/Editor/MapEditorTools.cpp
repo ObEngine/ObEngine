@@ -345,9 +345,7 @@ namespace obe
             sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);
             sprToAdd->setRotation(0);
             //ADD SPRITE SIZE
-            sf::Vector2u textureSize = sprToAdd->getTexture().getSize();
-            Transform::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Transform::Units::WorldPixels);
-            sprToAdd->setSize(initialSpriteSize);
+            sprToAdd->useTextureSize();
             sprToAdd->setLayer(1);
             sprToAdd->setZDepth(1);
         }
