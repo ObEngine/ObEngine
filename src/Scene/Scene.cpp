@@ -650,7 +650,6 @@ namespace obe
             (*lua)["CPP_Import"] = &Bindings::Load;
             (*lua)["CPP_Hook"] = &Script::loadHook;
             loadWorldLib(lua);
-            Script::loadScrGameObjectLib(lua);
             (*lua)["This"] = lua;
         }
     };

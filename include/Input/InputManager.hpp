@@ -56,12 +56,21 @@ namespace obe
             * \return A reference to the KeyboardManager (to chain calls)
             */
             InputManager& addContext(const std::string& context);
+            /**
+             * \brief Removes a context in use
+             * \param context Name of the context to remove
+             * \return A reference to the InputManager (to chain calls)
+             */
             InputManager& removeContext(const std::string& context);
             /**
             * \brief Cleans all the contexts and adds a new one
             * \param context Name of the only context to use
             */
             void setContext(const std::string& context);
+            /**
+             * \brief Gets all the contexts currently used by the InputManager
+             * \return A std::vector of std::string containing all the contexts used by the InputManager
+             */
             std::vector<std::string> getContexts();
             /**
             * \brief Enables or disables the KeyboardManager

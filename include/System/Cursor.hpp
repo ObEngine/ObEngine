@@ -11,23 +11,6 @@ namespace obe
     namespace System
     {
         /**
-         * \brief An enum for Mouse buttons (Left-click / Right-click)
-         */
-        enum class MouseButton
-        {
-            Left,
-            Right
-        };
-
-        enum class MouseButtonState
-        {
-            Idle,
-            Hold,
-            Pressed,
-            Released
-        };
-
-        /**
          * \brief A Class to manipulate and display the Cursor in the Engine
          * @Bind
          */

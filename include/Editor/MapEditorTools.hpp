@@ -42,10 +42,39 @@ namespace obe
             static sf::Texture* GetFolderThumbnail(const std::string& path);
         };
 
+        /**
+         * \brief Builds the Editor Object Tab
+         * \param objectPanel TGUI Panel that will contains the Objects Creation Button
+         * \param requiresPanel TGUI Panel used to transmit Init parameters
+         * \param baseTheme TGUI Theme
+         * \param objectsScrollbar Scrollbar of the objectsPanel
+         */
         void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, tgui::Scrollbar::Ptr objectsScrollbar);
+        /**
+         * \brief Builds the RequiresPanel that will transmit Init parameters to the GameObject
+         * \param requiresPanel TGUI Panel used to transmit Init parameters
+         * \param baseTheme TGUI Theme
+         * \param objName Type of GameObject to build
+         */
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName);
+        /**
+         * \brief Builds an Object through Parameters
+         * \param objName Type of GameObject to build
+         * \param requires Vili ComplexNode containing the different parameters
+         */
         void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires);
+        /**
+         * \brief Loads the Sprite Folder
+         * \param spritesPanel TGUI Panel that will contains all Sprite Creation Buttons
+         * \param spritesCatLabel Name of the folder
+         * \param path Path where are the Sprite located
+         * \param spritesScrollbar Scrollbar of spritesPanel
+         */
         void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path, tgui::Scrollbar::Ptr spritesScrollbar);
-        void addSpriteToWorld(std::string geid);
+        /**
+         * \brief Adds a Sprite to the Scene
+         * \param spritePath Path to the image
+         */
+        void addSpriteToScene(const std::string& spritePath);
     }
 }

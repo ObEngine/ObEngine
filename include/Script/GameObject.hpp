@@ -20,14 +20,32 @@ namespace obe
     {
         class GameObject;
 
+        /**
+         * \brief Manages and caches GameObject GODF and Requirements
+         */
         class GameObjectDatabase
         {
         private:
             static vili::ViliParser allRequires;
             static vili::ViliParser allDefinitions;
         public:
+            /**
+             * \brief Gets the Requires ComplexNode of the GameObject
+             * \param type Type of the GameObject to get the Requirements
+             * \return A pointer to the Requires ComplexNode of the GameObject
+             */
             static vili::ComplexNode* GetRequirementsForGameObject(const std::string& type);
+            /**
+             * \brief Gets the ObjectDefintion ComplexNode of the GameObject
+             * \param type Type of the GameObject to get the GODF
+             * \return A pointer to the ObjectDefintion ComplexNode
+             */
             static vili::ComplexNode* GetDefinitionForGameObject(const std::string& type);
+            /**
+             * \brief Applies the Requirements to a GameObject using a Requires ComplexNode
+             * \param obj GameObject to applies the requirements to
+             * \param requires ComplexNode containing the Requirements
+             */
             static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         };
 
@@ -70,7 +88,6 @@ namespace obe
              * \brief Destructor of the GameObject
              */
             ~GameObject();
-
             /**
              * \brief Get the Type of the GameObject
              * \return A std::string containing the type of the GameObject
@@ -111,7 +128,6 @@ namespace obe
              * \param state Should be equal to true if the GameObject must updates, false otherwise
              */
             void setUpdateState(bool state);
-
             /**
              * \brief Gets the Animator Component of the GameObject (Raises ObEngine.Script.GameObject.NoAnimator if no Animator Component)
              * \return A pointer to the Animator Component of the GameObject
@@ -127,7 +143,6 @@ namespace obe
             * \return A pointer to the LevelSprite Component of the GameObject
             */
             Graphics::LevelSprite* getLevelSprite();
-
             /**
              * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
              * \return A pointer to the TriggerGroup of the GameObject
@@ -165,7 +180,6 @@ namespace obe
              * \param value Value of the Parameter
              */
             void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const;
-
             /**
              * \brief Register a Trigger in the GameObject
              * \param trg Pointer to the Trigger
@@ -182,7 +196,6 @@ namespace obe
              * \brief Updates the GameObject
              */
             void update() const;
-
             /**
              * \brief Deletes the GameObject
              */
@@ -192,16 +205,28 @@ namespace obe
              */
             bool deletable = false;
 
+            /**
+             * \brief Access the exposition table of the GameObject
+             * \return A reference to the exposition table of the GameObject
+             */
             kaguya::LuaTable access() const;
+            /**
+             * \brief Gets a reference to the Lua function used to build the GameObject (Local.Init proxy)
+             * \return A reference to the Lua function used to build the GameObject
+             */
             kaguya::LuaFunction getConstructor() const;
 
+            /**
+             * \brief Gets the id (index) of the GameObject Lua environement
+             * \return An unsigned int representing the id (index) of the GameObject Lua environement
+             */
             unsigned int getEnvIndex() const;
 
+            /**
+             * \brief Triggers the GameObject's Local.Init
+             */
             void initialize();
         };
-
-        void loadScrGameObject(GameObject* obj, kaguya::State* lua);
-        void loadScrGameObjectLib(kaguya::State* lua);
 
         template <typename U>
         void GameObject::sendInitArg(const std::string& argName, U value)

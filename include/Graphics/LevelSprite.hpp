@@ -72,7 +72,7 @@ namespace obe
             sf::Texture m_texture;
             sfe::ComplexSprite m_sprite;
             std::string m_parentId = "";
-            PositionTransformers::PositionTransformer m_positionTransformer;
+            PositionTransformer m_positionTransformer;
 
             void applySize();
             void resetUnit(Transform::Units unit) override;
@@ -82,9 +82,10 @@ namespace obe
              * \param id A std::string containing the Id of the LevelSprite
              */
             explicit LevelSprite(const std::string& id);
-
+            /**
+             * \brief Reset internal LevelSprite Rect using texture size
+             */
             void useTextureSize();
-
             //Loading
             /**
              * \brief The LevelSprite will load the sf::Texture at the given path
@@ -97,10 +98,22 @@ namespace obe
              */
             std::string getPath() const;
 
+            /**
+             * \brief Configures the LevelSprite with the given ComplexNode
+             * \param configuration ComplexNode containing all LevelSprite new parameters
+             */
             void configure(vili::ComplexNode& configuration) override;
 
             //Texture
+            /**
+             * \brief Sets the Texture of the LevelSprite
+             * \param texture Texture to set
+             */
             void setTexture(const sf::Texture& texture);
+            /**
+             * \brief Gets a reference to the texture of the LevelSprite
+             * \return A reference to the current texture of the LevelSprite
+             */
             sf::Texture& getTexture();
 
             //Layers
@@ -193,8 +206,16 @@ namespace obe
             int getYScaleFactor() const;
 
             //PositionTransformers
-            void setPositionTransformer(PositionTransformers::PositionTransformer transformer);
-            PositionTransformers::PositionTransformer getPositionTransformer() const;
+            /**
+             * \brief Sets the new Position Transform of the LevelSprite
+             * \param transformer New PositionTransformer of the LevelSprite
+             */
+            void setPositionTransformer(PositionTransformer transformer);
+            /**
+             * \brief Gets the PositionTransformer used by the LevelSprite
+             * \return The PositionTransformer used by the LevelSprite
+             */
+            PositionTransformer getPositionTransformer() const;
 
             //Sprite
             /**

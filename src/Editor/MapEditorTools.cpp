@@ -322,16 +322,15 @@ namespace obe
                     currentSprite->setPosition(xpos, ypos);
                     currentSprite->getRenderer()->setTexture(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
                     currentSprite->setSize(sprSize, sprSize);
-                    currentSprite->connect("pressed", [path, element] { addSpriteToWorld(path + "/" + element); });
+                    currentSprite->connect("pressed", [path, element] { addSpriteToScene(path + "/" + element); });
                 }
             }
 
             spritesScrollbar->setMaximum(ypos + sprSize + yOff + 30);
         }
 
-        void addSpriteToWorld(std::string geid)
+        void addSpriteToScene(const std::string& spritePath)
         {
-            std::cout << "Recv geid : " << geid << std::endl;
             Scene::Scene* world = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
             int i = 0;
             std::string testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i);
@@ -341,7 +340,7 @@ namespace obe
             }
             Graphics::LevelSprite* sprToAdd = world->createLevelSprite(testId);
             Transform::UnitVector pixelCamera = world->getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-            sprToAdd->load("Sprites/LevelSprites/" + geid);
+            sprToAdd->load("Sprites/LevelSprites/" + spritePath);
             sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);
             sprToAdd->setRotation(0);
             //ADD SPRITE SIZE

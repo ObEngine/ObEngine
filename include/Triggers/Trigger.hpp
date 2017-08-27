@@ -39,7 +39,16 @@ namespace obe
              */
             template <typename P>
             void pushParameter(const std::string& name, P parameter);
+            /**
+             * \brief Pushes a parameter on the Trigger from a Lua VM
+             * \param name Name of the Parameter to push
+             * \param parameter Value of the parameter (LuaRef can be anything)
+             */
             void pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter);
+            /**
+             * \brief Gets the Lua Table path used to store Trigger Parameters
+             * \return The path to the Lua Table used to store Trigger Parameters
+             */
             std::string getTriggerLuaTableName() const;
         public:
             /**
@@ -47,7 +56,6 @@ namespace obe
              * \param parent Pointer to the parent TriggerGroup
              * \param name Name of the Trigger
              * \param startState State of the Trigger when created (enabled / disabled)
-             * \param permanent If equals to true, when the Trigger will be enabled it will stay enabled
              */
             explicit Trigger(TriggerGroup* parent, const std::string& name, bool startState = false);
             /**
@@ -75,7 +83,10 @@ namespace obe
              * \param envIndex Index of the Lua Env to register
              */
             void registerEnvironment(unsigned int envIndex, const std::string& callbackName);
-
+            /**
+             * \brief Removes an environment from Trigger Execution
+             * \param envIndex Index of the Lua environment
+             */
             void unregisterEnvironment(unsigned int envIndex);
             /**
              * \brief Triggers callbacks

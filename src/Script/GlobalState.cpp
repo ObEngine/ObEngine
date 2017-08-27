@@ -31,5 +31,10 @@ namespace obe
         {
             ScriptEngine["ExecuteFileOnEnv"](System::Path(file).find(), envIndex);
         }
+
+        void executeString(unsigned envIndex, const std::string& string)
+        {
+            ScriptEngine["ExecuteStringOnEnv"](string, envIndex);
+        }
     }
 }

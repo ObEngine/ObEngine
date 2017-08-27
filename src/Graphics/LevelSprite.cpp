@@ -273,7 +273,7 @@ namespace obe
             this->setSize(spriteSize.x, spriteSize.y);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
             this->setRotation(spriteRot);
-            Graphics::PositionTransformers::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+            Graphics::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
             this->setPositionTransformer(positionTransformer);
             this->setLayer(layer);
             this->setZDepth(zdepth);
@@ -321,12 +321,12 @@ namespace obe
             return obe::Utils::Math::sign(m_sprite.getScale().y);
         }
 
-        void LevelSprite::setPositionTransformer(PositionTransformers::PositionTransformer transformer)
+        void LevelSprite::setPositionTransformer(PositionTransformer transformer)
         {
             m_positionTransformer = transformer;
         }
 
-        PositionTransformers::PositionTransformer LevelSprite::getPositionTransformer() const
+        PositionTransformer LevelSprite::getPositionTransformer() const
         {
             return m_positionTransformer;
         }

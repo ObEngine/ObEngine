@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     vili::ViliParser::StoreInCache("Obe.vili");
 
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
-    Graphics::PositionTransformers::Init();
+    Graphics::InitPositionTransformer();
     Input::InitKeyList();
 
     /*std::ofstream out("debug.log");

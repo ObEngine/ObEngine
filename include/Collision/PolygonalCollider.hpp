@@ -142,6 +142,11 @@ namespace obe
              * \return The index of the Point (or one of its neighboor) that is the closest one of the given Position
              */
             unsigned int findClosestPoint(const Transform::UnitVector& position, bool neighboor = false, std::vector<int> excludedPoints = {});
+            /**
+             * \brief Finds the closest Line from the given Position
+             * \param position Position used to get the closest Line
+             * \return The index of the line that is the closest one of the given Position (Line between point 0 and point 1 is index 0)
+             */
             unsigned int findClosestLine(const Transform::UnitVector& position);
             /**
              * \brief Get all the Points of the Polygon

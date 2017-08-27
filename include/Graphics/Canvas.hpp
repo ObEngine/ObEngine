@@ -32,7 +32,6 @@ namespace obe
             virtual ~Element() = default;
             /**
              * \brief Abstract update method
-             * \param state Lua VM to update
              */
             virtual void update() = 0;
         };
@@ -63,7 +62,6 @@ namespace obe
             kaguya::LuaTable& get();
             /**
              * \brief Updates the Configurable
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -88,7 +86,6 @@ namespace obe
             virtual void draw(sf::RenderTexture& target) const = 0;
             /**
              * \brief Updates the Drawable
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -113,7 +110,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override = 0;
             /**
              * \brief Updates the Colorable
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -141,7 +137,6 @@ namespace obe
             explicit Transformable(const std::string& id);
             /**
              * \brief Updates the Transformable
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -164,7 +159,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override = 0;
             /**
              * \brief Updates the CanvasElement
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -192,7 +186,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override;
             /**
              * \brief Updates the Line
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -215,7 +208,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override;
             /**
              * \brief Updates the Rectangle
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -242,7 +234,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override;
             /**
              * \brief Updates the Text
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -267,7 +258,6 @@ namespace obe
             void draw(sf::RenderTexture& target) const override;
             /**
              * \brief Updates the Circle
-             * \param state Lua VM to update
              */
             void update() override;
         };
@@ -284,7 +274,6 @@ namespace obe
         public:
             /**
              * \brief Creates a new Canvas
-             * \param state Lua VM connected to the Canvas
              * \param width Width of the Canvas (in pixels)
              * \param height Height of the Canvas (in pixels)
              */

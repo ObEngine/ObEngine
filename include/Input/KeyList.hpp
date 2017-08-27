@@ -26,6 +26,10 @@ namespace obe
         */
         InputButton* GetKey(const std::string& keyId);
 
+        /**
+         * \brief Return all currently pressed InputButton in a std::vector
+         * \return Returns a std::vector of InputButton pointers being currently pressed
+         */
         std::vector<InputButton*> GetAllPressedButtons();
     }
 }

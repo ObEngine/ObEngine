@@ -40,32 +40,6 @@ namespace obe
             return GAMEOBJECTENV["ObjectInit"];
         }
 
-        void loadScrGameObject(GameObject* obj, kaguya::State* lua)
-        {
-            //(*lua)["CPP_Import"] = &loadLibBridge;
-            //(*lua)["CPP_Hook"] = &loadHookBridge;
-            loadScrGameObjectLib(lua);
-            (*lua)["This"] = obj;
-        }
-
-        void loadScrGameObjectLib(kaguya::State* lua)
-        {
-            Bindings::Load(lua, "Core.Types.Identifiable");
-            (*lua)["CPP_GameObject"].setClass(kaguya::UserdataMetatable<GameObject, Types::Identifiable>()
-                .addFunction("LevelSprite", &GameObject::getLevelSprite)
-                .addFunction("Collider", &GameObject::getCollider)
-                .addFunction("Animator", &GameObject::getAnimator)
-                .addFunction("delete", &GameObject::deleteObject)
-                .addFunction("exec", &GameObject::exec)
-                //.addFunction("getPriority", &GameObject::getPriority)
-                .addFunction("getPublicKey", &GameObject::getPublicKey)
-                .addFunction("sendInitArg", &GameObject::sendInitArgFromLua)
-                .addFunction("useLocalTrigger", &GameObject::useLocalTrigger)
-                .addFunction("useExternalTrigger", useExternalTriggerProxy())
-                //.addFunction("access", &GameObject::access)
-            );
-        }
-
         vili::ViliParser GameObjectDatabase::allDefinitions;
         vili::ViliParser GameObjectDatabase::allRequires;
         vili::ComplexNode* GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
@@ -286,7 +260,8 @@ namespace obe
                 {
                     if (m_hasAnimator)
                     {
-                        m_objectAnimator->update();
+                        if (m_objectAnimator->getKey() != "")
+                            m_objectAnimator->update();
                         if (m_hasLevelSprite)
                         {
                             m_objectLevelSprite->setTexture(m_objectAnimator->getTexture());

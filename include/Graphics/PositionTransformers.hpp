@@ -10,33 +10,61 @@ namespace obe
 {
     namespace Graphics
     {
-        namespace PositionTransformers
+        using CoordinateTransformer = std::function<double(double position, double camera, int layer)>;
+
+        void InitPositionTransformer();
+
+        extern std::map<std::string, CoordinateTransformer> Transformers;
+        extern CoordinateTransformer Parallax;
+        extern CoordinateTransformer Camera;
+        extern CoordinateTransformer Position;
+
+        class PositionTransformer
         {
-            using CoordinateTransformer = std::function<double(double position, double camera, int layer)>;
-
-            void Init();
-
-            extern std::map<std::string, CoordinateTransformer> Transformers;
-            extern CoordinateTransformer Parallax;
-            extern CoordinateTransformer Camera;
-            extern CoordinateTransformer Position;
-
-            class PositionTransformer
-            {
-            private:
-                std::string m_xTransformerName = "Camera";
-                std::string m_yTransformerName = "Camera";
-                CoordinateTransformer m_xTransformer;
-                CoordinateTransformer m_yTransformer;
-            public:
-                PositionTransformer();
-                PositionTransformer(const std::string& xTransformer, const std::string& yTransformer);
-                Transform::UnitVector operator()(Transform::UnitVector& position, Transform::UnitVector& camera, int layer) const;
-                CoordinateTransformer& getXTransformer();
-                CoordinateTransformer& getYTransformer();
-                std::string getXTransformerName() const;
-                std::string getYTransformerName() const;
-            };
+        private:
+            std::string m_xTransformerName = "Camera";
+            std::string m_yTransformerName = "Camera";
+            CoordinateTransformer m_xTransformer;
+            CoordinateTransformer m_yTransformer;
+        public:
+            /**
+            * \brief Default PositionTransformer constructor
+            */
+            PositionTransformer();
+            /**
+             * \brief Non-Default PositionTransformer constructor
+             * \param xTransformer Name of the Transformer the x Coordinate should use
+             * \param yTransformer Name of the Transformer the y Coordinate should use
+             */
+            PositionTransformer(const std::string& xTransformer, const std::string& yTransformer);
+            /**
+             * \brief Method used by the LevelSprite to get the Position once transformed
+             * \param position Base Position of the element
+             * \param camera Position of the Camera
+             * \param layer Layer of the element
+             * \return The new transformer position
+             */
+            Transform::UnitVector operator()(Transform::UnitVector& position, Transform::UnitVector& camera, int layer) const;
+            /**
+             * \brief Gets the CoordinateTransformer of x Coordinate
+             * \return The CoordinateTransformer of x Coordinate
+             */
+            CoordinateTransformer& getXTransformer();
+            /**
+             * \brief Gets the CoordinateTransformer of y Coordinate
+             * \return The CoordinateTransformer of y Coordinate
+             */
+            CoordinateTransformer& getYTransformer();
+            /**
+             * \brief Gets the name of the CoordinateTransformer of x Coordinate
+             * \return The name of the CoordinateTransformer of x Coordinate in a std::string
+             */
+            std::string getXTransformerName() const;
+            /**
+            * \brief Gets the name of the CoordinateTransformer of y Coordinate
+            * \return The name of the CoordinateTransformer of y Coordinate in a std::string
+            */
+            std::string getYTransformerName() const;
         };
     }
 }

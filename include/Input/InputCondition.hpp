@@ -45,6 +45,9 @@ namespace obe
              * \return true if the InputCondition is fulfilled, false otherwise
              */
             bool check() const;
+            /**
+             * \brief Clears the InputCondition
+             */
             void clear();
         };
     }

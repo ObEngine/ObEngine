@@ -34,7 +34,7 @@ namespace obe
             std::cout << "<System> Creating window with resolution " << Transform::UnitVector::Screen.w << "x" << Transform::UnitVector::Screen.h << std::endl;
             
             //Creating Window
-            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
+            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine");
             window.setKeyRepeatEnabled(false);
             sf::Texture loadingTexture;
             loadingTexture.loadFromFile("Sprites/Menus/loading.png");
@@ -437,6 +437,11 @@ namespace obe
                     {
                     case sf::Event::Closed:
                         window.close();
+                        break;
+                    case sf::Event::Resized:
+                        Transform::UnitVector::Screen.w = event.size.width;
+                        Transform::UnitVector::Screen.h = event.size.height;
+                        window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                         break;
                     case sf::Event::JoystickConnected:
                         Input::SetGamepadList();

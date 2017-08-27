@@ -41,7 +41,11 @@ namespace obe
             Scene::Scene& world, 
             double& waitForMapSaving, 
             tgui::Label::Ptr savedLabel);
-
+        /**
+         * \brief Connects Console's related Triggers
+         * \param inputManager Reference to the InputManager
+         * \param gameConsole Reference to the Game Console
+         */
         void connectGameConsoleActions(
             Input::InputManager& inputManager,
             Debug::Console& gameConsole

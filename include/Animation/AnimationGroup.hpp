@@ -53,6 +53,10 @@ namespace obe
             int m_loopAmount = 0;
 
         public:
+            /**
+             * \brief Default AnimationGroup constructor
+             * \param groupName Name of the AnimationGroup
+             */
             explicit AnimationGroup(const std::string& groupName);
             /**
              * \brief Initialize animation (Set image at index 0)
