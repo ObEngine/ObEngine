@@ -20,6 +20,11 @@ namespace obe
             m_combinations.push_back(condition);
         }
 
+        void InputAction::clearConditions()
+        {
+            m_combinations.clear();
+        }
+
         void InputAction::connect(ActionCallback callback)
         {
             m_callback = callback;

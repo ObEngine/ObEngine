@@ -35,6 +35,12 @@ namespace obe
                     std::vector<std::string> stateAndButton = Utils::String::split(element, ":");
                     if (stateAndButton.size() == 1 || stateAndButton.size() == 2)
                     {
+                        if (stateAndButton.size() == 1)
+                        {
+                            stateAndButton.push_back(stateAndButton[0]);
+                            stateAndButton[0] = "Pressed";
+                        }
+                            
                         if (Utils::Vector::isInList(stateAndButton[0], { "Idle", "Hold", "Pressed", "Released" }))
                         {
                             std::vector<std::string> stateList = Utils::String::split(stateAndButton[0], ",");
@@ -50,7 +56,10 @@ namespace obe
                                 InputButtonMonitorPtr monitor = Monitors::Monitor(button);
 
                                 if (!isKeyAlreadyInCombination(button))
+                                {
+                                    m_enabled = true;
                                     m_triggerConditions.emplace_back(monitor, buttonStates);
+                                }
                                 else
                                 {
                                     throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonAlreadyInCombination", { { "button", button->getName() } });
@@ -61,10 +70,10 @@ namespace obe
                                 throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonNotFound", { { "button", keyId } });
                             }
                         }
-                    }
-                    else
-                    {
-                        throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.UnknownState", { { "state", stateAndButton[0] } });
+                        else
+                        {
+                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.UnknownState", { { "state", stateAndButton[0] } });
+                        }
                     }
                 }
             }
@@ -82,6 +91,8 @@ namespace obe
 
         bool InputCondition::check() const
         {
+            if (!m_enabled)
+                return false;
             bool conditionOk = true;
             for (const InputCombinationElement& element : m_triggerConditions)
             {
@@ -92,6 +103,12 @@ namespace obe
                 }
             }
             return conditionOk;
+        }
+
+        void InputCondition::clear()
+        {
+            m_triggerConditions.clear();
+            m_enabled = false;
         }
     }
 }

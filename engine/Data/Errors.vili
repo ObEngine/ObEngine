@@ -185,7 +185,7 @@ ObEngine:
         TriggerGroup:
             where:"TriggerGroup"
             UnknownTrigger:
-                where:"getTrigger"
+                where:"%function%"
                 message:"Trigger %trigger% does not exists in TriggerGroup %group%"
         TriggerDatabase:
             where:"TriggerDatabase"

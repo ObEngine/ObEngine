@@ -20,6 +20,7 @@ namespace obe
         class InputCondition
         {
         private:
+            bool m_enabled = false;
             InputCombination m_triggerConditions;
             bool isKeyAlreadyInCombination(InputButton* button);
         public:
@@ -44,6 +45,7 @@ namespace obe
              * \return true if the InputCondition is fulfilled, false otherwise
              */
             bool check() const;
+            void clear();
         };
     }
 }

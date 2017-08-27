@@ -26,6 +26,15 @@ namespace obe
             return this;
         }
 
+        TriggerGroup* TriggerGroup::removeTrigger(const std::string& triggerName)
+        {
+            if (m_triggerMap.find(triggerName) != m_triggerMap.end())
+                m_triggerMap.erase(triggerName);
+            else
+                throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", { {"function", "removeTrigger"}, {"trigger", triggerName}, {"group", m_name} });
+            return this;
+        }
+
         TriggerGroup* TriggerGroup::delayTriggerState(const std::string& triggerName, Time::TimeUnit delay)
         {
             m_delayedTriggers.push_back(std::make_unique<TriggerDelay>(getTrigger(triggerName), delay));

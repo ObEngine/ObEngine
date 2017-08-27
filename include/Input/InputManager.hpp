@@ -43,6 +43,10 @@ namespace obe
             */
             bool actionExists(const std::string& actionId);
             /**
+             * \brief Clears all Actions
+             */
+            void clear();
+            /**
             * \brief Clear all contexts the KeyboardManager is using
             */
             void clearContexts();

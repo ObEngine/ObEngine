@@ -50,6 +50,12 @@ namespace obe
              */
             TriggerGroup* addTrigger(const std::string& triggerName);
             /**
+             * \brief Removes a Trigger from the TriggerGroup
+             * \param triggerName Name of the Trigger to remove
+             * \return Pointer to the TriggerGroup to chain calls
+             */
+            TriggerGroup* removeTrigger(const std::string& triggerName);
+            /**
              * \brief Delays activation of a Trigger
              * \param triggerName Name of the Trigger to delay
              * \param delay Time in ms used to delay the Trigger

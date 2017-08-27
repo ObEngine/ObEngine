@@ -53,6 +53,14 @@ namespace obe
             return false;
         }
 
+        void InputManager::clear()
+        {
+            m_currentActions.clear();
+            for (auto& action : m_allActions)
+                m_actionTriggers->removeTrigger(action->getId());
+            m_allActions.clear();
+        }
+
         void InputManager::handleTriggers()
         {
             if (m_binderEnabled)
@@ -91,6 +99,7 @@ namespace obe
 
         void InputManager::configure(vili::ComplexNode& config)
         {
+            std::vector<std::string> alreadyInFile;
             std::vector<std::string> contexts = config.getAll(vili::NodeType::ComplexNode);
             for (std::string& context : contexts)
             {
@@ -101,12 +110,17 @@ namespace obe
                     {
                         m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), action));
                     }
+                    else if (!Utils::Vector::isInList(action, alreadyInFile))
+                    {
+                        this->getAction(action).clearConditions();
+                    }
                     std::string associatedKeys = config.at(context).getDataNode(action);
                     InputCondition actionCondition;
                     actionCondition.setCombinationCode(associatedKeys);
                     std::cout << "Associated Key : " << associatedKeys << " for action " << action << std::endl;
                     this->getAction(action).addCondition(actionCondition);
                     this->getAction(action).addContext(context);
+                    alreadyInFile.push_back(action);
                 }
             }
             //Add Context keys in real time <REVISION>

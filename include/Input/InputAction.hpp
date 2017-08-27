@@ -38,7 +38,15 @@ namespace obe
             * \param id Id of the KeyboardAction
             */
             explicit InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id);
+            /**
+             * \brief Adds an InputCondition to the InputAction
+             * \param condition An InputCondition to add to the InputAction
+             */
             void addCondition(InputCondition condition);
+            /**
+             * \brief Clears all the InputCondition of the InputAction
+             */
+            void clearConditions();
             /**
             * \brief Adds a new Callback
             * \param callback A function that will be called when the Action is triggered

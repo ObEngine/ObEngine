@@ -77,6 +77,7 @@ namespace obe
             {
                 (*lua)["Core"]["Input"]["InputManager"].setClass(kaguya::UserdataMetatable<Input::InputManager>()
                     .addFunction("actionExists", &Input::InputManager::actionExists)
+                    .addFunction("clear", &Input::InputManager::clear)
                     .addFunction("clearContexts", &Input::InputManager::clearContexts)
                     .addFunction("configure", &Input::InputManager::configure)
                     .addFunction("getAction", &Input::InputManager::getAction)
