@@ -8,7 +8,7 @@ If you want to discuss about the engine or contribute to it,
 I strongly suggest you to come in our friendly discord Server, 
 here's an invitation URL, feel free to come anytime !
 
-https://discord.gg/D6JvZzM
+https://discord.gg/HkM6zdT
 
 ## Contributors
 
