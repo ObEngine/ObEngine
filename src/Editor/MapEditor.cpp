@@ -406,16 +406,24 @@ namespace obe
 
                 //GUI Update
                 infoLabel->setText(
-                    "Cursor : (" +
-                    std::to_string(cursor.getX()) + ", " + std::to_string(cursor.getY()) +
-                    ")" +
-                    std::string("   Camera : (") +
-                    std::to_string(int(pixelCamera.x)) + ", " + std::to_string(int(pixelCamera.y)) +
-                    ")" +
-                    std::string("   Sum : (") +
-                    std::to_string(int(pixelCamera.x) + int(cursor.getX())) + ", " + std::to_string(int(pixelCamera.y) + int(cursor.getY())) +
-                    ")" +
-                    std::string("   Layer : ") + std::to_string(currentLayer)
+                    "Cursor : (" 
+                    + std::to_string(cursor.getX()) 
+                    + ", " 
+                    + std::to_string(cursor.getY()) 
+                    + ")" 
+                    + std::string("   Camera : (") 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).x)) 
+                    + ", " 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).y))
+                    + ")" 
+                    + std::string("   Sum : (") 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).x) 
+                        + int(cursor.getX())) 
+                    + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).y)
+                        + int(cursor.getY())) 
+                    + ")" 
+                    + std::string("   Layer : ") 
+                    + std::to_string(currentLayer)
                 );
 
                 //Events
@@ -452,6 +460,12 @@ namespace obe
                     case sf::Event::TextEntered:
                         if (gameConsole.isVisible())
                             gameConsole.inputKey(event.text.unicode);
+                        break;
+                    case sf::Event::GainedFocus:
+                        inputManager.setEnabled(true);
+                        break;
+                    case sf::Event::LostFocus:
+                        inputManager.setEnabled(false);
                         break;
                     case sf::Event::MouseWheelMoved:
                         if (event.mouseWheel.delta >= scrollSensitive)

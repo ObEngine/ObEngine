@@ -4,6 +4,7 @@
 #include <Bindings/EditorBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
+#include <Bindings/ObePlugin.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>
@@ -138,14 +139,15 @@ namespace obe
                     const std::string pluginName = Utils::String::split(filename, ".")[0];
                     std::cout << "Indexing Plugin : " << filename << " as " << pluginName << std::endl;
                     BindTree["Plugins"].add(Utils::String::split(filename, ".")[0], 
-                        [pluginPath, pluginName](kaguya::State* lua) {
-                            Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
-                            auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
-                            Plugins[pluginName]->open();
-                            exposeFunction.init();
-                            exposeFunction(lua);
-                        }
-                    );
+                        [pluginPath, pluginName](kaguya::State* lua)
+                    {
+                        Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
+                        auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
+                        Plugins[pluginName]->open();
+                        exposeFunction.init();
+                        exposeFunction(lua);
+                        std::cout << "<Plugin> Loaded " << pluginName << std::endl;
+                    });
                 }
             }
         }
