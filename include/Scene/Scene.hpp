@@ -25,6 +25,7 @@ namespace obe
             Camera m_camera;
             bool m_cameraLocked = true;
             Transform::UnitVector m_cameraInitialPosition;
+            Transform::Referencial m_cameraInitialReferencial;
             bool m_updateState = true;
             bool m_needToOrderUpdateArray = true;
 

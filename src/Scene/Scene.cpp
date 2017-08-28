@@ -80,7 +80,14 @@ namespace obe
                     view.at<vili::DataNode>("pos", "x").get<double>(),
                     view.at<vili::DataNode>("pos", "y").get<double>(),
                     Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
-                m_camera.setPosition(m_cameraInitialPosition, Transform::Referencial::Center);
+                m_cameraInitialReferencial = Transform::Referencial::Center;
+                if (mapParse->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
+                {
+                    m_cameraInitialReferencial = Transform::stringToReferencial(
+                        mapParse->at("View", "referencial").getDataNode("referencial").get<std::string>()
+                    );
+                }
+                m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", {{"map", filename}});
@@ -197,7 +204,14 @@ namespace obe
             dataStore->at("View", "pos").createDataNode("unit", unitsToString(m_cameraInitialPosition.unit));
             dataStore->at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
             dataStore->at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
-            dataStore->at("View", "pos").useTemplate(dataStore->getTemplate("Vector2<WorldUnits>"));
+            dataStore->at("View", "pos").useTemplate(dataStore->getTemplate(
+                "Vector2<" + Transform::unitsToString(m_cameraInitialPosition.unit) + ">")
+            );
+            dataStore->at("View").createComplexNode("referencial");
+            dataStore->at("View", "referencial").createDataNode("referencial", Transform::referencialToString(m_cameraInitialReferencial));
+            dataStore->at("View", "referencial").useTemplate(dataStore->getTemplate(
+                "Referencial<" + Transform::referencialToString(m_cameraInitialReferencial) + ">"
+            ));
 
             //LevelSprites
             if (m_spriteArray.size() > 0) (*dataStore)->createComplexNode("LevelSprites");

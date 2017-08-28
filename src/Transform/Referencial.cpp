@@ -1,4 +1,5 @@
 #include <Transform/Referencial.hpp>
+#include "vili/ErrorHandler.hpp"
 
 namespace obe
 {
@@ -199,6 +200,29 @@ namespace obe
             case Referencial::BottomRight: return "BottomRight";
             default: return "Error";
             }
+        }
+
+        Referencial stringToReferencial(const std::string& ref)
+        {
+            if (ref == "TopLeft")
+                return Referencial::TopLeft;
+            if (ref == "Top")
+                return Referencial::Top;
+            if (ref == "TopRight")
+                return Referencial::TopRight;
+            if (ref == "Left")
+                return Referencial::Left;
+            if (ref == "Center")
+                return Referencial::Center;
+            if (ref == "Right")
+                return Referencial::Right;
+            if (ref == "BottomLeft")
+                return Referencial::BottomLeft;
+            if (ref == "Bottom")
+                return Referencial::Bottom;
+            if (ref == "BottomRight")
+                return Referencial::BottomRight;
+            throw aube::ErrorHandler::Raise("ObEngine.Transform.Referencial.UnknownReferencial", { {"referencial", ref} });
         }
 
         std::ostream& operator<<(std::ostream& os, Referencial m)

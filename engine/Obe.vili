@@ -66,11 +66,11 @@ Vector2<ViewPercentage>:
 Template(Vector2<ViewPercentage>);
 
 Vector2<ViewPixels>:
-    IntComposant:
-        type:"Int"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(IntComposant):
-        1(IntComposant):
+        0(NumericComposant):
+        1(NumericComposant):
     __body__:
         unit:"ViewPixels"
         x:&(0/value)
@@ -92,11 +92,11 @@ Vector2<ViewUnits>:
 Template(Vector2<ViewUnits>);
 
 Vector2<WorldPixels>:
-    IntComposant:
-        type:"Int"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(IntComposant):
-        1(IntComposant):
+        0(NumericComposant):
+        1(NumericComposant):
     __body__:
         unit:"WorldPixels"
         x:&(0/value)
@@ -153,13 +153,13 @@ Unit<WorldUnits>:
 Template(Unit<WorldUnits>);
 
 Rect<ViewPercentage>:
-    FloatComposant:
-        type:"Float"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(FloatComposant):
-        1(FloatComposant):
-        2(FloatComposant):
-        3(FloatComposant):
+        0(NumericComposant):
+        1(NumericComposant):
+        2(NumericComposant):
+        3(NumericComposant):
     __body__:
         unit:"ViewPercentage"
         x:&(0/value)
@@ -170,13 +170,13 @@ Rect<ViewPercentage>:
 Template(Rect<ViewPercentage>);
 
 Rect<ViewPixels>:
-    IntComposant:
-        type:"Int"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(IntComposant):
-        1(IntComposant):
-        2(IntComposant):
-        3(IntComposant):
+        0(NumericComposant):
+        1(NumericComposant):
+        2(NumericComposant):
+        3(NumericComposant):
     __body__:
         unit:"ViewPixels"
         x:&(0/value)
@@ -187,13 +187,13 @@ Rect<ViewPixels>:
 Template(Rect<ViewPixels>);
 
 Rect<ViewUnits>:
-    FloatComposant:
-        type:"Float"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(FloatComposant):
-        1(FloatComposant):
-        2(FloatComposant):
-        3(FloatComposant):
+        0(NumericComposant):
+        1(NumericComposant):
+        2(NumericComposant):
+        3(NumericComposant):
     __body__:
         unit:"ViewUnits"
         x:&(0/value)
@@ -204,13 +204,13 @@ Rect<ViewUnits>:
 Template(Rect<ViewUnits>);
 
 Rect<WorldPixels>:
-    IntComposant:
-        type:"Int"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(IntComposant):
-        1(IntComposant):
-        2(IntComposant):
-        3(IntComposant):
+        0(NumericComposant):
+        1(NumericComposant):
+        2(NumericComposant):
+        3(NumericComposant):
     __body__:
         unit:"WorldPixels"
         x:&(0/value)
@@ -221,13 +221,13 @@ Rect<WorldPixels>:
 Template(Rect<WorldPixels>);
 
 Rect<WorldUnits>:
-    FloatComposant:
-        type:"Float"
+    NumericComposant:
+        types:["Float", "Int"]
     __init__:
-        0(FloatComposant):
-        1(FloatComposant):
-        2(FloatComposant):
-        3(FloatComposant):
+        0(NumericComposant):
+        1(NumericComposant):
+        2(NumericComposant):
+        3(NumericComposant):
     __body__:
         unit:"WorldUnits"
         x:&(0/value)
@@ -236,3 +236,66 @@ Rect<WorldUnits>:
         h:&(3/value)
 
 Template(Rect<WorldUnits>);
+
+Referencial<TopLeft>:
+    __init__:
+    __body__:
+        referencial:"TopLeft"
+
+Template(Referencial<TopLeft>);
+
+Referencial<Top>:
+    __init__:
+    __body__:
+        referencial:"Top"
+
+Template(Referencial<Top>);
+
+Referencial<TopRight>:
+    __init__:
+    __body__:
+        referencial:"TopRight"
+
+Template(Referencial<TopRight>);
+
+Referencial<Left>:
+    __init__:
+    __body__:
+        referencial:"Left"
+
+Template(Referencial<Left>);
+
+Referencial<Center>:
+    __init__:
+    __body__:
+        referencial:"Center"
+
+Template(Referencial<Center>);
+
+Referencial<Right>:
+    __init__:
+    __body__:
+        referencial:"Right"
+
+Template(Referencial<Right>);
+
+Referencial<BottomLeft>:
+    __init__:
+    __body__:
+        referencial:"BottomLeft"
+
+Template(Referencial<BottomLeft>);
+
+Referencial<Bottom>:
+    __init__:
+    __body__:
+        referencial:"Bottom"
+
+Template(Referencial<Bottom>);
+
+Referencial<BottomRight>:
+    __init__:
+    __body__:
+        referencial:"BottomRight"
+
+Template(Referencial<BottomRight>);

@@ -199,6 +199,12 @@ namespace obe
          */
         std::string referencialToString(Referencial ref);
         /**
+         * \brief Gets a Referencial based on its name
+         * \param ref Name of the Referencial
+         * \return The Referencial enum value corresponding to the given name
+         */
+        Referencial stringToReferencial(const std::string& ref);
+        /**
          * \brief Overload of operator<< to print Referencials
          * \param os The stream you want to print the Referencial
          * \param m The Referencial you want to print
