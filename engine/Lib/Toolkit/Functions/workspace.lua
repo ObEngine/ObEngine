@@ -14,6 +14,18 @@ function getWorkspaceList()
     return allWorkspaces;
 end
 
+function getNonIndexedWorkspaces()
+    local allWorkspaces = Core.System.Path("Workspace"):DirectoryListLoader();
+    local allIndexedWorkspaces = getWorkspaceList();
+    local returnWorkspaces = {};
+    for _, key in pairs(allWorkspaces) do
+        if not Core.Utils.Vector.isInList(key, allIndexedWorkspaces) then
+            table.insert(returnWorkspaces, key);
+        end
+    end
+    return returnWorkspaces;
+end
+
 Functions.mount = function(workspaceName)
     local parser = Vili.ViliParser.new();
     parser:parseFile("Workspace/Workspaces.vili");
@@ -94,6 +106,27 @@ function Functions.list()
     end
 end
 
+function Functions.index(workspaceName)
+    if Core.Utils.Vector.isInList(workspaceName, getNonIndexedWorkspaces()) then
+        local parser = Vili.ViliParser.new();
+        parser:parseFile("Workspace/Workspaces.vili");
+        parser:root():createComplexNode(workspaceName);
+        parser:root():at(workspaceName):createDataNode("path", "Workspace/" .. workspaceName);
+        parser:writeFile("Workspace/Workspaces.vili");
+        Color.print({
+            { text = "Workspace <", color = Style.Success},
+            { text = workspaceName, color = Style.Workspace},
+            { text = "> has  been successfully indexed !", color = Style.Success},
+        }, 2);
+    else
+        Color.print({
+            { text = "Workspace <", color = Style.Error},
+            { text = workspaceName, color = Style.Workspace},
+            { text = "> is already indexed", color = Style.Error}
+        }, 2);
+    end
+end
+
 return {
     Functions = Functions,
     Routes = {
@@ -112,6 +145,16 @@ return {
                 Route.Help("Name of the Workspace you want to mount");
                 Route.Autocomplete(function(start)
                     return getWorkspaceList();
+                end)
+            });
+        }),
+        Route.Node("index", {
+            Route.Help("Indexes an existing Workspace");
+            Route.Arg("workspaceName", {
+                Route.Call("index");
+                Route.Help("Name of the Workspace you want to index");
+                Route.Autocomplete(function(start)
+                    return getNonIndexedWorkspaces();
                 end)
             });
         }),
