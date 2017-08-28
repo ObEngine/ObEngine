@@ -55,8 +55,10 @@ namespace obe
 
         void Trigger::execute() const
         {
-            for (auto& rEnv : m_registeredEnvs)
+            unsigned int envAmount = m_registeredEnvs.size();
+            for (unsigned int envIndex = 0; envIndex < envAmount; envIndex++)
             {
+                std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[envIndex];
                 Script::ScriptEngine["ExecuteStringOnEnv"]("LuaCore.FuncInjector(" + rEnv.second +", \"" + this->getTriggerLuaTableName() +"\")", rEnv.first);
                 //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
                 Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
