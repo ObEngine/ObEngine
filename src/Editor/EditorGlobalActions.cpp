@@ -58,7 +58,7 @@ namespace obe
             {
                 cameraSpeed = Transform::UnitVector::Screen.h;
             });
-            inputManager.getAction("ResetCamera").connect([&world](const Input::InputActionEvent& event)
+            inputManager.getAction("ResetCameraSize").connect([&world](const Input::InputActionEvent& event)
             {
                 world.getCamera()->setSize(1, Transform::Referencial::Center);
             });

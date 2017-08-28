@@ -46,7 +46,7 @@ KeyBinding:
         ToggleGridSnap:"Pressed:H"
         ToggleEditorMenu:"Pressed:E"
         ExitEditor:"Pressed:Escape"
-        ResetCamera:"Pressed:R"
+        ResetCameraSize:"Pressed:R"
     spriteEditing:
         SpriteCancelOffset:"Hold:LMB + Pressed:O"
         SpriteRemove:"Pressed:Delete"

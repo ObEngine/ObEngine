@@ -181,9 +181,13 @@ namespace obe
             tgui::ComboBox::Ptr cameraMode = gui.get<tgui::ComboBox>("cameraMode");
 
             GUI::buildEditorMapMenu(mapPanel, scene);
-            GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode);
+            GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode, scene);
             GUI::buildEditorSpritesMenu(spritesPanel, spritesScrollbar);
             GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar);
+
+            tgui::EditBox::Ptr cameraSizeInput = gui.get<tgui::EditBox>("cameraSizeInput");
+            tgui::EditBox::Ptr cameraPositionXInput = gui.get<tgui::EditBox>("cameraPositionXInput");
+            tgui::EditBox::Ptr cameraPositionYInput = gui.get<tgui::EditBox>("cameraPositionYInput");
 
             tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
             tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");
@@ -220,7 +224,10 @@ namespace obe
             scene.loadFromFile(mapName);
 
             mapNameInput->setText(scene.getLevelName());
-
+            cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
+            cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).x));
+            cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).y));
+                
             //Connect InputManager Actions
             connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
             connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
@@ -412,14 +419,14 @@ namespace obe
                     + std::to_string(cursor.getY()) 
                     + ")" 
                     + std::string("   Camera : (") 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).x)) 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().x)) 
                     + ", " 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).y))
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().y))
                     + ")" 
                     + std::string("   Sum : (") 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).x) 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().x)
                         + int(cursor.getX())) 
-                    + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).y)
+                    + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().y)
                         + int(cursor.getY())) 
                     + ")" 
                     + std::string("   Layer : ") 
@@ -478,6 +485,7 @@ namespace obe
                             scene.getCamera()->scale(1.1, Transform::Referencial::Center);
                             gameConsole.scroll(1);
                         }
+                        cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                         break;
                     }
                     gui.handleEvent(event);
@@ -485,6 +493,8 @@ namespace obe
                 //Draw Everything Here
                 if (framerateManager.doRender())
                 {
+                    cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).x));
+                    cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).y));
                     window.clear();
                     scene.display(window);
                     pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>

@@ -4,7 +4,6 @@
 #include <Bindings/EditorBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
-#include <Bindings/ObePlugin.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>

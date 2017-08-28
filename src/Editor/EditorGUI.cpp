@@ -297,7 +297,7 @@ namespace obe
                 mapNameButton->connect("pressed", changeMapNameLambda);
             }
 
-            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode)
+            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode, Scene::Scene& scene)
             {
                 tgui::Label::Ptr settingsCatLabel = tgui::Label::create();
                 tgui::CheckBox::Ptr displayFramerateCheckbox = tgui::CheckBox::create();
@@ -311,6 +311,13 @@ namespace obe
                 tgui::EditBox::Ptr gridOffsetYInput = tgui::EditBox::create();
                 tgui::Button::Ptr gridOffsetButton = tgui::Button::create();
                 tgui::CheckBox::Ptr snapGridCheckbox = tgui::CheckBox::create();
+                tgui::Label::Ptr cameraPositionLabel = tgui::Label::create();
+                tgui::EditBox::Ptr cameraPositionXInput = tgui::EditBox::create();
+                tgui::EditBox::Ptr cameraPositionYInput = tgui::EditBox::create();
+                tgui::Button::Ptr cameraPositionBtn = tgui::Button::create();
+                tgui::Label::Ptr cameraSizeLabel = tgui::Label::create();
+                tgui::EditBox::Ptr cameraSizeInput = tgui::EditBox::create();
+                tgui::Button::Ptr cameraSizeBtn = tgui::Button::create();
 
                 settingsPanel->add(settingsCatLabel, "settingsCatLabel");
 
@@ -325,6 +332,13 @@ namespace obe
                 settingsPanel->add(gridOffsetYInput, "gridOffsetYInput");
                 settingsPanel->add(gridOffsetButton, "gridOffsetButton");
                 settingsPanel->add(snapGridCheckbox, "snapGridCheckbox");
+                settingsPanel->add(cameraPositionLabel, "cameraPositionLabel");
+                settingsPanel->add(cameraPositionXInput, "cameraPositionXInput");
+                settingsPanel->add(cameraPositionYInput, "cameraPositionYInput");
+                settingsPanel->add(cameraPositionBtn, "cameraPositionBtn");
+                settingsPanel->add(cameraSizeLabel, "cameraSizeLabel");
+                settingsPanel->add(cameraSizeInput, "cameraSizeInput");
+                settingsPanel->add(cameraSizeBtn, "cameraSizeBtn");
 
                 settingsCatLabel->setPosition(20, 20);
                 settingsCatLabel->setTextSize(bigFontSize);
@@ -478,6 +492,55 @@ namespace obe
                 snapGridCheckbox->connect("unchecked", [&cursor]()
                 {
                     cursor.setConstraint(System::Constraints::Default);
+                });
+
+                cameraPositionLabel->setPosition(60, tguif::bindBottom(snapGridCheckbox) + 20);
+                cameraPositionLabel->setTextSize(mediumFontSize);
+                cameraPositionLabel->setRenderer(baseTheme.getRenderer("Label"));
+                cameraPositionLabel->setText("Camera Position : ");
+
+                cameraPositionXInput->setPosition(tguif::bindRight(cameraPositionLabel) + 20, tguif::bindTop(cameraPositionLabel));
+                cameraPositionXInput->setSize(80, mediumFontSize + 4);
+                cameraPositionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition().x));
+                cameraPositionXInput->setInputValidator(tgui::EditBox::Validator::Float);
+
+                cameraPositionYInput->setPosition(tguif::bindRight(cameraPositionXInput) + 20, tguif::bindTop(cameraPositionLabel));
+                cameraPositionYInput->setSize(80, mediumFontSize + 4);
+                cameraPositionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition().y));
+                cameraPositionYInput->setInputValidator(tgui::EditBox::Validator::Float);
+
+                cameraPositionBtn->setPosition(tguif::bindRight(cameraPositionYInput) + 20, tguif::bindTop(cameraPositionLabel) + 4);
+                cameraPositionBtn->setRenderer(baseTheme.getRenderer("ApplyButton"));
+                cameraPositionBtn->setSize(16, 16);
+
+                cameraSizeLabel->setPosition(60, tguif::bindBottom(cameraPositionLabel) + 20);
+                cameraSizeLabel->setTextSize(mediumFontSize);
+                cameraSizeLabel->setRenderer(baseTheme.getRenderer("Label"));
+                cameraSizeLabel->setText("Camera Size : ");
+
+                cameraSizeInput->setPosition(tguif::bindRight(cameraSizeLabel) + 20, tguif::bindTop(cameraSizeLabel));
+                cameraSizeInput->setSize(80, mediumFontSize + 4);
+                cameraSizeInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
+                cameraSizeInput->setInputValidator(tgui::EditBox::Validator::Float);
+
+                cameraSizeBtn->setPosition(tguif::bindRight(cameraSizeInput) + 20, tguif::bindTop(cameraSizeLabel) + 4);
+                cameraSizeBtn->setRenderer(baseTheme.getRenderer("ApplyButton"));
+                cameraSizeBtn->setSize(16, 16);
+
+                cameraPositionBtn->connect("pressed", [cameraPositionXInput, cameraPositionYInput, &scene]()
+                {
+                    float camX = std::stof(cameraPositionXInput->getText().toAnsiString());
+                    float camY = std::stof(cameraPositionYInput->getText().toAnsiString());
+                    scene.getCamera()->setPosition(Transform::UnitVector(camX, camY), Transform::Referencial::Center);
+                });
+
+                cameraSizeBtn->connect("pressed", [cameraSizeInput, &scene]()
+                {
+                    float camSize = std::stof(cameraSizeInput->getText().toAnsiString());
+                    scene.getCamera()->setSize(camSize, Transform::Referencial::Center);
                 });
             }
 
