@@ -1,8 +1,12 @@
 #pragma once
 
+#include <memory>
+
 #include <kaguya/kaguya.hpp>
 
 #include <Bindings/BindingTree.hpp>
+
+#include <dynamicLinker/dynamicLinker.hpp>
 
 namespace obe
 {
@@ -12,6 +16,7 @@ namespace obe
     namespace Bindings
     {
         extern BindingTree BindTree;
+        extern std::map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
         /**
          * \brief Loads a Library in the Lua VM
          * \param lua Lua VM where to load the library

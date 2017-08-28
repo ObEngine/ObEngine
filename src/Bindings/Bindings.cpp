@@ -16,6 +16,8 @@
 #include <Bindings/UtilsBindings.hpp>
 #include <Bindings/ViliBindings.hpp>
 #include <Bindings/Bindings.hpp>
+#include <System/Path.hpp>
+#include <Utils/FileUtils.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -24,14 +26,13 @@ namespace obe
     namespace Bindings
     {
         BindingTree BindTree("Root");
+        std::map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
 
         void Load(kaguya::State* lua, const std::string& lib)
         {
-            std::cout << "Load start : "<< lib << std::endl;
             //BuildLuaLibPath(lua, lib);
             std::vector<std::string> splittedLibPath = Utils::String::split(lib, ".");
             BindTree.walkTo(splittedLibPath)(lua);
-            std::cout << "Lib Successfully Loaded" << std::endl;
         }
 
         void IndexBindings()
@@ -124,6 +125,29 @@ namespace obe
                 .add("NodeTemplate", &ViliBindings::LoadViliNodeTemplate)
                 .add("NodeType", &ViliBindings::LoadViliNodeType)
                 .add("ViliParser", &ViliBindings::LoadViliViliParser);
+            
+            // Plugins
+            BindTree.add("Plugins");
+            for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
+            {
+                std::cout << "Checking Plugins on Mounted Path : " << mountedPath.basePath << std::endl;
+                System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
+                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
+                {
+                    const std::string pluginPath = cPluginPath.add(filename).toString();
+                    const std::string pluginName = Utils::String::split(filename, ".")[0];
+                    std::cout << "Indexing Plugin : " << filename << " as " << pluginName << std::endl;
+                    BindTree["Plugins"].add(Utils::String::split(filename, ".")[0], 
+                        [pluginPath, pluginName](kaguya::State* lua) {
+                            Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
+                            auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
+                            Plugins[pluginName]->open();
+                            exposeFunction.init();
+                            exposeFunction(lua);
+                        }
+                    );
+                }
+            }
         }
     }
 }

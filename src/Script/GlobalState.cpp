@@ -14,10 +14,9 @@ namespace obe
             System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
             System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
             Bindings::Load(&ScriptEngine, "Core");
-            std::cout << "LOADING CORE LIB RESULT ===============>" << std::endl;
-            ScriptEngine("print(inspect(Core))");
             Bindings::Load(&ScriptEngine, "SFML");
             Bindings::Load(&ScriptEngine, "Vili");
+            Bindings::Load(&ScriptEngine, "Plugins");
             ScriptEngine["Hook"] = kaguya::NewTable();
             ScriptEngine.dofile("Lib/Internal/CanvasConfig.lua");
         }

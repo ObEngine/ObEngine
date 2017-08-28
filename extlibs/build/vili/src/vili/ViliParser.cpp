@@ -587,7 +587,6 @@ namespace vili
 
     bool ViliParser::CheckCache(ViliParser* parser, const std::string& path, bool visibility)
     {
-        std::cout << "Checking Cache for " << path << " with visibility : " << visibility << std::endl;
         if (ViliCache.find(path) != ViliCache.end())
         {
             ComplexNode& cacheRoot = ViliCache[path]->root();

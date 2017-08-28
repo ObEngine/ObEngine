@@ -146,12 +146,12 @@ namespace obe
             bool elementAlreadyExists = checkIfLuaElementExists(lua, this->getNodePath());
             if (!elementAlreadyExists && !m_hasLib)
             {
-                std::cout << "Doesn't exists, create table : " << this->getNodePath() << std::endl;
+                //std::cout << "Doesn't exists, create table : " << this->getNodePath() << std::endl;
                 (*lua)(this->getNodePath() + " = {};");
             }
             else if (!elementAlreadyExists)
             {
-                std::cout << "Doesn't exists, LoadLib : " << this->getNodePath() << std::endl;
+                //std::cout << "Doesn't exists, LoadLib : " << this->getNodePath() << std::endl;
                 m_lib(lua);
             }
             if (spreads)

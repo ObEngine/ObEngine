@@ -1,7 +1,7 @@
 Core = {}; -- Core Lib
 LuaUtil = {};
 
-inspect = require("Lib/StdLib/inspect");
+inspect = require("Lib/StdLib/Inspect");
 
 function LuaUtil.Exists(path)
     local pathToTest = load("return " .. path);

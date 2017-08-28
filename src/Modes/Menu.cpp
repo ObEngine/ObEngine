@@ -319,8 +319,6 @@ namespace obe
             sf::Vector2i grabbedOffset;
             bool grabbedWindow = false;
 
-            std::cout << middlePanel->getSize().x << ", " << middlePanel->getSize().y << std::endl;
-
             while (window.isOpen())
             {
                 sf::Event event;
