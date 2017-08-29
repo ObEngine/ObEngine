@@ -87,6 +87,11 @@ namespace obe
             }
         }
 
+        void Animator::setPaused(bool pause)
+        {
+            m_paused = pause;
+        }
+
         void Animator::loadAnimator()
         {
             std::vector<std::string> listDir;
@@ -120,16 +125,19 @@ namespace obe
 
         void Animator::update()
         {
-            if (m_currentAnimation == nullptr)
-                throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation", {{"animator", m_animatorPath.toString()}});
-            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
+            if (!m_paused)
             {
-                m_currentAnimation->reset();
-                m_currentAnimationName = m_currentAnimation->getCalledAnimation();
-                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
+                if (m_currentAnimation == nullptr)
+                    throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation", { { "animator", m_animatorPath.toString() } });
+                if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
+                {
+                    m_currentAnimation->reset();
+                    m_currentAnimationName = m_currentAnimation->getCalledAnimation();
+                    m_currentAnimation = m_animationSet[m_currentAnimationName].get();
+                }
+                if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
+                    m_currentAnimation->update();
             }
-            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
-                m_currentAnimation->update();
         }
 
         const sf::Texture& Animator::getTexture()

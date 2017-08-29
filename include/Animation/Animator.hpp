@@ -50,6 +50,7 @@ namespace obe
             std::string m_currentAnimationName = "NONE";
             System::Path m_animatorPath;
             sf::Texture* m_lastTexturePointer = nullptr;
+            bool m_paused = false;
         public:
             /**
              * \brief Animator Class default constructor
@@ -98,6 +99,11 @@ namespace obe
              *            Throws a ObEngine.Animation.Animator.AnimationNotFound exception if the Animation key is not found.
              */
             void setKey(const std::string& key);
+            /**
+            * \brief Starts or Pause the Animator (won't do anything even if updated)
+            * \param pause true if the Animator should pause, false otherwise
+            */
+            void setPaused(bool pause);
             /**
              * \brief Loads the Animator (Using the Animator root path).\n
              *        It will also load all the Animation contained in the Animator.

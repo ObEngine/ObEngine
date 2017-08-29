@@ -28,7 +28,6 @@ namespace obe
                     .addFunction("getTextureAtIndex", &Animation::Animation::getTextureAtIndex)
                     .addFunction("isAnimationOver", &Animation::Animation::isAnimationOver)
                     .addFunction("loadAnimation", &Animation::Animation::loadAnimation)
-                    .addFunction("setPaused", &Animation::Animation::setPaused)
                     .addFunction("reset", &Animation::Animation::reset)
                     .addFunction("update", &Animation::Animation::update)
                 );
@@ -74,6 +73,7 @@ namespace obe
                         static_cast<void (Animation::Animator::*)(System::Path)>(&Animation::Animator::setPath),
                         static_cast<void (Animation::Animator::*)(const std::string&)>(&Animation::Animator::setPath)
                     )
+                    .addFunction("setPaused", &Animation::Animator::setPaused)
                     .addFunction("textureChanged", &Animation::Animator::textureChanged)
                     .addFunction("update", &Animation::Animator::update)
                 );

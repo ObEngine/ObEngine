@@ -41,8 +41,8 @@ namespace aube
         if (m_errors.find(errorId) != m_errors.end())
         {
             ErrorMessage* currentError = m_errors[errorId];
-            std::string errorMessage = "[" + errorId + "]";
-            errorMessage += "<" + currentError->getLocation() + "> : " + currentError->getMessage();
+            std::string errorMessage = "<<Error>>[" + errorId + "]";
+            errorMessage += "@" + currentError->getLocation() + " : " + currentError->getMessage();
             for (std::pair<std::string, std::string> parameter : parameters)
             {
                 errorMessage = errorMessage.replace(errorMessage.find("%" + parameter.first + "%"), parameter.first.size() + 2, parameter.second);
@@ -60,5 +60,29 @@ namespace aube
             std::cerr << "    > " << parameter.first << " = " << parameter.second << std::endl;
         }
         return std::runtime_error(errorId.c_str());
+    }
+
+    void ErrorHandler::Warn(const std::string& errorId, const std::map<std::string, std::string>& parameters)
+    {
+        if (m_errors.find(errorId) != m_errors.end())
+        {
+            ErrorMessage* currentError = m_errors[errorId];
+            std::string errorMessage = "<<Warning>>[" + errorId + "]";
+            errorMessage += "@" + currentError->getLocation() + " : " + currentError->getMessage();
+            for (std::pair<std::string, std::string> parameter : parameters)
+            {
+                errorMessage = errorMessage.replace(errorMessage.find("%" + parameter.first + "%"), parameter.first.size() + 2, parameter.second);
+            }
+            std::cerr << errorMessage << std::endl;
+            for (std::string& hint : currentError->getHints())
+            {
+                std::cerr << "    > " << hint << std::endl;
+            }
+        }
+        std::cerr << "Raised Unknown Warning : " << errorId << " with parameters : " << std::endl;
+        for (std::pair<std::string, std::string> parameter : parameters)
+        {
+            std::cerr << "    > " << parameter.first << " = " << parameter.second << std::endl;
+        }
     }
 }

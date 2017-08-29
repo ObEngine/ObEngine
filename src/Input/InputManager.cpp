@@ -19,7 +19,9 @@ namespace obe
                     return *action.get();
                 }
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
+            aube::ErrorHandler::Warn("ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
+            m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), actionId));
+            return *m_allActions.back().get();
         }
 
         void InputManager::setEnabled(bool state)
