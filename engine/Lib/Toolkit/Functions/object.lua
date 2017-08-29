@@ -19,6 +19,7 @@ function Functions.create(objectName, components)
     }, 1);
     os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", Core.Utils.File.separator()));
     local objSaveFile = Vili.ViliParser.new();
+    objSaveFile:includeFile("Obe");
     objSaveFile:root():createComplexNode(objectName);
     if (components ~= nil) then
         if (string.find(components, "C") ~= nil) then
@@ -60,15 +61,8 @@ function Functions.create(objectName, components)
             }, 2);
             objSaveFile:root():at(objectName):createComplexNode("LevelSprite");
             local objLevelSprite = objSaveFile:root():at(objectName .. "/" .. "LevelSprite");
-            if (haveCollider) then
-                objLevelSprite:createDataNode("position", "relative");
-            else
-                objLevelSprite:createDataNode("position", "absolute");
-            end
-            objLevelSprite:createDataNode("offsetX", 0);
-            objLevelSprite:createDataNode("offsetY", 0);
-            objLevelSprite:createDataNode("rotation", 0);
-            objLevelSprite:createDataNode("scale", 1.0);
+            objLevelSprite:createDataNode("xTransform", "Camera");
+            objLevelSprite:createDataNode("yTransform", "Camera");
             objLevelSprite:createDataNode("layer", 1);
             objLevelSprite:createDataNode("z-depth", 0);
         end
@@ -83,7 +77,6 @@ function Functions.create(objectName, components)
                 { text = "(S)cript", color = Style.Object}
             }, 2);
             objSaveFile:root():at(objectName):createComplexNode("Script");
-            objSaveFile:root():at(objectName .. "/Script"):createDataNode("priority", 0);
             objSaveFile:root():at(objectName .. "/Script"):createDataNode("source", "Data/GameObjects/" .. 
                 objectName .. "/" .. objectName .. ".lua");
         end
