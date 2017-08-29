@@ -1,8 +1,10 @@
 local Class = require("Lib/StdLib/Class");
 local Trajectory = require("Lib/GameLib/Trajectory");
 
-local Linear = Class("Linear", Trajectory, function(self, speed, acceleration, angle)
+local Linear = Class("Linear", Trajectory, function(self, collider, speed, acceleration, angle)
     self:super();
+    self.collider = collider;
+    self.allColliders = {};
     self.trajName = "Linear";
     self.speed = speed;
     self.acceleration = acceleration;
@@ -40,6 +42,10 @@ function Linear:updatePosition()
     local radAngle = (math.pi / 180.0) * ((90 - self.angle) * -1);
     self.addX = math.cos(radAngle) * (self.speed * self.dt);
     self.addY = math.sin(radAngle) * (self.speed * self.dt);
+end
+
+function Linear:setColliders(colliders)
+    self.allColliders = colliders;
 end
 
 function Linear:update(dt)

@@ -111,6 +111,18 @@ namespace obe
             return *this;
         }
 
+        bool UnitVector::operator==(const UnitVector& vec) const
+        {
+            UnitVector pVec = vec.to(unit);
+            return (x == pVec.x && y == pVec.y);
+        }
+
+        bool UnitVector::operator!=(const UnitVector& vec) const
+        {
+            UnitVector pVec = vec.to(unit);
+            return (x != pVec.x || y != pVec.y);
+        }
+
         UnitVector UnitVector::to(Units pUnit) const
         {
             switch (pUnit)

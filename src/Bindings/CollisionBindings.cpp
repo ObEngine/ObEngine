@@ -18,12 +18,12 @@ namespace obe
                 Load(lua, "Core.Types.Identifiable");
                 (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
-                        Collision::PolygonalCollider,
-                        kaguya::MultipleBase<
-                            Transform::UnitBasedObject,
-                            Types::Selectable,
-                            Types::Identifiable
-                        >
+                    Collision::PolygonalCollider,
+                    kaguya::MultipleBase<
+                    Transform::UnitBasedObject,
+                    Types::Selectable,
+                    Types::Identifiable
+                    >
                     >()
                     .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
                     .addFunction("addPoint", PolygonalCollider_addPoint_wrapper())
@@ -41,7 +41,16 @@ namespace obe
                     .addFunction("getAllTags", &Collision::PolygonalCollider::getAllTags)
                     .addFunction("getDistanceFromPoint", &Collision::PolygonalCollider::getDistanceFromPoint)
                     .addFunction("getMasterPointPosition", &Collision::PolygonalCollider::getMasterPointPosition)
-                    .addFunction("getMaximumDistanceBeforeCollision", &Collision::PolygonalCollider::getMaximumDistanceBeforeCollision)
+                    .addOverloadedFunctions("getMaximumDistanceBeforeCollision",
+                        static_cast<Transform::UnitVector 
+                            (Collision::PolygonalCollider::*)
+                            (std::vector<Collision::PolygonalCollider>&, const Transform::UnitVector&) const>
+                            (&Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
+                        static_cast<Transform::UnitVector
+                            (Collision::PolygonalCollider::*)
+                            (const Collision::PolygonalCollider&, const Transform::UnitVector&) const>
+                            (&Collision::PolygonalCollider::getMaximumDistanceBeforeCollision)
+                    )
                     .addFunction("getOrigin", &Collision::PolygonalCollider::getOrigin)
                     .addFunction("getParentId", &Collision::PolygonalCollider::getParentId)
                     .addFunction("getPointPosition", &Collision::PolygonalCollider::getPointPosition)

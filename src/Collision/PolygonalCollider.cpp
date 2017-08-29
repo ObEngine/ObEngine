@@ -268,6 +268,35 @@ namespace obe
             return m_allPoints;
         }
 
+        Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(std::vector<PolygonalCollider>& colliders, const Transform::UnitVector& offset) const
+        {
+            std::vector<Transform::UnitVector> limitedMaxDists;
+            for (const PolygonalCollider& collider : colliders)
+            {
+                Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(collider, offset);
+                if (maxDist != offset)
+                {
+                    limitedMaxDists.push_back(maxDist);
+                }
+            }
+            
+            Transform::UnitVector destPos = (m_masterPoint + offset).to<Transform::Units::WorldPixels>();
+            if (!limitedMaxDists.empty())
+            {
+                std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
+                for (Transform::UnitVector& distCoord : limitedMaxDists)
+                {
+                    double dist = std::sqrt(std::pow(distCoord.x - offset.x, 2) + std::pow(distCoord.y - offset.y, 2));
+                    if (minDist.first == -1 || minDist.first > dist)
+                    {
+                        minDist = std::pair<double, Transform::UnitVector>(dist, distCoord);
+                    }
+                }
+                return minDist.second;
+            }
+            return offset;
+        }
+
         int PolygonalCollider::hasPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance)
         {
             Transform::UnitVector pVec = position.to(m_unit);
@@ -751,7 +780,7 @@ namespace obe
                 else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
                 {
                     //std::cout << "Accept Zero Binary Branch" << std::endl;
-                    return Transform::UnitVector(0, 0, m_unit);
+                    return Transform::UnitVector(0, 0, tOffset.unit);
                 }
                 else if (std::get<0>(tdm1) > 0 && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
                 {
@@ -767,7 +796,7 @@ namespace obe
                 else
                 {
                     //std::cout << "Accept none" << std::endl;
-                    return Transform::UnitVector(0, 0, m_unit);
+                    return Transform::UnitVector(0, 0, tOffset.unit);
                 }
 
                 //std::cout << "MIN DEP IS : " << minDep << std::endl;

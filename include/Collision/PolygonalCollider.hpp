@@ -157,7 +157,7 @@ namespace obe
 
             //Collision Tests
             //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
-
+            Transform::UnitVector getMaximumDistanceBeforeCollision(std::vector<PolygonalCollider>& collider, const Transform::UnitVector& offset) const;
             Transform::UnitVector getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
             /**
              * \brief Checks if two polygons are intersecting

@@ -132,6 +132,9 @@ namespace obe
             */
             UnitVector& operator/=(const UnitVector& div);
 
+            bool operator==(const UnitVector& vec) const;
+            bool operator!=(const UnitVector& vec) const;
+
             /**
              * \brief Return an UnitVector with the converted values (x, y) to the Unit you want
              * \tparam E An enum value from Coord::Units
