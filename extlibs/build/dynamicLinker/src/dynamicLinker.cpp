@@ -4,7 +4,9 @@
  */
 
 #include <dynamicLinker.hpp>
+#ifdef _WIN32 || _WIN64
 #include <WinBase.h>
+#endif
 
 namespace dynamicLinker {
 
