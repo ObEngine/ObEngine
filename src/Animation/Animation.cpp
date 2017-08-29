@@ -136,7 +136,7 @@ namespace obe
 
         void Animation::update()
         {
-            if (m_animationCode.size() > 0)
+            if (m_animationCode.size() > 0 && !m_paused)
             {
                 if (m_codeIndex > m_animationCode.size() - 1 && m_animationPlayMode != AnimationPlayMode::OneTime)
                     m_codeIndex = 0;
@@ -209,6 +209,11 @@ namespace obe
                     }
                 }
             }
+        }
+
+        void Animation::setPaused(bool pause)
+        {
+            m_paused = pause;
         }
 
         void Animation::reset()

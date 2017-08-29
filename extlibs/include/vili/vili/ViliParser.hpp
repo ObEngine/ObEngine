@@ -13,6 +13,8 @@ namespace vili
     {
     private:
         static std::map<std::string, std::unique_ptr<ViliParser>> ViliCache;
+        std::vector<std::string> m_quickLook;
+        std::vector<std::string> m_quickLookMatches;
         std::unique_ptr<ComplexNode> m_root = nullptr;
         std::map<std::string, NodeTemplate*> m_templateList;
         std::vector<std::string> m_flagList;
@@ -20,6 +22,7 @@ namespace vili
         std::vector<std::string> m_includes;
         ComplexNode& getPath(std::string path) const;
         ComplexNode& getRootChild(std::string child) const;
+        bool checkQuickLookMatches(const std::string& attributePath);
     public:
         /**
          * \brief Creates a ViliParser
@@ -134,6 +137,8 @@ namespace vili
          * \return A pointer to the NodeTemplate if found (raises an exception otherwise)
          */
         NodeTemplate* getTemplate(const std::string& templateId) const;
+
+        void setQuickLookAttributes(const std::vector<std::string>&& qla);
 
         std::vector<std::string> getAllTemplates() const;
 

@@ -335,12 +335,11 @@ namespace obe
         void Scene::display(sf::RenderWindow& target)
         {
             this->displaySprites(target);
-            Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
             {
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
-                    m_colliderArray[i]->draw(target, -pixelCamera.x, -pixelCamera.y,
+                    m_colliderArray[i]->draw(target, m_camera,
                                              m_showCollisionModes["drawLines"],
                                              m_showCollisionModes["drawPoints"],
                                              m_showCollisionModes["drawMasterPoint"],
@@ -465,7 +464,7 @@ namespace obe
             m_gameObjectMap[id] = move(newGameObject);
             m_needToOrderUpdateArray = true;
 
-            std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
+            //std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
             return m_gameObjectMap[id].get();
         }

@@ -213,7 +213,12 @@ namespace vili
                 for (const std::string& parsedLine : parsedLines)
                 {
                     while (!parsedLine.empty() && currentIndent < addPath.size() && addPath.size() > 0)
+                    {
+                        if (this->checkQuickLookMatches(getPath(Path(addPath)).getRawNodePath()))
+                            return true;
                         addPath.pop_back();
+                    }
+                        
                     std::function<std::string()> indenter = [curList, currentIndent, curListIndent]()
                     {
                         std::string strIndent = "";
@@ -230,7 +235,11 @@ namespace vili
                         return strIndent;
                     };
                     if (curList != "None" && parsedLine == "]")
+                    {
+                        if (this->checkQuickLookMatches(getPath(Path(addPath)).getArrayNode(curList).getRawNodePath()))
+                            return true;
                         curList = "None";
+                    }
                     if (!parsedLine.empty() && currentIndent == 0)
                     {
                         if (parsedLine.substr(parsedLine.size() - 1, 1) == ";")
@@ -333,6 +342,8 @@ namespace vili
                                     std::cout << indenter() << "Create LinkAttribute " << attributeID << " linking to " << attributeValue
                                         << " inside " << pushIndicator << " (Type:" << attributeType << ")" << std::endl;
                                 }
+                                if (this->checkQuickLookMatches(getPath(Path(addPath)).getLinkNode(attributeID).getRawNodePath()))
+                                    return true;
                             }
                             else if (attributeType == DataType::Template)
                             {
@@ -360,20 +371,25 @@ namespace vili
                                         std::cout << indenter() << "Create ComplexAttribute " << attributeID << " from Template <" << templateName
                                             << "> inside " << pushIndicator << std::endl;
                                     }
+
+                                    if (this->checkQuickLookMatches(getPath(Path(addPath)).getComplexNode(attributeID).getRawNodePath()))
+                                        return true;
                                 }
                                 else
                                     throw aube::ErrorHandler::Raise("Vili.Vili.ViliParser.UnknownTemplate", {{"template", templateName},{"id", attributeID},{"file", filename}});
                             }
                             else
                             {
-                                getPath(Path(addPath)).createDataNode(attributeID, attributeType);
-                                getPath(Path(addPath)).getDataNode(attributeID).setVisible(visible);
-                                getPath(Path(addPath)).getDataNode(attributeID).autoset(attributeValue);
+                                DataNode& newDataNode = getPath(Path(addPath)).createDataNode(attributeID, attributeType);
+                                newDataNode.setVisible(visible);
+                                newDataNode.autoset(attributeValue);
                                 if (verbose)
                                 {
                                     std::cout << indenter() << "Create BaseAttribute " << attributeID << "(" << attributeValue;
                                     std::cout << ") inside " << pushIndicator << " (Type:" << attributeType << ")" << std::endl;
                                 }
+                                if (this->checkQuickLookMatches(newDataNode.getRawNodePath()))
+                                    return true;
                             }
                         }
                         else if (curList != "None")
@@ -537,7 +553,6 @@ namespace vili
             if (templatePair.second->isVisible())
                 outFile << "Template (" << templatePair.first << ");" << std::endl;
         }
-            
 
         outFile.close();
     }
@@ -578,6 +593,41 @@ namespace vili
             allTemplateNames.push_back(cTemplate.first);
         }
         return allTemplateNames;
+    }
+
+    void ViliParser::setQuickLookAttributes(const std::vector<std::string>&& qla)
+    {
+        m_quickLook = qla;
+    }
+
+    bool ViliParser::checkQuickLookMatches(const std::string& attributePath)
+    {
+        if (!m_quickLook.empty())
+        {
+            auto splittedPath = Functions::String::split(attributePath, "/");
+            std::string joinedPath;
+            if (splittedPath.size() > 1 && splittedPath[0] == "root")
+            {
+                joinedPath = Functions::Vector::join(splittedPath, "/", 1, 0);
+            }
+            else
+            {
+                joinedPath = attributePath;
+            }
+            
+            if (Functions::Vector::isInList(joinedPath, m_quickLook) && !Functions::Vector::isInList(joinedPath, m_quickLookMatches))
+            {
+                m_quickLookMatches.push_back(joinedPath);
+            }
+            if (m_quickLookMatches.size() == m_quickLook.size())
+            {
+                m_quickLook.clear();
+                m_quickLookMatches.clear();
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     void ViliParser::StoreInCache(const std::string& path)

@@ -343,10 +343,39 @@ namespace obe
             return std::sqrt(std::pow(p1coords.x - p2coords.x, 2) + std::pow(p1coords.y - p2coords.y, 2));
         }
 
-        void PolygonalCollider::draw(sf::RenderWindow& target, int offsetX, int offsetY, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+        void PolygonalCollider::draw(sf::RenderWindow& target, Scene::Camera& camera, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
             if (m_allPoints.size() >= 1)
             {
+                bool hasDrawablePoint = false;
+                Transform::UnitVector offset = camera.getPosition().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector csize = camera.getSize().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector pMaster = m_masterPoint.to<Transform::Units::WorldPixels>();
+                if (drawMasterPoint || drawSkel)
+                {
+                    if (pMaster.x >= offset.x && pMaster.y >= offset.y && pMaster.x <= offset.x + csize.x && pMaster.y <= offset.y + csize.y)
+                    {
+                        hasDrawablePoint = true;
+                    }
+                }
+                if (!hasDrawablePoint)
+                {
+                    for (int i = 0; i < m_allPoints.size(); i++)
+                    {
+                        Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
+                        if (point.x >= offset.x && point.y >= offset.y && point.x <= offset.x + csize.x && point.y <= offset.y + csize.y)
+                        {
+                            hasDrawablePoint = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasDrawablePoint)
+                {
+                    return;
+                }
+                    
+
                 std::map<std::string, Types::Any> drawOptions;
 
                 int r = 6;
@@ -367,7 +396,7 @@ namespace obe
                     if (Utils::Vector::isInList((i != m_allPoints.size() - 1) ? i + 1 : 0, m_highlightedLines) && m_selected)
                         drawOptions["line_color_" + std::to_string(i)] = sf::Color(0, 255, 0);
 
-                    drawPoints.emplace_back(point.x + offsetX, point.y + offsetY);
+                    drawPoints.emplace_back(point.x - offset.x, point.y - offset.y);
                 }
 
                 if (Utils::Vector::isInList(0, m_highlightedPoints) && m_selected)
@@ -378,8 +407,7 @@ namespace obe
                 if (drawMasterPoint)
                 {
                     sf::CircleShape polyPt;
-                    Transform::UnitVector pMaster = m_masterPoint.to<Transform::Units::WorldPixels>();
-                    polyPt.setPosition(sf::Vector2f(pMaster.x + offsetX - r, pMaster.y + offsetY - r));
+                    polyPt.setPosition(sf::Vector2f(pMaster.x - offset.x - r, pMaster.y - offset.y - r));
                     polyPt.setRadius(r);
                     sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
                     polyPt.setFillColor(polyPtColor);
@@ -391,8 +419,8 @@ namespace obe
                             Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                             Graphics::Utils::drawLine(target,
-                                                      point.x + offsetX, point.y + offsetY,
-                                                      pMaster.x + offsetX, pMaster.y + offsetY,
+                                                      point.x - offset.x, point.y - offset.y,
+                                                      pMaster.x - offset.x, pMaster.y - offset.y,
                                                       2, currentLineColor);
                         }
                     }

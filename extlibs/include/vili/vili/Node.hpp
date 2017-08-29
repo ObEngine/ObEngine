@@ -78,6 +78,11 @@ namespace vili
          */
         virtual std::string getNodePath() const;
         /**
+         * \brief Get the Node Path (Example : GrandParent/Parent/Node) without annotations
+         * \return A std::string that contains the NodePath of the Node
+         */
+        virtual std::string getRawNodePath() const;
+        /**
          * \brief Get the depth of the Node (While the parent of the Node has a parent etc..) A Node without parent has depth = 0
          * \return An int containing the depth of the Node
          */

@@ -1,3 +1,4 @@
+#include <Script/GameObject.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Utils/TypeUtils.hpp>
@@ -42,7 +43,6 @@ namespace obe
         void Trigger::registerEnvironment(unsigned int envIndex, const std::string& callbackName)
         {
             m_registeredEnvs.emplace_back(envIndex, callbackName);
-            std::cout << "Registering : " << envIndex << std::endl;
             Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
         }
 
@@ -55,14 +55,21 @@ namespace obe
 
         void Trigger::execute() const
         {
-            unsigned envAmount = m_registeredEnvs.size();
-            for (unsigned int i = 0; i < envAmount; i++)
+            
+            std::vector<unsigned int> EnabledEnvs = Script::GameObject::AllEnvs;
+            unsigned int envAmount = m_registeredEnvs.size();
+            for (unsigned int envIndex = 0; envIndex < envAmount; envIndex++)
             {
-                // Problem when GameObjects are deleted <REVISION>
-                std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[i];
-                Script::ScriptEngine["ExecuteStringOnEnv"]("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);
-                //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
-                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NewTable();
+                std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[envIndex];
+                if (Utils::Vector::isInList(rEnv.first, EnabledEnvs))
+                {
+                    Script::ScriptEngine["ExecuteStringOnEnv"]
+                    ("LuaCore.FuncInjector(" + rEnv.second +", \"" + this->getTriggerLuaTableName() +"\")", rEnv.first);
+                    //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
+                    Script::ScriptEngine["__ENVIRONMENTS"]
+                        [rEnv.first]["LuaCore"]["FTCP"]
+                        [this->getTriggerLuaTableName()] = kaguya::NewTable();
+                }
             }
         }
 

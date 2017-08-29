@@ -69,7 +69,7 @@ namespace obe
             std::vector<LevelSpriteHandlePoint> m_handlePoints;
             int m_layer = 1;
             int m_zdepth = 0;
-            sf::Texture m_texture;
+            const sf::Texture* m_texture;
             sfe::ComplexSprite m_sprite;
             std::string m_parentId = "";
             PositionTransformer m_positionTransformer;
@@ -114,7 +114,7 @@ namespace obe
              * \brief Gets a reference to the texture of the LevelSprite
              * \return A reference to the current texture of the LevelSprite
              */
-            sf::Texture& getTexture();
+            const sf::Texture& getTexture();
 
             //Layers
             /**

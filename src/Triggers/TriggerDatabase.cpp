@@ -114,11 +114,9 @@ namespace obe
         {
             if (m_allTriggers.find(namespaceName) != m_allTriggers.end())
             {
-                std::cout << "  Entering NSP Seek" << std::endl;
                 std::vector<std::string> allNames;
                 for (auto& nsp : m_allTriggers[namespaceName])
                 {
-                    std::cout << "    <foreach>" << std::endl;
                     allNames.push_back(nsp.first);
                 }
                 return allNames;

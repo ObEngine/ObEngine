@@ -75,6 +75,7 @@ namespace obe
             int m_currentDelay = 0;
             Time::TimeUnit m_animationClock = 0;
             bool m_isOver = false;
+            bool m_paused = false;
             int m_sprOffsetX = 0;
             int m_sprOffsetY = 0;
             int m_priority = 0;
@@ -149,6 +150,11 @@ namespace obe
              * \brief Resets the Animation (Unselect current AnimationGroup and restart AnimationCode)
              */
             void reset();
+            /**
+             * \brief Starts or Pause the Animation
+             * \param pause true if the Animation should pause, false otherwise
+             */
+            void setPaused(bool pause);
             /**
              * \brief Get the sf::Texture containing the current texture in the Animation
              * \return A reference to the currently displayed Texture

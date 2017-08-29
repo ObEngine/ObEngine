@@ -34,8 +34,8 @@ namespace obe
             if (path != "")
             {
                 m_path = path;
-                m_texture = *ResourceManager::GetInstance()->getTexture(System::Path(path).find());
-                m_sprite.setTexture(m_texture);
+                m_texture = ResourceManager::GetInstance()->getTexture(System::Path(path).find());
+                m_sprite.setTexture(*m_texture);
             }
         }
 
@@ -45,13 +45,13 @@ namespace obe
 
         void LevelSprite::setTexture(const sf::Texture& texture)
         {
-            m_texture = texture;
-            m_sprite.setTexture(m_texture);
+            m_texture = &texture;
+            m_sprite.setTexture(texture);
         }
 
-        sf::Texture& LevelSprite::getTexture()
+        const sf::Texture& LevelSprite::getTexture()
         {
-            return m_texture;
+            return *m_texture;
         }
 
         void LevelSprite::setLayer(int layer)
@@ -154,7 +154,7 @@ namespace obe
             Transform::UnitVector pixelSize = m_size.to<Transform::Units::WorldPixels>();
             double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor();
             double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor();
-            sf::Vector2u texSize = m_texture.getSize();
+            sf::Vector2u texSize = m_texture->getSize();
             /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
             std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
             std::cout << "From : " << pixelSize << std::endl;*/
@@ -234,7 +234,7 @@ namespace obe
             std::string spriteYTransformer;
             std::string spriteUnits = configuration.contains(vili::NodeType::ComplexNode, "rect") ?
                 configuration.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
-            std::cout << "SpriteUnit : " << spriteUnits << std::endl;
+            //std::cout << "SpriteUnit : " << spriteUnits << std::endl;
             std::string spritePath = configuration.contains(vili::NodeType::DataNode, "path") ?
                 configuration.getDataNode("path").get<std::string>() : "";
             Transform::UnitVector spritePos(0, 0);

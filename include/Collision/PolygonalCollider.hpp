@@ -3,6 +3,7 @@
 #include <clipper/clipper.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <Scene/Camera.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Types/Identifiable.hpp>
@@ -323,7 +324,7 @@ namespace obe
              * \param drawMasterPoint Draws the MasterPoint of the Polygon or not
              * \param drawSkel Draws the Skeleton (Lines to MasterPoint) of the Polygon or not
              */
-            void draw(sf::RenderWindow& target, int offsetX, int offsetY, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+            void draw(sf::RenderWindow& target, Scene::Camera& camera, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
             /**
              * \brief Highlight a Point of the Polygon (Changes its color when the Polygon is drawn)
              * \param pointIndex Index of the Point to highlight

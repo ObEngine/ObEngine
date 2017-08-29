@@ -28,6 +28,7 @@ namespace obe
                     .addFunction("getTextureAtIndex", &Animation::Animation::getTextureAtIndex)
                     .addFunction("isAnimationOver", &Animation::Animation::isAnimationOver)
                     .addFunction("loadAnimation", &Animation::Animation::loadAnimation)
+                    .addFunction("setPaused", &Animation::Animation::setPaused)
                     .addFunction("reset", &Animation::Animation::reset)
                     .addFunction("update", &Animation::Animation::update)
                 );

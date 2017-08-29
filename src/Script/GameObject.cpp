@@ -91,6 +91,8 @@ namespace obe
         }
 
         //GameObject
+        std::vector<unsigned int> GameObject::AllEnvs;
+
         GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr)
         {
             m_type = type;
@@ -139,7 +141,8 @@ namespace obe
                 m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
 
                 m_envIndex = ScriptEngine["CreateNewEnv"]();
-                std::cout << "Environment Index is : " << m_envIndex << std::endl;
+                AllEnvs.push_back(m_envIndex);
+                //std::cout << "Environment Index is : " << m_envIndex << std::endl;
 
                 //executeFile(m_envIndex, System::Path("Lib/Internal/ScriptInit.lua").find());
                 //loadScrGameObject(this, m_objectScript.get());
@@ -345,7 +348,7 @@ namespace obe
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
         {
-            std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << callAlias << std::endl;
+            //std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << callAlias << std::endl;
             if (trName == "*")
             {
                 std::vector<std::string> allTrg = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
@@ -393,6 +396,14 @@ namespace obe
                 hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeLevelSpriteById(m_objectLevelSprite->getId());
             if (m_hasCollider)
                 hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeColliderById(m_objectCollider->getId());
+            AllEnvs.erase(
+                std::remove_if(
+                    AllEnvs.begin(), 
+                    AllEnvs.end(), 
+                    [this](const unsigned int& envIndex) { return envIndex == m_envIndex; }
+                ), 
+                AllEnvs.end()
+            );
             //GAMEOBJECTENV = nullptr;
         }
     }

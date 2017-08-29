@@ -80,6 +80,20 @@ namespace vili
         return Functions::Vector::join(parentChain, "/");
     }
 
+    std::string Node::getRawNodePath() const
+    {
+        std::vector<std::string> parentChain;
+        ContainerNode* currentParent = this->getParent();
+        while (currentParent != nullptr)
+        {
+            parentChain.push_back(currentParent->getId());
+            currentParent = currentParent->getParent();
+        }
+        reverse(parentChain.begin(), parentChain.end());
+        parentChain.push_back(this->getId());
+        return Functions::Vector::join(parentChain, "/");
+    }
+
     unsigned int Node::getDepth() const
     {
         ContainerNode* currentParent = this->getParent();

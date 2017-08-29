@@ -8,13 +8,13 @@ Object = {
 };
 
 function ObjectInit(argtable)
-    print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
+    --print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
     local argt = argtable or {};
     for k, v in pairs(argt) do
         This:sendInitArg(k, v);
-        print("Pushing Arg", k, v);
+        --print("Pushing Arg", k, v);
     end
-    print("Initialisation done");
+    --print("Initialisation done");
     This:initialize();
     return Object;
 end
@@ -30,7 +30,7 @@ setmetatable(Local, Local__Meta);
 
 Global__Trigger__Meta = {
     __newindex = function(object, index, value)
-        print("Register new Global Trigger", object.triggerGroupId, index);
+        --print("Register new Global Trigger", object.triggerGroupId, index);
         This:useExternalTrigger("Global", object.triggerGroupId, index);
         rawset(object, index, value);
     end
