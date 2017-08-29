@@ -18,6 +18,7 @@ namespace obe
             Bindings::Load(&ScriptEngine, "Vili");
             Bindings::Load(&ScriptEngine, "Plugins");
             ScriptEngine["Hook"] = kaguya::NewTable();
+            ScriptEngine.dofile("Lib/Internal/Aliases.lua");
             ScriptEngine.dofile("Lib/Internal/CanvasConfig.lua");
         }
 

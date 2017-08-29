@@ -55,13 +55,14 @@ namespace obe
 
         void Trigger::execute() const
         {
-            unsigned int envAmount = m_registeredEnvs.size();
-            for (unsigned int envIndex = 0; envIndex < envAmount; envIndex++)
+            unsigned envAmount = m_registeredEnvs.size();
+            for (unsigned int i = 0; i < envAmount; i++)
             {
-                std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[envIndex];
-                Script::ScriptEngine["ExecuteStringOnEnv"]("LuaCore.FuncInjector(" + rEnv.second +", \"" + this->getTriggerLuaTableName() +"\")", rEnv.first);
+                // Problem when GameObjects are deleted <REVISION>
+                std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[i];
+                Script::ScriptEngine["ExecuteStringOnEnv"]("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);
                 //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
-                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+                Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NewTable();
             }
         }
 
