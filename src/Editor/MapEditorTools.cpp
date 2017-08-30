@@ -223,7 +223,7 @@ namespace obe
             {
                 std::cout << "LOADING CORE LIB RESULT AFTERALL ===============>" << std::endl;
                 Script::ScriptEngine("print(inspect(Core))");
-                Script::GameObject* newGameObject = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(key, objName);
+                Script::GameObject* newGameObject = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(objName, key);
                 newGameObject->initialize();
             }
         }
@@ -232,7 +232,7 @@ namespace obe
         {
             Scene::Scene* scene = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
-            Script::GameObject* newGameObject = scene->createGameObject(key, objName);
+            Script::GameObject* newGameObject = scene->createGameObject(objName, key);
             
             requires->at("Output").walk([](vili::NodeIterator& node)
             {

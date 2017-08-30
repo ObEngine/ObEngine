@@ -22,6 +22,12 @@ namespace obe
                 );
             }
 
+            kaguya::LuaFunction SceneGameObjectWrapperFunction(Scene::Scene* scene, const std::string& objectType, const std::string& objectId = "")
+            {
+                return scene->createGameObject(objectId, objectType)->getConstructor();
+            }
+
+            KAGUYA_FUNCTION_OVERLOADS(Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);
             void LoadScene(kaguya::State* lua)
             {
                 (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
@@ -42,20 +48,20 @@ namespace obe
                     .addFunction("getCamera", &Scene::Scene::getCamera)
                     .addFunction("getColliderAmount", &Scene::Scene::getColliderAmount)
                     .addFunction("getColliderByCentroidPosition", &Scene::Scene::getColliderByCentroidPosition)
-                    .addFunction("getColliderById", &Scene::Scene::getColliderById)
+                    .addFunction("getCollider", &Scene::Scene::getCollider)
                     .addFunction("getColliderPointByPosition", &Scene::Scene::getColliderPointByPosition)
                     .addFunction("getGameObjectAmount", &Scene::Scene::getGameObjectAmount)
                     //.addFunction("getGameObjectById", &Scene::Scene::getGameObjectById)
                     .addFunction("getLevelName", &Scene::Scene::getLevelName)
                     .addFunction("getLevelSpriteAmount", &Scene::Scene::getLevelSpriteAmount)
-                    .addFunction("getLevelSpriteById", &Scene::Scene::getLevelSpriteById)
+                    .addFunction("getLevelSprite", &Scene::Scene::getLevelSprite)
                     .addFunction("getLevelSpriteByPosition", &Scene::Scene::getLevelSpriteByPosition)
                     .addFunction("getLevelSpritesByLayer", &Scene::Scene::getLevelSpritesByLayer)
                     .addFunction("isCameraLocked", &Scene::Scene::isCameraLocked)
                     .addFunction("loadFromFile", &Scene::Scene::setFutureLoadFromFile)
-                    .addFunction("removeColliderById", &Scene::Scene::removeColliderById)
-                    .addFunction("removeGameObjectById", &Scene::Scene::removeGameObjectById)
-                    .addFunction("removeLevelSpriteById", &Scene::Scene::removeLevelSpriteById)
+                    .addFunction("removeCollider", &Scene::Scene::removeCollider)
+                    .addFunction("removeGameObject", &Scene::Scene::removeGameObject)
+                    .addFunction("removeLevelSprite", &Scene::Scene::removeLevelSprite)
                     .addFunction("reorganizeLayers", &Scene::Scene::reorganizeLayers)
                     .addFunction("setCameraLock", &Scene::Scene::setCameraLock)
                     .addFunction("setLevelName", &Scene::Scene::setLevelName)
@@ -63,16 +69,12 @@ namespace obe
                     .addFunction("update", &Scene::Scene::update)
                 );
 
-                (*lua)["Core"]["Scene"]["Scene"]["getGameObjectById"] = kaguya::function([](Scene::Scene* scene, const std::string& objectId)
+                (*lua)["Core"]["Scene"]["Scene"]["getGameObject"] = kaguya::function([](Scene::Scene* scene, const std::string& objectId)
                 {
-                    return scene->getGameObjectById(objectId)->access();
+                    return scene->getGameObject(objectId)->access();
                 });
 
-                (*lua)["Core"]["Scene"]["Scene"]["createGameObject"] = kaguya::function(
-                    [](Scene::Scene* scene, const std::string& objectId, const std::string& objectType)
-                {
-                    return scene->createGameObject(objectId, objectType)->getConstructor();
-                });
+                (*lua)["Core"]["Scene"]["Scene"]["createGameObject"] = kaguya::function(Scene_createGameObject_wrapper());
             }
         }  
     }

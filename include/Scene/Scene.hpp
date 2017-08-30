@@ -93,11 +93,11 @@ namespace obe
             //GameObjects
             /**
              * \brief Creates a new GameObject
-             * \param id Id of the new GameObject
              * \param object Type of the GameObject
+             * \param id Id of the new GameObject (If empty the id will be randomly generated)
              * \return A pointer to the newly created GameObject
              */
-            Script::GameObject* createGameObject(const std::string& id, const std::string& object);
+            Script::GameObject* createGameObject(const std::string& object, const std::string& id = "");
             /**
              * \brief Get how many GameObjects are present in the Scene
              * \return An unsigned int containing how many GameObjects are present in the Scene
@@ -113,7 +113,7 @@ namespace obe
              * \param id Id of the GameObject to retrieve
              * \return A pointer to the GameObject
              */
-            Script::GameObject* getGameObjectById(const std::string& id);
+            Script::GameObject* getGameObject(const std::string& id);
             /**
              * \brief Check if a GameObject exists in the Scene
              * \param id Id of the GameObject to check the existence
@@ -124,7 +124,7 @@ namespace obe
              * \brief Removes a GameObject from the Scene
              * \param id Id of the GameObject to remove from the Scene
              */
-            void removeGameObjectById(const std::string& id);
+            void removeGameObject(const std::string& id);
 
             //Camera
             Camera* getCamera(); // <REVISION>
@@ -170,7 +170,7 @@ namespace obe
              * \param id Id of the LevelSprite to get
              * \return A pointer to the LevelSprite
              */
-            Graphics::LevelSprite* getLevelSpriteById(const std::string& id);
+            Graphics::LevelSprite* getLevelSprite(const std::string& id);
             /**
              * \brief Check if a LevelSprite exists in the Scene
              * \param id Id of the LevelSprite to check the existence
@@ -181,7 +181,7 @@ namespace obe
              * \brief Removes the LevelSprite with the given Id
              * \param id Id of the LevelSprite to remove
              */
-            void removeLevelSpriteById(const std::string& id);
+            void removeLevelSprite(const std::string& id);
 
             //Colliders
             /**
@@ -217,7 +217,7 @@ namespace obe
              * \param id Id of the Collider to retrieve
              * \return A pointer to the Collider
              */
-            Collision::PolygonalCollider* getColliderById(const std::string& id);
+            Collision::PolygonalCollider* getCollider(const std::string& id);
             /**
              * \brief Check the existence of the Collider with given Id in the Scene
              * \param id Id of the Collider to check the existence
@@ -228,7 +228,7 @@ namespace obe
              * \brief Removes the Collider with the given Id from the Scene
              * \param id Id of the Collider to remove
              */
-            void removeColliderById(const std::string& id);
+            void removeCollider(const std::string& id);
 
             //Other
             /**

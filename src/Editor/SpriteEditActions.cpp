@@ -206,7 +206,7 @@ namespace obe
                 {
                     editorTriggers->pushParameter("SpriteRemoved", "id", selectedSprite->getId());
                     editorTriggers->trigger("SpriteRemoved");
-                    world.removeLevelSpriteById(selectedSprite->getId());
+                    world.removeLevelSprite(selectedSprite->getId());
                     selectedSprite = nullptr;
                     sprInfo.setString("");
                     hoveredSprite = nullptr;

@@ -84,7 +84,7 @@ namespace obe
                     }
                     selectedMasterCollider = tempCol;
                     selectedMasterCollider->setSelected(true);
-                    if (selectedMasterCollider->getParentId() != "") world.getGameObjectById(selectedMasterCollider->getParentId())->setUpdateState(false);
+                    if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
                     masterColliderGrabbed = true;
                     editorTriggers->pushParameter("ColliderPicked", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderPicked", "pos", cursCoord);
@@ -117,7 +117,7 @@ namespace obe
                 {
                     masterColliderGrabbed = false;
                     if (selectedMasterCollider->getParentId() != "") 
-                        world.getGameObjectById(selectedMasterCollider->getParentId())->setUpdateState(true);
+                        world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
                     editorTriggers->pushParameter("ColliderReleased", "collider", selectedMasterCollider);
                     editorTriggers->trigger("ColliderReleased");
                 }
@@ -157,7 +157,7 @@ namespace obe
                         editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                         editorTriggers->trigger("ColliderRemoved");
                         selectedMasterCollider->setSelected(false);
-                        world.removeColliderById(selectedMasterCollider->getId());
+                        world.removeCollider(selectedMasterCollider->getId());
                         selectedMasterCollider = nullptr;
                         masterColliderGrabbed = false;
                         colliderPtGrabbed = -1;
@@ -206,7 +206,7 @@ namespace obe
                     editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                     editorTriggers->trigger("ColliderRemoved");
                     selectedMasterCollider->setSelected(false);
-                    world.removeColliderById(selectedMasterCollider->getId());
+                    world.removeCollider(selectedMasterCollider->getId());
                     selectedMasterCollider = nullptr;
                     masterColliderGrabbed = false;
                     colliderPtGrabbed = -1;

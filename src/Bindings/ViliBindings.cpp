@@ -262,8 +262,8 @@ namespace obe
                 );
             }
 
-            KAGUYA_MEMBER_FUNCTION_OVERLOADS(ViliParser_parseFile_wrapper, vili::ViliParser, parseFile, 1, 3)
-                KAGUYA_MEMBER_FUNCTION_OVERLOADS(ViliParser_includeFile_wrapper, vili::ViliParser, includeFile, 1, 2)
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(ViliParser_parseFile_wrapper, vili::ViliParser, parseFile, 1, 3);
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(ViliParser_includeFile_wrapper, vili::ViliParser, includeFile, 1, 2);
             void LoadViliViliParser(kaguya::State* lua)
             {
                 (*lua)["Vili"]["ViliParser"].setClass(kaguya::UserdataMetatable<vili::ViliParser>()

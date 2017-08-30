@@ -145,8 +145,8 @@ namespace obe
                     if (!this->doesGameObjectExists(currentObjectName))
                     {
                         vili::ComplexNode& currentObject = gameObjects.at(currentObjectName);
-                        std::string levelObjectType = currentObject.getDataNode("type").get<std::string>();
-                        Script::GameObject* newObject = this->createGameObject(currentObjectName, levelObjectType);
+                        std::string gameObjectType = currentObject.getDataNode("type").get<std::string>();
+                        Script::GameObject* newObject = this->createGameObject(gameObjectType, currentObjectName);
                         if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
                         {
                             vili::ComplexNode& objectRequirements = currentObject.at("Requires");
@@ -157,7 +157,7 @@ namespace obe
                         newObject->exec("LuaCore.InjectInitInjectionTable()");
                         newObject->initialize();
                     }
-                    else if (!this->getGameObjectById(currentObjectName)->isPermanent())
+                    else if (!this->getGameObject(currentObjectName)->isPermanent())
                     {
                         aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene", {{"object", currentObjectName}, {"mapfile", m_levelName}});
                     }
@@ -428,7 +428,7 @@ namespace obe
             m_updateState = state;
         }
 
-        Script::GameObject* Scene::getGameObjectById(const std::string& id)
+        Script::GameObject* Scene::getGameObject(const std::string& id)
         {
             for (auto& gameObject : m_gameObjectArray)
             {
@@ -448,7 +448,7 @@ namespace obe
             return false;
         }
 
-        void Scene::removeGameObjectById(const std::string& id)
+        void Scene::removeGameObject(const std::string& id)
         {
             m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [&id](const std::unique_ptr<Script::GameObject>& ptr){
                 if (ptr->getId() == id)
@@ -466,9 +466,22 @@ namespace obe
             return returnVec;
         }
 
-        Script::GameObject* Scene::createGameObject(const std::string& id, const std::string& obj)
+        Script::GameObject* Scene::createGameObject(const std::string& obj, const std::string& id)
         {
-            std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, id);
+            std::string useId = id;
+            if (useId.empty())
+            {
+                while (useId.empty() || this->doesGameObjectExists(useId))
+                {
+                    useId = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+                }
+            }
+            else if (this->doesGameObjectExists(useId))
+            {
+                aube::ErrorHandler::Warn("ObEngine.Scene.Scene.OverridedObject", { {"id", id}, {"mapfile", m_levelName} });
+            }
+
+            std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, useId);
             vili::ComplexNode& gameObjectData = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
             newGameObject->loadGameObject(*this, gameObjectData);
             if (newGameObject->m_hasScriptEngine)
@@ -480,12 +493,12 @@ namespace obe
             if (newGameObject->doesHaveLevelSprite())
             {
                 newGameObject->getLevelSprite()->setPosition(0, 0);
-                newGameObject->getLevelSprite()->setParentId(id);
+                newGameObject->getLevelSprite()->setParentId(useId);
             }
 
             if (newGameObject->doesHaveCollider())
             {
-                newGameObject->getCollider()->setParentId(id);
+                newGameObject->getCollider()->setParentId(useId);
             }
 
             m_gameObjectArray.push_back(move(newGameObject));
@@ -572,7 +585,7 @@ namespace obe
             return returnSpr;
         }
 
-        Graphics::LevelSprite* Scene::getLevelSpriteById(const std::string& id)
+        Graphics::LevelSprite* Scene::getLevelSprite(const std::string& id)
         {
             for (int i = 0; i < m_spriteArray.size(); i++)
             {
@@ -592,7 +605,7 @@ namespace obe
             return false;
         }
 
-        void Scene::removeLevelSpriteById(const std::string& id)
+        void Scene::removeLevelSprite(const std::string& id)
         {
             m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(), [&id](std::unique_ptr<Graphics::LevelSprite>& levelSprite)
             {
@@ -634,7 +647,7 @@ namespace obe
             return nullptr;
         }
 
-        Collision::PolygonalCollider* Scene::getColliderById(const std::string& id)
+        Collision::PolygonalCollider* Scene::getCollider(const std::string& id)
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
@@ -658,7 +671,7 @@ namespace obe
             return false;
         }
 
-        void Scene::removeColliderById(const std::string& id)
+        void Scene::removeCollider(const std::string& id)
         {
             m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(), [&id](std::unique_ptr<Collision::PolygonalCollider>& collider)
             {
