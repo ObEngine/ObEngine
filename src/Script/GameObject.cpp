@@ -131,6 +131,10 @@ namespace obe
         void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
         {
             //Script
+            if (obj.contains(vili::NodeType::DataNode, "permanent"))
+            {
+                m_permanent = obj.getDataNode("permanent").get<bool>();
+            }
             if (obj.contains(vili::NodeType::ComplexNode, "Script"))
             {
                 m_hasScriptEngine = true;
@@ -405,6 +409,16 @@ namespace obe
                 AllEnvs.end()
             );
             //GAMEOBJECTENV = nullptr;
+        }
+
+        void GameObject::setPermanent(bool permanent)
+        {
+            m_permanent = permanent;
+        }
+
+        bool GameObject::isPermanent()
+        {
+            return m_permanent;
         }
     }
 }

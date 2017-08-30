@@ -27,16 +27,13 @@ namespace obe
             Transform::UnitVector m_cameraInitialPosition;
             Transform::Referencial m_cameraInitialReferencial;
             bool m_updateState = true;
-            bool m_needToOrderUpdateArray = true;
 
             std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
             std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
-            std::map<std::string, std::unique_ptr<Script::GameObject>> m_gameObjectMap;
-            std::vector<Script::GameObject*> m_updateObjArray;
+            std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
             std::vector<std::string> m_scriptArray;
 
             std::map<std::string, bool> m_showCollisionModes;
-            void orderGameObjectExecutionByPriority();
             void displaySprites(sf::RenderWindow& target);
         public:
             /**

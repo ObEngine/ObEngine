@@ -137,23 +137,30 @@ namespace obe
                 }
             }
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "LevelObjects"))
+            if (mapParse->contains(vili::NodeType::ComplexNode, "GameObjects"))
             {
-                vili::ComplexNode& levelObjects = mapParse.at("LevelObjects");
-                for (std::string& currentObjectName : levelObjects.getAll(vili::NodeType::ComplexNode))
+                vili::ComplexNode& gameObjects = mapParse.at("GameObjects");
+                for (std::string& currentObjectName : gameObjects.getAll(vili::NodeType::ComplexNode))
                 {
-                    vili::ComplexNode& currentObject = levelObjects.at(currentObjectName);
-                    std::string levelObjectType = currentObject.getDataNode("type").get<std::string>();
-                    Script::GameObject* newObject = this->createGameObject(currentObjectName, levelObjectType);
-                    if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
+                    if (!this->doesGameObjectExists(currentObjectName))
                     {
-                        vili::ComplexNode& objectRequirements = currentObject.at("Requires");
-                        currentObject.removeOwnership(&objectRequirements);
-                        Script::GameObjectDatabase::ApplyRequirements(newObject, objectRequirements);
-                        objectRequirements.setParent(&currentObject);
+                        vili::ComplexNode& currentObject = gameObjects.at(currentObjectName);
+                        std::string levelObjectType = currentObject.getDataNode("type").get<std::string>();
+                        Script::GameObject* newObject = this->createGameObject(currentObjectName, levelObjectType);
+                        if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
+                        {
+                            vili::ComplexNode& objectRequirements = currentObject.at("Requires");
+                            currentObject.removeOwnership(&objectRequirements);
+                            Script::GameObjectDatabase::ApplyRequirements(newObject, objectRequirements);
+                            objectRequirements.setParent(&currentObject);
+                        }
+                        newObject->exec("LuaCore.InjectInitInjectionTable()");
+                        newObject->initialize();
                     }
-                    newObject->exec("LuaCore.InjectInitInjectionTable()");
-                    newObject->initialize();
+                    else if (!this->getGameObjectById(currentObjectName)->isPermanent())
+                    {
+                        aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene", {{"object", currentObjectName}, {"mapfile", m_levelName}});
+                    }
                 }
             }
 
@@ -175,14 +182,29 @@ namespace obe
 
         void Scene::clearWorld()
         {
-            for (auto& object : m_gameObjectMap)
+            for (auto& gameObject : m_gameObjectArray)
             {
-                object.second->deleteObject();
+                if (!gameObject->isPermanent())
+                {
+                    gameObject->deleteObject();
+                }
             }
-            m_gameObjectMap.clear();
-            m_spriteArray.clear();
-            m_colliderArray.clear();
-            m_updateObjArray.clear();
+            m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), 
+            [](const std::unique_ptr<Script::GameObject>& ptr){
+                return (!ptr->isPermanent());
+            }), m_gameObjectArray.end());
+            m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(), 
+            [this](const std::unique_ptr<Graphics::LevelSprite>& ptr){
+                if (!ptr->getParentId().empty() && this->doesGameObjectExists(ptr->getParentId()))
+                    return false;
+                return true;
+            }), m_spriteArray.end());
+            m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(), 
+            [this](const std::unique_ptr<Collision::PolygonalCollider>& ptr){
+                if (!ptr->getParentId().empty() && this->doesGameObjectExists(ptr->getParentId()))
+                    return false;
+                return true;
+            }), m_colliderArray.end());
             m_scriptArray.clear();
         }
 
@@ -260,11 +282,11 @@ namespace obe
                     }
                 }
             }
-            if (m_gameObjectMap.size() > 0) (*dataStore)->createComplexNode("LevelObjects");
-            for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
+            if (m_gameObjectArray.size() > 0) (*dataStore)->createComplexNode("GameObjects");
+            for (auto& gameObject : m_gameObjectArray)
             {
-                dataStore->at("LevelObjects").createComplexNode(it->first);
-                dataStore->at("LevelObjects", it->first).createDataNode("type", it->second->getType());
+                dataStore->at("GameObjects").createComplexNode(gameObject->getId());
+                dataStore->at("GameObjects", gameObject->getId()).createDataNode("type", gameObject->getType());
                 /*(*it->second->m_objectScript)("inspect = require('Lib/StdLib/Inspect');");
                 //kaguya::LuaRef saveTableRef = (*it->second->m_objectScript)["Local"]["Save"]();
                 //(*it->second->m_objectScript)("print('Saving : ', This:getId())");
@@ -317,16 +339,10 @@ namespace obe
                 m_camera.unlock();
             if (m_updateState)
             {
-                if (m_needToOrderUpdateArray)
+                for (auto& gameObject : m_gameObjectArray)
                 {
-                    this->orderGameObjectExecutionByPriority();
-                    m_needToOrderUpdateArray = false;
-                }
-
-                for (int i = 0; i < m_updateObjArray.size(); i++)
-                {
-                    if (!m_updateObjArray[i]->deletable)
-                        m_updateObjArray[i]->update();
+                    if (!gameObject->deletable)
+                        gameObject->update();
                 }
             }
             m_camera.unlock();
@@ -414,27 +430,38 @@ namespace obe
 
         Script::GameObject* Scene::getGameObjectById(const std::string& id)
         {
-            if (m_gameObjectMap.find(id) != m_gameObjectMap.end())
-                return m_gameObjectMap[id].get();
+            for (auto& gameObject : m_gameObjectArray)
+            {
+                if (gameObject->getId() == id)
+                    return gameObject.get();
+            }
             throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownGameObject", {{"id", id}, {"map", m_levelName}});
         }
 
         bool Scene::doesGameObjectExists(const std::string& id)
         {
-            return (m_gameObjectMap.find(id) != m_gameObjectMap.end());
+            for (auto& gameObject : m_gameObjectArray)
+            {
+                if (gameObject->getId() == id)
+                    return true;
+            }
+            return false;
         }
 
         void Scene::removeGameObjectById(const std::string& id)
         {
-            m_gameObjectMap.erase(id);
+            m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [&id](const std::unique_ptr<Script::GameObject>& ptr){
+                if (ptr->getId() == id)
+                    return true;
+            }), m_gameObjectArray.end());
         }
 
         std::vector<Script::GameObject*> Scene::getAllGameObjects()
         {
             std::vector<Script::GameObject*> returnVec;
-            for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
+            for (auto& gameObject : m_gameObjectArray)
             {
-                it->second.get();
+                returnVec.push_back(gameObject.get());
             }
             return returnVec;
         }
@@ -461,25 +488,16 @@ namespace obe
                 newGameObject->getCollider()->setParentId(id);
             }
 
-            m_gameObjectMap[id] = move(newGameObject);
-            m_needToOrderUpdateArray = true;
+            m_gameObjectArray.push_back(move(newGameObject));
 
             //std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
-            return m_gameObjectMap[id].get();
+            return m_gameObjectArray.back().get();
         }
 
         unsigned Scene::getGameObjectAmount() const
         {
-            return m_gameObjectMap.size();
-        }
-
-        void Scene::orderGameObjectExecutionByPriority()
-        {
-            m_updateObjArray.clear();
-            for (auto it = m_gameObjectMap.begin(); it != m_gameObjectMap.end(); ++it)
-                m_updateObjArray.push_back(it->second.get());
-            //sort(m_updateObjArray.begin(), m_updateObjArray.end(), Script::orderScrPriority);
+            return m_gameObjectArray.size();
         }
 
         void Scene::reorganizeLayers()

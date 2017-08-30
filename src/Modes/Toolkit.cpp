@@ -13,6 +13,8 @@ namespace obe
         void startToolkitMode()
         {
             bool continueToolkit = true;
+            std::vector<std::string> commandHistory;
+            unsigned commandHistoryIndex = 0;
             sf::RenderWindow window({636, 636}, "ObEngine Toolkit", sf::Style::None);
             sf::Color inputColor(255, 255, 255);
 
@@ -64,15 +66,21 @@ namespace obe
             mainPanel->add(toolkitInput);
 
             kaguya::State toolkitEngine;
-            toolkitInput->connect("returnkeypressed", [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine]()
+            toolkitInput->connect("returnkeypressed", [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine, &commandHistory, &commandHistoryIndex]()
             {
                 sfe::RichText newtext(toolkitFont);
                 newtext.setCharacterSize(16);
-                newtext << ">> " + toolkitInput->getText().toAnsiString();
+                std::string inputText = toolkitInput->getText().toAnsiString();
+                newtext << ">> " + inputText;
                 newtext << inputColor;
                 content->addLine(newtext);
-                toolkitEngine["evaluate"](toolkitInput->getText().toAnsiString());
+                toolkitEngine["evaluate"](inputText);
                 toolkitInput->setText("");
+                commandHistory.erase(std::remove_if(commandHistory.begin(), commandHistory.end(), [&inputText](const std::string& command){
+                    return (command == inputText);
+                }), commandHistory.end());
+                commandHistory.push_back(inputText);
+                commandHistoryIndex = commandHistory.size();
             });
 
             toolkitEngine["This"] = &toolkitEngine;
@@ -137,6 +145,22 @@ namespace obe
                         window.close();
                     else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab)
                         toolkitEngine["autocomplete"](toolkitInput->getText().toAnsiString());
+                    else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
+                    {
+                        if (commandHistoryIndex > 0)
+                        {
+                            commandHistoryIndex--;
+                            toolkitInput->setText(commandHistory[commandHistoryIndex]);
+                        }
+                    }
+                    else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
+                    {
+                        if (commandHistoryIndex < commandHistory.size() - 1)
+                        {
+                            commandHistoryIndex++;
+                            toolkitInput->setText(commandHistory[commandHistoryIndex]);
+                        }
+                    }
                     else if (event.type == sf::Event::MouseButtonPressed)
                     {
                         if (sf::Mouse::getPosition().y - window.getPosition().y < 70 && sf::Mouse::getPosition().x - window.getPosition().x < 580)

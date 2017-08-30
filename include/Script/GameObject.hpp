@@ -56,6 +56,7 @@ namespace obe
         {
         private:
             unsigned int m_envIndex;
+            bool m_permanent;
             std::unique_ptr<Animation::Animator> m_objectAnimator;
             Graphics::LevelSprite* m_objectLevelSprite;
             Collision::PolygonalCollider* m_objectCollider;
@@ -205,7 +206,6 @@ namespace obe
              * \brief Delete State of the GameObject (false = not deleted)
              */
             bool deletable = false;
-
             /**
              * \brief Access the exposition table of the GameObject
              * \return A reference to the exposition table of the GameObject
@@ -216,17 +216,18 @@ namespace obe
              * \return A reference to the Lua function used to build the GameObject
              */
             kaguya::LuaFunction getConstructor() const;
-
             /**
              * \brief Gets the id (index) of the GameObject Lua environement
              * \return An unsigned int representing the id (index) of the GameObject Lua environement
              */
             unsigned int getEnvIndex() const;
-
             /**
              * \brief Triggers the GameObject's Local.Init
              */
             void initialize();
+
+            void setPermanent(bool permanent);
+            bool isPermanent();
         };
 
         template <typename U>
