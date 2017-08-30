@@ -24,7 +24,7 @@ namespace obe
 
             kaguya::LuaFunction SceneGameObjectWrapperFunction(Scene::Scene* scene, const std::string& objectType, const std::string& objectId = "")
             {
-                return scene->createGameObject(objectId, objectType)->getConstructor();
+                return scene->createGameObject(objectType, objectId)->getConstructor();
             }
 
             KAGUYA_FUNCTION_OVERLOADS(Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);

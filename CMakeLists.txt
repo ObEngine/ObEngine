@@ -23,12 +23,6 @@ add_subdirectory(extlibs/build/dynamicLinker)
 file(GLOB_RECURSE PG_OBE include/*.hpp)
 file(GLOB_RECURSE HD_OBE src/*.cpp)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
-else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-endif()
-
 set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(SFML 2 REQUIRED graphics window system network audio)
@@ -51,6 +45,10 @@ target_link_libraries(ObEngine sfe)
 target_link_libraries(ObEngine tgui)
 target_link_libraries(ObEngine vili)
 target_link_libraries(ObEngine dynamicLinker)
+
+if (UNIX)
+    target_link_libraries(ObEngine ${CMAKE_DL_LIBS})
+endif()
 
 if(SFML_FOUND)
   target_link_libraries(ObEngine ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
@@ -86,3 +84,7 @@ foreach(_source IN ITEMS ${_src_list})
     string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
     source_group("${_group_path}" FILES "${_source}")
 endforeach()
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
