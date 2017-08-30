@@ -31,7 +31,7 @@ KeyBinding:
         CamMovable:"Pressed:F10"
         CamFree:"Pressed:F11"
         CamUp:"Hold:Z"
-        CamDown:"Idle:LControl + Hold:S"
+        CamDown:"Hold:S"
         CamLeft:"Hold:Q"
         CamRight:"Hold:D"
         CamDash:"Hold:LShift"

@@ -457,6 +457,7 @@ namespace obe
                         Transform::UnitVector::Screen.w = event.size.width;
                         Transform::UnitVector::Screen.h = event.size.height;
                         window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                        gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                         break;
                     case sf::Event::JoystickConnected:
                         Input::SetGamepadList();

@@ -80,6 +80,11 @@ namespace obe
             }
         }
 
+        InputCombination InputCondition::getCombination() const
+        {
+            return m_triggerConditions;
+        }
+
         void InputCondition::addCombinationElement(InputCombinationElement combinationElement)
         {
             m_triggerConditions.push_back(combinationElement);

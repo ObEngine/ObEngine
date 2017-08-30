@@ -13,6 +13,8 @@ namespace obe
         using InputCombinationElement = std::pair<InputButtonMonitorPtr, std::vector<InputButtonState>>;
         using InputCombination = std::vector<InputCombinationElement>;
 
+        InputCombinationElement parseCombinationCode(const std::string& code);
+
         /**
          * \brief A class represented the required conditions to trigger an InputAction
          * @Bind
@@ -30,6 +32,11 @@ namespace obe
              * \param code The string that contains the new InputCombination
              */
             void setCombinationCode(const std::string& code);
+            /**
+             * \brief Gets the InputCombination used by the InputCondition
+             * \return The InputCombination used by the InputCondition
+             */
+            InputCombination getCombination() const;
             /**
              * \brief Adds a new InputCombinationElement to the InputCondition
              * \param combinationElement The InputCombinationElement to add to the InputCondition

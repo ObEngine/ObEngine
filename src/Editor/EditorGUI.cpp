@@ -1,6 +1,8 @@
 #include <Editor/EditorGUI.hpp>
-#include "Editor/MapEditorTools.hpp"
-#include "Editor/TGUIFallback.hpp"
+#include <Editor/MapEditorTools.hpp>
+#include <Editor/TGUIFallback.hpp>
+#include <System/Loaders.hpp>
+#include "Input/InputCondition.hpp"
 
 namespace obe
 {
@@ -112,12 +114,15 @@ namespace obe
                 tgui::Panel::Ptr editorPanel = tgui::Panel::create();
                 tgui::Panel::Ptr mapPanel = tgui::Panel::create();
                 tgui::Panel::Ptr settingsPanel = tgui::Panel::create();
+                tgui::Panel::Ptr keybindingPanel = tgui::Panel::create();
+                tgui::Scrollbar::Ptr keybindingScrollbar = tgui::Scrollbar::create();
                 tgui::Panel::Ptr spritesPanel = tgui::Panel::create();
                 tgui::Scrollbar::Ptr spritesScrollbar = tgui::Scrollbar::create();
                 tgui::Panel::Ptr objectsPanel = tgui::Panel::create();
                 tgui::Scrollbar::Ptr objectsScrollbar = tgui::Scrollbar::create();
                 tgui::Button::Ptr mapButton = tgui::Button::create();
                 tgui::Button::Ptr settingsButton = tgui::Button::create();
+                tgui::Button::Ptr keybindingButton = tgui::Button::create();
                 tgui::Button::Ptr spritesButton = tgui::Button::create();
                 tgui::Button::Ptr objectsButton = tgui::Button::create();
 
@@ -129,12 +134,15 @@ namespace obe
 
                 editorPanel->add(mapPanel, "mapPanel");
                 editorPanel->add(settingsPanel, "settingsPanel");
+                editorPanel->add(keybindingPanel, "keybindingPanel");
+                editorPanel->add(keybindingScrollbar, "keybindingScrollbar");
                 editorPanel->add(spritesPanel, "spritesPanel");
                 editorPanel->add(spritesScrollbar, "spritesScrollbar");
                 editorPanel->add(objectsPanel, "objectsPanel");
                 editorPanel->add(objectsScrollbar, "objectsScrollbar");
                 editorPanel->add(mapButton, "mapButton");
                 editorPanel->add(settingsButton, "settingsButton");
+                editorPanel->add(keybindingButton, "keybindingButton");
                 editorPanel->add(spritesButton, "spritesButton");
                 editorPanel->add(objectsButton, "objectsButton");
 
@@ -150,7 +158,13 @@ namespace obe
                 settingsButton->setText("Settings");
                 settingsButton->setTextSize(mediumFontSize);
 
-                spritesButton->setPosition(tguif::bindRight(settingsButton), 0);
+                keybindingButton->setPosition(tguif::bindRight(settingsButton), 0);
+                keybindingButton->setSize("10%", 30);
+                keybindingButton->setRenderer(baseTheme.getRenderer("Button"));
+                keybindingButton->setText("Keybinding");
+                keybindingButton->setTextSize(mediumFontSize);
+
+                spritesButton->setPosition(tguif::bindRight(keybindingButton), 0);
                 spritesButton->setSize("10%", 30);
                 spritesButton->setRenderer(baseTheme.getRenderer("Button"));
                 spritesButton->setText("Sprites");
@@ -169,6 +183,15 @@ namespace obe
                 settingsPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
                 settingsPanel->setSize("100%", "100% - 30");
                 settingsPanel->setPosition(0, 30);
+
+                keybindingPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                keybindingPanel->setSize("100%", "100% - 30");
+                keybindingPanel->setPosition(0, 30);
+
+                keybindingScrollbar->setPosition("100% - 16", "30");
+                keybindingScrollbar->setSize("16", "100% - 30");
+                keybindingScrollbar->connect("ValueChanged", scrollPanel, keybindingPanel, keybindingScrollbar);
+                keybindingScrollbar->setLowValue(keybindingPanel->getSize().y);
 
                 spritesPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
                 spritesPanel->setSize("100%", "100% - 30");
@@ -193,60 +216,92 @@ namespace obe
                 spritesPanel->hide();
                 objectsPanel->hide();
 
-                mapButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
+                mapButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->show();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
+                    mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
                     mainPanel->get<tgui::Panel>("spritesPanel")->hide();
                     mainPanel->get<tgui::Panel>("objectsPanel")->hide();
                     mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("keybindingButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     spritesScrollbar->hide();
                     objectsScrollbar->hide();
+                    keybindingScrollbar->hide();
                 });
 
-                settingsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
+                settingsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->show();
+                    mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
                     mainPanel->get<tgui::Panel>("spritesPanel")->hide();
                     mainPanel->get<tgui::Panel>("objectsPanel")->hide();
                     mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("keybindingButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     spritesScrollbar->hide();
                     objectsScrollbar->hide();
+                    keybindingScrollbar->hide();
                 });
 
-                spritesButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
+                keybindingButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
+                {
+                    tgui::Panel::Ptr keybindingPanel = mainPanel->get<tgui::Panel>("keybindingPanel");
+                    tgui::Scrollbar::Ptr keybindingScrollbar = mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
+                    buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
+                    mainPanel->get<tgui::Panel>("mapPanel")->hide();
+                    mainPanel->get<tgui::Panel>("settingsPanel")->hide();
+                    mainPanel->get<tgui::Panel>("keybindingPanel")->show();
+                    mainPanel->get<tgui::Panel>("spritesPanel")->hide();
+                    mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+                    mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("keybindingButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                    mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    spritesScrollbar->hide();
+                    objectsScrollbar->hide();
+                    keybindingScrollbar->show();
+                });
+
+                spritesButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
+                    mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
                     mainPanel->get<tgui::Panel>("spritesPanel")->show();
                     mainPanel->get<tgui::Panel>("objectsPanel")->hide();
                     mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("keybindingButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("Button"));
                     spritesScrollbar->show();
                     objectsScrollbar->hide();
+                    keybindingScrollbar->hide();
                 });
 
-                objectsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]()
+                objectsButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]()
                 {
                     mainPanel->get<tgui::Panel>("mapPanel")->hide();
                     mainPanel->get<tgui::Panel>("settingsPanel")->hide();
+                    mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
                     mainPanel->get<tgui::Panel>("spritesPanel")->hide();
                     mainPanel->get<tgui::Panel>("objectsPanel")->show();
                     mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("settingsButton")->setRenderer(baseTheme.getRenderer("Button"));
+                    mainPanel->get<tgui::Button>("keybindingButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("spritesButton")->setRenderer(baseTheme.getRenderer("Button"));
                     mainPanel->get<tgui::Button>("objectsButton")->setRenderer(baseTheme.getRenderer("SelectedButton"));
                     spritesScrollbar->hide();
                     objectsScrollbar->show();
+                    keybindingScrollbar->hide();
                 });
             }
 
@@ -604,6 +659,132 @@ namespace obe
                 requiresPanelContent->setRenderer(baseTheme.getRenderer("TransparentPanel"));
                 requiresPanelContent->setSize("100% - 2", "100% - 62");
                 requiresPanelContent->setPosition(0, 60);
+            }
+
+            void buildKeyBindingMenu(tgui::Panel::Ptr& keybindingPanel, tgui::Scrollbar::Ptr& keybindingScrollbar)
+            {
+                keybindingPanel->removeAllWidgets();
+
+                tgui::Label::Ptr keybindingCatLabel = tgui::Label::create();
+
+                keybindingPanel->add(keybindingCatLabel, "keybindingCatLabel");
+
+                keybindingCatLabel->setPosition(20, 20);
+                keybindingCatLabel->setTextSize(bigFontSize);
+                keybindingCatLabel->setRenderer(baseTheme.getRenderer("Label"));
+                keybindingCatLabel->setText("[ Keybinding Settings ]");
+
+                vili::ViliParser viliConfig;
+                System::Path("Data/config.cfg.vili").loadResource(&viliConfig, System::Loaders::dataLoader);
+                vili::ComplexNode& keybinding = viliConfig.at("KeyBinding");
+                unsigned int yPos = 80;
+                for (const std::string& context : keybinding.getAll(vili::NodeType::ComplexNode))
+                {
+                    tgui::Label::Ptr contextLbl = tgui::Label::create();
+                    keybindingPanel->add(contextLbl);
+                    contextLbl->setPosition(20, yPos);
+                    contextLbl->setTextSize(bigFontSize);
+                    contextLbl->setRenderer(baseTheme.getRenderer("Label"));
+                    contextLbl->setText(context);
+
+                    yPos += 70;
+                    
+                    for (const std::string& action : keybinding.at(context).getAll(vili::NodeType::DataNode))
+                    {
+                        tgui::Button::Ptr actionBtn = tgui::Button::create();
+                        keybindingPanel->add(actionBtn);
+                        actionBtn->setPosition(60, yPos);
+                        actionBtn->setSize("20%", 30);
+                        actionBtn->setRenderer(baseTheme.getRenderer("Button"));
+                        actionBtn->setText(action);
+                        actionBtn->setTextSize(mediumFontSize);
+
+                        Input::InputCondition keyGen;
+                        keyGen.setCombinationCode(keybinding.at(context).getDataNode(action).get<std::string>());
+                        unsigned int xPos = tguif::bindRight(actionBtn) + 30;
+                        unsigned int kIndex = 0;
+                        for (auto& key : keyGen.getCombination())
+                        {
+                            std::string keyName = key.first->getName();
+                            std::string stateName = Input::inputButtonStateToString(key.second[0]);
+                            if (Utils::String::contains(keyName, "NumPad"))
+                            {
+                                System::Path numImgPath("Sprites/Keys/Keyboard/Key_Num.png");                                
+                                keyName = Utils::String::replace(keyName, "NumPad", "");
+                                if (numImgPath.find() != "")
+                                {
+                                    tgui::Picture::Ptr numImg = tgui::Picture::create();
+                                    numImg->setTexture(numImgPath.find());
+                                    numImg->setPosition(xPos, yPos - 35);
+                                    keybindingPanel->add(numImg);
+                                    xPos += 100;
+                                }
+                                else
+                                {
+                                    tgui::Label::Ptr numLbl = tgui::Label::create();
+                                    numLbl->setPosition(xPos, yPos);
+                                    numLbl->setTextSize(mediumFontSize);
+                                    numLbl->setRenderer(baseTheme.getRenderer("Label"));
+                                    numLbl->setText("(NumPad)");
+                                    keybindingPanel->add(numLbl);
+                                    xPos += 100;
+                                }
+                            }
+                            System::Path keyImgPath("Sprites/Keys/Keyboard/Key_" + keyName + ".png");
+                            System::Path stateImgPath("Sprites/Keys/Keyboard/" + stateName + ".png");
+                            std::cout << "Load img path : " << keyImgPath.toString() << std::endl;
+                            if (kIndex > 0)
+                            {
+                                tgui::Label::Ptr addSymbol = tgui::Label::create();
+                                keybindingPanel->add(addSymbol);
+                                contextLbl->setPosition(xPos - 50, yPos - 40);
+                                contextLbl->setTextSize(bigFontSize * 3);
+                                contextLbl->setRenderer(baseTheme.getRenderer("Label"));
+                                contextLbl->setText("+");
+                            }
+                            if (keyImgPath.find() != "")
+                            {
+                                tgui::Picture::Ptr keyImg = tgui::Picture::create();
+                                keyImg->setTexture(keyImgPath.find());
+                                keyImg->setPosition(xPos, yPos - 35);
+
+                                keybindingPanel->add(keyImg);
+                            }
+                            else
+                            {
+                                tgui::Label::Ptr keyLbl = tgui::Label::create();
+                                keybindingPanel->add(keyLbl);
+                                keyLbl->setPosition(xPos + ((kIndex > 0) ? 15 : 0), yPos);
+                                keyLbl->setTextSize(bigFontSize);
+                                keyLbl->setRenderer(baseTheme.getRenderer("Label"));
+                                keyLbl->setText(keyName);
+                            }
+                            if (stateImgPath.find() != "")
+                            {
+                                tgui::Picture::Ptr stateImg = tgui::Picture::create();
+                                stateImg->setTexture(stateImgPath.find());
+                                stateImg->setPosition(xPos, yPos - 35);
+
+                                keybindingPanel->add(stateImg);
+                            }
+                            else
+                            {
+                                tgui::Label::Ptr stateLbl = tgui::Label::create();
+                                keybindingPanel->add(stateLbl);
+                                stateLbl->setPosition(xPos + ((kIndex > 0) ? 15 : 0), yPos - 20);
+                                stateLbl->setTextSize(mediumFontSize);
+                                stateLbl->setRenderer(baseTheme.getRenderer("GreenLabel"));
+                                stateLbl->setText(stateName);
+                            }
+                            tgui::Picture::Ptr stateImg = tgui::Picture::create();
+                            kIndex += 1;
+                            xPos += 150;
+                        }
+                        yPos += 100;
+                    }
+                }
+
+                keybindingScrollbar->setMaximum(yPos + 10);
             }
         }
     }

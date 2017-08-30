@@ -84,8 +84,8 @@ namespace obe
             AllKeys["MMB"] = std::make_unique<InputButton>(sf::Mouse::Middle, "MMB");
             //Others
             AllKeys["Add"] = std::make_unique<InputButton>(sf::Keyboard::Add, "Add", "+", InputType::Others);
-            AllKeys["BackSlash"] = std::make_unique<InputButton>(sf::Keyboard::BackSlash, "BackSlash", "\\", InputType::Others);
-            AllKeys["BackSpace"] = std::make_unique<InputButton>(sf::Keyboard::BackSpace, "BackSpace", "", InputType::Others);
+            AllKeys["Backslash"] = std::make_unique<InputButton>(sf::Keyboard::BackSlash, "Backslash", "\\", InputType::Others);
+            AllKeys["Backspace"] = std::make_unique<InputButton>(sf::Keyboard::BackSpace, "Backspace", "", InputType::Others);
             AllKeys["Comma"] = std::make_unique<InputButton>(sf::Keyboard::Comma, "Comma", ",", InputType::Others);
             AllKeys["Dash"] = std::make_unique<InputButton>(sf::Keyboard::Dash, "Dash", "-", InputType::Others);
             AllKeys["Delete"] = std::make_unique<InputButton>(sf::Keyboard::Delete, "Delete", "", InputType::Others);
@@ -112,7 +112,7 @@ namespace obe
             AllKeys["Return"] = std::make_unique<InputButton>(sf::Keyboard::Return, "Return", "", InputType::Others);
             AllKeys["RShift"] = std::make_unique<InputButton>(sf::Keyboard::RShift, "RShift", "", InputType::Others);
             AllKeys["RSystem"] = std::make_unique<InputButton>(sf::Keyboard::RSystem, "RSystem", "", InputType::Others);
-            AllKeys["SemiColon"] = std::make_unique<InputButton>(sf::Keyboard::SemiColon, "SemiColor", ";", InputType::Others);
+            AllKeys["Semicolon"] = std::make_unique<InputButton>(sf::Keyboard::SemiColon, "Semicolon", ";", InputType::Others);
             AllKeys["Slash"] = std::make_unique<InputButton>(sf::Keyboard::Slash, "Slash", "/", InputType::Others);
             AllKeys["Space"] = std::make_unique<InputButton>(sf::Keyboard::Space, "Space", " ", InputType::Others);
             AllKeys["Substract"] = std::make_unique<InputButton>(sf::Keyboard::Subtract, "Substract", "-", InputType::Others);
