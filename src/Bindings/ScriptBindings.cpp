@@ -23,6 +23,7 @@ namespace obe
                     .addFunction("getConstructor", &Script::GameObject::getConstructor)
                     //.addFunction("getPriority", &GameObject::getPriority)
                     .addFunction("getPublicKey", &Script::GameObject::getPublicKey)
+                    .addFunction("getType", &Script::GameObject::getType)
                     .addFunction("sendInitArg", &Script::GameObject::sendInitArgFromLua)
                     .addFunction("useLocalTrigger", &Script::GameObject::useLocalTrigger)
                     .addFunction("useExternalTrigger", useExternalTriggerProxy())

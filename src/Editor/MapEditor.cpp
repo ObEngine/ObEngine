@@ -34,7 +34,7 @@ namespace obe
             std::cout << "<System> Creating window with resolution " << Transform::UnitVector::Screen.w << "x" << Transform::UnitVector::Screen.h << std::endl;
             
             //Creating Window
-            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine");
+            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
             window.setKeyRepeatEnabled(false);
             sf::Texture loadingTexture;
             loadingTexture.loadFromFile("Sprites/Menus/loading.png");
