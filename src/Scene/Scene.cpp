@@ -30,13 +30,20 @@ namespace obe
 
         Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id)
         {
-            std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
+            if (!this->doesLevelSpriteExists(id))
+            {
+                std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
 
-            Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
-            m_spriteArray.push_back(move(newLevelSprite));
+                Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
+                m_spriteArray.push_back(move(newLevelSprite));
 
-            this->reorganizeLayers();
-            return returnLevelSprite;
+                this->reorganizeLayers();
+                return returnLevelSprite;
+            }
+            else
+            {
+                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.SpriteAlreadyExists", { {"id", id}, {"mapfile", m_levelName} });
+            }
         }
 
         Collision::PolygonalCollider* Scene::createCollider(const std::string& id)
@@ -333,10 +340,6 @@ namespace obe
                     std::cout << "  SpriteSize : " << sprite->getSpriteWidth() << ", " << sprite->getSpriteHeight() << std::endl;
                 }*/
             }
-            if (m_cameraLocked)
-                m_camera.lock();
-            else
-                m_camera.unlock();
             if (m_updateState)
             {
                 for (auto& gameObject : m_gameObjectArray)
@@ -345,7 +348,6 @@ namespace obe
                         gameObject->update();
                 }
             }
-            m_camera.unlock();
         }
 
         void Scene::display(sf::RenderWindow& target)
