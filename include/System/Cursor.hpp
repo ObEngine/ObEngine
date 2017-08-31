@@ -22,13 +22,15 @@ namespace obe
             int m_y = 0;
             int m_constrainedX = 0;
             int m_constrainedY = 0;
+            sf::RenderWindow* m_wref;
             Triggers::TriggerGroupPtr m_cursorTriggers;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
         public:
             /**
              * \brief Creates a Cursor
+             * \param window Reference to window
              */
-            explicit Cursor();
+            explicit Cursor(sf::RenderWindow* window);
             /**
              * \brief Gets the x Coordinate of the Cursor Position (Constrained)
              * \return An int containing the x Coordinate of the Cursor Position

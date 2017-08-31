@@ -34,7 +34,7 @@ namespace obe
             std::cout << "<System> Creating window with resolution " << Transform::UnitVector::Screen.w << "x" << Transform::UnitVector::Screen.h << std::endl;
             
             //Creating Window
-            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
+            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine");
             window.setKeyRepeatEnabled(false);
             sf::Texture loadingTexture;
             loadingTexture.loadFromFile("Sprites/Menus/loading.png");
@@ -119,7 +119,7 @@ namespace obe
             int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
             //Cursor
-            System::Cursor cursor;
+            System::Cursor cursor(&window);
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //Scene Creation / Loading
@@ -161,7 +161,7 @@ namespace obe
             GUI::init(window);
             int saveEditMode = -1;
             gui.add(mainPanel);
-            mainPanel->setSize(window.getSize().x, window.getSize().y);
+            mainPanel->setSize("100%", "100%");
 
             GUI::buildEditorMenu(mainPanel);
             GUI::buildObjectCreationMenu(mainPanel);
@@ -267,11 +267,8 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            std::cout << "=> LISTING GLOBAL NAMESPACE TRIGGERGROUP CONTENT" << std::endl;
-            for (auto& truc : Triggers::TriggerDatabase::GetInstance()->getAllTriggersGroupNames("Global"))
-            {
-                std::cout << "GLOBAL POSITIONING NAMESPACE LISTING : " << truc << std::endl;
-            }
+            GUI::calculateFontSize(window);
+            GUI::applyFontSize(mainPanel);
 
             //Game Starts
             while (window.isOpen())
@@ -313,7 +310,7 @@ namespace obe
                 //Updates
                 if (!gameConsole.isVisible())
                 {
-                    if (cameraMode->getSelectedItem() == "Movable Camera")
+                    if (cameraMode->getSelectedItem() == "Movable")
                     {
                         scene.setCameraLock(true);
                     }
@@ -458,6 +455,9 @@ namespace obe
                         Transform::UnitVector::Screen.h = event.size.height;
                         window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                         gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                        GUI::calculateFontSize(window);
+                        GUI::applyFontSize(mainPanel);
+                        GUI::applyScrollbarMaxValue(mainPanel);
                         break;
                     case sf::Event::JoystickConnected:
                         Input::SetGamepadList();

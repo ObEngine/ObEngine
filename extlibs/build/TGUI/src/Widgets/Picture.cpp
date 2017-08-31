@@ -65,20 +65,26 @@ namespace tgui
 
     void Picture::setTexture(const Texture& texture, bool fullyClickable)
     {
-        if (!m_sprite.isSet())
+        if (!m_sprite.isSet() && (texture.getImageSize() != sf::Vector2f{0,0}))
             setSize(texture.getImageSize());
 
         m_fullyClickable = fullyClickable;
         m_sprite.setTexture(texture);
-        m_sprite.setPosition(getPosition());
         m_sprite.setOpacity(m_opacityCached);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const sf::String& Picture::getLoadedFilename() const
+    const Texture& Picture::getTexture() const
     {
-        return m_sprite.getTexture().getId();
+        return m_sprite.getTexture();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Texture& Picture::getTexture()
+    {
+        return m_sprite.getTexture();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,20 +94,6 @@ namespace tgui
         Widget::setSize(size);
 
         m_sprite.setSize(getSize());
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void Picture::setSmooth(bool smooth)
-    {
-        m_sprite.getTexture().setSmooth(smooth);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    bool Picture::isSmooth() const
-    {
-        return m_sprite.getTexture().isSmooth();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +129,7 @@ namespace tgui
             if (m_possibleDoubleClick)
             {
                 m_possibleDoubleClick = false;
-                onDoubleClick->emit(this, pos - getPosition());
+                onDoubleClick.emit(this, pos - getPosition());
             }
             else // This is the first click
             {
@@ -149,10 +141,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& Picture::getSignal(std::string&& signalName)
+    Signal& Picture::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onDoubleClick->getName()))
-            return *onDoubleClick;
+        if (signalName == toLower(onDoubleClick.getName()))
+            return onDoubleClick;
         else
             return ClickableWidget::getSignal(std::move(signalName));
     }

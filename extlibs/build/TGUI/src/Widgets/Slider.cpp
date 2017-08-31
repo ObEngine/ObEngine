@@ -202,10 +202,7 @@ namespace tgui
     void Slider::setMaximum(int maximum)
     {
         // Set the new maximum
-        if (maximum > 0)
-            m_maximum = maximum;
-        else
-            m_maximum = 1;
+        m_maximum = maximum;
 
         // The minimum can't be below the maximum
         if (m_minimum > m_maximum)
@@ -239,7 +236,7 @@ namespace tgui
         {
             m_value = value;
 
-            onValueChange->emit(this, m_value);
+            onValueChange.emit(this, m_value);
 
             updateThumbPosition();
         }
@@ -313,16 +310,16 @@ namespace tgui
 
                 // Set the new value
                 if (pos.y - m_mouseDownOnThumbPos.y + (m_thumb.height / 2.0f) > 0)
-                    setValue(static_cast<int>((((pos.y + (m_thumb.height / 2.0f) - m_mouseDownOnThumbPos.y) / getSize().y) * (m_maximum - m_minimum)) + m_minimum + 0.5f));
+                    setValue(m_maximum - static_cast<int>((((pos.y + (m_thumb.height / 2.0f) - m_mouseDownOnThumbPos.y) / getSize().y) * (m_maximum - m_minimum)) + 0.5f));
                 else
-                    setValue(m_minimum);
+                    setValue(m_maximum);
 
                 // Set the thumb position for smooth scrolling
-                float thumbTop = pos.y - m_mouseDownOnThumbPos.y;
+                const float thumbTop = pos.y - m_mouseDownOnThumbPos.y;
                 if ((thumbTop + (m_thumb.height / 2.0f) > 0) && (thumbTop + (m_thumb.height / 2.0f) < getSize().y))
                     m_thumb.top = thumbTop;
                 else
-                    m_thumb.top = (getSize().y / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.height / 2.0f);
+                    m_thumb.top = (getSize().y / (m_maximum - m_minimum) * (m_maximum - m_value)) - (m_thumb.height / 2.0f);
             }
             else // the slider lies horizontal
             {
@@ -341,11 +338,11 @@ namespace tgui
                     setValue(m_minimum);
 
                 // Set the thumb position for smooth scrolling
-                float thumbLeft = pos.x - m_mouseDownOnThumbPos.x;
+                const float thumbLeft = pos.x - m_mouseDownOnThumbPos.x;
                 if ((thumbLeft + (m_thumb.width / 2.0f) > 0) && (thumbLeft + (m_thumb.width / 2.0f) < getSize().x))
                     m_thumb.left = thumbLeft;
                 else
-                    m_thumb.left = (getSize().x / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.width / 2.0f) ;
+                    m_thumb.left = (getSize().x / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.width / 2.0f);
             }
         }
         else // Normal mouse move
@@ -393,10 +390,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& Slider::getSignal(std::string&& signalName)
+    Signal& Slider::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onValueChange->getName()))
-            return *onValueChange;
+        if (signalName == toLower(onValueChange.getName()))
+            return onValueChange;
         else
             return Widget::getSignal(std::move(signalName));
     }
@@ -408,7 +405,7 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturetrack")
         {
@@ -419,7 +416,7 @@ namespace tgui
             else
                 m_verticalImage = false;
 
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturetrackhover")
         {
@@ -428,7 +425,7 @@ namespace tgui
         else if (property == "texturethumb")
         {
             m_spriteThumb.setTexture(getRenderer()->getTextureThumb());
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturethumbhover")
         {
@@ -486,7 +483,7 @@ namespace tgui
         if (m_verticalScroll)
         {
             m_thumb.left = (getSize().x - m_thumb.width) / 2.0f;
-            m_thumb.top = (getSize().y / (m_maximum - m_minimum) * (m_value - m_minimum)) - (m_thumb.height / 2.0f);
+            m_thumb.top = (getSize().y / (m_maximum - m_minimum) * (m_maximum - m_value)) - (m_thumb.height / 2.0f);
         }
         else
         {

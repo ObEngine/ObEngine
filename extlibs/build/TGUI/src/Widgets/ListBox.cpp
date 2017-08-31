@@ -102,7 +102,7 @@ namespace tgui
         m_scroll.setSize({m_scroll.getSize().x, std::max(0.f, getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom())});
         m_scroll.setLowValue(static_cast<unsigned int>(m_scroll.getSize().y));
 
-        updatePosition();
+        setPosition(m_position);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ namespace tgui
         m_itemIds.erase(m_itemIds.begin() + index);
 
         m_scroll.setMaximum(static_cast<unsigned int>(m_items.size() * m_itemHeight));
-        updatePosition();
+        setPosition(m_position);
 
         // Keep it simple and forget hover when an item is removed
         updateHoveringItem(-1);
@@ -373,7 +373,7 @@ namespace tgui
 
         m_scroll.setScrollAmount(m_itemHeight);
         m_scroll.setMaximum(static_cast<unsigned int>(m_items.size() * m_itemHeight));
-        updatePosition();
+        setPosition(m_position);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +397,7 @@ namespace tgui
         for (auto& item : m_items)
             item.setCharacterSize(m_textSize);
 
-        updatePosition();
+        setPosition(m_position);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,7 +422,7 @@ namespace tgui
             m_itemIds.erase(m_itemIds.begin() + m_maxItems, m_itemIds.end());
 
             m_scroll.setMaximum(static_cast<unsigned int>(m_items.size() * m_itemHeight));
-            updatePosition();
+            setPosition(m_position);
         }
     }
 
@@ -480,7 +480,7 @@ namespace tgui
                     updateHoveringItem(-1);
 
                 if (m_hoveringItem >= 0)
-                    onMousePress->emit(this, m_items[m_hoveringItem].getString(), m_itemIds[m_hoveringItem]);
+                    onMousePress.emit(this, m_items[m_hoveringItem].getString(), m_itemIds[m_hoveringItem]);
 
                 if (m_selectedItem != m_hoveringItem)
                 {
@@ -499,7 +499,7 @@ namespace tgui
         if (m_mouseDown && !m_scroll.isMouseDown())
         {
             if (m_selectedItem >= 0)
-                onMouseRelease->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
+                onMouseRelease.emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
 
             // Check if you double-clicked
             if (m_possibleDoubleClick)
@@ -507,7 +507,7 @@ namespace tgui
                 m_possibleDoubleClick = false;
 
                 if (m_selectedItem >= 0)
-                    onDoubleClick->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
+                    onDoubleClick.emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
             }
             else // This is the first click
             {
@@ -600,16 +600,16 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& ListBox::getSignal(std::string&& signalName)
+    Signal& ListBox::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onItemSelect->getName()))
-            return *onItemSelect;
-        else if (signalName == toLower(onMousePress->getName()))
-            return *onMousePress;
-        else if (signalName == toLower(onMouseRelease->getName()))
-            return *onMouseRelease;
-        else if (signalName == toLower(onDoubleClick->getName()))
-            return *onDoubleClick;
+        if (signalName == toLower(onItemSelect.getName()))
+            return onItemSelect;
+        else if (signalName == toLower(onMousePress.getName()))
+            return onMousePress;
+        else if (signalName == toLower(onMouseRelease.getName()))
+            return onMouseRelease;
+        else if (signalName == toLower(onDoubleClick.getName()))
+            return onDoubleClick;
         else
             return Widget::getSignal(std::move(signalName));
     }
@@ -621,12 +621,12 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "padding")
         {
             m_paddingCached = getRenderer()->getPadding();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "textcolor")
         {
@@ -722,7 +722,7 @@ namespace tgui
                     item.setCharacterSize(m_textSize);
             }
 
-            updatePosition();
+            setPosition(m_position);
         }
         else
             Widget::rendererChanged(property);
@@ -808,9 +808,9 @@ namespace tgui
 
             m_selectedItem = item;
             if (m_selectedItem >= 0)
-                onItemSelect->emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
+                onItemSelect.emit(this, m_items[m_selectedItem].getString(), m_itemIds[m_selectedItem]);
             else
-                onItemSelect->emit(this, "", "");
+                onItemSelect.emit(this, "", "");
 
             updateSelectedAndHoveringItemColorsAndStyle();
         }

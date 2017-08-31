@@ -23,148 +23,150 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef TGUI_GROUP_HPP
-#define TGUI_GROUP_HPP
+#ifndef TGUI_ABSOLUTE_OR_RELATIVE_VALUE_HPP
+#define TGUI_ABSOLUTE_OR_RELATIVE_VALUE_HPP
 
-
-#include <TGUI/Container.hpp>
-#include <TGUI/Renderers/GroupRenderer.hpp>
+#include <TGUI/Global.hpp>
+#include <TGUI/to_string.hpp>
+#include <type_traits>
+#include <string>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Group widget
+    /// @brief Class to store the a value that is either a constant or a ratio
     ///
-    /// Invisible container used to group widgets.
-    ///
+    /// You don't have to explicitly create an instance of this class, numbers and strings are implicitly cast.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    class TGUI_API Group : public Container
+    class TGUI_API AbsoluteOrRelativeValue
     {
     public:
 
-        typedef std::shared_ptr<Group> Ptr; ///< Shared widget pointer
-        typedef std::shared_ptr<const Group> ConstPtr; ///< Shared constant widget pointer
-
-
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Default constructor
-        ///
-        /// @param size  Size of the group
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Group(const Layout2d& size = {"100%", "100%"});
+        TGUI_CONSTEXPR AbsoluteOrRelativeValue() = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Creates a new group
+        /// @brief Constructor to set constant
         ///
-        /// @param size  Size of the group
-        ///
-        /// @return The new group
-        ///
+        /// @param constant  Value to set
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Group::Ptr create(const Layout2d& size = {"100%", "100%"});
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Makes a copy of another group
-        ///
-        /// @param group  The other group
-        ///
-        /// @return The new group
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Group::Ptr copy(Group::ConstPtr group);
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
-        ///
-        /// @return Temporary pointer to the renderer
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        GroupRenderer* getRenderer() const
+        template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+        TGUI_CONSTEXPR AbsoluteOrRelativeValue(T constant) :
+            m_constant    {true},
+            m_value       {static_cast<float>(constant)}
         {
-            return aurora::downcast<GroupRenderer*>(m_renderer.get());
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Changes the size of the group
+        /// @brief Construct the value from a string that either contains a value or a percentage
         ///
-        /// @param size  The new size of the group
-        ///
+        /// @param expression  String to parse
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setSize(const Layout2d& size) override;
-        using Widget::setSize;
+        AbsoluteOrRelativeValue(const char* expression) :
+            AbsoluteOrRelativeValue{std::string{expression}}
+        {
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the distance between the position of the container and a widget that would be drawn inside
-        ///        this container on relative position (0,0)
+        /// @brief Construct the value from a string that either contains a value or a percentage
         ///
-        /// @return Offset of the widgets in the container
-        ///
+        /// @param expression  String to parse
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Vector2f getChildWidgetsOffset() const override;
+        AbsoluteOrRelativeValue(const std::string& expression)
+        {
+            if (!expression.empty() && (expression.back() == '%'))
+            {
+                m_constant = false;
+                m_ratio    = tgui::stof(expression.substr(0, expression.length()-1)) / 100.f;
+            }
+            else
+            {
+                m_constant = true;
+                m_value    = tgui::stof(expression.substr(0, expression.length()));
+            }
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
+        /// @brief Returns the value
         ///
-        /// @return Is the mouse on top of the widget?
-        ///
+        /// @return The constant value or the value based on the given ratio and parent size
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        TGUI_CONSTEXPR float getValue() const
+        {
+            return m_value;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the stored ratio
+        ///
+        /// @return The ratio that is multiplied with the parent size to get the value, when the value isn't a constant
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR float getRatio() const
+        {
+            return m_ratio;
+        }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMousePressed(sf::Vector2f pos) override;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Draw the child widgets to a render target
+        /// @brief Update the size to which the value depends on if the value is relative
         ///
-        /// @param target Render target to draw to
-        /// @param states Current render states
-        ///
+        /// @param newParentSize  New size from which to take the relative value
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected:
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Function called when one of the properties of the renderer is changed
-        ///
-        /// @param property  Lowercase name of the property that was changed
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void rendererChanged(const std::string& property) override;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Makes a copy of the widget
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Widget::Ptr clone() const override
+        void updateParentSize(float newParentSize)
         {
-            return std::make_shared<Group>(*this);
+            if (!m_constant)
+            {
+                m_parentValue = newParentSize;
+                m_value = m_ratio * newParentSize;
+            }
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Converts the value to a string
+        ///
+        /// @return String representation of the value
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::string toString() const
+        {
+            if (m_constant)
+                return to_string(m_value);
+            else
+                return to_string(m_ratio * 100) + '%';
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
-        // Cached renderer properties
-        Padding m_paddingCached;
+        bool  m_constant     = true;
+        float m_value        = 0;
+        float m_ratio        = 0;
+        float m_parentValue  = 0;
+    };
 
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Helper class to create an AbsoluteOrRelativeValue object containing a relative value without using a string
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    struct TGUI_API RelativeValue : AbsoluteOrRelativeValue
+    {
+        explicit TGUI_CONSTEXPR RelativeValue(float ratio)
+        {
+            m_constant = false;
+            m_ratio    = ratio;
+        }
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,4 +174,4 @@ namespace tgui
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // TGUI_GROUP_HPP
+#endif // TGUI_ABSOLUTE_OR_RELATIVE_VALUE_HPP

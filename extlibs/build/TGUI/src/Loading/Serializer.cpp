@@ -148,13 +148,6 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        std::string serializeLayout(ObjectConverter&& value)
-        {
-            return value.getLayout().toString();
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         std::string serializeOutline(ObjectConverter&& value)
         {
             return value.getOutline().toString();
@@ -175,11 +168,15 @@ namespace tgui
                 result += " Part(" + to_string(texture.getData()->rect.left) + ", " + to_string(texture.getData()->rect.top)
                             + ", " + to_string(texture.getData()->rect.width) + ", " + to_string(texture.getData()->rect.height) + ")";
             }
+
             if (texture.getMiddleRect() != sf::IntRect{0, 0, static_cast<int>(texture.getData()->texture.getSize().x), static_cast<int>(texture.getData()->texture.getSize().y)})
             {
                 result += " Middle(" + to_string(texture.getMiddleRect().left) + ", " + to_string(texture.getMiddleRect().top)
                               + ", " + to_string(texture.getMiddleRect().width) + ", " + to_string(texture.getMiddleRect().height) + ")";
             }
+
+            if (texture.isSmooth())
+                result += " Smooth";
 
             return result;
         }
@@ -247,7 +244,6 @@ namespace tgui
             {ObjectConverter::Type::Color, serializeColor},
             {ObjectConverter::Type::String, serializeString},
             {ObjectConverter::Type::Number, serializeNumber},
-            {ObjectConverter::Type::Layout, serializeLayout},
             {ObjectConverter::Type::Outline, serializeOutline},
             {ObjectConverter::Type::Texture, serializeTexture},
             {ObjectConverter::Type::TextStyle, serializeTextStyle},

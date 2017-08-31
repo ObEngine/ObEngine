@@ -51,7 +51,7 @@ namespace obe
             /**
             * \brief The radius of a HandlePoint
             */
-            static const int radius = 6;
+            static unsigned int radius;
         };
         /**
          * \brief An element meant to be displayed in a Scene

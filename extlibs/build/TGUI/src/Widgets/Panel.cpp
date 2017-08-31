@@ -76,14 +76,6 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    sf::Vector2f Panel::getContentSize() const
-    {
-        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight() - m_paddingCached.getLeft() - m_paddingCached.getRight(),
-                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom() - m_paddingCached.getTop() - m_paddingCached.getBottom()};
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     sf::Vector2f Panel::getChildWidgetsOffset() const
     {
         return {m_paddingCached.getLeft() + m_bordersCached.getLeft(),
@@ -103,7 +95,7 @@ namespace tgui
     {
         m_mouseDown = true;
 
-        onMousePress->emit(this, pos - getPosition());
+        onMousePress.emit(this, pos - getPosition());
 
         Container::leftMousePressed(pos);
     }
@@ -112,10 +104,10 @@ namespace tgui
 
     void Panel::leftMouseReleased(sf::Vector2f pos)
     {
-        onMouseRelease->emit(this, pos - getPosition());
+        onMouseRelease.emit(this, pos - getPosition());
 
         if (m_mouseDown)
-            onClick->emit(this, pos - getPosition());
+            onClick.emit(this, pos - getPosition());
 
         m_mouseDown = false;
 
@@ -124,14 +116,22 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& Panel::getSignal(std::string&& signalName)
+    sf::Vector2f Panel::getInnerSize() const
     {
-        if (signalName == toLower(onMousePress->getName()))
-            return *onMousePress;
-        else if (signalName == toLower(onMouseRelease->getName()))
-            return *onMouseRelease;
-        else if (signalName == toLower(onClick->getName()))
-            return *onClick;
+        return {getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight() - m_paddingCached.getLeft() - m_paddingCached.getRight(),
+                getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom() - m_paddingCached.getTop() - m_paddingCached.getBottom()};
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Panel::getSignal(std::string signalName)
+    {
+        if (signalName == toLower(onMousePress.getName()))
+            return onMousePress;
+        else if (signalName == toLower(onMouseRelease.getName()))
+            return onMouseRelease;
+        else if (signalName == toLower(onClick.getName()))
+            return onClick;
         else
             return Group::getSignal(std::move(signalName));
     }
@@ -143,7 +143,7 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "bordercolor")
         {

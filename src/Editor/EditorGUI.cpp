@@ -17,11 +17,66 @@ namespace obe
 
             void init(sf::RenderWindow& window)
             {
-                bigFontSize = static_cast<double>(window.getSize().y) / static_cast<double>(32.0) - 6;
-                mediumFontSize = static_cast<double>(bigFontSize) / 1.3;
-                smallFontSize = static_cast<double>(bigFontSize) / 2.0;
+                calculateFontSize(window);
                 baseTheme = tgui::Theme();
                 baseTheme.load("Data/GUI/obe.style");
+            }
+
+            void calculateFontSize(sf::RenderWindow& window)
+            {
+                double wCoeff = 1;
+                if (window.getSize().x < sf::VideoMode::getDesktopMode().width)
+                    wCoeff = (double(sf::VideoMode::getDesktopMode().width - window.getSize().x) / double(sf::VideoMode::getDesktopMode().width)) * 0.5 + 1.0;
+                else
+                    wCoeff = 1 - (double(window.getSize().x - sf::VideoMode::getDesktopMode().width) / double(window.getSize().x));
+                std::cout << "CW" << wCoeff << std::endl;
+                bigFontSize = (double(window.getSize().x)) / double(64.0 / wCoeff);
+                mediumFontSize = double(bigFontSize) / 1.3;
+                smallFontSize = double(bigFontSize) / 2.0;
+            }
+
+            void applyFontSize(tgui::Panel::Ptr& mainPanel)
+            {
+                mainPanel->get<tgui::Label>("titleLabel")->setTextSize(bigFontSize);
+                mainPanel->get<tgui::Label>("infoLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::ComboBox>("cameraMode")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::ComboBox>("editMode")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Button>("editorButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Label>("savedLabel")->setTextSize(smallFontSize);
+                mainPanel->get<tgui::Button>("mapButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Button>("settingsButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Button>("keybindingButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Button>("spritesButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Button>("objectsButton")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Label>("mapCatLabel")->setTextSize(bigFontSize);
+                mainPanel->get<tgui::Label>("mapNameLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::EditBox>("mapNameInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::Label>("settingsCatLabel")->setTextSize(bigFontSize);
+                mainPanel->get<tgui::CheckBox>("displayFramerateCheckbox")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::CheckBox>("enableGridCheckbox")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Label>("gridDimensionLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::EditBox>("gridDimensionXInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::EditBox>("gridDimensionYInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::Label>("gridOffsetLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::EditBox>("gridOffsetXInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::EditBox>("gridOffsetYInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::CheckBox>("snapGridCheckbox")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::Label>("cameraPositionLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::EditBox>("cameraPositionXInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::EditBox>("cameraPositionYInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::Label>("cameraSizeLabel")->setTextSize(mediumFontSize);
+                mainPanel->get<tgui::EditBox>("cameraSizeInput")->setSize("8.3%", mediumFontSize + 4);
+
+                tgui::Panel::Ptr keybindingPanel = mainPanel->get<tgui::Panel>("keybindingPanel");
+                tgui::Scrollbar::Ptr keybindingScrollbar = mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
+                buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
+            }
+
+            void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel)
+            {
+                mainPanel->get<tgui::Scrollbar>("keybindingScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("keybindingPanel")->getSize().y);
+                mainPanel->get<tgui::Scrollbar>("spritesScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("spritesPanel")->getSize().y);
+                mainPanel->get<tgui::Scrollbar>("objectsScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("objectsPanel")->getSize().y);
             }
 
             void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
@@ -56,24 +111,24 @@ namespace obe
                 titlePanel->add(cameraMode, "cameraMode");
 
                 titlePanel->setRenderer(baseTheme.getRenderer("TransparentPanel"));
-                titlePanel->setSize("100%", "38");
+                titlePanel->setSize("100%", tgui::bindHeight(titleLabel) + 10);
                 titlePanel->setPosition(0, 0);
 
-                titleLabel->setPosition(0, 0);
+                titleLabel->setPosition(0, "(&.height - height) / 2");
                 titleLabel->setTextSize(bigFontSize);
                 titleLabel->setRenderer(baseTheme.getRenderer("Label"));
                 titleLabel->setText("ObEngine Map Editor");
 
-                infoLabel->setPosition(tguif::bindRight(titleLabel) + 60, 5);
+                infoLabel->setPosition(tgui::bindRight(titleLabel) + tgui::Layout("5%"), "(&.height - height) / 2");
                 infoLabel->setTextSize(mediumFontSize);
                 infoLabel->setRenderer(baseTheme.getRenderer("Label"));
                 infoLabel->setText("<>");
 
-                cameraMode->addItem("Movable Camera");
-                cameraMode->addItem("Free Camera");
-                cameraMode->setSelectedItem("Movable Camera");
-                cameraMode->setSize("200", "100%");
-                cameraMode->setPosition("100% - 200", 0);
+                cameraMode->addItem("Movable");
+                cameraMode->addItem("Free");
+                cameraMode->setSelectedItem("Movable");
+                cameraMode->setSize("10.5%", "100%");
+                cameraMode->setPosition(tgui::bindWidth(titlePanel) - tgui::bindWidth(cameraMode), 0);
                 cameraMode->setTextSize(mediumFontSize);
                 cameraMode->setRenderer(baseTheme.getRenderer("ComboBox"));
                 cameraMode->getRenderer()->getTextureArrowUp().setSmooth(true);
@@ -84,20 +139,20 @@ namespace obe
                 editMode->addItem("Play");
                 editMode->addItem("None");
                 editMode->setSelectedItem("None");
-                editMode->setSize("200", "100%");
-                editMode->setPosition(tguif::bindLeft(cameraMode) - tguif::bindWidth(editMode) - 1, 0);
+                editMode->setSize("10.5%", "100%");
+                editMode->setPosition(tgui::bindLeft(cameraMode) - tgui::bindWidth(editMode) - 1, 0);
                 editMode->setTextSize(mediumFontSize);
                 editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
                 editMode->getRenderer()->getTextureArrowUp().setSmooth(true);
                 editMode->getRenderer()->getTextureArrowDown().setSmooth(true);
 
-                editorButton->setSize(190, "100%");
-                editorButton->setPosition(tguif::bindLeft(editMode) - tguif::bindWidth(editorButton) - 1, 0);
+                editorButton->setSize("9.8%", "100%");
+                editorButton->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(editorButton) - 1, 0);
                 editorButton->setText("Editor Menu");
                 editorButton->setTextSize(mediumFontSize);
                 editorButton->setRenderer(baseTheme.getRenderer("Button"));
 
-                savedLabel->setPosition(tguif::bindLeft(editorButton) - 50, 5);
+                savedLabel->setPosition(tgui::bindLeft(editorButton) - 50, 5);
                 savedLabel->setTextSize(smallFontSize);
                 savedLabel->setRenderer(baseTheme.getRenderer("GreenLabel"));
                 savedLabel->setText("Saved");
@@ -146,32 +201,32 @@ namespace obe
                 editorPanel->add(spritesButton, "spritesButton");
                 editorPanel->add(objectsButton, "objectsButton");
 
-                mapButton->setSize("10%", 30);
+                mapButton->setSize("20%", 30);
                 mapButton->setPosition(0, 0);
                 mapButton->setRenderer(baseTheme.getRenderer("Button"));
                 mapButton->setText("Map");
                 mapButton->setTextSize(mediumFontSize);
 
-                settingsButton->setPosition(tguif::bindRight(mapButton), 0);
-                settingsButton->setSize("10%", 30);
+                settingsButton->setPosition(tgui::bindRight(mapButton), 0);
+                settingsButton->setSize("20%", 30);
                 settingsButton->setRenderer(baseTheme.getRenderer("Button"));
                 settingsButton->setText("Settings");
                 settingsButton->setTextSize(mediumFontSize);
 
-                keybindingButton->setPosition(tguif::bindRight(settingsButton), 0);
-                keybindingButton->setSize("10%", 30);
+                keybindingButton->setPosition(tgui::bindRight(settingsButton), 0);
+                keybindingButton->setSize("20%", 30);
                 keybindingButton->setRenderer(baseTheme.getRenderer("Button"));
                 keybindingButton->setText("Keybinding");
                 keybindingButton->setTextSize(mediumFontSize);
 
-                spritesButton->setPosition(tguif::bindRight(keybindingButton), 0);
-                spritesButton->setSize("10%", 30);
+                spritesButton->setPosition(tgui::bindRight(keybindingButton), 0);
+                spritesButton->setSize("20%", 30);
                 spritesButton->setRenderer(baseTheme.getRenderer("Button"));
                 spritesButton->setText("Sprites");
                 spritesButton->setTextSize(mediumFontSize);
 
-                objectsButton->setPosition(tguif::bindRight(spritesButton), 0);
-                objectsButton->setSize("10%", 30);
+                objectsButton->setPosition(tgui::bindRight(spritesButton), 0);
+                objectsButton->setSize("20%", 30);
                 objectsButton->setRenderer(baseTheme.getRenderer("Button"));
                 objectsButton->setText("Objects");
                 objectsButton->setTextSize(mediumFontSize);
@@ -188,8 +243,8 @@ namespace obe
                 keybindingPanel->setSize("100%", "100% - 30");
                 keybindingPanel->setPosition(0, 30);
 
-                keybindingScrollbar->setPosition("100% - 16", "30");
-                keybindingScrollbar->setSize("16", "100% - 30");
+                keybindingScrollbar->setPosition("&.width - width", tgui::bindBottom(objectsButton));
+                keybindingScrollbar->setSize("16", tgui::bindHeight(editorPanel) - tgui::bindHeight(objectsButton));
                 keybindingScrollbar->connect("ValueChanged", scrollPanel, keybindingPanel, keybindingScrollbar);
                 keybindingScrollbar->setLowValue(keybindingPanel->getSize().y);
 
@@ -206,13 +261,14 @@ namespace obe
                 objectsPanel->setSize("100%", "100% - 30");
                 objectsPanel->setPosition(0, 30);
 
-                objectsScrollbar->setPosition("100% - 16", "30");
-                objectsScrollbar->setSize("16", "100% - 30");
+                objectsScrollbar->setPosition("&.width - width", tgui::bindBottom(objectsButton));
+                objectsScrollbar->setSize("16", tgui::bindHeight(editorPanel) - tgui::bindHeight(objectsButton));
                 objectsScrollbar->connect("ValueChanged", scrollPanel, objectsPanel, objectsScrollbar);
                 objectsScrollbar->setLowValue(objectsPanel->getSize().y);
 
                 mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
                 settingsPanel->hide();
+                keybindingPanel->hide();
                 spritesPanel->hide();
                 objectsPanel->hide();
 
@@ -322,7 +378,7 @@ namespace obe
                 mapCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 mapCatLabel->setText("[ Map Settings ]");
 
-                mapNameLabel->setPosition(60, tguif::bindBottom(mapCatLabel) + 20);
+                mapNameLabel->setPosition(60, tgui::bindBottom(mapCatLabel) + 20);
                 mapNameLabel->setTextSize(mediumFontSize);
                 mapNameLabel->setRenderer(baseTheme.getRenderer("Label"));
                 mapNameLabel->setText("Map Name : ");
@@ -341,14 +397,15 @@ namespace obe
                     }
                 };
 
-                mapNameInput->setPosition(tguif::bindRight(mapNameLabel) + 20, tguif::bindTop(mapNameLabel));
-                mapNameInput->setSize(160, mediumFontSize + 4);
+                mapNameInput->setPosition(tgui::bindRight(mapNameLabel) + 20, tgui::bindTop(mapNameLabel));
+                mapNameInput->setSize("8.3%", mediumFontSize + 4);
                 mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 mapNameInput->connect("returnkeypressed", changeMapNameLambda);
 
-                mapNameButton->setPosition(tguif::bindRight(mapNameInput) + 20, tguif::bindTop(mapNameLabel) + 4);
-                mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 mapNameButton->setSize(16, 16);
+                mapNameButton->setPosition(tgui::bindRight(mapNameInput) + 20, 
+                tgui::bindTop(mapNameInput) + tgui::bindHeight(mapNameInput) / 2 - tgui::bindHeight(mapNameButton) / 2);
+                mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 mapNameButton->connect("pressed", changeMapNameLambda);
             }
 
@@ -400,13 +457,13 @@ namespace obe
                 settingsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 settingsCatLabel->setText("[ Global Settings ]");
 
-                displayFramerateCheckbox->setPosition(60, tguif::bindBottom(settingsCatLabel) + 20);
+                displayFramerateCheckbox->setPosition(60, tgui::bindBottom(settingsCatLabel) + 20);
                 displayFramerateCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
                 displayFramerateCheckbox->setSize(16, 16);
                 displayFramerateCheckbox->setTextSize(mediumFontSize);
                 displayFramerateCheckbox->setText("Display Framerate ?");
 
-                enableGridCheckbox->setPosition(60, tguif::bindBottom(displayFramerateCheckbox) + 20);
+                enableGridCheckbox->setPosition(60, tgui::bindBottom(displayFramerateCheckbox) + 20);
                 enableGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
                 enableGridCheckbox->setSize(16, 16);
                 enableGridCheckbox->setTextSize(mediumFontSize);
@@ -427,24 +484,25 @@ namespace obe
                     snapGridCheckbox->disable();
                 });
 
-                gridDimensionLabel->setPosition(60, tguif::bindBottom(enableGridCheckbox) + 20);
+                gridDimensionLabel->setPosition(60, tgui::bindBottom(enableGridCheckbox) + 20);
                 gridDimensionLabel->setTextSize(mediumFontSize);
                 gridDimensionLabel->setRenderer(baseTheme.getRenderer("Label"));
                 gridDimensionLabel->setText("Grid Cell Size : ");
 
-                gridDimensionXInput->setPosition(tguif::bindRight(gridDimensionLabel) + 20, tguif::bindTop(gridDimensionLabel));
+                gridDimensionXInput->setPosition(tgui::bindRight(gridDimensionLabel) + 20, tgui::bindTop(gridDimensionLabel));
                 gridDimensionXInput->setSize(80, mediumFontSize + 4);
                 gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridDimensionXInput->setText(std::to_string(editorGrid.getCellWidth()));
                 gridDimensionXInput->setInputValidator(tgui::EditBox::Validator::UInt);
 
-                gridDimensionYInput->setPosition(tguif::bindRight(gridDimensionXInput) + 20, tguif::bindTop(gridDimensionLabel));
+                gridDimensionYInput->setPosition(tgui::bindRight(gridDimensionXInput) + 20, tgui::bindTop(gridDimensionLabel));
                 gridDimensionYInput->setSize(80, mediumFontSize + 4);
                 gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridDimensionYInput->setText(std::to_string(editorGrid.getCellHeight()));
                 gridDimensionYInput->setInputValidator(tgui::EditBox::Validator::UInt);
 
-                gridDimensionButton->setPosition(tguif::bindRight(gridDimensionYInput) + 20, tguif::bindTop(gridDimensionLabel) + 4);
+                gridDimensionButton->setPosition(tgui::bindRight(gridDimensionYInput) + 20, 
+                tgui::bindTop(gridDimensionYInput) + tgui::bindHeight(gridDimensionYInput) / 2 - tgui::bindHeight(gridDimensionButton) / 2);
                 gridDimensionButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 gridDimensionButton->setSize(16, 16);
 
@@ -478,24 +536,25 @@ namespace obe
                     }
                 });
 
-                gridOffsetLabel->setPosition(60, tguif::bindBottom(gridDimensionLabel) + 20);
+                gridOffsetLabel->setPosition(60, tgui::bindBottom(gridDimensionLabel) + 20);
                 gridOffsetLabel->setTextSize(mediumFontSize);
                 gridOffsetLabel->setRenderer(baseTheme.getRenderer("Label"));
                 gridOffsetLabel->setText("Grid Cell Offset : ");
 
-                gridOffsetXInput->setPosition(tguif::bindRight(gridOffsetLabel) + 20, tguif::bindTop(gridOffsetLabel));
+                gridOffsetXInput->setPosition(tgui::bindRight(gridOffsetLabel) + 20, tgui::bindTop(gridOffsetLabel));
                 gridOffsetXInput->setSize(80, mediumFontSize + 4);
                 gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridOffsetXInput->setText(std::to_string(editorGrid.getOffsetX()));
                 gridOffsetXInput->setInputValidator(tgui::EditBox::Validator::Int);
 
-                gridOffsetYInput->setPosition(tguif::bindRight(gridOffsetXInput) + 20, tguif::bindTop(gridOffsetLabel));
+                gridOffsetYInput->setPosition(tgui::bindRight(gridOffsetXInput) + 20, tgui::bindTop(gridOffsetLabel));
                 gridOffsetYInput->setSize(80, mediumFontSize + 4);
                 gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridOffsetYInput->setText(std::to_string(editorGrid.getOffsetY()));
                 gridOffsetYInput->setInputValidator(tgui::EditBox::Validator::Int);
 
-                gridOffsetButton->setPosition(tguif::bindRight(gridOffsetYInput) + 20, tguif::bindTop(gridOffsetLabel) + 4);
+                gridOffsetButton->setPosition(tgui::bindRight(gridOffsetYInput) + 20, 
+                tgui::bindTop(gridOffsetYInput) + tgui::bindHeight(gridOffsetYInput) / 2 - tgui::bindHeight(gridOffsetButton) / 2);
                 gridOffsetButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 gridOffsetButton->setSize(16, 16);
 
@@ -520,7 +579,7 @@ namespace obe
                     }
                 });
 
-                snapGridCheckbox->setPosition(60, tguif::bindBottom(gridOffsetLabel) + 20);
+                snapGridCheckbox->setPosition(60, tgui::bindBottom(gridOffsetLabel) + 20);
                 snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
                 snapGridCheckbox->setSize(16, 16);
                 snapGridCheckbox->setTextSize(mediumFontSize);
@@ -549,39 +608,41 @@ namespace obe
                     cursor.setConstraint(System::Constraints::Default);
                 });
 
-                cameraPositionLabel->setPosition(60, tguif::bindBottom(snapGridCheckbox) + 20);
+                cameraPositionLabel->setPosition(60, tgui::bindBottom(snapGridCheckbox) + 20);
                 cameraPositionLabel->setTextSize(mediumFontSize);
                 cameraPositionLabel->setRenderer(baseTheme.getRenderer("Label"));
                 cameraPositionLabel->setText("Camera Position : ");
 
-                cameraPositionXInput->setPosition(tguif::bindRight(cameraPositionLabel) + 20, tguif::bindTop(cameraPositionLabel));
+                cameraPositionXInput->setPosition(tgui::bindRight(cameraPositionLabel) + 20, tgui::bindTop(cameraPositionLabel));
                 cameraPositionXInput->setSize(80, mediumFontSize + 4);
                 cameraPositionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition().x));
                 cameraPositionXInput->setInputValidator(tgui::EditBox::Validator::Float);
 
-                cameraPositionYInput->setPosition(tguif::bindRight(cameraPositionXInput) + 20, tguif::bindTop(cameraPositionLabel));
+                cameraPositionYInput->setPosition(tgui::bindRight(cameraPositionXInput) + 20, tgui::bindTop(cameraPositionLabel));
                 cameraPositionYInput->setSize(80, mediumFontSize + 4);
                 cameraPositionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition().y));
                 cameraPositionYInput->setInputValidator(tgui::EditBox::Validator::Float);
 
-                cameraPositionBtn->setPosition(tguif::bindRight(cameraPositionYInput) + 20, tguif::bindTop(cameraPositionLabel) + 4);
+                cameraPositionBtn->setPosition(tgui::bindRight(cameraPositionYInput) + 20, 
+                tgui::bindTop(cameraPositionYInput) + tgui::bindHeight(cameraPositionYInput) / 2 - tgui::bindHeight(cameraPositionBtn) / 2);
                 cameraPositionBtn->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 cameraPositionBtn->setSize(16, 16);
 
-                cameraSizeLabel->setPosition(60, tguif::bindBottom(cameraPositionLabel) + 20);
+                cameraSizeLabel->setPosition(60, tgui::bindBottom(cameraPositionLabel) + 20);
                 cameraSizeLabel->setTextSize(mediumFontSize);
                 cameraSizeLabel->setRenderer(baseTheme.getRenderer("Label"));
                 cameraSizeLabel->setText("Camera Size : ");
 
-                cameraSizeInput->setPosition(tguif::bindRight(cameraSizeLabel) + 20, tguif::bindTop(cameraSizeLabel));
+                cameraSizeInput->setPosition(tgui::bindRight(cameraSizeLabel) + 20, tgui::bindTop(cameraSizeLabel));
                 cameraSizeInput->setSize(80, mediumFontSize + 4);
                 cameraSizeInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                 cameraSizeInput->setInputValidator(tgui::EditBox::Validator::Float);
 
-                cameraSizeBtn->setPosition(tguif::bindRight(cameraSizeInput) + 20, tguif::bindTop(cameraSizeLabel) + 4);
+                cameraSizeBtn->setPosition(tgui::bindRight(cameraSizeInput) + 20, 
+                tgui::bindTop(cameraSizeInput) + tgui::bindHeight(cameraSizeInput) / 2 - tgui::bindHeight(cameraSizeBtn) / 2);
                 cameraSizeBtn->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 cameraSizeBtn->setSize(16, 16);
 
@@ -701,7 +762,7 @@ namespace obe
 
                         Input::InputCondition keyGen;
                         keyGen.setCombinationCode(keybinding.at(context).getDataNode(action).get<std::string>());
-                        unsigned int xPos = tguif::bindRight(actionBtn) + 30;
+                        tgui::Layout xPos = tgui::bindRight(actionBtn) + 30;
                         unsigned int kIndex = 0;
                         for (auto& key : keyGen.getCombination())
                         {
@@ -717,7 +778,7 @@ namespace obe
                                     numImg->setTexture(numImgPath.find());
                                     numImg->setPosition(xPos, yPos - 35);
                                     keybindingPanel->add(numImg);
-                                    xPos += 100;
+                                    xPos = xPos + 100;
                                 }
                                 else
                                 {
@@ -727,7 +788,7 @@ namespace obe
                                     numLbl->setRenderer(baseTheme.getRenderer("Label"));
                                     numLbl->setText("(NumPad)");
                                     keybindingPanel->add(numLbl);
-                                    xPos += 100;
+                                    xPos = xPos + 100;
                                 }
                             }
                             System::Path keyImgPath("Sprites/Keys/Keyboard/Key_" + keyName + ".png");
@@ -778,7 +839,7 @@ namespace obe
                             }
                             tgui::Picture::Ptr stateImg = tgui::Picture::create();
                             kIndex += 1;
-                            xPos += 150;
+                            xPos = xPos + 150;
                         }
                         yPos += 100;
                     }

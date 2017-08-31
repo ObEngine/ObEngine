@@ -212,81 +212,6 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ObjectConverter deserializeLayout(const std::string& value)
-        {
-            std::string expression = tgui::trim(value);
-            if (expression.empty())
-                return {0.f};
-
-            // First calculate expressions withing brackets
-            auto openBracketPos = expression.rfind('(');
-            while (openBracketPos != std::string::npos)
-            {
-                auto closeBracketPos = expression.find(')', openBracketPos + 1);
-                if (closeBracketPos == std::string::npos)
-                    return {0.f}; // Opening bracket without matching closing bracket
-
-                std::string newExpression = expression.substr(0, openBracketPos)
-                                          + deserializeLayout(expression.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1)).getLayout().toString()
-                                          + expression.substr(closeBracketPos + 1);
-
-                expression = newExpression;
-                openBracketPos = expression.rfind('(');
-            }
-
-            // All brackets should be remove by now
-            if (expression.find(')') != std::string::npos)
-                return {0.f};
-
-            float ratioTerm = 0;
-            float constantTerm = 0;
-
-            // Split the expression in terms
-            // We can't split on '+' and '-' simultaniously, so we first split on '+' which gives a list of elements
-            // that may still be an expression containing '-'. When we split this expression on '-', the first term in the list
-            // is always positive (because it came first after the original split on '+'), while all the other terms have to be
-            // negative (because there can only be more terms when a '-' was found in the expression)
-            std::vector<std::string> temp = Deserializer::split(expression, '+');
-            for (auto& element : temp)
-            {
-                auto terms = Deserializer::split(element, '-');
-
-                // The first term in the list is always the positive one
-                if (!terms[0].empty())
-                {
-                    if (terms[0].back() == '%')
-                    {
-                        terms[0].pop_back();
-                        ratioTerm += std::stof(terms[0]);
-                    }
-                    else
-                        constantTerm += std::stof(terms[0]);
-                }
-
-                // All other elements are negative
-                for (unsigned int i = 1; i < terms.size(); ++i)
-                {
-                    if (!terms[i].empty())
-                    {
-                        if (terms[i].back() == '%')
-                        {
-                            terms[i].pop_back();
-                            ratioTerm -= std::stof(terms[i]);
-                        }
-                        else
-                            constantTerm -= std::stof(terms[i]);
-                    }
-                }
-            }
-
-            if (ratioTerm)
-                return {RelLayout{ratioTerm / 100.f, constantTerm}};
-            else
-                return {Layout{constantTerm}};
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         ObjectConverter deserializeOutline(const std::string& value)
         {
             std::string str = trim(value);
@@ -318,20 +243,18 @@ namespace tgui
         {
             std::string::const_iterator c = value.begin();
 
-            // Remove all whitespaces (string should still contains something)
+            // Remove all whitespaces and return an empty texture when the string does not contain any text
             if (!removeWhitespace(value, c))
-                throw Exception{"Failed to deserialize texture '" + value + "'. Value is empty."};
+                return Texture{};
 
             if (toLower(value) == "none")
                 return Texture{};
 
-            // There has to be a quote
+            // There has to be a quote if the value contains more than just the filename
             if (*c == '"')
                 ++c;
             else
-            {
-                throw Exception{"Failed to deserialize texture '" + value + "'. Expected an opening quote for the filename."};
-            }
+                return Texture{getResourcePath() + value};
 
             std::string filename;
             char prev = '\0';
@@ -360,6 +283,7 @@ namespace tgui
             // There may be optional parameters
             sf::IntRect partRect;
             sf::IntRect middleRect;
+            bool smooth = false;
 
             while (removeWhitespace(value, c))
             {
@@ -368,7 +292,15 @@ namespace tgui
                 if (openingBracketPos != std::string::npos)
                     word = value.substr(c - value.begin(), openingBracketPos - (c - value.begin()));
                 else
-                    throw Exception{"Failed to deserialize texture '" + value + "'. Invalid text found behind filename."};
+                {
+                    if (toLower(trim(value.substr(c - value.begin()))) == "smooth")
+                    {
+                        smooth = true;
+                        break;
+                    }
+                    else
+                        throw Exception{"Failed to deserialize texture '" + value + "'. Invalid text found behind filename."};
+                }
 
                 sf::IntRect* rect = nullptr;
                 if ((word == "Part") || (word == "part"))
@@ -401,7 +333,7 @@ namespace tgui
                 std::advance(c, closeBracketPos - (c - value.begin()) + 1);
             }
 
-            return Texture{getResourcePath() + filename, partRect, middleRect};
+            return Texture{getResourcePath() + filename, partRect, middleRect, smooth};
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -462,7 +394,6 @@ namespace tgui
             {ObjectConverter::Type::Color, deserializeColor},
             {ObjectConverter::Type::String, deserializeString},
             {ObjectConverter::Type::Number, deserializeNumber},
-            {ObjectConverter::Type::Layout, deserializeLayout},
             {ObjectConverter::Type::Outline, deserializeOutline},
             {ObjectConverter::Type::Texture, deserializeTexture},
             {ObjectConverter::Type::TextStyle, deserializeTextStyle},

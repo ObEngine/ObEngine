@@ -17,9 +17,10 @@ namespace obe
             };
         }
 
-        Cursor::Cursor() :
+        Cursor::Cursor(sf::RenderWindow* window) :
             m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"))
         {
+            m_wref = window;
             m_constraint = Constraints::Default;
 
             m_cursorTriggers->addTrigger("CursorMoved");
@@ -49,25 +50,25 @@ namespace obe
         void Cursor::setX(unsigned int newx)
         {
             m_x = newx;
-            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y));
+            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), *m_wref);
         }
 
         void Cursor::setY(unsigned int newy)
         {
             m_y = newy;
-            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y));
+            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), *m_wref);
         }
 
         void Cursor::setPosition(unsigned int newx, unsigned int newy)
         {
             m_x = newx;
             m_y = newy;
-            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y));
+            sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), *m_wref);
         }
 
         void Cursor::update()
         {
-            sf::Vector2i mousePos = sf::Mouse::getPosition();
+            sf::Vector2i mousePos = sf::Mouse::getPosition(*m_wref);
             m_x = mousePos.x;
             m_y = mousePos.y;
             if (mousePos != m_saveOldPos)

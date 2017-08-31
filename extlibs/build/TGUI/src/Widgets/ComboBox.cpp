@@ -507,10 +507,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& ComboBox::getSignal(std::string&& signalName)
+    Signal& ComboBox::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onItemSelect->getName()))
-            return *onItemSelect;
+        if (signalName == toLower(onItemSelect.getName()))
+            return onItemSelect;
         else
             return Widget::getSignal(std::move(signalName));
     }
@@ -522,12 +522,12 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "padding")
         {
             m_paddingCached = getRenderer()->getPadding();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "textcolor")
         {
@@ -544,7 +544,7 @@ namespace tgui
         else if (property == "texturearrowup")
         {
             m_spriteArrowUp.setTexture(getRenderer()->getTextureArrowUp());
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturearrowuphover")
         {
@@ -553,7 +553,7 @@ namespace tgui
         else if (property == "texturearrowdown")
         {
             m_spriteArrowDown.setTexture(getRenderer()->getTextureArrowDown());
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturearrowdownhover")
         {
@@ -608,7 +608,7 @@ namespace tgui
             if (m_listBox->getRenderer()->getFont() == nullptr)
                 m_listBox->getRenderer()->setFont(m_fontCached);
 
-            updateSize();
+            setSize(m_size);
         }
         else
             Widget::rendererChanged(property);
@@ -683,17 +683,17 @@ namespace tgui
     {
         m_listBox->hide();
 
-        m_listBox->onItemSelect->connect([this](){
-                                            m_text.setString(m_listBox->getSelectedItem());
-                                            onItemSelect->emit(this, m_listBox->getSelectedItem(), m_listBox->getSelectedItemId());
-                                        });
+        m_listBox->connect("ItemSelected", [this](){
+                                                m_text.setString(m_listBox->getSelectedItem());
+                                                onItemSelect.emit(this, m_listBox->getSelectedItem(), m_listBox->getSelectedItemId());
+                                            });
 
-        m_listBox->onUnfocus->connect([this](){
-                                            if (!m_mouseHover)
-                                                hideListBox();
-                                        });
+        m_listBox->connect("Unfocused", [this](){
+                                                    if (!m_mouseHover)
+                                                        hideListBox();
+                                                });
 
-        m_listBox->onMouseRelease->connect([this](){ hideListBox(); });
+        m_listBox->connect("MouseReleased", [this](){ hideListBox(); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

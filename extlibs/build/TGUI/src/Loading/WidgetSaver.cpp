@@ -40,6 +40,8 @@
 #include <TGUI/Widgets/Picture.hpp>
 #include <TGUI/Widgets/ProgressBar.hpp>
 #include <TGUI/Widgets/RadioButton.hpp>
+#include <TGUI/Widgets/RangeSlider.hpp>
+#include <TGUI/Widgets/ScrollablePanel.hpp>
 #include <TGUI/Widgets/Scrollbar.hpp>
 #include <TGUI/Widgets/Slider.hpp>
 #include <TGUI/Widgets/SpinButton.hpp>
@@ -224,6 +226,11 @@ namespace tgui
 
             if (childWindow->isResizable())
                 SET_PROPERTY("Resizable", "true");
+
+            if (childWindow->getMinimumSize() != sf::Vector2f{})
+                SET_PROPERTY("MinimumSize", "(" + to_string(childWindow->getMinimumSize().x) + ", " + to_string(childWindow->getMinimumSize().y) + ")");
+            if (childWindow->getMaximumSize() != sf::Vector2f{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()})
+                SET_PROPERTY("MaximumSize", "(" + to_string(childWindow->getMaximumSize().x) + ", " + to_string(childWindow->getMaximumSize().y) + ")");
 
             std::string serializedTitleButtons;
             if (childWindow->getTitleButtons() & ChildWindow::TitleButton::Minimize)
@@ -528,10 +535,8 @@ namespace tgui
             auto picture = std::static_pointer_cast<Picture>(widget);
             auto node = WidgetSaver::getSaveFunction("widget")(picture);
 
-            if (!picture->getLoadedFilename().isEmpty())
-                SET_PROPERTY("Filename", Serializer::serialize(sf::String{picture->getLoadedFilename()}));
-            if (picture->isSmooth())
-                SET_PROPERTY("Smooth", "true");
+            if (!picture->getTexture().getId().isEmpty())
+                SET_PROPERTY("Texture", Serializer::serialize(picture->getTexture()));
 
             return node;
         }
@@ -578,6 +583,32 @@ namespace tgui
                 SET_PROPERTY("TextClickable", "false");
 
             SET_PROPERTY("TextSize", to_string(radioButton->getTextSize()));
+            return node;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        std::unique_ptr<DataIO::Node> saveRangeSlider(Widget::Ptr widget)
+        {
+            auto slider = std::static_pointer_cast<RangeSlider>(widget);
+            auto node = WidgetSaver::getSaveFunction("widget")(slider);
+
+            SET_PROPERTY("Minimum", to_string(slider->getMinimum()));
+            SET_PROPERTY("Maximum", to_string(slider->getMaximum()));
+            SET_PROPERTY("SelectionStart", to_string(slider->getSelectionStart()));
+            SET_PROPERTY("SelectionEnd", to_string(slider->getSelectionEnd()));
+            return node;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        std::unique_ptr<DataIO::Node> saveScrollablePanel(Widget::Ptr widget)
+        {
+            auto panel = std::static_pointer_cast<ScrollablePanel>(widget);
+            auto node = WidgetSaver::getSaveFunction("panel")(panel);
+
+            SET_PROPERTY("CententSize", "(" + to_string(panel->getContentSize().x) + ", " + to_string(panel->getContentSize().y) + ")");
+
             return node;
         }
 
@@ -714,6 +745,8 @@ namespace tgui
             {"progressbar", saveProgressBar},
             {"radiobutton", saveRadioButton},
             {"radiobuttongroup", saveContainer},
+            {"rangeslider", saveRangeSlider},
+            {"scrollablepanel", saveScrollablePanel},
             {"scrollbar", saveScrollbar},
             {"slider", saveSlider},
             {"spinbutton", saveSpinButton},

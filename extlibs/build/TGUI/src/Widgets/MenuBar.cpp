@@ -285,7 +285,7 @@ namespace tgui
         Widget::setParent(parent);
 
         if ((m_parent != nullptr) && (getSize().x == 0))
-            setSize(RelLayout{1}, m_size.y);
+            setSize("100%", m_size.y);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ namespace tgui
 
                 if (selectedMenuItem < m_menus[m_visibleMenu].menuItems.size())
                 {
-                    onMenuItemClick->emit(this,
+                    onMenuItemClick.emit(this,
                                          m_menus[m_visibleMenu].menuItems[selectedMenuItem].getString(),
                                          {m_menus[m_visibleMenu].text.getString(), m_menus[m_visibleMenu].menuItems[selectedMenuItem].getString()});
 
@@ -510,10 +510,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& MenuBar::getSignal(std::string&& signalName)
+    Signal& MenuBar::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onMenuItemClick->getName()))
-            return *onMenuItemClick;
+        if (signalName == toLower(onMenuItemClick.getName()))
+            return onMenuItemClick;
         else
             return Widget::getSignal(std::move(signalName));
     }

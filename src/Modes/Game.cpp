@@ -65,7 +65,7 @@ namespace obe
             vili::ComplexNode& gameConfig = configFile.at("GameConfig");
 
             //Cursor
-            System::Cursor cursor;
+            System::Cursor cursor(&window);
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //Scene Creation / Loading

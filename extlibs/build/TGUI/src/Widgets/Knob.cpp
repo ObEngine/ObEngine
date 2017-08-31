@@ -216,7 +216,7 @@ namespace tgui
             // The knob might have to point in a different direction
             recalculateRotation();
 
-            onValueChange->emit(this, m_value);
+            onValueChange.emit(this, m_value);
         }
     }
 
@@ -450,10 +450,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& Knob::getSignal(std::string&& signalName)
+    Signal& Knob::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onValueChange->getName()))
-            return *onValueChange;
+        if (signalName == toLower(onValueChange.getName()))
+            return onValueChange;
         else
             return Widget::getSignal(std::move(signalName));
     }
@@ -465,17 +465,17 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturebackground")
         {
             m_spriteBackground.setTexture(getRenderer()->getTextureBackground());
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "textureforeground")
         {
             m_spriteForeground.setTexture(getRenderer()->getTextureForeground());
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "bordercolor")
         {

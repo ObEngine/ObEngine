@@ -148,7 +148,7 @@ namespace tgui
         if (m_value != value)
         {
             m_value = value;
-            onValueChange->emit(this, value);
+            onValueChange.emit(this, value);
         }
     }
 
@@ -180,7 +180,7 @@ namespace tgui
             m_spriteArrowDownHover.setRotation(-90);
         }
 
-        updateSize();
+        setSize(m_size);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,10 +290,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& SpinButton::getSignal(std::string&& signalName)
+    Signal& SpinButton::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onValueChange->getName()))
-            return *onValueChange;
+        if (signalName == toLower(onValueChange.getName()))
+            return onValueChange;
         else
             return ClickableWidget::getSignal(std::move(signalName));
     }
@@ -305,12 +305,12 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "spacebetweenarrows")
         {
             m_spaceBetweenArrowsCached = getRenderer()->getSpaceBetweenArrows();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "texturearrowup")
         {

@@ -32,9 +32,11 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <functional>
+#include <typeindex>
 #include <cstddef>
 #include <memory>
 #include <vector>
+#include <deque>
 #include <map>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,15 +45,11 @@ namespace tgui
 {
     class Widget;
     class ChildWindow;
+    class SignalWidgetBase;
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @internal
-    /// @brief Helper function to dereference a void* back to its correct type
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    template <typename Type>
-    const Type& dereference(const void* obj)
+    namespace internal_signal
     {
-        return *static_cast<const Type*>(obj);
+        extern TGUI_API std::deque<const void*> parameters;
     }
 
 
@@ -65,11 +63,6 @@ namespace tgui
         using Delegate = std::function<void()>;
         using DelegateEx = std::function<void(std::shared_ptr<Widget>, const std::string&)>;
 
-        Signal(const Signal& other) = delete;
-        Signal(Signal&&) = delete;
-        Signal& operator=(const Signal& other) = delete;
-        Signal& operator=(Signal&&) = delete;
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructor
@@ -80,9 +73,33 @@ namespace tgui
         Signal(std::string&& name, std::size_t extraParameters = 0) :
             m_name{std::move(name)}
         {
-            if (1 + extraParameters > m_parameters.size())
-                m_parameters.resize(1 + extraParameters);
+            if (1 + extraParameters > internal_signal::parameters.size())
+                internal_signal::parameters.resize(1 + extraParameters);
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Copy constructor which will not copy the signal handlers
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Signal(const Signal& other);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Default move constructor
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Signal(Signal&& other) = default;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Copy assignment operator which will not copy the signal handlers
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Signal& operator=(const Signal& other);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Default move assignment operator
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Signal& operator=(Signal&& other) = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +150,7 @@ namespace tgui
             if (m_handlers.empty())
                 return false;
 
-            m_parameters[0] = static_cast<const void*>(&widget);
+            internal_signal::parameters[0] = static_cast<const void*>(&widget);
 
             for (auto& handler : m_handlers)
                 handler.second();
@@ -154,13 +171,21 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Extracts the widget stored in the first parameter
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::shared_ptr<Widget> getWidget() const;
+        static std::shared_ptr<Widget> getWidget();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,15 +193,12 @@ namespace tgui
 
         std::string m_name;
         std::map<unsigned int, std::function<void()>> m_handlers;
-
-        static std::vector<const void*> m_parameters;
     };
 
 
     #define TGUI_SIGNAL_VALUE_DECLARATION(TypeName, Type) \
     /**************************************************************************************************************************** \
      * @brief Signal to which the user can subscribe to get callbacks from
-     *
      ****************************************************************************************************************************/ \
     class TGUI_API Signal##TypeName : public Signal \
     { \
@@ -187,7 +209,6 @@ namespace tgui
         \
         /************************************************************************************************************************ \
          * @brief Constructor
-         *
          ************************************************************************************************************************/ \
         Signal##TypeName(std::string&& name) : \
             Signal{std::move(name), 1} \
@@ -200,7 +221,6 @@ namespace tgui
          * @param handler  Callback function that is given a Vector2f as argument
          *
          * @return Unique id of the connection
-         *
          ************************************************************************************************************************/ \
         unsigned int connect(const Delegate##TypeName& handler); \
         \
@@ -210,23 +230,28 @@ namespace tgui
          * @param handler  Callback function that is given a pointer to the widget, the name of the signal and a Vector2f as arguments
          *
          * @return Unique id of the connection
-         *
          ************************************************************************************************************************/ \
         unsigned int connect(const Delegate##TypeName##Ex& handler); \
         \
         /************************************************************************************************************************ \
          * @internal
          * @brief Call all connected signal handlers
-         *
          ************************************************************************************************************************/ \
         bool emit(const Widget* widget, Type strParam) \
         { \
             if (m_handlers.empty()) \
                 return false; \
          \
-            m_parameters[1] = static_cast<const void*>(&strParam); \
+            internal_signal::parameters[1] = static_cast<const void*>(&strParam); \
             return Signal::emit(widget); \
         } \
+        \
+        /************************************************************************************************************************ \
+         * @internal
+         * @brief Checks whether the unbound parameters match with this signal
+         * @return The index in the parameters list where the parameters will be stored
+         ************************************************************************************************************************/ \
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override; \
     };
 
 
@@ -236,6 +261,67 @@ namespace tgui
     TGUI_SIGNAL_VALUE_DECLARATION(Float, float)
     TGUI_SIGNAL_VALUE_DECLARATION(String, const sf::String&)
     TGUI_SIGNAL_VALUE_DECLARATION(Vector2f, sf::Vector2f)
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Signal to which the user can subscribe to get callbacks from
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TGUI_API SignalRange : public Signal
+    {
+    public:
+
+        using DelegateRange = std::function<void(int, int)>;
+        using DelegateRangeEx = std::function<void(std::shared_ptr<Widget>, const std::string&, int, int)>;
+
+        using Signal::connect;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        SignalRange(std::string&& name) :
+            Signal{std::move(name), 2}
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param handler  Callback function that is given a child window as argument
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int connect(const DelegateRange& handler);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param handler  Callback function that is given a pointer to the widget, the name of the signal and a child window as arguments
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int connect(const DelegateRangeEx& handler);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Call all connected signal handlers
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool emit(const Widget* widget, int value1, int value2);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    };
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +371,14 @@ namespace tgui
         /// @brief Call all connected signal handlers
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool emit(const ChildWindow* param);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -364,10 +458,19 @@ namespace tgui
             if (m_handlers.empty())
                 return false;
 
-            m_parameters[1] = static_cast<const void*>(&item);
-            m_parameters[2] = static_cast<const void*>(&id);
+            internal_signal::parameters[1] = static_cast<const void*>(&item);
+            internal_signal::parameters[2] = static_cast<const void*>(&id);
             return Signal::emit(widget);
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
@@ -446,92 +549,157 @@ namespace tgui
             if (m_handlers.empty())
                 return false;
 
-            m_parameters[1] = static_cast<const void*>(&item);
-            m_parameters[2] = static_cast<const void*>(&fullItem);
+            internal_signal::parameters[1] = static_cast<const void*>(&item);
+            internal_signal::parameters[2] = static_cast<const void*>(&fullItem);
             return Signal::emit(widget);
         }
 
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 
 
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Wrapper around signals to allow copying and moving
-    ///
-    /// The signal itself can't be copied of moved. The wrapper will just copy the pointer to the signal when moving but will
-    /// reset the signal when being copied. A copied widget has no signal handlers at all.
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    template <typename SignalType>
-    class SignalWrapper
+    namespace internal_signal
     {
-    public:
+        // void_t only exists in c++17 so we use our own implementation to support c++14 compilers
+        template<typename...>
+        using void_t = void;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Constructor
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalWrapper(std::string&& name) :
-            m_signal{std::make_unique<SignalType>(std::move(name))}
+        // Type to pass a list of template types
+        template <typename...>
+        struct TypeSet;
+
+        // Used for static_assert errors inside template functions
+        template <typename...>
+        struct always_false : std::false_type {};
+
+        // The dereference function turns the void* elements in the parameters list back into its original type right before calling the signal handler
+        template <typename Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type* = nullptr>
+        decltype(auto) dereference(const void* obj)
         {
+            // Signal handlers are allowed to have std::string parameters while the signal sends sf::String
+            return static_cast<std::string>(*static_cast<const sf::String*>(obj));
         }
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Copy constructor that will default initialize the signal (as handlers are not copied)
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalWrapper(const SignalWrapper& other) :
-            m_signal{std::make_unique<SignalType>(other->getName())}
+        template <typename Type, typename std::enable_if<!std::is_same<Type, std::string>::value>::type* = nullptr>
+        decltype(auto) dereference(const void* obj)
         {
+            return *static_cast<const Type*>(obj);
         }
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Default move constructor
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalWrapper(SignalWrapper&&) = default;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Copy assignment operator that will default initialize the signal (as handlers are not copied)
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalWrapper& operator=(const SignalWrapper& other)
+        // std::invoke only exists in c++17 so we use our own implementation to support c++14 compilers
+        // Visual Studio compiler did not like it when the function was called "invoke"
+        template <typename Func, typename... Args, typename std::enable_if<std::is_member_pointer<typename std::decay<Func>::type>::value>::type* = nullptr>
+        void invokeFunc(Func&& func, Args&&... args)
         {
-            if (this != &other)
-                m_signal = std::make_unique<SignalType>(other->getName());
-
-            return *this;
+            std::mem_fn(func)(std::forward<Args>(args)...);
         }
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Default move assignment operator
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalWrapper& operator=(SignalWrapper&&) = default;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Access the signal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalType& operator*() const
+        template <typename Func, typename... Args, typename std::enable_if<!std::is_member_pointer<typename std::decay<Func>::type>::value>::type* = nullptr>
+        void invokeFunc(Func&& func, Args&&... args)
         {
-            return *m_signal;
+            std::forward<Func>(func)(std::forward<Args>(args)...);
         }
 
+        // The binder will figure out the unbound parameters and bind them if they correspond to what the signal sends
+        template <typename... Args>
+        struct binder;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Access the signal
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalType* operator->() const
+        template <typename Arg, typename... AllArgs, typename BoundArg, typename... BoundArgs>
+        struct binder<TypeSet<Arg, AllArgs...>, TypeSet<BoundArg, BoundArgs...>>
+            : binder<TypeSet<AllArgs...>, TypeSet<BoundArgs...>>
         {
-            return m_signal.get();
-        }
+        };
+
+        template <typename... UnboundArgs>
+        struct binder<TypeSet<std::shared_ptr<Widget>, std::string, UnboundArgs...>, TypeSet<>>
+        {
+            template <typename Func, typename... BoundArgs>
+            static decltype(auto) bind(Signal& signal, Func&& func, BoundArgs&&... args)
+            {
+                return bindImpl(std::index_sequence_for<UnboundArgs...>{}, signal, std::forward<Func>(func), std::forward<BoundArgs>(args)...);
+            }
+
+        private:
+
+            template <typename Func, typename... BoundArgs, std::size_t... Indices>
+            static decltype(auto) bindImpl(std::index_sequence<Indices...>, Signal& signal, Func&& func, BoundArgs&&... args)
+            {
+                const std::size_t offset = (sizeof...(UnboundArgs) > 0) ? signal.validateTypes({typeid(UnboundArgs)...}) : 0;
+                return [=, f=func](const std::shared_ptr<Widget>& widget, const std::string& signalName) {  // f=func is needed to decay free functions
+                    invokeFunc(f,
+                               args...,
+                               widget,
+                               signalName,
+                               internal_signal::dereference<UnboundArgs>(internal_signal::parameters[offset + Indices])...);
+                };
+            }
+        };
+
+        template <typename... UnboundArgs>
+        struct binder<TypeSet<UnboundArgs...>, TypeSet<>>
+        {
+            template <typename Func, typename... BoundArgs>
+            static decltype(auto) bind(Signal& signal, Func&& func, BoundArgs&&... args)
+            {
+                return bindImpl(std::index_sequence_for<UnboundArgs...>{}, signal, std::forward<Func>(func), std::forward<BoundArgs>(args)...);
+            }
+
+        private:
+
+            template <typename Func, typename... BoundArgs, std::size_t... Indices>
+            static decltype(auto) bindImpl(std::index_sequence<Indices...>, Signal& signal, Func&& func, BoundArgs&&... args)
+            {
+                const std::size_t offset = (sizeof...(UnboundArgs) > 0) ? signal.validateTypes({typeid(UnboundArgs)...}) : 0;
+                return [=, f=func]() {  // f=func is needed to decay free functions
+                    invokeFunc(f,
+                               args...,
+                               internal_signal::dereference<UnboundArgs>(internal_signal::parameters[offset + Indices])...);
+                };
+            }
+        };
 
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private:
+        // Error case (function signature did not match anything)
+        template <typename Enable, typename Func, typename... BoundArgs>
+        struct func_traits;
 
-        std::unique_ptr<SignalType> m_signal = std::make_unique<SignalType>();
-    };
+        // Normal function or lambda
+        template <typename Func, typename... BoundArgs>
+        struct func_traits<void_t<decltype(&Func::operator())>, Func, BoundArgs...>
+            : public func_traits<void, decltype(&Func::operator()), Func*, BoundArgs...>
+        {
+        };
+
+        // Non-const member function
+        template <typename Class, typename... Args, typename... BoundArgs>
+        struct func_traits<void, void(Class::*)(Args...), BoundArgs...>
+            : binder<TypeSet<Class*, typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
+        {
+        };
+
+        // Const member function
+        template <typename Class, typename... Args, typename... BoundArgs>
+        struct func_traits<void, void(Class::*)(Args...) const, BoundArgs...>
+            : binder<TypeSet<const Class*, typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
+        {
+        };
+
+        // Free function
+        template <typename... Args, typename... BoundArgs>
+        struct func_traits<void, void(*)(Args...), BoundArgs...>
+            : binder<TypeSet<typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
+        {
+        };
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -545,43 +713,17 @@ namespace tgui
         /// @brief Connects a signal handler that will be called when this signal is emitted
         ///
         /// @param signalName   Name of the signal
-        /// @param handler      Callback function
-        ///
-        /// @return Unique id of the connection
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int connect(std::string signalName, const Signal::Delegate& handler)
-        {
-            return getSignal(toLower(std::move(signalName))).connect(handler);
-        }
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Connects a signal handler that will be called when this signal is emitted
-        ///
-        /// @param signalName   Name of the signal
-        /// @param handler      Callback function that is given a pointer to the widget and the name of the signal as arguments
-        ///
-        /// @return Unique id of the connection
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int connect(std::string signalName, const Signal::DelegateEx& handler)
-        {
-            return getSignal(toLower(std::move(signalName))).connect(handler);
-        }
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Connects a signal handler that will be called when this signal is emitted
-        ///
-        /// @param signalName   Name of the signal
-        /// @param handler      Callback function that is giventhe extra arguments provided to this function as arguments
+        /// @param handler      Callback function that is given the extra arguments provided to this function as arguments
         /// @param args         Optional extra arguments to pass to the signal handler when the signal is emitted
         ///
         /// @return Unique id of the connection
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        template <typename Func, typename... Args, typename std::enable_if<std::is_convertible<Func, std::function<void(Args...)>>::value>::type* = nullptr>
+        template <typename Func, typename... Args, typename std::enable_if<std::is_convertible<Func, std::function<void(const Args&...)>>::value>::type* = nullptr>
         unsigned int connect(std::string signalName, Func&& handler, const Args&... args)
         {
-            return getSignal(toLower(std::move(signalName))).connect([f=std::function<void(Args...)>(handler),args...](){ f(args...); });
+            const unsigned int id = getSignal(toLower(signalName)).connect([f=std::function<void(const Args&...)>(handler),args...](){ f(args...); });
+            m_connectedSignals[id] = toLower(signalName);
+            return id;
         }
 
 
@@ -595,28 +737,78 @@ namespace tgui
         ///
         /// @return Unique id of the connection
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        template <typename Func, typename... Args, typename std::enable_if<std::is_convertible<Func, std::function<void(Args..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
-        unsigned int connect(std::string signalName, Func&& handler, Args&&... args)
+        template <typename Func, typename... BoundArgs, typename std::enable_if<std::is_convertible<Func, std::function<void(const BoundArgs&..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
+        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args)
         {
-            return getSignal(toLower(std::move(signalName))).connect(
-                [f=std::function<void(Args..., std::shared_ptr<Widget>, const std::string&)>(handler), args...]
-                (const std::shared_ptr<Widget>& w, const std::string& s)
-                { f(args..., w, s); }
-            );
+            const unsigned int id = getSignal(toLower(signalName)).connect(
+                                        [f=std::function<void(const BoundArgs&..., const std::shared_ptr<Widget>&, const std::string&)>(handler), args...]
+                                        (const std::shared_ptr<Widget>& w, const std::string& s)
+                                        { f(args..., w, s); }
+                                    );
+            m_connectedSignals[id] = toLower(signalName);
+            return id;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param signalName   Name of the signal
+        /// @param handler      Callback function
+        /// @param args         Optional extra arguments to pass to the signal handler when the signal is emitted
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        template <typename Func, typename... BoundArgs, typename std::enable_if<!std::is_convertible<Func, std::function<void(const BoundArgs&...)>>::value
+                                                                             && !std::is_convertible<Func, std::function<void(const BoundArgs&..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
+        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args)
+        {
+            Signal& signal = getSignal(toLower(signalName));
+            using binder = internal_signal::func_traits<void, typename std::decay<Func>::type, BoundArgs...>;
+            const unsigned int id = signal.connect(binder::bind(signal, std::forward<Func>(handler), std::forward<BoundArgs>(args)...));
+            m_connectedSignals[id] = toLower(signalName);
+            return id;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connect a signal handler to multiple signals
+        ///
+        /// @param signalNames  List of signal names that will trigger the signal handler
+        /// @param handler      Callback function
+        /// @param args         Optional extra arguments to pass to the signal handler when the signal is emitted
+        ///
+        /// @return Unique id of the last connection. When passing e.g. 2 signal names, the first signal will correspond to id-1.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        template <typename Func, typename... BoundArgs>
+        unsigned int connect(std::initializer_list<std::string> signalNames, Func&& handler, BoundArgs&&... args)
+        {
+            unsigned int lastId = 0;
+            for (auto& signalName : signalNames)
+                lastId = connect(std::move(signalName), handler, args...);
+
+            return lastId;
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Disconnects a signal handler
         ///
-        /// @param signalName   Name of the signal
         /// @param id           Id of the connection
         ///
         /// @return True when a connection with this id existed and was removed
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool disconnect(std::string signalName, unsigned int id)
+        bool disconnect(unsigned int id)
         {
-            return getSignal(toLower(std::move(signalName))).disconnect(id);
+            auto it = m_connectedSignals.find(id);
+            if (it != m_connectedSignals.end())
+            {
+                const bool ret = getSignal(it->second).disconnect(id);
+                m_connectedSignals.erase(it);
+                return ret;
+            }
+            else // The id was not found
+                return false;
         }
 
 
@@ -625,10 +817,13 @@ namespace tgui
         ///
         /// @param signalName   Name of the signal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void disconnectAll(std::string signalName)
-        {
-            return getSignal(toLower(std::move(signalName))).disconnectAll();
-        }
+        void disconnectAll(std::string signalName);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Disconnects all signal handlers from signals
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void disconnectAll();
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -637,7 +832,16 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Retrieves a signal based on its name
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual Signal& getSignal(std::string&& signalName) = 0;
+        virtual Signal& getSignal(std::string signalName) = 0;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private:
+
+        std::map<unsigned int, std::string> m_connectedSignals;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

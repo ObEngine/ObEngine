@@ -75,15 +75,24 @@ namespace tgui
         // The renderer will be null when the widget was moved
         if (m_renderer)
             m_renderer->unsubscribe(this);
+
+        for (auto& layout : m_boundPositionLayouts)
+            layout->unbindWidget();
+
+        for (auto& layout : m_boundSizeLayouts)
+            layout->unbindWidget();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Widget::Widget(const Widget& other) :
-        Transformable                  {other},
         SignalWidgetBase               {other},
         enable_shared_from_this<Widget>{other},
         m_type                         {other.m_type},
+        m_position                     {other.m_position},
+        m_size                         {other.m_size},
+        m_boundPositionLayouts         {},
+        m_boundSizeLayouts             {},
         m_enabled                      {other.m_enabled},
         m_visible                      {other.m_visible},
         m_parent                       {nullptr},
@@ -96,13 +105,17 @@ namespace tgui
         m_fontCached                   {other.m_fontCached},
         m_opacityCached                {other.m_opacityCached}
     {
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
+
         m_renderer->subscribe(this, [this](const std::string& property){ rendererChangedCallback(property); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Widget::Widget(Widget&& other) :
-        Transformable                  {std::move(other)},
         SignalWidgetBase               {std::move(other)},
         enable_shared_from_this<Widget>{std::move(other)},
         onPositionChange               {std::move(other.onPositionChange)},
@@ -112,6 +125,10 @@ namespace tgui
         onMouseEnter                   {std::move(other.onMouseEnter)},
         onMouseLeave                   {std::move(other.onMouseLeave)},
         m_type                         {std::move(other.m_type)},
+        m_position                     {std::move(other.m_position)},
+        m_size                         {std::move(other.m_size)},
+        m_boundPositionLayouts         {std::move(other.m_boundPositionLayouts)},
+        m_boundSizeLayouts             {std::move(other.m_boundSizeLayouts)},
         m_enabled                      {std::move(other.m_enabled)},
         m_visible                      {std::move(other.m_visible)},
         m_parent                       {nullptr},
@@ -128,6 +145,11 @@ namespace tgui
         m_fontCached                   {std::move(other.m_fontCached)},
         m_opacityCached                {std::move(other.m_opacityCached)}
     {
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
+
         other.m_renderer->unsubscribe(&other);
         m_renderer->subscribe(this, [this](const std::string& property){ rendererChangedCallback(property); });
 
@@ -142,18 +164,21 @@ namespace tgui
         {
             m_renderer->unsubscribe(this);
 
-            Transformable::operator=(other);
             SignalWidgetBase::operator=(other);
             enable_shared_from_this::operator=(other);
 
-            onPositionChange->disconnectAll();
-            onSizeChange->disconnectAll();
-            onFocus->disconnectAll();
-            onUnfocus->disconnectAll();
-            onMouseEnter->disconnectAll();
-            onMouseLeave->disconnectAll();
+            onPositionChange.disconnectAll();
+            onSizeChange.disconnectAll();
+            onFocus.disconnectAll();
+            onUnfocus.disconnectAll();
+            onMouseEnter.disconnectAll();
+            onMouseLeave.disconnectAll();
 
             m_type                 = other.m_type;
+            m_position             = other.m_position;
+            m_size                 = other.m_size;
+            m_boundPositionLayouts = {};
+            m_boundSizeLayouts     = {};
             m_enabled              = other.m_enabled;
             m_visible              = other.m_visible;
             m_parent               = nullptr;
@@ -170,6 +195,11 @@ namespace tgui
             m_fontCached           = other.m_fontCached;
             m_opacityCached        = other.m_opacityCached;
 
+            m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+            m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+            m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+            m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
+
             m_renderer->subscribe(this, [this](const std::string& property){ rendererChangedCallback(property); });
         }
 
@@ -185,7 +215,6 @@ namespace tgui
             m_renderer->unsubscribe(this);
             other.m_renderer->unsubscribe(&other);
 
-            Transformable::operator=(std::move(other));
             SignalWidgetBase::operator=(std::move(other));
             enable_shared_from_this::operator=(std::move(other));
 
@@ -196,6 +225,10 @@ namespace tgui
             onMouseEnter           = std::move(other.onMouseEnter);
             onMouseLeave           = std::move(other.onMouseLeave);
             m_type                 = std::move(other.m_type);
+            m_position             = std::move(other.m_position);
+            m_size                 = std::move(other.m_size);
+            m_boundPositionLayouts = std::move(other.m_boundPositionLayouts);
+            m_boundSizeLayouts     = std::move(other.m_boundSizeLayouts);
             m_enabled              = std::move(other.m_enabled);
             m_visible              = std::move(other.m_visible);
             m_parent               = nullptr;
@@ -211,6 +244,11 @@ namespace tgui
             m_showAnimations       = std::move(other.m_showAnimations);
             m_fontCached           = std::move(other.m_fontCached);
             m_opacityCached        = std::move(other.m_opacityCached);
+
+            m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+            m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+            m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+            m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
             m_renderer->subscribe(this, [this](const std::string& property){ rendererChangedCallback(property); });
 
@@ -283,40 +321,43 @@ namespace tgui
 
     void Widget::setPosition(const Layout2d& position)
     {
-        Transformable::setPosition(position);
+        m_position = position;
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
 
-        if (m_parent)
+        if (getPosition() != m_prevPosition)
         {
-            const sf::Vector2f oldPosition = m_position.getValue();
-            m_position.updateParentSize(m_parent->getContentSize());
-            if (oldPosition != m_position.getValue())
-            {
-                updatePosition();
-                return;
-            }
-        }
+            m_prevPosition = getPosition();
+            onPositionChange.emit(this, getPosition());
 
-        onPositionChange->emit(this, getPosition());
+            for (auto& layout : m_boundPositionLayouts)
+                layout->recalculateValue();
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Widget::setSize(const Layout2d& size)
     {
-        Transformable::setSize(size);
+        m_size = size;
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
-        if (m_parent)
+        if (getSize() != m_prevSize)
         {
-            const sf::Vector2f oldSize = m_size.getValue();
-            m_size.updateParentSize(m_parent->getContentSize());
-            if (oldSize != m_size.getValue())
-            {
-                updateSize();
-                return;
-            }
-        }
+            m_prevSize = getSize();
+            onSizeChange.emit(this, getSize());
 
-        onSizeChange->emit(this, getSize());
+            for (auto& layout : m_boundSizeLayouts)
+                layout->recalculateValue();
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    sf::Vector2f Widget::getFullSize() const
+    {
+        return getSize();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -545,8 +586,12 @@ namespace tgui
     void Widget::setParent(Container* parent)
     {
         m_parent = parent;
-        if (m_parent)
-            updateParentSize(m_parent->getContentSize());
+
+        // Give the layouts another chance to find widgets to which it refers
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -606,7 +651,7 @@ namespace tgui
 
     void Widget::widgetFocused()
     {
-        onFocus->emit(this);
+        onFocus.emit(this);
 
         // Make sure the parent is also focused
         if (m_parent)
@@ -617,7 +662,7 @@ namespace tgui
 
     void Widget::widgetUnfocused()
     {
-        onUnfocus->emit(this);
+        onUnfocus.emit(this);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -647,36 +692,48 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Widget::updateParentSize(sf::Vector2f size)
+    void Widget::bindPositionLayout(Layout* layout)
     {
-        const sf::Vector2f oldPosition = m_position.getValue();
-        const sf::Vector2f oldSize = m_size.getValue();
-
-        m_position.updateParentSize(size);
-        m_size.updateParentSize(size);
-
-        if (oldPosition != m_position.getValue())
-            updatePosition();
-        if (oldSize != m_size.getValue())
-            updateSize();
+        m_boundPositionLayouts.insert(layout);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& Widget::getSignal(std::string&& signalName)
+    void Widget::unbindPositionLayout(Layout* layout)
     {
-        if (signalName == toLower(onPositionChange->getName()))
-            return *onPositionChange;
-        else if (signalName == toLower(onSizeChange->getName()))
-            return *onSizeChange;
-        else if (signalName == toLower(onFocus->getName()))
-            return *onFocus;
-        else if (signalName == toLower(onUnfocus->getName()))
-            return *onUnfocus;
-        else if (signalName == toLower(onMouseEnter->getName()))
-            return *onMouseEnter;
-        else if (signalName == toLower(onMouseLeave->getName()))
-            return *onMouseLeave;
+        m_boundPositionLayouts.erase(layout);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Widget::bindSizeLayout(Layout* layout)
+    {
+        m_boundSizeLayouts.insert(layout);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Widget::unbindSizeLayout(Layout* layout)
+    {
+        m_boundSizeLayouts.erase(layout);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    Signal& Widget::getSignal(std::string signalName)
+    {
+        if (signalName == toLower(onPositionChange.getName()))
+            return onPositionChange;
+        else if (signalName == toLower(onSizeChange.getName()))
+            return onSizeChange;
+        else if (signalName == toLower(onFocus.getName()))
+            return onFocus;
+        else if (signalName == toLower(onUnfocus.getName()))
+            return onUnfocus;
+        else if (signalName == toLower(onMouseEnter.getName()))
+            return onMouseEnter;
+        else if (signalName == toLower(onMouseLeave.getName()))
+            return onMouseLeave;
 
         throw Exception{"No signal exists with name '" + std::move(signalName) + "'."};
     }
@@ -698,7 +755,7 @@ namespace tgui
     void Widget::mouseEnteredWidget()
     {
         m_mouseHover = true;
-        onMouseEnter->emit(this);
+        onMouseEnter.emit(this);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -706,7 +763,7 @@ namespace tgui
     void Widget::mouseLeftWidget()
     {
         m_mouseHover = false;
-        onMouseLeave->emit(this);
+        onMouseLeave.emit(this);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

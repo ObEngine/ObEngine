@@ -198,7 +198,7 @@ namespace tgui
         if (present)
         {
             m_verticalScroll.show();
-            updateSize();
+            setSize(m_size);
         }
         else
         {
@@ -743,7 +743,7 @@ namespace tgui
                 m_caretVisible = true;
                 m_animationTimeElapsed = {};
 
-                onTextChange->emit(this, m_text);
+                onTextChange.emit(this, m_text);
                 break;
             }
 
@@ -761,7 +761,7 @@ namespace tgui
                 else // You did select some characters, so remove them
                     deleteSelectedCharacters();
 
-                onTextChange->emit(this, m_text);
+                onTextChange.emit(this, m_text);
                 break;
             }
 
@@ -822,7 +822,7 @@ namespace tgui
                         m_selEnd = m_selStart;
                         rearrangeText(true);
 
-                        onTextChange->emit(this, m_text);
+                        onTextChange.emit(this, m_text);
                     }
                 }
 
@@ -894,7 +894,7 @@ namespace tgui
         m_caretVisible = true;
         m_animationTimeElapsed = {};
 
-        onTextChange->emit(this, m_text);
+        onTextChange.emit(this, m_text);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1394,10 +1394,10 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Signal& TextBox::getSignal(std::string&& signalName)
+    Signal& TextBox::getSignal(std::string signalName)
     {
-        if (signalName == toLower(onTextChange->getName()))
-            return *onTextChange;
+        if (signalName == toLower(onTextChange.getName()))
+            return onTextChange;
         else
             return Widget::getSignal(std::move(signalName));
     }
@@ -1409,12 +1409,12 @@ namespace tgui
         if (property == "borders")
         {
             m_bordersCached = getRenderer()->getBorders();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "padding")
         {
             m_paddingCached = getRenderer()->getPadding();
-            updateSize();
+            setSize(m_size);
         }
         else if (property == "textcolor")
         {

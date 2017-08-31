@@ -27,12 +27,23 @@
 
 #include <SFML/Config.hpp>
 
-#ifndef SFML_STATIC
+// TGUI will link in the same way as SFML, unless TGUI_DYNAMIC or TGUI_STATIC is defined
+#if !defined(TGUI_DYNAMIC) && !defined(TGUI_STATIC)
+    #ifdef SFML_STATIC
+        #define TGUI_STATIC
+    #endif
+#endif
+
+#ifndef TGUI_STATIC
 
     #ifdef SFML_SYSTEM_WINDOWS
 
         // Windows compilers need specific (and different) keywords for export and import
-#define TGUI_API
+        #ifdef tgui_EXPORTS
+            #define TGUI_API
+        #else
+            #define TGUI_API
+        #endif
 
     #else // Linux, FreeBSD, Mac OS X
 
@@ -59,11 +70,19 @@
 #define TGUI_VERSION_MINOR 8
 #define TGUI_VERSION_PATCH 0
 
-// The constexpr keyword is not widely supported enough to be enabled by default
-#ifdef TGUI_ENABLE_CONSTEXPR
-    #define TGUI_CONSTEXPR constexpr
+// All supported compilers except GCC 4.9 support constexpr
+#if __GNUC__
+    #if __cpp_constexpr >= 201304
+        #define TGUI_CONSTEXPR constexpr
+    #else
+        #define TGUI_CONSTEXPR
+    #endif
 #else
-    #define TGUI_CONSTEXPR
+    #define TGUI_CONSTEXPR constexpr
+#endif
+
+#ifndef TGUI_NO_DEPRECATED_WARNINGS
+    #define TGUI_DEPRECATED(msg) [[deprecated(msg)]]
 #endif
 
 #endif // TGUI_CONFIG_HPP

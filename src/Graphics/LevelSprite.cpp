@@ -331,6 +331,7 @@ namespace obe
             return m_positionTransformer;
         }
 
+        unsigned int LevelSpriteHandlePoint::radius = 6;
         LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)
         {
             m_rect = parentRect;
