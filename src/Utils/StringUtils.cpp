@@ -130,7 +130,7 @@ namespace obe
 
             bool startsWith(const std::string& string, const std::string& search)
             {
-                if (search.size() < string.size())
+                if (string.size() < search.size())
                     return false;
                 return (std::mismatch(search.begin(), search.end(), string.begin()).first == search.end());
                 
@@ -138,7 +138,7 @@ namespace obe
 
             bool endsWith(const std::string& string, const std::string& search)
             {
-                if (search.size() < string.size())
+                if (string.size() < search.size())
                 {
                     return false;
                 }

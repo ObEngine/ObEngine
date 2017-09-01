@@ -39,34 +39,32 @@ namespace obe
             std::vector<std::string> allMaps;
             for (int i = 0; i < allMapsTemp.size(); i++)
             {
-                if (allMapsTemp[i].size() > 8 && allMapsTemp[i].substr(allMapsTemp[i].size() - 9) == ".map.vili")
+                if (Utils::String::endsWith(allMapsTemp[i], ".map.vili"))
                     allMaps.push_back(allMapsTemp[i]);
             }
             for (int i = 0; i < allMaps.size(); i++)
             {
-                if (Utils::String::endsWith(allMaps[i], ".map.vili"))
+                vili::ViliParser mapInfoParser;
+                mapInfoParser.setQuickLookAttributes({ "Meta" });
+                System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
+                std::string filename = allMaps[i];
+                std::string levelName = "???";
+
+                if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
                 {
-                    vili::ViliParser mapInfoParser;
-                    System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
-                    std::string filename = allMapsTemp[i];
-                    std::string levelName = "???";
-
-                    if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
-                    {
-                        if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode, "name"))
-                            levelName = mapInfoParser.at("Meta").getDataNode("name").get<std::string>();
-                    }
-
-                    tgui::Button::Ptr selectMapButton = tgui::Button::create();
-                    selectMapButton->setText(levelName + " (" + filename.substr(0, allMapsTemp[i].size() - 9) + ")");
-                    selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
-                    selectMapButton->setSize("630", "100");
-                    selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
-                    std::cout << "Adding map file : " << levelName << selectMapButton->getPosition().x << ", " << selectMapButton->getPosition().y << std::endl;
-                    selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
-                    middlePanel->add(selectMapButton);
-                    scrollBoxSize += selectMapButton->getSize().y - 1;
+                    if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode, "name"))
+                        levelName = mapInfoParser.at("Meta").getDataNode("name").get<std::string>();
                 }
+
+                tgui::Button::Ptr selectMapButton = tgui::Button::create();
+                selectMapButton->setText(levelName + " (" + filename.substr(0, allMapsTemp[i].size() - 9) + ")");
+                selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
+                selectMapButton->setSize("630", "100");
+                selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
+                std::cout << "Adding map file : " << levelName << selectMapButton->getPosition().x << ", " << selectMapButton->getPosition().y << std::endl;
+                selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
+                middlePanel->add(selectMapButton);
+                scrollBoxSize += selectMapButton->getSize().y - 1;
             }
             scrollbar->setLowValue(middlePanel->getSize().y);
             scrollbar->setMaximum(scrollBoxSize);
