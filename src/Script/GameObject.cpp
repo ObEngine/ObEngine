@@ -119,7 +119,6 @@ namespace obe
 
         void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const
         {
-            std::cout << "Pushing Parameter : " << argName << std::endl;
             m_localTriggers->pushParameterFromLua("Init", argName, value);
         }
 
