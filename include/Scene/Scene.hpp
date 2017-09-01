@@ -33,6 +33,8 @@ namespace obe
             std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
             std::vector<std::string> m_scriptArray;
 
+            vili::ViliParser m_levelFile;
+            std::string m_levelFileName;
             std::map<std::string, bool> m_showCollisionModes;
             void displaySprites(sf::RenderWindow& target);
         public:
@@ -236,6 +238,15 @@ namespace obe
              * \return A std::string containing the folder where was loaded the map file
              */
             std::string getBaseFolder() const;
+            /**
+             * \brief Reloads the Scene from the level file
+             */
+            void reload();
+            /**
+             * \brief Name of the last loaded map file with loadFromFile method
+             * \return A std::string containing the name of the last loaded map file with loadFromFile method
+             */
+            std::string getLevelFile() const;
             /**
              * \brief Draws some elements of the Colliders
              * \param drawLines Draw the lines of the Colliders

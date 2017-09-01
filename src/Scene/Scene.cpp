@@ -71,34 +71,48 @@ namespace obe
             return m_baseFolder;
         }
 
+        void Scene::reload()
+        {
+            this->loadFromFile(m_levelFileName);
+        }
+
         void Scene::loadFromFile(const std::string& filename)
         {
             this->clearWorld();
-            vili::ViliParser mapParse;
-            m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&mapParse, System::Loaders::dataLoader);
+            if (filename != m_levelFileName)
+            {
+                m_levelFile = vili::ViliParser();
+                m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&m_levelFile, System::Loaders::dataLoader);
+                m_levelFileName = filename;
+            }
+            else
+            {
+                std::cout << "Reloading Map file" << std::endl;
+            }
+            
             std::cout << "Base Folder : " << m_baseFolder << std::endl;
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "Meta"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "Meta"))
             {
-                vili::ComplexNode& meta = mapParse.at("Meta");
+                vili::ComplexNode& meta = m_levelFile.at("Meta");
                 m_levelName = meta.getDataNode("name").get<std::string>();
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoMeta", {{"map", filename}});
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "View"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "View"))
             {
-                vili::ComplexNode& view = mapParse.at("View");
+                vili::ComplexNode& view = m_levelFile.at("View");
                 m_camera.setSize(view.at<vili::DataNode>("size").get<double>());
                 m_cameraInitialPosition = Transform::UnitVector(
                     view.at<vili::DataNode>("pos", "x").get<double>(),
                     view.at<vili::DataNode>("pos", "y").get<double>(),
                     Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
                 m_cameraInitialReferencial = Transform::Referencial::Center;
-                if (mapParse->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
+                if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
                 {
                     m_cameraInitialReferencial = Transform::stringToReferencial(
-                        mapParse->at("View", "referencial").getDataNode("referencial").get<std::string>()
+                        m_levelFile->at("View", "referencial").getDataNode("referencial").get<std::string>()
                     );
                 }
                 m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
@@ -106,9 +120,9 @@ namespace obe
             else
                 throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", {{"map", filename}});
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "LevelSprites"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "LevelSprites"))
             {
-                vili::ComplexNode& levelSprites = mapParse.at("LevelSprites");
+                vili::ComplexNode& levelSprites = m_levelFile.at("LevelSprites");
 
                 for (std::string& currentSpriteName : levelSprites.getAll(vili::NodeType::ComplexNode))
                 {
@@ -118,9 +132,9 @@ namespace obe
 
             this->reorganizeLayers();
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "Collisions"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "Collisions"))
             {
-                vili::ComplexNode& collisions = mapParse.at("Collisions");
+                vili::ComplexNode& collisions = m_levelFile.at("Collisions");
                 for (std::string& collisionName : collisions.getAll(vili::NodeType::ComplexNode))
                 {
                     vili::ComplexNode& currentCollision = collisions.at(collisionName);
@@ -151,9 +165,9 @@ namespace obe
                 }
             }
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "GameObjects"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "GameObjects"))
             {
-                vili::ComplexNode& gameObjects = mapParse.at("GameObjects");
+                vili::ComplexNode& gameObjects = m_levelFile.at("GameObjects");
                 for (std::string& currentObjectName : gameObjects.getAll(vili::NodeType::ComplexNode))
                 {
                     if (!this->doesGameObjectExists(currentObjectName))
@@ -178,9 +192,9 @@ namespace obe
                 }
             }
 
-            if (mapParse->contains(vili::NodeType::ComplexNode, "Script"))
+            if (m_levelFile->contains(vili::NodeType::ComplexNode, "Script"))
             {
-                vili::ComplexNode& script = mapParse.at("Script");
+                vili::ComplexNode& script = m_levelFile.at("Script");
                 for (vili::DataNode* scriptName : script.getArrayNode("gameScripts"))
                 {
                     System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
@@ -705,6 +719,11 @@ namespace obe
             (*lua)["CPP_Hook"] = &Script::loadHook;
             loadWorldLib(lua);
             (*lua)["This"] = lua;
+        }
+
+        std::string Scene::getLevelFile() const
+        {
+            return m_levelFileName;
         }
     };
 };
