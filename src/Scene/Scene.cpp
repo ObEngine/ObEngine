@@ -329,8 +329,8 @@ namespace obe
             if (m_futureLoad != "")
             {
                 std::cout << "FUTURE LOAD NOW : " << m_futureLoad << std::endl;
-                m_futureLoad.clear();
-                this->loadFromFile(m_futureLoad);
+                std::string futureLoadBuffer = std::move(m_futureLoad);
+                this->loadFromFile(futureLoadBuffer);
             }
             //std::cout << "LevelSprite Array Size (" << m_spriteArray.size() << ")" << std::endl;
             for (auto& sprite : m_spriteArray)
