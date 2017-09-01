@@ -48,10 +48,17 @@ namespace obe
 
         Collision::PolygonalCollider* Scene::createCollider(const std::string& id)
         {
-            std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
-            Collision::PolygonalCollider* returnCollider = newCollider.get();
-            m_colliderArray.push_back(move(newCollider));
-            return returnCollider;
+            if (!this->doesColliderExists(id))
+            {
+                std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
+                Collision::PolygonalCollider* returnCollider = newCollider.get();
+                m_colliderArray.push_back(move(newCollider));
+                return returnCollider;
+            }
+            else
+            {
+                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.ColliderAlreadyExists", { {"id", id}, {"mapfile", m_levelName} });
+            }
         }
 
         unsigned Scene::getColliderAmount() const

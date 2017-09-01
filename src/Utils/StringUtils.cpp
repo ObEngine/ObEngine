@@ -127,6 +127,23 @@ namespace obe
             {
                 return (string.find(search) != std::string::npos);
             }
+
+            bool startsWith(const std::string& string, const std::string& search)
+            {
+                if (search.size() < string.size())
+                    return false;
+                return (std::mismatch(search.begin(), search.end(), string.begin()).first == search.end());
+                
+            }
+
+            bool endsWith(const std::string& string, const std::string& search)
+            {
+                if (search.size() < string.size())
+                {
+                    return false;
+                }
+                return (std::mismatch(search.rbegin(), search.rend(), string.rbegin()).first == search.rend());
+            }
         }
     }
 }

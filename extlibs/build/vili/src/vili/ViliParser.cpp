@@ -632,7 +632,12 @@ namespace vili
 
     void ViliParser::StoreInCache(const std::string& path)
     {
-        ViliCache[path] = std::make_unique<ViliParser>(path);
+        std::cout << "Storing : " << path << " in Cache" << std::endl;
+        std::unique_ptr<ViliParser> fCache = std::make_unique<ViliParser>();
+        std::cout << "Parsing to fill Cache" << std::endl;
+        fCache->parseFile(path, true);
+        std::cout << "Parsing over" << std::endl;
+        ViliCache[path] = std::move(fCache);
     }
 
     bool ViliParser::CheckCache(ViliParser* parser, const std::string& path, bool visibility)

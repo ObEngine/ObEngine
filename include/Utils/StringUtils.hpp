@@ -103,6 +103,20 @@ namespace obe
              * \return true if the string contains search, false otherwise
              */
             bool contains(const std::string& string, const std::string& search);
+            /**
+             * \brief Checks if "string" starts with "search"
+             * \param string String where to search the prefix
+             * \param search Prefix to check
+             * \return true if search is a prefix of string, false otherwise
+             */
+            bool startsWith(const std::string& string, const std::string& search);
+            /**
+             * \brief Checks if "string" ends with "search"
+             * \param string String where to search the suffix
+             * \param search Suffix to check
+             * \return true if search is a suffix of string, false otherwise
+             */
+            bool endsWith(const std::string& string, const std::string& search);
         }
     }
 }
