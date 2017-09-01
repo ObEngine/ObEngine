@@ -56,7 +56,7 @@ namespace obe
         {
         private:
             unsigned int m_envIndex;
-            bool m_permanent;
+            bool m_permanent = false;
             std::unique_ptr<Animation::Animator> m_objectAnimator;
             Graphics::LevelSprite* m_objectLevelSprite;
             Collision::PolygonalCollider* m_objectCollider;
