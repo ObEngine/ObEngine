@@ -9,6 +9,20 @@ namespace obe
 {
     namespace Transform
     {
+        Rect::Rect(MovableType type, const std::string& id) : Movable(type, id)
+        {
+        }
+
+        void Rect::setPosition(const UnitVector& position)
+        {
+            this->setPosition(position, Referencial::TopLeft);
+        }
+
+        UnitVector Rect::getPosition() const
+        {
+            return this->getPosition(Referencial::TopLeft);
+        }   
+
         void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;
@@ -51,40 +65,9 @@ namespace obe
             m_position.set(pVec.x, pVec.y);
         }
 
-        void Rect::setPosition(double x, double y, Referencial ref)
-        {
-            this->setPosition(UnitVector(x, y, Units::WorldUnits), ref);
-        }
-
         void Rect::move(const UnitVector& position)
         {
             m_position += position;
-        }
-
-        void Rect::move(double x, double y)
-        {
-            m_position.add(x, y);
-        }
-
-        void Rect::setX(double x, Referencial ref)
-        {
-            UnitVector vec(x, 0, Units::WorldUnits);
-            this->transformRef(vec, ref, ConversionType::To);
-            m_position.x = vec.x;
-        }
-
-        void Rect::setY(double y, Referencial ref)
-        {
-            UnitVector vec(0, y, Units::WorldUnits);
-            this->transformRef(vec, ref, ConversionType::To);
-            m_position.y = vec.y;
-        }
-
-        void Rect::setSize(double width, double height, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size.set(width, height);
-            this->setPosition(savePosition, ref);
         }
 
         void Rect::setSize(const UnitVector& size, Referencial ref)
@@ -101,27 +84,6 @@ namespace obe
             this->setPosition(savePosition, ref);
         }
 
-        void Rect::scale(double width, double height, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size *= UnitVector(width, height, m_size.unit);
-            this->setPosition(savePosition, ref);
-        }
-
-        void Rect::setWidth(double width, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size.x = width;
-            this->setPosition(savePosition, ref);
-        }
-
-        void Rect::setHeight(double height, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size.y = height;
-            this->setPosition(savePosition, ref);
-        }
-
         UnitVector Rect::getPosition(Referencial ref) const
         {
             UnitVector getPosVec = m_position;
@@ -132,26 +94,6 @@ namespace obe
         UnitVector Rect::getSize() const
         {
             return m_size;
-        }
-
-        double Rect::getX(Referencial ref) const
-        {
-            return this->getPosition(ref).x;
-        }
-
-        double Rect::getY(Referencial ref) const
-        {
-            return this->getPosition(ref).y;
-        }
-
-        double Rect::getWidth() const
-        {
-            return m_size.x;
-        }
-
-        double Rect::getHeight() const
-        {
-            return m_size.y;
         }
 
         void Rect::setPointPosition(const UnitVector& position, Referencial ref)
@@ -165,35 +107,21 @@ namespace obe
             }
             else if (isOnLeftSide(ref) || isOnRightSide(ref))
             {
-                this->setX(position.to<Units::WorldUnits>().x, ref);
-                this->setWidth(newSize.x, ref);
+                UnitVector cPos(position.to(m_position.unit).x, m_position.y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.y = m_size.y;
+                this->setSize(newSize, ref);
             }
             else if (isOnTopSide(ref) || isOnBottomSide(ref))
             {
-                this->setY(position.to<Units::WorldUnits>().y, ref);
-                this->setHeight(newSize.y, ref);
+                UnitVector cPos(m_position.x, position.to(m_position.unit).y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.x = m_size.x;
+                this->setSize(newSize, ref);
             }
         }
 
-        void Rect::setPointPosition(double x, double y, Referencial ref)
-        {
-            UnitVector pVec(x, y);
-            this->setPointPosition(pVec, ref);
-        }
-
         void Rect::movePoint(const UnitVector& position, Referencial ref)
-        {
-        }
-
-        void Rect::movePoint(double x, double y, Referencial ref)
-        {
-        }
-
-        void Rect::setPointX(double x, Referencial ref)
-        {
-        }
-
-        void Rect::setPointY(double y, Referencial ref)
         {
         }
 

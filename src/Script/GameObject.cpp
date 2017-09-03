@@ -93,7 +93,7 @@ namespace obe
         //GameObject
         std::vector<unsigned int> GameObject::AllEnvs;
 
-        GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr)
+        GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr), m_objectNode(id)
         {
             m_type = type;
             m_id = id;
@@ -200,7 +200,8 @@ namespace obe
             //Collider
             if (obj.contains(vili::NodeType::ComplexNode, "Collider"))
             {
-                m_objectCollider = world.createCollider(m_id);
+                m_objectCollider = world.createCollider(m_id, false);
+                m_objectNode.addChild(m_objectCollider);
 
                 std::string pointsUnit = obj.at("Collider", "unit").getDataNode("unit").get<std::string>();
                 bool completePoint = true;
@@ -249,7 +250,8 @@ namespace obe
             //LevelSprite
             if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
             {
-                m_objectLevelSprite = world.createLevelSprite(m_id);
+                m_objectLevelSprite = world.createLevelSprite(m_id, false);
+                m_objectNode.addChild(m_objectLevelSprite);
                 m_objectLevelSprite->configure(obj.at("LevelSprite"));
                 if (m_hasScriptEngine)
                     GAMEOBJECTENV["Object"]["LevelSprite"] = m_objectLevelSprite;
@@ -322,6 +324,11 @@ namespace obe
             if (m_hasLevelSprite)
                 return m_objectLevelSprite;
             throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoLevelSprite", {{"id", m_id}});
+        }
+
+        Transform::Node2D* GameObject::getSceneNode()
+        {
+            return &m_objectNode;
         }
 
         Collision::PolygonalCollider* GameObject::getCollider()

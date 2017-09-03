@@ -5,6 +5,7 @@
 #include <sfe/ComplexSprite.hpp>
 
 #include <Graphics/PositionTransformers.hpp>
+#include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
@@ -57,7 +58,11 @@ namespace obe
          * \brief An element meant to be displayed in a Scene
          * @Bind
          */
-        class LevelSprite : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Rect, public Types::Identifiable, Types::Configurable
+        class LevelSprite : 
+        public Transform::UnitBasedObject, 
+        public Types::Selectable, 
+        public Transform::Rect, 
+        public Types::Configurable
         {
         private:
             std::string m_path = "";

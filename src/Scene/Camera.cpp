@@ -5,7 +5,7 @@ namespace obe
 {
     namespace Scene
     {
-        Camera::Camera()
+        Camera::Camera() : Rect(Transform::MovableType::Camera, "Camera")
         {
             Transform::UnitVector::Init(m_camera);
         }
@@ -58,7 +58,12 @@ namespace obe
         {
             if (!m_locked)
             {
-                Rect::setSize(pSize * 2 * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h), pSize * 2, ref);
+                Rect::setSize(
+                    Transform::UnitVector(
+                        pSize * 2 * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h), 
+                        pSize * 2, m_size.unit
+                    )
+                , ref);
                 this->apply();
             }
         }

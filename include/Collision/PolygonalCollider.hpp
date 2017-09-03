@@ -11,6 +11,10 @@
 
 namespace obe
 {
+    namespace Scene
+    {
+        class Scene;
+    }
     namespace Collision
     {
         bool pointsCompare(const Transform::UnitVector& first, const Transform::UnitVector& second);
@@ -43,7 +47,7 @@ namespace obe
          * \brief Class used for all Collisions in the engine, it's a Polygon containing n points
          * @Bind
          */
-        class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable, public Types::Identifiable
+        class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Movable
         {
         private:
             //Tag System
@@ -65,6 +69,7 @@ namespace obe
             std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
             void resetUnit(Transform::Units unit) override;
         public:
+            static Scene::Scene* m_sceneRef;
             /**
              * \brief Constructs a PolygonalCollider
              * \param id Id of the PolygonalCollider (Used to retrieve it for example)
@@ -157,7 +162,7 @@ namespace obe
 
             //Collision Tests
             //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
-            Transform::UnitVector getMaximumDistanceBeforeCollision(std::vector<PolygonalCollider>& collider, const Transform::UnitVector& offset) const;
+            Transform::UnitVector getMaximumDistanceBeforeCollision(const Transform::UnitVector& offset) const;
             Transform::UnitVector getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
             /**
              * \brief Checks if two polygons are intersecting
@@ -184,7 +189,7 @@ namespace obe
              * \brief Get the Position of the first point (index 0) of the Polygon
              * \return An UnitVector containing the position of the first point of the Polygon
              */
-            Transform::UnitVector getPosition();
+            Transform::UnitVector getPosition() const override;
             /**
              * \brief Get the Position of one of the points of the Polygon
              * \param index Index of the point to get the position
@@ -207,12 +212,12 @@ namespace obe
              * \brief Moves the Polygon (relative to the current position)
              * \param vec UnitVector containing the offset to move the Polygon
              */
-            void move(const Transform::UnitVector& vec);
+            void move(const Transform::UnitVector& vec) override;
             /**
              * \brief Sets the new position of the Polygon (using the point at index 0)
              * \param vec UnitVector containing the new Position of the Polygon
              */
-            void setPosition(const Transform::UnitVector& vec);
+            void setPosition(const Transform::UnitVector& vec) override;
             /**
              * \brief Sets the new position of the Polygon (using the centroid)
              * \param vec UnitVector containing the new Position of the Polygon

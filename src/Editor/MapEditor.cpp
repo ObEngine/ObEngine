@@ -214,6 +214,7 @@ namespace obe
             sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
             sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
             double waitForMapSaving = -1;
+            Transform::Units editorUnit = Transform::Units::WorldUnits;
 
             //Framerate / DeltaTime
             Time::FPSCounter fps;
@@ -235,7 +236,7 @@ namespace obe
             connectMenuActions(inputManager, editMode, cameraMode, editorPanel);
             connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
-                scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground);
+                scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground, editorUnit);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
             connectGameConsoleActions(inputManager, gameConsole);
             inputManager.getAction("ExitEditor").connect([&window](const Input::InputActionEvent& event)
@@ -357,8 +358,10 @@ namespace obe
                             sprInfoStr = "Hovered Sprite : \n";
                             sprInfoStr += "    Id : " + hoveredSprite->getId() + "\n";
                             sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
-                            sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getX()) + "," + std::to_string(hoveredSprite->getY()) + "\n";
-                            sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getWidth()) + "," + std::to_string(hoveredSprite->getHeight()) + "\n";
+                            sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getPosition().to(editorUnit).x) + "," 
+                            + std::to_string(hoveredSprite->getPosition().to(editorUnit).y) + "\n";
+                            sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getSize().to(editorUnit).x) 
+                            + "," + std::to_string(hoveredSprite->getSize().to(editorUnit).y) + "\n";
                             sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
                             sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
                             sprInfo.setString(sprInfoStr);

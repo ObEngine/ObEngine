@@ -15,14 +15,14 @@ namespace obe
             {
                 Load(lua, "Core.Transform.UnitBasedObject");
                 Load(lua, "Core.Types.Selectable");
-                Load(lua, "Core.Types.Identifiable");
+                Load(lua, "Core.Transform.Movable");
                 (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
                     Collision::PolygonalCollider,
                     kaguya::MultipleBase<
                     Transform::UnitBasedObject,
                     Types::Selectable,
-                    Types::Identifiable
+                    Transform::Movable
                     >
                     >()
                     .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
@@ -44,7 +44,7 @@ namespace obe
                     .addOverloadedFunctions("getMaximumDistanceBeforeCollision",
                         static_cast<Transform::UnitVector 
                             (Collision::PolygonalCollider::*)
-                            (std::vector<Collision::PolygonalCollider>&, const Transform::UnitVector&) const>
+                            (const Transform::UnitVector&) const>
                             (&Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
                         static_cast<Transform::UnitVector
                             (Collision::PolygonalCollider::*)

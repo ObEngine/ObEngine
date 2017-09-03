@@ -28,6 +28,7 @@ namespace obe
             int& selectedSpriteOffsetX, 
             int& selectedSpriteOffsetY,
             sf::Text& sprInfo,
-            sf::RectangleShape& sprInfoBackground);
+            sf::RectangleShape& sprInfoBackground,
+            Transform::Units& editorUnit);
     }
 }

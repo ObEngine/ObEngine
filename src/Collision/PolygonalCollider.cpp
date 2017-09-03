@@ -68,7 +68,8 @@ namespace obe
             return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
         }
 
-        PolygonalCollider::PolygonalCollider(const std::string& id) : Selectable(false), Identifiable(id)
+        Scene::Scene* PolygonalCollider::m_sceneRef = nullptr;
+        PolygonalCollider::PolygonalCollider(const std::string& id) : Selectable(false), Movable(Transform::MovableType::PolygonalCollider, id)
         {
         }
 
@@ -268,13 +269,15 @@ namespace obe
             return m_allPoints;
         }
 
-        Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(std::vector<PolygonalCollider>& colliders, const Transform::UnitVector& offset) const
+        Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(const Transform::UnitVector& offset) const
         {
+            auto colliders = m_sceneRef->getAllColliders();
             std::vector<Transform::UnitVector> limitedMaxDists;
-            for (const PolygonalCollider& collider : colliders)
+            for (const PolygonalCollider* collider : colliders)
             {
-                Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(collider, offset);
-                if (maxDist != offset)
+                Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(*collider, offset);
+                //Add Tag check <REVISION>
+                if (maxDist != offset && collider != this)
                 {
                     limitedMaxDists.push_back(maxDist);
                 }
@@ -286,7 +289,7 @@ namespace obe
                 std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
                 for (Transform::UnitVector& distCoord : limitedMaxDists)
                 {
-                    double dist = std::sqrt(std::pow(distCoord.x - offset.x, 2) + std::pow(distCoord.y - offset.y, 2));
+                    double dist = std::sqrt(std::pow(distCoord.x - destPos.x, 2) + std::pow(distCoord.y - destPos.y, 2));
                     if (minDist.first == -1 || minDist.first > dist)
                     {
                         minDist = std::pair<double, Transform::UnitVector>(dist, distCoord);
@@ -458,7 +461,7 @@ namespace obe
             }
         }
 
-        Transform::UnitVector PolygonalCollider::getPosition()
+        Transform::UnitVector PolygonalCollider::getPosition() const
         {
             return m_allPoints[0];
         }

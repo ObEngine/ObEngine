@@ -11,10 +11,8 @@ namespace obe
 {
     namespace Graphics
     {
-        LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Identifiable(id)
+        LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite, id)
         {
-            m_id = id;
-
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
@@ -124,7 +122,7 @@ namespace obe
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
-                Transform::UnitVector refPoint = this->getPosition(refIndex).to<Transform::Units::WorldPixels>();
+                Transform::UnitVector refPoint = Rect::getPosition(refIndex).to<Transform::Units::WorldPixels>();
                 int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
                 int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
                 if (obe::Utils::Math::isBetween(posX + pixelCamera.x, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
@@ -200,7 +198,7 @@ namespace obe
 
         Transform::UnitVector LevelSprite::getDrawPosition(Transform::UnitVector& cameraPosition) const
         {
-            Transform::UnitVector pixelPosition = m_position.to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
             Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
 
             Transform::UnitVector transformedPosition = m_positionTransformer(pixelPosition, pixelCamera, m_layer);
@@ -269,8 +267,8 @@ namespace obe
 
             if (spritePath != "")
                 this->load(spritePath);
-            this->setPosition(spritePos.x, spritePos.y);
-            this->setSize(spriteSize.x, spriteSize.y);
+            this->setPosition(spritePos);
+            this->setSize(spriteSize);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
             this->setRotation(spriteRot);
             Graphics::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
@@ -281,7 +279,7 @@ namespace obe
 
         sf::FloatRect LevelSprite::getRect()
         {
-            Transform::UnitVector realPosition = m_position.to<Transform::Units::WorldPixels>();
+            Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
 
             m_sprite.setPosition(realPosition.x, realPosition.y);
             m_sprite.setRotation(m_rotation);
@@ -350,7 +348,7 @@ namespace obe
                 scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
                 double vScale = std::max(scaleVector.x, scaleVector.y);
                 if (baseDist.x != 0 && baseDist.y != 0)
-                    m_rect->scale(vScale, vScale, Transform::reverseReferencial(m_referencial));
+                    m_rect->scale(Transform::UnitVector(vScale, vScale, scaleVector.unit), Transform::reverseReferencial(m_referencial));
             }
             else
             {

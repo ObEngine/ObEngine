@@ -82,6 +82,8 @@ namespace obe
                 .add("FPSCounter", &TimeBindings::LoadFPSCounter)
                 .add("FramerateManager", &TimeBindings::LoadFramerateManager);
             BindTree["Core"].add("Transform")["Transform"]
+                .add("Movable", &TransformBindings::LoadMovable)
+                .add("Node2D", &TransformBindings::LoadNode2D)
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
                 .add("Rect", &TransformBindings::LoadRect)
                 .add("Referencial", &TransformBindings::LoadReferencial)

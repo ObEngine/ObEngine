@@ -11,8 +11,9 @@ namespace obe
 {
     namespace Scene
     {
-        Scene::Scene()
+        Scene::Scene() : m_sceneRoot("root")
         {
+            Collision::PolygonalCollider::m_sceneRef = this;
             loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
             Script::ScriptEngine["Scene"] = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
@@ -28,7 +29,7 @@ namespace obe
             Triggers::TriggerDatabase::GetInstance()->removeNamespace("Map");
         }
 
-        Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id)
+        Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id, bool addToSceneRoot)
         {
             if (!this->doesLevelSpriteExists(id))
             {
@@ -36,6 +37,9 @@ namespace obe
 
                 Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
                 m_spriteArray.push_back(move(newLevelSprite));
+
+                if (addToSceneRoot)
+                    m_sceneRoot.addChild(returnLevelSprite);
 
                 this->reorganizeLayers();
                 return returnLevelSprite;
@@ -46,14 +50,14 @@ namespace obe
             }
         }
 
-        Collision::PolygonalCollider* Scene::createCollider(const std::string& id)
+        Collision::PolygonalCollider* Scene::createCollider(const std::string& id, bool addToSceneRoot)
         {
             if (!this->doesColliderExists(id))
             {
-                std::unique_ptr<Collision::PolygonalCollider> newCollider = std::make_unique<Collision::PolygonalCollider>(id);
-                Collision::PolygonalCollider* returnCollider = newCollider.get();
-                m_colliderArray.push_back(move(newCollider));
-                return returnCollider;
+                m_colliderArray.push_back(std::make_unique<Collision::PolygonalCollider>(id));
+                if (addToSceneRoot)
+                    m_sceneRoot.addChild(m_colliderArray.back().get());
+                return m_colliderArray.back().get();
             }
             else
             {
@@ -515,7 +519,8 @@ namespace obe
 
             if (newGameObject->doesHaveLevelSprite())
             {
-                newGameObject->getLevelSprite()->setPosition(0, 0);
+                Transform::UnitVector zero(0, 0);
+                newGameObject->getLevelSprite()->setPosition(zero);
                 newGameObject->getLevelSprite()->setParentId(useId);
             }
 
@@ -700,6 +705,11 @@ namespace obe
             {
                 return (collider->getId() == id);
             }), m_colliderArray.end());
+        }
+
+        Transform::Node2D& Scene::getSceneRootNode()
+        {
+            return m_sceneRoot;
         }
 
 

@@ -4,6 +4,7 @@
 #include <Graphics/LevelSprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/GameObject.hpp>
+#include <Transform/Node2D.hpp>
 
 namespace obe
 {
@@ -32,6 +33,8 @@ namespace obe
             std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
             std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
             std::vector<std::string> m_scriptArray;
+
+            Transform::Node2D m_sceneRoot;
 
             vili::ViliParser m_levelFile;
             std::string m_levelFileName;
@@ -143,7 +146,7 @@ namespace obe
              * \param id Id of the new LevelSprite
              * \return A pointer to the newly created LevelSprite
              */
-            Graphics::LevelSprite* createLevelSprite(const std::string& id);
+            Graphics::LevelSprite* createLevelSprite(const std::string& id, bool addToSceneRoot = true);
             /**
             * \brief Get how many LevelSprites are present in the Scene
             * \return An unsigned int containing how many LevelSprites are present in the Scene
@@ -191,7 +194,7 @@ namespace obe
              * \param id Id of the new Collider
              * \return A pointer to the newly created Collider
              */
-            Collision::PolygonalCollider* createCollider(const std::string& id);
+            Collision::PolygonalCollider* createCollider(const std::string& id, bool addToSceneRoot = true);
             /**
              * \brief Get how many Colliders are present in the Scene
              * \return The amount of Colliders present in the Scene
@@ -231,6 +234,7 @@ namespace obe
              * \param id Id of the Collider to remove
              */
             void removeCollider(const std::string& id);
+            Transform::Node2D& getSceneRootNode();
 
             //Other
             /**

@@ -28,13 +28,15 @@ namespace obe
             }
 
             KAGUYA_FUNCTION_OVERLOADS(Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(Scene_createLevelSprite_wrapper, Scene::Scene, createLevelSprite, 1, 2);
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(Scene_createCollider_wrapper, Scene::Scene, createCollider, 1, 2);
             void LoadScene(kaguya::State* lua)
             {
                 (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
                     .addFunction("clearWorld", &Scene::Scene::clearWorld)
-                    .addFunction("createCollider", &Scene::Scene::createCollider)
+                    .addFunction("createCollider", Scene_createCollider_wrapper())
                     //.addFunction("createGameObject", &Scene::Scene::createGameObject)
-                    .addFunction("createLevelSprite", &Scene::Scene::createLevelSprite)
+                    .addFunction("createLevelSprite", Scene_createLevelSprite_wrapper())
                     .addFunction("display", &Scene::Scene::display)
                     .addFunction("doesColliderExists", &Scene::Scene::doesColliderExists)
                     .addFunction("doesGameObjectExists", &Scene::Scene::doesGameObjectExists)

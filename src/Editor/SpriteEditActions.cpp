@@ -79,7 +79,8 @@ namespace obe
             int& selectedSpriteOffsetX,
             int& selectedSpriteOffsetY,
             sf::Text& sprInfo,
-            sf::RectangleShape& sprInfoBackground)
+            sf::RectangleShape& sprInfoBackground,
+            Transform::Units& editorUnit)
         {
             inputManager.getAction("MoveHandlePoint").connect([editorTriggers, &selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
             {
@@ -169,7 +170,8 @@ namespace obe
                 &selectedHandlePoint, 
                 &sprInfo,
                 &sprInfoBackground,
-                &world]
+                &world,
+                &editorUnit]
             (const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
@@ -187,8 +189,10 @@ namespace obe
                     sprInfoStr = "Hovered Sprite : \n";
                     sprInfoStr += "    Id : " + selectedSprite->getId() + "\n";
                     sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
-                    sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getX()) + "," + std::to_string(selectedSprite->getY()) + "\n";
-                    sprInfoStr += "    Size : " + std::to_string(selectedSprite->getWidth()) + "," + std::to_string(selectedSprite->getHeight()) + "\n";
+                    sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getPosition().to(editorUnit).x) 
+                    + "," + std::to_string(selectedSprite->getPosition().to(editorUnit).y) + "\n";
+                    sprInfoStr += "    Size : " + std::to_string(selectedSprite->getSize().to(editorUnit).x) 
+                    + "," + std::to_string(selectedSprite->getSize().to(editorUnit).y) + "\n";
                     sprInfoStr += "    Rot : " + std::to_string(selectedSprite->getRotation()) + "\n";
                     sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
                     sprInfo.setString(sprInfoStr);

@@ -23,15 +23,13 @@ namespace obe
                 Load(lua, "Core.Transform.UnitBasedObject");
                 Load(lua, "Core.Types.Selectable");
                 Load(lua, "Core.Transform.Rect");
-                Load(lua, "Core.Types.Identifiable");
                 (*lua)["Core"]["Graphics"]["LevelSprite"].setClass(
                     kaguya::UserdataMetatable<
                     Graphics::LevelSprite,
                     kaguya::MultipleBase<
                     Transform::UnitBasedObject,
                     Types::Selectable,
-                    Transform::Rect,
-                    Types::Identifiable
+                    Transform::Rect
                     >
                     >()
                     .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)

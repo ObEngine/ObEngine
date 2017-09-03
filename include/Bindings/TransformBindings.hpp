@@ -11,6 +11,8 @@ namespace obe
         */
         namespace TransformBindings
         {
+            void LoadMovable(kaguya::State* lua);
+            void LoadNode2D(kaguya::State* lua);
             void LoadProtectedUnitVector(kaguya::State* lua);
             void LoadRect(kaguya::State* lua);
             void LoadReferencial(kaguya::State* lua);
