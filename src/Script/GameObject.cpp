@@ -9,7 +9,6 @@
 #include <Transform/UnitVector.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerDatabase.hpp>
-#include <Utils/VectorUtils.hpp>
 
 #define GAMEOBJECTENV ScriptEngine["__ENVIRONMENTS"][m_envIndex]
 
@@ -178,12 +177,10 @@ namespace obe
                     }
                 }
             }
-            //Animator
-            std::string animatorPath;
             if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
             {
                 m_objectAnimator = std::make_unique<Animation::Animator>();
-                animatorPath = obj.at("Animator").getDataNode("path").get<std::string>();
+                std::string animatorPath = obj.at("Animator").getDataNode("path").get<std::string>();
                 if (animatorPath != "")
                 {
                     m_objectAnimator->setPath(animatorPath);
@@ -205,11 +202,11 @@ namespace obe
 
                 std::string pointsUnit = obj.at("Collider", "unit").getDataNode("unit").get<std::string>();
                 bool completePoint = true;
-                double pointBuffer;
+                double pointBuffer = 0;
                 Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
                 for (vili::DataNode* colliderPoint : obj.at("Collider").getArrayNode("points"))
                 {
-                    if (completePoint = !completePoint)
+                    if ((completePoint = !completePoint))
                     {
                         Transform::UnitVector pVector2 = Transform::UnitVector(
                             pointBuffer,

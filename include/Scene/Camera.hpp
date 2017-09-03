@@ -27,7 +27,6 @@ namespace obe
         class Camera : Transform::Rect
         {
         private:
-            bool m_locked = false;
             sf::View m_view;
 
             Transform::ViewStruct* m_camera;
@@ -37,15 +36,6 @@ namespace obe
             void apply() const;
         public:
             Camera();
-
-            /**
-             * \brief Locks the Camera so it can't be modified until unlock
-             */
-            void lock();
-            /**
-             * \brief Unlock the Camera so it can be modified again
-             */
-            void unlock();
 
             /**
              * \brief Sets the Position of the Camera

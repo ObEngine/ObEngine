@@ -1,7 +1,4 @@
 #include <cmath>
-#include <complex>
-#include <limits>
-#include <functional>
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <vili/ErrorHandler.hpp>
@@ -134,6 +131,7 @@ namespace obe
             case ColliderTagType::Accepted: return m_acceptedTags;
             case ColliderTagType::Rejected: return m_rejectedTags;
             }
+            throw aube::ErrorHandler::Raise("ObEngine.Collision.PolygonalCollider.WrongColliderTagType");
         }
 
         void PolygonalCollider::addPoint(const Transform::UnitVector& position, int pointIndex)
@@ -196,6 +194,8 @@ namespace obe
                 }
                 return closestNode;
             }
+            throw aube::ErrorHandler::Raise("ObEngine.Collision.PolygonalCollider.NotEnoughPoints", 
+            { {"id", m_id}, {"points", std::to_string(m_allPoints.size())}, {"function", "findClosestPoint"} });
         }
 
         unsigned int PolygonalCollider::findClosestLine(const Transform::UnitVector& position)
@@ -233,12 +233,11 @@ namespace obe
                 return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
             };
             double shortestDistance = -1;
-            unsigned int shortestIndex;
+            unsigned int shortestIndex = 0;
             for (unsigned int i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size(); j = i++)
             {
                 Transform::UnitVector p1 = m_allPoints[i];
                 Transform::UnitVector p2 = m_allPoints[j];
-                std::complex<double> a(p2.x - p1.x, p2.y - p1.y);
                 double currentDistance = distanceLineFromPoint(p3, p1, p2);
                 if (shortestDistance == -1 || currentDistance < shortestDistance)
                 {
@@ -377,12 +376,13 @@ namespace obe
 
         void PolygonalCollider::draw(sf::RenderWindow& target, Scene::Camera& camera, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
-            if (m_allPoints.size() >= 1)
+            if (m_allPoints.size() >= 3)
             {
-                bool hasDrawablePoint = false;
                 Transform::UnitVector offset = camera.getPosition().to<Transform::Units::WorldPixels>();
-                Transform::UnitVector csize = camera.getSize().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector pMaster = m_masterPoint.to<Transform::Units::WorldPixels>();
+
+                /*bool hasDrawablePoint = false; (Old Optimisation Trick, doesn't work)
+                Transform::UnitVector csize = camera.getSize().to<Transform::Units::WorldPixels>();
                 if (drawMasterPoint || drawSkel)
                 {
                     if (pMaster.x >= offset.x && pMaster.y >= offset.y && pMaster.x <= offset.x + csize.x && pMaster.y <= offset.y + csize.y)
@@ -405,8 +405,7 @@ namespace obe
                 if (!hasDrawablePoint)
                 {
                     return;
-                }
-                    
+                }*/
 
                 std::map<std::string, Types::Any> drawOptions;
 
@@ -417,7 +416,7 @@ namespace obe
                 drawOptions["radius"] = r;
                 drawOptions["point_color"] = sf::Color::White;
 
-                std::vector<sf::Vector2i> drawPoints;
+                std::vector<sf::Vector2i> lDrawPoints;
 
                 for (int i = 0; i < m_allPoints.size(); i++)
                 {
@@ -428,7 +427,7 @@ namespace obe
                     if (Utils::Vector::isInList((i != m_allPoints.size() - 1) ? i + 1 : 0, m_highlightedLines) && m_selected)
                         drawOptions["line_color_" + std::to_string(i)] = sf::Color(0, 255, 0);
 
-                    drawPoints.emplace_back(point.x - offset.x, point.y - offset.y);
+                    lDrawPoints.emplace_back(point.x - offset.x, point.y - offset.y);
                 }
 
                 if (Utils::Vector::isInList(0, m_highlightedPoints) && m_selected)
@@ -457,7 +456,7 @@ namespace obe
                         }
                     }
                 }
-                Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
+                Graphics::Utils::drawPolygon(target, lDrawPoints, drawOptions);
             }
         }
 
@@ -805,8 +804,6 @@ namespace obe
                 //std::cout << "MIN DEP IS : " << minDep << std::endl;
                 return minDep;
             }
-            std::cout << "Ew Shit" << std::endl;
-            return Transform::UnitVector(0, 0, m_unit);
         }
 
         bool PolygonalCollider::doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const

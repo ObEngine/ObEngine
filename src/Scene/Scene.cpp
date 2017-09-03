@@ -5,7 +5,6 @@
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <Triggers/TriggerDatabase.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe
 {
@@ -350,21 +349,6 @@ namespace obe
                 std::string futureLoadBuffer = std::move(m_futureLoad);
                 this->loadFromFile(futureLoadBuffer);
             }
-            //std::cout << "LevelSprite Array Size (" << m_spriteArray.size() << ")" << std::endl;
-            for (auto& sprite : m_spriteArray)
-            {
-                /*if (Utils::String::contains(sprite->getId(), "bomb_") && sprite->getId().at(0) != '_')
-                {
-                    std::cout << "  Id : " << sprite->getId() << std::endl;
-                    std::cout << "  Position : " << sprite->getPosition() << std::endl;
-                    std::cout << "  Size : " << sprite->getSize() << std::endl;
-                    std::cout << "  Texture : " << sprite->getTexture().getSize().x << ", " << sprite->getTexture().getSize().y << std::endl;
-                    std::cout << "  Visible : " << sprite->isVisible() << std::endl;
-                    std::cout << "  Alpha : " << sprite->getColor().a << std::endl;
-                    std::cout << "  Camera Position : " << sprite->getDrawPosition(m_camera.getPosition()).to<Transform::Units::WorldPixels>() << std::endl;
-                    std::cout << "  SpriteSize : " << sprite->getSpriteWidth() << ", " << sprite->getSpriteHeight() << std::endl;
-                }*/
-            }
             if (m_updateState)
             {
                 for (auto& gameObject : m_gameObjectArray)
@@ -383,10 +367,10 @@ namespace obe
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
                     m_colliderArray[i]->draw(target, m_camera,
-                                             m_showCollisionModes["drawLines"],
-                                             m_showCollisionModes["drawPoints"],
-                                             m_showCollisionModes["drawMasterPoint"],
-                                             m_showCollisionModes["drawSkel"]);
+                        m_showCollisionModes["drawLines"],
+                        m_showCollisionModes["drawPoints"],
+                        m_showCollisionModes["drawMasterPoint"],
+                        m_showCollisionModes["drawSkel"]);
                 }
             }
         }
@@ -438,16 +422,6 @@ namespace obe
         Camera* Scene::getCamera()
         {
             return &m_camera;
-        }
-
-        void Scene::setCameraLock(bool state)
-        {
-            m_cameraLocked = state;
-        }
-
-        bool Scene::isCameraLocked() const
-        {
-            return m_cameraLocked;
         }
 
         void Scene::setUpdateState(bool state)

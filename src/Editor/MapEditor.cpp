@@ -13,7 +13,6 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Network/Network.hpp>
 #include <Scene/Scene.hpp>
-#include <Script/GameObject.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
 #include <System/Cursor.hpp>
@@ -354,8 +353,7 @@ namespace obe
                         {
                             hoveredSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
                             hoveredSprite->setColor(sf::Color(0, 255, 255));
-                            std::string sprInfoStr;
-                            sprInfoStr = "Hovered Sprite : \n";
+                            std::string sprInfoStr = "Hovered Sprite : \n";
                             sprInfoStr += "    Id : " + hoveredSprite->getId() + "\n";
                             sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
                             sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getPosition().to(editorUnit).x) + "," 
@@ -401,7 +399,7 @@ namespace obe
                 //Collision Edition
                 if (editMode->getSelectedItem() == "Collisions")
                 {
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
+                    cursCoord.set(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
 
                     scene.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)
@@ -491,6 +489,7 @@ namespace obe
                         }
                         cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                         break;
+                    default: ;
                     }
                     gui.handleEvent(event);
                 }

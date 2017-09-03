@@ -15,7 +15,10 @@ namespace obe
             std::vector<Movable*> m_children;
         public:
             Node2D(const std::string& id);
-
+            /**
+             * \brief Adds a child to the Node2D
+             * \param child Pointer to the new Node2D child
+             */
             void addChild(Movable* child);
             /**
             * \brief Set the position of the Node2D and all of its children using an UnitVector

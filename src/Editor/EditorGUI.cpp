@@ -24,7 +24,7 @@ namespace obe
 
             void calculateFontSize(sf::RenderWindow& window)
             {
-                double wCoeff = 1;
+                double wCoeff;
                 if (window.getSize().x < sf::VideoMode::getDesktopMode().width)
                     wCoeff = (double(sf::VideoMode::getDesktopMode().width - window.getSize().x) / double(sf::VideoMode::getDesktopMode().width)) * 0.5 + 1.0;
                 else

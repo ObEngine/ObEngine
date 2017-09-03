@@ -162,7 +162,18 @@ namespace obe
 
             //Collision Tests
             //PolygonalCollider joinPolygonalColliders(std::string joinID, PolygonalCollider* other) const;
+            /**
+             * \brief Gets the Maximum distance before Collision in all the Colliders of the Scene
+             * \param offset Distance the Collider should move to (if nothing collides)
+             * \return The maximum distance the Collider can travel before colliding
+             */
             Transform::UnitVector getMaximumDistanceBeforeCollision(const Transform::UnitVector& offset) const;
+            /**
+             * \brief Gets the Maximum distance before Collision with a specific Collider
+             * \param collider Collider to check the Collsion with
+             * \param offset Distance the Collider should move to (if nothing collides)
+             * \return The maximum distance the Collider can travel before colliding
+             */
             Transform::UnitVector getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const;
             /**
              * \brief Checks if two polygons are intersecting
@@ -322,8 +333,7 @@ namespace obe
             /**
              * \brief Draws the Polygon on the screen
              * \param target sf::RenderWindow you want to draw the Polygon to
-             * \param offsetX x Coordinate of the Offset of the Camera
-             * \param offsetY y Coordinate of the Offset of the Camera
+             * \param camera Camera of the Scene (used for draw offset)
              * \param drawLines Draws the lines of the Polygon or not
              * \param drawPoints Draws the points of the Polygon or not
              * \param drawMasterPoint Draws the MasterPoint of the Polygon or not

@@ -24,7 +24,6 @@ namespace obe
             std::string m_baseFolder = "";
             std::string m_futureLoad = "";
             Camera m_camera;
-            bool m_cameraLocked = true;
             Transform::UnitVector m_cameraInitialPosition;
             Transform::Referencial m_cameraInitialReferencial;
             bool m_updateState = true;
@@ -132,9 +131,11 @@ namespace obe
             void removeGameObject(const std::string& id);
 
             //Camera
-            Camera* getCamera(); // <REVISION>
-            void setCameraLock(bool state);
-            bool isCameraLocked() const;
+            /**
+             * \brief Gets the Scene Camera
+             * \return A pointer to the Scene Camera
+             */
+            Camera* getCamera();
 
             //LevelSprites
             /**

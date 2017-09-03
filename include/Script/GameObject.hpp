@@ -147,6 +147,10 @@ namespace obe
             * \return A pointer to the LevelSprite Component of the GameObject
             */
             Graphics::LevelSprite* getLevelSprite();
+            /**
+             * \brief Gets the Scene Node of the GameObject (Node2D that can manipulate the position of all Scene Components)
+             * \return A reference to the GameObject's Scene Node
+             */
             Transform::Node2D* getSceneNode();
             /**
              * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
@@ -228,8 +232,15 @@ namespace obe
              * \brief Triggers the GameObject's Local.Init
              */
             void initialize();
-
+            /**
+             * \brief Configures the permanent parameter of the GameObject
+             * \param permanent Should be true if the GameObject should be permanent, false otherwise
+             */
             void setPermanent(bool permanent);
+            /**
+             * \brief Gets if the GameObject is permanent (Will stay after loading another map)
+             * \return true if the GameObject is permanent, false otherwise
+             */
             bool isPermanent();
         };
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <string>
 #include <vector>
 
 #include <SFML/Graphics/Color.hpp>
@@ -10,8 +9,6 @@
 
 #include <Debug/ConsoleStream.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Identifiable.hpp>
-#include <Types/Togglable.hpp>
 
 namespace obe
 {
