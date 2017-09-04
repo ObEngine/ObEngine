@@ -11,6 +11,8 @@ namespace obe
          */
         namespace CollisionBindings
         {
+            void LoadTrajectory(kaguya::State* lua);
+            void LoadTrajectoryNode(kaguya::State* lua);
             void LoadPolygonalCollider(kaguya::State* lua);
         }
     }

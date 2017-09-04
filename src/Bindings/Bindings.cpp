@@ -44,7 +44,9 @@ namespace obe
                 .add("Animation", &AnimationBindings::LoadAnimation)
                 .add("Animator", &AnimationBindings::LoadAnimator);
             BindTree["Core"].add("Collision")["Collision"]
-                .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider);
+                .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider)
+                .add("Trajectory", &CollisionBindings::LoadTrajectory)
+                .add("TrajectoryNode", &CollisionBindings::LoadTrajectoryNode);
             BindTree["Core"].add("Debug")["Debug"]
                 .add("Console", &DebugBindings::LoadConsole)
                 .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
@@ -129,7 +131,7 @@ namespace obe
                 .add("ViliParser", &ViliBindings::LoadViliViliParser);
             
             // Plugins
-            BindTree.add("Plugins");
+            /*BindTree.add("Plugins");
             for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
             {
                 std::cout << "Checking Plugins on Mounted Path : " << mountedPath.basePath << std::endl;
@@ -150,7 +152,7 @@ namespace obe
                         std::cout << "<Plugin> Loaded " << pluginName << std::endl;
                     });
                 }
-            }
+            }*/
         }
     }
 }

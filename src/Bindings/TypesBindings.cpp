@@ -31,8 +31,8 @@ namespace obe
                 (*lua)["Core"]["Types"]["Togglable"].setClass(kaguya::UserdataMetatable<Types::Togglable>()
                     .addFunction("disable", &Types::Togglable::disable)
                     .addFunction("enable", &Types::Togglable::enable)
-                    .addFunction("getState", &Types::Togglable::getState)
-                    .addFunction("setState", &Types::Togglable::setState)
+                    .addFunction("isEnabled", &Types::Togglable::isEnabled)
+                    .addFunction("setEnabled", &Types::Togglable::setEnabled)
                     .addFunction("toggle", &Types::Togglable::toggle)
                 );
             }

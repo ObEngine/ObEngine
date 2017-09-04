@@ -493,7 +493,7 @@ namespace obe
                         scene.enableShowCollision(true);
                     else
                         scene.enableShowCollision(false);
-                    if (editorGrid.getState())
+                    if (editorGrid.isEnabled())
                         editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")

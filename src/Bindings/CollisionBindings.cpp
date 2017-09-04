@@ -1,6 +1,8 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
 #include <Collision/PolygonalCollider.hpp>
+#include <Collision/Trajectory.hpp>
+#include <Collision/TrajectoryNode.hpp>
 
 
 namespace obe
@@ -9,6 +11,43 @@ namespace obe
     {
         namespace CollisionBindings
         {
+            
+
+            void LoadTrajectory(kaguya::State* lua)
+            {
+                Load(lua, "Core.Types.Togglable");
+                (*lua)["Core"]["Collision"]["Trajectory"].setClass(kaguya::UserdataMetatable<Collision::Trajectory, Types::Togglable>()
+                    .addFunction("addAcceleration", &Collision::Trajectory::addAcceleration)
+                    .addFunction("addAngle", &Collision::Trajectory::addAngle)
+                    .addFunction("addSpeed", &Collision::Trajectory::addSpeed)
+                    .addFunction("getAcceleration", &Collision::Trajectory::getAcceleration)
+                    .addFunction("getAngle", &Collision::Trajectory::getAngle)
+                    .addFunction("getSpeed", &Collision::Trajectory::getSpeed)
+                    .addFunction("getStatic", &Collision::Trajectory::getStatic)
+                    .addFunction("getUnit", &Collision::Trajectory::getUnit)
+                    .addFunction("setAcceleration", &Collision::Trajectory::setAcceleration)
+                    .addFunction("setAngle", &Collision::Trajectory::setAngle)
+                    .addFunction("setSpeed", &Collision::Trajectory::setSpeed)
+                    .addFunction("setStatic", &Collision::Trajectory::setStatic)
+                );
+            }
+
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(TrajectoryNode_addTrajectory_wrapper, Collision::TrajectoryNode, addTrajectory, 1, 2);
+            void LoadTrajectoryNode(kaguya::State* lua)
+            {
+                (*lua)["Core"]["Collision"]["TrajectoryNode"].setClass(kaguya::UserdataMetatable<Collision::TrajectoryNode>()
+                    .setConstructors<Collision::TrajectoryNode(Transform::Node2D*)>()
+                    .addFunction("addCheck", &Collision::TrajectoryNode::addCheck)
+                    .addFunction("addTrajectory", TrajectoryNode_addTrajectory_wrapper())
+                    .addFunction("getSceneNode", &Collision::TrajectoryNode::getSceneNode)
+                    .addFunction("getTrajectory", &Collision::TrajectoryNode::getTrajectory)
+                    .addFunction("onCollide", &Collision::TrajectoryNode::onCollide)
+                    .addFunction("removeTrajectory", &Collision::TrajectoryNode::removeTrajectory)
+                    .addFunction("setProbe", &Collision::TrajectoryNode::setProbe)
+                    .addFunction("update", &Collision::TrajectoryNode::update)
+                );
+            }
+
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_addPoint_wrapper, Collision::PolygonalCollider, addPoint, 1, 2);
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
             void LoadPolygonalCollider(kaguya::State* lua)

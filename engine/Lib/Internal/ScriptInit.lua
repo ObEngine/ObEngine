@@ -12,8 +12,6 @@ function LuaUtil.Exists(path)
     return true;
 end
 
-inspect = require("Lib/StdLib/Inspect");
-
 function GetHook(hook)
     CPP_Hook(This, hook);
 end

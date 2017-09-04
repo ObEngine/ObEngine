@@ -9,7 +9,7 @@ namespace obe
             m_enabled = enabled;
         }
 
-        void Togglable::setState(bool state)
+        void Togglable::setEnabled(bool state)
         {
             m_enabled = state;
         }
@@ -29,7 +29,7 @@ namespace obe
             m_enabled = false;
         }
 
-        bool Togglable::getState() const
+        bool Togglable::isEnabled() const
         {
             return m_enabled;
         }

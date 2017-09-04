@@ -22,7 +22,7 @@ namespace obe
             * \brief Set the state of the Togglable
             * \param state A boolean to set the state of the Togglable (true / false)
             */
-            void setState(bool state);
+            void setEnabled(bool state);
             /**
             * \brief Togglable disables if it was enabled and enables if it wasn't
             */
@@ -39,7 +39,7 @@ namespace obe
             * \brief Get if the Togglable is enabled or not
             * \return true if enabled, false otherwise
             */
-            bool getState() const;
+            bool isEnabled() const;
         };
     }
 }
