@@ -19,7 +19,6 @@ namespace obe
 
         Trajectory* Trajectory::setSpeed(double speed)
         {
-            std::cout << "Set speed : " << speed << std::endl;
             m_speed = speed;
             return this;
         }

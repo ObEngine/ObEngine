@@ -50,7 +50,7 @@ namespace obe
                 Trajectory* cTraj = trajectory.second.first.get();
                 if (cTraj->isEnabled())
                 {
-                    double radAngle = (Utils::Math::pi / 180.0) * ((90.0 - cTraj->getAngle()) * -1.0);
+                    double radAngle = (Utils::Math::pi / 180.0) * -cTraj->getAngle();
                     double addX = std::cos(radAngle) * (cTraj->getSpeed() * dt);
                     double addY = std::sin(radAngle) * (cTraj->getSpeed() * dt);
                     Transform::UnitVector cOffset(addX, addY, cTraj->getUnit());

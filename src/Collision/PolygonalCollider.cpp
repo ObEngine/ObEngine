@@ -758,7 +758,7 @@ namespace obe
                             }
                         }
                     }
-                    std::cout << minDistance << ", " << minDeplacement << ", " << inFront << std::endl;
+                    //std::cout << "MINDEPCHE" << minDistance << ", " << minDeplacement << ", " << inFront << std::endl;
                     return std::make_tuple(minDistance, minDeplacement, inFront);
                 };
                 PolygonPath fPath = this->getAllPoints();
