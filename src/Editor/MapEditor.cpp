@@ -77,7 +77,6 @@ namespace obe
                 ->addTrigger("CursorMagnetized")
                 ->addTrigger("GridToggled")
                 ->addTrigger("GridSnapToggled")
-                ->addTrigger("CameraModeChanged")
                 ->addTrigger("EditModeChanged")
                 ->addTrigger("SceneSaved");
             //Editor Sprite Triggers
@@ -177,7 +176,6 @@ namespace obe
             GUI::buildToolbar(mainPanel, editorPanel);
 
             tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode");
-            tgui::ComboBox::Ptr cameraMode = gui.get<tgui::ComboBox>("cameraMode");
 
             GUI::buildEditorMapMenu(mapPanel, scene);
             GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode, scene);
@@ -232,7 +230,7 @@ namespace obe
             connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
             connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
             connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
-            connectMenuActions(inputManager, editMode, cameraMode, editorPanel);
+            connectMenuActions(inputManager, editMode, editorPanel);
             connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
             connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground, editorUnit);
@@ -308,17 +306,6 @@ namespace obe
 
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 //Updates
-                if (!gameConsole.isVisible())
-                {
-                    if (cameraMode->getSelectedItem() == "Movable")
-                    {
-                        scene.setCameraLock(true);
-                    }
-                    else
-                    {
-                        scene.setCameraLock(false);
-                    }
-                }
 
                 if (oldConsoleVisibility != gameConsole.isVisible())
                 {

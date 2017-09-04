@@ -32,7 +32,6 @@ namespace obe
         void connectMenuActions(
             Input::InputManager& inputManager, 
             tgui::ComboBox::Ptr editMode, 
-            tgui::ComboBox::Ptr cameraMode,
             tgui::Panel::Ptr editorPanel);
         void connectSaveActions(
             Triggers::TriggerGroup* editorTriggers, 

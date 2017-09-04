@@ -86,8 +86,6 @@ namespace obe
             Time::FramerateManager framerateManager(window, gameConfig);
             window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
 
-            scene.setCameraLock(false);
-
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
 

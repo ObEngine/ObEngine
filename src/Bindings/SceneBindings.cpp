@@ -13,12 +13,10 @@ namespace obe
                 (*lua)["Core"]["Scene"]["Camera"].setClass(kaguya::UserdataMetatable<Scene::Camera>()
                     .addFunction("getPosition", &Scene::Camera::getPosition)
                     .addFunction("getSize", &Scene::Camera::getSize)
-                    .addFunction("lock", &Scene::Camera::lock)
                     .addFunction("move", &Scene::Camera::move)
                     .addFunction("scale", &Scene::Camera::scale)
                     .addFunction("setPosition", &Scene::Camera::setPosition)
                     .addFunction("setSize", &Scene::Camera::setSize)
-                    .addFunction("unlock", &Scene::Camera::unlock)
                 );
             }
 
@@ -60,14 +58,12 @@ namespace obe
                     .addFunction("getLevelSprite", &Scene::Scene::getLevelSprite)
                     .addFunction("getLevelSpriteByPosition", &Scene::Scene::getLevelSpriteByPosition)
                     .addFunction("getLevelSpritesByLayer", &Scene::Scene::getLevelSpritesByLayer)
-                    .addFunction("isCameraLocked", &Scene::Scene::isCameraLocked)
                     .addFunction("loadFromFile", &Scene::Scene::setFutureLoadFromFile)
                     .addFunction("reload", &Scene::Scene::reload)
                     .addFunction("removeCollider", &Scene::Scene::removeCollider)
                     .addFunction("removeGameObject", &Scene::Scene::removeGameObject)
                     .addFunction("removeLevelSprite", &Scene::Scene::removeLevelSprite)
                     .addFunction("reorganizeLayers", &Scene::Scene::reorganizeLayers)
-                    .addFunction("setCameraLock", &Scene::Scene::setCameraLock)
                     .addFunction("setLevelName", &Scene::Scene::setLevelName)
                     .addFunction("setUpdateState", &Scene::Scene::setUpdateState)
                     .addFunction("update", &Scene::Scene::update)

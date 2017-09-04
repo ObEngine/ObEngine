@@ -166,17 +166,8 @@ namespace obe
         void connectMenuActions(
             Input::InputManager& inputManager, 
             tgui::ComboBox::Ptr editMode, 
-            tgui::ComboBox::Ptr cameraMode,
             tgui::Panel::Ptr editorPanel)
         {
-            inputManager.getAction("CamMovable").connect([cameraMode](const Input::InputActionEvent& event)
-            {
-                cameraMode->setSelectedItemByIndex(0);
-            });
-            inputManager.getAction("CamFree").connect([cameraMode](const Input::InputActionEvent& event)
-            {
-                cameraMode->setSelectedItemByIndex(1);
-            });
             inputManager.getAction("SpriteMode").connect([editMode](const Input::InputActionEvent& event)
             {
                 editMode->setSelectedItemByIndex(0);

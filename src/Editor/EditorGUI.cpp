@@ -39,7 +39,6 @@ namespace obe
             {
                 mainPanel->get<tgui::Label>("titleLabel")->setTextSize(bigFontSize);
                 mainPanel->get<tgui::Label>("infoLabel")->setTextSize(mediumFontSize);
-                mainPanel->get<tgui::ComboBox>("cameraMode")->setTextSize(mediumFontSize);
                 mainPanel->get<tgui::ComboBox>("editMode")->setTextSize(mediumFontSize);
                 mainPanel->get<tgui::Button>("editorButton")->setTextSize(mediumFontSize);
                 mainPanel->get<tgui::Label>("savedLabel")->setTextSize(smallFontSize);
@@ -97,7 +96,6 @@ namespace obe
                 tgui::Label::Ptr infoLabel = tgui::Label::create();
                 tgui::Label::Ptr savedLabel = tgui::Label::create();
                 tgui::Button::Ptr editorButton = tgui::Button::create();
-                tgui::ComboBox::Ptr cameraMode = tgui::ComboBox::create();
                 tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
                 tgui::HorizontalWrap::Ptr toolbarWrap = tgui::HorizontalWrap::create();
 
@@ -108,7 +106,6 @@ namespace obe
                 titlePanel->add(savedLabel, "savedLabel");
                 titlePanel->add(editorButton, "editorButton");
                 titlePanel->add(editMode, "editMode");
-                titlePanel->add(cameraMode, "cameraMode");
 
                 titlePanel->setRenderer(baseTheme.getRenderer("TransparentPanel"));
                 titlePanel->setSize("100%", tgui::bindHeight(titleLabel) + 10);
@@ -124,23 +121,13 @@ namespace obe
                 infoLabel->setRenderer(baseTheme.getRenderer("Label"));
                 infoLabel->setText("<>");
 
-                cameraMode->addItem("Movable");
-                cameraMode->addItem("Free");
-                cameraMode->setSelectedItem("Movable");
-                cameraMode->setSize("10.5%", "100%");
-                cameraMode->setPosition(tgui::bindWidth(titlePanel) - tgui::bindWidth(cameraMode), 0);
-                cameraMode->setTextSize(mediumFontSize);
-                cameraMode->setRenderer(baseTheme.getRenderer("ComboBox"));
-                cameraMode->getRenderer()->getTextureArrowUp().setSmooth(true);
-                cameraMode->getRenderer()->getTextureArrowDown().setSmooth(true);
-
                 editMode->addItem("LevelSprites");
                 editMode->addItem("Collisions");
                 editMode->addItem("Play");
                 editMode->addItem("None");
                 editMode->setSelectedItem("None");
                 editMode->setSize("10.5%", "100%");
-                editMode->setPosition(tgui::bindLeft(cameraMode) - tgui::bindWidth(editMode) - 1, 0);
+                editMode->setPosition(tgui::bindWidth(titlePanel) - tgui::bindWidth(editMode) - 1, 0);
                 editMode->setTextSize(mediumFontSize);
                 editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
                 editMode->getRenderer()->getTextureArrowUp().setSmooth(true);

@@ -60,6 +60,7 @@ EditSquareButton {
     Texture      = "Button/Edit/idle.png";
     TextureHover = "Button/Edit/hover.png";
     TextureDown  = "Button/Edit/pushed.png";
+    TextureDisabled = "Button/Edit/disabled.png";
     TextColor    = rgb(255, 255, 255);
 }
 

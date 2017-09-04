@@ -9,6 +9,12 @@ namespace obe
 {
     namespace System
     {
+        enum class PathType
+        {
+            All,
+            Directory,
+            File
+        };
         /**
          * \brief Class used to manipulate paths and dynamically load resources (Based on multiple mounted paths)
          * @Bind
@@ -54,7 +60,7 @@ namespace obe
              * \brief Finds the most priorized file corresponding to the Path
              * \return The full path to the most priorized file
              */
-            std::string find() const;
+            std::string find(PathType pathType = PathType::All) const;
             /**
              * \brief Get the current path in string form
              * \return The Path in std::string form

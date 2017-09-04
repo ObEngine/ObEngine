@@ -40,12 +40,18 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.System.Path.UnknownPathAtIndex", {{"index", std::to_string(index)}, {"path", m_path}});
         }
 
-        std::string Path::find() const
+        std::string Path::find(PathType pathType) const
         {
             for (MountablePath& mountedPath : MountedPaths)
             {
                 int loadResponse = 0;
-                if (Utils::File::fileExists(mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path))
+                if ((pathType == PathType::All || pathType == PathType::File) && 
+                Utils::File::fileExists(mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path))
+                {
+                    return mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+                }
+                else if ((pathType == PathType::All || pathType == PathType::Directory) &&
+                Utils::File::directoryExists(mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path))
                 {
                     return mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
                 }

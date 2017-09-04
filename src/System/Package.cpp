@@ -51,7 +51,7 @@ namespace obe
             {
                 if (PackageExists(packageName))
                 {
-                    Path::Mount(MountablePath(PathType::Package, GetPackageLocation(packageName), priority));
+                    Path::Mount(MountablePath(MountablePathType::Package, GetPackageLocation(packageName), priority));
                     std::cout << "<System> Mounting Package : " << packageName << " : " << GetPackageLocation(packageName) << std::endl;
                     return true;
                 }

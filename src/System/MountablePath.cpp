@@ -12,7 +12,7 @@ namespace obe
 {
     namespace System
     {
-        MountablePath::MountablePath(PathType pathType, const std::string& basePath, unsigned int priority)
+        MountablePath::MountablePath(MountablePathType pathType, const std::string& basePath, unsigned int priority)
         {
             this->pathType = pathType;
             this->basePath = basePath;
@@ -32,7 +32,7 @@ namespace obe
                 int currentPriority = currentElement.at<vili::DataNode>("priority").get<int>();
                 if (currentType == "Path")
                 {
-                    Path::Mount(MountablePath(PathType::Path, currentPath, currentPriority));
+                    Path::Mount(MountablePath(MountablePathType::Path, currentPath, currentPriority));
                     std::cout << "Mounted Path : <" << currentPath << "> with priority : " << currentPriority << std::endl;
                 }
                 else if (currentType == "Package")

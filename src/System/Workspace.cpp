@@ -26,7 +26,7 @@ namespace obe
             {
                 if (WorkspaceExists(workspaceName))
                 {
-                    Path::Mount(MountablePath(PathType::Workspace, GetWorkspaceLocation(workspaceName), priority));
+                    Path::Mount(MountablePath(MountablePathType::Workspace, GetWorkspaceLocation(workspaceName), priority));
                     std::cout << "<System> Mounting Workspace : " << workspaceName << " : " << GetWorkspaceLocation(workspaceName) << std::endl;
                     return true;
                 }

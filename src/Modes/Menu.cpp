@@ -274,34 +274,64 @@ namespace obe
                 window.close();
             });
 
+            auto checkBootFile = [playButton]()
+            {
+                if (System::Path("boot.lua").find() == "")
+                {
+                    playButton->disable();
+                }
+                else
+                {
+                    playButton->enable();
+                }
+            };
+
+            auto checkMapFolder = [editButton]()
+            {
+                if (System::Path("Data/Maps").find(System::PathType::Directory) == "")
+                {
+                    editButton->disable();
+                }
+                else
+                {
+                    editButton->enable();
+                }
+            };
+
+            checkBootFile();
+            checkMapFolder();
+
             playButton->setRenderer(baseTheme.getRenderer("PlaySquareButton"));
             playButton->setSize("318", "286");
             playButton->setPosition("0", "0");
-            playButton->connect("pressed", []()
+            playButton->connect("pressed", [&checkBootFile, &checkMapFolder]()
             {
                 startGame();
+                checkBootFile();
+                checkMapFolder();
             });
-            if (System::Path("boot.lua").find() == "")
-            {
-                playButton->disable();
-            }
+            
 
             editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
             editButton->setSize("318", "286");
             editButton->setPosition(tguif::bindRight(playButton), "0");
-            editButton->connect("pressed", []()
+            editButton->connect("pressed", [&checkBootFile, &checkMapFolder]()
             {
                 std::string editMapName = chooseMapMenu();
                 if (editMapName != "")
                     Editor::editMap(editMapName);
+                checkBootFile();
+                checkMapFolder();
             });
 
             toolkitButton->setRenderer(baseTheme.getRenderer("ToolkitSquareButton"));
             toolkitButton->setSize("318", "286");
             toolkitButton->setPosition("0", tguif::bindBottom(playButton));
-            toolkitButton->connect("pressed", [&window]()
+            toolkitButton->connect("pressed", [&window, &checkBootFile, &checkMapFolder]()
             {
                 startToolkitMode();
+                checkBootFile();
+                checkMapFolder();
             });
 
             helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));

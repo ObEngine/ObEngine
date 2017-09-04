@@ -7,7 +7,7 @@ namespace obe
         /**
         * \brief Defines the source of a mounted path
         */
-        enum class PathType
+        enum class MountablePathType
         {
             /**
             * \brief A standard path
@@ -36,11 +36,11 @@ namespace obe
              * \param basePath Path to the mounted path
              * \param priority Priority of the mounted path
              */
-            MountablePath(PathType pathType, const std::string& basePath, unsigned int priority = 0);
+            MountablePath(MountablePathType pathType, const std::string& basePath, unsigned int priority = 0);
             /**
              * \brief Type of the mounted path
              */
-            PathType pathType;
+            MountablePathType pathType;
             /**
              * \brief Path of the mounted path
              */
