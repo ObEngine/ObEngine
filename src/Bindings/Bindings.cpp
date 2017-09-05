@@ -131,7 +131,7 @@ namespace obe
                 .add("ViliParser", &ViliBindings::LoadViliViliParser);
             
             // Plugins
-            /*BindTree.add("Plugins");
+            BindTree.add("Plugins");
             for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
             {
                 std::cout << "Checking Plugins on Mounted Path : " << mountedPath.basePath << std::endl;
@@ -146,13 +146,20 @@ namespace obe
                     {
                         Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
                         auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
-                        Plugins[pluginName]->open();
-                        exposeFunction.init();
-                        exposeFunction(lua);
-                        std::cout << "<Plugin> Loaded " << pluginName << std::endl;
+                        try
+                        {
+                            Plugins[pluginName]->open();
+                            exposeFunction.init();
+                            exposeFunction(lua);
+                            std::cout << "<Plugin> Loaded " << pluginName << std::endl;
+                        }
+                        catch (const dynamicLinker::dynamicLinkerException& e) {
+                            std::cout << "<Plugin> : Unloadable Plugin : " << pluginName << std::endl;
+                            std::cout << "  > Cause : " << e.what() << std::endl;
+                        }
                     });
                 }
-            }*/
+            }
         }
     }
 }
