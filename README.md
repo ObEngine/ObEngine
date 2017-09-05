@@ -87,6 +87,7 @@ Here you go :
 - Skeletal animations
 - Collaborative map editor
 - Better light & particle system
+- C++ plugins
 
 ## ObEngine's versions
 
