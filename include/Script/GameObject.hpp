@@ -7,7 +7,7 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Script/GlobalState.hpp>
-#include <Transform/Node2D.hpp>
+#include <Transform/SceneNode.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
 namespace obe
@@ -62,7 +62,7 @@ namespace obe
             Graphics::LevelSprite* m_objectLevelSprite;
             Collision::PolygonalCollider* m_objectCollider;
             Triggers::TriggerGroupPtr m_localTriggers;
-            Transform::Node2D m_objectNode;
+            Transform::SceneNode m_objectNode;
 
             std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
             std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
@@ -148,10 +148,10 @@ namespace obe
             */
             Graphics::LevelSprite* getLevelSprite();
             /**
-             * \brief Gets the Scene Node of the GameObject (Node2D that can manipulate the position of all Scene Components)
+             * \brief Gets the Scene Node of the GameObject (SceneNode that can manipulate the position of all Scene Components)
              * \return A reference to the GameObject's Scene Node
              */
-            Transform::Node2D* getSceneNode();
+            Transform::SceneNode* getSceneNode();
             /**
              * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
              * \return A pointer to the TriggerGroup of the GameObject

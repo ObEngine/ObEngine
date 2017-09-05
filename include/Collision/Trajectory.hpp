@@ -9,6 +9,9 @@ namespace obe
     {
         class TrajectoryNode;
 
+        /**
+         * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and acceleration (Linear Trajectory)
+         */
         class Trajectory : public Types::Togglable
         {
         private:

@@ -1,6 +1,6 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/TransformBindings.hpp>
-#include <Transform/Node2D.hpp>
+#include <Transform/SceneNode.hpp>
 #include <Transform/ProtectedUnitVector.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitBasedObject.hpp>
@@ -23,13 +23,13 @@ namespace obe
                 );
             }
 
-            void LoadNode2D(kaguya::State* lua)
+            void LoadSceneNode(kaguya::State* lua)
             {
                 Load(lua, "Core.Transform.Movable");
-                (*lua)["Core"]["Transform"]["Node2D"].setClass(kaguya::UserdataMetatable<Transform::Node2D, Transform::Movable>()
-                    .addFunction("addChild", &Transform::Node2D::addChild)
-                    .addFunction("move", &Transform::Node2D::move)
-                    .addFunction("setPosition", &Transform::Node2D::setPosition)
+                (*lua)["Core"]["Transform"]["SceneNode"].setClass(kaguya::UserdataMetatable<Transform::SceneNode, Transform::Movable>()
+                    .addFunction("addChild", &Transform::SceneNode::addChild)
+                    .addFunction("move", &Transform::SceneNode::move)
+                    .addFunction("setPosition", &Transform::SceneNode::setPosition)
                 );
             }
 

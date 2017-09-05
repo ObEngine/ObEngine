@@ -13,6 +13,9 @@ namespace obe
     {
         extern std::function<void(kaguya::State*)> RegisterLib;
 
+        /**
+         * \brief Holds and indexes all the CXX Bindings for Lua
+         */
         class BindingTree : public Types::Identifiable
         {
         private:

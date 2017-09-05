@@ -19,6 +19,9 @@ namespace obe
         extern CoordinateTransformer Camera;
         extern CoordinateTransformer Position;
 
+        /**
+         * \brief A PositionTransformer tells how a Coordinate should be transformed depending of multiple parameters
+         */
         class PositionTransformer
         {
         private:

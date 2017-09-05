@@ -4,7 +4,7 @@
 #include <Graphics/LevelSprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/GameObject.hpp>
-#include <Transform/Node2D.hpp>
+#include <Transform/SceneNode.hpp>
 
 namespace obe
 {
@@ -33,7 +33,7 @@ namespace obe
             std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
             std::vector<std::string> m_scriptArray;
 
-            Transform::Node2D m_sceneRoot;
+            Transform::SceneNode m_sceneRoot;
 
             vili::ViliParser m_levelFile;
             std::string m_levelFileName;
@@ -235,7 +235,7 @@ namespace obe
              * \param id Id of the Collider to remove
              */
             void removeCollider(const std::string& id);
-            Transform::Node2D& getSceneRootNode();
+            Transform::SceneNode& getSceneRootNode();
 
             //Other
             /**

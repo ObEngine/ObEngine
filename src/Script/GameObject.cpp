@@ -323,7 +323,7 @@ namespace obe
             throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoLevelSprite", {{"id", m_id}});
         }
 
-        Transform::Node2D* GameObject::getSceneNode()
+        Transform::SceneNode* GameObject::getSceneNode()
         {
             return &m_objectNode;
         }

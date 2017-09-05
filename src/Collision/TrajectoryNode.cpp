@@ -5,7 +5,7 @@ namespace obe
 {
     namespace Collision
     {
-        TrajectoryNode::TrajectoryNode(Transform::Node2D* sceneNode)
+        TrajectoryNode::TrajectoryNode(Transform::SceneNode* sceneNode)
         {
             m_sceneNode = sceneNode;
         }
@@ -76,7 +76,7 @@ namespace obe
             m_sceneNode->move(realOffset);
         }
 
-        Transform::Node2D* TrajectoryNode::getSceneNode() const
+        Transform::SceneNode* TrajectoryNode::getSceneNode() const
         {
             return m_sceneNode;
         }

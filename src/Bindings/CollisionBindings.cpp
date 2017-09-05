@@ -36,7 +36,7 @@ namespace obe
             void LoadTrajectoryNode(kaguya::State* lua)
             {
                 (*lua)["Core"]["Collision"]["TrajectoryNode"].setClass(kaguya::UserdataMetatable<Collision::TrajectoryNode>()
-                    .setConstructors<Collision::TrajectoryNode(Transform::Node2D*)>()
+                    .setConstructors<Collision::TrajectoryNode(Transform::SceneNode*)>()
                     .addFunction("addCheck", &Collision::TrajectoryNode::addCheck)
                     .addFunction("addTrajectory", TrajectoryNode_addTrajectory_wrapper())
                     .addFunction("getSceneNode", &Collision::TrajectoryNode::getSceneNode)

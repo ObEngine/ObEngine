@@ -85,10 +85,10 @@ namespace obe
                 .add("FramerateManager", &TimeBindings::LoadFramerateManager);
             BindTree["Core"].add("Transform")["Transform"]
                 .add("Movable", &TransformBindings::LoadMovable)
-                .add("Node2D", &TransformBindings::LoadNode2D)
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
                 .add("Rect", &TransformBindings::LoadRect)
                 .add("Referencial", &TransformBindings::LoadReferencial)
+                .add("SceneNode", &TransformBindings::LoadSceneNode)
                 .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
                 .add("Units", &TransformBindings::LoadUnits)
                 .add("UnitVector", &TransformBindings::LoadUnitVector);

@@ -14,7 +14,7 @@ namespace obe
             Camera,
             LevelSprite,
             PolygonalCollider,
-            Node2D
+            SceneNode
         };
         class Movable : public Types::Identifiable
         {

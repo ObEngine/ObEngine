@@ -681,7 +681,7 @@ namespace obe
             }), m_colliderArray.end());
         }
 
-        Transform::Node2D& Scene::getSceneRootNode()
+        Transform::SceneNode& Scene::getSceneRootNode()
         {
             return m_sceneRoot;
         }

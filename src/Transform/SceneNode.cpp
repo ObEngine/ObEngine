@@ -1,19 +1,19 @@
-#include <Transform/Node2D.hpp>
+#include <Transform/SceneNode.hpp>
 
 namespace obe
 {
     namespace Transform
     {
-        Node2D::Node2D(const std::string& id) : Movable(MovableType::Node2D, id)
+        SceneNode::SceneNode(const std::string& id) : Movable(MovableType::SceneNode, id)
         {
         }
 
-        void Node2D::addChild(Movable* child)
+        void SceneNode::addChild(Movable* child)
         {
             m_children.push_back(child);
         }
 
-        void Node2D::setPosition(const UnitVector& position)
+        void SceneNode::setPosition(const UnitVector& position)
         {
             for (auto& child : m_children)
             {
@@ -22,7 +22,7 @@ namespace obe
             }
         }
 
-        void Node2D::move(const UnitVector& position)
+        void SceneNode::move(const UnitVector& position)
         {
             for (auto& child : m_children)
             {
