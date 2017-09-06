@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include <Collision/TrajectoryNode.hpp>
 #include <Utils/MathUtils.hpp>
 

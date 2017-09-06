@@ -96,6 +96,7 @@ namespace obe
                     .addFunction("getPointRelativePosition", &Collision::PolygonalCollider::getPointRelativePosition)
                     .addFunction("getPointsAmount", &Collision::PolygonalCollider::getPointsAmount)
                     .addFunction("getPosition", &Collision::PolygonalCollider::getPosition)
+                    .addFunction("getRotation", &Collision::PolygonalCollider::getRotation)
                     .addFunction("getSideAngle", &Collision::PolygonalCollider::getSideAngle)
                     .addFunction("getSideContainingPoint", &Collision::PolygonalCollider::getSideContainingPoint)
                     .addFunction("getSideLength", &Collision::PolygonalCollider::getSideLength)
@@ -108,6 +109,7 @@ namespace obe
                     .addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
                     .addFunction("removeOriginChild", &Collision::PolygonalCollider::removeOriginChild)
                     .addFunction("removeTag", &Collision::PolygonalCollider::removeTag)
+                    .addFunction("rotate", &Collision::PolygonalCollider::rotate)
                     .addFunction("setOrigin", &Collision::PolygonalCollider::setOrigin)
                     .addFunction("setParentId", &Collision::PolygonalCollider::setParentId)
                     .addFunction("setPointPosition", &Collision::PolygonalCollider::setPointPosition)
@@ -115,6 +117,7 @@ namespace obe
                     .addFunction("setPointRelativePosition", &Collision::PolygonalCollider::setPointRelativePosition)
                     .addFunction("setPosition", &Collision::PolygonalCollider::setPosition)
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
+                    .addFunction("setRotation", &Collision::PolygonalCollider::setRotation)
                 );
                 (*lua)["Core"]["Collision"]["ColliderTagType"] = kaguya::NewTable();
                 (*lua)["Core"]["Collision"]["ColliderTagType"]["Accepted"] = Collision::ColliderTagType::Accepted;

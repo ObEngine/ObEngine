@@ -475,6 +475,29 @@ namespace obe
             return m_masterPoint;
         }
 
+        void PolygonalCollider::setRotation(float angle, Transform::UnitVector origin)
+        {
+            this->rotate(angle - m_angle, origin);
+        }
+
+        float PolygonalCollider::getRotation() const
+        {
+            return m_angle;
+        }
+
+        void PolygonalCollider::rotate(float angle, Transform::UnitVector origin)
+        {
+            m_angle += angle;
+
+            double radAngle = (Utils::Math::pi / 180.0) * -angle;
+            for (Transform::UnitVector& point : m_allPoints)
+            {
+                point.set(std::cos(radAngle) * (point.x - origin.x) - std::sin(radAngle) * (point.y - origin.y) + origin.x,
+                    std::sin(radAngle) * (point.x - origin.x) + std::cos(radAngle) * (point.y - origin.y) + origin.y);
+            }
+            this->calculateMasterPoint();
+        }
+
         void PolygonalCollider::move(const Transform::UnitVector& position)
         {
             for (PolygonalCollider* child : m_originChildren)

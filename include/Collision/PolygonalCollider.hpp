@@ -65,6 +65,8 @@ namespace obe
             PolygonalCollider* m_origin = nullptr;
             std::string m_parentId = "";
 
+            float m_angle = 0;
+
             void calculateMasterPoint();
             std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
             void resetUnit(Transform::Units unit) override;
@@ -218,6 +220,25 @@ namespace obe
              * \return An UnitVector containing the position of the Master Point (centroid) of the Polygon
              */
             Transform::UnitVector getMasterPointPosition() const;
+
+            //Rotation
+            /**
+             * \brief Sets the angle of the PolygonalCollider (will rotate all points around the given origin)
+             * \param angle Angle to set to the PolygonalCollider
+             * \param origin Origin to rotate all the points around
+             */
+            void setRotation(float angle, Transform::UnitVector origin);
+            /**
+             * \brief Gets the current angle of the PolygonalCollider
+             * \return A float containing the value of the current angle of the PolygonalCollider
+             */
+            float getRotation() const;
+            /**
+             * \brief Adds an angle to the current angle of the PolygonalCollider (will rotate all points around the given origin)
+             * \param angle Angle to add to the PolygonalCollider
+             * \param origin Origin to rotate all the points around
+             */
+            void rotate(float angle, Transform::UnitVector origin);
 
             /**
              * \brief Moves the Polygon (relative to the current position)
