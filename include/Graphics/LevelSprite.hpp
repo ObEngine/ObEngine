@@ -119,7 +119,7 @@ namespace obe
              * \brief Gets a reference to the texture of the LevelSprite
              * \return A reference to the current texture of the LevelSprite
              */
-            const sf::Texture& getTexture();
+            const sf::Texture& getTexture() const;
 
             //Layers
             /**

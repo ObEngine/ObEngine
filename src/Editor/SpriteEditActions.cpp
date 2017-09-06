@@ -87,7 +87,6 @@ namespace obe
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedHandlePoint != nullptr)
                 {
-                    std::cout << "Moving ref : " << selectedHandlePoint->getReferencial() << std::endl;
                     selectedHandlePoint->moveTo(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
                     editorTriggers->pushParameter("SpriteHandlePointMoved", "handlePoint", selectedHandlePoint);
                     editorTriggers->trigger("SpriteHandlePointMoved");
@@ -142,11 +141,9 @@ namespace obe
                         selectedSpriteOffsetY = 0;
 
                     }
-                    std::cout << "Ended NonEf" << std::endl;
                 }
                 if (hoveredSprite != nullptr && selectedHandlePoint == nullptr)
                 {
-                    std::cout << "MUCH WOW" << std::endl;
                     selectedSprite = hoveredSprite;
                     selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
                     selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;

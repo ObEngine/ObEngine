@@ -275,13 +275,10 @@ namespace obe
                     vili::ComplexNode& currentSprite = dataStore->at("LevelSprites").createComplexNode(m_spriteArray[i]->getId());
                     currentSprite.createDataNode("path", m_spriteArray[i]->getPath());
                     currentSprite.createComplexNode("rect");
-                    Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
+                    Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to(m_spriteArray[i]->getWorkingUnit());
                     currentSprite.at("rect").createDataNode("x", spritePositionRect.x);
                     currentSprite.at("rect").createDataNode("y", spritePositionRect.y);
-                    Transform::UnitVector spriteSizeRect = Transform::UnitVector(
-                        m_spriteArray[i]->getSpriteWidth() * m_spriteArray[i]->getXScaleFactor(),
-                        m_spriteArray[i]->getSpriteHeight() * m_spriteArray[i]->getYScaleFactor(),
-                        Transform::Units::WorldPixels).to<Transform::Units::WorldUnits>(/*m_spriteArray[i]->getWorkingUnit()*/);
+                    Transform::UnitVector spriteSizeRect = m_spriteArray[i]->getSize().to(m_spriteArray[i]->getWorkingUnit());
                     currentSprite.at("rect").createDataNode("w", spriteSizeRect.x);
                     currentSprite.at("rect").createDataNode("h", spriteSizeRect.y);
                     currentSprite.at("rect").useTemplate(
@@ -307,7 +304,7 @@ namespace obe
                     dataStore->at("Collisions", m_colliderArray[i]->getId()).createArrayNode("points");
                     for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
                     {
-                        Transform::UnitVector pVec = m_colliderArray[i]->getPointPosition(j);
+                        Transform::UnitVector pVec = m_colliderArray[i]->getPointPosition(j).to(m_colliderArray[i]->getWorkingUnit());
                         dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.x);
                         dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.y);
                     }

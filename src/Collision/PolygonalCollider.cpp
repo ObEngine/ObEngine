@@ -78,11 +78,6 @@ namespace obe
 
         void PolygonalCollider::resetUnit(Transform::Units unit)
         {
-            for (Transform::UnitVector& point : m_allPoints)
-            {
-                point = point.to(unit);
-            }
-            std::cout << "Converted all Points" << std::endl;
         }
 
         unsigned int PolygonalCollider::getPointsAmount() const
@@ -136,7 +131,7 @@ namespace obe
 
         void PolygonalCollider::addPoint(const Transform::UnitVector& position, int pointIndex)
         {
-            Transform::UnitVector pVec = position.to(m_unit);
+            Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
             if (pointIndex == -1 || pointIndex == m_allPoints.size())
                 m_allPoints.push_back(pVec);
             else if (pointIndex >= 0 && pointIndex < m_allPoints.size())
@@ -153,7 +148,7 @@ namespace obe
 
         double PolygonalCollider::getDistanceFromPoint(unsigned int pointIndex, const Transform::UnitVector& position)
         {
-            Transform::UnitVector pVec = position.to(m_unit);
+            Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
             return std::sqrt(std::pow((pVec.x - m_allPoints[pointIndex].x), 2) + std::pow((pVec.y - m_allPoints[pointIndex].y), 2));
         }
 
@@ -161,7 +156,7 @@ namespace obe
         {
             if (m_allPoints.size() > 0)
             {
-                Transform::UnitVector pVec = position.to(m_unit);
+                Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
                 int closestNode = 0;
                 double tiniestDist = -1;
                 for (unsigned int i = 0; i < m_allPoints.size(); i++)
@@ -200,7 +195,7 @@ namespace obe
 
         unsigned int PolygonalCollider::findClosestLine(const Transform::UnitVector& position)
         {
-            Transform::UnitVector p3 = position.to(m_unit);
+            Transform::UnitVector p3 = position.to<Transform::Units::WorldUnits>();
             auto distanceLineFromPoint = [](const Transform::UnitVector& point, const Transform::UnitVector& lineP1, const Transform::UnitVector& lineP2)
             {
                 Transform::UnitVector lineDiff = lineP2 - lineP1;
@@ -301,8 +296,8 @@ namespace obe
 
         int PolygonalCollider::hasPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance)
         {
-            Transform::UnitVector pVec = position.to(m_unit);
-            Transform::UnitVector pTolerance = tolerance.to(m_unit);
+            Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
+            Transform::UnitVector pTolerance = tolerance.to<Transform::Units::WorldUnits>();
             for (unsigned int i = 0; i < m_allPoints.size(); i++)
             {
                 if (Utils::Math::isBetween(pVec.x, m_allPoints[i].x - pTolerance.x, m_allPoints[i].x + pTolerance.x))
@@ -316,8 +311,8 @@ namespace obe
 
         bool PolygonalCollider::hasMasterPoint(const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const
         {
-            Transform::UnitVector pVec = position.to(m_unit);
-            Transform::UnitVector pTolerance = tolerance.to(m_unit);
+            Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
+            Transform::UnitVector pTolerance = tolerance.to<Transform::Units::WorldUnits>();
             if (Utils::Math::isBetween(pVec.x, m_masterPoint.x - pTolerance.x, m_masterPoint.x + pTolerance.x))
             {
                 if (Utils::Math::isBetween(pVec.y, m_masterPoint.y - pTolerance.x, m_masterPoint.y + pTolerance.y))
@@ -334,19 +329,19 @@ namespace obe
 
         void PolygonalCollider::setPointPosition(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index] = vec.to(m_unit);
+            m_allPoints[index] = vec.to<Transform::Units::WorldUnits>();
             calculateMasterPoint();
         }
 
         void PolygonalCollider::setPointRelativePosition(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index] = vec.to(m_unit) + m_allPoints[0];
+            m_allPoints[index] = vec.to<Transform::Units::WorldUnits>() + m_allPoints[0];
             calculateMasterPoint();
         }
 
         void PolygonalCollider::setPointPositionFromMaster(unsigned int index, const Transform::UnitVector& vec)
         {
-            m_allPoints[index] = vec.to(m_unit) + m_masterPoint;
+            m_allPoints[index] = vec.to<Transform::Units::WorldUnits>() + m_masterPoint;
             calculateMasterPoint();
         }
 
@@ -498,7 +493,7 @@ namespace obe
         {
             if (m_allPoints.size() > 0)
             {
-                const Transform::UnitVector pVec = position.to(m_unit);
+                const Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
                 const Transform::UnitVector addPosition = pVec - m_allPoints[0];
                 for (PolygonalCollider* child : m_originChildren)
                     child->move(addPosition);
@@ -515,7 +510,7 @@ namespace obe
         {
             if (m_allPoints.size() > 0)
             {
-                const Transform::UnitVector pVec = position.to(m_unit);
+                const Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
                 const Transform::UnitVector addPosition = pVec - m_masterPoint;
                 for (PolygonalCollider* child : m_originChildren)
                     child->move(addPosition);

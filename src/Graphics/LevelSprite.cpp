@@ -47,7 +47,7 @@ namespace obe
             m_sprite.setTexture(texture);
         }
 
-        const sf::Texture& LevelSprite::getTexture()
+        const sf::Texture& LevelSprite::getTexture() const
         {
             return *m_texture;
         }
@@ -348,7 +348,7 @@ namespace obe
                 scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
                 double vScale = std::max(scaleVector.x, scaleVector.y);
                 if (baseDist.x != 0 && baseDist.y != 0)
-                    m_rect->scale(Transform::UnitVector(vScale, vScale, scaleVector.unit), Transform::reverseReferencial(m_referencial));
+                    m_rect->scale(Transform::UnitVector(vScale, vScale, m_rect->getSize().unit), Transform::reverseReferencial(m_referencial));
             }
             else
             {

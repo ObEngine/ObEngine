@@ -4,6 +4,7 @@
 #include <Transform/Rect.hpp>
 #include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>
+#include <iostream>
 
 namespace obe
 {
@@ -31,28 +32,28 @@ namespace obe
             case Referencial::TopLeft:
                 break;
             case Referencial::Top:
-                vec.add(factor * m_size.to(vec.unit).x / 2, 0);
+                vec.add(factor * m_size.x / 2, 0);
                 break;
             case Referencial::TopRight:
-                vec.add(factor * m_size.to(vec.unit).x, 0);
+                vec.add(factor * m_size.x, 0);
                 break;
             case Referencial::Left:
-                vec.add(0, factor * m_size.to(vec.unit).y / 2);
+                vec.add(0, factor * m_size.y / 2);
                 break;
             case Referencial::Center:
-                vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y / 2);
+                vec.add(factor * m_size.x / 2, factor * m_size.y / 2);
                 break;
             case Referencial::Right:
-                vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y / 2);
+                vec.add(factor * m_size.x, factor * m_size.y / 2);
                 break;
             case Referencial::BottomLeft:
-                vec.add(0, factor * m_size.to(vec.unit).y);
+                vec.add(0, factor * m_size.y);
                 break;
             case Referencial::Bottom:
-                vec.add(factor * m_size.to(vec.unit).x / 2, factor * m_size.to(vec.unit).y);
+                vec.add(factor * m_size.x / 2, factor * m_size.y);
                 break;
             case Referencial::BottomRight:
-                vec.add(factor * m_size.to(vec.unit).x, factor * m_size.to(vec.unit).y);
+                vec.add(factor * m_size.x, factor * m_size.y);
                 break;
             default: break;
             }
@@ -62,7 +63,7 @@ namespace obe
         {
             UnitVector pVec = position.to<Units::WorldUnits>();
             this->transformRef(pVec, ref, ConversionType::To);
-            m_position.set(pVec.x, pVec.y);
+            m_position.set(pVec);
         }
 
         void Rect::move(const UnitVector& position)
@@ -107,14 +108,14 @@ namespace obe
             }
             else if (isOnLeftSide(ref) || isOnRightSide(ref))
             {
-                UnitVector cPos(position.to(m_position.unit).x, m_position.y, m_position.unit);
+                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
                 this->setPosition(cPos, ref);
                 newSize.y = m_size.y;
                 this->setSize(newSize, ref);
             }
             else if (isOnTopSide(ref) || isOnBottomSide(ref))
             {
-                UnitVector cPos(m_position.x, position.to(m_position.unit).y, m_position.unit);
+                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
                 this->setPosition(cPos, ref);
                 newSize.x = m_size.x;
                 this->setSize(newSize, ref);
