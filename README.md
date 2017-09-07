@@ -80,6 +80,7 @@ Here you go :
 - DeltaTime handling
 - Custom package manager with online repository
 - Extendable toolkit with a lot of functionalities
+- Gamepad support
 
 ## Future features which are also really cool ?
 - Normal maps
