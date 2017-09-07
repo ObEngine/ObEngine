@@ -13,6 +13,8 @@ namespace obe
     {
         LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite, id)
         {
+            m_texture = ResourceManager::GetInstance()->getTexture("Sprites/Others/notexture.png");
+            m_sprite.setTexture(*m_texture);
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);

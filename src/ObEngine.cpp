@@ -7,6 +7,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
+#include <Graphics/ResourceManager.hpp>
 #include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
@@ -53,6 +54,7 @@ int main(int argc, char** argv)
 
     Bindings::IndexBindings();
     Script::InitScriptEngine();
+    Graphics::ResourceManager::GetInstance()->getTexture("Sprites/Others/notexture.png");
 
     if (startMode == "edit")
     {
