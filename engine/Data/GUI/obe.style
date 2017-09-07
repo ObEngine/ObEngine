@@ -144,6 +144,12 @@ CheckBox {
     TextColor        = rgb(255, 255, 255);
 }
 
+StateCheckBox {
+    TextureChecked   = "Checkbox/State/pause.png";
+    TextureUnchecked = "Checkbox/State/play.png";
+    TextColor        = rgb(255, 255, 255);
+}
+
 DisabledCheckBox {
     TextureChecked   = "Checkbox/selected.png";
     TextureUnchecked = "Checkbox/unselected.png";

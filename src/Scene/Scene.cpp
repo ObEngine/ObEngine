@@ -424,6 +424,15 @@ namespace obe
         void Scene::setUpdateState(bool state)
         {
             m_updateState = state;
+            unsigned int envCount = Script::ScriptEngine["__ENV_COUNT"];
+            for (unsigned int i = 0; i < envCount; i++)
+            {
+                bool exists = Script::ScriptEngine["LuaUtil"]["Exists"]("__ENVIRONMENTS[" + std::to_string(i) + "]");
+                if (exists)
+                {
+                    Script::ScriptEngine["__ENVIRONMENTS"][i]["__ENV_ENABLED"] = state;
+                }
+            }
         }
 
         Script::GameObject* Scene::getGameObject(const std::string& id)

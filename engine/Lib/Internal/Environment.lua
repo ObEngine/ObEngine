@@ -7,6 +7,7 @@ function CreateNewEnv()
     local ENV = env or {};
     if env == nil then
         ENV["__ENV_ID"] = __ENV_COUNT;
+        ENV["__ENV_ENABLED"] = true;
         setmetatable(ENV, {__index=_G});
         __ENVIRONMENTS[__ENV_COUNT] = ENV;
         __ENV_COUNT = __ENV_COUNT + 1;

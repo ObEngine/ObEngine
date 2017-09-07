@@ -89,13 +89,14 @@ namespace obe
                 previousScrolbarValue = scrollbar->getValue();
             }
 
-            void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel)
+            void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel, Scene::Scene& scene)
             {
                 tgui::Panel::Ptr titlePanel = tgui::Panel::create();
                 tgui::Label::Ptr titleLabel = tgui::Label::create();
                 tgui::Label::Ptr infoLabel = tgui::Label::create();
                 tgui::Label::Ptr savedLabel = tgui::Label::create();
                 tgui::Button::Ptr editorButton = tgui::Button::create();
+                tgui::CheckBox::Ptr updateStateCheckbox = tgui::CheckBox::create();
                 tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
                 tgui::HorizontalWrap::Ptr toolbarWrap = tgui::HorizontalWrap::create();
 
@@ -105,6 +106,7 @@ namespace obe
                 titlePanel->add(infoLabel, "infoLabel");
                 titlePanel->add(savedLabel, "savedLabel");
                 titlePanel->add(editorButton, "editorButton");
+                titlePanel->add(updateStateCheckbox, "updateStateCheckbox");
                 titlePanel->add(editMode, "editMode");
 
                 titlePanel->setRenderer(baseTheme.getRenderer("TransparentPanel"));
@@ -126,15 +128,21 @@ namespace obe
                 editMode->addItem("Play");
                 editMode->addItem("None");
                 editMode->setSelectedItem("None");
-                editMode->setSize("10.5%", "100%");
+                editMode->setSize("10.5%", "100% - 1");
                 editMode->setPosition(tgui::bindWidth(titlePanel) - tgui::bindWidth(editMode) - 1, 0);
                 editMode->setTextSize(mediumFontSize);
                 editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
                 editMode->getRenderer()->getTextureArrowUp().setSmooth(true);
                 editMode->getRenderer()->getTextureArrowDown().setSmooth(true);
 
+                updateStateCheckbox->setSize(128, "100% - 1");
+                updateStateCheckbox->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(updateStateCheckbox) - 1, 0);
+                updateStateCheckbox->setRenderer(baseTheme.getRenderer("StateCheckBox"));
+                updateStateCheckbox->getRenderer()->getTextureChecked().setSmooth(true);
+                updateStateCheckbox->getRenderer()->getTextureUnchecked().setSmooth(true);
+
                 editorButton->setSize("9.8%", "100%");
-                editorButton->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(editorButton) - 1, 0);
+                editorButton->setPosition(tgui::bindLeft(updateStateCheckbox) - tgui::bindWidth(editorButton) - 1, 0);
                 editorButton->setText("Editor Menu");
                 editorButton->setTextSize(mediumFontSize);
                 editorButton->setRenderer(baseTheme.getRenderer("Button"));
@@ -148,6 +156,16 @@ namespace obe
                 editorButton->connect("pressed", [editorPanel]()
                 {
                     editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
+                });
+
+                updateStateCheckbox->connect("checked", [&scene]()
+                {
+                    scene.setUpdateState(true);
+                });
+
+                updateStateCheckbox->connect("unchecked", [&scene]()
+                {
+                    scene.setUpdateState(false);
                 });
             }
 

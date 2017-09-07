@@ -63,8 +63,12 @@ namespace obe
                 std::pair<unsigned int, std::string> rEnv = m_registeredEnvs[envIndex];
                 if (Utils::Vector::isInList(rEnv.first, EnabledEnvs))
                 {
-                    Script::ScriptEngine["ExecuteStringOnEnv"]
-                    ("LuaCore.FuncInjector(" + rEnv.second +", \"" + this->getTriggerLuaTableName() +"\")", rEnv.first);
+                    bool envEnabled = Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["__ENV_ENABLED"];
+                    if (envEnabled)
+                    {
+                        Script::ScriptEngine["ExecuteStringOnEnv"]
+                        ("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);
+                    }
                     //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
                     Script::ScriptEngine["__ENVIRONMENTS"]
                         [rEnv.first]["LuaCore"]["FTCP"]

@@ -173,7 +173,7 @@ namespace obe
             tgui::Scrollbar::Ptr spritesScrollbar = gui.get<tgui::Scrollbar>("spritesScrollbar");
             tgui::Scrollbar::Ptr objectsScrollbar = gui.get<tgui::Scrollbar>("objectsScrollbar");
 
-            GUI::buildToolbar(mainPanel, editorPanel);
+            GUI::buildToolbar(mainPanel, editorPanel, scene);
 
             tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode");
 
@@ -267,6 +267,8 @@ namespace obe
 
             GUI::calculateFontSize(window);
             GUI::applyFontSize(mainPanel);
+
+            scene.setUpdateState(false);
 
             //Game Starts
             while (window.isOpen())
