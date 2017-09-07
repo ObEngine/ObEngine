@@ -12,126 +12,104 @@ namespace obe
     {
         Rect::Rect(MovableType type, const std::string& id) : Movable(type, id)
         {
+
         }
 
-        void Rect::setPosition(const UnitVector& position)
+        float Rect::getRotation() const
         {
-            this->setPosition(position, Referencial::TopLeft);
+            return m_angle;
         }
 
-        UnitVector Rect::getPosition() const
+        /**
+        * \brief Sets the angle of the PolygonalCollider (will rotate all points around the given origin)
+        * \param angle Angle to set to the PolygonalCollider
+        * \param origin Origin to rotate all the points around
+        */
+        void Rect::setRotation(float angle, Transform::UnitVector origin)
         {
-            return this->getPosition(Referencial::TopLeft);
-        }   
+            rotate(angle - m_angle, origin);
+        }
+
+        void Rect::rotate(float angle, Transform::UnitVector origin)
+        {
+            double radAngle = (Utils::Math::pi / 180.0) * -angle;
+            double cY = cos(radAngle);
+            double sY = sin(radAngle);
+
+            UnitVector delta = m_position - origin;
+            m_position.x = (delta.x * cY - delta.y * sY) + origin.x;
+            m_position.y = (delta.x * sY + delta.y * cY) + origin.y;
+
+            m_angle += angle;
+        }
 
         void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;
+
+            //calc once
+            double radAngle = (Utils::Math::pi / 180.0) * -m_angle;
+            double cY = cos(radAngle);
+            double sY = sin(radAngle);
+            double dx, dy;
+            UnitVector result;
+
             switch (ref)
             {
             case Referencial::TopLeft:
+                dx = 0;
+                dy = 0;
                 break;
+
             case Referencial::Top:
-                vec.add(factor * m_size.x / 2, 0);
+                dx = m_size.x / 2;
+                dy = 0;
                 break;
+
             case Referencial::TopRight:
-                vec.add(factor * m_size.x, 0);
+                dx = m_size.x;
+                dy = 0;
                 break;
+
             case Referencial::Left:
-                vec.add(0, factor * m_size.y / 2);
+                dx = 0;
+                dy = m_size.y / 2;
                 break;
+
             case Referencial::Center:
-                vec.add(factor * m_size.x / 2, factor * m_size.y / 2);
+                dx = m_size.x / 2;
+                dy = m_size.y / 2;
                 break;
+
             case Referencial::Right:
-                vec.add(factor * m_size.x, factor * m_size.y / 2);
+                dx = m_size.x;
+                dy = m_size.y / 2;
                 break;
+
             case Referencial::BottomLeft:
-                vec.add(0, factor * m_size.y);
+                dx = 0;
+                dy = m_size.y;
                 break;
+
             case Referencial::Bottom:
-                vec.add(factor * m_size.x / 2, factor * m_size.y);
+                dx = m_size.x / 2;
+                dy = m_size.y;
                 break;
+
             case Referencial::BottomRight:
-                vec.add(factor * m_size.x, factor * m_size.y);
+                dx = m_size.x;
+                dy = m_size.y;
                 break;
-            default: break;
+
+            default:
+                break;
             }
+            result.x = (dx * cY - dy * sY) * factor;
+            result.y = (dx * sY + dy * cY) * factor;
+            vec.add(result);
         }
 
-        void Rect::setPosition(const UnitVector& position, Referencial ref)
-        {
-            UnitVector pVec = position.to<Units::WorldUnits>();
-            this->transformRef(pVec, ref, ConversionType::To);
-            m_position.set(pVec);
-        }
-
-        void Rect::move(const UnitVector& position)
-        {
-            m_position += position;
-        }
-
-        void Rect::setSize(const UnitVector& size, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size.set(size);
-            this->setPosition(savePosition, ref);
-        }
-
-        void Rect::scale(const UnitVector& size, Referencial ref)
-        {
-            UnitVector savePosition = this->getPosition(ref);
-            m_size *= size;
-            this->setPosition(savePosition, ref);
-        }
-
-        UnitVector Rect::getPosition(Referencial ref) const
-        {
-            UnitVector getPosVec = m_position;
-            this->transformRef(getPosVec, ref, ConversionType::From);
-            return getPosVec;
-        }
-
-        UnitVector Rect::getSize() const
-        {
-            return m_size;
-        }
-
-        void Rect::setPointPosition(const UnitVector& position, Referencial ref)
-        {
-            UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
-            UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
-            if (isOnCorner(ref))
-            {
-                this->setPosition(position, ref);
-                this->setSize(newSize, ref);
-            }
-            else if (isOnLeftSide(ref) || isOnRightSide(ref))
-            {
-                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.y = m_size.y;
-                this->setSize(newSize, ref);
-            }
-            else if (isOnTopSide(ref) || isOnBottomSide(ref))
-            {
-                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.x = m_size.x;
-                this->setSize(newSize, ref);
-            }
-        }
-
-        void Rect::movePoint(const UnitVector& position, Referencial ref)
-        {
-        }
-
-        UnitVector Rect::getScaleFactor() const
-        {
-            return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
-        }
-
-        void Rect::display(sf::RenderWindow& target) const
+        void Rect::display(sf::RenderWindow& target, unsigned int posX, unsigned int posY) const
         {
             int r = 6;
             std::map<std::string, Types::Any> drawOptions;
@@ -153,29 +131,139 @@ namespace obe
             drawOptions["point_color_7"] = sf::Color(0, 128, 255);
             drawOptions["point_color_8"] = sf::Color(0, 0, 255);
 
-            UnitVector pixelPosition = m_position.to<Units::WorldPixels>();
-            UnitVector pixelSize = m_size.to<Units::WorldPixels>();
+            UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
 
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + pixelSize.x / 2, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + r);
-            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + pixelSize.y / 2);
-            drawPoints.emplace_back(pixelPosition.x + pixelSize.x - r, pixelPosition.y + pixelSize.y - r);
-            drawPoints.emplace_back(pixelPosition.x + pixelSize.x / 2, pixelPosition.y + pixelSize.y - r);
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + pixelSize.y - r);
-            drawPoints.emplace_back(pixelPosition.x + r, pixelPosition.y + pixelSize.y / 2);
+            const std::vector<Referencial> realOrder = 
+              { Referencial::TopLeft, Referencial::Top, Referencial::TopRight, 
+                Referencial::Right, Referencial::BottomRight,
+                Referencial::Bottom, Referencial::BottomLeft, Referencial::Left };
+            for (uint16_t i = 0; i < 8; ++i)
+            {
+                UnitVector pt;
+                this->transformRef(pt, realOrder.at(i), ConversionType::From);
+                UnitVector world = (pt + dPos).to<Units::WorldPixels>();
+                drawPoints.emplace_back(world.x, world.y);
+            }
 
             Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
         }
 
-        bool Rect::intersects(const Rect& rect) const
+        void Rect::setPointPosition(const UnitVector& position, Referencial ref)
         {
-            UnitVector p1 = m_position.to<Units::WorldUnits>();
-            UnitVector p2 = rect.getPosition().to<Units::WorldUnits>();
-            UnitVector s1 = m_size.to<Units::WorldUnits>();
-            UnitVector s2 = rect.getSize().to<Units::WorldUnits>();
-            return (abs(p1.x - p2.x) < (s1.x + s2.x) / 2) &&
-                (abs(p1.y - p2.y) < (s1.y + s2.y) / 2);
+            UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+
+            auto rotatePointFromAngle = [=](const UnitVector& center, const UnitVector& Around, float angle)
+            {
+                double cY = cos(angle);
+                double sY = sin(angle);
+
+                UnitVector moved, delta = Around - center;
+                moved.x = (delta.x * cY - delta.y * sY) + center.x;
+                moved.y = (delta.x * sY + delta.y * cY) + center.y;
+
+                return moved;
+            };
+            UnitVector movedPoint = rotatePointFromAngle(position, oppositePointPosition, (-m_angle));
+            UnitVector newSize = movedPoint - position;
+
+
+            if (isOnCorner(ref))
+            {
+                this->setPosition(position, ref);
+                this->setSize(newSize, ref);
+            }
+            else if (isOnLeftSide(ref) || isOnRightSide(ref))
+            {
+                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.y = m_size.y;
+                this->setSize(newSize, ref);
+            }
+            else if (isOnTopSide(ref) || isOnBottomSide(ref))
+            {
+                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.x = m_size.x;
+                this->setSize(newSize, ref);
+            }
+            /*UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+            UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
+            if (isOnCorner(ref))
+            {
+                this->setPosition(position, ref);
+                this->setSize(newSize, ref);
+            }
+            else if (isOnLeftSide(ref) || isOnRightSide(ref))
+            {
+                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.y = m_size.y;
+                this->setSize(newSize, ref);
+            }
+            else if (isOnTopSide(ref) || isOnBottomSide(ref))
+            {
+                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
+                this->setPosition(cPos, ref);
+                newSize.x = m_size.x;
+                this->setSize(newSize, ref);
+            }*/
+        }
+
+        UnitVector Rect::getPosition(Referencial ref) const
+        {
+            UnitVector getPosVec = m_position;
+            this->transformRef(getPosVec, ref, ConversionType::From);
+            return getPosVec;
+        }
+
+        void Rect::setPosition(const UnitVector& position, Referencial ref)
+        {
+            UnitVector pVec = position.to<Units::WorldUnits>();
+            this->transformRef(pVec, ref, ConversionType::To);
+            m_position.set(pVec);
+        }
+
+        void Rect::setSize(const UnitVector& size, Referencial ref)
+        {
+            UnitVector savePosition = this->getPosition(ref);
+            m_size.set(size);
+            this->setPosition(savePosition, ref);
+        }
+
+        void Rect::setPosition(const UnitVector& position)
+        {
+            this->setPosition(position, Referencial::TopLeft);
+        }
+
+        UnitVector Rect::getPosition() const
+        {
+            return this->getPosition(Referencial::TopLeft);
+        }   
+
+        void Rect::move(const UnitVector& position)
+        {
+            m_position += position;
+        }
+
+        void Rect::scale(const UnitVector& size, Referencial ref)
+        {
+            UnitVector savePosition = this->getPosition(ref);
+            m_size *= size;
+            this->setPosition(savePosition, ref);
+        }
+
+        UnitVector Rect::getSize() const
+        {
+            return m_size;
+        }
+
+        void Rect::movePoint(const UnitVector& position, Referencial ref)
+        {
+        }
+
+        UnitVector Rect::getScaleFactor() const
+        {
+            return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
         }
     }
 }

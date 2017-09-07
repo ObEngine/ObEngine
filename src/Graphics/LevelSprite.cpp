@@ -35,7 +35,9 @@ namespace obe
             {
                 m_path = path;
                 m_texture = ResourceManager::GetInstance()->getTexture(System::Path(path).find());
+                
                 m_sprite.setTexture(*m_texture);
+                m_sprite.setTextureRect(sf::IntRect(0, 0, m_texture->getSize().x, m_texture->getSize().y));
             }
         }
 
@@ -66,16 +68,16 @@ namespace obe
 
         void LevelSprite::setRotation(double rotate)
         {
-            m_rotation = rotate;
-            m_sprite.setRotation(m_rotation);
+            Rect::setRotation(rotate, this->getPosition(Transform::Referencial::Center));
+            m_sprite.setRotationOrigin(m_sprite.getGlobalBounds().width / 2, m_sprite.getGlobalBounds().height / 2);
+            m_sprite.setRotation(-m_angle + 90);
         }
 
         void LevelSprite::rotate(double addRotate)
         {
-            m_rotation += addRotate;
-            if (m_rotation < 0) m_rotation += 360;
-            m_rotation = (static_cast<int>(m_rotation) % 360) + (m_rotation - floor(m_rotation));
-            m_sprite.setRotation(m_rotation);
+            Rect::rotate(addRotate, this->getPosition(Transform::Referencial::Center));
+            m_sprite.setRotationOrigin(m_sprite.getGlobalBounds().width / 2, m_sprite.getGlobalBounds().height / 2);
+            m_sprite.setRotation(-m_angle + 90);
         }
 
         void LevelSprite::setScalingOrigin(int x, int y)
@@ -83,39 +85,9 @@ namespace obe
             m_sprite.setScalingOrigin(x, y);
         }
 
-        void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY)
+        void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY) const
         {
-            std::map<std::string, Types::Any> drawOptions;
-
-            drawOptions["lines"] = true;
-            drawOptions["points"] = m_selected;
-            drawOptions["radius"] = LevelSpriteHandlePoint::radius;
-            drawOptions["point_color"] = sf::Color::White;
-
-            std::vector<sf::Vector2i> drawPoints;
-            Transform::UnitVector spriteSize = m_size.to<Transform::Units::WorldPixels>();
-
-            drawOptions["point_color_0"] = sf::Color(255, 0, 0);
-            drawOptions["point_color_1"] = sf::Color(255, 128, 0);
-            drawOptions["point_color_2"] = sf::Color(255, 255, 0);
-            drawOptions["point_color_3"] = sf::Color(128, 255, 0);
-            drawOptions["point_color_4"] = sf::Color(0, 255, 0);
-            drawOptions["point_color_5"] = sf::Color(0, 255, 128);
-            drawOptions["point_color_6"] = sf::Color(0, 255, 255);
-            drawOptions["point_color_7"] = sf::Color(0, 128, 255);
-            drawOptions["point_color_8"] = sf::Color(0, 0, 255);
-
-            Transform::UnitVector pixelPosition(spritePositionX, spritePositionY, Transform::Units::WorldPixels);
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y + spriteSize.y / 2);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x, pixelPosition.y + spriteSize.y);
-            drawPoints.emplace_back(pixelPosition.x + spriteSize.x / 2, pixelPosition.y + spriteSize.y);
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + spriteSize.y);
-            drawPoints.emplace_back(pixelPosition.x, pixelPosition.y + spriteSize.y / 2);
-
-            Utils::drawPolygon(target, drawPoints, drawOptions);
+            this->display(target, spritePositionX, spritePositionY);
         }
 
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
@@ -208,11 +180,6 @@ namespace obe
             return Transform::UnitVector(transformedPosition.x, transformedPosition.y, Transform::Units::ViewPixels);
         }
 
-        double LevelSprite::getRotation() const
-        {
-            return m_rotation;
-        }
-
         int LevelSprite::getLayer() const
         {
             return m_layer;
@@ -272,11 +239,11 @@ namespace obe
             this->setPosition(spritePos);
             this->setSize(spriteSize);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
-            this->setRotation(spriteRot);
-            Graphics::PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+            PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
             this->setPositionTransformer(positionTransformer);
             this->setLayer(layer);
             this->setZDepth(zdepth);
+            this->setRotation(spriteRot);
         }
 
         sf::FloatRect LevelSprite::getRect()
@@ -284,7 +251,7 @@ namespace obe
             Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
 
             m_sprite.setPosition(realPosition.x, realPosition.y);
-            m_sprite.setRotation(m_rotation);
+            m_sprite.setRotation(-m_angle + 90);
             sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
             mrect.left = m_sprite.getGlobalBounds().left;
             mrect.top = m_sprite.getGlobalBounds().top;

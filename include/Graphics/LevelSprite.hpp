@@ -69,8 +69,6 @@ namespace obe
 
             bool m_visible = true;
 
-            double m_rotation = 0;
-
             std::vector<LevelSpriteHandlePoint> m_handlePoints;
             int m_layer = 1;
             int m_zdepth = 0;
@@ -154,11 +152,6 @@ namespace obe
              * \param rotate The new angle of the LevelSprite (0 -> 360 where 0 / 360 is the top)
              */
             void setRotation(double rotate);
-            /**
-             * \brief 
-             * \return 
-             */
-            double getRotation() const;
 
             //Origins
             /**
@@ -279,7 +272,7 @@ namespace obe
              * \param spritePositionX x Coordinate of the Offset of the Handle
              * \param spritePositionY y Coordinate of the Offset of the Handle
              */
-            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY);
+            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY) const;
             /**
              * \brief Get the HandlePoint of the LevelSprite at the given Position(x, y)
              * \param cameraPosition Position of the Scene Camera

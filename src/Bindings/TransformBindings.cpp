@@ -66,7 +66,6 @@ namespace obe
                     .addFunction("getPosition", Rect_getPosition_proxy())
                     .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
                     .addFunction("getSize", &Transform::Rect::getSize)
-                    .addFunction("intersects", &Transform::Rect::intersects)
                     .addFunction("move", &Transform::Rect::move)
                     .addFunction("movePoint", Rect_movePoint_uv_proxy())
                     .addFunction("scale", Rect_scale_uv_proxy())
