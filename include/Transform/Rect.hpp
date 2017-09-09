@@ -21,6 +21,8 @@ namespace obe
              */
             UnitVector m_size;
             float m_angle = 0;
+            float m_cosAngleBuffer = 0;
+            float m_sinAngleBuffer = 0;
         public:
             /**
             * \brief Conversion Type for Referencial Usage
@@ -45,6 +47,7 @@ namespace obe
             *			   - To : ref to Referencial::TopLeft
             */
             void transformRef(UnitVector& vec, Referencial ref, ConversionType type) const;
+
             Rect(MovableType type, const std::string& id);
             /**
             * \brief Set the position of the Rect (Movable override) using an UnitVector

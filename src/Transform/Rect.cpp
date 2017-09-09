@@ -10,47 +10,49 @@ namespace obe
 {
     namespace Transform
     {
+        UnitVector rotatePointAroundCenter(const UnitVector& center, const UnitVector& Around, float angle)
+        {
+            double cY = cos(angle);
+            double sY = sin(angle);
+
+            UnitVector moved, delta = Around - center;
+            moved.x = (delta.x * cY - delta.y * sY) + center.x;
+            moved.y = (delta.x * sY + delta.y * cY) + center.y;
+
+            return moved;
+        };
+
         Rect::Rect(MovableType type, const std::string& id) : Movable(type, id)
         {
-
         }
 
         float Rect::getRotation() const
         {
-            return m_angle;
+            return Utils::Math::convertToDegree(m_angle);
         }
 
-        /**
-        * \brief Sets the angle of the PolygonalCollider (will rotate all points around the given origin)
-        * \param angle Angle to set to the PolygonalCollider
-        * \param origin Origin to rotate all the points around
-        */
         void Rect::setRotation(float angle, Transform::UnitVector origin)
         {
+            std::cout << "@ThisPoint : " << m_position << std::endl;
             rotate(angle - m_angle, origin);
         }
 
         void Rect::rotate(float angle, Transform::UnitVector origin)
         {
-            double radAngle = (Utils::Math::pi / 180.0) * -angle;
-            double cY = cos(radAngle);
-            double sY = sin(radAngle);
-
-            UnitVector delta = m_position - origin;
-            m_position.x = (delta.x * cY - delta.y * sY) + origin.x;
-            m_position.y = (delta.x * sY + delta.y * cY) + origin.y;
-
+            double tRadAngle = Utils::Math::convertToRadian(m_angle);
+            double radAngle = Utils::Math::convertToRadian(angle);
+            
+            m_position = rotatePointAroundCenter(origin, m_position, radAngle);
             m_angle += angle;
+            m_cosAngleBuffer = cos(tRadAngle);
+            m_sinAngleBuffer = sin(tRadAngle);
+            std::cout << "Angle : " << m_angle << std::endl;
         }
 
+        //TODO remove calculation when dx and dy are equal to 0. Directly add to vec in switch case.
         void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;
-
-            //calc once
-            double radAngle = (Utils::Math::pi / 180.0) * -m_angle;
-            double cY = cos(radAngle);
-            double sY = sin(radAngle);
             double dx, dy;
             UnitVector result;
 
@@ -104,8 +106,8 @@ namespace obe
             default:
                 break;
             }
-            result.x = (dx * cY - dy * sY) * factor;
-            result.y = (dx * sY + dy * cY) * factor;
+            result.x = (dx * m_cosAngleBuffer - dy * m_sinAngleBuffer) * factor;
+            result.y = (dx * m_sinAngleBuffer + dy * m_cosAngleBuffer) * factor;
             vec.add(result);
         }
 
@@ -133,14 +135,16 @@ namespace obe
 
             UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
 
-            const std::vector<Referencial> realOrder = 
-              { Referencial::TopLeft, Referencial::Top, Referencial::TopRight, 
+            const std::vector<Referencial> fixDisplayOrder =
+            { Referencial::TopLeft, Referencial::Top, Referencial::TopRight,
                 Referencial::Right, Referencial::BottomRight,
                 Referencial::Bottom, Referencial::BottomLeft, Referencial::Left };
-            for (uint16_t i = 0; i < 8; ++i)
+
+            for (uint8_t i = 0; i < 8; ++i)
             {
                 UnitVector pt;
-                this->transformRef(pt, realOrder.at(i), ConversionType::From);
+                this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
+
                 UnitVector world = (pt + dPos).to<Units::WorldPixels>();
                 drawPoints.emplace_back(world.x, world.y);
             }
@@ -148,65 +152,48 @@ namespace obe
             Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
         }
 
+
         void Rect::setPointPosition(const UnitVector& position, Referencial ref)
         {
+            UnitVector refPosition = this->getPosition(ref);
             UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+            UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -m_angle);
 
-            auto rotatePointFromAngle = [=](const UnitVector& center, const UnitVector& Around, float angle)
-            {
-                double cY = cos(angle);
-                double sY = sin(angle);
-
-                UnitVector moved, delta = Around - center;
-                moved.x = (delta.x * cY - delta.y * sY) + center.x;
-                moved.y = (delta.x * sY + delta.y * cY) + center.y;
-
-                return moved;
-            };
-            UnitVector movedPoint = rotatePointFromAngle(position, oppositePointPosition, (-m_angle));
-            UnitVector newSize = movedPoint - position;
-
+            this->setPosition(position, ref);
 
             if (isOnCorner(ref))
             {
-                this->setPosition(position, ref);
-                this->setSize(newSize, ref);
+                if (isOnTopSide(ref))
+                {
+                    this->setSize({ movedPoint.x - position.x , movedPoint.y - position.y }, ref);
+                }
+                else
+                {
+                    this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
+                }
             }
-            else if (isOnLeftSide(ref) || isOnRightSide(ref))
+            if (isOnLeftSide(ref) || isOnRightSide(ref))
             {
-                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.y = m_size.y;
-                this->setSize(newSize, ref);
+                if (isOnLeftSide(ref))
+                {
+                    this->setSize({ movedPoint.x - position.x , m_size.y }, ref);
+                }
+                else
+                {
+                    this->setSize({ position.x - movedPoint.x, m_size.y }, ref);
+                }
             }
-            else if (isOnTopSide(ref) || isOnBottomSide(ref))
+            else // we are on TopSide or LeftSide here, no need to specify the condition [Retard Sygmei] 
             {
-                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.x = m_size.x;
-                this->setSize(newSize, ref);
+                if (isOnTopSide(ref))
+                {
+                    this->setSize({ m_size.x, movedPoint.y - position.y }, ref);
+                }
+                else
+                {
+                    this->setSize({ m_size.x, position.y - movedPoint.y }, ref);
+                }
             }
-            /*UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
-            UnitVector newSize = (oppositePointPosition - position) * getReferencialOffset(ref);
-            if (isOnCorner(ref))
-            {
-                this->setPosition(position, ref);
-                this->setSize(newSize, ref);
-            }
-            else if (isOnLeftSide(ref) || isOnRightSide(ref))
-            {
-                UnitVector cPos(position.to(m_position.unit).x, this->getPosition(ref).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.y = m_size.y;
-                this->setSize(newSize, ref);
-            }
-            else if (isOnTopSide(ref) || isOnBottomSide(ref))
-            {
-                UnitVector cPos(this->getPosition(ref).x, position.to(m_position.unit).y, m_position.unit);
-                this->setPosition(cPos, ref);
-                newSize.x = m_size.x;
-                this->setSize(newSize, ref);
-            }*/
         }
 
         UnitVector Rect::getPosition(Referencial ref) const
@@ -238,7 +225,7 @@ namespace obe
         UnitVector Rect::getPosition() const
         {
             return this->getPosition(Referencial::TopLeft);
-        }   
+        }
 
         void Rect::move(const UnitVector& position)
         {

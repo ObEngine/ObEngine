@@ -30,6 +30,16 @@ namespace obe
             {
                 return (trunc(value) == value);
             }
+
+            double convertToRadian(double value)
+            {
+                return  (Utils::Math::pi / 180.0) * -value;
+            }
+
+            double convertToDegree(double value)
+            {
+                return	(180.0 / Utils::Math::pi) * -value;
+            }
         }
     }
 }

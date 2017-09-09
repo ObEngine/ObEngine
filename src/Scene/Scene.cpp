@@ -385,6 +385,9 @@ namespace obe
                 tAffSpr.setPosition(spritePosition.x, spritePosition.y);
                 //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
                 //tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
+                //m_spriteArray[i]->rotate(1);
+                std::cout << "Sprite @" << m_spriteArray[i]->getId() << std::endl;
+                std::cout << "Bounds : " << tAffSpr.getGlobalBounds().left << ", " << tAffSpr.getGlobalBounds().top << ", " << tAffSpr.getGlobalBounds().width << ", " << tAffSpr.getGlobalBounds().height << std::endl;
                 
                 if (m_spriteArray[i]->isVisible())
                 {
@@ -584,10 +587,15 @@ namespace obe
             std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);
             for (unsigned int i = 0; i < getSpriteVec.size(); i++)
             {
-                if (pixelPosition.x > getSpriteVec[i]->getRect().left && pixelPosition.x < getSpriteVec[i]->getRect().left + getSpriteVec[i]->getSpriteWidth())
+                Transform::UnitVector center = getSpriteVec[i]->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
+                Transform::UnitVector ssize = getSpriteVec[i]->getSize().to<Transform::Units::WorldPixels>();
+                float rot = getSpriteVec[i]->getRotation();
+                int tX = cos(rot) * (pixelPosition.x - center.x) - sin(rot) * (pixelPosition.y - center.y);
+                int tY = sin(rot) * (pixelPosition.y - center.y) + cos(rot) * (pixelPosition.x - center.x);
+                if ((tX > center.x - ssize.x / 2) && (tX < center.x + ssize.x / 2)
+                    && (tY > center.y - ssize.y / 2) && (tY < center.y + ssize.y / 2))
                 {
-                    if (pixelPosition.y > getSpriteVec[i]->getRect().top && pixelPosition.y < getSpriteVec[i]->getRect().top + getSpriteVec[i]->getSpriteHeight())
-                        returnSpr = getSpriteVec[i];
+                    returnSpr = getSpriteVec[i];
                 }
             }
             return returnSpr;

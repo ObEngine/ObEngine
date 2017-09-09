@@ -69,6 +69,19 @@ namespace obe
             template <typename T>
             int sign(T val);
 
+            /**
+             * \brief Converts a degrees angle to radians
+             * \param value Angle in degrees
+             * \return A double containing the converted value
+             */
+            double convertToRadian(double value);
+            /**
+            * \brief Converts a radians angle to degrees
+            * \param value Angle in  radians
+            * \return A double containing the converted value
+            */
+            double convertToDegree(double value);
+
             template <typename N>
             N getMin(const N& min1, const N& min2)
             {

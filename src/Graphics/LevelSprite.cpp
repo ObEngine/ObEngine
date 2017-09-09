@@ -70,14 +70,14 @@ namespace obe
         {
             Rect::setRotation(rotate, this->getPosition(Transform::Referencial::Center));
             m_sprite.setRotationOrigin(m_sprite.getGlobalBounds().width / 2, m_sprite.getGlobalBounds().height / 2);
-            m_sprite.setRotation(-m_angle + 90);
+            m_sprite.setRotation(-m_angle);
         }
 
         void LevelSprite::rotate(double addRotate)
         {
             Rect::rotate(addRotate, this->getPosition(Transform::Referencial::Center));
             m_sprite.setRotationOrigin(m_sprite.getGlobalBounds().width / 2, m_sprite.getGlobalBounds().height / 2);
-            m_sprite.setRotation(-m_angle + 90);
+            m_sprite.setRotation(-m_angle);
         }
 
         void LevelSprite::setScalingOrigin(int x, int y)
@@ -87,7 +87,7 @@ namespace obe
 
         void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY) const
         {
-            this->display(target, spritePositionX, spritePositionY);
+            Rect::display(target, spritePositionX, spritePositionY);
         }
 
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
@@ -237,13 +237,25 @@ namespace obe
             if (spritePath != "")
                 this->load(spritePath);
             this->setPosition(spritePos);
+            std::cout << "PrePosition : " << m_position << std::endl;
             this->setSize(spriteSize);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
             PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
             this->setPositionTransformer(positionTransformer);
             this->setLayer(layer);
             this->setZDepth(zdepth);
+            std::cout << "PrePosition1 : " << m_position << std::endl;
             this->setRotation(spriteRot);
+            std::cout << "PrePosition2 : " << m_position << std::endl;
+
+            std::cout << "<>==============================<> Sprite Configuration : " << m_id << std::endl;
+            std::cout << "Angle : " << m_angle << std::endl;
+            std::cout << "Layer : " << m_layer << std::endl;
+            std::cout << "ZDepth : " << m_zdepth << std::endl;
+            std::cout << "Position : " << m_position << std::endl;
+            std::cout << "Size : " << m_size << std::endl;
+            std::cout << "Visible : " << m_visible << std::endl;
+            this->setSelected(true);
         }
 
         sf::FloatRect LevelSprite::getRect()
@@ -251,7 +263,6 @@ namespace obe
             Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
 
             m_sprite.setPosition(realPosition.x, realPosition.y);
-            m_sprite.setRotation(-m_angle + 90);
             sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
             mrect.left = m_sprite.getGlobalBounds().left;
             mrect.top = m_sprite.getGlobalBounds().top;
