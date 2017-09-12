@@ -357,9 +357,9 @@ namespace obe
                 //std::cout << "Set : " << x << ", " << y << std::endl;
                 m_dp = Transform::UnitVector(x, y, Transform::Units::WorldPixels);
                 float angle = m_rect->getRotation();
-                Transform::UnitVector pos = m_rect->getPosition(m_referencial);
+                Transform::UnitVector pos = m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>();
                 Transform::UnitVector constrainedPos(Transform::Units::WorldPixels);
-
+                Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
 
                 if (Transform::isOnCorner(m_referencial))
                 {
@@ -373,10 +373,19 @@ namespace obe
                 }
                 else
                 {
+                    float e1_x = oppositePos.x - pos.x;
+                    float e1_y = oppositePos.y - pos.y;
+                    float e2_x = x - pos.x;
+                    float e2_y = y - pos.y;
+
+                    float valDp = e1_x * e2_x + e1_y * e2_y;
+                    float len = e1_x * e1_x + e1_y * e1_y;
+
+                    m_dp.x = pos.x + (valDp * e1_x) / len;
+                    m_dp.y = pos.y + (valDp * e1_y) / len;
 
                     m_rect->setPointPosition(m_dp, m_referencial);
                 }
-                //std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
             }
             else
             {
