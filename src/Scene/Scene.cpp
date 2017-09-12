@@ -5,6 +5,7 @@
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include "Graphics/DrawUtils.hpp"
 
 namespace obe
 {
@@ -377,24 +378,27 @@ namespace obe
             Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
             {
-                Transform::UnitVector spritePosition = m_spriteArray[i]->getDrawPosition(pixelCamera);
+                Transform::UnitVector spritePosition = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::Center);
                 sfe::ComplexSprite& tAffSpr = m_spriteArray[i]->getSprite();
 
                 //std::cout << "Draw Position of Sprite : " << spritePosition << std::endl;
 
+                Transform::UnitVector middle = (m_spriteArray[i]->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
+
+                tAffSpr.setTranslationOrigin(middle.x, middle.y);
                 tAffSpr.setPosition(spritePosition.x, spritePosition.y);
-                //tAffSpr.setScalingOrigin(-layeredX, -layeredY); Work on this later :)
-                //tAffSpr.scale(m_camera.getHeight() / 2, m_camera.getHeight() / 2);
-                //m_spriteArray[i]->rotate(1);
-                std::cout << "Sprite @" << m_spriteArray[i]->getId() << std::endl;
+
+                /*std::cout << "Sprite @" << m_spriteArray[i]->getId() << std::endl;
                 std::cout << "Bounds : " << tAffSpr.getGlobalBounds().left << ", " << tAffSpr.getGlobalBounds().top << ", " << tAffSpr.getGlobalBounds().width << ", " << tAffSpr.getGlobalBounds().height << std::endl;
-                
+                std::cout << "CPos : " << spritePosition << std::endl;*/
+
                 if (m_spriteArray[i]->isVisible())
                 {
                     target.draw(tAffSpr);
                     if (m_spriteArray[i]->isSelected())
                     {
-                        m_spriteArray[i]->drawHandle(target, spritePosition.x, spritePosition.y);
+                        Transform::UnitVector handlePos = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
+                        m_spriteArray[i]->drawHandle(target, handlePos.x, handlePos.y);
                     }
                         
                 }
@@ -583,17 +587,23 @@ namespace obe
         Graphics::LevelSprite* Scene::getLevelSpriteByPosition(const Transform::UnitVector& position, int layer)
         {
             Graphics::LevelSprite* returnSpr = nullptr;
+            std::vector<Transform::Referencial> rectPts = { 
+              Transform::Referencial::TopLeft, Transform::Referencial::TopRight,
+              Transform::Referencial::BottomRight, Transform::Referencial::BottomLeft 
+            };
             Transform::UnitVector pixelPosition = position.to<Transform::Units::WorldPixels>();
+            Transform::UnitVector zeroOffset(0, 0);
+            Collision::PolygonalCollider positionCollider("positionCollider");
+            positionCollider.addPoint(position);
             std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);
             for (unsigned int i = 0; i < getSpriteVec.size(); i++)
             {
-                Transform::UnitVector center = getSpriteVec[i]->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
-                Transform::UnitVector ssize = getSpriteVec[i]->getSize().to<Transform::Units::WorldPixels>();
-                float rot = getSpriteVec[i]->getRotation();
-                int tX = cos(rot) * (pixelPosition.x - center.x) - sin(rot) * (pixelPosition.y - center.y);
-                int tY = sin(rot) * (pixelPosition.y - center.y) + cos(rot) * (pixelPosition.x - center.x);
-                if ((tX > center.x - ssize.x / 2) && (tX < center.x + ssize.x / 2)
-                    && (tY > center.y - ssize.y / 2) && (tY < center.y + ssize.y / 2))
+                Collision::PolygonalCollider sprCollider("sprCollider");
+                for (Transform::Referencial& ref : rectPts)
+                {
+                    sprCollider.addPoint(getSpriteVec[i]->getPosition(ref));
+                }
+                if (sprCollider.doesCollide(positionCollider, zeroOffset))
                 {
                     returnSpr = getSpriteVec[i];
                 }

@@ -28,7 +28,7 @@ namespace obe
 
         float Rect::getRotation() const
         {
-            return Utils::Math::convertToDegree(m_angle);
+            return m_angle;
         }
 
         void Rect::setRotation(float angle, Transform::UnitVector origin)
@@ -39,14 +39,12 @@ namespace obe
 
         void Rect::rotate(float angle, Transform::UnitVector origin)
         {
-            double tRadAngle = Utils::Math::convertToRadian(m_angle);
             double radAngle = Utils::Math::convertToRadian(angle);
             
             m_position = rotatePointAroundCenter(origin, m_position, radAngle);
             m_angle += angle;
-            m_cosAngleBuffer = cos(tRadAngle);
-            m_sinAngleBuffer = sin(tRadAngle);
-            std::cout << "Angle : " << m_angle << std::endl;
+            if (m_angle < 0 || m_angle > 360)
+                m_angle = Utils::Math::normalise(m_angle, 0, 360);
         }
 
         //TODO remove calculation when dx and dy are equal to 0. Directly add to vec in switch case.
@@ -54,6 +52,9 @@ namespace obe
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;
             double dx, dy;
+            double radAngle = Utils::Math::convertToRadian(m_angle);
+            double cosAngle = std::cos(radAngle);
+            double sinAngle = std::sin(radAngle);
             UnitVector result;
 
             switch (ref)
@@ -106,8 +107,8 @@ namespace obe
             default:
                 break;
             }
-            result.x = (dx * m_cosAngleBuffer - dy * m_sinAngleBuffer) * factor;
-            result.y = (dx * m_sinAngleBuffer + dy * m_cosAngleBuffer) * factor;
+            result.x = (dx * cosAngle - dy * sinAngle) * factor;
+            result.y = (dx * sinAngle + dy * cosAngle) * factor;
             vec.add(result);
         }
 
@@ -157,7 +158,8 @@ namespace obe
         {
             UnitVector refPosition = this->getPosition(ref);
             UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
-            UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -m_angle);
+            double radAngle = Utils::Math::convertToRadian(m_angle);
+            UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
             this->setPosition(position, ref);
 

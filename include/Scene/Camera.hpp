@@ -42,7 +42,7 @@ namespace obe
              * \param position New Position of the Camera
              * \param ref Referencial used to position the Camera
              */
-            void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::Center);
             /**
              * \brief Moves the Camera
              * \param position Position to add to the Camera
@@ -53,20 +53,20 @@ namespace obe
              * \param ref Referencial used to get the Position of the Camera
              * \return The Position of the Camera
              */
-            Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+            Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::Center) const;
 
             /**
              * \brief Sets the size of the Camera
              * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 WorldUnits)
              * \param ref Referencial used to resize the Camera
              */
-            void setSize(double pSize, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void setSize(double pSize, Transform::Referencial ref = Transform::Referencial::Center);
             /**
              * \brief Scales the Camera
              * \param pSize Factor used to multiply the current size
              * \param ref Referencial used to resize the Camera
              */
-            void scale(double pSize, Transform::Referencial ref = Transform::Referencial::TopLeft);
+            void scale(double pSize, Transform::Referencial ref = Transform::Referencial::Center);
             /**
              * \brief Gets an UnitVector containing the size of the Camera (Width and Height)
              * \return An UnitVector containing the size of the Camera (Width and Height)

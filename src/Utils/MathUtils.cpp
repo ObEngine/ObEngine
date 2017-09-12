@@ -40,6 +40,14 @@ namespace obe
             {
                 return	(180.0 / Utils::Math::pi) * -value;
             }
+
+            double normalise(const double value, const double start, const double end)
+            {
+                const double width = end - start;
+                const double offsetValue = value - start;
+
+                return (offsetValue - (floor(offsetValue / width) * width)) + start;
+            }
         }
     }
 }

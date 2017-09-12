@@ -27,6 +27,7 @@ namespace obe
             Transform::Rect* m_rect;
             Transform::Referencial m_referencial;
         public:
+            Transform::UnitVector m_dp;
             /**
             * \brief Creates a HandlePoint
             * \param parentRect Rect of the parent LevelSprite
@@ -38,7 +39,7 @@ namespace obe
             * \param x x Coordinate of the Position where to move the HandlePoint
             * \param y y Coordinate of the Position where to move the HandlePoint
             */
-            void moveTo(int x, int y) const;
+            void moveTo(int x, int y);
             /**
             * \brief Get the Referencial of the HandlePoint
             * \return The Referencial value
@@ -179,7 +180,7 @@ namespace obe
              * \param cameraPosition Position of the Camera (in WorldPixels Unit)
              * \return The Screen Position at which the LevelSprite should be drawn (in ViewPixels Unit)
              */
-            Transform::UnitVector getDrawPosition(Transform::UnitVector& cameraPosition) const;
+            Transform::UnitVector getDrawPosition(Transform::UnitVector& cameraPosition, Transform::Referencial ref) const;
 
             //Size
             /**

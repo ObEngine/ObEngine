@@ -275,6 +275,11 @@ namespace obe
             {
                 framerateManager.update();
 
+                if (Input::GetKey("Return")->isPressed())
+                {
+                    scene.getLevelSprite("sprite0")->rotate(90 * framerateManager.getGameSpeed());
+                }
+
                 gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
                 gameTriggers->trigger("Update");
 
@@ -489,6 +494,9 @@ namespace obe
                     cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).y));
                     window.clear();
                     scene.display(window);
+                    sf::Color magenta = sf::Color::Magenta;
+                    if (selectedHandlePoint != nullptr)
+                        Graphics::Utils::drawPoint(window, selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
                     pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")

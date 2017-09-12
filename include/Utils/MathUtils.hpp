@@ -81,6 +81,14 @@ namespace obe
             * \return A double containing the converted value
             */
             double convertToDegree(double value);
+            /**
+             * \brief Normalizes a value between start and end
+             * \param value Value to normalize
+             * \param start Lower bound
+             * \param end Higher bound
+             * \return Normalized value
+             */
+            double normalise(const double value, const double start, const double end);
 
             template <typename N>
             N getMin(const N& min1, const N& min2)
