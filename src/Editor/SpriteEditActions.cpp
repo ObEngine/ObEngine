@@ -122,6 +122,7 @@ namespace obe
                     std::cout << selectedHandlePoint << ", " << hoveredSprite << ", " << selectedSprite << std::endl;
                     if (selectedHandlePoint != nullptr)
                     {
+                        std::cout << "Picked HandlePoint" << std::endl;
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "handlePoint", selectedHandlePoint);
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "pos", 
                             pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));

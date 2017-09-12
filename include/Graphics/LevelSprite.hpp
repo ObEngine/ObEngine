@@ -17,6 +17,11 @@ namespace obe
 {
     namespace Graphics
     {
+        enum class LevelSpriteHandlePointType
+        {
+            ScaleHandle,
+            RotateHandle
+        };
         /**
         * \brief A HandlePoint to manipulate a LevelSprite Size
         * @Bind
@@ -26,14 +31,20 @@ namespace obe
         private:
             Transform::Rect* m_rect;
             Transform::Referencial m_referencial;
+            LevelSpriteHandlePointType m_type;
         public:
             Transform::UnitVector m_dp;
             /**
-            * \brief Creates a HandlePoint
+            * \brief Creates a Scale HandlePoint
             * \param parentRect Rect of the parent LevelSprite
             * \param ref Referencial of the HandlePoint
             */
             LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref);
+            /**
+            * \brief Creates a Rotate HandlePoint
+            * \param parentRect Rect of the parent LevelSprite
+            */
+            LevelSpriteHandlePoint(Transform::Rect* parentRect);
             /**
             * \brief Move the HandlePoint to the given Position
             * \param x x Coordinate of the Position where to move the HandlePoint
@@ -45,6 +56,11 @@ namespace obe
             * \return The Referencial value
             */
             Transform::Referencial getReferencial() const;
+            /**
+             * \brief Gets the type of the LevelSpriteHandlePoint (either Rotate or Scale)
+             * \return An enum value from LevelSpriteHandlePointType representing the type of the Handle Point
+             */
+            LevelSpriteHandlePointType getType() const;
             /**
             * \brief Get the rect of the parent LevelSprite
             * \return The Rect of the parent LevelSprite

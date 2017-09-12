@@ -132,7 +132,7 @@ namespace obe
             drawOptions["point_color_5"] = sf::Color(0, 255, 128);
             drawOptions["point_color_6"] = sf::Color(0, 255, 255);
             drawOptions["point_color_7"] = sf::Color(0, 128, 255);
-            drawOptions["point_color_8"] = sf::Color(0, 0, 255);
+            drawOptions["point_color_8"] = sf::Color(255, 255, 255);
 
             UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
 
@@ -149,6 +149,19 @@ namespace obe
                 UnitVector world = (pt + dPos).to<Units::WorldPixels>();
                 drawPoints.emplace_back(world.x, world.y);
             }
+
+            double radAngle = Utils::Math::convertToRadian(m_angle);
+            double cosAngle = std::cos(radAngle);
+            double sinAngle = std::sin(radAngle);
+            UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::WorldPixels>();
+            UnitVector vec = topPos;
+            UnitVector result;
+            double dy = m_size.y / 4;
+            result.x = (-dy * sinAngle) * -1;
+            result.y = (dy * cosAngle) * -1;
+            vec.add(result);
+            Graphics::Utils::drawPoint(target, vec.x - r, vec.y - r, r, sf::Color::White);
+            Graphics::Utils::drawLine(target, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
             Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
         }

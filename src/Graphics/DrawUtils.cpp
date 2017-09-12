@@ -16,7 +16,7 @@ namespace obe
                 return options[key].as<T>();
             }
 
-            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color& color)
+            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color color)
             {
                 sf::CircleShape drawPt;
                 drawPt.setRadius(radius);
@@ -25,7 +25,7 @@ namespace obe
                 target.draw(drawPt);
             }
 
-            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color& color)
+            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color color)
             {
                 sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(x1, y1), color),

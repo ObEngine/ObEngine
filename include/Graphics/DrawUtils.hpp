@@ -24,7 +24,7 @@ namespace obe
              * \param radius Radius of the Point to draw
              * \param color Color of the new Point
              */
-            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned int radius, sf::Color& color);
+            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned int radius, sf::Color color);
             /**
              * \brief Draws a Line
              * \param target Window you want to draw the Line on
@@ -35,7 +35,7 @@ namespace obe
              * \param thickness Thickness of the line you want to draw (2 = Minimal visible size)
              * \param color Color of the line you want to draw
              */
-            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color& color);
+            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color color);
             /**
              * \brief Draws a Polygon
              * \param target Window you want to draw the Line on

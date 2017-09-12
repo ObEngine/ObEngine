@@ -20,6 +20,7 @@ namespace obe
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
                 m_handlePoints.emplace_back(this, refIndex);
             }
+            m_handlePoints.emplace_back(this);
         }
 
         void LevelSprite::useTextureSize()
@@ -108,6 +109,27 @@ namespace obe
                     if (obe::Utils::Math::isBetween(posY + pixelCamera.y, lowerYBound, upperYBound))
                         return &m_handlePoints[i];
                 }
+            }
+
+            double radAngle = obe::Utils::Math::convertToRadian(m_angle);
+            double cosAngle = std::cos(radAngle);
+            double sinAngle = std::sin(radAngle);
+            Transform::UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::WorldPixels>();
+            Transform::UnitVector rotHandle = topPos;
+            Transform::UnitVector result;
+            double dy = m_size.y / 4;
+            result.x = (-dy * sinAngle) * -1;
+            result.y = (dy * cosAngle) * -1;
+            rotHandle.add(result);
+
+            int lowerXBound = std::min(rotHandle.x - LevelSpriteHandlePoint::radius, rotHandle.x + LevelSpriteHandlePoint::radius);
+            int upperXBound = std::max(rotHandle.x - LevelSpriteHandlePoint::radius, rotHandle.x + LevelSpriteHandlePoint::radius);
+            if (obe::Utils::Math::isBetween(posX + pixelCamera.x, lowerXBound, upperXBound))
+            {
+                int lowerYBound = std::min(rotHandle.y - LevelSpriteHandlePoint::radius, rotHandle.y + LevelSpriteHandlePoint::radius);
+                int upperYBound = std::max(rotHandle.y - LevelSpriteHandlePoint::radius, rotHandle.y + LevelSpriteHandlePoint::radius);
+                if (obe::Utils::Math::isBetween(posY + pixelCamera.y, lowerYBound, upperYBound))
+                    return &m_handlePoints.back();
             }
             return nullptr;
         }
@@ -318,39 +340,69 @@ namespace obe
         {
             m_rect = parentRect;
             m_referencial = ref;
+            m_type = LevelSpriteHandlePointType::ScaleHandle;
+        }
+
+        LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect)
+        {
+            m_rect = parentRect;
+            m_type = LevelSpriteHandlePointType::RotateHandle;
         }
 
         void LevelSpriteHandlePoint::moveTo(int x, int y)
         {
-            //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
-            //std::cout << "Set : " << x << ", " << y << std::endl;
-            m_dp = Transform::UnitVector(x, y, Transform::Units::WorldPixels);
-            float angle = m_rect->getRotation();
-            Transform::UnitVector pos = m_rect->getPosition(m_referencial);
-            Transform::UnitVector constrainedPos(Transform::Units::WorldPixels);
-
-
-            if (Transform::isOnCorner(m_referencial))
+            if (m_type == LevelSpriteHandlePointType::ScaleHandle)
             {
-                Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
-                Transform::UnitVector baseDist = oppositePos - m_dp;
-                Transform::UnitVector scaleVector = baseDist / m_rect->getSize().to<Transform::Units::WorldPixels>();
-                scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
-                double vScale = std::max(scaleVector.x, scaleVector.y);
-                if (baseDist.x != 0 && baseDist.y != 0)
-                    m_rect->scale(Transform::UnitVector(vScale, vScale, m_rect->getSize().unit), Transform::reverseReferencial(m_referencial));
+                //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
+                //std::cout << "Set : " << x << ", " << y << std::endl;
+                m_dp = Transform::UnitVector(x, y, Transform::Units::WorldPixels);
+                float angle = m_rect->getRotation();
+                Transform::UnitVector pos = m_rect->getPosition(m_referencial);
+                Transform::UnitVector constrainedPos(Transform::Units::WorldPixels);
+
+
+                if (Transform::isOnCorner(m_referencial))
+                {
+                    Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector baseDist = oppositePos - m_dp;
+                    Transform::UnitVector scaleVector = baseDist / m_rect->getSize().to<Transform::Units::WorldPixels>();
+                    scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
+                    double vScale = std::max(scaleVector.x, scaleVector.y);
+                    if (baseDist.x != 0 && baseDist.y != 0)
+                        m_rect->scale(Transform::UnitVector(vScale, vScale, m_rect->getSize().unit), Transform::reverseReferencial(m_referencial));
+                }
+                else
+                {
+
+                    m_rect->setPointPosition(m_dp, m_referencial);
+                }
+                //std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
             }
             else
             {
-                
-                m_rect->setPointPosition(m_dp, m_referencial);
+                double atan = std::atan(y / x) / obe::Utils::Math::pi * 180;
+                atan = obe::Utils::Math::convertToDegree(atan);
+                if (x < 0 || y < 0)
+                    atan += 180;
+                if (x > 0 && y < 0)
+                    atan -= 180;
+                if (atan < 0)
+                    atan += 360;
+
+                std::cout << atan << std::endl;
+
+                m_rect->setRotation(std::fmod(atan, 360), m_rect->getPosition(Transform::Referencial::Center));
             }
-            //std::cout << "Is now at " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
         }
 
         Transform::Referencial LevelSpriteHandlePoint::getReferencial() const
         {
             return m_referencial;
+        }
+
+        LevelSpriteHandlePointType LevelSpriteHandlePoint::getType() const
+        {
+            return m_type;
         }
 
         Transform::Rect& LevelSpriteHandlePoint::getRect() const
