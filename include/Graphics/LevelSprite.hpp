@@ -95,6 +95,7 @@ namespace obe
             PositionTransformer m_positionTransformer;
 
             void applySize();
+            void applySpriteRotation();
             void resetUnit(Transform::Units unit) override;
         public:
             /**

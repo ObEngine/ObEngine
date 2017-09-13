@@ -119,7 +119,7 @@ namespace obe
              * \brief Draws the Rect for debug purposes <REMOVE>
              * \param target sf::RenderWindow where to render the Rect
              */
-            void display(sf::RenderWindow& target, unsigned int posX, unsigned int posY) const;
+            void display(sf::RenderWindow& target, int posX, int posY) const;
         };
     }
 }

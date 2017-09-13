@@ -41,7 +41,6 @@ namespace obe
                     .addFunction("getPath", &Graphics::LevelSprite::getPath)
                     .addFunction("getPositionTransformer", &Graphics::LevelSprite::getPositionTransformer)
                     .addFunction("getRect", &Graphics::LevelSprite::getRect)
-                    .addFunction("getRotation", &Graphics::LevelSprite::getRotation)
                     .addFunction("getSprite", &Graphics::LevelSprite::getSprite)
                     .addFunction("getSpriteHeight", &Graphics::LevelSprite::getSpriteHeight)
                     .addFunction("getSpriteWidth", &Graphics::LevelSprite::getSpriteWidth)

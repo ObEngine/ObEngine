@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Graphics/DrawUtils.hpp>
@@ -12,8 +14,8 @@ namespace obe
     {
         UnitVector rotatePointAroundCenter(const UnitVector& center, const UnitVector& Around, float angle)
         {
-            double cY = cos(angle);
-            double sY = sin(angle);
+            double cY = std::cos(angle);
+            double sY = std::sin(angle);
 
             UnitVector moved, delta = Around - center;
             moved.x = (delta.x * cY - delta.y * sY) + center.x;
@@ -33,8 +35,7 @@ namespace obe
 
         void Rect::setRotation(float angle, Transform::UnitVector origin)
         {
-            std::cout << "@ThisPoint : " << m_position << std::endl;
-            rotate(angle - m_angle, origin);
+            this->rotate(angle - m_angle, origin);
         }
 
         void Rect::rotate(float angle, Transform::UnitVector origin)
@@ -112,7 +113,7 @@ namespace obe
             vec.add(result);
         }
 
-        void Rect::display(sf::RenderWindow& target, unsigned int posX, unsigned int posY) const
+        void Rect::display(sf::RenderWindow& target, int posX, int posY) const
         {
             int r = 6;
             std::map<std::string, Types::Any> drawOptions;
@@ -153,13 +154,16 @@ namespace obe
             double radAngle = Utils::Math::convertToRadian(m_angle);
             double cosAngle = std::cos(radAngle);
             double sinAngle = std::sin(radAngle);
-            UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::WorldPixels>();
+            UnitVector topPos;
+            this->transformRef(topPos, Referencial::Top, ConversionType::From);
+            topPos = topPos.to<Units::WorldPixels>();
+            topPos += dPos;
             UnitVector vec = topPos;
             UnitVector result;
             double dy = m_size.y / 4;
             result.x = (-dy * sinAngle) * -1;
             result.y = (dy * cosAngle) * -1;
-            vec.add(result);
+            vec += result;
             Graphics::Utils::drawPoint(target, vec.x - r, vec.y - r, r, sf::Color::White);
             Graphics::Utils::drawLine(target, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 

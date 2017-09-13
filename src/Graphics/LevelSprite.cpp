@@ -30,6 +30,14 @@ namespace obe
             this->setSize(initialSpriteSize);
         }
 
+        void LevelSprite::applySpriteRotation()
+        {
+            Transform::UnitVector middle = (this->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
+            middle *= Transform::UnitVector(this->getScaleFactor().x, this->getScaleFactor().y, middle.unit);
+            m_sprite.setRotationOrigin(middle.x, middle.y);
+            m_sprite.setRotation(-m_angle * this->getScaleFactor().x * this->getScaleFactor().y);
+        }
+
         void LevelSprite::load(const std::string& path)
         {
             if (path != "")
@@ -70,17 +78,13 @@ namespace obe
         void LevelSprite::setRotation(double rotate)
         {
             Rect::setRotation(rotate, this->getPosition(Transform::Referencial::Center));
-            Transform::UnitVector middle = (this->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
-            m_sprite.setRotationOrigin(middle.x, middle.y);
-            m_sprite.setRotation(-m_angle);
+            this->applySpriteRotation();
         }
 
         void LevelSprite::rotate(double addRotate)
         {
             Rect::rotate(addRotate, this->getPosition(Transform::Referencial::Center));
-            Transform::UnitVector middle = (this->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
-            m_sprite.setRotationOrigin(middle.x, middle.y);
-            m_sprite.setRotation(-m_angle);
+            this->applySpriteRotation();
         }
 
         void LevelSprite::setScalingOrigin(int x, int y)
@@ -163,7 +167,7 @@ namespace obe
             {
                 m_sprite.scale(widthScale, heightScale);
             }
-            m_sprite.setRotation(-m_angle);
+            this->applySpriteRotation();
         }
 
         void LevelSprite::setColor(sf::Color newColor)
@@ -244,8 +248,8 @@ namespace obe
                 spritePos = spritePos.to<Transform::Units::WorldUnits>();
                 spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
             }
-            int spriteRot = configuration.contains(vili::NodeType::DataNode, "rotation") ?
-                configuration.getDataNode("rotation").get<int>() : 0;
+            double spriteRot = configuration.contains(vili::NodeType::DataNode, "rotation") ?
+                configuration.getDataNode("rotation").get<double>() : 0;
             int layer = configuration.contains(vili::NodeType::DataNode, "layer") ?
                 configuration.getDataNode("layer").get<int>() : 1;
             int zdepth = configuration.contains(vili::NodeType::DataNode, "z-depth") ?
@@ -272,6 +276,7 @@ namespace obe
             this->setZDepth(zdepth);
             std::cout << "PrePosition1 : " << m_position << std::endl;
             this->setRotation(spriteRot);
+            this->applySpriteRotation();
             std::cout << "PrePosition2 : " << m_position << std::endl;
 
             std::cout << "<>==============================<> Sprite Configuration : " << m_id << std::endl;
@@ -389,18 +394,10 @@ namespace obe
             }
             else
             {
-                double atan = std::atan(y / x) / obe::Utils::Math::pi * 180;
-                atan = obe::Utils::Math::convertToDegree(atan);
-                if (x < 0 || y < 0)
-                    atan += 180;
-                if (x > 0 && y < 0)
-                    atan -= 180;
-                if (atan < 0)
-                    atan += 360;
+                Transform::UnitVector center = m_rect->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
+                double n = (90 + ((m_rect->getScaleFactor().y < 0) ? 180 : 0)) - (std::atan2(center.y - y, center.x - x)) * 180.0 / obe::Utils::Math::pi;
 
-                std::cout << atan << std::endl;
-
-                m_rect->setRotation(std::fmod(atan, 360), m_rect->getPosition(Transform::Referencial::Center));
+                m_rect->setRotation(std::fmod(n, 360), m_rect->getPosition(Transform::Referencial::Center));
             }
         }
 

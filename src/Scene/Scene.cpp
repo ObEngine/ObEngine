@@ -399,6 +399,7 @@ namespace obe
                     {
                         Transform::UnitVector handlePos = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
                         m_spriteArray[i]->drawHandle(target, handlePos.x, handlePos.y);
+                        middle += pixelCamera;
                     }
                         
                 }
