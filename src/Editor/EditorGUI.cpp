@@ -29,7 +29,6 @@ namespace obe
                     wCoeff = (double(sf::VideoMode::getDesktopMode().width - window.getSize().x) / double(sf::VideoMode::getDesktopMode().width)) * 0.5 + 1.0;
                 else
                     wCoeff = 1 - (double(window.getSize().x - sf::VideoMode::getDesktopMode().width) / double(window.getSize().x));
-                std::cout << "CW" << wCoeff << std::endl;
                 bigFontSize = (double(window.getSize().x)) / double(64.0 / wCoeff);
                 mediumFontSize = double(bigFontSize) / 1.3;
                 smallFontSize = double(bigFontSize) / 2.0;
@@ -798,7 +797,6 @@ namespace obe
                             }
                             System::Path keyImgPath("Sprites/Keys/Keyboard/Key_" + keyName + ".png");
                             System::Path stateImgPath("Sprites/Keys/Keyboard/" + stateName + ".png");
-                            std::cout << "Load img path : " << keyImgPath.toString() << std::endl;
                             if (kIndex > 0)
                             {
                                 tgui::Label::Ptr addSymbol = tgui::Label::create();

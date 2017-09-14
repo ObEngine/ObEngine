@@ -127,7 +127,6 @@ namespace obe
 
         void Console::inputKey(int keyCode)
         {
-            //std::cout << "Current Key : " << keyCode << std::endl;
             switch (keyCode)
             {
             case 8:
@@ -142,8 +141,7 @@ namespace obe
                 this->clearInputBuffer();
                 m_virtualCursor = 0;
                 break;
-            case 22:
-                std::cout << "PASTE" << std::endl;
+            case 22: //Paste
                 break;
             default:
                 m_inputBuffer.insert(m_inputBuffer.begin() + m_virtualCursor, static_cast<char>(keyCode));

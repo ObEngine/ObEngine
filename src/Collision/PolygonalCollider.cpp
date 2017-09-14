@@ -4,10 +4,11 @@
 #include <vili/ErrorHandler.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
-#include <Types/Any.hpp>
+#include <Debug/Logger.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/Script.hpp>
+#include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -685,7 +686,7 @@ namespace obe
             if (!Utils::Vector::isInList(tag, this->retrieveTagVector(tagType)))
                 this->retrieveTagVector(tagType).push_back(tag);
             else
-                std::cout << "<Warning:Collisions:PolygonalCollider>[addTag] : Tag \'" << tag << "\" is already in PolygonalCollider \"" << m_id << "\"" << std::endl;
+                Debug::Log->warn("<PolygonalCollider> Tag '{0}' is already in PolygonalCollider '{1}'", tag, m_id);
         }
 
         void PolygonalCollider::clearTags(ColliderTagType tagType)
@@ -722,106 +723,79 @@ namespace obe
 
         Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(const PolygonalCollider& collider, const Transform::UnitVector& offset) const
         {
-            if (/*!doesCollide(collider, Transform::UnitVector(0, 0))*/true)
+            Transform::Units pxUnit = Transform::Units::WorldPixels;
+            const Transform::UnitVector tOffset = offset.to(pxUnit);
+            bool inFront = false;
+            Transform::UnitVector minDep;
+            auto calcMinDistanceDep = [this](PolygonPath& sol1, PolygonPath& sol2, const Transform::UnitVector& tOffset) -> std::tuple<double, Transform::UnitVector, bool>
             {
-                //std::cout << "Accept Chall ===============================>" << std::endl;
-                Transform::Units pxUnit = Transform::Units::WorldPixels;
-                const Transform::UnitVector tOffset = offset.to(pxUnit);
+                double minDistance = -1;
                 bool inFront = false;
-                Transform::UnitVector minDep;
-                auto calcMinDistanceDep = [this](PolygonPath& sol1, PolygonPath& sol2, const Transform::UnitVector& tOffset) -> std::tuple<double, Transform::UnitVector, bool>
+                
+                Transform::Units pxUnit = Transform::Units::WorldPixels;
+                Transform::UnitVector minDeplacement(pxUnit);
+                Transform::UnitVector point1(pxUnit);
+                Transform::UnitVector point2(pxUnit);
+                Transform::UnitVector point3(pxUnit);
+                Transform::UnitVector s1(pxUnit);
+                Transform::UnitVector s2(pxUnit);
+                Transform::UnitVector ip(pxUnit);
+                double s, t, distance;
+                for (Transform::UnitVector& point0 : sol1)
                 {
-                    double minDistance = -1;
-                    bool inFront = false;
-                    
-                    Transform::Units pxUnit = Transform::Units::WorldPixels;
-                    Transform::UnitVector minDeplacement(pxUnit);
-                    Transform::UnitVector point1(pxUnit);
-                    Transform::UnitVector point2(pxUnit);
-                    Transform::UnitVector point3(pxUnit);
-                    Transform::UnitVector s1(pxUnit);
-                    Transform::UnitVector s2(pxUnit);
-                    Transform::UnitVector ip(pxUnit);
-                    double s, t, distance;
-                    for (Transform::UnitVector& point0 : sol1)
+                    point0 = point0.to(pxUnit);
+                    for (int i = 0; i < sol2.size(); i++)
                     {
-                        point0 = point0.to(pxUnit);
-                        for (int i = 0; i < sol2.size(); i++)
+                        point1 = point0 + tOffset;
+                        point2 = sol2[i].to(pxUnit);
+                        point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1].to(pxUnit);
+
+                        s1 = point1 - point0;
+                        s2 = point3 - point2;
+
+                        s = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y)) / (-s2.x * s1.y + s1.x * s2.y);
+                        t = (s2.x * (point0.y - point2.y) - s2.y * (point0.x - point2.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+                        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                         {
-                            point1 = point0 + tOffset;
-                            point2 = sol2[i].to(pxUnit);
-                            point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1].to(pxUnit);
+                            inFront = true;
+                            ip = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
 
-                            s1 = point1 - point0;
-                            s2 = point3 - point2;
-
-                            s = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y)) / (-s2.x * s1.y + s1.x * s2.y);
-                            t = (s2.x * (point0.y - point2.y) - s2.y * (point0.x - point2.x)) / (-s2.x * s1.y + s1.x * s2.y);
-
-                            //std::cout << "S/T : " << s << ", " << t << std::endl;
-
-                            if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+                            distance = std::sqrt(std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
+                            if (distance < minDistance || minDistance == -1)
                             {
-                                inFront = true;
-                                ip = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
-
-                                distance = std::sqrt(std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
-                                if (distance < minDistance || minDistance == -1)
-                                {
-                                    minDistance = distance;
-                                    double xComp = t * s1.x;
-                                    double yComp = t * s1.y;
-                                    minDeplacement.set((xComp > 0) ? std::floor(xComp) : std::ceil(xComp), (yComp > 0) ? std::floor(yComp) : std::ceil(yComp));
-                                }
+                                minDistance = distance;
+                                double xComp = t * s1.x;
+                                double yComp = t * s1.y;
+                                minDeplacement.set((xComp > 0) ? std::floor(xComp) : std::ceil(xComp), (yComp > 0) ? std::floor(yComp) : std::ceil(yComp));
                             }
                         }
                     }
-                    //std::cout << "MINDEPCHE" << minDistance << ", " << minDeplacement << ", " << inFront << std::endl;
-                    return std::make_tuple(minDistance, minDeplacement, inFront);
-                };
-                PolygonPath fPath = this->getAllPoints();
-                PolygonPath sPath = collider.getAllPoints();
-
-                auto tdm1 = calcMinDistanceDep(fPath, sPath, tOffset);
-                //std::cout << "TDM1 : " << std::get<1>(tdm1) << std::endl;
-                auto tdm2 = calcMinDistanceDep(sPath, fPath, tOffset * Transform::UnitVector(-1.0, -1.0, tOffset.unit));
-                //std::cout << "TDM2 : " << std::get<1>(tdm2) << std::endl;
-                std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
-                std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
-                if (std::get<2>(tdm1) || std::get<2>(tdm2))
-                    inFront = true;
-
-
-                //std::cout << "NONZERO : " << (std::get<0>(tdm1) > 0) << ", " << (std::get<0>(tdm2) > 0) << std::endl;
-                //std::cout << "tdm1 less or equal : " << (std::get<0>(tdm1) <= std::get<0>(tdm2)) << std::endl;
-
-                if (!inFront)
-                    minDep = tOffset;
-                else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
-                {
-                    //std::cout << "Accept Zero Binary Branch" << std::endl;
-                    return Transform::UnitVector(0, 0, tOffset.unit);
                 }
-                else if (std::get<0>(tdm1) > 0 && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
-                {
-                    //std::cout << "Accept first choice" << std::endl;
-                    minDep = std::get<1>(tdm1);
-                }
-                else if (std::get<0>(tdm2) > 0)
-                {
-                    //std::cout << "Accept second choice" << std::endl;
-                    //std::cout << "SECOND CHOICE : " << std::get<1>(tdm2) << std::endl;
-                    minDep = std::get<1>(tdm2);
-                }
-                else
-                {
-                    //std::cout << "Accept none" << std::endl;
-                    return Transform::UnitVector(0, 0, tOffset.unit);
-                }
+                return std::make_tuple(minDistance, minDeplacement, inFront);
+            };
+            PolygonPath fPath = this->getAllPoints();
+            PolygonPath sPath = collider.getAllPoints();
 
-                //std::cout << "MIN DEP IS : " << minDep << std::endl;
-                return minDep;
-            }
+            auto tdm1 = calcMinDistanceDep(fPath, sPath, tOffset);
+            auto tdm2 = calcMinDistanceDep(sPath, fPath, tOffset * Transform::UnitVector(-1.0, -1.0, tOffset.unit));
+            std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
+            std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
+            if (std::get<2>(tdm1) || std::get<2>(tdm2))
+                inFront = true;
+
+            if (!inFront)
+                minDep = tOffset;
+            else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
+                return Transform::UnitVector(0, 0, tOffset.unit);
+            else if (std::get<0>(tdm1) > 0 && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
+                minDep = std::get<1>(tdm1);
+            else if (std::get<0>(tdm2) > 0)
+                minDep = std::get<1>(tdm2);
+            else
+                return Transform::UnitVector(0, 0, tOffset.unit);
+
+            return minDep;
         }
 
         bool PolygonalCollider::doesCollide(const PolygonalCollider& collider, const Transform::UnitVector& offset) const

@@ -2,6 +2,7 @@
 
 #include <vili/ErrorHandler.hpp>
 
+#include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
 #include <Utils/FileUtils.hpp>
 
@@ -100,9 +101,11 @@ namespace obe
             for (MountablePath& mountedPath : MountedPaths)
             {
                 int loadResponse = 0;
-                if (Utils::File::fileExists(mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path))
+                std::string loadPath = mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+                if (Utils::File::fileExists(loadPath))
                 {
-                    loadResponse = lambda(resource, mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path);
+                    Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
+                    loadResponse = lambda(resource, loadPath);
                 }
 
                 loadSum += loadResponse;

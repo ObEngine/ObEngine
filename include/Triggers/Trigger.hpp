@@ -4,6 +4,7 @@
 
 #include <kaguya/kaguya.hpp>
 
+#include <Debug/Logger.hpp>
 #include <Script/GlobalState.hpp>
 #include <Types/Any.hpp>
 #include <Utils/StringUtils.hpp>
@@ -26,6 +27,7 @@ namespace obe
         private:
             TriggerGroup* m_parent;
             std::string m_name;
+            std::string m_fullName;
             std::vector<std::pair<unsigned int, std::string>> m_registeredEnvs;
             bool m_enabled = false;
             friend class TriggerGroup;
@@ -97,9 +99,11 @@ namespace obe
         template <typename P>
         void Trigger::pushParameter(const std::string& name, P parameter)
         {
+            Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
             for (auto& rEnv : m_registeredEnvs)
             {
                 // Future Trigger Call Parameters
+                Debug::Log->trace("<Trigger> Pushing parameter {0} to Lua Environment {1} from Trigger {2}", name, rEnv.first, m_fullName);
                 Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
             }
         }

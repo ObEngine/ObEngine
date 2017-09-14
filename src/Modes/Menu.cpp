@@ -61,7 +61,6 @@ namespace obe
                 selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
                 selectMapButton->setSize("630", "100");
                 selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
-                std::cout << "Adding map file : " << levelName << selectMapButton->getPosition().x << ", " << selectMapButton->getPosition().y << std::endl;
                 selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
                 middlePanel->add(selectMapButton);
                 scrollBoxSize += selectMapButton->getSize().y - 1;
@@ -77,7 +76,7 @@ namespace obe
             {
                 if (!Utils::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString()))
                 {
-                    std::cout << "Creating new level : " << newLevelName << std::endl;
+                    Debug::Log->info("<Menu:createLevel> Creating new Map file : '{0}'", newLevelName);
                     vili::ViliParser newFileParser;
                     newFileParser.addFlag("Map");
                     newFileParser.addFlag("Lock");
@@ -95,7 +94,7 @@ namespace obe
                     input->setText("");
                 }
                 else
-                    std::cout << "<Warning:Menu:Menu>[createLevel] : Level \"" << newLevelName << "\" already exists, abort..." << std::endl;
+                    Debug::Log->warn("<Menu:createLevel> Map file : '{0}' already exists, cancelling operation", newLevelName);
             }
         }
 

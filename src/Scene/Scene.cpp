@@ -61,7 +61,7 @@ namespace obe
             }
             else
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.ColliderAlreadyExists", { {"id", id}, {"mapfile", m_levelName} });
+                Debug::Log->warn("<Scene> Collider '{0}' already exists !", id);
             }
         }
 
@@ -77,11 +77,13 @@ namespace obe
 
         void Scene::reload()
         {
+            Debug::Log->debug("<Scene> Reloading Scene");
             this->loadFromFile(m_levelFileName);
         }
 
         void Scene::loadFromFile(const std::string& filename)
         {
+            Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", filename);
             this->clearWorld();
             if (filename != m_levelFileName)
             {
@@ -89,12 +91,6 @@ namespace obe
                 m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&m_levelFile, System::Loaders::dataLoader);
                 m_levelFileName = filename;
             }
-            else
-            {
-                std::cout << "Reloading Map file" << std::endl;
-            }
-            
-            std::cout << "Base Folder : " << m_baseFolder << std::endl;
 
             if (m_levelFile->contains(vili::NodeType::ComplexNode, "Meta"))
             {
@@ -142,7 +138,6 @@ namespace obe
                 for (std::string& collisionName : collisions.getAll(vili::NodeType::ComplexNode))
                 {
                     vili::ComplexNode& currentCollision = collisions.at(collisionName);
-                    std::cout << "New Collider : " << collisionName << std::endl;
                     std::unique_ptr<Collision::PolygonalCollider> tempCollider = std::make_unique<Collision::PolygonalCollider>(collisionName);
 
                     std::string pointsUnit = currentCollision.at<vili::DataNode>("unit", "unit").get<std::string>();
@@ -158,7 +153,6 @@ namespace obe
                                 colliderPoint->get<double>(),
                                 pBaseUnit
                             );
-                            std::cout << "Add Vector Pt : " << pVector2 << std::endl;
                             tempCollider->addPoint(pVector2);
                         }
                         else
@@ -343,7 +337,6 @@ namespace obe
         {
             if (m_futureLoad != "")
             {
-                std::cout << "FUTURE LOAD NOW : " << m_futureLoad << std::endl;
                 std::string futureLoadBuffer = std::move(m_futureLoad);
                 this->loadFromFile(futureLoadBuffer);
             }
@@ -518,8 +511,6 @@ namespace obe
             }
 
             m_gameObjectArray.push_back(move(newGameObject));
-
-            //std::cout << "<World> Created new object : " << id << " of type : " << obj << std::endl;
 
             return m_gameObjectArray.back().get();
         }

@@ -102,9 +102,12 @@ namespace obe
         {
             if (!m_initialised)
             {
+                Debug::Log->warn("<GameObject> Initialising GameObject '{0}'", m_id);
                 m_initialised = true;
                 m_localTriggers->trigger("Init");
             }
+            else
+                Debug::Log->warn("<GameObject> GameObject '{0}' has already been initialised", m_id);
         }
 
         GameObject::~GameObject()
@@ -118,6 +121,7 @@ namespace obe
 
         void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const
         {
+            Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to GameObject {1} (From Lua)", argName, m_id);
             m_localTriggers->pushParameterFromLua("Init", argName, value);
         }
 
@@ -128,6 +132,7 @@ namespace obe
 
         void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
         {
+            Debug::Log->debug("<GameObject> Loading GameObject '{0}'", m_id);
             //Script
             if (obj.contains(vili::NodeType::DataNode, "permanent"))
             {
@@ -355,7 +360,6 @@ namespace obe
 
         void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
         {
-            //std::cout << "REGISTERING ET : " << trNsp << ", " << trGrp << ", " << trName << ", " << callAlias << std::endl;
             if (trName == "*")
             {
                 std::vector<std::string> allTrg = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);

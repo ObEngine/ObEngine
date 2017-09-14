@@ -28,7 +28,7 @@ namespace obe
 
             bool isDoubleInt(const double& value)
             {
-                return (trunc(value) == value);
+                return (int(value) == value);
             }
 
             double convertToRadian(double value)

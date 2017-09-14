@@ -102,8 +102,6 @@ namespace obe
             {
                 unsigned int ixPos = (index % maxElementsPerRow) * (btnSize + btnOff) + xOff;
                 unsigned int iyPos = index / maxElementsPerRow * (btnSize + btnOff) + yOff;
-
-                std::cout << "On Index " << index << " determined pos : " << ixPos << ", " << iyPos << std::endl;
                 return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
             };
 
@@ -111,7 +109,6 @@ namespace obe
             {
                 std::string currentObjName = allGameObjects[i];
                 std::tie(xpos, ypos) = getBtnPos(i);
-                std::cout << currentObjName << ":" << xpos << "," << ypos << std::endl;
                 tgui::Button::Ptr currentObj = tgui::Button::create();
                 currentObj->setRenderer(baseTheme.getRenderer("ObjectButton"));
                 currentObj->setTextSize(18);
@@ -121,7 +118,6 @@ namespace obe
                 objectTab->add(currentObj);
                 currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
                 {
-                    std::cout << "Trying to build : " << currentObjName << std::endl;
                     buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
                 });
             }
@@ -131,17 +127,14 @@ namespace obe
 
         void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
         {
-            std::cout << "Call Require Creation for : " << objName << std::endl;
             vili::ComplexNode* requires = Script::GameObjectDatabase::GetRequirementsForGameObject(objName);
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
             vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
-            std::cout << "Requires is : " << requires << std::endl;
             if (requires != nullptr)
             {
                 requires->getComplexNode("Input").copy(requireCopy, "Input");
                 requires->getComplexNode("Output").copy(requireCopy, "Output");
                 vili::ComplexNode& requireInput = requires->at("Input");
-                std::cout << "Show Requires Panel !" << std::endl;
                 requiresPanel->show();
                 tgui::Panel::Ptr content = requiresPanel->get<tgui::Panel>("content");
                 content->removeAllWidgets();
@@ -160,8 +153,6 @@ namespace obe
                 int widgetVerticalPosition = 70;
                 for (std::string& requireItem : requireInput.getAll(vili::NodeType::ComplexNode))
                 {
-                    std::cout << "Require item is : " << requireItem << std::endl;
-
                     tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                     currentRequirementLabel->setPosition(50, widgetVerticalPosition);
                     currentRequirementLabel->setTextSize(18);
@@ -265,14 +256,12 @@ namespace obe
             const int yOff = 70;
             unsigned int maxElementsPerRow = float(panelWidth) / (float(sprSize) + float(sprOff));
             unsigned int elemIndex = 0;
-            std::cout << "Spr Size : " << sprSize << std::endl;
             auto getSpritePos = [&sprSize, &sprOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
             {
                 unsigned int ixPos = (index % maxElementsPerRow) * (sprSize + sprOff) + xOff;
                 unsigned int iyPos = index / maxElementsPerRow * (sprSize + sprOff) + yOff;
                 index++;
 
-                std::cout << "On Index " << index << " determined pos : " << ixPos << ", " << iyPos << std::endl;
                 return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
             };
             unsigned int xpos;
@@ -314,7 +303,7 @@ namespace obe
                 if (textureLoadChecker.getSize().x != 0)
                 {
                     std::tie(xpos, ypos) = getSpritePos(elemIndex);
-                    std::cout << "MAMIA1 : " << xpos << ", " << ypos << std::endl;
+
                     tgui::Button::Ptr currentSprite = tgui::Button::create();
                     spritesPanel->add(currentSprite, "LS_FILE_" + element);
                     currentSprite->setPosition(xpos, ypos);

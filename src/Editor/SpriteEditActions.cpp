@@ -119,10 +119,8 @@ namespace obe
                 if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
                 {
                     selectedHandlePoint = selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
-                    std::cout << selectedHandlePoint << ", " << hoveredSprite << ", " << selectedSprite << std::endl;
                     if (selectedHandlePoint != nullptr)
                     {
-                        std::cout << "Picked HandlePoint" << std::endl;
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "handlePoint", selectedHandlePoint);
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "pos", 
                             pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));
@@ -133,7 +131,6 @@ namespace obe
                     {
                         editorTriggers->pushParameter("SpriteUnselect", "sprite", selectedSprite);
                         editorTriggers->trigger("SpriteUnselect");
-                        std::cout << "Unselect" << std::endl;
                         selectedSprite->setColor(sf::Color::White);
                         selectedSprite->unselect();
                         sprInfo.setString("");

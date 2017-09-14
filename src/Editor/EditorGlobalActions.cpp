@@ -190,10 +190,9 @@ namespace obe
             double& waitForMapSaving, 
             tgui::Label::Ptr savedLabel)
         {
-            std::cout << "CONNECTED SAVE ACTIONS" << std::endl;
             inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel](const Input::InputActionEvent& event)
             {
-                std::cout << "Save Map" << std::endl;
+                Debug::Log->info("<EditorGlobalActions> Saving Map '{0}'", mapName);
                 world.dump()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
                 if (waitForMapSaving < 0)
                 {

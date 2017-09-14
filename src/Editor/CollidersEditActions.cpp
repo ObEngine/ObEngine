@@ -215,11 +215,9 @@ namespace obe
 
             inputManager.getAction("ColliderCreate").connect([editorTriggers, &selectedMasterCollider, &world, &cursor](const Input::InputActionEvent& event)
             {
-                std::cout << "Called : " << (selectedMasterCollider == nullptr) << std::endl;
                 if (selectedMasterCollider == nullptr)
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    std::cout << "Let's go : " << (cursor.getX() + pixelCamera.x) << ", " << (cursor.getY() + pixelCamera.y) << std::endl;
                     int i = 0;
                     Transform::UnitVector pPos(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels);
                     pPos += pixelCamera;

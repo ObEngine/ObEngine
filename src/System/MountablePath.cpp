@@ -23,7 +23,15 @@ namespace obe
         {
             Path::MountedPaths.clear();
             vili::ViliParser mountedPaths;
-            mountedPaths.parseFile("Mount.vili", true);
+            try
+            {
+                mountedPaths.parseFile("Mount.vili", true);
+            }
+            catch (...)
+            {
+                Debug::Log->critical("<MountablePath> Can't find 'Mount.vili' file, stopping ObEngine");
+                throw aube::ErrorHandler::Raise("ObEngine.System.MountablePath.NoMountFile");
+            }
             for (std::string path : mountedPaths.at("Mount").getAll(vili::NodeType::ComplexNode))
             {
                 vili::ComplexNode& currentElement = mountedPaths.at("Mount", path);
@@ -33,23 +41,23 @@ namespace obe
                 if (currentType == "Path")
                 {
                     Path::Mount(MountablePath(MountablePathType::Path, currentPath, currentPriority));
-                    std::cout << "Mounted Path : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+                    Debug::Log->info("<MountablePath> Mounted Path : '{0}' with priority {1}", currentPath, currentPriority);
                 }
                 else if (currentType == "Package")
                 {
                     Package::Load(currentPath, currentPriority);
-                    std::cout << "Mounted Package : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+                    Debug::Log->info("<MountablePath> Mounted Package : '{0}' with priority {1}", currentPath, currentPriority);
                 }
                 else if (currentType == "Workspace")
                 {
                     Workspace::Load(currentPath, currentPriority);
-                    std::cout << "Mounted Workspace : <" << currentPath << "> with priority : " << currentPriority << std::endl;
+                    Debug::Log->info("<MountablePath> Mounted Workspace : '{0}' with priority {1}", currentPath, currentPriority);
                 }
             }
-            std::cout << "<System> List of mounted paths : " << std::endl;
+            Debug::Log->info("<MountablePath> List of mounted paths : ");
             for (MountablePath& currentPath : Path::MountedPaths)
             {
-                std::cout << "    <System> MountedPath : " << currentPath.basePath << std::endl;
+                Debug::Log->info("<MoutablePath> MountedPath : {0}", currentPath.basePath);
             }
         }
     }

@@ -1,3 +1,4 @@
+#include <Debug/Logger.hpp>
 #include <Utils/FileUtils.hpp>
 
 namespace obe
@@ -8,6 +9,7 @@ namespace obe
         {
             std::vector<std::string> getDirectoryList(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Get Directory List at {0}", path);
                 tinydir_dir dir;
                 tinydir_open(&dir, path.c_str());
 
@@ -28,6 +30,7 @@ namespace obe
 
             std::vector<std::string> getFileList(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Get File List at {0}", path);
                 tinydir_dir dir;
                 tinydir_open(&dir, path.c_str());
 
@@ -45,6 +48,7 @@ namespace obe
 
             bool fileExists(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Test File existence at {0}", path);
                 struct stat buffer;
                 bool fileFound = (stat(path.c_str(), &buffer) == 0);
                 return fileFound;
@@ -52,6 +56,7 @@ namespace obe
 
             bool directoryExists(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Get Directory existence at {0}", path);
 #ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_directory(path);
 #else
@@ -67,6 +72,7 @@ namespace obe
 
             bool createDirectory(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Create Directory at {0}", path);
 #ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::create_directory(path);
 #else
@@ -80,12 +86,14 @@ namespace obe
 
             void createFile(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Create File at {0}", path);
                 std::ofstream dst(path, std::ios::binary);
                 dst.close();
             }
 
             void copy(const std::string& source, const std::string& target)
-            {
+            { 
+                Debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
 #ifdef _USE_CPP_NEW_FS
                 //std::experimental::filesystem::copy(source, target); (Doesn't work for now)
                 std::ifstream src(source, std::ios::binary);
@@ -103,11 +111,14 @@ namespace obe
 
             bool deleteFile(const std::string& path)
             {
+                if (Debug::Log.get() != nullptr)
+                    Debug::Log->trace("<FileUtils> Delete File at {0}", path);
                 return std::remove(path.c_str()) == 0;
             }
 
             bool deleteDirectory(const std::string& path)
             {
+                Debug::Log->trace("<FileUtils> Delete Directory at {0}", path);
 #ifdef _USE_CPP_NEW_FS
                 if (directoryExists(path))
                     return std::experimental::filesystem::remove(path);

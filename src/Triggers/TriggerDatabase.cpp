@@ -8,6 +8,7 @@ namespace obe
 
         TriggerDatabase::TriggerDatabase()
         {
+            Debug::Log->debug("<TriggerDatabase> Initialising TriggerDatabase");
             this->createNamespace("Global");
             m_databaseChrono.start();
         }
@@ -36,6 +37,7 @@ namespace obe
 
         void TriggerDatabase::createNamespace(const std::string& groupNamespace)
         {
+            Debug::Log->debug("<TriggerDatabase> Creating Namespace {0} in TriggerDatabase", groupNamespace);
             if (m_allTriggers.size() == 0)
                 m_allTriggers[groupNamespace] = std::map<std::string, std::unique_ptr<TriggerGroup>>();
             else
@@ -49,6 +51,7 @@ namespace obe
 
         TriggerGroup* TriggerDatabase::createTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
         {
+            Debug::Log->debug("<TriggerDatabase> Creating TriggerGroup {0} in Namespace {1}", triggerGroupName, groupNamespace);
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) == m_allTriggers[groupNamespace].end())
@@ -63,7 +66,7 @@ namespace obe
 
         TriggerGroup* TriggerDatabase::joinTriggerGroup(const std::string& groupNamespace, const std::string& triggerGroupName)
         {
-            std::cout << "Trying to join TriggerGroup : " << triggerGroupName << " inside : " << groupNamespace << std::endl;
+            Debug::Log->debug("<TriggerDatabase> Joining TriggerGroup {0} in Namespace {1}", triggerGroupName, groupNamespace);
             if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
             {
                 if (m_allTriggers[groupNamespace].find(triggerGroupName) != m_allTriggers[groupNamespace].end() && m_allTriggers[groupNamespace][triggerGroupName]->isJoinable())
@@ -86,6 +89,7 @@ namespace obe
 
         void TriggerDatabase::removeNamespace(const std::string& namespaceId)
         {
+            Debug::Log->debug("<TriggerDatabase> Removing Trigger Namespace {0}", namespaceId);
             if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
                 m_allTriggers.erase(m_allTriggers.find(namespaceId));
             else
@@ -127,6 +131,7 @@ namespace obe
 
         void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
         {
+            Debug::Log->debug("<TriggerDatabase> Removing TriggerGroup {0} from Namespace {1}", trgGroup->getName(), trgGroup->getNamespace());
             m_allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());
         }
 
@@ -146,6 +151,7 @@ namespace obe
 
         void TriggerDatabase::update()
         {
+            Debug::Log->trace("<TriggerDatabase> Updating TriggerDatabase");
             for (auto it = m_allTriggers.begin(); it != m_allTriggers.end(); ++it)
             {
                 for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -178,6 +184,7 @@ namespace obe
 
         void TriggerDatabase::clear()
         {
+            Debug::Log->debug("<TriggerDatabase> Clearing TriggerDatabase");
             m_delayedTriggers.clear();
             m_databaseChrono.stop();
             m_allTriggers.clear();

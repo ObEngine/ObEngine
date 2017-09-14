@@ -67,7 +67,7 @@ namespace obe
                             }
                             else
                             {
-                                std::cout << "Warning : ObEngine.Input.InputCondition.ButtonNotFound : " << keyId << std::endl;
+                                Debug::Log->warn("<InputCondition> Button not found : '{0}' in code '{1}'", keyId, code);
                                 //throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonNotFound", { { "button", keyId } });
                             }
                         }

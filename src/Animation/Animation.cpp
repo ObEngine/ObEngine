@@ -1,4 +1,5 @@
 #include <Animation/Animation.hpp>
+#include <Debug/Logger.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
@@ -70,6 +71,7 @@ namespace obe
 
         void Animation::loadAnimation(const System::Path& path)
         {
+            Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
             vili::ViliParser animFile;
             path.add(path.last() + ".ani.vili").loadResource(&animFile, System::Loaders::dataLoader);
             //Meta
@@ -95,6 +97,7 @@ namespace obe
                     textureName = Utils::String::replace(model, "%s", imageList.get(i).get<std::string>());
                 else if (imageList.get(i).getDataType() == vili::DataType::String)
                     textureName = imageList.get(i).get<std::string>();
+                Debug::Log->trace("<Animation> Loading Texture {0} in Animation {1}", textureName, m_animationName);
                 m_animationTextures[i] = Graphics::ResourceManager::GetInstance()->getTexture(path.add(textureName).toString());
             }
             //Groups
@@ -109,6 +112,7 @@ namespace obe
                     m_animationGroupMap[complexName]->setGroupDelay(currentGroup.at<vili::DataNode>("clock"));
                 else
                     m_animationGroupMap[complexName]->setGroupDelay(m_animationDelay);
+                Debug::Log->trace("<Animation> Building AnimationGroup {0} in Animation {1}", complexName, m_animationName);
                 m_animationGroupMap[complexName]->build();
             }
             //Animation Code
@@ -142,6 +146,7 @@ namespace obe
                     m_codeIndex = 0;
                 if (Time::getTickSinceEpoch() - m_animationDelay > m_currentDelay)
                 {
+                    Debug::Log->trace("<Animation> Updating Animation {0}", m_animationName);
                     if (m_askCommand)
                     {
                         std::vector<std::string> currentCommand = m_animationCode[m_codeIndex];
@@ -213,6 +218,7 @@ namespace obe
 
         void Animation::reset()
         {
+            Debug::Log->trace("<Animation> Resetting Animation {0}", m_animationName);
             for (auto it = m_animationGroupMap.begin(); it != m_animationGroupMap.end(); ++it)
                 it->second->reset();
             m_currentStatus = AnimationStatus::Play;

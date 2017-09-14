@@ -31,6 +31,15 @@ set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(SFML 2 REQUIRED graphics window system network audio)
 add_subdirectory(extlibs/build/sfe)
+
+IF (NOT DEFINED BUILD_TESTS)
+    set(BUILD_TESTS OFF CACHE BOOL "Build ObEngine Tests ?")
+ENDIF()
+
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
+
 find_package(OpenGL REQUIRED)
 
 include_directories(include/)

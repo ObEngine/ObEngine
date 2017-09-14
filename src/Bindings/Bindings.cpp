@@ -16,6 +16,7 @@
 #include <Bindings/UtilsBindings.hpp>
 #include <Bindings/ViliBindings.hpp>
 #include <Bindings/Bindings.hpp>
+#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>
 #include <Utils/StringUtils.hpp>
@@ -134,13 +135,12 @@ namespace obe
             BindTree.add("Plugins");
             for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
             {
-                std::cout << "Checking Plugins on Mounted Path : " << mountedPath.basePath << std::endl;
+                Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
                 System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
                 for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
                 {
                     const std::string pluginPath = cPluginPath.add(filename).toString();
                     const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    std::cout << "Indexing Plugin : " << filename << " as " << pluginName << std::endl;
                     BindTree["Plugins"].add(Utils::String::split(filename, ".")[0], 
                         [pluginPath, pluginName](kaguya::State* lua)
                     {
@@ -151,11 +151,10 @@ namespace obe
                             Plugins[pluginName]->open();
                             exposeFunction.init();
                             exposeFunction(lua);
-                            std::cout << "<Plugin> Loaded " << pluginName << std::endl;
+                            Debug::Log->info("<Bindings:Plugin> : Loaded : {0}", pluginName);
                         }
                         catch (const dynamicLinker::dynamicLinkerException& e) {
-                            std::cout << "<Plugin> : Unloadable Plugin : " << pluginName << std::endl;
-                            std::cout << "  > Cause : " << e.what() << std::endl;
+                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0}", pluginName);
                         }
                     });
                 }

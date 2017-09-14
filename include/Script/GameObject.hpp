@@ -5,6 +5,7 @@
 
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
+#include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Script/GlobalState.hpp>
 #include <Transform/SceneNode.hpp>
@@ -247,6 +248,7 @@ namespace obe
         template <typename U>
         void GameObject::sendInitArg(const std::string& argName, U value)
         {
+            Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName, m_id);
             m_localTriggers->pushParameter("Init", argName, value);
         }
     };

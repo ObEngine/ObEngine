@@ -2,6 +2,7 @@
 
 #include <kaguya/kaguya.hpp>
 
+#include <Debug/Logger.hpp>
 #include <Script/GlobalState.hpp>
 #include <Types/Any.hpp>
 #include <Utils/TypeUtils.hpp>
@@ -26,6 +27,7 @@ namespace obe
         template <typename T>
         void CoreHook::dropValue(std::string name, T val)
         {
+            Debug::Log->debug("<CoreHook> Dropping value {0} (Type {1})", name, Utils::Type::getObjectType(val));
             ScriptEngine["Hook"][name] = val;
             containerMap[name] = std::pair<std::string, Types::Any*>(Utils::Type::getObjectType(val), new Types::Any(val));
         }

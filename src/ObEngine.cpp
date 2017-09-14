@@ -5,6 +5,7 @@
 #include <SFML/Window/VideoMode.hpp>
 
 #include <Bindings/Bindings.hpp>
+#include <Debug/Logger.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
@@ -32,44 +33,61 @@ int main(int argc, char** argv)
     std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
+    Debug::InitLogger();
+    Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
 
+    Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    Debug::Log->debug("<ObEngine> Initialising Position Transformers");
     Graphics::InitPositionTransformer();
+    Debug::Log->debug("<ObEngine> Initialising Input Handling");
     Input::InitKeyList();
 
-    /*std::ofstream out("debug.log");
-    std::streambuf *coutbuf = std::cout.rdbuf();
-    std::cout.rdbuf(out.rdbuf());*/
+    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}", Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
-    /*std::ofstream out_err("errors.log");
-    std::streambuf* cerrbug = std::cerr.rdbuf();
-    std::cerr.rdbuf(out_err.rdbuf());*/
-
-    std::cout << "<Computer Configuration>" << std::endl;
-    std::cout << "Screen Resolution : " << Transform::UnitVector::Screen.w << ", " << Transform::UnitVector::Screen.h << std::endl;
-
+    Debug::Log->debug("<ObEngine> Initialising Errors Handling");
     LoadErrors();
+    Debug::Log->debug("<ObEngine> Mounting paths");
     System::MountPaths();
 
+    Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
+    Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
+    Debug::Log->debug("<ObEngine> Loading NoTexture asset");
     Graphics::ResourceManager::GetInstance()->getTexture("Sprites/Others/notexture.png");
+
+    Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 
     if (startMode == "edit")
     {
+        Debug::Log->info("<ObEngine> Starting ObEngine MapEditor");
         std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
             Editor::editMap(editMapName);
     }
     else if (startMode == "play")
+    {
+        Debug::Log->info("<ObEngine> Starting ObEngine Player");
         Modes::startGame();
+    }
     else if (startMode == "toolkit")
+    {
+        Debug::Log->info("<ObEngine> Starting ObEngine Toolkit");
         Modes::startToolkitMode();
+    }
     else if (startMode == "dev")
+    {
+        Debug::Log->info("<ObEngine> Starting ObEngine Development Menu");
         Modes::startDevMenu();
+    }
     else
+    {
+        Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine player by default", startMode);
         Modes::startGame();
+    }
+        
 
     return 0;
 }

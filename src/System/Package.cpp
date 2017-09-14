@@ -25,6 +25,7 @@ namespace obe
 
             bool Install(const std::string& packageName)
             {
+                Debug::Log->info("<Package> Installing Package '{0}'", packageName);
                 if (!Utils::Vector::isInList(packageName + ".opaque", Utils::File::getFileList("Package")))
                     throw aube::ErrorHandler::Raise("ObEngine.System.Package.CantFindPackage", {{"package", packageName}});
                 if (!PackageExists(packageName))
@@ -33,9 +34,8 @@ namespace obe
                     vili::ViliParser cPackage("Package/Opaque.vili");
                     std::string realPackageName = cPackage.at<vili::DataNode>("Meta", "name").get<std::string>();
                     std::string packageVersion = cPackage.at<vili::DataNode>("Meta", "version").get<std::string>();
-                    std::cout << "<Package> Installing Package <" << packageName << "> ..." << std::endl;
                     elz::extractZip("Package/" + packageName + ".opaque", "Package/" + realPackageName);
-                    std::cout << "<Package> Package <" << packageName << "> has been successfully installed !" << std::endl;
+                    Debug::Log->info("<Package> Package '{0}' has been successfully installed", packageName);
 
                     vili::ViliParser packages("Package/Packages.vili");
                     packages->createComplexNode(realPackageName);
@@ -49,10 +49,10 @@ namespace obe
 
             bool Load(const std::string& packageName, unsigned int priority)
             {
+                Debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
                 if (PackageExists(packageName))
                 {
                     Path::Mount(MountablePath(MountablePathType::Package, GetPackageLocation(packageName), priority));
-                    std::cout << "<System> Mounting Package : " << packageName << " : " << GetPackageLocation(packageName) << std::endl;
                     return true;
                 }
                 throw aube::ErrorHandler::Raise("ObEngine.System.Package.InexistantPackage", {{"function", "Load"}, {"package", packageName}});

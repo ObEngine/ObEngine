@@ -1,3 +1,4 @@
+#include <Debug/Logger.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
@@ -22,12 +23,14 @@ namespace obe
 
         TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
         {
+            Debug::Log->debug("<TriggerGroup> Add Trigger {0} to TriggerGroup {1}", triggerName, m_fromNsp + m_name);
             m_triggerMap[triggerName] = std::make_unique<Trigger>(this, triggerName);
             return this;
         }
 
         TriggerGroup* TriggerGroup::removeTrigger(const std::string& triggerName)
         {
+            Debug::Log->debug("<TriggerGroup> Remove Trigger {0} from TriggerGroup {1}", triggerName, m_fromNsp + m_name);
             if (m_triggerMap.find(triggerName) != m_triggerMap.end())
                 m_triggerMap.erase(triggerName);
             else
@@ -43,6 +46,7 @@ namespace obe
 
         TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
         {
+            Debug::Log->trace("<TriggerGroup> Trigger {0} from TriggerGroup {1}", triggerName, m_fromNsp + m_name);
             this->getTrigger(triggerName)->execute();
             return this;
         }

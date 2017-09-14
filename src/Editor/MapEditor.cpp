@@ -30,8 +30,6 @@ namespace obe
     {
         void editMap(const std::string& mapName)
         {
-            std::cout << "<System> Creating window with resolution " << Transform::UnitVector::Screen.w << "x" << Transform::UnitVector::Screen.h << std::endl;
-            
             //Creating Window
             sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
             window.setKeyRepeatEnabled(false);
@@ -127,7 +125,7 @@ namespace obe
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
             {
                 gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
-                std::cout << "[LuaError]<Main> : " << "[CODE::" << statuscode << "] : " << message << std::endl;
+                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
             });
             Script::hookCore.dropValue("Scene", &scene);
 
@@ -316,7 +314,6 @@ namespace obe
 
                 if (oldConsoleVisibility != gameConsole.isVisible())
                 {
-                    std::cout << "Swap console Visibility" << std::endl;
                     if (oldConsoleVisibility)
                     {
                         inputManager.clearContexts();

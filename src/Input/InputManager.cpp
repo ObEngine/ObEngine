@@ -119,7 +119,7 @@ namespace obe
                     std::string associatedKeys = config.at(context).getDataNode(action);
                     InputCondition actionCondition;
                     actionCondition.setCombinationCode(associatedKeys);
-                    std::cout << "Associated Key : " << associatedKeys << " for action " << action << std::endl;
+                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'", associatedKeys, action);
                     this->getAction(action).addCondition(actionCondition);
                     this->getAction(action).addContext(context);
                     alreadyInFile.push_back(action);
@@ -135,12 +135,12 @@ namespace obe
 
         InputManager& InputManager::addContext(const std::string& context)
         {
-            std::cout << "Add Context : " << context << std::endl;
+            Debug::Log->debug("<InputManager> Adding Context '{0}'", context);
             for (auto& action : m_allActions)
             {
                 if (Utils::Vector::isInList(context, action->getContexts()) && !Utils::Vector::isInList(action.get(), m_currentActions))
                 {
-                    std::cout << "Add Action in context : " << context << " : " << action.get()->getId() << std::endl;
+                    Debug::Log->debug("<InputManager> Add Action '{0}' in Context '{1}'", action.get()->getId(), context);
                     m_currentActions.push_back(action.get());
                 }
             }

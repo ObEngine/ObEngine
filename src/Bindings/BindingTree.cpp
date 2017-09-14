@@ -1,4 +1,5 @@
 #include <Bindings/BindingTree.hpp>
+#include <Debug/Logger.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -146,12 +147,11 @@ namespace obe
             bool elementAlreadyExists = checkIfLuaElementExists(lua, this->getNodePath());
             if (!elementAlreadyExists && !m_hasLib)
             {
-                //std::cout << "Doesn't exists, create table : " << this->getNodePath() << std::endl;
                 (*lua)(this->getNodePath() + " = {};");
             }
             else if (!elementAlreadyExists)
             {
-                //std::cout << "Doesn't exists, LoadLib : " << this->getNodePath() << std::endl;
+                Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
                 m_lib(lua);
             }
             if (spreads)

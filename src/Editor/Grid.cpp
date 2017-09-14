@@ -19,32 +19,38 @@ namespace obe
 
         void EditorGrid::setCellWidth(unsigned int sizeX)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Width : {0}", sizeX);
             m_gridSizeX = sizeX;
         }
 
         void EditorGrid::setCellHeight(unsigned int sizeY)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Height : {0}", sizeY);
             m_gridSizeY = sizeY;
         }
 
         void EditorGrid::setSize(unsigned int sizeX, unsigned int sizeY)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Size : {0}x{1}", sizeX, sizeY);
             this->setCellWidth(sizeX);
             this->setCellHeight(sizeY);
         }
 
         void EditorGrid::setOffsetX(int offsetX)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Offset X : {0}", offsetX);
             this->gridOffX = offsetX % this->m_gridSizeX;
         }
 
         void EditorGrid::setOffsetY(int offsetY)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Offset Y : {0}", offsetY);
             this->gridOffY = offsetY % this->m_gridSizeY;
         }
 
         void EditorGrid::setOffset(int offsetX, int offsetY)
         {
+            Debug::Log->trace("<EditorGrid> Set Cell Offset : {0}, {1}", offsetX, offsetY);
             this->setOffsetX(offsetX);
             this->setOffsetY(offsetY);
         }
@@ -73,6 +79,7 @@ namespace obe
         {
             if (gridMagnetX != -1 && gridMagnetY != -1)
             {
+                Debug::Log->trace("<EditorGrid> Magnetize Cursor on {0}, {1}", gridMagnetX, gridMagnetY);
                 cursor.setPosition(gridMagnetX, gridMagnetY);
             }
         }
@@ -81,6 +88,7 @@ namespace obe
         {
             if (gridMagnetX != -1 && gridMagnetY != -1)
             {
+                Debug::Log->trace("<EditorGrid> Move Magnet to {0}, {1}", x, y);
                 if (x != 0) gridMagnetX += (m_gridSizeX * x);
                 if (y != 0) gridMagnetY += (m_gridSizeY * y);
                 cursor.setPosition(gridMagnetX, gridMagnetY);

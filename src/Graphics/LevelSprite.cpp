@@ -231,7 +231,6 @@ namespace obe
             std::string spriteYTransformer;
             std::string spriteUnits = configuration.contains(vili::NodeType::ComplexNode, "rect") ?
                 configuration.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
-            //std::cout << "SpriteUnit : " << spriteUnits << std::endl;
             std::string spritePath = configuration.contains(vili::NodeType::DataNode, "path") ?
                 configuration.getDataNode("path").get<std::string>() : "";
             Transform::UnitVector spritePos(0, 0);
@@ -267,25 +266,15 @@ namespace obe
             if (spritePath != "")
                 this->load(spritePath);
             this->setPosition(spritePos);
-            std::cout << "PrePosition : " << m_position << std::endl;
             this->setSize(spriteSize);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
             PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
             this->setPositionTransformer(positionTransformer);
             this->setLayer(layer);
             this->setZDepth(zdepth);
-            std::cout << "PrePosition1 : " << m_position << std::endl;
             this->setRotation(spriteRot);
             this->applySpriteRotation();
-            std::cout << "PrePosition2 : " << m_position << std::endl;
 
-            std::cout << "<>==============================<> Sprite Configuration : " << m_id << std::endl;
-            std::cout << "Angle : " << m_angle << std::endl;
-            std::cout << "Layer : " << m_layer << std::endl;
-            std::cout << "ZDepth : " << m_zdepth << std::endl;
-            std::cout << "Position : " << m_position << std::endl;
-            std::cout << "Size : " << m_size << std::endl;
-            std::cout << "Visible : " << m_visible << std::endl;
             this->setSelected(true);
         }
 

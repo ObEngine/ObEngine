@@ -107,7 +107,6 @@ namespace vili
             {
                 for (int i = 0; i < vector.size(); i++)
                 {
-                    std::cout << "Compare : " << find[occ] << " and " << vector[i] << std::endl;
                     if (find[occ] == vector[i])
                     {
                         if (!startedSearch)

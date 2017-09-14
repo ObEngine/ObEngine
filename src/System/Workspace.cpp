@@ -1,5 +1,6 @@
 #include <vili/Vili.hpp>
 
+#include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
@@ -24,10 +25,10 @@ namespace obe
 
             bool Load(const std::string& workspaceName, unsigned int priority)
             {
+                Debug::Log->info("<Workspace> Loading Workspace '{0}' with priority {1}", workspaceName, priority);
                 if (WorkspaceExists(workspaceName))
                 {
                     Path::Mount(MountablePath(MountablePathType::Workspace, GetWorkspaceLocation(workspaceName), priority));
-                    std::cout << "<System> Mounting Workspace : " << workspaceName << " : " << GetWorkspaceLocation(workspaceName) << std::endl;
                     return true;
                 }
                 throw aube::ErrorHandler::Raise("ObEngine.System.Workspace.InexistantWorkspace", {{"workspace", workspaceName}});

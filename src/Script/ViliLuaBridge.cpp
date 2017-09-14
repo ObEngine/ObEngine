@@ -84,7 +84,6 @@ namespace obe
 
             vili::ComplexNode* luaTableToComplexNode(const std::string& id, kaguya::LuaRef& convert)
             {
-                std::cout << "Convert table : " << id << std::endl;
                 vili::ComplexNode* returnElement = nullptr;
                 if (convert.type() == 0 || convert.type() == 5)
                 {
@@ -95,13 +94,11 @@ namespace obe
                         std::string tableKey = tableItem.first;
                         if (convert[tableKey].type() == 5)
                         {
-                            std::cout << "Push subtable : " << tableKey << std::endl;
                             kaguya::LuaRef tempTableRef = convert[tableKey];
                             returnElement->pushComplexNode(luaTableToComplexNode(tableKey, tempTableRef));
                         }
                         else if (Utils::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
                         {
-                            std::cout << "Push subelement : " << tableKey << std::endl;
                             kaguya::LuaRef tempElemRef = convert[tableKey];
                             returnElement->pushDataNode(luaElementToDataNode(tableKey, tempElemRef));
                         }

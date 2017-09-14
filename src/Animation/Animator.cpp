@@ -27,6 +27,7 @@ namespace obe
 
         void Animator::clear(bool clearMemory)
         {
+            Debug::Log->trace("<Animator> Clearing Animator at {0}", m_animatorPath.toString());
             m_animationSet.clear();
             m_currentAnimation = nullptr;
             m_currentAnimationName = "NONE";
@@ -58,6 +59,7 @@ namespace obe
 
         void Animator::setKey(const std::string& key)
         {
+            Debug::Log->trace("<Animator> Set Animation Key {0} for Animator at {1}", key, m_animatorPath.toString());
             if (m_animationSet.find(key) == m_animationSet.end())
             {
                 throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", {
@@ -94,6 +96,7 @@ namespace obe
 
         void Animator::loadAnimator()
         {
+            Debug::Log->trace("<Animator> Loading Animator at {0}", m_animatorPath.toString());
             std::vector<std::string> listDir;
             m_animatorPath.loadResource(&listDir, System::Loaders::dirPathLoader);
             std::vector<std::string> allFiles;
@@ -127,6 +130,7 @@ namespace obe
         {
             if (!m_paused)
             {
+                Debug::Log->trace("<Animator> Updating Animator at {0}", m_animatorPath.toString());
                 if (m_currentAnimation == nullptr)
                     throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation", { { "animator", m_animatorPath.toString() } });
                 if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
