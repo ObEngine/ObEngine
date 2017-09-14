@@ -40,7 +40,7 @@ namespace obe
 
         void Rect::rotate(float angle, Transform::UnitVector origin)
         {
-            double radAngle = Utils::Math::convertToRadian(angle);
+            double radAngle = Utils::Math::convertToRadian(-angle);
             
             m_position = rotatePointAroundCenter(origin, m_position, radAngle);
             m_angle += angle;
@@ -53,7 +53,7 @@ namespace obe
         {
             double factor = (type == ConversionType::From) ? 1.0 : -1.0;
             double dx, dy;
-            double radAngle = Utils::Math::convertToRadian(m_angle);
+            double radAngle = Utils::Math::convertToRadian(-m_angle);
             double cosAngle = std::cos(radAngle);
             double sinAngle = std::sin(radAngle);
             UnitVector result;
@@ -151,7 +151,7 @@ namespace obe
                 drawPoints.emplace_back(world.x, world.y);
             }
 
-            double radAngle = Utils::Math::convertToRadian(m_angle);
+            double radAngle = Utils::Math::convertToRadian(-m_angle);
             double cosAngle = std::cos(radAngle);
             double sinAngle = std::sin(radAngle);
             UnitVector topPos;
@@ -175,7 +175,7 @@ namespace obe
         {
             UnitVector refPosition = this->getPosition(ref);
             UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
-            double radAngle = Utils::Math::convertToRadian(m_angle);
+            double radAngle = Utils::Math::convertToRadian(-m_angle);
             UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
             this->setPosition(position, ref);

@@ -115,7 +115,7 @@ namespace obe
                 }
             }
 
-            double radAngle = obe::Utils::Math::convertToRadian(m_angle);
+            double radAngle = obe::Utils::Math::convertToRadian(-m_angle);
             double cosAngle = std::cos(radAngle);
             double sinAngle = std::sin(radAngle);
             Transform::UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::WorldPixels>();

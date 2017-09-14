@@ -33,12 +33,12 @@ namespace obe
 
             double convertToRadian(double value)
             {
-                return  (Utils::Math::pi / 180.0) * -value;
+                return  (Utils::Math::pi / 180.0) * value;
             }
 
             double convertToDegree(double value)
             {
-                return	(180.0 / Utils::Math::pi) * -value;
+                return	(180.0 / Utils::Math::pi) * value;
             }
 
             double normalise(const double value, const double start, const double end)
