@@ -11,6 +11,8 @@ namespace obe
         */
         namespace SoundBindings
         {
+            void LoadMusic(kaguya::State* lua);
+            void LoadSound(kaguya::State* lua);
         }
     }
 }

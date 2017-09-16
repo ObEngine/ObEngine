@@ -72,7 +72,9 @@ namespace obe
                 .add("Scene", &SceneBindings::LoadScene);
             BindTree["Core"].add("Script")["Script"]
                 .add("Script", &ScriptBindings::LoadGameObject);
-            BindTree["Core"].add("Sound")["Sound"];
+            BindTree["Core"].add("Sound")["Sound"]
+                .add("Music", &SoundBindings::LoadMusic)
+                .add("Sound", &SoundBindings::LoadSound);
             BindTree["Core"].add("System")["System"]
                 .add("Constants", &SystemBindings::LoadSystemConstants)
                 .add("MountablePath", &SystemBindings::LoadMountablePath)

@@ -42,7 +42,7 @@ namespace obe
              * \param position New Position of the Camera
              * \param ref Referencial used to position the Camera
              */
-            void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::Center);
+            void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
             /**
              * \brief Moves the Camera
              * \param position Position to add to the Camera
@@ -53,7 +53,7 @@ namespace obe
              * \param ref Referencial used to get the Position of the Camera
              * \return The Position of the Camera
              */
-            Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::Center) const;
+            Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
 
             /**
              * \brief Sets the size of the Camera
