@@ -249,9 +249,11 @@ namespace vili
 
     ComplexNode& ComplexNode::createComplexNode(const std::string& id)
     {
-        m_childAttributes[id] = std::make_unique<ComplexNode>(this, id);
         if (!Functions::Vector::isInList(id, m_childAttributesNames))
+        {
+            m_childAttributes[id] = std::make_unique<ComplexNode>(this, id);
             m_childAttributesNames.push_back(id);
+        }
         return this->getComplexNode(id);
     }
 
