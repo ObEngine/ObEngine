@@ -102,7 +102,7 @@ namespace obe
         {
             if (!m_initialised)
             {
-                Debug::Log->warn("<GameObject> Initialising GameObject '{0}'", m_id);
+                Debug::Log->debug("<GameObject> Initialising GameObject '{0}'", m_id);
                 m_initialised = true;
                 m_localTriggers->trigger("Init");
             }

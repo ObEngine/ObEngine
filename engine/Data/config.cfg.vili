@@ -79,10 +79,5 @@ KeyBinding:
         ConsoleDownHistory:"Pressed:Down"
         ConsoleToggle:"Pressed:F1"
     
-Developpement:
-    showCharacter:True
-    showLevelSprites:True
-    showOverlay:True
-    showCollisions:False
-    showFPS:True
-    COMM:"COM9"
+Debug:
+    logLevel:1

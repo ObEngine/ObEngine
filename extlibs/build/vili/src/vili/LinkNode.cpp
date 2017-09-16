@@ -111,14 +111,4 @@ namespace vili
             (*file) << m_id << ":&(" << getPath() << ")" << std::endl;
         }
     }
-
-    void ArrayNode::reorder(int index)
-    {
-        for (int i = index + 1; i < m_dataList.size(); i++)
-        {
-            this->removeOwnership(m_dataList[i].get());
-            m_dataList[i]->setId("#" + std::to_string(i));
-            m_dataList[i]->setParent(this);
-        }
-    }
 }

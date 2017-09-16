@@ -115,7 +115,12 @@ namespace obe
                         m_levelFile->at("View", "referencial").getDataNode("referencial").get<std::string>()
                     );
                 }
+                Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referencial {2}", 
+                    m_cameraInitialPosition.x, 
+                    m_cameraInitialPosition.y, 
+                    Transform::referencialToString(m_cameraInitialReferencial));
                 m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
+                std::cout << m_camera.getPosition() << std::endl;
             }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", {{"map", filename}});

@@ -274,8 +274,6 @@ namespace obe
             this->setZDepth(zdepth);
             this->setRotation(spriteRot);
             this->applySpriteRotation();
-
-            this->setSelected(true);
         }
 
         sf::FloatRect LevelSprite::getRect()

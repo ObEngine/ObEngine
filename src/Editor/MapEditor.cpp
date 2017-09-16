@@ -10,11 +10,13 @@
 #include <Editor/EditorGlobalActions.hpp>
 #include <Editor/SpriteEditActions.hpp>
 #include <Input/InputManager.hpp>
+#include <Input/KeyList.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Network/Network.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
+#include <System/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <Time/FramerateCounter.hpp>
@@ -22,7 +24,6 @@
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/MathUtils.hpp>
-#include "Input/KeyList.hpp"
 
 namespace obe
 {
@@ -109,9 +110,7 @@ namespace obe
             font.loadFromFile("Data/Fonts/arial.ttf");
 
             //Config
-            vili::ViliParser configFile;
-            System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
-            vili::ComplexNode& gameConfig = configFile->at("GameConfig");
+            vili::ComplexNode& gameConfig = System::Config->at("GameConfig");
             int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
             //Cursor
@@ -135,7 +134,7 @@ namespace obe
             //Keybinding
             Input::InputManager inputManager;
             Script::hookCore.dropValue("InputManager", &inputManager);
-            inputManager.configure(configFile.at("KeyBinding"));
+            inputManager.configure(System::Config.at("KeyBinding"));
             inputManager
                 .addContext("game")
                 .addContext("mapEditor")
@@ -272,11 +271,6 @@ namespace obe
             while (window.isOpen())
             {
                 framerateManager.update();
-
-                if (Input::GetKey("Return")->isPressed())
-                {
-                    scene.getLevelSprite("sprite0")->rotate(90 * framerateManager.getGameSpeed());
-                }
 
                 gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
                 gameTriggers->trigger("Update");

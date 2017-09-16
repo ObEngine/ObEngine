@@ -8,6 +8,7 @@
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/Script.hpp>
+#include <System/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -60,9 +61,7 @@ namespace obe
             font.loadFromFile("Data/Fonts/arial.ttf");
 
             //Config
-            vili::ViliParser configFile;
-            System::Path("Data/config.cfg.vili").loadResource(&configFile, System::Loaders::dataLoader);
-            vili::ComplexNode& gameConfig = configFile.at("GameConfig");
+            vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
 
             //Cursor
             System::Cursor cursor(&window);
@@ -75,7 +74,7 @@ namespace obe
             //Keybinding
             Input::InputManager inputManager;
             Script::hookCore.dropValue("InputManager", &inputManager);
-            inputManager.configure(configFile.at("KeyBinding"));
+            inputManager.configure(System::Config.at("KeyBinding"));
             inputManager.addContext("game");
 
             sf::Event event;

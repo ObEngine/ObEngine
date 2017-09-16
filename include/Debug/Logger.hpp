@@ -9,5 +9,6 @@ namespace obe
         namespace spd = spdlog;
         extern std::shared_ptr<spd::logger> Log;
         void InitLogger();
+        void InitLoggerLevel();
     }
 }

@@ -1,6 +1,9 @@
 #include <spdlog/sinks/dist_sink.h>
 
 #include <Debug/Logger.hpp>
+#include <System/Config.hpp>
+#include <System/Loaders.hpp>
+#include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>
 
 namespace obe
@@ -24,8 +27,16 @@ namespace obe
             dist_sink->add_sink(sink2);
             Log = std::make_shared<spdlog::logger>("Log", dist_sink);
             Log->set_pattern("[%H:%M:%S.%e]<%l> : %v");
-            Log->set_level(spd::level::trace);
+            Log->set_level(spd::level::info);
             Log->info("Logger initialised");
+        }
+
+        void InitLoggerLevel()
+        {
+            spdlog::level::level_enum lvle = static_cast<spdlog::level::level_enum>(System::Config.at("Debug").getDataNode("logLevel").get<int>());
+            std::cout << "Debug level : " << lvle << std::endl;
+            if (System::Config->contains("Debug") && System::Config.at("Debug").contains("logLevel"))
+                Log->set_level(lvle);
         }
     }
 }

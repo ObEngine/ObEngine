@@ -15,6 +15,7 @@
 #include <Modes/Toolkit.hpp>
 #include <ObEngine.hpp>
 #include <Script/GlobalState.hpp>
+#include <System/Config.hpp>
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
@@ -50,6 +51,8 @@ int main(int argc, char** argv)
     LoadErrors();
     Debug::Log->debug("<ObEngine> Mounting paths");
     System::MountPaths();
+    System::InitConfiguration();
+    Debug::InitLoggerLevel();
 
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
