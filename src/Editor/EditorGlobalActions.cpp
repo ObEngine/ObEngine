@@ -60,7 +60,7 @@ namespace obe
             });
             inputManager.getAction("ResetCameraSize").connect([&world](const Input::InputActionEvent& event)
             {
-                world.getCamera()->setSize(1, Transform::Referencial::Center);
+                world.getCamera()->setSize(1);
             });
         }
 

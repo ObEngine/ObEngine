@@ -108,7 +108,7 @@ namespace obe
                     view.at<vili::DataNode>("pos", "x").get<double>(),
                     view.at<vili::DataNode>("pos", "y").get<double>(),
                     Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
-                m_cameraInitialReferencial = Transform::Referencial::Center;
+                m_cameraInitialReferencial = Transform::Referencial::TopLeft;
                 if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
                 {
                     m_cameraInitialReferencial = Transform::stringToReferencial(

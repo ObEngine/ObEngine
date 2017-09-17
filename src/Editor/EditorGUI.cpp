@@ -654,13 +654,13 @@ namespace obe
                 {
                     float camX = std::stof(cameraPositionXInput->getText().toAnsiString());
                     float camY = std::stof(cameraPositionYInput->getText().toAnsiString());
-                    scene.getCamera()->setPosition(Transform::UnitVector(camX, camY), Transform::Referencial::Center);
+                    scene.getCamera()->setPosition(Transform::UnitVector(camX, camY));
                 });
 
                 cameraSizeBtn->connect("pressed", [cameraSizeInput, &scene]()
                 {
                     float camSize = std::stof(cameraSizeInput->getText().toAnsiString());
-                    scene.getCamera()->setSize(camSize, Transform::Referencial::Center);
+                    scene.getCamera()->setSize(camSize);
                 });
             }
 

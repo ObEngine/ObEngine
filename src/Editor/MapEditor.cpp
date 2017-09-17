@@ -208,6 +208,8 @@ namespace obe
             sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
             sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
             double waitForMapSaving = -1;
+            double saveCamPosX = 0;
+            double saveCamPosY = 0;
             Transform::Units editorUnit = Transform::Units::WorldUnits;
 
             //Framerate / DeltaTime
@@ -220,8 +222,6 @@ namespace obe
 
             mapNameInput->setText(scene.getLevelName());
             cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
-            cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).x));
-            cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).y));
                 
             //Connect InputManager Actions
             connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
@@ -402,14 +402,14 @@ namespace obe
                     + std::to_string(cursor.getY()) 
                     + ")" 
                     + std::string("   Camera : (") 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().x)) 
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)) 
                     + ", " 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().y))
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y))
                     + ")" 
                     + std::string("   Sum : (") 
-                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().x)
+                    + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
                         + int(cursor.getX())) 
-                    + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>().y)
+                    + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
                         + int(cursor.getY())) 
                     + ")" 
                     + std::string("   Layer : ") 
@@ -464,12 +464,12 @@ namespace obe
                     case sf::Event::MouseWheelMoved:
                         if (event.mouseWheel.delta >= scrollSensitive)
                         {
-                            scene.getCamera()->scale(0.9, Transform::Referencial::Center);
+                            scene.getCamera()->scale(0.9);
                             gameConsole.scroll(-1);
                         }
                         else if (event.mouseWheel.delta <= -scrollSensitive)
                         {
-                            scene.getCamera()->scale(1.1, Transform::Referencial::Center);
+                            scene.getCamera()->scale(1.1);
                             gameConsole.scroll(1);
                         }
                         cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
@@ -481,8 +481,14 @@ namespace obe
                 //Draw Everything Here
                 if (framerateManager.doRender())
                 {
-                    cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).x));
-                    cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition(Transform::Referencial::Center).y));
+                    if (saveCamPosX != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x || saveCamPosY != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y)
+                    {
+                        saveCamPosX = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x;
+                        saveCamPosY = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y;
+                        cameraPositionXInput->setText(std::to_string(saveCamPosX));
+                        cameraPositionYInput->setText(std::to_string(saveCamPosY));
+                    }
+
                     window.clear();
                     scene.display(window);
                     sf::Color magenta = sf::Color::Magenta;
