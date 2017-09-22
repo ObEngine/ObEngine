@@ -64,6 +64,7 @@ namespace obe
                     Transform::Movable
                     >
                     >()
+                    .setConstructors<Collision::PolygonalCollider(const std::string&)>()
                     .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
                     .addFunction("addPoint", PolygonalCollider_addPoint_wrapper())
                     .addFunction("addTag", &Collision::PolygonalCollider::addTag)

@@ -78,7 +78,7 @@ namespace obe
         void Scene::reload()
         {
             Debug::Log->debug("<Scene> Reloading Scene");
-            this->loadFromFile(m_levelFileName);
+            m_futureLoad = m_levelFileName;
         }
 
         void Scene::loadFromFile(const std::string& filename)
