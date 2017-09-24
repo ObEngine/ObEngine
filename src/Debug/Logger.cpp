@@ -19,7 +19,7 @@ namespace obe
             #if defined(_WIN32) || defined(_WIN64)
             auto sink1 = std::make_shared<spdlog::sinks::wincolor_stdout_sink_mt>();
             #else
-            auto sink1 = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>()
+            auto sink1 = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
             #endif
             auto sink2 = std::make_shared<spdlog::sinks::simple_file_sink_st>("debug.log");
 
