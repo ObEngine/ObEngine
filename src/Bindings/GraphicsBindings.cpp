@@ -1,6 +1,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Graphics/Canvas.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
 
@@ -119,6 +120,15 @@ namespace obe
                     .addFunction("render", &Graphics::Canvas::render)
                     .addFunction("setTarget", &Graphics::Canvas::setTarget)
                 );
+            }
+
+            void LoadGraphicsUtils(kaguya::State* lua)
+            {
+                (*lua)["Core"]["Graphics"]["Utils"] = kaguya::NewTable();
+                (*lua)["Core"]["Graphics"]["Utils"]["SetClearColor"] = kaguya::function([](sf::Color newColor)
+                {
+                    Graphics::Utils::clearColor = newColor;
+                });
             }
         }
     }

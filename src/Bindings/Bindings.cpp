@@ -58,7 +58,8 @@ namespace obe
                 .add("Canvas", &GraphicsBindings::LoadCanvas)
                 .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
                 .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
-                .add("ResourceManager", &GraphicsBindings::LoadResourceManager);
+                .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
+                .add("Utils", &GraphicsBindings::LoadGraphicsUtils);
             BindTree["Core"].add("Input")["Input"]
                 .add("InputAction", &InputBindings::LoadInputAction)
                 .add("InputActionEvent", &InputBindings::LoadInputActionEvent)

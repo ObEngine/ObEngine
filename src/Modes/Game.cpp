@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/Scene.hpp>
@@ -125,7 +126,7 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     
-                    window.clear();
+                    window.clear(Graphics::Utils::clearColor);
                     scene.display(window);
 
                     window.display();

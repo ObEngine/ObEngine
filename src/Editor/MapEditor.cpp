@@ -265,7 +265,7 @@ namespace obe
             GUI::calculateFontSize(window);
             GUI::applyFontSize(mainPanel);
 
-            scene.setUpdateState(false);
+            //scene.setUpdateState(false);
 
             //Game Starts
             while (window.isOpen())
@@ -489,7 +489,7 @@ namespace obe
                         cameraPositionYInput->setText(std::to_string(saveCamPosY));
                     }
 
-                    window.clear();
+                    window.clear(Graphics::Utils::clearColor);
                     scene.display(window);
                     sf::Color magenta = sf::Color::Magenta;
                     if (selectedHandlePoint != nullptr)

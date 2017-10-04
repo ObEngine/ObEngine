@@ -139,6 +139,7 @@ namespace obe
                 updateStateCheckbox->setRenderer(baseTheme.getRenderer("StateCheckBox"));
                 updateStateCheckbox->getRenderer()->getTextureChecked().setSmooth(true);
                 updateStateCheckbox->getRenderer()->getTextureUnchecked().setSmooth(true);
+                updateStateCheckbox->check();
 
                 editorButton->setSize("9.8%", "100%");
                 editorButton->setPosition(tgui::bindLeft(updateStateCheckbox) - tgui::bindWidth(editorButton) - 1, 0);

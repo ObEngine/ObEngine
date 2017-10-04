@@ -50,6 +50,8 @@ namespace obe
              *          - <point_color_x> sf::Color : Color of a specific point of the Polygon where x is the index of the point
              */
             void drawPolygon(sf::RenderWindow& target, std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options);
+
+            extern sf::Color clearColor;
         }
     }
 }

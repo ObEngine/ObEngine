@@ -58,6 +58,7 @@ namespace obe
         {
             m_texture = &texture;
             m_sprite.setTexture(texture);
+            m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
         }
 
         const sf::Texture& LevelSprite::getTexture() const

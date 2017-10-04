@@ -52,20 +52,21 @@ namespace obe
                 Trajectory* cTraj = trajectory.second.first.get();
                 if (cTraj->isEnabled())
                 {
+                    double speed = cTraj->m_speed + cTraj->m_acceleration * dt;
                     double radAngle = (Utils::Math::pi / 180.0) * -cTraj->getAngle();
-                    double addX = std::cos(radAngle) * (cTraj->getSpeed() * dt);
-                    double addY = std::sin(radAngle) * (cTraj->getSpeed() * dt);
+                    double addX = std::cos(radAngle) * (speed * dt);
+                    double addY = std::sin(radAngle) * (speed * dt);
                     Transform::UnitVector cOffset(addX, addY, cTraj->getUnit());
                     for (kaguya::LuaFunction& check : trajectory.second.second)
                     {
                         if (m_probe != nullptr)
-                            check(&cTraj, &cOffset, m_probe);
+                            check(cTraj, &cOffset, m_probe);
                         else
-                            check(&cTraj, &cOffset);
+                            check(cTraj, &cOffset);
                     }
                     if (!cTraj->getStatic())
                     {
-                        cTraj->m_speed += cTraj->m_acceleration;
+                        cTraj->m_speed = speed;
                         offset.add(cOffset);
                     }
                 }

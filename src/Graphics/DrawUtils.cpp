@@ -63,6 +63,8 @@ namespace obe
                     }
                 }
             }
+
+            sf::Color clearColor = sf::Color::Black;
         }
     }
 }
