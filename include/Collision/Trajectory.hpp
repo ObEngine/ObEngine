@@ -1,5 +1,7 @@
 #pragma once
 
+#include <kaguya/kaguya.hpp>
+
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
 
@@ -20,6 +22,8 @@ namespace obe
             double m_acceleration = 0;
             bool m_static = false;
             Transform::Units m_unit;
+            std::vector<kaguya::LuaFunction> m_checks;
+            kaguya::LuaFunction m_onCollideCallback;
             friend class TrajectoryNode;
         public:
             Trajectory(Transform::Units unit = Transform::Units::WorldUnits);
@@ -35,6 +39,10 @@ namespace obe
             double getAcceleration() const;
             bool getStatic() const;
             Transform::Units getUnit() const;
+            void addCheck(kaguya::LuaFunction check);
+            std::vector<kaguya::LuaFunction>& getChecks();
+            void onCollide(kaguya::LuaFunction callback);
+            kaguya::LuaFunction& getOnCollideCallback();
         };
     }
 }

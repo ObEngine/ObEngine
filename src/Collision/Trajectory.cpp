@@ -77,5 +77,25 @@ namespace obe
         {
             return m_unit;
         }
+
+        void Trajectory::addCheck(kaguya::LuaFunction check)
+        {
+            m_checks.push_back(check);
+        }
+
+        std::vector<kaguya::LuaFunction>& Trajectory::getChecks()
+        {
+            return m_checks;
+        }
+
+        void Trajectory::onCollide(kaguya::LuaFunction callback)
+        {
+            m_onCollideCallback = callback;
+        }
+
+        kaguya::LuaFunction& Trajectory::getOnCollideCallback()
+        {
+            return m_onCollideCallback;
+        }
     }
 }

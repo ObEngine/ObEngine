@@ -10,7 +10,7 @@ function loadToolkitFunctions()
     local fileList = Core.Utils.File.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
     for _, content in pairs(fileList) do
-        allFunctions[String.split(content, ".")[1]] = require("Lib/Toolkit/Functions/" .. String.split(content, ".")[1]);
+        allFunctions[content:split(".")[1]] = require("Lib/Toolkit/Functions/" .. content:split(".")[1]);
     end
     return allFunctions;
 end

@@ -19,24 +19,13 @@ namespace obe
 
         Trajectory* TrajectoryNode::addTrajectory(const std::string& id, Transform::Units unit)
         {
-            m_trajectories[id] = std::pair<std::unique_ptr<Trajectory>, std::vector<kaguya::LuaFunction>>
-            (std::make_unique<Trajectory>(unit), std::vector<kaguya::LuaFunction>());
-            return m_trajectories[id].first.get();
-        }
-
-        void TrajectoryNode::addCheck(const std::string& id, kaguya::LuaFunction check)
-        {
-            m_trajectories[id].second.push_back(check);
-        }
-
-        void TrajectoryNode::onCollide(kaguya::LuaFunction callback)
-        {
-            m_onCollideCallback = callback;
+            m_trajectories[id] = std::make_unique<Trajectory>(unit);
+            return m_trajectories[id].get();
         }
 
         Trajectory* TrajectoryNode::getTrajectory(const std::string& id)
         {
-            return m_trajectories[id].first.get();
+            return m_trajectories[id].get();
         }
 
         void TrajectoryNode::removeTrajectory(const std::string& id)
@@ -46,10 +35,9 @@ namespace obe
 
         void TrajectoryNode::update(double dt)
         {
-            Transform::UnitVector offset(0, 0);
             for (auto& trajectory : m_trajectories)
             {
-                Trajectory* cTraj = trajectory.second.first.get();
+                Trajectory* cTraj = trajectory.second.get();
                 if (cTraj->isEnabled())
                 {
                     double speed = cTraj->m_speed + cTraj->m_acceleration * dt;
@@ -57,7 +45,7 @@ namespace obe
                     double addX = std::cos(radAngle) * (speed * dt);
                     double addY = std::sin(radAngle) * (speed * dt);
                     Transform::UnitVector cOffset(addX, addY, cTraj->getUnit());
-                    for (kaguya::LuaFunction& check : trajectory.second.second)
+                    for (kaguya::LuaFunction& check : trajectory.second->getChecks())
                     {
                         if (m_probe != nullptr)
                             check(cTraj, &cOffset, m_probe);
@@ -67,16 +55,15 @@ namespace obe
                     if (!cTraj->getStatic())
                     {
                         cTraj->m_speed = speed;
-                        offset.add(cOffset);
+                        Transform::UnitVector realOffset = cOffset;
+                        if (m_probe != nullptr)
+                            realOffset = m_probe->getMaximumDistanceBeforeCollision(cOffset);
+                        if (realOffset != cOffset && !trajectory.second->getOnCollideCallback().isNilref())
+                            trajectory.second->getOnCollideCallback()(trajectory.second.get(), cOffset, realOffset);
+                        m_sceneNode->move(realOffset);
                     }
                 }
             }
-            Transform::UnitVector realOffset = offset;
-            if (m_probe != nullptr)
-                realOffset = m_probe->getMaximumDistanceBeforeCollision(offset);
-            if (realOffset != offset && !m_onCollideCallback.isNilref())
-                m_onCollideCallback(offset, realOffset);
-            m_sceneNode->move(realOffset);
         }
 
         Transform::SceneNode* TrajectoryNode::getSceneNode() const
