@@ -75,10 +75,11 @@ namespace obe
             return m_baseFolder;
         }
 
-        void Scene::reload()
+        void Scene::reload(kaguya::LuaFunction callback)
         {
             Debug::Log->debug("<Scene> Reloading Scene");
             m_futureLoad = m_levelFileName;
+			m_onLoadCallback = callback;
         }
 
         void Scene::loadFromFile(const std::string& filename)
@@ -206,9 +207,10 @@ namespace obe
             }
         }
 
-        void Scene::setFutureLoadFromFile(const std::string& filename)
+        void Scene::setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback)
         {
             m_futureLoad = filename;
+			m_onLoadCallback = callback;
         }
 
         void Scene::clearWorld()
@@ -344,6 +346,7 @@ namespace obe
             {
                 std::string futureLoadBuffer = std::move(m_futureLoad);
                 this->loadFromFile(futureLoadBuffer);
+				this->m_onLoadCallback();
             }
             if (m_updateState)
             {

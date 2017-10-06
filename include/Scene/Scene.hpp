@@ -39,6 +39,9 @@ namespace obe
             std::string m_levelFileName;
             std::map<std::string, bool> m_showCollisionModes;
             void displaySprites(sf::RenderWindow& target);
+
+			kaguya::LuaFunction m_onLoadCallback;
+
         public:
             /**
              * \brief Creates a new Scene
@@ -58,7 +61,7 @@ namespace obe
              * \brief Same that loadFromFile excepts the map will load at the next update
              * \param filename Name of the file located in Data/Maps (using System::Loaders)
              */
-            void setFutureLoadFromFile(const std::string& filename);
+			void setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback = kaguya::State().loadstring(""));
             /**
              * \brief Removes all elements in the Scene
              */
@@ -246,7 +249,7 @@ namespace obe
             /**
              * \brief Reloads the Scene from the level file
              */
-            void reload();
+            void reload(kaguya::LuaFunction callback = kaguya::State().loadstring(""));
             /**
              * \brief Name of the last loaded map file with loadFromFile method
              * \return A std::string containing the name of the last loaded map file with loadFromFile method
