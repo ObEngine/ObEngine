@@ -58,8 +58,14 @@ namespace obe
                     .addFunction("getLevelSprite", &Scene::Scene::getLevelSprite)
                     .addFunction("getLevelSpriteByPosition", &Scene::Scene::getLevelSpriteByPosition)
                     .addFunction("getLevelSpritesByLayer", &Scene::Scene::getLevelSpritesByLayer)
-                    .addFunction("loadFromFile", &Scene::Scene::setFutureLoadFromFile)
-                    .addFunction("reload", &Scene::Scene::reload)
+                    .addOverloadedFunctions("loadFromFile",
+                        static_cast<void (Scene::Scene::*)(const std::string&)>(&Scene::Scene::setFutureLoadFromFile),
+                        static_cast<void (Scene::Scene::*)(const std::string&, kaguya::LuaFunction)>(&Scene::Scene::setFutureLoadFromFile)
+                    )
+                    .addOverloadedFunctions("reload",
+                        static_cast<void (Scene::Scene::*)()>(&Scene::Scene::reload),
+                        static_cast<void (Scene::Scene::*)(kaguya::LuaFunction)>(&Scene::Scene::reload)
+                    )
                     .addFunction("removeCollider", &Scene::Scene::removeCollider)
                     .addFunction("removeGameObject", &Scene::Scene::removeGameObject)
                     .addFunction("removeLevelSprite", &Scene::Scene::removeLevelSprite)

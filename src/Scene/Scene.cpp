@@ -75,6 +75,12 @@ namespace obe
             return m_baseFolder;
         }
 
+        void Scene::reload()
+        {
+            Debug::Log->debug("<Scene> Reloading Scene");
+            m_futureLoad = m_levelFileName;
+        }
+
         void Scene::reload(kaguya::LuaFunction callback)
         {
             Debug::Log->debug("<Scene> Reloading Scene");
@@ -205,6 +211,11 @@ namespace obe
                     m_scriptArray.push_back(*scriptName);
                 }
             }
+        }
+
+        void Scene::setFutureLoadFromFile(const std::string& filename)
+        {
+            m_futureLoad = filename;
         }
 
         void Scene::setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback)

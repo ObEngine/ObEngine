@@ -58,6 +58,12 @@ namespace obe
              * \brief Same that loadFromFile excepts the map will load at the next update
              * \param filename Name of the file located in Data/Maps (using System::Loaders)
              */
+            void setFutureLoadFromFile(const std::string& filename);
+            /**
+             * \brief Same that loadFromFile excepts the map will load at the next update
+             * \param filename Name of the file located in Data/Maps (using System::Loaders)
+             * \param callback Lua Function called when new map has been loaded
+             */
             void setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback);
             /**
              * \brief Removes all elements in the Scene
@@ -245,6 +251,11 @@ namespace obe
             std::string getBaseFolder() const;
             /**
              * \brief Reloads the Scene from the level file
+             */
+            void reload();
+            /**
+             * \brief Reloads the Scene from the level file
+             * \param callback Lua Function called when the map has been reloaded
              */
             void reload(kaguya::LuaFunction callback);
             /**
