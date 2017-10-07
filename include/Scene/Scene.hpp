@@ -32,16 +32,13 @@ namespace obe
             std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
             std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
             std::vector<std::string> m_scriptArray;
-
             Transform::SceneNode m_sceneRoot;
 
             vili::ViliParser m_levelFile;
             std::string m_levelFileName;
             std::map<std::string, bool> m_showCollisionModes;
+            kaguya::LuaFunction m_onLoadCallback;
             void displaySprites(sf::RenderWindow& target);
-
-			kaguya::LuaFunction m_onLoadCallback;
-
         public:
             /**
              * \brief Creates a new Scene
@@ -61,7 +58,7 @@ namespace obe
              * \brief Same that loadFromFile excepts the map will load at the next update
              * \param filename Name of the file located in Data/Maps (using System::Loaders)
              */
-			void setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback = kaguya::State().loadstring(""));
+            void setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback);
             /**
              * \brief Removes all elements in the Scene
              */
@@ -249,7 +246,7 @@ namespace obe
             /**
              * \brief Reloads the Scene from the level file
              */
-            void reload(kaguya::LuaFunction callback = kaguya::State().loadstring(""));
+            void reload(kaguya::LuaFunction callback);
             /**
              * \brief Name of the last loaded map file with loadFromFile method
              * \return A std::string containing the name of the last loaded map file with loadFromFile method

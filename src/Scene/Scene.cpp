@@ -346,7 +346,8 @@ namespace obe
             {
                 std::string futureLoadBuffer = std::move(m_futureLoad);
                 this->loadFromFile(futureLoadBuffer);
-				this->m_onLoadCallback();
+                if (!m_onLoadCallback.isNilref())
+                    m_onLoadCallback(futureLoadBuffer);
             }
             if (m_updateState)
             {
