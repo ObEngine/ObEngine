@@ -193,7 +193,6 @@ namespace obe
                             objectRequirements.setParent(&currentObject);
                         }
                         newObject->exec("LuaCore.InjectInitInjectionTable()");
-                        newObject->initialize();
                     }
                     else if (!this->getGameObject(currentObjectName)->isPermanent())
                     {

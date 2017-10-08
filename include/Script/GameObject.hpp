@@ -205,7 +205,7 @@ namespace obe
             /**
              * \brief Updates the GameObject
              */
-            void update() const;
+            void update();
             /**
              * \brief Deletes the GameObject
              */
@@ -242,7 +242,7 @@ namespace obe
              * \brief Gets if the GameObject is permanent (Will stay after loading another map)
              * \return true if the GameObject is permanent, false otherwise
              */
-            bool isPermanent();
+            bool isPermanent() const;
         };
 
         template <typename U>

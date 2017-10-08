@@ -104,6 +104,7 @@ namespace obe
             {
                 Debug::Log->debug("<GameObject> Initialising GameObject '{0}'", m_id);
                 m_initialised = true;
+                GAMEOBJECTENV["__OBJECT_INIT"] = true;
                 m_localTriggers->trigger("Init");
             }
             else
@@ -164,6 +165,7 @@ namespace obe
 
                 GAMEOBJECTENV["__OBJECT_TYPE"] = m_type;
                 GAMEOBJECTENV["__OBJECT_ID"] = m_id;
+                GAMEOBJECTENV["__OBJECT_INIT"] = false;
                 GAMEOBJECTENV["Private"] = m_privateKey;
                 GAMEOBJECTENV["Public"] = m_publicKey;
 
@@ -262,7 +264,7 @@ namespace obe
             }
         }
 
-        void GameObject::update() const
+        void GameObject::update()
         {
             if (m_canUpdate)
             {
@@ -277,6 +279,10 @@ namespace obe
                             m_objectLevelSprite->setTexture(m_objectAnimator->getTexture());
                         }
                     }
+                }
+                else
+                {
+                    this->initialize();
                 }
             }
         }
@@ -423,7 +429,7 @@ namespace obe
             m_permanent = permanent;
         }
 
-        bool GameObject::isPermanent()
+        bool GameObject::isPermanent() const
         {
             return m_permanent;
         }

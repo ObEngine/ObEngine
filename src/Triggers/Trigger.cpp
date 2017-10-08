@@ -67,7 +67,8 @@ namespace obe
                 if (Utils::Vector::isInList(rEnv.first, EnabledEnvs))
                 {
                     bool envEnabled = Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["__ENV_ENABLED"];
-                    if (envEnabled)
+                    bool objEnabled = Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["__OBJECT_INIT"];
+                    if (envEnabled && objEnabled)
                     {
                         Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on Lua Environment {1} from Trigger {2}", rEnv.second, rEnv.first, m_name);
                         Script::ScriptEngine["ExecuteStringOnEnv"]
