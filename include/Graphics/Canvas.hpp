@@ -262,6 +262,26 @@ namespace obe
             void update() override;
         };
 
+        /*
+         * \brief A Canvas Sprite
+         */
+        class Sprite : public CanvasElement, public Colorable, public Transformable
+        {
+        private:
+            std::string m_path;
+        public:
+            explicit Sprite(const std::string& id);
+            /**
+             * \brief Draws the Sprite
+             * \param target Target where to draw the Sprite to
+             */
+            void draw(sf::RenderTexture& target) const override;
+            /**
+             * \brief Updates the Sprite
+             */
+            void update() override;
+        };
+
         /**
          * \brief A Canvas where you can draw CanvasElements on
          */
@@ -303,6 +323,8 @@ namespace obe
              * \return A pointer to the newly created Circle
              */
             Circle* circle(const std::string& id);
+
+            Sprite* sprite(const std::string& id);
             /*Polygon& Polygon(std::string id);
             Shader& Shader(std::string id);
             Vertexes& Vertexes(std::string id);*/

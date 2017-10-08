@@ -392,6 +392,7 @@ namespace obe
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
             {
                 Transform::UnitVector spritePosition = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::Center);
+                Transform::UnitVector bsp = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
                 sfe::ComplexSprite& tAffSpr = m_spriteArray[i]->getSprite();
 
                 //std::cout << "Draw Position of Sprite : " << spritePosition << std::endl;
@@ -410,8 +411,12 @@ namespace obe
                     target.draw(tAffSpr);
                     if (m_spriteArray[i]->isSelected())
                     {
+                        //std::cout << "Middle : " << middle << std::endl;
+                        std::cout << "Sprite position : " << spritePosition << std::endl;
                         Transform::UnitVector handlePos = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
                         m_spriteArray[i]->drawHandle(target, handlePos.x, handlePos.y);
+                        Graphics::Utils::drawPoint(target, spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
+                        Graphics::Utils::drawPoint(target, bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
                         middle += pixelCamera;
                     }
                         

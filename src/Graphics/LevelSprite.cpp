@@ -208,7 +208,7 @@ namespace obe
 
             Transform::UnitVector transformedPosition = m_positionTransformer(pixelPosition, pixelCamera, m_layer);
 
-            return Transform::UnitVector(transformedPosition.x, transformedPosition.y, Transform::Units::ViewPixels);
+            return Transform::UnitVector(transformedPosition.x, transformedPosition.y, Transform::Units::WorldPixels);
         }
 
         int LevelSprite::getLayer() const

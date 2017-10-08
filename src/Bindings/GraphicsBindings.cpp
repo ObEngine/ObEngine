@@ -109,6 +109,9 @@ namespace obe
                 (*lua)["Core"]["Graphics"]["Canvas"]["Circle"].setClass(
                     kaguya::UserdataMetatable<Graphics::Circle, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
                 );
+                (*lua)["Core"]["Graphics"]["Canvas"]["Sprite"].setClass(
+                    kaguya::UserdataMetatable<Graphics::Sprite, kaguya::MultipleBase<Graphics::CanvasElement, Graphics::Colorable, Graphics::Transformable>>()
+                );
                 (*lua)["Core"]["Graphics"]["Canvas"]["Canvas"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas>()
                     .setConstructors<Graphics::Canvas(unsigned int, unsigned int)>()
@@ -116,6 +119,7 @@ namespace obe
                     .addFunction("Rectangle", &Graphics::Canvas::rectangle)
                     .addFunction("Text", &Graphics::Canvas::text)
                     .addFunction("Circle", &Graphics::Canvas::circle)
+                    .addFunction("Sprite", &Graphics::Canvas::sprite)
                     .addFunction("Get", &Graphics::Canvas::get)
                     .addFunction("render", &Graphics::Canvas::render)
                     .addFunction("setTarget", &Graphics::Canvas::setTarget)

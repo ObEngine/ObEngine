@@ -1,5 +1,6 @@
 #include <Graphics/Canvas.hpp>
 #include <Script/GlobalState.hpp>
+#include "Graphics/ResourceManager.hpp"
 
 namespace obe
 {
@@ -194,6 +195,33 @@ namespace obe
             m_radius = m_tableWrapper["radius"];
         }
 
+        Sprite::Sprite(const std::string& id) : CanvasElement(id), Transformable(id), Drawable(id), Colorable(id), Configurable(id), Element(id)
+        {
+        }
+
+        void Sprite::draw(sf::RenderTexture& target) const
+        {
+            sfe::ComplexSprite sprite;
+            sprite.setTexture(*Graphics::ResourceManager::GetInstance()->getTexture(m_path));
+            sprite.setTranslationOrigin(m_translationOriginX, m_translationOriginY);
+            sprite.setRotationOrigin(m_rotationOriginX, m_rotationOriginY);
+            sprite.setPosition(m_x, m_y);
+            sprite.setRotation(m_rotation);
+            sprite.setColor(m_color);
+            //sprite.setScale(m_width, m_height);
+
+            target.draw(sprite);
+        }
+
+        void Sprite::update()
+        {
+            Transformable::update();
+            Colorable::update();
+
+            std::string pathBuffer = m_tableWrapper["path"];
+            m_path = pathBuffer;
+        }
+
         Canvas::Canvas(unsigned int width, unsigned int height)
         {
             m_canvas.create(width, height);
@@ -225,6 +253,13 @@ namespace obe
             Circle* newCircle = new Circle(id);
             elements[id] = newCircle;
             return newCircle;
+        }
+
+        Sprite* Canvas::sprite(const std::string& id)
+        {
+            Sprite* newSprite = new Sprite(id);
+            elements[id] = newSprite;
+            return newSprite;
         }
 
         kaguya::LuaTable& Canvas::get(std::string id)
