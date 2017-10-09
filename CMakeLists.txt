@@ -69,8 +69,6 @@ endif()
 
 target_link_libraries(ObEngine ${OPENGL_LIBRARIES})
 
-file(COPY engine/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/engine/ )
-
 set(_inc_root_path "${ObEngine_SOURCE_DIR}/include/")
 file(
     GLOB_RECURSE _inc_list 

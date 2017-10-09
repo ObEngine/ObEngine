@@ -2,29 +2,12 @@ Define Flag (Settings);
 
 GameConfig:
     antiAliasing:True
-    depthOfField:True
     scrollSensibility:1
     framerateLimit:True
-    framerateTarget:144
+    framerateTarget:60
     vsync:True
     
 KeyBinding:
-    game:
-        Jump:"Pressed:Space"
-        Left:"Hold:Q"
-        Right:"Hold:D"
-        Crouch:"Pressed:S"
-        Sprint:"Pressed:LShift"
-        Attack:"Pressed:E"
-        Spell1:"Pressed:1"
-        Spell2:"Pressed:2"
-        Spell3:"Pressed:3"
-        Spell4:"Pressed:4"
-        Spell5:"Pressed:W"
-        Spell6:"Pressed:X"
-        Spell7:"Pressed:C"
-        Spell8:"Pressed:V"
-        Reset:"Pressed:R"
     mapEditor:
         SpriteMode:"Pressed:W"
         CollisionMode:"Pressed:C"
