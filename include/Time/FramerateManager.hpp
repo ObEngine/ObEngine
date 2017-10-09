@@ -29,10 +29,9 @@ namespace obe
         public:
             /**
              * \brief Creates a new FramerateManager
-             * \param window Reference to the window to initialize the VerticalSync
              * \param config Initial configuration of the FramerateManager
              */
-            FramerateManager(sf::RenderWindow& window, vili::ComplexNode& config);
+            FramerateManager(vili::ComplexNode& config);
             /**
              * \brief Updates the FramerateManager (done everytime in the main loop)
              */
@@ -89,10 +88,9 @@ namespace obe
             void setFramerateTarget(unsigned int limit);
             /**
              * \brief Set if VerticalSync should be enabled or not
-             * \param window A reference to the sf::RenderWindow to enable / disable V-Sync
              * \param vsync A boolean containing if the v-sync should be enabled (true = enabled)
              */
-            void setVSyncEnabled(sf::RenderWindow& window, bool vsync);
+            void setVSyncEnabled(bool vsync);
         };
     }
 }

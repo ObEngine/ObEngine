@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Time/TimeUtils.hpp>
 
@@ -7,7 +8,7 @@ namespace obe
 {
     namespace Time
     {
-        FramerateManager::FramerateManager(sf::RenderWindow& window, vili::ComplexNode& config)
+        FramerateManager::FramerateManager(vili::ComplexNode& config)
         {
             m_frameLimiterClock = getTickSinceEpoch();
             m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit")) ? config.at<vili::DataNode>("framerateLimit") : true;
@@ -17,7 +18,7 @@ namespace obe
             m_currentFrame = 0;
             m_frameProgression = 0;
             m_needToRender = false;
-            window.setVerticalSyncEnabled(m_vsyncEnabled);
+            System::MainWindow.setVerticalSyncEnabled(m_vsyncEnabled);
         }
 
         void FramerateManager::update()
@@ -86,10 +87,10 @@ namespace obe
             m_framerateTarget = limit;
         }
 
-        void FramerateManager::setVSyncEnabled(sf::RenderWindow& window, bool vsync)
+        void FramerateManager::setVSyncEnabled(bool vsync)
         {
             m_vsyncEnabled = vsync;
-            window.setVerticalSyncEnabled(vsync);
+            System::MainWindow.setVerticalSyncEnabled(vsync);
         }
 
         bool FramerateManager::doRender() const

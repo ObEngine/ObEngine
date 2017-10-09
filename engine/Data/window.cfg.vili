@@ -1,0 +1,13 @@
+Game:
+    fullscreen:True
+    width:"Fill"
+    height:"Fill"
+    title:"MyGame"
+
+Editor:
+    fullscreen:False
+    closeable:True
+    titlebar:True
+    resizeable:True
+    width:1280
+    height:720

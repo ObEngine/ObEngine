@@ -19,6 +19,7 @@
 #include <System/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
+#include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Transform/UnitVector.hpp>
@@ -32,26 +33,7 @@ namespace obe
         void editMap(const std::string& mapName)
         {
             //Creating Window
-            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
-            window.setKeyRepeatEnabled(false);
-            sf::Texture loadingTexture;
-            loadingTexture.loadFromFile("Sprites/Menus/loading.png");
-            loadingTexture.setSmooth(true);
-            sf::Sprite loadingSprite;
-            loadingSprite.setTexture(loadingTexture);
-            sf::Font loadingFont;
-            loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
-            sf::Text loadingText;
-            loadingText.setFont(loadingFont);
-            loadingText.setCharacterSize(70.0);
-            loadingText.setPosition(348.0, 595.0);
-            vili::ViliParser loadingStrDP("Sprites/Menus/loading.vili");
-            std::string loadingRandomStr = loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").get(
-                Utils::Math::randint(0, loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").size() - 1));
-            loadingText.setString(loadingRandomStr);
-            window.draw(loadingSprite);
-            window.draw(loadingText);
-            window.display();
+            System::InitWindow(System::WindowContext::EditorWindow);
 
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
@@ -114,7 +96,7 @@ namespace obe
             int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
             //Cursor
-            System::Cursor cursor(&window);
+            System::Cursor cursor;
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //Scene Creation / Loading
@@ -150,10 +132,10 @@ namespace obe
 
             //GUI
             sf::Event event;
-            tgui::Gui gui(window);
+            tgui::Gui gui(System::MainWindow);
             gui.setFont("Data/Fonts/weblysleekuil.ttf");
             tgui::Panel::Ptr mainPanel = tgui::Panel::create();
-            GUI::init(window);
+            GUI::init(System::MainWindow);
             int saveEditMode = -1;
             gui.add(mainPanel);
             mainPanel->setSize("100%", "100%");
@@ -215,8 +197,7 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            Time::FramerateManager framerateManager(window, gameConfig);
-            window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
+            Time::FramerateManager framerateManager(gameConfig);
 
             scene.loadFromFile(mapName);
 
@@ -233,9 +214,9 @@ namespace obe
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground, editorUnit);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
             connectGameConsoleActions(inputManager, gameConsole);
-            inputManager.getAction("ExitEditor").connect([&window](const Input::InputActionEvent& event)
+            inputManager.getAction("ExitEditor").connect([](const Input::InputActionEvent& event)
             {
-                window.close();
+                System::MainWindow.close();
             });
 
             auto editModeCallback = [&editorTriggers, &inputManager, editMode]()
@@ -262,13 +243,13 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            GUI::calculateFontSize(window);
+            GUI::calculateFontSize(System::MainWindow);
             GUI::applyFontSize(mainPanel);
 
             //scene.setUpdateState(false);
 
             //Game Starts
-            while (window.isOpen())
+            while (System::MainWindow.isOpen())
             {
                 framerateManager.update();
 
@@ -429,19 +410,19 @@ namespace obe
                 //cursor.handleTriggers();
                 inputManager.handleTriggers();
 
-                while (window.pollEvent(event))
+                while (System::MainWindow.pollEvent(event))
                 {
                     switch (event.type)
                     {
                     case sf::Event::Closed:
-                        window.close();
+                        System::MainWindow.close();
                         break;
                     case sf::Event::Resized:
                         Transform::UnitVector::Screen.w = event.size.width;
                         Transform::UnitVector::Screen.h = event.size.height;
-                        window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                        System::MainWindow.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                         gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                        GUI::calculateFontSize(window);
+                        GUI::calculateFontSize(System::MainWindow);
                         GUI::applyFontSize(mainPanel);
                         GUI::applyScrollbarMaxValue(mainPanel);
                         break;
@@ -489,11 +470,11 @@ namespace obe
                         cameraPositionYInput->setText(std::to_string(saveCamPosY));
                     }
 
-                    window.clear(Graphics::Utils::clearColor);
-                    scene.display(window);
+                    System::MainWindow.clear(Graphics::Utils::clearColor);
+                    scene.display(System::MainWindow);
                     sf::Color magenta = sf::Color::Magenta;
                     if (selectedHandlePoint != nullptr)
-                        Graphics::Utils::drawPoint(window, selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
+                        Graphics::Utils::drawPoint(System::MainWindow, selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
                     pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")
@@ -501,29 +482,29 @@ namespace obe
                     else
                         scene.enableShowCollision(false);
                     if (editorGrid.isEnabled())
-                        editorGrid.draw(window, cursor, pixelCamera.x, pixelCamera.y);
+                        editorGrid.draw(System::MainWindow, cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")
                     {
-                        window.draw(sprInfoBackground);
-                        window.draw(sprInfo);
+                        System::MainWindow.draw(sprInfoBackground);
+                        System::MainWindow.draw(sprInfo);
                     }
                     gui.draw();
                     if (drawFPS)
-                        fps.draw(window);
+                        fps.draw(System::MainWindow);
 
                     //Console
                     if (gameConsole.isVisible())
-                        gameConsole.display(window);
+                        gameConsole.display(System::MainWindow);
 
-                    window.display();
+                    System::MainWindow.display();
                 }
             }
             gameTriggers->trigger("End");
             Triggers::TriggerDatabase::GetInstance()->update();
             scene.update(framerateManager.getGameSpeed());
 
-            window.close();
+            System::MainWindow.close();
             gui.removeAllWidgets();
         }
     }

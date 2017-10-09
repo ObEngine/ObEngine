@@ -13,6 +13,7 @@
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
+#include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Transform/UnitVector.hpp>
@@ -26,26 +27,7 @@ namespace obe
         void startGame()
         {
             //Creating Window
-            sf::RenderWindow window(sf::VideoMode(Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h), "ObEngine", sf::Style::Fullscreen);
-            window.setKeyRepeatEnabled(false);
-            sf::Texture loadingTexture;
-            loadingTexture.loadFromFile("Sprites/Menus/loading.png");
-            loadingTexture.setSmooth(true);
-            sf::Sprite loadingSprite;
-            loadingSprite.setTexture(loadingTexture);
-            sf::Font loadingFont;
-            loadingFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
-            sf::Text loadingText;
-            loadingText.setFont(loadingFont);
-            loadingText.setCharacterSize(70.0);
-            loadingText.setPosition(348.0, 595.0);
-            vili::ViliParser loadingStrDP("Sprites/Menus/loading.vili");
-            std::string loadingRandomStr = loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").get(
-                Utils::Math::randint(0, loadingStrDP.at<vili::ArrayNode>("Loading", "loadingStr").size() - 1));
-            loadingText.setString(loadingRandomStr);
-            window.draw(loadingSprite);
-            window.draw(loadingText);
-            window.display();
+            System::InitWindow(System::WindowContext::GameWindow);
 
             Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
 
@@ -65,7 +47,7 @@ namespace obe
             vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
 
             //Cursor
-            System::Cursor cursor(&window);
+            System::Cursor cursor;
             Script::hookCore.dropValue("Cursor", &cursor);
 
             //Scene Creation / Loading
@@ -83,14 +65,13 @@ namespace obe
             //Framerate / DeltaTime
             Time::FPSCounter fps;
             fps.loadFont(font);
-            Time::FramerateManager framerateManager(window, gameConfig);
-            window.setVerticalSyncEnabled(framerateManager.isVSyncEnabled());
+            Time::FramerateManager framerateManager(gameConfig);
 
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
 
             //Game Starts
-            while (window.isOpen())
+            while (System::MainWindow.isOpen())
             {
                 framerateManager.update();
                 gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
@@ -108,17 +89,17 @@ namespace obe
                 //Triggers Handling
                 inputManager.handleTriggers();
 
-                while (window.pollEvent(event))
+                while (System::MainWindow.pollEvent(event))
                 {
                     switch (event.type)
                     {
                     case sf::Event::Closed:
-                        window.close();
+                        System::MainWindow.close();
                         break;
 
                     case sf::Event::KeyPressed:
                         if (event.key.code == sf::Keyboard::Escape)
-                            window.close();
+                            System::MainWindow.close();
                         break;
                     }
                 }
@@ -126,16 +107,16 @@ namespace obe
                 if (framerateManager.doRender())
                 {
                     
-                    window.clear(Graphics::Utils::clearColor);
-                    scene.display(window);
+                    System::MainWindow.clear(Graphics::Utils::clearColor);
+                    scene.display(System::MainWindow);
 
-                    window.display();
+                    System::MainWindow.display();
                 }
             }
             gameTriggers->trigger("End");
             Triggers::TriggerDatabase::GetInstance()->update();
             scene.update(framerateManager.getGameSpeed());
-            window.close();
+            System::MainWindow.close();
         }
     }
 }
