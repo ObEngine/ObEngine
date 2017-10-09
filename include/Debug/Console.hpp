@@ -109,9 +109,8 @@ namespace obe
             void upHistory();
             /**
              * \brief Displays the Console on the screen
-             * \param target sf::RenderWindow where to display the Console
              */
-            void display(sf::RenderWindow& target);
+            void display();
             /**
              * \brief Check the visibility of the Console
              * \return true if the Console is visible, false otherwise

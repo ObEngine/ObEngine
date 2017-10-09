@@ -2,6 +2,7 @@
 #include <Editor/MapEditorTools.hpp>
 #include <Editor/TGUIFallback.hpp>
 #include <System/Loaders.hpp>
+#include <System/Window.hpp>
 #include "Input/InputCondition.hpp"
 
 namespace obe
@@ -15,21 +16,21 @@ namespace obe
             unsigned int smallFontSize;
             tgui::Theme baseTheme;
 
-            void init(sf::RenderWindow& window)
+            void init()
             {
-                calculateFontSize(window);
+                calculateFontSize();
                 baseTheme = tgui::Theme();
                 baseTheme.load("Data/GUI/obe.style");
             }
 
-            void calculateFontSize(sf::RenderWindow& window)
+            void calculateFontSize()
             {
                 double wCoeff;
-                if (window.getSize().x < sf::VideoMode::getDesktopMode().width)
-                    wCoeff = (double(sf::VideoMode::getDesktopMode().width - window.getSize().x) / double(sf::VideoMode::getDesktopMode().width)) * 0.5 + 1.0;
+                if (System::MainWindow.getSize().x < sf::VideoMode::getDesktopMode().width)
+                    wCoeff = (double(sf::VideoMode::getDesktopMode().width - System::MainWindow.getSize().x) / double(sf::VideoMode::getDesktopMode().width)) * 0.5 + 1.0;
                 else
-                    wCoeff = 1 - (double(window.getSize().x - sf::VideoMode::getDesktopMode().width) / double(window.getSize().x));
-                bigFontSize = (double(window.getSize().x)) / double(64.0 / wCoeff);
+                    wCoeff = 1 - (double(System::MainWindow.getSize().x - sf::VideoMode::getDesktopMode().width) / double(System::MainWindow.getSize().x));
+                bigFontSize = (double(System::MainWindow.getSize().x)) / double(64.0 / wCoeff);
                 mediumFontSize = double(bigFontSize) / 1.3;
                 smallFontSize = double(bigFontSize) / 2.0;
             }

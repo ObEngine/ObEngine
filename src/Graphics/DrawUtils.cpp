@@ -1,6 +1,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 
 #include <Graphics/DrawUtils.hpp>
+#include <System/Window.hpp>
 
 namespace obe
 {
@@ -16,25 +17,25 @@ namespace obe
                 return options[key].as<T>();
             }
 
-            void drawPoint(sf::RenderWindow& target, int x, int y, unsigned radius, sf::Color color)
+            void drawPoint(int x, int y, unsigned radius, sf::Color color)
             {
                 sf::CircleShape drawPt;
                 drawPt.setRadius(radius);
                 drawPt.setPosition(sf::Vector2f(x, y));
                 drawPt.setFillColor(color);
-                target.draw(drawPt);
+                System::MainWindow.draw(drawPt);
             }
 
-            void drawLine(sf::RenderWindow& target, int x1, int y1, int x2, int y2, int thickness, sf::Color color)
+            void drawLine(int x1, int y1, int x2, int y2, int thickness, sf::Color color)
             {
                 sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(x1, y1), color),
                     sf::Vertex(sf::Vector2f(x2, y2), color)
                 };
-                target.draw(line, thickness, sf::Lines);
+                System::MainWindow.draw(line, thickness, sf::Lines);
             }
 
-            void drawPolygon(sf::RenderWindow& target, std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options)
+            void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options)
             {
                 bool drawLines = findOptionOrDefault(options, "lines", true);
                 bool drawPoints = findOptionOrDefault(options, "points", true);
@@ -52,14 +53,14 @@ namespace obe
                     if (drawLines)
                     {
                         sf::Color currentLineColor = findOptionOrDefault(options, ("line_color_" + std::to_string(i)).c_str(), lineColor);
-                        drawLine(target, point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
+                        drawLine(point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
                     }
                     if (drawPoints)
                     {
                         sf::Color currentPointColor = findOptionOrDefault(options, ("point_color_" + std::to_string(i)).c_str(), pointColor);
                         polyPt.setFillColor(currentPointColor);
                         polyPt.setPosition(point1.x - pointRadius, point1.y - pointRadius);
-                        target.draw(polyPt);
+                        System::MainWindow.draw(polyPt);
                     }
                 }
             }

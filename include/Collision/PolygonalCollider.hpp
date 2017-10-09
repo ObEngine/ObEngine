@@ -360,7 +360,7 @@ namespace obe
              * \param drawMasterPoint Draws the MasterPoint of the Polygon or not
              * \param drawSkel Draws the Skeleton (Lines to MasterPoint) of the Polygon or not
              */
-            void draw(sf::RenderWindow& target, Scene::Camera& camera, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
+            void draw(Scene::Camera& camera, bool drawLines = true, bool drawPoints = false, bool drawMasterPoint = false, bool drawSkel = false);
             /**
              * \brief Highlight a Point of the Polygon (Changes its color when the Polygon is drawn)
              * \param pointIndex Index of the Point to highlight

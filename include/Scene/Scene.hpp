@@ -38,7 +38,7 @@ namespace obe
             std::string m_levelFileName;
             std::map<std::string, bool> m_showCollisionModes;
             kaguya::LuaFunction m_onLoadCallback;
-            void displaySprites(sf::RenderWindow& target);
+            void displaySprites();
         public:
             /**
              * \brief Creates a new Scene
@@ -80,10 +80,9 @@ namespace obe
              */
             void update(double dt);
             /**
-             * \brief Display all elements of the Scene of target
-             * \param target sf::RenderWindow you want to render all Scene elements to
+             * \brief Display all elements of the Scene on target
              */
-            void display(sf::RenderWindow& target);
+            void display();
             /**
              * \brief Get the name of the level
              * \return A std::string containing the name of the level

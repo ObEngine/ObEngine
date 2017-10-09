@@ -117,9 +117,8 @@ namespace obe
             void rotate(float angle, Transform::UnitVector origin);
             /**
              * \brief Draws the Rect for debug purposes <REMOVE>
-             * \param target sf::RenderWindow where to render the Rect
              */
-            void display(sf::RenderWindow& target, int posX, int posY) const;
+            void display(int posX, int posY) const;
         };
     }
 }

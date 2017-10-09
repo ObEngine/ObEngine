@@ -3,6 +3,7 @@
 
 #include <Debug/Console.hpp>
 #include <Script/GlobalState.hpp>
+#include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
@@ -193,10 +194,10 @@ namespace obe
             m_consoleVisibility = enabled;
         }
 
-        void Console::display(sf::RenderWindow& target)
+        void Console::display()
         {
             //OUTPUT
-            target.clear(sf::Color(0, 0, 0, 200));
+            System::MainWindow.clear(sf::Color(0, 0, 0, 200));
             sf::Text textOutput;
             textOutput.setFont(m_font);
             textOutput.setFillColor(sf::Color(255, 255, 255));
@@ -219,14 +220,14 @@ namespace obe
                 }
                 rectangle.setPosition(0, i);
                 rectangle.setFillColor(backgroundColor);
-                target.draw(rectangle);
+                System::MainWindow.draw(rectangle);
             }
             for (unsigned int i = 0 + m_consoleScroll; i < consoleText.size(); i++)
             {
                 textOutput.setString(consoleText[i]->getFormatedMessage());
                 textOutput.setFillColor(consoleText[i]->getColor());
                 textOutput.setPosition(sf::Vector2f(textX, textY));
-                target.draw(textOutput);
+                System::MainWindow.draw(textOutput);
                 textY += 20;
             }
 
@@ -236,13 +237,13 @@ namespace obe
             rectangleFrame.setOutlineColor(sf::Color(255, 255, 255, 255));
             rectangleFrame.setOutlineThickness(2);
             rectangleFrame.move(2, 2);
-            target.draw(rectangleFrame);
+            System::MainWindow.draw(rectangleFrame);
 
             //INPUT
             sf::RectangleShape rectangleInput = sf::RectangleShape(sf::Vector2f(Transform::UnitVector::Screen.w, 40));
             rectangleInput.setPosition(0, Transform::UnitVector::Screen.h - 40);
             rectangleInput.setFillColor(sf::Color(100, 100, 100));
-            target.draw(rectangleInput);
+            System::MainWindow.draw(rectangleInput);
             //CURSOR
             sf::RectangleShape rectangleCursor = sf::RectangleShape(sf::Vector2f(2, 30));
             sf::Text estimate;
@@ -252,7 +253,7 @@ namespace obe
             int consoleCurPos = estimate.getGlobalBounds().width;
             rectangleCursor.setPosition(consoleCurPos + 2, Transform::UnitVector::Screen.h - 35);
             rectangleCursor.setFillColor(sf::Color(200, 200, 200));
-            target.draw(rectangleCursor);
+            System::MainWindow.draw(rectangleCursor);
             //TEXT
             sf::Text textInput;
             textInput.setFont(m_font);
@@ -260,7 +261,7 @@ namespace obe
             textInput.setCharacterSize(26);
             textInput.setPosition(2, Transform::UnitVector::Screen.h - 40);
             textInput.setString(m_inputBuffer);
-            target.draw(textInput);
+            System::MainWindow.draw(textInput);
         }
     }
 }

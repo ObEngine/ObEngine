@@ -93,9 +93,9 @@ namespace obe
             m_sprite.setScalingOrigin(x, y);
         }
 
-        void LevelSprite::drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY) const
+        void LevelSprite::drawHandle(int spritePositionX, int spritePositionY) const
         {
-            Rect::display(target, spritePositionX, spritePositionY);
+            Rect::display(spritePositionX, spritePositionY);
         }
 
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)

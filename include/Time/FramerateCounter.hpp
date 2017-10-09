@@ -41,9 +41,8 @@ namespace obe
             void loadFont(sf::Font& font);
             /**
             * \brief Draws the calculated stats on the screen
-            * \param target Window to draws that stats on
             */
-            void draw(sf::RenderWindow& target);
+            void draw();
         };
     }
 }

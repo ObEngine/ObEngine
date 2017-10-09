@@ -14,8 +14,8 @@ namespace obe
             extern unsigned int mediumFontSize;
             extern unsigned int smallFontSize;
             extern tgui::Theme baseTheme;
-            void init(sf::RenderWindow& window);
-            void calculateFontSize(sf::RenderWindow& window);
+            void init();
+            void calculateFontSize();
             void applyFontSize(tgui::Panel::Ptr& mainPanel);
             void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel);
             void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel, Scene::Scene& scene);

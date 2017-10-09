@@ -2,6 +2,7 @@
 #include <TGUI/Animation.hpp>
 
 #include <Editor/EditorGlobalActions.hpp>
+#include <System/Window.hpp>
 
 namespace obe
 {

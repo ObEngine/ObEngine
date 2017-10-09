@@ -100,12 +100,11 @@ namespace obe
             void moveMagnet(System::Cursor& cursor, int x, int y);
             /**
              * \brief Draws the Grid on the Screen
-             * \param target Screen you want to render the Grid on
              * \param cursor System::Cursor used to check which lines to highlight
              * \param offsetX x Coordinate of the drawing offset (Camera)
              * \param offsetY y Coordinate of the drawing offset (Camera)
              */
-            void draw(sf::RenderWindow& target, System::Cursor& cursor, int offsetX, int offsetY);
+            void draw(System::Cursor& cursor, int offsetX, int offsetY);
         };
     }
 }

@@ -8,6 +8,7 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/Script.hpp>
+#include <System/Window.hpp>
 #include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
@@ -370,7 +371,7 @@ namespace obe
             return std::sqrt(std::pow(p1coords.x - p2coords.x, 2) + std::pow(p1coords.y - p2coords.y, 2));
         }
 
-        void PolygonalCollider::draw(sf::RenderWindow& target, Scene::Camera& camera, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+        void PolygonalCollider::draw(Scene::Camera& camera, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
         {
             if (m_allPoints.size() >= 3)
             {
@@ -438,21 +439,20 @@ namespace obe
                     polyPt.setRadius(r);
                     sf::Color polyPtColor = m_selected ? sf::Color(0, 150, 255) : sf::Color(255, 150, 0);
                     polyPt.setFillColor(polyPtColor);
-                    target.draw(polyPt);
+                    System::MainWindow.draw(polyPt);
                     if (drawSkel)
                     {
                         for (int i = 0; i < m_allPoints.size(); i++)
                         {
                             Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
                             sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
-                            Graphics::Utils::drawLine(target,
-                                                      point.x - offset.x, point.y - offset.y,
+                            Graphics::Utils::drawLine(point.x - offset.x, point.y - offset.y,
                                                       pMaster.x - offset.x, pMaster.y - offset.y,
                                                       2, currentLineColor);
                         }
                     }
                 }
-                Graphics::Utils::drawPolygon(target, lDrawPoints, drawOptions);
+                Graphics::Utils::drawPolygon(lDrawPoints, drawOptions);
             }
         }
 

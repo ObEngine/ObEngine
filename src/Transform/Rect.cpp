@@ -113,7 +113,7 @@ namespace obe
             vec.add(result);
         }
 
-        void Rect::display(sf::RenderWindow& target, int posX, int posY) const
+        void Rect::display(int posX, int posY) const
         {
             int r = 6;
             std::map<std::string, Types::Any> drawOptions;
@@ -164,10 +164,10 @@ namespace obe
             result.x = (-dy * sinAngle) * -1;
             result.y = (dy * cosAngle) * -1;
             vec += result;
-            Graphics::Utils::drawPoint(target, vec.x - r, vec.y - r, r, sf::Color::White);
-            Graphics::Utils::drawLine(target, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
+            Graphics::Utils::drawPoint(vec.x - r, vec.y - r, r, sf::Color::White);
+            Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
-            Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
+            Graphics::Utils::drawPolygon(drawPoints, drawOptions);
         }
 
 

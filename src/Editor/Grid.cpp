@@ -95,7 +95,7 @@ namespace obe
             }
         }
 
-        void EditorGrid::draw(sf::RenderWindow& target, System::Cursor& cursor, int offsetX, int offsetY)
+        void EditorGrid::draw(System::Cursor& cursor, int offsetX, int offsetY)
         {
             int stackX = -1;
             int stackY = -1;
@@ -110,12 +110,12 @@ namespace obe
             {
                 if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
                 {
-                    Graphics::Utils::drawLine(target, i, 0, i, Transform::UnitVector::Screen.h, 2, selectedLineColor);
+                    Graphics::Utils::drawLine(i, 0, i, Transform::UnitVector::Screen.h, 2, selectedLineColor);
                     stackX = i;
                 }
                 else
                 {
-                    Graphics::Utils::drawLine(target, i, 0, i, Transform::UnitVector::Screen.h, 2, normalLineColor);
+                    Graphics::Utils::drawLine(i, 0, i, Transform::UnitVector::Screen.h, 2, normalLineColor);
                 }
             }
             int startGridY = (m_gridSizeY - ((gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
@@ -123,12 +123,12 @@ namespace obe
             {
                 if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))
                 {
-                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
+                    Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
                     stackY = i;
                 }
                 else
                 {
-                    Graphics::Utils::drawLine(target, 0, i, Transform::UnitVector::Screen.w, i, 2, normalLineColor);
+                    Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w, i, 2, normalLineColor);
                 }
             }
             if (stackX != -1 && stackY != -1)

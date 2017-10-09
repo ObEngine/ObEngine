@@ -290,7 +290,7 @@ namespace obe
              * \param spritePositionX x Coordinate of the Offset of the Handle
              * \param spritePositionY y Coordinate of the Offset of the Handle
              */
-            void drawHandle(sf::RenderWindow& target, int spritePositionX, int spritePositionY) const;
+            void drawHandle(int spritePositionX, int spritePositionY) const;
             /**
              * \brief Get the HandlePoint of the LevelSprite at the given Position(x, y)
              * \param cameraPosition Position of the Scene Camera

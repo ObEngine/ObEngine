@@ -108,7 +108,7 @@ namespace obe
                 {
                     
                     System::MainWindow.clear(Graphics::Utils::clearColor);
-                    scene.display(System::MainWindow);
+                    scene.display();
 
                     System::MainWindow.display();
                 }

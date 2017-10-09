@@ -135,7 +135,7 @@ namespace obe
             tgui::Gui gui(System::MainWindow);
             gui.setFont("Data/Fonts/weblysleekuil.ttf");
             tgui::Panel::Ptr mainPanel = tgui::Panel::create();
-            GUI::init(System::MainWindow);
+            GUI::init();
             int saveEditMode = -1;
             gui.add(mainPanel);
             mainPanel->setSize("100%", "100%");
@@ -243,7 +243,7 @@ namespace obe
 
             editMode->connect("itemselected", editModeCallback);
 
-            GUI::calculateFontSize(System::MainWindow);
+            GUI::calculateFontSize();
             GUI::applyFontSize(mainPanel);
 
             //scene.setUpdateState(false);
@@ -422,7 +422,7 @@ namespace obe
                         Transform::UnitVector::Screen.h = event.size.height;
                         System::MainWindow.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                         gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                        GUI::calculateFontSize(System::MainWindow);
+                        GUI::calculateFontSize();
                         GUI::applyFontSize(mainPanel);
                         GUI::applyScrollbarMaxValue(mainPanel);
                         break;
@@ -471,10 +471,10 @@ namespace obe
                     }
 
                     System::MainWindow.clear(Graphics::Utils::clearColor);
-                    scene.display(System::MainWindow);
+                    scene.display();
                     sf::Color magenta = sf::Color::Magenta;
                     if (selectedHandlePoint != nullptr)
-                        Graphics::Utils::drawPoint(System::MainWindow, selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
+                        Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
                     pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
                     //Show Collision
                     if (editMode->getSelectedItem() == "Collisions")
@@ -482,7 +482,7 @@ namespace obe
                     else
                         scene.enableShowCollision(false);
                     if (editorGrid.isEnabled())
-                        editorGrid.draw(System::MainWindow, cursor, pixelCamera.x, pixelCamera.y);
+                        editorGrid.draw(cursor, pixelCamera.x, pixelCamera.y);
                     //HUD & GUI
                     if (sprInfo.getString() != "")
                     {
@@ -491,11 +491,11 @@ namespace obe
                     }
                     gui.draw();
                     if (drawFPS)
-                        fps.draw(System::MainWindow);
+                        fps.draw();
 
                     //Console
                     if (gameConsole.isVisible())
-                        gameConsole.display(System::MainWindow);
+                        gameConsole.display();
 
                     System::MainWindow.display();
                 }

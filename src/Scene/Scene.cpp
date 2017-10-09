@@ -4,6 +4,7 @@
 #include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
+#include <System/Window.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include "Graphics/DrawUtils.hpp"
 
@@ -369,14 +370,14 @@ namespace obe
             }
         }
 
-        void Scene::display(sf::RenderWindow& target)
+        void Scene::display()
         {
-            this->displaySprites(target);
+            this->displaySprites();
             if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
             {
                 for (unsigned int i = 0; i < m_colliderArray.size(); i++)
                 {
-                    m_colliderArray[i]->draw(target, m_camera,
+                    m_colliderArray[i]->draw(m_camera,
                         m_showCollisionModes["drawLines"],
                         m_showCollisionModes["drawPoints"],
                         m_showCollisionModes["drawMasterPoint"],
@@ -385,7 +386,7 @@ namespace obe
             }
         }
 
-        void Scene::displaySprites(sf::RenderWindow& target)
+        void Scene::displaySprites()
         {
             Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
@@ -407,15 +408,15 @@ namespace obe
 
                 if (m_spriteArray[i]->isVisible())
                 {
-                    target.draw(tAffSpr);
+                    System::MainWindow.draw(tAffSpr);
                     if (m_spriteArray[i]->isSelected())
                     {
                         //std::cout << "Middle : " << middle << std::endl;
                         std::cout << "Sprite position : " << spritePosition << std::endl;
                         Transform::UnitVector handlePos = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
-                        m_spriteArray[i]->drawHandle(target, handlePos.x, handlePos.y);
-                        Graphics::Utils::drawPoint(target, spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
-                        Graphics::Utils::drawPoint(target, bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
+                        m_spriteArray[i]->drawHandle(handlePos.x, handlePos.y);
+                        Graphics::Utils::drawPoint(spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
+                        Graphics::Utils::drawPoint(bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
                         middle += pixelCamera;
                     }
                         

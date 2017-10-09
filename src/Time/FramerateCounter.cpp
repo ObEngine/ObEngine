@@ -1,3 +1,4 @@
+#include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 
 namespace obe
@@ -32,14 +33,14 @@ namespace obe
             m_text.setFillColor(sf::Color::White);
         }
 
-        void FPSCounter::draw(sf::RenderWindow& target)
+        void FPSCounter::draw()
         {
             if (m_canUpdateFPS)
             {
                 m_canUpdateFPS = false;
                 m_text.setString(std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
             }
-            target.draw(m_text);
+            System::MainWindow.draw(m_text);
         }
     }
 }
