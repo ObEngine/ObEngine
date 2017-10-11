@@ -5,6 +5,7 @@
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
 #include <Transform/UnitVector.hpp>
+#include <System/Window.hpp>
 
 namespace obe
 {
@@ -128,6 +129,12 @@ namespace obe
                 (*lua)["Core"]["System"]["Workspace"]["GetWorkspaceLocation"] = kaguya::function(System::Workspace::GetWorkspaceLocation);
                 (*lua)["Core"]["System"]["Workspace"]["WorkspaceExists"] = kaguya::function(System::Workspace::WorkspaceExists);
                 (*lua)["Core"]["System"]["Workspace"]["Load"] = kaguya::function(System::Workspace::Load);
+            }
+
+            void LoadWindow(kaguya::State* lua)
+            {
+                (*lua)["Core"]["System"]["Window"] = kaguya::NewTable();
+                (*lua)["Core"]["System"]["Window"]["setTitle"] = kaguya::function(System::setTitle);
             }
         }
     }
