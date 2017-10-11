@@ -74,7 +74,8 @@ namespace obe
                 .add("Package", &SystemBindings::LoadPackage)
                 .add("Path", &SystemBindings::LoadPath)
                 .add("Cursor", &SystemBindings::LoadSCursor)
-                .add("Workspace", &SystemBindings::LoadWorkspace);
+                .add("Workspace", &SystemBindings::LoadWorkspace)
+                .add("Window", &SystemBindings::LoadWindow);
             BindTree["Core"].add("Time")["Time"]
                 .add("Chronometer", &TimeBindings::LoadChronometer)
                 .add("FPSCounter", &TimeBindings::LoadFPSCounter)
