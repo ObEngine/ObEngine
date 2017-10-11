@@ -3,14 +3,6 @@ cmake_policy(SET CMP0015 NEW)
 
 project(ObEngineCore)
 
-IF (NOT DEFINED _USE_CPP_NEW_FS)
-    set(_USE_CPP_NEW_FS ON CACHE BOOL "Use C++17 Filesystem ?")
-ENDIF()
-
-if(_USE_CPP_NEW_FS)
-    ADD_DEFINITIONS(-D_USE_CPP_NEW_FS)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
 endif()
@@ -36,6 +28,10 @@ target_link_libraries(ObEngineCore sfe)
 target_link_libraries(ObEngineCore vili)
 target_link_libraries(ObEngineCore dynamicLinker)
 
+IF(CMAKE_COMPILER_IS_GNUCXX AND _USE_CPP_NEW_FS)
+  target_link_libraries(ObEngineCore stdc++fs)
+ENDIF()
+
 if (UNIX)
     target_link_libraries(ObEngineCore ${CMAKE_DL_LIBS})
 endif()
@@ -46,17 +42,17 @@ endif()
 
 target_link_libraries(ObEngineCore ${OPENGL_LIBRARIES})
 
-set(_inc_root_path "${ObEngine_SOURCE_DIR}/include/")
+set(_inc_root_path "${ObEngine_SOURCE_DIR}/include/Core")
 file(
     GLOB_RECURSE _inc_list 
     LIST_DIRECTORIES false
-    "${_inc_root_path}/*.hpp"
+    "${_inc_root_path}/Core/*.hpp"
 )
-set(_src_root_path "${ObEngine_SOURCE_DIR}/src/")
+set(_src_root_path "${ObEngine_SOURCE_DIR}/src/Core")
 file(
     GLOB_RECURSE _src_list 
     LIST_DIRECTORIES false
-    "${_src_root_path}/*.cpp"
+    "${_src_root_path}/Core/*.cpp"
 )
 
 foreach(_include IN ITEMS ${_inc_list})
