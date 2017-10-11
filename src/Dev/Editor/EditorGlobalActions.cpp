@@ -189,12 +189,13 @@ namespace obe
             const std::string& mapName, 
             Scene::Scene& world, 
             double& waitForMapSaving, 
-            tgui::Label::Ptr savedLabel)
+            tgui::Label::Ptr savedLabel,
+            tgui::CheckBox::Ptr saveCameraPositionCheckbox)
         {
-            inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel](const Input::InputActionEvent& event)
+            inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel, saveCameraPositionCheckbox](const Input::InputActionEvent& event)
             {
                 Debug::Log->info("<EditorGlobalActions> Saving Map '{0}'", mapName);
-                world.dump()->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+                world.dump(saveCameraPositionCheckbox->isChecked())->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
                 if (waitForMapSaving < 0)
                 {
                     savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));

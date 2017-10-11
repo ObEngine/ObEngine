@@ -73,7 +73,7 @@ namespace obe
              * \brief Dumps all elements of the Scene in a vili tree
              * \return 
              */
-            vili::ViliParser* dump();
+            vili::ViliParser* dump(bool saveCameraPosition);
             /**
              * \brief Updates all elements in the Scene
              * \param dt DeltaTime used to update the Scene

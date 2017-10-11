@@ -171,6 +171,7 @@ namespace obe
             tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
             tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
             tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
+            tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
 
             //Map Editor
             Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -205,7 +206,7 @@ namespace obe
             cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                 
             //Connect InputManager Actions
-            connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel);
+            connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel, saveCameraPositionCheckbox);
             connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
             connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
             connectMenuActions(inputManager, editMode, editorPanel);
