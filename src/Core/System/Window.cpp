@@ -93,5 +93,10 @@ namespace obe
         {
             System::MainWindow.setTitle(title);
         }
+
+        void setSize(unsigned int width, unsigned int height)
+        {
+            System::MainWindow.setSize(sf::Vector2u(width, height));
+        }
     }
 }

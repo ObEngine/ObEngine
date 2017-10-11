@@ -135,6 +135,7 @@ namespace obe
             {
                 (*lua)["Core"]["System"]["Window"] = kaguya::NewTable();
                 (*lua)["Core"]["System"]["Window"]["setTitle"] = kaguya::function(System::setTitle);
+                (*lua)["Core"]["System"]["Window"]["setSize"] = kaguya::function(System::setSize);
             }
         }
     }
