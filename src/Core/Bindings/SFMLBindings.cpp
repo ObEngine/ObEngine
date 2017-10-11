@@ -8,8 +8,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
+#include <Bindings/Bindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
-#include "Bindings/Bindings.hpp"
 
 namespace obe
 {

@@ -2,8 +2,6 @@
 
 #include <Bindings/Bindings.hpp>
 #include <Collision/PolygonalCollider.hpp>
-#include <Debug/Console.hpp>
-#include <Editor/Grid.hpp>
 #include <Graphics/Canvas.hpp>
 #include <Input/InputManager.hpp>
 #include <Script/Script.hpp>
@@ -23,11 +21,8 @@ namespace obe
             if (containerMap.find(name) != containerMap.end())
             {
                 std::string hookType = containerMap[name].first;
-                if (hookType == Utils::Type::getClassType<Debug::Console*>())
-                {
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Debug::Console*>();
-                }
-                else if (hookType == Utils::Type::getClassType<System::Cursor*>())
+                // Bring back Debug::Console Type
+                if (hookType == Utils::Type::getClassType<System::Cursor*>())
                 {
                     (*lua)["Hook"][name] = containerMap[name].second->as<System::Cursor*>();
                 }
@@ -43,10 +38,7 @@ namespace obe
                 {
                     (*lua)["Hook"][name] = containerMap[name].second->as<Triggers::TriggerGroup*>();
                 }
-                else if (hookType == Utils::Type::getClassType<Editor::EditorGrid*>())
-                {
-                    (*lua)["Hook"][name] = containerMap[name].second->as<Editor::EditorGrid*>();
-                }
+                // Bring Back Editor:Grid Type
                 else
                     throw aube::ErrorHandler::Raise("ObEngine.Script.CoreHook.UnknownHookType", {{"type", hookType}, {"name", name}});
             }
