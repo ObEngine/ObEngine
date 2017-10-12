@@ -4,10 +4,7 @@ cmake_policy(SET CMP0015 NEW)
 project(ObEngineTests)
 
 file(GLOB_RECURSE PG_OBT src/*.hpp)
-file(GLOB_RECURSE HD_OBT 
-    src/*.cpp
-    ../src/*.cpp
-)
+file(GLOB_RECURSE HD_OBT src/*.cpp)
 
 FOREACH(item ${HD_OBT})
   IF(${item} MATCHES "ObEngine.cpp")
@@ -19,7 +16,7 @@ set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
 find_package(OpenGL REQUIRED)
 
-include_directories(../include/)
+include_directories(../include/Core)
 include_directories(../extlibs/include/)
 
 include_directories(${SFML_INCLUDE_DIR})
@@ -28,11 +25,11 @@ include_directories(${OPENGL_INCLUDE_DIR})
 
 add_executable(ObEngineTests ${PG_OBT} ${HD_OBT})
 
+target_link_libraries(ObEngineTests ObEngineCore)
 target_link_libraries(ObEngineTests clipper)
 target_link_libraries(ObEngineTests elzip)
 target_link_libraries(ObEngineTests lua)
 target_link_libraries(ObEngineTests sfe)
-target_link_libraries(ObEngineTests TGUI)
 target_link_libraries(ObEngineTests vili)
 target_link_libraries(ObEngineTests dynamicLinker)
 

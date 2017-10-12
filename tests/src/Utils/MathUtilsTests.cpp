@@ -57,5 +57,38 @@ TEST_CASE("A value should be converted from degrees to radians", "[obe.Utils.Mat
 
 TEST_CASE("A value should be converted from radians to degrees", "[obe.Utils.Math.convertToDegree]")
 {
-    
+    SECTION("Positive Known Angles")
+    {
+        REQUIRE(convertToDegree(0) == 0);
+        REQUIRE(convertToDegree(pi / 2) == Approx(90));
+        REQUIRE(convertToDegree(pi) == Approx(180));
+        REQUIRE(convertToDegree(pi + pi / 2) == Approx(270));
+    }
+    SECTION("Negative Known Angles")
+    {
+        REQUIRE(convertToDegree(-pi / 2) == Approx(-90));
+        REQUIRE(convertToDegree(-pi) == Approx(-180));
+        REQUIRE(convertToDegree(-pi - pi / 2) == Approx(-270));
+        REQUIRE(convertToDegree(-2 * pi) == Approx(-360));
+    }
+    SECTION("Random Angles")
+    {
+        REQUIRE(convertToDegree(1) == Approx(57.2958));
+        REQUIRE(convertToDegree(22) == Approx(1260.51));
+        REQUIRE(convertToDegree(-2.5) == Approx(-143.239));
+        REQUIRE(convertToDegree(0.7) == Approx(40.107));
+    }
+}
+
+TEST_CASE("A value should be normalised from start to end", "[obe.Utils.Math.normalise]")
+{
+    SECTION("Angle normalisation")
+    {
+        REQUIRE(normalise(0, 0, 360) == 0);
+        REQUIRE(normalise(360, 0, 360) == 0);
+        REQUIRE(normalise(361, 0, 360) == 1);
+        REQUIRE(normalise(720, 0, 360) == 0);
+        REQUIRE(normalise(1000, 0, 360) == 280);
+        REQUIRE(normalise(-650, 0, 360) == 70);
+    }
 }
