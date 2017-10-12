@@ -54,7 +54,7 @@ namespace obe
                 }
             }
 
-            auto wStyle = sf::Style::None;
+            int wStyle = sf::Style::None;
             bool fullscreen = true;
             bool closeable = true;
             bool resizeable = true;
