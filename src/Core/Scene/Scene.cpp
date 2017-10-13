@@ -368,13 +368,16 @@ namespace obe
                 if (!m_onLoadCallback.isNilref())
                     m_onLoadCallback(futureLoadBuffer);
             }
-            if (m_updateState)
+            if (m_updateState || m_debugState)
             {
                 for (auto& gameObject : m_gameObjectArray)
                 {
                     if (!gameObject->deletable)
                         gameObject->update();
                 }
+
+                if (m_debugState)
+                    setDebugState(false);
             }
         }
 
@@ -465,6 +468,20 @@ namespace obe
                 if (exists)
                 {
                     Script::ScriptEngine["__ENVIRONMENTS"][i]["__ENV_ENABLED"] = state;
+                }
+            }
+        }
+
+        void Scene::setDebugState(bool state)
+        {
+            m_debugState = state;
+            unsigned int envCount = Script::ScriptEngine["__ENV_COUNT"];
+            for (unsigned int i = 0; i < envCount; i++)
+            {
+                bool exists = Script::ScriptEngine["LuaUtil"]["Exists"]("__ENVIRONMENTS[" + std::to_string(i) + "]");
+                if (exists)
+                {
+                    Script::ScriptEngine["__ENVIRONMENTS"][i]["__ENV_DEBUG"] = state;
                 }
             }
         }

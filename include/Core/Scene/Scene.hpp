@@ -26,7 +26,8 @@ namespace obe
             Camera m_camera;
             Transform::UnitVector m_cameraInitialPosition;
             Transform::Referencial m_cameraInitialReferencial;
-            bool m_updateState = true;
+            bool m_updateState = false;
+            bool m_debugState = false;
 
             std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
             std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
@@ -94,10 +95,16 @@ namespace obe
              */
             void setLevelName(const std::string& newName);
             /**
-             * \brief Enables or disables the Scene update
-             * \param state true if the Scene should update, false otherwise
-             */
+            * \brief Enables or disables the Scene update
+            * \param state true if the Scene should update, false otherwise
+            */
             void setUpdateState(bool state);
+
+            /**
+            * \brief Enables or disables the Scene debug
+            * \param state true if the Scene should be in debug mode, false otherwise
+            */
+            void setDebugState(bool state);
 
             //GameObjects
             /**

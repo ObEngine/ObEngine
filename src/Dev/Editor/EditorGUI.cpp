@@ -98,6 +98,7 @@ namespace obe
                 tgui::Label::Ptr savedLabel = tgui::Label::create();
                 tgui::Button::Ptr editorButton = tgui::Button::create();
                 tgui::CheckBox::Ptr updateStateCheckbox = tgui::CheckBox::create();
+                tgui::Button::Ptr debugButton = tgui::Button::create();
                 tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
                 tgui::HorizontalWrap::Ptr toolbarWrap = tgui::HorizontalWrap::create();
 
@@ -108,6 +109,7 @@ namespace obe
                 titlePanel->add(savedLabel, "savedLabel");
                 titlePanel->add(editorButton, "editorButton");
                 titlePanel->add(updateStateCheckbox, "updateStateCheckbox");
+                titlePanel->add(debugButton, "debugButton");
                 titlePanel->add(editMode, "editMode");
 
                 titlePanel->setRenderer(baseTheme.getRenderer("TransparentPanel"));
@@ -136,14 +138,20 @@ namespace obe
                 editMode->getRenderer()->getTextureArrowUp().setSmooth(true);
                 editMode->getRenderer()->getTextureArrowDown().setSmooth(true);
 
+                debugButton->setSize("8%", "100% - 1");
+                debugButton->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(debugButton) - 1, 0);
+                debugButton->setText("Step Into");
+                debugButton->setTextSize(mediumFontSize);
+                debugButton->setRenderer(baseTheme.getRenderer("Button"));
+
                 updateStateCheckbox->setSize(128, "100% - 1");
-                updateStateCheckbox->setPosition(tgui::bindLeft(editMode) - tgui::bindWidth(updateStateCheckbox) - 1, 0);
+                updateStateCheckbox->setPosition(tgui::bindLeft(debugButton) - tgui::bindWidth(updateStateCheckbox) - 1, 0);
                 updateStateCheckbox->setRenderer(baseTheme.getRenderer("StateCheckBox"));
                 updateStateCheckbox->getRenderer()->getTextureChecked().setSmooth(true);
                 updateStateCheckbox->getRenderer()->getTextureUnchecked().setSmooth(true);
-                updateStateCheckbox->check();
+                updateStateCheckbox->uncheck();
 
-                editorButton->setSize("9.8%", "100%");
+                editorButton->setSize("9.8%", "100% - 1");
                 editorButton->setPosition(tgui::bindLeft(updateStateCheckbox) - tgui::bindWidth(editorButton) - 1, 0);
                 editorButton->setText("Editor Menu");
                 editorButton->setTextSize(mediumFontSize);
@@ -169,6 +177,13 @@ namespace obe
                 {
                     scene.setUpdateState(false);
                 });
+
+                debugButton->connect("pressed", [&scene, updateStateCheckbox]()
+                {
+                    updateStateCheckbox->uncheck();
+                    scene.setDebugState(true);
+                });
+
             }
 
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel)
