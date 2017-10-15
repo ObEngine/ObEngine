@@ -7,8 +7,8 @@ if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
 endif()
 
-file(GLOB_RECURSE PG_OBE *.hpp)
-file(GLOB_RECURSE HD_OBE *.cpp)
+file(GLOB_RECURSE PG_OBE "${ObEngine_SOURCE_DIR}/include/Core/*.hpp")
+file(GLOB_RECURSE HD_OBE "${ObEngine_SOURCE_DIR}/src/Core/*.cpp")
 
 set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
 
@@ -43,26 +43,16 @@ endif()
 target_link_libraries(ObEngineCore ${OPENGL_LIBRARIES})
 
 set(_inc_root_path "${ObEngine_SOURCE_DIR}/include/Core")
-file(
-    GLOB_RECURSE _inc_list 
-    LIST_DIRECTORIES false
-    "${_inc_root_path}/Core/*.hpp"
-)
 set(_src_root_path "${ObEngine_SOURCE_DIR}/src/Core")
-file(
-    GLOB_RECURSE _src_list 
-    LIST_DIRECTORIES false
-    "${_src_root_path}/Core/*.cpp"
-)
 
-foreach(_include IN ITEMS ${_inc_list})
+foreach(_include IN ITEMS ${PG_OBE})
     get_filename_component(_include_path "${_include}" PATH)
     file(RELATIVE_PATH _include_path_rel "${_inc_root_path}" "${_include_path}")
     string(REPLACE "/" "\\" _group_path "${_include_path_rel}")
     source_group("${_group_path}" FILES "${_include}")
 endforeach()
 
-foreach(_source IN ITEMS ${_src_list})
+foreach(_source IN ITEMS ${HD_OBE})
     get_filename_component(_source_path "${_source}" PATH)
     file(RELATIVE_PATH _source_path_rel "${_src_root_path}" "${_source_path}")
     string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
