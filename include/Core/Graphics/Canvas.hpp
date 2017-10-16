@@ -17,10 +17,8 @@ namespace obe
          */
         class Element
         {
-        protected:
-            std::vector<std::pair<std::string, std::string>> requires;
-            std::string m_id;
         public:
+            std::string id;
             /**
              * \brief Creates a new Canvas Element
              * \param id Id of the new Element
@@ -30,50 +28,16 @@ namespace obe
              * \brief Default destructor of Element
              */
             virtual ~Element() = default;
-            /**
-             * \brief Abstract update method
-             */
-            virtual void update() = 0;
         };
 
-        /**
-         * \brief A Configurable Canvas Element (can have properties)
-         */
-        class Configurable : public virtual Element
-        {
-        protected:
-            kaguya::LuaTable m_tableWrapper;
-        public:
-            /**
-             * \brief Creates a new Configurable Canvas Element
-             * \param id 
-             */
-            explicit Configurable(const std::string& id);
-            /**
-             * \brief Initialize the Configurable
-             * \param tableWrapper LuaTable reference used for configuration
-             * \return A reference to the LuaTable passed by parameter
-             */
-            kaguya::LuaTable& init(const kaguya::LuaTable& tableWrapper);
-            /**
-             * \brief Get a reference to the LuaTable used for configuration
-             * \return A reference to the LuaTable used for configuration
-             */
-            kaguya::LuaTable& get();
-            /**
-             * \brief Updates the Configurable
-             */
-            void update() override;
-        };
 
         /**
          * \brief A Drawable Canvas Element
          */
-        class Drawable : public virtual Configurable
+        class Drawable : public virtual Element
         {
-        protected:
-            unsigned int m_layer = 1;
         public:
+            unsigned int layer;
             /**
              * \brief Creates a new Drawable
              * \param id Id of the new Drawable
@@ -84,10 +48,6 @@ namespace obe
              * \param target Target where to render the result
              */
             virtual void draw(sf::RenderTexture& target) const = 0;
-            /**
-             * \brief Updates the Drawable
-             */
-            void update() override;
         };
 
         /**
@@ -95,9 +55,8 @@ namespace obe
          */
         class Colorable : public virtual Drawable
         {
-        protected:
-            sf::Color m_color;
         public:
+            sf::Color color;
             /**
              * \brief Creates a new Colorable
              * \param id Id of the new Colorable
@@ -108,43 +67,30 @@ namespace obe
              * \param target Target where to render the result
              */
             void draw(sf::RenderTexture& target) const override = 0;
-            /**
-             * \brief Updates the Colorable
-             */
-            void update() override;
         };
 
         /**
          * \brief A Transformable Canvas Element
          */
-        class Transformable : public virtual Configurable
+        class Transformable : public virtual Element
         {
-        protected:
-            float m_x;
-            float m_y;
-            float m_width;
-            float m_height;
-            float m_rotation;
-            float m_translationOriginX;
-            float m_translationOriginY;
-            float m_rotationOriginX;
-            float m_rotationOriginY;
         public:
+            Transform::UnitVector position;
+            Transform::UnitVector size;
+            float angle;
+            Transform::UnitVector translationOrigin;
+            Transform::UnitVector rotationOrigin;
             /**
              * \brief Creates a new Transformable
              * \param id Id of the new Transformable
              */
             explicit Transformable(const std::string& id);
-            /**
-             * \brief Updates the Transformable
-             */
-            void update() override;
         };
 
         /**
          * \brief A CanvasElement (Base class for all real CanvasElements)
          */
-        class CanvasElement : public virtual Drawable
+        class CanvasElement : public Drawable
         {
         public:
             /**
@@ -157,10 +103,6 @@ namespace obe
              * \param target Target where to draw the result to
              */
             void draw(sf::RenderTexture& target) const override = 0;
-            /**
-             * \brief Updates the CanvasElement
-             */
-            void update() override;
         };
 
         /**
@@ -168,12 +110,9 @@ namespace obe
          */
         class Line : public CanvasElement, public Colorable
         {
-        private:
-            float m_x1;
-            float m_x2;
-            float m_y1;
-            float m_y2;
         public:
+            Transform::UnitVector p1;
+            Transform::UnitVector p2;
             /**
              * \brief Creates a new Line
              * \param id 
@@ -184,10 +123,6 @@ namespace obe
              * \param target Target where to draw the Line to
              */
             void draw(sf::RenderTexture& target) const override;
-            /**
-             * \brief Updates the Line
-             */
-            void update() override;
         };
 
         /**
@@ -196,6 +131,7 @@ namespace obe
         class Rectangle : public CanvasElement, public Colorable, public Transformable
         {
         public:
+            sf::RectangleShape shape;
             /**
              * \brief Creates a new Rectangle
              * \param id Id of the new Rectangle
@@ -206,10 +142,20 @@ namespace obe
              * \param target Target where to draw the Rectangle to
              */
             void draw(sf::RenderTexture& target) const override;
-            /**
-             * \brief Updates the Rectangle
-             */
-            void update() override;
+        };
+
+        enum class TextHorizontalAlign
+        {
+            Left,
+            Center,
+            Right
+        };
+
+        enum class TextVerticalAlign
+        {
+            Top,
+            Center,
+            Bottom
         };
 
         /**
@@ -217,11 +163,13 @@ namespace obe
          */
         class Text : public CanvasElement, public Colorable, public Transformable
         {
-        private:
-            int m_characterSize;
-            std::string m_text;
-            std::string m_font;
         public:
+            int characterSize;
+            std::string content;
+            sf::Text text;
+            sf::Font font;
+            TextHorizontalAlign h_align;
+            TextVerticalAlign v_align;
             /**
              * \brief Creates a new Text
              * \param id Id of the new Text
@@ -232,10 +180,6 @@ namespace obe
              * \param target Target where to draw the Text to
              */
             void draw(sf::RenderTexture& target) const override;
-            /**
-             * \brief Updates the Text
-             */
-            void update() override;
         };
 
         /**
@@ -243,9 +187,9 @@ namespace obe
          */
         class Circle : public CanvasElement, public Colorable, public Transformable
         {
-        private:
-            float m_radius;
         public:
+            sf::CircleShape shape;
+            float radius;
             /**
              * \brief Creates a new Circle
              * \param id Id of the new Circle
@@ -256,10 +200,6 @@ namespace obe
              * \param target Target where to draw the Circle to
              */
             void draw(sf::RenderTexture& target) const override;
-            /**
-             * \brief Updates the Circle
-             */
-            void update() override;
         };
 
         /*
@@ -267,19 +207,15 @@ namespace obe
          */
         class Sprite : public CanvasElement, public Colorable, public Transformable
         {
-        private:
-            std::string m_path;
         public:
+            sf::Texture texture;
+            sfe::ComplexSprite sprite;
             explicit Sprite(const std::string& id);
             /**
              * \brief Draws the Sprite
              * \param target Target where to draw the Sprite to
              */
             void draw(sf::RenderTexture& target) const override;
-            /**
-             * \brief Updates the Sprite
-             */
-            void update() override;
         };
 
         /**
@@ -290,7 +226,7 @@ namespace obe
         private:
             LevelSprite* m_target;
             sf::RenderTexture m_canvas;
-            std::map<std::string, CanvasElement*> elements;
+            std::map<std::string, std::unique_ptr<CanvasElement>> elements;
         public:
             /**
              * \brief Creates a new Canvas
@@ -328,13 +264,6 @@ namespace obe
             /*Polygon& Polygon(std::string id);
             Shader& Shader(std::string id);
             Vertexes& Vertexes(std::string id);*/
-
-            /**
-             * \brief Get a reference to the LuaTable connected to a CanvasElement
-             * \param id Id of the CanvasElement to get the LuaTable
-             * \return A reference to the LuaTable of the CanvasElement
-             */
-            kaguya::LuaTable& get(std::string id);
 
             /**
              * \brief Sets the LevelSprite where the Canvas should render
