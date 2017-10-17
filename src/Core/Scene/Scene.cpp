@@ -259,7 +259,7 @@ namespace obe
             Debug::Log->debug("<Scene> Scene Cleared !");
         }
 
-        vili::ViliParser* Scene::dump()
+        vili::ViliParser* Scene::dump(bool saveCameraPosition)
         {
             vili::ViliParser* dataStore = new vili::ViliParser;
             dataStore->addFlag("Map");
@@ -275,8 +275,16 @@ namespace obe
             dataStore->at("View").createDataNode("size", m_camera.getSize().y / 2);
             dataStore->at("View").createComplexNode("pos");
             dataStore->at("View", "pos").createDataNode("unit", unitsToString(m_cameraInitialPosition.unit));
-            dataStore->at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
-            dataStore->at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
+            if (!saveCameraPosition)
+            {
+                dataStore->at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
+                dataStore->at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
+            }
+            else
+            {
+                dataStore->at("View", "pos").createDataNode("x", m_camera.getPosition().x);
+                dataStore->at("View", "pos").createDataNode("y", m_camera.getPosition().y);
+            }
             dataStore->at("View", "pos").useTemplate(dataStore->getTemplate(
                 "Vector2<" + Transform::unitsToString(m_cameraInitialPosition.unit) + ">")
             );

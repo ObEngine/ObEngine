@@ -5,9 +5,9 @@ Game:
     title:"MyGame"
 
 Editor:
-    fullscreen:False
+    fullscreen:True
     closeable:True
     titlebar:True
     resizeable:True
-    width:1280
-    height:720
+    width:"Fill"
+    height:"Fill"

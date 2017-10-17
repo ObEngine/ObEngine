@@ -65,6 +65,7 @@ namespace obe
                 mainPanel->get<tgui::EditBox>("cameraPositionYInput")->setSize("8.3%", mediumFontSize + 4);
                 mainPanel->get<tgui::Label>("cameraSizeLabel")->setTextSize(mediumFontSize);
                 mainPanel->get<tgui::EditBox>("cameraSizeInput")->setSize("8.3%", mediumFontSize + 4);
+                mainPanel->get<tgui::CheckBox>("saveCameraPositionCheckbox")->setTextSize(mediumFontSize);
 
                 tgui::Panel::Ptr keybindingPanel = mainPanel->get<tgui::Panel>("keybindingPanel");
                 tgui::Scrollbar::Ptr keybindingScrollbar = mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
@@ -436,7 +437,8 @@ namespace obe
                 tgui::Label::Ptr cameraSizeLabel = tgui::Label::create();
                 tgui::EditBox::Ptr cameraSizeInput = tgui::EditBox::create();
                 tgui::Button::Ptr cameraSizeBtn = tgui::Button::create();
-
+                tgui::CheckBox::Ptr saveCameraPositionCheckbox = tgui::CheckBox::create();
+                
                 settingsPanel->add(settingsCatLabel, "settingsCatLabel");
 
                 settingsPanel->add(displayFramerateCheckbox, "displayFramerateCheckbox");
@@ -457,6 +459,7 @@ namespace obe
                 settingsPanel->add(cameraSizeLabel, "cameraSizeLabel");
                 settingsPanel->add(cameraSizeInput, "cameraSizeInput");
                 settingsPanel->add(cameraSizeBtn, "cameraSizeBtn");
+                settingsPanel->add(saveCameraPositionCheckbox, "saveCameraPositionCheckbox");
 
                 settingsCatLabel->setPosition(20, 20);
                 settingsCatLabel->setTextSize(bigFontSize);
@@ -664,6 +667,12 @@ namespace obe
                     float camSize = std::stof(cameraSizeInput->getText().toAnsiString());
                     scene.getCamera()->setSize(camSize);
                 });
+
+                saveCameraPositionCheckbox->setPosition(60, tgui::bindBottom(cameraSizeInput) + 20);
+                saveCameraPositionCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
+                saveCameraPositionCheckbox->setSize(16, 16);
+                saveCameraPositionCheckbox->setTextSize(mediumFontSize);
+                saveCameraPositionCheckbox->setText("Save Camera Position ?");
             }
 
             void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar)

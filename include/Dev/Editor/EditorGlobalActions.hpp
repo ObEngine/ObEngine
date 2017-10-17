@@ -39,7 +39,8 @@ namespace obe
             const std::string& mapName, 
             Scene::Scene& world, 
             double& waitForMapSaving, 
-            tgui::Label::Ptr savedLabel);
+            tgui::Label::Ptr savedLabel,
+            tgui::CheckBox::Ptr saveCameraPositionCheckbox);
         /**
          * \brief Connects Console's related Triggers
          * \param inputManager Reference to the InputManager

@@ -17,6 +17,7 @@ namespace obe
             void LoadPath(kaguya::State* lua);
             void LoadPackage(kaguya::State* lua);
             void LoadWorkspace(kaguya::State* lua);
+            void LoadWindow(kaguya::State* lua);
         }
     }
 }

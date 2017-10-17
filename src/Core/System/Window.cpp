@@ -88,5 +88,15 @@ namespace obe
             System::MainWindow.create(sf::VideoMode(width, height), title, wStyle);
             System::MainWindow.setKeyRepeatEnabled(false);
         }
+
+        void setTitle(const std::string& title)
+        {
+            System::MainWindow.setTitle(title);
+        }
+
+        void setSize(unsigned int width, unsigned int height)
+        {
+            System::MainWindow.setSize(sf::Vector2u(width, height));
+        }
     }
 }
