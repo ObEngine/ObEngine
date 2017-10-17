@@ -113,6 +113,7 @@ namespace obe
 
         GameObject::~GameObject()
         {
+            Debug::Log->debug("<GameObject> Deleting GameObject {0}", m_id);
             if (m_hasScriptEngine)
             {
                 Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);

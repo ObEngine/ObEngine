@@ -83,5 +83,8 @@ script:
   - gcc -v && g++ -v && /usr/local/bin/cmake --version
   - mkdir build
   - cd build
-  - /usr/local/bin/cmake ..
+  - /usr/local/bin/cmake -DBUILD_TESTS=ON ..
   - make
+  # Running Tests
+  - mv tests/ObEngineTests Tests
+  - ./Tests

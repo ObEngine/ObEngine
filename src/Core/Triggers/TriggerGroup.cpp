@@ -131,6 +131,7 @@ namespace obe
                 m_link->m_references--;
                 if (m_link->m_references == 0)
                 {
+                    Debug::Log->trace("Removing TriggerGroup {0} from TriggerGroupPtr", m_link->getName());
                     TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
                 }
             }

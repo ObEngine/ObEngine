@@ -91,7 +91,10 @@ namespace obe
         {
             Debug::Log->debug("<TriggerDatabase> Removing Trigger Namespace {0}", namespaceId);
             if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
+            {
+                Debug::Log->trace("<TriggerDatabase> Found Trigger Namespace {0}, removing it...", namespaceId);
                 m_allTriggers.erase(m_allTriggers.find(namespaceId));
+            }
             else
                 throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace", {{"function", "removeNamespace"}, {"nsp", namespaceId}});
         }

@@ -92,7 +92,8 @@ namespace obe
         void Scene::loadFromFile(const std::string& filename)
         {
             Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", filename);
-            this->clearWorld();
+            this->clear();
+            Debug::Log->debug("<Scene> Cleared Scene");
             if (filename != m_levelFileName)
             {
                 m_levelFile = vili::ViliParser();
@@ -224,32 +225,38 @@ namespace obe
             m_onLoadCallback = callback;
         }
 
-        void Scene::clearWorld()
+        void Scene::clear()
         {
             for (auto& gameObject : m_gameObjectArray)
             {
                 if (!gameObject->isPermanent())
                 {
+                    Debug::Log->debug("<Scene> Deleting GameObject {0}", gameObject->getId());
                     gameObject->deleteObject();
                 }
             }
+            Debug::Log->debug("<Scene> Cleaning GameObject Array");
             m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), 
             [](const std::unique_ptr<Script::GameObject>& ptr){
                 return (!ptr->isPermanent());
             }), m_gameObjectArray.end());
+            Debug::Log->debug("<Scene> Cleaning LevelSprite Array");
             m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(), 
             [this](const std::unique_ptr<Graphics::LevelSprite>& ptr){
                 if (!ptr->getParentId().empty() && this->doesGameObjectExists(ptr->getParentId()))
                     return false;
                 return true;
             }), m_spriteArray.end());
+            Debug::Log->debug("<Scene> Cleaning LevelSprite Array");
             m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(), 
             [this](const std::unique_ptr<Collision::PolygonalCollider>& ptr){
                 if (!ptr->getParentId().empty() && this->doesGameObjectExists(ptr->getParentId()))
                     return false;
                 return true;
             }), m_colliderArray.end());
+            Debug::Log->debug("<Scene> Clearing MapScript Array");
             m_scriptArray.clear();
+            Debug::Log->debug("<Scene> Scene Cleared !");
         }
 
         vili::ViliParser* Scene::dump()

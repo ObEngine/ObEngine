@@ -31,7 +31,7 @@ namespace obe
             void LoadScene(kaguya::State* lua)
             {
                 (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
-                    .addFunction("clearWorld", &Scene::Scene::clearWorld)
+                    .addFunction("clear", &Scene::Scene::clear)
                     .addFunction("createCollider", Scene_createCollider_wrapper())
                     //.addFunction("createGameObject", &Scene::Scene::createGameObject)
                     .addFunction("createLevelSprite", Scene_createLevelSprite_wrapper())

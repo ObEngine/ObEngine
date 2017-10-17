@@ -68,7 +68,7 @@ namespace obe
             /**
              * \brief Removes all elements in the Scene
              */
-            void clearWorld();
+            void clear();
             /**
              * \brief Dumps all elements of the Scene in a vili tree
              * \return 
