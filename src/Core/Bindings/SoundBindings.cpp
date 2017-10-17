@@ -10,7 +10,7 @@ namespace obe
         {
             void LoadMusic(kaguya::State* lua)
             {
-                (*lua)["Core"]["Sound"]["Music"].setClass(kaguya::UserdataMetatable<Sound::MusicWrapper>()
+                (*lua)["obe"]["Music"].setClass(kaguya::UserdataMetatable<Sound::MusicWrapper>()
                     .setConstructors<Sound::MusicWrapper(), Sound::MusicWrapper(const std::string&)>()
                     .addFunction("doesUsesSoundPosition", &Sound::MusicWrapper::doesUsesSoundPosition)
                     .addFunction("getDuration", &Sound::MusicWrapper::getDuration)
@@ -39,7 +39,7 @@ namespace obe
 
             void LoadSound(kaguya::State* lua)
             {
-                (*lua)["Core"]["Sound"]["Sound"].setClass(kaguya::UserdataMetatable<Sound::SoundWrapper>()
+                (*lua)["obe"]["Sound"].setClass(kaguya::UserdataMetatable<Sound::SoundWrapper>()
                     .setConstructors<Sound::SoundWrapper(), Sound::SoundWrapper(const std::string&)>()
                     .addFunction("doesUsesSoundPosition", &Sound::SoundWrapper::doesUsesSoundPosition)
                     .addFunction("getMinimumDistance", &Sound::SoundWrapper::getMinimumDistance)

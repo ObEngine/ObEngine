@@ -15,8 +15,8 @@ namespace obe
         {
             void LoadInputAction(kaguya::State* lua)
             {
-                Load(lua, "Core.Types.Identifiable");
-                (*lua)["Core"]["Input"]["InputAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
+                Load(lua, "obe.Types.Identifiable");
+                (*lua)["obe"]["InputAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
                     .addFunction("addCondition", &Input::InputAction::addCondition)
                     .addFunction("addContext", &Input::InputAction::addContext)
                     .addFunction("check", &Input::InputAction::check)
@@ -31,14 +31,14 @@ namespace obe
             }
             void LoadInputActionEvent(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["InputActionEvent"].setClass(kaguya::UserdataMetatable<Input::InputActionEvent>()
+                (*lua)["obe"]["InputActionEvent"].setClass(kaguya::UserdataMetatable<Input::InputActionEvent>()
                     .addFunction("getAction", &Input::InputActionEvent::getAction)
                     .addFunction("getCondition", &Input::InputActionEvent::getCondition)
                 );
             }
             void LoadInputButton(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["InputButton"].setClass(kaguya::UserdataMetatable<Input::InputButton>()
+                (*lua)["obe"]["InputButton"].setClass(kaguya::UserdataMetatable<Input::InputButton>()
                     .addFunction("getKey", &Input::InputButton::getKey)
                     .addFunction("getName", &Input::InputButton::getName)
                     .addFunction("getType", &Input::InputButton::getType)
@@ -50,14 +50,14 @@ namespace obe
 
             void LoadInputButtonMonitor(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["InputButtonMonitor"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitor>()
+                (*lua)["obe"]["InputButtonMonitor"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitor>()
                     .addFunction("getButton", &Input::InputButtonMonitor::getButton)
                     .addFunction("getReferences", &Input::InputButtonMonitor::getReferences)
                     .addFunction("getState", &Input::InputButtonMonitor::getState)
                     .addFunction("update", &Input::InputButtonMonitor::update)
                 );
 
-                (*lua)["Core"]["Input"]["InputButtonMonitorPtr"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitorPtr>()
+                (*lua)["obe"]["InputButtonMonitorPtr"].setClass(kaguya::UserdataMetatable<Input::InputButtonMonitorPtr>()
                     .addFunction("getButton", &Input::InputButtonMonitorPtr::getButton)
                     .addFunction("getState", &Input::InputButtonMonitorPtr::getState)
                 );
@@ -65,7 +65,7 @@ namespace obe
             
             void LoadInputCondition(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["InputCondition"].setClass(kaguya::UserdataMetatable<Input::InputCondition>()
+                (*lua)["obe"]["InputCondition"].setClass(kaguya::UserdataMetatable<Input::InputCondition>()
                     .addFunction("addCombinationElement", &Input::InputCondition::addCombinationElement)
                     .addFunction("check", &Input::InputCondition::check)
                     .addFunction("setCombination", &Input::InputCondition::setCombination)
@@ -75,7 +75,7 @@ namespace obe
 
             void LoadInputManager(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["InputManager"].setClass(kaguya::UserdataMetatable<Input::InputManager>()
+                (*lua)["obe"]["InputManager"].setClass(kaguya::UserdataMetatable<Input::InputManager>()
                     .addFunction("actionExists", &Input::InputManager::actionExists)
                     .addFunction("clear", &Input::InputManager::clear)
                     .addFunction("clearContexts", &Input::InputManager::clearContexts)
@@ -87,13 +87,13 @@ namespace obe
                     .addFunction("update", &Input::InputManager::update)
                 );
 
-                (*lua)["Core"]["Input"]["InputManager"]["addContext"] = kaguya::function(
+                (*lua)["obe"]["InputManager"]["addContext"] = kaguya::function(
                     [](Input::InputManager& manager, const std::string& context)
                 {
                     return &manager.addContext(context);
                 });
 
-                (*lua)["Core"]["Input"]["InputManager"]["removeContext"] = kaguya::function(
+                (*lua)["obe"]["InputManager"]["removeContext"] = kaguya::function(
                     [](Input::InputManager& manager, const std::string& context)
                 {
                     return &manager.removeContext(context);
@@ -102,16 +102,17 @@ namespace obe
 
             void LoadInputFunctions(kaguya::State* lua)
             {
-                (*lua)["Core"]["Input"]["Monitors"] = kaguya::NewTable();
-                (*lua)["Core"]["Input"]["Monitors"]["UpdateMonitors"] = kaguya::function(Input::Monitors::UpdateMonitors);
-                (*lua)["Core"]["Input"]["Monitors"]["UpdateMonitorsAndRemoveIfNoReferences"] = kaguya::function(Input::Monitors::UpdateMonitorsAndRemoveIfNoReferences);
-                (*lua)["Core"]["Input"]["Monitors"]["Monitor"] = kaguya::overload(
+                (*lua)["obe"]["Input"] = kaguya::NewTable();
+                (*lua)["obe"]["Input"]["Monitors"] = kaguya::NewTable();
+                (*lua)["obe"]["Input"]["Monitors"]["UpdateMonitors"] = kaguya::function(Input::Monitors::UpdateMonitors);
+                (*lua)["obe"]["Input"]["Monitors"]["UpdateMonitorsAndRemoveIfNoReferences"] = kaguya::function(Input::Monitors::UpdateMonitorsAndRemoveIfNoReferences);
+                (*lua)["obe"]["Input"]["Monitors"]["Monitor"] = kaguya::overload(
                     static_cast<Input::InputButtonMonitorPtr(*)(const std::string&)>(Input::Monitors::Monitor),
                     static_cast<Input::InputButtonMonitorPtr(*)(Input::InputButton*)>(Input::Monitors::Monitor));
-                (*lua)["Core"]["Input"]["InitKeyList"] = kaguya::function(Input::InitKeyList);
-                (*lua)["Core"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
-                (*lua)["Core"]["Input"]["GetAllPressedButtons"] = kaguya::function(Input::GetAllPressedButtons);
-                (*lua)["Core"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
+                (*lua)["obe"]["Input"]["InitKeyList"] = kaguya::function(Input::InitKeyList);
+                (*lua)["obe"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
+                (*lua)["obe"]["Input"]["GetAllPressedButtons"] = kaguya::function(Input::GetAllPressedButtons);
+                (*lua)["obe"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
             }
             
         }

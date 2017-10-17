@@ -111,8 +111,6 @@ end
 #### Hello-World in game console
 Does exactly the same thing than the first one except that it prints "Hello World" in the game console (F1 to open console)
 ```lua
-Import("Core.Console") -- Import Console API from C++
-
 GetHook("Console"); -- Place the Game's Console pointer in Hook.Console
 
 function Local.Init()
@@ -126,8 +124,6 @@ end
 #### Rainbow Hello-World
 Same thing that the one before except that we will change the color of the text at every frame !
 ```lua
-Import("Core.Console");
-
 GetHook("Console");
 
 math.randomseed(os.time()); -- Random seed for when we'll use math.random()
@@ -150,9 +146,6 @@ Every LevelObject can have a LevelSprite associated (it's cooler when your objec
 #### Rotating goat
 Let's imagine you want to create a rotating goat in your game, no problem :
 ```lua
-Import("Core.LevelSprite"); -- C++ API for LevelSprites
-Import("Core.Animation.Animator"); -- C++ API for Animations (but just the Animator)
-
 function Local.Init()
   -- Set the animation for when the goat is flying to the right (You can imagine it already right ?)
   This:Animator():setKey("GOAT_FLYING_LEFT");
@@ -171,9 +164,6 @@ This is a simple door that you can open or close when you click it
 
 ```lua
 Door = {} -- You create a table to place Door's function in
-
-Import("Core.Animation.Animator");
-Import("Core.Collision");
 
 function Local.Init()
     This:Animator():setKey("Close");
@@ -203,8 +193,6 @@ end
 The engine includes a `Canvas` lib to draw stuff in real time and using it is really straightforward !
 
 ```lua
-Import("Core.Canvas"); -- Core Canvas Lib Import
-
 function Local.Init()
   canvas = Core.Canvas.new(400, 400); -- Creating a 400x400 canvas
   

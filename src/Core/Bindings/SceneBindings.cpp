@@ -10,7 +10,7 @@ namespace obe
         {
             void LoadCamera(kaguya::State* lua)
             {
-                (*lua)["Core"]["Scene"]["Camera"].setClass(kaguya::UserdataMetatable<Scene::Camera>()
+                (*lua)["obe"]["Camera"].setClass(kaguya::UserdataMetatable<Scene::Camera>()
                     .addFunction("getPosition", &Scene::Camera::getPosition)
                     .addFunction("getSize", &Scene::Camera::getSize)
                     .addFunction("move", &Scene::Camera::move)
@@ -30,7 +30,7 @@ namespace obe
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(Scene_createCollider_wrapper, Scene::Scene, createCollider, 1, 2);
             void LoadScene(kaguya::State* lua)
             {
-                (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
+                (*lua)["obe"]["Scene"].setClass(kaguya::UserdataMetatable<Scene::Scene>()
                     .addFunction("clear", &Scene::Scene::clear)
                     .addFunction("createCollider", Scene_createCollider_wrapper())
                     //.addFunction("createGameObject", &Scene::Scene::createGameObject)
@@ -75,12 +75,12 @@ namespace obe
                     .addFunction("update", &Scene::Scene::update)
                 );
 
-                (*lua)["Core"]["Scene"]["Scene"]["getGameObject"] = kaguya::function([](Scene::Scene* scene, const std::string& objectId)
+                (*lua)["obe"]["Scene"]["getGameObject"] = kaguya::function([](Scene::Scene* scene, const std::string& objectId)
                 {
                     return scene->getGameObject(objectId)->access();
                 });
 
-                (*lua)["Core"]["Scene"]["Scene"]["createGameObject"] = kaguya::function(Scene_createGameObject_wrapper());
+                (*lua)["obe"]["Scene"]["createGameObject"] = kaguya::function(Scene_createGameObject_wrapper());
             }
         }  
     }

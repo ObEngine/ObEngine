@@ -1,7 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 local Route = require("Lib/Toolkit/Route");
 local Style = require("Lib/Toolkit/Stylesheet");
-local Package = Core.System.Package;
+local Package = obe.Package;
 
 local Functions = {};
 
@@ -31,7 +31,7 @@ function Functions.install(packageName)
         parser:parseFile("Package/Opaque.vili");
         local tPackageName = parser:root():at("Meta"):getDataNode("name"):getString();
         if parser:hasFlag("Mount") then
-            Core.Utils.File.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
+            obe.Filesystem.copy(Package.GetPackageLocation(tPackageName) .. "/Mount.vili", "Mount.vili");
         end
     else
         Color.print({
@@ -49,13 +49,13 @@ function Functions.mount(packageName)
         { text = "> ...", color = Style.Execute},
     }, 1)
     if Package.PackageExists(packageName) then
-        Core.Utils.File.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
+        obe.Filesystem.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
         Color.print({
             { text = "Package <", color = Style.Success},
             { text = packageName, color = Style.Package},
             { text = "> has been successfully mounted", color = Style.Success}
         }, 2);
-        Core.System.MountPaths();
+        obe.MountPaths();
     else
         Color.print({
             { text = "Package <", color = Style.Error},
@@ -88,7 +88,7 @@ return {
                 Route.Help("Name of the .opaque package file you want to install");
                 Route.Call("install");
                 Route.Autocomplete(function(start)
-                    local fileList = Core.Utils.File.getFileList("Package/");
+                    local fileList = obe.Filesystem.getFileList("Package/");
                     local opaqueFiles = {};
                     local extension = ".opaque";
                     for _, file in pairs(fileList) do

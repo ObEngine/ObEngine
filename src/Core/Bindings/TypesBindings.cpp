@@ -11,14 +11,14 @@ namespace obe
         {
             void LoadIdentifiable(kaguya::State* lua)
             {
-                (*lua)["Core"]["Types"]["Identifiable"].setClass(kaguya::UserdataMetatable<Types::Identifiable>()
+                (*lua)["obe"]["Identifiable"].setClass(kaguya::UserdataMetatable<Types::Identifiable>()
                     .addFunction("getId", &Types::Identifiable::getId)
                     .addFunction("setId", &Types::Identifiable::setId)
                 );
             }
             void LoadSelectable(kaguya::State* lua)
             {
-                (*lua)["Core"]["Types"]["Selectable"].setClass(kaguya::UserdataMetatable<Types::Selectable>()
+                (*lua)["obe"]["Selectable"].setClass(kaguya::UserdataMetatable<Types::Selectable>()
                     .addFunction("isSelected", &Types::Selectable::isSelected)
                     .addFunction("select", &Types::Selectable::select)
                     .addFunction("setSelected", &Types::Selectable::setSelected)
@@ -28,7 +28,7 @@ namespace obe
             }
             void LoadTogglable(kaguya::State* lua)
             {
-                (*lua)["Core"]["Types"]["Togglable"].setClass(kaguya::UserdataMetatable<Types::Togglable>()
+                (*lua)["obe"]["Togglable"].setClass(kaguya::UserdataMetatable<Types::Togglable>()
                     .addFunction("disable", &Types::Togglable::disable)
                     .addFunction("enable", &Types::Togglable::enable)
                     .addFunction("isEnabled", &Types::Togglable::isEnabled)

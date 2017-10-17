@@ -10,7 +10,7 @@ namespace obe
         {
             void LoadConsoleMessage(kaguya::State* lua)
             {
-                (*lua)["Core"]["Debug"]["ConsoleMessage"].setClass(kaguya::UserdataMetatable<Debug::ConsoleMessage>()
+                (*lua)["obe"]["Debug"]["ConsoleMessage"].setClass(kaguya::UserdataMetatable<Debug::ConsoleMessage>()
                     .addFunction("getColor", &Debug::ConsoleMessage::getColor)
                     .addFunction("getFormatedMessage", &Debug::ConsoleMessage::getFormatedMessage)
                     .addFunction("getHeader", &Debug::ConsoleMessage::getHeader)
@@ -22,9 +22,9 @@ namespace obe
 
             void LoadConsoleStream(kaguya::State* lua)
             {
-                Load(lua, "Core.Types.Identifiable");
-                Load(lua, "Core.Types.Togglable");
-                (*lua)["Core"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
+                Load(lua, "obe.Types.Identifiable");
+                Load(lua, "obe.Types.Togglable");
+                (*lua)["obe"]["Debug"]["ConsoleStream"].setClass(kaguya::UserdataMetatable<Debug::ConsoleStream, kaguya::MultipleBase<Types::Identifiable, Types::Togglable>>()
                     .addFunction("getColor", &Debug::ConsoleStream::getColor)
                     .addFunction("push", &Debug::ConsoleStream::push)
                     .addFunction("setColor", &Debug::ConsoleStream::setColor)
@@ -33,7 +33,7 @@ namespace obe
 
             void LoadConsole(kaguya::State* lua)
             {
-                (*lua)["Core"]["Debug"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
+                (*lua)["obe"]["Debug"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
                     .addFunction("clearInputBuffer", &Debug::Console::clearInputBuffer)
                     .addFunction("createStream", &Debug::Console::createStream)
                     .addFunction("display", &Debug::Console::display)

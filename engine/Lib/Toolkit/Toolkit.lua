@@ -7,7 +7,7 @@ local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
 
 function loadToolkitFunctions()
-    local fileList = Core.Utils.File.getFileList("Lib/Toolkit/Functions");
+    local fileList = obe.Filesystem.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
     for _, content in pairs(fileList) do
         allFunctions[String.split(content, ".")[1]] = require("Lib/Toolkit/Functions/" .. String.split(content, ".")[1]);

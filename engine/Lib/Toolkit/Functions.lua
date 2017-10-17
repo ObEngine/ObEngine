@@ -41,9 +41,6 @@ Toolkit.commands.workspace = {
     }
 };
 
--- Permanent Aliases
-require("Lib/Toolkit/Aliases");
-
 -- Functions loading
 for k, v in pairs(Toolkit.commands) do
     Toolkit.functions[k] = require("Lib/Toolkit/Functions/" .. k);

@@ -87,7 +87,7 @@ namespace obe
             toolkitEngine["CPP_Import"] = &Bindings::Load;
             toolkitEngine["CPP_Hook"] = &Script::loadHook;
             toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
-            Bindings::BindTree["Core"](&toolkitEngine);
+            Bindings::BindTree["obe"](&toolkitEngine);
             Bindings::BindTree["SFML"](&toolkitEngine);
             Bindings::BindTree["Vili"](&toolkitEngine);
             toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)

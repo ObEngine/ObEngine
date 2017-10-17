@@ -14,8 +14,8 @@ namespace obe
         {
             void LoadMovable(kaguya::State* lua)
             {
-                Load(lua, "Core.Types.Identifiable");
-                (*lua)["Core"]["Transform"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable, Types::Identifiable>()
+                Load(lua, "obe.Types.Identifiable");
+                (*lua)["obe"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable, Types::Identifiable>()
                     .addFunction("getPosition", &Transform::Movable::getPosition)
                     .addFunction("getType", &Transform::Movable::getType)
                     .addFunction("move", &Transform::Movable::move)
@@ -25,8 +25,8 @@ namespace obe
 
             void LoadSceneNode(kaguya::State* lua)
             {
-                Load(lua, "Core.Transform.Movable");
-                (*lua)["Core"]["Transform"]["SceneNode"].setClass(kaguya::UserdataMetatable<Transform::SceneNode, Transform::Movable>()
+                Load(lua, "obe.Transform.Movable");
+                (*lua)["obe"]["SceneNode"].setClass(kaguya::UserdataMetatable<Transform::SceneNode, Transform::Movable>()
                     .addFunction("addChild", &Transform::SceneNode::addChild)
                     .addFunction("move", &Transform::SceneNode::move)
                     .addFunction("setPosition", &Transform::SceneNode::setPosition)
@@ -35,8 +35,8 @@ namespace obe
 
             void LoadProtectedUnitVector(kaguya::State* lua)
             {
-                Load(lua, "Core.Transform.UnitVector");
-                (*lua)["Core"]["Transform"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
+                Load(lua, "obe.Transform.UnitVector");
+                (*lua)["obe"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
                 );
             }
 
@@ -60,8 +60,8 @@ namespace obe
             );
             void LoadRect(kaguya::State* lua)
             {
-                Load(lua, "Core.Transform.Movable");
-                (*lua)["Core"]["Transform"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect, Transform::Movable>()
+                Load(lua, "obe.Transform.Movable");
+                (*lua)["obe"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect, Transform::Movable>()
                     .addFunction("display", &Transform::Rect::display)
                     .addFunction("getPosition", Rect_getPosition_proxy())
                     .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
@@ -78,28 +78,28 @@ namespace obe
 
             void LoadReferencial(kaguya::State* lua)
             {
-                (*lua)["Core"]["Transform"]["Referencial"] = kaguya::NewTable();
-                (*lua)["Core"]["Transform"]["Referencial"]["Bottom"] = Transform::Referencial::Bottom;
-                (*lua)["Core"]["Transform"]["Referencial"]["BottomLeft"] = Transform::Referencial::BottomLeft;
-                (*lua)["Core"]["Transform"]["Referencial"]["BottomRight"] = Transform::Referencial::BottomRight;
-                (*lua)["Core"]["Transform"]["Referencial"]["Center"] = Transform::Referencial::Center;
-                (*lua)["Core"]["Transform"]["Referencial"]["Left"] = Transform::Referencial::Left;
-                (*lua)["Core"]["Transform"]["Referencial"]["Right"] = Transform::Referencial::Right;
-                (*lua)["Core"]["Transform"]["Referencial"]["Top"] = Transform::Referencial::Top;
-                (*lua)["Core"]["Transform"]["Referencial"]["TopLeft"] = Transform::Referencial::TopLeft;
-                (*lua)["Core"]["Transform"]["Referencial"]["TopRight"] = Transform::Referencial::TopRight;
+                (*lua)["obe"]["Referencial"] = kaguya::NewTable();
+                (*lua)["obe"]["Referencial"]["Bottom"] = Transform::Referencial::Bottom;
+                (*lua)["obe"]["Referencial"]["BottomLeft"] = Transform::Referencial::BottomLeft;
+                (*lua)["obe"]["Referencial"]["BottomRight"] = Transform::Referencial::BottomRight;
+                (*lua)["obe"]["Referencial"]["Center"] = Transform::Referencial::Center;
+                (*lua)["obe"]["Referencial"]["Left"] = Transform::Referencial::Left;
+                (*lua)["obe"]["Referencial"]["Right"] = Transform::Referencial::Right;
+                (*lua)["obe"]["Referencial"]["Top"] = Transform::Referencial::Top;
+                (*lua)["obe"]["Referencial"]["TopLeft"] = Transform::Referencial::TopLeft;
+                (*lua)["obe"]["Referencial"]["TopRight"] = Transform::Referencial::TopRight;
             }
 
             void LoadUnitBasedObject(kaguya::State* lua)
             {
-                (*lua)["Core"]["Transform"]["UnitBasedObject"].setClass(kaguya::UserdataMetatable<Transform::UnitBasedObject>()
+                (*lua)["obe"]["UnitBasedObject"].setClass(kaguya::UserdataMetatable<Transform::UnitBasedObject>()
                     .addFunction("getWorkingUnit", &Transform::UnitBasedObject::getWorkingUnit)
                     .addFunction("setWorkingUnit", &Transform::UnitBasedObject::setWorkingUnit)
                 );
             }
             void LoadUnitVector(kaguya::State* lua)
             {
-                (*lua)["Core"]["Transform"]["UnitVector"].setClass(kaguya::UserdataMetatable<Transform::UnitVector>()
+                (*lua)["obe"]["UnitVector"].setClass(kaguya::UserdataMetatable<Transform::UnitVector>()
                     .setConstructors<
                     Transform::UnitVector(),
                     Transform::UnitVector(Transform::Units),
@@ -129,13 +129,13 @@ namespace obe
 
             void LoadUnits(kaguya::State* lua)
             {
-                (*lua)["Core"]["Transform"]["Units"] = kaguya::NewTable();
-                (*lua)["Core"]["Transform"]["Units"]["ViewPercentage"] = Transform::Units::ViewPercentage;
-                (*lua)["Core"]["Transform"]["Units"]["ViewPixels"] = Transform::Units::ViewPixels;
-                (*lua)["Core"]["Transform"]["Units"]["ViewUnits"] = Transform::Units::ViewUnits;
-                (*lua)["Core"]["Transform"]["Units"]["WorldPixels"] = Transform::Units::WorldPixels;
-                (*lua)["Core"]["Transform"]["Units"]["WorldUnits"] = Transform::Units::WorldUnits;
-                (*lua)["Core"]["Transform"]["Units"]["Unknown"] = Transform::Units::Unknown;
+                (*lua)["obe"]["Units"] = kaguya::NewTable();
+                (*lua)["obe"]["Units"]["ViewPercentage"] = Transform::Units::ViewPercentage;
+                (*lua)["obe"]["Units"]["ViewPixels"] = Transform::Units::ViewPixels;
+                (*lua)["obe"]["Units"]["ViewUnits"] = Transform::Units::ViewUnits;
+                (*lua)["obe"]["Units"]["WorldPixels"] = Transform::Units::WorldPixels;
+                (*lua)["obe"]["Units"]["WorldUnits"] = Transform::Units::WorldUnits;
+                (*lua)["obe"]["Units"]["Unknown"] = Transform::Units::Unknown;
             }
         }
     }

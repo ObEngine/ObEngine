@@ -7,7 +7,7 @@ local Functions = {};
 
 function Functions.create(objectName, components)
     components = components:upper();
-    local currentWs = Core.System.Path.Paths()[1].basePath;
+    local currentWs = obe.Path.Paths()[1].basePath;
     local haveAnimator = false;
     local haveLevelSprite = false;
     local haveCollider = false;
@@ -17,7 +17,7 @@ function Functions.create(objectName, components)
         { text = objectName, color = Style.Object},
         { text = "> ...", color = Style.Execute}
     }, 1);
-    os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", Core.Utils.File.separator()));
+    os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", obe.Filesystem.separator()));
     local objSaveFile = Vili.ViliParser.new();
     objSaveFile:includeFile("Obe");
     objSaveFile:root():createComplexNode(objectName);
@@ -54,7 +54,7 @@ function Functions.create(objectName, components)
         end
         if (string.find(components, "L") ~= nil) then
             haveLevelSprite = true;
-            os.execute(("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. objectName):gsub("/", Core.Utils.File.separator()));
+            os.execute(("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. objectName):gsub("/", obe.Filesystem.separator()));
             Color.print({
                 { text = "+ Using component ", color = Style.Success},
                 { text = "(L)evelSprite", color = Style.Object}
@@ -69,7 +69,7 @@ function Functions.create(objectName, components)
         if (string.find(components, "S") ~= nil) then
             haveScript = true;
             local scriptFile = io.open((currentWs .. "/Data/GameObjects/" ..
-                objectName .. "/" .. objectName .. ".lua"):gsub("/", Core.Utils.File.separator()), "w");
+                objectName .. "/" .. objectName .. ".lua"):gsub("/", obe.Filesystem.separator()), "w");
             scriptFile:write("function Local.Init()\n    print(\"Hello, World!\");\nend");
             scriptFile:close();
             Color.print({
@@ -82,7 +82,7 @@ function Functions.create(objectName, components)
         end
     end
     objSaveFile:writeFile((currentWs .. "/Data/GameObjects/" ..
-        objectName .. "/" .. objectName .. ".obj.vili"):gsub("/", Core.Utils.File.separator()));
+        objectName .. "/" .. objectName .. ".obj.vili"):gsub("/", obe.Filesystem.separator()));
     Color.print({
         { text = "GameObject <", color = Style.Success},
         { text = objectName, color = Style.Object},
@@ -91,7 +91,7 @@ function Functions.create(objectName, components)
 end
 
 function Functions.list()
-    local allObjects = Core.System.Path("Data/GameObjects"):DirectoryListLoader();
+    local allObjects = obe.Path("Data/GameObjects"):DirectoryListLoader();
     Color.print({
         { text = "Listing all objects : ", color = Style.Execute},
     }, 1);

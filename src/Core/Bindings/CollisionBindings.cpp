@@ -15,8 +15,8 @@ namespace obe
 
             void LoadTrajectory(kaguya::State* lua)
             {
-                Load(lua, "Core.Types.Togglable");
-                (*lua)["Core"]["Collision"]["Trajectory"].setClass(kaguya::UserdataMetatable<Collision::Trajectory, Types::Togglable>()
+                Load(lua, "obe.Types.Togglable");
+                (*lua)["obe"]["Trajectory"].setClass(kaguya::UserdataMetatable<Collision::Trajectory, Types::Togglable>()
                     .addFunction("addAcceleration", &Collision::Trajectory::addAcceleration)
                     .addFunction("addAngle", &Collision::Trajectory::addAngle)
                     .addFunction("addCheck", &Collision::Trajectory::addCheck)
@@ -37,7 +37,7 @@ namespace obe
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(TrajectoryNode_addTrajectory_wrapper, Collision::TrajectoryNode, addTrajectory, 1, 2);
             void LoadTrajectoryNode(kaguya::State* lua)
             {
-                (*lua)["Core"]["Collision"]["TrajectoryNode"].setClass(kaguya::UserdataMetatable<Collision::TrajectoryNode>()
+                (*lua)["obe"]["TrajectoryNode"].setClass(kaguya::UserdataMetatable<Collision::TrajectoryNode>()
                     .setConstructors<Collision::TrajectoryNode(Transform::SceneNode*)>()
                     .addFunction("addTrajectory", TrajectoryNode_addTrajectory_wrapper())
                     .addFunction("getSceneNode", &Collision::TrajectoryNode::getSceneNode)
@@ -52,10 +52,10 @@ namespace obe
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
             void LoadPolygonalCollider(kaguya::State* lua)
             {
-                Load(lua, "Core.Transform.UnitBasedObject");
-                Load(lua, "Core.Types.Selectable");
-                Load(lua, "Core.Transform.Movable");
-                (*lua)["Core"]["Collision"]["PolygonalCollider"].setClass(
+                Load(lua, "obe.Transform.UnitBasedObject");
+                Load(lua, "obe.Types.Selectable");
+                Load(lua, "obe.Transform.Movable");
+                (*lua)["obe"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
                     Collision::PolygonalCollider,
                     kaguya::MultipleBase<
@@ -120,10 +120,10 @@ namespace obe
                     .addFunction("setPositionFromMaster", &Collision::PolygonalCollider::setPositionFromMaster)
                     .addFunction("setRotation", &Collision::PolygonalCollider::setRotation)
                 );
-                (*lua)["Core"]["Collision"]["ColliderTagType"] = kaguya::NewTable();
-                (*lua)["Core"]["Collision"]["ColliderTagType"]["Accepted"] = Collision::ColliderTagType::Accepted;
-                (*lua)["Core"]["Collision"]["ColliderTagType"]["Rejected"] = Collision::ColliderTagType::Rejected;
-                (*lua)["Core"]["Collision"]["ColliderTagType"]["Tag"] = Collision::ColliderTagType::Tag;
+                (*lua)["obe"]["ColliderTagType"] = kaguya::NewTable();
+                (*lua)["obe"]["ColliderTagType"]["Accepted"] = Collision::ColliderTagType::Accepted;
+                (*lua)["obe"]["ColliderTagType"]["Rejected"] = Collision::ColliderTagType::Rejected;
+                (*lua)["obe"]["ColliderTagType"]["Tag"] = Collision::ColliderTagType::Tag;
             }
         }
     }

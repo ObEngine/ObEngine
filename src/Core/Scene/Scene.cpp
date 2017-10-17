@@ -15,7 +15,6 @@ namespace obe
         Scene::Scene() : m_sceneRoot("root")
         {
             Collision::PolygonalCollider::m_sceneRef = this;
-            loadWorldScriptEngineBaseLib(&Script::ScriptEngine);
             Script::ScriptEngine["Scene"] = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
@@ -740,25 +739,6 @@ namespace obe
         Transform::SceneNode& Scene::getSceneRootNode()
         {
             return m_sceneRoot;
-        }
-
-
-        void loadWorldLib(kaguya::State* lua)
-        {
-            if (!static_cast<bool>((*lua)["Core"])) (*lua)["Core"] = kaguya::NewTable();
-            (*lua)["Core"]["Scene"] = kaguya::NewTable();
-            (*lua)["Core"]["Scene"]["Scene"].setClass(kaguya::UserdataMetatable<Scene>()
-                .addFunction("loadFromFile", &Scene::loadFromFile)
-            );
-        }
-
-        void loadWorldScriptEngineBaseLib(kaguya::State* lua)
-        {
-            //TOB
-            (*lua)["CPP_Import"] = &Bindings::Load;
-            (*lua)["CPP_Hook"] = &Script::loadHook;
-            loadWorldLib(lua);
-            (*lua)["This"] = lua;
         }
 
         std::string Scene::getLevelFile() const

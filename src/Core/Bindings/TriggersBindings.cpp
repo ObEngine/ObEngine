@@ -11,7 +11,7 @@ namespace obe
         {
             void LoadTrigger(kaguya::State* lua)
             {
-                (*lua)["Core"]["Triggers"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
+                (*lua)["obe"]["Trigger"].setClass(kaguya::UserdataMetatable<Triggers::Trigger>()
                     .addFunction("execute", &Triggers::Trigger::execute)
                     .addFunction("getGroup", &Triggers::Trigger::getGroup)
                     .addFunction("getName", &Triggers::Trigger::getName)
@@ -22,7 +22,7 @@ namespace obe
             }
             void LoadTriggerDatabase(kaguya::State* lua)
             {
-                (*lua)["Core"]["Triggers"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDatabase>()
+                (*lua)["obe"]["TriggerDatabase"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDatabase>()
                     .addStaticFunction("GetInstance", &Triggers::TriggerDatabase::GetInstance)
                     .addFunction("clear", &Triggers::TriggerDatabase::clear)
                     .addFunction("createNamespace", &Triggers::TriggerDatabase::createNamespace)
@@ -39,12 +39,12 @@ namespace obe
             }
             void LoadTriggerDelay(kaguya::State* lua)
             {
-                (*lua)["Core"]["Triggers"]["TriggerDelay"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDelay>()
+                (*lua)["obe"]["TriggerDelay"].setClass(kaguya::UserdataMetatable<Triggers::TriggerDelay>()
                 );
             }
             void LoadTriggerGroup(kaguya::State* lua)
             {
-                (*lua)["Core"]["Triggers"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
+                (*lua)["obe"]["TriggerGroup"].setClass(kaguya::UserdataMetatable<Triggers::TriggerGroup>()
                     .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                     .addFunction("delayTriggerState", &Triggers::TriggerGroup::delayTriggerState)
                     .addFunction("getAllTriggers", &Triggers::TriggerGroup::getAllTriggers)

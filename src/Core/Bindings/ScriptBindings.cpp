@@ -12,8 +12,8 @@ namespace obe
                 void(Script::GameObject::*)(std::string, std::string, std::string, std::string));
             void LoadGameObject(kaguya::State* lua)
             {
-                Load(lua, "Core.Types.Identifiable");
-                (*lua)["CPP_GameObject"].setClass(kaguya::UserdataMetatable<Script::GameObject, Types::Identifiable>()
+                Load(lua, "obe.Types.Identifiable");
+                (*lua)["obe"]["GameObject"].setClass(kaguya::UserdataMetatable<Script::GameObject, Types::Identifiable>()
                     .addFunction("LevelSprite", &Script::GameObject::getLevelSprite)
                     .addFunction("Collider", &Script::GameObject::getCollider)
                     .addFunction("Animator", &Script::GameObject::getAnimator)

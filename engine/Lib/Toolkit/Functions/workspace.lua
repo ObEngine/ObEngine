@@ -15,11 +15,11 @@ function getWorkspaceList()
 end
 
 function getNonIndexedWorkspaces()
-    local allWorkspaces = Core.System.Path("Workspace"):DirectoryListLoader();
+    local allWorkspaces = obe.Path("Workspace"):DirectoryListLoader();
     local allIndexedWorkspaces = getWorkspaceList();
     local returnWorkspaces = {};
     for _, key in pairs(allWorkspaces) do
-        if not Core.Utils.Vector.isInList(key, allIndexedWorkspaces) then
+        if not obe.Array.contains(key, allIndexedWorkspaces) then
             table.insert(returnWorkspaces, key);
         end
     end
@@ -35,13 +35,13 @@ Functions.mount = function(workspaceName)
         { text = "> ...", color = Style.Execute},
     }, 1);
     if (parser:root():contains(Vili.NodeType.ComplexNode, workspaceName)) then
-        Core.Utils.File.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
+        obe.Filesystem.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
         Color.print({
             { text = "Workspace <", color = Style.Success},
             { text = workspaceName, color = Style.Workspace},
             { text = "> has  been successfully mounted !", color = Style.Success},
         }, 2);
-        Core.System.MountPaths();
+        obe.MountPaths();
     else
         Color.print({
             { text = "Workspace <", color = Style.Error},
@@ -66,14 +66,14 @@ Functions.create = function(workspaceName)
             { text = "> already exists", color = Style.Error}
         }, 2);
     else
-        os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", Core.Utils.File.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", Core.Utils.File.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/Maps"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameObjects"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", obe.Filesystem.separator()));
         parser:root():createComplexNode(workspaceName);
         parser:root():at(workspaceName):createDataNode("path", "Workspace/" .. workspaceName);
         parser:writeFile("Workspace/Workspaces.vili", true);
@@ -107,7 +107,7 @@ function Functions.list()
 end
 
 function Functions.index(workspaceName)
-    if Core.Utils.Vector.isInList(workspaceName, getNonIndexedWorkspaces()) then
+    if obe.Array.contains(workspaceName, getNonIndexedWorkspaces()) then
         local parser = Vili.ViliParser.new();
         parser:parseFile("Workspace/Workspaces.vili");
         parser:root():createComplexNode(workspaceName);

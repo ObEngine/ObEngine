@@ -11,7 +11,7 @@ namespace obe
         {
             void LoadChronometer(kaguya::State* lua)
             {
-                (*lua)["Core"]["Time"]["Chronometer"].setClass(kaguya::UserdataMetatable<Time::Chronometer>()
+                (*lua)["obe"]["Chronometer"].setClass(kaguya::UserdataMetatable<Time::Chronometer>()
                     .setConstructors<Time::Chronometer()>()
                     .addFunction("getTime", &Time::Chronometer::getTime)
                     .addFunction("limitExceeded", &Time::Chronometer::limitExceeded)
@@ -22,7 +22,7 @@ namespace obe
             }
             void LoadFPSCounter(kaguya::State* lua)
             {
-                (*lua)["Core"]["Time"]["FPSCounter"].setClass(kaguya::UserdataMetatable<Time::FPSCounter>()
+                (*lua)["obe"]["FPSCounter"].setClass(kaguya::UserdataMetatable<Time::FPSCounter>()
                     .addFunction("draw", &Time::FPSCounter::draw)
                     .addFunction("loadFont", &Time::FPSCounter::loadFont)
                     .addFunction("tick", &Time::FPSCounter::tick)
@@ -31,7 +31,7 @@ namespace obe
             }
             void LoadFramerateManager(kaguya::State* lua)
             {
-                (*lua)["Core"]["Time"]["FramerateManager"].setClass(kaguya::UserdataMetatable<Time::FramerateManager>()
+                (*lua)["obe"]["FramerateManager"].setClass(kaguya::UserdataMetatable<Time::FramerateManager>()
                     .addFunction("doRender", &Time::FramerateManager::doRender)
                     .addFunction("getDeltaTime", &Time::FramerateManager::getDeltaTime)
                     .addFunction("getFramerateTarget", &Time::FramerateManager::getFramerateTarget)

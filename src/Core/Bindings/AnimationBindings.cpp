@@ -11,7 +11,7 @@ namespace obe
         {
             void LoadAnimation(kaguya::State* lua)
             {
-                (*lua)["Core"]["Animation"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
+                (*lua)["obe"]["Animation"].setClass(kaguya::UserdataMetatable<Animation::Animation>()
                     .addFunction("applyParameters", &Animation::Animation::applyParameters)
                     .addFunction("getAllAnimationGroupName", &Animation::Animation::getAllAnimationGroupName)
                     .addFunction("getAnimationDelay", &Animation::Animation::getAnimationDelay)
@@ -35,7 +35,7 @@ namespace obe
 
             void LoadAnimationGroup(kaguya::State* lua)
             {
-                (*lua)["Core"]["Animation"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
+                (*lua)["obe"]["AnimationGroup"].setClass(kaguya::UserdataMetatable<Animation::AnimationGroup>()
                     .addFunction("build", &Animation::AnimationGroup::build)
                     .addFunction("forceNext", &Animation::AnimationGroup::forceNext)
                     .addFunction("forcePrevious", &Animation::AnimationGroup::forcePrevious)
@@ -58,7 +58,7 @@ namespace obe
 
             void LoadAnimator(kaguya::State* lua)
             {
-                (*lua)["Core"]["Animation"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()
+                (*lua)["obe"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()
                     .addFunction("clear", &Animation::Animator::clear)
                     .addFunction("getAllAnimationName", &Animation::Animator::getAllAnimationName)
                     .addFunction("getAnimation", &Animation::Animator::getAnimation)
