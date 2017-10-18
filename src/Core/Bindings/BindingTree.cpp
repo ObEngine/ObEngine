@@ -145,11 +145,7 @@ namespace obe
                 }
             }
             bool elementAlreadyExists = checkIfLuaElementExists(lua, this->getNodePath());
-            if (!elementAlreadyExists && !m_hasLib)
-            {
-                (*lua)(this->getNodePath() + " = {};");
-            }
-            else if (!elementAlreadyExists)
+            if (!elementAlreadyExists && m_hasLib)
             {
                 Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
                 m_lib(lua);

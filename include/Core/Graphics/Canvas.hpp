@@ -92,7 +92,7 @@ namespace obe
             /**
              * \brief A CanvasElement (Base class for all real CanvasElements)
              */
-            class CanvasElement : public Drawable
+            class CanvasElement : public virtual Drawable
             {
             public:
                 /**
