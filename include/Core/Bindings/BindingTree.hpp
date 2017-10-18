@@ -10,8 +10,8 @@
 namespace obe
 {
     namespace Bindings
-    {
-        extern std::function<void(kaguya::State*)> RegisterLib;
+    {        
+        std::function<void(kaguya::State*)> InitTreeNodeAsTable(const std::string& nodeName);
 
         /**
          * \brief Holds and indexes all the CXX Bindings for Lua

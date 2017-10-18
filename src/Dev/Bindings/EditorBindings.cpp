@@ -10,8 +10,8 @@ namespace obe
         {
             void LoadEditorGrid(kaguya::State* lua)
             {
-                Load(lua, "obe.Types.Togglable");
-                (*lua)["obe"]["Editor"]["EditorGrid"].setClass(kaguya::UserdataMetatable<Editor::EditorGrid, Types::Togglable>()
+                Load(lua, "obe.Togglable");
+                (*lua)["obe"]["EditorGrid"].setClass(kaguya::UserdataMetatable<Editor::EditorGrid, Types::Togglable>()
                     .addFunction("draw", &Editor::EditorGrid::draw)
                     .addFunction("getCellHeight", &Editor::EditorGrid::getCellHeight)
                     .addFunction("getCellWidth", &Editor::EditorGrid::getCellWidth)

@@ -14,7 +14,7 @@ namespace obe
         {
             void LoadMovable(kaguya::State* lua)
             {
-                Load(lua, "obe.Types.Identifiable");
+                Load(lua, "obe.Identifiable");
                 (*lua)["obe"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable, Types::Identifiable>()
                     .addFunction("getPosition", &Transform::Movable::getPosition)
                     .addFunction("getType", &Transform::Movable::getType)
@@ -25,7 +25,7 @@ namespace obe
 
             void LoadSceneNode(kaguya::State* lua)
             {
-                Load(lua, "obe.Transform.Movable");
+                Load(lua, "obe.Movable");
                 (*lua)["obe"]["SceneNode"].setClass(kaguya::UserdataMetatable<Transform::SceneNode, Transform::Movable>()
                     .addFunction("addChild", &Transform::SceneNode::addChild)
                     .addFunction("move", &Transform::SceneNode::move)
@@ -35,7 +35,7 @@ namespace obe
 
             void LoadProtectedUnitVector(kaguya::State* lua)
             {
-                Load(lua, "obe.Transform.UnitVector");
+                Load(lua, "obe.UnitVector");
                 (*lua)["obe"]["ProtectedUnitVector"].setClass(kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>()
                 );
             }
@@ -60,7 +60,7 @@ namespace obe
             );
             void LoadRect(kaguya::State* lua)
             {
-                Load(lua, "obe.Transform.Movable");
+                Load(lua, "obe.Movable");
                 (*lua)["obe"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect, Transform::Movable>()
                     .addFunction("display", &Transform::Rect::display)
                     .addFunction("getPosition", Rect_getPosition_proxy())

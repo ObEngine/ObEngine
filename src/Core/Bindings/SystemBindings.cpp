@@ -34,10 +34,10 @@ namespace obe
             }
             void LoadSystemConstants(kaguya::State* lua)
             {
-                (*lua)["obe"]["System"]["OS"] = getOsName();
-                (*lua)["obe"]["System"]["Screen"] = kaguya::NewTable();
-                (*lua)["obe"]["System"]["Screen"]["Width"] = Transform::UnitVector::Screen.w;
-                (*lua)["obe"]["System"]["Screen"]["Height"] = Transform::UnitVector::Screen.h;
+                (*lua)["obe"]["OS"] = getOsName();
+                (*lua)["obe"]["Screen"] = kaguya::NewTable();
+                (*lua)["obe"]["Screen"]["Width"] = Transform::UnitVector::Screen.w;
+                (*lua)["obe"]["Screen"]["Height"] = Transform::UnitVector::Screen.h;
             }
 
             void LoadSCursor(kaguya::State* lua)

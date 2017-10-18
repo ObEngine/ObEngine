@@ -7,13 +7,16 @@ namespace obe
 {
     namespace Bindings
     {
-        std::function<void(kaguya::State*)> RegisterLib = [](kaguya::State* lua)
+        std::function<void(kaguya::State*)> InitTreeNodeAsTable(const std::string& nodeName)
         {
-        };
+            return [nodeName](kaguya::State* lua) {
+                (*lua)(nodeName + " = {};");
+            };
+        }
 
         bool checkIfLuaElementExists(kaguya::State* lua, const std::string& path)
         {
-            bool exists = (*lua)["LuaUtil"]["Exists"](path);
+            bool exists = (*lua)["LuaUtil"]["IsLibLoaded"](path);
             return exists;
         }
 
@@ -71,29 +74,14 @@ namespace obe
 
         BindingTree& BindingTree::add(const std::string& id, std::function<void(kaguya::State*)> lib)
         {
-            if (!m_hasLib)
-            {
-                m_children.push_back(std::make_unique<BindingTree>(this, id, lib));
-                return *this;
-            }
-            else
-            {
-                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild", {{"id", getNodePath()}});
-            }
-            
+            m_children.push_back(std::make_unique<BindingTree>(this, id, lib));
+            return *this;
         }
 
         BindingTree& BindingTree::add(const std::string& id)
         {
-            if (!m_hasLib)
-            {
-                m_children.push_back(std::make_unique<BindingTree>(this, id));
-                return *this;
-            }
-            else
-            {
-                throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.TerminalNodeCantHaveChild", { { "id", getNodePath() } });
-            }
+            m_children.push_back(std::make_unique<BindingTree>(this, id));
+            return *this;
         }
 
         BindingTree& BindingTree::walkTo(std::vector<std::string> path)
@@ -148,6 +136,7 @@ namespace obe
             if (!elementAlreadyExists && m_hasLib)
             {
                 Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
+                (*lua)("table.insert(LuaUtil.libList, '" + this->getNodePath() + "');");
                 m_lib(lua);
             }
             if (spreads)

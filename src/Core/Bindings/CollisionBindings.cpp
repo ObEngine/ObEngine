@@ -15,7 +15,7 @@ namespace obe
 
             void LoadTrajectory(kaguya::State* lua)
             {
-                Load(lua, "obe.Types.Togglable");
+                Load(lua, "obe.Togglable");
                 (*lua)["obe"]["Trajectory"].setClass(kaguya::UserdataMetatable<Collision::Trajectory, Types::Togglable>()
                     .addFunction("addAcceleration", &Collision::Trajectory::addAcceleration)
                     .addFunction("addAngle", &Collision::Trajectory::addAngle)
@@ -52,9 +52,9 @@ namespace obe
             KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
             void LoadPolygonalCollider(kaguya::State* lua)
             {
-                Load(lua, "obe.Transform.UnitBasedObject");
-                Load(lua, "obe.Types.Selectable");
-                Load(lua, "obe.Transform.Movable");
+                Load(lua, "obe.UnitBasedObject");
+                Load(lua, "obe.Selectable");
+                Load(lua, "obe.Movable");
                 (*lua)["obe"]["PolygonalCollider"].setClass(
                     kaguya::UserdataMetatable<
                     Collision::PolygonalCollider,

@@ -39,56 +39,57 @@ namespace obe
         void IndexBindings()
         {
             // obe Binding
-            BindTree.add("obe");
-            BindTree["obe"].add("Animation")["Animation"]
+            BindTree.add("obe", InitTreeNodeAsTable("obe"));
+            BindTree["obe"]
+            // Animation
                 .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
                 .add("Animation", &AnimationBindings::LoadAnimation)
-                .add("Animator", &AnimationBindings::LoadAnimator);
-            BindTree["obe"].add("Collision")["Collision"]
+                .add("Animator", &AnimationBindings::LoadAnimator)
+            // Collision
                 .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider)
                 .add("Trajectory", &CollisionBindings::LoadTrajectory)
-                .add("TrajectoryNode", &CollisionBindings::LoadTrajectoryNode);
-            BindTree["obe"].add("Debug")["Debug"]
+                .add("TrajectoryNode", &CollisionBindings::LoadTrajectoryNode)
+            // Debug
                 .add("Console", &DebugBindings::LoadConsole)
                 .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
-                .add("ConsoleStream", &DebugBindings::LoadConsoleStream);
-            BindTree["obe"].add("Editor")["Editor"]
-                .add("EditorGrid", &EditorBindings::LoadEditorGrid);
-            BindTree["obe"].add("Graphics")["Graphics"]
+                .add("ConsoleStream", &DebugBindings::LoadConsoleStream)
+            // Editor
+                .add("EditorGrid", &EditorBindings::LoadEditorGrid)
+            // Graphics
                 .add("Canvas", &GraphicsBindings::LoadCanvas)
                 .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
                 .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
                 .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
-                .add("Utils", &GraphicsBindings::LoadGraphicsUtils);
-            BindTree["obe"].add("Input")["Input"]
+                .add("Utils", &GraphicsBindings::LoadGraphicsUtils)
+            // Input
                 .add("InputAction", &InputBindings::LoadInputAction)
                 .add("InputActionEvent", &InputBindings::LoadInputActionEvent)
                 .add("InputButton", &InputBindings::LoadInputButton)
                 .add("InputButtonMonitor", &InputBindings::LoadInputButtonMonitor)
                 .add("InputCondition", &InputBindings::LoadInputCondition)
                 .add("InputFunctions", &InputBindings::LoadInputFunctions)
-                .add("InputManager", &InputBindings::LoadInputManager);
-            BindTree["obe"].add("Scene")["Scene"]
+                .add("InputManager", &InputBindings::LoadInputManager)
+            // Scene
                 .add("Camera", &SceneBindings::LoadCamera)
-                .add("Scene", &SceneBindings::LoadScene);
-            BindTree["obe"].add("Script")["Script"]
-                .add("Script", &ScriptBindings::LoadGameObject);
-            BindTree["obe"].add("Sound")["Sound"]
+                .add("Scene", &SceneBindings::LoadScene)
+            // Script
+                .add("Script", &ScriptBindings::LoadGameObject)
+            // Sound
                 .add("Music", &SoundBindings::LoadMusic)
-                .add("Sound", &SoundBindings::LoadSound);
-            BindTree["obe"].add("System")["System"]
+                .add("Sound", &SoundBindings::LoadSound)
+            // System
                 .add("Constants", &SystemBindings::LoadSystemConstants)
                 .add("MountablePath", &SystemBindings::LoadMountablePath)
                 .add("Package", &SystemBindings::LoadPackage)
                 .add("Path", &SystemBindings::LoadPath)
                 .add("Cursor", &SystemBindings::LoadSCursor)
                 .add("Workspace", &SystemBindings::LoadWorkspace)
-                .add("Window", &SystemBindings::LoadWindow);
-            BindTree["obe"].add("Time")["Time"]
+                .add("Window", &SystemBindings::LoadWindow)
+            // Time
                 .add("Chronometer", &TimeBindings::LoadChronometer)
                 .add("FPSCounter", &TimeBindings::LoadFPSCounter)
-                .add("FramerateManager", &TimeBindings::LoadFramerateManager);
-            BindTree["obe"].add("Transform")["Transform"]
+                .add("FramerateManager", &TimeBindings::LoadFramerateManager)
+            // Transform
                 .add("Movable", &TransformBindings::LoadMovable)
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
                 .add("Rect", &TransformBindings::LoadRect)
@@ -96,17 +97,17 @@ namespace obe
                 .add("SceneNode", &TransformBindings::LoadSceneNode)
                 .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
                 .add("Units", &TransformBindings::LoadUnits)
-                .add("UnitVector", &TransformBindings::LoadUnitVector);
-            BindTree["obe"].add("Triggers")["Triggers"]
+                .add("UnitVector", &TransformBindings::LoadUnitVector)
+            // Triggers
                 .add("Trigger", &TriggersBindings::LoadTrigger)
                 .add("TriggerDatabase", &TriggersBindings::LoadTriggerDatabase)
                 .add("TriggerDelay", &TriggersBindings::LoadTriggerDelay)
-                .add("TriggerGroup", &TriggersBindings::LoadTriggerGroup);
-            BindTree["obe"].add("Types")["Types"]
+                .add("TriggerGroup", &TriggersBindings::LoadTriggerGroup)
+            // Types
                 .add("Identifiable", &TypesBindings::LoadIdentifiable)
                 .add("Selectable", &TypesBindings::LoadSelectable)
-                .add("Togglable", &TypesBindings::LoadTogglable);
-            BindTree["obe"].add("Utils")["Utils"]
+                .add("Togglable", &TypesBindings::LoadTogglable)
+            // Utils
                 .add("ExecUtils", &UtilsBindings::LoadExecUtils)
                 .add("FileUtils", &UtilsBindings::LoadFileUtils)
                 .add("MathUtils", &UtilsBindings::LoadMathUtils)
@@ -114,12 +115,12 @@ namespace obe
                 .add("VectorUtils", &UtilsBindings::loadVectorUtils);
 
             // SFML Binding
-            BindTree.add("SFML");
+            BindTree.add("SFML", InitTreeNodeAsTable("SFML"));
             BindTree["SFML"]
                 .add("Color", SFMLBindings::LoadSfColor);
 
             // Vili Binding
-            BindTree.add("Vili");
+            BindTree.add("Vili", InitTreeNodeAsTable("Vili"));
             BindTree["Vili"]
                 .add("ArrayNode", &ViliBindings::LoadViliArrayNode)
                 .add("ComplexNode", &ViliBindings::LoadViliComplexNode)
@@ -136,7 +137,6 @@ namespace obe
                 .add("ViliParser", &ViliBindings::LoadViliViliParser);
             
             // Plugins
-            BindTree.add("Plugins");
             for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
             {
                 Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
@@ -145,7 +145,7 @@ namespace obe
                 {
                     const std::string pluginPath = cPluginPath.add(filename).toString();
                     const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    BindTree["Plugins"].add(Utils::String::split(filename, ".")[0], 
+                    BindTree.add(Utils::String::split(filename, ".")[0], 
                         [pluginPath, pluginName](kaguya::State* lua)
                     {
                         Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);

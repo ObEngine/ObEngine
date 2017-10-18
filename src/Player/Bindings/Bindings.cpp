@@ -37,7 +37,7 @@ namespace obe
         void IndexBindings()
         {
             // obe Binding
-            BindTree.add("obe");
+            BindTree.add("obe", InitTreeNodeAsTable("obe"));
             BindTree["obe"]
             // Animation
                 .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
@@ -107,12 +107,12 @@ namespace obe
                 .add("VectorUtils", &UtilsBindings::loadVectorUtils);
 
             // SFML Binding
-            BindTree.add("SFML");
+            BindTree.add("SFML", InitTreeNodeAsTable("SFML"));
             BindTree["SFML"]
                 .add("Color", SFMLBindings::LoadSfColor);
 
             // Vili Binding
-            BindTree.add("Vili");
+            BindTree.add("Vili", InitTreeNodeAsTable("Vili"));
             BindTree["Vili"]
                 .add("ArrayNode", &ViliBindings::LoadViliArrayNode)
                 .add("ComplexNode", &ViliBindings::LoadViliComplexNode)
@@ -129,7 +129,6 @@ namespace obe
                 .add("ViliParser", &ViliBindings::LoadViliViliParser);
             
             // Plugins
-            BindTree.add("Plugins");
             for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
             {
                 Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
@@ -138,7 +137,7 @@ namespace obe
                 {
                     const std::string pluginPath = cPluginPath.add(filename).toString();
                     const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    BindTree["Plugins"].add(Utils::String::split(filename, ".")[0], 
+                    BindTree.add(Utils::String::split(filename, ".")[0], 
                         [pluginPath, pluginName](kaguya::State* lua)
                     {
                         Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);

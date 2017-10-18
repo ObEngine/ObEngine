@@ -21,9 +21,9 @@ namespace obe
             }
             void LoadLevelSprite(kaguya::State* lua)
             {
-                Load(lua, "obe.Transform.UnitBasedObject");
-                Load(lua, "obe.Types.Selectable");
-                Load(lua, "obe.Transform.Rect");
+                Load(lua, "obe.UnitBasedObject");
+                Load(lua, "obe.Selectable");
+                Load(lua, "obe.Rect");
                 (*lua)["obe"]["LevelSprite"].setClass(
                     kaguya::UserdataMetatable<
                     Graphics::LevelSprite,

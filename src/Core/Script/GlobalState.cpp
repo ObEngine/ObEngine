@@ -13,10 +13,7 @@ namespace obe
         {
             System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
             System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-            Bindings::Load(&ScriptEngine, "obe");
-            Bindings::Load(&ScriptEngine, "SFML");
-            Bindings::Load(&ScriptEngine, "Vili");
-            Bindings::Load(&ScriptEngine, "Plugins");
+            Bindings::BindTree(&ScriptEngine);
             ScriptEngine["Hook"] = kaguya::NewTable();
             ScriptEngine.dofile("Lib/Internal/CanvasConfig.lua");
         }

@@ -15,7 +15,7 @@ namespace obe
         {
             void LoadInputAction(kaguya::State* lua)
             {
-                Load(lua, "obe.Types.Identifiable");
+                Load(lua, "obe.Identifiable");
                 (*lua)["obe"]["InputAction"].setClass(kaguya::UserdataMetatable<Input::InputAction, Types::Identifiable>()
                     .addFunction("addCondition", &Input::InputAction::addCondition)
                     .addFunction("addContext", &Input::InputAction::addContext)
