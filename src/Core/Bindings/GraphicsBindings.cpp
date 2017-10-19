@@ -4,6 +4,8 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
+#include <System/Loaders.hpp>
+#include <System/Path.hpp>
 
 namespace obe
 {
@@ -119,7 +121,7 @@ namespace obe
                         kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable, Graphics::Canvas::Transformable>
                     >()
                 );
-                (*lua)["obe"]["Canvas"]["Canvas"].setClass(
+                (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()
                     .setConstructors<Graphics::Canvas::Canvas(unsigned int, unsigned int)>()
                     .addFunction("Line", &Graphics::Canvas::Canvas::line)
@@ -130,6 +132,8 @@ namespace obe
                     .addFunction("render", &Graphics::Canvas::Canvas::render)
                     .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
                 );
+
+                //System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             }
 
             void LoadGraphicsUtils(kaguya::State* lua)
