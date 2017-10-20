@@ -30,8 +30,35 @@ before_build:
   - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% .
   - cmd: dir
 
+before_package:
+  - cmd: cd C:\projects\ObEngine
+  - cmd: mkdir Release
+  - cmd: cd Release
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\openal32.dll"
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-audio-2.dll"
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-graphics-2.dll"
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-network-2.dll"
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-system-2.dll"
+  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-window-2.dll"
+  - cmd: copy "C:\projects\ObEngine\src\Dev\Release\ObEngineDev.exe"
+  - cmd: xcopy /E "C:\projects\ObEngine\engine"
+  - cmd: dir
+  - cmd: cd ..
+  - cmd: 7z a ObEngine-win32.zip ./Release/*
+
 build:
   parallel: true
   project: ObEngine.sln
 
 test: off
+
+deploy:
+  release: obengine-unstable
+  description: 'ObEngine Unstable Release (From latest commit)'
+  provider: GitHub
+  auth_token:
+    secure: 5E+JB7x9O0JbU2cR2rjoec5G/KJMmYkRhKE2lliwU9fwn8yPxm+qGn59yEh/vRUU
+  artifact: ObEngine-win32.zip
+  prerelease: true
+  on:
+    branch: master
