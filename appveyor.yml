@@ -27,6 +27,6 @@ before_build:
   - cmd: cd C:\projects\ObEngine
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G -DSFML_ROOT=%SFML_ROOT% ../
+  - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% ../
 
 test: off
