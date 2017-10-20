@@ -1,11 +1,11 @@
 #include "elzip_fallback.hpp"
 
 void createDir(std::string dir) {
-	#if defined _MSC_VER
-		_mkdir(dir.data());
-	#elif defined __GNUC__
-		mkdir(dir.data(), 0777);
-	#endif
+#ifdef _WIN32
+	return bool(CreateDirectory(dir.c_str(), LPSECURITY_ATTRIBUTES(NULL)));
+#else
+	return bool(mkdir(dir.c_str(), S_IRUSR | S_IWUSR | S_IXUSR));
+#endif
 }
 
 std::vector<std::string> split(const std::string &str, const std::string &delimiters) {

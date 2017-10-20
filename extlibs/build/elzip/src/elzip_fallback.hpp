@@ -1,8 +1,9 @@
 #pragma once
 
-#if defined _MSC_VER
-#include <direct.h>
-#elif defined __GNUC__
+
+#if defined _WIN32
+#include <winbase.h>
+#else
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
