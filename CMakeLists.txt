@@ -16,7 +16,6 @@ endif()
 add_subdirectory(extlibs/build/clipper)
 add_subdirectory(extlibs/build/elzip)
 add_subdirectory(extlibs/build/lua)
-add_subdirectory(extlibs/build/TGUI)
 add_subdirectory(extlibs/build/vili)
 add_subdirectory(extlibs/build/dynamicLinker)
 
@@ -39,6 +38,7 @@ IF (NOT DEFINED BUILD_DEV)
 ENDIF()
 
 if(BUILD_DEV)
+    add_subdirectory(extlibs/build/TGUI)
     add_subdirectory(src/Dev)
 endif()
 
