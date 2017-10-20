@@ -17,14 +17,17 @@ init:
   - cmd: cmake --version
   - cmd: msbuild /version
 
-clone_folder: C:\projects\dart
+clone_folder: C:\projects\ObEngine
 
 branches:
   only:
     - master
 
 before_build:
-  - cmd: cmake -G -DSFML_ROOT=%SFML_ROOT% .
+  - cmd: cd C:\projects\ObEngine
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: cmake -G -DSFML_ROOT=%SFML_ROOT% ../
 
 build: off
 
