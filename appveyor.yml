@@ -45,12 +45,17 @@ before_package:
   - cmd: dir
   - cmd: cd ..
   - cmd: 7z a ObEngine-win32.zip ./Release/*
+  - cmd: dir
 
 build:
   parallel: true
   project: ObEngine.sln
 
 test: off
+
+artifacts:
+  - path: ObEngine-win32.zip
+    name: ObEngine-win32
 
 deploy:
   release: obengine-unstable
