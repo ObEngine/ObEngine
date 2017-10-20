@@ -5,8 +5,17 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height)
     self.elements = {};
 end);
 
-function obe.Canvas.Canvas.MakeMT(base, attributes)
-
+function obe.Canvas.Canvas.MakeMT(bases, attributes)
+    local gbase = {};
+    for _, base in pairs(bases) do 
+        for accid, accessor in pairs(base.__accessors) do 
+            gbase[accid] = accessor;
+        end
+    end
+    return {
+        __accessors = gbase,
+        
+    }
 end
 
 obe.Canvas.Canvas.LineMT = obe.Canvas.Canvas.MakeMT(

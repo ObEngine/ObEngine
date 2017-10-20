@@ -1,0 +1,31 @@
+version: "{build}"
+
+os: Visual Studio 2017
+
+platform: 
+  - Win32
+
+environment:
+  MSVC_DEFAULT_OPTIONS: ON
+  SFML_ROOT: C:\Libraries\SFML-2.4.2
+
+configuration:
+  - Debug
+  - Release
+
+init:
+  - cmd: cmake --version
+  - cmd: msbuild /version
+
+clone_folder: C:\projects\dart
+
+branches:
+  only:
+    - master
+
+before_build:
+  - cmd: cmake -G -DSFML_ROOT=%SFML_ROOT% .
+
+build: off
+
+test: off

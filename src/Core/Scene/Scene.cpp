@@ -381,6 +381,10 @@ namespace obe
                     if (!gameObject->deletable)
                         gameObject->update();
                 }
+                m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [](const std::unique_ptr<Script::GameObject>& ptr) {
+                    if (ptr->deletable)
+                        return true;
+                }), m_gameObjectArray.end());
             }
         }
 
@@ -664,6 +668,7 @@ namespace obe
 
         void Scene::removeLevelSprite(const std::string& id)
         {
+            Debug::Log->debug("<Scene> Removing LevelSprite {0}", id);
             m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(), [&id](std::unique_ptr<Graphics::LevelSprite>& levelSprite)
             {
                 return (levelSprite->getId() == id);
