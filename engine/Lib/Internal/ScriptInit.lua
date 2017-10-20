@@ -12,6 +12,18 @@ function LuaUtil.Exists(path)
     return true;
 end
 
+LuaUtil.libList = {};
+
+function LuaUtil.IsLibLoaded(lib)
+    for _, v in pairs(LuaUtil.libList) do
+        if v == lib then
+            return true;
+        end
+    end
+    return false;
+end
+
+
 function GetHook(hook)
     CPP_Hook(This, hook);
 end
