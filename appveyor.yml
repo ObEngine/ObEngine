@@ -28,9 +28,7 @@ before_build:
   - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip"
   - cmd: 7z.exe x SFML-2.4.2-windows-vc14-32-bit.zip
   - cmd: cd C:\projects\ObEngine
-  - cmd: mkdir build
-  - cmd: cd build
-  - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% ../
+  - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% .
   - cmd: dir
 
 build:
