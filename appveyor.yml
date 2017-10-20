@@ -10,7 +10,6 @@ environment:
   SFML_ROOT: C:\Libraries\SFML-2.4.2
 
 configuration:
-  - Debug
   - Release
 
 init:

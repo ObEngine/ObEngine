@@ -13,6 +13,8 @@ file(GLOB_RECURSE HD_TGUI
 include_directories(../../include/)
 include_directories(${SFML_INCLUDE_DIR})
 
+message("TGUI found SFML : ${SFML_INCLUDE_DIR}")
+
 if(CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
 endif()
