@@ -29,6 +29,4 @@ before_build:
   - cmd: cd build
   - cmd: cmake -G -DSFML_ROOT=%SFML_ROOT% ../
 
-build: off
-
 test: off
