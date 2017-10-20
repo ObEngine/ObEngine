@@ -34,12 +34,12 @@ before_package:
   - cmd: cd C:\projects\ObEngine
   - cmd: mkdir Release
   - cmd: cd Release
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\openal32.dll"
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-audio-2.dll"
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-graphics-2.dll"
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-network-2.dll"
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-system-2.dll"
-  - cmd: copy "C:\Libraries\SFML\SFML-2.4.2\bin\sfml-window-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\openal32.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-audio-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-graphics-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-network-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-system-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-window-2.dll"
   - cmd: copy "C:\projects\ObEngine\src\Dev\Release\ObEngineDev.exe"
   - cmd: xcopy /E "C:\projects\ObEngine\engine"
   - cmd: dir
