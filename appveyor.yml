@@ -24,7 +24,7 @@ branches:
     - master
 
 before_build:
-  - cmd: cd C:
+  - cmd: cd C:\
   - cmd: mkdir Libraries
   - cmd: cd Libraries
   - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip"
