@@ -32,4 +32,8 @@ before_build:
   - cmd: cd build
   - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% ../
 
+build:
+  parallel: true
+  project: ObEngine.sln
+
 test: off
