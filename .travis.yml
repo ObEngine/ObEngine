@@ -107,5 +107,5 @@ deploy:
   file: "build/obengine-linux.tar.gz"
   skip_cleanup: true
   on:
-    tags: true
+    branch: master
   overwrite: true
