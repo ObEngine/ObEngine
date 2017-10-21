@@ -84,7 +84,28 @@ script:
   - mkdir build
   - cd build
   - /usr/local/bin/cmake -DBUILD_TESTS=ON ..
-  - make
+  - make -j6
   # Running Tests
   - mv tests/ObEngineTests Tests
   - ./Tests
+
+before_deploy:
+  - ls
+  - ls ../
+  - mv ../engine release
+  - mv src/Dev/ObEngineDev release/ObEngineDev
+  - mv src/Player/ObEnginePlayer release/ObEnginePlayer
+  - tar -zcvf obengine-linux.tar.gz release
+  - cd ..
+  - mv build/obengine-linux.tar.gz obengine-linux.tar.gz
+  - ls
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "AOOIDLwQGASq6sQmDKYXKfyNWjzw/3m2SKHfvnrjI855O/ybqiKUfUntljH7ozL8K7YReADlSZoIeNh6rZciiOzqUMp8Sv3sO70GIysUPy4DmIGqo4GXVAPWjXGWaj62+H9OfTOkJYbLbnZrzz1EgdfHDFYxcP56afjP8yECHhZ5gsFjXWPfu905W5vsSDOJjqW/l3huqLkEBghnvk/FT8Z4ZErNGdE9lLznHs/K73WmKm4AiC418IE1pXtPSs+73QphAjcU701fZdGUzHy0Dcpu5euJizEqWWHEOeAGPiWGSJ0jfjDwJQtKX7TVVXKbs+udgcuPmfQqspCnjZgupKhV/wQCxW7jfSvjmutiuTApP0wHGFOalGDxfvioJZ/S89rI2lFCiQk7NZ1I9NiXxsY3d6UJLW99pUsCiPzzdMZF2SgrfwbTaTxmliCZ76Y+rUPGw2/jKkZE2mkY1nmDi57oMLzebQPDZ5r7wSr4gRaAwCulRRkI+B1cXZZaEQVfWbEa8xmsL5G8QjoQvXX154iskTqA+c0WpmrRPmcyIYyhOcCrm8NEKTLx1D3XSX8RbEfVLWiup6TR8eGPvoTsolkaTz3Q+ce7cAyXolb2mYBiOMuNKwz312YYHZtYFGvgNlksrPU5g9A2mVfwT5Brbzcd/YMBKTgULcDjrYkplhM="
+  file: "build/obengine-linux.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true
+  overwrite: true
