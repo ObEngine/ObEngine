@@ -1,111 +1,98 @@
 language: cpp
-compiler: gcc
-
 compiler: g++-6
 env: COMPILER=g++-6
-
 dist: trusty
 sudo: required
-
 cache:
   directories:
-    - /usr/local/bin/
-
+  - "/usr/local/bin/"
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-6
-      
-      - libfreetype6-dev
-      - libjpeg-dev
-      - libx11-dev
-      - libxrandr-dev
-      - libxcb1-dev
-      - libx11-xcb-dev
-      - libxcb-randr0-dev
-      - libxcb-image0-dev
-      - libgl1-mesa-dev
-      - libflac-dev
-      - libogg-dev
-      - libvorbis-dev
-      - libvorbisenc2
-      - libvorbisfile3
-      - libopenal-dev
-      - libpthread-stubs0-dev
-      - libstdc++6
-      - libc6
-      - libgcc1
-
-      - libglew-dev
-      - libgpgme11-dev
-      - libsndfile1-dev
-      - libudev-dev
-      
+    - g++-6
+    - libfreetype6-dev
+    - libjpeg-dev
+    - libx11-dev
+    - libxrandr-dev
+    - libxcb1-dev
+    - libx11-xcb-dev
+    - libxcb-randr0-dev
+    - libxcb-image0-dev
+    - libgl1-mesa-dev
+    - libflac-dev
+    - libogg-dev
+    - libvorbis-dev
+    - libvorbisenc2
+    - libvorbisfile3
+    - libopenal-dev
+    - libpthread-stubs0-dev
+    - libstdc++6
+    - libc6
+    - libgcc1
+    - libglew-dev
+    - libgpgme11-dev
+    - libsndfile1-dev
+    - libudev-dev
 script:
-  - sudo apt-get purge cmake
-  - mkdir ~/temp
-  - cd ~/temp
-  # Installing CMake
-  - echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
-  - echo "(Step 2/5) Extracting CMake.." &&tar xzvf cmake-3.8.2.tar.gz > cmake-extractlog
-  - cd cmake-3.8.2/
-  - echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
-  - echo "(Step 4/5) Make CMake.." && make -j4 > makelog
-  - echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
-  - which cmake
-  # Installing SFML 2.4.2
-  - cd ~/temp
-  - echo "Installing SFML..."
-  - pwd
-  - ls
-  - wget https://www.sfml-dev.org/files/SFML-2.4.2-sources.zip
-  - unzip SFML-2.4.2-sources.zip > sfml-downloadlog
-  - pwd
-  - ls
-  - cd SFML-2.4.2/src/SFML/Graphics
-  - rm CMakeLists.txt
-  - wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/build/SFML/Graphics/CMakeLists.txt
-  - cd ../../../
-  - mkdir build/
-  - cd build
-  - /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > install.log
-  - make >> install.log
-  - sudo make install >> install.log
-  - sudo ldconfig
-  # Building ObEngine
-  - cd /home/travis/build/Sygmei/ObEngine
-  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
-  - export CC=/usr/bin/gcc-6
-  - export CXX=/usr/bin/g++-6
-  - gcc -v && g++ -v && /usr/local/bin/cmake --version
-  - mkdir build
-  - cd build
-  - /usr/local/bin/cmake -DBUILD_TESTS=ON ..
-  - make -j6
-  # Running Tests
-  - mv tests/ObEngineTests Tests
-  - ./Tests
-
+- sudo apt-get purge cmake
+- mkdir ~/temp
+- cd ~/temp
+- echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.8/cmake-3.8.2.tar.gz
+- echo "(Step 2/5) Extracting CMake.." &&tar xzvf cmake-3.8.2.tar.gz > cmake-extractlog
+- cd cmake-3.8.2/
+- echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
+- echo "(Step 4/5) Make CMake.." && make -j4 > makelog
+- echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
+- which cmake
+- cd ~/temp
+- echo "Installing SFML..."
+- pwd
+- ls
+- wget https://www.sfml-dev.org/files/SFML-2.4.2-sources.zip
+- unzip SFML-2.4.2-sources.zip > sfml-downloadlog
+- pwd
+- ls
+- cd SFML-2.4.2/src/SFML/Graphics
+- rm CMakeLists.txt
+- wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/build/SFML/Graphics/CMakeLists.txt
+- cd ../../../
+- mkdir build/
+- cd build
+- /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE
+  .. > install.log
+- make >> install.log
+- sudo make install >> install.log
+- sudo ldconfig
+- cd /home/travis/build/Sygmei/ObEngine
+- sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+- sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+- export CC=/usr/bin/gcc-6
+- export CXX=/usr/bin/g++-6
+- gcc -v && g++ -v && /usr/local/bin/cmake --version
+- mkdir build
+- cd build
+- "/usr/local/bin/cmake -DBUILD_TESTS=ON .."
+- make -j6
+- mv tests/ObEngineTests Tests
+- "./Tests"
 before_deploy:
-  - ls
-  - ls ../
-  - mv ../engine release
-  - mv src/Dev/ObEngineDev release/ObEngineDev
-  - mv src/Player/ObEnginePlayer release/ObEnginePlayer
-  - tar -zcvf obengine-linux.tar.gz release
-  - cd ..
-  - mv build/obengine-linux.tar.gz obengine-linux.tar.gz
-  - ls
-
+- ls
+- ls ../
+- mv ../engine release
+- mv src/Dev/ObEngineDev release/ObEngineDev
+- mv src/Player/ObEnginePlayer release/ObEnginePlayer
+- tar -zcvf obengine-linux.tar.gz release
+- cd ..
+- mv build/obengine-linux.tar.gz obengine-linux.tar.gz
+- ls
 deploy:
   provider: releases
-  api_key:
-    secure: "AOOIDLwQGASq6sQmDKYXKfyNWjzw/3m2SKHfvnrjI855O/ybqiKUfUntljH7ozL8K7YReADlSZoIeNh6rZciiOzqUMp8Sv3sO70GIysUPy4DmIGqo4GXVAPWjXGWaj62+H9OfTOkJYbLbnZrzz1EgdfHDFYxcP56afjP8yECHhZ5gsFjXWPfu905W5vsSDOJjqW/l3huqLkEBghnvk/FT8Z4ZErNGdE9lLznHs/K73WmKm4AiC418IE1pXtPSs+73QphAjcU701fZdGUzHy0Dcpu5euJizEqWWHEOeAGPiWGSJ0jfjDwJQtKX7TVVXKbs+udgcuPmfQqspCnjZgupKhV/wQCxW7jfSvjmutiuTApP0wHGFOalGDxfvioJZ/S89rI2lFCiQk7NZ1I9NiXxsY3d6UJLW99pUsCiPzzdMZF2SgrfwbTaTxmliCZ76Y+rUPGw2/jKkZE2mkY1nmDi57oMLzebQPDZ5r7wSr4gRaAwCulRRkI+B1cXZZaEQVfWbEa8xmsL5G8QjoQvXX154iskTqA+c0WpmrRPmcyIYyhOcCrm8NEKTLx1D3XSX8RbEfVLWiup6TR8eGPvoTsolkaTz3Q+ce7cAyXolb2mYBiOMuNKwz312YYHZtYFGvgNlksrPU5g9A2mVfwT5Brbzcd/YMBKTgULcDjrYkplhM="
-  file: "build/obengine-linux.tar.gz"
+  file: build/obengine-linux.tar.gz
   skip_cleanup: true
   on:
     branch: master
   overwrite: true
+  api_key:
+    secure: YhOdpW1i54lnkOxdtvSrtuRD7JOqs8UT1cylOgO/LnOWI5NAatLnLQIyqCFHdoa570I5b98vI6t9dykk4OJtJ0xM5jTgn8qr3K8Y6bleTWGMm+5/xSv46+hr0L54YURgAX7u+RhZXTuVo3CUGGv0zaUvnab8+jEDXxIfb4P+D2cKlfXS+FXIXPdEYdMNwzaCyF/O+0vOQhT/G8uHdfYMSP7O3RRu7sBbqZoMan1aEfMC1OhdOvYPiXUxATawtV9FPXsL6Y9DEetw/61vBRz2NzZ2Jfr89rBDXQAdBcyOQnHP7WQF+w7cwIkHuSwBjmOy0ya8Nq1eKoZG8GlLewfHgq5BnJNXkkmssBrNIryQNjTcvWYxm+V+9EIEpL0s9oHQR2v5ogWKBoCN5MPMNprn6HUMAD16L/KGnyKkWtyIi/xHB/fClKn+X4fN+ddYPuqPrjwuiWYzKg7ys1Nl6XcwFKim8YKy9AxKqcDgLTvO2U56IhLVAP5/YcDa9yOf3LpHJGwArQpXKWvFNCGi0i9/pI7uYTsP8/1cKYftAkCTiakMDQfOUp92B71qVlvIeMo+7D9yqvP+DoysIHLS3gUybMRu2lMMwByBpMu3nvMktDi5QfQlqqux/ZI25YkUDegRXrIMqNT5sRuIzhjtgMyBBfwiVG0y5fLMSqk/Y0Dq2n0=
