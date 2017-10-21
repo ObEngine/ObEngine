@@ -8,7 +8,6 @@
 #include <Modes/Game.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <Script/Script.hpp>
 #include <System/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
@@ -29,7 +28,7 @@ namespace obe
             //Creating Window
             System::InitWindow(System::WindowContext::GameWindow);
 
-            Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
+            Triggers::TriggerDatabase::GetInstance()->reg("TriggerDatabase");
 
             //Game Triggers
             Triggers::TriggerGroupPtr gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
@@ -48,15 +47,15 @@ namespace obe
 
             //Cursor
             System::Cursor cursor;
-            Script::hookCore.dropValue("Cursor", &cursor);
+            cursor.reg("Cursor");
 
             //Scene Creation / Loading
             Scene::Scene scene;
-            Script::hookCore.dropValue("Scene", &scene);
+            scene.reg("Scene");
 
             //Keybinding
             Input::InputManager inputManager;
-            Script::hookCore.dropValue("InputManager", &inputManager);
+            inputManager.reg("InputManager");
             inputManager.configure(System::Config.at("KeyBinding"));
             inputManager.addContext("game");
 

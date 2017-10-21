@@ -15,7 +15,6 @@
 #include <Network/Network.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <Script/Script.hpp>
 #include <System/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
@@ -35,7 +34,7 @@ namespace obe
             //Creating Window
             System::InitWindow(System::WindowContext::EditorWindow);
 
-            Script::hookCore.dropValue("TriggerDatabase", Triggers::TriggerDatabase::GetInstance());
+            Triggers::TriggerDatabase::GetInstance()->reg("TriggerDatabase");
 
             //Editor Triggers
             Triggers::TriggerGroupPtr editorTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor");
@@ -85,7 +84,7 @@ namespace obe
             Debug::Console gameConsole;
             bool oldConsoleVisibility = false;
             std::vector<std::string> backupContexts;
-            Script::hookCore.dropValue("Console", &gameConsole);
+            gameConsole.reg("Console");
 
             //Font
             sf::Font font;
@@ -97,7 +96,7 @@ namespace obe
 
             //Cursor
             System::Cursor cursor;
-            Script::hookCore.dropValue("Cursor", &cursor);
+            cursor.reg("Cursor");
 
             //Scene Creation / Loading
             Scene::Scene scene;
@@ -108,14 +107,14 @@ namespace obe
                 gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
                 Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
             });
-            Script::hookCore.dropValue("Scene", &scene);
+            scene.reg("Scene");
 
             //Socket
             Network::NetworkHandler networkHandler;
 
             //Keybinding
             Input::InputManager inputManager;
-            Script::hookCore.dropValue("InputManager", &inputManager);
+            inputManager.reg("InputManager");
             inputManager.configure(System::Config.at("KeyBinding"));
             inputManager
                 .addContext("game")
@@ -124,7 +123,7 @@ namespace obe
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
-            Script::hookCore.dropValue("Grid", &editorGrid);
+            editorGrid.reg("Grid");
             inputManager.getAction("MagnetizeUp").setRepeat(200);
             inputManager.getAction("MagnetizeDown").setRepeat(200);
             inputManager.getAction("MagnetizeLeft").setRepeat(200);
@@ -158,8 +157,8 @@ namespace obe
 
             GUI::buildEditorMapMenu(mapPanel, scene);
             GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode, scene);
-            GUI::buildEditorSpritesMenu(spritesPanel, spritesScrollbar);
-            GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar);
+            GUI::buildEditorSpritesMenu(spritesPanel, spritesScrollbar, scene);
+            GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar, scene);
 
             tgui::EditBox::Ptr cameraSizeInput = gui.get<tgui::EditBox>("cameraSizeInput");
             tgui::EditBox::Ptr cameraPositionXInput = gui.get<tgui::EditBox>("cameraPositionXInput");

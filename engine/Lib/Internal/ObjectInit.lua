@@ -38,7 +38,7 @@ Global__Trigger__Meta = {
 
 Global__Meta = {
     __index = function(table, key)
-        for _, v in pairs(Hook.TriggerDatabase:GetInstance():getAllTriggersGroupNames("Global")) do
+        for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames("Global")) do
             if v == key then
                 if rawget(table, key) == nil then
                     rawset(table, key, { triggerGroupId = key });

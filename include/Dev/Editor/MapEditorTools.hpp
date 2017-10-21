@@ -5,6 +5,8 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <TGUI/TGUI.hpp>
 
+#include <Scene/Scene.hpp>
+
 namespace vili 
 {
     class ComplexNode;
@@ -49,20 +51,25 @@ namespace obe
          * \param baseTheme TGUI Theme
          * \param objectsScrollbar Scrollbar of the objectsPanel
          */
-        void buildObjectTab(tgui::Panel::Ptr& objectPanel, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, tgui::Scrollbar::Ptr objectsScrollbar);
+        void buildObjectTab(
+            Scene::Scene& scene, 
+            tgui::Panel::Ptr& objectPanel, 
+            tgui::Panel::Ptr& requiresPanel, 
+            tgui::Theme& baseTheme, 
+            tgui::Scrollbar::Ptr objectsScrollbar);
         /**
          * \brief Builds the RequiresPanel that will transmit Init parameters to the GameObject
          * \param requiresPanel TGUI Panel used to transmit Init parameters
          * \param baseTheme TGUI Theme
          * \param objName Type of GameObject to build
          */
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName);
+        void buildRequiresObjectTab(Scene::Scene& scene, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName);
         /**
          * \brief Builds an Object through Parameters
          * \param objName Type of GameObject to build
          * \param requires Vili ComplexNode containing the different parameters
          */
-        void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires);
+        void buildObjectThroughRequire(Scene::Scene& scene, const std::string& objName, vili::ComplexNode* requires);
         /**
          * \brief Loads the Sprite Folder
          * \param spritesPanel TGUI Panel that will contains all Sprite Creation Buttons
@@ -70,11 +77,15 @@ namespace obe
          * \param path Path where are the Sprite located
          * \param spritesScrollbar Scrollbar of spritesPanel
          */
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path, tgui::Scrollbar::Ptr spritesScrollbar);
+        void loadSpriteFolder(Scene::Scene& scene, 
+            tgui::Panel::Ptr spritesPanel, 
+            tgui::Label::Ptr spritesCatLabel, 
+            const std::string& path, 
+            tgui::Scrollbar::Ptr spritesScrollbar);
         /**
          * \brief Adds a Sprite to the Scene
          * \param spritePath Path to the image
          */
-        void addSpriteToScene(const std::string& spritePath);
+        void addSpriteToScene(Scene::Scene& scene, const std::string& spritePath);
     }
 }

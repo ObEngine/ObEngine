@@ -6,6 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <System/Cursor.hpp>
+#include <Types/Registrable.hpp>
 #include <Types/Togglable.hpp>
 
 namespace obe
@@ -16,7 +17,7 @@ namespace obe
          * \brief A grid for precise edition in the map editor
          * @Bind
          */
-        class EditorGrid : public Types::Togglable
+        class EditorGrid : public Types::Togglable, public Types::Registrable<EditorGrid>
         {
         private:
             unsigned int m_gridSizeX;

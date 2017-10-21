@@ -9,6 +9,7 @@
 
 #include <Debug/ConsoleStream.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
 
 namespace obe
 {
@@ -18,7 +19,7 @@ namespace obe
          * \brief An in-editor Console used to Debug
          * @Bind
          */
-        class Console
+        class Console : public Types::Registrable<Console>
         {
         private:
             ConsoleStream* m_debugStream;

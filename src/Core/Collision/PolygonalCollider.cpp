@@ -7,7 +7,6 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
-#include <Script/Script.hpp>
 #include <System/Window.hpp>
 #include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>

@@ -5,6 +5,7 @@
 #include <Time/Chronometer.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
 
 namespace obe
 {
@@ -14,7 +15,7 @@ namespace obe
          * \brief A TriggerDatabase that handles all Trigger / TriggerGroup
          * @Bind
          */
-        class TriggerDatabase
+        class TriggerDatabase : public Types::Registrable<TriggerDatabase>
         {
         private:
             TriggerDatabase();

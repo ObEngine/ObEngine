@@ -1,12 +1,11 @@
 #include <Bindings/Bindings.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
 #include <Triggers/TriggerDatabase.hpp>
-#include "Graphics/DrawUtils.hpp"
 
 namespace obe
 {
@@ -15,7 +14,6 @@ namespace obe
         Scene::Scene() : m_sceneRoot("root")
         {
             Collision::PolygonalCollider::m_sceneRef = this;
-            Script::ScriptEngine["Scene"] = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;
@@ -381,9 +379,15 @@ namespace obe
                     if (!gameObject->deletable)
                         gameObject->update();
                 }
-                m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [](const std::unique_ptr<Script::GameObject>& ptr) {
+                m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [this](const std::unique_ptr<Script::GameObject>& ptr) {
                     if (ptr->deletable)
+                    {
+                        if (ptr->m_hasLevelSprite)
+                            this->removeLevelSprite(ptr->getLevelSprite()->getId());
+                        if (ptr->m_hasCollider)
+                            this->removeCollider(ptr->getCollider()->getId());
                         return true;
+                    }
                 }), m_gameObjectArray.end());
             }
         }
@@ -535,11 +539,6 @@ namespace obe
             std::unique_ptr<Script::GameObject> newGameObject = std::make_unique<Script::GameObject>(obj, useId);
             vili::ComplexNode& gameObjectData = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
             newGameObject->loadGameObject(*this, gameObjectData);
-            if (newGameObject->m_hasScriptEngine)
-            {
-                //loadWorldLib(newGameObject->m_objectScript.get());
-                //(*newGameObject.get()->m_objectScript)["Scene"] = this;
-            }
 
             if (newGameObject->doesHaveLevelSprite())
             {

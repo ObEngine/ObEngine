@@ -2,7 +2,6 @@
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/GlobalState.hpp>
-#include <Script/Script.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <Transform/Units.hpp>
@@ -410,10 +409,6 @@ namespace obe
             {
                 trigger.first->unregisterEnvironment(m_envIndex);
             }
-            if (m_hasLevelSprite)
-                hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeLevelSprite(m_objectLevelSprite->getId());
-            if (m_hasCollider)
-                hookCore.getPointer("Scene")->as<Scene::Scene*>()->removeCollider(m_objectCollider->getId());
             AllEnvs.erase(
                 std::remove_if(
                     AllEnvs.begin(), 

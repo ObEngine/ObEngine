@@ -4,7 +4,6 @@
 #include <Editor/MapEditorTools.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
-#include <Script/Script.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Transform/UnitVector.hpp>
@@ -37,7 +36,12 @@ namespace obe
             double texH = sprTexture.getSize().y;
             double scale = (texW >= texH) ? m_size / texW : m_size / texH;
             sprite.setScale(scale, scale);
-            sprite.setPosition(sf::Vector2f((m_size / 2) - (sprite.getGlobalBounds().width / 2), (m_size / 2) - (sprite.getGlobalBounds().height / 2)));
+            sprite.setPosition(
+                sf::Vector2f(
+                    (m_size / 2) - (sprite.getGlobalBounds().width / 2), 
+                    (m_size / 2) - (sprite.getGlobalBounds().height / 2)
+                )
+            );
             m_instance->m_renderer.clear(sf::Color(0, 0, 0, 0));
             sf::RectangleShape sprRec(sf::Vector2f(m_size, m_size));
             sprRec.setFillColor(sf::Color(100, 100, 100));
@@ -85,7 +89,11 @@ namespace obe
             return m_instance->m_cache[path];
         }
 
-        void buildObjectTab(tgui::Panel::Ptr& objectTab, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, tgui::Scrollbar::Ptr objectsScrollbar)
+        void buildObjectTab(Scene::Scene& scene, 
+            tgui::Panel::Ptr& objectTab, 
+            tgui::Panel::Ptr& requiresPanel, 
+            tgui::Theme& baseTheme, 
+            tgui::Scrollbar::Ptr objectsScrollbar)
         {
             std::vector<std::string> allGameObjects;
             System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
@@ -116,16 +124,16 @@ namespace obe
                 currentObj->setPosition(xpos, ypos);
                 currentObj->setSize(btnSize, btnSize);
                 objectTab->add(currentObj);
-                currentObj->connect("pressed", [&requiresPanel, &baseTheme, currentObjName]()
+                currentObj->connect("pressed", [&scene, &requiresPanel, &baseTheme, currentObjName]()
                 {
-                    buildRequiresObjectTab(requiresPanel, baseTheme, currentObjName);
+                    buildRequiresObjectTab(scene, requiresPanel, baseTheme, currentObjName);
                 });
             }
 
             objectsScrollbar->setMaximum(ypos + btnSize + yOff + 30);
         }
 
-        void buildRequiresObjectTab(tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
+        void buildRequiresObjectTab(Scene::Scene& scene, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
         {
             vili::ComplexNode* requires = Script::GameObjectDatabase::GetRequirementsForGameObject(objName);
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
@@ -195,7 +203,7 @@ namespace obe
                 createObjectButton->setTextSize(22);
                 createObjectButton->setText("Create Object");
 
-                createObjectButton->connect("pressed", [objName, requireComboBoxes, requireEditBoxes, key, requireCopy]() mutable
+                createObjectButton->connect("pressed", [objName, requireComboBoxes, requireEditBoxes, key, requireCopy, &scene]() mutable
                 {
                     for (auto& cReq : requireComboBoxes)
                     {
@@ -205,23 +213,22 @@ namespace obe
                     {
                         requireCopy->at("Input", cReq.first).createDataNode("value", cReq.second->getText());
                     }
-                    buildObjectThroughRequire(objName, requireCopy);
+                    buildObjectThroughRequire(scene, objName, requireCopy);
                 });
 
                 requiresPanel->add(createObjectButton);
             }
             else
             {
-                Script::GameObject* newGameObject = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>()->createGameObject(objName, key);
+                Script::GameObject* newGameObject = scene.createGameObject(objName, key);
                 newGameObject->initialize();
             }
         }
 
-        void buildObjectThroughRequire(const std::string& objName, vili::ComplexNode* requires)
+        void buildObjectThroughRequire(Scene::Scene& scene, const std::string& objName, vili::ComplexNode* requires)
         {
-            Scene::Scene* scene = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
             std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
-            Script::GameObject* newGameObject = scene->createGameObject(objName, key);
+            Script::GameObject* newGameObject = scene.createGameObject(objName, key);
             
             requires->at("Output").walk([](vili::NodeIterator& node)
             {
@@ -238,7 +245,11 @@ namespace obe
             newGameObject->initialize();
         }
 
-        void loadSpriteFolder(tgui::Panel::Ptr spritesPanel, tgui::Label::Ptr spritesCatLabel, const std::string& path, tgui::Scrollbar::Ptr spritesScrollbar)
+        void loadSpriteFolder(Scene::Scene& scene, 
+            tgui::Panel::Ptr spritesPanel, 
+            tgui::Label::Ptr spritesCatLabel, 
+            const std::string& path, 
+            tgui::Scrollbar::Ptr spritesScrollbar)
         {
             spritesPanel->removeAllWidgets();
             spritesPanel->add(spritesCatLabel);
@@ -276,10 +287,10 @@ namespace obe
             backButton->setSize(sprSize, sprSize);
             backButton->setPosition(xpos, ypos);
 
-            backButton->connect("pressed", [spritesPanel, spritesCatLabel, path, spritesScrollbar]
+            backButton->connect("pressed", [spritesPanel, spritesCatLabel, path, spritesScrollbar, &scene]
             {
                 std::vector<std::string> splittedPath = Utils::String::split(path, "/");
-                loadSpriteFolder(spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1), spritesScrollbar);
+                loadSpriteFolder(scene, spritesPanel, spritesCatLabel, "/" + Utils::Vector::join(splittedPath, "/", 0, 1), spritesScrollbar);
             });
 
             for (std::string element : folderList)
@@ -290,9 +301,9 @@ namespace obe
                 currentFolder->setSize(sprSize, sprSize);
                 currentFolder->setPosition(xpos, ypos);
                 currentFolder->getRenderer()->setTexture(*Thumbnailer::GetFolderThumbnail(path + "/" + element));
-                currentFolder->connect("pressed", [spritesPanel, spritesCatLabel, path, element, spritesScrollbar]()
+                currentFolder->connect("pressed", [spritesPanel, spritesCatLabel, path, element, spritesScrollbar, &scene]()
                 {
-                    loadSpriteFolder(spritesPanel, spritesCatLabel, path + "/" + element, spritesScrollbar);
+                    loadSpriteFolder(scene, spritesPanel, spritesCatLabel, path + "/" + element, spritesScrollbar);
                 });
             }
 
@@ -309,24 +320,23 @@ namespace obe
                     currentSprite->setPosition(xpos, ypos);
                     currentSprite->getRenderer()->setTexture(*Thumbnailer::GetSpriteThumbnail(path + "/" + element));
                     currentSprite->setSize(sprSize, sprSize);
-                    currentSprite->connect("pressed", [path, element] { addSpriteToScene(path + "/" + element); });
+                    currentSprite->connect("pressed", [path, element, &scene] { addSpriteToScene(scene, path + "/" + element); });
                 }
             }
 
             spritesScrollbar->setMaximum(ypos + sprSize + yOff + 30);
         }
 
-        void addSpriteToScene(const std::string& spritePath)
+        void addSpriteToScene(Scene::Scene& scene, const std::string& spritePath)
         {
-            Scene::Scene* world = Script::hookCore.getPointer("Scene")->as<Scene::Scene*>();
             int i = 0;
-            std::string testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i);
-            while (world->doesLevelSpriteExists(testId))
+            std::string testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i);
+            while (scene.doesLevelSpriteExists(testId))
             {
-                testId = "sprite" + std::to_string(world->getLevelSpriteAmount() + i++);
+                testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i++);
             }
-            Graphics::LevelSprite* sprToAdd = world->createLevelSprite(testId);
-            Transform::UnitVector pixelCamera = world->getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+            Graphics::LevelSprite* sprToAdd = scene.createLevelSprite(testId);
+            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
             sprToAdd->load("Sprites/LevelSprites/" + spritePath);
             sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);
             sprToAdd->setRotation(0);

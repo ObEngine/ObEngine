@@ -113,11 +113,9 @@ end
 #### Hello-World in game console
 Does exactly the same thing than the first one except that it prints "Hello World" in the game console (F1 to open console)
 ```lua
-GetHook("Console"); -- Place the Game's Console pointer in Hook.Console
-
 function Local.Init()
   -- Create a new stream for the console named "HelloWorld", the "true" means the stream is directly enabled
-  local consoleStream = Hook.Console:createStream("HelloWorld", true);
+  local consoleStream = Console:createStream("HelloWorld", true);
   -- Write "Hello World" in the game console in red using the stream (5th parameter is alpha)
   consoleStream:write("Hello World", 255, 0, 0, 255);
 end
@@ -126,12 +124,10 @@ end
 #### Rainbow Hello-World
 Same thing that the one before except that we will change the color of the text at every frame !
 ```lua
-GetHook("Console");
-
 math.randomseed(os.time()); -- Random seed for when we'll use math.random()
 
 function Local.Init()
-  local consoleStream = Hook.Console:createStream("HelloWorld", true);
+  local consoleStream = Console:createStream("HelloWorld", true);
   -- We start with the white color (255, 255, 255), the line is stored in helloWorldMessage
   helloWorldMessage = consoleStream:write("Hello World Rainbow !", 255, 255, 255, 255);
 end

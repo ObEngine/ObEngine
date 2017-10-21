@@ -22,8 +22,3 @@ function LuaUtil.IsLibLoaded(lib)
     end
     return false;
 end
-
-
-function GetHook(hook)
-    CPP_Hook(This, hook);
-end

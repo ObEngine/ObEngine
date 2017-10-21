@@ -5,6 +5,7 @@
 #include <Scene/Camera.hpp>
 #include <Script/GameObject.hpp>
 #include <Transform/SceneNode.hpp>
+#include <Types/Registrable.hpp>
 
 namespace obe
 {
@@ -17,7 +18,7 @@ namespace obe
          * \brief The Scene class is a container of all the game elements
          * @Bind
          */
-        class Scene
+        class Scene : public Types::Registrable<Scene>
         {
         private:
             std::string m_levelName = "";

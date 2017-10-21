@@ -675,7 +675,7 @@ namespace obe
                 saveCameraPositionCheckbox->setText("Save Camera Position ?");
             }
 
-            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar)
+            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar, Scene::Scene& scene)
             {
                 tgui::Label::Ptr spritesCatLabel = tgui::Label::create();
 
@@ -686,10 +686,14 @@ namespace obe
                 spritesCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 spritesCatLabel->setText("[ Sprites Settings ]");
 
-                loadSpriteFolder(spritesPanel, spritesCatLabel, "", spritesScrollbar);
+                loadSpriteFolder(scene, spritesPanel, spritesCatLabel, "", spritesScrollbar);
             }
 
-            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel, tgui::Scrollbar::Ptr& objectsScrollbar)
+            void buildEditorObjectsMenu( 
+                tgui::Panel::Ptr& objectsPanel, 
+                tgui::Panel::Ptr& requiresPanel, 
+                tgui::Scrollbar::Ptr& objectsScrollbar,
+                Scene::Scene& scene)
             {
                 tgui::Label::Ptr objectsCatLabel = tgui::Label::create();
 
@@ -700,7 +704,7 @@ namespace obe
                 objectsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
                 objectsCatLabel->setText("[ Objects Settings ]");
 
-                buildObjectTab(objectsPanel, requiresPanel, baseTheme, objectsScrollbar);
+                buildObjectTab(scene, objectsPanel, requiresPanel, baseTheme, objectsScrollbar);
             }
 
             void buildObjectCreationMenu(tgui::Panel::Ptr& mainPanel)

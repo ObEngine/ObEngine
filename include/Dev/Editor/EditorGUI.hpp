@@ -21,9 +21,16 @@ namespace obe
             void buildToolbar(tgui::Panel::Ptr& mainPanel, tgui::Panel::Ptr& editorPanel, Scene::Scene& scene);
             void buildEditorMenu(tgui::Panel::Ptr& mainPanel);
             void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world);
-            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode, Scene::Scene& scene);
-            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar);
-            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel, tgui::Scrollbar::Ptr& objectsScrollbar);
+            void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, 
+                EditorGrid& editorGrid, 
+                System::Cursor& cursor, 
+                tgui::ComboBox::Ptr& editMode, 
+                Scene::Scene& scene);
+            void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar, Scene::Scene& scene);
+            void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, 
+                tgui::Panel::Ptr& requiresPanel, 
+                tgui::Scrollbar::Ptr& objectsScrollbar,
+                Scene::Scene& scene);
             void buildObjectCreationMenu(tgui::Panel::Ptr& mainPanel);
             void buildKeyBindingMenu(tgui::Panel::Ptr& keybindingPanel, tgui::Scrollbar::Ptr& keybindingScrollbar);
         }

@@ -6,6 +6,7 @@
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
 
 namespace obe
 {
@@ -15,7 +16,7 @@ namespace obe
         * \brief Class used to manage KeyClass and KeyboardAction
         * @Bind
         */
-        class InputManager
+        class InputManager : public Types::Registrable<InputManager>
         {
         private:
             std::vector<std::unique_ptr<InputAction>> m_allActions;

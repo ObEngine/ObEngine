@@ -5,6 +5,7 @@
 
 #include <Animation/Animator.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
 
 namespace obe
 {
@@ -14,7 +15,7 @@ namespace obe
          * \brief A Class to manipulate and display the Cursor in the Engine
          * @Bind
          */
-        class Cursor
+        class Cursor : public Types::Registrable<Cursor>
         {
         private:
             sf::Vector2i m_saveOldPos;

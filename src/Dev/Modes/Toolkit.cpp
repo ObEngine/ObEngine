@@ -1,10 +1,10 @@
 #include <kaguya/kaguya.hpp>
 #include <TGUI/TGUI.hpp>
 
+#include <Bindings/Bindings.hpp>
 #include <Modes/Toolkit.hpp>
-#include <Script/Script.hpp>
-#include "Bindings/Bindings.hpp"
 #include <Modes/ToolkitContentBox.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
@@ -84,12 +84,8 @@ namespace obe
             });
 
             toolkitEngine["This"] = &toolkitEngine;
-            toolkitEngine["CPP_Import"] = &Bindings::Load;
-            toolkitEngine["CPP_Hook"] = &Script::loadHook;
             toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
-            Bindings::BindTree["obe"](&toolkitEngine);
-            Bindings::BindTree["SFML"](&toolkitEngine);
-            Bindings::BindTree["Vili"](&toolkitEngine);
+            Bindings::BindTree(&toolkitEngine);
             toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)
             {
                 inputColor.r = r;
