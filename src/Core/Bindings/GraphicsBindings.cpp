@@ -78,6 +78,8 @@ namespace obe
 
             void LoadCanvas(kaguya::State* lua)
             {
+                Load(lua, "obe.UnitVector");
+                Load(lua, "SFML.Color");
                 (*lua)["obe"]["Canvas"] = kaguya::NewTable();
                 (*lua)["obe"]["Canvas"]["RequirePair"].setClass(kaguya::UserdataMetatable<std::pair<std::string, std::string>>()
                     .addFunction("first", &std::pair<std::string, std::string>::first)
@@ -86,9 +88,11 @@ namespace obe
                 (*lua)["obe"]["Canvas"]["Element"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Element>());
                 (*lua)["obe"]["Canvas"]["Drawable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Drawable, Graphics::Canvas::Element>()
+                        .addProperty("layer", &Graphics::Canvas::Drawable::layer)
                 );
                 (*lua)["obe"]["Canvas"]["Colorable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Colorable, Graphics::Canvas::Drawable>()
+                        .addProperty("color", &Graphics::Canvas::Colorable::color)
                 );
                 (*lua)["obe"]["Canvas"]["Transformable"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Transformable, Graphics::Canvas::Element>()
@@ -98,8 +102,10 @@ namespace obe
                 );
                 (*lua)["obe"]["Canvas"]["Line"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Line, 
-                        kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable>
-                    >()
+                    kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::Colorable>>()
+                        .addProperty("p1", &Graphics::Canvas::Line::p1)
+                        .addProperty("p2", &Graphics::Canvas::Line::p2)
+                        .addProperty("thickness", &Graphics::Canvas::Line::thickness)
                 );
                 (*lua)["obe"]["Canvas"]["Rectangle"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, 
@@ -133,7 +139,7 @@ namespace obe
                     .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
                 );
 
-                //System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+                System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             }
 
             void LoadGraphicsUtils(kaguya::State* lua)

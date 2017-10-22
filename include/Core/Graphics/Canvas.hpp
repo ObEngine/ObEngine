@@ -82,6 +82,7 @@ namespace obe
                 float angle;
                 Transform::UnitVector translationOrigin;
                 Transform::UnitVector rotationOrigin;
+                Transform::UnitVector scaleOrigin;
                 /**
                  * \brief Creates a new Transformable
                  * \param id Id of the new Transformable
@@ -115,6 +116,7 @@ namespace obe
             public:
                 Transform::UnitVector p1;
                 Transform::UnitVector p2;
+                unsigned int thickness;
                 /**
                  * \brief Creates a new Line
                  * \param id 

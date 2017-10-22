@@ -403,6 +403,7 @@ namespace obe
 
         void GameObject::deleteObject()
         {
+            Debug::Log->debug("GameObject::deleteObject called for {0}", m_id);
             m_localTriggers->trigger("Delete");
             this->deletable = true;
             for (auto& trigger : m_registeredTriggers)

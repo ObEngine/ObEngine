@@ -95,3 +95,4 @@ deploy:
   file: obengine-linux.tar.gz
   on:
     repo: Sygmei/ObEngine
+    branch: master
