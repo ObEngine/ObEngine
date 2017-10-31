@@ -112,15 +112,28 @@ namespace sfe
 
 
     ////////////////////////////////////////////////////////////////////////////////
-    RichText& RichText::operator <<(const sf::Color& color)
+    RichText& RichText::pushFillColor(const sf::Color& color)
     {
-        m_currentColor = color;
+        m_currentFillColor = color;
         return *this;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    RichText& RichText::pushOutlineColor(const sf::Color& color)
+    {
+        m_currentOutlineColor = color;
+        return *this;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
-    RichText& RichText::operator <<(sf::Text::Style style)
+    RichText& RichText::pushOutlineThickness(unsigned int thickness)
+    {
+        m_currentOutlineThickness = thickness;
+        return *this;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    RichText& RichText::pushStyle(sf::Text::Style style)
     {
         m_currentStyle = style;
         return *this;
@@ -161,7 +174,7 @@ namespace sfe
 
 
     ////////////////////////////////////////////////////////////////////////////////
-    RichText& RichText::operator <<(const sf::String& string)
+    RichText& RichText::pushString(const sf::String& string)
     {
         // Maybe skip
         if (string.isEmpty())
@@ -304,7 +317,9 @@ namespace sfe
     RichText::RichText(const sf::Font* font)
         : m_font(font),
           m_characterSize(30),
-          m_currentColor(sf::Color::White),
+          m_currentFillColor(sf::Color::White),
+          m_currentOutlineColor(sf::Color::White),
+          m_currentOutlineThickness(0),
           m_currentStyle(sf::Text::Regular)
     {
     }
@@ -315,7 +330,9 @@ namespace sfe
     {
         sf::Text text;
         text.setString(string);
-        text.setFillColor(m_currentColor);
+        text.setFillColor(m_currentFillColor);
+        text.setOutlineColor(m_currentOutlineColor);
+        text.setOutlineThickness(m_currentOutlineThickness);
         text.setStyle(m_currentStyle);
         text.setCharacterSize(m_characterSize);
         if (m_font)

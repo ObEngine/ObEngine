@@ -99,9 +99,11 @@ namespace sfe
         //////////////////////////////////////////////////////////////////////////
         // Operators
         //////////////////////////////////////////////////////////////////////////
-        RichText& operator <<(const sf::Color& color);
-        RichText& operator <<(sf::Text::Style style);
-        RichText& operator <<(const sf::String& string);
+        RichText& pushFillColor(const sf::Color& color);
+        RichText& pushOutlineColor(const sf::Color& color);
+        RichText& pushOutlineThickness(unsigned int thickness);
+        RichText& pushStyle(sf::Text::Style style);
+        RichText& pushString(const sf::String& string);
 
         //////////////////////////////////////////////////////////////////////////
         // Set character size
@@ -172,7 +174,9 @@ namespace sfe
         const sf::Font* m_font; ///< Font
         unsigned int m_characterSize; ///< Character size
         mutable sf::FloatRect m_bounds; ///< Local bounds
-        sf::Color m_currentColor; ///< Last used color
+        sf::Color m_currentFillColor; ///< Last used color
+        sf::Color m_currentOutlineColor;
+        unsigned int m_currentOutlineThickness;
         sf::Text::Style m_currentStyle; ///< Last style used
     };
 }

@@ -163,9 +163,11 @@ namespace obe
 
                 (*lua)["SFML"]["RichText"].setClass(kaguya::UserdataMetatable<sfe::RichText, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
                     .setConstructors<sfe::RichText(), sfe::RichText(const sf::Font&)>()
-                    .addFunction("pushColor", static_cast<sfe::RichText&(sfe::RichText::*)(const sf::Color&)>(&sfe::RichText::operator<<))
-                    .addFunction("pushString", static_cast<sfe::RichText&(sfe::RichText::*)(const sf::String&)>(&sfe::RichText::operator<<))
-                    .addFunction("pushStyle", static_cast<sfe::RichText&(sfe::RichText::*)(sf::Text::Style)>(&sfe::RichText::operator<<))
+                    .addFunction("pushFillColor", &sfe::RichText::pushFillColor)
+                    .addFunction("pushOutlineColor", &sfe::RichText::pushOutlineColor)
+                    .addFunction("pushOutlineThickness", &sfe::RichText::pushOutlineThickness)
+                    .addFunction("pushString", &sfe::RichText::pushString)
+                    .addFunction("pushStyle", &sfe::RichText::pushStyle)
                     .addFunction("setCharacterSize", &sfe::RichText::setCharacterSize)
                     .addFunction("getCharacterSize", &sfe::RichText::getCharacterSize)
                     .addFunction("setFont", &sfe::RichText::setFont)
@@ -174,6 +176,13 @@ namespace obe
                     .addFunction("getLocalBounds", &sfe::RichText::getLocalBounds)
                     .addFunction("getGlobalBounds", &sfe::RichText::getGlobalBounds)
                 );
+
+                (*lua)["SFML"]["Style"] = kaguya::NewTable();
+                (*lua)["SFML"]["Style"]["Regular"] = sf::Text::Style::Regular;
+                (*lua)["SFML"]["Style"]["Bold"] = sf::Text::Style::Bold;
+                (*lua)["SFML"]["Style"]["Italic"] = sf::Text::Style::Italic;
+                (*lua)["SFML"]["Style"]["StrikeThrough"] = sf::Text::Style::StrikeThrough;
+                (*lua)["SFML"]["Style"]["Underlined"] = sf::Text::Style::Underlined;
             }
 
             void LoadSfTransformable(kaguya::State* lua)

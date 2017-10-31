@@ -5,6 +5,28 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height)
     self.elements = {};
 end);
 
+function obe.Canvas.NormalizeColor(color, base)
+    if type(color) == "table" then
+        local ncolor = SFML.Color();
+        base = base or { r = 0, g = 0, b = 0, a = 255 };
+        ncolor.r = color.r or base.r;
+        ncolor.g = color.g or base.g;
+        ncolor.b = color.b or base.b;
+        ncolor.a = color.a or base.a;
+        return ncolor;
+    elseif type(color) == "number" then
+        local dalpha = self.shape:getFillColor().a;
+        local ncolor = SFML.Color(color, color, color, dalpha);
+    elseif type(color) == "string" then
+        color = color:gsub("#","");
+        if string.len(color) == 3 then
+            return SFML.Color(tonumber("0x"..color:sub(1,1)) * 17, tonumber("0x"..color:sub(2,2)) * 17, tonumber("0x"..color:sub(3,3)) * 17);
+        elseif string.len(color) == 6 then
+            return SFML.Color(tonumber("0x"..color:sub(1,2)), tonumber("0x"..color:sub(3,4)), tonumber("0x"..color:sub(5,6)));
+        end
+    end
+end
+
 obe.Canvas.Bases = {};
 
 function obe.Canvas.MakeMT(bases)
@@ -12,9 +34,13 @@ function obe.Canvas.MakeMT(bases)
     local getters = {};
     local setters = {};
     local fAccess = function(a, b, c) 
-        print("SETTER MT", a, b, c); 
+        print("SETTER MTo", a, b, c); 
         k = getmetatable(a);
-        k.__setters[b](k.__ref, c);
+        if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
+            k.__setters.__number(k.__ref, c);
+        else
+            k.__setters[b](k.__ref, c);
+        end
     end
     local nAccess = function(a, b)
         print("GETTER MT", a, b);
@@ -22,7 +48,9 @@ function obe.Canvas.MakeMT(bases)
         print(k.__getters[b]);
         if type(k.__getters[b]) == "function" then
             return k.__getters[b](k.__ref);
-        else
+        elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
+            return k.__getters.__number(k.__ref);
+        elseif type(k.__getters[b]) == "table" then
             return k.__getters[b];
         end
     end
@@ -345,7 +373,7 @@ obe.Canvas.Bases.Text = {
     getters = {
         text = function(self)
             local fulltext = "";
-            for _, line in pairs(self.text:getLines()) do
+            for _, line in pairs(self.shape:getLines()) do
                 for _, text in pairs(line:getTexts()) do
                     fullText = fulltext .. text:getString():toAnsiString();
                 end
@@ -357,31 +385,57 @@ obe.Canvas.Bases.Text = {
             return fulltext;
         end,
         size = function(self)
-            return self.text:getCharacterSize();
+            return self.shape:getCharacterSize();
         end,
         font = function(self)
             return self.fontPath;
         end,
         width = function(self)
-            return self.text:getGlobalBounds().width;
+            return self.shape:getGlobalBounds().width;
         end,
         height = function(self)
-            return self.text:getGlobalBounds().height;
+            return self.shape:getGlobalBounds().height;
         end
     },
     setters = {
         text = function(self, text)
-            self.text:clear();
+            self.shape:clear();
             -- Apply style
-            self.text:pushString(text);
+            if self.fontPath == "" then
+                error("@Canvas.Text.setters.text : Need to set @font before @text");
+            end
+            self.shape:pushString(SFML.String(text));
         end,
         size = function(self, size)
-            self.text:setCharacterSize(size);
+            self.shape:setCharacterSize(size);
         end,
         font = function(self, font)
+            print("MMMMMMMMMMMMDDDDDDDDDDDRRRRRRRRRR");
             self.fontPath = font;
-            self.font:loadFromFile(font);
-            self.text:setFont(self.font);
+            self.shape:setFont(obe.ResourceManager.GetFont(font));
+        end,
+        __number = function(self, part)
+            self.shape:pushOutlineThickness(0);
+            self.shape:pushOutlineColor(SFML.Color(255, 255, 255));
+            self.shape:pushFillColor(SFML.Color(255, 255, 255));
+            self.shape:pushStyle(SFML.Style.Regular);
+            if part.color then
+                self.shape:pushFillColor(obe.Canvas.NormalizeColor(part.color));
+            end
+            if part.style then
+                self.shape:pushStyle(part.style);
+            end
+            if part.outline then
+                if part.outline.thickness then
+                    self.shape:pushOutlineThickness(part.outline.thickness);
+                end
+                if part.outline.color then
+                    self.shape:pushOutlineColor(obe.Canvas.NormalizeColor(part.outline.color));
+                end
+            end
+            if part.text then
+                self.shape:pushString(SFML.String(part.text));
+            end
         end
     }
 }
@@ -409,6 +463,7 @@ function obe.Canvas.Canvas:Text(id)
         obe.Canvas.Bases.Shape,
         obe.Canvas.Bases.Text});
     obe.Canvas.InitializeMT(self.elements[id], self.internal:Text(id));
+    self.elements[id].font = "Data/Fonts/arial.ttf";
     return self.elements[id];
 end
 

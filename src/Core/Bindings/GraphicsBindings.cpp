@@ -100,8 +100,8 @@ namespace obe
                 );
                 (*lua)["obe"]["Canvas"]["Text"].setClass(
                     kaguya::UserdataMetatable<Graphics::Canvas::Text, Graphics::Canvas::CanvasElement>()
-                        .addProperty("text", &Graphics::Canvas::Text::text)
-                        .addProperty("font", &Graphics::Canvas::Text::font)
+                        .addProperty("fontPath", &Graphics::Canvas::Text::fontPath)
+                        .addProperty("shape", &Graphics::Canvas::Text::shape)
                         .addProperty("h_align", &Graphics::Canvas::Text::h_align)
                         .addProperty("v_align", &Graphics::Canvas::Text::v_align)
                 );

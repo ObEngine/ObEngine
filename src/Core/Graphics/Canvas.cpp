@@ -20,7 +20,7 @@ namespace obe
             {
             }
     
-            void Line::draw(sf::RenderTexture& target) const
+            void Line::draw(sf::RenderTexture& target)
             {
                 Transform::UnitVector p1px = p1.to<Transform::Units::WorldPixels>();
                 Transform::UnitVector p2px = p2.to<Transform::Units::WorldPixels>();
@@ -36,7 +36,7 @@ namespace obe
             {
             }
     
-            void Rectangle::draw(sf::RenderTexture& target) const
+            void Rectangle::draw(sf::RenderTexture& target)
             {
                 target.draw(shape);
             }
@@ -45,16 +45,27 @@ namespace obe
             {
             }
     
-            void Text::draw(sf::RenderTexture& target) const
+            void Text::draw(sf::RenderTexture& target)
             {
-                target.draw(text);
+                sf::Vector2f offset;
+                if (h_align == TextHorizontalAlign::Center)
+                    offset.x -= shape.getGlobalBounds().width / 2;
+                else if (h_align == TextHorizontalAlign::Right)
+                    offset.x -= shape.getGlobalBounds().width;
+                if (v_align == TextVerticalAlign::Center)
+                    offset.y -= shape.getGlobalBounds().height / 2;
+                else if (v_align == TextVerticalAlign::Bottom)
+                    offset.y -= shape.getGlobalBounds().height;
+                shape.move(offset);
+                target.draw(shape);
+                shape.move(-offset);
             }
     
             Circle::Circle(const std::string& id) : CanvasElement(id)
             {
             }
     
-            void Circle::draw(sf::RenderTexture& target) const
+            void Circle::draw(sf::RenderTexture& target)
             {
                 target.draw(shape);
             }
@@ -63,7 +74,7 @@ namespace obe
             {
             }
     
-            void Sprite::draw(sf::RenderTexture& target) const
+            void Sprite::draw(sf::RenderTexture& target)
             {
                 target.draw(sprite);
             }

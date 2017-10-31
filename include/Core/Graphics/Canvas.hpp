@@ -34,7 +34,7 @@ namespace obe
                  * \brief Abstract draw method
                  * \param target Target where to render the result
                  */
-                virtual void draw(sf::RenderTexture& target) const = 0;
+                virtual void draw(sf::RenderTexture& target) = 0;
             };
 
             /**
@@ -57,7 +57,7 @@ namespace obe
                  * \brief Draws the Line
                  * \param target Target where to draw the Line to
                  */
-                void draw(sf::RenderTexture& target) const override;
+                void draw(sf::RenderTexture& target) override;
             };
 
             /**
@@ -76,7 +76,7 @@ namespace obe
                  * \brief Draws the Rectangle
                  * \param target Target where to draw the Rectangle to
                  */
-                void draw(sf::RenderTexture& target) const override;
+                void draw(sf::RenderTexture& target) override;
             };
 
             enum class TextHorizontalAlign
@@ -100,8 +100,7 @@ namespace obe
             {
             public:
                 std::string fontPath;
-                sfe::RichText text;
-                sf::Font font;
+                sfe::RichText shape;
                 TextHorizontalAlign h_align;
                 TextVerticalAlign v_align;
                 /**
@@ -113,7 +112,7 @@ namespace obe
                  * \brief Draws the Text
                  * \param target Target where to draw the Text to
                  */
-                void draw(sf::RenderTexture& target) const override;
+                void draw(sf::RenderTexture& target) override;
             };
 
             /**
@@ -133,7 +132,7 @@ namespace obe
                  * \brief Draws the Circle
                  * \param target Target where to draw the Circle to
                  */
-                void draw(sf::RenderTexture& target) const override;
+                void draw(sf::RenderTexture& target) override;
             };
 
             /*
@@ -149,7 +148,7 @@ namespace obe
                  * \brief Draws the Sprite
                  * \param target Target where to draw the Sprite to
                  */
-                void draw(sf::RenderTexture& target) const override;
+                void draw(sf::RenderTexture& target) override;
             };
 
             /**

@@ -71,8 +71,8 @@ namespace obe
                 sfe::RichText newtext(toolkitFont);
                 newtext.setCharacterSize(16);
                 std::string inputText = toolkitInput->getText().toAnsiString();
-                newtext << ">> " + inputText;
-                newtext << inputColor;
+                newtext.pushString(">> " + inputText);
+                newtext.pushFillColor(inputColor);
                 content->addLine(newtext);
                 toolkitEngine["evaluate"](inputText);
                 toolkitInput->setText("");
@@ -100,8 +100,8 @@ namespace obe
                 newtext.setCharacterSize(16);
                 for (int i = 0; i < strings.size(); i++)
                 {
-                    newtext << colors.at(i);
-                    newtext << strings.at(i);
+                    newtext.pushFillColor(colors.at(i));
+                    newtext.pushString(strings.at(i));
                 }
                 content->addLine(newtext);
             });
