@@ -111,7 +111,7 @@ namespace obe
             return *this;
         }
 
-        UnitVector UnitVector::operator-()
+        UnitVector UnitVector::operator-() const
         {
             return UnitVector(-x, -y, unit);
         }

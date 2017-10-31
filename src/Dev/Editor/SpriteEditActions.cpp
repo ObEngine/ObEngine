@@ -87,7 +87,7 @@ namespace obe
                 Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 if (selectedHandlePoint != nullptr)
                 {
-                    selectedHandlePoint->moveTo(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                    selectedHandlePoint->moveTo(cursor.getPosition(), pixelCamera);
                     editorTriggers->pushParameter("SpriteHandlePointMoved", "handlePoint", selectedHandlePoint);
                     editorTriggers->trigger("SpriteHandlePointMoved");
                 }

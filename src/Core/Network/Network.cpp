@@ -5,7 +5,8 @@ namespace obe
 {
     namespace Network
     {
-        NetworkHandler::NetworkHandler() : socketTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"))
+        NetworkHandler::NetworkHandler() : 
+        socketTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"), Triggers::TriggerGroupPtrRemover)
         {
             listener.setBlocking(false);
             listener.listen(53000);

@@ -101,17 +101,19 @@ namespace obe
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
         {
             Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
+            Transform::UnitVector targetPos = Transform::UnitVector(posX, posY, Transform::Units::WorldPixels);
+            targetPos = m_positionTransformer(targetPos, -pixelCamera, m_layer);
             for (int i = 0; i < 9; i++)
             {
                 Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
                 Transform::UnitVector refPoint = Rect::getPosition(refIndex).to<Transform::Units::WorldPixels>();
                 int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
                 int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
-                if (obe::Utils::Math::isBetween(posX + pixelCamera.x, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
+                if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
                 {
                     int lowerYBound = std::min(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
                     int upperYBound = std::max(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
-                    if (obe::Utils::Math::isBetween(posY + pixelCamera.y, lowerYBound, upperYBound))
+                    if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                         return &m_handlePoints[i];
                 }
             }
@@ -129,11 +131,11 @@ namespace obe
 
             int lowerXBound = std::min(rotHandle.x - LevelSpriteHandlePoint::radius, rotHandle.x + LevelSpriteHandlePoint::radius);
             int upperXBound = std::max(rotHandle.x - LevelSpriteHandlePoint::radius, rotHandle.x + LevelSpriteHandlePoint::radius);
-            if (obe::Utils::Math::isBetween(posX + pixelCamera.x, lowerXBound, upperXBound))
+            if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound))
             {
                 int lowerYBound = std::min(rotHandle.y - LevelSpriteHandlePoint::radius, rotHandle.y + LevelSpriteHandlePoint::radius);
                 int upperYBound = std::max(rotHandle.y - LevelSpriteHandlePoint::radius, rotHandle.y + LevelSpriteHandlePoint::radius);
-                if (obe::Utils::Math::isBetween(posY + pixelCamera.y, lowerYBound, upperYBound))
+                if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                     return &m_handlePoints.back();
             }
             return nullptr;
@@ -329,47 +331,47 @@ namespace obe
         }
 
         unsigned int LevelSpriteHandlePoint::radius = 6;
-        LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref)
+        LevelSpriteHandlePoint::LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referencial ref)
         {
-            m_rect = parentRect;
+            m_sprite = parent;
             m_referencial = ref;
             m_type = LevelSpriteHandlePointType::ScaleHandle;
         }
 
-        LevelSpriteHandlePoint::LevelSpriteHandlePoint(Transform::Rect* parentRect)
+        LevelSpriteHandlePoint::LevelSpriteHandlePoint(LevelSprite* parent)
         {
-            m_rect = parentRect;
+            m_sprite = parent;
             m_type = LevelSpriteHandlePointType::RotateHandle;
         }
 
-        void LevelSpriteHandlePoint::moveTo(int x, int y)
+        void LevelSpriteHandlePoint::moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera)
         {
             if (m_type == LevelSpriteHandlePointType::ScaleHandle)
             {
                 //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
                 //std::cout << "Set : " << x << ", " << y << std::endl;
-                m_dp = Transform::UnitVector(x, y, Transform::Units::WorldPixels);
-                float angle = m_rect->getRotation();
-                Transform::UnitVector pos = m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>();
+                m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
+                float angle = m_sprite->getRotation();
+                Transform::UnitVector pos = m_sprite->getPosition(m_referencial).to<Transform::Units::WorldPixels>();
                 Transform::UnitVector constrainedPos(Transform::Units::WorldPixels);
-                Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
+                Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
 
                 if (Transform::isOnCorner(m_referencial))
                 {
-                    Transform::UnitVector oppositePos = m_rect->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
                     Transform::UnitVector baseDist = oppositePos - m_dp;
-                    Transform::UnitVector scaleVector = baseDist / m_rect->getSize().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::WorldPixels>();
                     scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
                     double vScale = std::max(scaleVector.x, scaleVector.y);
                     if (baseDist.x != 0 && baseDist.y != 0)
-                        m_rect->scale(Transform::UnitVector(vScale, vScale, m_rect->getSize().unit), Transform::reverseReferencial(m_referencial));
+                        m_sprite->scale(Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit), Transform::reverseReferencial(m_referencial));
                 }
                 else
                 {
                     float e1_x = oppositePos.x - pos.x;
                     float e1_y = oppositePos.y - pos.y;
-                    float e2_x = x - pos.x;
-                    float e2_y = y - pos.y;
+                    float e2_x = m_dp.x - pos.x;
+                    float e2_y = m_dp.y - pos.y;
 
                     float valDp = e1_x * e2_x + e1_y * e2_y;
                     float len = e1_x * e1_x + e1_y * e1_y;
@@ -377,15 +379,18 @@ namespace obe
                     m_dp.x = pos.x + (valDp * e1_x) / len;
                     m_dp.y = pos.y + (valDp * e1_y) / len;
 
-                    m_rect->setPointPosition(m_dp, m_referencial);
+                    m_sprite->setPointPosition(m_dp, m_referencial);
                 }
             }
             else
             {
-                Transform::UnitVector center = m_rect->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
-                double n = (90 + ((m_rect->getScaleFactor().y < 0) ? 180 : 0)) - (std::atan2(center.y - y, center.x - x)) * 180.0 / obe::Utils::Math::pi;
+                m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
 
-                m_rect->setRotation(std::fmod(n, 360), m_rect->getPosition(Transform::Referencial::Center));
+                Transform::UnitVector center = m_sprite->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
+                double n = (90 + ((m_sprite->getScaleFactor().y < 0) ? 180 : 0)) - 
+                    (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
+
+                static_cast<Transform::Rect*>(m_sprite)->setRotation(std::fmod(n, 360), m_sprite->getPosition(Transform::Referencial::Center));
             }
         }
 
@@ -401,7 +406,7 @@ namespace obe
 
         Transform::Rect& LevelSpriteHandlePoint::getRect() const
         {
-            return *m_rect;
+            return *m_sprite;
         }
     }
 }

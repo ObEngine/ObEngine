@@ -146,7 +146,7 @@ namespace obe
                 m_publicKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
-                m_localTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local");
+                m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local"), Triggers::TriggerGroupPtrRemover);
 
                 m_envIndex = ScriptEngine["CreateNewEnv"]();
                 AllEnvs.push_back(m_envIndex);

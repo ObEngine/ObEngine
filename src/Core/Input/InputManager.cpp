@@ -6,7 +6,8 @@ namespace obe
 {
     namespace Input
     {
-        InputManager::InputManager() : m_actionTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Actions"))
+        InputManager::InputManager() : 
+        m_actionTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Actions"), Triggers::TriggerGroupPtrRemover)
         {
         }
 

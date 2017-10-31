@@ -18,7 +18,6 @@ namespace obe
             std::map<std::string, std::unique_ptr<Trigger>> m_triggerMap;
             std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
             bool m_joinable = false;
-            unsigned int m_references = 0;
             friend class TriggerDatabase;
         public:
             /**
@@ -27,6 +26,8 @@ namespace obe
              * \param triggerGroupName Name of the TriggerGroup
              */
             explicit TriggerGroup(const std::string& triggerGroupNamespace, const std::string& triggerGroupName);
+
+            ~TriggerGroup();
             /**
              * \brief Sets if the TriggerGroup is joinable or not
              * \param joinable true if the TriggerGroup should be joinable, false otherwise
@@ -110,27 +111,10 @@ namespace obe
              * \return A std::string containing the name of the TriggerGroup
              */
             std::string getName() const;
-
-            friend class TriggerGroupPtr;
         };
 
-        /**
-        * \brief Smart pointer for TriggerGroup
-        */
-        class TriggerGroupPtr
-        {
-        private:
-            TriggerGroup* m_link = nullptr;
-            static unsigned int amount;
-            unsigned int m_id = 0;
-            friend class TriggerDatabase;
-        public:
-            TriggerGroupPtr(TriggerGroup* link);
-            TriggerGroupPtr& operator=(const TriggerGroupPtr& link);
-            TriggerGroup* operator->() const;
-            TriggerGroup* get() const;
-            ~TriggerGroupPtr();
-        };
+        using TriggerGroupPtr = std::shared_ptr<TriggerGroup>;
+        void TriggerGroupPtrRemover(TriggerGroup* ptr);
 
         template <typename P>
         void TriggerGroup::pushParameter(const std::string& triggerName, const std::string& parameterName, P parameter)

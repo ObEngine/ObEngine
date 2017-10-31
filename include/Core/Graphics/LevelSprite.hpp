@@ -22,6 +22,9 @@ namespace obe
             ScaleHandle,
             RotateHandle
         };
+
+        class LevelSprite;
+
         /**
         * \brief A HandlePoint to manipulate a LevelSprite Size
         * @Bind
@@ -29,7 +32,7 @@ namespace obe
         class LevelSpriteHandlePoint
         {
         private:
-            Transform::Rect* m_rect;
+            LevelSprite* m_sprite;
             Transform::Referencial m_referencial;
             LevelSpriteHandlePointType m_type;
         public:
@@ -39,18 +42,18 @@ namespace obe
             * \param parentRect Rect of the parent LevelSprite
             * \param ref Referencial of the HandlePoint
             */
-            LevelSpriteHandlePoint(Transform::Rect* parentRect, Transform::Referencial ref);
+            LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referencial ref);
             /**
             * \brief Creates a Rotate HandlePoint
             * \param parentRect Rect of the parent LevelSprite
             */
-            LevelSpriteHandlePoint(Transform::Rect* parentRect);
+            LevelSpriteHandlePoint(LevelSprite* parent);
             /**
             * \brief Move the HandlePoint to the given Position
             * \param x x Coordinate of the Position where to move the HandlePoint
             * \param y y Coordinate of the Position where to move the HandlePoint
             */
-            void moveTo(int x, int y);
+            void moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera);
             /**
             * \brief Get the Referencial of the HandlePoint
             * \return The Referencial value

@@ -12,6 +12,10 @@ namespace obe
             m_name = triggerGroupName;
         }
 
+        TriggerGroup::~TriggerGroup()
+        {
+        }
+
         Trigger* TriggerGroup::getTrigger(const std::string& triggerName)
         {
             if (m_triggerMap.find(triggerName) != m_triggerMap.end())
@@ -101,50 +105,9 @@ namespace obe
             return m_name;
         }
 
-        unsigned int TriggerGroupPtr::amount = 0;
-
-        TriggerGroupPtr::TriggerGroupPtr(TriggerGroup* link)
+        void TriggerGroupPtrRemover(TriggerGroup* ptr)
         {
-            if (link != nullptr)
-            {
-                m_link = link;
-                m_link->m_references++;
-                m_id = amount++;
-            }
-        }
-
-        TriggerGroupPtr& TriggerGroupPtr::operator=(const TriggerGroupPtr& link)
-        {
-            if (link.m_link != nullptr)
-            {
-                m_link = link.m_link;
-                m_link->m_references++;
-                m_id = amount++;
-            }
-            return *this;
-        }
-
-        TriggerGroupPtr::~TriggerGroupPtr()
-        {
-            if (m_link != nullptr)
-            {
-                m_link->m_references--;
-                if (m_link->m_references == 0)
-                {
-                    Debug::Log->trace("Removing TriggerGroup {0} from TriggerGroupPtr", m_link->getName());
-                    TriggerDatabase::GetInstance()->removeTriggerGroup(m_link);
-                }
-            }
-        }
-
-        TriggerGroup* TriggerGroupPtr::operator->() const
-        {
-            return m_link;
-        }
-
-        TriggerGroup* TriggerGroupPtr::get() const
-        {
-            return m_link;
+            TriggerDatabase::GetInstance()->removeTriggerGroup(ptr);
         }
     }
 }

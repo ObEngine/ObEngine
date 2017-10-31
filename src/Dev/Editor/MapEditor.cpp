@@ -37,7 +37,10 @@ namespace obe
             Triggers::TriggerDatabase::GetInstance()->reg("TriggerDatabase");
 
             //Editor Triggers
-            Triggers::TriggerGroupPtr editorTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor");
+            Triggers::TriggerGroupPtr editorTriggers(
+                Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor"), 
+                Triggers::TriggerGroupPtrRemover);
+
             //Editor Collider Triggers
             editorTriggers
                 ->addTrigger("ColliderCreated")
@@ -73,7 +76,10 @@ namespace obe
                 ->addTrigger("SpriteRemoved");
 
             //Game Triggers
-            Triggers::TriggerGroupPtr gameTriggers = Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game")
+            Triggers::TriggerGroupPtr gameTriggers(
+                Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game"),
+                Triggers::TriggerGroupPtrRemover);
+            gameTriggers
                 ->addTrigger("Start")
                 ->trigger("Start")
                 ->addTrigger("End")
