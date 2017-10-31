@@ -306,7 +306,6 @@ namespace obe
                     oldConsoleVisibility = gameConsole.isVisible();
                 }
 
-                Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
                 //Sprite Editing
                 if (editMode->getSelectedItem() == "LevelSprites")
                 {
@@ -314,10 +313,10 @@ namespace obe
 
                     if (hoveredSprite == nullptr)
                     {
-                        hoveredSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
+                        hoveredSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                         if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                         {
-                            hoveredSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
+                            hoveredSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                             hoveredSprite->setColor(sf::Color(0, 255, 255));
                             std::string sprInfoStr = "Hovered Sprite : \n";
                             sprInfoStr += "    Id : " + hoveredSprite->getId() + "\n";
@@ -339,7 +338,7 @@ namespace obe
                         sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
                         sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
                         bool outHover = false;
-                        Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursCoord, currentLayer);
+                        Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                         if (testHoverSprite != hoveredSprite)
                             outHover = true;
                         if (outHover)
@@ -365,7 +364,7 @@ namespace obe
                 //Collision Edition
                 if (editMode->getSelectedItem() == "Collisions")
                 {
-                    cursCoord.set(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
 
                     scene.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)

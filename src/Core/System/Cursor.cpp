@@ -66,6 +66,11 @@ namespace obe
             sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow);
         }
 
+        Transform::UnitVector Cursor::getPosition()
+        {
+            return Transform::UnitVector(m_constrainedX, m_constrainedY, Transform::Units::WorldPixels);
+        }
+
         void Cursor::update()
         {
             sf::Vector2i mousePos = sf::Mouse::getPosition(System::MainWindow);

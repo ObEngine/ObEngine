@@ -132,6 +132,8 @@ namespace obe
             */
             UnitVector& operator/=(const UnitVector& div);
 
+            UnitVector operator-();
+
             bool operator==(const UnitVector& vec) const;
             bool operator!=(const UnitVector& vec) const;
 

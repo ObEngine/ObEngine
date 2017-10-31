@@ -111,6 +111,11 @@ namespace obe
             return *this;
         }
 
+        UnitVector UnitVector::operator-()
+        {
+            return UnitVector(-x, -y, unit);
+        }
+
         bool UnitVector::operator==(const UnitVector& vec) const
         {
             UnitVector pVec = vec.to(unit);

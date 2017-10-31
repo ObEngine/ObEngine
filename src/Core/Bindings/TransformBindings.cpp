@@ -111,7 +111,8 @@ namespace obe
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add)
                     )
                     .addFunction("__add", &Transform::UnitVector::operator+)
-                    .addFunction("__sub", &Transform::UnitVector::operator-)
+                    .addFunction("__sub", 
+                        static_cast<Transform::UnitVector (Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator-))
                     .addFunction("__div", &Transform::UnitVector::operator/)
                     .addFunction("__mul", &Transform::UnitVector::operator*)
                     .addOverloadedFunctions("set",

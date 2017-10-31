@@ -618,7 +618,7 @@ namespace obe
             return returnLayer;
         }
 
-        Graphics::LevelSprite* Scene::getLevelSpriteByPosition(const Transform::UnitVector& position, int layer)
+        Graphics::LevelSprite* Scene::getLevelSpriteByPosition(const Transform::UnitVector& position, const Transform::UnitVector& camera, int layer)
         {
             Graphics::LevelSprite* returnSpr = nullptr;
             std::vector<Transform::Referencial> rectPts = { 
@@ -627,11 +627,12 @@ namespace obe
             };
             Transform::UnitVector pixelPosition = position.to<Transform::Units::WorldPixels>();
             Transform::UnitVector zeroOffset(0, 0);
-            Collision::PolygonalCollider positionCollider("positionCollider");
-            positionCollider.addPoint(position);
+            
             std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);
             for (unsigned int i = 0; i < getSpriteVec.size(); i++)
             {
+                Collision::PolygonalCollider positionCollider("positionCollider");
+                positionCollider.addPoint(getSpriteVec[i]->getPositionTransformer()(position, camera, layer));
                 Collision::PolygonalCollider sprCollider("sprCollider");
                 for (Transform::Referencial& ref : rectPts)
                 {

@@ -176,7 +176,7 @@ namespace obe
              * \param layer Layer where to check
              * \return The pointer to a LevelSprite if found, nullptr otherwise
              */
-            Graphics::LevelSprite* getLevelSpriteByPosition(const Transform::UnitVector& position, int layer);
+            Graphics::LevelSprite* getLevelSpriteByPosition(const Transform::UnitVector& position, const Transform::UnitVector& camera, int layer);
             /**
              * \brief Get a LevelSprite by Id (Raises an exception if not found)
              * \param id Id of the LevelSprite to get

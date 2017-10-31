@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include <Animation/Animator.hpp>
+#include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Registrable.hpp>
 
@@ -66,6 +67,8 @@ namespace obe
              * \param newy An int containing the y Coordinate of the new Cursor Position
              */
             void setPosition(unsigned int newx, unsigned int newy);
+
+            Transform::UnitVector getPosition();
             /**
              * \brief Updates the Cursor
              */

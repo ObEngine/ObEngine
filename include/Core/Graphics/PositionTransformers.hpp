@@ -47,7 +47,7 @@ namespace obe
              * \param layer Layer of the element
              * \return The new transformer position
              */
-            Transform::UnitVector operator()(Transform::UnitVector& position, Transform::UnitVector& camera, int layer) const;
+            Transform::UnitVector operator()(const Transform::UnitVector& position, const Transform::UnitVector& camera, int layer) const;
             /**
              * \brief Gets the CoordinateTransformer of x Coordinate
              * \return The CoordinateTransformer of x Coordinate

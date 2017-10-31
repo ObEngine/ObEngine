@@ -123,7 +123,7 @@ namespace obe
                     {
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "handlePoint", selectedHandlePoint);
                         editorTriggers->pushParameter("SpriteHandlePointPicked", "pos", 
-                            pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));
+                            pixelCamera + cursor.getPosition());
                         editorTriggers->trigger("SpriteHandlePointPicked");
                         hoveredSprite = nullptr;
                     }
@@ -137,14 +137,17 @@ namespace obe
                         selectedSprite = nullptr;
                         selectedSpriteOffsetX = 0;
                         selectedSpriteOffsetY = 0;
-
                     }
                 }
                 if (hoveredSprite != nullptr && selectedHandlePoint == nullptr)
                 {
                     selectedSprite = hoveredSprite;
-                    selectedSpriteOffsetX = (cursor.getX() + pixelCamera.x) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().x;
-                    selectedSpriteOffsetY = (cursor.getY() + pixelCamera.y) - selectedSprite->getPosition().to<Transform::Units::WorldPixels>().y;
+                    Transform::UnitVector selectedSpriteOffset = selectedSprite->getPositionTransformer()(
+                        cursor.getPosition() - selectedSprite->getPosition(),
+                        -pixelCamera,
+                        selectedSprite->getLayer()).to<Transform::Units::WorldPixels>();
+                    selectedSpriteOffsetX = selectedSpriteOffset.x;
+                    selectedSpriteOffsetY = selectedSpriteOffset.y;
                     editorTriggers->pushParameter("SpriteSelect", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteSelect", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
                     editorTriggers->pushParameter("SpriteSelect", "pos",
@@ -174,8 +177,9 @@ namespace obe
                     editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    selectedSprite->setPosition(Transform::UnitVector(cursor.getX() + pixelCamera.x - selectedSpriteOffsetX,
-                        cursor.getY() + pixelCamera.y - selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                    Transform::UnitVector basePos(cursor.getX() - selectedSpriteOffsetX, cursor.getY() - selectedSpriteOffsetY, Transform::Units::WorldPixels);
+                    Transform::UnitVector newPosition = selectedSprite->getPositionTransformer()(basePos, -pixelCamera, selectedSprite->getLayer());
+                    selectedSprite->setPosition(newPosition);
                     editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
                     editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
                     editorTriggers->trigger("SpriteMoved");
