@@ -378,7 +378,9 @@ namespace obe
                     else if (event.type == sf::Event::MouseMoved)
                     {
                         if (grabbedWindow)
+                        {
                             window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
+                        }
                     }
                     gui.handleEvent(event);
                 }

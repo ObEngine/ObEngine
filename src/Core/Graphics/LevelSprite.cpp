@@ -13,7 +13,7 @@ namespace obe
     {
         LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite, id)
         {
-            m_texture = ResourceManager::GetInstance()->getTexture("Sprites/Others/notexture.png");
+            m_texture = ResourceManager::GetTexture("Sprites/Others/notexture.png");
             m_sprite.setTexture(*m_texture);
             for (int i = 0; i < 9; i++)
             {
@@ -43,7 +43,7 @@ namespace obe
             if (path != "")
             {
                 m_path = path;
-                m_texture = ResourceManager::GetInstance()->getTexture(System::Path(path).find());
+                m_texture = ResourceManager::GetTexture(System::Path(path).find());
                 
                 m_sprite.setTexture(*m_texture);
                 m_sprite.setTextureRect(sf::IntRect(0, 0, m_texture->getSize().x, m_texture->getSize().y));

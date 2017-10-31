@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
     Debug::Log->debug("<ObEngine> Loading NoTexture asset");
-    Graphics::ResourceManager::GetInstance()->getTexture("Sprites/Others/notexture.png");
+    Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

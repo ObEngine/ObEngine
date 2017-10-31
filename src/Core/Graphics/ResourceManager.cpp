@@ -7,52 +7,40 @@ namespace obe
 {
     namespace Graphics
     {
-        ResourceManager* ResourceManager::m_instance = nullptr;
+        std::map<std::string, std::unique_ptr<sf::Texture>> ResourceManager::m_textureDatabase;
+        std::map<std::string, std::unique_ptr<sf::Font>> ResourceManager::m_fontDatabase;
 
-        ResourceManager::ResourceManager() : m_resourceManagerTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "ResourceManager"))
+        sf::Texture* ResourceManager::GetTexture(const std::string& path, bool antiAliasing)
         {
-            m_resourceManagerTriggers->addTrigger("TextureLoaded");
-        }
-
-        ResourceManager* ResourceManager::GetInstance()
-        {
-            if (m_instance == nullptr)
-                m_instance = new ResourceManager();
-            return m_instance;
-        }
-
-        sf::Texture* ResourceManager::getTexture(const std::string& path, bool antiAliasing)
-        {
-            if (m_textureDatabase.size() != 0)
+            if (m_textureDatabase.find(path) == m_textureDatabase.end())
             {
-                if (m_textureDatabase.find(path) == m_textureDatabase.end())
+                std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
+                System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
+                
+                if (tempTexture != nullptr)
                 {
-                    std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
-                    System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
-                    
-                    if (tempTexture != nullptr)
-                    {
-                        tempTexture->setSmooth(antiAliasing);
-                        m_textureDatabase[path] = move(tempTexture);
-                        m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
-                        m_resourceManagerTriggers->trigger("TextureLoaded");
-                        return m_textureDatabase[path].get();
-                    }
-                    throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
+                    tempTexture->setSmooth(antiAliasing);
+                    m_textureDatabase[path] = move(tempTexture);
                 }
-                return m_textureDatabase[path].get();
+                else
+                    throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
             }
-            std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
-            System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
-            if (tempTexture != nullptr)
+            return m_textureDatabase[path].get();
+        }
+
+        sf::Font* ResourceManager::GetFont(const std::string& path)
+        {
+            if (m_fontDatabase.find(path) == m_fontDatabase.end())
             {
-                tempTexture->setSmooth(antiAliasing);
-                m_textureDatabase[path] = move(tempTexture);
-                m_resourceManagerTriggers->pushParameter("TextureLoaded", "texture", m_textureDatabase[path].get());
-                m_resourceManagerTriggers->trigger("TextureLoaded");
-                return m_textureDatabase[path].get();
+                std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
+                System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
+                
+                if (tempFont != nullptr)
+                    m_fontDatabase[path] = move(tempFont);
+                else
+                    throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
             }
-            throw aube::ErrorHandler::Raise("ObEngine.Animation.RessourceManager.LoadTexture", {{"file", path}});
+            return m_fontDatabase[path].get();
         }
     }
 }

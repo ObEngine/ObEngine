@@ -98,7 +98,7 @@ namespace obe
                 else if (imageList.get(i).getDataType() == vili::DataType::String)
                     textureName = imageList.get(i).get<std::string>();
                 Debug::Log->trace("<Animation> Loading Texture {0} in Animation {1}", textureName, m_animationName);
-                m_animationTextures[i] = Graphics::ResourceManager::GetInstance()->getTexture(path.add(textureName).toString());
+                m_animationTextures[i] = Graphics::ResourceManager::GetTexture(path.add(textureName).toString());
             }
             //Groups
             vili::ComplexNode& groups = animFile.at("Groups");

@@ -71,8 +71,8 @@ namespace obe
             void LoadResourceManager(kaguya::State* lua)
             {
                 (*lua)["obe"]["ResourceManager"].setClass(kaguya::UserdataMetatable<Graphics::ResourceManager>()
-                    .addStaticFunction("GetInstance", &Graphics::ResourceManager::GetInstance)
-                    .addFunction("getTexture", &Graphics::ResourceManager::getTexture)
+                    .addStaticFunction("GetTexture", &Graphics::ResourceManager::GetTexture)
+                    .addStaticFunction("GetFont", &Graphics::ResourceManager::GetFont)
                 );
             }
 
