@@ -1,3 +1,5 @@
+#include <vili/ErrorHandler.hpp>
+
 #include <Input/InputButton.hpp>
 #include <SFML/Window/Joystick.hpp>
 
@@ -84,6 +86,14 @@ namespace obe
             }
                 
             return sf::Keyboard::isKeyPressed(m_key);
+        }
+
+        unsigned int InputButton::getAxisPosition()
+        {
+            if (m_type == InputType::GamepadAxis)
+                return sf::Joystick::getAxisPosition(m_gamepadIndex, m_gamepadAxis);
+            else
+                throw aube::ErrorHandler::Raise("Obe.Input.InputButton.NotAnAxis");
         }
     }
 }
