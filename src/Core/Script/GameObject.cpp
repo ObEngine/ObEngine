@@ -101,18 +101,18 @@ namespace obe
         {
             if (!m_initialised)
             {
-                Debug::Log->debug("<GameObject> Initialising GameObject '{0}'", m_id);
+                Debug::Log->debug("<GameObject> Initialising GameObject '{0}' ({1})", m_id, m_type);
                 m_initialised = true;
                 GAMEOBJECTENV["__OBJECT_INIT"] = true;
                 m_localTriggers->trigger("Init");
             }
             else
-                Debug::Log->warn("<GameObject> GameObject '{0}' has already been initialised", m_id);
+                Debug::Log->warn("<GameObject> GameObject '{0}' ({1}) has already been initialised", m_id, m_type);
         }
 
         GameObject::~GameObject()
         {
-            Debug::Log->debug("<GameObject> Deleting GameObject {0}", m_id);
+            Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
             if (m_hasScriptEngine)
             {
                 Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
@@ -122,7 +122,7 @@ namespace obe
 
         void GameObject::sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const
         {
-            Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to GameObject {1} (From Lua)", argName, m_id);
+            Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to GameObject {1} ({2}) (From Lua)", argName, m_id, m_type);
             m_localTriggers->pushParameterFromLua("Init", argName, value);
         }
 
@@ -133,7 +133,7 @@ namespace obe
 
         void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
         {
-            Debug::Log->debug("<GameObject> Loading GameObject '{0}'", m_id);
+            Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
             //Script
             if (obj.contains(vili::NodeType::DataNode, "permanent"))
             {
@@ -403,7 +403,7 @@ namespace obe
 
         void GameObject::deleteObject()
         {
-            Debug::Log->debug("GameObject::deleteObject called for {0}", m_id);
+            Debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
             m_localTriggers->trigger("Delete");
             this->deletable = true;
             for (auto& trigger : m_registeredTriggers)
