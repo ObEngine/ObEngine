@@ -341,8 +341,8 @@ namespace obe
                     }
                     else if (hoveredSprite != nullptr)
                     {
-                        sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                        sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                        sprInfoBackground.setPosition(cursor.getConstrainedX() + 40, cursor.getConstrainedY());
+                        sprInfo.setPosition(cursor.getConstrainedX() + 50, cursor.getConstrainedY());
                         bool outHover = false;
                         Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                         if (testHoverSprite != hoveredSprite)
@@ -370,7 +370,7 @@ namespace obe
                 //Collision Edition
                 if (editMode->getSelectedItem() == "Collisions")
                 {
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y);
+                    Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
 
                     scene.enableShowCollision(true, true, true, true);
                     if (selectedMasterCollider != nullptr)
@@ -383,9 +383,9 @@ namespace obe
                 //GUI Update
                 infoLabel->setText(
                     "Cursor : (" 
-                    + std::to_string(cursor.getX()) 
+                    + std::to_string(cursor.getConstrainedX()) 
                     + ", " 
-                    + std::to_string(cursor.getY()) 
+                    + std::to_string(cursor.getConstrainedY()) 
                     + ")" 
                     + std::string("   Camera : (") 
                     + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)) 
@@ -394,9 +394,9 @@ namespace obe
                     + ")" 
                     + std::string("   Sum : (") 
                     + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
-                        + int(cursor.getX())) 
+                        + int(cursor.getConstrainedX())) 
                     + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
-                        + int(cursor.getY())) 
+                        + int(cursor.getConstrainedY())) 
                     + ")" 
                     + std::string("   Layer : ") 
                     + std::to_string(currentLayer)

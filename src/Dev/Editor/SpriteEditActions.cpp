@@ -177,7 +177,7 @@ namespace obe
                     editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    Transform::UnitVector basePos(cursor.getX() - selectedSpriteOffsetX, cursor.getY() - selectedSpriteOffsetY, Transform::Units::WorldPixels);
+                    Transform::UnitVector basePos(cursor.getConstrainedX() - selectedSpriteOffsetX, cursor.getConstrainedY() - selectedSpriteOffsetY, Transform::Units::WorldPixels);
                     Transform::UnitVector newPosition = selectedSprite->getPositionTransformer()(basePos, -pixelCamera, selectedSprite->getLayer());
                     selectedSprite->setPosition(newPosition);
                     editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
@@ -196,8 +196,8 @@ namespace obe
                     sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
                     sprInfo.setString(sprInfoStr);
                     sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
-                    sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                    sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                    sprInfoBackground.setPosition(cursor.getConstrainedX() + 40, cursor.getConstrainedY());
+                    sprInfo.setPosition(cursor.getConstrainedX() + 50, cursor.getConstrainedY());
                 }
             });
 

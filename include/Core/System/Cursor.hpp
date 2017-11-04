@@ -35,22 +35,22 @@ namespace obe
              * \brief Gets the x Coordinate of the Cursor Position (Constrained)
              * \return An int containing the x Coordinate of the Cursor Position
              */
-            int getX() const;
+            int getConstrainedX() const;
             /**
             * \brief Gets the y Coordinate of the Cursor Position (Constrained)
             * \return An int containing the y Coordinate of the Cursor Position
             */
-            int getY() const;
+            int getConstrainedY() const;
             /**
              * \brief Gets the x Coordinate of the raw (System) position of the Cursor (Unconstrained)
              * \return An int containing the x Coordinate of the Cursor Position
              */
-            int getRawX() const;
+            int getX() const;
             /**
             * \brief Gets the y Coordinate of the raw (System) position of the Cursor (Unconstrained)
             * \return An int containing the y Coordinate of the Cursor Position
             */
-            int getRawY() const;
+            int getY() const;
             /**
              * \brief Sets the x Coordinate of the Cursor Position
              * \param newx An int containing the x Coordinate of the new Cursor Position

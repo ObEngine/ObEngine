@@ -14,7 +14,7 @@ namespace obe
         {
             std::function<std::pair<int, int>(Cursor*)> Default = [](Cursor* cursor)
             {
-                return std::pair<int, int>(cursor->getRawX(), cursor->getRawY());
+                return std::pair<int, int>(cursor->getX(), cursor->getY());
             };
         }
 
@@ -27,22 +27,22 @@ namespace obe
             m_saveOldPos = sf::Mouse::getPosition();
         }
 
-        int Cursor::getX() const
+        int Cursor::getConstrainedX() const
         {
             return m_constrainedX;
         }
 
-        int Cursor::getY() const
+        int Cursor::getConstrainedY() const
         {
             return m_constrainedY;
         }
 
-        int Cursor::getRawX() const
+        int Cursor::getX() const
         {
             return m_x;
         }
 
-        int Cursor::getRawY() const
+        int Cursor::getY() const
         {
             return m_y;
         }

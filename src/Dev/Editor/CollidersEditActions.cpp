@@ -47,7 +47,7 @@ namespace obe
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
+                    Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     editorTriggers->pushParameter("ColliderPointMoved", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderPointMoved", "pointIndex", colliderPtGrabbed);
                     editorTriggers->pushParameter("ColliderPointMoved", "oldPos", selectedMasterCollider->getPointPosition(colliderPtGrabbed).to<Transform::Units::WorldPixels>());
@@ -100,7 +100,7 @@ namespace obe
                 if (selectedMasterCollider != nullptr && masterColliderGrabbed)
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
+                    Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     editorTriggers->pushParameter("ColliderMoved", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderMoved", "oldPos", selectedMasterCollider->getMasterPointPosition().to<Transform::Units::WorldPixels>());
                     editorTriggers->pushParameter("ColliderMoved", "pos", cursCoord);
@@ -131,7 +131,7 @@ namespace obe
                 {
                     const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
+                    Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     int rqPtRes = selectedMasterCollider->hasPoint(cursCoord, pTolerance);
                     if (rqPtRes == -1)
                     {
@@ -180,7 +180,7 @@ namespace obe
                 if (selectedMasterCollider != nullptr)
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
+                    Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     if (world.getColliderByCentroidPosition(cursCoord) == nullptr)
                     {
                         if (world.getColliderPointByPosition(cursCoord).first == nullptr)
@@ -219,7 +219,7 @@ namespace obe
                 {
                     Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     int i = 0;
-                    Transform::UnitVector pPos(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels);
+                    Transform::UnitVector pPos(cursor.getConstrainedX(), cursor.getConstrainedY(), Transform::Units::WorldPixels);
                     pPos += pixelCamera;
                     std::string testId = "collider" + std::to_string(world.getColliderAmount() + i);
                     while (world.doesColliderExists(testId))

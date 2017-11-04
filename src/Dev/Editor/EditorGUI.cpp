@@ -601,8 +601,8 @@ namespace obe
                     {
                         if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
                         {
-                            int snappedX = cursor->getRawX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
-                            int snappedY = cursor->getRawY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
+                            int snappedX = cursor->getX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
+                            int snappedY = cursor->getY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
                             return std::pair<int, int>(snappedX, snappedY);
                         }
                         else
