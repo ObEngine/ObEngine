@@ -22,10 +22,10 @@ namespace obe
         private:
             unsigned int m_gridSizeX;
             unsigned int m_gridSizeY;
-            int gridOffX = 0;
-            int gridOffY = 0;
-            int gridMagnetX = -1;
-            int gridMagnetY = -1;
+            int m_gridOffX = 0;
+            int m_gridOffY = 0;
+            int m_gridMagnetX = -1;
+            int m_gridMagnetY = -1;
         public:
             /**
              * \brief Constructor of the EditorGrid
@@ -92,6 +92,10 @@ namespace obe
              * \param cursor Reference to the System::Cursor you want to magnetize
              */
             void magnetize(System::Cursor& cursor) const;
+            /*
+             * \brief Gets the closest grid intersection
+             */
+            std::pair<int, int> getClosestIntersection(int x, int y, int offsetX, int offsetY) const;
             /**
              * \brief Move the virtual magnet on the grid (Used to magnetize the System::Cursor)
              * \param cursor Reference to the System::Cursor you want to magnetize

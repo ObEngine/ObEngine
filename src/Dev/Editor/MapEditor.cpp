@@ -341,8 +341,8 @@ namespace obe
                     }
                     else if (hoveredSprite != nullptr)
                     {
-                        sprInfoBackground.setPosition(cursor.getConstrainedX() + 40, cursor.getConstrainedY());
-                        sprInfo.setPosition(cursor.getConstrainedX() + 50, cursor.getConstrainedY());
+                        sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
+                        sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
                         bool outHover = false;
                         Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                         if (testHoverSprite != hoveredSprite)
@@ -383,9 +383,9 @@ namespace obe
                 //GUI Update
                 infoLabel->setText(
                     "Cursor : (" 
-                    + std::to_string(cursor.getConstrainedX()) 
+                    + std::to_string(cursor.getX()) 
                     + ", " 
-                    + std::to_string(cursor.getConstrainedY()) 
+                    + std::to_string(cursor.getY()) 
                     + ")" 
                     + std::string("   Camera : (") 
                     + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)) 
@@ -394,9 +394,9 @@ namespace obe
                     + ")" 
                     + std::string("   Sum : (") 
                     + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
-                        + int(cursor.getConstrainedX())) 
+                        + int(cursor.getX())) 
                     + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
-                        + int(cursor.getConstrainedY())) 
+                        + int(cursor.getY())) 
                     + ")" 
                     + std::string("   Layer : ") 
                     + std::to_string(currentLayer)

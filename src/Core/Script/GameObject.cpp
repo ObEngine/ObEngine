@@ -115,8 +115,8 @@ namespace obe
             Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
             if (m_hasScriptEngine)
             {
+                m_localTriggers.reset();
                 Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_privateKey);
-                Triggers::TriggerDatabase::GetInstance()->removeNamespace(m_publicKey);
             }
         }
 
@@ -143,9 +143,7 @@ namespace obe
             {
                 m_hasScriptEngine = true;
                 m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
-                m_publicKey = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
                 Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
-                Triggers::TriggerDatabase::GetInstance()->createNamespace(m_publicKey);
                 m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local"), Triggers::TriggerGroupPtrRemover);
 
                 m_envIndex = ScriptEngine["CreateNewEnv"]();
@@ -167,7 +165,6 @@ namespace obe
                 GAMEOBJECTENV["__OBJECT_ID"] = m_id;
                 GAMEOBJECTENV["__OBJECT_INIT"] = false;
                 GAMEOBJECTENV["Private"] = m_privateKey;
-                GAMEOBJECTENV["Public"] = m_publicKey;
 
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
                 {
@@ -290,11 +287,6 @@ namespace obe
         std::string GameObject::getType() const
         {
             return m_type;
-        }
-
-        std::string GameObject::getPublicKey() const
-        {
-            return m_publicKey;
         }
 
         bool GameObject::doesHaveAnimator() const

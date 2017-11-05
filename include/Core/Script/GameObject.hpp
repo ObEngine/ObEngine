@@ -71,7 +71,6 @@ namespace obe
             std::string m_id;
             std::string m_type;
             std::string m_privateKey;
-            std::string m_publicKey;
 
             bool m_hasAnimator = false;
             bool m_hasCollider = false;
@@ -98,11 +97,6 @@ namespace obe
              * \return A std::string containing the type of the GameObject
              */
             std::string getType() const;
-            /**
-             * \brief Get the public key of the GameObject
-             * \return A std::string containing the public key of the GameObject
-             */
-            std::string getPublicKey() const;
             /**
              * \brief Checks if the GameObject has an Animator Component
              * \return true if the GameObject contains an Animator Component, false otherwise

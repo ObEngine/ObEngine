@@ -595,15 +595,14 @@ namespace obe
                 snapGridCheckbox->setText("Snap to Grid ?");
                 snapGridCheckbox->disable();
 
-                snapGridCheckbox->connect("checked", [&editorGrid, &cursor, editMode]()
+                snapGridCheckbox->connect("checked", [&editorGrid, &cursor, editMode, &scene]()
                 {
-                    cursor.setConstraint([editMode, &editorGrid](System::Cursor* cursor)
+                    cursor.setConstraint([editMode, &editorGrid, &scene](System::Cursor* cursor)
                     {
                         if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
                         {
-                            int snappedX = cursor->getX() / editorGrid.getCellWidth() * editorGrid.getCellWidth() + editorGrid.getOffsetX();
-                            int snappedY = cursor->getY() / editorGrid.getCellHeight() * editorGrid.getCellHeight() + editorGrid.getOffsetY();
-                            return std::pair<int, int>(snappedX, snappedY);
+                            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                            return editorGrid.getClosestIntersection(cursor->getX(), cursor->getY(), pixelCamera.x, pixelCamera.y);
                         }
                         else
                         {
