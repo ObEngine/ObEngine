@@ -161,17 +161,7 @@ obe.Canvas.Bases.Line = {
         end,
         thickness = function(self, thickness) self.thickness = thickness or 1; end,
         color = function(self, color)
-            if type(color) == "number" then
-                self.color.r = color;
-                self.color.g = color;
-                self.color.b = color;
-                self.color.a = self.color.a or 255;
-            elseif type(color) == "table" then
-                self.color.r = color.r or self.color.r;
-                self.color.g = color.g or self.color.g;
-                self.color.b = color.b or self.color.b;
-                self.color.a = color.a or self.color.a;
-            end
+            self.color = obe.Canvas.NormalizeColor(color, self.color);
         end
     }
 };
@@ -233,19 +223,7 @@ obe.Canvas.Bases.Shape = {
             },
             setters = {
                 color = function(self, color)
-                    if type(color) == "number" then
-                        local dalpha = self.shape:getOutlineColor().a;
-                        local ncolor = SFML.Color(color, color, color, dalpha);
-                        self.shape:setOutlineColor(ncolor);
-                    elseif type(color) == "table" then
-                        local dcolor = self.shape:getOutlineColor();
-                        local ncolor = SFML.Color();
-                        ncolor.r = color.r or dcolor.r;
-                        ncolor.g = color.g or dcolor.g;
-                        ncolor.b = color.b or dcolor.b;
-                        ncolor.a = color.a or dcolor.a;
-                        self.shape:setOutlineColor(ncolor);
-                    end
+                    self.shape:setOutlineColor(obe.Canvas.NormalizeColor(color, self.shape:getOutlineColor()));
                 end,
                 thickness = function(self, thickness) self.shape:setOutlineThickness(thickness or 1); end
             }
@@ -284,18 +262,8 @@ obe.Canvas.Bases.Shape = {
     setters = {
         outline = function(self, outline)
             if type(outline) == "table" then
-                if type(outline.color) == "table" then
-                    local dcolor = self.shape:getOutlineColor();
-                    local ncolor = SFML.Color();
-                    ncolor.r = outline.color.r or dcolor.r;
-                    ncolor.g = outline.color.g or dcolor.g;
-                    ncolor.b = outline.color.b or dcolor.b;
-                    ncolor.a = outline.color.a or dcolor.a;
-                    self.shape:setOutlineColor(ncolor);
-                elseif (outline.color) == "number" then
-                    local dalpha = self.shape:getOutlineColor().a;
-                    local ncolor = SFML.Color(outline.color, outline.color, outline.color, dalpha);
-                    self.shape:setOutlineColor(ncolor);
+                if outline.color then
+                    self.shape:setOutlineColor(obe.Canvas.NormalizeColor(outline.color, self.shape:getOutlineColor()));
                 end
                 if type(outline.thickness) == "number" then
                     self.shape:setOutlineThickness(outline.thickness);
@@ -303,22 +271,7 @@ obe.Canvas.Bases.Shape = {
             end
         end,
         color = function(self, color)
-            if type(color) == "table" then
-                local dcolor = self.shape:getFillColor();
-                local ncolor = SFML.Color();
-                ncolor.r = color.r or dcolor.r;
-                ncolor.g = color.g or dcolor.g;
-                ncolor.b = color.b or dcolor.b;
-                ncolor.a = color.a or dcolor.a;
-                self.shape:setFillColor(ncolor);
-            elseif type(color) == "number" then
-                local dalpha = self.shape:getFillColor().a;
-                local ncolor = SFML.Color(color, color, color, dalpha);
-                self.shape:setFillColor(ncolor);
-            elseif type(color) == "string" then
-                local dalpha = self.shape:getFillColor().a;
-                
-            end
+            self.shape:setFillColor(obe.Canvas.NormalizeColor(color, self.shape:getFillColor()));
         end,
         x = function(self, x)
             local y = self.shape:getPosition().y;
@@ -413,6 +366,21 @@ obe.Canvas.Bases.Text = {
             print("MMMMMMMMMMMMDDDDDDDDDDDRRRRRRRRRR");
             self.fontPath = font;
             self.shape:setFont(obe.ResourceManager.GetFont(font));
+        end,
+        color = function(self, color)
+            local fulltext = "";
+            for _, line in pairs(self.shape:getLines()) do
+                for _, text in pairs(line:getTexts()) do
+                    fullText = fulltext .. text:getString():toAnsiString();
+                end
+                fullText = fullText .. "\n";
+            end
+            if fullText ~= "" then
+                fullText = string.sub(fullText, 1, -2);
+            end
+            self.shape:clear();
+            self.shape:pushFillColor(obe.Canvas.NormalizeColor(color));
+            self.shape:pushString(SFML.String(fullText));
         end,
         __number = function(self, part)
             self.shape:pushOutlineThickness(0);

@@ -15,7 +15,7 @@ namespace obe
             System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
             Bindings::BindTree(&ScriptEngine);
             ScriptEngine["Hook"] = kaguya::NewTable();
-            ScriptEngine.dofile("Lib/Internal/CanvasConfig.lua");
+            ScriptEngine.dofile("Lib/Internal/Canvas.lua");
         }
 
         unsigned int createNewEnvironment()

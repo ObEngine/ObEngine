@@ -131,13 +131,14 @@ namespace obe
                 );
             }
 
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(SFML_String_toAnsiString_wrapper, sf::String, toAnsiString, 0, 1);
             void LoadSfText(kaguya::State* lua)
             {
                 Load(lua, "SFML.Transformable");
 
                 (*lua)["SFML"]["String"].setClass(kaguya::UserdataMetatable<sf::String>()
                     .setConstructors<sf::String(), sf::String(const std::string&)>()
-                    .addFunction("toAnsiString", &sf::String::toAnsiString)
+                    .addFunction("toAnsiString", SFML_String_toAnsiString_wrapper())
                 );
 
                 (*lua)["SFML"]["Text"].setClass(kaguya::UserdataMetatable<sf::Text, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
@@ -161,6 +162,14 @@ namespace obe
                     .addFunction("findCharacterPos", &sf::Text::findCharacterPos)
                 );
 
+                (*lua)["SFML"]["RichLine"].setClass(kaguya::UserdataMetatable<sfe::RichText::Line, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
+                    .addFunction("appendText", &sfe::RichText::Line::appendText)
+                    .addFunction("getGlobalBounds", &sfe::RichText::Line::getGlobalBounds)
+                    .addFunction("getTexts", &sfe::RichText::Line::getTexts)
+                    .addFunction("setCharacterSize", &sfe::RichText::Line::setCharacterSize)
+                    .addFunction("setFont", &sfe::RichText::Line::setFont)
+                );
+
                 (*lua)["SFML"]["RichText"].setClass(kaguya::UserdataMetatable<sfe::RichText, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
                     .setConstructors<sfe::RichText(), sfe::RichText(const sf::Font&)>()
                     .addFunction("pushFillColor", &sfe::RichText::pushFillColor)
@@ -175,6 +184,7 @@ namespace obe
                     .addFunction("clear", &sfe::RichText::clear)
                     .addFunction("getLocalBounds", &sfe::RichText::getLocalBounds)
                     .addFunction("getGlobalBounds", &sfe::RichText::getGlobalBounds)
+                    .addFunction("getLines", &sfe::RichText::getLines)
                 );
 
                 (*lua)["SFML"]["Style"] = kaguya::NewTable();
