@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6)
 cmake_policy(SET CMP0015 NEW)
 
 project(ObEngine)
@@ -31,6 +31,7 @@ ENDIF()
 
 if(BUILD_PLAYER)
     add_subdirectory(src/Player)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
 endif()
 
 IF (NOT DEFINED BUILD_DEV)
@@ -40,6 +41,7 @@ ENDIF()
 if(BUILD_DEV)
     add_subdirectory(extlibs/build/TGUI)
     add_subdirectory(src/Dev)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()
 
 IF (NOT DEFINED BUILD_TESTS)
