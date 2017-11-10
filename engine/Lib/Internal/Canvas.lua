@@ -375,7 +375,7 @@ obe.Canvas.Bases.Text = {
                 end
                 fullText = fullText .. "\n";
             end
-            if fullText ~= "" then
+            if fullText and fullText ~= "" then
                 fullText = string.sub(fullText, 1, -2);
             end
             self.shape:clear();

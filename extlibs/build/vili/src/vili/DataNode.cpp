@@ -10,43 +10,39 @@ namespace vili
     std::ostream& operator<<(std::ostream& stream, const DataNode& attribute)
     {
         if (attribute.getDataType() == DataType::Int)
-            stream << attribute.m_data.Int;
+            stream << std::get<int>(attribute.m_data);
         else if (attribute.getDataType() == DataType::Float)
-            stream << attribute.m_data.Float;
+            stream << std::get<double>(attribute.m_data);
         else if (attribute.getDataType() == DataType::Bool)
-            stream << attribute.m_data.Bool;
+            stream << std::get<bool>(attribute.m_data);
         else if (attribute.getDataType() == DataType::String)
-            stream << attribute.m_data.String;
+            stream << std::get<std::string>(attribute.m_data);
         return stream;
     }
 
     DataNode::DataNode(ContainerNode* parent, const std::string& id, const DataType& dataType) : Node(parent, id, NodeType::DataNode)
     {
         m_dataType = dataType;
-        new(static_cast<void*>(&m_data.String)) std::string();
     }
 
     DataNode::DataNode(const std::string& id, const DataType& dataType) : Node(nullptr, id, NodeType::DataNode)
     {
         m_dataType = dataType;
-        new(static_cast<void*>(&m_data.String)) std::string();
     }
 
     DataNode::DataNode(const DataNode& copy) : Node(copy)
     {
         m_dataType = copy.m_dataType;
-        new(static_cast<void*>(&m_data.String)) std::string();
     }
 
     DataNode::~DataNode()
     {
-        //delete &m_data.String;
     }
 
     void DataNode::set(int var)
     {
         if (m_dataType == DataType::Int)
-            m_data.Int = var;
+            m_data = var;
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongIntSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
@@ -54,7 +50,7 @@ namespace vili
     void DataNode::set(double var)
     {
         if (m_dataType == DataType::Float)
-            m_data.Float = var;
+            m_data = var;
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongFloatSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
@@ -62,7 +58,7 @@ namespace vili
     void DataNode::set(const std::string& var)
     {
         if (m_dataType == DataType::String)
-            m_data.String = var;
+            m_data = var;
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
@@ -70,7 +66,7 @@ namespace vili
     void DataNode::set(const char* var)
     {
         if (m_dataType == DataType::String)
-            m_data.String = std::string(var);
+            m_data = std::string(var);
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
@@ -78,7 +74,7 @@ namespace vili
     void DataNode::set(bool var)
     {
         if (m_dataType == DataType::Bool)
-            m_data.Bool = var;
+            m_data = var;
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongBoolSet", {{"path", getNodePath()},{"type", Types::dataTypeToString(m_dataType)}});
     }
@@ -114,13 +110,13 @@ namespace vili
         if (Types::getVarType(rawData) == m_dataType)
         {
             if (m_dataType == DataType::Int)
-                m_data.Int = stoi(rawData);
+                m_data = stoi(rawData);
             else if (m_dataType == DataType::Float)
-                m_data.Float = stod(rawData);
+                m_data = stod(rawData);
             else if (m_dataType == DataType::String)
-                m_data.String = Functions::String::extract(rawData, 1, 1);
+                m_data = Functions::String::extract(rawData, 1, 1);
             else if (m_dataType == DataType::Bool)
-                m_data.Bool = (rawData == "True" ? true : false);
+                m_data = (rawData == "True" ? true : false);
         }
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongAutoset", {{"data", rawData},{"path", getNodePath()}});
@@ -129,13 +125,13 @@ namespace vili
     std::string DataNode::dumpData() const
     {
         if (m_dataType == DataType::String)
-            return "\"" + m_data.String + "\"";
+            return "\"" + std::get<std::string>(m_data) + "\"";
         if (m_dataType == DataType::Int)
-            return std::to_string(m_data.Int);
+            return std::to_string(std::get<int>(m_data));
         if (m_dataType == DataType::Float)
-            return std::to_string(m_data.Float);
+            return std::to_string(std::get<double>(m_data));
         if (m_dataType == DataType::Bool)
-            return (m_data.Bool ? "True" : "False");
+            return (std::get<bool>(m_data) ? "True" : "False");
         return "?TypeError?";
     }
 
@@ -162,13 +158,13 @@ namespace vili
             dynamic_cast<ComplexNode*>(newParent)->createDataNode(newid.empty() ? m_id : newid, m_dataType);
             DataNode* newCopy = &dynamic_cast<ComplexNode*>(newParent)->getDataNode(newid.empty() ? m_id : newid);
             if (m_dataType == DataType::Int)
-                newCopy->set(m_data.Int);
+                newCopy->set(std::get<int>(m_data));
             else if (m_dataType == DataType::Float)
-                newCopy->set(m_data.Float);
+                newCopy->set(std::get<double>(m_data));
             else if (m_dataType == DataType::Bool)
-                newCopy->set(m_data.Bool);
+                newCopy->set(std::get<bool>(m_data));
             else if (m_dataType == DataType::String)
-                newCopy->set(m_data.String);
+                newCopy->set(std::get<std::string>(m_data));
         }
     }
 
@@ -194,7 +190,7 @@ namespace vili
     DataNode::operator std::string() const
     {
         if (m_dataType == DataType::String)
-            return m_data.String;
+            return std::get<std::string>(m_data);
         throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringCastOperator", {{"path", getNodePath()}});
     }
 
@@ -206,21 +202,21 @@ namespace vili
 	DataNode::operator int() const
     {
         if (m_dataType == DataType::Int)
-            return m_data.Int;
+            return std::get<int>(m_data);
         throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongIntCastOperator", {{"path", getNodePath()}});
     }
 
     DataNode::operator double() const
     {
         if (m_dataType == DataType::Float)
-            return m_data.Float;
+            return std::get<double>(m_data);
         throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongFloatCastOperator", {{"path", getNodePath()}});
     }
 
     DataNode::operator bool() const
     {
         if (m_dataType == DataType::Bool)
-            return m_data.Bool;
+            return std::get<bool>(m_data);
         throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongBoolCastOperator", {{"path", getNodePath()}});
     }
 }

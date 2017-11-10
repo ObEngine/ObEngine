@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <variant>
 
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -28,10 +29,7 @@ namespace obe
         {
         private:
             std::string m_name;
-            sf::Keyboard::Key m_key;
-            sf::Mouse::Button m_mb;
-            unsigned int m_gamepadButtonIndex;
-            sf::Joystick::Axis m_gamepadAxis;
+            std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int, sf::Joystick::Axis> m_button;
             std::pair<AxisCompareType, float> m_detectAxis;
             std::string m_returnChar;
             InputType m_type;
