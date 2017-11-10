@@ -50,7 +50,7 @@ Of course, you can even sell your game made with the engine, no royalties (If yo
 You can also modify the sources.
 There's no need to write somewhere that your game is made with ÖbE (but it's nice if you do it !)
 
-# On which platforms can I export my game made with ÖbEngine ?
+## On which platforms can I export my game made with ÖbEngine ?
 
 ÖbEngine has been tested on the following platforms :
 - Windows XP, 7, 8, 10
