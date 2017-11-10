@@ -1,6 +1,6 @@
 language: cpp
 compiler: g++-7
-env: COMPILER=g++-6
+env: COMPILER=g++-7
 dist: trusty
 sudo: required
 cache:

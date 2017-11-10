@@ -519,10 +519,10 @@ namespace obe
                 {
                     gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                     gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                    if (Utils::String::isStringInt(gridDimensionXInput->getText()) && Utils::String::isStringInt(gridDimensionYInput->getText()))
+                    if (Utils::String::isStringInt(gridDimensionXInput->getText().toAnsiString()) && Utils::String::isStringInt(gridDimensionYInput->getText().toAnsiString()))
                     {
-                        std::string xGridSize = gridDimensionXInput->getText();
-                        std::string yGridSize = gridDimensionYInput->getText();
+                        std::string xGridSize = gridDimensionXInput->getText().toAnsiString();
+                        std::string yGridSize = gridDimensionYInput->getText().toAnsiString();
                         if (stoi(xGridSize) < 2 || stoi(yGridSize) < 2)
                         {
                             editorGrid.setSize(2, 2);
@@ -535,11 +535,11 @@ namespace obe
                         gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                         return;
                     }
-                    if (!Utils::String::isStringInt(gridDimensionXInput->getText()))
+                    if (!Utils::String::isStringInt(gridDimensionXInput->getText().toAnsiString()))
                     {
                         gridDimensionXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
                     }
-                    if (!Utils::String::isStringInt(gridDimensionYInput->getText()))
+                    if (!Utils::String::isStringInt(gridDimensionYInput->getText().toAnsiString()))
                     {
                         gridDimensionYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
                     }
@@ -569,20 +569,20 @@ namespace obe
 
                 gridOffsetButton->connect("pressed", [gridOffsetXInput, gridOffsetYInput, &editorGrid]()
                 {
-                    if (Utils::String::isStringInt(gridOffsetXInput->getText()) && Utils::String::isStringInt(gridOffsetYInput->getText()))
+                    if (Utils::String::isStringInt(gridOffsetXInput->getText().toAnsiString()) && Utils::String::isStringInt(gridOffsetYInput->getText().toAnsiString()))
                     {
-                        std::string xGridOffset = gridOffsetXInput->getText();
-                        std::string yGridOffset = gridOffsetYInput->getText();
+                        std::string xGridOffset = gridOffsetXInput->getText().toAnsiString();
+                        std::string yGridOffset = gridOffsetYInput->getText().toAnsiString();
                         editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
                         gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                         gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                         return;
                     }
-                    if (!Utils::String::isStringInt(gridOffsetXInput->getText()))
+                    if (!Utils::String::isStringInt(gridOffsetXInput->getText().toAnsiString()))
                     {
                         gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
                     }
-                    if (!Utils::String::isStringInt(gridOffsetYInput->getText()))
+                    if (!Utils::String::isStringInt(gridOffsetYInput->getText().toAnsiString()))
                     {
                         gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
                     }
