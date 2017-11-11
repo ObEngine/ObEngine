@@ -19,7 +19,7 @@
 ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML !
 
 ## What do I need to build it ?
-You will need several libs :
+You will need SFML :
 - [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2/index-fr.php) (Display, Input, Network, Sound and much more)
 
 There are other libraries but they are included in the repository (extlibs/ folder) :
@@ -33,29 +33,16 @@ There are other libraries but they are included in the repository (extlibs/ fold
 - [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
 - [tinydir](https://github.com/cxong/tinydir) (BSD2 License) (tiny filesystem, soon replaced with C++17's filesystem)
 - [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
+- [Catch](https://github.com/catchorg/Catch2) (Boost Software License) (Test Framework)
+- [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
+- [dynamicLinker](https://github.com/Marqin/dynamicLinker) (MIT License) (Dynamic Libs wrapper)
+- [RichText](https://github.com/Skyrpex/RichText) (No license) (sf::Text extension)
 
 ## How do I build it ?
-If you want to build ÖbEngine yourself (which is perfectly fine), you'll need CMake software.
-
-A CMakeLists.txt is provided in the project.
-
-Just tell CMake where SFML(>= 2.4) is by providing the following CMake entriy (or Environment var) :
-- SFML_ROOT (Root of SFML folder where there is include/ and lib/ folders)
-
-Those are compiler requirements :
-- If you're on Windows vc14 is required.
-- If you're on Linux g++-6 is required.
-
-You'll need a compiler with \<filesystem\> support or at least \<experimental/filesystem\>.
-
-If your compiler doesn't support C++17 filesystem, you can disable CMake entry "USE_CPP_NEW_FS", it will use the fallback instead.
-
-If everything is okay, CMake should generate what you want (Makefiles / VS Project / Something else).
-
-Once ObEngine is built, place the generated executable in engine/ folder.
+Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
 
 ## Could you give an example of what I can do with your engine ?
-Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D.
+Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D (maybe partial 3D support in a future update).
 You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
 
 ## Is it free ?
@@ -63,23 +50,30 @@ Of course, you can even sell your game made with the engine, no royalties (If yo
 You can also modify the sources.
 There's no need to write somewhere that your game is made with ÖbE (but it's nice if you do it !)
 
+## On which platforms can I export my game made with ÖbEngine ?
+
+ÖbEngine has been tested on the following platforms :
+- Windows XP, 7, 8, 10
+- Linux (Debian, Arch)
+- MacOS
+
+ÖbEngine will have export for Android and HTML5 available in a future update.
+
 ## Give me some interesting features
 Here you go :
 - Neat map editor (With a grid for precise map edition)
-- Spritesheet animations (with tiny animation language)
-- Light system
-- Particles
-- Lua scripting (Object oriented with a full events system)
-- Object-oriented
-- Infinite amount of layers with optional parallax
-- Mathematical expressions parsing
-- Home-made data language
+- Animations
+- Native plugins (You can extend the engine with C++)
+- Canvas (You can draw stuff using a simple API)
+- Network support
+- Scriptable GameObjects
+- Workspaces and Packages system
+- Lua scripting
+- Layering system
+- Parallax
+- Home-made data language (Vili)
 - Polygonal Collisions with full collision detection support
 - Developpement console with coloration and scripting support
-- Customizable cursor (whoa)
-- Serial and Network events support
-- Trajectory system (and you can even create your owns)
-- DeltaTime handling
 - Custom package manager with online repository
 - Extendable toolkit with a lot of functionalities
 - Gamepad support
@@ -89,8 +83,11 @@ Here you go :
 - 3D objects in 2D scene
 - Skeletal animations
 - Collaborative map editor
-- Better light & particle system
-- C++ plugins
+- Light & particle system
+- C++ GameObjects
+- Multiple windows
+- Android and HTML5 export
+- Tiled Map Editor support
 
 ## ObEngine's versions
 
@@ -98,10 +95,10 @@ Here you go :
 - 0.55 Baldur (June 2016) - Better scripting support
 - 0.81 Clue (January 2017) - Big engine rework
 - 0.99 Dagr (February 2017) - First released dev version of ObEngine
-- 1.0 Eir (Summer 2017) - First public released version
+- 1.0 Eir (Fall 2017) - First public released version
 
-## Right, can I have several object scripting examples now ?
-Sure, here are some simple objects :
+## Right, can I see how does scripting looks ?
+Sure, here are some simple GameObjects :
 ### Examples using console :
 #### Hello-World object
 This one is really simple, it just prints "Hello World" in the console (not the game console)
@@ -110,37 +107,8 @@ function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
-#### Hello-World in game console
-Does exactly the same thing than the first one except that it prints "Hello World" in the game console (F1 to open console)
-```lua
-function Local.Init()
-  -- Create a new stream for the console named "HelloWorld", the "true" means the stream is directly enabled
-  local consoleStream = Console:createStream("HelloWorld", true);
-  -- Write "Hello World" in the game console in red using the stream (5th parameter is alpha)
-  consoleStream:write("Hello World", 255, 0, 0, 255);
-end
-```
-
-#### Rainbow Hello-World
-Same thing that the one before except that we will change the color of the text at every frame !
-```lua
-math.randomseed(os.time()); -- Random seed for when we'll use math.random()
-
-function Local.Init()
-  local consoleStream = Console:createStream("HelloWorld", true);
-  -- We start with the white color (255, 255, 255), the line is stored in helloWorldMessage
-  helloWorldMessage = consoleStream:write("Hello World Rainbow !", 255, 255, 255, 255);
-end
-
-function Local.Update() -- This will be called at every frame
-  local r = math.random(0, 255); -- Red composant
-  local g = math.random(0, 255); -- Green composant
-  local b = math.random(0, 255); -- Blue composant
-  helloWorldMessage:setColor(r, g, b); -- Change the color of the whole line
-end
-```
 ### Examples with LevelSprites
-Every LevelObject can have a LevelSprite associated (it's cooler when your object appears in the game right ?).
+Every GameObject can have a LevelSprite associated (it's cooler when your object appears in the game right ?).
 #### Rotating goat
 Let's imagine you want to create a rotating goat in your game, no problem :
 ```lua
@@ -149,41 +117,8 @@ function Local.Init()
   This:Animator():setKey("GOAT_FLYING_LEFT");
 end
 
-function Local.Update(P) -- P is a table that contains every events parameters (here parameters for update)
-  This:LevelSprite():rotate(P.dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
-end
-```
-
-### Examples with Colliders
-Every LevelObject can also have a Collider (solid or not).
-
-#### A simple door
-This is a simple door that you can open or close when you click it
-
-```lua
-Door = {} -- You create a table to place Door's function in
-
-function Local.Init()
-    This:Animator():setKey("Close");
-    opened = false;
-end
-
-function Door.Open()
-    This:Animator():setKey("Open");
-    This:Collider():setSolid(false); -- Makes the character able to pass through the door
-    opened = true;
-end
-
-function Door.Close()
-    This:Animator():setKey("Close");
-    This:Collider():setSolid(true); -- Makes the collider solid (no one can pass through)
-    opened = false;
-end
-
-function Local.Click() -- Called when the object's collider is clicked
-    if opened then Door.Close();
-    else Door.Open();
-    end
+function Local.Update(dt) -- Local.Update is a function called every loop and dt is the DeltaTime
+  This:LevelSprite():rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
 end
 ```
 
@@ -192,37 +127,37 @@ The engine includes a `Canvas` lib to draw stuff in real time and using it is re
 
 ```lua
 function Local.Init()
-  canvas = Core.Canvas.new(400, 400); -- Creating a 400x400 canvas
+  canvas = obe.Canvas.Canvas(400, 400); -- Creating a 400x400 canvas
   
-  canvas:Rectangle("background"):init({ -- Dark grey background
-      layer = 2, x = 0, y = 0, width = 250, height = 100
-      color = { r = 50, g = 50, b = 50, a = 255 },
+  canvas:Rectangle("background")({ -- Dark grey background
+      layer = 2, x = 0, y = 0, width = 250, height = 100,
+      color = { r = 50, g = 50, b = 50},
   });
 
-  canvas:Text("fstPlayer"):init({ -- First player's score label
+  canvas:Text("fstPlayer")({ -- First player's score label
       text = "Player 1 : 0 points", size = 22
   });
 
-  canvas:Text("scdPlayer"):init({ -- Second player's score label
+  canvas:Text("scdPlayer")({ -- Second player's score label
       text = "Player 2 : 0 points", size = 22, y = 50
   });
 
-  canvas:Circle("green"):init({ -- Small green circle
-      color = { r = 0, g = 255, b = 0, a = 255 }, -- Green color
+  canvas:Circle("green")({ -- Small green circle
+      color = "0F0", -- Green color
       radius = 7, x = 200, y = 5
   });
 
-  canvas:Circle("yellow"):init({ -- Small yellow circle
-      color = { r = 255, g = 255, b = 0, a = 255 }, -- Yellow color
+  canvas:Circle("yellow")({ -- Small yellow circle
+      color = "FF0", -- Yellow color
       radius = 7, x = 217, y = 5
   });
 
-  canvas:Circle("red"):init({ -- Small red circle
-      color = { r = 255, g = 0, b = 0, a = 255 }, -- Red color
+  canvas:Circle("red")({ -- Small red circle
+      color = "F00", -- Red color
       radius = 7, x = 234, y = 5
   });
   
-  canvas:target(This:LevelSprite()); -- Canvas result will render in object's LevelSprite
+  canvas:setTarget(This:LevelSprite()); -- Canvas result will render in object's LevelSprite
   canvas:render(); -- Drawing all the stuff !
 end
 ```
