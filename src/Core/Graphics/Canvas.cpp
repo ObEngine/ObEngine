@@ -86,37 +86,32 @@ namespace obe
     
             Line* Canvas::line(const std::string& id)
             {
-                std::unique_ptr<Line> newline = std::make_unique<Line>(id);
-                auto it = elements.emplace(id, std::move(newline));
-                return static_cast<Line*>(it.first->second.get());
+                m_elements.push_back(CanvasElementPair(id, std::make_unique<Line>(id)));
+                return static_cast<Line*>(m_elements.back().second.get());
             }
     
             Rectangle* Canvas::rectangle(const std::string& id)
             {
-                std::unique_ptr<Rectangle> newrectangle = std::make_unique<Rectangle>(id);
-                auto it = elements.emplace(id, std::move(newrectangle));
-                return static_cast<Rectangle*>(it.first->second.get());
+                m_elements.push_back(CanvasElementPair(id, std::make_unique<Rectangle>(id)));
+                return static_cast<Rectangle*>(m_elements.back().second.get());
             }
     
             Text* Canvas::text(const std::string& id)
             {
-                std::unique_ptr<Text> newtext = std::make_unique<Text>(id);
-                auto it = elements.emplace(id, std::move(newtext));
-                return static_cast<Text*>(it.first->second.get());
+                m_elements.push_back(CanvasElementPair(id, std::make_unique<Text>(id)));
+                return static_cast<Text*>(m_elements.back().second.get());
             }
     
             Circle* Canvas::circle(const std::string& id)
             {
-                std::unique_ptr<Circle> newcircle = std::make_unique<Circle>(id);
-                auto it = elements.emplace(id, std::move(newcircle));
-                return static_cast<Circle*>(it.first->second.get());
+                m_elements.push_back(CanvasElementPair(id, std::make_unique<Circle>(id)));
+                return static_cast<Circle*>(m_elements.back().second.get());
             }
     
             Sprite* Canvas::sprite(const std::string& id)
             {
-                std::unique_ptr<Sprite> newsprite = std::make_unique<Sprite>(id);
-                auto it = elements.emplace(id, std::move(newsprite));
-                return static_cast<Sprite*>(it.first->second.get());
+                m_elements.push_back(CanvasElementPair(id, std::make_unique<Sprite>(id)));
+                return static_cast<Sprite*>(m_elements.back().second.get());
             }
     
             void Canvas::setTarget(LevelSprite* target)
@@ -127,7 +122,11 @@ namespace obe
             void Canvas::render()
             {
                 m_canvas.clear(sf::Color(0, 0, 0, 0));
-                for (auto& element : elements)
+                std::sort(m_elements.begin(), m_elements.end(), [](const auto& elem1, const auto& elem2)
+                {
+                    return elem1.second->layer > elem2.second->layer;
+                });
+                for (auto& element : m_elements)
                 {
                     element.second->draw(m_canvas);
                 }

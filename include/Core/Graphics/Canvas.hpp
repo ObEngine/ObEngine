@@ -22,7 +22,7 @@ namespace obe
             {
             public:
                 std::string id;
-                unsigned int layer;
+                unsigned int layer = 1;
                 bool visible;
 
                 /**
@@ -154,12 +154,13 @@ namespace obe
             /**
              * \brief A Canvas where you can draw CanvasElements on
              */
+            using CanvasElementPair = std::pair<std::string, std::unique_ptr<CanvasElement>>;
             class Canvas
             {
             private:
                 LevelSprite* m_target;
                 sf::RenderTexture m_canvas;
-                std::map<std::string, std::unique_ptr<CanvasElement>> elements;
+                std::vector<CanvasElementPair> m_elements;
             public:
                 /**
                  * \brief Creates a new Canvas
