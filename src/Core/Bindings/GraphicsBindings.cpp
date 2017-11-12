@@ -125,6 +125,8 @@ namespace obe
                     .addFunction("Sprite", &Graphics::Canvas::Canvas::sprite)
                     .addFunction("render", &Graphics::Canvas::Canvas::render)
                     .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
+                    .addFunction("clear", &Graphics::Canvas::Canvas::clear)
+                    .addFunction("remove", &Graphics::Canvas::Canvas::remove)
                 );
 
                 System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);

@@ -576,7 +576,6 @@ namespace obe
 
         void Scene::reorganizeLayers()
         {
-            Debug::Log->debug("REORGANIZING SPRITES");
             std::sort(m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2)
             {
                 if (sprite1->getLayer() == sprite2->getLayer())
