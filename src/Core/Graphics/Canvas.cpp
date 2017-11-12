@@ -128,7 +128,8 @@ namespace obe
                 });
                 for (auto& element : m_elements)
                 {
-                    element.second->draw(m_canvas);
+                    if (element.second->visible)
+                        element.second->draw(m_canvas);
                 }
                 m_canvas.display();
                 m_target->setTexture(m_canvas.getTexture());
