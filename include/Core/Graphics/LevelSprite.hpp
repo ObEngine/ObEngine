@@ -101,6 +101,7 @@ namespace obe
             void applySpriteRotation();
             void resetUnit(Transform::Units unit) override;
         public:
+            bool m_layerChanged = false;
             /**
              * \brief Creates a new LevelSprite with the given Id
              * \param id A std::string containing the Id of the LevelSprite

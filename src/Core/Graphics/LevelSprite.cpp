@@ -69,11 +69,13 @@ namespace obe
         void LevelSprite::setLayer(int layer)
         {
             m_layer = layer;
+            m_layerChanged = true;
         }
 
         void LevelSprite::setZDepth(int zdepth)
         {
             m_zdepth = zdepth;
+            m_layerChanged = true;
         }
 
         void LevelSprite::setRotation(double rotate)

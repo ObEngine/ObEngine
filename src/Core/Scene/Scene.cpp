@@ -394,6 +394,18 @@ namespace obe
 
         void Scene::display()
         {
+            for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
+            {
+                if (it->get()->m_layerChanged)
+                {
+                    for (auto it2 = it; it2 != m_spriteArray.end(); ++it2)
+                    {
+                        it2->get()->m_layerChanged = false;
+                    }
+                    this->reorganizeLayers();
+                    break;
+                }
+            }
             this->displaySprites();
             if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
             {
@@ -564,32 +576,18 @@ namespace obe
 
         void Scene::reorganizeLayers()
         {
-            bool noChange = false;
-            while (noChange == false)
+            Debug::Log->debug("REORGANIZING SPRITES");
+            std::sort(m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2)
             {
-                noChange = true;
-                for (unsigned int i = 0; i < m_spriteArray.size(); i++)
+                if (sprite1->getLayer() == sprite2->getLayer())
                 {
-                    if (i != m_spriteArray.size() - 1 && m_spriteArray[i]->getLayer() < m_spriteArray[i + 1]->getLayer())
-                    {
-                        swap(m_spriteArray[i], m_spriteArray[i + 1]);
-                        noChange = false;
-                    }
+                    return sprite1->getZDepth() > sprite2->getZDepth();
                 }
-            }
-            noChange = false;
-            while (noChange == false)
-            {
-                noChange = true;
-                for (unsigned int i = 0; i < m_spriteArray.size(); i++)
+                else
                 {
-                    if (i != m_spriteArray.size() - 1 && m_spriteArray[i]->getLayer() == m_spriteArray[i + 1]->getLayer() && m_spriteArray[i]->getZDepth() < m_spriteArray[i + 1]->getZDepth())
-                    {
-                        swap(m_spriteArray[i], m_spriteArray[i + 1]);
-                        noChange = false;
-                    }
+                    return sprite1->getLayer() > sprite2->getLayer();
                 }
-            }
+            });
         }
 
         unsigned int Scene::getLevelSpriteAmount() const

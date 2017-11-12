@@ -8,34 +8,32 @@ namespace obe
             Triggers::TriggerGroup* editorTriggers, 
             Input::InputManager& inputManager, 
             Graphics::LevelSprite*& selectedSprite, 
-            Scene::Scene& world, 
+            Scene::Scene& scene, 
             int& currentLayer)
         {
-            inputManager.getAction("SpriteZDepthInc").connect([editorTriggers, &selectedSprite, &world](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteZDepthInc").connect([editorTriggers, &selectedSprite, &scene](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setZDepth(selectedSprite->getZDepth() + 1);
-                    world.reorganizeLayers();
                     editorTriggers->pushParameter("SpriteZDepthChanged", "zdepth", selectedSprite->getZDepth());
                     editorTriggers->pushParameter("SpriteZDepthChanged", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteZDepthChanged", "operation", "Increase");
                     editorTriggers->trigger("SpriteZDepthChanged");
                 }
             });
-            inputManager.getAction("SpriteZDepthDec").connect([editorTriggers, &selectedSprite, &world](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteZDepthDec").connect([editorTriggers, &selectedSprite, &scene](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
                     selectedSprite->setZDepth(selectedSprite->getZDepth() - 1);
-                    world.reorganizeLayers();
                     editorTriggers->pushParameter("SpriteZDepthChanged", "zdepth", selectedSprite->getZDepth());
                     editorTriggers->pushParameter("SpriteZDepthChanged", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteZDepthChanged", "operation", "Decrease");
                     editorTriggers->trigger("SpriteZDepthChanged");
                 }
             });
-            inputManager.getAction("SpriteLayerInc").connect([editorTriggers, &selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteLayerInc").connect([editorTriggers, &selectedSprite, &scene, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -45,12 +43,10 @@ namespace obe
                     editorTriggers->pushParameter("SpriteLayerChanged", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteLayerChanged", "operation", "Increase");
                     editorTriggers->trigger("SpriteLayerChanged");
-                    
-                    world.reorganizeLayers();
                 }
                 currentLayer += 1;
             });
-            inputManager.getAction("SpriteLayerDec").connect([editorTriggers, &selectedSprite, &world, &currentLayer](const Input::InputActionEvent& event)
+            inputManager.getAction("SpriteLayerDec").connect([editorTriggers, &selectedSprite, &scene, &currentLayer](const Input::InputActionEvent& event)
             {
                 if (selectedSprite != nullptr)
                 {
@@ -60,8 +56,6 @@ namespace obe
                     editorTriggers->pushParameter("SpriteLayerChanged", "sprite", selectedSprite);
                     editorTriggers->pushParameter("SpriteLayerChanged", "operation", "Decrease");
                     editorTriggers->trigger("SpriteLayerChanged");
-
-                    world.reorganizeLayers();
                 }
                 currentLayer -= 1;
             });

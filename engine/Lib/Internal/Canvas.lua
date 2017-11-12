@@ -30,11 +30,9 @@ end
 obe.Canvas.Bases = {};
 
 function obe.Canvas.MakeMT(bases)
-    print("MAKE MT CALLED");
     local getters = {};
     local setters = {};
     local fAccess = function(a, b, c) 
-        print("SETTER MTo", a, b, c); 
         k = getmetatable(a);
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
             k.__setters.__number(k.__ref, c);
@@ -43,9 +41,7 @@ function obe.Canvas.MakeMT(bases)
         end
     end
     local nAccess = function(a, b)
-        print("GETTER MT", a, b);
         k = getmetatable(a);
-        print(k.__getters[b]);
         if type(k.__getters[b]) == "function" then
             return k.__getters[b](k.__ref);
         elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
@@ -61,7 +57,6 @@ function obe.Canvas.MakeMT(bases)
         return a;
     end
     for kb, base in pairs(bases) do
-        print(kb, base, inspect(base));
         for getterName, getterValue in pairs(base.getters) do
             getters[getterName] = getterValue;
         end
@@ -71,13 +66,11 @@ function obe.Canvas.MakeMT(bases)
     end
     for key, getter in pairs(getters) do
         if type(getter) == "table" then
-            print("Call MAKEMT on gt subtable", key);
             getters[key] = obe.Canvas.MakeMT({getter});
         end
     end
     for key, setter in pairs(setters) do
         if type(setter) == "table" then
-            print("Call MAKEMT on st subtable", key);
             setters[key] = obe.Canvas.MakeMT({setter});
         end
     end
@@ -96,12 +89,9 @@ end
 
 function obe.Canvas.InitializeMT(tbl, ref)
     if type(tbl) == "table" and rawget(tbl, "__type") == "CanvasMT" then
-        print("On ", rawget(tbl, "__id"));
-        print("INITIALIZING MT");
         local mt = getmetatable(tbl);
         mt.__ref = ref;
         for k, getter in pairs(mt.__getters) do
-            print("Subinitialize Getter : ", k)
             obe.Canvas.InitializeMT(getter, ref);
         end
         for k, setter in pairs(mt.__setters) do
@@ -363,7 +353,6 @@ obe.Canvas.Bases.Text = {
             self.shape:setCharacterSize(size);
         end,
         font = function(self, font)
-            print("MMMMMMMMMMMMDDDDDDDDDDDRRRRRRRRRR");
             self.fontPath = font;
             self.shape:setFont(obe.ResourceManager.GetFont(font));
         end,
