@@ -3,7 +3,7 @@ __ENVIRONMENTS = {};
 
 local inspect = require("Lib/StdLib/Inspect");
 
-function CreateNewEnv()
+function CreateNewEnv(env)
     local ENV = env or {};
     if env == nil then
         ENV["__ENV_ID"] = __ENV_COUNT;

@@ -159,12 +159,12 @@ namespace obe
                     ->addTrigger("Init")
                     ->addTrigger("Delete");
 
-                executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
-
                 GAMEOBJECTENV["__OBJECT_TYPE"] = m_type;
                 GAMEOBJECTENV["__OBJECT_ID"] = m_id;
                 GAMEOBJECTENV["__OBJECT_INIT"] = false;
                 GAMEOBJECTENV["Private"] = m_privateKey;
+
+                executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
 
                 if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
                 {

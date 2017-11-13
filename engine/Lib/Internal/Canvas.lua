@@ -33,7 +33,7 @@ function obe.Canvas.MakeMT(bases)
     local getters = {};
     local setters = {};
     local fAccess = function(a, b, c) 
-        k = getmetatable(a);
+        local k = getmetatable(a);
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
             k.__setters.__number(k.__ref, c);
         else
@@ -41,7 +41,7 @@ function obe.Canvas.MakeMT(bases)
         end
     end
     local nAccess = function(a, b)
-        k = getmetatable(a);
+        local k = getmetatable(a);
         if type(k.__getters[b]) == "function" then
             return k.__getters[b](k.__ref);
         elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
@@ -358,10 +358,10 @@ obe.Canvas.Bases.Text = {
             self.shape:setFont(obe.ResourceManager.GetFont(font));
         end,
         color = function(self, color)
-            local fulltext = "";
+            local fullText = "";
             for _, line in pairs(self.shape:getLines()) do
                 for _, text in pairs(line:getTexts()) do
-                    fullText = fulltext .. text:getString():toAnsiString();
+                    fullText = fullText .. text:getString():toAnsiString();
                 end
                 fullText = fullText .. "\n";
             end
