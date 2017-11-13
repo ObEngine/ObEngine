@@ -128,12 +128,26 @@ namespace obe
                 });
                 for (auto& element : m_elements)
                 {
-                    element.second->draw(m_canvas);
+                    if (element.second->visible)
+                        element.second->draw(m_canvas);
                 }
                 m_canvas.display();
                 m_target->setTexture(m_canvas.getTexture());
             }
-    
+
+            void Canvas::clear()
+            {
+                m_elements.clear();
+            }
+
+            void Canvas::remove(const std::string& id)
+            {
+                std::remove_if(m_elements.begin(), m_elements.end(), [&id](auto& elem)
+                {
+                    return elem.second->id == id;
+                });
+            }
+
             const sf::Texture& Canvas::getTexture() const
             {
                 return m_canvas.getTexture();

@@ -51,6 +51,7 @@ function obe.Canvas.MakeMT(bases)
         end
     end
     local tAccess = function(a, b)
+        b = b or {};
         for k, v in pairs(b) do
             a[k] = v;
         end

@@ -209,6 +209,15 @@ namespace obe
                  */
                 void render();
                 /**
+                 * \brief Clears all CanvasElement from the Canvas
+                 */
+                void clear();
+                /**
+                 * \brief Removes a CanvasElement from the Canvas
+                 * \param id Id of the CanvasElement to remove
+                 */
+                void remove(const std::string& id);
+                /**
                  * \brief Gets the current Texture of the Canvas
                  * \return A reference to the current Texture of the Canvas
                  */
