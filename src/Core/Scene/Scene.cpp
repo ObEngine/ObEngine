@@ -203,10 +203,18 @@ namespace obe
             if (m_levelFile->contains(vili::NodeType::ComplexNode, "Script"))
             {
                 vili::ComplexNode& script = m_levelFile.at("Script");
-                for (vili::DataNode* scriptName : script.getArrayNode("gameScripts"))
+                if (script.contains(vili::NodeType::DataNode, "source"))
                 {
-                    System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-                    m_scriptArray.push_back(*scriptName);
+                    System::Path(script.at<vili::DataNode>("source")).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+                    m_scriptArray.push_back(script.at<vili::DataNode>("source"));
+                }
+                else if (script.contains(vili::NodeType::ArrayNode, "sources"))
+                {
+                    for (vili::DataNode* scriptName : script.getArrayNode("sources"))
+                    {
+                        System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+                        m_scriptArray.push_back(*scriptName);
+                    }
                 }
             }
         }
@@ -354,10 +362,17 @@ namespace obe
             if (m_scriptArray.size() > 0)
             {
                 (*dataStore)->createComplexNode("Script");
-                dataStore->at("Script").createArrayNode("gameScripts");
-                for (int i = 0; i < m_scriptArray.size(); i++)
+                if (m_scriptArray.size() == 1)
                 {
-                    dataStore->at("Script").getArrayNode("gameScripts").push(m_scriptArray[i]);
+                    dataStore->at("Script").createDataNode("source", m_scriptArray[0]);
+                }
+                else
+                {
+                    dataStore->at("Script").createArrayNode("sources");
+                    for (int i = 0; i < m_scriptArray.size(); i++)
+                    {
+                        dataStore->at("Script").getArrayNode("sources").push(m_scriptArray[i]);
+                    }
                 }
             }
             return dataStore;
