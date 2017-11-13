@@ -2,7 +2,7 @@
 --
 -- See the [wiki page](http://lua-users.org/wiki/ListComprehensions)
 --
---    local C= require 'pl.comprehension' . new()
+--    local C= require 'Lib.StdLib.pl.comprehension' . new()
 --
 --    C ('x for x=1,10') ()
 --    ==> {1,2,3,4,5,6,7,8,9,10}

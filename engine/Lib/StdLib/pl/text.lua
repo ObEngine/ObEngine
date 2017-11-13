@@ -9,7 +9,7 @@
 -- Calling `text.format_operator()` overloads the % operator for strings to give Python/Ruby style formated output.
 -- This is extended to also do template-like substitution for map-like data.
 --
---    > require 'pl.text'.format_operator()
+--    > require 'Lib.StdLib.pl.text'.format_operator()
 --    > = '%s = %5.3f' % {'PI',math.pi}
 --    PI = 3.142
 --    > = '$name = $value' % {name='dog',value='Pluto'}
@@ -26,7 +26,7 @@ local is_callable = require 'Lib.StdLib.pl.types'.is_callable
 local unpack = utils.unpack
 
 local function makelist(l)
-    return setmetatable(l, require('pl.List'))
+    return setmetatable(l, require('Lib.StdLib.pl.List'))
 end
 
 local function lstrip(str)  return (str:gsub('^%s+',''))  end
@@ -40,7 +40,7 @@ local function imap(f,t,...)
 end
 
 --[[
-module ('pl.text',utils._module)
+module ('Lib.StdLib.pl.text',utils._module)
 ]]
 
 local text = {}

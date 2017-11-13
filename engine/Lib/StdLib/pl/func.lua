@@ -2,7 +2,7 @@
 -- Placeholder expressions are useful for short anonymous functions, and were
 -- inspired by the Boost Lambda library.
 --
---    > utils.import 'pl.func'
+--    > utils.import 'Lib.StdLib.pl.func'
 --    > ls = List{10,20,30}
 --    > = ls:map(_1+1)
 --    {11,21,31}

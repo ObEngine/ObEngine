@@ -367,7 +367,7 @@ function utils.function_arg (idx,f,msg)
     if tp == 'function' then return f end  -- no worries!
     -- ok, a string can correspond to an operator (like '==')
     if tp == 'string' then
-        if not ops then ops = require 'pl.operator'.optable end
+        if not ops then ops = require 'Lib.StdLib.pl.operator'.optable end
         local fn = ops[f]
         if fn then return fn end
         local fn, err = utils.string_lambda(f)

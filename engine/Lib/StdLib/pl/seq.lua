@@ -158,7 +158,7 @@ function seq.copy(iter)
         res[k] = v
         k = k + 1
     end
-    setmetatable(res, require('pl.List'))
+    setmetatable(res, require('Lib.StdLib.pl.List'))
     return res
 end
 
@@ -253,7 +253,7 @@ function seq.count_map(iter)
         if v then t[s] = v + 1
         else t[s] = 1 end
     end
-    return setmetatable(t, require('pl.Map'))
+    return setmetatable(t, require('Lib.StdLib.pl.Map'))
 end
 
 -- given a sequence, return all the unique values in that sequence.
