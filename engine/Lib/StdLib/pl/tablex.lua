@@ -24,7 +24,7 @@ local function setmeta (res,tbl,pl_class)
 end
 
 local function makelist(l)
-    return setmetatable(l, require('Lib.StdLib.pl.List'))
+    return setmetatable(l, tablex)
 end
 
 local function makemap(m)

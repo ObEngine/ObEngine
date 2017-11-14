@@ -427,6 +427,7 @@ end
 function utils.assert_arg (n,val,tp,verify,msg,lev)
     if type(val) ~= tp then
         error(("argument %d expected a '%s', got a '%s'"):format(n,tp,type(val)),lev or 2)
+        debug.backtrace();
     end
     if verify and not verify(val) then
         error(("argument %d: '%s' %s"):format(n,val,msg),lev or 2)

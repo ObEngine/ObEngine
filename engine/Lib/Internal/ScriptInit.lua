@@ -3,8 +3,8 @@ LuaUtil = {};
 pl = {};
 
 inspect = require("Lib/StdLib/Inspect");
-pl.Date = require("Lib/StdLib/pl/Date");
-pl.List = require("Lib/StdLib/pl/List");
+Date = require("Lib/StdLib/pl/Date");
+List = require("Lib/StdLib/pl/List");
 pl.String = require("Lib/StdLib/pl/stringx");
 pl.Table = require("Lib/StdLib/pl/tablex");
 pl.Array2d = require("Lib/StdLib/pl/array2d");

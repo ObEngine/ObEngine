@@ -1,6 +1,5 @@
 -- Dependancies
 local String = require("Lib/StdLib/String");
-local Table = require("Lib/StdLib/Table");
 local Color = require("Lib/StdLib/ConsoleColor");
 local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
@@ -63,7 +62,7 @@ function autocompleteArgs(command, query)
         end
         if recurseIn then
             print("RECURSION")
-            return autocompleteArgs(recurseIn.children, String.join(subpath, " "));
+            return autocompleteArgs(recurseIn.children, List(subpath):join(" "));
         else
             print("NOT FOUND HURR DURR");
             return {};
@@ -194,7 +193,7 @@ function autocompleteHandle(ToolkitFunctions, command)
     if #command > 0 then
         local commandName, cargs = decomposeCommand(command);
         if ToolkitFunctions[commandName] then
-            local useQuery = String.join(cargs, " ");
+            local useQuery = List(cargs):join(" ");
             if command:sub(#command, #command) == " " then
                 useQuery = useQuery .. " ";
             end
@@ -261,7 +260,7 @@ function autocomplete(command)
                 if command:sub(#command, #command) == " " and #cargs > 0 then
                     addSpace = " ";
                 end
-                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, String.join(cargs, " ") .. addSpace);
+                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, List(cargs):join() .. addSpace);
                 if getTableSize(completions) == 1 and getTableKeys(completions)[1] == getLastArgument(command) then
                     command = command .. " ";
                     _term_write(" ");
