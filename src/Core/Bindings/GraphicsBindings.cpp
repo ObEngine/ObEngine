@@ -129,6 +129,16 @@ namespace obe
                     .addFunction("remove", &Graphics::Canvas::Canvas::remove)
                 );
 
+                (*lua)["obe"]["Canvas"]["Alignment"] = kaguya::NewTable();
+                (*lua)["obe"]["Canvas"]["Alignment"]["Horizontal"] = kaguya::NewTable();
+                (*lua)["obe"]["Canvas"]["Alignment"]["Horizontal"]["Left"] = Graphics::Canvas::TextHorizontalAlign::Left;
+                (*lua)["obe"]["Canvas"]["Alignment"]["Horizontal"]["Center"] = Graphics::Canvas::TextHorizontalAlign::Center;
+                (*lua)["obe"]["Canvas"]["Alignment"]["Horizontal"]["Right"] = Graphics::Canvas::TextHorizontalAlign::Right;
+                (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"] = kaguya::NewTable();
+                (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"]["Top"] = Graphics::Canvas::TextVerticalAlign::Top;
+                (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"]["Center"] = Graphics::Canvas::TextVerticalAlign::Center;
+                (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"]["Bottom"] = Graphics::Canvas::TextVerticalAlign::Bottom;
+
                 System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             }
 

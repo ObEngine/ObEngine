@@ -27,6 +27,34 @@ function obe.Canvas.NormalizeColor(color, base)
     end
 end
 
+function obe.Canvas.ConvertHAlign(align)
+    if type(align) == "string" then
+        if align == "Left" then return obe.Canvas.Alignment.Horizontal.Left;
+        elseif align == "Center" then return obe.Canvas.Alignment.Horizontal.Center;
+        elseif align == "Right" then return obe.Canvas.Alignment.Horizontal.Right;
+        end
+    else
+        if align == obe.Canvas.Alignment.Horizontal.Left then return "Left";
+        elseif align == obe.Canvas.Alignment.Horizontal.Center then return "Center";
+        elseif align == obe.Canvas.Alignment.Horizontal.Right then return "Right";
+        end
+    end
+end
+
+function obe.Canvas.ConvertVAlign(align)
+    if type(align) == "string" then
+        if align == "Top" then return obe.Canvas.Alignment.Vertical.Top;
+        elseif align == "Center" then return obe.Canvas.Alignment.Vertical.Center;
+        elseif align == "Bottom" then return obe.Canvas.Alignment.Vertical.Bottom;
+        end
+    else
+        if align == obe.Canvas.Alignment.Vertical.Top then return "Top";
+        elseif align == obe.Canvas.Alignment.Vertical.Center then return "Center";
+        elseif align == obe.Canvas.Alignment.Vertical.Bottom then return "Bottom";
+        end
+    end
+end
+
 obe.Canvas.Bases = {};
 
 function obe.Canvas.MakeMT(bases)
@@ -37,6 +65,7 @@ function obe.Canvas.MakeMT(bases)
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
             k.__setters.__number(k.__ref, c);
         else
+            print(k, b, c);
             k.__setters[b](k.__ref, c);
         end
     end
@@ -339,7 +368,21 @@ obe.Canvas.Bases.Text = {
         end,
         height = function(self)
             return self.shape:getGlobalBounds().height;
-        end
+        end,
+        align = {
+            getters = {
+                h = function(self) return obe.Canvas.ConvertHAlign(self.h_align); end,
+                horizontal = function(self) return obe.Canvas.ConvertHAlign(self.h_align); end,
+                v = function(self) return obe.Canvas.ConvertVAlign(self.v_align); end,
+                vertical = function(self) return obe.Canvas.ConvertVAlign(self.v_align); end
+            },
+            setters = {
+                h = function(self, h) self.h_align = obe.Canvas.ConvertHAlign(h); end,
+                horizontal = function(self, h) self.h_align = obe.Canvas.ConvertHAlign(h); end,
+                v = function(self, v) self.v_align = obe.Canvas.ConvertVAlign(v); end,
+                vertical = function(self, v) self.v_align = obe.Canvas.ConvertVAlign(v); end
+            }
+        }
     },
     setters = {
         text = function(self, text)
@@ -394,6 +437,18 @@ obe.Canvas.Bases.Text = {
             if part.text then
                 self.shape:pushString(SFML.String(part.text));
             end
+        end,
+        align = function(self, al)
+            print(inspect(al));
+            if al.h or al.horizontal then
+                print("Found h");
+                self.h_align = obe.Canvas.ConvertHAlign(al.h or al.horizontal);
+            end
+            if al.v or al.vertical then
+                print("Found v");
+                self.v_align = obe.Canvas.ConvertVAlign(al.v or al.vertical);
+            end
+            print("End");
         end
     }
 }
@@ -445,4 +500,12 @@ end
 
 function obe.Canvas.Canvas:setTarget(target)
     self.internal:setTarget(target);
+end
+
+function obe.Canvas.Canvas:clear()
+    self.internal:clear();
+end
+
+function obe.Canvas.Canvas:remove(element)
+    self.internal:remove(element);
 end
