@@ -163,7 +163,7 @@ namespace obe
                             Debug::Log->info("<Bindings:Plugin> : Loaded : {0}", pluginName);
                         }
                         catch (const dynamicLinker::dynamicLinkerException& e) {
-                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0}", pluginName);
+                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0} ({1})", pluginName, e.what());
                         }
                     });
                 }

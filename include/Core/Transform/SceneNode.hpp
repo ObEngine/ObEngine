@@ -17,7 +17,7 @@ namespace obe
         private:
             std::vector<Movable*> m_children;
         public:
-            SceneNode(const std::string& id);
+            explicit SceneNode(const std::string& id);
             /**
              * \brief Adds a child to the SceneNode
              * \param child Pointer to the new SceneNode child

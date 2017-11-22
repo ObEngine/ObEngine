@@ -1,3 +1,7 @@
+#pragma once
+
+#include <map>
+
 namespace obe
 {
     namespace Utils

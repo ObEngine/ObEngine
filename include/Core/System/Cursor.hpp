@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Transform/UnitVector.hpp>

@@ -47,7 +47,7 @@ namespace obe
              * \brief Moves the Camera
              * \param position Position to add to the Camera
              */
-            void move(const Transform::UnitVector& position);
+            void move(const Transform::UnitVector& position) override;
             /**
              * \brief Gets the Position of the Camera
              * \param ref Referencial used to get the Position of the Camera

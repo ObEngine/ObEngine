@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Input/InputButton.hpp>
-#include <Input/InputButtonState.hpp>
-#include "InputCondition.hpp"
+#include <Input/InputAction.hpp>
 
 namespace obe
 {

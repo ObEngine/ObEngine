@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
 
 #include <Time/TimeUtils.hpp>

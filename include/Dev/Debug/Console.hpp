@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Debug/ConsoleStream.hpp>
 #include <Triggers/TriggerGroup.hpp>

@@ -1,8 +1,3 @@
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-
-#include <Collision/PolygonalCollider.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
@@ -15,9 +10,7 @@
 #include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
-#include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
-#include <Utils/MathUtils.hpp>
 
 namespace obe
 {
