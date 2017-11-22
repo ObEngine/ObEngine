@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Input/InputAction.hpp>
+#include <Input/InputCondition.hpp>
 
 namespace obe
 {

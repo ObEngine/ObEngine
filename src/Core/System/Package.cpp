@@ -1,3 +1,5 @@
+#include <vili/vili/ViliParser.hpp>
+
 #include <System/Package.hpp>
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>

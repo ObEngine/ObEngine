@@ -1,3 +1,5 @@
+#include <vili/ErrorHandler.hpp>
+
 #include <Triggers/TriggerDatabase.hpp>
 
 namespace obe

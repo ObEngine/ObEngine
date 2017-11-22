@@ -6,6 +6,7 @@
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
@@ -60,6 +61,7 @@ namespace obe
             else
             {
                 Debug::Log->warn("<Scene> Collider '{0}' already exists !", id);
+                return this->getCollider(id);
             }
         }
 

@@ -1,9 +1,10 @@
 #include <Editor/EditorGUI.hpp>
 #include <Editor/MapEditorTools.hpp>
 #include <Editor/TGUIFallback.hpp>
+#include <Input/InputCondition.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
-#include "Input/InputCondition.hpp"
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
@@ -854,7 +855,6 @@ namespace obe
                                 stateLbl->setRenderer(baseTheme.getRenderer("GreenLabel"));
                                 stateLbl->setText(stateName);
                             }
-                            tgui::Picture::Ptr stateImg = tgui::Picture::create();
                             kIndex += 1;
                             xPos = xPos + 150;
                         }

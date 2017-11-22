@@ -1,11 +1,13 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <vili/ErrorHandler.hpp>
 
 #include <Debug/Console.hpp>
 #include <Script/GlobalState.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
