@@ -161,3 +161,5 @@ function Local.Init()
   canvas:render(); -- Drawing all the stuff !
 end
 ```
+
+Check the Wiki for more examples !

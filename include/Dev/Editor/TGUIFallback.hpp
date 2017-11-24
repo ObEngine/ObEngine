@@ -1,6 +1,5 @@
 #pragma once
 
-#include <TGUI/Layout.hpp>
 #include <TGUI/Widget.hpp>
 
 namespace obe

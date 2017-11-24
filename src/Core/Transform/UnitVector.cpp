@@ -111,6 +111,54 @@ namespace obe
             return *this;
         }
 
+        UnitVector UnitVector::operator+(double add) const
+        {
+            return UnitVector(x + add, y + add, unit);
+        }
+
+        UnitVector UnitVector::operator-(double sub) const
+        {
+            return UnitVector(x - sub, y - sub, unit);
+        }
+
+        UnitVector UnitVector::operator*(double mul) const
+        {
+            return UnitVector(x * mul, y * mul, unit);
+        }
+
+        UnitVector UnitVector::operator/(double div) const
+        {
+            return UnitVector(x / div, y / div, unit);
+        }
+
+        UnitVector& UnitVector::operator+=(double add)
+        {
+            x += add;
+            y += add;
+            return *this;
+        }
+
+        UnitVector& UnitVector::operator-=(double sub)
+        {
+            x -= sub;
+            y -= sub;
+            return *this;
+        }
+
+        UnitVector& UnitVector::operator*=(double mul)
+        {
+            x *= mul;
+            y *= mul;
+            return *this;
+        }
+
+        UnitVector& UnitVector::operator/=(double div)
+        {
+            x /= div;
+            y /= div;
+            return *this;
+        }
+
         UnitVector UnitVector::operator-() const
         {
             return UnitVector(-x, -y, unit);

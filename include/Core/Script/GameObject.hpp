@@ -7,7 +7,6 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
-#include <Script/GlobalState.hpp>
 #include <Transform/SceneNode.hpp>
 #include <Triggers/TriggerGroup.hpp>
 

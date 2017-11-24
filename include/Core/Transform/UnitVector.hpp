@@ -38,7 +38,7 @@ namespace obe
              * \brief Constructor of UnitVector
              * \param unit Unit of the UnitVector
              */
-            UnitVector(Units unit = Units::WorldUnits);
+            explicit UnitVector(Units unit = Units::WorldUnits);
             /**
              * \brief Constructor (with x, y) of UnitVector
              * \param x x Coordinate of the UnitVector
@@ -132,9 +132,73 @@ namespace obe
             */
             UnitVector& operator/=(const UnitVector& div);
 
+            /**
+             * \brief Adds a number to both x and y Coordinates of the UnitVector and return the result
+             * \param add Number to add to the two Coordinates of the UnitVector
+             * \return An UnitVector equals to the base UnitVector plus the "add" number on both Coordinates
+             */
+            UnitVector operator+(double add) const;
+            /**
+             * \brief Subtracts a number to both x and y Coordinates of the UnitVector and return the result
+             * \param sub Number to subtract to the two Coordinates of the UnitVector
+             * \return An UnitVector equals to the base UnitVector minus the "sub" number on both Coordinates
+             */
+            UnitVector operator-(double sub) const;
+            /**
+             * \brief Multiplies a number to both x and y Coordinates of the UnitVector and return the result
+             * \param mul Number to multiply to the two Coordinates of the UnitVector
+             * \return An UnitVector equals to the base UnitVector with "mul" number multiplying both Coordinates
+             */
+            UnitVector operator*(double mul) const;
+            /**
+             * \brief Divides a number to both x and y Coordinates of the UnitVector and return the result
+             * \param div Number to divide to the two Coordinates of the UnitVector
+             * \return An UnitVector equals to the base UnitVector with "div" number dividing both Coordinates
+             */
+            UnitVector operator/(double div) const;
+
+            /**
+             * \brief Increments both Coordinates of the UnitVector with a given number
+             * \param add Number used to increment both Coordinates of the UnitVector
+             * \return A reference to the current UnitVector (to chain calls)
+             */
+            UnitVector& operator+=(double add);
+            /**
+             * \brief Decrements both Coordinates of the UnitVector with a given number
+             * \param sub Number used to decrement both Coordinates of the UnitVector
+             * \return A reference to the current UnitVector (to chain calls)
+             */
+            UnitVector& operator-=(double sub);
+            /**
+             * \brief Multiplies and assigns the UnitVector
+             * \param mul Number used to multiply and assign both Coordinates of the UnitVector
+             * \return A reference to the current UnitVector (to chain calls)
+             */
+            UnitVector& operator*=(double mul);
+            /**
+             * \brief Divides and assigns the UnitVector
+             * \param div Number used to divide and assign both Coordinates of the UnitVector
+             * \return A reference to the current UnitVector (to chain calls)
+             */
+            UnitVector& operator/=(double div);
+
+            /**
+             * \brief Negates both Coordinates of the UnitVector
+             * \return Return an UnitVector equals to the base UnitVector with both Coordinates negated
+             */
             UnitVector operator-() const;
 
+            /**
+             * \brief Tests equality between two UnitVector
+             * \param vec Other UnitVector to test equality
+             * \return true if both UnitVector are equals, false otherwise (unit not included)
+             */
             bool operator==(const UnitVector& vec) const;
+            /**
+             * \brief Tests inequality between two UnitVector
+             * \param vec Other UnitVector to test inequality
+             * \return true if both UnitVector are different, false otherwise (unit not included)
+             */
             bool operator!=(const UnitVector& vec) const;
 
             /**

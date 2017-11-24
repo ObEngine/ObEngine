@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include <kaguya/kaguya.hpp>
@@ -35,6 +34,7 @@ namespace obe
                  * \param target Target where to render the result
                  */
                 virtual void draw(sf::RenderTexture& target) = 0;
+                virtual ~CanvasElement() = default;
             };
 
             /**

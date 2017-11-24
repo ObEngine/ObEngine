@@ -33,7 +33,8 @@ namespace obe
             if (m_fontDatabase.find(path) == m_fontDatabase.end())
             {
                 std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
-                System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
+                std::string foundAt = System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
+                std::cout << "Font : " << path << " : found at : " << foundAt << std::endl;
                 
                 if (tempFont != nullptr)
                     m_fontDatabase[path] = move(tempFont);

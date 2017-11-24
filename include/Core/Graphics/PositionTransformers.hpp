@@ -4,7 +4,6 @@
 #include <map>
 
 #include <Transform/UnitVector.hpp>
-#include <Types/Identifiable.hpp>
 
 namespace obe
 {

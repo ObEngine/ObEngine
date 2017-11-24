@@ -2,28 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <fstream>
-#include <iostream>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
-
-#include <tinydir/tinydir.h>
-#ifdef _USE_CPP_NEW_FS
-#include <experimental/filesystem>
-#endif
-
-#if _MSC_VER
-#include <io.h>
-#include <direct.h>
-#include <winbase.h>
-#define FsAccess _access
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define FsAccess access
-#define GetCurrentDir getcwd
-#endif
 
 namespace obe
 {

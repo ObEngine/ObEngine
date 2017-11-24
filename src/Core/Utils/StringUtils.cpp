@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <clocale>
 #include <cctype>
-#include <sstream>
 
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>

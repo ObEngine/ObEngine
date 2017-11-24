@@ -1,12 +1,10 @@
 #pragma once
 
 #include <clipper/clipper.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Scene/Camera.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
 
 namespace obe
@@ -353,7 +351,6 @@ namespace obe
             //Debug
             /**
              * \brief Draws the Polygon on the screen
-             * \param target sf::RenderWindow you want to draw the Polygon to
              * \param camera Camera of the Scene (used for draw offset)
              * \param drawLines Draws the lines of the Polygon or not
              * \param drawPoints Draws the points of the Polygon or not

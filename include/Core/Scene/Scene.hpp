@@ -153,7 +153,7 @@ namespace obe
              * \param id Id of the new LevelSprite
              * \return A pointer to the newly created LevelSprite
              */
-            Graphics::LevelSprite* createLevelSprite(const std::string& id, bool addToSceneRoot = true);
+            Graphics::LevelSprite* createLevelSprite(const std::string& id = "", bool addToSceneRoot = true);
             /**
             * \brief Get how many LevelSprites are present in the Scene
             * \return An unsigned int containing how many LevelSprites are present in the Scene
@@ -201,7 +201,7 @@ namespace obe
              * \param id Id of the new Collider
              * \return A pointer to the newly created Collider
              */
-            Collision::PolygonalCollider* createCollider(const std::string& id, bool addToSceneRoot = true);
+            Collision::PolygonalCollider* createCollider(const std::string& id = "", bool addToSceneRoot = true);
             /**
              * \brief Get how many Colliders are present in the Scene
              * \return The amount of Colliders present in the Scene

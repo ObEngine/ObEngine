@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Time/TimeUtils.hpp>
 #include <Triggers/Trigger.hpp>
-#include "Time/TimeUtils.hpp"
 
 namespace obe
 {

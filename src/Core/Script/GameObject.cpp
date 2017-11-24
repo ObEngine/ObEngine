@@ -8,6 +8,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include <Utils/StringUtils.hpp>
 
 #define GAMEOBJECTENV ScriptEngine["__ENVIRONMENTS"][m_envIndex]
 

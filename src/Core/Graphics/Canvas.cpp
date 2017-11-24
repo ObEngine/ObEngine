@@ -142,10 +142,10 @@ namespace obe
 
             void Canvas::remove(const std::string& id)
             {
-                std::remove_if(m_elements.begin(), m_elements.end(), [&id](auto& elem)
+                m_elements.erase(std::remove_if(m_elements.begin(), m_elements.end(), [&id](auto& elem)
                 {
                     return elem.second->id == id;
-                });
+                }), m_elements.end());
             }
 
             const sf::Texture& Canvas::getTexture() const

@@ -10,7 +10,6 @@
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Types/Configurable.hpp>
-#include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
 
 namespace obe
@@ -39,19 +38,19 @@ namespace obe
             Transform::UnitVector m_dp;
             /**
             * \brief Creates a Scale HandlePoint
-            * \param parentRect Rect of the parent LevelSprite
+            * \param parent Rect of the parent LevelSprite
             * \param ref Referencial of the HandlePoint
             */
             LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referencial ref);
             /**
             * \brief Creates a Rotate HandlePoint
-            * \param parentRect Rect of the parent LevelSprite
+            * \param parent Rect of the parent LevelSprite
             */
             LevelSpriteHandlePoint(LevelSprite* parent);
             /**
             * \brief Move the HandlePoint to the given Position
-            * \param x x Coordinate of the Position where to move the HandlePoint
-            * \param y y Coordinate of the Position where to move the HandlePoint
+            * \param position Position where the HandlePoint should move to
+            * \param camera Camera used to manipulate PositionTransformers
             */
             void moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera);
             /**
@@ -290,7 +289,6 @@ namespace obe
             //Handle
             /**
              * \brief Draws the handle used to scale the Sprite
-             * \param target Window where to draw the handle
              * \param spritePositionX x Coordinate of the Offset of the Handle
              * \param spritePositionY y Coordinate of the Offset of the Handle
              */

@@ -8,6 +8,7 @@
 #include <System/Path.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/StringUtils.hpp>
+#include <Utils/VectorUtils.hpp>
 
 namespace obe
 {

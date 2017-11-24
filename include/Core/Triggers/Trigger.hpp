@@ -1,15 +1,10 @@
 #pragma once
 
-#include <queue>
-
 #include <kaguya/kaguya.hpp>
 
 #include <Debug/Logger.hpp>
 #include <Script/GlobalState.hpp>
 #include <Types/Any.hpp>
-#include <Utils/StringUtils.hpp>
-#include <Utils/TypeUtils.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe
 {

@@ -1,6 +1,7 @@
 #include <Input/InputManager.hpp>
 #include <Input/KeyList.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include <Utils/VectorUtils.hpp>
 
 namespace obe
 {

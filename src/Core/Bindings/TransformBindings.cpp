@@ -110,17 +110,23 @@ namespace obe
                         static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::add),
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::add)
                     )
-                    .addFunction("__add", &Transform::UnitVector::operator+)
-                    .addFunction("__sub", 
-                        static_cast<Transform::UnitVector (Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator-))
-                    .addFunction("__div", &Transform::UnitVector::operator/)
-                    .addFunction("__mul", &Transform::UnitVector::operator*)
+                    .addOverloadedFunctions("__add", 
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator+),
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(double) const>(&Transform::UnitVector::operator+))
+                    .addOverloadedFunctions("__sub", 
+                        static_cast<Transform::UnitVector (Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator-),
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(double) const>(&Transform::UnitVector::operator-))
+                    .addOverloadedFunctions("__mul",
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator*),
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(double) const>(&Transform::UnitVector::operator*))
+                    .addOverloadedFunctions("__div",
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(const Transform::UnitVector&) const>(&Transform::UnitVector::operator/),
+                        static_cast<Transform::UnitVector(Transform::UnitVector::*)(double) const>(&Transform::UnitVector::operator/))
                     .addOverloadedFunctions("set",
                         static_cast<void (Transform::UnitVector::*)(const Transform::UnitVector&)>(&Transform::UnitVector::set),
                         static_cast<void (Transform::UnitVector::*)(double, double)>(&Transform::UnitVector::set)
                     )
-                    .addFunction("equal", &Transform::UnitVector::operator==)
-                    .addFunction("different", &Transform::UnitVector::operator!=)
+                    .addFunction("__eq", &Transform::UnitVector::operator==)
                     .addFunction("to", static_cast<Transform::UnitVector (Transform::UnitVector::*)(Transform::Units) const>(&Transform::UnitVector::to))
                     .addProperty("x", &Transform::UnitVector::x)
                     .addProperty("y", &Transform::UnitVector::y)

@@ -1,3 +1,5 @@
+#include <vili/ErrorHandler.hpp>
+
 #include <Debug/Logger.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Triggers/TriggerGroup.hpp>
