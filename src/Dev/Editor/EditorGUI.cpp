@@ -100,7 +100,6 @@ namespace obe
                 tgui::Button::Ptr editorButton = tgui::Button::create();
                 tgui::CheckBox::Ptr updateStateCheckbox = tgui::CheckBox::create();
                 tgui::ComboBox::Ptr editMode = tgui::ComboBox::create();
-                tgui::HorizontalWrap::Ptr toolbarWrap = tgui::HorizontalWrap::create();
 
                 mainPanel->add(titlePanel, "titlePanel");
 

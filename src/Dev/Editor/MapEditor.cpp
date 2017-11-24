@@ -358,8 +358,16 @@ namespace obe
                 }
                 else
                 {
+                    std::cout << "SelectedSprite : " << selectedSprite << std::endl;
                     if (selectedSprite != nullptr)
+                    {
                         selectedSprite->setColor(sf::Color::White);
+                        selectedSprite->setSelected(false);
+                    }
+                    if (hoveredSprite != nullptr)
+                    {
+                        hoveredSprite->setColor(sf::Color::White);
+                    }
                     selectedSprite = nullptr;
                     hoveredSprite = nullptr;
                     selectedSpriteOffsetX = 0;
