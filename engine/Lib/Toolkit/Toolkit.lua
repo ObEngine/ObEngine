@@ -62,7 +62,7 @@ function autocompleteArgs(command, query)
         end
         if recurseIn then
             print("RECURSION")
-            return autocompleteArgs(recurseIn.children, List(subpath):join(" "));
+            return autocompleteArgs(recurseIn.children, pl.List(subpath):join(" "));
         else
             print("NOT FOUND HURR DURR");
             return {};
@@ -193,7 +193,7 @@ function autocompleteHandle(ToolkitFunctions, command)
     if #command > 0 then
         local commandName, cargs = decomposeCommand(command);
         if ToolkitFunctions[commandName] then
-            local useQuery = List(cargs):join(" ");
+            local useQuery = pl.List(cargs):join(" ");
             if command:sub(#command, #command) == " " then
                 useQuery = useQuery .. " ";
             end
@@ -260,7 +260,7 @@ function autocomplete(command)
                 if command:sub(#command, #command) == " " and #cargs > 0 then
                     addSpace = " ";
                 end
-                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, List(cargs):join() .. addSpace);
+                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, pl.List(cargs):join() .. addSpace);
                 if getTableSize(completions) == 1 and getTableKeys(completions)[1] == getLastArgument(command) then
                     command = command .. " ";
                     _term_write(" ");

@@ -26,9 +26,7 @@ namespace obe
                 Load(lua, "obe.UnitBasedObject");
                 Load(lua, "obe.Selectable");
                 Load(lua, "obe.Rect");
-                (*lua)["obe"]["LevelSprite"].setClass(
-                    kaguya::UserdataMetatable<
-                    Graphics::LevelSprite,
+                (*lua)["obe"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite,
                     kaguya::MultipleBase<
                     Transform::UnitBasedObject,
                     Types::Selectable,
@@ -81,42 +79,40 @@ namespace obe
                 Load(lua, "obe.UnitVector");
                 Load(lua, "SFML.Color");
                 (*lua)["obe"]["Canvas"] = kaguya::NewTable();
-                (*lua)["obe"]["Canvas"]["CanvasElement"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["CanvasElement"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement>()
                     .addProperty("layer", &Graphics::Canvas::CanvasElement::layer)
                     .addProperty("visible", &Graphics::Canvas::CanvasElement::visible)
                     .addProperty("id", &Graphics::Canvas::CanvasElement::id)
                 );
-                (*lua)["obe"]["Canvas"]["Line"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Line, Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["Line"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Line, 
+                    Graphics::Canvas::CanvasElement>()
                         .addProperty("p1", &Graphics::Canvas::Line::p1)
                         .addProperty("p2", &Graphics::Canvas::Line::p2)
                         .addProperty("thickness", &Graphics::Canvas::Line::thickness)
                         .addProperty("color", &Graphics::Canvas::Line::color)
                 );
-                (*lua)["obe"]["Canvas"]["Rectangle"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["Rectangle"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, 
+                    Graphics::Canvas::CanvasElement>()
                         .addProperty("shape", &Graphics::Canvas::Rectangle::shape)
                 );
-                (*lua)["obe"]["Canvas"]["Text"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Text, Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["Text"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Text, 
+                    Graphics::Canvas::CanvasElement>()
                         .addProperty("fontPath", &Graphics::Canvas::Text::fontPath)
                         .addProperty("shape", &Graphics::Canvas::Text::shape)
                         .addProperty("h_align", &Graphics::Canvas::Text::h_align)
                         .addProperty("v_align", &Graphics::Canvas::Text::v_align)
                 );
-                (*lua)["obe"]["Canvas"]["Circle"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Circle, Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["Circle"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Circle, 
+                    Graphics::Canvas::CanvasElement>()
                         .addProperty("shape", &Graphics::Canvas::Circle::shape)
                         .addProperty("radius", &Graphics::Canvas::Circle::radius)
                 );
-                (*lua)["obe"]["Canvas"]["Sprite"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Sprite, Graphics::Canvas::CanvasElement>()
+                (*lua)["obe"]["Canvas"]["Sprite"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Sprite, 
+                    Graphics::Canvas::CanvasElement>()
                         .addProperty("path", &Graphics::Canvas::Sprite::path)
                         .addProperty("sprite", &Graphics::Canvas::Sprite::sprite)
                 );
-                (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(
-                    kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()
+                (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()
                     .setConstructors<Graphics::Canvas::Canvas(unsigned int, unsigned int)>()
                     .addFunction("Line", &Graphics::Canvas::Canvas::line)
                     .addFunction("Rectangle", &Graphics::Canvas::Canvas::rectangle)

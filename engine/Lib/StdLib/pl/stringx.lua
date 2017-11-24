@@ -36,7 +36,7 @@ local function assert_nonempty_string(n,s)
 end
 
 local function makelist(l)
-    return setmetatable(l, require('Lib.StdLib.pl.tablex'))
+    return setmetatable(l, require('Lib.StdLib.pl.List'))
 end
 
 local stringx = {}
