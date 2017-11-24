@@ -7,22 +7,22 @@ namespace obe
         void connectCollidersActions(
             Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager,
-            Scene::Scene& world,
+            Scene::Scene& scene,
             System::Cursor& cursor,
             int& colliderPtGrabbed,
             Collision::PolygonalCollider*& selectedMasterCollider,
             bool& masterColliderGrabbed)
         {
             inputManager.getAction("ColliderPointPick").connect(
-                [editorTriggers, &world, &cursor, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed]
+                [editorTriggers, &scene, &cursor, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed]
             (const Input::InputActionEvent& event)
             {
-                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
-                if (colliderPtGrabbed == -1 && world.getColliderPointByPosition(cursCoord).first != nullptr)
+                if (colliderPtGrabbed == -1 && scene.getColliderPointByPosition(cursCoord).first != nullptr)
                 {
                     std::pair<Collision::PolygonalCollider*, int> selectedPtCollider;
-                    selectedPtCollider = world.getColliderPointByPosition(cursCoord);
+                    selectedPtCollider = scene.getColliderPointByPosition(cursCoord);
                     if (selectedMasterCollider != nullptr && selectedMasterCollider != selectedPtCollider.first)
                     {
                         selectedMasterCollider->setSelected(false);
@@ -41,12 +41,12 @@ namespace obe
             });
             
             inputManager.getAction("ColliderPointMove").connect(
-                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &world, &cursor]
+                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &scene, &cursor]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
                 {
-                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     editorTriggers->pushParameter("ColliderPointMoved", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderPointMoved", "pointIndex", colliderPtGrabbed);
@@ -66,15 +66,15 @@ namespace obe
             });
 
             inputManager.getAction("ColliderMasterPick").connect(
-                [editorTriggers, &world, &cursor, &selectedMasterCollider, &colliderPtGrabbed, &masterColliderGrabbed]
+                [editorTriggers, &scene, &cursor, &selectedMasterCollider, &colliderPtGrabbed, &masterColliderGrabbed]
             (const Input::InputActionEvent& event)
             {
 
-                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getX() + pixelCamera.x, cursor.getY() + pixelCamera.y, Transform::Units::WorldPixels);
-                if (world.getColliderByCentroidPosition(cursCoord) != nullptr)
+                if (scene.getColliderByCentroidPosition(cursCoord) != nullptr)
                 {
-                    Collision::PolygonalCollider* tempCol = world.getColliderByCentroidPosition(cursCoord);
+                    Collision::PolygonalCollider* tempCol = scene.getColliderByCentroidPosition(cursCoord);
                     if (selectedMasterCollider != nullptr && selectedMasterCollider != tempCol)
                     {
                         selectedMasterCollider->setSelected(false);
@@ -84,7 +84,7 @@ namespace obe
                     }
                     selectedMasterCollider = tempCol;
                     selectedMasterCollider->setSelected(true);
-                    if (selectedMasterCollider->getParentId() != "") world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
+                    if (selectedMasterCollider->getParentId() != "") scene.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
                     masterColliderGrabbed = true;
                     editorTriggers->pushParameter("ColliderPicked", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderPicked", "pos", cursCoord);
@@ -94,12 +94,12 @@ namespace obe
 
             //Collision Master Move
             inputManager.getAction("ColliderMasterMove").connect(
-                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &world, &cursor]
+                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &scene, &cursor]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && masterColliderGrabbed)
                 {
-                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     editorTriggers->pushParameter("ColliderMoved", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderMoved", "oldPos", selectedMasterCollider->getMasterPointPosition().to<Transform::Units::WorldPixels>());
@@ -110,27 +110,27 @@ namespace obe
             });
 
             inputManager.getAction("ColliderMasterRelease").connect(
-                [editorTriggers, &masterColliderGrabbed, &selectedMasterCollider, &world]
+                [editorTriggers, &masterColliderGrabbed, &selectedMasterCollider, &scene]
             (const Input::InputActionEvent& event)
             {
                 if (masterColliderGrabbed)
                 {
                     masterColliderGrabbed = false;
                     if (selectedMasterCollider->getParentId() != "") 
-                        world.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
+                        scene.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
                     editorTriggers->pushParameter("ColliderReleased", "collider", selectedMasterCollider);
                     editorTriggers->trigger("ColliderReleased");
                 }
             });
 
             inputManager.getAction("ColliderPointCreate").connect(
-                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &world, &cursor]
+                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &scene, &cursor]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed)
                 {
                     const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
-                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                     int rqPtRes = selectedMasterCollider->hasPoint(cursCoord, pTolerance);
                     if (rqPtRes == -1)
@@ -146,7 +146,7 @@ namespace obe
             });
 
             inputManager.getAction("ColliderPointRemove").connect(
-                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &world]
+                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &scene]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
@@ -157,7 +157,7 @@ namespace obe
                         editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                         editorTriggers->trigger("ColliderRemoved");
                         selectedMasterCollider->setSelected(false);
-                        world.removeCollider(selectedMasterCollider->getId());
+                        scene.removeCollider(selectedMasterCollider->getId());
                         selectedMasterCollider = nullptr;
                         masterColliderGrabbed = false;
                         colliderPtGrabbed = -1;
@@ -174,16 +174,16 @@ namespace obe
             });
 
             inputManager.getAction("ColliderRelease").connect(
-                [editorTriggers, &selectedMasterCollider, &world, &cursor, &masterColliderGrabbed, &colliderPtGrabbed]
+                [editorTriggers, &selectedMasterCollider, &scene, &cursor, &masterColliderGrabbed, &colliderPtGrabbed]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr)
                 {
-                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
-                    if (world.getColliderByCentroidPosition(cursCoord) == nullptr)
+                    if (scene.getColliderByCentroidPosition(cursCoord) == nullptr)
                     {
-                        if (world.getColliderPointByPosition(cursCoord).first == nullptr)
+                        if (scene.getColliderPointByPosition(cursCoord).first == nullptr)
                         {
                             editorTriggers->pushParameter("ColliderReleased", "collider", selectedMasterCollider);
                             editorTriggers->pushParameter("ColliderReleased", "pos", cursCoord);
@@ -198,7 +198,7 @@ namespace obe
             });
 
             inputManager.getAction("ColliderRemove").connect(
-                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &world, &colliderPtGrabbed]
+                [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &scene, &colliderPtGrabbed]
             (const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider != nullptr && masterColliderGrabbed)
@@ -206,27 +206,21 @@ namespace obe
                     editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                     editorTriggers->trigger("ColliderRemoved");
                     selectedMasterCollider->setSelected(false);
-                    world.removeCollider(selectedMasterCollider->getId());
+                    scene.removeCollider(selectedMasterCollider->getId());
                     selectedMasterCollider = nullptr;
                     masterColliderGrabbed = false;
                     colliderPtGrabbed = -1;
                 }
             });
 
-            inputManager.getAction("ColliderCreate").connect([editorTriggers, &selectedMasterCollider, &world, &cursor](const Input::InputActionEvent& event)
+            inputManager.getAction("ColliderCreate").connect([editorTriggers, &selectedMasterCollider, &scene, &cursor](const Input::InputActionEvent& event)
             {
                 if (selectedMasterCollider == nullptr)
                 {
-                    Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                    int i = 0;
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                     Transform::UnitVector pPos(cursor.getConstrainedX(), cursor.getConstrainedY(), Transform::Units::WorldPixels);
                     pPos += pixelCamera;
-                    std::string testId = "collider" + std::to_string(world.getColliderAmount() + i);
-                    while (world.doesColliderExists(testId))
-                    {
-                        testId = "collider" + std::to_string(world.getColliderAmount() + i++);
-                    }
-                    Collision::PolygonalCollider* newCollider = world.createCollider(testId);
+                    Collision::PolygonalCollider* newCollider = scene.createCollider();
                     newCollider->addPoint(Transform::UnitVector(50, 0, Transform::Units::WorldPixels));
                     newCollider->addPoint(Transform::UnitVector(0, 50, Transform::Units::WorldPixels));
                     newCollider->addPoint(Transform::UnitVector(100, 50, Transform::Units::WorldPixels));
@@ -235,6 +229,10 @@ namespace obe
                     editorTriggers->pushParameter("ColliderCreated", "pos", pPos);
                     editorTriggers->trigger("ColliderCreated");
                 }
+            });
+
+            inputManager.getAction("ColliderCopy").connect([editorTriggers, &selectedMasterCollider, &scene, &cursor](const Input::InputActionEvent& event)
+            {
             });
         }
     }

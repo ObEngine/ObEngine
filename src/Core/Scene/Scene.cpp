@@ -30,9 +30,20 @@ namespace obe
 
         Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id, bool addToSceneRoot)
         {
-            if (!this->doesLevelSpriteExists(id))
+            std::string createId = id;
+            if (createId.empty())
             {
-                std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(id);
+                int i = 0;
+                std::string testId = "sprite" + std::to_string(this->getColliderAmount() + i);
+                while (this->doesLevelSpriteExists(testId))
+                {
+                    testId = "sprite" + std::to_string(this->getLevelSpriteAmount() + i++);
+                }
+                createId = testId;
+            }
+            if (!this->doesLevelSpriteExists(createId))
+            {
+                std::unique_ptr<Graphics::LevelSprite> newLevelSprite = std::make_unique<Graphics::LevelSprite>(createId);
 
                 Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
                 m_spriteArray.push_back(move(newLevelSprite));
@@ -43,25 +54,36 @@ namespace obe
                 this->reorganizeLayers();
                 return returnLevelSprite;
             }
-            else
+            else // <REVISION> Copy ColliderCreate behaviour
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.SpriteAlreadyExists", { {"id", id}, {"mapfile", m_levelName} });
+                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.SpriteAlreadyExists", { {"id", createId}, {"mapfile", m_levelName} });
             }
         }
 
         Collision::PolygonalCollider* Scene::createCollider(const std::string& id, bool addToSceneRoot)
         {
-            if (!this->doesColliderExists(id))
+            std::string createId = id;
+            if (createId.empty())
             {
-                m_colliderArray.push_back(std::make_unique<Collision::PolygonalCollider>(id));
+                int i = 0;
+                std::string testId = "collider" + std::to_string(this->getColliderAmount() + i);
+                while (this->doesColliderExists(testId))
+                {
+                    testId = "collider" + std::to_string(this->getColliderAmount() + i++);
+                }
+                createId = testId;
+            }
+            if (!this->doesColliderExists(createId))
+            {
+                m_colliderArray.push_back(std::make_unique<Collision::PolygonalCollider>(createId));
                 if (addToSceneRoot)
                     m_sceneRoot.addChild(m_colliderArray.back().get());
                 return m_colliderArray.back().get();
             }
             else
             {
-                Debug::Log->warn("<Scene> Collider '{0}' already exists !", id);
-                return this->getCollider(id);
+                Debug::Log->warn("<Scene> Collider '{0}' already exists !", createId);
+                return this->getCollider(createId);
             }
         }
 
