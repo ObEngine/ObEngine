@@ -98,6 +98,7 @@ namespace obe
             // Types
                 .add("Identifiable", &TypesBindings::LoadIdentifiable)
                 .add("Selectable", &TypesBindings::LoadSelectable)
+                .add("Serializable", &TypesBindings::LoadSerializable)
                 .add("Togglable", &TypesBindings::LoadTogglable)
             // Utils
                 .add("ExecUtils", &UtilsBindings::LoadExecUtils)

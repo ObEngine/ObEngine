@@ -363,7 +363,7 @@ namespace vili
                                         cArg.getDataNode("value").setAnnotation("Set");
                                         i++;
                                     }
-                                    m_templateList[templateName]->build(&getPath(Path(addPath)), attributeID);
+                                    m_templateList[templateName]->build(&this->getPath(Path(addPath)), attributeID);
                                     getPath(Path(addPath)).getComplexNode(attributeID).useTemplate(m_templateList[templateName]);
 
                                     if (verbose)

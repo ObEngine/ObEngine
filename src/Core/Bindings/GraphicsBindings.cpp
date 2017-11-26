@@ -25,6 +25,7 @@ namespace obe
             {
                 Load(lua, "obe.UnitBasedObject");
                 Load(lua, "obe.Selectable");
+                Load(lua, "obe.Serializable");
                 Load(lua, "obe.Rect");
                 (*lua)["obe"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite,
                     kaguya::MultipleBase<

@@ -36,7 +36,6 @@ namespace vili
             if (location->getType() == NodeType::ComplexNode)
             {
                 ComplexNode* complexLocation = static_cast<ComplexNode*>(location);
-                std::cout << "ContainsLink ! " << complexLocation->contains(NodeType::ComplexNode, pathPart) << std::endl;
                 if (complexLocation->contains(NodeType::ComplexNode, pathPart))
                     location = &complexLocation->getComplexNode(pathPart);
                 else if (complexLocation->contains(NodeType::DataNode, pathPart))
@@ -78,16 +77,12 @@ namespace vili
     void LinkNode::apply()
     {
         ComplexNode* complexParent = dynamic_cast<ComplexNode*>(m_parent);
-        complexParent->remove(m_id);
+        Node* target = this->getTarget();
 
-        if (getTarget()->getType() == NodeType::ComplexNode)
-            dynamic_cast<ComplexNode*>(getTarget())->copy(complexParent, m_id);
-        else if (getTarget()->getType() == NodeType::ArrayNode)
-            dynamic_cast<ArrayNode*>(getTarget())->copy(complexParent, m_id);
-        else if (getTarget()->getType() == NodeType::DataNode)
-            dynamic_cast<DataNode*>(getTarget())->copy(complexParent, m_id);
-        else if (getTarget()->getType() == NodeType::LinkNode)
-            dynamic_cast<LinkNode*>(getTarget())->copy(complexParent, m_id);
+        complexParent->extractElement(this);
+
+        target->copy(complexParent, m_id);
+        delete this;
     }
 
     bool LinkNode::operator==(const LinkNode& compare) const

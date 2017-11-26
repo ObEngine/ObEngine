@@ -54,6 +54,7 @@ namespace obe
             {
                 Load(lua, "obe.UnitBasedObject");
                 Load(lua, "obe.Selectable");
+                Load(lua, "obe.Serializable");
                 Load(lua, "obe.Movable");
                 (*lua)["obe"]["PolygonalCollider"].setClass(kaguya::UserdataMetatable<Collision::PolygonalCollider,
                     kaguya::MultipleBase<

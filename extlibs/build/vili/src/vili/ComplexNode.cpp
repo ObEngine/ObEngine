@@ -53,8 +53,14 @@ namespace vili
         if (this->contains(element->getId()))
         {
             this->removeOwnership(element);
+            unsigned int fIndex = 0;
+            for (unsigned int i = 0; i < m_children.size(); i++)
+            {
+                if (element->getId() == m_children[i]->getId())
+                    fIndex = i;
+            }
             this->getNodePtr(element->getId()).release();
-            this->remove(element->getId());
+            m_children.erase(m_children.begin() + fIndex);
             return element;
         }
         throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongExtraction", {{"path", getNodePath()},{"element", element->getNodePath()}});
@@ -157,7 +163,6 @@ namespace vili
     {
         for (auto& child : m_children)
         {
-            std::cout << "Iterate over child : " << child->getId() << " searching for " << id << std::endl;
             if (child->getId() == id && child->getType() == searchType)
                 return true;
         }
@@ -229,6 +234,7 @@ namespace vili
 
     DataNode& ComplexNode::pushDataNode(DataNode* attribute)
     {
+        attribute->setParent(this);
         if (!this->contains(attribute->getId()))
             m_children.push_back(std::unique_ptr<DataNode>(attribute));
         else
@@ -245,6 +251,7 @@ namespace vili
 
     ArrayNode& ComplexNode::pushArrayNode(ArrayNode* attribute)
     {
+        attribute->setParent(this);
         if (!this->contains(attribute->getId()))
             m_children.push_back(std::unique_ptr<ArrayNode>(attribute));
         else
@@ -255,12 +262,13 @@ namespace vili
     ComplexNode& ComplexNode::createComplexNode(const std::string& id)
     {
         if (!this->contains(id))
-            m_children.push_back(std::make_unique<ComplexNode>(id));
+            m_children.push_back(std::make_unique<ComplexNode>(this, id));
         return this->getComplexNode(id);
     }
 
     ComplexNode& ComplexNode::pushComplexNode(ComplexNode* attribute)
     {
+        attribute->setParent(this);
         if (!this->contains(attribute->getId()))
             m_children.push_back(std::unique_ptr<ComplexNode>(attribute));
         else
@@ -277,6 +285,7 @@ namespace vili
 
     LinkNode& ComplexNode::pushLinkNode(LinkNode* attribute)
     {
+        attribute->setParent(this);
         if (!this->contains(attribute->getId()))
             m_children.push_back(std::unique_ptr<LinkNode>(attribute));
         else
@@ -341,7 +350,10 @@ namespace vili
 
     void ComplexNode::remove(const std::string& id)
     {
-        
+        m_children.erase(std::remove_if(m_children.begin(), m_children.end(), [&id](auto& child)
+        {
+            return (child->getId() == id);
+        }), m_children.end());
     }
 
     void ComplexNode::clear()

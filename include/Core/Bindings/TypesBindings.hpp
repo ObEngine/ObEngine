@@ -13,6 +13,7 @@ namespace obe
         {
             void LoadIdentifiable(kaguya::State* lua);
             void LoadSelectable(kaguya::State* lua);
+            void LoadSerializable(kaguya::State* lua);
             void LoadTogglable(kaguya::State* lua);
         }
     }

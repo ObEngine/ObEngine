@@ -1,6 +1,7 @@
 #include <Bindings/TypesBindings.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
+#include <Types/Serializable.hpp>
 #include <Types/Togglable.hpp>
 
 namespace obe
@@ -26,6 +27,15 @@ namespace obe
                     .addFunction("unselect", &Types::Selectable::unselect)
                 );
             }
+
+            void LoadSerializable(kaguya::State* lua)
+            {
+                (*lua)["obe"]["Serializable"].setClass(kaguya::UserdataMetatable<Types::Serializable>()
+                    .addFunction("dump", &Types::Serializable::dump)
+                    .addFunction("load", &Types::Serializable::load)
+                );
+            }
+
             void LoadTogglable(kaguya::State* lua)
             {
                 (*lua)["obe"]["Togglable"].setClass(kaguya::UserdataMetatable<Types::Togglable>()

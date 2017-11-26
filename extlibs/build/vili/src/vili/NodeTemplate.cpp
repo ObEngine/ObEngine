@@ -58,8 +58,11 @@ namespace vili
                 {
                     for (LinkNode* compare : attributeAddresses)
                     {
-                        if (link == compare)
+                        if (*link == *compare)
+                        {
                             link->apply();
+                            break;
+                        }
                     }
                 }
             });
