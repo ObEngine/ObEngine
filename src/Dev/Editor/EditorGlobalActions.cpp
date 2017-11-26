@@ -222,6 +222,13 @@ namespace obe
                 {
                     sceneClipboard.clear();
                     selectedMasterCollider->dump(sceneClipboard);
+                    sceneClipboard.at(selectedMasterCollider->getId()).createDataNode("type", "Collider");
+                }
+                if (selectedSprite)
+                {
+                    sceneClipboard.clear();
+                    selectedSprite->dump(sceneClipboard);
+                    sceneClipboard.at(selectedSprite->getId()).createDataNode("type", "LevelSprite");
                 }
             });
 
@@ -230,9 +237,21 @@ namespace obe
                 Debug::Log->debug("<EditorGlobalActions> Cutting Object");
             });
 
-            inputManager.getAction("Paste").connect([](const Input::InputActionEvent& event)
+            inputManager.getAction("Paste").connect([&sceneClipboard, &scene](const Input::InputActionEvent& event)
             {
                 Debug::Log->debug("<EditorGlobalActions> Pasting Object");
+
+                for (vili::ComplexNode* item : sceneClipboard.getAll<vili::ComplexNode>())
+                {
+                    if (item->at<vili::DataNode>("type").get<std::string>() == "Collider")
+                    {
+                        scene.createCollider()->load(*item);
+                    }
+                    else if (item->at<vili::DataNode>("type").get<std::string>() == "LevelSprite")
+                    {
+                        scene.createLevelSprite()->load(*item);
+                    }
+                }
             });
         }
 

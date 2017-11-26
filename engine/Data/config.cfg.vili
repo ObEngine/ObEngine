@@ -9,8 +9,8 @@ GameConfig:
     
 KeyBinding:
     mapEditor:
-        SpriteMode:"Pressed:W"
-        CollisionMode:"Pressed:C"
+        SpriteMode:"Pressed:1"
+        CollisionMode:"Pressed:2"
         CamMovable:"Pressed:F10"
         CamFree:"Pressed:F11"
         CamUp:"Hold:Z"

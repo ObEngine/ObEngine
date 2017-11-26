@@ -230,10 +230,6 @@ namespace obe
                     editorTriggers->trigger("ColliderCreated");
                 }
             });
-
-            inputManager.getAction("ColliderCopy").connect([editorTriggers, &selectedMasterCollider, &scene, &cursor](const Input::InputActionEvent& event)
-            {
-            });
         }
     }
 }

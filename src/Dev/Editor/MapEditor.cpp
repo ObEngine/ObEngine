@@ -221,6 +221,7 @@ namespace obe
                 scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground, editorUnit);
             connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
             connectGameConsoleActions(inputManager, gameConsole);
+            connectCopyPasteActions(editorTriggers.get(), inputManager, scene, sceneClipboard, savedLabel, selectedMasterCollider, selectedSprite);
             inputManager.getAction("ExitEditor").connect([](const Input::InputActionEvent& event)
             {
                 System::MainWindow.close();
