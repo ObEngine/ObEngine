@@ -59,7 +59,8 @@ namespace obe
                     kaguya::MultipleBase<
                     Transform::UnitBasedObject,
                     Types::Selectable,
-                    Transform::Movable
+                    Transform::Movable,
+                    Types::Serializable
                     >
                     >()
                     .setConstructors<Collision::PolygonalCollider(const std::string&)>()

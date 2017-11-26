@@ -6,6 +6,7 @@
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Types/Selectable.hpp>
+#include <Types/Serializable.hpp>
 
 namespace obe
 {
@@ -45,7 +46,11 @@ namespace obe
          * \brief Class used for all Collisions in the engine, it's a Polygon containing n points
          * @Bind
          */
-        class PolygonalCollider : public Transform::UnitBasedObject, public Types::Selectable, public Transform::Movable
+        class PolygonalCollider : 
+            public Transform::UnitBasedObject, 
+            public Types::Selectable, 
+            public Transform::Movable, 
+            public Types::Serializable
         {
         private:
             //Tag System
@@ -374,6 +379,17 @@ namespace obe
              * \param lines Resets Lines Highlights ?
              */
             void clearHighlights(bool points = true, bool lines = true);
+
+            /**
+             * \brief Dumps the content of the PolygonalCollider to a ComplexNode
+             * \param target ComplexNode where to serialize the PolygonalCollider
+             */
+             void dump(vili::ComplexNode& target) const override;
+             /**
+              * \brief Loads the PolygonalCollider from a ComplexNode
+              * \param data ComplexNode containing the data of the PolygonalCollider
+              */
+             void load(vili::ComplexNode& data) override;
         };
     }
 }

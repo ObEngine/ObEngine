@@ -30,23 +30,31 @@ namespace vili
 
     ComplexNode::ComplexNode(const ComplexNode& copy) : ContainerNode(copy)
     {
-        for (auto& child : copy.m_childAttributes)
+        for (auto& child : copy.m_children)
         {
-            m_childAttributes[child.first]->copy(this);
+            child->copy(this);
         }
-        m_childAttributesNames = copy.m_childAttributesNames;
         m_heritFrom = copy.m_heritFrom;
         m_template = nullptr;
     }
 
+    std::unique_ptr<Node>& ComplexNode::getNodePtr(const std::string& id)
+    {
+        for (auto& child : m_children)
+        {
+            if (child->getId() == id)
+                return child;
+        }
+        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.NodeNotFound", {{"path", getNodePath()}, {"node", id}});
+    }
+
     Node* ComplexNode::extractElement(Node* element)
     {
-        if (Functions::Vector::isInList(element->getId(), m_childAttributesNames))
+        if (this->contains(element->getId()))
         {
             this->removeOwnership(element);
-            m_childAttributes[element->getId()].release();
-            m_childAttributes.erase(element->getId());
-            Functions::Vector::eraseAll(m_childAttributesNames, element->getId());
+            this->getNodePtr(element->getId()).release();
+            this->remove(element->getId());
             return element;
         }
         throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongExtraction", {{"path", getNodePath()},{"element", element->getNodePath()}});
@@ -54,10 +62,10 @@ namespace vili
 
     void ComplexNode::heritage(ComplexNode* heritTarget)
     {
-        for (const std::string& child : heritTarget->getAll(NodeType::Node))
+        for (auto& child : heritTarget->getAll(NodeType::Node))
         {
-            heritTarget->get(child)->copy(this);
-            this->get(child)->setVisible(false);
+            child->copy(this);
+            child->setVisible(false);
         }
         m_heritFrom.push_back(heritTarget->getId());
     }
@@ -95,37 +103,32 @@ namespace vili
 
     Node* ComplexNode::get(const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end())
-            return m_childAttributes.at(id).get();
+        for (auto& child : m_children)
+        {
+            if (child->getId() == id)
+                return child.get();
+        }
         throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetAttributeKey", {{"node", id},{"path", getNodePath()}});
     }
 
     DataNode& ComplexNode::getDataNode(const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::DataNode)
-            return *static_cast<DataNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetBaseAttributeKey", {{"node", id},{"path", getNodePath()}});
+        return *static_cast<DataNode*>(this->get(id));
     }
 
     ArrayNode& ComplexNode::getArrayNode(const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::ArrayNode)
-            return *static_cast<ArrayNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetListAttributeKey", {{"node", id},{"path", getNodePath()}});
+        return *static_cast<ArrayNode*>(this->get(id));
     }
 
     LinkNode& ComplexNode::getLinkNode(const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::LinkNode)
-            return *static_cast<LinkNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetLinkAttributeKey", {{"node", id},{"path", getNodePath()}});
+        return *static_cast<LinkNode*>(this->get(id));
     }
 
     ComplexNode& ComplexNode::getComplexNode(const std::string& id) const
     {
-        if (!m_childAttributes.empty() && m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == NodeType::ComplexNode)
-            return *static_cast<ComplexNode*>(m_childAttributes.at(id).get());
-        throw aube::ErrorHandler::Raise("Vili.Vili.ComplexNode.WrongGetComplexNodeKey", {{"node", id},{"path", getNodePath()}});
+        return *static_cast<ComplexNode*>(this->get(id));
     }
 
     NodeType ComplexNode::getNodeType(const std::string& id) const
@@ -133,60 +136,64 @@ namespace vili
         return this->get(id)->getType();
     }
 
-    std::vector<std::string> ComplexNode::getAll(NodeType searchType) const
+    std::vector<Node*> ComplexNode::getAll(NodeType searchType) const
     {
-        std::vector<std::string> attributes;
-        for (const std::string& id : m_childAttributesNames)
+        std::vector<Node*> nodes;
+        for (auto& child : m_children)
         {
-            if (m_childAttributes.at(id)->getType() == searchType)
-                attributes.push_back(id);
+            if (child->getType() == searchType)
+                nodes.push_back(child.get());
             else if (searchType == NodeType::Node)
-                attributes.push_back(id);
-            else if (searchType == NodeType::ContainerNode && m_childAttributes.at(id)->getType() == NodeType::ComplexNode)
-                attributes.push_back(id);
-            else if (searchType == NodeType::ContainerNode && m_childAttributes.at(id)->getType() == NodeType::ArrayNode)
-                attributes.push_back(id);
+                nodes.push_back(child.get());
+            else if (searchType == NodeType::ContainerNode && child->getType() == NodeType::ComplexNode)
+                nodes.push_back(child.get());
+            else if (searchType == NodeType::ContainerNode && child->getType() == NodeType::ArrayNode)
+                nodes.push_back(child.get());
         }
-        return attributes;
+        return nodes;
     }
 
     bool ComplexNode::contains(NodeType searchType, const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end() && m_childAttributes.at(id)->getType() == searchType)
-            return true;
+        for (auto& child : m_children)
+        {
+            std::cout << "Iterate over child : " << child->getId() << " searching for " << id << std::endl;
+            if (child->getId() == id && child->getType() == searchType)
+                return true;
+        }
         return false;
     }
 
     bool ComplexNode::contains(const std::string& id) const
     {
-        if (m_childAttributes.find(id) != m_childAttributes.end())
-            return true;
+        for (auto& child : m_children)
+        {
+            if (child->getId() == id)
+                return true;
+        }
         return false;
     }
 
     DataNode& ComplexNode::createDataNode(const std::string& id, const DataType& type, const std::string& data)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, type);
-        getDataNode(id).autoset(data);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, type));
+        this->getDataNode(id).autoset(data);
         return this->getDataNode(id);
     }
 
     DataNode& ComplexNode::createDataNode(const std::string& id, const DataType& type)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, type);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, type));
         return this->getDataNode(id);
     }
 
     DataNode& ComplexNode::createDataNode(const std::string& id, const std::string& data)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, DataType::String);
-        getDataNode(id).set(data);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, DataType::String));
+        this->getDataNode(id).set(data);
         return this->getDataNode(id);
     }
 
@@ -198,86 +205,82 @@ namespace vili
 
     DataNode& ComplexNode::createDataNode(const std::string& id, bool data)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, DataType::Bool);
-        getDataNode(id).set(data);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, DataType::Bool));
+        this->getDataNode(id).set(data);
         return this->getDataNode(id);
     }
 
     DataNode& ComplexNode::createDataNode(const std::string& id, int data)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, DataType::Int);
-        getDataNode(id).set(data);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, DataType::Int));
+        this->getDataNode(id).set(data);
         return this->getDataNode(id);
     }
 
     DataNode& ComplexNode::createDataNode(const std::string& id, double data)
     {
-        m_childAttributes[id] = std::make_unique<DataNode>(this, id, DataType::Float);
-        getDataNode(id).set(data);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<DataNode>(this, id, DataType::Float));
+        this->getDataNode(id).set(data);
         return this->getDataNode(id);
     }
 
     DataNode& ComplexNode::pushDataNode(DataNode* attribute)
     {
-        m_childAttributes[attribute->getId()] = std::unique_ptr<DataNode>(attribute);
-        if (!Functions::Vector::isInList(attribute->getId(), m_childAttributesNames))
-            m_childAttributesNames.push_back(attribute->getId());
+        if (!this->contains(attribute->getId()))
+            m_children.push_back(std::unique_ptr<DataNode>(attribute));
+        else
+            this->getNodePtr(attribute->getId()).reset(attribute);
         return this->getDataNode(attribute->getId());
     }
 
     ArrayNode& ComplexNode::createArrayNode(const std::string& id)
     {
-        m_childAttributes[id] = std::make_unique<ArrayNode>(this, id);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<ArrayNode>(this, id));
         return this->getArrayNode(id);
     }
 
     ArrayNode& ComplexNode::pushArrayNode(ArrayNode* attribute)
     {
-        m_childAttributes[attribute->getId()] = std::unique_ptr<ArrayNode>(attribute);
-        if (!Functions::Vector::isInList(attribute->getId(), m_childAttributesNames))
-            m_childAttributesNames.push_back(attribute->getId());
+        if (!this->contains(attribute->getId()))
+            m_children.push_back(std::unique_ptr<ArrayNode>(attribute));
+        else
+            this->getNodePtr(attribute->getId()).reset(attribute);
         return this->getArrayNode(attribute->getId());
     }
 
     ComplexNode& ComplexNode::createComplexNode(const std::string& id)
     {
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-        {
-            m_childAttributes[id] = std::make_unique<ComplexNode>(this, id);
-            m_childAttributesNames.push_back(id);
-        }
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<ComplexNode>(id));
         return this->getComplexNode(id);
     }
 
     ComplexNode& ComplexNode::pushComplexNode(ComplexNode* attribute)
     {
-        m_childAttributes[attribute->getId()] = std::unique_ptr<ComplexNode>(attribute);
-        if (!Functions::Vector::isInList(attribute->getId(), m_childAttributesNames))
-            m_childAttributesNames.push_back(attribute->getId());
+        if (!this->contains(attribute->getId()))
+            m_children.push_back(std::unique_ptr<ComplexNode>(attribute));
+        else
+            this->getNodePtr(attribute->getId()).reset(attribute);
         return this->getComplexNode(attribute->getId());
     }
 
     LinkNode& ComplexNode::createLinkNode(const std::string& id, const std::string& path)
     {
-        m_childAttributes[id] = std::make_unique<LinkNode>(this, id, path);
-        if (!Functions::Vector::isInList(id, m_childAttributesNames))
-            m_childAttributesNames.push_back(id);
+        if (!this->contains(id))
+            m_children.push_back(std::make_unique<LinkNode>(this, id, path));
         return this->getLinkNode(id);
     }
 
     LinkNode& ComplexNode::pushLinkNode(LinkNode* attribute)
     {
-        m_childAttributes[attribute->getId()] = std::unique_ptr<LinkNode>(attribute);
-        if (!Functions::Vector::isInList(attribute->getId(), m_childAttributesNames))
-            m_childAttributesNames.push_back(attribute->getId());
+        if (!this->contains(attribute->getId()))
+            m_children.push_back(std::unique_ptr<LinkNode>(attribute));
+        else
+            this->getNodePtr(attribute->getId()).reset(attribute);
         return this->getLinkNode(attribute->getId());
     }
 
@@ -301,14 +304,14 @@ namespace vili
 
                 m_template->getBody()->walk([this, &argsMap, templateName](NodeIterator& node)
                 {
-                    for (const std::string& currentLink : node->getAll(NodeType::LinkNode))
+                    for (LinkNode* link : node->getAll<LinkNode>())
                     {
-                        std::vector<std::string> linkParts = Functions::String::split(node->getLinkNode(currentLink).getPath(), "/");
+                        std::vector<std::string> linkParts = Functions::String::split(link->getPath(), "/");
                         if (Functions::String::isStringInt(linkParts[linkParts.size() - 2]) && linkParts[linkParts.size() - 1] == "value")
                         {
                             if (stoi(linkParts[linkParts.size() - 2]) <= argsMap.size())
                             {
-                                std::vector<std::string> argPathFragments = Functions::String::split(node->getLinkNode(currentLink).getNodePath(), "/");
+                                std::vector<std::string> argPathFragments = Functions::String::split(link->getNodePath(), "/");
                                 std::string returnedData = this->at<DataNode>(Functions::Vector::join(argPathFragments, "/", 2)).dumpData();
                                 if (this->at<DataNode>(Functions::Vector::join(argPathFragments, "/", 2)).getDataType() == DataType::Float)
                                 {
@@ -329,29 +332,21 @@ namespace vili
         }
         if (m_visible && m_template == nullptr)
         {
-            for (const std::string& child : m_childAttributesNames)
-                m_childAttributes.at(child)->write(file, spacing, depth + 1);
+            for (auto& child : m_children)
+                child->write(file, spacing, depth + 1);
             if (depth == 1)
                 (*file) << std::endl;
         }
     }
 
-    void ComplexNode::removeNode(NodeType nodeType, const std::string& id, bool freeMemory)
+    void ComplexNode::remove(const std::string& id)
     {
-        if (Functions::Vector::isInList(id, this->getAll(nodeType)))
-            m_childAttributesNames.erase(m_childAttributesNames.begin() + Functions::Vector::indexOfElement(id, m_childAttributesNames));
-        typedef std::map<std::string, std::unique_ptr<Node>>::iterator it_type;
-        it_type itDel = m_childAttributes.find(id);
-        if (itDel != m_childAttributes.end() && m_childAttributes[id]->getType() == nodeType)
-        {
-            if (!freeMemory)
-                m_childAttributes[id].release();
-            m_childAttributes.erase(itDel);
-        }
-        else
-        {
-            // Add error <REVISION>
-        }
+        
+    }
+
+    void ComplexNode::clear()
+    {
+        m_children.clear();
     }
 
     void ComplexNode::copy(ContainerNode* newParent, const std::string& newid) const
@@ -360,9 +355,9 @@ namespace vili
         if (newParent->getType() == NodeType::ComplexNode)
         {
             dynamic_cast<ComplexNode*>(newParent)->createComplexNode(useID);
-            for (const std::string& child : m_childAttributesNames)
+            for (auto& child : m_children)
             {
-                m_childAttributes.at(child)->copy(&dynamic_cast<ComplexNode*>(newParent)->getComplexNode(useID));
+                child->copy(&dynamic_cast<ComplexNode*>(newParent)->getComplexNode(useID));
             }
         }
         else
@@ -383,10 +378,10 @@ namespace vili
         else
         {
             NodeIterator baseIterator;
-            for (const std::string& complex : getAll(NodeType::ComplexNode))
+            for (ComplexNode* complex : this->getAll<ComplexNode>())
             {
                 if (!baseIterator.over())
-                    getComplexNode(complex).walk(walkFunction, baseIterator);
+                    complex->walk(walkFunction, baseIterator);
                 else
                     break;
             }
@@ -400,10 +395,10 @@ namespace vili
 
     void ComplexNode::walk(std::function<void(NodeIterator&)> walkFunction, NodeIterator& iterator)
     {
-        for (const std::string& complex : getAll(NodeType::ComplexNode))
+        for (ComplexNode* complex : this->getAll<ComplexNode>())
         {
             if (!iterator.over())
-                getComplexNode(complex).walk(walkFunction, iterator);
+                complex->walk(walkFunction, iterator);
             else
                 break;
         }

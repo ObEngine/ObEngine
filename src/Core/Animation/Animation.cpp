@@ -102,18 +102,17 @@ namespace obe
             }
             //Groups
             vili::ComplexNode& groups = animFile.at("Groups");
-            for (std::string complexName : groups.getAll(vili::NodeType::ComplexNode))
+            for (vili::ComplexNode* complex : groups.getAll<vili::ComplexNode>())
             {
-                m_animationGroupMap.emplace(complexName, std::make_unique<AnimationGroup>(complexName));
-                vili::ComplexNode& currentGroup = groups.at(complexName);
-                for (vili::DataNode* currentTexture : currentGroup.at<vili::ArrayNode>("content"))
-                    m_animationGroupMap[complexName]->pushTexture(m_animationTextures[*currentTexture]);
-                if (currentGroup.contains(vili::NodeType::DataNode, "clock"))
-                    m_animationGroupMap[complexName]->setGroupDelay(currentGroup.at<vili::DataNode>("clock"));
+                m_animationGroupMap.emplace(complex->getId(), std::make_unique<AnimationGroup>(complex->getId()));
+                for (vili::DataNode* currentTexture : complex->at<vili::ArrayNode>("content"))
+                    m_animationGroupMap[complex->getId()]->pushTexture(m_animationTextures[*currentTexture]);
+                if (complex->contains(vili::NodeType::DataNode, "clock"))
+                    m_animationGroupMap[complex->getId()]->setGroupDelay(complex->at<vili::DataNode>("clock"));
                 else
-                    m_animationGroupMap[complexName]->setGroupDelay(m_animationDelay);
-                Debug::Log->trace("<Animation> Building AnimationGroup {0} in Animation {1}", complexName, m_animationName);
-                m_animationGroupMap[complexName]->build();
+                    m_animationGroupMap[complex->getId()]->setGroupDelay(m_animationDelay);
+                Debug::Log->trace("<Animation> Building AnimationGroup {0} in Animation {1}", complex->getId(), m_animationName);
+                m_animationGroupMap[complex->getId()]->build();
             }
             //Animation Code
             vili::ComplexNode& animation = animFile.at("Animation");

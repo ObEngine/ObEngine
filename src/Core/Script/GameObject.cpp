@@ -82,10 +82,10 @@ namespace obe
 
         void GameObjectDatabase::ApplyRequirements(GameObject* obj, vili::ComplexNode& requires)
         {
-            for (const std::string& currentRequirement : requires.getAll())
+            for (vili::Node* currentRequirement : requires.getAll())
             {
                 kaguya::LuaTable requireTable = ScriptEngine["__ENVIRONMENTS"][obj->getEnvIndex()]["LuaCore"]["ObjectInitInjectionTable"];
-                DataBridge::dataToLua(requireTable, requires.get(currentRequirement));
+                DataBridge::dataToLua(requireTable, currentRequirement);
             }
         }
 
@@ -254,7 +254,7 @@ namespace obe
             {
                 m_objectLevelSprite = world.createLevelSprite(m_id, false);
                 m_objectNode.addChild(m_objectLevelSprite);
-                m_objectLevelSprite->configure(obj.at("LevelSprite"));
+                m_objectLevelSprite->load(obj.at("LevelSprite"));
                 if (m_hasScriptEngine)
                     GAMEOBJECTENV["Object"]["LevelSprite"] = m_objectLevelSprite;
                 m_hasLevelSprite = true;

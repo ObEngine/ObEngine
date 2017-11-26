@@ -30,7 +30,8 @@ namespace obe
                     kaguya::MultipleBase<
                     Transform::UnitBasedObject,
                     Types::Selectable,
-                    Transform::Rect
+                    Transform::Rect,
+                    Types::Serializable
                     >
                     >()
                     .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
@@ -50,7 +51,7 @@ namespace obe
                     .addFunction("getYScaleFactor", &Graphics::LevelSprite::getYScaleFactor)
                     .addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
                     .addFunction("isVisible", &Graphics::LevelSprite::isVisible)
-                    .addFunction("load", &Graphics::LevelSprite::load)
+                    .addFunction("loadTexture", &Graphics::LevelSprite::loadTexture)
                     .addFunction("rotate", &Graphics::LevelSprite::rotate)
                     .addFunction("setColor", &Graphics::LevelSprite::setColor)
                     .addFunction("setLayer", &Graphics::LevelSprite::setLayer)

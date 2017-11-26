@@ -757,29 +757,29 @@ namespace obe
                 System::Path("Data/config.cfg.vili").loadResource(&viliConfig, System::Loaders::dataLoader);
                 vili::ComplexNode& keybinding = viliConfig.at("KeyBinding");
                 unsigned int yPos = 80;
-                for (const std::string& context : keybinding.getAll(vili::NodeType::ComplexNode))
+                for (vili::ComplexNode* context : keybinding.getAll<vili::ComplexNode>())
                 {
                     tgui::Label::Ptr contextLbl = tgui::Label::create();
                     keybindingPanel->add(contextLbl);
                     contextLbl->setPosition(20, yPos);
                     contextLbl->setTextSize(bigFontSize);
                     contextLbl->setRenderer(baseTheme.getRenderer("Label"));
-                    contextLbl->setText(context);
+                    contextLbl->setText(context->getId());
 
                     yPos += 70;
                     
-                    for (const std::string& action : keybinding.at(context).getAll(vili::NodeType::DataNode))
+                    for (vili::DataNode* action : keybinding.at(context->getId()).getAll<vili::DataNode>())
                     {
                         tgui::Button::Ptr actionBtn = tgui::Button::create();
                         keybindingPanel->add(actionBtn);
                         actionBtn->setPosition(60, yPos);
                         actionBtn->setSize("20%", 30);
                         actionBtn->setRenderer(baseTheme.getRenderer("Button"));
-                        actionBtn->setText(action);
+                        actionBtn->setText(action->getId());
                         actionBtn->setTextSize(mediumFontSize);
 
                         Input::InputCondition keyGen;
-                        keyGen.setCombinationCode(keybinding.at(context).getDataNode(action).get<std::string>());
+                        keyGen.setCombinationCode(action->get<std::string>());
                         tgui::Layout xPos = tgui::bindRight(actionBtn) + 30;
                         unsigned int kIndex = 0;
                         for (auto& key : keyGen.getCombination())

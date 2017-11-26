@@ -4,13 +4,17 @@
 #include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/Panel.hpp>
+#include <vili/vili/ComplexNode.hpp>
 
+#include <Collision/PolygonalCollider.hpp>
 #include <Debug/Console.hpp>
 #include <Editor/Grid.hpp>
+#include <Graphics/LevelSprite.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
 #include <Time/FramerateManager.hpp>
+#include <Triggers/TriggerGroup.hpp>
 
 namespace obe
 {
@@ -19,7 +23,7 @@ namespace obe
         void connectCamMovementActions(
             Triggers::TriggerGroup* editorTriggers,
             Input::InputManager& inputManager, 
-            Scene::Scene& world, 
+            Scene::Scene& scene, 
             int& cameraSpeed, 
             Time::FramerateManager& framerateManager);
         void connectGridActions(
@@ -37,10 +41,18 @@ namespace obe
             Triggers::TriggerGroup* editorTriggers, 
             Input::InputManager& inputManager, 
             const std::string& mapName, 
-            Scene::Scene& world, 
+            Scene::Scene& scene, 
             double& waitForMapSaving, 
             tgui::Label::Ptr savedLabel,
             tgui::CheckBox::Ptr saveCameraPositionCheckbox);
+        void connectCopyPasteActions(
+            Triggers::TriggerGroup* editorTriggers,
+            Input::InputManager& inputManager,
+            Scene::Scene& scene,
+            vili::ComplexNode& sceneClipboard,
+            tgui::Label::Ptr savedLabel,
+            Collision::PolygonalCollider*& selectedMasterCollider,
+            Graphics::LevelSprite*& selectedSprite);
         /**
          * \brief Connects Console's related Triggers
          * \param inputManager Reference to the InputManager

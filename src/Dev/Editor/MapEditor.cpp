@@ -106,6 +106,7 @@ namespace obe
 
             //Scene Creation / Loading
             Scene::Scene scene;
+            vili::ComplexNode sceneClipboard("Clipboard");
             //scene.getCamera()->bindView(window);
             Script::ScriptEngine["stream"] = gameConsole.createStream("Scene", true);
             Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message)
@@ -358,7 +359,6 @@ namespace obe
                 }
                 else
                 {
-                    std::cout << "SelectedSprite : " << selectedSprite << std::endl;
                     if (selectedSprite != nullptr)
                     {
                         selectedSprite->setColor(sf::Color::White);

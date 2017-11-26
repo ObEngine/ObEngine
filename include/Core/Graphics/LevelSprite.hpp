@@ -9,8 +9,8 @@
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
 #include <Transform/UnitBasedObject.hpp>
-#include <Types/Configurable.hpp>
 #include <Types/Selectable.hpp>
+#include <Types/Serializable.hpp>
 
 namespace obe
 {
@@ -78,10 +78,10 @@ namespace obe
          * @Bind
          */
         class LevelSprite : 
-        public Transform::UnitBasedObject, 
-        public Types::Selectable, 
-        public Transform::Rect, 
-        public Types::Configurable
+            public Transform::UnitBasedObject, 
+            public Types::Selectable, 
+            public Transform::Rect,
+            public Types::Serializable
         {
         private:
             std::string m_path = "";
@@ -115,18 +115,12 @@ namespace obe
              * \brief The LevelSprite will load the sf::Texture at the given path
              * \param path A std::string containing the path of the texture to load
              */
-            void load(const std::string& path);
+            void loadTexture(const std::string& path);
             /**
              * \brief Get the path of the sf::Texture loaded by the Sprite
              * \return A std::string containing the path of the sf::Texture loaded by the Sprite (if any)
              */
             std::string getPath() const;
-
-            /**
-             * \brief Configures the LevelSprite with the given ComplexNode
-             * \param configuration ComplexNode containing all LevelSprite new parameters
-             */
-            void configure(vili::ComplexNode& configuration) override;
 
             //Texture
             /**
@@ -301,6 +295,17 @@ namespace obe
              * \return The adress of the HandlePoint if the position is correct, nullptr otherwise
              */
             LevelSpriteHandlePoint* getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY);
+
+            /**
+             * \brief Dumps the content of the LevelSprite to a ComplexNode
+             * \param target ComplexNode where to serialize the LevelSprite
+             */
+             void dump(vili::ComplexNode& target) const override;
+             /**
+              * \brief Loads the LevelSprite from a ComplexNode
+              * \param data ComplexNode containing the data of the LevelSprite
+              */
+             void load(vili::ComplexNode& data) override;
         };
     }
 }

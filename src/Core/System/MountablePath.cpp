@@ -32,12 +32,11 @@ namespace obe
                 Debug::Log->critical("<MountablePath> Can't find 'Mount.vili' file, stopping ObEngine");
                 throw aube::ErrorHandler::Raise("ObEngine.System.MountablePath.NoMountFile");
             }
-            for (std::string path : mountedPaths.at("Mount").getAll(vili::NodeType::ComplexNode))
+            for (vili::ComplexNode* path : mountedPaths.at("Mount").getAll<vili::ComplexNode>())
             {
-                vili::ComplexNode& currentElement = mountedPaths.at("Mount", path);
-                std::string currentType = currentElement.at<vili::DataNode>("type").get<std::string>();
-                std::string currentPath = currentElement.at<vili::DataNode>("path").get<std::string>();
-                int currentPriority = currentElement.at<vili::DataNode>("priority").get<int>();
+                std::string currentType = path->at<vili::DataNode>("type").get<std::string>();
+                std::string currentPath = path->at<vili::DataNode>("path").get<std::string>();
+                int currentPriority = path->at<vili::DataNode>("priority").get<int>();
                 if (currentType == "Path")
                 {
                     Path::Mount(MountablePath(MountablePathType::Path, currentPath, currentPriority));

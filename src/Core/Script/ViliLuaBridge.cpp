@@ -35,19 +35,19 @@ namespace obe
                 target[convert->getId()] = kaguya::NewTable();
                 kaguya::LuaTable injectTable = target[convert->getId()];
                 kaguya::State olol;
-                for (std::string elementName : convert->getAll())
+                for (vili::Node* node : convert->getAll())
                 {
-                    if (convert->getNodeType(elementName) == vili::NodeType::DataNode)
+                    if (node->getType() == vili::NodeType::DataNode)
                     {
-                        dataNodeToLuaElement(injectTable, &convert->getDataNode(elementName));
+                        dataNodeToLuaElement(injectTable, &convert->getDataNode(node->getId()));
                     }
-                    else if (convert->getNodeType(elementName) == vili::NodeType::ComplexNode)
+                    else if (node->getType() == vili::NodeType::ComplexNode)
                     {
-                        complexNodeToLuaTable(injectTable, &convert->getComplexNode(elementName));
+                        complexNodeToLuaTable(injectTable, &convert->getComplexNode(node->getId()));
                     }
-                    else if (convert->getNodeType(elementName) == vili::NodeType::ArrayNode)
+                    else if (node->getType() == vili::NodeType::ArrayNode)
                     {
-                        arrayNodeToLuaTable(injectTable, &convert->getArrayNode(elementName));
+                        arrayNodeToLuaTable(injectTable, &convert->getArrayNode(node->getId()));
                     }
                 }
                 target[convert->getId()] = injectTable;

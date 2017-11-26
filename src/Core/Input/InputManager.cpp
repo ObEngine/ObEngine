@@ -104,27 +104,24 @@ namespace obe
         void InputManager::configure(vili::ComplexNode& config)
         {
             std::vector<std::string> alreadyInFile;
-            std::vector<std::string> contexts = config.getAll(vili::NodeType::ComplexNode);
-            for (std::string& context : contexts)
+            for (vili::ComplexNode* context : config.getAll<vili::ComplexNode>())
             {
-                std::vector<std::string> allContextKeys = config.at(context).getAll(vili::NodeType::DataNode);
-                for (std::string& action : allContextKeys)
+                for (vili::DataNode* action : context->getAll<vili::DataNode>())
                 {
-                    if (!this->actionExists(action))
+                    if (!this->actionExists(action->getId()))
                     {
-                        m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), action));
+                        m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), action->getId()));
                     }
-                    else if (!Utils::Vector::isInList(action, alreadyInFile))
+                    else if (!Utils::Vector::isInList(action->getId(), alreadyInFile))
                     {
-                        this->getAction(action).clearConditions();
+                        this->getAction(action->getId()).clearConditions();
                     }
-                    std::string associatedKeys = config.at(context).getDataNode(action);
                     InputCondition actionCondition;
-                    actionCondition.setCombinationCode(associatedKeys);
-                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'", associatedKeys, action);
-                    this->getAction(action).addCondition(actionCondition);
-                    this->getAction(action).addContext(context);
-                    alreadyInFile.push_back(action);
+                    actionCondition.setCombinationCode(action->get<std::string>());
+                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'", action->get<std::string>(), action->getId());
+                    this->getAction(action->getId()).addCondition(actionCondition);
+                    this->getAction(action->getId()).addContext(context->getId());
+                    alreadyInFile.push_back(action->getId());
                 }
             }
             //Add Context keys in real time <REVISION>

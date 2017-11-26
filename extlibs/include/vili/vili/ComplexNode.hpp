@@ -23,14 +23,14 @@ namespace vili
     class ComplexNode : public ContainerNode
     {
     protected:
-        std::map<std::string, std::unique_ptr<Node>> m_childAttributes;
-        std::vector<std::string> m_childAttributesNames;
+        std::vector<std::unique_ptr<Node>> m_children;
         std::vector<std::string> m_heritFrom;
         NodeTemplate* m_template = nullptr;
         ComplexNode& getPath(std::string attributePath) const;
         void walk(std::function<void(NodeIterator&)> walkFunction, NodeIterator& iterator);
         template <class T>
         void walk(std::function<void(NodeValidator<T>&)> walkFunction, NodeValidator<T>& iterator);
+        std::unique_ptr<Node>& getNodePtr(const std::string& id);
     public:
         /**
          * \brief Redefines ClassType to NodeType::ComplexNode
@@ -148,7 +148,10 @@ namespace vili
          * \param searchType Type of the Nodes you want to get (NodeType::Node works for all Nodes and NodeType::ContainerNode for ArrayNode and ComplexNode)
          * \return A std::vector of std::string containing the Id of the Nodes of the given type contained in the ComplexNode
          */
-        std::vector<std::string> getAll(NodeType searchType = NodeType::Node) const;
+        std::vector<Node*> getAll(NodeType searchType = NodeType::Node) const;
+
+        template <class T>
+        std::vector<T*> getAll() const;
 
         /**
          * \brief Checks if the ComplexNode contains a Node with the given Id
@@ -263,12 +266,17 @@ namespace vili
 
         /**
          * \brief Removes a child Node from the ComplexNode
-         * \param nodeType Type of the Node to remove
          * \param id Id of the Node to remove
          * \param freeMemory If equals to true, the DataNode will be erased from memory\n 
          *                   else it will juste remove the Tree from the tree while keeping the DataNode pointer valid
          */
-        void removeNode(NodeType nodeType, const std::string& id, bool freeMemory = false);
+        void remove(const std::string& id);
+
+        /**
+         * \brief Removes all children of the ComplexNode
+         * \param freeMemory If equals to true, all children will be erased from memory.
+         */
+        void clear();
 
         /**
         * \brief Writes the ComplexNode to a file
@@ -393,5 +401,14 @@ namespace vili
             iterator.next(this);
             walkFunction(iterator);
         }
+    }
+
+    template <class T>
+    std::vector<T*> ComplexNode::getAll() const
+    {
+        std::vector<T*> nodes;
+        for (Node* child : this->getAll(T::ClassType))
+            nodes.push_back(static_cast<T*>(child));
+        return nodes;
     }
 }

@@ -159,9 +159,9 @@ namespace obe
             {
                 vili::ComplexNode& levelSprites = m_levelFile.at("LevelSprites");
 
-                for (std::string& currentSpriteName : levelSprites.getAll(vili::NodeType::ComplexNode))
+                for (vili::ComplexNode* currentSprite : levelSprites.getAll<vili::ComplexNode>())
                 {
-                    this->createLevelSprite(currentSpriteName)->configure(levelSprites.at(currentSpriteName));
+                    this->createLevelSprite(currentSprite->getId())->load(*currentSprite);
                 }
             }
 
@@ -170,56 +170,33 @@ namespace obe
             if (m_levelFile->contains(vili::NodeType::ComplexNode, "Collisions"))
             {
                 vili::ComplexNode& collisions = m_levelFile.at("Collisions");
-                for (std::string& collisionName : collisions.getAll(vili::NodeType::ComplexNode))
+                for (vili::ComplexNode* currentCollision : collisions.getAll<vili::ComplexNode>())
                 {
-                    vili::ComplexNode& currentCollision = collisions.at(collisionName);
-                    std::unique_ptr<Collision::PolygonalCollider> tempCollider = std::make_unique<Collision::PolygonalCollider>(collisionName);
-
-                    std::string pointsUnit = currentCollision.at<vili::DataNode>("unit", "unit").get<std::string>();
-                    bool completePoint = true;
-                    double pointBuffer = 0;
-                    Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                    for (vili::DataNode* colliderPoint : currentCollision.getArrayNode("points"))
-                    {
-                        if ((completePoint = !completePoint))
-                        {
-                            Transform::UnitVector pVector2 = Transform::UnitVector(
-                                pointBuffer,
-                                colliderPoint->get<double>(),
-                                pBaseUnit
-                            );
-                            tempCollider->addPoint(pVector2);
-                        }
-                        else
-                            pointBuffer = colliderPoint->get<double>();
-                    }
-                    tempCollider->setWorkingUnit(pBaseUnit);
-                    m_colliderArray.push_back(move(tempCollider));
+                    this->createCollider(currentCollision->getId())->load(*currentCollision);
                 }
             }
 
             if (m_levelFile->contains(vili::NodeType::ComplexNode, "GameObjects"))
             {
                 vili::ComplexNode& gameObjects = m_levelFile.at("GameObjects");
-                for (std::string& currentObjectName : gameObjects.getAll(vili::NodeType::ComplexNode))
+                for (vili::ComplexNode* currentObject : gameObjects.getAll<vili::ComplexNode>())
                 {
-                    if (!this->doesGameObjectExists(currentObjectName))
+                    if (!this->doesGameObjectExists(currentObject->getId()))
                     {
-                        vili::ComplexNode& currentObject = gameObjects.at(currentObjectName);
-                        std::string gameObjectType = currentObject.getDataNode("type").get<std::string>();
-                        Script::GameObject* newObject = this->createGameObject(gameObjectType, currentObjectName);
-                        if (currentObject.contains(vili::NodeType::ComplexNode, "Requires"))
+                        std::string gameObjectType = currentObject->getDataNode("type").get<std::string>();
+                        Script::GameObject* newObject = this->createGameObject(gameObjectType, currentObject->getId());
+                        if (currentObject->contains(vili::NodeType::ComplexNode, "Requires"))
                         {
-                            vili::ComplexNode& objectRequirements = currentObject.at("Requires");
-                            currentObject.removeOwnership(&objectRequirements);
+                            vili::ComplexNode& objectRequirements = currentObject->at("Requires");
+                            currentObject->removeOwnership(&objectRequirements);
                             Script::GameObjectDatabase::ApplyRequirements(newObject, objectRequirements);
-                            objectRequirements.setParent(&currentObject);
+                            objectRequirements.setParent(currentObject);
                         }
                         newObject->exec("LuaCore.InjectInitInjectionTable()");
                     }
-                    else if (!this->getGameObject(currentObjectName)->isPermanent())
+                    else if (!this->getGameObject(currentObject->getId())->isPermanent())
                     {
-                        aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene", {{"object", currentObjectName}, {"mapfile", m_levelName}});
+                        aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene", {{"object", currentObject->getId()}, {"mapfile", m_levelName}});
                     }
                 }
             }
@@ -329,23 +306,7 @@ namespace obe
             {
                 if (m_spriteArray[i]->getParentId() == "")
                 {
-                    vili::ComplexNode& currentSprite = dataStore->at("LevelSprites").createComplexNode(m_spriteArray[i]->getId());
-                    currentSprite.createDataNode("path", m_spriteArray[i]->getPath());
-                    currentSprite.createComplexNode("rect");
-                    Transform::UnitVector spritePositionRect = m_spriteArray[i]->getPosition().to(m_spriteArray[i]->getWorkingUnit());
-                    currentSprite.at("rect").createDataNode("x", spritePositionRect.x);
-                    currentSprite.at("rect").createDataNode("y", spritePositionRect.y);
-                    Transform::UnitVector spriteSizeRect = m_spriteArray[i]->getSize().to(m_spriteArray[i]->getWorkingUnit());
-                    currentSprite.at("rect").createDataNode("w", spriteSizeRect.x);
-                    currentSprite.at("rect").createDataNode("h", spriteSizeRect.y);
-                    currentSprite.at("rect").useTemplate(
-                        dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">")
-                    );
-                    currentSprite.createDataNode("rotation", m_spriteArray[i]->getRotation());
-                    currentSprite.createDataNode("layer", m_spriteArray[i]->getLayer());
-                    currentSprite.createDataNode("z-depth", m_spriteArray[i]->getZDepth());
-                    currentSprite.createDataNode("xTransform", m_spriteArray[i]->getPositionTransformer().getXTransformerName());
-                    currentSprite.createDataNode("yTransform", m_spriteArray[i]->getPositionTransformer().getYTransformerName());
+                    m_spriteArray[i]->dump(dataStore->at("LevelSprites"));
                 }
             }
             if (m_colliderArray.size() > 0) (*dataStore)->createComplexNode("Collisions");
@@ -353,18 +314,7 @@ namespace obe
             {
                 if (m_colliderArray[i]->getParentId() == "")
                 {
-                    dataStore->at("Collisions").createComplexNode(m_colliderArray[i]->getId());
-                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createComplexNode("unit");
-                    dataStore->at("Collisions", m_colliderArray[i]->getId(), "unit").useTemplate(
-                        dataStore->getTemplate("Unit<" + unitsToString(m_colliderArray[i]->getWorkingUnit()) + ">")
-                    );
-                    dataStore->at("Collisions", m_colliderArray[i]->getId()).createArrayNode("points");
-                    for (unsigned int j = 0; j < m_colliderArray[i]->getPointsAmount(); j++)
-                    {
-                        Transform::UnitVector pVec = m_colliderArray[i]->getPointPosition(j).to(m_colliderArray[i]->getWorkingUnit());
-                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.x);
-                        dataStore->at("Collisions", m_colliderArray[i]->getId()).getArrayNode("points").push(pVec.y);
-                    }
+                    m_colliderArray[i]->dump(dataStore->at("Collisions"));
                 }
             }
             if (m_gameObjectArray.size() > 0) (*dataStore)->createComplexNode("GameObjects");

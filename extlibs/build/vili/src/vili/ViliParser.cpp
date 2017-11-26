@@ -358,7 +358,7 @@ namespace vili
                                     for (std::string& arg : templateArgs)
                                     {
                                         ComplexNode& cArg = getRootChild(templateName).at("__init__", std::to_string(i));
-                                        cArg.removeNode(NodeType::DataNode, "value", true);
+                                        cArg.remove("value");
                                         cArg.createDataNode("value", Types::getVarType(arg), arg);
                                         cArg.getDataNode("value").setAnnotation("Set");
                                         i++;
@@ -645,10 +645,10 @@ namespace vili
         if (ViliCache.find(path) != ViliCache.end())
         {
             ComplexNode& cacheRoot = ViliCache[path]->root();
-            for (const std::string& currentNode : cacheRoot.getAll())
+            for (Node* node : cacheRoot.getAll())
             {
-                cacheRoot.get(currentNode)->copy(parser->operator->());
-                parser->root().get(currentNode)->setVisible(visibility);
+                node->copy(parser->operator->());
+                node->setVisible(visibility);
             }
             for (const std::string& currentTemplate : ViliCache[path]->getAllTemplates())
             {

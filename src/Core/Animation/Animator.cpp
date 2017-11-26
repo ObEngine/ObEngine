@@ -106,8 +106,8 @@ namespace obe
             if (Utils::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
             {
                 System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
-                for (std::string& currentAnimParameters : animatorCfgFile.at("Animator").getAll(vili::NodeType::ComplexNode))
-                    animationParameters[currentAnimParameters] = &animatorCfgFile.at("Animator", currentAnimParameters);
+                for (vili::ComplexNode* currentAnim : animatorCfgFile.at("Animator").getAll<vili::ComplexNode>())
+                    animationParameters[currentAnim->getId()] = &animatorCfgFile.at("Animator", currentAnim->getId());
             }
             for (unsigned int i = 0; i < listDir.size(); i++)
             {

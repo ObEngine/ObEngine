@@ -187,20 +187,52 @@ namespace obe
             Triggers::TriggerGroup* editorTriggers, 
             Input::InputManager& inputManager, 
             const std::string& mapName, 
-            Scene::Scene& world, 
+            Scene::Scene& scene, 
             double& waitForMapSaving, 
             tgui::Label::Ptr savedLabel,
             tgui::CheckBox::Ptr saveCameraPositionCheckbox)
         {
-            inputManager.getAction("Save").connect([&mapName, &world, &waitForMapSaving, savedLabel, saveCameraPositionCheckbox](const Input::InputActionEvent& event)
+            inputManager.getAction("Save").connect([&mapName, &scene, &waitForMapSaving, savedLabel, saveCameraPositionCheckbox]
+                (const Input::InputActionEvent& event)
             {
                 Debug::Log->info("<EditorGlobalActions> Saving Map '{0}'", mapName);
-                world.dump(saveCameraPositionCheckbox->isChecked())->writeFile(world.getBaseFolder() + "/Data/Maps/" + mapName, true);
+                scene.dump(saveCameraPositionCheckbox->isChecked())->writeFile(scene.getBaseFolder() + "/Data/Maps/" + mapName, true);
                 if (waitForMapSaving < 0)
                 {
                     savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
                     waitForMapSaving = 0;
                 }
+            });
+        }
+
+        void connectCopyPasteActions(
+            Triggers::TriggerGroup* editorTriggers,
+            Input::InputManager& inputManager,
+            Scene::Scene& scene,
+            vili::ComplexNode& sceneClipboard,
+            tgui::Label::Ptr savedLabel,
+            Collision::PolygonalCollider*& selectedMasterCollider,
+            Graphics::LevelSprite*& selectedSprite)
+        {
+            inputManager.getAction("Copy").connect([&editorTriggers, &scene, &sceneClipboard, savedLabel, &selectedMasterCollider, &selectedSprite]
+                (const Input::InputActionEvent& event)
+            {
+                Debug::Log->debug("<EditorGlobalActions> Copying Object");
+                if (selectedMasterCollider)
+                {
+                    sceneClipboard.clear();
+                    selectedMasterCollider->dump(sceneClipboard);
+                }
+            });
+
+            inputManager.getAction("Cut").connect([](const Input::InputActionEvent& event)
+            {
+                Debug::Log->debug("<EditorGlobalActions> Cutting Object");
+            });
+
+            inputManager.getAction("Paste").connect([](const Input::InputActionEvent& event)
+            {
+                Debug::Log->debug("<EditorGlobalActions> Pasting Object");
             });
         }
 

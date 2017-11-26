@@ -38,7 +38,7 @@ namespace obe
             m_sprite.setRotation(-m_angle * this->getScaleFactor().x * this->getScaleFactor().y);
         }
 
-        void LevelSprite::load(const std::string& path)
+        void LevelSprite::loadTexture(const std::string& path)
         {
             if (path != "")
             {
@@ -230,57 +230,6 @@ namespace obe
             return m_path;
         }
 
-        void LevelSprite::configure(vili::ComplexNode& configuration)
-        {
-            std::string spriteXTransformer;
-            std::string spriteYTransformer;
-            std::string spriteUnits = configuration.contains(vili::NodeType::ComplexNode, "rect") ?
-                configuration.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
-            std::string spritePath = configuration.contains(vili::NodeType::DataNode, "path") ?
-                configuration.getDataNode("path").get<std::string>() : "";
-            Transform::UnitVector spritePos(0, 0);
-            Transform::UnitVector spriteSize(1, 1);
-            if (configuration.contains(vili::NodeType::ComplexNode, "rect"))
-            {
-                Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
-                spritePos.unit = rectUnit;
-                spritePos.x = configuration.at<vili::DataNode>("rect", "x").get<double>();
-                spritePos.y = configuration.at<vili::DataNode>("rect", "y").get<double>();
-                spriteSize.unit = rectUnit;
-                spriteSize.x = configuration.at<vili::DataNode>("rect", "w").get<double>();
-                spriteSize.y = configuration.at<vili::DataNode>("rect", "h").get<double>();
-                spritePos = spritePos.to<Transform::Units::WorldUnits>();
-                spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
-            }
-            double spriteRot = configuration.contains(vili::NodeType::DataNode, "rotation") ?
-                configuration.getDataNode("rotation").get<double>() : 0;
-            int layer = configuration.contains(vili::NodeType::DataNode, "layer") ?
-                configuration.getDataNode("layer").get<int>() : 1;
-            int zdepth = configuration.contains(vili::NodeType::DataNode, "z-depth") ?
-                configuration.getDataNode("z-depth").get<int>() : 1;
-
-            if (configuration.contains(vili::NodeType::DataNode, "xTransform"))
-                spriteXTransformer = configuration.at<vili::DataNode>("xTransform").get<std::string>();
-            else
-                spriteXTransformer = "Position";
-            if (configuration.contains(vili::NodeType::DataNode, "yTransform"))
-                spriteYTransformer = configuration.at<vili::DataNode>("yTransform").get<std::string>();
-            else
-                spriteYTransformer = "Position";
-
-            if (spritePath != "")
-                this->load(spritePath);
-            this->setPosition(spritePos);
-            this->setSize(spriteSize);
-            this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
-            PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
-            this->setPositionTransformer(positionTransformer);
-            this->setLayer(layer);
-            this->setZDepth(zdepth);
-            this->setRotation(spriteRot);
-            this->applySpriteRotation();
-        }
-
         sf::FloatRect LevelSprite::getRect()
         {
             Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
@@ -409,6 +358,77 @@ namespace obe
         Transform::Rect& LevelSpriteHandlePoint::getRect() const
         {
             return *m_sprite;
+        }
+
+        void LevelSprite::dump(vili::ComplexNode& target) const
+        {
+            vili::ComplexNode& ser = target.createComplexNode(m_id);
+            ser.createDataNode("path", m_path);
+            ser.createComplexNode("rect");
+            Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
+            ser.at("rect").createDataNode("x", spritePositionRect.x);
+            ser.at("rect").createDataNode("y", spritePositionRect.y);
+            Transform::UnitVector spriteSizeRect = this->getSize().to(m_unit);
+            ser.at("rect").createDataNode("w", spriteSizeRect.x);
+            ser.at("rect").createDataNode("h", spriteSizeRect.y);
+            ser.at("rect").createDataNode("unit", Transform::unitsToString(m_unit));
+
+            ser.createDataNode("rotation", m_angle);
+            ser.createDataNode("layer", m_layer);
+            ser.createDataNode("z-depth", m_zdepth);
+            ser.createDataNode("xTransform", m_positionTransformer.getXTransformerName());
+            ser.createDataNode("yTransform", m_positionTransformer.getYTransformerName());
+        }
+
+        void LevelSprite::load(vili::ComplexNode& data)
+        {
+            std::string spriteXTransformer;
+            std::string spriteYTransformer;
+            std::string spriteUnits = data.contains(vili::NodeType::ComplexNode, "rect") ?
+                data.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
+            std::string spritePath = data.contains(vili::NodeType::DataNode, "path") ?
+                data.getDataNode("path").get<std::string>() : "";
+            Transform::UnitVector spritePos(0, 0);
+            Transform::UnitVector spriteSize(1, 1);
+            if (data.contains(vili::NodeType::ComplexNode, "rect"))
+            {
+                Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
+                spritePos.unit = rectUnit;
+                spritePos.x = data.at<vili::DataNode>("rect", "x").get<double>();
+                spritePos.y = data.at<vili::DataNode>("rect", "y").get<double>();
+                spriteSize.unit = rectUnit;
+                spriteSize.x = data.at<vili::DataNode>("rect", "w").get<double>();
+                spriteSize.y = data.at<vili::DataNode>("rect", "h").get<double>();
+                spritePos = spritePos.to<Transform::Units::WorldUnits>();
+                spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
+            }
+            double spriteRot = data.contains(vili::NodeType::DataNode, "rotation") ?
+                data.getDataNode("rotation").get<double>() : 0;
+            int layer = data.contains(vili::NodeType::DataNode, "layer") ?
+                data.getDataNode("layer").get<int>() : 1;
+            int zdepth = data.contains(vili::NodeType::DataNode, "z-depth") ?
+                data.getDataNode("z-depth").get<int>() : 1;
+
+            if (data.contains(vili::NodeType::DataNode, "xTransform"))
+                spriteXTransformer = data.at<vili::DataNode>("xTransform").get<std::string>();
+            else
+                spriteXTransformer = "Position";
+            if (data.contains(vili::NodeType::DataNode, "yTransform"))
+                spriteYTransformer = data.at<vili::DataNode>("yTransform").get<std::string>();
+            else
+                spriteYTransformer = "Position";
+
+            if (spritePath != "")
+                this->loadTexture(spritePath);
+            this->setPosition(spritePos);
+            this->setSize(spriteSize);
+            this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
+            PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+            this->setPositionTransformer(positionTransformer);
+            this->setLayer(layer);
+            this->setZDepth(zdepth);
+            this->setRotation(spriteRot);
+            this->applySpriteRotation();
         }
     }
 }

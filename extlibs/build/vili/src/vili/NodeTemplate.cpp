@@ -54,17 +54,17 @@ namespace vili
                 attributeAddresses.push_back(constraintManager.getLinkNode());
             parent->getComplexNode(id).walk([attributeAddresses](NodeIterator& complex)
             {
-                for (int i = 0; i < complex->getAll(NodeType::LinkNode).size(); i++)
+                for (LinkNode* link : complex->getAll<LinkNode>())
                 {
-                    for (int j = 0; j < attributeAddresses.size(); j++)
+                    for (LinkNode* compare : attributeAddresses)
                     {
-                        if (complex->getLinkNode(complex->getAll(NodeType::LinkNode)[i]) == (*attributeAddresses[j]))
-                            complex->getLinkNode(complex->getAll(NodeType::LinkNode)[i]).apply();
+                        if (link == compare)
+                            link->apply();
                     }
                 }
             });
             if (m_defaultLinkRoot)
-                parent->at(id).removeNode(NodeType::DataNode, "__linkroot__");
+                parent->at(id).remove("__linkroot__");
         }
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.NodeTemplate.BuildError", {{"element", id},{"parent", parent->getNodePath()}});

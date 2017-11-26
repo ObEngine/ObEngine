@@ -827,5 +827,42 @@ namespace obe
             }
             return false;
         }
+
+        void PolygonalCollider::dump(vili::ComplexNode& target) const
+        {
+            vili::ComplexNode& ser = target.createComplexNode(m_id);
+            ser.createComplexNode("unit")
+                .createDataNode("unit", Transform::unitsToString(m_unit));
+            vili::ArrayNode& points = ser.createArrayNode("points");
+            for (auto& point : m_allPoints)
+            {
+                Transform::UnitVector pVec = point.to(m_unit);
+                points.push(pVec.x);
+                points.push(pVec.y);
+            }
+        }
+
+        void PolygonalCollider::load(vili::ComplexNode& data)
+        {
+            std::string pointsUnit = data.at<vili::DataNode>("unit", "unit").get<std::string>();
+            bool completePoint = true;
+            double pointBuffer = 0;
+            Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
+            for (vili::DataNode* colliderPoint : data.getArrayNode("points"))
+            {
+                if ((completePoint = !completePoint))
+                {
+                    Transform::UnitVector pVector2 = Transform::UnitVector(
+                        pointBuffer,
+                        colliderPoint->get<double>(),
+                        pBaseUnit
+                    );
+                    this->addPoint(pVector2);
+                }
+                else
+                    pointBuffer = colliderPoint->get<double>();
+            }
+            this->setWorkingUnit(pBaseUnit);
+        }
     }
 }

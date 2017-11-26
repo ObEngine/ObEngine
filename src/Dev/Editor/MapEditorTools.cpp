@@ -160,8 +160,9 @@ namespace obe
                 std::unordered_map<std::string, tgui::EditBox::Ptr> requireEditBoxes;
 
                 int widgetVerticalPosition = 70;
-                for (std::string& requireItem : requireInput.getAll(vili::NodeType::ComplexNode))
+                for (vili::ComplexNode* complexRequire : requireInput.getAll<vili::ComplexNode>())
                 {
+                    std::string requireItem = complexRequire->getId();
                     tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                     currentRequirementLabel->setPosition(50, widgetVerticalPosition);
                     currentRequirementLabel->setTextSize(18);
@@ -233,11 +234,11 @@ namespace obe
             
             requires->at("Output").walk([](vili::NodeIterator& node)
             {
-                for (const std::string& linkId : node->getAll(vili::NodeType::LinkNode))
+                for (vili::LinkNode* link : node->getAll<vili::LinkNode>())
                 {
                     node->createDataNode("__linkroot__", "Input");
-                    node->getLinkNode(linkId).apply();
-                    node->removeNode(vili::NodeType::DataNode, "__linkroot__", true);
+                    link->apply();
+                    node->remove("__linkroot__");
                 }
             });
 
@@ -338,7 +339,7 @@ namespace obe
             }
             Graphics::LevelSprite* sprToAdd = scene.createLevelSprite(testId);
             Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-            sprToAdd->load("Sprites/LevelSprites/" + spritePath);
+            sprToAdd->loadTexture("Sprites/LevelSprites/" + spritePath);
             sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);
             sprToAdd->setRotation(0);
             //ADD SPRITE SIZE
