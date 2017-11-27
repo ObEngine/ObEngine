@@ -65,7 +65,6 @@ function obe.Canvas.MakeMT(bases)
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
             k.__setters.__number(k.__ref, c);
         else
-            print(k, b, c);
             k.__setters[b](k.__ref, c);
         end
     end
@@ -439,16 +438,12 @@ obe.Canvas.Bases.Text = {
             end
         end,
         align = function(self, al)
-            print(inspect(al));
             if al.h or al.horizontal then
-                print("Found h");
                 self.h_align = obe.Canvas.ConvertHAlign(al.h or al.horizontal);
             end
             if al.v or al.vertical then
-                print("Found v");
                 self.v_align = obe.Canvas.ConvertVAlign(al.v or al.vertical);
             end
-            print("End");
         end
     }
 }

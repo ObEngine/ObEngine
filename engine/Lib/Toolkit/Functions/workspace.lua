@@ -9,7 +9,7 @@ function getWorkspaceList()
     parser:parseFile("Workspace/Workspaces.vili");
     local allWorkspaces = {};
     for _, key in pairs(parser:root():getAll(Vili.NodeType.ComplexNode)) do 
-        table.insert(allWorkspaces, key);
+        table.insert(allWorkspaces, key:getId());
     end
     return allWorkspaces;
 end

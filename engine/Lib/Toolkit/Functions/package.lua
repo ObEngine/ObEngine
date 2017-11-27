@@ -10,7 +10,7 @@ function getPackageList()
     parser:parseFile("Package/Packages.vili");
     local allPackages = {};
     for _, key in pairs(parser:root():getAll(Vili.NodeType.ComplexNode)) do 
-        table.insert(allPackages, key);
+        table.insert(allPackages, key:getId());
     end
     return allPackages;
 end

@@ -22,7 +22,7 @@ namespace obe
             public:
                 std::string id;
                 unsigned int layer = 1;
-                bool visible;
+                bool visible = true;
 
                 /**
                  * \brief Creates a new CanvasElement
