@@ -295,6 +295,7 @@ namespace vili
 
     void ComplexNode::write(std::ofstream* file, const std::string& spacing, unsigned int depth) const
     {
+        std::cout << "Writing : " << m_id << " with visibility " << m_visible << std::endl;
         if (m_visible && depth > 0)
         {
             for (unsigned int i = 0; i < depth - 1; i++)

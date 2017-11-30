@@ -78,6 +78,7 @@ namespace obe
                 mainPanel->get<tgui::Scrollbar>("keybindingScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("keybindingPanel")->getSize().y);
                 mainPanel->get<tgui::Scrollbar>("spritesScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("spritesPanel")->getSize().y);
                 mainPanel->get<tgui::Scrollbar>("objectsScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("objectsPanel")->getSize().y);
+                //mainPanel->get<tgui::Scrollbar>("inspectorScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("inspectorPanel")->getSize().y);
             }
 
             void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
@@ -368,17 +369,24 @@ namespace obe
                 });
             }
 
-            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& world)
+            void buildEditorMapMenu(tgui::Panel::Ptr& mapPanel, Scene::Scene& scene)
             {
                 tgui::Label::Ptr mapNameLabel = tgui::Label::create();
                 tgui::EditBox::Ptr mapNameInput = tgui::EditBox::create();
                 tgui::Button::Ptr mapNameButton = tgui::Button::create();
                 tgui::Label::Ptr mapCatLabel = tgui::Label::create();
+                tgui::Label::Ptr inspectorLabel = tgui::Label::create();
+                tgui::Panel::Ptr inspectorPanel = tgui::Panel::create();
+                tgui::Button::Ptr inspectorRefreshButton = tgui::Button::create();
+                //tgui::Scrollbar::Ptr inspectorScrollbar = tgui::Scrollbar::create();
 
                 mapPanel->add(mapCatLabel, "mapCatLabel");
                 mapPanel->add(mapNameLabel, "mapNameLabel");
                 mapPanel->add(mapNameInput, "mapNameInput");
                 mapPanel->add(mapNameButton, "mapNameButton");
+                mapPanel->add(inspectorLabel, "inspectorLabel");
+                mapPanel->add(inspectorRefreshButton, "inspectorRefreshButton");
+                mapPanel->add(inspectorPanel, "inspectorPanel");
 
                 mapCatLabel->setPosition(20, 20);
                 mapCatLabel->setTextSize(bigFontSize);
@@ -390,17 +398,27 @@ namespace obe
                 mapNameLabel->setRenderer(baseTheme.getRenderer("Label"));
                 mapNameLabel->setText("Map Name : ");
 
-                auto changeMapNameLambda = [&world, mapPanel]()
+                auto changeMapNameLambda = [&scene, mapPanel]()
                 {
                     tgui::EditBox::Ptr mapNameInput = mapPanel->get<tgui::EditBox>("mapNameInput");
                     if (mapNameInput->getText() != "")
                     {
-                        world.setLevelName(mapNameInput->getText());
+                        scene.setLevelName(mapNameInput->getText());
                         mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
                     }
                     else
                     {
                         mapNameInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                    }
+                };
+
+                auto getSceneContent = [&scene, inspectorPanel]()
+                {
+                    inspectorPanel->removeAllWidgets();
+                    vili::ViliParser* sceneDump = scene.dump(false);
+                    for (vili::ComplexNode* spr : sceneDump->root().at("LevelSprites").getAll<vili::ComplexNode>())
+                    {
+                        std::cout << spr->getId() << std::endl;
                     }
                 };
 
@@ -414,6 +432,25 @@ namespace obe
                 tgui::bindTop(mapNameInput) + tgui::bindHeight(mapNameInput) / 2 - tgui::bindHeight(mapNameButton) / 2);
                 mapNameButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
                 mapNameButton->connect("pressed", changeMapNameLambda);
+
+                inspectorLabel->setPosition(40, tgui::bindBottom(mapNameLabel) + 20);
+                inspectorLabel->setTextSize(bigFontSize);
+                inspectorLabel->setRenderer(baseTheme.getRenderer("Label"));
+                inspectorLabel->setText("Inspector: ");
+
+                inspectorRefreshButton->setSize(16, 16);
+                inspectorRefreshButton->setPosition(tgui::bindRight(inspectorLabel) + 20, tgui::bindTop(inspectorLabel));
+                inspectorRefreshButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
+                inspectorRefreshButton->connect("pressed", getSceneContent);
+
+                inspectorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                inspectorPanel->setSize("100%", "100% - 30");
+                inspectorPanel->setPosition(0, tgui::bindBottom(inspectorLabel) + 30);
+
+                /*inspectorScrollbar->setPosition("&.width - width", tgui::bindTop(inspectorPanel));
+                inspectorScrollbar->setSize("16", tgui::bindHeight(inspectorPanel) - tgui::bindHeight(mapNameButton));
+                inspectorScrollbar->connect("ValueChanged", scrollPanel, inspectorPanel, inspectorScrollbar);
+                inspectorScrollbar->setLowValue(inspectorPanel->getSize().y);*/
             }
 
             void buildEditorSettingsMenu(tgui::Panel::Ptr& settingsPanel, EditorGrid& editorGrid, System::Cursor& cursor, tgui::ComboBox::Ptr& editMode, Scene::Scene& scene)
