@@ -12,7 +12,7 @@ namespace obe
 {
     namespace Scene
     {
-        Scene::Scene() : m_sceneRoot("root")
+        Scene::Scene() : m_sceneRoot("root"), m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
         {
             Collision::PolygonalCollider::m_sceneRef = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
@@ -21,6 +21,8 @@ namespace obe
             m_showCollisionModes["drawPoints"] = false;
             m_showCollisionModes["drawMasterPoint"] = false;
             m_showCollisionModes["drawSkel"] = false;
+
+            m_sceneTriggers->addTrigger("MapLoaded");
         }
 
         Scene::~Scene()
@@ -218,6 +220,8 @@ namespace obe
                     }
                 }
             }
+            m_sceneTriggers->pushParameter("MapLoaded", "name", filename);
+            m_sceneTriggers->trigger("MapLoaded");
         }
 
         void Scene::setFutureLoadFromFile(const std::string& filename)
@@ -440,7 +444,6 @@ namespace obe
                         m_spriteArray[i]->drawHandle(handlePos.x, handlePos.y);
                         Graphics::Utils::drawPoint(spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
                         Graphics::Utils::drawPoint(bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
-                        middle += pixelCamera;
                     }
                         
                 }
@@ -611,7 +614,6 @@ namespace obe
               Transform::Referencial::TopLeft, Transform::Referencial::TopRight,
               Transform::Referencial::BottomRight, Transform::Referencial::BottomLeft 
             };
-            Transform::UnitVector pixelPosition = position.to<Transform::Units::WorldPixels>();
             Transform::UnitVector zeroOffset(0, 0);
             
             std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);

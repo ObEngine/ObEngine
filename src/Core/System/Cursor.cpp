@@ -66,7 +66,30 @@ namespace obe
             sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow);
         }
 
-        Transform::UnitVector Cursor::getPosition()
+        void Cursor::show()
+        {
+            m_visible = true;
+            System::MainWindow.setMouseCursorVisible(true);
+        }
+
+        void Cursor::hide()
+        {
+            m_visible = false;
+            System::MainWindow.setMouseCursorVisible(false);
+        }
+
+        void Cursor::setVisible(bool visible)
+        {
+            m_visible = visible;
+            System::MainWindow.setMouseCursorVisible(visible);
+        }
+
+        bool Cursor::isVisible() const
+        {
+            return m_visible;
+        }
+
+        Transform::UnitVector Cursor::getPosition() const
         {
             return Transform::UnitVector(m_constrainedX, m_constrainedY, Transform::Units::WorldPixels);
         }

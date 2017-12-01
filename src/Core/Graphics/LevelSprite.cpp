@@ -420,6 +420,7 @@ namespace obe
 
             if (spritePath != "")
                 this->loadTexture(spritePath);
+            std::cout << "Sprite Pos : " << m_id << " is " << spritePos << std::endl;
             this->setPosition(spritePos);
             this->setSize(spriteSize);
             this->setWorkingUnit(Transform::stringToUnits(spriteUnits));

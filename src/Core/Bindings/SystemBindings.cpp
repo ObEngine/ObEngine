@@ -47,10 +47,14 @@ namespace obe
                     .addFunction("getRawY", &System::Cursor::getY)
                     .addFunction("getX", &System::Cursor::getConstrainedX)
                     .addFunction("getY", &System::Cursor::getConstrainedY)
+                    .addFunction("hide", &System::Cursor::hide)
+                    .addFunction("isVisible", &System::Cursor::isVisible)
                     .addFunction("setConstraint", &System::Cursor::setConstraint)
                     .addFunction("setPosition", &System::Cursor::setPosition)
+                    .addFunction("setVisible", &System::Cursor::setVisible)
                     .addFunction("setX", &System::Cursor::setX)
                     .addFunction("setY", &System::Cursor::setY)
+                    .addFunction("show", &System::Cursor::show)
                     .addFunction("update", &System::Cursor::update)
                 );
             }

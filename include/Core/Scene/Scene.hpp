@@ -39,6 +39,7 @@ namespace obe
             std::string m_levelFileName;
             std::map<std::string, bool> m_showCollisionModes;
             kaguya::LuaFunction m_onLoadCallback;
+            Triggers::TriggerGroupPtr m_sceneTriggers;
             void displaySprites();
         public:
             /**

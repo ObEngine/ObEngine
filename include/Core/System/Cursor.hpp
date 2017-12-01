@@ -23,6 +23,7 @@ namespace obe
             int m_y = 0;
             int m_constrainedX = 0;
             int m_constrainedY = 0;
+            bool m_visible = true;
             Triggers::TriggerGroupPtr m_cursorTriggers;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
         public:
@@ -67,7 +68,12 @@ namespace obe
              */
             void setPosition(unsigned int newx, unsigned int newy);
 
-            Transform::UnitVector getPosition();
+            void show();
+            void hide();
+            void setVisible(bool visible);
+            bool isVisible() const;
+
+            Transform::UnitVector getPosition() const;
             /**
              * \brief Updates the Cursor
              */

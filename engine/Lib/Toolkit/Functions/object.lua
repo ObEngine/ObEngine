@@ -29,7 +29,7 @@ function Functions.create(objectName, components)
                 { text = "(C)ollider", color = Style.Object}
             }, 2);
             objSaveFile:root():at(objectName):createComplexNode("Collider");
-            objCollider = objSaveFile:root():at(objectName .. "/Collider");
+            local objCollider = objSaveFile:root():at(objectName .. "/Collider");
             objCollider:createComplexNode("unit");
             objCollider:at("unit"):createDataNode("unit", "WorldUnits");
             objCollider:createArrayNode("points");
