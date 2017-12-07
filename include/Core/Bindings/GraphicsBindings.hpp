@@ -16,6 +16,7 @@ namespace obe
             void LoadResourceManager(kaguya::State* lua);
             void LoadCanvas(kaguya::State* lua);
             void LoadGraphicsUtils(kaguya::State* lua);
+            void LoadShader(kaguya::State* lua);
         }
     }
 }

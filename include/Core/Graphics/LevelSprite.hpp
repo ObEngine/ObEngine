@@ -5,6 +5,7 @@
 #include <sfe/ComplexSprite.hpp>
 
 #include <Graphics/PositionTransformers.hpp>
+#include <Graphics/Shader.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
@@ -95,6 +96,7 @@ namespace obe
             sfe::ComplexSprite m_sprite;
             std::string m_parentId = "";
             PositionTransformer m_positionTransformer;
+            Shader* m_shader = nullptr;
 
             void applySize();
             void applySpriteRotation();
@@ -306,6 +308,12 @@ namespace obe
               * \param data ComplexNode containing the data of the LevelSprite
               */
              void load(vili::ComplexNode& data) override;
+
+             void setShader(Shader* shader);
+
+             Shader* getShader();
+
+             bool hasShader();
         };
     }
 }

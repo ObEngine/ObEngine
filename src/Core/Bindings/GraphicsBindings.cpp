@@ -44,6 +44,7 @@ namespace obe
                     .addFunction("getPath", &Graphics::LevelSprite::getPath)
                     .addFunction("getPositionTransformer", &Graphics::LevelSprite::getPositionTransformer)
                     .addFunction("getRect", &Graphics::LevelSprite::getRect)
+                    .addFunction("getShader", &Graphics::LevelSprite::getShader)
                     .addFunction("getSprite", &Graphics::LevelSprite::getSprite)
                     .addFunction("getSpriteHeight", &Graphics::LevelSprite::getSpriteHeight)
                     .addFunction("getSpriteWidth", &Graphics::LevelSprite::getSpriteWidth)
@@ -51,6 +52,7 @@ namespace obe
                     .addFunction("getXScaleFactor", &Graphics::LevelSprite::getXScaleFactor)
                     .addFunction("getYScaleFactor", &Graphics::LevelSprite::getYScaleFactor)
                     .addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
+                    .addFunction("hasShader", &Graphics::LevelSprite::hasShader)
                     .addFunction("isVisible", &Graphics::LevelSprite::isVisible)
                     .addFunction("loadTexture", &Graphics::LevelSprite::loadTexture)
                     .addFunction("rotate", &Graphics::LevelSprite::rotate)
@@ -61,6 +63,7 @@ namespace obe
                     .addFunction("setRotation", &Graphics::LevelSprite::setRotation)
                     .addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)
                     .addFunction("setScalingOrigin", &Graphics::LevelSprite::setScalingOrigin)
+                    .addFunction("setShader", &Graphics::LevelSprite::setShader)
                     .addFunction("setTexture", &Graphics::LevelSprite::setTexture)
                     .addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
                     .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
@@ -146,6 +149,29 @@ namespace obe
                 {
                     Graphics::Utils::clearColor = newColor;
                 });
+            }
+
+            void LoadShader(kaguya::State* lua)
+            {
+                (*lua)["obe"]["Shader"].setClass(kaguya::UserdataMetatable<Graphics::Shader>()
+                    .setConstructors<Graphics::Shader()>()
+                    .addFunction("loadShader", &Graphics::Shader::loadShader)
+                    .addOverloadedFunctions("setUniform",
+                        static_cast<void (Graphics::Shader::*)(const std::string&, float)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, int)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, bool)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Texture&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Vec2&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Vec3&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Vec4&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Ivec2&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Ivec3&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Ivec4&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Bvec2&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Bvec3&)>(&Graphics::Shader::setUniform),
+                        static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Bvec4&)>(&Graphics::Shader::setUniform)
+                    )
+                );
             }
         }
     }

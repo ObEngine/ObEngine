@@ -60,6 +60,7 @@ namespace obe
                 .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
                 .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
                 .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
+                .add("Shader", &GraphicsBindings::LoadShader)
                 .add("Utils", &GraphicsBindings::LoadGraphicsUtils)
             // Input
                 .add("InputAction", &InputBindings::LoadInputAction)
@@ -120,6 +121,8 @@ namespace obe
             BindTree["SFML"]
                 .add("Color", SFMLBindings::LoadSfColor)
                 .add("Drawable", SFMLBindings::LoadSfDrawable)
+                .add("Font", SFMLBindings::LoadSfFont)
+                .add("Glsl", SFMLBindings::LoadSfGlsl)
                 .add("Shape", SFMLBindings::LoadSfShape)
                 .add("Text", SFMLBindings::LoadSfText)
                 .add("Transformable", SFMLBindings::LoadSfTransformable)

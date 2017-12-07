@@ -435,7 +435,10 @@ namespace obe
 
                 if (m_spriteArray[i]->isVisible())
                 {
-                    System::MainWindow.draw(tAffSpr);
+                    if (m_spriteArray[i]->hasShader())
+                        System::MainWindow.draw(tAffSpr, static_cast<sf::Shader*>(m_spriteArray[i]->getShader()));
+                    else
+                        System::MainWindow.draw(tAffSpr);
                     if (m_spriteArray[i]->isSelected())
                     {
                         //std::cout << "Middle : " << middle << std::endl;

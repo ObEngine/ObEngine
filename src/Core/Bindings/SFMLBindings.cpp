@@ -1,4 +1,5 @@
 #include <sfe/RichText.hpp>
+#include <SFML/Graphics/Glsl.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
@@ -63,6 +64,37 @@ namespace obe
 
                 (*lua)["SFML"]["FontInfo"].setClass(kaguya::UserdataMetatable<sf::Font::Info>()
                     .addProperty("family", &sf::Font::Info::family)
+                );
+            }
+
+            void LoadSfGlsl(kaguya::State* lua)
+            {
+                (*lua)["GLSL"] = kaguya::NewTable();
+
+                (*lua)["GLSL"]["Vec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec2>()
+                    .setConstructors<sf::Glsl::Vec2(), sf::Glsl::Vec2(float, float)>()
+                    .addProperty("x", &sf::Glsl::Vec2::x)
+                    .addProperty("y", &sf::Glsl::Vec2::y)
+                );
+
+                (*lua)["GLSL"]["Vec3"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec3>()
+                    .setConstructors<sf::Glsl::Vec3(), sf::Glsl::Vec3(float, float, float)>()
+                    .addProperty("x", &sf::Glsl::Vec3::x)
+                    .addProperty("y", &sf::Glsl::Vec3::y)
+                    .addProperty("z", &sf::Glsl::Vec3::z)
+                );
+
+                (*lua)["GLSL"]["Bvec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Bvec2>()
+                    .setConstructors<sf::Glsl::Bvec2(), sf::Glsl::Bvec2(bool, bool)>()
+                    .addProperty("x", &sf::Glsl::Vec2::x)
+                    .addProperty("y", &sf::Glsl::Vec2::y)
+                );
+
+                (*lua)["GLSL"]["Bvec3"].setClass(kaguya::UserdataMetatable<sf::Glsl::Bvec3>()
+                    .setConstructors<sf::Glsl::Bvec3(), sf::Glsl::Bvec3(bool, bool, bool)>()
+                    .addProperty("x", &sf::Glsl::Vec3::x)
+                    .addProperty("y", &sf::Glsl::Vec3::y)
+                    .addProperty("z", &sf::Glsl::Vec3::z)
                 );
             }
 

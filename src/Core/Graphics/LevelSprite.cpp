@@ -431,5 +431,21 @@ namespace obe
             this->setRotation(spriteRot);
             this->applySpriteRotation();
         }
+
+        void LevelSprite::setShader(Shader* shader)
+        {
+            m_shader = shader;
+            m_shader->setUniform("texture", sf::Shader::CurrentTexture);
+        }
+        
+        Shader* LevelSprite::getShader()
+        {
+            return m_shader;
+        }
+
+        bool LevelSprite::hasShader()
+        {
+            return (m_shader != nullptr);
+        }
     }
 }
