@@ -71,11 +71,11 @@ namespace obe
             {
                 (*lua)["GLSL"] = kaguya::NewTable();
 
-                (*lua)["GLSL"]["Vec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec2>()
+                /*(*lua)["GLSL"]["Vec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec2>()
                     .setConstructors<sf::Glsl::Vec2(), sf::Glsl::Vec2(float, float)>()
                     .addProperty("x", &sf::Glsl::Vec2::x)
                     .addProperty("y", &sf::Glsl::Vec2::y)
-                );
+                );*/
 
                 (*lua)["GLSL"]["Vec3"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec3>()
                     .setConstructors<sf::Glsl::Vec3(), sf::Glsl::Vec3(float, float, float)>()
@@ -84,17 +84,54 @@ namespace obe
                     .addProperty("z", &sf::Glsl::Vec3::z)
                 );
 
+                (*lua)["GLSL"]["Vec4"].setClass(kaguya::UserdataMetatable<sf::Glsl::Vec4>()
+                    .setConstructors<sf::Glsl::Vec4(), sf::Glsl::Vec4(float, float, float, float)>()
+                    .addProperty("x", &sf::Glsl::Vec4::x)
+                    .addProperty("y", &sf::Glsl::Vec4::y)
+                    .addProperty("z", &sf::Glsl::Vec4::z)
+                    .addProperty("w", &sf::Glsl::Vec4::w)
+                );
+
                 (*lua)["GLSL"]["Bvec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Bvec2>()
                     .setConstructors<sf::Glsl::Bvec2(), sf::Glsl::Bvec2(bool, bool)>()
-                    .addProperty("x", &sf::Glsl::Vec2::x)
-                    .addProperty("y", &sf::Glsl::Vec2::y)
+                    .addProperty("x", &sf::Glsl::Bvec2::x)
+                    .addProperty("y", &sf::Glsl::Bvec2::y)
                 );
 
                 (*lua)["GLSL"]["Bvec3"].setClass(kaguya::UserdataMetatable<sf::Glsl::Bvec3>()
                     .setConstructors<sf::Glsl::Bvec3(), sf::Glsl::Bvec3(bool, bool, bool)>()
-                    .addProperty("x", &sf::Glsl::Vec3::x)
-                    .addProperty("y", &sf::Glsl::Vec3::y)
-                    .addProperty("z", &sf::Glsl::Vec3::z)
+                    .addProperty("x", &sf::Glsl::Bvec3::x)
+                    .addProperty("y", &sf::Glsl::Bvec3::y)
+                    .addProperty("z", &sf::Glsl::Bvec3::z)
+                );
+
+                (*lua)["GLSL"]["Bvec4"].setClass(kaguya::UserdataMetatable<sf::Glsl::Bvec4>()
+                    .setConstructors<sf::Glsl::Bvec4(), sf::Glsl::Bvec4(bool, bool, bool, bool)>()
+                    .addProperty("x", &sf::Glsl::Bvec4::x)
+                    .addProperty("y", &sf::Glsl::Bvec4::y)
+                    .addProperty("z", &sf::Glsl::Bvec4::z)
+                    .addProperty("w", &sf::Glsl::Bvec4::w)
+                );
+
+                (*lua)["GLSL"]["Ivec2"].setClass(kaguya::UserdataMetatable<sf::Glsl::Ivec2>()
+                    .setConstructors<sf::Glsl::Ivec2(), sf::Glsl::Ivec2(int, int)>()
+                    .addProperty("x", &sf::Glsl::Ivec2::x)
+                    .addProperty("y", &sf::Glsl::Ivec2::y)
+                );
+
+                (*lua)["GLSL"]["Ivec3"].setClass(kaguya::UserdataMetatable<sf::Glsl::Ivec3>()
+                    .setConstructors<sf::Glsl::Ivec3(), sf::Glsl::Ivec3(int, int, int)>()
+                    .addProperty("x", &sf::Glsl::Ivec3::x)
+                    .addProperty("y", &sf::Glsl::Ivec3::y)
+                    .addProperty("z", &sf::Glsl::Ivec3::z)
+                );
+
+                (*lua)["GLSL"]["Ivec4"].setClass(kaguya::UserdataMetatable<sf::Glsl::Ivec4>()
+                    .setConstructors<sf::Glsl::Ivec4(), sf::Glsl::Ivec4(int, int, int, int)>()
+                    .addProperty("x", &sf::Glsl::Ivec4::x)
+                    .addProperty("y", &sf::Glsl::Ivec4::y)
+                    .addProperty("z", &sf::Glsl::Ivec4::z)
+                    .addProperty("w", &sf::Glsl::Ivec4::w)
                 );
             }
 

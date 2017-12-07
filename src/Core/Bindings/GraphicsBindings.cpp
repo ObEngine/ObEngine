@@ -154,7 +154,7 @@ namespace obe
             void LoadShader(kaguya::State* lua)
             {
                 (*lua)["obe"]["Shader"].setClass(kaguya::UserdataMetatable<Graphics::Shader>()
-                    .setConstructors<Graphics::Shader()>()
+                    .setConstructors<Graphics::Shader(), Graphics::Shader(const std::string&)>()
                     .addFunction("loadShader", &Graphics::Shader::loadShader)
                     .addOverloadedFunctions("setUniform",
                         static_cast<void (Graphics::Shader::*)(const std::string&, float)>(&Graphics::Shader::setUniform),

@@ -648,7 +648,6 @@ namespace vili
             for (Node* node : cacheRoot.getAll())
             {
                 node->copy(parser->operator->());
-                std::cout << "Set Node " << node->getId() << " visibility to " << visibility << std::endl;
                 parser->root().get(node->getId())->setVisible(visibility);
             }
             for (const std::string& currentTemplate : ViliCache[path]->getAllTemplates())

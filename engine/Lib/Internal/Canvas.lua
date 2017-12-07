@@ -324,6 +324,7 @@ obe.Canvas.Bases.Rectangle = {
             self.shape:setSize(SFML.Vector2f(width, height));
         end,
         height = function(self, height)
+            print(inspect(SFML));
             local width = self.shape:getSize().x;
             self.shape:setSize(SFML.Vector2f(width, height));
         end,

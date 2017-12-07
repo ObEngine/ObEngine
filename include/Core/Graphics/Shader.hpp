@@ -19,6 +19,7 @@ namespace obe
             std::string m_path;
         public:
             Shader();
+            explicit Shader(const std::string& path);
             void loadShader(const std::string& path);
             /**
             * \brief Dumps the content of the Shader to a ComplexNode

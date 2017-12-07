@@ -9,7 +9,12 @@ namespace obe
         {
             m_path = "";
         }
-        
+
+        Shader::Shader(const std::string& path)
+        {
+            this->loadShader(path);
+        }
+
         void Shader::loadShader(const std::string& path)
         {
             this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);
