@@ -391,7 +391,7 @@ obe.Canvas.Bases.Text = {
             if self.fontPath == "" then
                 error("@Canvas.Text.setters.text : Need to set @font before @text");
             end
-            self.shape:pushString(SFML.String(text));
+            self.shape:pushString(SFML.WString(text));
         end,
         size = function(self, size)
             self.shape:setCharacterSize(size);

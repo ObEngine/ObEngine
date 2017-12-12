@@ -1,3 +1,6 @@
+#include <bitset>
+#include <codecvt>
+
 #include <sfe/RichText.hpp>
 #include <SFML/Graphics/Glsl.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -135,6 +138,12 @@ namespace obe
                 );
             }
 
+            std::wstring toUtf8WString(const std::string& input)
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+                return converter.from_bytes(input.c_str());
+            }
+
             void LoadSfShape(kaguya::State* lua)
             {
                 Load(lua, "SFML.Drawable");
@@ -209,6 +218,10 @@ namespace obe
                     .setConstructors<sf::String(), sf::String(const std::string&)>()
                     .addFunction("toAnsiString", SFML_String_toAnsiString_wrapper())
                 );
+
+                (*lua)["SFML"]["WString"] = kaguya::function([](std::string bob){
+                    return sf::String(toUtf8WString(bob));
+                });
 
                 (*lua)["SFML"]["Text"].setClass(kaguya::UserdataMetatable<sf::Text, kaguya::MultipleBase<sf::Drawable, sf::Transformable>>()
                     .setConstructors<sf::Text(), 
