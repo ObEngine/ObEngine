@@ -1,11 +1,10 @@
 #pragma once
 
+#include <any>
 #include <map>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
-
-#include <Types/Any.hpp>
 
 namespace obe
 {
@@ -46,7 +45,7 @@ namespace obe
              *        - <point_color> sf::Color : Default color of the points of the Polygon
              *          - <point_color_x> sf::Color : Color of a specific point of the Polygon where x is the index of the point
              */
-            void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options);
+            void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, std::any>& options);
 
             extern sf::Color clearColor;
         }

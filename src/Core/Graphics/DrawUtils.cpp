@@ -10,11 +10,11 @@ namespace obe
         namespace Utils
         {
             template <typename T>
-            T findOptionOrDefault(std::map<std::string, Types::Any>& options, const char* key, T defaultValue)
+            T findOptionOrDefault(std::map<std::string, std::any>& options, const char* key, T defaultValue)
             {
                 if (options.find(key) == options.end())
                     return defaultValue;
-                return options[key].as<T>();
+                return std::any_cast<T>(options[key]);
             }
 
             void drawPoint(int x, int y, unsigned radius, sf::Color color)
@@ -35,7 +35,7 @@ namespace obe
                 System::MainWindow.draw(line, thickness, sf::Lines);
             }
 
-            void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, Types::Any>& options)
+            void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, std::any>& options)
             {
                 bool drawLines = findOptionOrDefault(options, "lines", true);
                 bool drawPoints = findOptionOrDefault(options, "points", true);

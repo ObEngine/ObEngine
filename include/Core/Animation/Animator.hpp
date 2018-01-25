@@ -60,12 +60,12 @@ namespace obe
              * \brief Animator Class Path constructor (Equivalent to default constructor + Animation::setPath())
              * \param path Path to the Animator root
              */
-            explicit Animator(System::Path path);
+            explicit Animator(const System::Path& path);
             /**
              * \brief Sets the path of the Animator root
              * \param path System::Path pointing to the Animator root
              */
-            void setPath(System::Path path);
+            void setPath(const System::Path& path);
             /**
              * \brief Sets the path of the Animator root
              * \param path std::string pointing to the Animator root (later converted to System::Path)

@@ -4,7 +4,6 @@
 
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Rect.hpp>
-#include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>
 #include <iostream>
 
@@ -116,25 +115,17 @@ namespace obe
         void Rect::display(int posX, int posY) const
         {
             int r = 6;
-            std::map<std::string, Types::Any> drawOptions;
-
-            drawOptions["lines"] = true;
-            drawOptions["points"] = true;
-            drawOptions["radius"] = r;
-            drawOptions["point_color"] = sf::Color::White;
+            std::map<std::string, std::any> drawOptions = {
+                { "lines", true },
+                { "points", true },
+                { "radius", r },
+                { "point_color", sf::Color::White },
+                { "point_color_0", sf::Color::Red },{ "point_color_1", sf::Color(255, 128, 0) },{ "point_color_2", sf::Color::Yellow },
+                { "point_color_3", sf::Color(128, 255, 0) },{ "point_color_4", sf::Color::Green },{ "point_color_5", sf::Color(0, 255, 128) },
+                { "point_color_6", sf::Color::Magenta },{ "point_color_7", sf::Color(0, 128, 255) },{ "point_color_8", sf::Color::White }
+            };
 
             std::vector<sf::Vector2i> drawPoints;
-
-            drawOptions["point_color_0"] = sf::Color(255, 0, 0);
-            drawOptions["point_color_1"] = sf::Color(255, 128, 0);
-            drawOptions["point_color_2"] = sf::Color(255, 255, 0);
-            drawOptions["point_color_3"] = sf::Color(128, 255, 0);
-            drawOptions["point_color_4"] = sf::Color(0, 255, 0);
-            drawOptions["point_color_5"] = sf::Color(0, 255, 128);
-            drawOptions["point_color_6"] = sf::Color(0, 255, 255);
-            drawOptions["point_color_7"] = sf::Color(0, 128, 255);
-            drawOptions["point_color_8"] = sf::Color(255, 255, 255);
-
             UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
 
             const std::vector<Referencial> fixDisplayOrder =

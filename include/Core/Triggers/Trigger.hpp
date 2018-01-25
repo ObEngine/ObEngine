@@ -4,7 +4,6 @@
 
 #include <Debug/Logger.hpp>
 #include <Script/GlobalState.hpp>
-#include <Types/Any.hpp>
 
 namespace obe
 {
@@ -12,7 +11,6 @@ namespace obe
     {
         class TriggerGroup;
 
-        using ParameterTable = std::map<std::string, std::pair<std::string, Types::Any>>;
         /**
          * \brief A Class that does represents a triggerable event
          * @Bind

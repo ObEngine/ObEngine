@@ -59,6 +59,7 @@ namespace obe
             void LoadAnimator(kaguya::State* lua)
             {
                 (*lua)["obe"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()
+                    .setConstructors<Animation::Animator(), Animation::Animator(const System::Path&)>()
                     .addFunction("clear", &Animation::Animator::clear)
                     .addFunction("getAllAnimationName", &Animation::Animator::getAllAnimationName)
                     .addFunction("getAnimation", &Animation::Animator::getAnimation)
@@ -70,7 +71,7 @@ namespace obe
                     .addFunction("loadAnimator", &Animation::Animator::loadAnimator)
                     .addFunction("setKey", &Animation::Animator::setKey)
                     .addOverloadedFunctions("setPath",
-                        static_cast<void (Animation::Animator::*)(System::Path)>(&Animation::Animator::setPath),
+                        static_cast<void (Animation::Animator::*)(const System::Path&)>(&Animation::Animator::setPath),
                         static_cast<void (Animation::Animator::*)(const std::string&)>(&Animation::Animator::setPath)
                     )
                     .addFunction("setPaused", &Animation::Animator::setPaused)

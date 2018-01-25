@@ -65,7 +65,11 @@ function obe.Canvas.MakeMT(bases)
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
             k.__setters.__number(k.__ref, c);
         else
-            k.__setters[b](k.__ref, c);
+            if k.__setters[b] then
+                k.__setters[b](k.__ref, c);
+            else
+                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(b));
+            end
         end
     end
     local nAccess = function(a, b)
@@ -342,6 +346,20 @@ obe.Canvas.Bases.Circle = {
     }
 }
 
+function GetRichTextString(shape)
+    local fullText = "";
+    for _, line in pairs(shape:getLines()) do
+        for _, text in pairs(line:getTexts()) do
+            fullText = fullText .. text:getString():toAnsiString();
+        end
+        fullText = fullText .. "\n";
+    end
+    if fullText and fullText ~= "" then
+        fullText = string.sub(fullText, 1, -2);
+    end
+    return fullText;
+end
+
 obe.Canvas.Bases.Text = {
     getters = {
         text = function(self)
@@ -401,19 +419,23 @@ obe.Canvas.Bases.Text = {
             self.shape:setFont(obe.ResourceManager.GetFont(font));
         end,
         color = function(self, color)
-            local fullText = "";
-            for _, line in pairs(self.shape:getLines()) do
-                for _, text in pairs(line:getTexts()) do
-                    fullText = fullText .. text:getString():toAnsiString();
-                end
-                fullText = fullText .. "\n";
-            end
-            if fullText and fullText ~= "" then
-                fullText = string.sub(fullText, 1, -2);
-            end
             self.shape:clear();
             self.shape:pushFillColor(obe.Canvas.NormalizeColor(color));
-            self.shape:pushString(SFML.String(fullText));
+            self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+        end,
+        outline = function(self, outline)
+            if type(outline) == "table" then
+                if outline.color then
+                    self.shape:clear();
+                    self.shape:pushOutlineColor(obe.Canvas.NormalizeColor(outline.color));
+                    self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+                end
+                if type(outline.thickness) == "number" then
+                    self.shape:clear();
+                    self.shape:pushOutlineThickness(outline.thickness);
+                    self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+                end
+            end
         end,
         __number = function(self, part)
             self.shape:pushOutlineThickness(0);

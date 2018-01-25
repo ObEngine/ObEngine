@@ -8,7 +8,6 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <System/Window.hpp>
-#include <Types/Any.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -402,15 +401,14 @@ namespace obe
                 {
                     return;
                 }*/
-
-                std::map<std::string, Types::Any> drawOptions;
-
+                
                 int r = 6;
-
-                drawOptions["lines"] = drawLines;
-                drawOptions["points"] = drawPoints;
-                drawOptions["radius"] = r;
-                drawOptions["point_color"] = sf::Color::White;
+                std::map<std::string, std::any> drawOptions = {
+                    { "lines", drawLines },
+                    { "points", drawPoints },
+                    { "radius", r },
+                    { "point_color", sf::Color::White } 
+                };
 
                 std::vector<sf::Vector2i> lDrawPoints;
 

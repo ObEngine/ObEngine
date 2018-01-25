@@ -10,12 +10,12 @@ namespace obe
         {
         }
 
-        Animator::Animator(System::Path path)
+        Animator::Animator(const System::Path& path)
         {
             m_animatorPath = path;
         }
 
-        void Animator::setPath(System::Path path)
+        void Animator::setPath(const System::Path& path)
         {
             m_animatorPath = path;
         }

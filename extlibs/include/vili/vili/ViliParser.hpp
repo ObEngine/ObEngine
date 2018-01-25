@@ -78,7 +78,7 @@ namespace vili
          * \return A reference to the casted Node
          */
         template <class T, class ...Args>
-        T& at(const std::string& cPath, Args ...pathParts);
+        T& at(const std::string& cPath, Args&& ...pathParts);
         /**
          * \brief Parses a .vili file
          * \param filename Path of the vili file to parse
@@ -153,8 +153,8 @@ namespace vili
     }
 
     template <class T, class ...Args>
-    T& ViliParser::at(const std::string& cPath, Args ...pathParts)
+    T& ViliParser::at(const std::string& cPath, Args&& ...pathParts)
     {
-        return m_root->at<T>(cPath, pathParts...);
+        return m_root->at<T>(cPath, std::forward<Args>(pathParts)...);
     }
 }

@@ -2,7 +2,6 @@
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
-#include <Types/Any.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
