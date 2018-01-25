@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef _USE_CPP_NEW_FS
 #include <elzip/elzip.hpp>
-#else
-#include <elzip/elzip_fallback.hpp>
-#endif
 
 namespace obe
 {

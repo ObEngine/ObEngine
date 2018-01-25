@@ -28,15 +28,16 @@ target_link_libraries(ObEngineCore sfe)
 target_link_libraries(ObEngineCore vili)
 target_link_libraries(ObEngineCore dynamicLinker)
 
-IF(CMAKE_COMPILER_IS_GNUCXX AND _USE_CPP_NEW_FS)
-  target_link_libraries(ObEngineCore stdc++fs)
-ENDIF()
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(elzip stdc++fs)
+endif()
 
 if (UNIX)
     target_link_libraries(ObEngineCore ${CMAKE_DL_LIBS})
 endif()
 
-if(SFML_FOUND)
+if (SFML_FOUND)
   target_link_libraries(ObEngineCore ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
 endif()
 

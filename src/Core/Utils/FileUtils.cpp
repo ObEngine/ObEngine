@@ -5,22 +5,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-#include <tinydir/tinydir.h>
-#ifdef _USE_CPP_NEW_FS
-#include <experimental/filesystem>
-#else
-#if _MSC_VER
-#include <io.h>
-#include <direct.h>
-#include <winbase.h>
-#define FsAccess _access
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define FsAccess access
-#define GetCurrentDir getcwd
-#endif
-#endif
+#include <filesystem>
 
 #include <Debug/Logger.hpp>
 #include <Utils/FileUtils.hpp>
@@ -34,39 +19,30 @@ namespace obe
             std::vector<std::string> getDirectoryList(const std::string& path)
             {
                 Debug::Log->trace("<FileUtils> Get Directory List at {0}", path);
-                tinydir_dir dir;
-                tinydir_open(&dir, path.c_str());
 
-                std::vector<std::string> fileList;
-                while (dir.has_next)
+                std::vector<std::string> folderList;
+                for (auto& p : std::experimental::filesystem::directory_iterator(path))
                 {
-                    tinydir_file file;
-                    tinydir_readfile(&dir, &file);
-                    if (file.is_dir)
+                    if (std::experimental::filesystem::is_directory(p))
                     {
-                        if (std::string(file.name) != "." && std::string(file.name) != "..") { fileList.push_back(std::string(file.name)); }
+                        folderList.push_back(std::experimental::filesystem::path(p.path()).filename().string());
                     }
-                    tinydir_next(&dir);
                 }
-                tinydir_close(&dir);
-                return fileList;
+                return folderList;
             }
 
             std::vector<std::string> getFileList(const std::string& path)
             {
                 Debug::Log->trace("<FileUtils> Get File List at {0}", path);
-                tinydir_dir dir;
-                tinydir_open(&dir, path.c_str());
 
                 std::vector<std::string> fileList;
-                while (dir.has_next)
+                for (auto& p : std::experimental::filesystem::directory_iterator(path))
                 {
-                    tinydir_file file;
-                    tinydir_readfile(&dir, &file);
-                    if (!file.is_dir) { fileList.push_back(std::string(file.name)); }
-                    tinydir_next(&dir);
+                    if (std::experimental::filesystem::is_regular_file(p))
+                    {
+                        fileList.push_back(std::experimental::filesystem::path(p.path()).filename().string());
+                    }
                 }
-                tinydir_close(&dir);
                 return fileList;
             }
 
@@ -81,31 +57,15 @@ namespace obe
             bool directoryExists(const std::string& path)
             {
                 Debug::Log->trace("<FileUtils> Get Directory existence at {0}", path);
-#ifdef _USE_CPP_NEW_FS
+
                 return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_directory(path);
-#else
-                if (FsAccess(path.c_str(), 0) == 0) 
-                {
-                    struct stat status;
-                    stat(path.c_str(), &status);
-                    return (status.st_mode & S_IFDIR) != 0;
-                }
-                return false;
-#endif
             }
 
             bool createDirectory(const std::string& path)
             {
                 Debug::Log->trace("<FileUtils> Create Directory at {0}", path);
-#ifdef _USE_CPP_NEW_FS
+
                 return std::experimental::filesystem::create_directory(path);
-#else
-#ifdef _WIN32
-                return bool(CreateDirectory(path.c_str(), LPSECURITY_ATTRIBUTES(NULL)));
-#else
-                return bool(mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IXUSR));    //   grant owner access only
-#endif
-#endif
             }
 
             void createFile(const std::string& path)
@@ -118,19 +78,12 @@ namespace obe
             void copy(const std::string& source, const std::string& target)
             { 
                 Debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
-#ifdef _USE_CPP_NEW_FS
+
                 //std::experimental::filesystem::copy(source, target); (Doesn't work for now)
                 std::ifstream src(source, std::ios::binary);
                 std::ofstream dst(target, std::ios::binary);
 
                 dst << src.rdbuf();
-#else
-                //Can Only Copy File (Fix it for fallback)
-                std::ifstream src(source, std::ios::binary);
-                std::ofstream dst(target, std::ios::binary);
-
-                dst << src.rdbuf();
-#endif
             }
 
             bool deleteFile(const std::string& path)
@@ -143,24 +96,15 @@ namespace obe
             bool deleteDirectory(const std::string& path)
             {
                 Debug::Log->trace("<FileUtils> Delete Directory at {0}", path);
-#ifdef _USE_CPP_NEW_FS
+
                 if (directoryExists(path))
                     return std::experimental::filesystem::remove(path);
                 return false;
-#else
-#endif
             }
 
             std::string getCurrentDirectory()
             {
-#ifdef _USE_CPP_NEW_FS
                 return std::experimental::filesystem::current_path().string();
-#else
-                char buff[FILENAME_MAX];
-                GetCurrentDir(buff, FILENAME_MAX);
-                std::string current_working_dir(buff);
-                return current_working_dir;
-#endif
             }
 
             std::string separator()

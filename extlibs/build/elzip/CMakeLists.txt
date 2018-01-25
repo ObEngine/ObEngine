@@ -5,40 +5,25 @@ project(elzip)
 
 add_subdirectory(minizip)
 
-IF (_USE_CPP_NEW_FS)
-    MESSAGE("Using new C++17 Filesystem")
-    file(GLOB PG_LZIP 
-        ../../include/elzip/unzipper.hpp 
-        ../../include/elzip/zipper.hpp
-        ../../include/elzip/elzip.hpp
-    )
-    file(GLOB HD_LZIP 
-        src/unzipper.cpp
-        src/zipper.cpp
-        src/elzip.cpp
-    )
-ELSE()
-    MESSAGE("Using ElZip fallback")
-    file(GLOB PG_LZIP 
-        ../../include/elzip/unzipper.hpp 
-        ../../include/elzip/zipper.hpp
-        ../../include/elzip/elzip_fallback.hpp
-    )
-    file(GLOB HD_LZIP 
-        src/unzipper.cpp
-        src/zipper.cpp
-        src/elzip_fallback.cpp
-    )
-ENDIF()
+file(GLOB PG_LZIP 
+    ../../include/elzip/unzipper.hpp 
+    ../../include/elzip/zipper.hpp
+    ../../include/elzip/elzip.hpp
+)
+file(GLOB HD_LZIP 
+    src/unzipper.cpp
+    src/zipper.cpp
+    src/elzip.cpp
+)
 
 include_directories(../../include/minizip)
 
 add_library(elzip ${PG_LZIP} ${HD_LZIP})
 target_link_libraries(elzip minizip)
 
-IF(CMAKE_COMPILER_IS_GNUCXX AND _USE_CPP_NEW_FS)
-  target_link_libraries(elzip stdc++fs)
-ENDIF()
+if (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(elzip stdc++fs)
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
