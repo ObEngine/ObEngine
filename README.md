@@ -29,7 +29,6 @@ There are other libraries but they are included in the repository (extlibs/ fold
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (zlib License) (Scripting language)
 - [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
 - [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
-- [tinydir](https://github.com/cxong/tinydir) (BSD2 License) (tiny filesystem, soon replaced with C++17's filesystem)
 - [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
 - [Catch](https://github.com/catchorg/Catch2) (Boost Software License) (Test Framework)
 - [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
