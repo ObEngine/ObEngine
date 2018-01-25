@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/Sygmei/ObEngine.svg?branch=master)](https://travis-ci.org/Sygmei/ObEngine)
 [![Build status](https://ci.appveyor.com/api/projects/status/l8sr8k4shilmnm83?svg=true)](https://ci.appveyor.com/project/Sygmei/obengine)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg)]()
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/81846da629d244f69f357568a2f8d690)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
 
