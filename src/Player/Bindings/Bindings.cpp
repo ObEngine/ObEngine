@@ -139,26 +139,29 @@ namespace obe
             {
                 Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
                 System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
-                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
+                if (Utils::File::directoryExists(cPluginPath.toString()))
                 {
-                    const std::string pluginPath = cPluginPath.add(filename).toString();
-                    const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    BindTree.add(Utils::String::split(filename, ".")[0], 
-                        [pluginPath, pluginName](kaguya::State* lua)
+                    for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
                     {
-                        Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
-                        auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
-                        try
+                        const std::string pluginPath = cPluginPath.add(filename).toString();
+                        const std::string pluginName = Utils::String::split(filename, ".")[0];
+                        BindTree.add(Utils::String::split(filename, ".")[0], 
+                            [pluginPath, pluginName](kaguya::State* lua)
                         {
-                            Plugins[pluginName]->open();
-                            exposeFunction.init();
-                            exposeFunction(lua);
-                            Debug::Log->info("<Bindings:Plugin> : Loaded : {0}", pluginName);
-                        }
-                        catch (const dynamicLinker::dynamicLinkerException& e) {
-                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0}", pluginName);
-                        }
-                    });
+                            Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
+                            auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
+                            try
+                            {
+                                Plugins[pluginName]->open();
+                                exposeFunction.init();
+                                exposeFunction(lua);
+                                Debug::Log->info("<Bindings:Plugin> : Loaded : {0}", pluginName);
+                            }
+                            catch (const dynamicLinker::dynamicLinkerException& e) {
+                                Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0}", pluginName);
+                            }
+                        });
+                    }
                 }
             }
         }

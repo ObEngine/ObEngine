@@ -377,6 +377,8 @@ namespace obe
                 tgui::Label::Ptr mapCatLabel = tgui::Label::create();
                 tgui::Label::Ptr inspectorLabel = tgui::Label::create();
                 tgui::Panel::Ptr inspectorPanel = tgui::Panel::create();
+                tgui::Panel::Ptr inspectorLeftPanel = tgui::Panel::create();
+                tgui::Panel::Ptr inspectorRightPanel = tgui::Panel::create();
                 tgui::Button::Ptr inspectorRefreshButton = tgui::Button::create();
                 //tgui::Scrollbar::Ptr inspectorScrollbar = tgui::Scrollbar::create();
 
@@ -387,6 +389,9 @@ namespace obe
                 mapPanel->add(inspectorLabel, "inspectorLabel");
                 mapPanel->add(inspectorRefreshButton, "inspectorRefreshButton");
                 mapPanel->add(inspectorPanel, "inspectorPanel");
+
+                inspectorPanel->add(inspectorLeftPanel, "inspectorLeftPanel");
+                inspectorPanel->add(inspectorRightPanel, "inspectorRightPanel");
 
                 mapCatLabel->setPosition(20, 20);
                 mapCatLabel->setTextSize(bigFontSize);
@@ -412,13 +417,25 @@ namespace obe
                     }
                 };
 
-                auto getSceneContent = [&scene, inspectorPanel]()
+                auto getSceneContent = [&scene, inspectorLeftPanel]()
                 {
-                    inspectorPanel->removeAllWidgets();
+                    inspectorLeftPanel->removeAllWidgets();
                     vili::ViliParser* sceneDump = scene.dump(false);
+                    int i = 0;
                     for (vili::ComplexNode* spr : sceneDump->root().at("LevelSprites").getAll<vili::ComplexNode>())
                     {
                         std::cout << spr->getId() << std::endl;
+                        tgui::Panel::Ptr inspectorSprPanel = tgui::Panel::create();
+                        inspectorLeftPanel->add(inspectorSprPanel);
+                        inspectorSprPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                        inspectorSprPanel->setSize("100%", "10%");
+                        inspectorSprPanel->setPosition(0, i++ * 100);
+                        tgui::Label::Ptr inspectorSprLabel = tgui::Label::create();
+                        inspectorSprPanel->add(inspectorSprLabel);
+                        inspectorSprLabel->setPosition(0, 0);
+                        inspectorSprLabel->setTextSize(bigFontSize);
+                        inspectorSprLabel->setRenderer(baseTheme.getRenderer("Label"));
+                        inspectorSprLabel->setText(spr->getId());
                     }
                 };
 
@@ -446,6 +463,14 @@ namespace obe
                 inspectorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
                 inspectorPanel->setSize("100%", "100% - 30");
                 inspectorPanel->setPosition(0, tgui::bindBottom(inspectorLabel) + 30);
+
+                inspectorLeftPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                inspectorLeftPanel->setSize("50%", "100%");
+                inspectorLeftPanel->setPosition(0, 0);
+
+                inspectorRightPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                inspectorRightPanel->setSize("50%", "100%");
+                inspectorRightPanel->setPosition(tgui::bindRight(inspectorLeftPanel), 0);
 
                 /*inspectorScrollbar->setPosition("&.width - width", tgui::bindTop(inspectorPanel));
                 inspectorScrollbar->setSize("16", tgui::bindHeight(inspectorPanel) - tgui::bindHeight(mapNameButton));

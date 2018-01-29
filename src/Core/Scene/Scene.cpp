@@ -311,6 +311,8 @@ namespace obe
                 if (m_spriteArray[i]->getParentId() == "")
                 {
                     m_spriteArray[i]->dump(dataStore->at("LevelSprites"));
+                    dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect").useTemplate(
+                        dataStore->getTemplate("Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">"));
                 }
             }
             if (m_colliderArray.size() > 0) (*dataStore)->createComplexNode("Collisions");

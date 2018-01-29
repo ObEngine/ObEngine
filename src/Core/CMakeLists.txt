@@ -30,7 +30,7 @@ target_link_libraries(ObEngineCore dynamicLinker)
 
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(elzip stdc++fs)
+    target_link_libraries(ObEngineCore stdc++fs)
 endif()
 
 if (UNIX)
