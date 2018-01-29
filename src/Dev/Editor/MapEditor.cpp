@@ -12,7 +12,7 @@
 #include <Input/InputManager.hpp>
 #include <Input/KeyList.hpp>
 #include <Graphics/DrawUtils.hpp>
-#include <Network/Network.hpp>
+#include <Network/NetworkHandler.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <System/Config.hpp>

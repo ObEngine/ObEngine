@@ -26,6 +26,7 @@ pl.Types = require("Lib/StdLib/pl/types");
 pl.Utils = require("Lib/StdLib/pl/utils");
 
 pl.String:import();
+LuaUtil.Serpent = require("Lib/Internal/Serpent");
 
 function LuaUtil.Exists(path)
     local pathToTest = load("return " .. path);

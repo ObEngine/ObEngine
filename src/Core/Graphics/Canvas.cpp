@@ -55,11 +55,8 @@ namespace obe
                 if (v_align == TextVerticalAlign::Center)
                     offset.y -= shape.getGlobalBounds().height / 2;
                 else if (v_align == TextVerticalAlign::Bottom)
-                    offset.y -= shape.getGlobalBounds().height;
-                std::cout << shape.getGlobalBounds().left << "xx," << shape.getGlobalBounds().top << "," << shape.getGlobalBounds().width << "," << shape.getGlobalBounds().height << std::endl;
+                    offset.y -= shape.getGlobalBounds().height;     
                 shape.move(offset);
-                std::cout << shape.getGlobalBounds().left << "oo," << shape.getGlobalBounds().top << std::endl;
-                //shape.pushString(sf::String("bodo"));
                 target.draw(shape);
                 shape.move(-offset);
             }
@@ -131,7 +128,6 @@ namespace obe
                 });
                 for (auto& element : m_elements)
                 {
-                    std::cout << element.second->id << "," << element.second->visible << std::endl;
                     if (element.second->visible)
                         element.second->draw(m_canvas);
                 }
