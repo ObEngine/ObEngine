@@ -27,5 +27,7 @@ namespace obe
          * \brief To call when the engine starts, indexes all Lua bindings
          */
         void IndexBindings();
+        void IndexBaseBindings();
+        void IndexPlugins();
     }
 }

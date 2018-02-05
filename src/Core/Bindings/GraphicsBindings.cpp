@@ -1,6 +1,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Graphics/Canvas.hpp>
+#include <Graphics/Color.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
@@ -171,6 +172,20 @@ namespace obe
                         static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Bvec3&)>(&Graphics::Shader::setUniform),
                         static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Glsl::Bvec4&)>(&Graphics::Shader::setUniform)
                     )
+                );
+            }
+
+            KAGUYA_MEMBER_FUNCTION_OVERLOADS(Color_fromRgb_wrapper, Graphics::Color, fromRgb, 3, 4);
+            void LoadColor(kaguya::State* lua)
+            {
+                (*lua)["obe"]["Color"].setClass(kaguya::UserdataMetatable<Graphics::Color, sf::Color>()
+                    .setConstructors<
+                        Graphics::Color(uint_fast8_t, uint_fast8_t, uint_fast8_t),
+                        Graphics::Color(uint_fast8_t, uint_fast8_t, uint_fast8_t, uint_fast8_t),
+                        Graphics::Color(std::string)
+                    >()
+                    .addFunction("fromHex", &Graphics::Color::fromHex)
+                    .addFunction("fromRgb", Color_fromRgb_wrapper())
                 );
             }
         }

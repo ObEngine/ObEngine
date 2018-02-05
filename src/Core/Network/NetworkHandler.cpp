@@ -1,4 +1,4 @@
-#include <Network/NetWorkHandler.hpp>
+#include <Network/NetworkHandler.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
 namespace obe
