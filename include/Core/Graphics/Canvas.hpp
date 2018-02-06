@@ -8,7 +8,6 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include <Graphics/LevelSprite.hpp>
-#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
