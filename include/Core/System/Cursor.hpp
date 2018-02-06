@@ -1,6 +1,9 @@
 #pragma once
 
+#include <map>
+
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Transform/UnitVector.hpp>
@@ -26,6 +29,7 @@ namespace obe
             bool m_visible = true;
             Triggers::TriggerGroupPtr m_cursorTriggers;
             std::function<std::pair<int, int>(Cursor*)> m_constraint;
+            std::map<sf::Mouse::Button, bool> m_buttonState;
         public:
             /**
              * \brief Creates a Cursor

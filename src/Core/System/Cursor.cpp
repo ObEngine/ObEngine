@@ -18,12 +18,39 @@ namespace obe
             };
         }
 
+        std::string MouseButtonToString(sf::Mouse::Button button)
+        {
+            if (button == sf::Mouse::Button::Left)
+            {
+                std::cout << "isleft" << std::endl;
+                return "left";
+            }
+            else if (button == sf::Mouse::Button::Middle)
+            {
+                std::cout << "ismiddle" << std::endl;
+                return "middle";
+            }
+            else if (button == sf::Mouse::Button::Right)
+            {
+                std::cout << "isright" << std::endl;
+                return "right";
+            }
+        }
+
         Cursor::Cursor() :
             m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"), Triggers::TriggerGroupPtrRemover)
         {
             m_constraint = Constraints::Default;
 
-            m_cursorTriggers->addTrigger("CursorMoved");
+            m_buttonState[sf::Mouse::Button::Left] = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            m_buttonState[sf::Mouse::Button::Middle] = sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle);
+            m_buttonState[sf::Mouse::Button::Right] = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
+
+            m_cursorTriggers->addTrigger("Move");
+            m_cursorTriggers->addTrigger("Press");
+            m_cursorTriggers->addTrigger("Release");
+            m_cursorTriggers->addTrigger("Hold");
+
             m_saveOldPos = sf::Mouse::getPosition();
         }
 
@@ -101,16 +128,45 @@ namespace obe
             m_y = mousePos.y;
             if (mousePos != m_saveOldPos)
             {
-                m_cursorTriggers->pushParameter("CursorMoved", "x", m_x);
-                m_cursorTriggers->pushParameter("CursorMoved", "y", m_y);
-                m_cursorTriggers->pushParameter("CursorMoved", "oldX", m_saveOldPos.x);
-                m_cursorTriggers->pushParameter("CursorMoved", "oldY", m_saveOldPos.y);
-                m_cursorTriggers->trigger("CursorMoved");
+                m_cursorTriggers->pushParameter("Move", "x", m_x);
+                m_cursorTriggers->pushParameter("Move", "y", m_y);
+                m_cursorTriggers->pushParameter("Move", "oldX", m_saveOldPos.x);
+                m_cursorTriggers->pushParameter("Move", "oldY", m_saveOldPos.y);
+                m_cursorTriggers->trigger("Move");
                 m_saveOldPos = mousePos;
             }
             std::pair<int, int> constrainedPosition = m_constraint(this);
             m_constrainedX = constrainedPosition.first;
             m_constrainedY = constrainedPosition.second;
+
+            bool hold = false;
+            bool press = false;
+            bool release = false;
+
+            for (auto& state : m_buttonState)
+            {
+                if (sf::Mouse::isButtonPressed(state.first) && state.second)
+                {
+                    m_cursorTriggers->pushParameter("Hold", MouseButtonToString(state.first), true);
+                    hold = true;
+                }
+                if (sf::Mouse::isButtonPressed(state.first) && !state.second)
+                {
+                    m_cursorTriggers->pushParameter("Press", MouseButtonToString(state.first), true);
+                    state.second = true;
+                    press = true;
+                }
+                if (!sf::Mouse::isButtonPressed(state.first) && state.second)
+                {
+                    m_cursorTriggers->pushParameter("Release", MouseButtonToString(state.first), true);
+                    state.second = false;
+                    release = true;
+                }
+            }
+
+            if (hold) m_cursorTriggers->trigger("Hold");
+            if (press) m_cursorTriggers->trigger("Press");
+            if (release) m_cursorTriggers->trigger("Release");
         }
 
         void Cursor::setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint)
