@@ -119,7 +119,6 @@ namespace obe
         template <typename P>
         void TriggerGroup::pushParameter(const std::string& triggerName, const std::string& parameterName, P parameter)
         {
-            std::cout << "Push parameter : " << triggerName << " : " << parameterName << std::endl;
             getTrigger(triggerName)->pushParameter(parameterName, parameter);
         }
     }

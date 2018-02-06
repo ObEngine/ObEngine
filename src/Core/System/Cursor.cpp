@@ -22,17 +22,14 @@ namespace obe
         {
             if (button == sf::Mouse::Button::Left)
             {
-                std::cout << "isleft" << std::endl;
                 return "left";
             }
             else if (button == sf::Mouse::Button::Middle)
             {
-                std::cout << "ismiddle" << std::endl;
                 return "middle";
             }
             else if (button == sf::Mouse::Button::Right)
             {
-                std::cout << "isright" << std::endl;
                 return "right";
             }
         }
@@ -148,17 +145,23 @@ namespace obe
                 if (sf::Mouse::isButtonPressed(state.first) && state.second)
                 {
                     m_cursorTriggers->pushParameter("Hold", MouseButtonToString(state.first), true);
+                    m_cursorTriggers->pushParameter("Hold", "x", m_x);
+                    m_cursorTriggers->pushParameter("Hold", "y", m_y);
                     hold = true;
                 }
                 if (sf::Mouse::isButtonPressed(state.first) && !state.second)
                 {
                     m_cursorTriggers->pushParameter("Press", MouseButtonToString(state.first), true);
+                    m_cursorTriggers->pushParameter("Press", "x", m_x);
+                    m_cursorTriggers->pushParameter("Press", "y", m_y);
                     state.second = true;
                     press = true;
                 }
                 if (!sf::Mouse::isButtonPressed(state.first) && state.second)
                 {
                     m_cursorTriggers->pushParameter("Release", MouseButtonToString(state.first), true);
+                    m_cursorTriggers->pushParameter("Release", "x", m_x);
+                    m_cursorTriggers->pushParameter("Release", "y", m_y);
                     state.second = false;
                     release = true;
                 }

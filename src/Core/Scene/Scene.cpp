@@ -58,7 +58,8 @@ namespace obe
             }
             else // <REVISION> Copy ColliderCreate behaviour
             {
-                throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.SpriteAlreadyExists", { {"id", createId}, {"mapfile", m_levelName} });
+                Debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
+                return this->getLevelSprite(createId);
             }
         }
 

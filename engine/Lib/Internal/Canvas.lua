@@ -139,7 +139,7 @@ obe.Canvas.Bases.Drawable = {
       visible = function(self) return self.visible; end
   },
   setters = {
-      layer = function(self, layer) self.layer = layer or 1; end,
+      layer = function(self, layer) self:setLayer(layer or 1); end,
       visible = function(self, visible) self.visible = visible; end
   }
 }
@@ -470,7 +470,15 @@ obe.Canvas.Bases.Text = {
     }
 }
 
+function obe.Canvas.Canvas:GenerateId(id)
+    while id == nil or self.internal:get(id) ~= nil do
+        id = obe.String.getRandomKey(obe.String.Alphabet .. obe.String.Numbers, 12);
+    end
+    return id;
+end
+
 function obe.Canvas.Canvas:Line(id)
+    id = self:GenerateId(id);
     self.elements[id] = obe.Canvas.MakeMT({ 
         obe.Canvas.Bases.Drawable, 
         obe.Canvas.Bases.Line});
@@ -479,6 +487,7 @@ function obe.Canvas.Canvas:Line(id)
 end
 
 function obe.Canvas.Canvas:Rectangle(id)
+    id = self:GenerateId(id);
     self.elements[id] = obe.Canvas.MakeMT({
         obe.Canvas.Bases.Drawable,
         obe.Canvas.Bases.Shape,
@@ -488,6 +497,7 @@ function obe.Canvas.Canvas:Rectangle(id)
 end
 
 function obe.Canvas.Canvas:Text(id)
+    id = self:GenerateId(id);
     self.elements[id] = obe.Canvas.MakeMT({
         obe.Canvas.Bases.Drawable,
         obe.Canvas.Bases.Shape,
@@ -498,6 +508,7 @@ function obe.Canvas.Canvas:Text(id)
 end
 
 function obe.Canvas.Canvas:Circle(id)
+    id = self:GenerateId(id);
     self.elements[id] = obe.Canvas.MakeMT({
         obe.Canvas.Bases.Drawable,
         obe.Canvas.Bases.Shape,
@@ -507,6 +518,7 @@ function obe.Canvas.Canvas:Circle(id)
 end
 
 function obe.Canvas.Canvas:Sprite(id)
+    id = self:GenerateId(id);
     self.elements[id] = { __ref = self.internal:Sprite(id); };
     return self.elements[id];
 end

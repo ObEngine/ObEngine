@@ -68,6 +68,8 @@ namespace obe
                 (*lua)["obe"]["String"]["isSurroundedBy"] = kaguya::function(Utils::String::isSurroundedBy);
                 (*lua)["obe"]["String"]["getRandomKey"] = kaguya::function(Utils::String::getRandomKey);
                 (*lua)["obe"]["String"]["contains"] = kaguya::function(Utils::String::contains);
+                (*lua)["obe"]["String"]["Alphabet"] = Utils::String::Alphabet;
+                (*lua)["obe"]["String"]["Numbers"] = Utils::String::Numbers;
             }
 
             void loadVectorUtils(kaguya::State* lua)

@@ -50,6 +50,10 @@ namespace obe
             //Scene Creation / Loading
             Scene::Scene scene;
             scene.reg("Scene");
+            Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
+            {
+                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+            });
 
             //Keybinding
             Input::InputManager inputManager;

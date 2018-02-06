@@ -42,7 +42,8 @@ namespace obe
             if (path != "")
             {
                 m_path = path;
-                m_texture = ResourceManager::GetTexture(System::Path(path).find());
+                std::string fPath = System::Path(path).find();
+                m_texture = ResourceManager::GetTexture(fPath);
                 
                 m_sprite.setTexture(*m_texture);
                 m_sprite.setTextureRect(sf::IntRect(0, 0, m_texture->getSize().x, m_texture->getSize().y));

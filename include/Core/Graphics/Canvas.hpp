@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <kaguya/kaguya.hpp>
@@ -7,34 +8,57 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include <Graphics/LevelSprite.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
     namespace Graphics
     {
-            namespace Canvas
+        namespace Canvas
+        {
+            enum class CanvasElementType
             {
+                CanvasElement,
+                Line,
+                Rectangle,
+                Text,
+                Circle,
+                Sprite
+            };
+
+            class Canvas;
             /**
              * \brief A Drawable Canvas Element
              */
             class CanvasElement
             {
             public:
-                std::string id;
+                static const CanvasElementType Type = CanvasElementType::CanvasElement;
+
+                Canvas* parent;
+                std::string id; // <REVISION> Possible id overlap in Canvas
                 unsigned int layer = 1;
                 bool visible = true;
+                CanvasElementType type;
 
                 /**
                  * \brief Creates a new CanvasElement
                  * \param id Id of the new CanvasElement
                  */
-                explicit CanvasElement(const std::string& id);
+                explicit CanvasElement(Canvas* parent, const std::string& id);
                 /**
                  * \brief Abstract draw method
                  * \param target Target where to render the result
                  */
                 virtual void draw(sf::RenderTexture& target) = 0;
                 virtual ~CanvasElement() = default;
+
+                /*
+                 * \brief Changes layer or object and will ask the Canvas to reorder elements automatically
+                 */
+                void setLayer(unsigned int layer);
+
+                using Ptr = std::unique_ptr<CanvasElement>;
             };
 
             /**
@@ -47,12 +71,13 @@ namespace obe
                 Transform::UnitVector p2;
                 unsigned int thickness;
                 sf::Color color;
+                static const CanvasElementType Type = CanvasElementType::Line;
 
                 /**
                  * \brief Creates a new Line
-                 * \param id 
+                 * \param id
                  */
-                explicit Line(const std::string& id);
+                explicit Line(Canvas* parent, const std::string& id);
                 /**
                  * \brief Draws the Line
                  * \param target Target where to draw the Line to
@@ -66,12 +91,14 @@ namespace obe
             class Rectangle : public CanvasElement
             {
             public:
+                static const CanvasElementType Type = CanvasElementType::Rectangle;
+
                 sf::RectangleShape shape;
                 /**
                  * \brief Creates a new Rectangle
                  * \param id Id of the new Rectangle
                  */
-                explicit Rectangle(const std::string& id);
+                explicit Rectangle(Canvas* parent, const std::string& id);
                 /**
                  * \brief Draws the Rectangle
                  * \param target Target where to draw the Rectangle to
@@ -99,6 +126,8 @@ namespace obe
             class Text : public CanvasElement
             {
             public:
+                static const CanvasElementType Type = CanvasElementType::Text;
+
                 std::string fontPath;
                 sfe::RichText shape;
                 TextHorizontalAlign h_align;
@@ -107,7 +136,7 @@ namespace obe
                  * \brief Creates a new Text
                  * \param id Id of the new Text
                  */
-                explicit Text(const std::string& id);
+                explicit Text(Canvas* parent, const std::string& id);
                 /**
                  * \brief Draws the Text
                  * \param target Target where to draw the Text to
@@ -121,13 +150,15 @@ namespace obe
             class Circle : public CanvasElement
             {
             public:
+                static const CanvasElementType Type = CanvasElementType::Circle;
+
                 sf::CircleShape shape;
                 float radius;
                 /**
                  * \brief Creates a new Circle
                  * \param id Id of the new Circle
                  */
-                explicit Circle(const std::string& id);
+                explicit Circle(Canvas* parent, const std::string& id);
                 /**
                  * \brief Draws the Circle
                  * \param target Target where to draw the Circle to
@@ -141,9 +172,11 @@ namespace obe
             class Sprite : public CanvasElement
             {
             public:
+                static const CanvasElementType Type = CanvasElementType::Sprite;
+
                 std::string path;
                 sfe::ComplexSprite sprite;
-                explicit Sprite(const std::string& id);
+                explicit Sprite(Canvas* parent, const std::string& id);
                 /**
                  * \brief Draws the Sprite
                  * \param target Target where to draw the Sprite to
@@ -154,13 +187,14 @@ namespace obe
             /**
              * \brief A Canvas where you can draw CanvasElements on
              */
-            using CanvasElementPair = std::pair<std::string, std::unique_ptr<CanvasElement>>;
             class Canvas
             {
             private:
                 LevelSprite* m_target;
                 sf::RenderTexture m_canvas;
-                std::vector<CanvasElementPair> m_elements;
+                std::vector<CanvasElement::Ptr> m_elements;
+                bool m_sortRequired = true;
+                void sortElements();
             public:
                 /**
                  * \brief Creates a new Canvas
@@ -169,35 +203,10 @@ namespace obe
                  */
                 Canvas(unsigned int width, unsigned int height);
 
-                /**
-                 * \brief Adds a new Line to the Canvas
-                 * \param id Id of the new Line
-                 * \return A pointer to the newly created Line
-                 */
-                Line* line(const std::string& id);
-                /**
-                 * \brief Adds a new Rectangle to the Canvas
-                 * \param id Id of the new Rectangle
-                 * \return A pointer to the newly created Rectangle
-                 */
-                Rectangle* rectangle(const std::string& id);
-                /**
-                 * \brief Adds a new Text to the Canvas
-                 * \param id Id of the new Text
-                 * \return A pointer to the newly created Text
-                 */
-                Text* text(const std::string& id);
-                /**
-                 * \brief Adds a new Circle to the Canvas
-                 * \param id Id of the new Circle
-                 * \return A pointer to the newly created Circle
-                 */
-                Circle* circle(const std::string& id);
+                template <class S>
+                S* add(const std::string& id);
 
-                Sprite* sprite(const std::string& id);
-                /*Polygon& Polygon(std::string id);
-                Shader& Shader(std::string id);
-                Vertexes& Vertexes(std::string id);*/
+                CanvasElement* get(const std::string& id);
 
                 /**
                  * \brief Sets the LevelSprite where the Canvas should render
@@ -222,7 +231,31 @@ namespace obe
                  * \return A reference to the current Texture of the Canvas
                  */
                 const sf::Texture& getTexture() const;
+                /**
+                * \brief Asks the Canvas to sort elements for the next rendering
+                */
+                void requiresSort();
             };
+
+            template <class S>
+            inline S* Canvas::add(const std::string& id)
+            {
+                if (this->get(id) == nullptr)
+                {
+                    m_sortRequired = true;
+                    m_elements.push_back(std::make_unique<S>(this, id));
+                    return static_cast<S*>(m_elements.back().get());
+                }
+                else if (this->get(id)->type == S::Type)
+                {
+                    Debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
+                    return static_cast<S*>(this->get(id));
+                }
+                else
+                {
+                    throw aube::ErrorHandler::Raise("obe.Graphics.Canvas.Canvas.ElementAlreadyExistsWithDifferentType");
+                }
+            }
         }
     }
 }

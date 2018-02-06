@@ -89,6 +89,7 @@ namespace obe
                     .addProperty("layer", &Graphics::Canvas::CanvasElement::layer)
                     .addProperty("visible", &Graphics::Canvas::CanvasElement::visible)
                     .addProperty("id", &Graphics::Canvas::CanvasElement::id)
+                    .addFunction("setLayer", &Graphics::Canvas::CanvasElement::setLayer)
                 );
                 (*lua)["obe"]["Canvas"]["Line"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Line, 
                     Graphics::Canvas::CanvasElement>()
@@ -120,15 +121,16 @@ namespace obe
                 );
                 (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()
                     .setConstructors<Graphics::Canvas::Canvas(unsigned int, unsigned int)>()
-                    .addFunction("Line", &Graphics::Canvas::Canvas::line)
-                    .addFunction("Rectangle", &Graphics::Canvas::Canvas::rectangle)
-                    .addFunction("Text", &Graphics::Canvas::Canvas::text)
-                    .addFunction("Circle", &Graphics::Canvas::Canvas::circle)
-                    .addFunction("Sprite", &Graphics::Canvas::Canvas::sprite)
+                    .addFunction("Line", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Line>)
+                    .addFunction("Rectangle", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Rectangle>)
+                    .addFunction("Text", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Text>)
+                    .addFunction("Circle", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Circle>)
+                    .addFunction("Sprite", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Sprite>)
                     .addFunction("render", &Graphics::Canvas::Canvas::render)
                     .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
                     .addFunction("clear", &Graphics::Canvas::Canvas::clear)
                     .addFunction("remove", &Graphics::Canvas::Canvas::remove)
+                    .addFunction("get", &Graphics::Canvas::Canvas::get)
                 );
 
                 (*lua)["obe"]["Canvas"]["Alignment"] = kaguya::NewTable();

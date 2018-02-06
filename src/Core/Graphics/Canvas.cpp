@@ -3,6 +3,7 @@
 #include <Script/GlobalState.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe
 {
@@ -10,13 +11,22 @@ namespace obe
     {
         namespace Canvas
         {            
-            CanvasElement::CanvasElement(const std::string& id)
+            CanvasElement::CanvasElement(Canvas* parent, const std::string& id)
             {
                 this->id = id;
+                this->parent = parent;
+            }
+
+            void CanvasElement::setLayer(unsigned int layer)
+            {
+                if (this->layer != layer)
+                {
+                    this->layer = layer;
+                    parent->requiresSort();
+                }
             }
     
-    
-            Line::Line(const std::string& id) : CanvasElement(id)
+            Line::Line(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
             {
             }
     
@@ -32,7 +42,7 @@ namespace obe
                 target.draw(line, 2, sf::Lines);
             }
     
-            Rectangle::Rectangle(const std::string& id) : CanvasElement(id)
+            Rectangle::Rectangle(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
             {
             }
     
@@ -41,7 +51,7 @@ namespace obe
                 target.draw(shape);
             }
     
-            Text::Text(const std::string& id) : CanvasElement(id)
+            Text::Text(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
             {
             }
     
@@ -61,7 +71,7 @@ namespace obe
                 shape.move(-offset);
             }
     
-            Circle::Circle(const std::string& id) : CanvasElement(id)
+            Circle::Circle(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
             {
             }
     
@@ -70,7 +80,7 @@ namespace obe
                 target.draw(shape);
             }
     
-            Sprite::Sprite(const std::string& id) : CanvasElement(id)
+            Sprite::Sprite(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
             {
             }
     
@@ -79,39 +89,29 @@ namespace obe
                 target.draw(sprite);
             }
     
+            void Canvas::sortElements()
+            {
+                std::sort(m_elements.begin(), m_elements.end(), [](const auto& elem1, const auto& elem2)
+                {
+                    return elem1->layer > elem2->layer;
+                });
+            }
+
             Canvas::Canvas(unsigned int width, unsigned int height)
             {
                 m_canvas.create(width, height);
             }
-    
-            Line* Canvas::line(const std::string& id)
+
+            CanvasElement* Canvas::get(const std::string & id)
             {
-                m_elements.push_back(CanvasElementPair(id, std::make_unique<Line>(id)));
-                return static_cast<Line*>(m_elements.back().second.get());
-            }
-    
-            Rectangle* Canvas::rectangle(const std::string& id)
-            {
-                m_elements.push_back(CanvasElementPair(id, std::make_unique<Rectangle>(id)));
-                return static_cast<Rectangle*>(m_elements.back().second.get());
-            }
-    
-            Text* Canvas::text(const std::string& id)
-            {
-                m_elements.push_back(CanvasElementPair(id, std::make_unique<Text>(id)));
-                return static_cast<Text*>(m_elements.back().second.get());
-            }
-    
-            Circle* Canvas::circle(const std::string& id)
-            {
-                m_elements.push_back(CanvasElementPair(id, std::make_unique<Circle>(id)));
-                return static_cast<Circle*>(m_elements.back().second.get());
-            }
-    
-            Sprite* Canvas::sprite(const std::string& id)
-            {
-                m_elements.push_back(CanvasElementPair(id, std::make_unique<Sprite>(id)));
-                return static_cast<Sprite*>(m_elements.back().second.get());
+                for (auto& elem : m_elements)
+                {
+                    if (elem->id == id)
+                    {
+                        return elem.get();
+                    }
+                }
+                return nullptr;
             }
     
             void Canvas::setTarget(LevelSprite* target)
@@ -122,14 +122,17 @@ namespace obe
             void Canvas::render()
             {
                 m_canvas.clear(sf::Color(0, 0, 0, 0));
-                std::sort(m_elements.begin(), m_elements.end(), [](const auto& elem1, const auto& elem2)
+
+                if (m_sortRequired)
                 {
-                    return elem1.second->layer > elem2.second->layer;
-                });
+                    this->sortElements();
+                    m_sortRequired = false;
+                }
+                
                 for (auto& element : m_elements)
                 {
-                    if (element.second->visible)
-                        element.second->draw(m_canvas);
+                    if (element->visible)
+                        element->draw(m_canvas);
                 }
                 m_canvas.display();
                 m_target->setTexture(m_canvas.getTexture());
@@ -144,13 +147,18 @@ namespace obe
             {
                 m_elements.erase(std::remove_if(m_elements.begin(), m_elements.end(), [&id](auto& elem)
                 {
-                    return elem.second->id == id;
+                    return elem->id == id;
                 }), m_elements.end());
             }
 
             const sf::Texture& Canvas::getTexture() const
             {
                 return m_canvas.getTexture();
+            }
+
+            void Canvas::requiresSort()
+            {
+                m_sortRequired = true;
             }
         }
     }
