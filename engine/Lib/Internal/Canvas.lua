@@ -136,7 +136,8 @@ end
 obe.Canvas.Bases.Drawable = {
   getters = {
       layer = function(self) return self.layer; end,
-      visible = function(self) return self.visible; end
+      visible = function(self) return self.visible; end,
+      id = function(self) return self.id; end
   },
   setters = {
       layer = function(self, layer) self:setLayer(layer or 1); end,
@@ -154,16 +155,44 @@ obe.Canvas.Bases.Line = {
         thickness = function(self) return self.thickness; end,
         color = {
             getters = {
-                r = function(self) return self.color.r; end,
-                g = function(self) return self.color.g; end,
-                b = function(self) return self.color.b; end,
-                a = function(self) return self.color.a; end
+                r = function(self) return self.p1color.r; end,
+                g = function(self) return self.p1color.g; end,
+                b = function(self) return self.p1color.b; end,
+                a = function(self) return self.p1color.a; end
             },
             setters = {
-                r = function(self, r) self.color.r = r or 0 end,
-                g = function(self, g) self.color.g = g or 0; end,
-                b = function(self, b) self.color.b = b or 0; end,
-                a = function(self, a) self.color.a = a or 255; end
+                r = function(self, r) self.p1color.r = r or 0; self.p2color.r = r or 0; end,
+                g = function(self, g) self.p1color.g = g or 0; self.p2color.g = g or 0; end,
+                b = function(self, b) self.p1color.b = b or 0; self.p2color.b = b or 0; end,
+                a = function(self, a) self.p1color.a = a or 255; self.p2color.a = a or 255; end
+            }
+        },
+        p1color = {
+            getters = {
+                r = function(self) return self.p1color.r; end,
+                g = function(self) return self.p1color.g; end,
+                b = function(self) return self.p1color.b; end,
+                a = function(self) return self.p1color.a; end
+            },
+            setters = {
+                r = function(self, r) self.p1color.r = r or 0; end,
+                g = function(self, g) self.p1color.g = g or 0; end,
+                b = function(self, b) self.p1color.b = b or 0; end,
+                a = function(self, a) self.p1color.a = a or 255; end
+            }
+        },
+        p2color = {
+            getters = {
+                r = function(self) return self.p2color.r; end,
+                g = function(self) return self.p2color.g; end,
+                b = function(self) return self.p2color.b; end,
+                a = function(self) return self.p2color.a; end
+            },
+            setters = {
+                r = function(self, r) self.p2color.r = r or 0; end,
+                g = function(self, g) self.p2color.g = g or 0; end,
+                b = function(self, b) self.p2color.b = b or 0; end,
+                a = function(self, a) self.p2color.a = a or 255; end
             }
         }
     },
@@ -184,8 +213,15 @@ obe.Canvas.Bases.Line = {
         end,
         thickness = function(self, thickness) self.thickness = thickness or 1; end,
         color = function(self, color)
-            self.color = obe.Canvas.NormalizeColor(color, self.color);
-        end
+            self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
+            self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
+        end,
+        p1color = function(self, color)
+            self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
+        end,
+        p2color = function(self, color)
+            self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
+        end,
     }
 };
 

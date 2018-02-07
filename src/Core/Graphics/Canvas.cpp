@@ -36,8 +36,8 @@ namespace obe
                 Transform::UnitVector p2px = p2.to<Transform::Units::WorldPixels>();
                 sf::Vertex line[] =
                 {
-                    sf::Vertex(sf::Vector2f(p1px.x, p1px.y), color),
-                    sf::Vertex(sf::Vector2f(p2px.x, p2px.y), color)
+                    sf::Vertex(sf::Vector2f(p1px.x, p1px.y), p1color),
+                    sf::Vertex(sf::Vector2f(p2px.x, p2px.y), p2color)
                 };
                 target.draw(line, 2, sf::Lines);
             }

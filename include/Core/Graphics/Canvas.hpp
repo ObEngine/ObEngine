@@ -7,6 +7,7 @@
 #include <sfe/RichText.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
+#include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
 
 namespace obe
@@ -69,7 +70,8 @@ namespace obe
                 Transform::UnitVector p1;
                 Transform::UnitVector p2;
                 unsigned int thickness;
-                sf::Color color;
+                sf::Color p1color;
+                sf::Color p2color;
                 static const CanvasElementType Type = CanvasElementType::Line;
 
                 /**

@@ -96,7 +96,8 @@ namespace obe
                         .addProperty("p1", &Graphics::Canvas::Line::p1)
                         .addProperty("p2", &Graphics::Canvas::Line::p2)
                         .addProperty("thickness", &Graphics::Canvas::Line::thickness)
-                        .addProperty("color", &Graphics::Canvas::Line::color)
+                        .addProperty("p1color", &Graphics::Canvas::Line::p1color)
+                        .addProperty("p2color", &Graphics::Canvas::Line::p2color)
                 );
                 (*lua)["obe"]["Canvas"]["Rectangle"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, 
                     Graphics::Canvas::CanvasElement>()
