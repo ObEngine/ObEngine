@@ -1,4 +1,5 @@
 local Class = require("Lib/StdLib/Class");
+local contains = require("Lib/StdLib/Contains");
 
 obe.Canvas.Canvas = Class("Canvas", function(self, width, height)
     self.internal = obe.Canvas.InternalCanvas(width, height);
@@ -60,6 +61,8 @@ obe.Canvas.Bases = {};
 function obe.Canvas.MakeMT(bases)
     local getters = {};
     local setters = {};
+    local priority = {};
+
     local fAccess = function(a, b, c) 
         local k = getmetatable(a);
         if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
@@ -84,12 +87,28 @@ function obe.Canvas.MakeMT(bases)
     end
     local tAccess = function(a, b)
         b = b or {};
+        local k = getmetatable(a);
+        if #k.__priority > 0 then
+            for k, v in pairs(k.__priority) do
+                if b[v] then
+                    a[v] = b[v];
+                    b[v] = nil;
+                end
+            end
+        end
         for k, v in pairs(b) do
             a[k] = v;
         end
         return a;
     end
     for kb, base in pairs(bases) do
+        if base.priority then
+            for k, priorityName in pairs(base.priority) do
+                if not contains(priority, priorityName) then
+                    table.insert(priority, priorityName);
+                end
+            end
+        end
         for getterName, getterValue in pairs(base.getters) do
             getters[getterName] = getterValue;
         end
@@ -111,6 +130,7 @@ function obe.Canvas.MakeMT(bases)
         __ref = nil,
         __getters = getters,
         __setters = setters,
+        __priority = priority,
         __index = nAccess,
         __newindex = fAccess,
         __call = tAccess
@@ -396,6 +416,9 @@ function GetRichTextString(shape)
 end
 
 obe.Canvas.Bases.Text = {
+    priority = {
+        "font", "size", "color", "outline"
+    },
     getters = {
         text = function(self)
             local fulltext = "";
