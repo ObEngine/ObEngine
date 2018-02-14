@@ -24,9 +24,17 @@ function ExecuteFileOnEnv(file, envIndex)
 end
 
 function ExecuteStringOnEnv(code, envIndex)
-    --print("Call string : ", code, "with index", envIndex);
-    --print(inspect(__ENVIRONMENTS[envIndex]));
     assert(load(code, nil, "t", __ENVIRONMENTS[envIndex]))();
-    --print("CALL RESULT : ", f, err);
-    --print("Call file : ", file, " is over");
+end
+
+function EnvFuncInjector(env, triggerName)
+    local bsize = collectgarbage("count") * 1024;
+    _ENV = __ENVIRONMENTS[env];
+    local func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
+    if type(func) == "string" then
+        _ENV["LuaCore"]["TriggerList"][triggerName].callback = assert(load("return " .. func, nil, "t", _ENV))();
+        func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
+    end
+    _ENV["LuaCore"].FuncInjector(func, triggerName);
+    _ENV = _G;
 end

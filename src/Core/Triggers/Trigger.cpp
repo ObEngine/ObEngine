@@ -43,9 +43,11 @@ namespace obe
 
         void Trigger::registerEnvironment(unsigned int envIndex, const std::string& callbackName)
         {
-            Debug::Log->trace("<Trigger> Registering Lua Environment {0} in Trigger {1} associated to callback", envIndex, m_name, callbackName);
+            Debug::Log->trace("<Trigger> Registering Lua Environment {0} in Trigger {1} associated to callback {2}", envIndex, m_name, callbackName);
             m_registeredEnvs.emplace_back(envIndex, callbackName);
-            Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getNamespace() + "__" + this->getGroup() + "__" + m_name] = kaguya::NewTable();
+            Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NewTable();
+            Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["TriggerList"][this->getTriggerLuaTableName()] = kaguya::NewTable();
+            Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["TriggerList"][this->getTriggerLuaTableName()]["callback"] = callbackName;
         }
 
         void Trigger::unregisterEnvironment(unsigned envIndex)
@@ -71,8 +73,9 @@ namespace obe
                     if (envEnabled && objEnabled)
                     {
                         Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on Lua Environment {1} from Trigger {2}", rEnv.second, rEnv.first, m_name);
-                        Script::ScriptEngine["ExecuteStringOnEnv"]
-                        ("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);
+                        /*Script::ScriptEngine["ExecuteStringOnEnv"]
+                        ("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);*/
+                        Script::ScriptEngine("EnvFuncInjector(" + std::to_string(rEnv.first) + ", \"" + this->getTriggerLuaTableName() + "\")");
                     }
                     //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());
                     Script::ScriptEngine["__ENVIRONMENTS"]

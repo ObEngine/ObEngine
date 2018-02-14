@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/System/Clock.hpp>
+
 namespace obe
 {
     namespace Time

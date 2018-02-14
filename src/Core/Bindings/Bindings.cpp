@@ -82,6 +82,7 @@ namespace obe
                 .add("Chronometer", &TimeBindings::LoadChronometer)
                 .add("FPSCounter", &TimeBindings::LoadFPSCounter)
                 .add("FramerateManager", &TimeBindings::LoadFramerateManager)
+                .add("TimeUtils", &TimeBindings::LoadTimeUtils)
             // Transform
                 .add("Movable", &TransformBindings::LoadMovable)
                 .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)

@@ -15,6 +15,7 @@ namespace obe
             m_framerateTarget = (config.contains(vili::NodeType::DataNode, "framerateTarget")) ? config.at<vili::DataNode>("framerateTarget") : 60;
             m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync")) ? config.at<vili::DataNode>("vsync") : true;
             m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
+            std::cout << "Need to update every : " << m_reqFramerateInterval << std::endl;
             m_currentFrame = 0;
             m_frameProgression = 0;
             m_needToRender = false;

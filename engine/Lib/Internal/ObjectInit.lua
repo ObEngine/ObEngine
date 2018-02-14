@@ -7,6 +7,12 @@ Object = {
     id = __OBJECT_ID;
 };
 
+LuaCore = {};
+LuaCore.Lua_ReqList = {}; -- Require Parameters
+LuaCore.FTCP = {}; -- Future Trigger Call Parameters
+LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
+LuaCore.TriggerList = {};
+
 function ObjectInit(argtable)
     --print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
     local argt = argtable or {};
@@ -53,22 +59,23 @@ Global__Meta = {
 
 setmetatable(Global, Global__Meta);
 
-LuaCore = {};
-LuaCore.Lua_ReqList = {}; -- Require Parameters
-LuaCore.FTCP = {}; -- Future Trigger Call Parameters
-LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
-
 function LuaCore.InjectInitInjectionTable()
     for k, v in pairs(LuaCore.ObjectInitInjectionTable) do
         This:sendInitArg(k, v);
     end
 end
 
+local ArgMirror = require('Lib/Internal/ArgMirror');
+function LuaCore.IndexTriggerArgList(triggerName, funcToCall)
+    LuaCore.TriggerList[triggerName].args = ArgMirror.GetArgs(funcToCall);
+end
+
 function LuaCore.FuncInjector(funcToCall, triggerRegisterName)
-    --print("Injection : ", funcName, triggerRegisterName, triggerStackIndex, inspect(__FTCP__));
     if type(funcToCall) == "function" then
-        local ArgMirror = require('Lib/Internal/ArgMirror');
-        local Lua_Func_ArgList = ArgMirror.GetArgs(funcToCall);
+        if not LuaCore.TriggerList[triggerRegisterName].args then
+            LuaCore.IndexTriggerArgList(triggerRegisterName, funcToCall);
+        end
+        local Lua_Func_ArgList = LuaCore.TriggerList[triggerRegisterName].args;
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
             if (LuaCore.FTCP[triggerRegisterName]) then

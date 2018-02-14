@@ -12,6 +12,8 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
+#include <Time/TimeUtils.hpp>
+
 #include <any>
 
 namespace obe
@@ -71,21 +73,37 @@ namespace obe
             System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Script::ScriptEngine.dostring("Game.Start()");
 
+            sf::Clock CLOCKI;
+            sf::Time lastDisplay;
+            sf::Time t1;
+            sf::Time t2;
+            sf::Time t3;
+
             //Game Starts
             while (System::MainWindow.isOpen())
             {
                 framerateManager.update();
+
+                t1 = CLOCKI.getElapsedTime();
                 gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
                 gameTriggers->trigger("Update");
-
-                if (framerateManager.doRender())
+                std::cout << "Update : " << (CLOCKI.getElapsedTime() - t1).asMilliseconds() << std::endl;
+                
+                t2 = CLOCKI.getElapsedTime();
+                if (true)
+                {
                     gameTriggers->trigger("Render");
+                }
+                std::cout << "Render : " << (CLOCKI.getElapsedTime() - t2).asMilliseconds() << std::endl;
+                    
 
                 //Events
+                t3 = CLOCKI.getElapsedTime();
                 scene.update(framerateManager.getGameSpeed());
                 Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
+                std::cout << "Scene : " << (CLOCKI.getElapsedTime() - t3).asMilliseconds() << std::endl;
 
                 //Triggers Handling
                 inputManager.handleTriggers();
@@ -105,19 +123,23 @@ namespace obe
                     }
                 }
 
-                if (framerateManager.doRender())
+                if (true)
                 {
-                    
                     System::MainWindow.clear(Graphics::Utils::clearColor);
                     scene.display();
 
                     System::MainWindow.display();
+                    std::cout << "Last display : " << (CLOCKI.getElapsedTime() - lastDisplay).asMilliseconds() << std::endl;
+                    lastDisplay = CLOCKI.getElapsedTime();
                 }
             }
             gameTriggers->trigger("End");
             Triggers::TriggerDatabase::GetInstance()->update();
+            
             scene.update(framerateManager.getGameSpeed());
             System::MainWindow.close();
+
+            std::cin.get();
         }
     }
 }
