@@ -28,7 +28,6 @@ function ExecuteStringOnEnv(code, envIndex)
 end
 
 function EnvFuncInjector(env, triggerName)
-    local bsize = collectgarbage("count") * 1024;
     _ENV = __ENVIRONMENTS[env];
     local func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
     if type(func) == "string" then
