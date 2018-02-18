@@ -34,8 +34,6 @@ namespace obe
             //Creating Window
             System::InitWindow(System::WindowContext::EditorWindow);
 
-            Triggers::TriggerDatabase::GetInstance()->reg("TriggerDatabase");
-
             //Editor Triggers
             Triggers::TriggerGroupPtr editorTriggers(
                 Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor"), 
@@ -90,7 +88,6 @@ namespace obe
             Debug::Console gameConsole;
             bool oldConsoleVisibility = false;
             std::vector<std::string> backupContexts;
-            gameConsole.reg("Console");
 
             //Font
             sf::Font font;
@@ -102,7 +99,6 @@ namespace obe
 
             //Cursor
             System::Cursor cursor;
-            cursor.reg("Cursor");
 
             //Scene Creation / Loading
             Scene::Scene scene;
@@ -114,14 +110,12 @@ namespace obe
                 gameConsole.pushMessage("LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
                 Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
             });
-            scene.reg("Scene");
 
             //Socket
             Network::NetworkHandler networkHandler;
 
             //Keybinding
             Input::InputManager inputManager;
-            inputManager.reg("InputManager");
             inputManager.configure(System::Config.at("KeyBinding"));
             inputManager
                 .addContext("game")
@@ -130,7 +124,6 @@ namespace obe
 
             //Editor Grid
             EditorGrid editorGrid(32, 32);
-            editorGrid.reg("Grid");
             inputManager.getAction("MagnetizeUp").setRepeat(200);
             inputManager.getAction("MagnetizeDown").setRepeat(200);
             inputManager.getAction("MagnetizeLeft").setRepeat(200);

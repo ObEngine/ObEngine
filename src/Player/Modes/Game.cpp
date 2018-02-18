@@ -12,6 +12,8 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
+#include <entt/entt.hpp>
+
 namespace obe
 {
     namespace Modes
@@ -20,8 +22,6 @@ namespace obe
         {
             //Creating Window
             System::InitWindow(System::WindowContext::GameWindow);
-
-            Triggers::TriggerDatabase::GetInstance()->reg("TriggerDatabase");
 
             //Game Triggers
             Triggers::TriggerGroupPtr gameTriggers(
@@ -43,11 +43,10 @@ namespace obe
 
             //Cursor
             System::Cursor cursor;
-            cursor.reg("Cursor");
 
             //Scene Creation / Loading
             Scene::Scene scene;
-            scene.reg("Scene");
+
             Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
             {
                 Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
@@ -55,7 +54,7 @@ namespace obe
 
             //Keybinding
             Input::InputManager inputManager;
-            inputManager.reg("InputManager");
+
             inputManager.configure(System::Config.at("KeyBinding"));
             inputManager.addContext("game");
 

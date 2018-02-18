@@ -7,6 +7,7 @@
 #include <sfe/RichText.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
+#include <Component/Component.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
 

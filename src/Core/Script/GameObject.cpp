@@ -92,10 +92,9 @@ namespace obe
         //GameObject
         std::vector<unsigned int> GameObject::AllEnvs;
 
-        GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr), m_objectNode(id)
+        GameObject::GameObject(const std::string& type, const std::string& id) : Identifiable(id), m_localTriggers(nullptr)
         {
             m_type = type;
-            m_id = id;
         }
 
         void GameObject::initialize()

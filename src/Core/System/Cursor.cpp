@@ -35,7 +35,8 @@ namespace obe
         }
 
         Cursor::Cursor() :
-            m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"), Triggers::TriggerGroupPtrRemover)
+        Registrable("Cursor"),
+        m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"), Triggers::TriggerGroupPtrRemover)
         {
             m_constraint = Constraints::Default;
 

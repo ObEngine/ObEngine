@@ -14,6 +14,7 @@ namespace obe
     namespace Debug
     {
         Console::Console() : 
+        Registrable("Console"),
         consoleTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Console"), Triggers::TriggerGroupPtrRemover)
         {
             m_font.loadFromFile("Data/Fonts/arial.ttf");

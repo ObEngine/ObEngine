@@ -12,7 +12,9 @@ namespace obe
 {
     namespace Scene
     {
-        Scene::Scene() : m_sceneRoot("root"), m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
+        Scene::Scene() : 
+        Registrable("Scene"),
+        m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
         {
             Collision::PolygonalCollider::m_sceneRef = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);

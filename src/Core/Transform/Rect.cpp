@@ -23,7 +23,7 @@ namespace obe
             return moved;
         };
 
-        Rect::Rect(MovableType type, const std::string& id) : Movable(type, id)
+        Rect::Rect(MovableType type) : Movable(type)
         {
         }
 

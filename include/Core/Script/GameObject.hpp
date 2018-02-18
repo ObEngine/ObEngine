@@ -67,7 +67,6 @@ namespace obe
             std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
             std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
 
-            std::string m_id;
             std::string m_type;
             std::string m_privateKey;
 

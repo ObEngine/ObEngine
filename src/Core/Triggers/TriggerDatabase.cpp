@@ -8,7 +8,8 @@ namespace obe
     {
         TriggerDatabase* TriggerDatabase::m_instance = nullptr;
 
-        TriggerDatabase::TriggerDatabase()
+        TriggerDatabase::TriggerDatabase() :
+        Registrable("TriggerDatabase")
         {
             Debug::Log->debug("<TriggerDatabase> Initialising TriggerDatabase");
             this->createNamespace("Global");

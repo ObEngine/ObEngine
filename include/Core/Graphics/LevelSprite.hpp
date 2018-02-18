@@ -4,8 +4,10 @@
 
 #include <sfe/ComplexSprite.hpp>
 
+#include <Component/Component.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/Shader.hpp>
+#include <Script/GlobalState.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referencial.hpp>
@@ -82,7 +84,9 @@ namespace obe
             public Transform::UnitBasedObject, 
             public Types::Selectable, 
             public Transform::Rect,
-            public Types::Serializable
+            public Types::Serializable,
+            public Types::Identifiable,
+            public Component::Component<LevelSprite>
         {
         private:
             std::string m_path = "";
@@ -102,6 +106,7 @@ namespace obe
             void applySpriteRotation();
             void resetUnit(Transform::Units unit) override;
         public:
+            INJECTABLE
             bool m_layerChanged = false;
             /**
              * \brief Creates a new LevelSprite with the given Id

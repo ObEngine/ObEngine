@@ -46,7 +46,7 @@ namespace obe
             */
             void transformRef(UnitVector& vec, Referencial ref, ConversionType type) const;
 
-            Rect(MovableType type, const std::string& id);
+            Rect(MovableType type);
             /**
             * \brief Set the position of the Rect (Movable override) using an UnitVector
             * \param position Position to affect to the Rect (Movable override)

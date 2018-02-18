@@ -66,7 +66,10 @@ namespace obe
         }
 
         Scene::Scene* PolygonalCollider::m_sceneRef = nullptr;
-        PolygonalCollider::PolygonalCollider(const std::string& id) : Selectable(false), Movable(Transform::MovableType::PolygonalCollider, id)
+        PolygonalCollider::PolygonalCollider(const std::string& id) : 
+            Selectable(false), 
+            Movable(Transform::MovableType::PolygonalCollider),
+            Identifiable(id)
         {
         }
 

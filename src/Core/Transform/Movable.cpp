@@ -4,7 +4,7 @@ namespace obe
 {
     namespace Transform
     {
-        Movable::Movable(MovableType type, const std::string& id) : Types::Identifiable(id)
+        Movable::Movable(MovableType type)
         {
             m_type = type;
         }

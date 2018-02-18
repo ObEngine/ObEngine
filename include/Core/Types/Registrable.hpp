@@ -12,7 +12,7 @@ namespace obe
         class Registrable
         {
         public:
-            void reg(const std::string& id)
+            Registrable(const std::string& id)
             {
                 Script::ScriptEngine[id] = static_cast<T*>(this);
             }

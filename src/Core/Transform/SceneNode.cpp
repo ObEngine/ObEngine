@@ -4,7 +4,7 @@ namespace obe
 {
     namespace Transform
     {
-        SceneNode::SceneNode(const std::string& id) : Movable(MovableType::SceneNode, id)
+        SceneNode::SceneNode() : Movable(MovableType::SceneNode)
         {
         }
 

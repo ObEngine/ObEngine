@@ -15,7 +15,7 @@ namespace obe
             void LoadMovable(kaguya::State* lua)
             {
                 Load(lua, "obe.Identifiable");
-                (*lua)["obe"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable, Types::Identifiable>()
+                (*lua)["obe"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable>()
                     .addFunction("getPosition", &Transform::Movable::getPosition)
                     .addFunction("getType", &Transform::Movable::getType)
                     .addFunction("move", &Transform::Movable::move)

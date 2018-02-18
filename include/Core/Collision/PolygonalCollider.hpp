@@ -2,7 +2,9 @@
 
 #include <clipper/clipper.hpp>
 
+#include <Component/Component.hpp>
 #include <Scene/Camera.hpp>
+#include <Script/GlobalState.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Types/Selectable.hpp>
@@ -46,11 +48,13 @@ namespace obe
          * \brief Class used for all Collisions in the engine, it's a Polygon containing n points
          * @Bind
          */
-        class PolygonalCollider : 
-            public Transform::UnitBasedObject, 
-            public Types::Selectable, 
-            public Transform::Movable, 
-            public Types::Serializable
+        class PolygonalCollider :
+            public Transform::UnitBasedObject,
+            public Types::Selectable,
+            public Transform::Movable,
+            public Types::Serializable,
+            public Types::Identifiable,
+            public Component::Component<PolygonalCollider>
         {
         private:
             //Tag System
@@ -74,6 +78,7 @@ namespace obe
             std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
             void resetUnit(Transform::Units unit) override;
         public:
+            INJECTABLE
             static Scene::Scene* m_sceneRef;
             /**
              * \brief Constructs a PolygonalCollider
