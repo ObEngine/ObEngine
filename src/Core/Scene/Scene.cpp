@@ -58,7 +58,7 @@ namespace obe
                 this->reorganizeLayers();
                 return returnLevelSprite;
             }
-            else // <REVISION> Copy ColliderCreate behaviour
+            else
             {
                 Debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
                 return this->getLevelSprite(createId);

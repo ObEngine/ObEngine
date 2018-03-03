@@ -864,6 +864,27 @@ namespace obe
                     pointBuffer = colliderPoint->get<double>();
             }
             this->setWorkingUnit(pBaseUnit);
+            if (data.contains(vili::NodeType::DataNode, "tag"))
+                this->addTag(Collision::ColliderTagType::Tag, data.at<vili::DataNode>("tag").get<std::string>());
+            else if (data.contains(vili::NodeType::ArrayNode, "tags"))
+            {
+                for (vili::DataNode* cTag : data.at<vili::ArrayNode>("tags"))
+                    this->addTag(Collision::ColliderTagType::Tag, cTag->get<std::string>());
+            }
+            if (data.contains(vili::NodeType::DataNode, "accept"))
+                this->addTag(Collision::ColliderTagType::Accepted, data.at<vili::DataNode>("accept").get<std::string>());
+            else if (data.contains(vili::NodeType::ArrayNode, "accept"))
+            {
+                for (vili::DataNode* aTag : data.at<vili::ArrayNode>("accept"))
+                    this->addTag(Collision::ColliderTagType::Accepted, aTag->get<std::string>());
+            }
+            if (data.contains(vili::NodeType::DataNode, "reject"))
+                this->addTag(Collision::ColliderTagType::Rejected, data.at<vili::DataNode>("reject").get<std::string>());
+            else if (data.contains(vili::NodeType::ArrayNode, "reject"))
+            {
+                for (vili::DataNode* rTag : data.at<vili::ArrayNode>("reject"))
+                    this->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
+            }
         }
     }
 }

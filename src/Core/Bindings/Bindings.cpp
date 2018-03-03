@@ -116,6 +116,7 @@ namespace obe
                 .add("Drawable", SFMLBindings::LoadSfDrawable)
                 .add("Shape", SFMLBindings::LoadSfShape)
                 .add("Text", SFMLBindings::LoadSfText)
+                .add("Texture", SFMLBindings::LoadSfTexture)
                 .add("Transformable", SFMLBindings::LoadSfTransformable)
                 .add("Vector", SFMLBindings::LoadSfVector);
 

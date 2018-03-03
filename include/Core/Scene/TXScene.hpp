@@ -9,15 +9,13 @@
 #include <Script/GameObject.hpp>
 #include <Transform/SceneNode.hpp>
 #include <Types/Registrable.hpp>
-
-#include <entt/entt.hpp>
+#include <Types/Serializable.hpp>
 
 namespace obe
 {
     namespace Scene
     {
         #define LUAENV Script::ScriptEngine["__ENVIRONMENTS"][m_envIndex]
-        entt::DefaultRegistry Registry;
 
         class Capsule
         {

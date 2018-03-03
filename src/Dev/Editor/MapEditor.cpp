@@ -379,7 +379,18 @@ namespace obe
                     {
                         selectedMasterCollider->clearHighlights();
                         selectedMasterCollider->highlightLine(selectedMasterCollider->findClosestLine(cursCoord));
-                    }     
+                    }
+                    if (Collision::PolygonalCollider* col = scene.getColliderByCentroidPosition(cursor.getPosition() + pixelCamera); col != nullptr)
+                    {
+                        std::string sprInfoStr = "Hovered Collider : \n";
+                        sprInfoStr += "    Id : " + col->getId() + "\n";
+                        sprInfoStr += "    Pos : " + std::to_string(col->getPosition().to(editorUnit).x) + ","
+                            + std::to_string(col->getPosition().to(editorUnit).y) + "\n";
+                        sprInfo.setString(sprInfoStr);
+                        sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
+                        sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
+                        sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                    }
                 }
 
                 //GUI Update

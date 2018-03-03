@@ -277,6 +277,18 @@ namespace obe
                 (*lua)["SFML"]["Style"]["Underlined"] = sf::Text::Style::Underlined;
             }
 
+            void LoadSfTexture(kaguya::State * lua)
+            {
+                (*lua)["SFML"]["Texture"].setClass(kaguya::UserdataMetatable<sf::Texture>()
+                    .addFunction("getSize", &sf::Texture::getSize)
+                    .addFunction("isRepeated", &sf::Texture::isRepeated)
+                    .addFunction("isSmooth", &sf::Texture::isSmooth)
+                    .addFunction("loadFromFile", &sf::Texture::loadFromFile)
+                    .addFunction("setRepeated", &sf::Texture::setRepeated)
+                    .addFunction("setSmooth", &sf::Texture::setSmooth)
+                );
+            }
+
             void LoadSfTransformable(kaguya::State* lua)
             {
                 (*lua)["SFML"]["Transformable"].setClass(kaguya::UserdataMetatable<sf::Transformable>()
@@ -317,6 +329,12 @@ namespace obe
                     .setConstructors<sf::Vector2f(), sf::Vector2f(float, float)>()
                     .addProperty("x", &sf::Vector2f::x)
                     .addProperty("y", &sf::Vector2f::y)
+                );
+
+                (*lua)["SFML"]["Vector2u"].setClass(kaguya::UserdataMetatable<sf::Vector2u>()
+                    .setConstructors<sf::Vector2u(), sf::Vector2u(unsigned int, unsigned int)>()
+                    .addProperty("x", &sf::Vector2u::x)
+                    .addProperty("y", &sf::Vector2u::y)
                 );
             }
         }

@@ -12,8 +12,6 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
-#include <entt/entt.hpp>
-
 namespace obe
 {
     namespace Modes
@@ -34,7 +32,7 @@ namespace obe
                 ->addTrigger("Update")
                 ->addTrigger("Render");
 
-            //Font
+            //Font <REVISION> Remove this
             sf::Font font;
             font.loadFromFile("Data/Fonts/arial.ttf");
 

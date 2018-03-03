@@ -9,7 +9,6 @@ namespace obe
     {
         TXScene::TXScene(const std::string& name, const std::string& id, bool scriptable) : Types::Identifiable(id)
         {
-            m_entityId = Registry.create();
             m_sceneName = name;
             if (scriptable)
             {

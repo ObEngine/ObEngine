@@ -203,46 +203,7 @@ namespace obe
             {
                 m_objectCollider = world.createCollider(m_id, false);
                 m_objectNode.addChild(m_objectCollider);
-
-                std::string pointsUnit = obj.at("Collider", "unit").getDataNode("unit").get<std::string>();
-                bool completePoint = true;
-                double pointBuffer = 0;
-                Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-                for (vili::DataNode* colliderPoint : obj.at("Collider").getArrayNode("points"))
-                {
-                    if ((completePoint = !completePoint))
-                    {
-                        Transform::UnitVector pVector2 = Transform::UnitVector(
-                            pointBuffer,
-                            colliderPoint->get<double>(),
-                            pBaseUnit
-                        ).to<Transform::Units::WorldPixels>();
-                        m_objectCollider->addPoint(pVector2);
-                    }
-                    else
-                        pointBuffer = colliderPoint->get<double>();
-                }
-                if (obj.at("Collider").contains(vili::NodeType::DataNode, "tag"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Tag, obj.at<vili::DataNode>("Collider", "tag").get<std::string>());
-                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "tags"))
-                {
-                    for (vili::DataNode* cTag : obj.at<vili::ArrayNode>("Collider", "tags"))
-                        m_objectCollider->addTag(Collision::ColliderTagType::Tag, cTag->get<std::string>());
-                }
-                if (obj.at("Collider").contains(vili::NodeType::DataNode, "accept"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Accepted, obj.at<vili::DataNode>("Collider", "accept").get<std::string>());
-                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "accept"))
-                {
-                    for (vili::DataNode* aTag : obj.at<vili::ArrayNode>("Collider", "accept"))
-                        m_objectCollider->addTag(Collision::ColliderTagType::Accepted, aTag->get<std::string>());
-                }
-                if (obj.at("Collider").contains(vili::NodeType::DataNode, "reject"))
-                    m_objectCollider->addTag(Collision::ColliderTagType::Rejected, obj.at<vili::DataNode>("Collider", "reject").get<std::string>());
-                else if (obj.at("Collider").contains(vili::NodeType::ArrayNode, "reject"))
-                {
-                    for (vili::DataNode* rTag : obj.at<vili::ArrayNode>("Collider", "reject"))
-                        m_objectCollider->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
-                }
+                m_objectCollider->load(obj.at("Collider"));
 
                 if (m_hasScriptEngine)
                     GAMEOBJECTENV["Object"]["Collider"] = m_objectCollider;
