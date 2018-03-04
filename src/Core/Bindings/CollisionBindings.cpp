@@ -99,7 +99,6 @@ namespace obe::Bindings::CollisionBindings
             .addFunction("hasPoint", &Collision::PolygonalCollider::hasPoint)
             .addFunction("highlightLine", &Collision::PolygonalCollider::highlightLine)
             .addFunction("highlightPoint", &Collision::PolygonalCollider::highlightPoint)
-            .addFunction("isSelected", &Collision::PolygonalCollider::isSelected)
             .addFunction("move", &Collision::PolygonalCollider::move)
             .addFunction("movePoint", &Collision::PolygonalCollider::movePoint)
             .addFunction("removeOrigin", &Collision::PolygonalCollider::removeOrigin)
