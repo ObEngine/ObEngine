@@ -2,10 +2,11 @@
 
 #include <memory>
 
-#include <dynamicLinker/dynamicLinker.hpp>
 #include <kaguya/kaguya.hpp>
 
 #include <Bindings/BindingTree.hpp>
+
+#include <dynamicLinker/dynamicLinker.hpp> // DON'T FUCKING MOVE THIS
 
 /**
 * \brief Bind C++ Classes and Functions to Lua VMs
