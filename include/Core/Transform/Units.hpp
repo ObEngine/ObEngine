@@ -37,11 +37,7 @@ namespace obe
             * \brief WorldUnits is an Unit used to place / scale an element using the Scene. \n
             * Exemple : x = 4.5, y = 2.5
             */
-            WorldUnits,
-            /**
-             * \brief This Unit should never be used. (Debug purpose)
-             */
-            Unknown
+            WorldUnits
         };
 
         /**

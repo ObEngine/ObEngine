@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 namespace obe
 {
@@ -34,6 +35,9 @@ namespace obe
             bool keyInMap(T item, std::map<T, U>& map);
 
             template <typename T, typename U>
+            std::vector<T> getKeys(const std::map<T, U>& map);
+
+            template <typename T, typename U>
             bool valueInMap(T item, std::map<U, T>& map)
             {
                 for (auto iterator = map.begin(); iterator != map.end(); ++iterator)
@@ -53,6 +57,14 @@ namespace obe
                         return true;
                 }
                 return false;
+            }
+            template<typename T, typename U>
+            std::vector<T> getKeys(const std::map<T, U>& map)
+            {
+                std::vector<T> keys;
+                for (auto it = map.begin(); it != map.end(); ++it)
+                    keys.push_back(it->first);
+                return keys;
             }
         }
     }

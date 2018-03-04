@@ -2,19 +2,13 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Time related classes and functions
+*/
+namespace obe::Bindings::TimeBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Time related classes and functions
-        */
-        namespace TimeBindings
-        {
-            void LoadChronometer(kaguya::State* lua);
-            void LoadFPSCounter(kaguya::State* lua);
-            void LoadFramerateManager(kaguya::State* lua);
-            void LoadTimeUtils(kaguya::State* lua);
-        }
-    }
+    void LoadChronometer(kaguya::State* lua);
+    void LoadFPSCounter(kaguya::State* lua);
+    void LoadFramerateManager(kaguya::State* lua);
+    void LoadTimeUtils(kaguya::State* lua);
 }

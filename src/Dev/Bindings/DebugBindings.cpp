@@ -36,7 +36,6 @@ namespace obe
                 (*lua)["obe"]["Console"].setClass(kaguya::UserdataMetatable<Debug::Console>()
                     .addFunction("clearInputBuffer", &Debug::Console::clearInputBuffer)
                     .addFunction("createStream", &Debug::Console::createStream)
-                    .addFunction("display", &Debug::Console::display)
                     .addFunction("downHistory", &Debug::Console::downHistory)
                     .addFunction("getInputBufferContent", &Debug::Console::getInputBufferContent)
                     .addFunction("getStream", &Debug::Console::getStream)

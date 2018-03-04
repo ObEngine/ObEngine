@@ -489,7 +489,7 @@ namespace obe
                     }
 
                     System::MainWindow.clear(Graphics::Utils::clearColor);
-                    scene.display();
+                    scene.draw();
                     sf::Color magenta = sf::Color::Magenta;
                     if (selectedHandlePoint != nullptr)
                         Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, magenta);
@@ -513,7 +513,7 @@ namespace obe
 
                     //Console
                     if (gameConsole.isVisible())
-                        gameConsole.display();
+                        gameConsole.draw();
 
                     System::MainWindow.display();
                 }

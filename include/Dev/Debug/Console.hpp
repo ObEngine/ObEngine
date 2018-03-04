@@ -108,9 +108,9 @@ namespace obe
              */
             void upHistory();
             /**
-             * \brief Displays the Console on the screen
+             * \brief Draws the Console on the screen
              */
-            void display();
+            void draw();
             /**
              * \brief Check the visibility of the Console
              * \return true if the Console is visible, false otherwise

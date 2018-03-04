@@ -198,7 +198,7 @@ namespace obe
             m_consoleVisibility = enabled;
         }
 
-        void Console::display()
+        void Console::draw()
         {
             //OUTPUT
             System::MainWindow.clear(sf::Color(0, 0, 0, 200));

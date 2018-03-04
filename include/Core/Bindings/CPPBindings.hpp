@@ -2,15 +2,9 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to C++ Standard Lib related classes and functions
+*/
+namespace obe::Bindings::CPPBindings
 {
-    namespace Bindings
-    {
-        /**
-         * \brief Bindings to C++ Standard Lib related classes and functions
-         */
-        namespace CPPBindings
-        {
-        }
-    }
 }

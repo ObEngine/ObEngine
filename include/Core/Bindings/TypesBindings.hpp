@@ -2,19 +2,13 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Types related classes and functions
+*/
+namespace obe::Bindings::TypesBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Types related classes and functions
-        */
-        namespace TypesBindings
-        {
-            void LoadIdentifiable(kaguya::State* lua);
-            void LoadSelectable(kaguya::State* lua);
-            void LoadSerializable(kaguya::State* lua);
-            void LoadTogglable(kaguya::State* lua);
-        }
-    }
+    void LoadIdentifiable(kaguya::State* lua);
+    void LoadSelectable(kaguya::State* lua);
+    void LoadSerializable(kaguya::State* lua);
+    void LoadTogglable(kaguya::State* lua);
 }

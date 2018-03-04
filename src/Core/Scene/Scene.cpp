@@ -16,7 +16,7 @@ namespace obe
         Registrable("Scene"),
         m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
         {
-            Collision::PolygonalCollider::m_sceneRef = this;
+            Collision::PolygonalCollider::SceneRef = this;
             System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
             Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
             m_showCollisionModes["drawLines"] = false;
@@ -390,7 +390,7 @@ namespace obe
             }
         }
 
-        void Scene::display()
+        void Scene::draw()
         {
             for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
             {
@@ -404,22 +404,7 @@ namespace obe
                     break;
                 }
             }
-            this->displaySprites();
-            if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
-            {
-                for (unsigned int i = 0; i < m_colliderArray.size(); i++)
-                {
-                    m_colliderArray[i]->draw(m_camera,
-                        m_showCollisionModes["drawLines"],
-                        m_showCollisionModes["drawPoints"],
-                        m_showCollisionModes["drawMasterPoint"],
-                        m_showCollisionModes["drawSkel"]);
-                }
-            }
-        }
-
-        void Scene::displaySprites()
-        {
+            
             Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
             for (unsigned int i = 0; i < m_spriteArray.size(); i++)
             {
@@ -453,7 +438,19 @@ namespace obe
                         Graphics::Utils::drawPoint(spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
                         Graphics::Utils::drawPoint(bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
                     }
-                        
+
+                }
+            }
+
+            if (m_showCollisionModes["drawLines"] || m_showCollisionModes["drawPoints"] || m_showCollisionModes["drawMasterPoint"] || m_showCollisionModes["drawSkel"])
+            {
+                for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+                {
+                    m_colliderArray[i]->draw(m_camera,
+                        m_showCollisionModes["drawLines"],
+                        m_showCollisionModes["drawPoints"],
+                        m_showCollisionModes["drawMasterPoint"],
+                        m_showCollisionModes["drawSkel"]);
                 }
             }
         }

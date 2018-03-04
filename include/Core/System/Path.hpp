@@ -39,7 +39,7 @@ namespace obe
              * \brief Build a path from a std::string
              * \param path Path in std::string form
              */
-            explicit Path(const std::string& path);
+            Path(const std::string& path);
             /**
              * \brief Returns a new Path which is the current one concatened with the given string
              * \param path String containing the path part to add

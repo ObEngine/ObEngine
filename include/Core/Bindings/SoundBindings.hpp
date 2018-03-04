@@ -2,17 +2,11 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Sound related classes and functions
+*/
+namespace obe::Bindings::SoundBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Sound related classes and functions
-        */
-        namespace SoundBindings
-        {
-            void LoadMusic(kaguya::State* lua);
-            void LoadSound(kaguya::State* lua);
-        }
-    }
+    void LoadMusic(kaguya::State* lua);
+    void LoadSound(kaguya::State* lua);
 }

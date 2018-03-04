@@ -112,7 +112,7 @@ namespace obe
             vec.add(result);
         }
 
-        void Rect::display(int posX, int posY) const
+        void Rect::draw(int posX, int posY) const
         {
             int r = 6;
             std::map<std::string, std::any> drawOptions = {

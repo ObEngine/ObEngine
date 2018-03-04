@@ -2,19 +2,13 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Triggers related classes and functions
+*/
+namespace obe::Bindings::TriggersBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Triggers related classes and functions
-        */
-        namespace TriggersBindings
-        {
-            void LoadTrigger(kaguya::State* lua);
-            void LoadTriggerDatabase(kaguya::State* lua);
-            void LoadTriggerDelay(kaguya::State* lua);
-            void LoadTriggerGroup(kaguya::State* lua);
-        }
-    }
+    void LoadTrigger(kaguya::State* lua);
+    void LoadTriggerDatabase(kaguya::State* lua);
+    void LoadTriggerDelay(kaguya::State* lua);
+    void LoadTriggerGroup(kaguya::State* lua);
 }

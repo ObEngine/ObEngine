@@ -97,7 +97,7 @@ namespace obe
 
         void LevelSprite::drawHandle(int spritePositionX, int spritePositionY) const
         {
-            Rect::display(spritePositionX, spritePositionY);
+            Rect::draw(spritePositionX, spritePositionY);
         }
 
         LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)

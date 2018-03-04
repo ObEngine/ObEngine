@@ -2,16 +2,10 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Script related classes and functions
+*/
+namespace obe::Bindings::ScriptBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Script related classes and functions
-        */
-        namespace ScriptBindings
-        {
-            void LoadGameObject(kaguya::State* lua);
-        }
-    }
+    void LoadGameObject(kaguya::State* lua);
 }

@@ -2,18 +2,12 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Collision related classes and functions
+*/
+namespace obe::Bindings::CollisionBindings
 {
-    namespace Bindings
-    {
-        /**
-         * \brief Bindings to Collision related classes and functions
-         */
-        namespace CollisionBindings
-        {
-            void LoadTrajectory(kaguya::State* lua);
-            void LoadTrajectoryNode(kaguya::State* lua);
-            void LoadPolygonalCollider(kaguya::State* lua);
-        }
-    }
+    void LoadTrajectory(kaguya::State* lua);
+    void LoadTrajectoryNode(kaguya::State* lua);
+    void LoadPolygonalCollider(kaguya::State* lua);
 }

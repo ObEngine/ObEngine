@@ -2,17 +2,11 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Scene related classes and functions
+*/
+namespace obe::Bindings::SceneBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Scene related classes and functions
-        */
-        namespace SceneBindings
-        {
-            void LoadCamera(kaguya::State* lua);
-            void LoadScene(kaguya::State* lua);
-        }
-    }
+    void LoadCamera(kaguya::State* lua);
+    void LoadScene(kaguya::State* lua);
 }

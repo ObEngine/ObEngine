@@ -33,17 +33,17 @@ namespace obe
             m_trajectories.erase(id);
         }
 
-        void TrajectoryNode::update(double dt)
+        void TrajectoryNode::update(const double dt)
         {
             for (auto& trajectory : m_trajectories)
             {
                 Trajectory* cTraj = trajectory.second.get();
                 if (cTraj->isEnabled())
                 {
-                    double speed = cTraj->m_speed + cTraj->m_acceleration * dt;
-                    double radAngle = (Utils::Math::pi / 180.0) * -cTraj->getAngle();
-                    double addX = std::cos(radAngle) * (speed * dt);
-                    double addY = std::sin(radAngle) * (speed * dt);
+                    const double speed = cTraj->m_speed + cTraj->m_acceleration * dt;
+                    const double radAngle = (Utils::Math::pi / 180.0) * -cTraj->getAngle();
+                    const double addX = std::cos(radAngle) * (speed * dt);
+                    const double addY = std::sin(radAngle) * (speed * dt);
                     Transform::UnitVector cOffset(addX, addY, cTraj->getUnit());
                     for (kaguya::LuaFunction& check : trajectory.second->getChecks())
                     {

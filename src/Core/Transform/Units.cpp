@@ -1,3 +1,5 @@
+#include <vili/ErrorHandler.hpp>
+
 #include <Transform/Units.hpp>
 
 namespace obe
@@ -16,7 +18,7 @@ namespace obe
                 return Units::WorldPixels;
             if (unit == "WorldUnits")
                 return Units::WorldUnits;
-            return Units::Unknown;
+            throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownStringUnit", {{"unit", unit}});
         }
 
         std::string unitsToString(Units unit)
@@ -28,9 +30,8 @@ namespace obe
             case Units::ViewUnits: return "ViewUnits";
             case Units::WorldPixels: return "WorldPixels";
             case Units::WorldUnits: return "WorldUnits";
-            default: return "Error";
             }
-            return "Error";
+            throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownUnit");
         }
     }
 }

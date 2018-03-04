@@ -40,7 +40,6 @@ namespace obe
             std::map<std::string, bool> m_showCollisionModes;
             kaguya::LuaFunction m_onLoadCallback;
             Triggers::TriggerGroupPtr m_sceneTriggers;
-            void displaySprites();
         public:
             /**
              * \brief Creates a new Scene
@@ -82,9 +81,9 @@ namespace obe
              */
             void update(double dt);
             /**
-             * \brief Display all elements of the Scene on target
+             * \brief Draws all elements of the Scene on the screen
              */
-            void display();
+            void draw();
             /**
              * \brief Get the name of the level
              * \return A std::string containing the name of the level

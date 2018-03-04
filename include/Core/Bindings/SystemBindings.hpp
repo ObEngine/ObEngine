@@ -2,22 +2,16 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to System related classes and functions
+*/
+namespace obe::Bindings::SystemBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to System related classes and functions
-        */
-        namespace SystemBindings
-        {
-            void LoadSystemConstants(kaguya::State* lua);
-            void LoadSCursor(kaguya::State* lua);
-            void LoadMountablePath(kaguya::State* lua);
-            void LoadPath(kaguya::State* lua);
-            void LoadPackage(kaguya::State* lua);
-            void LoadWorkspace(kaguya::State* lua);
-            void LoadWindow(kaguya::State* lua);
-        }
-    }
+    void LoadSystemConstants(kaguya::State* lua);
+    void LoadSCursor(kaguya::State* lua);
+    void LoadMountablePath(kaguya::State* lua);
+    void LoadPath(kaguya::State* lua);
+    void LoadPackage(kaguya::State* lua);
+    void LoadWorkspace(kaguya::State* lua);
+    void LoadWindow(kaguya::State* lua);
 }

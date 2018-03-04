@@ -1,101 +1,97 @@
 #include <Collision/Trajectory.hpp>
 #include <Collision/TrajectoryNode.hpp>
-#include <Utils/MathUtils.hpp>
 
-namespace obe
+namespace obe::Collision
 {
-    namespace Collision
+    Trajectory::Trajectory(const Transform::Units unit) : Togglable(true)
     {
-        Trajectory::Trajectory(Transform::Units unit) : Togglable(true)
-        {
-            m_unit = unit;
-        }
+        m_unit = unit;
+    }
 
-        Trajectory* Trajectory::setAngle(double angle)
-        {
-            m_angle = angle;
-            return this;
-        }
+    Trajectory* Trajectory::setAngle(const double angle)
+    {
+        m_angle = angle;
+        return this;
+    }
 
-        Trajectory* Trajectory::setSpeed(double speed)
-        {
-            m_speed = speed;
-            return this;
-        }
+    Trajectory* Trajectory::setSpeed(const double speed)
+    {
+        m_speed = speed;
+        return this;
+    }
 
-        Trajectory* Trajectory::setAcceleration(double acceleration)
-        {
-            m_acceleration = acceleration;
-            return this;
-        }
+    Trajectory* Trajectory::setAcceleration(const double acceleration)
+    {
+        m_acceleration = acceleration;
+        return this;
+    }
 
-        Trajectory* Trajectory::addAngle(double angle)
-        {
-            m_angle += angle;
-            return this;
-        }
+    Trajectory* Trajectory::addAngle(const double angle)
+    {
+        m_angle += angle;
+        return this;
+    }
 
-        Trajectory* Trajectory::addSpeed(double speed)
-        {
-            m_speed += speed;
-            return this;
-        }
+    Trajectory* Trajectory::addSpeed(const double speed)
+    {
+        m_speed += speed;
+        return this;
+    }
 
-        Trajectory* Trajectory::addAcceleration(double acceleration)
-        {
-            m_acceleration = acceleration;
-            return this;
-        }
+    Trajectory* Trajectory::addAcceleration(const double acceleration)
+    {
+        m_acceleration = acceleration;
+        return this;
+    }
 
-        Trajectory* Trajectory::setStatic(bool tStatic)
-        {
-            m_static = tStatic;
-            return this;
-        }
+    Trajectory* Trajectory::setStatic(const bool tStatic)
+    {
+        m_static = tStatic;
+        return this;
+    }
 
-        double Trajectory::getAngle() const
-        {
-            return m_angle;
-        }
+    double Trajectory::getAngle() const
+    {
+        return m_angle;
+    }
 
-        double Trajectory::getSpeed() const
-        {
-            return m_speed;
-        }
+    double Trajectory::getSpeed() const
+    {
+        return m_speed;
+    }
 
-        double Trajectory::getAcceleration() const
-        {
-            return m_acceleration;
-        }
+    double Trajectory::getAcceleration() const
+    {
+        return m_acceleration;
+    }
 
-        bool Trajectory::getStatic() const
-        {
-            return m_static;
-        }
+    bool Trajectory::getStatic() const
+    {
+        return m_static;
+    }
 
-        Transform::Units Trajectory::getUnit() const
-        {
-            return m_unit;
-        }
+    Transform::Units Trajectory::getUnit() const
+    {
+        return m_unit;
+    }
 
-        void Trajectory::addCheck(kaguya::LuaFunction check)
-        {
-            m_checks.push_back(check);
-        }
+    void Trajectory::addCheck(const kaguya::LuaFunction& check)
+    {
+        m_checks.push_back(check);
+    }
 
-        std::vector<kaguya::LuaFunction>& Trajectory::getChecks()
-        {
-            return m_checks;
-        }
+    std::vector<kaguya::LuaFunction>& Trajectory::getChecks()
+    {
+        return m_checks;
+    }
 
-        void Trajectory::onCollide(kaguya::LuaFunction callback)
-        {
-            m_onCollideCallback = callback;
-        }
+    void Trajectory::onCollide(const kaguya::LuaFunction& callback)
+    {
+        m_onCollideCallback = callback;
+    }
 
-        kaguya::LuaFunction& Trajectory::getOnCollideCallback()
-        {
-            return m_onCollideCallback;
-        }
+    kaguya::LuaFunction& Trajectory::getOnCollideCallback()
+    {
+        return m_onCollideCallback;
     }
 }

@@ -2,20 +2,14 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Utils related classes and functions
+*/
+namespace obe::Bindings::UtilsBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Utils related classes and functions
-        */
-        namespace UtilsBindings
-        {
-            void LoadExecUtils(kaguya::State* lua);
-            void LoadFileUtils(kaguya::State* lua);
-            void LoadMathUtils(kaguya::State* lua);
-            void loadStringUtils(kaguya::State* lua);
-            void loadVectorUtils(kaguya::State* lua);
-        }
-    }
+    void LoadExecUtils(kaguya::State* lua);
+    void LoadFileUtils(kaguya::State* lua);
+    void LoadMathUtils(kaguya::State* lua);
+    void loadStringUtils(kaguya::State* lua);
+    void loadVectorUtils(kaguya::State* lua);
 }

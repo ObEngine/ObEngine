@@ -118,7 +118,7 @@ namespace obe
             /**
              * \brief Draws the Rect for debug purposes <REMOVE>
              */
-            void display(int posX, int posY) const;
+            void draw(int posX, int posY) const;
         };
     }
 }

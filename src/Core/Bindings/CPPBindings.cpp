@@ -1,11 +1,5 @@
 #include <Bindings/CPPBindings.hpp>
 
-namespace obe
+namespace obe::Bindings::CPPBindings
 {
-    namespace Bindings
-    {
-        namespace CPPBindings
-        {
-        }
-    }
 }

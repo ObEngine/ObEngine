@@ -2,13 +2,11 @@
 
 #include <spdlog/spdlog.h>
 
-namespace obe
+namespace obe::Debug
 {
-    namespace Debug
-    {
-        namespace spd = spdlog;
-        extern std::shared_ptr<spd::logger> Log;
-        void InitLogger();
-        void InitLoggerLevel();
-    }
+    namespace spd = spdlog;
+    extern std::shared_ptr<spd::logger> Log;
+
+    void InitLogger();
+    void InitLoggerLevel();
 }
