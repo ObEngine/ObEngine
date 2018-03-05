@@ -1,39 +1,36 @@
 #include <Network/NetworkHandler.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
-namespace obe
+namespace obe::Network
 {
-    namespace Network
+    NetworkHandler::NetworkHandler() : 
+    m_socketTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"), Triggers::TriggerGroupPtrRemover)
     {
-        NetworkHandler::NetworkHandler() : 
-        socketTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Network"), Triggers::TriggerGroupPtrRemover)
-        {
-            listener.setBlocking(false);
-            listener.listen(53000);
-            client.setBlocking(false);
-            socketTriggers->addTrigger("DataReceived")
-                          ->addTrigger("Connected")
-                          ->addTrigger("Disconnected");
-        }
+        m_listener.setBlocking(false);
+        m_listener.listen(53000);
+        m_client.setBlocking(false);
+        m_socketTriggers->addTrigger("DataReceived")
+                        ->addTrigger("Connected")
+                        ->addTrigger("Disconnected");
+    }
 
-        void NetworkHandler::handleTriggers()
+    void NetworkHandler::handleTriggers()
+    {
+        if (m_listener.accept(m_client) == sf::Socket::Done)
         {
-            if (listener.accept(client) == sf::Socket::Done)
-            {
-                socketTriggers->pushParameter("Connected", "IP", client.getRemoteAddress().toString());
-                socketTriggers->trigger("Connected");
-                std::cout << "[Network] Client Accepted" << std::endl;
-            }
-            status = client.receive(data, 100, received);
-            if (status == sf::Socket::Done)
-            {
-                socketTriggers->pushParameter("DataReceived", "Content", std::string(data).substr(0, received));
-                socketTriggers->trigger("DataReceived");
-            }
-            else if (status == sf::Socket::Disconnected)
-            {
-                socketTriggers->trigger("Disconnected");
-            }
+            m_socketTriggers->pushParameter("Connected", "IP", m_client.getRemoteAddress().toString());
+            m_socketTriggers->trigger("Connected");
+            std::cout << "[Network] Client Accepted" << std::endl;
+        }
+        m_status = m_client.receive(m_data, 100, m_received);
+        if (m_status == sf::Socket::Done)
+        {
+            m_socketTriggers->pushParameter("DataReceived", "Content", std::string(m_data).substr(0, m_received));
+            m_socketTriggers->trigger("DataReceived");
+        }
+        else if (m_status == sf::Socket::Disconnected)
+        {
+            m_socketTriggers->trigger("Disconnected");
         }
     }
 }

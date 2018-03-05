@@ -3,34 +3,31 @@
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 
-namespace obe
+namespace obe::Script
 {
-    namespace Script
+    kaguya::State ScriptEngine;
+
+    void InitScriptEngine()
     {
-        kaguya::State ScriptEngine;
+        System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
+        Bindings::BindTree(&ScriptEngine);
+        ScriptEngine["Hook"] = kaguya::NewTable();
+        ScriptEngine.dofile("Lib/Internal/Canvas.lua");
+    }
 
-        void InitScriptEngine()
-        {
-            System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-            System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-            Bindings::BindTree(&ScriptEngine);
-            ScriptEngine["Hook"] = kaguya::NewTable();
-            ScriptEngine.dofile("Lib/Internal/Canvas.lua");
-        }
+    unsigned int CreateNewEnvironment()
+    {
+        return ScriptEngine["CreateNewEnv"]();
+    }
 
-        unsigned int createNewEnvironment()
-        {
-            return ScriptEngine["CreateNewEnv"]();
-        }
+    void executeFile(unsigned int envIndex, const std::string& file)
+    {
+        ScriptEngine["ExecuteFileOnEnv"](System::Path(file).find(), envIndex);
+    }
 
-        void executeFile(unsigned envIndex, const std::string& file)
-        {
-            ScriptEngine["ExecuteFileOnEnv"](System::Path(file).find(), envIndex);
-        }
-
-        void executeString(unsigned envIndex, const std::string& string)
-        {
-            ScriptEngine["ExecuteStringOnEnv"](string, envIndex);
-        }
+    void executeString(unsigned int envIndex, const std::string& string)
+    {
+        ScriptEngine["ExecuteStringOnEnv"](string, envIndex);
     }
 }

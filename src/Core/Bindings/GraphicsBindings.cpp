@@ -149,7 +149,7 @@ namespace obe::Bindings::GraphicsBindings
     {
         (*lua)["obe"]["SetClearColor"] = kaguya::function([](sf::Color newColor)
         {
-            Graphics::Utils::clearColor = newColor;
+            Graphics::Utils::ClearColor = newColor;
         });
     }
 

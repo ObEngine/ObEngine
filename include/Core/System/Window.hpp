@@ -1,21 +1,20 @@
 #pragma once
 
+#include <string>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
-namespace obe
+namespace obe::System
 {
-    namespace System
+    enum class WindowContext
     {
-        enum class WindowContext
-        {
-            GameWindow,
-            EditorWindow
-        };
+        GameWindow,
+        EditorWindow
+    };
 
-        extern sf::RenderWindow MainWindow;
+    extern sf::RenderWindow MainWindow;
 
-        void InitWindow(WindowContext context);
-        void setTitle(const std::string& title);
-        void setSize(unsigned int width, unsigned int height);
-    }
+    void InitWindow(WindowContext context);
+    void setTitle(const std::string& title);
+    void setSize(unsigned int width, unsigned int height);
 }

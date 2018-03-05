@@ -416,7 +416,7 @@ namespace obe
                 );
 
                 //Events
-                scene.update(framerateManager.getGameSpeed());
+                scene.update();
                 Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
@@ -426,7 +426,6 @@ namespace obe
                 //Triggers Handling
                 networkHandler.handleTriggers();
                 //cursor.handleTriggers();
-                inputManager.handleTriggers();
 
                 while (System::MainWindow.pollEvent(event))
                 {
@@ -488,7 +487,7 @@ namespace obe
                         cameraPositionYInput->setText(std::to_string(saveCamPosY));
                     }
 
-                    System::MainWindow.clear(Graphics::Utils::clearColor);
+                    System::MainWindow.clear(Graphics::Utils::ClearColor);
                     scene.draw();
                     sf::Color magenta = sf::Color::Magenta;
                     if (selectedHandlePoint != nullptr)
@@ -520,7 +519,7 @@ namespace obe
             }
             gameTriggers->trigger("End");
             Triggers::TriggerDatabase::GetInstance()->update();
-            scene.update(framerateManager.getGameSpeed());
+            scene.update();
 
             System::MainWindow.close();
             gui.removeAllWidgets();

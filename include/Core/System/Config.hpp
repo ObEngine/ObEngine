@@ -2,11 +2,8 @@
 
 #include <vili/vili/ViliParser.hpp>
 
-namespace obe
+namespace obe::System
 {
-    namespace System
-    {
-        extern vili::ViliParser Config;
-        void InitConfiguration();
-    }
+    extern vili::ViliParser Config;
+    void InitConfiguration();
 }

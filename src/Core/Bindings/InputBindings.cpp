@@ -79,7 +79,6 @@ namespace obe::Bindings::InputBindings
             .addFunction("clearContexts", &Input::InputManager::clearContexts)
             .addFunction("configure", &Input::InputManager::configure)
             .addFunction("getAction", &Input::InputManager::getAction)
-            .addFunction("handleTriggers", &Input::InputManager::handleTriggers)
             .addFunction("setContext", &Input::InputManager::setContext)
             .addFunction("setEnabled", &Input::InputManager::setEnabled)
             .addFunction("update", &Input::InputManager::update)

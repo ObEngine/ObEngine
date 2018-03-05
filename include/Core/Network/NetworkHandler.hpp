@@ -4,25 +4,22 @@
 
 #include <Triggers/TriggerGroup.hpp>
 
-namespace obe
+namespace obe::Network
 {
-    namespace Network
+    /**
+    * \brief Handle the Network input / output (Will be remade)
+    */
+    class NetworkHandler
     {
-        /**
-         * \brief Handle the Network input / output (Will be remade)
-         */
-        class NetworkHandler
-        {
-        private:
-            sf::TcpSocket client;
-            sf::TcpListener listener;
-            size_t received;
-            sf::Socket::Status status;
-            char data[4096];
-            Triggers::TriggerGroupPtr socketTriggers;
-        public:
-            NetworkHandler();
-            void handleTriggers();
-        };
-    }
+    private:
+        sf::TcpSocket m_client;
+        sf::TcpListener m_listener;
+        size_t m_received;
+        sf::Socket::Status m_status;
+        char m_data[4096];
+        Triggers::TriggerGroupPtr m_socketTriggers;
+    public:
+        NetworkHandler();
+        void handleTriggers();
+    };
 }

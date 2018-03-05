@@ -80,13 +80,10 @@ namespace obe
                     
 
                 //Events
-                scene.update(framerateManager.getGameSpeed());
+                scene.update();
                 Triggers::TriggerDatabase::GetInstance()->update();
                 inputManager.update();
                 cursor.update();
-
-                //Triggers Handling
-                inputManager.handleTriggers();
 
                 while (System::MainWindow.pollEvent(event))
                 {
@@ -103,9 +100,9 @@ namespace obe
                     }
                 }
 
-                if (true)
+                if (framerateManager.doRender())
                 {
-                    System::MainWindow.clear(Graphics::Utils::clearColor);
+                    System::MainWindow.clear(Graphics::Utils::ClearColor);
                     scene.draw();
 
                     System::MainWindow.display();
@@ -114,7 +111,7 @@ namespace obe
             gameTriggers->trigger("End");
             Triggers::TriggerDatabase::GetInstance()->update();
             
-            scene.update(framerateManager.getGameSpeed());
+            scene.update();
             System::MainWindow.close();
 
             std::cin.get();

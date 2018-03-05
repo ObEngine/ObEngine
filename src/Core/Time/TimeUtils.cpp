@@ -2,18 +2,15 @@
 
 #include <Time/TimeUtils.hpp>
 
-namespace obe
+namespace obe::Time
 {
-    namespace Time
+    TimeUnit getTickSinceEpoch()
     {
-        TimeUnit getTickSinceEpoch()
-        {
-            return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        }
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    }
 
-        TimeUnit getTickSinceEpochMicro()
-        {
-            return std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1);
-        }
+    TimeUnit getTickSinceEpochMicro()
+    {
+        return std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1);
     }
 }

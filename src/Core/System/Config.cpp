@@ -3,18 +3,15 @@
 
 #include <Debug/Logger.hpp>
 
-namespace obe
+namespace obe::System
 {
-    namespace System
-    {
-        vili::ViliParser Config;
+    vili::ViliParser Config;
 
-        void InitConfiguration()
-        {
-            Config = vili::ViliParser();
-            std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-            Path("Data/config.cfg.vili").loadResource(&Config, [](vili::ViliParser* obj, std::string path) -> int { obj->parseFile(path); return 0x002; });
-            std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-        }
+    void InitConfiguration()
+    {
+        Config = vili::ViliParser();
+        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
+        Path("Data/config.cfg.vili").loadResource(&Config, [](vili::ViliParser* obj, std::string path) -> int { obj->parseFile(path); return 0x002; });
+        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
     }
 }

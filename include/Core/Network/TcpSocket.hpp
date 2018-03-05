@@ -2,21 +2,18 @@
 
 #include <SFML/Network/TcpSocket.hpp>
 
-namespace obe
+namespace obe::Network
 {
-    namespace Network
+    class LuaPacket
     {
-        class LuaPacket
-        {
-        private:
-            std::string m_serializedObject;
-        public:
+    private:
+        std::string m_serializedObject;
+    public:
 
-        };
+    };
 
-        class TcpSocket : public sf::TcpSocket
-        {
-        public:
-        };
-    }
+    class TcpSocket : public sf::TcpSocket
+    {
+    public:
+    };
 }

@@ -11,7 +11,7 @@ namespace obe
     {
         sf::RenderWindow MainWindow;
 
-        void InitWindow(WindowContext context)
+        void InitWindow(const WindowContext context)
         {
             vili::ViliParser windowConfig;
             std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
@@ -35,6 +35,10 @@ namespace obe
                     wconf = &windowConfig.at("Editor");
                 else
                     wconf = &windowConfig.root();
+            }
+            else
+            {
+                throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
             }
 
             if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
@@ -94,7 +98,7 @@ namespace obe
             System::MainWindow.setTitle(title);
         }
 
-        void setSize(unsigned int width, unsigned int height)
+        void setSize(const unsigned int width, const unsigned int height)
         {
             System::MainWindow.setSize(sf::Vector2u(width, height));
         }
