@@ -3,69 +3,63 @@
 #include <map>
 #include <vector>
 
-namespace obe
+/**
+* \brief Some functions to handle maps
+* @Bind
+*/
+namespace obe::Utils::Map
 {
-    namespace Utils
+    /**
+    * \brief Check if the given value is found in the std::map
+    * \tparam T Type of the std::map values
+    * \tparam U Type of the std::map keys
+    * \param item Value to search in the map
+    * \param map Reference to the map you want to search the value in
+    * \return true if the value has been found, false otherwise
+    */
+    template <typename T, typename U>
+    bool valueInMap(T item, std::map<U, T>& map);
+    /**
+    * \brief Check if the given key is found in the std::map
+    * \tparam T Type of the std::map values
+    * \tparam U Type of the std::map keys
+    * \param item key to search in the map
+    * \param map Reference to the map you want to search the key in
+    * \return true if the key has been found, false otherwise
+    */
+    template <typename T, typename U>
+    bool keyInMap(T item, std::map<T, U>& map);
+
+    template <typename T, typename U>
+    std::vector<T> getKeys(const std::map<T, U>& map);
+
+    template <typename T, typename U>
+    bool valueInMap(T item, std::map<U, T>& map)
     {
-        /**
-         * \brief Some functions to handle maps
-         * @Bind
-         */
-        namespace Map
+        for (auto iterator = map.begin(); iterator != map.end(); ++iterator)
         {
-            /**
-             * \brief Check if the given value is found in the std::map
-             * \tparam T Type of the std::map values
-             * \tparam U Type of the std::map keys
-             * \param item Value to search in the map
-             * \param map Reference to the map you want to search the value in
-             * \return true if the value has been found, false otherwise
-             */
-            template <typename T, typename U>
-            bool valueInMap(T item, std::map<U, T>& map);
-            /**
-            * \brief Check if the given key is found in the std::map
-            * \tparam T Type of the std::map values
-            * \tparam U Type of the std::map keys
-            * \param item key to search in the map
-            * \param map Reference to the map you want to search the key in
-            * \return true if the key has been found, false otherwise
-            */
-            template <typename T, typename U>
-            bool keyInMap(T item, std::map<T, U>& map);
-
-            template <typename T, typename U>
-            std::vector<T> getKeys(const std::map<T, U>& map);
-
-            template <typename T, typename U>
-            bool valueInMap(T item, std::map<U, T>& map)
-            {
-                for (auto iterator = map.begin(); iterator != map.end(); ++iterator)
-                {
-                    if (iterator->second == item)
-                        return true;
-                }
-                return false;
-            }
-
-            template <typename T, typename U>
-            bool keyInMap(T item, std::map<T, U>& map)
-            {
-                for (auto iterator = map.begin(); iterator != map.end(); ++iterator)
-                {
-                    if (iterator->first == item)
-                        return true;
-                }
-                return false;
-            }
-            template<typename T, typename U>
-            std::vector<T> getKeys(const std::map<T, U>& map)
-            {
-                std::vector<T> keys;
-                for (auto it = map.begin(); it != map.end(); ++it)
-                    keys.push_back(it->first);
-                return keys;
-            }
+            if (iterator->second == item)
+                return true;
         }
+        return false;
+    }
+
+    template <typename T, typename U>
+    bool keyInMap(T item, std::map<T, U>& map)
+    {
+        for (auto iterator = map.begin(); iterator != map.end(); ++iterator)
+        {
+            if (iterator->first == item)
+                return true;
+        }
+        return false;
+    }
+    template<typename T, typename U>
+    std::vector<T> getKeys(const std::map<T, U>& map)
+    {
+        std::vector<T> keys;
+        for (auto it = map.begin(); it != map.end(); ++it)
+            keys.push_back(it->first);
+        return keys;
     }
 }

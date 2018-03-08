@@ -11,6 +11,6 @@ namespace obe::Time
 
     TimeUnit getTickSinceEpochMicro()
     {
-        return std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1);
+		return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 }

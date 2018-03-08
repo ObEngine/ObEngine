@@ -4,18 +4,15 @@
 
 #include <Script/GlobalState.hpp>
 
-namespace obe
+namespace obe::Types
 {
-    namespace Types
+    template <class T> 
+    class Registrable
     {
-        template <class T> 
-        class Registrable
+    public:
+        Registrable(const std::string& id)
         {
-        public:
-            Registrable(const std::string& id)
-            {
-                Script::ScriptEngine[id] = static_cast<T*>(this);
-            }
-        };
-    }
+            Script::ScriptEngine[id] = static_cast<T*>(this);
+        }
+    };
 }

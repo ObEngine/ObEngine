@@ -1,12 +1,9 @@
 #pragma once
 
-namespace obe
+namespace obe::Modes
 {
-    namespace Modes
-    {
-        /**
-         * \brief Start the game by loading the boot.lua file in one of the MountedPaths
-         */
-        void startGame();
-    }
+    /**
+    * \brief Start the game by loading the boot.lua file in one of the MountedPaths
+    */
+    void startGame();
 }

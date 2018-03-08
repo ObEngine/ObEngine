@@ -19,7 +19,6 @@
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
-#include <Utils/VectorUtils.hpp>
 
 void LoadErrors()
 {
@@ -31,7 +30,7 @@ using namespace obe;
 int main(int argc, char** argv)
 {
     Utils::Exec::RunArgsParser runParser(argc, argv);
-    std::string startMode = runParser.getArgumentValue("-mode");
+	const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
     Debug::InitLogger();
@@ -66,7 +65,7 @@ int main(int argc, char** argv)
     if (startMode == "edit")
     {
         Debug::Log->info("<ObEngine> Starting ObEngine MapEditor");
-        std::string editMapName = Modes::chooseMapMenu();
+	    const std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
             Editor::editMap(editMapName);
     }

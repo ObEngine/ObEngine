@@ -35,7 +35,7 @@ namespace obe::Input
                         stateAndButton[0] = "Pressed";
                     }
                             
-                    if (Utils::Vector::isInList(stateAndButton[0], { "Idle", "Hold", "Pressed", "Released" }))
+                    if (Utils::Vector::contains(stateAndButton[0], { "Idle", "Hold", "Pressed", "Released" }))
                     {
                         std::vector<std::string> stateList = Utils::String::split(stateAndButton[0], ",");
                         std::vector<InputButtonState> buttonStates;
@@ -96,7 +96,7 @@ namespace obe::Input
         bool conditionOk = true;
         for (const InputCombinationElement& element : m_triggerConditions)
         {
-            if (!Utils::Vector::isInList(element.first.getState(), element.second))
+            if (!Utils::Vector::contains(element.first.getState(), element.second))
             {
                 conditionOk = false;
                 break;

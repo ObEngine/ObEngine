@@ -2,23 +2,20 @@
 #include <Bindings/DebugBindings.hpp>
 #include <Bindings/EditorBindings.hpp>
 
-namespace obe
+namespace obe::Bindings
 {
-    namespace Bindings
+    void IndexBindings()
     {
-        void IndexBindings()
-        {
-            IndexBaseBindings();
+        IndexBaseBindings();
 
-            BindTree["obe"]
-            // Debug
-                .add("Console", &DebugBindings::LoadConsole)
-                .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
-                .add("ConsoleStream", &DebugBindings::LoadConsoleStream)
-            // Editor
-                .add("EditorGrid", &EditorBindings::LoadEditorGrid);
+        BindTree["obe"]
+        // Debug
+            .add("Console", &DebugBindings::LoadConsole)
+            .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
+            .add("ConsoleStream", &DebugBindings::LoadConsoleStream)
+        // Editor
+            .add("EditorGrid", &EditorBindings::LoadEditorGrid);
 
-            IndexPlugins();
-        }
+        IndexPlugins();
     }
 }

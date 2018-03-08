@@ -5,102 +5,99 @@
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe
+namespace obe::System
 {
-    namespace System
+    sf::RenderWindow MainWindow;
+
+    void InitWindow(const WindowContext context)
     {
-        sf::RenderWindow MainWindow;
+        vili::ViliParser windowConfig;
+        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
+        Path("Data/window.cfg.vili").loadResource(&windowConfig, [](vili::ViliParser* obj, std::string path) -> int { obj->parseFile(path); return 0x002; });
+        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
 
-        void InitWindow(const WindowContext context)
+        unsigned int width = 1280;
+        unsigned int height = 720;
+
+        vili::ComplexNode* wconf;
+        if (context == WindowContext::GameWindow)
         {
-            vili::ViliParser windowConfig;
-            std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-            Path("Data/window.cfg.vili").loadResource(&windowConfig, [](vili::ViliParser* obj, std::string path) -> int { obj->parseFile(path); return 0x002; });
-            std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-
-            unsigned int width = 1280;
-            unsigned int height = 720;
-
-            vili::ComplexNode* wconf;
-            if (context == WindowContext::GameWindow)
-            {
-                if (windowConfig->contains("Game"))
-                    wconf = &windowConfig.at("Game");
-                else
-                    wconf = &windowConfig.root();
-            }
-            else if (context == WindowContext::EditorWindow)
-            {
-                if (windowConfig->contains("Editor"))
-                    wconf = &windowConfig.at("Editor");
-                else
-                    wconf = &windowConfig.root();
-            }
+            if (windowConfig->contains("Game"))
+                wconf = &windowConfig.at("Game");
             else
-            {
-                throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
-            }
-
-            if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
-                width = wconf->getDataNode("width").get<int>();
-            else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
-            {
-                if (wconf->getDataNode("width").get<std::string>() == "Fill")
-                    width = Transform::UnitVector::Screen.w;
-            }
-            if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
-                height = wconf->getDataNode("height").get<int>();
-            else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
-            {
-                if (wconf->getDataNode("height").get<std::string>() == "Fill")
-                {
-                    height = Transform::UnitVector::Screen.h;
-                }
-            }
-
-            int wStyle = sf::Style::None;
-            bool fullscreen = true;
-            bool closeable = true;
-            bool resizeable = true;
-            bool titlebar = true;
-
-            if (wconf->contains("fullscreen"))
-                fullscreen = wconf->getDataNode("fullscreen").get<bool>();
-            if (wconf->contains("closeable"))
-                closeable = wconf->getDataNode("closeable").get<bool>();
-            if (wconf->contains("resizeable"))
-                resizeable = wconf->getDataNode("resizeable").get<bool>();
-            if (wconf->contains("titlebar"))
-                titlebar = wconf->getDataNode("titlebar").get<bool>();
-
-            if (fullscreen)
-                wStyle = sf::Style::Fullscreen;
+                wconf = &windowConfig.root();
+        }
+        else if (context == WindowContext::EditorWindow)
+        {
+            if (windowConfig->contains("Editor"))
+                wconf = &windowConfig.at("Editor");
             else
+                wconf = &windowConfig.root();
+        }
+        else
+        {
+            throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
+        }
+
+        if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
+            width = wconf->getDataNode("width").get<int>();
+        else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
+        {
+            if (wconf->getDataNode("width").get<std::string>() == "Fill")
+                width = Transform::UnitVector::Screen.w;
+        }
+        if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
+            height = wconf->getDataNode("height").get<int>();
+        else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
+        {
+            if (wconf->getDataNode("height").get<std::string>() == "Fill")
             {
-                if (closeable)
-                    wStyle |= sf::Style::Close;
-                if (resizeable)
-                    wStyle |= sf::Style::Resize;
-                if (titlebar)
-                    wStyle |= sf::Style::Titlebar;
+                height = Transform::UnitVector::Screen.h;
             }
-
-            std::string title = "ObEngine";
-            if (wconf->contains("title"))
-                title = wconf->getDataNode("title").get<std::string>();
-
-            System::MainWindow.create(sf::VideoMode(width, height), title, wStyle);
-            System::MainWindow.setKeyRepeatEnabled(false);
         }
 
-        void setTitle(const std::string& title)
+        int wStyle = sf::Style::None;
+        bool fullscreen = true;
+        bool closeable = true;
+        bool resizeable = true;
+        bool titlebar = true;
+
+        if (wconf->contains("fullscreen"))
+            fullscreen = wconf->getDataNode("fullscreen").get<bool>();
+        if (wconf->contains("closeable"))
+            closeable = wconf->getDataNode("closeable").get<bool>();
+        if (wconf->contains("resizeable"))
+            resizeable = wconf->getDataNode("resizeable").get<bool>();
+        if (wconf->contains("titlebar"))
+            titlebar = wconf->getDataNode("titlebar").get<bool>();
+
+        if (fullscreen)
+            wStyle = sf::Style::Fullscreen;
+        else
         {
-            System::MainWindow.setTitle(title);
+            if (closeable)
+                wStyle |= sf::Style::Close;
+            if (resizeable)
+                wStyle |= sf::Style::Resize;
+            if (titlebar)
+                wStyle |= sf::Style::Titlebar;
         }
 
-        void setSize(const unsigned int width, const unsigned int height)
-        {
-            System::MainWindow.setSize(sf::Vector2u(width, height));
-        }
+        std::string title = "ObEngine";
+        if (wconf->contains("title"))
+            title = wconf->getDataNode("title").get<std::string>();
+
+        System::MainWindow.create(sf::VideoMode(width, height), title, wStyle);
+        System::MainWindow.setKeyRepeatEnabled(false);
+    }
+
+    void setTitle(const std::string& title)
+    {
+        System::MainWindow.setTitle(title);
+    }
+
+    void setSize(const unsigned int width, const unsigned int height)
+    {
+        System::MainWindow.setSize(sf::Vector2u(width, height));
     }
 }

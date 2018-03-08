@@ -159,7 +159,7 @@ namespace obe::Collision
             for (unsigned int i = 0; i < m_allPoints.size(); i++)
             {
                 const double currentPointDist = this->getDistanceFromPoint(i, pVec);
-                if ((tiniestDist == -1 || tiniestDist > currentPointDist) && !Utils::Vector::isInList(static_cast<int>(i), excludedNodes))
+                if ((tiniestDist == -1 || tiniestDist > currentPointDist) && !Utils::Vector::contains(static_cast<int>(i), excludedNodes))
                 {
                     closestNode = i;
                     tiniestDist = currentPointDist;
@@ -413,15 +413,15 @@ namespace obe::Collision
             {
                 const Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
 
-                if (Utils::Vector::isInList(i, m_highlightedPoints) && m_selected)
+                if (Utils::Vector::contains(i, m_highlightedPoints) && m_selected)
                     drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
-                if (Utils::Vector::isInList((i != m_allPoints.size() - 1) ? i + 1 : 0, m_highlightedLines) && m_selected)
+                if (Utils::Vector::contains((i != m_allPoints.size() - 1) ? i + 1 : 0, m_highlightedLines) && m_selected)
                     drawOptions["line_color_" + std::to_string(i)] = sf::Color(0, 255, 0);
 
                 lDrawPoints.emplace_back(point.x - offset.x, point.y - offset.y);
             }
 
-            if (Utils::Vector::isInList(0, m_highlightedPoints) && m_selected)
+            if (Utils::Vector::contains(0, m_highlightedPoints) && m_selected)
                 drawOptions["point_color_0"] = sf::Color(255, 255, 0);
             else if (m_selected)
                 drawOptions["point_color_0"] = sf::Color(0, 255, 0);
@@ -606,7 +606,7 @@ namespace obe::Collision
             result.addPoint(a->X, a->Y);
             for (int poly = 0; poly < polys.size(); poly++)
             {
-                if (Utils::Vector::isInList(a, polys[poly]) && Utils::Vector::isInList(b, polys[poly]))
+                if (Utils::Vector::contains(a, polys[poly]) && Utils::Vector::contains(b, polys[poly]))
                 {
                     int iA = findFromAddress(a);
                     int iB = findFromAddress(b);
@@ -630,7 +630,7 @@ namespace obe::Collision
 
     void PolygonalCollider::removeOriginChild(PolygonalCollider* child, bool trigger)
     {
-        if (Utils::Vector::isInList(child, m_originChildren))
+        if (Utils::Vector::contains(child, m_originChildren))
         {
             for (int i = 0; i < m_originChildren.size(); i++)
             {
@@ -677,7 +677,7 @@ namespace obe::Collision
 
     void PolygonalCollider::addTag(ColliderTagType tagType, const std::string& tag)
     {
-        if (!Utils::Vector::isInList(tag, this->retrieveTagVector(tagType)))
+        if (!Utils::Vector::contains(tag, this->retrieveTagVector(tagType)))
             this->retrieveTagVector(tagType).push_back(tag);
         else
             Debug::Log->warn("<PolygonalCollider> Tag '{0}' is already in PolygonalCollider '{1}'", tag, m_id);
@@ -695,7 +695,7 @@ namespace obe::Collision
 
     bool PolygonalCollider::doesHaveTag(ColliderTagType tagType, const std::string& tag)
     {
-        return Utils::Vector::isInList(tag, this->retrieveTagVector(tagType));
+        return Utils::Vector::contains(tag, this->retrieveTagVector(tagType));
     }
 
     bool PolygonalCollider::doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags)
@@ -703,7 +703,7 @@ namespace obe::Collision
         if (m_tags.size() == 0) return false;
         for (const std::string tag : tags)
         {
-            if (Utils::Vector::isInList(tag, this->retrieveTagVector(tagType)))
+            if (Utils::Vector::contains(tag, this->retrieveTagVector(tagType)))
                 return true;
         }
         return false;

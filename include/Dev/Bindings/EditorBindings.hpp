@@ -2,16 +2,10 @@
 
 #include <kaguya/kaguya.hpp>
 
-namespace obe
+/**
+* \brief Bindings to Editor related classes and functions
+*/
+namespace obe::Bindings::EditorBindings
 {
-    namespace Bindings
-    {
-        /**
-        * \brief Bindings to Editor related classes and functions
-        */
-        namespace EditorBindings
-        {
-            void LoadEditorGrid(kaguya::State* lua);
-        }
-    }
+    void LoadEditorGrid(kaguya::State* lua);
 }

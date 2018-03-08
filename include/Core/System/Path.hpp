@@ -71,11 +71,10 @@ namespace obe::System
         * \tparam F Loader which is a lambda (Called if the file is found to load the resource)
         * \param resource Pointer where the resource will be loaded
         * \param lambda Loader which is a lambda (Called if the file is found to load the resource)
-        * \param silent Defines the verbosity of the resource loading (false = verbose)
         * \return The Path used to load the resource in std::string form
         */
         template <typename R, typename F>
-        std::string loadResource(R* resource, F lambda, bool silent = false) const;
+        std::string loadResource(R* resource, F lambda) const;
         /**
         * \brief Add a Path to Mounted Paths
         * \param path Path to mount
@@ -93,14 +92,14 @@ namespace obe::System
     };
 
     template <typename R, typename F>
-    std::string Path::loadResource(R* resource, F lambda, bool silent) const
+    std::string Path::loadResource(R* resource, F lambda) const
     {
         int loadSum = 0;
         for (MountablePath& mountedPath : MountedPaths)
         {
             int loadResponse = 0;
             std::string loadPath = mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
-            if (Utils::File::fileExists(loadPath))
+            if (Utils::File::fileExists(loadPath) || Utils::File::directoryExists(loadPath))
             {
                 Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
                 loadResponse = lambda(resource, loadPath);

@@ -22,7 +22,7 @@ namespace obe::Scene
     * camera.move(newPosition); // Move BottomRight Corner of the Camera to (400, 2000)::WorldPixels
     * \endcode
     */
-    class Camera : Transform::Rect
+    class Camera : public Transform::Rect
     {
     private:
         double m_angle = 0;
@@ -37,12 +37,12 @@ namespace obe::Scene
         * \param ref Referencial used to get the Position of the Camera
         * \return The Position of the Camera
         */
-        Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const;
+        Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const override;
         /**
         * \brief Gets an UnitVector containing the size of the Camera (Width and Height)
         * \return An UnitVector containing the size of the Camera (Width and Height)
         */
-        Transform::UnitVector getSize() const;
+        Transform::UnitVector getSize() const override;
         /**
         * \brief Moves the Camera
         * \param position Position to add to the Camera
@@ -61,7 +61,7 @@ namespace obe::Scene
         * \param position New Position of the Camera
         * \param ref Referencial used to position the Camera
         */
-        void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft);
+        void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft) override;
         /**
         * \brief Sets the size of the Camera
         * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 WorldUnits)

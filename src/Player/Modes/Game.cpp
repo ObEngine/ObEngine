@@ -12,109 +12,107 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
-namespace obe
+namespace obe::Modes
 {
-    namespace Modes
+    void startGame()
     {
-        void startGame()
+        //Creating Window
+        System::InitWindow(System::WindowContext::GameWindow);
+
+        //Game Triggers
+        Triggers::TriggerGroupPtr gameTriggers(
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game"),
+            Triggers::TriggerGroupPtrRemover);
+
+        gameTriggers
+			->addTrigger("Start")
+			->trigger("Start")
+			->addTrigger("End")
+			->addTrigger("Update")
+			->addTrigger("Render");
+
+        //Font <REVISION> Remove this
+        sf::Font font;
+        font.loadFromFile("Data/Fonts/arial.ttf");
+
+        //Config
+        vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
+
+        //Cursor
+        System::Cursor cursor;
+
+        //Scene Creation / Loading
+        Scene::Scene scene;
+
+        Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
         {
-            //Creating Window
-            System::InitWindow(System::WindowContext::GameWindow);
+            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+        });
 
-            //Game Triggers
-            Triggers::TriggerGroupPtr gameTriggers(
-                Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game"),
-                Triggers::TriggerGroupPtrRemover);
-            gameTriggers
-                ->addTrigger("Start")
-                ->trigger("Start")
-                ->addTrigger("End")
-                ->addTrigger("Update")
-                ->addTrigger("Render");
+        //Keybinding
+        Input::InputManager inputManager;
 
-            //Font <REVISION> Remove this
-            sf::Font font;
-            font.loadFromFile("Data/Fonts/arial.ttf");
+        inputManager.configure(System::Config.at("KeyBinding"));
+        inputManager.addContext("game");
 
-            //Config
-            vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
+        sf::Event event;
 
-            //Cursor
-            System::Cursor cursor;
+        //Framerate / DeltaTime
+        Time::FPSCounter fps;
+        fps.loadFont(font);
+        Time::FramerateManager framerateManager(gameConfig);
 
-            //Scene Creation / Loading
-            Scene::Scene scene;
+        System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        Script::ScriptEngine.dostring("Game.Start()");
 
-            Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
-            {
-                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
-            });
+        //Game Starts
+        while (System::MainWindow.isOpen())
+        {
+            framerateManager.update();
 
-            //Keybinding
-            Input::InputManager inputManager;
-
-            inputManager.configure(System::Config.at("KeyBinding"));
-            inputManager.addContext("game");
-
-            sf::Event event;
-
-            //Framerate / DeltaTime
-            Time::FPSCounter fps;
-            fps.loadFont(font);
-            Time::FramerateManager framerateManager(gameConfig);
-
-            System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-            Script::ScriptEngine.dostring("Game.Start()");
-
-            //Game Starts
-            while (System::MainWindow.isOpen())
-            {
-                framerateManager.update();
-
-                gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
-                gameTriggers->trigger("Update");
+            gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
+            gameTriggers->trigger("Update");
                 
-                if (framerateManager.doRender())
-                    gameTriggers->trigger("Render");
+            if (framerateManager.doRender())
+                gameTriggers->trigger("Render");
 
                     
 
-                //Events
-                scene.update();
-                Triggers::TriggerDatabase::GetInstance()->update();
-                inputManager.update();
-                cursor.update();
+            //Events
+            scene.update();
+            Triggers::TriggerDatabase::GetInstance()->update();
+            inputManager.update();
+            cursor.update();
 
-                while (System::MainWindow.pollEvent(event))
+            while (System::MainWindow.pollEvent(event))
+            {
+                switch (event.type)
                 {
-                    switch (event.type)
-                    {
-                    case sf::Event::Closed:
+                case sf::Event::Closed:
+                    System::MainWindow.close();
+                    break;
+
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape)
                         System::MainWindow.close();
-                        break;
-
-                    case sf::Event::KeyPressed:
-                        if (event.key.code == sf::Keyboard::Escape)
-                            System::MainWindow.close();
-                        break;
-                    }
-                }
-
-                if (framerateManager.doRender())
-                {
-                    System::MainWindow.clear(Graphics::Utils::ClearColor);
-                    scene.draw();
-
-                    System::MainWindow.display();
+                    break;
                 }
             }
-            gameTriggers->trigger("End");
-            Triggers::TriggerDatabase::GetInstance()->update();
-            
-            scene.update();
-            System::MainWindow.close();
 
-            std::cin.get();
+            if (framerateManager.doRender())
+            {
+                System::MainWindow.clear(Graphics::Utils::ClearColor);
+                scene.draw();
+
+                System::MainWindow.display();
+            }
         }
+        gameTriggers->trigger("End");
+        Triggers::TriggerDatabase::GetInstance()->update();
+            
+        scene.update();
+        System::MainWindow.close();
+
+        std::cin.get();
     }
 }

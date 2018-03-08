@@ -1,12 +1,9 @@
 #pragma once
 
-namespace obe
+namespace obe::Modes
 {
-    namespace Modes
-    {
-        /**
-         * \brief A mode that will start the Toolkit
-         */
-        void startToolkitMode();
-    }
+    /**
+    * \brief A mode that will start the Toolkit
+    */
+    void startToolkitMode();
 }

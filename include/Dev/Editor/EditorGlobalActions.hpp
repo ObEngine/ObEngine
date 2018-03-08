@@ -16,51 +16,48 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
-namespace obe
+namespace obe::Editor
 {
-    namespace Editor
-    {
-        void connectCamMovementActions(
-            Triggers::TriggerGroup* editorTriggers,
-            Input::InputManager& inputManager, 
-            Scene::Scene& scene, 
-            int& cameraSpeed, 
-            Time::FramerateManager& framerateManager);
-        void connectGridActions(
-            Triggers::TriggerGroup* editorTriggers,
-            Input::InputManager& inputManager, 
-            tgui::CheckBox::Ptr& enableGridCheckbox, 
-            tgui::CheckBox::Ptr& snapGridCheckbox, 
-            System::Cursor& cursor, 
-            Editor::EditorGrid& editorGrid);
-        void connectMenuActions(
-            Input::InputManager& inputManager, 
-            tgui::ComboBox::Ptr editMode, 
-            tgui::Panel::Ptr editorPanel);
-        void connectSaveActions(
-            Triggers::TriggerGroup* editorTriggers, 
-            Input::InputManager& inputManager, 
-            const std::string& mapName, 
-            Scene::Scene& scene, 
-            double& waitForMapSaving, 
-            tgui::Label::Ptr savedLabel,
-            tgui::CheckBox::Ptr saveCameraPositionCheckbox);
-        void connectCopyPasteActions(
-            Triggers::TriggerGroup* editorTriggers,
-            Input::InputManager& inputManager,
-            Scene::Scene& scene,
-            vili::ComplexNode& sceneClipboard,
-            tgui::Label::Ptr savedLabel,
-            Collision::PolygonalCollider*& selectedMasterCollider,
-            Graphics::LevelSprite*& selectedSprite);
-        /**
-         * \brief Connects Console's related Triggers
-         * \param inputManager Reference to the InputManager
-         * \param gameConsole Reference to the Game Console
-         */
-        void connectGameConsoleActions(
-            Input::InputManager& inputManager,
-            Debug::Console& gameConsole
-        );
-    }
+    void connectCamMovementActions(
+        Triggers::TriggerGroup* editorTriggers,
+        Input::InputManager& inputManager, 
+        Scene::Scene& scene, 
+        int& cameraSpeed, 
+        Time::FramerateManager& framerateManager);
+    void connectGridActions(
+        Triggers::TriggerGroup* editorTriggers,
+        Input::InputManager& inputManager, 
+        tgui::CheckBox::Ptr& enableGridCheckbox, 
+        tgui::CheckBox::Ptr& snapGridCheckbox, 
+        System::Cursor& cursor, 
+        Editor::EditorGrid& editorGrid);
+    void connectMenuActions(
+        Input::InputManager& inputManager, 
+        tgui::ComboBox::Ptr editMode, 
+        tgui::Panel::Ptr editorPanel);
+    void connectSaveActions(
+        Triggers::TriggerGroup* editorTriggers, 
+        Input::InputManager& inputManager, 
+        const std::string& mapName, 
+        Scene::Scene& scene, 
+        double& waitForMapSaving, 
+        tgui::Label::Ptr savedLabel,
+        tgui::CheckBox::Ptr saveCameraPositionCheckbox);
+    void connectCopyPasteActions(
+        Triggers::TriggerGroup* editorTriggers,
+        Input::InputManager& inputManager,
+        Scene::Scene& scene,
+        vili::ComplexNode& sceneClipboard,
+        tgui::Label::Ptr savedLabel,
+        Collision::PolygonalCollider*& selectedMasterCollider,
+        Graphics::LevelSprite*& selectedSprite);
+    /**
+    * \brief Connects Console's related Triggers
+    * \param inputManager Reference to the InputManager
+    * \param gameConsole Reference to the Game Console
+    */
+    void connectGameConsoleActions(
+        Input::InputManager& inputManager,
+        Debug::Console& gameConsole
+    );
 }

@@ -25,7 +25,7 @@ namespace obe::System::Package
     bool Install(const std::string& packageName)
     {
         Debug::Log->info("<Package> Installing Package '{0}'", packageName);
-        if (!Utils::Vector::isInList(packageName + ".opaque", Utils::File::getFileList("Package")))
+        if (!Utils::Vector::contains(packageName + ".opaque", Utils::File::getFileList("Package")))
             throw aube::ErrorHandler::Raise("ObEngine.System.Package.CantFindPackage", {{"package", packageName}});
         if (!PackageExists(packageName))
         {

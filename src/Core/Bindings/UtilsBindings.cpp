@@ -71,7 +71,7 @@ namespace obe::Bindings::UtilsBindings
     void loadVectorUtils(kaguya::State* lua)
     {
         (*lua)["obe"]["Array"] = kaguya::NewTable();
-        UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "contains", Utils::Vector::isInList);
+        UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "contains", Utils::Vector::contains);
         UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "index", Utils::Vector::indexOfElement);
         UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "eraseAll", Utils::Vector::eraseAll);
         UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "sub", Utils::Vector::getSubVector);

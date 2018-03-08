@@ -1,13 +1,10 @@
 #include <Bindings/Bindings.hpp>
 
-namespace obe
+namespace obe::Bindings
 {
-    namespace Bindings
+    void IndexBindings()
     {
-        void IndexBindings()
-        {
-            IndexBaseBindings();
-            IndexPlugins();
-        }
+        IndexBaseBindings();
+        IndexPlugins();
     }
 }

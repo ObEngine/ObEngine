@@ -1,11 +1,8 @@
 #include <Editor/EditorTooltip.hpp>
 
-namespace obe
+namespace obe::Editor
 {
-    namespace Editor
+    void Tooltip::draw()
     {
-        void Tooltip::draw()
-        {
-        }
     }
 }

@@ -92,7 +92,7 @@ namespace obe::Script::DataBridge
                     kaguya::LuaRef tempTableRef = convert[tableKey];
                     returnElement->pushComplexNode(luaTableToComplexNode(tableKey, tempTableRef));
                 }
-                else if (Utils::Vector::isInList(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
+                else if (Utils::Vector::contains(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
                 {
                     kaguya::LuaRef tempElemRef = convert[tableKey];
                     returnElement->pushDataNode(luaElementToDataNode(tableKey, tempElemRef));
@@ -145,7 +145,7 @@ namespace obe::Script::DataBridge
                     kaguya::LuaRef tempTableRef = convert[tableKey];
                     returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));
                 }
-                else if (Utils::Vector::isInList(convert[tableKey].type(), std::vector<int>({ 1, 3, 4 }))) {
+                else if (Utils::Vector::contains(convert[tableKey].type(), std::vector<int>({ 1, 3, 4 }))) {
                     kaguya::LuaRef tempElemRef = convert[tableKey];
                     returnElement->pushBaseAttribute(luaElementToBaseAttribute(tableKey, tempElemRef));
                 }

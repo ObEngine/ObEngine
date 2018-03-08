@@ -1,11 +1,8 @@
 #include <Transform/UnitStructures.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe
+namespace obe::Transform
 {
-    namespace Transform
-    {
-        ViewStruct UnitVector::View;
-        ScreenStruct UnitVector::Screen;
-    }
+    ViewStruct UnitVector::View;
+    ScreenStruct UnitVector::Screen;
 }

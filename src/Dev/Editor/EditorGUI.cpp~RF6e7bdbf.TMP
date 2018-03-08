@@ -20,7 +20,7 @@ namespace obe::Editor::GUI
     {
         double wCoeff;
 		const sf::Vector2u windowSize = System::MainWindow.getSize();
-		const unsigned int screenWidth = sf::VideoMode::getDesktopMode().width;
+		const auto screenWidth = sf::VideoMode::getDesktopMode().width;
 
         if (windowSize.x < screenWidth)
             wCoeff = (double(screenWidth - System::MainWindow.getSize().x) / double(screenWidth)) * 0.5 + 1.0;

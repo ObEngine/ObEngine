@@ -3,51 +3,43 @@
 
 #include <Utils/MathUtils.hpp>
 
-namespace obe
+namespace obe::Utils::Math
 {
-    namespace Utils
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
+    int randint(const int& min, const int& max)
     {
-        namespace Math
-        {
-            const double pi = 3.14159265359;
+        const std::uniform_int_distribution<int> uni(min, max);
+        return uni(rng);
+    }
 
-            std::random_device rd;
-            std::mt19937 rng(rd());
+    double randfloat()
+    {
+	    const std::uniform_real_distribution<> dis(0, 1);
+        return dis(rng);
+    }
 
-            int randint(const int& min, const int& max)
-            {
-                std::uniform_int_distribution<int> uni(min, max);
-                return uni(rng);
-            }
+    bool isDoubleInt(const double& value)
+    {
+        return (int(value) == value);
+    }
 
-            double randfloat()
-            {
-                std::uniform_real_distribution<> dis(0, 1);
-                return dis(rng);
-            }
+    double convertToRadian(const double value)
+    {
+        return  (Utils::Math::pi / 180.0) * value;
+    }
 
-            bool isDoubleInt(const double& value)
-            {
-                return (int(value) == value);
-            }
+    double convertToDegree(const double value)
+    {
+        return	(180.0 / Utils::Math::pi) * value;
+    }
 
-            double convertToRadian(double value)
-            {
-                return  (Utils::Math::pi / 180.0) * value;
-            }
+    double normalise(const double value, const double start, const double end)
+    {
+        const double width = end - start;
+        const double offsetValue = value - start;
 
-            double convertToDegree(double value)
-            {
-                return	(180.0 / Utils::Math::pi) * value;
-            }
-
-            double normalise(const double value, const double start, const double end)
-            {
-                const double width = end - start;
-                const double offsetValue = value - start;
-
-                return (offsetValue - (floor(offsetValue / width) * width)) + start;
-            }
-        }
+        return (offsetValue - (floor(offsetValue / width) * width)) + start;
     }
 }

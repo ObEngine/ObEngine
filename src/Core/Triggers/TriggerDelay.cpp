@@ -1,13 +1,10 @@
 #include <Triggers/TriggerDelay.hpp>
 
-namespace obe
+namespace obe::Triggers
 {
-    namespace Triggers
+    TriggerDelay::TriggerDelay(Trigger* trigger, Time::TimeUnit delay)
     {
-        TriggerDelay::TriggerDelay(Trigger* trigger, Time::TimeUnit delay)
-        {
-            m_trigger = trigger;
-            m_delay = delay;
-        }
+        m_trigger = trigger;
+        m_delay = delay;
     }
 }

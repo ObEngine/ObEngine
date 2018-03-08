@@ -35,7 +35,7 @@ namespace obe::Input
 
     void InputAction::addContext(const std::string& context)
     {
-        if (!Utils::Vector::isInList(context, m_contexts))
+        if (!Utils::Vector::contains(context, m_contexts))
             m_contexts.push_back(context);
     }
 

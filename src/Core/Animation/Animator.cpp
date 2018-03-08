@@ -101,7 +101,7 @@ namespace obe::Animation
         m_animatorPath.loadResource(&allFiles, System::Loaders::filePathLoader);
         vili::ViliParser animatorCfgFile;
         std::map<std::string, vili::ComplexNode*> animationParameters;
-        if (Utils::Vector::isInList(std::string("animator.cfg.vili"), allFiles))
+        if (Utils::Vector::contains(std::string("animator.cfg.vili"), allFiles))
         {
             System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
             for (vili::ComplexNode* currentAnim : animatorCfgFile.at("Animator").getAll<vili::ComplexNode>())

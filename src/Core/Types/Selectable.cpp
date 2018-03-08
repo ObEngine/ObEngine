@@ -1,37 +1,34 @@
 #include <Types/Selectable.hpp>
 
-namespace obe
+namespace obe::Types
 {
-    namespace Types
+    Selectable::Selectable(bool selected)
     {
-        Selectable::Selectable(bool selected)
-        {
-            m_selected = selected;
-        }
+        m_selected = selected;
+    }
 
-        void Selectable::setSelected(bool selected)
-        {
-            m_selected = selected;
-        }
+    void Selectable::setSelected(bool selected)
+    {
+        m_selected = selected;
+    }
 
-        void Selectable::toggleSelected()
-        {
-            m_selected = !m_selected;
-        }
+    void Selectable::toggleSelected()
+    {
+        m_selected = !m_selected;
+    }
 
-        void Selectable::select()
-        {
-            m_selected = true;
-        }
+    void Selectable::select()
+    {
+        m_selected = true;
+    }
 
-        void Selectable::unselect()
-        {
-            m_selected = false;
-        }
+    void Selectable::unselect()
+    {
+        m_selected = false;
+    }
 
-        bool Selectable::isSelected() const
-        {
-            return m_selected;
-        }
+    bool Selectable::isSelected() const
+    {
+        return m_selected;
     }
 }

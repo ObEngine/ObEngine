@@ -75,7 +75,7 @@ namespace obe::Input
                 {
                     m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), action->getId()));
                 }
-                else if (!Utils::Vector::isInList(action->getId(), alreadyInFile))
+                else if (!Utils::Vector::contains(action->getId(), alreadyInFile))
                 {
                     this->getAction(action->getId()).clearConditions();
                 }
@@ -100,7 +100,7 @@ namespace obe::Input
         Debug::Log->debug("<InputManager> Adding Context '{0}'", context);
         for (auto& action : m_allActions)
         {
-            if (Utils::Vector::isInList(context, action->getContexts()) && !Utils::Vector::isInList(action.get(), m_currentActions))
+            if (Utils::Vector::contains(context, action->getContexts()) && !Utils::Vector::contains(action.get(), m_currentActions))
             {
                 Debug::Log->debug("<InputManager> Add Action '{0}' in Context '{1}'", action.get()->getId(), context);
                 m_currentActions.push_back(action.get());
@@ -135,7 +135,7 @@ namespace obe::Input
         {
             for (const std::string& context : action->getContexts())
             {
-                if (!Utils::Vector::isInList(context, allContexts))
+                if (!Utils::Vector::contains(context, allContexts))
                 {
                     allContexts.push_back(context);
                 }

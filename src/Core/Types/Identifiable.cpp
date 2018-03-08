@@ -1,22 +1,19 @@
 #include <Types/Identifiable.hpp>
 
-namespace obe
+namespace obe::Types
 {
-    namespace Types
+    Identifiable::Identifiable(const std::string& id)
     {
-        Identifiable::Identifiable(const std::string& id)
-        {
-            m_id = id;
-        }
+        m_id = id;
+    }
 
-        void Identifiable::setId(const std::string& id)
-        {
-            m_id = id;
-        }
+    void Identifiable::setId(const std::string& id)
+    {
+        m_id = id;
+    }
 
-        std::string Identifiable::getId() const
-        {
-            return m_id;
-        }
+    std::string Identifiable::getId() const
+    {
+        return m_id;
     }
 }

@@ -1,15 +1,12 @@
 #pragma once
 
-namespace obe
+namespace obe::Editor
 {
-    namespace Editor
-    {
-        class Tooltip
-        {
-        private:
+	class Tooltip
+	{
+	private:
 
-        public:
-            void draw();
-        };
-    }
+	public:
+		void draw();
+	};
 }
