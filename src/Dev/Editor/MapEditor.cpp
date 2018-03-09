@@ -4,6 +4,7 @@
 #include <Debug/Console.hpp>
 #include <Editor/CollidersEditActions.hpp>
 #include <Editor/EditorGUI.hpp>
+#include <Editor/EditorTooltip.hpp>
 #include <Editor/Grid.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Editor/EditorGlobalActions.hpp>
@@ -179,12 +180,7 @@ namespace obe::Editor
         Collision::PolygonalCollider* selectedMasterCollider = nullptr;
         int colliderPtGrabbed = -1;
         bool masterColliderGrabbed = false;
-        sf::Text sprInfo;
-        sprInfo.setFont(font);
-        sprInfo.setCharacterSize(16);
-        sprInfo.setFillColor(sf::Color::White);
-        sf::RectangleShape sprInfoBackground(sf::Vector2f(100, 160));
-        sprInfoBackground.setFillColor(sf::Color(0, 0, 0, 200));
+        Tooltip tooltip;
         double waitForMapSaving = -1;
         double saveCamPosX = 0;
         double saveCamPosY = 0;
@@ -207,7 +203,7 @@ namespace obe::Editor
         connectMenuActions(inputManager, editMode, editorPanel);
         connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
         connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
-            scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, sprInfo, sprInfoBackground, editorUnit);
+            scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, tooltip, editorUnit);
         connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
         connectGameConsoleActions(inputManager, gameConsole);
         connectCopyPasteActions(editorTriggers.get(), inputManager, scene, sceneClipboard, savedLabel, selectedMasterCollider, selectedSprite);
@@ -315,25 +311,28 @@ namespace obe::Editor
                     {
                         hoveredSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                         hoveredSprite->setColor(sf::Color(0, 255, 255));
-                        std::string sprInfoStr = "Hovered Sprite : \n";
-                        sprInfoStr += "    Id : " + hoveredSprite->getId() + "\n";
-                        sprInfoStr += "    Name : " + hoveredSprite->getPath() + "\n";
-                        sprInfoStr += "    Pos : " + std::to_string(hoveredSprite->getPosition().to(editorUnit).x) + "," 
-                        + std::to_string(hoveredSprite->getPosition().to(editorUnit).y) + "\n";
-                        sprInfoStr += "    Size : " + std::to_string(hoveredSprite->getSize().to(editorUnit).x) 
-                        + "," + std::to_string(hoveredSprite->getSize().to(editorUnit).y) + "\n";
-                        sprInfoStr += "    Rot : " + std::to_string(hoveredSprite->getRotation()) + "\n";
-                        sprInfoStr += "    Layer / Z : " + std::to_string(hoveredSprite->getLayer()) + "," + std::to_string(hoveredSprite->getZDepth()) + "\n";
-                        sprInfo.setString(sprInfoStr);
-                        sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
+
+                        tooltip.setText("Hovered Sprite : \n"
+                            "   Id : {}\n"
+                            "   Name : {}\n"
+                            "   Pos : {}, {}\n"
+                            "   Size : {}, {}\n"
+                            "   Rot : {}\n"
+                            "   Layer / Z : {}, {}", 
+                            hoveredSprite->getId(),
+                            hoveredSprite->getPath(),
+                            hoveredSprite->getPosition().to(editorUnit).x, hoveredSprite->getPosition().to(editorUnit).y,
+                            hoveredSprite->getSize().to(editorUnit).x, hoveredSprite->getSize().to(editorUnit).y,
+                            hoveredSprite->getRotation(),
+                            hoveredSprite->getLayer(), hoveredSprite->getZDepth()
+                        );
                     }
                     else
                         hoveredSprite == nullptr;
                 }
                 else if (hoveredSprite != nullptr)
                 {
-                    sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                    sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                    tooltip.setPosition(cursor.getX() + 40, cursor.getY());
                     bool outHover = false;
                     Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(cursor.getPosition(), -pixelCamera, currentLayer);
                     if (testHoverSprite != hoveredSprite)
@@ -343,7 +342,7 @@ namespace obe::Editor
                         if (hoveredSprite != selectedSprite)
                             hoveredSprite->setColor(sf::Color::White);
                         hoveredSprite = nullptr;
-                        sprInfo.setString("");
+                        tooltip.clear();
                     }
                 }                      
             }
@@ -362,7 +361,7 @@ namespace obe::Editor
                 hoveredSprite = nullptr;
                 selectedSpriteOffsetX = 0;
                 selectedSpriteOffsetY = 0;
-                sprInfo.setString("");
+                tooltip.clear();
             }
 
             //Collision Edition
@@ -378,14 +377,13 @@ namespace obe::Editor
                 }
                 if (Collision::PolygonalCollider* col = scene.getColliderByCentroidPosition(cursor.getPosition() + pixelCamera); col != nullptr)
                 {
-                    std::string sprInfoStr = "Hovered Collider : \n";
-                    sprInfoStr += "    Id : " + col->getId() + "\n";
-                    sprInfoStr += "    Pos : " + std::to_string(col->getPosition().to(editorUnit).x) + ","
-                        + std::to_string(col->getPosition().to(editorUnit).y) + "\n";
-                    sprInfo.setString(sprInfoStr);
-                    sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
-                    sprInfoBackground.setPosition(cursor.getX() + 40, cursor.getY());
-                    sprInfo.setPosition(cursor.getX() + 50, cursor.getY());
+                    tooltip.setText("Hovered Collider : \n"
+                        "   Id : {}\n"
+                        "   Pos : {}, {}\n",
+                        col->getId(),
+                        col->getPosition().to(editorUnit).x, col->getPosition().to(editorUnit).y
+                    );
+                    tooltip.setPosition(cursor.getX() + 40, cursor.getY());
                 }
             }
 
@@ -496,10 +494,9 @@ namespace obe::Editor
                 if (editorGrid.isEnabled())
                     editorGrid.draw(cursor, pixelCamera.x, pixelCamera.y);
                 //HUD & GUI
-                if (sprInfo.getString() != "")
+                if (!tooltip.empty())
                 {
-                    System::MainWindow.draw(sprInfoBackground);
-                    System::MainWindow.draw(sprInfo);
+                    tooltip.draw();
                 }
                 gui.draw();
                 if (drawFPS)

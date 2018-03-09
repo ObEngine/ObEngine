@@ -6,7 +6,7 @@
 */
 namespace obe::Utils::Math
 {
-	constexpr static double pi = 3.14159265359;
+    constexpr static double pi = 3.14159265359;
 
     /**
     * \brief Get a random integer between the given bound

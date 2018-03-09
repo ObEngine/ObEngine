@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Editor/Grid.hpp>
+#include <Editor/EditorTooltip.hpp>
 #include <Input/InputManager.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Scene/Scene.hpp>
@@ -25,7 +26,6 @@ namespace obe::Editor
         Editor::EditorGrid& editorGrid, 
         int& selectedSpriteOffsetX, 
         int& selectedSpriteOffsetY,
-        sf::Text& sprInfo,
-        sf::RectangleShape& sprInfoBackground,
+        Editor::Tooltip& tooltip,
         Transform::Units& editorUnit);
 }

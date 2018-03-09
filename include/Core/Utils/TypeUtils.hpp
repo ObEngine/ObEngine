@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Utils/StringUtils.hpp>
+#include <Utils/VectorUtils.hpp>
 
 /**
 * \brief Functions to work with Types

@@ -10,13 +10,13 @@ namespace obe::Utils::Math
 
     int randint(const int& min, const int& max)
     {
-        const std::uniform_int_distribution<int> uni(min, max);
+        std::uniform_int_distribution<int> uni(min, max);
         return uni(rng);
     }
 
     double randfloat()
     {
-	    const std::uniform_real_distribution<> dis(0, 1);
+	    std::uniform_real_distribution<> dis(0, 1);
         return dis(rng);
     }
 

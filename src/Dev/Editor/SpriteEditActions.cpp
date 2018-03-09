@@ -70,8 +70,7 @@ namespace obe::Editor
         Editor::EditorGrid& editorGrid,
         int& selectedSpriteOffsetX,
         int& selectedSpriteOffsetY,
-        sf::Text& sprInfo,
-        sf::RectangleShape& sprInfoBackground,
+        Editor::Tooltip& tooltip,
         Transform::Units& editorUnit)
     {
         inputManager.getAction("MoveHandlePoint").connect([editorTriggers, &selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
@@ -103,7 +102,7 @@ namespace obe::Editor
             &cursor, 
             &selectedHandlePoint, 
             &hoveredSprite,
-            &sprInfo,
+            &tooltip,
             &world]
         (const Input::InputActionEvent& event)
         {
@@ -125,7 +124,7 @@ namespace obe::Editor
                     editorTriggers->trigger("SpriteUnselect");
                     selectedSprite->setColor(sf::Color::White);
                     selectedSprite->unselect();
-                    sprInfo.setString("");
+                    tooltip.clear();
                     selectedSprite = nullptr;
                     selectedSpriteOffsetX = 0;
                     selectedSpriteOffsetY = 0;
@@ -158,8 +157,7 @@ namespace obe::Editor
             &selectedSpriteOffsetX, 
             &selectedSpriteOffsetY, 
             &selectedHandlePoint, 
-            &sprInfo,
-            &sprInfoBackground,
+            &tooltip,
             &world,
             &editorUnit]
         (const Input::InputActionEvent& event)
@@ -176,25 +174,26 @@ namespace obe::Editor
                 editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
                 editorTriggers->trigger("SpriteMoved");
 
-                std::string sprInfoStr;
-                sprInfoStr = "Hovered Sprite : \n";
-                sprInfoStr += "    Id : " + selectedSprite->getId() + "\n";
-                sprInfoStr += "    Name : " + selectedSprite->getPath() + "\n";
-                sprInfoStr += "    Pos : " + std::to_string(selectedSprite->getPosition().to(editorUnit).x) 
-                + "," + std::to_string(selectedSprite->getPosition().to(editorUnit).y) + "\n";
-                sprInfoStr += "    Size : " + std::to_string(selectedSprite->getSize().to(editorUnit).x) 
-                + "," + std::to_string(selectedSprite->getSize().to(editorUnit).y) + "\n";
-                sprInfoStr += "    Rot : " + std::to_string(selectedSprite->getRotation()) + "\n";
-                sprInfoStr += "    Layer / Z : " + std::to_string(selectedSprite->getLayer()) + "," + std::to_string(selectedSprite->getZDepth()) + "\n";
-                sprInfo.setString(sprInfoStr);
-                sprInfoBackground.setSize(sf::Vector2f(sprInfo.getGlobalBounds().width + 20, sprInfo.getGlobalBounds().height - 10));
-                sprInfoBackground.setPosition(cursor.getConstrainedX() + 40, cursor.getConstrainedY());
-                sprInfo.setPosition(cursor.getConstrainedX() + 50, cursor.getConstrainedY());
+                tooltip.setText("Selected Sprite : \n"
+                "   Id : {}\n"
+                "   Name : {}\n"
+                "   Pos : {}, {}\n"
+                "   Size : {}, {}\n"
+                "   Rot : {}\n"
+                "   Layer / Z : {}, {}\n",
+                selectedSprite->getId(),
+                selectedSprite->getPath(),
+                selectedSprite->getPosition().to(editorUnit).x, selectedSprite->getPosition().to(editorUnit).y,
+                selectedSprite->getSize().to(editorUnit).x, selectedSprite->getSize().to(editorUnit).y,
+                selectedSprite->getRotation(),
+                selectedSprite->getLayer(), selectedSprite->getZDepth()); // <REVISION> Duplicated code (See MapEditor.cpp)
+
+                tooltip.setPosition(cursor.getX() + 40, cursor.getY());
             }
         });
 
         inputManager.getAction("SpriteRemove").connect(
-            [editorTriggers, &selectedSprite, &world, &sprInfo, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
+            [editorTriggers, &selectedSprite, &world, &tooltip, &hoveredSprite, &selectedSpriteOffsetX, &selectedSpriteOffsetY]
         (const Input::InputActionEvent& event)
         {
             if (selectedSprite != nullptr)
@@ -203,7 +202,7 @@ namespace obe::Editor
                 editorTriggers->trigger("SpriteRemoved");
                 world.removeLevelSprite(selectedSprite->getId());
                 selectedSprite = nullptr;
-                sprInfo.setString("");
+                tooltip.clear();
                 hoveredSprite = nullptr;
                 selectedSpriteOffsetX = 0;
                 selectedSpriteOffsetY = 0;

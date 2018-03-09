@@ -1,3 +1,5 @@
+#include <ostream>
+
 #include <Transform/UnitVector.hpp>
 
 namespace obe::Transform
