@@ -22,6 +22,7 @@ target_include_directories(ObEngineTests
 )
 
 target_link_libraries(ObEngineTests ObEngineCore)
+target_link_libraries(ObEngineTests catch)
 target_link_libraries(ObEngineTests elzip)
 target_link_libraries(ObEngineTests lua)
 target_link_libraries(ObEngineTests sfe)
