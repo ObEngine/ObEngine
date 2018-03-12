@@ -1,6 +1,6 @@
 #pragma once
 
-#include <spdlog/fmt/bundled/format.h>
+#include <fmt/format.h>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 

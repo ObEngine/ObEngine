@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include <vili/vili/Types.hpp>
-#include <vili/vili/ViliParser.hpp>
+#include <vili/Types.hpp>
+#include <vili/ViliParser.hpp>
 
 #include <Bindings/Bindings.hpp>
 #include <Bindings/ViliBindings.hpp>

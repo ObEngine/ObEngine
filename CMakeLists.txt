@@ -1,19 +1,25 @@
 cmake_minimum_required(VERSION 3.6)
-cmake_policy(SET CMP0015 NEW)
 
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/extlibs/find/")
 
-add_subdirectory(extlibs/build/clipper)
-add_subdirectory(extlibs/build/elzip)
-add_subdirectory(extlibs/build/lua)
-add_subdirectory(extlibs/build/vili)
-add_subdirectory(extlibs/build/dynamicLinker)
+add_subdirectory(extlibs/catch)
+add_subdirectory(extlibs/dynamicLinker)
+add_subdirectory(extlibs/vili)
+
+add_subdirectory(extlibs/fmt)
+add_subdirectory(extlibs/spdlog)
+
+add_subdirectory(extlibs/lua)
+add_subdirectory(extlibs/kaguya)
+
+add_subdirectory(extlibs/minizip)
+add_subdirectory(extlibs/elzip)
 
 find_package(SFML 2 REQUIRED graphics window system network audio)
 find_package(OpenGL REQUIRED)
-add_subdirectory(extlibs/build/sfe)
+add_subdirectory(extlibs/sfe)
 
 add_subdirectory(src/Core)
 
@@ -23,6 +29,7 @@ ENDIF()
 
 if(BUILD_PLAYER)
     add_subdirectory(src/Player)
+    
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
 endif()
 
@@ -31,8 +38,10 @@ IF (NOT DEFINED BUILD_DEV)
 ENDIF()
 
 if(BUILD_DEV)
-    add_subdirectory(extlibs/build/TGUI)
+    add_subdirectory(extlibs/TGUI)
+
     add_subdirectory(src/Dev)
+    
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()
 

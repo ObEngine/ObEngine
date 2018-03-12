@@ -1,32 +1,27 @@
 cmake_minimum_required(VERSION 3.6)
-cmake_policy(SET CMP0015 NEW)
 
 project(ObEngineTests)
 
-file(GLOB_RECURSE PG_OBT src/*.hpp)
-file(GLOB_RECURSE HD_OBT src/*.cpp)
+file(GLOB_RECURSE OBT_HEADERS src/*.hpp)
+file(GLOB_RECURSE OBT_SOURCES src/*.cpp)
 
-FOREACH(item ${HD_OBT})
+FOREACH(item ${OBT_SOURCES})
   IF(${item} MATCHES "ObEngine.cpp")
-    LIST(REMOVE_ITEM HD_OBT ${item})
+    LIST(REMOVE_ITEM OBT_SOURCES ${item})
   ENDIF(${item} MATCHES "ObEngine.cpp")
 ENDFOREACH(item)
 
-set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
-
 find_package(OpenGL REQUIRED)
 
-include_directories(../include/Core)
-include_directories(../extlibs/include/)
+add_executable(ObEngineTests ${OBT_HEADERS} ${OBT_SOURCES})
 
-include_directories(${SFML_INCLUDE_DIR})
-include_directories(${LUA53_INCLUDE_DIR})
-include_directories(${OPENGL_INCLUDE_DIR})
-
-add_executable(ObEngineTests ${PG_OBT} ${HD_OBT})
+target_include_directories(ObEngineTests
+  PRIVATE
+    $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
+)
 
 target_link_libraries(ObEngineTests ObEngineCore)
-target_link_libraries(ObEngineTests clipper)
 target_link_libraries(ObEngineTests elzip)
 target_link_libraries(ObEngineTests lua)
 target_link_libraries(ObEngineTests sfe)

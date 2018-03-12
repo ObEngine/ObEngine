@@ -4,7 +4,7 @@
 #include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/Panel.hpp>
-#include <vili/vili/ComplexNode.hpp>
+#include <vili/ComplexNode.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Console.hpp>

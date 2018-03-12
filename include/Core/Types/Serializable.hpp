@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vili/vili/ComplexNode.hpp>
+#include <vili/ComplexNode.hpp>
 
 namespace obe::Types
 {

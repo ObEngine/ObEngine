@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <vili/vili/ComplexNode.hpp>
+#include <vili/ComplexNode.hpp>
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>

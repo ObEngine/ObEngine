@@ -22,7 +22,7 @@
 
 void LoadErrors()
 {
-    vili::LoadErrors("Data/Errors.vili");
+    aube::LoadErrors("Data/Errors.vili");
 }
 
 using namespace obe;

@@ -1,26 +1,18 @@
 cmake_minimum_required(VERSION 3.6)
-cmake_policy(SET CMP0015 NEW)
 
 project(ObEnginePlayer)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -O3")
-endif()
+file(GLOB_RECURSE OBEPLAYER_HEADERS "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
+file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
 
-file(GLOB_RECURSE PG_OBE_PLAY "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
-file(GLOB_RECURSE HD_OBE_PLAY "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
+add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
 
-set_property(GLOBAL APPEND_STRING PROPERTY COMPILE_FLAGS -Wall)
-
-include_directories(../../include/Core)
-include_directories(../../include/Player)
-include_directories(../../extlibs/include/)
-
-include_directories(${SFML_INCLUDE_DIR})
-include_directories(${LUA53_INCLUDE_DIR})
-include_directories(${OPENGL_INCLUDE_DIR})
-
-add_executable(ObEnginePlayer ${HD_OBE_PLAY} ${PG_OBE_PLAY})
+target_include_directories(ObEnginePlayer
+  PRIVATE
+    $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
+    $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
+)
 
 target_link_libraries(ObEnginePlayer ObEngineCore)
 

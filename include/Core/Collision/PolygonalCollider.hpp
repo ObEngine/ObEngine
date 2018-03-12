@@ -1,7 +1,5 @@
 #pragma once
 
-#include <clipper/clipper.hpp>
-
 #include <Component/Component.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/GlobalState.hpp>
