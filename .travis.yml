@@ -66,8 +66,6 @@ script:
 - sudo make install >> install.log
 - sudo ldconfig
 - cd /home/travis/build/Sygmei/ObEngine
-- sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
-- sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
 - export CC=/usr/bin/gcc-7
 - export CXX=/usr/bin/g++-7
 - gcc -v && g++ -v && /usr/local/bin/cmake --version
