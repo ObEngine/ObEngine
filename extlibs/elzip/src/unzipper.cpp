@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include <zlib.h>
+#include <minizip/zlib.h>
 
 #include <unzipper.hpp>
 

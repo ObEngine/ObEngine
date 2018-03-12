@@ -3,7 +3,7 @@
 #include <sstream>
 #include <ctime>
 
-#include <zlib.h>
+#include <minizip/zlib.h>
 
 #include <zipper.hpp>
 

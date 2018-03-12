@@ -61,7 +61,7 @@
 
 #ifdef _WIN32
 #define USEWIN32IOAPI
-#include "win/iowin32.h"
+#include "iowin32.h"
 #endif
 
 
