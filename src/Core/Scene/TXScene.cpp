@@ -17,6 +17,19 @@ namespace obe::Scene
             
     }
 
+	Component::ComponentBase& TXScene::get(const std::string& id)
+	{
+		for (Component::ComponentBase* component : m_components)
+		{
+			if (component->getId() == id)
+			{
+				return *component;
+			}
+		}
+
+		throw aube::ErrorHandler::Raise("obe.Scene.Scene.ComponentNotFound", { { "sceneId", m_id },{ "componentId", id } });
+	}
+
 	void TXScene::clear()
 	{
 		for (auto& component : m_components)
@@ -32,6 +45,16 @@ namespace obe::Scene
 
 	void TXScene::load(vili::ComplexNode& data)
 	{
+	}
+
+	void TXScene::setName(const std::string& name)
+	{
+		m_name = name;
+	}
+
+	std::string TXScene::getName()
+	{
+		return m_name;
 	}
 
 	std::vector<unsigned int> LuaComponent::AllEnvs;

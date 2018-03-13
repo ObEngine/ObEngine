@@ -10,6 +10,10 @@ namespace obe::Component
 {
     class ComponentBase : public Types::Identifiable, public Types::Serializable
     {
+    protected:
+		static std::vector<ComponentBase*> Components;
+		static void AddComponent(ComponentBase* component);
+		static void RemoveComponent(ComponentBase* component);
     public:
 		ComponentBase(const std::string& id);
 		~ComponentBase() override = default;
@@ -45,7 +49,9 @@ namespace obe::Component
     template<class T>
     inline T& Component<T>::create(const std::string& id)
     {
-		return *Pool.emplace_back(std::make_unique<T>(id)).get();
+		T* ref = Pool.emplace_back(std::make_unique<T>(id)).get();
+		AddComponent(ref);
+		return *ref;
     }
 
 	template <class T>
@@ -57,6 +63,7 @@ namespace obe::Component
 	template <class T>
 	void Component<T>::remove()
 	{
+		RemoveComponent(this);
 		T::Pool.erase(std::remove_if(T::Pool.begin(), T::Pool.end(), [&](auto& elem) { return (this == elem.get()); }), T::Pool.end());
 	}
 

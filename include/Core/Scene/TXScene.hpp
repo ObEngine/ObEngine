@@ -63,7 +63,9 @@ namespace obe::Scene
     private:
         bool m_permanent = false;
         std::vector<Component::ComponentBase*> m_components;
+		std::vector<std::unique_ptr<TXScene>> m_children;
         std::unique_ptr<LuaComponent> m_script;
+		std::string m_name;
     public:
         explicit TXScene(const std::string& id, bool scriptable = false);
 
@@ -83,11 +85,17 @@ namespace obe::Scene
         * \brief Deletes the GameObject
         */
         void deleteObject();
-        /**
-        * \brief Delete State of the GameObject (false = not deleted)
-        */
+        
 		template <class T>
 		T& add(const std::string& id);
+
+		Component::ComponentBase& get(const std::string& id);
+		template <class T>
+		T& get(const std::string& id);
+
+		template <class T>
+		std::vector<T&> getAll();
+
 		/**
 		* \brief Removes all elements in the Scene
 		*/
@@ -95,6 +103,13 @@ namespace obe::Scene
 
 	    void dump(vili::ComplexNode& target) const override;
 	    void load(vili::ComplexNode& data) override;
+
+		void setName(const std::string& name);
+		std::string getName();
+
+		/**
+		* \brief Delete State of the GameObject (false = not deleted)
+		*/
         bool deletable = false;
     };
 
@@ -113,5 +128,34 @@ namespace obe::Scene
 		}
 
 		return *reference;
+	}
+	template<class T>
+	inline T& TXScene::get(const std::string& id)
+	{
+		static_assert(
+			std::is_base_of<Component::ComponentBase, T>::value,
+			"Scene.get<T>(id) requires T to have Component as base class"
+		);
+
+		return *static_cast<T*>(this->get(id));
+	}
+
+	template <class T>
+	std::vector<T&> TXScene::getAll()
+	{
+		static_assert(
+			std::is_base_of<Component::ComponentBase, T>::value,
+			"Scene.getAll<T>() requires T to have Component as base class"
+		);
+		std::vector<T&> componentsOfTypeT;
+		for (Component::ComponentBase* component : m_components)
+		{
+			if (T* castedComponent = dynamic_cast<T*>(component); castedComponent != nullptr)
+			{
+				componentsOfTypeT.push_back(*castedComponent);
+			}
+		}
+
+		return componentsOfTypeT;
 	}
 }
