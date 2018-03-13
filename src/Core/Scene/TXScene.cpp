@@ -5,9 +5,8 @@
 
 namespace obe::Scene
 {
-    TXScene::TXScene(const std::string& name, const std::string& id, bool scriptable) : Types::Identifiable(id)
+    TXScene::TXScene(const std::string& id, bool scriptable) : Types::Identifiable(id)
     {
-        m_sceneName = name;
         if (scriptable)
         {
             m_script = std::make_unique<LuaComponent>();
@@ -18,7 +17,25 @@ namespace obe::Scene
             
     }
 
-    LuaComponent::LuaComponent()
+	void TXScene::clear()
+	{
+		for (auto& component : m_components)
+		{
+			component->remove();
+		}
+		m_components.clear();
+	}
+
+	void TXScene::dump(vili::ComplexNode& target) const
+	{
+	}
+
+	void TXScene::load(vili::ComplexNode& data)
+	{
+	}
+
+	std::vector<unsigned int> LuaComponent::AllEnvs;
+	LuaComponent::LuaComponent()
     {
         m_triggerNamespace = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
         Triggers::TriggerDatabase::GetInstance()->createNamespace(m_triggerNamespace);
@@ -44,7 +61,7 @@ namespace obe::Scene
 
         Script::executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
     }
-    void LuaComponent::execute(const std::string& path)
+    void LuaComponent::execute(const std::string& path) const
     {
         Script::executeFile(m_envIndex, System::Path(path).find());
     }

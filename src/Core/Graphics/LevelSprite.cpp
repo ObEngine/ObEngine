@@ -8,7 +8,7 @@
 
 namespace obe::Graphics
 {
-    LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite), Identifiable(id)
+    LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite), Component(id)
     {
         m_texture = ResourceManager::GetTexture("Sprites/Others/notexture.png");
         m_sprite.setTexture(*m_texture);

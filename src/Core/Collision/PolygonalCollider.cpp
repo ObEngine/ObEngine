@@ -63,7 +63,7 @@ namespace obe::Collision
     PolygonalCollider::PolygonalCollider(const std::string& id) : 
         Selectable(false), 
         Movable(Transform::MovableType::PolygonalCollider),
-        Identifiable(id)
+        Component(id)
     {
     }
 

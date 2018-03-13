@@ -81,8 +81,6 @@ namespace obe::Graphics
         public Transform::UnitBasedObject,
         public Types::Selectable,
         public Transform::Rect,
-        public Types::Serializable,
-        public Types::Identifiable,
         public Component::Component<LevelSprite>
     {
     private:
@@ -101,7 +99,6 @@ namespace obe::Graphics
         void applySpriteRotation();
         void resetUnit(Transform::Units unit) override;
     public:
-        INJECTABLE
         bool m_layerChanged = false;
         /**
         * \brief Creates a new LevelSprite with the given Id

@@ -10,6 +10,7 @@
 #include <Transform/SceneNode.hpp>
 #include <Types/Registrable.hpp>
 #include <Types/Serializable.hpp>
+#include <Utils/TypeUtils.hpp>
 
 namespace obe::Scene
 {
@@ -54,19 +55,17 @@ namespace obe::Scene
         */
         void initialize();
 
-        void execute(const std::string& code);
+        void execute(const std::string& code) const;
     };
 
     class TXScene : public Types::Serializable, public Types::Identifiable
     {
     private:
         bool m_permanent = false;
-        std::string m_sceneName;
-        uint32_t m_entityId;
         std::vector<Component::ComponentBase*> m_components;
-        std::optional<std::unique_ptr<LuaComponent>> m_script;
+        std::unique_ptr<LuaComponent> m_script;
     public:
-        explicit TXScene(const std::string& name, const std::string& id, bool scriptable);
+        explicit TXScene(const std::string& id, bool scriptable = false);
 
         ~TXScene();
 
@@ -87,6 +86,32 @@ namespace obe::Scene
         /**
         * \brief Delete State of the GameObject (false = not deleted)
         */
+		template <class T>
+		T& add(const std::string& id);
+		/**
+		* \brief Removes all elements in the Scene
+		*/
+		void clear();
+
+	    void dump(vili::ComplexNode& target) const override;
+	    void load(vili::ComplexNode& data) override;
         bool deletable = false;
     };
+
+	template <class T>
+	T& TXScene::add(const std::string& id)
+	{
+		static_assert(
+			std::is_base_of<Component::ComponentBase, T>::value, 
+			"Scene.add<T>(id) requires T to have Component as base class"
+		);
+
+		T* reference = static_cast<T*>(m_components.emplace_back(&T::create(id)));
+		if (m_script)
+		{
+			reference->inject(m_script->getEnvIndex());
+		}
+
+		return *reference;
+	}
 }

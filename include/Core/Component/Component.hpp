@@ -1,29 +1,65 @@
 #pragma once
 
-#define INJECTABLE void inject(unsigned int envIndex) override { Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id] = this; }
-
 #include <memory>
 #include <vector>
 
+#include <Types/Identifiable.hpp>
+#include <Types/Serializable.hpp>
+
 namespace obe::Component
 {
-    class ComponentBase
+    class ComponentBase : public Types::Identifiable, public Types::Serializable
     {
+    public:
+		ComponentBase(const std::string& id);
+		~ComponentBase() override = default;
         virtual void inject(unsigned int envIndex) = 0;
+		virtual void remove() = 0;
+	   
+	    void dump(vili::ComplexNode& target) const override = 0;
+	    void load(vili::ComplexNode& data) override = 0;
     };
 
     template <class T>
     class Component : public ComponentBase
     {
     public:
+	    explicit Component(const std::string& id);
+		~Component() override = default;
+
         static std::vector<std::unique_ptr<T>> Pool;
         static T& create(const std::string& id);
-        void inject(unsigned int envIndex) override = 0;
+		
+		void remove() override;
+        void inject(unsigned int envIndex) override;
+	    
+	    void dump(vili::ComplexNode& target) const override = 0;
+	    void load(vili::ComplexNode& data) override = 0;
     };
+
+	template <class T>
+	Component<T>::Component(const std::string& id) : ComponentBase(id)
+	{
+	}
 
     template<class T>
     inline T& Component<T>::create(const std::string& id)
     {
-        return *Pool.emplace_back(std::make_unique<T>(id)).get();
+		return *Pool.emplace_back(std::make_unique<T>(id)).get();
     }
+
+	template <class T>
+	void Component<T>::inject(unsigned int envIndex)
+    {
+	    Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id] = static_cast<T*>(this);
+    }
+
+	template <class T>
+	void Component<T>::remove()
+	{
+		T::Pool.erase(std::remove_if(T::Pool.begin(), T::Pool.end(), [&](auto& elem) { return (this == elem.get()); }), T::Pool.end());
+	}
+
+	template <class T>
+	std::vector<std::unique_ptr<T>> Component<T>::Pool;
 }

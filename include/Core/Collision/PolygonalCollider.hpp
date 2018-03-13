@@ -49,8 +49,6 @@ namespace obe::Collision
         public Transform::UnitBasedObject,
         public Types::Selectable,
         public Transform::Movable,
-        public Types::Serializable,
-        public Types::Identifiable,
         public Component::Component<PolygonalCollider>
     {
     private:
@@ -70,7 +68,6 @@ namespace obe::Collision
         void resetUnit(Transform::Units unit) override;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
     public:
-        INJECTABLE
         static Scene::Scene* SceneRef; // <REVISION> Remove this horror
         /**
         * \brief Constructs a PolygonalCollider
