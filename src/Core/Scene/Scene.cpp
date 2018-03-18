@@ -14,8 +14,7 @@ namespace obe::Scene
     Registrable("Scene"),
     m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
     {
-        Collision::PolygonalCollider::SceneRef = this;
-        System::Path("Lib/Internal/SceneInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
         Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
         m_showCollisionModes["drawLines"] = false;
         m_showCollisionModes["drawPoints"] = false;

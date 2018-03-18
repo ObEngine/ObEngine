@@ -1,6 +1,9 @@
 #include <Bindings/SceneBindings.hpp>
 #include <Scene/Camera.hpp>
 #include <Scene/Scene.hpp>
+#include <Scene/TXScene.hpp>
+#include <Types/Identifiable.hpp>
+#include <Types/Serializable.hpp>
 
 namespace obe::Bindings::SceneBindings
 {
@@ -75,4 +78,27 @@ namespace obe::Bindings::SceneBindings
 
         (*lua)["obe"]["Scene"]["createGameObject"] = kaguya::function(Scene_createGameObject_wrapper());
     }
+
+	void LoadTXScene(kaguya::State* lua)
+	{
+		(*lua)["obe"]["TXScene"].setClass(kaguya::UserdataMetatable<Scene::TXScene,
+			kaguya::MultipleBase<
+			Types::Identifiable,
+			Types::Serializable>
+		>()
+			//.addFunction("addSprite", &Scene::TXScene::add<Graphics::LevelSprite>)
+			//.addFunction("addCollider", &Scene::TXScene::add<Collision::PolygonalCollider>)
+			.addFunction("clear", &Scene::TXScene::clear)
+			.addFunction("remove", &Scene::TXScene::remove)
+			//.addFunction("get", static_cast<Component::ComponentBase&(Scene::TXScene::*)(const std::string&)>(&Scene::TXScene::get))
+			//.addFunction("getLevelSprite", &Scene::TXScene::get<Graphics::LevelSprite>)
+			//.addFunction("getCollider", &Scene::TXScene::get<Collision::PolygonalCollider>)
+			//.addFunction("getAllSprites", &Scene::TXScene::getAll<Graphics::LevelSprite>)
+			//.addFunction("getAllColliders", &Scene::TXScene::getAll<Collision::PolygonalCollider>)
+			.addFunction("getName", &Scene::TXScene::getName)
+			.addFunction("isPermanent", &Scene::TXScene::isPermanent)
+			.addFunction("setName", &Scene::TXScene::setName)
+			.addFunction("setPermanent", &Scene::TXScene::setPermanent)
+		);
+	}
 }

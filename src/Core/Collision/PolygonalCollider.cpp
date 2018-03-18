@@ -59,7 +59,6 @@ namespace obe::Collision
         return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
     }
 
-    Scene::Scene* PolygonalCollider::SceneRef = nullptr;
     PolygonalCollider::PolygonalCollider(const std::string& id) : 
         Selectable(false), 
         Movable(Transform::MovableType::PolygonalCollider),
@@ -262,13 +261,12 @@ namespace obe::Collision
 
     Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(const Transform::UnitVector& offset) const
     {
-        auto colliders = SceneRef->getAllColliders();
         std::vector<Transform::UnitVector> limitedMaxDists;
-        for (const PolygonalCollider* collider : colliders)
+        for (auto& collider : Pool)
         {
             const Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(*collider, offset);
             //Add Tag check <REVISION>
-            if (maxDist != offset && collider != this)
+            if (maxDist != offset && collider.get() != this)
             {
                 limitedMaxDists.push_back(maxDist);
             }

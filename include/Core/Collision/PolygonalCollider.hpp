@@ -68,7 +68,6 @@ namespace obe::Collision
         void resetUnit(Transform::Units unit) override;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
     public:
-        static Scene::Scene* SceneRef; // <REVISION> Remove this horror
         /**
         * \brief Constructs a PolygonalCollider
         * \param id Id of the PolygonalCollider (Used to retrieve it for example)

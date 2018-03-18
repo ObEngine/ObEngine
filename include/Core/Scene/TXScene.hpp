@@ -55,7 +55,7 @@ namespace obe::Scene
         */
         void initialize();
 
-        void execute(const std::string& code) const;
+        void execute(const std::string& pathath) const;
     };
 
     class TXScene : public Types::Serializable, public Types::Identifiable
@@ -67,7 +67,9 @@ namespace obe::Scene
         std::unique_ptr<LuaComponent> m_script;
 		std::string m_name;
     public:
+		static TXScene CreateRootScene();
         explicit TXScene(const std::string& id, bool scriptable = false);
+		TXScene(TXScene&& scene);
 
         ~TXScene();
 
@@ -84,7 +86,7 @@ namespace obe::Scene
         /**
         * \brief Deletes the GameObject
         */
-        void deleteObject();
+        void remove();
         
 		template <class T>
 		T& add(const std::string& id);

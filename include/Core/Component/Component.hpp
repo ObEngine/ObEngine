@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include <Script/GlobalState.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 
@@ -46,7 +47,7 @@ namespace obe::Component
 	{
 	}
 
-    template<class T>
+	template<class T>
     inline T& Component<T>::create(const std::string& id)
     {
 		T* ref = Pool.emplace_back(std::make_unique<T>(id)).get();

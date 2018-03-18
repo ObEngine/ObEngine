@@ -11,6 +11,7 @@
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include "Scene/TXScene.hpp"
 
 namespace obe::Modes
 {
@@ -43,6 +44,7 @@ namespace obe::Modes
 
         //Scene Creation / Loading
         Scene::Scene scene;
+		//Scene::TXScene scene = Scene::TXScene::CreateRootScene();
 
         Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
         {
@@ -62,6 +64,7 @@ namespace obe::Modes
         fps.loadFont(font);
         Time::FramerateManager framerateManager(gameConfig);
 
+		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
         System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
         Script::ScriptEngine.dostring("Game.Start()");
 
@@ -103,6 +106,9 @@ namespace obe::Modes
             {
                 System::MainWindow.clear(Graphics::Utils::ClearColor);
                 scene.draw();
+				for (auto& sprite : Graphics::LevelSprite::Pool)
+				{
+				}
 
                 System::MainWindow.display();
             }
@@ -112,7 +118,5 @@ namespace obe::Modes
             
         scene.update();
         System::MainWindow.close();
-
-        std::cin.get();
     }
 }

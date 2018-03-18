@@ -4,6 +4,8 @@
 
 namespace obe::Component
 {
+	std::vector<ComponentBase*> ComponentBase::Components;
+
 	void ComponentBase::AddComponent(ComponentBase* component)
 	{
 		for (ComponentBase* comp : Components)

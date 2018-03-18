@@ -1,21 +1,56 @@
+#include <vili/Vili.hpp>
+
 #include <Scene/TXScene.hpp>
 #include <Script/GlobalState.hpp>
+#include <System/Loaders.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Scene
 {
+	TXScene TXScene::CreateRootScene()
+	{
+		Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
+
+		return TXScene("Root");
+	}
+
     TXScene::TXScene(const std::string& id, bool scriptable) : Types::Identifiable(id)
     {
         if (scriptable)
         {
             m_script = std::make_unique<LuaComponent>();
         }
+		Script::ScriptEngine["Scenes"][id] = this;
     }
-    TXScene::~TXScene()
+
+	TXScene::TXScene(TXScene&& scene) : Identifiable(scene.getId())
+	{
+		m_permanent = scene.m_permanent;
+		m_components = std::move(scene.m_components);
+		m_children = std::move(scene.m_children);
+		m_script.reset(scene.m_script.release());
+		m_name = std::move(scene.m_name);
+	}
+
+	TXScene::~TXScene()
     {
             
     }
+
+	void TXScene::setPermanent(bool permanent)
+	{
+		m_permanent = permanent;
+	}
+
+	bool TXScene::isPermanent() const
+	{
+		return m_permanent;
+	}
+
+	void TXScene::remove()
+	{
+	}
 
 	Component::ComponentBase& TXScene::get(const std::string& id)
 	{
@@ -45,6 +80,122 @@ namespace obe::Scene
 
 	void TXScene::load(vili::ComplexNode& data)
 	{
+		Debug::Log->debug("<Scene> Loading Scene");
+		this->clear();
+		Debug::Log->debug("<Scene> Cleared Scene");
+
+
+		if (data.contains(vili::NodeType::DataNode, "name"))
+		{
+			m_name = data.getDataNode("name").get<std::string>();
+		}
+		else
+			throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoName", { {"id", m_id } });
+
+		/*if (data.contains(vili::NodeType::ComplexNode, "View"))
+		{
+			vili::ComplexNode& view = m_levelFile.at("View");
+			m_camera.setSize(view.at<vili::DataNode>("size").get<double>());
+			m_cameraInitialPosition = Transform::UnitVector(
+				view.at<vili::DataNode>("pos", "x").get<double>(),
+				view.at<vili::DataNode>("pos", "y").get<double>(),
+				Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
+			m_cameraInitialReferencial = Transform::Referencial::TopLeft;
+			if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
+			{
+				m_cameraInitialReferencial = Transform::stringToReferencial(
+					m_levelFile->at("View", "referencial").getDataNode("referencial").get<std::string>()
+				);
+			}
+			Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referencial {2}",
+				m_cameraInitialPosition.x,
+				m_cameraInitialPosition.y,
+				Transform::referencialToString(m_cameraInitialReferencial));
+			m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
+			std::cout << m_camera.getPosition() << std::endl;
+		}
+		else
+			throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", { { "map", filename } });*/
+
+		if (data.contains(vili::NodeType::ComplexNode, "Components"))
+		{
+			vili::ComplexNode& components = data.at("Components");
+
+			for (vili::ComplexNode* component : components.getAll<vili::ComplexNode>())
+			{
+				const std::string componentType = component->getDataNode("type");
+				if (componentType == "Sprite")
+				{
+					this->add<Graphics::LevelSprite>(component->getDataNode("id")).load(*component);
+				}
+				else if (componentType == "Collider")
+				{
+					this->add<Collision::PolygonalCollider>(component->getDataNode("id")).load(*component);
+				}
+				/*else if (componentType == "Script")
+				{
+					m_script = std::make_unique<LuaComponent>();
+					if (component->contains(vili::NodeType::DataNode, "source"))
+					{
+						m_script->execute(component->at<vili::DataNode>("source"));
+						m_scriptArray.push_back(script.at<vili::DataNode>("source"));
+					}
+					else if (script.contains(vili::NodeType::ArrayNode, "sources"))
+					{
+						for (vili::DataNode* scriptName : script.getArrayNode("sources"))
+						{
+							System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+							m_scriptArray.push_back(*scriptName);
+						}
+					}
+				}*/
+			}
+		}
+
+		/*if (m_levelFile->contains(vili::NodeType::ComplexNode, "GameObjects"))
+		{
+			vili::ComplexNode& gameObjects = m_levelFile.at("GameObjects");
+			for (vili::ComplexNode* currentObject : gameObjects.getAll<vili::ComplexNode>())
+			{
+				if (!this->doesGameObjectExists(currentObject->getId()))
+				{
+					const std::string gameObjectType = currentObject->getDataNode("type").get<std::string>();
+					Script::GameObject* newObject = this->createGameObject(gameObjectType, currentObject->getId());
+					if (currentObject->contains(vili::NodeType::ComplexNode, "Requires"))
+					{
+						vili::ComplexNode& objectRequirements = currentObject->at("Requires");
+						currentObject->removeOwnership(&objectRequirements);
+						Script::GameObjectDatabase::ApplyRequirements(newObject, objectRequirements);
+						objectRequirements.setParent(currentObject);
+					}
+					newObject->exec("LuaCore.InjectInitInjectionTable()");
+				}
+				else if (!this->getGameObject(currentObject->getId())->isPermanent())
+				{
+					aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene", { { "object", currentObject->getId() },{ "mapfile", m_levelName } });
+				}
+			}
+		}
+
+		if (m_levelFile->contains(vili::NodeType::ComplexNode, "Script"))
+		{
+			vili::ComplexNode& script = m_levelFile.at("Script");
+			if (script.contains(vili::NodeType::DataNode, "source"))
+			{
+				System::Path(script.at<vili::DataNode>("source")).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+				m_scriptArray.push_back(script.at<vili::DataNode>("source"));
+			}
+			else if (script.contains(vili::NodeType::ArrayNode, "sources"))
+			{
+				for (vili::DataNode* scriptName : script.getArrayNode("sources"))
+				{
+					System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+					m_scriptArray.push_back(*scriptName);
+				}
+			}
+		}
+		m_sceneTriggers->pushParameter("MapLoaded", "name", filename);
+		m_sceneTriggers->trigger("MapLoaded");*/
 	}
 
 	void TXScene::setName(const std::string& name)
@@ -84,6 +235,12 @@ namespace obe::Scene
 
         Script::executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
     }
+
+	unsigned LuaComponent::getEnvIndex() const
+	{
+		return m_envIndex;
+	}
+
     void LuaComponent::execute(const std::string& path) const
     {
         Script::executeFile(m_envIndex, System::Path(path).find());
