@@ -23,7 +23,6 @@ You will need SFML :
 
 There are other libraries but they are included in the repository (extlibs/ folder) :
 
-- [clipper](http://www.angusj.com/delphi/clipper.php) (Boost Software License) (Polygons)
 - [11zip](https://github.com/Sygmei/11Zip)  (MIT License) (minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/))
 - [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
 - [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (zlib License) (Scripting language)
@@ -34,6 +33,7 @@ There are other libraries but they are included in the repository (extlibs/ fold
 - [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
 - [dynamicLinker](https://github.com/Marqin/dynamicLinker) (MIT License) (Dynamic Libs wrapper)
 - [RichText](https://github.com/Skyrpex/RichText) (No license) (sf::Text extension)
+- [fmt](https://github.com/fmtlib/fmt) (BSD 2-Clause "Simplified" License) (Formatting library)
 
 ## How do I build it ?
 Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
