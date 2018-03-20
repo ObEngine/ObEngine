@@ -132,23 +132,23 @@ namespace obe::Scene
 				{
 					this->add<Collision::PolygonalCollider>(component->getDataNode("id")).load(*component);
 				}
-				/*else if (componentType == "Script")
+				else if (componentType == "Script")
 				{
 					m_script = std::make_unique<LuaComponent>();
 					if (component->contains(vili::NodeType::DataNode, "source"))
 					{
 						m_script->execute(component->at<vili::DataNode>("source"));
-						m_scriptArray.push_back(script.at<vili::DataNode>("source"));
+						m_script->addSource(component->at<vili::DataNode>("source"));
 					}
-					else if (script.contains(vili::NodeType::ArrayNode, "sources"))
+					else if (component->contains(vili::NodeType::ArrayNode, "sources"))
 					{
-						for (vili::DataNode* scriptName : script.getArrayNode("sources"))
+						for (vili::DataNode* scriptName : component->getArrayNode("sources"))
 						{
-							System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-							m_scriptArray.push_back(*scriptName);
+							m_script->execute(*scriptName);
+							m_script->addSource(*scriptName);
 						}
 					}
-				}*/
+				}
 			}
 		}
 
@@ -203,7 +203,7 @@ namespace obe::Scene
 		m_name = name;
 	}
 
-	std::string TXScene::getName()
+	std::string TXScene::getName() const
 	{
 		return m_name;
 	}
@@ -245,4 +245,17 @@ namespace obe::Scene
     {
         Script::executeFile(m_envIndex, System::Path(path).find());
     }
+
+	void LuaComponent::addSource(const std::string& path)
+	{
+		m_sources.push_back(path);
+	}
+
+	void LuaComponent::dump(vili::ComplexNode& target) const
+	{
+	}
+
+	void LuaComponent::load(vili::ComplexNode& data)
+	{
+	}
 }

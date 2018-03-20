@@ -23,18 +23,19 @@ namespace obe::Scene
         T& get(const std::string& id);
     };
 
-    class LuaComponent
+    class LuaComponent : public Types::Serializable
     {
     private:
         unsigned int m_envIndex;
         Triggers::TriggerGroupPtr m_localTriggers;
+		std::vector<std::string> m_sources;
 
         std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
         std::string m_triggerNamespace;
     public:
         static std::vector<unsigned int> AllEnvs;
-        LuaComponent();
+        explicit LuaComponent();
         /**
         * \brief Access the exposition table of the GameObject
         * \return A reference to the exposition table of the GameObject
@@ -55,7 +56,11 @@ namespace obe::Scene
         */
         void initialize();
 
-        void execute(const std::string& pathath) const;
+        void execute(const std::string& path) const;
+		void addSource(const std::string& path);
+
+	    void dump(vili::ComplexNode& target) const override;
+	    void load(vili::ComplexNode& data) override;
     };
 
     class TXScene : public Types::Serializable, public Types::Identifiable
@@ -107,7 +112,7 @@ namespace obe::Scene
 	    void load(vili::ComplexNode& data) override;
 
 		void setName(const std::string& name);
-		std::string getName();
+		std::string getName() const;
 
 		/**
 		* \brief Delete State of the GameObject (false = not deleted)
