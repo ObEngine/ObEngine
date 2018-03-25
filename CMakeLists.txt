@@ -38,6 +38,11 @@ IF (NOT DEFINED BUILD_DEV)
 ENDIF()
 
 if(BUILD_DEV)
+	find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_AUTORCC ON)
+	set (CMAKE_INCLUDE_CURRENT_DIR ON)
+
     add_subdirectory(extlibs/TGUI)
 
     add_subdirectory(src/Dev)

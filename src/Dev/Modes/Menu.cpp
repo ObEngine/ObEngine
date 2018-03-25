@@ -1,4 +1,8 @@
 #include <TGUI/TGUI.hpp>
+#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QObject>
 #include <vili/Vili.hpp>
 
 #include <Editor/MapEditor.hpp>
@@ -232,9 +236,65 @@ namespace obe::Modes
         return currentMap;
     }
 
-    void startDevMenu()
+	class Backend : public QObject
+	{
+		Q_OBJECT
+	public:
+		Q_INVOKABLE void refresh() const;
+		Q_INVOKABLE void play() const;
+		Q_INVOKABLE void edit() const;
+	};
+
+	void Backend::play() const
+	{
+		startGame();
+	}
+
+	void Backend::edit() const
+	{
+		const std::string editMapName = chooseMapMenu();
+		if (editMapName != "")
+			Editor::editMap(editMapName);
+	}
+
+	void Backend::refresh() const
+	{
+		if (System::Path("boot.lua").find() == "")
+		{
+			//playButton->disable();
+		}
+		else
+		{
+			//playButton->enable();
+		}
+		if (System::Path("Data/Maps").find(System::PathType::Directory) == "")
+		{
+			//editButton->disable();
+		}
+		else
+		{
+			//editButton->enable();
+		}
+	}
+
+
+	void startDevMenu()
     {
-        sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
+		QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+		int argc = 0;
+		char** argv = {};
+		qmlRegisterType<Backend>("obe.Menu.Backend", 1, 0, "Backend");
+		QGuiApplication app(argc, argv);
+
+		QQmlApplicationEngine engine;
+		engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
+		if (engine.rootObjects().isEmpty())
+			throw aube::ErrorHandler::Raise("obe.Menu.QtError");
+
+		app.exec();
+
+        /*sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 
         tgui::Gui gui(window);
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -385,6 +445,8 @@ namespace obe::Modes
             window.clear();
             gui.draw();
             window.display();
-        }
+        }*/
     }
 }
+
+#include "Menu.moc"
