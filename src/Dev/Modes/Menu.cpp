@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QObject>
 #include <vili/Vili.hpp>
 
@@ -236,26 +237,53 @@ namespace obe::Modes
         return currentMap;
     }
 
+    enum class MenuCode
+    {
+        None,
+        Play,
+        Edit,
+        Toolkit,
+        Help
+    };
 	class Backend : public QObject
 	{
 		Q_OBJECT
+    private:
+        QGuiApplication* m_app;
+        MenuCode m_code = MenuCode::None;
 	public:
+        Backend(QGuiApplication* app);
 		Q_INVOKABLE void refresh() const;
-		Q_INVOKABLE void play() const;
-		Q_INVOKABLE void edit() const;
+		Q_INVOKABLE void play();
+		Q_INVOKABLE void edit();
+        Q_INVOKABLE void toolkit();
+        MenuCode getAction() const;
 	};
 
-	void Backend::play() const
+    Backend::Backend(QGuiApplication* app)
+    {
+        m_app = app;
+    }
+
+	void Backend::play()
 	{
-		startGame();
+        m_code = MenuCode::Play;
+        m_app->exit();
+		//startGame();
 	}
 
-	void Backend::edit() const
+	void Backend::edit()
 	{
-		const std::string editMapName = chooseMapMenu();
-		if (editMapName != "")
-			Editor::editMap(editMapName);
+        std::cout << "Edit !" << std::endl;
+		m_code = MenuCode::Edit;
+        m_app->exit();
 	}
+
+    void Backend::toolkit()
+    {
+        m_code = MenuCode::Toolkit;
+        m_app->exit();
+    }
 
 	void Backend::refresh() const
 	{
@@ -277,6 +305,10 @@ namespace obe::Modes
 		}
 	}
 
+    MenuCode Backend::getAction() const
+    {
+        return m_code;
+    }
 
 	void startDevMenu()
     {
@@ -284,7 +316,7 @@ namespace obe::Modes
 
 		int argc = 0;
 		char** argv = {};
-		qmlRegisterType<Backend>("obe.Menu.Backend", 1, 0, "Backend");
+		//qmlRegisterType<Backend>("obe.Menu.Backend", 1, 0, "Backend");
 		QGuiApplication app(argc, argv);
 
 		QQmlApplicationEngine engine;
@@ -292,7 +324,27 @@ namespace obe::Modes
 		if (engine.rootObjects().isEmpty())
 			throw aube::ErrorHandler::Raise("obe.Menu.QtError");
 
+        Backend a(&app);
+        engine.rootContext()->setContextProperty("MenuBackend", &a); 
+
 		app.exec();
+
+        std::cout << "OLOLOL" << std::endl;
+
+        if (a.getAction() == MenuCode::Play)
+        {
+            startGame();
+        }
+        else if (a.getAction() == MenuCode::Edit)
+        {
+            const std::string editMapName = chooseMapMenu();
+            if (editMapName != "")
+                Editor::editMap(editMapName);   
+        }
+        else if (a.getAction() == MenuCode::Toolkit)
+        {
+            startToolkitMode();
+        }
 
         /*sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 

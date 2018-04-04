@@ -5,11 +5,19 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     property vector2d m_offset
+    property string title_text
+    property string back_source
 
-    id: rectangle
+    Component.onCompleted: {
+        if (back_source == "") {
+            backButton.visible = false;
+        }
+    }
+
+    id: titlebar
     width: parent.width
     height: Math.min(parent.height / 10, 60)
-    color: "#202020"
+    color: "#101010"
     MouseArea {
         id: mouseArea
         anchors.fill: parent
@@ -27,10 +35,10 @@ Rectangle {
         id: text1
         anchors.left: logo.right
         color: "#ffffff"
-        text: qsTr("ÖbEngine Development Window")
+        text: title_text
         anchors.leftMargin: 10
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 20
+        font.pixelSize: 18
     }
 
     Image {
@@ -50,9 +58,35 @@ Rectangle {
     }
 
     RoundButton {
+        id: backButton
+        palette.button: "#404040"
+        anchors.right: minButton.left
+        anchors.rightMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        onClicked: {
+            loader.source = back_source;
+        }
+
+        Image {
+            id: backImg
+            height: parent.height / 3
+            fillMode: Image.PreserveAspectFit
+            antialiasing: true
+            smooth: true
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            source: "icons/back.svg"
+            sourceSize.width: width
+            sourceSize.height: height
+        }
+    }
+
+
+    RoundButton {
         id: minButton
+        palette.button: "#404040"
         anchors.right: closeButton.left
-        anchors.rightMargin: 0
+        anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         onClicked: {
             applicationWindow.visibility = Window.Minimized
@@ -74,9 +108,11 @@ Rectangle {
 
     RoundButton {
         id: closeButton
+        palette.button: "#404040"
+        palette.highlight: "#FF0000"
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: 0
+        anchors.rightMargin: 10
         onClicked: {
             Qt.quit()
         }
