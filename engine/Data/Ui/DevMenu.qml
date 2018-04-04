@@ -1,8 +1,14 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
+import obe.Backend.Menu 1.0
 
-Item {    
+Item {   
+    MenuBackend {
+        id: backend
+        window: applicationWindow
+    } 
+
     Titlebar {
         id: titlebar
         title_text: "ÖbEngine Development Window"
@@ -24,7 +30,7 @@ Item {
             text: "Play"
             icon: "icons/play-button.svg"
             function action() {
-                MenuBackend.play();
+                backend.play();
             }
         }
 
@@ -33,7 +39,7 @@ Item {
             text: "Edit"
             icon: "icons/new-file.svg"
             function action() {
-                MenuBackend.edit();
+                backend.edit();
             }
         }
 
@@ -42,7 +48,7 @@ Item {
             text: "Toolkit"
             icon: "icons/terminal.svg"
             function action() {
-                MenuBackend.toolkit();
+                loader.source = "Toolkit.qml"
             }
         }
 
@@ -54,13 +60,13 @@ Item {
     }
 
     Component.onCompleted: {
-        if (MenuBackend.hasBootFile()) {
+        if (backend.hasBootFile()) {
             playBtn.enable();
         }
         else {
             playBtn.disable();
         }
-        if (MenuBackend.hasMapFolder()) {
+        if (backend.hasMapFolder()) {
             editBtn.enable();
         }
         else {

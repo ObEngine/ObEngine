@@ -7,6 +7,7 @@
 #include <QObject>
 #include <vili/Vili.hpp>
 
+#include <Backend/MenuBackend.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
@@ -238,84 +239,10 @@ namespace obe::Modes
         return currentMap;
     }
 
-    enum class MenuCode
-    {
-        None,
-        Play,
-        Edit,
-        Toolkit,
-        Help
-    };
-	class MenuBackend : public QObject
-	{
-		Q_OBJECT
-    private:
-		QQmlApplicationEngine* m_engine;
-        MenuCode m_code = MenuCode::None;
-		void closeWindow() const;
-	public:
-		void setEngine(QQmlApplicationEngine* engine);
-		Q_INVOKABLE void play();
-		Q_INVOKABLE void edit();
-        Q_INVOKABLE void toolkit();
-		Q_INVOKABLE bool hasBootFile() const;
-		Q_INVOKABLE bool hasMapFolder() const;
-        MenuCode getAction() const;
-	};
-
-	void MenuBackend::closeWindow() const
-	{
-		QWindow* mainWindow = dynamic_cast<QWindow*>(m_engine->rootObjects().first());
-		std::cout << mainWindow->geometry().width() << std::endl;
-		mainWindow->close();
-	}
-
-    void MenuBackend::setEngine(QQmlApplicationEngine* engine)
-    {
-        m_engine = engine;
-    }
-
-	void MenuBackend::play()
-	{
-        m_code = MenuCode::Play;
-		this->closeWindow();
-	}
-
-	void MenuBackend::edit()
-	{
-		m_code = MenuCode::Edit;
-		this->closeWindow();
-	}
-
-    void MenuBackend::toolkit()
-    {
-        m_code = MenuCode::Toolkit;
-		this->closeWindow();
-		
-    }
-
-	bool MenuBackend::hasBootFile() const
-	{
-		return !System::Path("boot.lua").find().empty();
-	}
-
-	bool MenuBackend::hasMapFolder() const
-	{
-		return !System::Path("Data/Maps").find(System::PathType::Directory).empty();
-	}
-
-    MenuCode MenuBackend::getAction() const
-    {
-        return m_code;
-    }
-
 	void startDevMenu()
     {
-		MenuBackend backend;
 		{
 			QQmlApplicationEngine engine;
-			backend.setEngine(&engine);
-			engine.rootContext()->setContextProperty("MenuBackend", &backend);
 			engine.rootContext()->setContextProperty("load_source", "DevMenu.qml");
 			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
 			if (engine.rootObjects().isEmpty())
@@ -324,20 +251,20 @@ namespace obe::Modes
 			QGuiApplication::exec();
 		}
 
-        if (backend.getAction() == MenuCode::Play)
+        /*if (backend.getAction() == Backend::MenuCode::Play)
         {
             Modes::startGame();
         }
-        else if (backend.getAction() == MenuCode::Edit)
+        else if (backend.getAction() == Backend::MenuCode::Edit)
         {
             const std::string editMapName = chooseMapMenu();
             if (editMapName != "")
                 Editor::editMap(editMapName);   
         }
-        else if (backend.getAction() == MenuCode::Toolkit)
+        else if (backend.getAction() == Backend::MenuCode::Toolkit)
         {
             Modes::startToolkitMode();
-        }
+        }*/
 
         /*sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 
@@ -493,5 +420,3 @@ namespace obe::Modes
         }*/
     }
 }
-
-#include "Menu.moc"

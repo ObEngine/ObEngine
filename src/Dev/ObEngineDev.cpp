@@ -5,6 +5,7 @@
 #include <QGuiApplication>
 #include <SFML/Window/VideoMode.hpp>
 
+#include <Backend/Backend.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Debug/Logger.hpp>
 #include <Editor/MapEditor.hpp>
@@ -32,6 +33,7 @@ int main(int argc, char** argv)
 {
 	QGuiApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    Backend::RegisterTypes();
 
     Utils::Exec::RunArgsParser runParser(argc, argv);
 	const std::string startMode = runParser.getArgumentValue("-mode");

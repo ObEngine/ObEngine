@@ -46,6 +46,7 @@ namespace obe::Bindings::CollisionBindings
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(PolygonalCollider_clearHighlights_wrapper, Collision::PolygonalCollider, clearHighlights, 0, 2);
     void LoadPolygonalCollider(kaguya::State* lua)
     {
+        // <REVISION> PolygonalCollider should herit from Component (Make Component Bindings)
         Load(lua, "obe.UnitBasedObject");
         Load(lua, "obe.Selectable");
         Load(lua, "obe.Serializable");
@@ -55,7 +56,8 @@ namespace obe::Bindings::CollisionBindings
             Transform::UnitBasedObject,
             Types::Selectable,
             Transform::Movable,
-            Types::Serializable
+            Types::Serializable,
+            Types::Identifiable
             >
             >()
             .setConstructors<Collision::PolygonalCollider(const std::string&)>()

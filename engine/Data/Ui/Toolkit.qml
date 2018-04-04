@@ -1,8 +1,30 @@
 import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.0
+import obe.Backend.Toolkit 1.0
 
 Item {
+    ToolkitBackend {
+        id: backend
+        window: applicationWindow
+
+        function term_display(strings) {
+            for (var i = 0; i < strings.length; i++)
+            {
+                print(strings[i]);
+                textEdit.insert(textEdit.length, strings[i]);
+            }
+        }
+
+        function term_clear() {
+            textEdit.clear();
+        }
+
+        function term_write(text) {
+            textInput.insert(textInput.length, text)
+        }
+    }
+
     anchors.fill: parent
 
     Component.onCompleted: {
@@ -10,6 +32,7 @@ Item {
         applicationWindow.title = qsTr("Toolkit")
         print(applicationWindow.width)
         applicationWindow.color = "#424242"
+        backend.init();
     }
 
     Titlebar {
@@ -48,6 +71,7 @@ Item {
             property string text_color: "#ffffff"
 
             id: textEdit
+            objectName: "textEdit"
             anchors.fill: parent
             
             color: "#ffffff"
@@ -64,8 +88,9 @@ Item {
     Connections {
         target: textInput
         onAccepted: {
-            textEdit.append("<font color='" + textEdit.text_color + "'>" + textInput.displayText + "</font>")
-            textInput.clear()
+            textEdit.append("<font color='" + textEdit.text_color + "'>" + textInput.displayText + "</font>");
+            backend.execute(textInput.displayText);
+            textInput.clear();
 
         }
     }
