@@ -1,16 +1,61 @@
 #include <kaguya/kaguya.hpp>
-#include <TGUI/TGUI.hpp>
+#include <QWindow>
+#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QObject>
+#include <ErrorHandler.hpp>
 
 #include <Bindings/Bindings.hpp>
 #include <Modes/Toolkit.hpp>
-#include <Modes/ToolkitContentBox.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Modes
 {
-    void startToolkitMode()
+	class ToolkitBackend : public QObject
+	{
+		Q_OBJECT
+		private:
+			QQmlApplicationEngine* m_engine;
+			void closeWindow() const;
+		public:
+			void setEngine(QQmlApplicationEngine* engine);
+			Q_INVOKABLE void execute(const std::string& code);
+	};
+
+	void ToolkitBackend::closeWindow() const
+	{
+		QWindow* mainWindow = dynamic_cast<QWindow*>(m_engine->rootObjects().first());
+		std::cout << mainWindow->geometry().width() << std::endl;
+		mainWindow->close();
+	}
+
+	void ToolkitBackend::setEngine(QQmlApplicationEngine* engine)
+	{
+		m_engine = engine;
+	}
+
+	void ToolkitBackend::execute(const std::string& code)
+	{
+	}
+
+	void startToolkitMode()
     {
-        bool continueToolkit = true;
+		ToolkitBackend backend;
+		{
+			QQmlApplicationEngine engine;
+			backend.setEngine(&engine);
+			engine.rootContext()->setContextProperty("MenuBackend", &backend);
+			engine.rootContext()->setContextProperty("load_source", "Toolkit.qml");
+			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
+			if (engine.rootObjects().isEmpty())
+				throw aube::ErrorHandler::Raise("obe.Menu.QtError");
+
+			QGuiApplication::exec();
+		}
+
+        /*bool continueToolkit = true;
         std::vector<std::string> commandHistory;
         unsigned commandHistoryIndex = 0;
         sf::RenderWindow window({636, 636}, "ObEngine Toolkit", sf::Style::None);
@@ -191,6 +236,8 @@ namespace obe::Modes
             window.clear();
             gui.draw();
             window.display();
-        }
+        }*/
     }
 }
+
+#include "Toolkit.moc"

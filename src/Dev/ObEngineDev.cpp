@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <vili/Vili.hpp>
+#include <QGuiApplication>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <Bindings/Bindings.hpp>
@@ -29,6 +30,9 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
+	QGuiApplication app(argc, argv);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     Utils::Exec::RunArgsParser runParser(argc, argv);
 	const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;

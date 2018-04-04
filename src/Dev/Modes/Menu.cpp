@@ -1,4 +1,5 @@
 #include <TGUI/TGUI.hpp>
+#include <QWindow>
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -245,105 +246,97 @@ namespace obe::Modes
         Toolkit,
         Help
     };
-	class Backend : public QObject
+	class MenuBackend : public QObject
 	{
 		Q_OBJECT
     private:
-        QGuiApplication* m_app;
+		QQmlApplicationEngine* m_engine;
         MenuCode m_code = MenuCode::None;
+		void closeWindow() const;
 	public:
-        Backend(QGuiApplication* app);
-		Q_INVOKABLE void refresh() const;
+		void setEngine(QQmlApplicationEngine* engine);
 		Q_INVOKABLE void play();
 		Q_INVOKABLE void edit();
         Q_INVOKABLE void toolkit();
+		Q_INVOKABLE bool hasBootFile() const;
+		Q_INVOKABLE bool hasMapFolder() const;
         MenuCode getAction() const;
 	};
 
-    Backend::Backend(QGuiApplication* app)
+	void MenuBackend::closeWindow() const
+	{
+		QWindow* mainWindow = dynamic_cast<QWindow*>(m_engine->rootObjects().first());
+		std::cout << mainWindow->geometry().width() << std::endl;
+		mainWindow->close();
+	}
+
+    void MenuBackend::setEngine(QQmlApplicationEngine* engine)
     {
-        m_app = app;
+        m_engine = engine;
     }
 
-	void Backend::play()
+	void MenuBackend::play()
 	{
         m_code = MenuCode::Play;
-        m_app->exit();
-		//startGame();
+		this->closeWindow();
 	}
 
-	void Backend::edit()
+	void MenuBackend::edit()
 	{
-        std::cout << "Edit !" << std::endl;
 		m_code = MenuCode::Edit;
-        m_app->exit();
+		this->closeWindow();
 	}
 
-    void Backend::toolkit()
+    void MenuBackend::toolkit()
     {
         m_code = MenuCode::Toolkit;
-        m_app->exit();
+		this->closeWindow();
+		
     }
 
-	void Backend::refresh() const
+	bool MenuBackend::hasBootFile() const
 	{
-		if (System::Path("boot.lua").find() == "")
-		{
-			//playButton->disable();
-		}
-		else
-		{
-			//playButton->enable();
-		}
-		if (System::Path("Data/Maps").find(System::PathType::Directory) == "")
-		{
-			//editButton->disable();
-		}
-		else
-		{
-			//editButton->enable();
-		}
+		return !System::Path("boot.lua").find().empty();
 	}
 
-    MenuCode Backend::getAction() const
+	bool MenuBackend::hasMapFolder() const
+	{
+		return !System::Path("Data/Maps").find(System::PathType::Directory).empty();
+	}
+
+    MenuCode MenuBackend::getAction() const
     {
         return m_code;
     }
 
 	void startDevMenu()
     {
-		QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+		MenuBackend backend;
+		{
+			QQmlApplicationEngine engine;
+			backend.setEngine(&engine);
+			engine.rootContext()->setContextProperty("MenuBackend", &backend);
+			engine.rootContext()->setContextProperty("load_source", "DevMenu.qml");
+			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
+			if (engine.rootObjects().isEmpty())
+				throw aube::ErrorHandler::Raise("obe.Menu.QtError");
 
-		int argc = 0;
-		char** argv = {};
-		//qmlRegisterType<Backend>("obe.Menu.Backend", 1, 0, "Backend");
-		QGuiApplication app(argc, argv);
+			QGuiApplication::exec();
+		}
 
-		QQmlApplicationEngine engine;
-		engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
-		if (engine.rootObjects().isEmpty())
-			throw aube::ErrorHandler::Raise("obe.Menu.QtError");
-
-        Backend a(&app);
-        engine.rootContext()->setContextProperty("MenuBackend", &a); 
-
-		app.exec();
-
-        std::cout << "OLOLOL" << std::endl;
-
-        if (a.getAction() == MenuCode::Play)
+        if (backend.getAction() == MenuCode::Play)
         {
-            startGame();
+            Modes::startGame();
         }
-        else if (a.getAction() == MenuCode::Edit)
+        else if (backend.getAction() == MenuCode::Edit)
         {
             const std::string editMapName = chooseMapMenu();
             if (editMapName != "")
                 Editor::editMap(editMapName);   
         }
-        else if (a.getAction() == MenuCode::Toolkit)
+        else if (backend.getAction() == MenuCode::Toolkit)
         {
-            startToolkitMode();
+            Modes::startToolkitMode();
         }
 
         /*sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);

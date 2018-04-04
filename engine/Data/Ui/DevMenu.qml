@@ -52,4 +52,19 @@ Item {
             icon: "icons/question.svg"
         }
     }
+
+    Component.onCompleted: {
+        if (MenuBackend.hasBootFile()) {
+            playBtn.enable();
+        }
+        else {
+            playBtn.disable();
+        }
+        if (MenuBackend.hasMapFolder()) {
+            editBtn.enable();
+        }
+        else {
+            editBtn.disable();
+        }
+    }
 }

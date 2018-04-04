@@ -55,4 +55,14 @@ Rectangle {
             color: "#ffffff"
         }
     }
+
+    function enable() {
+        mouseArea.enabled = true;
+        button.color = "#424242";
+    }
+
+    function disable() {
+        mouseArea.enabled = false;
+        button.color = "#808080";
+    }
 }

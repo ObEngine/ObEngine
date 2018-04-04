@@ -4,6 +4,7 @@ import QtQuick.Window 2.2
 
 ApplicationWindow {
     id: applicationWindow
+    objectName: "applicationWindow"
     visible: true
     width: Screen.desktopAvailableHeight / 2
     height: Screen.desktopAvailableHeight / 2
@@ -12,10 +13,8 @@ ApplicationWindow {
 
     Loader {
         id: loader
+        objectName: "loader"
         anchors.fill: parent
-    }
-
-    Component.onCompleted: {
-        loader.source = "DevMenu.qml";
+        source: load_source
     }
 }
