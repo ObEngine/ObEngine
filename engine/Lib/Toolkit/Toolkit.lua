@@ -437,7 +437,7 @@ function evaluate(command)
         Color.print({
             {text = "Command ", color = Style.Error},
             {text = commandName, color = Style.Command},
-            {text = " not found.", color = Style.Error}
+            {text = "&nbsp;not found.", color = Style.Error}
         }, 2);
     end
     

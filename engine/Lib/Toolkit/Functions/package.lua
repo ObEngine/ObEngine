@@ -17,15 +17,15 @@ end
 
 function Functions.install(packageName)
     Color.print({
-            { text = "Installing Package <", color = Style.Execute},
+            { text = "Installing Package &lt;", color = Style.Execute},
             { text = packageName, color = Style.Package},
-            { text = "> ...", color = Style.Execute},
+            { text = "&gt; ...", color = Style.Execute},
         }, 1)
     if Package.Install(packageName) then
         Color.print({
-            { text = "Package <", color = Style.Success},
+            { text = "Package &lt;", color = Style.Success},
             { text = packageName, color = Style.Package},
-            { text = "> has been successfully installed", color = Style.Success}
+            { text = "&gt; has been successfully installed", color = Style.Success}
         }, 2);
         local parser = Vili.ViliParser.new();
         parser:parseFile("Package/Opaque.vili");
@@ -35,32 +35,32 @@ function Functions.install(packageName)
         end
     else
         Color.print({
-            { text = "Package <", color = Style.Error},
+            { text = "Package &lt;", color = Style.Error},
             { text = packageName, color = Style.Package},
-            { text = "> has not been installed (Already installed ?)", color = Style.Error}
+            { text = "&gt; has not been installed (Already installed ?)", color = Style.Error}
         }, 2);
     end
 end
 
 function Functions.mount(packageName)
     Color.print({
-        { text = "Mounting Package <", color = Style.Execute},
+        { text = "Mounting Package &lt;", color = Style.Execute},
         { text = packageName, color = Style.Package},
-        { text = "> ...", color = Style.Execute},
+        { text = "&gt; ...", color = Style.Execute},
     }, 1)
     if Package.PackageExists(packageName) then
         obe.Filesystem.copy(Package.GetPackageLocation(packageName) .. "/Mount.vili", "Mount.vili");
         Color.print({
-            { text = "Package <", color = Style.Success},
+            { text = "Package &lt;", color = Style.Success},
             { text = packageName, color = Style.Package},
-            { text = "> has been successfully mounted", color = Style.Success}
+            { text = "&gt; has been successfully mounted", color = Style.Success}
         }, 2);
         obe.MountPaths();
     else
         Color.print({
-            { text = "Package <", color = Style.Error},
+            { text = "Package &lt;", color = Style.Error},
             { text = packageName, color = Style.Package},
-            { text = "> does not exists", color = Style.Error}
+            { text = "&gt; does not exists", color = Style.Error}
         }, 2);
     end
 end

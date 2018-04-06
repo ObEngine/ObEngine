@@ -12,55 +12,72 @@ namespace obe::Backend
     ToolkitBackend::ToolkitBackend()
     {
         std::cout << "Hello there, I'm TKB" << std::endl;
-        toolkitState["This"] = &toolkitState;
-        toolkitState.dofile("Lib/Internal/ScriptInit.lua");
-        Bindings::BindTree(&toolkitState);
+        m_toolkitState["This"] = &m_toolkitState;
+        m_toolkitState.dofile("Lib/Internal/ScriptInit.lua");
+        Bindings::BindTree(&m_toolkitState);
     }
 
     void ToolkitBackend::init()
     {
-        std::cout << "Binding Over.." << std::endl;
-
-        std::cout << "MTEXTEDIT : " << m_textEdit << std::endl;
-
-        toolkitState["_term_display"] = kaguya::function([this](const std::vector<std::string>& strings, const std::vector<sf::Color>& colors)
+        m_toolkitState["_term_display"] = kaguya::function([this](const std::vector<std::string>& strings, const std::vector<sf::Color>& colors)
         {
-            QList<QVariant> msgs;
+            QList<QString> msgs;
             for (int i = 0; i < strings.size(); i++)
             {
                 sf::Color c = colors.at(i);
                 QColor ccolor(c.r, c.g, c.b);
-                msgs.append(QString::fromStdString("<font color='" + ccolor.name().toStdString() + "'>" + strings.at(i) + "</font>"));
+                msgs.push_back(QString::fromStdString("<font color='" + ccolor.name().toStdString() + "'>" + strings.at(i) + "</font>"));
             }
-            QMetaObject::invokeMethod(this, "term_display", Q_ARG(QVariant, msgs));
+            //QMetaObject::invokeMethod(this, "term_display", Q_ARG(QVariant, msgs));
+			this->termDisplay(msgs);
         });
-        toolkitState["_term_clear"] = kaguya::function([this]()
+        m_toolkitState["_term_clear"] = kaguya::function([this]()
         {
             QMetaObject::invokeMethod(this, "term_clear");
         });
-        toolkitEngine["_term_write"] = kaguya::function([&toolkitInput](const std::string& string)
+        m_toolkitState["_term_write"] = kaguya::function([this](const std::string& string)
         {
-            QMetaObject::invokeMethod(this, "term_write", Q_ARG(QVariant, string));
+            QMetaObject::invokeMethod(this, "term_write", Q_ARG(QVariant, QString::fromStdString(string)));
         });
-        toolkitState["_term_last"] = kaguya::function([this]()
+        m_toolkitState["_term_last"] = kaguya::function([this]()
         {
-            m_textInput->moveCursor(QTextCursor::End);
+			QMetaObject::invokeMethod(this, "term_last");
         });
-        toolkitState["_term_get"] = kaguya::function([this]() -> std::string
+        m_toolkitState["_term_get"] = kaguya::function([this]() -> std::string
         {
-            return m_textInput->toPlainText().toStdString();
+			QVariant returnedValue;
+			QMetaObject::invokeMethod(this, "term_get", Q_RETURN_ARG(QVariant, returnedValue));
+			return returnedValue.toString().toStdString();
         });
-        toolkitState["_term_close"] = kaguya::function([this]()
+        m_toolkitState["_term_close"] = kaguya::function([this]()
         {
             m_window->close();
         });
 
-        toolkitState.dofile("Lib/Toolkit/Toolkit.lua");
+        m_toolkitState.dofile("Lib/Toolkit/Toolkit.lua");
     }
 
     void ToolkitBackend::execute(const QString& code)
     {
         std::cout << "Code executed : " << code.toStdString() << std::endl;
-        toolkitState(code.toStdString());
+
+		m_toolkitState["evaluate"](code.toStdString());
+		m_commandHistory.erase(std::remove_if(m_commandHistory.begin(), m_commandHistory.end(), [&code](const std::string& command) {
+			return (command == code.toStdString());
+		}), m_commandHistory.end());
+		m_commandHistory.push_back(code.toStdString());
+		m_commandHistoryIndex = m_commandHistory.size();
     }
+
+	void ToolkitBackend::autocomplete()
+	{
+		std::cout << "Autocomplete from Backend" << std::endl;
+		QVariant returnedValue;
+		QMetaObject::invokeMethod(this, "term_get", Q_RETURN_ARG(QVariant, returnedValue));
+		std::cout << "Got input content" << std::endl;
+		m_toolkitState["autocomplete"](returnedValue.toString().toStdString());
+		std::cout << "Autocomplete function called" << std::endl;
+	}
 }
+
+#include "ToolkitBackend.moc"

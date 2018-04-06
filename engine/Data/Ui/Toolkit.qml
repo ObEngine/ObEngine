@@ -1,6 +1,6 @@
 import QtQuick 2.10
 import QtQuick.Window 2.10
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.3
 import obe.Backend.Toolkit 1.0
 
 Item {
@@ -11,17 +11,29 @@ Item {
         function term_display(strings) {
             for (var i = 0; i < strings.length; i++)
             {
-                print(strings[i]);
                 textEdit.insert(textEdit.length, strings[i]);
             }
+            textEdit.insert(textEdit.length, "<br>");
         }
 
         function term_clear() {
-            textEdit.clear();
+            textInput.text = "";
         }
 
         function term_write(text) {
-            textInput.insert(textInput.length, text)
+            textInput.insert(textInput.length, text);
+        }
+
+        function term_last() {
+            textInput.cursorPosition = textInput.length;
+        }
+
+        function term_get() {
+            return textInput.text;
+        }
+
+        onTermDisplay: {
+            term_display(strings)
         }
     }
 
@@ -52,6 +64,12 @@ Item {
         font.weight: Font.Light
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
+        font.pixelSize: 18
+
+        Keys.onTabPressed: {
+            print("Starting autocomplete")
+            backend.autocomplete();
+        }
     }
 
     Rectangle {
@@ -67,20 +85,28 @@ Item {
         border.width: 1
         border.color: "#303030"
 
-        TextEdit {
-            property string text_color: "#ffffff"
-
-            id: textEdit
-            objectName: "textEdit"
+        ScrollView {
+            id: scrollView
             anchors.fill: parent
+            clip: true
             
-            color: "#ffffff"
-            text: qsTr("")
-            textFormat: Text.RichText
-            readOnly: true
-            selectionColor: "#800000"
-            
-            font.pixelSize: 12
+            TextEdit {
+                property string text_color: "#ffffff"
+
+                id: textEdit
+                objectName: "textEdit"
+                anchors.fill: parent
+                
+                selectByMouse: true
+                color: "#ffffff"
+                text: qsTr("")
+                textFormat: Text.RichText
+                wrapMode: TextEdit.Wrap
+                readOnly: true
+                selectionColor: "#800000"
+                
+                font.pixelSize: 14
+            }
         }
     }
     
@@ -88,7 +114,7 @@ Item {
     Connections {
         target: textInput
         onAccepted: {
-            textEdit.append("<font color='" + textEdit.text_color + "'>" + textInput.displayText + "</font>");
+            textEdit.append("<b>&gt;&gt; <font color='" + textEdit.text_color + "'>" + textInput.displayText + "</font><br></b>");
             backend.execute(textInput.displayText);
             textInput.clear();
 

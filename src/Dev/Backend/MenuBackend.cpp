@@ -30,3 +30,5 @@ namespace obe::Backend
         return m_code;
     }
 }
+
+#include "MenuBackend.moc"

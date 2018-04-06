@@ -9,7 +9,7 @@ ApplicationWindow {
     width: Screen.desktopAvailableHeight / 2
     height: Screen.desktopAvailableHeight / 2
     title: qsTr("ÖbEngine Dev")
-    flags: Qt.FramelessWindowHint | Qt.Window
+    flags: Qt.CustomizeWindowHint | Qt.Window
 
     Loader {
         id: loader

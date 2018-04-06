@@ -12,15 +12,16 @@ namespace obe::Backend
 	{
 		Q_OBJECT
         private:
-            kaguya::State toolkitState;
-            Q_PROPERTY(QTextEdit* textEdit MEMBER m_textEdit)
-            QTextEdit* m_textEdit;
-            Q_PROPERTY(QTextEdit* textInput MEMBER m_textInput)
-            QTextEdit* m_textInput;
+            kaguya::State m_toolkitState;
+			std::vector<std::string> m_commandHistory;
+			unsigned m_commandHistoryIndex = 0;
         public:
             ToolkitBackend();
             Q_INVOKABLE void init();
 			Q_INVOKABLE void execute(const QString& code);
+			Q_INVOKABLE void autocomplete();
+		signals:
+			void termDisplay(QList<QString> strings);
 	};
 }
 

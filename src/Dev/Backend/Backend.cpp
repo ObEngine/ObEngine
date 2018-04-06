@@ -12,3 +12,5 @@ namespace obe::Backend
         qmlRegisterType<ToolkitBackend>("obe.Backend.Toolkit", 1, 0, "ToolkitBackend");
     }
 }
+
+#include "Backend.moc"

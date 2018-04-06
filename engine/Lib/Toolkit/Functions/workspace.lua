@@ -30,23 +30,23 @@ Functions.mount = function(workspaceName)
     local parser = Vili.ViliParser.new();
     parser:parseFile("Workspace/Workspaces.vili");
     Color.print({
-        { text = "Mounting Workspace <", color = Style.Execute},
+        { text = "Mounting Workspace &lt;", color = Style.Execute},
         { text = workspaceName, color = Style.Workspace},
-        { text = "> ...", color = Style.Execute},
+        { text = "&gt; ...", color = Style.Execute},
     }, 1);
     if (parser:root():contains(Vili.NodeType.ComplexNode, workspaceName)) then
         obe.Filesystem.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
         Color.print({
-            { text = "Workspace <", color = Style.Success},
+            { text = "Workspace &lt;", color = Style.Success},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> has  been successfully mounted !", color = Style.Success},
+            { text = "&gt; has  been successfully mounted !", color = Style.Success},
         }, 2);
         obe.MountPaths();
     else
         Color.print({
-            { text = "Workspace <", color = Style.Error},
+            { text = "Workspace &lt;", color = Style.Error},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> does not exists", color = Style.Error}
+            { text = "&gt; does not exists", color = Style.Error}
         }, 2);
     end
 end
@@ -55,15 +55,15 @@ Functions.create = function(workspaceName)
     local parser = Vili.ViliParser.new();
     parser:parseFile("Workspace/Workspaces.vili");
     Color.print({
-        { text = "Creating Workspace <", color = Style.Execute},
+        { text = "Creating Workspace &lt;", color = Style.Execute},
         { text = workspaceName, color = Style.Workspace},
-        { text = "> ...", color = Style.Execute},
+        { text = "&gt; ...", color = Style.Execute},
     }, 1);
     if (parser:root():contains(Vili.NodeType.ComplexNode, workspaceName)) then
         Color.print({
-            { text = "Workspace <", color = Style.Error},
+            { text = "Workspace &lt;", color = Style.Error},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> already exists", color = Style.Error}
+            { text = "&gt; already exists", color = Style.Error}
         }, 2);
     else
         os.execute(("mkdir Workspace/" .. workspaceName):gsub("/", obe.Filesystem.separator()));
@@ -86,9 +86,9 @@ Functions.create = function(workspaceName)
         defaultMount:close()
 
         Color.print({
-            { text = "Workspace <", color = Style.Success},
+            { text = "Workspace &lt;", color = Style.Success},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> has  been successfully created !", color = Style.Success},
+            { text = "&gt; has  been successfully created !", color = Style.Success},
         }, 2);
     end
 end
@@ -114,15 +114,15 @@ function Functions.index(workspaceName)
         parser:root():at(workspaceName):createDataNode("path", "Workspace/" .. workspaceName);
         parser:writeFile("Workspace/Workspaces.vili");
         Color.print({
-            { text = "Workspace <", color = Style.Success},
+            { text = "Workspace &lt;", color = Style.Success},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> has  been successfully indexed !", color = Style.Success},
+            { text = "&gt; has  been successfully indexed !", color = Style.Success},
         }, 2);
     else
         Color.print({
-            { text = "Workspace <", color = Style.Error},
+            { text = "Workspace &lt;", color = Style.Error},
             { text = workspaceName, color = Style.Workspace},
-            { text = "> is already indexed", color = Style.Error}
+            { text = "&gt; is already indexed", color = Style.Error}
         }, 2);
     end
 end
