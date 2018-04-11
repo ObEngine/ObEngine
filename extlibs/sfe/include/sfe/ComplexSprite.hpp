@@ -27,6 +27,7 @@ namespace sfe
         const sf::Color& getColor() const;
         sf::FloatRect getLocalBounds() const;
         sf::FloatRect getGlobalBounds() const;
+        void setVertices(std::array<sf::Vertex, 4>& vertices);
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

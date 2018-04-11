@@ -2,6 +2,7 @@
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
+#include <System/Window.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
@@ -27,12 +28,24 @@ namespace obe::Graphics
         this->setSize(initialSpriteSize);
     }
 
-    void LevelSprite::applySpriteRotation()
+    void LevelSprite::draw(const Transform::UnitVector& camera)
     {
-        Transform::UnitVector middle = (this->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
-        middle *= Transform::UnitVector(this->getScaleFactor().x, this->getScaleFactor().y, middle.unit);
-        m_sprite.setRotationOrigin(middle.x, middle.y);
-        m_sprite.setRotation(-m_angle * this->getScaleFactor().x * this->getScaleFactor().y);
+        auto toVertex = [](const Transform::UnitVector& uv)
+        {
+            return sf::Vertex(sf::Vector2f(uv.x, uv.y));
+        };
+        std::array<sf::Vertex, 4> vertices;
+        vertices[0] = toVertex(Rect::getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>());
+        vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::WorldPixels>());
+        vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::WorldPixels>());
+        vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::WorldPixels>());
+        m_sprite.setVertices(vertices);
+
+        System::MainWindow.draw(m_sprite);
+        if (m_selected)
+        {
+            this->drawHandle(camera);
+        }
     }
 
     void LevelSprite::loadTexture(const std::string& path)
@@ -79,13 +92,11 @@ namespace obe::Graphics
     void LevelSprite::setRotation(double rotate)
     {
         Rect::setRotation(rotate, this->getPosition(Transform::Referencial::Center));
-        this->applySpriteRotation();
     }
 
     void LevelSprite::rotate(double addRotate)
     {
         Rect::rotate(addRotate, this->getPosition(Transform::Referencial::Center));
-        this->applySpriteRotation();
     }
 
     void LevelSprite::setScalingOrigin(int x, int y)
@@ -93,9 +104,10 @@ namespace obe::Graphics
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void LevelSprite::drawHandle(int spritePositionX, int spritePositionY) const
+    void LevelSprite::drawHandle(const Transform::UnitVector& camera) const
     {
-        Rect::draw(spritePositionX, spritePositionY);
+        const Transform::UnitVector position = m_positionTransformer(m_position, camera, m_layer).to<Transform::Units::WorldPixels>();
+        Rect::draw(position.x, position.y);
     }
 
     LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
@@ -151,28 +163,6 @@ namespace obe::Graphics
         m_sprite.setRotationOrigin(x, y);
     }
 
-    void LevelSprite::applySize()
-    {
-        m_sprite.setRotation(0);
-        //std::cout << "Applying Size of " << m_id << std::endl;
-        const Transform::UnitVector pixelSize = m_size.to<Transform::Units::WorldPixels>();
-        const double spriteWidth = this->getSpriteWidth() * this->getXScaleFactor();
-        const double spriteHeight = this->getSpriteHeight() * this->getYScaleFactor();
-        const sf::Vector2u texSize = m_texture->getSize();
-        /*std::cout << "Apply size : " << pixelSize << " for LevelSprite " << m_id << std::endl;
-        std::cout << "Before : " << spriteWidth << ", " << spriteHeight << std::endl;
-        std::cout << "From : " << pixelSize << std::endl;*/
-        const double widthScale = pixelSize.x / spriteWidth;
-        const double heightScale = pixelSize.y / spriteHeight;
-        //std::cout << "ISSCALE : " << widthScale << ", " << heightScale << std::endl;
-        //std::cout << "ShiftTest : " << (pixelSize.x > 1 || pixelSize.x < -1) << ", " << (pixelSize.y > 1 || pixelSize.y < -1) << std::endl;
-        if ((pixelSize.x >= 1 || pixelSize.x <= -1) && (pixelSize.y >= 1 || pixelSize.y <= -1) && (texSize.x >= 1 && texSize.y >= 1))
-        {
-            m_sprite.scale(widthScale, heightScale);
-        }
-        this->applySpriteRotation();
-    }
-
     void LevelSprite::setColor(sf::Color newColor)
     {
         m_sprite.setColor(newColor);
@@ -185,11 +175,6 @@ namespace obe::Graphics
 
     sfe::ComplexSprite& LevelSprite::getSprite()
     {
-        this->applySize();
-        //this->applySize();
-        //std::cout << "Rect of LevelSprite : " << m_position << ", " << m_size << std::endl;
-        //std::cout << "And real size is : " << m_returnSprite.getGlobalBounds().width << ", " << m_returnSprite.getGlobalBounds().height << std::endl;
-        //std::cout << "From scale : " << m_returnSprite.getScale().x << ", " << m_returnSprite.getScale().y << std::endl;
         return m_sprite;
     }
 
@@ -201,16 +186,6 @@ namespace obe::Graphics
     double LevelSprite::getSpriteHeight() const
     {
         return m_sprite.getGlobalBounds().height;
-    }
-
-    Transform::UnitVector LevelSprite::getDrawPosition(Transform::UnitVector& cameraPosition, Transform::Referencial ref) const
-    {
-        const Transform::UnitVector pixelPosition = this->getPosition(ref).to<Transform::Units::WorldPixels>();
-        const Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
-
-        const Transform::UnitVector transformedPosition = m_positionTransformer(pixelPosition, pixelCamera, m_layer);
-
-        return Transform::UnitVector(transformedPosition.x, transformedPosition.y, Transform::Units::WorldPixels);
     }
 
     int LevelSprite::getLayer() const
@@ -336,7 +311,7 @@ namespace obe::Graphics
             const double n = (90 + ((m_sprite->getScaleFactor().y < 0) ? 180 : 0)) - 
                 (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
 
-            static_cast<Transform::Rect*>(m_sprite)->setRotation(std::fmod(n, 360), m_sprite->getPosition(Transform::Referencial::Center));
+            m_sprite->setRotation(std::fmod(n, 360));
         }
     }
 
@@ -424,7 +399,6 @@ namespace obe::Graphics
         this->setLayer(layer);
         this->setZDepth(zdepth);
         this->setRotation(spriteRot);
-        this->applySpriteRotation();
     }
 
     void LevelSprite::setShader(Shader* shader)

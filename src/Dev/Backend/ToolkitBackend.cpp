@@ -21,15 +21,15 @@ namespace obe::Backend
     {
         m_toolkitState["_term_display"] = kaguya::function([this](const std::vector<std::string>& strings, const std::vector<sf::Color>& colors)
         {
-            QList<QString> msgs;
+            QString msgs;
             for (int i = 0; i < strings.size(); i++)
             {
                 sf::Color c = colors.at(i);
                 QColor ccolor(c.r, c.g, c.b);
-                msgs.push_back(QString::fromStdString("<font color='" + ccolor.name().toStdString() + "'>" + strings.at(i) + "</font>"));
+                msgs += QString::fromStdString("<font color='" + ccolor.name().toStdString() + "'>" + strings.at(i) + "</font>");
             }
             //QMetaObject::invokeMethod(this, "term_display", Q_ARG(QVariant, msgs));
-			this->termDisplay(msgs);
+            this->termDisplay(msgs);
         });
         m_toolkitState["_term_clear"] = kaguya::function([this]()
         {
@@ -41,13 +41,13 @@ namespace obe::Backend
         });
         m_toolkitState["_term_last"] = kaguya::function([this]()
         {
-			QMetaObject::invokeMethod(this, "term_last");
+            QMetaObject::invokeMethod(this, "term_last");
         });
         m_toolkitState["_term_get"] = kaguya::function([this]() -> std::string
         {
-			QVariant returnedValue;
-			QMetaObject::invokeMethod(this, "term_get", Q_RETURN_ARG(QVariant, returnedValue));
-			return returnedValue.toString().toStdString();
+            QVariant returnedValue;
+            QMetaObject::invokeMethod(this, "term_get", Q_RETURN_ARG(QVariant, returnedValue));
+            return returnedValue.toString().toStdString();
         });
         m_toolkitState["_term_close"] = kaguya::function([this]()
         {
@@ -61,21 +61,19 @@ namespace obe::Backend
     {
         std::cout << "Code executed : " << code.toStdString() << std::endl;
 
-		m_toolkitState["evaluate"](code.toStdString());
-		m_commandHistory.erase(std::remove_if(m_commandHistory.begin(), m_commandHistory.end(), [&code](const std::string& command) {
-			return (command == code.toStdString());
-		}), m_commandHistory.end());
-		m_commandHistory.push_back(code.toStdString());
-		m_commandHistoryIndex = m_commandHistory.size();
+        m_toolkitState["evaluate"](code.toStdString());
+        m_commandHistory.erase(std::remove_if(m_commandHistory.begin(), m_commandHistory.end(), [&code](const std::string& command) {
+            return (command == code.toStdString());
+        }), m_commandHistory.end());
+        m_commandHistory.push_back(code.toStdString());
+        m_commandHistoryIndex = m_commandHistory.size();
     }
 
 	void ToolkitBackend::autocomplete()
 	{
 		std::cout << "Autocomplete from Backend" << std::endl;
-		QVariant returnedValue;
-		QMetaObject::invokeMethod(this, "term_get", Q_RETURN_ARG(QVariant, returnedValue));
 		std::cout << "Got input content" << std::endl;
-		m_toolkitState["autocomplete"](returnedValue.toString().toStdString());
+		m_toolkitState["autocomplete"](m_input.toStdString());
 		std::cout << "Autocomplete function called" << std::endl;
 	}
 }

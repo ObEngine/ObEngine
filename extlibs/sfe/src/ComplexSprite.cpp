@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdlib>
 
 #include <SFML/Graphics/Texture.hpp>
@@ -95,6 +96,14 @@ namespace sfe
     sf::FloatRect ComplexSprite::getGlobalBounds() const
     {
         return getTransform().transformRect(getLocalBounds());
+    }
+
+    void ComplexSprite::setVertices(std::array<sf::Vertex, 4>& vertices)
+    {
+        m_vertices[0].position = vertices[0].position;
+        m_vertices[1].position = vertices[1].position;
+        m_vertices[2].position = vertices[2].position;
+        m_vertices[3].position = vertices[3].position;
     }
 
     void ComplexSprite::draw(sf::RenderTarget& target, sf::RenderStates states) const

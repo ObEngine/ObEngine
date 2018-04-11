@@ -8,12 +8,10 @@ Item {
         id: backend
         window: applicationWindow
 
-        function term_display(strings) {
-            for (var i = 0; i < strings.length; i++)
-            {
-                textEdit.insert(textEdit.length, strings[i]);
-            }
-            textEdit.insert(textEdit.length, "<br>");
+        function term_display(string) {
+            var milli = (new Date).getTime();
+            textEdit.text += string;
+            print((new Date).getTime() - milli);
         }
 
         function term_clear() {
@@ -33,7 +31,7 @@ Item {
         }
 
         onTermDisplay: {
-            term_display(strings)
+            term_display(string)
         }
     }
 
@@ -68,7 +66,7 @@ Item {
 
         Keys.onTabPressed: {
             print("Starting autocomplete")
-            backend.autocomplete();
+            backend.input = textInput.text;
         }
     }
 
@@ -90,20 +88,17 @@ Item {
             anchors.fill: parent
             clip: true
             
-            TextEdit {
+            Text {
                 property string text_color: "#ffffff"
 
                 id: textEdit
                 objectName: "textEdit"
                 anchors.fill: parent
                 
-                selectByMouse: true
                 color: "#ffffff"
                 text: qsTr("")
                 textFormat: Text.RichText
                 wrapMode: TextEdit.Wrap
-                readOnly: true
-                selectionColor: "#800000"
                 
                 font.pixelSize: 14
             }

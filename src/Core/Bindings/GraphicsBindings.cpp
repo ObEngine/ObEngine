@@ -35,7 +35,6 @@ namespace obe::Bindings::GraphicsBindings
             >()
             .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
             .addFunction("getColor", &Graphics::LevelSprite::getColor)
-            .addFunction("getDrawPosition", &Graphics::LevelSprite::getDrawPosition)
             .addFunction("getHandlePoint", &Graphics::LevelSprite::getHandlePoint)
             .addFunction("getLayer", &Graphics::LevelSprite::getLayer)
             .addFunction("getParentId", &Graphics::LevelSprite::getParentId)

@@ -95,8 +95,6 @@ namespace obe::Graphics
         bool m_visible = true;
         int m_zdepth = 0;
 
-        void applySize();
-        void applySpriteRotation();
         void resetUnit(Transform::Units unit) override;
     public:
         bool m_layerChanged = false;
@@ -110,7 +108,7 @@ namespace obe::Graphics
         * \param spritePositionX x Coordinate of the Offset of the Handle
         * \param spritePositionY y Coordinate of the Offset of the Handle
         */
-        void drawHandle(int spritePositionX, int spritePositionY) const;
+        void drawHandle(const Transform::UnitVector& camera) const;
         /**
         * \brief Dumps the content of the LevelSprite to a ComplexNode
         * \param target ComplexNode where to serialize the LevelSprite
@@ -121,12 +119,6 @@ namespace obe::Graphics
         * \return A sf::Color containing the blend color of the LevelSprite
         */
         sf::Color getColor() const;
-        /**
-        * \brief Get the Position where the LevelSprite should be drawn depending of the Position of the Camera
-        * \param cameraPosition Position of the Camera (in WorldPixels Unit)
-        * \return The Screen Position at which the LevelSprite should be drawn (in ViewPixels Unit)
-        */
-        Transform::UnitVector getDrawPosition(Transform::UnitVector& cameraPosition, Transform::Referencial ref) const;
         /**
         * \brief Get the HandlePoint of the LevelSprite at the given Position(x, y)
         * \param cameraPosition Position of the Scene Camera
@@ -280,5 +272,7 @@ namespace obe::Graphics
         * \brief Reset internal LevelSprite Rect using texture size
         */
         void useTextureSize();
+
+        void draw(const Transform::UnitVector& camera);
     };
 }

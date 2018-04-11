@@ -405,37 +405,9 @@ namespace obe::Scene
         Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
-            const Transform::UnitVector spritePosition = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::Center);
-            const Transform::UnitVector bsp = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
-            sfe::ComplexSprite& tAffSpr = m_spriteArray[i]->getSprite();
-
-            //std::cout << "Draw Position of Sprite : " << spritePosition << std::endl;
-
-            const Transform::UnitVector middle = (m_spriteArray[i]->getSize() / Transform::UnitVector(2, 2)).to<Transform::Units::WorldPixels>();
-
-            tAffSpr.setTranslationOrigin(middle.x, middle.y);
-            tAffSpr.setPosition(spritePosition.x, spritePosition.y);
-
-            /*std::cout << "Sprite @" << m_spriteArray[i]->getId() << std::endl;
-            std::cout << "Bounds : " << tAffSpr.getGlobalBounds().left << ", " << tAffSpr.getGlobalBounds().top << ", " << tAffSpr.getGlobalBounds().width << ", " << tAffSpr.getGlobalBounds().height << std::endl;
-            std::cout << "CPos : " << spritePosition << std::endl;*/
-
             if (m_spriteArray[i]->isVisible())
             {
-                if (m_spriteArray[i]->hasShader())
-                    System::MainWindow.draw(tAffSpr, static_cast<sf::Shader*>(m_spriteArray[i]->getShader()));
-                else
-                    System::MainWindow.draw(tAffSpr);
-                if (m_spriteArray[i]->isSelected())
-                {
-                    //std::cout << "Middle : " << middle << std::endl;
-                    std::cout << "Sprite position : " << spritePosition << std::endl;
-                    const Transform::UnitVector handlePos = m_spriteArray[i]->getDrawPosition(pixelCamera, Transform::Referencial::TopLeft);
-                    m_spriteArray[i]->drawHandle(handlePos.x, handlePos.y);
-                    Graphics::Utils::drawPoint(spritePosition.x, spritePosition.y, 3, sf::Color::Blue);
-                    Graphics::Utils::drawPoint(bsp.x + middle.x, bsp.y + middle.y, 3, sf::Color::Red);
-                }
-
+                m_spriteArray[i]->draw(pixelCamera);
             }
         }
 
