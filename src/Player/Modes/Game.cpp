@@ -79,14 +79,6 @@ namespace obe::Modes
             if (framerateManager.doRender())
                 gameTriggers->trigger("Render");
 
-                    
-
-            //Events
-            scene.update();
-            Triggers::TriggerDatabase::GetInstance()->update();
-            inputManager.update();
-            cursor.update();
-
             while (System::MainWindow.pollEvent(event))
             {
                 switch (event.type)
@@ -94,13 +86,20 @@ namespace obe::Modes
                 case sf::Event::Closed:
                     System::MainWindow.close();
                     break;
-
+                case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
+                    Input::Monitors::UpdateMonitors();
                     if (event.key.code == sf::Keyboard::Escape)
                         System::MainWindow.close();
                     break;
                 }
             }
+
+            //Events
+            scene.update();
+            Triggers::TriggerDatabase::GetInstance()->update();
+            inputManager.update();
+            cursor.update();
 
             if (framerateManager.doRender())
             {

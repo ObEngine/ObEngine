@@ -34,7 +34,6 @@ namespace obe::Input
     {
         if (m_binderEnabled)
         {
-            Monitors::UpdateMonitors();
             const unsigned int actionsAmount = m_currentActions.size();
             for (unsigned int i = 0; i < actionsAmount; i++)
             {

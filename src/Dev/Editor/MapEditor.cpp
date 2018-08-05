@@ -413,18 +413,6 @@ namespace obe::Editor
                 + std::to_string(currentLayer)
             );
 
-            //Events
-            scene.update();
-            Triggers::TriggerDatabase::GetInstance()->update();
-            inputManager.update();
-            cursor.update();
-            if (drawFPS) fps.uTick();
-            if (drawFPS && framerateManager.doRender()) fps.tick();
-
-            //Triggers Handling
-            networkHandler.handleTriggers();
-            //cursor.handleTriggers();
-
             while (System::MainWindow.pollEvent(event))
             {
                 switch (event.type)
@@ -470,10 +458,26 @@ namespace obe::Editor
                     }
                     cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                     break;
-                default: ;
+                case sf::Event::KeyReleased:
+                case sf::Event::KeyPressed:
+                    Input::Monitors::UpdateMonitors();
+                default:;
                 }
                 gui.handleEvent(event);
             }
+
+            //Events
+            scene.update();
+            Triggers::TriggerDatabase::GetInstance()->update();
+            inputManager.update();
+            cursor.update();
+            if (drawFPS) fps.uTick();
+            if (drawFPS && framerateManager.doRender()) fps.tick();
+
+            //Triggers Handling
+            networkHandler.handleTriggers();
+            //cursor.handleTriggers();
+
             //Draw Everything Here
             if (framerateManager.doRender())
             {
