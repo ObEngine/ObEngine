@@ -48,11 +48,11 @@ namespace obe::Transform
     //TODO remove calculation when dx and dy are equal to 0. Directly add to vec in switch case.
     void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
     {
-        double factor = (type == ConversionType::From) ? 1.0 : -1.0;
+        const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
         double dx, dy;
-        double radAngle = Utils::Math::convertToRadian(-m_angle);
-        double cosAngle = std::cos(radAngle);
-        double sinAngle = std::sin(radAngle);
+        const double radAngle = Utils::Math::convertToRadian(-m_angle);
+        const double cosAngle = std::cos(radAngle);
+        const double sinAngle = std::sin(radAngle);
         UnitVector result;
 
         switch (ref)

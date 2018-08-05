@@ -30,18 +30,22 @@ namespace obe::Graphics
 
     void LevelSprite::draw(const Transform::UnitVector& camera)
     {
-        auto toVertex = [](const Transform::UnitVector& uv)
+        const auto toVertex = [](const Transform::UnitVector& uv)
         {
             return sf::Vertex(sf::Vector2f(uv.x, uv.y));
         };
         std::array<sf::Vertex, 4> vertices;
-        vertices[0] = toVertex(Rect::getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>());
-        vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::WorldPixels>());
-        vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::WorldPixels>());
-        vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::WorldPixels>());
+        vertices[0] = toVertex(Rect::getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>() - camera);
+        vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::WorldPixels>() - camera);
+        vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::WorldPixels>() - camera);
+        vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::WorldPixels>() - camera);
         m_sprite.setVertices(vertices);
 
-        System::MainWindow.draw(m_sprite);
+        if (m_shader)
+            System::MainWindow.draw(m_sprite, m_shader);
+        else
+            System::MainWindow.draw(m_sprite);
+
         if (m_selected)
         {
             this->drawHandle(camera);
