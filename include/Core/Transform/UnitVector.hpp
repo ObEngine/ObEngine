@@ -212,6 +212,14 @@ namespace obe::Transform
         * \return A new UnitVector containing the converted values with the new Units
         */
         UnitVector to(Units pUnit) const;
+
+        /**
+        * \brief Display an UnitVector for debug purposes
+        * \param os The stream you want to print the UnitVector in
+        * \param m The UnitVector you want to print
+        * \return The stream passed by reference (To chain calls)
+        */
+        friend std::ostream& operator<<(std::ostream& os, const UnitVector& m);
     };
 
     template <>
@@ -313,12 +321,4 @@ namespace obe::Transform
             return UnitVector(0, 0);
         }
     }
-
-    /**
-    * \brief Display an UnitVector for debug purposes
-    * \param os The stream you want to print the UnitVector in
-    * \param m The UnitVector you want to print
-    * \return The stream passed by reference (To chain calls)
-    */
-    std::ostream& operator<<(std::ostream& os, const UnitVector& m);
 }

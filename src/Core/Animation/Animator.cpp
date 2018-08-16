@@ -1,6 +1,7 @@
 #include <Animation/Animator.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
+#include "Graphics/LevelSprite.hpp"
 
 namespace obe::Animation
 {
@@ -30,7 +31,6 @@ namespace obe::Animation
         m_currentAnimation = nullptr;
         m_currentAnimationName = "NONE";
         m_animatorPath = System::Path("");
-        m_lastTexturePointer = nullptr;
     }
 
     Animation* Animator::getAnimation(const std::string& animationName) const
@@ -139,23 +139,50 @@ namespace obe::Animation
             }
             if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
                 m_currentAnimation->update();
+
+            if (m_target)
+            {
+                const sf::Texture& texture = this->getTexture();
+                m_target->setTexture(texture);
+
+                if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
+                {
+                    m_target->setSize(
+                        Transform::UnitVector(
+                            m_target->getSize().x, 
+                            float(texture.getSize().y) / float(texture.getSize().x) * m_target->getSize().x
+                        )
+                    );
+                }
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedHeight)
+                {
+                    m_target->setSize(
+                        Transform::UnitVector(
+                            float(texture.getSize().x) / float(texture.getSize().y) * m_target->getSize().y,
+                            m_target->getSize().y
+                        )
+                    );
+                }
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::UseTextureSize)
+                    m_target->useTextureSize();
+            }
         }
     }
 
-    const sf::Texture& Animator::getTexture()
+    void Animator::setTarget(Graphics::LevelSprite& sprite, AnimatorTargetScaleMode targetScaleMode)
     {
-        m_lastTexturePointer = &const_cast<sf::Texture&>(m_currentAnimation->getTexture());
+        m_target = &sprite;
+        m_targetScaleMode = targetScaleMode;
+    }
+
+    const sf::Texture& Animator::getTexture() const
+    {
         return m_currentAnimation->getTexture();
     }
 
     const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
     {
         return this->getAnimation(key)->getTextureAtIndex(index);
-    }
-
-    bool Animator::textureChanged() const
-    {
-        return (&m_currentAnimation->getTexture() != m_lastTexturePointer);
     }
 
     Transform::UnitVector Animator::getSpriteOffset() const

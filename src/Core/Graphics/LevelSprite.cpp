@@ -39,6 +39,7 @@ namespace obe::Graphics
         vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::WorldPixels>() - camera);
         vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::WorldPixels>() - camera);
         vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::WorldPixels>() - camera);
+
         m_sprite.setVertices(vertices);
 
         if (m_shader)

@@ -2,6 +2,7 @@
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
 #include <Bindings/AnimationBindings.hpp>
+#include <Graphics/LevelSprite.hpp>
 
 namespace obe::Bindings::AnimationBindings
 {
@@ -51,6 +52,7 @@ namespace obe::Bindings::AnimationBindings
         );
     }
 
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Animator_setTarget_wrapper, Animation::Animator, setTarget, 1, 2);
     void LoadAnimator(kaguya::State* lua)
     {
         (*lua)["obe"]["Animator"].setClass(kaguya::UserdataMetatable<Animation::Animator>()
@@ -69,8 +71,20 @@ namespace obe::Bindings::AnimationBindings
                 static_cast<void (Animation::Animator::*)(const std::string&)>(&Animation::Animator::setPath)
             )
             .addFunction("setPaused", &Animation::Animator::setPaused)
-            .addFunction("textureChanged", &Animation::Animator::textureChanged)
+            .addFunction("setTarget", Animator_setTarget_wrapper())
             .addFunction("update", &Animation::Animator::update)
         );
+
+        (*lua)["obe"]["Animator"]["setTarget"] = kaguya::overload([](Animation::Animator* animator, Graphics::LevelSprite* sprite) {
+            animator->setTarget(*sprite);
+        }, [](Animation::Animator* animator, Graphics::LevelSprite* sprite, Animation::AnimatorTargetScaleMode scaleMode) {
+            animator->setTarget(*sprite, scaleMode);
+        });
+
+        (*lua)["obe"]["Animator"]["TargetScaleMode"] = kaguya::NewTable();
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["Fit"] = Animation::AnimatorTargetScaleMode::Fit;
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["FixedWidth"] = Animation::AnimatorTargetScaleMode::FixedWidth;
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["FixedHeight"] = Animation::AnimatorTargetScaleMode::FixedHeight;
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["UseTextureSize"] = Animation::AnimatorTargetScaleMode::UseTextureSize;
     }
 }

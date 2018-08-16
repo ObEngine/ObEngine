@@ -45,7 +45,7 @@ namespace obe::Bindings::GraphicsBindings
             .addFunction("getSprite", &Graphics::LevelSprite::getSprite)
             .addFunction("getSpriteHeight", &Graphics::LevelSprite::getSpriteHeight)
             .addFunction("getSpriteWidth", &Graphics::LevelSprite::getSpriteWidth)
-            .addFunction("getTexture", &Graphics::LevelSprite::getTexture)
+            //.addFunction("getTexture", &Graphics::LevelSprite::getTexture)
             .addFunction("getXScaleFactor", &Graphics::LevelSprite::getXScaleFactor)
             .addFunction("getYScaleFactor", &Graphics::LevelSprite::getYScaleFactor)
             .addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
@@ -67,6 +67,11 @@ namespace obe::Bindings::GraphicsBindings
             .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
             .addFunction("useTextureSize", &Graphics::LevelSprite::useTextureSize)
         );
+
+        (*lua)["obe"]["LevelSprite"]["getTexture"] = kaguya::function([](Graphics::LevelSprite* sprite)
+        {
+            return &sprite->getTexture();
+        });
     }
 
     void LoadResourceManager(kaguya::State* lua)

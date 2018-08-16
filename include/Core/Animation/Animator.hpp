@@ -6,8 +6,22 @@
 #include <Animation/Animation.hpp>
 #include <System/Path.hpp>
 
+namespace obe {
+    namespace Graphics {
+        class LevelSprite;
+    }
+}
+
 namespace obe::Animation
 {
+    enum class AnimatorTargetScaleMode
+    {
+        Fit,
+        FixedWidth,
+        FixedHeight,
+        UseTextureSize
+    };
+
     /**
     * \brief A Class that will manage a set of Animation.\n
     * @Bind
@@ -47,8 +61,10 @@ namespace obe::Animation
         System::Path m_animatorPath;
         Animation* m_currentAnimation = nullptr;
         std::string m_currentAnimationName = "NONE";
-        sf::Texture* m_lastTexturePointer = nullptr;
         bool m_paused = false;
+        Graphics::LevelSprite* m_target = nullptr;
+        AnimatorTargetScaleMode m_targetScaleMode;
+
     public:
         /**
         * \brief Animator Class default constructor
@@ -90,7 +106,7 @@ namespace obe::Animation
         * \brief Get the current sf::Sprite of the current Animation
         * \return A pointer of the sf::Sprite currently played by the current Animation
         */
-        const sf::Texture& getTexture();
+        const sf::Texture& getTexture() const;
         /**
         * \brief Call Animation::getTextureAtIndex
         * \param key Name of the Animation where the Texture is located
@@ -126,13 +142,10 @@ namespace obe::Animation
         */
         void setPaused(bool pause);
         /**
-        * \brief Return if the Texture changed since the last call to getTexture()
-        * \return true if the Texture has changed, false otherwise
-        */
-        bool textureChanged() const;
-        /**
         * \brief Update the Animator and the currently played Animation
         */
         void update();
+
+        void setTarget(Graphics::LevelSprite& sprite, AnimatorTargetScaleMode targetScaleMode = AnimatorTargetScaleMode::Fit);
     };
 }
