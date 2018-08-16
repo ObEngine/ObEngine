@@ -83,8 +83,9 @@ namespace obe::Bindings::AnimationBindings
 
         (*lua)["obe"]["Animator"]["TargetScaleMode"] = kaguya::NewTable();
         (*lua)["obe"]["Animator"]["TargetScaleMode"]["Fit"] = Animation::AnimatorTargetScaleMode::Fit;
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["FixedSize"] = Animation::AnimatorTargetScaleMode::FixedSize;
         (*lua)["obe"]["Animator"]["TargetScaleMode"]["FixedWidth"] = Animation::AnimatorTargetScaleMode::FixedWidth;
         (*lua)["obe"]["Animator"]["TargetScaleMode"]["FixedHeight"] = Animation::AnimatorTargetScaleMode::FixedHeight;
-        (*lua)["obe"]["Animator"]["TargetScaleMode"]["UseTextureSize"] = Animation::AnimatorTargetScaleMode::UseTextureSize;
+        (*lua)["obe"]["Animator"]["TargetScaleMode"]["TextureSize"] = Animation::AnimatorTargetScaleMode::TextureSize;
     }
 }

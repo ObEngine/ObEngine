@@ -17,9 +17,10 @@ namespace obe::Animation
     enum class AnimatorTargetScaleMode
     {
         Fit,
+        FixedSize,
         FixedWidth,
         FixedHeight,
-        UseTextureSize
+        TextureSize
     };
 
     /**

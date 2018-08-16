@@ -145,7 +145,28 @@ namespace obe::Animation
                 const sf::Texture& texture = this->getTexture();
                 m_target->setTexture(texture);
 
-                if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
+                if (m_targetScaleMode == AnimatorTargetScaleMode::Fit)
+                {
+                    if (m_target->getSize().x >= m_target->getSize().y)
+                    {
+                        m_target->setSize(
+                            Transform::UnitVector(
+                                m_target->getSize().x,
+                                float(texture.getSize().y) / float(texture.getSize().x) * m_target->getSize().x
+                            )
+                        );
+                    }
+                    else
+                    {
+                        m_target->setSize(
+                            Transform::UnitVector(
+                                float(texture.getSize().x) / float(texture.getSize().y) * m_target->getSize().y,
+                                m_target->getSize().y
+                            )
+                        );
+                    }
+                }
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
                 {
                     m_target->setSize(
                         Transform::UnitVector(
@@ -163,7 +184,7 @@ namespace obe::Animation
                         )
                     );
                 }
-                else if (m_targetScaleMode == AnimatorTargetScaleMode::UseTextureSize)
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::TextureSize)
                     m_target->useTextureSize();
             }
         }

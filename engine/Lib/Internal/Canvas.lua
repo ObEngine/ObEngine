@@ -58,44 +58,61 @@ end
 
 obe.Canvas.Bases = {};
 
+function obe.Canvas.ApplyCache(element)
+    local applyCacheValue = function(mt, k, v)
+        if type(k) == "number" and not mt.__setters[k] and mt.__setters.__number then
+            mt.__setters.__number(mt.__ref, v);
+        else
+            if mt.__setters[k] then
+                mt.__setters[k](mt.__ref, v);
+            else
+                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
+            end
+        end
+    end
+    local mt = getmetatable(element);
+    --print("Cache : ", inspect(mt.__cache));
+    if #mt.__priority > 0 then
+        for k, v in pairs(mt.__priority) do
+            if mt.__cache[v] then
+                applyCacheValue(mt, v, mt.__cache[v]);
+                mt.__cache[v] = nil;
+            end
+        end
+    end
+    for k, v in pairs(mt.__cache) do
+        applyCacheValue(mt, k, v);
+    end
+    mt.__cache = {};
+end
+
 function obe.Canvas.MakeMT(bases)
     local getters = {};
     local setters = {};
     local priority = {};
+    local cache = {};
 
     local fAccess = function(a, b, c) 
         local k = getmetatable(a);
-        if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
-            k.__setters.__number(k.__ref, c);
-        else
-            if k.__setters[b] then
-                k.__setters[b](k.__ref, c);
-            else
-                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(b));
-            end
-        end
+        k.__cache[b] = c;
     end
     local nAccess = function(a, b)
         local k = getmetatable(a);
-        if type(k.__getters[b]) == "function" then
-            return k.__getters[b](k.__ref);
-        elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
-            return k.__getters.__number(k.__ref);
-        elseif type(k.__getters[b]) == "table" then
-            return k.__getters[b];
+        if k.__cache[b] then
+            return k.__cache[b];
+        else
+            if type(k.__getters[b]) == "function" then
+                return k.__getters[b](k.__ref);
+            elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
+                return k.__getters.__number(k.__ref);
+            elseif type(k.__getters[b]) == "table" then
+                return k.__getters[b];
+            end
         end
     end
     local tAccess = function(a, b)
         b = b or {};
         local k = getmetatable(a);
-        if #k.__priority > 0 then
-            for k, v in pairs(k.__priority) do
-                if b[v] then
-                    a[v] = b[v];
-                    b[v] = nil;
-                end
-            end
-        end
         for k, v in pairs(b) do
             a[k] = v;
         end
@@ -133,7 +150,8 @@ function obe.Canvas.MakeMT(bases)
         __priority = priority,
         __index = nAccess,
         __newindex = fAccess,
-        __call = tAccess
+        __call = tAccess,
+        __cache = cache
     };
     local tt = { __type = "CanvasMT" };
     setmetatable(tt, mt);
@@ -583,6 +601,9 @@ function obe.Canvas.Canvas:Sprite(id)
 end
 
 function obe.Canvas.Canvas:render()
+    for _, element in pairs(self.elements) do
+        obe.Canvas.ApplyCache(element);
+    end
     self.internal:render();
 end
 
