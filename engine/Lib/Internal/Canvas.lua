@@ -171,6 +171,11 @@ function obe.Canvas.InitializeMT(tbl, ref)
     end
 end
 
+local UV2V2f = function(uv)
+    local uvpx = uv:to(obe.Units.WorldPixels);
+    return SFML.Vector2f(uvpx.x, uvpx.y);
+end
+
 obe.Canvas.Bases.Drawable = {
   getters = {
       layer = function(self) return self.layer; end,
@@ -185,10 +190,68 @@ obe.Canvas.Bases.Drawable = {
 
 obe.Canvas.Bases.Line = {
     getters = {
-        x1 = function(self) return self.p1.x; end,
-        y1 = function(self) return self.p1.y; end,
-        x2 = function(self) return self.p2.x; end,
-        y2 = function(self) return self.p2.y; end,
+        p1 = {
+            getters = {
+                x = function(self) return self.p1.x; end,
+                y = function(self) return self.p1.y; end,
+                unit = function(self) return self.p1.unit; end,
+                color = {
+                    getters = {
+                        r = function(self) return self.p1color.r; end,
+                        g = function(self) return self.p1color.g; end,
+                        b = function(self) return self.p1color.b; end,
+                        a = function(self) return self.p1color.a; end
+                    },
+                    setters = {
+                        r = function(self, r) self.p1color.r = r or 0; end,
+                        g = function(self, g) self.p1color.g = g or 0; end,
+                        b = function(self, b) self.p1color.b = b or 0; end,
+                        a = function(self, a) self.p1color.a = a or 255; end
+                    }
+                },
+            },
+            setters = {
+                x = function(self, x) self.p1.x = x or 0; end,
+                y = function(self, y) self.p1.y = y or 0; end,
+                unit = function(self, unit)
+                    self.p1.unit = unit or obe.Units.WorldPixels;
+                end,
+                color = function(self, color)
+                    self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
+                end
+            }
+        },
+        p2 = {
+            getters = {
+                x = function(self) return self.p2.x; end,
+                y = function(self) return self.p2.y; end,
+                unit = function(self) return self.p2.unit; end,
+                color = {
+                    getters = {
+                        r = function(self) return self.p2color.r; end,
+                        g = function(self) return self.p2color.g; end,
+                        b = function(self) return self.p2color.b; end,
+                        a = function(self) return self.p2color.a; end
+                    },
+                    setters = {
+                        r = function(self, r) self.p2color.r = r or 0; end,
+                        g = function(self, g) self.p2color.g = g or 0; end,
+                        b = function(self, b) self.p2color.b = b or 0; end,
+                        a = function(self, a) self.p2color.a = a or 255; end
+                    }
+                }
+            },
+            setters = {
+                x = function(self, x) self.p2.x = x or 0; end,
+                y = function(self, y) self.p2.y = y or 0; end,
+                unit = function(self, unit)
+                    self.p2.unit = unit or obe.Units.WorldPixels;
+                end,
+                color = function(self, color)
+                    self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
+                end
+            }
+        },
         unit = function(self) return self.p1.unit; end,
         thickness = function(self) return self.thickness; end,
         color = {
@@ -204,69 +267,29 @@ obe.Canvas.Bases.Line = {
                 b = function(self, b) self.p1color.b = b or 0; self.p2color.b = b or 0; end,
                 a = function(self, a) self.p1color.a = a or 255; self.p2color.a = a or 255; end
             }
-        },
-        p1color = {
-            getters = {
-                r = function(self) return self.p1color.r; end,
-                g = function(self) return self.p1color.g; end,
-                b = function(self) return self.p1color.b; end,
-                a = function(self) return self.p1color.a; end
-            },
-            setters = {
-                r = function(self, r) self.p1color.r = r or 0; end,
-                g = function(self, g) self.p1color.g = g or 0; end,
-                b = function(self, b) self.p1color.b = b or 0; end,
-                a = function(self, a) self.p1color.a = a or 255; end
-            }
-        },
-        p2color = {
-            getters = {
-                r = function(self) return self.p2color.r; end,
-                g = function(self) return self.p2color.g; end,
-                b = function(self) return self.p2color.b; end,
-                a = function(self) return self.p2color.a; end
-            },
-            setters = {
-                r = function(self, r) self.p2color.r = r or 0; end,
-                g = function(self, g) self.p2color.g = g or 0; end,
-                b = function(self, b) self.p2color.b = b or 0; end,
-                a = function(self, a) self.p2color.a = a or 255; end
-            }
         }
     },
     setters = {
-        x1 = function(self, x1) self.p1.x = x1 or 0; end,
-        y1 = function(self, y1) self.p1.y = y1 or 0; end,
-        x2 = function(self, x2) self.p2.x = x2 or 0; end,
-        y2 = function(self, y2) self.p2.y = y2 or 0; end,
         unit = function(self, unit)
             self.p1.unit = unit or obe.Units.WorldPixels;
             self.p2.unit = unit or obe.Units.WorldPixels;
-        end,
-        p1Unit = function(self, unit)
-            self.p1.unit = unit or obe.Units.WorldPixels;
-        end,
-        p2Unit = function(self, unit)
-            self.p1.unit = unit or obe.Units.WorldPixels;
         end,
         thickness = function(self, thickness) self.thickness = thickness or 1; end,
         color = function(self, color)
             self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
             self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
-        end,
-        p1color = function(self, color)
-            self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
-        end,
-        p2color = function(self, color)
-            self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
-        end,
+        end
     }
 };
 
 obe.Canvas.Bases.Shape = {
+    priority = {
+        "unit"
+    },
     getters = {
-        x = function(self) return self.shape:getPosition().x; end,
-        y = function(self) return self.shape:getPosition().y; end,
+        x = function(self) return self.position.x; end,
+        y = function(self) return self.position.y; end,
+        unit = function(self) return self.position.unit; end,
         angle = function(self) return self.shape:getRotation(); end,
         scale = {
             getters = {
@@ -371,12 +394,15 @@ obe.Canvas.Bases.Shape = {
             self.shape:setFillColor(obe.Canvas.NormalizeColor(color, self.shape:getFillColor()));
         end,
         x = function(self, x)
-            local y = self.shape:getPosition().y;
-            self.shape:setPosition(SFML.Vector2f(x, y));
+            self.position.x = x;
+            self.shape:setPosition(UV2V2f(self.position));
         end,
         y = function(self, y)
-            local x = self.shape:getPosition().x;
-            self.shape:setPosition(SFML.Vector2f(x, y));
+            self.position.y = y;
+            self.shape:setPosition(UV2V2f(self.position));
+        end,
+        unit = function(self, unit)
+            self.position.unit = unit or obe.Units.WorldPixels;
         end,
         angle = function(self, angle)
             self.shape:setRotation(angle or 0);
@@ -393,17 +419,21 @@ obe.Canvas.Bases.Shape = {
 
 obe.Canvas.Bases.Rectangle = {
     getters = {
-        width = function(self) return self.shape:getSize().x; end,
-        height = function(self) return self.shape:getSize().y; end
+        width = function(self) return self.size.x; end,
+        height = function(self) return self.size.y; end
     },
     setters = {
         width = function(self, width)
-            local height = self.shape:getSize().y;
-            self.shape:setSize(SFML.Vector2f(width, height));
+            self.size.x = width;
+            self.shape:setSize(UV2V2f(self.size));
         end,
         height = function(self, height)
-            local width = self.shape:getSize().x;
-            self.shape:setSize(SFML.Vector2f(width, height));
+            self.size.y = height
+            self.shape:setSize(UV2V2f(self.size));
+        end,
+        unit = function(self, unit)
+            self.position.unit = unit or obe.Units.WorldPixels;
+            self.size.unit = unit or obe.Units.WorldPixels;
         end,
     }
 }

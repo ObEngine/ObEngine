@@ -83,15 +83,23 @@ namespace obe::Graphics::Canvas
         void draw(sf::RenderTexture& target) override;
     };
 
+    class CanvasPositionable : public CanvasElement
+    {
+    public:
+        Transform::UnitVector position;
+        CanvasPositionable(Canvas* parent, const std::string& id);
+    };
+
     /**
     * \brief A Canvas Rectangle
     */
-    class Rectangle : public CanvasElement
+    class Rectangle : public CanvasPositionable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Rectangle;
 
         sf::RectangleShape shape;
+        Transform::UnitVector size;
         /**
         * \brief Create a new Rectangle
         * \param parent Pointer to the Canvas
@@ -122,7 +130,7 @@ namespace obe::Graphics::Canvas
     /**
     * \brief A Canvas Text
     */
-    class Text : public CanvasElement
+    class Text : public CanvasPositionable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Text;
@@ -147,7 +155,7 @@ namespace obe::Graphics::Canvas
     /**
     * \brief A Canvas Circle
     */
-    class Circle : public CanvasElement
+    class Circle : public CanvasPositionable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Circle;
@@ -170,7 +178,7 @@ namespace obe::Graphics::Canvas
     /*
     * \brief A Canvas Sprite
     */
-    class Sprite : public CanvasElement
+    class Sprite : public CanvasPositionable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Sprite;

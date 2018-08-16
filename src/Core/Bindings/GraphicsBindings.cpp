@@ -93,6 +93,9 @@ namespace obe::Bindings::GraphicsBindings
             .addProperty("id", &Graphics::Canvas::CanvasElement::id)
             .addFunction("setLayer", &Graphics::Canvas::CanvasElement::setLayer)
         );
+        (*lua)["obe"]["Canvas"]["CanvasShape"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::CanvasPositionable>()
+            .addProperty("position", &Graphics::Canvas::CanvasPositionable::position)
+        );
         (*lua)["obe"]["Canvas"]["Line"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Line, 
             Graphics::Canvas::CanvasElement>()
                 .addProperty("p1", &Graphics::Canvas::Line::p1)
@@ -102,23 +105,24 @@ namespace obe::Bindings::GraphicsBindings
                 .addProperty("p2color", &Graphics::Canvas::Line::p2color)
         );
         (*lua)["obe"]["Canvas"]["Rectangle"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Rectangle, 
-            Graphics::Canvas::CanvasElement>()
+            kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::CanvasPositionable>>()
                 .addProperty("shape", &Graphics::Canvas::Rectangle::shape)
+                .addProperty("size", &Graphics::Canvas::Rectangle::size)
         );
         (*lua)["obe"]["Canvas"]["Text"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Text, 
-            Graphics::Canvas::CanvasElement>()
+            kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::CanvasPositionable>>()
                 .addProperty("fontPath", &Graphics::Canvas::Text::fontPath)
                 .addProperty("shape", &Graphics::Canvas::Text::shape)
                 .addProperty("h_align", &Graphics::Canvas::Text::h_align)
                 .addProperty("v_align", &Graphics::Canvas::Text::v_align)
         );
         (*lua)["obe"]["Canvas"]["Circle"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Circle, 
-            Graphics::Canvas::CanvasElement>()
+            kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::CanvasPositionable>>()
                 .addProperty("shape", &Graphics::Canvas::Circle::shape)
                 .addProperty("radius", &Graphics::Canvas::Circle::radius)
         );
         (*lua)["obe"]["Canvas"]["Sprite"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::Sprite, 
-            Graphics::Canvas::CanvasElement>()
+            kaguya::MultipleBase<Graphics::Canvas::CanvasElement, Graphics::Canvas::CanvasPositionable>>()
                 .addProperty("path", &Graphics::Canvas::Sprite::path)
                 .addProperty("sprite", &Graphics::Canvas::Sprite::sprite)
         );

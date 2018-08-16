@@ -37,8 +37,14 @@ namespace obe::Graphics::Canvas
         };
         target.draw(line, 2, sf::Lines);
     }
-    
-    Rectangle::Rectangle(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
+
+    CanvasPositionable::CanvasPositionable(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
+    {
+        // Default Canvas elements unit is WorldPixels
+        position.unit = Transform::Units::WorldPixels;
+    }
+
+    Rectangle::Rectangle(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
     }
     
@@ -47,7 +53,7 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
     
-    Text::Text(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
+    Text::Text(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
     }
     
@@ -67,7 +73,7 @@ namespace obe::Graphics::Canvas
         shape.move(-offset);
     }
     
-    Circle::Circle(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
+    Circle::Circle(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
     }
     
@@ -76,7 +82,7 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
     
-    Sprite::Sprite(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
+    Sprite::Sprite(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
     }
     
