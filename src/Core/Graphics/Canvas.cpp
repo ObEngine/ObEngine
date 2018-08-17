@@ -46,6 +46,7 @@ namespace obe::Graphics::Canvas
 
     Rectangle::Rectangle(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
+        this->size.unit = Transform::Units::WorldPixels;
     }
     
     void Rectangle::draw(sf::RenderTexture& target)
@@ -81,7 +82,16 @@ namespace obe::Graphics::Canvas
     {
         target.draw(shape);
     }
-    
+
+    Polygon::Polygon(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
+    {
+    }
+
+    void Polygon::draw(sf::RenderTexture& target)
+    {
+        target.draw(shape);
+    }
+
     Sprite::Sprite(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
     }

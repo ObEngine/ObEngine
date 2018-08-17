@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <vili/Vili.hpp>
 
 #include <Animation/AnimationGroup.hpp>
@@ -62,10 +64,10 @@ namespace obe::Animation
         Time::TimeUnit m_animationClock = 0;
         std::vector<std::vector<std::string>> m_animationCode;
         unsigned int m_animationDelay = 0;
-        std::map<std::string, std::unique_ptr<AnimationGroup>> m_animationGroupMap;
+        std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_animationGroupMap;
         std::string m_animationName;
         AnimationPlayMode m_animationPlayMode = AnimationPlayMode::OneTime;
-        std::map<int, sf::Texture*> m_animationTextures;
+        std::vector<sf::Texture*> m_animationTextures;
         std::string m_animationToCall = "";
         bool m_askCommand = true;
         unsigned int m_codeIndex = 0;

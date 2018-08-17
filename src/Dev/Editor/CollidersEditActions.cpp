@@ -28,6 +28,7 @@ namespace obe::Editor
                     masterColliderGrabbed = false;
                     colliderPtGrabbed = -1;
                 }
+                Debug::Log->debug("Action <ColliderPointPicked> triggered");
                 selectedMasterCollider = selectedPtCollider.first;
                 selectedMasterCollider->setSelected(true);
                 colliderPtGrabbed = selectedPtCollider.second;
@@ -42,16 +43,18 @@ namespace obe::Editor
             [editorTriggers, &selectedMasterCollider, &masterColliderGrabbed, &colliderPtGrabbed, &scene, &cursor]
         (const Input::InputActionEvent& event)
         {
+            Debug::Log->debug("Action <ColliderPointMoved (pre)> triggered");
             if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
             {
+                Debug::Log->debug("Action <ColliderPointMoved> triggered");
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                 editorTriggers->pushParameter("ColliderPointMoved", "collider", selectedMasterCollider);
                 editorTriggers->pushParameter("ColliderPointMoved", "pointIndex", colliderPtGrabbed);
-                editorTriggers->pushParameter("ColliderPointMoved", "oldPos", selectedMasterCollider->getPointPosition(colliderPtGrabbed).to<Transform::Units::WorldPixels>());
+                editorTriggers->pushParameter("ColliderPointMoved", "oldPos", selectedMasterCollider->get(colliderPtGrabbed).to<Transform::Units::WorldPixels>());
                 editorTriggers->pushParameter("ColliderPointMoved", "pos", cursCoord);
                 editorTriggers->trigger("ColliderPointMoved");
-                selectedMasterCollider->setPointPosition(colliderPtGrabbed, cursCoord);
+                selectedMasterCollider->get(colliderPtGrabbed).set(cursCoord);
             }
         });
 
@@ -80,6 +83,7 @@ namespace obe::Editor
                     masterColliderGrabbed = false;
                     colliderPtGrabbed = -1;
                 }
+                Debug::Log->debug("Action <ColliderMasterPick> triggered");
                 selectedMasterCollider = tempCol;
                 selectedMasterCollider->setSelected(true);
                 if (selectedMasterCollider->getParentId() != "") scene.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(false);
@@ -97,13 +101,14 @@ namespace obe::Editor
         {
             if (selectedMasterCollider != nullptr && masterColliderGrabbed)
             {
+                Debug::Log->debug("Action <ColliderMoved> triggered");
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
                 editorTriggers->pushParameter("ColliderMoved", "collider", selectedMasterCollider);
-                editorTriggers->pushParameter("ColliderMoved", "oldPos", selectedMasterCollider->getMasterPointPosition().to<Transform::Units::WorldPixels>());
+                editorTriggers->pushParameter("ColliderMoved", "oldPos", selectedMasterCollider->getCentroid().to<Transform::Units::WorldPixels>());
                 editorTriggers->pushParameter("ColliderMoved", "pos", cursCoord);
                 editorTriggers->trigger("ColliderMoved");
-                selectedMasterCollider->setPositionFromMaster(cursCoord);
+                selectedMasterCollider->setPositionFromCentroid(cursCoord);
             }
         });
 
@@ -113,6 +118,7 @@ namespace obe::Editor
         {
             if (masterColliderGrabbed)
             {
+                Debug::Log->debug("Action <ColliderMasterRelease> triggered");
                 masterColliderGrabbed = false;
                 if (selectedMasterCollider->getParentId() != "") 
                     scene.getGameObject(selectedMasterCollider->getParentId())->setUpdateState(true);
@@ -130,15 +136,16 @@ namespace obe::Editor
                 const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y, Transform::Units::WorldPixels);
-                int rqPtRes = selectedMasterCollider->hasPoint(cursCoord, pTolerance);
-                if (rqPtRes == -1)
+                
+                if (!selectedMasterCollider->getPointAroundPosition(cursCoord, pTolerance).has_value())
                 {
-                    unsigned int newPtIndex = selectedMasterCollider->findClosestLine(cursCoord);
+                    Debug::Log->debug("Action <ColliderPointCreate> triggered");
+                    auto newSegment = selectedMasterCollider->findClosestLine(cursCoord);
                     editorTriggers->pushParameter("ColliderPointCreated", "collider", selectedMasterCollider);
-                    editorTriggers->pushParameter("ColliderPointCreated", "pointIndex", newPtIndex);
+                    editorTriggers->pushParameter("ColliderPointCreated", "pointIndex", newSegment.first.index);
                     editorTriggers->pushParameter("ColliderPointCreated", "pos", cursCoord);
                     editorTriggers->trigger("ColliderPointCreated");
-                    selectedMasterCollider->addPoint(cursCoord, newPtIndex);
+                    selectedMasterCollider->addPoint(cursCoord, newSegment.first.index);
                 }
             }
         });
@@ -149,9 +156,10 @@ namespace obe::Editor
         {
             if (selectedMasterCollider != nullptr && !masterColliderGrabbed && colliderPtGrabbed != -1)
             {
-                selectedMasterCollider->deletePoint(colliderPtGrabbed);
+                selectedMasterCollider->get(colliderPtGrabbed).remove();
                 if (selectedMasterCollider->getPointsAmount() <= 2)
                 {
+                    Debug::Log->debug("Action <ColliderRemoved (from pt)> triggered");
                     editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                     editorTriggers->trigger("ColliderRemoved");
                     selectedMasterCollider->setSelected(false);
@@ -162,6 +170,7 @@ namespace obe::Editor
                 }
                 else
                 {
+                    Debug::Log->debug("Action <ColliderPointRemoved> triggered");
                     editorTriggers->pushParameter("ColliderPointRemoved", "collider", selectedMasterCollider);
                     editorTriggers->pushParameter("ColliderPointRemoved", "pointIndex", colliderPtGrabbed);
                     editorTriggers->trigger("ColliderPointRemoved");
@@ -183,6 +192,7 @@ namespace obe::Editor
                 {
                     if (scene.getColliderPointByPosition(cursCoord).first == nullptr)
                     {
+                        Debug::Log->debug("Action <ColliderRelease> triggered");
                         editorTriggers->pushParameter("ColliderReleased", "collider", selectedMasterCollider);
                         editorTriggers->pushParameter("ColliderReleased", "pos", cursCoord);
                         editorTriggers->trigger("ColliderReleased");
@@ -201,6 +211,7 @@ namespace obe::Editor
         {
             if (selectedMasterCollider != nullptr && masterColliderGrabbed)
             {
+                Debug::Log->debug("Action <ColliderRemove> triggered");
                 editorTriggers->pushParameter("ColliderRemoved", "id", selectedMasterCollider->getId());
                 editorTriggers->trigger("ColliderRemoved");
                 selectedMasterCollider->setSelected(false);
@@ -215,6 +226,7 @@ namespace obe::Editor
         {
             if (selectedMasterCollider == nullptr)
             {
+                Debug::Log->debug("Action <ColliderCreate> triggered");
                 Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
                 Transform::UnitVector pPos(cursor.getConstrainedX(), cursor.getConstrainedY(), Transform::Units::WorldPixels);
                 pPos += pixelCamera;
@@ -222,7 +234,7 @@ namespace obe::Editor
                 newCollider->addPoint(Transform::UnitVector(50, 0, Transform::Units::WorldPixels));
                 newCollider->addPoint(Transform::UnitVector(0, 50, Transform::Units::WorldPixels));
                 newCollider->addPoint(Transform::UnitVector(100, 50, Transform::Units::WorldPixels));
-                newCollider->setPositionFromMaster(pPos);
+                newCollider->setPositionFromCentroid(pPos);
                 editorTriggers->pushParameter("ColliderCreated", "collider", newCollider);
                 editorTriggers->pushParameter("ColliderCreated", "pos", pPos);
                 editorTriggers->trigger("ColliderCreated");

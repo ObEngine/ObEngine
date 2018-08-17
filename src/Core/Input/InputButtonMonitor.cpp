@@ -2,6 +2,7 @@
 
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
+#include "Debug/Logger.hpp"
 
 namespace obe::Input
 {
@@ -34,6 +35,7 @@ namespace obe::Input
         else if (!keyPressed && (m_buttonState == InputButtonState::Pressed || m_buttonState == InputButtonState::Hold))
         {
             m_buttonState = InputButtonState::Released;
+            Monitors::RequireRefresh = true;
         }
         else if (!keyPressed && m_buttonState == InputButtonState::Released)
         {
@@ -78,6 +80,7 @@ namespace obe::Input
 
         void UpdateMonitors()
         {
+            RequireRefresh = false;
             Monitors.erase(std::remove_if(Monitors.begin(), Monitors.end(), UpdateMonitorsAndRemoveIfNoReferences), Monitors.end());
         }
 

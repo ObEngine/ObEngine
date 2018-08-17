@@ -58,7 +58,7 @@ namespace obe::Animation
     class Animator
     {
     private:
-        std::map<std::string, std::unique_ptr<Animation>> m_animationSet;
+        std::unordered_map<std::string, std::unique_ptr<Animation>> m_animationSet;
         System::Path m_animatorPath;
         Animation* m_currentAnimation = nullptr;
         std::string m_currentAnimationName = "NONE";

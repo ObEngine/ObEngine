@@ -16,9 +16,9 @@ namespace obe::Collision
     class TrajectoryNode
     {
     private:
-        PolygonalCollider * m_probe = nullptr;
+        PolygonalCollider* m_probe = nullptr;
         Transform::SceneNode* m_sceneNode;
-        std::map<std::string, std::unique_ptr<Trajectory>> m_trajectories;
+        std::unordered_map<std::string, std::unique_ptr<Trajectory>> m_trajectories;
     public:
         TrajectoryNode(Transform::SceneNode* sceneNode);
         Trajectory* addTrajectory(const std::string& id, Transform::Units unit = Transform::Units::WorldUnits);

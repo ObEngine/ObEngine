@@ -377,7 +377,7 @@ namespace obe::Editor
                 if (selectedMasterCollider != nullptr)
                 {
                     selectedMasterCollider->clearHighlights();
-                    selectedMasterCollider->highlightLine(selectedMasterCollider->findClosestLine(cursCoord));
+                    selectedMasterCollider->highlightLine(selectedMasterCollider->findClosestLine(cursCoord).first.index);
                 }
                 if (Collision::PolygonalCollider* col = scene.getColliderByCentroidPosition(cursor.getPosition() + pixelCamera); col != nullptr)
                 {
@@ -458,13 +458,22 @@ namespace obe::Editor
                     }
                     cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                     break;
+                case sf::Event::MouseButtonPressed:
+                case sf::Event::MouseButtonReleased:
+                case sf::Event::JoystickButtonPressed:
+                case sf::Event::JoystickButtonReleased:
+                case sf::Event::JoystickMoved:
                 case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
-                    Input::Monitors::UpdateMonitors();
+                    Input::Monitors::RequireRefresh = true;
+                    break;
                 default:;
                 }
                 gui.handleEvent(event);
             }
+
+            if (Input::Monitors::RequireRefresh)
+                Input::Monitors::UpdateMonitors();
 
             //Events
             scene.update();

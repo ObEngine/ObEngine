@@ -113,15 +113,6 @@ namespace obe::Transform
     void Rect::draw(int posX, int posY) const
     {
         int r = 6;
-        std::map<std::string, std::any> drawOptions = {
-            { "lines", true },
-            { "points", true },
-            { "radius", r },
-            { "point_color", sf::Color::White },
-            { "point_color_0", sf::Color::Red },{ "point_color_1", sf::Color(255, 128, 0) },{ "point_color_2", sf::Color::Yellow },
-            { "point_color_3", sf::Color(128, 255, 0) },{ "point_color_4", sf::Color::Green },{ "point_color_5", sf::Color(0, 255, 128) },
-            { "point_color_6", sf::Color::Magenta },{ "point_color_7", sf::Color(0, 128, 255) },{ "point_color_8", sf::Color::White }
-        };
 
         std::vector<sf::Vector2i> drawPoints;
         UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
@@ -156,7 +147,17 @@ namespace obe::Transform
         Graphics::Utils::drawPoint(vec.x - r, vec.y - r, r, sf::Color::White);
         Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
-        Graphics::Utils::drawPolygon(drawPoints, drawOptions);
+        Graphics::Utils::drawPolygon(drawPoints, {
+            { "lines", true },
+            { "points", true },
+            { "radius", r },
+            { "point_color", sf::Color::White },
+            { "point_color_0", sf::Color::Red }, { "point_color_1", sf::Color(255, 128, 0) },
+            { "point_color_2", sf::Color::Yellow }, { "point_color_3", sf::Color(128, 255, 0) },
+            { "point_color_4", sf::Color::Green }, { "point_color_5", sf::Color(0, 255, 128) },
+            { "point_color_6", sf::Color::Magenta }, { "point_color_7", sf::Color(0, 128, 255) },
+            { "point_color_8", sf::Color::White }
+        });
     }
 
 

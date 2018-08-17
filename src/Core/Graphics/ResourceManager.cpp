@@ -5,8 +5,8 @@
 
 namespace obe::Graphics
 {
-    std::map<std::string, std::unique_ptr<sf::Texture>> ResourceManager::m_textureDatabase;
-    std::map<std::string, std::unique_ptr<sf::Font>> ResourceManager::m_fontDatabase;
+    std::unordered_map<std::string, std::unique_ptr<sf::Texture>> ResourceManager::m_textureDatabase;
+    std::unordered_map<std::string, std::unique_ptr<sf::Font>> ResourceManager::m_fontDatabase;
 
     sf::Texture* ResourceManager::GetTexture(const std::string& path, bool antiAliasing)
     {
@@ -31,7 +31,7 @@ namespace obe::Graphics
         if (m_fontDatabase.find(path) == m_fontDatabase.end())
         {
             std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
-            std::string foundAt = System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
+            const std::string foundAt = System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
             std::cout << "Font : " << path << " : found at : " << foundAt << std::endl;
                 
             if (tempFont != nullptr)

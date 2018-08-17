@@ -23,7 +23,7 @@
 namespace obe::Bindings
 {
     BindingTree BindTree("Root");
-    std::map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
+    std::unordered_map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
 
     void Load(kaguya::State* lua, const std::string& lib)
     {

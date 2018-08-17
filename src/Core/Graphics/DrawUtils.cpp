@@ -6,11 +6,11 @@
 namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
 {
     template <typename T>
-    T findOptionOrDefault(std::map<std::string, std::any>& options, const char* key, T defaultValue)
+    T findOptionOrDefault(const DrawPolygonOptions& options, const char* key, T defaultValue)
     {
         if (options.find(key) == options.end())
             return defaultValue;
-        return std::any_cast<T>(options[key]);
+        return std::any_cast<T>(options.at(key));
     }
 
     void drawPoint(int x, int y, unsigned int radius, sf::Color color)
@@ -31,7 +31,7 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         System::MainWindow.draw(line, thickness, sf::Lines);
     }
 
-    void drawPolygon(std::vector<sf::Vector2i>& points, std::map<std::string, std::any>& options)
+    void drawPolygon(std::vector<sf::Vector2i>& points, DrawPolygonOptions options)
     {
         const bool drawLines = findOptionOrDefault(options, "lines", true);
         const bool drawPoints = findOptionOrDefault(options, "points", true);

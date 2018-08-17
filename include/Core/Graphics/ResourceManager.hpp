@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <memory>
 
 #include <SFML/Graphics/Font.hpp>
@@ -17,9 +17,9 @@ namespace obe::Graphics
     class ResourceManager
     {
     private:
-        static std::map<std::string, std::unique_ptr<sf::Font>> m_fontDatabase;
+        static std::unordered_map<std::string, std::unique_ptr<sf::Font>> m_fontDatabase;
         static Triggers::TriggerGroupPtr m_resourceManagerTriggers;
-        static std::map<std::string, std::unique_ptr<sf::Texture>> m_textureDatabase;
+        static std::unordered_map<std::string, std::unique_ptr<sf::Texture>> m_textureDatabase;
     public:
         static sf::Font* GetFont(const std::string& path);
         /**

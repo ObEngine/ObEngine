@@ -8,6 +8,7 @@
 
 #include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
+#include <Transform/Polygon.hpp>
 
 namespace obe::Graphics::Canvas
 {
@@ -18,6 +19,7 @@ namespace obe::Graphics::Canvas
         Rectangle,
         Text,
         Circle,
+        Polygon,
         Sprite
     };
 
@@ -172,6 +174,18 @@ namespace obe::Graphics::Canvas
         * \brief Draw the Circle
         * \param target Target where to draw the Circle to
         */
+        void draw(sf::RenderTexture& target) override;
+    };
+
+    class Polygon : public CanvasPositionable
+    {
+        static const CanvasElementType Type = CanvasElementType::Polygon;
+
+        sf::ConvexShape shape;
+        Transform::Polygon polygon;
+
+        explicit Polygon(Canvas* parent, const std::string& id);
+
         void draw(sf::RenderTexture& target) override;
     };
 

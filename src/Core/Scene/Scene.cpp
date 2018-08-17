@@ -651,9 +651,10 @@ namespace obe::Scene
         const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
-            if (m_colliderArray[i]->hasPoint(pPos, pTolerance) != -1)
+            // Fix here
+            if (auto point = m_colliderArray[i]->getPointAroundPosition(pPos, pTolerance); point.has_value())
             {
-                return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), m_colliderArray[i]->hasPoint(pPos, pTolerance));
+                return std::pair<Collision::PolygonalCollider*, int>(m_colliderArray[i].get(), point.value()->index);
             }
         }
         return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
@@ -665,7 +666,7 @@ namespace obe::Scene
         const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
-            if (m_colliderArray[i]->hasMasterPoint(pPos, pTolerance))
+            if (m_colliderArray[i]->isCentroidAroundPosition(pPos, pTolerance))
                 return m_colliderArray[i].get();
         }
         return nullptr;

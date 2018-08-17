@@ -61,7 +61,7 @@ obe.Canvas.Bases = {};
 function obe.Canvas.ApplyCache(element)
     local applyCacheValue = function(mt, k, v)
         if type(k) == "number" and not mt.__setters[k] and mt.__setters.__number then
-            mt.__setters.__number(mt.__ref, v);
+            mt.__setters.__number(mt.__ref, k, v);
         else
             if mt.__setters[k] then
                 mt.__setters[k](mt.__ref, v);
@@ -104,7 +104,7 @@ function obe.Canvas.MakeMT(bases)
             if type(k.__getters[b]) == "function" then
                 return k.__getters[b](k.__ref);
             elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
-                return k.__getters.__number(k.__ref);
+                return k.__getters.__number(k.__ref, b);
             elseif type(k.__getters[b]) == "table" then
                 return k.__getters[b];
             end
@@ -449,6 +449,17 @@ obe.Canvas.Bases.Circle = {
     }
 }
 
+obe.Canvas.Bases.Polygon = {
+    getters = {
+
+    },
+    setters = {
+        __number = function(self, index, vertex)
+            local i = index - 1;
+        end
+    }
+}
+
 function GetRichTextString(shape)
     local fullText = "";
     for _, line in pairs(shape:getLines()) do
@@ -543,7 +554,7 @@ obe.Canvas.Bases.Text = {
                 end
             end
         end,
-        __number = function(self, part)
+        __number = function(self, index, part)
             self.shape:pushOutlineThickness(0);
             self.shape:pushOutlineColor(SFML.Color(255, 255, 255));
             self.shape:pushFillColor(SFML.Color(255, 255, 255));

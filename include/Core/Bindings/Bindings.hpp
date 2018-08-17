@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <kaguya/kaguya.hpp>
 
@@ -14,7 +15,7 @@
 namespace obe::Bindings
 {
     extern BindingTree BindTree;
-    extern std::map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
+    extern std::unordered_map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
 
     /**
     * \brief Loads a Library in the Lua VM

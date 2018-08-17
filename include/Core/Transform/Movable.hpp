@@ -11,6 +11,7 @@ namespace obe::Transform
         Rect,
         Camera,
         LevelSprite,
+        Polygon,
         PolygonalCollider,
         SceneNode
     };

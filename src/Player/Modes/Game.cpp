@@ -86,6 +86,11 @@ namespace obe::Modes
                 case sf::Event::Closed:
                     System::MainWindow.close();
                     break;
+                case sf::Event::MouseButtonPressed:
+                case sf::Event::MouseButtonReleased:
+                case sf::Event::JoystickButtonPressed:
+                case sf::Event::JoystickButtonReleased:
+                case sf::Event::JoystickMoved:
                 case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
                     Input::Monitors::UpdateMonitors();

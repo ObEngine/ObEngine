@@ -99,7 +99,7 @@ namespace obe::Animation
             else if (imageList.get(i).getDataType() == vili::DataType::String)
                 textureName = imageList.get(i).get<std::string>();
             Debug::Log->trace("<Animation> Loading Texture {0} in Animation {1}", textureName, m_animationName);
-            m_animationTextures[i] = Graphics::ResourceManager::GetTexture(path.add(textureName).toString());
+            m_animationTextures.push_back(Graphics::ResourceManager::GetTexture(path.add(textureName).toString()));
         }
         //Groups
         vili::ComplexNode& groups = animFile.at("Groups");
@@ -107,7 +107,7 @@ namespace obe::Animation
         {
             m_animationGroupMap.emplace(complex->getId(), std::make_unique<AnimationGroup>(complex->getId()));
             for (vili::DataNode* currentTexture : complex->at<vili::ArrayNode>("content"))
-                m_animationGroupMap[complex->getId()]->pushTexture(m_animationTextures[*currentTexture]);
+                m_animationGroupMap[complex->getId()]->pushTexture(m_animationTextures[currentTexture->get<int>()]);
             if (complex->contains(vili::NodeType::DataNode, "clock"))
                 m_animationGroupMap[complex->getId()]->setGroupDelay(complex->at<vili::DataNode>("clock"));
             else
