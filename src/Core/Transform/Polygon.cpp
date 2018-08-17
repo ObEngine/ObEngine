@@ -1,12 +1,13 @@
+#include <Debug/Logger.hpp>
 #include <Transform/Polygon.hpp>
+#include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
-#include "Utils/MathUtils.hpp"
 
 namespace obe::Transform
 {
     PolygonPoint::PolygonPoint(Polygon* parent, unsigned index) : 
         m_parent(parent),
-        index(index)
+        rw_index(index)
     {
     }
 
@@ -19,7 +20,15 @@ namespace obe::Transform
 
     void PolygonPoint::remove() const
     {
+        std::unique_ptr<PolygonPoint> tmpContainer;
+        for (auto& point : m_parent->m_points)
+        {
+            if (point.get() == this)
+                point.swap(tmpContainer);
+        }
         m_parent->m_points.erase(m_parent->m_points.begin() + index);
+        for (point_index_t i = index; i < m_parent->m_points.size(); i++)
+            m_parent->m_points[i]->rw_index = i;
     }
 
     double PolygonPoint::distance(const Transform::UnitVector& position) const
@@ -62,9 +71,14 @@ namespace obe::Transform
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
         if (pointIndex == -1 || pointIndex == m_points.size())
-            m_points.push_back(std::make_unique<PolygonPoint>(this, pointIndex, pVec));
+            m_points.push_back(std::make_unique<PolygonPoint>(this, m_points.size(), pVec));
         else if (pointIndex >= 0 && pointIndex < m_points.size())
+        {
             m_points.insert(m_points.begin() + pointIndex, std::make_unique<PolygonPoint>(this, pointIndex, pVec));
+            for (point_index_t i = pointIndex; i < m_points.size(); i++)
+                m_points[i]->rw_index = i;
+        }
+            
     }
 
     PolygonSegment Polygon::getLine(point_index_t index)
@@ -222,6 +236,7 @@ namespace obe::Transform
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::WorldUnits>();
         const Transform::UnitVector pTolerance = tolerance.to<Transform::Units::WorldUnits>();
+        point_index_t i = 0;
         for (auto& m_point : m_points)
         {
             if (Utils::Math::isBetween(pVec.x, m_point->x - pTolerance.x, m_point->x + pTolerance.x))
@@ -229,6 +244,7 @@ namespace obe::Transform
                 if (Utils::Math::isBetween(pVec.y, m_point->y - pTolerance.y, m_point->y + pTolerance.y))
                     return std::optional<PolygonPoint*>(m_point.get());
             }
+            i++;
         }
         return std::nullopt;
     }

@@ -17,7 +17,9 @@ namespace obe::Transform
     class PolygonPoint : public UnitVector
     {
     private:
+        friend class Polygon;
         Polygon* m_parent;
+        point_index_t rw_index;
     public:
         enum class RelativePositionFrom
         {
@@ -26,7 +28,7 @@ namespace obe::Transform
         };
         explicit PolygonPoint(Polygon* parent, unsigned int index);
         explicit PolygonPoint(Polygon* parent, unsigned int index, const Transform::UnitVector& position);
-        const point_index_t index;
+        const point_index_t& index = rw_index;
         void remove() const;
         double distance(const Transform::UnitVector& position) const;
         UnitVector getRelativePosition(RelativePositionFrom from);
