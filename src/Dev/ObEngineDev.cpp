@@ -23,6 +23,8 @@
 #include <Utils/ExecUtils.hpp>
 #include "Editor/Editor.hpp"
 #include <QApplication>
+#include <QQuickStyle>
+#include <QStandardPaths>
 
 void LoadErrors()
 {
@@ -35,6 +37,11 @@ int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Material");
+    for (auto& st : QStandardPaths::standardLocations(QStandardPaths::CacheLocation))
+    {
+        std::cout << st.toStdString() << std::endl;
+    }
     Backend::RegisterTypes();
 
     Utils::Exec::RunArgsParser runParser(argc, argv);

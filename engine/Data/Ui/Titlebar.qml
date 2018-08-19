@@ -49,7 +49,7 @@ Rectangle {
         smooth: true
         anchors.left: parent.left;
         anchors.leftMargin: 10
-        source: "logo.svg"
+        source: "icons/logo.svg"
         sourceSize.width: width
         sourceSize.height: height
     }

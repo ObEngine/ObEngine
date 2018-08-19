@@ -3,7 +3,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.11
-import QSFMLCanvas 1.0
+import QtQuick.Controls.Material 2.1
 
 ApplicationWindow {
     id: applicationWindow
@@ -11,6 +11,9 @@ ApplicationWindow {
     visibility: Window.Maximized
     minimumWidth: 640
     minimumHeight: 480
+    Material.theme: Material.Dark
+    Material.accent: Material.Purple
+    
     Component.onCompleted: {
         //applicationWindow.visibility = Window.Maximized
     }
@@ -60,9 +63,6 @@ ApplicationWindow {
                             }
                             Rectangle {
                                 anchors.right: parent.right
-                                QSFMLCanvas {
-
-                                }
                                 Text {
                                     text: "Game View"
                                     anchors.centerIn: parent
