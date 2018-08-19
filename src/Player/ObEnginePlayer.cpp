@@ -12,6 +12,7 @@
 #include <Modes/Game.hpp>
 #include <System/Config.hpp>
 #include <System/MountablePath.hpp>
+#include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
 
 void LoadErrors()
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
     System::MountPaths();
     System::InitConfiguration();
     Debug::InitLoggerLevel();
+    System::IndexPlugins();
 
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();

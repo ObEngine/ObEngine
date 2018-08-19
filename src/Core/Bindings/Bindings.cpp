@@ -19,6 +19,7 @@
 #include <Utils/FileUtils.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
+#include "System/Plugin.hpp"
 
 namespace obe::Bindings
 {
@@ -135,37 +136,12 @@ namespace obe::Bindings
             .add("ViliParser", &ViliBindings::LoadViliViliParser);
     }
 
-    void IndexPlugins()
+    void IndexPluginsBindings()
     {
-        // Plugins
-        for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
+        for (auto& plugin : System::Plugins)
         {
-            Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
-            System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
-            if (Utils::File::directoryExists(cPluginPath.toString()))
-            {
-                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
-                {
-                    const std::string pluginPath = cPluginPath.add(filename).toString();
-                    const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    BindTree.add(Utils::String::split(filename, ".")[0], 
-                        [pluginPath, pluginName](kaguya::State* lua)
-                    {
-                        Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
-                        auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("LoadBindings");
-                        try
-                        {
-                            Plugins[pluginName]->open();
-                            exposeFunction.init();
-                            exposeFunction(lua);
-                            Debug::Log->info("<Bindings:Plugin> : Loaded : {}", pluginName);
-                        }
-                        catch (const dynamicLinker::dynamicLinkerException& e) {
-                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {} (Reason : {})", pluginName, e.what());
-                        }
-                    });
-                }
-            }
+            if (plugin->hasOnLoadBindings())
+                BindTree.add(plugin->getId(), [&plugin](kaguya::State* lua) { plugin->onLoadBindings(lua); });
         }
     }
 }

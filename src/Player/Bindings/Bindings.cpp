@@ -5,6 +5,6 @@ namespace obe::Bindings
     void IndexBindings()
     {
         IndexBaseBindings();
-        IndexPlugins();
+        IndexPluginsBindings();
     }
 }

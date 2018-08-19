@@ -15,7 +15,6 @@
 namespace obe::Bindings
 {
     extern BindingTree BindTree;
-    extern std::unordered_map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
 
     /**
     * \brief Loads a Library in the Lua VM
@@ -28,5 +27,5 @@ namespace obe::Bindings
     */
     void IndexBindings();
     void IndexBaseBindings();
-    void IndexPlugins();
+    void IndexPluginsBindings();
 }

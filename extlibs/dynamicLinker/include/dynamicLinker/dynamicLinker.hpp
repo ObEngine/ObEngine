@@ -62,7 +62,7 @@ namespace dynamicLinker {
       void null();
     };
 
-
+  public:
     template<typename T> class dlSymbol {};
 
     template<typename R, typename ...A> class dlSymbol< R(A...) >  {

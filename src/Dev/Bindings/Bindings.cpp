@@ -16,6 +16,6 @@ namespace obe::Bindings
         // Editor
             .add("EditorGrid", &EditorBindings::LoadEditorGrid);
 
-        IndexPlugins();
+        IndexPluginsBindings();
     }
 }

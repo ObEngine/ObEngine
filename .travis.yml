@@ -54,10 +54,11 @@ script:
 - unzip SFML-2.5.0-sources.zip > sfml-downloadlog
 - pwd
 - ls
-- cd SFML-2.5.0/src/SFML/Graphics
-- rm CMakeLists.txt
-- wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/SFML/Graphics/CMakeLists.txt
-- cd ../../../
+- cd SFML-2.5.0
+#- src/SFML/Graphics
+#- rm CMakeLists.txt
+#- wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/SFML/Graphics/CMakeLists.txt
+#- cd ../../../
 - mkdir build/
 - cd build
 - /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE

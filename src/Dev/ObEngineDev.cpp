@@ -2,12 +2,17 @@
 #include <iostream>
 
 #include <vili/Vili.hpp>
+#include <QApplication>
 #include <QGuiApplication>
+#include <QQuickStyle>
+#include <QStandardPaths>
+
 #include <SFML/Window/VideoMode.hpp>
 
 #include <Backend/Backend.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Debug/Logger.hpp>
+#include <Editor/Editor.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
@@ -19,12 +24,16 @@
 #include <Script/GlobalState.hpp>
 #include <System/Config.hpp>
 #include <System/MountablePath.hpp>
+#include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
-#include "Editor/Editor.hpp"
-#include <QApplication>
-#include <QQuickStyle>
-#include <QStandardPaths>
+
+#include <Types/Global.hpp>
+
+static obe::Types::Global<666, std::string> global_title("Test : ");
+static obe::Types::Global<0, int> global_a(3);
+static obe::Types::Global<1, int> global_b(55);
+static obe::Types::Global<2, double> global_c(3.5);
 
 void LoadErrors()
 {
@@ -35,13 +44,11 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
+    std::cout << Types::GetGlobal<666>().get() << Types::GetGlobal<0>() + Types::GetGlobal<1>() * Types::GetGlobal<2>() << std::endl;
+
 	QApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
-    for (auto& st : QStandardPaths::standardLocations(QStandardPaths::CacheLocation))
-    {
-        std::cout << st.toStdString() << std::endl;
-    }
     Backend::RegisterTypes();
 
     Utils::Exec::RunArgsParser runParser(argc, argv);
@@ -67,6 +74,7 @@ int main(int argc, char** argv)
     System::MountPaths();
     System::InitConfiguration();
     Debug::InitLoggerLevel();
+    System::IndexPlugins();
 
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
