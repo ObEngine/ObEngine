@@ -50,8 +50,8 @@ script:
 - echo "Installing SFML..."
 - pwd
 - ls
-- wget https://www.sfml-dev.org/files/SFML-2.4.2-sources.zip
-- unzip SFML-2.4.2-sources.zip > sfml-downloadlog
+- wget https://www.sfml-dev.org/files/SFML-2.5.0-sources.zip
+- unzip SFML-2.5.0-sources.zip > sfml-downloadlog
 - pwd
 - ls
 - cd SFML-2.4.2/src/SFML/Graphics

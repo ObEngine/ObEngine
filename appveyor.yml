@@ -7,7 +7,7 @@ platform:
 
 environment:
   MSVC_DEFAULT_OPTIONS: ON
-  SFML_ROOT: C:\Libraries\SFML-2.5.0
+  SFML_DIR: C:\Libraries\SFML-2.5.0
   Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
 
 configuration:
@@ -28,7 +28,7 @@ before_build:
   - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.0-windows-vc15-64-bit.zip"
   - cmd: 7z.exe x SFML-2.5.0-windows-vc15-64-bit.zip
   - cmd: cd C:\projects\ObEngine
-  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DSFML_ROOT=%SFML_ROOT% -DQt5_DIR=%Qt5_DIR% .
+  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
   - cmd: dir
 
 before_package:
