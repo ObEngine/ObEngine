@@ -54,7 +54,7 @@ script:
 - unzip SFML-2.5.0-sources.zip > sfml-downloadlog
 - pwd
 - ls
-- cd SFML-2.4.2/src/SFML/Graphics
+- cd SFML-2.5.0/src/SFML/Graphics
 - rm CMakeLists.txt
 - wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/SFML/Graphics/CMakeLists.txt
 - cd ../../../
