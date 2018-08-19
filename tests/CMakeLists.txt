@@ -17,7 +17,6 @@ add_executable(ObEngineTests ${OBT_HEADERS} ${OBT_SOURCES})
 
 target_include_directories(ObEngineTests
   PRIVATE
-    $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 

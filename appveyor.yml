@@ -7,7 +7,8 @@ platform:
 
 environment:
   MSVC_DEFAULT_OPTIONS: ON
-  SFML_ROOT: C:\Libraries\SFML-2.4.2
+  SFML_ROOT: C:\Libraries\SFML-2.5.0
+  Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
 
 configuration:
   - Release
@@ -24,27 +25,28 @@ branches:
 
 before_build:
   - cmd: cd C:\Libraries
-  - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-32-bit.zip"
-  - cmd: 7z.exe x SFML-2.4.2-windows-vc14-32-bit.zip
+  - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.0-windows-vc15-64-bit.zip"
+  - cmd: 7z.exe x SFML-2.5.0-windows-vc15-64-bit.zip
   - cmd: cd C:\projects\ObEngine
-  - cmd: cmake -G "Visual Studio 15 2017" -DSFML_ROOT=%SFML_ROOT% .
+  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DSFML_ROOT=%SFML_ROOT% -DQt5_DIR=%Qt5_DIR% .
   - cmd: dir
 
 before_package:
   - cmd: cd C:\projects\ObEngine
   - cmd: mkdir Release
   - cmd: cd Release
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\openal32.dll"
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-audio-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-graphics-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-network-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-system-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.4.2\bin\sfml-window-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\openal32.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-audio-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-graphics-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-network-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-system-2.dll"
+  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-window-2.dll"
   - cmd: copy "C:\projects\ObEngine\src\Dev\Release\ObEngineDev.exe"
+  - cmd: copy "C:\projects\ObEngine\src\Player\Release\ObEnginePlayer.exe"
   - cmd: xcopy /E "C:\projects\ObEngine\engine"
   - cmd: dir
   - cmd: cd ..
-  - cmd: 7z a ObEngine-win32.zip ./Release/*
+  - cmd: 7z a ObEngine-win64.zip ./Release/*
   - cmd: dir
 
 build:
@@ -54,8 +56,8 @@ build:
 test: off
 
 artifacts:
-  - path: ObEngine-win32.zip
-    name: ObEngine-win32
+  - path: ObEngine-win64.zip
+    name: ObEngine-win64
 
 deploy:
   release: obengine-unstable
@@ -63,7 +65,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: 5E+JB7x9O0JbU2cR2rjoec5G/KJMmYkRhKE2lliwU9fwn8yPxm+qGn59yEh/vRUU
-  artifact: ObEngine-win32.zip
+  artifact: ObEngine-win64.zip
   prerelease: true
   on:
     branch: master

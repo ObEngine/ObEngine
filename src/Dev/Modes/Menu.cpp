@@ -8,6 +8,7 @@
 #include <vili/Vili.hpp>
 
 #include <Backend/MenuBackend.hpp>
+#include <Backend/SFMLRenderWidget.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
@@ -243,7 +244,6 @@ namespace obe::Modes
     {
 		{
 			QQmlApplicationEngine engine;
-			engine.rootContext()->setContextProperty("load_source", "DevMenu.qml");
 			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
 			if (engine.rootObjects().isEmpty())
 				throw aube::ErrorHandler::Raise("obe.Menu.QtError");

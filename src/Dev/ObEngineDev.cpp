@@ -21,6 +21,8 @@
 #include <System/MountablePath.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
+#include "Editor/Editor.hpp"
+#include <QApplication>
 
 void LoadErrors()
 {
@@ -31,7 +33,7 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-	QGuiApplication app(argc, argv);
+	QApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     Backend::RegisterTypes();
 
@@ -74,6 +76,7 @@ int main(int argc, char** argv)
 	    const std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
             Editor::editMap(editMapName);
+        //Editor::startEditor();
     }
     else if (startMode == "play")
     {

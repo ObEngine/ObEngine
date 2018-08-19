@@ -6,6 +6,7 @@ file(GLOB SFE_HEADERS include/sfe/*.hpp)
 file(GLOB SFE_SOURCES src/*.cpp)
 
 add_library(sfe ${SFE_HEADERS} ${SFE_SOURCES})
+target_link_libraries(sfe sfml-graphics)
 
 target_include_directories(sfe
     PUBLIC 
@@ -14,7 +15,6 @@ target_include_directories(sfe
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sfe>
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

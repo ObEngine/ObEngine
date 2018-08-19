@@ -6,6 +6,7 @@ file(GLOB_RECURSE TGUI_HEADERS include/TGUI/*.hpp include/TGUI/*.inl)
 file(GLOB_RECURSE TGUI_SOURCES src/*.cpp)
 
 add_library(TGUI ${TGUI_HEADERS} ${TGUI_SOURCES})
+target_link_libraries(TGUI sfml-graphics)
 
 target_include_directories(TGUI
     PUBLIC
@@ -13,7 +14,6 @@ target_include_directories(TGUI
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${SFML_INCLUDE_DIR}
 )
 
 target_compile_definitions(TGUI PRIVATE TGUI_STATIC)

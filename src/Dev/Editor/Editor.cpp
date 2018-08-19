@@ -24,16 +24,27 @@
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
+#include <QQmlApplicationEngine>
+#include <QGuiApplication>
+#include <Backend/SFMLRenderWidget.hpp>
+
 namespace obe::Editor
 {
-    void editMap(const std::string& mapName)
+    void startEditor()
     {
-        //Creating Window
-        System::InitWindow(System::WindowContext::EditorWindow);
+        //qmlRegisterType<QSFMLCanvas>("QSFMLCanvas", 1, 0, "QSFMLCanvas");
+        QQmlApplicationEngine engine;
+        
+        engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
+        
+        if (engine.rootObjects().isEmpty())
+            throw aube::ErrorHandler::Raise("obe.Menu.QtError");
+
+        QGuiApplication::exec();
 
         //Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor"), 
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Editor"),
             Triggers::TriggerGroupPtrRemover);
 
         //Editor Collider Triggers
@@ -92,7 +103,7 @@ namespace obe::Editor
 
         //Config
         vili::ComplexNode& gameConfig = System::Config->at("GameConfig");
-	    const int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
+        const int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
         //Cursor
         System::Cursor cursor;
@@ -166,8 +177,8 @@ namespace obe::Editor
         tgui::EditBox::Ptr mapNameInput = gui.get<tgui::EditBox>("mapNameInput");
         tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
         tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
-	    const tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
-	    const tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
+        const tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
+        const tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
 
         //Map Editor
         Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -191,13 +202,13 @@ namespace obe::Editor
         fps.loadFont(font);
         Time::FramerateManager framerateManager(gameConfig);
 
-        scene.loadFromFile(mapName);
+        //scene.loadFromFile(mapName);
 
         mapNameInput->setText(scene.getLevelName());
         cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
-                
+
         //Connect InputManager Actions
-        connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel, saveCameraPositionCheckbox);
+        //connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel, saveCameraPositionCheckbox);
         connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
         connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
         connectMenuActions(inputManager, editMode, editorPanel);
@@ -239,9 +250,9 @@ namespace obe::Editor
         GUI::calculateFontSize();
         GUI::applyFontSize(mainPanel);
 
-		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-		System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-		Script::ScriptEngine.dostring("Editor.Start()");
+        System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        Script::ScriptEngine.dostring("Editor.Start()");
 
         //scene.setUpdateState(false);
 
@@ -268,7 +279,7 @@ namespace obe::Editor
                     waitForMapSaving = -1;
             }
 
-	        const bool drawFPS = displayFramerateCheckbox->isChecked();
+            const bool drawFPS = displayFramerateCheckbox->isChecked();
 
             if (editorPanel->isVisible() && saveEditMode < 0)
             {
@@ -322,7 +333,7 @@ namespace obe::Editor
                             "   Pos : {}, {}\n"
                             "   Size : {}, {}\n"
                             "   Rot : {}\n"
-                            "   Layer / Z : {}, {}", 
+                            "   Layer / Z : {}, {}",
                             hoveredSprite->getId(),
                             hoveredSprite->getPath(),
                             hoveredSprite->getPosition().to(editorUnit).x, hoveredSprite->getPosition().to(editorUnit).y,
@@ -348,7 +359,7 @@ namespace obe::Editor
                         hoveredSprite = nullptr;
                         tooltip.clear();
                     }
-                }                      
+                }
             }
             else
             {
@@ -371,7 +382,7 @@ namespace obe::Editor
             //Collision Edition
             if (editMode->getSelectedItem() == "Collisions")
             {
-	            const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
+                const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
 
                 scene.enableShowCollision(true, true, true, true);
                 if (selectedMasterCollider != nullptr)
@@ -393,23 +404,23 @@ namespace obe::Editor
 
             //GUI Update
             infoLabel->setText(
-                "Cursor : (" 
-                + std::to_string(cursor.getX()) 
-                + ", " 
-                + std::to_string(cursor.getY()) 
-                + ")" 
-                + std::string("   Camera : (") 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)) 
-                + ", " 
+                "Cursor : ("
+                + std::to_string(cursor.getX())
+                + ", "
+                + std::to_string(cursor.getY())
+                + ")"
+                + std::string("   Camera : (")
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x))
+                + ", "
                 + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y))
-                + ")" 
-                + std::string("   Sum : (") 
+                + ")"
+                + std::string("   Sum : (")
                 + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
-                    + int(cursor.getX())) 
+                    + int(cursor.getX()))
                 + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
-                    + int(cursor.getY())) 
-                + ")" 
-                + std::string("   Layer : ") 
+                    + int(cursor.getY()))
+                + ")"
+                + std::string("   Layer : ")
                 + std::to_string(currentLayer)
             );
 
@@ -503,7 +514,7 @@ namespace obe::Editor
                 if (selectedHandlePoint != nullptr)
                     Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, sf::Color::Magenta);
                 pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
-                //Show Collision
+                                                                                                    //Show Collision
                 if (editMode->getSelectedItem() == "Collisions")
                     scene.enableShowCollision(true);
                 else

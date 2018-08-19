@@ -17,7 +17,7 @@ add_subdirectory(extlibs/kaguya)
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-find_package(SFML 2 REQUIRED graphics window system network audio)
+find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 find_package(OpenGL REQUIRED)
 add_subdirectory(extlibs/sfe)
 

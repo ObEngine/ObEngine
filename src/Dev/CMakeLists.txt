@@ -15,7 +15,6 @@ target_include_directories(ObEngineDev
   PRIVATE
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Dev>
-    $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
   $<BUILD_INTERFACE:${Qt5Core_INCLUDE_DIRS}>
   $<BUILD_INTERFACE:${Qt5Widgets_INCLUDE_DIRS}>
@@ -33,7 +32,7 @@ target_link_libraries(ObEngineDev Qt5::Core Qt5::Quick Qt5::Widgets)
 
 
 if(SFML_FOUND)
-  target_link_libraries(ObEngineDev ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+  target_link_libraries(ObEngineDev sfml-window)
 endif()
 
 target_link_libraries(ObEngineDev ${OPENGL_LIBRARIES})

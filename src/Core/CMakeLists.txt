@@ -9,10 +9,9 @@ add_library(ObEngineCore ${OBE_HEADERS} ${OBE_SOURCES})
 
 target_include_directories(ObEngineCore
   PUBLIC
-    $<INSTALL_INTERFACE:${CMAKE_SOURCE_DIR}/include/Core>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/Core>
+    $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
+    $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
   PRIVATE
-    $<BUILD_INTERFACE:${SFML_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 
@@ -34,7 +33,7 @@ if (UNIX)
 endif()
 
 if (SFML_FOUND)
-  target_link_libraries(ObEngineCore ${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+  target_link_libraries(ObEngineCore sfml-graphics sfml-audio sfml-system sfml-network)
 endif()
 
 target_link_libraries(ObEngineCore ${OPENGL_LIBRARIES})

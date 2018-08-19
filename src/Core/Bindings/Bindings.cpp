@@ -152,16 +152,16 @@ namespace obe::Bindings
                         [pluginPath, pluginName](kaguya::State* lua)
                     {
                         Plugins[pluginName] = dynamicLinker::dynamicLinker::make_new(pluginPath);
-                        auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("loadBindings");
+                        auto exposeFunction = Plugins[pluginName]->getFunction<void(kaguya::State*)>("LoadBindings");
                         try
                         {
                             Plugins[pluginName]->open();
                             exposeFunction.init();
                             exposeFunction(lua);
-                            Debug::Log->info("<Bindings:Plugin> : Loaded : {0}", pluginName);
+                            Debug::Log->info("<Bindings:Plugin> : Loaded : {}", pluginName);
                         }
-                        catch (const dynamicLinker::dynamicLinkerException&) {
-                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {0}", pluginName);
+                        catch (const dynamicLinker::dynamicLinkerException& e) {
+                            Debug::Log->warn("<Bindings:Plugin> : Unloadable Plugin : {} (Reason : {})", pluginName, e.what());
                         }
                     });
                 }
