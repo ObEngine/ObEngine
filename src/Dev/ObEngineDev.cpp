@@ -29,11 +29,8 @@
 #include <Utils/ExecUtils.hpp>
 
 #include <Types/Global.hpp>
-
-static obe::Types::Global<666, std::string> global_title("Test : ");
-static obe::Types::Global<0, int> global_a(3);
-static obe::Types::Global<1, int> global_b(55);
-static obe::Types::Global<2, double> global_c(3.5);
+#include "Utils/MathUtils.hpp"
+#include <Types/SynchronizeHelper.inl>
 
 void LoadErrors()
 {
@@ -44,8 +41,7 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    std::cout << Types::GetGlobal<666>().get() << Types::GetGlobal<0>() + Types::GetGlobal<1>() * Types::GetGlobal<2>() << std::endl;
-
+    Debug::Prrr.push_back(666);
 	QApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
@@ -82,6 +78,12 @@ int main(int argc, char** argv)
     Script::InitScriptEngine();
     Debug::Log->debug("<ObEngine> Loading NoTexture asset");
     Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
+
+    Debug::Log->info("Prr content : ");
+    for (auto& c : Debug::Prrr)
+    {
+        Debug::Log->error(" - {}", c);
+    }
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

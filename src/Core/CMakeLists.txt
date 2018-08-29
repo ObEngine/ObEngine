@@ -2,10 +2,16 @@ cmake_minimum_required(VERSION 3.6)
 
 project(ObEngineCore)
 
-file(GLOB_RECURSE OBE_HEADERS ${ObEngine_SOURCE_DIR}/include/Core/*.hpp)
+file(GLOB_RECURSE OBE_HEADERS 
+    ${ObEngine_SOURCE_DIR}/include/Core/*.hpp 
+    ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
 file(GLOB_RECURSE OBE_SOURCES ${ObEngine_SOURCE_DIR}/src/Core/*.cpp)
 
 add_library(ObEngineCore ${OBE_HEADERS} ${OBE_SOURCES})
+
+if (${BUILD_PLAYER} OR ${BUILD_DEV})
+    target_compile_definitions(ObEngineCore PUBLIC OBE_IS_NOT_PLUGIN)
+endif()
 
 target_include_directories(ObEngineCore
   PUBLIC

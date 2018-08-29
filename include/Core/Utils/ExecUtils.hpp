@@ -1,11 +1,13 @@
 #pragma once
 
 #include <string>
+#include "Types/Global.hpp"
 
 /**
 * \brief Some Classes and Functions to manipulate Engine Execution
 * @Bind
 */
+inline double global_rand;
 namespace obe::Utils::Exec
 {
     /**

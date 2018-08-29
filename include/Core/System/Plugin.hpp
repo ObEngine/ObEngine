@@ -44,7 +44,7 @@ namespace obe::System
         bool hasOnExit() const;
     };
 
-    static std::vector<std::unique_ptr<Plugin>> Plugins;
+    extern std::vector<std::unique_ptr<Plugin>> Plugins;
 
     template <class T>
     PluginFunction<T> getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName)

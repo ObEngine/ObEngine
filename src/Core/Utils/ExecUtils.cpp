@@ -1,11 +1,13 @@
 #include <algorithm>
 
 #include <Utils/ExecUtils.hpp>
+#include "Utils/MathUtils.hpp"
 
 namespace obe::Utils::Exec
 {
     RunArgsParser::RunArgsParser(int size, char** start)
     {
+        global_rand = (obe::Utils::Math::randfloat() * 10000.0);
         this->size = size;
         this->start = start;
     }

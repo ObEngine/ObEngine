@@ -24,7 +24,6 @@
 namespace obe::Bindings
 {
     BindingTree BindTree("Root");
-    std::unordered_map<std::string, std::shared_ptr<dynamicLinker::dynamicLinker>> Plugins;
 
     void Load(kaguya::State* lua, const std::string& lib)
     {
@@ -138,8 +137,10 @@ namespace obe::Bindings
 
     void IndexPluginsBindings()
     {
+        Debug::Log->error("INDEXING PLUGINS BINDINGS");
         for (auto& plugin : System::Plugins)
         {
+            Debug::Log->error("INDEXING PLUGINS BINDING {} ({})", plugin->getId(), plugin->hasOnLoadBindings());
             if (plugin->hasOnLoadBindings())
                 BindTree.add(plugin->getId(), [&plugin](kaguya::State* lua) { plugin->onLoadBindings(lua); });
         }
