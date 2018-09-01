@@ -32,6 +32,8 @@ namespace obe::Editor
 {
     void startEditor()
     {
+        System::MainWindow.init(System::WindowContext::EditorWindow);
+
         //qmlRegisterType<QSFMLCanvas>("QSFMLCanvas", 1, 0, "QSFMLCanvas");
         QQmlApplicationEngine engine;
         
@@ -139,7 +141,7 @@ namespace obe::Editor
 
         //GUI
         sf::Event event;
-        tgui::Gui gui(System::MainWindow);
+        tgui::Gui gui(System::MainWindow.getTarget());
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
         tgui::Panel::Ptr mainPanel = tgui::Panel::create();
         GUI::init();

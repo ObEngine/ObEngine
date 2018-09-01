@@ -90,7 +90,7 @@ namespace obe::Input
         /**
         * \brief Global list of all InputButtonMonitor
         */
-        extern std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
+        inline std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
         static bool RequireRefresh = false;
         /**
         * \brief Updates all the InputButtonMonitor

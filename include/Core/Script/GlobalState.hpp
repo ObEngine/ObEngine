@@ -7,7 +7,7 @@ namespace obe::Script
     /**
     * \brief Lua VM used everywhere in the code
     */
-    extern kaguya::State ScriptEngine;
+    inline kaguya::State ScriptEngine;
     /**
     * \brief Initialize the Lua VM
     */

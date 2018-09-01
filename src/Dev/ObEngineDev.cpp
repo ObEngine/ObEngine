@@ -28,9 +28,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
 
-#include <Types/Global.hpp>
 #include "Utils/MathUtils.hpp"
-#include <Types/SynchronizeHelper.inl>
 
 void LoadErrors()
 {
@@ -41,7 +39,6 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Debug::Prrr.push_back(666);
 	QApplication app(argc, argv);
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
@@ -78,12 +75,6 @@ int main(int argc, char** argv)
     Script::InitScriptEngine();
     Debug::Log->debug("<ObEngine> Loading NoTexture asset");
     Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
-
-    Debug::Log->info("Prr content : ");
-    for (auto& c : Debug::Prrr)
-    {
-        Debug::Log->error(" - {}", c);
-    }
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

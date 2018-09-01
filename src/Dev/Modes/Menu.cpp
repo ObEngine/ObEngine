@@ -17,6 +17,9 @@
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
+#include "System/Window.hpp"
+#include <thread>
+#include <wincon.h>
 
 namespace obe::Modes
 {

@@ -68,38 +68,38 @@ namespace obe::System
     void Cursor::setX(const unsigned int newx)
     {
         m_x = newx;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow);
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::setY(const unsigned int newy)
     {
         m_y = newy;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow);
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::setPosition(const unsigned int newx, const unsigned int newy)
     {
         m_x = newx;
         m_y = newy;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow);
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::show()
     {
         m_visible = true;
-        MainWindow.setMouseCursorVisible(true);
+        //MainWindow.setMouseCursorVisible(true);
     }
 
     void Cursor::hide()
     {
         m_visible = false;
-        MainWindow.setMouseCursorVisible(false);
+        //MainWindow.setMouseCursorVisible(false);
     }
 
     void Cursor::setVisible(const bool visible)
     {
         m_visible = visible;
-        MainWindow.setMouseCursorVisible(visible);
+        //MainWindow.setMouseCursorVisible(visible);
     }
 
     bool Cursor::isVisible() const
@@ -114,7 +114,7 @@ namespace obe::System
 
     void Cursor::update()
     {
-        const sf::Vector2i mousePos = sf::Mouse::getPosition(MainWindow);
+        const sf::Vector2i mousePos = sf::Mouse::getPosition(MainWindow.getWindow());
         m_x = mousePos.x;
         m_y = mousePos.y;
         if (mousePos != m_saveOldPos)

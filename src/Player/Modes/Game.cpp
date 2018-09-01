@@ -18,7 +18,7 @@ namespace obe::Modes
     void startGame()
     {
         //Creating Window
-        System::InitWindow(System::WindowContext::GameWindow);
+        System::MainWindow.init(System::WindowContext::GameWindow);
 
         //Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
