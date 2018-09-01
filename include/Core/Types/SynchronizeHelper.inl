@@ -3,22 +3,24 @@
 #include <Types/Global.hpp>
 
 #include <Utils/ExecUtils.hpp>
-#include <Debug/Logger.hpp>
 
-namespace obe::Globals
-{
-    namespace Debug
-    {
-        inline Types::Global<0, std::shared_ptr<spdlog::logger>> Log(GLOBE_GET(obe::Debug::Log));
-        inline Types::Global<1, std::vector<int>> Prrr(GLOBE_GET(obe::Debug::Prrr));
-        //static Types::Global<2, int> null_int(nullptr);
-    }
-}
+#include <Bindings/Bindings.hpp>
+#include <Debug/Logger.hpp>
+#include <Graphics/DrawUtils.hpp>
+#include <Input/InputButtonMonitor.hpp>
+#include <Input/KeyList.hpp>
+#include <Script/GlobalState.hpp>
+#include <System/Config.hpp>
+#include <System/Window.hpp>
 
 namespace obe::Types
 {
     namespace Globals
     {
+        /*int gl_a;
+        double gl_b;
+        Global<0, int> a(&gl_a);
+        Global<1, double> b(&gl_b);*/
         struct SynchronizeHelper
         {
             Globals::GlobalMap* tmp_globals;

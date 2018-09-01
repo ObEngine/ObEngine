@@ -23,8 +23,6 @@
 
 namespace obe::Bindings
 {
-    BindingTree BindTree("Root");
-
     void Load(kaguya::State* lua, const std::string& lib)
     {
         const std::vector<std::string> splittedLibPath = Utils::String::split(lib, ".");

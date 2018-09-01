@@ -7,8 +7,6 @@
 
 namespace obe::System
 {
-    sf::RenderWindow MainWindow;
-
     void InitWindow(const WindowContext context)
     {
         vili::ViliParser windowConfig;

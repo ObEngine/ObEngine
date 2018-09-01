@@ -4,10 +4,12 @@
 #include <unordered_map>
 
 #include <Input/InputButton.hpp>
+#include <Config.hpp>
+#include <Types/Global.hpp>
 
 namespace obe::Input
 {
-    extern std::unordered_map<std::string, std::unique_ptr<InputButton>> AllKeys;
+    GLOBE(5, AllKeys, std::unordered_map<std::string COMMA std::unique_ptr<InputButton>>);
     /**
      * \brief Initialize the list of all the keys
      */

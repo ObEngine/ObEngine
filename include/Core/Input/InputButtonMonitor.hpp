@@ -5,6 +5,8 @@
 
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
+#include <Config.hpp>
+#include <Types/Global.hpp>
 
 namespace obe::Input
 {
@@ -90,7 +92,7 @@ namespace obe::Input
         /**
         * \brief Global list of all InputButtonMonitor
         */
-        extern std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
+        GLOBE(4, Monitors, std::vector<std::unique_ptr<InputButtonMonitor>>)
         static bool RequireRefresh = false;
         /**
         * \brief Updates all the InputButtonMonitor

@@ -13,15 +13,18 @@ namespace obe::Types
 {
     namespace Globals
     {
-        constexpr size_t MaxGlobals = 3;
-        using GlobalMap = std::array<void*, MaxGlobals>;
-        inline GlobalMap Index;
-        void Synchronize(Globals::GlobalMap* OtherIndex);
+        struct GlobalMap
+        {
+            
+        };
+        void Synchronize(GlobalMap* OtherIndex);
     }
 
     template<int N> struct tag {};
 
-    template<typename T, int N>
+    class TypeDecl{};
+
+    template <typename T, int N>
     class TypeStorage
     {
         friend auto TypeDecl(tag<N>) { return T{}; }
@@ -32,10 +35,12 @@ namespace obe::Types
     class Global
     {
     private:
-        T* GLOBE_SYM _ref;
+        T* _ref = nullptr;
+        T** _plugin_ref = nullptr;
     public:
         Types::TypeStorage<T, id> TagType;
-        Global(T* GLOBE_SYM ref);
+        Global(T* ref);
+        Global(T** plugin_ref);
         operator T&();
         T& get();
         void reset(T* ptr);
@@ -52,11 +57,20 @@ namespace obe::Types
     
 
     template <unsigned short id, class T>
-    Global<id, T>::Global(T* GLOBE_SYM ref)
+    Global<id, T>::Global(T* ref)
     {
         std::cout << "Creating Global " << id << " with ptr " << ref << std::endl;
         _ref = ref;
         std::cout << "Creating global on " << static_cast<void*>(this) << " underlying " << static_cast<void*>(_ref) << std::endl;
+        Globals::Index[id] = this;
+    }
+
+    template <unsigned short id, class T>
+    Global<id, T>::Global(T** plugin_ref)
+    {
+        std::cout << "Creating Global (PREF) " << id << " with ptr " << plugin_ref << std::endl;
+        _plugin_ref = plugin_ref;
+        std::cout << "Creating global (PREF) on " << static_cast<void*>(this) << " underlying " << static_cast<void*>(_plugin_ref) << std::endl;
         Globals::Index[id] = this;
     }
 
@@ -79,7 +93,8 @@ namespace obe::Types
     {
         std::cout << "Resetting value on " << static_cast<void*>(this) << " underlying " << static_cast<void*>(_ref) << std::endl;
         std::cout << "RESET VALUE FROM " << _ref << " TO " << ptr << std::endl;
-        GLOBE_SYM _ref = ptr;
+        _ref = ptr;
+        *_plugin_ref = ptr;
     }
 
     template <unsigned short id, class T>
@@ -94,7 +109,7 @@ namespace obe::Types
     T* Global<id, T>::ptr()
     {
         std::cout << "Accessing ptr on " << static_cast<void*>(this) << " underlying " << static_cast<void*>(_ref) << std::endl;
-        return GLOBE_SYM _ref; // Problem here
+        return _ref; // Problem here
     }
 
     template <unsigned short id>
@@ -108,23 +123,5 @@ namespace obe::Types
     {
         std::cout << "Size of remote : " << OtherGlobals->size() << std::endl;
         return *static_cast<Global<id, decltype(TypeDecl(tag<id>{}))>*>(OtherGlobals->at(id));
-    }
-
-    namespace Globals
-    {
-        template <unsigned short I> struct int_ {};
-
-        template <unsigned short I, unsigned short N>
-        struct Loop {
-            template <class F>
-            static void run(F f) {
-                f(int_<I>()); // pass an templated struct to the eval method
-                std::cout << "Synchronizing index " << I << std::endl;
-                Loop<I + 1, N>::run(f);
-            }
-        };
-
-        template <unsigned short N>
-        struct Loop<N, N> { template <class F> static void run(F) {} };
     }
 }

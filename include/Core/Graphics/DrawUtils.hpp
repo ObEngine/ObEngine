@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <Config.hpp>
+#include <Types/Global.hpp>
 
 /**
 * \brief Some useful Graphics functions.
@@ -44,5 +46,5 @@ namespace obe::Graphics::Utils
     */
     void drawPolygon(std::vector<sf::Vector2i>& points, DrawPolygonOptions options);
 
-    extern sf::Color ClearColor;
+    GLOBE(3, ClearColor, sf::Color, sf::Color::Black)
 }

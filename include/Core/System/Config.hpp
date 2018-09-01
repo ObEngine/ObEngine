@@ -2,8 +2,11 @@
 
 #include <vili/ViliParser.hpp>
 
+#include <Config.hpp>
+#include <Types/Global.hpp>
+
 namespace obe::System
 {
-    extern vili::ViliParser Config;
+    GLOBE(7, Config, vili::ViliParser);
     void InitConfiguration();
 }

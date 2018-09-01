@@ -4,6 +4,9 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <Config.hpp>
+#include <Types/Global.hpp>
+
 namespace obe::System
 {
     enum class WindowContext
@@ -12,7 +15,7 @@ namespace obe::System
         EditorWindow
     };
 
-    extern sf::RenderWindow MainWindow;
+    GLOBE(8, MainWindow, sf::RenderWindow);
 
     void InitWindow(WindowContext context);
     void setTitle(const std::string& title);

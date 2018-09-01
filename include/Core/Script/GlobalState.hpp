@@ -2,12 +2,15 @@
 
 #include <kaguya/kaguya.hpp>
 
+#include <Config.hpp>
+#include <Types/Global.hpp>
+
 namespace obe::Script
 {
     /**
     * \brief Lua VM used everywhere in the code
     */
-    extern kaguya::State ScriptEngine;
+    GLOBE(6, ScriptEngine, kaguya::State);
     /**
     * \brief Initialize the Lua VM
     */

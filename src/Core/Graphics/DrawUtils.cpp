@@ -60,6 +60,4 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
             }
         }
     }
-
-    sf::Color ClearColor = sf::Color::Black; // <REVISION> Move to Window.hpp ?
 }

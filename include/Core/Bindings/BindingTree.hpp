@@ -6,6 +6,7 @@
 #include <kaguya/kaguya.hpp>
 
 #include <Types/Identifiable.hpp>
+#include <Types/Global.hpp>
 
 namespace obe::Bindings
 {
@@ -24,6 +25,7 @@ namespace obe::Bindings
 
         std::string getNodePath() const;
     public:
+        BindingTree() : Identifiable(""), m_parent(nullptr) {};
         /**
         * \brief Builds a BindingTree Node with a lib
         * \param parent Parent of the BindingTree Node

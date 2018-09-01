@@ -9,12 +9,17 @@
 
 #include <dynamicLinker/dynamicLinker.hpp> // DON'T FUCKING MOVE THIS
 
+#include <Config.hpp>
+#include <Types/Global.hpp>
+
 /**
 * \brief Bind C++ Classes and Functions to Lua VMs
 */
 namespace obe::Bindings
 {
-    extern BindingTree BindTree;
+    GLOBE(0, BindTree, BindingTree);
+    //GLOBE(0, HELLO_GLOBALS, int);
+    //inline BindingTree BindTree("Root");
 
     /**
     * \brief Loads a Library in the Lua VM

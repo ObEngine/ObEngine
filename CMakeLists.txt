@@ -4,6 +4,7 @@ project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
+add_subdirectory(extlibs/boost)
 add_subdirectory(extlibs/catch)
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/vili)

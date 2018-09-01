@@ -21,6 +21,7 @@ target_include_directories(ObEngineCore
     $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 
+target_link_libraries(ObEngineCore boost.preprocessor)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
 target_link_libraries(ObEngineCore sfe)
