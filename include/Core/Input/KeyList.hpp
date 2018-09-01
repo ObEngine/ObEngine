@@ -7,7 +7,7 @@
 
 namespace obe::Input
 {
-    extern std::unordered_map<std::string, std::unique_ptr<InputButton>> AllKeys;
+    inline std::unordered_map<std::string, std::unique_ptr<InputButton>> AllKeys;
     /**
      * \brief Initialize the list of all the keys
      */

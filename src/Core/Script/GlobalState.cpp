@@ -5,8 +5,6 @@
 
 namespace obe::Script
 {
-    kaguya::State ScriptEngine;
-
     void InitScriptEngine()
     {
         System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);

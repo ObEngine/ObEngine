@@ -76,8 +76,6 @@ namespace obe::Input
 
     namespace Monitors
     {
-        std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
-
         void UpdateMonitors()
         {
             RequireRefresh = false;

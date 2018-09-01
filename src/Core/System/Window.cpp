@@ -7,9 +7,7 @@
 
 namespace obe::System
 {
-    sf::RenderWindow MainWindow;
-
-    void InitWindow(const WindowContext context)
+    void Window::init(const WindowContext context)
     {
         vili::ViliParser windowConfig;
         std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
@@ -39,22 +37,32 @@ namespace obe::System
             throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
         }
 
-        if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
-            width = wconf->getDataNode("width").get<int>();
-        else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
+        if (wconf->contains("width"))
         {
-            if (wconf->getDataNode("width").get<std::string>() == "Fill")
-                width = Transform::UnitVector::Screen.w;
-        }
-        if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
-            height = wconf->getDataNode("height").get<int>();
-        else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
-        {
-            if (wconf->getDataNode("height").get<std::string>() == "Fill")
+            if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
+                width = wconf->getDataNode("width").get<int>();
+            else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
             {
-                height = Transform::UnitVector::Screen.h;
+                if (wconf->getDataNode("width").get<std::string>() == "Fill")
+                    width = Transform::UnitVector::Screen.w;
             }
         }
+        else
+            width = Transform::UnitVector::Screen.w;
+        if (wconf->contains("height"))
+        {
+            if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
+                height = wconf->getDataNode("height").get<int>();
+            else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
+            {
+                if (wconf->getDataNode("height").get<std::string>() == "Fill")
+                {
+                    height = Transform::UnitVector::Screen.h;
+                }
+            }
+        }
+        else
+            height = Transform::UnitVector::Screen.h;
 
         int wStyle = sf::Style::None;
         bool fullscreen = true;
@@ -70,6 +78,8 @@ namespace obe::System
             resizeable = wconf->getDataNode("resizeable").get<bool>();
         if (wconf->contains("titlebar"))
             titlebar = wconf->getDataNode("titlebar").get<bool>();
+        if (context == WindowContext::EditorWindow && wconf->contains("docked"))
+            m_docked = wconf->getDataNode("docked").get<bool>();
 
         if (fullscreen)
             wStyle = sf::Style::Fullscreen;
@@ -87,17 +97,127 @@ namespace obe::System
         if (wconf->contains("title"))
             title = wconf->getDataNode("title").get<std::string>();
 
-        System::MainWindow.create(sf::VideoMode(width, height), title, wStyle);
-        System::MainWindow.setKeyRepeatEnabled(false);
+        if (m_docked)
+        {
+            m_surface.create(1, 1);
+        }
+        else
+        {
+            m_window.create(sf::VideoMode(width, height), title, wStyle);
+            m_window.setKeyRepeatEnabled(false);
+        }
     }
 
-    void setTitle(const std::string& title)
+    void Window::clear(const sf::Color& color)
     {
-        System::MainWindow.setTitle(title);
+        if (!m_docked)
+            m_window.clear(color);
+        else
+            m_surface.clear();
     }
 
-    void setSize(const unsigned int width, const unsigned int height)
+    void Window::close()
     {
-        System::MainWindow.setSize(sf::Vector2u(width, height));
+        if (!m_docked)
+            m_window.close();
+    }
+
+    void Window::display()
+    {
+        if (!m_docked)
+            m_window.display();
+        else
+            m_surface.display();
+    }
+
+    void Window::draw(const sf::Drawable& drawable, const sf::RenderStates& states)
+    {
+        if (!m_docked)
+            m_window.draw(drawable, states);
+        else
+            m_surface.draw(drawable, states);
+    }
+
+    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
+        const sf::RenderStates& states)
+    {
+        if (!m_docked)
+            m_window.draw(vertices, vertexCount, type, states);
+        else
+            m_surface.draw(vertices, vertexCount, type, states);
+    }
+
+    sf::Vector2u Window::getSize() const
+    {
+        if (!m_docked)
+            return m_window.getSize();
+        else
+            m_surface.getSize();
+    }
+
+    bool Window::isOpen() const
+    {
+        if (!m_docked)
+            return m_window.isOpen();
+        else
+            return true;
+    }
+
+    bool Window::pollEvent(sf::Event& event)
+    {
+        if (!m_docked)
+            return m_window.pollEvent(event);
+        else
+            return true;
+    }
+
+    void Window::setTitle(const std::string& title)
+    {
+        
+        if (!m_docked)
+            m_window.setTitle(title);
+    }
+
+    void Window::setVerticalSyncEnabled(bool enabled)
+    {
+        if (!m_docked)
+            m_window.setVerticalSyncEnabled(enabled);
+    }
+
+    void Window::setView(const sf::View& view)
+    {
+        if (!m_docked)
+            m_window.setView(view);
+        else
+            m_surface.setView(view);
+    }
+
+    sf::RenderTarget& Window::getTarget()
+    {
+        if (m_docked)
+            return m_surface;
+        else
+            return m_window;
+    }
+
+    sf::RenderWindow& Window::getWindow()
+    {
+        return m_window;
+    }
+
+    sf::RenderTexture& Window::getTexture()
+    {
+        return m_surface;
+    }
+
+    void Window::setSize(const unsigned int width, const unsigned int height)
+    {
+        Transform::UnitVector::Screen.w = width;
+        Transform::UnitVector::Screen.h = height;
+        if (!m_docked)
+            m_window.setSize(sf::Vector2u(width, height));
+        else
+            m_surface.create(width, height);
+        this->setView(sf::View(sf::FloatRect(0, 0, width, height)));
     }
 }

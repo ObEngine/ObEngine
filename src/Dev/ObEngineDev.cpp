@@ -2,17 +2,11 @@
 #include <iostream>
 
 #include <vili/Vili.hpp>
-#include <QApplication>
-#include <QGuiApplication>
-#include <QQuickStyle>
-#include <QStandardPaths>
 
 #include <SFML/Window/VideoMode.hpp>
 
-#include <Backend/Backend.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Debug/Logger.hpp>
-#include <Editor/Editor.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Graphics/ResourceManager.hpp>
@@ -28,9 +22,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
 
-#include <Types/Global.hpp>
 #include "Utils/MathUtils.hpp"
-#include <Types/SynchronizeHelper.inl>
 
 void LoadErrors()
 {
@@ -41,12 +33,6 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Debug::Prrr.push_back(666);
-	QApplication app(argc, argv);
-	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QQuickStyle::setStyle("Material");
-    Backend::RegisterTypes();
-
     Utils::Exec::RunArgsParser runParser(argc, argv);
 	const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
@@ -78,12 +64,6 @@ int main(int argc, char** argv)
     Script::InitScriptEngine();
     Debug::Log->debug("<ObEngine> Loading NoTexture asset");
     Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
-
-    Debug::Log->info("Prr content : ");
-    for (auto& c : Debug::Prrr)
-    {
-        Debug::Log->error(" - {}", c);
-    }
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

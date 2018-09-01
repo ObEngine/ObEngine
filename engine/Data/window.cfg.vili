@@ -11,3 +11,4 @@ Editor:
     resizeable:True
     width:"Fill"
     height:"Fill"
+    docked:False

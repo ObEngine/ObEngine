@@ -29,7 +29,7 @@ namespace obe::Editor
     void editMap(const std::string& mapName)
     {
         //Creating Window
-        System::InitWindow(System::WindowContext::EditorWindow);
+        System::MainWindow.init(System::WindowContext::EditorWindow);
 
         //Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
@@ -128,7 +128,7 @@ namespace obe::Editor
 
         //GUI
         sf::Event event;
-        tgui::Gui gui(System::MainWindow);
+        tgui::Gui gui(System::MainWindow.getTarget());
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
         tgui::Panel::Ptr mainPanel = tgui::Panel::create();
         GUI::init();

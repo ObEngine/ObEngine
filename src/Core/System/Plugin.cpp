@@ -1,10 +1,12 @@
+#include <Debug/Logger.hpp>
+#include <Script/GlobalState.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Path.hpp>
 #include <System/Plugin.hpp>
+#include <Utils/FileUtils.hpp>
 #include <Utils/StringUtils.hpp>
-#include "Script/GlobalState.hpp"
+
 #include <kaguya/kaguya.hpp>
-#include "Types/Global.hpp"
 
 namespace obe::System
 {
@@ -31,7 +33,6 @@ namespace obe::System
     Plugin::Plugin(const std::string& id, const std::string& path) :
         Types::Identifiable(id)
     {
-        std::cout << "Size BEFORE " << id << " : " << Types::Globals::Index.size() << std::endl;
         m_hasOnInitFn = false;
         m_hasOnLoadBindingsFn = false;
         m_hasOnUpdateFn = false;
@@ -46,16 +47,6 @@ namespace obe::System
         catch (const dynamicLinker::dynamicLinkerException& e) 
         {
             Debug::Log->warn("<System:Plugin> : Unloadable Plugin : '{}' (Reason : {})", id, e.what());
-        }
-        try
-        {
-            auto sync = getPluginFunction<void(Types::Globals::GlobalMap*)>(m_dl, "Synchronize");
-            sync->init();
-            sync->operator()(&Types::Globals::Index);
-        }
-        catch (const dynamicLinker::dynamicLinkerException& e)
-        {
-            Debug::Log->warn("<System:Plugins> Warning ! Can't find <Synchronize> function for plugin '{}'", id);
         }
         try
         {
@@ -100,7 +91,6 @@ namespace obe::System
         catch (const dynamicLinker::dynamicLinkerException& e) {}
         
         Debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
-        std::cout << "Size AFTER " << id << " : " << Types::Globals::Index.size() << std::endl;
     }
 
     void Plugin::onLoadBindings(kaguya::State* lua) const

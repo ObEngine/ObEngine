@@ -16,8 +16,6 @@ target_include_directories(ObEngineDev
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Dev>
     $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
-  $<BUILD_INTERFACE:${Qt5Core_INCLUDE_DIRS}>
-  $<BUILD_INTERFACE:${Qt5Widgets_INCLUDE_DIRS}>
 )
 
 target_link_libraries(ObEngineDev ObEngineCore)
@@ -28,8 +26,6 @@ target_link_libraries(ObEngineDev sfe)
 target_link_libraries(ObEngineDev TGUI)
 target_link_libraries(ObEngineDev vili)
 target_link_libraries(ObEngineDev dynamicLinker)
-target_link_libraries(ObEngineDev Qt5::Core Qt5::Quick Qt5::Widgets Qt5::QuickControls2)
-
 
 if(SFML_FOUND)
   target_link_libraries(ObEngineDev sfml-window)

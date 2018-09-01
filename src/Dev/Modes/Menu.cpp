@@ -1,14 +1,6 @@
 #include <TGUI/TGUI.hpp>
-#include <QWindow>
-#include <QCoreApplication>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QObject>
 #include <vili/Vili.hpp>
 
-#include <Backend/MenuBackend.hpp>
-#include <Backend/SFMLRenderWidget.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
@@ -17,6 +9,9 @@
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
+#include "System/Window.hpp"
+#include <thread>
+#include <wincon.h>
 
 namespace obe::Modes
 {
@@ -242,31 +237,7 @@ namespace obe::Modes
 
 	void startDevMenu()
     {
-		{
-			QQmlApplicationEngine engine;
-			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
-			if (engine.rootObjects().isEmpty())
-				throw aube::ErrorHandler::Raise("obe.Menu.QtError");
-
-			QGuiApplication::exec();
-		}
-
-        /*if (backend.getAction() == Backend::MenuCode::Play)
-        {
-            Modes::startGame();
-        }
-        else if (backend.getAction() == Backend::MenuCode::Edit)
-        {
-            const std::string editMapName = chooseMapMenu();
-            if (editMapName != "")
-                Editor::editMap(editMapName);   
-        }
-        else if (backend.getAction() == Backend::MenuCode::Toolkit)
-        {
-            Modes::startToolkitMode();
-        }*/
-
-        /*sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
+        sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 
         tgui::Gui gui(window);
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -417,6 +388,6 @@ namespace obe::Modes
             window.clear();
             gui.draw();
             window.display();
-        }*/
+        }
     }
 }

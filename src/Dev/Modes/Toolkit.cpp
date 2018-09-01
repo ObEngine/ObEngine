@@ -1,61 +1,24 @@
 #include <kaguya/kaguya.hpp>
-#include <QWindow>
-#include <QCoreApplication>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QObject>
 #include <ErrorHandler.hpp>
 
 #include <Bindings/Bindings.hpp>
 #include <Modes/Toolkit.hpp>
 #include <Utils/StringUtils.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include "TGUI/Gui.hpp"
+#include "TGUI/Loading/Theme.hpp"
+#include "TGUI/Widgets/Panel.hpp"
+#include "Modes/ToolkitContentBox.hpp"
+#include "TGUI/Widgets/Label.hpp"
+#include "TGUI/Widgets/Button.hpp"
+#include "TGUI/Widgets/EditBox.hpp"
 
 namespace obe::Modes
 {
-	class ToolkitBackend : public QObject
-	{
-		Q_OBJECT
-		private:
-			QQmlApplicationEngine* m_engine;
-			void closeWindow() const;
-		public:
-			void setEngine(QQmlApplicationEngine* engine);
-			Q_INVOKABLE void execute(const std::string& code);
-	};
-
-	void ToolkitBackend::closeWindow() const
-	{
-		QWindow* mainWindow = dynamic_cast<QWindow*>(m_engine->rootObjects().first());
-		std::cout << mainWindow->geometry().width() << std::endl;
-		mainWindow->close();
-	}
-
-	void ToolkitBackend::setEngine(QQmlApplicationEngine* engine)
-	{
-		m_engine = engine;
-	}
-
-	void ToolkitBackend::execute(const std::string& code)
-	{
-	}
-
 	void startToolkitMode()
     {
-		ToolkitBackend backend;
-		{
-			QQmlApplicationEngine engine;
-			backend.setEngine(&engine);
-			engine.rootContext()->setContextProperty("MenuBackend", &backend);
-			engine.rootContext()->setContextProperty("load_source", "Toolkit.qml");
-			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
-			if (engine.rootObjects().isEmpty())
-				throw aube::ErrorHandler::Raise("obe.Menu.QtError");
-
-			QGuiApplication::exec();
-		}
-
-        /*bool continueToolkit = true;
+        bool continueToolkit = true;
         std::vector<std::string> commandHistory;
         unsigned commandHistoryIndex = 0;
         sf::RenderWindow window({636, 636}, "ObEngine Toolkit", sf::Style::None);
@@ -236,8 +199,6 @@ namespace obe::Modes
             window.clear();
             gui.draw();
             window.display();
-        }*/
+        }
     }
 }
-
-#include "Toolkit.moc"

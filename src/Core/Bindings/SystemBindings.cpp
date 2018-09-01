@@ -6,6 +6,10 @@
 #include <System/Workspace.hpp>
 #include <Transform/UnitVector.hpp>
 #include <System/Window.hpp>
+#include <kaguya/metatable.hpp>
+#include <Script/GlobalState.hpp>
+#include "System/MountablePath.hpp"
+#include <SFML/Graphics/Font.hpp>
 
 namespace obe::Bindings::SystemBindings
 {
@@ -133,8 +137,12 @@ namespace obe::Bindings::SystemBindings
 
     void LoadWindow(kaguya::State* lua)
     {
-        (*lua)["obe"]["Window"] = kaguya::NewTable();
-        (*lua)["obe"]["Window"]["setTitle"] = kaguya::function(System::setTitle);
-        (*lua)["obe"]["Window"]["setSize"] = kaguya::function(System::setSize);
+        (*lua)["obe"]["Window"].setClass(kaguya::UserdataMetatable<System::Window>()
+            .setConstructors<System::Window()>()
+            .addFunction("init", &System::Window::init)
+            .addFunction("setSize", &System::Window::setSize)
+            .addFunction("setTitle", &System::Window::setTitle)
+            .addFunction("setView", &System::Window::setView)
+        );
     }
 }
