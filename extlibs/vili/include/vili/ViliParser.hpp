@@ -21,7 +21,7 @@ namespace vili
         unsigned int m_spacing = 4;
         std::vector<std::string> m_includes;
         ComplexNode& getPath(std::string path) const;
-        ComplexNode& getRootChild(std::string child) const;
+        ComplexNode& getRootChild(const std::string& child) const;
         bool checkQuickLookMatches(const std::string& attributePath);
     public:
         /**

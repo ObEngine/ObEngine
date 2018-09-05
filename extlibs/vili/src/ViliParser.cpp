@@ -13,7 +13,7 @@ namespace
 
         for (;;)
         {
-            int c = sb->sbumpc();
+            const int c = sb->sbumpc();
             switch (c)
             {
             case '\n':
@@ -30,18 +30,6 @@ namespace
                 t += static_cast<char>(c);
             }
         }
-    }
-
-    std::string Path()
-    {
-        return "";
-    }
-
-    std::string Path(std::string cPath)
-    {
-        if (cPath.size() > 0 && vili::Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
-            cPath = vili::Functions::String::extract(cPath, 0, 1);
-        return cPath;
     }
 
     std::string Path(const std::vector<std::string>& path)
@@ -80,7 +68,7 @@ namespace vili
 
     ComplexNode& ViliParser::root() const
     {
-        return *m_root.get();
+        return *m_root;
     }
 
     void ViliParser::addFlag(const std::string& flag)
@@ -90,7 +78,7 @@ namespace vili
 
     bool ViliParser::hasFlag(const std::string& flagName) const
     {
-        return find(m_flagList.begin(), m_flagList.end(), flagName) != m_flagList.end();
+        return std::find(m_flagList.begin(), m_flagList.end(), flagName) != m_flagList.end();
     }
 
     std::vector<std::string> ViliParser::getAllFlags() const
@@ -100,7 +88,7 @@ namespace vili
 
     ComplexNode& ViliParser::getPath(std::string path) const
     {
-        if (path.size() > 0 && Functions::String::extract(path, path.size() - 1, 0) == "/")
+        if (!path.empty() && Functions::String::extract(path, path.size() - 1, 0) == "/")
             path = Functions::String::extract(path, 0, 1);
         if (Functions::String::occurencesInString(path, "/") > 0)
         {
@@ -111,10 +99,10 @@ namespace vili
         return getRootChild(path);
     }
 
-    ComplexNode& ViliParser::getRootChild(std::string child) const
+    ComplexNode& ViliParser::getRootChild(const std::string& child) const
     {
         if (child.empty())
-            return *m_root.get();
+            return *m_root;
         return m_root->getComplexNode(child);
     }
 
@@ -126,7 +114,7 @@ namespace vili
     ComplexNode& ViliParser::at(const std::string& cPath) const
     {
         std::string path = cPath;
-        if (cPath.size() > 0 && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
+        if (!cPath.empty() && Functions::String::extract(cPath, cPath.size() - 1, 0) == "/")
             path = Functions::String::extract(cPath, 0, 1);
         return getPath(path);
     }
@@ -173,7 +161,7 @@ namespace vili
                 }
                 Functions::String::replaceStringInPlace(rawLine, std::string(m_spacing, ' '), "");
                 std::vector<std::string> parsedLines;
-                std::string addParsedLine = "";
+                std::string addParsedLine;
                 for (int i = 0; i < std::get<2>(stringsInLine).size(); i++)
                 {
                     if (std::get<2>(stringsInLine)[i].first == 0)
@@ -212,7 +200,7 @@ namespace vili
                 parsedLines.push_back(addParsedLine);
                 for (const std::string& parsedLine : parsedLines)
                 {
-                    while (!parsedLine.empty() && currentIndent < addPath.size() && addPath.size() > 0)
+                    while (!parsedLine.empty() && currentIndent < addPath.size() && !addPath.empty())
                     {
                         if (this->checkQuickLookMatches(getPath(Path(addPath)).getRawNodePath()))
                             return true;
@@ -254,7 +242,7 @@ namespace vili
                             }
                             else if (instructionType == "Spacing")
                             {
-                                m_spacing = stoi(instructionValue);
+                                m_spacing = std::stoi(instructionValue);
                                 if (verbose) std::cout << indenter() << "Define New Spacing : " << m_spacing << std::endl;
                             }
                             else if (instructionType == "Include")
@@ -395,7 +383,7 @@ namespace vili
                         else if (curList != "None")
                         {
                             std::string attributeValue = parsedLine;
-                            DataType attributeType = Types::getVarType(attributeValue);
+                            const DataType attributeType = Types::getVarType(attributeValue);
                             if (verbose)
                                 std::cout << indenter() << "Create Element #" << getPath(Path(addPath)).getArrayNode(curList).size()
                                     << "(" << attributeValue << ") of ListAttribute " << curList << std::endl;
@@ -406,20 +394,20 @@ namespace vili
                             }
                             else if (attributeType == DataType::Int)
                             {
-                                getPath(Path(addPath)).getArrayNode(curList).push(stoi(attributeValue));
+                                getPath(Path(addPath)).getArrayNode(curList).push(std::stoi(attributeValue));
                             }
                             else if (attributeType == DataType::Float)
                             {
-                                getPath(Path(addPath)).getArrayNode(curList).push(stod(attributeValue));
+                                getPath(Path(addPath)).getArrayNode(curList).push(std::stod(attributeValue));
                             }
                             else if (attributeType == DataType::Bool)
                             {
-                                getPath(Path(addPath)).getArrayNode(curList).push(((attributeValue == "True") ? true : false));
+                                getPath(Path(addPath)).getArrayNode(curList).push((attributeValue == "True"));
                             }
                             else if (attributeType == DataType::Range)
                             {
-                                int rStart = stoi(Functions::String::split(attributeValue, "..")[0]);
-                                int rEnd = stoi(Functions::String::split(attributeValue, "..")[1]);
+                                int rStart = std::stoi(Functions::String::split(attributeValue, "..")[0]);
+                                int rEnd = std::stoi(Functions::String::split(attributeValue, "..")[1]);
                                 int step = 1;
                                 if (rStart > rEnd)
                                     step = -1;
@@ -478,6 +466,7 @@ namespace vili
                             }
                         }
                         std::vector<DataType> requiredConstraintTypes;
+                        requiredConstraintTypes.reserve(requiredTypes.size());
                         for (std::string& reqType : requiredTypes)
                         {
                             requiredConstraintTypes.push_back(Types::stringToDataType(reqType));
@@ -531,7 +520,7 @@ namespace vili
             outFile << "Include (" << include << ");" << std::endl;
             if (verbose) std::cout << "        Add New Include : " << include << std::endl;
         }
-        if (verbose && m_flagList.size() > 0) std::cout << "    Writing Flags..." << std::endl;
+        if (verbose && !m_flagList.empty()) std::cout << "    Writing Flags..." << std::endl;
         for (const std::string& flag : m_flagList)
         {
             outFile << "Flag (" << flag << ");" << std::endl;
@@ -539,13 +528,13 @@ namespace vili
         }
 
 
-        if (m_flagList.size() > 0 || m_spacing != 4 || m_includes.size() > 0) outFile << std::endl;
-        std::string writeSpacing = "";
+        if (!m_flagList.empty() || m_spacing != 4 || !m_includes.empty()) outFile << std::endl;
+        std::string writeSpacing;
         for (unsigned int i = 0; i < m_spacing; i++)
             writeSpacing += " ";
         m_root->write(&outFile, writeSpacing);
 
-        if (m_templateList.size() > 0)
+        if (!m_templateList.empty())
             outFile << std::endl;
 
         for (auto& templatePair : m_templateList)
