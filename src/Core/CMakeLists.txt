@@ -17,8 +17,6 @@ target_include_directories(ObEngineCore
   PUBLIC
     $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
-  PRIVATE
-    $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 
 target_link_libraries(ObEngineCore elzip)
@@ -41,8 +39,6 @@ endif()
 if (SFML_FOUND)
   target_link_libraries(ObEngineCore sfml-graphics sfml-audio sfml-system sfml-network)
 endif()
-
-target_link_libraries(ObEngineCore ${OPENGL_LIBRARIES})
 
 set(_inc_root_path ${ObEngine_SOURCE_DIR}/include/Core)
 set(_src_root_path ${ObEngine_SOURCE_DIR}/src/Core)

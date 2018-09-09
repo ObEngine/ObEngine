@@ -15,7 +15,6 @@ target_include_directories(ObEngineDev
   PRIVATE
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Dev>
-    $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 
 target_link_libraries(ObEngineDev ObEngineCore)
@@ -30,8 +29,6 @@ target_link_libraries(ObEngineDev dynamicLinker)
 if(SFML_FOUND)
   target_link_libraries(ObEngineDev sfml-window)
 endif()
-
-target_link_libraries(ObEngineDev ${OPENGL_LIBRARIES})
 
 if (UNIX)
     target_link_libraries(ObEngineDev ${CMAKE_DL_LIBS})

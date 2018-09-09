@@ -18,7 +18,6 @@ add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
-find_package(OpenGL REQUIRED)
 add_subdirectory(extlibs/sfe)
 
 add_subdirectory(src/Core)

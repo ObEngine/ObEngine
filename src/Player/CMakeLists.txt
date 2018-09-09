@@ -10,7 +10,6 @@ add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
 target_include_directories(ObEnginePlayer
   PRIVATE
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
-    $<BUILD_INTERFACE:${OPENGL_INCLUDE_DIR}>
 )
 
 target_link_libraries(ObEnginePlayer ObEngineCore)
@@ -23,8 +22,6 @@ target_link_libraries(ObEnginePlayer dynamicLinker)
 if(SFML_FOUND)
   target_link_libraries(ObEnginePlayer sfml-window)
 endif()
-
-target_link_libraries(ObEnginePlayer ${OPENGL_LIBRARIES})
 
 if (UNIX)
     target_link_libraries(ObEnginePlayer ${CMAKE_DL_LIBS})
