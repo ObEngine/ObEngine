@@ -371,10 +371,10 @@ namespace vili
             return baseIterator.result();
         }
         NodeValidator<T> baseIterator;
-        for (std::string& complex : getAll(NodeType::ComplexNode))
+        for (ComplexNode* complex : getAll<ComplexNode>())
         {
             if (!baseIterator.over())
-                getComplexNode(complex).walk<T>(walkFunction, baseIterator);
+                complex->walk<T>(walkFunction, baseIterator);
             else
                 break;
         }
@@ -389,10 +389,10 @@ namespace vili
     template <class T>
     void ComplexNode::walk(std::function<void(NodeValidator<T>&)> walkFunction, NodeValidator<T>& iterator)
     {
-        for (std::string& complex : getAll(NodeType::ComplexNode))
+        for (ComplexNode* complex : getAll<ComplexNode>())
         {
             if (!iterator.over())
-                getComplexNode(complex).walk<T>(walkFunction, iterator);
+                complex->walk<T>(walkFunction, iterator);
             else
                 break;
         }
