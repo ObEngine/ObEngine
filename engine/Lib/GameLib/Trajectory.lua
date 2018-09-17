@@ -19,7 +19,7 @@ function Trajectory.bind.Trajectory.obe__Collision__PolygonalCollider(self, col,
         return obe.Vec2(item:getPointPosition(0).x, item:getPointPosition(0).y); 
     end
     , function(item, x, y)
-        unit = unit or obe.WorldUnits;
+        unit = unit or obe.SceneUnits;
         local pVec = obe.Vec2(x, y, unit);
         item:setPosition(pVec);
     end});
@@ -31,7 +31,7 @@ function Trajectory.bind.Trajectory.obe__Graphics__LevelSprite(self, spr, offset
         return obe.Vec2(item:getX(), item:getY()); 
     end
     , function(item, x, y, unit)
-        unit = unit or obe.WorldUnits;
+        unit = unit or obe.SceneUnits;
         local pVec = obe.Vec2(x, y, unit);
         item:setPosition(pVec); 
     end});
@@ -43,7 +43,7 @@ function Trajectory.bind.Trajectory.obe__Script__GameObject(self, obj, offset)
         return obe.Vec2(item:Collider():getPointPosition(0).x, item:Collider():getPointPosition(0).y); 
     end
     , function(item, x, y, unit)
-        unit = unit or obe.WorldUnits;
+        unit = unit or obe.SceneUnits;
         local pVec = obe.Vec2(x, y, unit);
         item:LevelSprite():setPosition(pVec); 
         item:Collider():setPosition(pVec); 

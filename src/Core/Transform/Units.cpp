@@ -12,10 +12,10 @@ namespace obe::Transform
             return Units::ViewPixels;
         if (unit == "ViewUnits")
             return Units::ViewUnits;
-        if (unit == "WorldPixels")
-            return Units::WorldPixels;
-        if (unit == "WorldUnits")
-            return Units::WorldUnits;
+        if (unit == "ScenePixels")
+            return Units::ScenePixels;
+        if (unit == "SceneUnits")
+            return Units::SceneUnits;
         throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownStringUnit", {{"unit", unit}});
     }
 
@@ -26,8 +26,8 @@ namespace obe::Transform
         case Units::ViewPercentage: return "ViewPercentage0";
         case Units::ViewPixels: return "ViewPixels";
         case Units::ViewUnits: return "ViewUnits";
-        case Units::WorldPixels: return "WorldPixels";
-        case Units::WorldUnits: return "WorldUnits";
+        case Units::ScenePixels: return "ScenePixels";
+        case Units::SceneUnits: return "SceneUnits";
         }
         throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownUnit");
     }

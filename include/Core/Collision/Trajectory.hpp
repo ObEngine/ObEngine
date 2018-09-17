@@ -24,7 +24,7 @@ namespace obe::Collision
         Transform::Units m_unit;
         friend class TrajectoryNode;
     public:
-        Trajectory(Transform::Units unit = Transform::Units::WorldUnits);
+        Trajectory(Transform::Units unit = Transform::Units::SceneUnits);
         Trajectory* addAcceleration(double acceleration);
         Trajectory* addAngle(double angle);
         void addCheck(const kaguya::LuaFunction& check);

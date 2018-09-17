@@ -91,31 +91,31 @@ Vector2<ViewUnits>:
 
 Template(Vector2<ViewUnits>);
 
-Vector2<WorldPixels>:
+Vector2<ScenePixels>:
     NumericComposant:
         types:["Float", "Int"]
     __init__:
         0(NumericComposant):
         1(NumericComposant):
     __body__:
-        unit:"WorldPixels"
+        unit:"ScenePixels"
         x:&(0/value)
         y:&(1/value)
 
-Template(Vector2<WorldPixels>);
+Template(Vector2<ScenePixels>);
 
-Vector2<WorldUnits>:
+Vector2<SceneUnits>:
     NumericComposant:
         types:["Float", "Int"]
     __init__:
         0(NumericComposant):
         1(NumericComposant):
     __body__:
-        unit:"WorldUnits"
+        unit:"SceneUnits"
         x:&(0/value)
         y:&(1/value)
 
-Template(Vector2<WorldUnits>);
+Template(Vector2<SceneUnits>);
 
 Unit<ViewPercentage>:
     __init__:
@@ -138,19 +138,19 @@ Unit<ViewUnits>:
 
 Template(Unit<ViewUnits>);
 
-Unit<WorldPixels>:
+Unit<ScenePixels>:
     __init__:
     __body__:
-        unit:"WorldPixels"
+        unit:"ScenePixels"
 
-Template(Unit<WorldPixels>);
+Template(Unit<ScenePixels>);
 
-Unit<WorldUnits>:
+Unit<SceneUnits>:
     __init__:
     __body__:
-        unit:"WorldUnits"
+        unit:"SceneUnits"
 
-Template(Unit<WorldUnits>);
+Template(Unit<SceneUnits>);
 
 Rect<ViewPercentage>:
     NumericComposant:
@@ -203,7 +203,7 @@ Rect<ViewUnits>:
 
 Template(Rect<ViewUnits>);
 
-Rect<WorldPixels>:
+Rect<ScenePixels>:
     NumericComposant:
         types:["Float", "Int"]
     __init__:
@@ -212,15 +212,15 @@ Rect<WorldPixels>:
         2(NumericComposant):
         3(NumericComposant):
     __body__:
-        unit:"WorldPixels"
+        unit:"ScenePixels"
         x:&(0/value)
         y:&(1/value)
         w:&(2/value)
         h:&(3/value)
 
-Template(Rect<WorldPixels>);
+Template(Rect<ScenePixels>);
 
-Rect<WorldUnits>:
+Rect<SceneUnits>:
     NumericComposant:
         types:["Float", "Int"]
     __init__:
@@ -229,13 +229,13 @@ Rect<WorldUnits>:
         2(NumericComposant):
         3(NumericComposant):
     __body__:
-        unit:"WorldUnits"
+        unit:"SceneUnits"
         x:&(0/value)
         y:&(1/value)
         w:&(2/value)
         h:&(3/value)
 
-Template(Rect<WorldUnits>);
+Template(Rect<SceneUnits>);
 
 Referencial<TopLeft>:
     __init__:

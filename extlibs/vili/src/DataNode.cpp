@@ -110,13 +110,13 @@ namespace vili
         if (Types::getVarType(rawData) == m_dataType)
         {
             if (m_dataType == DataType::Int)
-                m_data = stoi(rawData);
+                m_data = std::stoi(rawData);
             else if (m_dataType == DataType::Float)
-                m_data = stod(rawData);
+                m_data = std::stod(rawData);
             else if (m_dataType == DataType::String)
                 m_data = Functions::String::extract(rawData, 1, 1);
             else if (m_dataType == DataType::Bool)
-                m_data = (rawData == "True" ? true : false);
+                m_data = (rawData == "True");
         }
         else
             throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongAutoset", {{"data", rawData},{"path", getNodePath()}});

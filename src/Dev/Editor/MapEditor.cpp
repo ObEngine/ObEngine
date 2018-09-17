@@ -184,7 +184,7 @@ namespace obe::Editor
         double waitForMapSaving = -1;
         double saveCamPosX = 0;
         double saveCamPosY = 0;
-        Transform::Units editorUnit = Transform::Units::WorldUnits;
+        Transform::Units editorUnit = Transform::Units::SceneUnits;
 
         //Framerate / DeltaTime
         Time::FPSCounter fps;
@@ -281,7 +281,7 @@ namespace obe::Editor
                 saveEditMode = -1;
             }
 
-            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
             //Updates
 
             if (oldConsoleVisibility != gameConsole.isVisible())
@@ -399,14 +399,14 @@ namespace obe::Editor
                 + std::to_string(cursor.getY()) 
                 + ")" 
                 + std::string("   Camera : (") 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)) 
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().x)) 
                 + ", " 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y))
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().y))
                 + ")" 
                 + std::string("   Sum : (") 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().x)
                     + int(cursor.getX())) 
-                + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
+                + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().y)
                     + int(cursor.getY())) 
                 + ")" 
                 + std::string("   Layer : ") 
@@ -502,7 +502,7 @@ namespace obe::Editor
                 scene.draw();
                 if (selectedHandlePoint != nullptr)
                     Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, sf::Color::Magenta);
-                pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
+                pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>(); // Do it once (Grid Draw Offset) <REVISION>
                 //Show Collision
                 if (editMode->getSelectedItem() == "Collisions")
                     scene.enableShowCollision(true);

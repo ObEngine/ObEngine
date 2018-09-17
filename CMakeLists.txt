@@ -43,6 +43,7 @@ if(BUILD_DEV)
 	set(CMAKE_AUTORCC ON)
 	set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
+    add_subdirectory(extlibs/QtQuickSFML)
     add_subdirectory(extlibs/TGUI)
 
     add_subdirectory(src/Dev)

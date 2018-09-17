@@ -4,6 +4,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.11
 import QtQuick.Controls.Material 2.1
+import obe.Backend.EmbeddedSFMLSurface 1.0
 
 ApplicationWindow {
     id: applicationWindow
@@ -16,9 +17,20 @@ ApplicationWindow {
     
     Component.onCompleted: {
         //applicationWindow.visibility = Window.Maximized
+        print("Loaded")
     }
     title: qsTr("ÖbEngine Dev")
     flags: Qt.Window
+
+    EmbeddedSFMLSurfaceBackend {
+        id: esfmlsurface
+        objectName: "esurface"
+        input: "mdrlolilol"
+        onRender: {
+            canvas.source = ""; 
+            canvas.source = "image://sfml/";
+        }
+    }
 
     Column {
         id: column
@@ -47,7 +59,6 @@ ApplicationWindow {
                     orientation: Qt.Vertical
                     anchors.fill: parent
                     Rectangle {
-                        color: rgb(255, 0, 0)
                         anchors.top: parent.top
                         height: parent.height * 0.75
                         Layout.minimumHeight: parent.height * 0.4
@@ -62,16 +73,24 @@ ApplicationWindow {
                                 }
                             }
                             Rectangle {
+                                id: surfaceContainer
                                 anchors.right: parent.right
-                                Text {
-                                    text: "Game View"
-                                    anchors.centerIn: parent
+                                onWidthChanged: { 
+                                    esfmlsurface.setWindowSize(surfaceContainer.width, surfaceContainer.height); 
+                                }
+                                onHeightChanged: { 
+                                    esfmlsurface.setWindowSize(surfaceContainer.width, surfaceContainer.height); 
+                                }
+                                Image {
+                                    anchors.fill: parent;
+                                    id: canvas
+                                    source: "image://sfml/"
+                                    cache: false
                                 }
                             }
                         }
                     }
                     Rectangle {
-                        color: rgb(0, 255, 0)
                         Layout.minimumHeight: parent.height * 0.1
                         Text {
                             text: "Asset Explorer"

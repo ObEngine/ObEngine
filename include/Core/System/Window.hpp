@@ -1,9 +1,11 @@
 #pragma once
 
+#include <mutex>
 #include <string>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace obe::System
 {
@@ -19,6 +21,9 @@ namespace obe::System
         sf::RenderWindow m_window;
         sf::RenderTexture m_surface;
         bool m_docked = false;
+        sf::ContextSettings m_contextSettings;
+        std::mutex m_renderMutex;
+        sf::RectangleShape m_shape; // To delete
     public:
         void init(const WindowContext context);
         void clear(const sf::Color& color = sf::Color(0, 0, 0, 255));
@@ -37,6 +42,9 @@ namespace obe::System
         sf::RenderTarget& getTarget();
         sf::RenderWindow& getWindow();
         sf::RenderTexture& getTexture();
+        sf::Image getImage();
+        void lockRender();
+        void unlockRender();
     };
 
     inline Window MainWindow;

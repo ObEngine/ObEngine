@@ -100,7 +100,7 @@ namespace obe::Collision
             }
         }
 
-        const Transform::UnitVector destPos = (this->getCentroid() + offset).to<Transform::Units::WorldPixels>();
+        const Transform::UnitVector destPos = (this->getCentroid() + offset).to<Transform::Units::ScenePixels>();
         if (!limitedMaxDists.empty())
         {
             std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
@@ -121,11 +121,11 @@ namespace obe::Collision
     {
         if (m_points.size() >= 3)
         {
-            const Transform::UnitVector offset = camera.getPosition().to<Transform::Units::WorldPixels>();
-            const Transform::UnitVector pMaster = this->getCentroid().to<Transform::Units::WorldPixels>();
+            const Transform::UnitVector offset = camera.getPosition().to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector pMaster = this->getCentroid().to<Transform::Units::ScenePixels>();
 
             /*bool hasDrawablePoint = false; (Old Optimisation Trick, doesn't work)
-            Transform::UnitVector csize = camera.getSize().to<Transform::Units::WorldPixels>();
+            Transform::UnitVector csize = camera.getSize().to<Transform::Units::ScenePixels>();
             if (drawMasterPoint || drawSkel)
             {
                 if (pMaster.x >= offset.x && pMaster.y >= offset.y && pMaster.x <= offset.x + csize.x && pMaster.y <= offset.y + csize.y)
@@ -137,7 +137,7 @@ namespace obe::Collision
             {
                 for (int i = 0; i < m_allPoints.size(); i++)
                 {
-                    Transform::UnitVector point = m_allPoints[i].to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector point = m_allPoints[i].to<Transform::Units::ScenePixels>();
                     if (point.x >= offset.x && point.y >= offset.y && point.x <= offset.x + csize.x && point.y <= offset.y + csize.y)
                     {
                         hasDrawablePoint = true;
@@ -162,7 +162,7 @@ namespace obe::Collision
 
             for (int i = 0; i < m_points.size(); i++)
             {
-                const Transform::UnitVector point = this->get(i).to<Transform::Units::WorldPixels>();
+                const Transform::UnitVector point = this->get(i).to<Transform::Units::ScenePixels>();
 
                 if (Utils::Vector::contains(i, m_highlightedPoints) && m_selected)
                     drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
@@ -189,7 +189,7 @@ namespace obe::Collision
                 {
                     for (int i = 0; i < m_points.size(); i++)
                     {
-                        const Transform::UnitVector point = this->get(i).to<Transform::Units::WorldPixels>();
+                        const Transform::UnitVector point = this->get(i).to<Transform::Units::ScenePixels>();
                         const sf::Color currentLineColor = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
                         Graphics::Utils::drawLine(point.x - offset.x, point.y - offset.y,
                                                     pMaster.x - offset.x, pMaster.y - offset.y,
@@ -378,7 +378,7 @@ namespace obe::Collision
 
     Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(PolygonalCollider& collider, const Transform::UnitVector& offset) const
     {
-        const Transform::Units pxUnit = Transform::Units::WorldPixels;
+        const Transform::Units pxUnit = Transform::Units::ScenePixels;
         const Transform::UnitVector tOffset = offset.to(pxUnit);
         bool inFront = false;
         Transform::UnitVector minDep;
@@ -390,7 +390,7 @@ namespace obe::Collision
             double minDistance = -1;
             bool inFront = false;
                 
-            Transform::Units pxUnit = Transform::Units::WorldPixels;
+            Transform::Units pxUnit = Transform::Units::ScenePixels;
             Transform::UnitVector minDeplacement(pxUnit);
             Transform::UnitVector point1(pxUnit);
             Transform::UnitVector point2(pxUnit);

@@ -32,7 +32,7 @@ namespace obe::Scene
         Rect::setSize(
             Transform::UnitVector(
                 pSize * 2 * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h), 
-                pSize * 2, m_size.unit
+                pSize * 2, Transform::Units::ViewUnits
             )
         , ref);
         this->apply();

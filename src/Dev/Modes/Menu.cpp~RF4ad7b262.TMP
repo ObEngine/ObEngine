@@ -23,7 +23,6 @@
 #include "qtquicksfml/SFMLImageProvider.hpp"
 #include <qtquicksfml/SFMLOffscreen.hpp>
 #include "Editor/Editor.hpp"
-#include "Backend/EmbeddedSFMLSurfaceBackend.hpp"
 
 namespace obe::Modes
 {
@@ -249,22 +248,15 @@ namespace obe::Modes
 
 	void startDevMenu()
     {
-        {
+		{
             System::MainWindow.init(System::WindowContext::EditorWindow);
             //SFMLOffscreen offscreen;
             SFMLImageProvider provider(System::MainWindow.getTexture());
+            std::thread editorThread(&Editor::startEditor);
 			QQmlApplicationEngine engine;
             engine.addImageProvider(QLatin1String("sfml"), &provider);
-            Backend::RegisterTypes();
+            Backend::registerTypes();
 			engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
-            std::cout << "Finding child..." << std::endl;
-		    QObject* qmlsurface = engine.rootObjects().at(0)->findChild<QObject*>("esurface");
-            std::cout << "Found child ?" << qmlsurface << std::endl;
-            Backend::EmbeddedSFMLSurfaceBackend& sfbackend = *qobject_cast<Backend::EmbeddedSFMLSurfaceBackend*>(qmlsurface);
-            std::cout << "Testing wrf : " << sfbackend.m_input.toStdString() << std::endl;
-            std::thread editorThread([&]() {
-                Editor::startEditor(sfbackend);
-            });
 			if (engine.rootObjects().isEmpty())
 				throw aube::ErrorHandler::Raise("obe.Menu.QtError");
 

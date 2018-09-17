@@ -135,7 +135,7 @@ namespace obe::Bindings::TransformBindings
         (*lua)["obe"]["Units"]["ViewPercentage"] = Transform::Units::ViewPercentage;
         (*lua)["obe"]["Units"]["ViewPixels"] = Transform::Units::ViewPixels;
         (*lua)["obe"]["Units"]["ViewUnits"] = Transform::Units::ViewUnits;
-        (*lua)["obe"]["Units"]["WorldPixels"] = Transform::Units::WorldPixels;
-        (*lua)["obe"]["Units"]["WorldUnits"] = Transform::Units::WorldUnits;
+        (*lua)["obe"]["Units"]["ScenePixels"] = Transform::Units::ScenePixels;
+        (*lua)["obe"]["Units"]["SceneUnits"] = Transform::Units::SceneUnits;
     }
 }

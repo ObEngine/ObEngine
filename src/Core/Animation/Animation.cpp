@@ -138,7 +138,7 @@ namespace obe::Animation
                 m_offset.x = parameters.at<vili::DataNode>("offset", "x").get<int>();
             if (parameters.at("offset").contains(vili::NodeType::DataNode, "y"))
                 m_offset.y = parameters.at<vili::DataNode>("offset", "y").get<int>();
-            m_offset = m_offset.to<Transform::Units::WorldPixels>();
+            m_offset = m_offset.to<Transform::Units::ScenePixels>();
         }
         if (parameters.contains(vili::NodeType::DataNode, "priority"))
             m_priority = parameters.at<vili::DataNode>("priority").get<int>();

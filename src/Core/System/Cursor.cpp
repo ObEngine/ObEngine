@@ -109,7 +109,7 @@ namespace obe::System
 
     Transform::UnitVector Cursor::getPosition() const
     {
-        return Transform::UnitVector(m_constrainedX, m_constrainedY, Transform::Units::WorldPixels);
+        return Transform::UnitVector(m_constrainedX, m_constrainedY, Transform::Units::ScenePixels);
     }
 
     void Cursor::update()

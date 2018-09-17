@@ -98,7 +98,7 @@ namespace obe::Transform
         void scale(const UnitVector& size, Referencial ref = Referencial::TopLeft);
         /**
         * \brief Get the Size of the Rect
-        * \return An UnitVector containing the size of the Rect (Default Unit is WorldUnits)
+        * \return An UnitVector containing the size of the Rect (Default Unit is SceneUnits)
         */
 	    virtual UnitVector getSize() const;
         /**

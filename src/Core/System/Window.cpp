@@ -99,7 +99,11 @@ namespace obe::System
 
         if (m_docked)
         {
-            m_surface.create(1, 1);
+            Debug::Log->warn("Creating {}, {} texture with settings", width, height);
+            
+            m_surface.create(800, 600, m_contextSettings);
+            m_shape.setSize({ 200.f, 200.f });
+            m_shape.setFillColor(sf::Color::Red);
         }
         else
         {
@@ -112,8 +116,8 @@ namespace obe::System
     {
         if (!m_docked)
             m_window.clear(color);
-        else
-            m_surface.clear();
+        else return;
+            //m_surface.clear(color);
     }
 
     void Window::close()
@@ -124,6 +128,7 @@ namespace obe::System
 
     void Window::display()
     {
+        //std::cout << "From Window : " << &m_surface << std::endl;
         if (!m_docked)
             m_window.display();
         else
@@ -157,6 +162,7 @@ namespace obe::System
 
     bool Window::isOpen() const
     {
+        //std::cout << "Docked ? " << m_docked << std::endl;
         if (!m_docked)
             return m_window.isOpen();
         else
@@ -168,7 +174,7 @@ namespace obe::System
         if (!m_docked)
             return m_window.pollEvent(event);
         else
-            return true;
+            return false;
     }
 
     void Window::setTitle(const std::string& title)
@@ -210,14 +216,41 @@ namespace obe::System
         return m_surface;
     }
 
+    sf::Image Window::getImage()
+    {
+        if (m_docked)
+        {
+            
+            return m_surface.getTexture().copyToImage();
+        }
+            
+        return {};
+    }
+
+    void Window::lockRender()
+    {
+        m_renderMutex.lock();
+    }
+
+    void Window::unlockRender()
+    {
+        m_renderMutex.unlock();
+    }
+
     void Window::setSize(const unsigned int width, const unsigned int height)
     {
         Transform::UnitVector::Screen.w = width;
         Transform::UnitVector::Screen.h = height;
+        
         if (!m_docked)
             m_window.setSize(sf::Vector2u(width, height));
         else
-            m_surface.create(width, height);
+        {
+            m_renderMutex.lock();
+            m_surface.create(width, height, m_contextSettings);
+            m_renderMutex.unlock();
+        }
         this->setView(sf::View(sf::FloatRect(0, 0, width, height)));
+        std::cout << "Settings surface size to " << width << ", " << height << std::endl;
     }
 }

@@ -28,6 +28,7 @@ target_link_libraries(ObEngineDev sfe)
 target_link_libraries(ObEngineDev TGUI)
 target_link_libraries(ObEngineDev vili)
 target_link_libraries(ObEngineDev dynamicLinker)
+target_link_libraries(ObEngineDev QtQuickSFML)
 target_link_libraries(ObEngineDev Qt5::Core Qt5::Quick Qt5::Widgets Qt5::QuickControls2)
 
 

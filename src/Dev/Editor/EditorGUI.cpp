@@ -658,7 +658,7 @@ namespace obe::Editor::GUI
             {
                 if (editMode->getSelectedItem() == "LevelSprites" || editMode->getSelectedItem() == "Collisions")
                 {
-                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+                    Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
                     return editorGrid.getClosestIntersection(cursor->getX(), cursor->getY(), pixelCamera.x, pixelCamera.y);
                 }
                 else

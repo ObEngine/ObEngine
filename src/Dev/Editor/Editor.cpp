@@ -27,22 +27,13 @@
 #include <QQmlApplicationEngine>
 #include <QGuiApplication>
 #include <Backend/SFMLRenderWidget.hpp>
+#include "Backend/EmbeddedSFMLSurfaceBackend.hpp"
 
 namespace obe::Editor
 {
-    void startEditor()
+    void startEditor(Backend::EmbeddedSFMLSurfaceBackend& sfBackend)
     {
-        System::MainWindow.init(System::WindowContext::EditorWindow);
-
-        //qmlRegisterType<QSFMLCanvas>("QSFMLCanvas", 1, 0, "QSFMLCanvas");
-        QQmlApplicationEngine engine;
-        
-        engine.load(QUrl(QStringLiteral("Data/Ui/main.qml")));
-        
-        if (engine.rootObjects().isEmpty())
-            throw aube::ErrorHandler::Raise("obe.Menu.QtError");
-
-        QGuiApplication::exec();
+        //System::MainWindow.init(System::WindowContext::EditorWindow);
 
         //Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
@@ -141,46 +132,7 @@ namespace obe::Editor
 
         //GUI
         sf::Event event;
-        tgui::Gui gui(System::MainWindow.getTarget());
-        gui.setFont("Data/Fonts/weblysleekuil.ttf");
-        tgui::Panel::Ptr mainPanel = tgui::Panel::create();
-        GUI::init();
         int saveEditMode = -1;
-        gui.add(mainPanel);
-        mainPanel->setSize("100%", "100%");
-
-        GUI::buildEditorMenu(mainPanel);
-        GUI::buildObjectCreationMenu(mainPanel);
-
-        tgui::Panel::Ptr editorPanel = gui.get<tgui::Panel>("editorPanel");
-        tgui::Panel::Ptr mapPanel = gui.get<tgui::Panel>("mapPanel");
-        tgui::Panel::Ptr settingsPanel = gui.get<tgui::Panel>("settingsPanel");
-        tgui::Panel::Ptr spritesPanel = gui.get<tgui::Panel>("spritesPanel");
-        tgui::Panel::Ptr objectsPanel = gui.get<tgui::Panel>("objectsPanel");
-        tgui::Panel::Ptr requiresPanel = gui.get<tgui::Panel>("requiresPanel");
-        tgui::Scrollbar::Ptr spritesScrollbar = gui.get<tgui::Scrollbar>("spritesScrollbar");
-        tgui::Scrollbar::Ptr objectsScrollbar = gui.get<tgui::Scrollbar>("objectsScrollbar");
-
-        GUI::buildToolbar(mainPanel, editorPanel, scene);
-
-        tgui::ComboBox::Ptr editMode = gui.get<tgui::ComboBox>("editMode");
-
-        GUI::buildEditorMapMenu(mapPanel, scene);
-        GUI::buildEditorSettingsMenu(settingsPanel, editorGrid, cursor, editMode, scene);
-        GUI::buildEditorSpritesMenu(spritesPanel, spritesScrollbar, scene);
-        GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar, scene);
-
-        tgui::EditBox::Ptr cameraSizeInput = gui.get<tgui::EditBox>("cameraSizeInput");
-        tgui::EditBox::Ptr cameraPositionXInput = gui.get<tgui::EditBox>("cameraPositionXInput");
-        tgui::EditBox::Ptr cameraPositionYInput = gui.get<tgui::EditBox>("cameraPositionYInput");
-
-        tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
-        tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");
-        tgui::EditBox::Ptr mapNameInput = gui.get<tgui::EditBox>("mapNameInput");
-        tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
-        tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
-        const tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
-        const tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
 
         //Map Editor
         Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -197,7 +149,7 @@ namespace obe::Editor
         double waitForMapSaving = -1;
         double saveCamPosX = 0;
         double saveCamPosY = 0;
-        Transform::Units editorUnit = Transform::Units::WorldUnits;
+        Transform::Units editorUnit = Transform::Units::SceneUnits;
 
         //Framerate / DeltaTime
         Time::FPSCounter fps;
@@ -206,51 +158,12 @@ namespace obe::Editor
 
         //scene.loadFromFile(mapName);
 
-        mapNameInput->setText(scene.getLevelName());
-        cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
-
         //Connect InputManager Actions
-        //connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving, savedLabel, saveCameraPositionCheckbox);
-        connectCamMovementActions(editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
-        connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox, cursor, editorGrid);
-        connectMenuActions(inputManager, editMode, editorPanel);
-        connectSpriteLayerActions(editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
-        connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite, selectedHandlePoint,
-            scene, cursor, editorGrid, selectedSpriteOffsetX, selectedSpriteOffsetY, tooltip, editorUnit);
-        connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor, colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
-        connectGameConsoleActions(inputManager, gameConsole);
-        connectCopyPasteActions(editorTriggers.get(), inputManager, scene, sceneClipboard, savedLabel, selectedMasterCollider, selectedSprite);
+
         inputManager.getAction("ExitEditor").connect([](const Input::InputActionEvent& event)
         {
             System::MainWindow.close();
         });
-
-        auto editModeCallback = [&editorTriggers, &inputManager, editMode]()
-        {
-            editorTriggers->pushParameter("EditModeChanged", "mode", editMode->getSelectedItem());
-            editorTriggers->trigger("EditModeChanged");
-            if (editMode->getSelectedItem() == "LevelSprites")
-            {
-                inputManager.addContext("spriteEditing");
-            }
-            else
-            {
-                inputManager.removeContext("spriteEditing");
-            }
-            if (editMode->getSelectedItem() == "Collisions")
-            {
-                inputManager.addContext("colliderEditing");
-            }
-            else
-            {
-                inputManager.removeContext("colliderEditing");
-            }
-        };
-
-        editMode->connect("itemselected", editModeCallback);
-
-        GUI::calculateFontSize();
-        GUI::applyFontSize(mainPanel);
 
         System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
         System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
@@ -258,9 +171,11 @@ namespace obe::Editor
 
         //scene.setUpdateState(false);
 
+        Debug::Log->warn("Editor MainLoop starting");
         //Game Starts
         while (System::MainWindow.isOpen())
         {
+            //Debug::Log->warn("Editor MainLoop ticking");
             framerateManager.update();
 
             gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
@@ -274,27 +189,13 @@ namespace obe::Editor
                 waitForMapSaving += framerateManager.getDeltaTime();
                 if (waitForMapSaving > 1 && waitForMapSaving < 2)
                 {
-                    savedLabel->hideWithEffect(tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
                     waitForMapSaving = 2;
                 }
                 else if (waitForMapSaving > 3)
                     waitForMapSaving = -1;
             }
 
-            const bool drawFPS = displayFramerateCheckbox->isChecked();
-
-            if (editorPanel->isVisible() && saveEditMode < 0)
-            {
-                saveEditMode = editMode->getSelectedItemIndex();
-                editMode->setSelectedItemByIndex(3);
-            }
-            else if (!editorPanel->isVisible() && saveEditMode > 0)
-            {
-                editMode->setSelectedItemByIndex(saveEditMode);
-                saveEditMode = -1;
-            }
-
-            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
             //Updates
 
             if (oldConsoleVisibility != gameConsole.isVisible())
@@ -317,7 +218,7 @@ namespace obe::Editor
             }
 
             //Sprite Editing
-            if (editMode->getSelectedItem() == "LevelSprites")
+            if (true)
             {
                 scene.enableShowCollision(true, true, false, false);
 
@@ -382,7 +283,7 @@ namespace obe::Editor
             }
 
             //Collision Edition
-            if (editMode->getSelectedItem() == "Collisions")
+            if (false)
             {
                 const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
 
@@ -404,28 +305,6 @@ namespace obe::Editor
                 }
             }
 
-            //GUI Update
-            infoLabel->setText(
-                "Cursor : ("
-                + std::to_string(cursor.getX())
-                + ", "
-                + std::to_string(cursor.getY())
-                + ")"
-                + std::string("   Camera : (")
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x))
-                + ", "
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y))
-                + ")"
-                + std::string("   Sum : (")
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().x)
-                    + int(cursor.getX()))
-                + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>().y)
-                    + int(cursor.getY()))
-                + ")"
-                + std::string("   Layer : ")
-                + std::to_string(currentLayer)
-            );
-
             while (System::MainWindow.pollEvent(event))
             {
                 switch (event.type)
@@ -437,10 +316,6 @@ namespace obe::Editor
                     Transform::UnitVector::Screen.w = event.size.width;
                     Transform::UnitVector::Screen.h = event.size.height;
                     System::MainWindow.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                    gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                    GUI::calculateFontSize();
-                    GUI::applyFontSize(mainPanel);
-                    GUI::applyScrollbarMaxValue(mainPanel);
                     break;
                 case sf::Event::JoystickConnected:
                     Input::SetGamepadList();
@@ -469,7 +344,6 @@ namespace obe::Editor
                         scene.getCamera()->scale(1.1);
                         gameConsole.scroll(1);
                     }
-                    cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
                     break;
                 case sf::Event::MouseButtonPressed:
                 case sf::Event::MouseButtonReleased:
@@ -482,7 +356,6 @@ namespace obe::Editor
                     break;
                 default:;
                 }
-                gui.handleEvent(event);
             }
 
             if (Input::Monitors::RequireRefresh)
@@ -493,8 +366,6 @@ namespace obe::Editor
             Triggers::TriggerDatabase::GetInstance()->update();
             inputManager.update();
             cursor.update();
-            if (drawFPS) fps.uTick();
-            if (drawFPS && framerateManager.doRender()) fps.tick();
 
             //Triggers Handling
             networkHandler.handleTriggers();
@@ -503,21 +374,21 @@ namespace obe::Editor
             //Draw Everything Here
             if (framerateManager.doRender())
             {
+                System::MainWindow.lockRender();
                 if (saveCamPosX != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x || saveCamPosY != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y)
                 {
                     saveCamPosX = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x;
                     saveCamPosY = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y;
-                    cameraPositionXInput->setText(std::to_string(saveCamPosX));
-                    cameraPositionYInput->setText(std::to_string(saveCamPosY));
                 }
 
+                //Debug::Log->warn("Rendering !");
                 System::MainWindow.clear(Graphics::Utils::ClearColor);
                 scene.draw();
                 if (selectedHandlePoint != nullptr)
                     Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x, selectedHandlePoint->m_dp.y, 3, sf::Color::Magenta);
-                pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>(); // Do it once (Grid Draw Offset) <REVISION>
+                pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>(); // Do it once (Grid Draw Offset) <REVISION>
                                                                                                     //Show Collision
-                if (editMode->getSelectedItem() == "Collisions")
+                if (false)
                     scene.enableShowCollision(true);
                 else
                     scene.enableShowCollision(false);
@@ -528,15 +399,14 @@ namespace obe::Editor
                 {
                     tooltip.draw();
                 }
-                gui.draw();
-                if (drawFPS)
-                    fps.draw();
 
                 //Console
                 if (gameConsole.isVisible())
                     gameConsole.draw();
 
                 System::MainWindow.display();
+                System::MainWindow.unlockRender();
+                sfBackend.render();
             }
         }
         gameTriggers->trigger("End");
@@ -544,6 +414,5 @@ namespace obe::Editor
         scene.update();
 
         System::MainWindow.close();
-        gui.removeAllWidgets();
     }
 }

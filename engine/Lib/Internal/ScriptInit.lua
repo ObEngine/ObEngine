@@ -2,6 +2,7 @@ Core = {}; -- Core Lib
 Scenes = {};
 LuaUtil = {};
 pl = {};
+Internal = {};
 
 inspect = require("Lib/StdLib/Inspect");
 pl.Date = require("Lib/StdLib/pl/Date");
@@ -48,3 +49,34 @@ function LuaUtil.IsLibLoaded(lib)
     end
     return false;
 end
+
+function Internal.CheckCoordinateTable(t)
+    if type(a) == "table" then
+        if a[1] and a[2] and type(a[1]) == "number" and type(a[2]) == "number" then
+            return true;
+        else 
+            error("The table should contain two coordinates that are both numbers");
+        end
+    else
+        error("When using {X}%v, {X} should be a table containing 2 coordinates : {10, 50}%v");
+    end
+end
+
+Internal.ViewPercentageMT = {
+    __mod = function(a, b)
+        Internal.CheckCoordinateTable(a);
+        return obe.UnitVector(a, b, obe.Units.ViewPercentage);
+    end
+};
+
+Internal.ScenePixelsMT = {
+    __pow = function(a, b)
+        Internal.CheckCoordinateTable(a);
+        return obe.UnitVector(a, b, obe.Units.ScenePixels);
+    end
+}
+
+scene = {};
+setmetatable(Internal.ScenePixelsMT);
+view = {};
+set
