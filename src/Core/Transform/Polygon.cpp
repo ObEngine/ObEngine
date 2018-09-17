@@ -37,6 +37,14 @@ namespace obe::Transform
         return std::sqrt(std::pow((pVec.x - x), 2) + std::pow((pVec.y - y), 2));
     }
 
+    UnitVector PolygonPoint::getRelativePosition(RelativePositionFrom from) const
+    {
+        if (from == RelativePositionFrom::Point0)
+            return (*this - m_parent->get(0));
+        else
+            return (*this - m_parent->getCentroid());
+    }
+
     void PolygonPoint::setRelativePosition(RelativePositionFrom from, const Transform::UnitVector& position)
     {
         if (from == RelativePositionFrom::Point0)

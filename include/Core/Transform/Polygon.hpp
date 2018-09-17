@@ -31,7 +31,7 @@ namespace obe::Transform
         const point_index_t& index = rw_index;
         void remove() const;
         double distance(const Transform::UnitVector& position) const;
-        UnitVector getRelativePosition(RelativePositionFrom from);
+        UnitVector getRelativePosition(RelativePositionFrom from) const;
         void setRelativePosition(RelativePositionFrom from, const Transform::UnitVector& position);
         void move(const Transform::UnitVector& position);
     };

@@ -132,21 +132,54 @@ namespace obe::Bindings::TransformBindings
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_addPoint_wrapper, Transform::Polygon, addPoint, 1, 2);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_findClosestPoint_wrapper, Transform::Polygon, findClosestPoint, 1, 3);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_getSegmentContainingPoint_wrapper, Transform::Polygon, getSegmentContainingPoint, 1, 2)
     void LoadPolygon(kaguya::State* lua)
     {
         Load(lua, "obe.Movable");
         Load(lua, "obe.UnitBasedObject");
+        (*lua)["obe"]["PolygonPoint"].setClass(kaguya::UserdataMetatable<Transform::PolygonPoint>()
+            .addFunction("distance", &Transform::PolygonPoint::distance)
+            .addFunction("getRelativePosition", &Transform::PolygonPoint::getRelativePosition)
+            .addFunction("move", &Transform::PolygonPoint::move)
+            .addFunction("remove", &Transform::PolygonPoint::remove)
+            .addFunction("setRelativePosition", &Transform::PolygonPoint::setRelativePosition)
+        );
+        (*lua)["obe"]["PolygonPoint"]["index"] = kaguya::function([](Transform::PolygonPoint& point) {
+            return point.index;
+        });
+        (*lua)["obe"]["PolygonSegment"].setClass(kaguya::UserdataMetatable<Transform::PolygonSegment>()
+            .setConstructors<Transform::PolygonSegment(const Transform::PolygonPoint&, const Transform::PolygonPoint&)>()
+            .addFunction("getAngle", &Transform::PolygonSegment::getAngle)
+            .addFunction("getLength", &Transform::PolygonSegment::getLength)
+        );
+        (*lua)["obe"]["PolygonSegment"]["first"] = kaguya::function([](Transform::PolygonSegment& segment) {
+            return &segment.first;
+        });
+        (*lua)["obe"]["PolygonSegment"]["second"] = kaguya::function([](Transform::PolygonSegment& segment) {
+            return &segment.second;
+        });
         (*lua)["obe"]["Polygon"].setClass(kaguya::UserdataMetatable<Transform::Polygon, 
         kaguya::MultipleBase<Transform::UnitBasedObject, Transform::Movable>>()
             .addFunction("addPoint", Polygon_addPoint_wrapper())
             .addFunction("findClosestSegment", &Transform::Polygon::findClosestSegment)
             .addFunction("findClosestPoint", Polygon_findClosestPoint_wrapper())
             .addFunction("getCentroid", &Transform::Polygon::getCentroid)
+            .addFunction("getPointAroundPosition", &Transform::Polygon::getPointAroundPosition)
             .addFunction("getPointsAmount", &Transform::Polygon::getPointsAmount)
             .addFunction("getPosition", &Transform::Polygon::getPosition)
             .addFunction("getRotation", &Transform::Polygon::getRotation)
             .addFunction("getSegment", &Transform::Polygon::getSegment)
+            .addFunction("getSegmentContainingPoint", Polygon_getSegmentContainingPoint_wrapper())
+            .addFunction("isCentroidAroundPosition", &Transform::Polygon::isCentroidAroundPosition)
+            .addFunction("move", &Transform::Polygon::move)
+            .addFunction("rotate", &Transform::Polygon::rotate)
+            .addFunction("setPosition", &Transform::Polygon::setPosition)
+            .addFunction("setPositionFromCentroid", &Transform::Polygon::setPositionFromCentroid)
+            .addFunction("setRotation", &Transform::Polygon::setRotation)
         );
+        (*lua)["obe"]["Polygon"]["get"] = kaguya::function([](Transform::Polygon& polygon, Transform::point_index_t index) {
+            return &polygon.get(index);
+        });
         (*lua)["obe"]["Polygon"]["getAllPoints"] = kaguya::function([](Transform::Polygon& polygon){
             std::vector<Transform::PolygonPoint*> points;
             for (const auto& point : polygon.getAllPoints())
