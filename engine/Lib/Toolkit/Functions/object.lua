@@ -31,7 +31,7 @@ function Functions.create(objectName, components)
             objSaveFile:root():at(objectName):createComplexNode("Collider");
             local objCollider = objSaveFile:root():at(objectName .. "/Collider");
             objCollider:createComplexNode("unit");
-            objCollider:at("unit"):createDataNode("unit", "WorldUnits");
+            objCollider:at("unit"):createDataNode("unit", "SceneUnits");
             objCollider:createArrayNode("points");
             objCollider:getArrayNode("points"):push(0);
             objCollider:getArrayNode("points"):push(0);

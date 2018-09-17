@@ -172,7 +172,7 @@ function obe.Canvas.InitializeMT(tbl, ref)
 end
 
 local UV2V2f = function(uv)
-    local uvpx = uv:to(obe.Units.WorldPixels);
+    local uvpx = uv:to(obe.Units.ScenePixels);
     return SFML.Vector2f(uvpx.x, uvpx.y);
 end
 
@@ -214,7 +214,7 @@ obe.Canvas.Bases.Line = {
                 x = function(self, x) self.p1.x = x or 0; end,
                 y = function(self, y) self.p1.y = y or 0; end,
                 unit = function(self, unit)
-                    self.p1.unit = unit or obe.Units.WorldPixels;
+                    self.p1.unit = unit or obe.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
@@ -245,7 +245,7 @@ obe.Canvas.Bases.Line = {
                 x = function(self, x) self.p2.x = x or 0; end,
                 y = function(self, y) self.p2.y = y or 0; end,
                 unit = function(self, unit)
-                    self.p2.unit = unit or obe.Units.WorldPixels;
+                    self.p2.unit = unit or obe.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
@@ -271,8 +271,8 @@ obe.Canvas.Bases.Line = {
     },
     setters = {
         unit = function(self, unit)
-            self.p1.unit = unit or obe.Units.WorldPixels;
-            self.p2.unit = unit or obe.Units.WorldPixels;
+            self.p1.unit = unit or obe.Units.ScenePixels;
+            self.p2.unit = unit or obe.Units.ScenePixels;
         end,
         thickness = function(self, thickness) self.thickness = thickness or 1; end,
         color = function(self, color)
@@ -416,7 +416,7 @@ obe.Canvas.Bases.Shape = {
             self.shape:setPosition(UV2V2f(self.position));
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Units.WorldPixels;
+            self.position.unit = unit or obe.Units.ScenePixels;
         end,
         angle = function(self, angle)
             self.shape:setRotation(angle or 0);
@@ -446,8 +446,8 @@ obe.Canvas.Bases.Rectangle = {
             self.shape:setSize(UV2V2f(self.size));
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Units.WorldPixels;
-            self.size.unit = unit or obe.Units.WorldPixels;
+            self.position.unit = unit or obe.Units.ScenePixels;
+            self.size.unit = unit or obe.Units.ScenePixels;
         end,
     }
 }

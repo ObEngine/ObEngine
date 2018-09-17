@@ -85,10 +85,10 @@ namespace obe::Modes
                 newFileParser.at("Meta").createDataNode("name", newLevelName);
                 newFileParser->createComplexNode("View");
                 newFileParser.at("View").createComplexNode("pos");
-                newFileParser.at("View", "pos").createDataNode("unit", "WorldUnits");
+                newFileParser.at("View", "pos").createDataNode("unit", "SceneUnits");
                 newFileParser.at("View", "pos").createDataNode("x", 0);
                 newFileParser.at("View", "pos").createDataNode("y", 0);
-                newFileParser.at("View", "pos").useTemplate(newFileParser.getTemplate("Vector2<WorldUnits>"));
+                newFileParser.at("View", "pos").useTemplate(newFileParser.getTemplate("Vector2<SceneUnits>"));
                 newFileParser.at("View").createDataNode("size", 1);
                 newFileParser.writeFile(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString(), true);
                 input->setText("");

@@ -115,7 +115,7 @@ namespace obe::Transform
         int r = 6;
 
         std::vector<sf::Vector2i> drawPoints;
-        UnitVector dPos(posX, posY, Transform::Units::WorldPixels);
+        UnitVector dPos(posX, posY, Transform::Units::ScenePixels);
 
         const std::vector<Referencial> fixDisplayOrder =
         { Referencial::TopLeft, Referencial::Top, Referencial::TopRight,
@@ -127,7 +127,7 @@ namespace obe::Transform
             UnitVector pt;
             this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
 
-            UnitVector world = (pt + dPos).to<Units::WorldPixels>();
+            UnitVector world = (pt + dPos).to<Units::ScenePixels>();
             drawPoints.emplace_back(world.x, world.y);
         }
 
@@ -136,7 +136,7 @@ namespace obe::Transform
         double sinAngle = std::sin(radAngle);
         UnitVector topPos;
         this->transformRef(topPos, Referencial::Top, ConversionType::From);
-        topPos = topPos.to<Units::WorldPixels>();
+        topPos = topPos.to<Units::ScenePixels>();
         topPos += dPos;
         UnitVector vec = topPos;
         UnitVector result;
@@ -214,7 +214,7 @@ namespace obe::Transform
 
     void Rect::setPosition(const UnitVector& position, Referencial ref)
     {
-        UnitVector pVec = position.to<Units::WorldUnits>();
+        UnitVector pVec = position.to<Units::SceneUnits>();
         this->transformRef(pVec, ref, ConversionType::To);
         m_position.set(pVec);
     }

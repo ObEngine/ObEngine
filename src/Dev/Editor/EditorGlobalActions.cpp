@@ -14,7 +14,7 @@ namespace obe::Editor
     {
         inputManager.getAction("CamLeft").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
         {
-            Transform::UnitVector moveVec(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels);
+            Transform::UnitVector moveVec(-cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::ScenePixels);
             world.getCamera()->move(moveVec);
             editorTriggers->pushParameter("CameraMoved", "direction", "Left");
             editorTriggers->pushParameter("CameraMoved", "move", moveVec);
@@ -23,7 +23,7 @@ namespace obe::Editor
         });
         inputManager.getAction("CamRight").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
         {
-            Transform::UnitVector moveVec(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::WorldPixels);
+            Transform::UnitVector moveVec(cameraSpeed * framerateManager.getGameSpeed(), 0, Transform::Units::ScenePixels);
             world.getCamera()->move(moveVec);
             editorTriggers->pushParameter("CameraMoved", "direction", "Left");
             editorTriggers->pushParameter("CameraMoved", "move", moveVec);
@@ -32,7 +32,7 @@ namespace obe::Editor
         });
         inputManager.getAction("CamUp").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
         {
-            Transform::UnitVector moveVec(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels);
+            Transform::UnitVector moveVec(0, -cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::ScenePixels);
             world.getCamera()->move(moveVec);
             editorTriggers->pushParameter("CameraMoved", "direction", "Left");
             editorTriggers->pushParameter("CameraMoved", "move", moveVec);
@@ -41,7 +41,7 @@ namespace obe::Editor
         });
         inputManager.getAction("CamDown").connect([editorTriggers, &world, &cameraSpeed, &framerateManager](const Input::InputActionEvent& event)
         {
-            Transform::UnitVector moveVec(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::WorldPixels);
+            Transform::UnitVector moveVec(0, cameraSpeed * framerateManager.getGameSpeed(), Transform::Units::ScenePixels);
             world.getCamera()->move(moveVec);
             editorTriggers->pushParameter("CameraMoved", "direction", "Left");
             editorTriggers->pushParameter("CameraMoved", "move", moveVec);

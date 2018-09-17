@@ -24,7 +24,7 @@ namespace obe::Graphics
     void LevelSprite::useTextureSize()
     {
         const sf::Vector2u textureSize = this->getTexture().getSize();
-        const Transform::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Transform::Units::WorldPixels);
+        const Transform::UnitVector initialSpriteSize(textureSize.x, textureSize.y, Transform::Units::ScenePixels);
         this->setSize(initialSpriteSize);
     }
 
@@ -35,10 +35,10 @@ namespace obe::Graphics
             return sf::Vertex(sf::Vector2f(uv.x, uv.y));
         };
         std::array<sf::Vertex, 4> vertices;
-        vertices[0] = toVertex(Rect::getPosition(Transform::Referencial::TopLeft).to<Transform::Units::WorldPixels>() - camera);
-        vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::WorldPixels>() - camera);
-        vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::WorldPixels>() - camera);
-        vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::WorldPixels>() - camera);
+        vertices[0] = toVertex(Rect::getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>() - camera);
+        vertices[1] = toVertex(Rect::getPosition(Transform::Referencial::BottomLeft).to<Transform::Units::ScenePixels>() - camera);
+        vertices[2] = toVertex(Rect::getPosition(Transform::Referencial::TopRight).to<Transform::Units::ScenePixels>() - camera);
+        vertices[3] = toVertex(Rect::getPosition(Transform::Referencial::BottomRight).to<Transform::Units::ScenePixels>() - camera);
 
         m_sprite.setVertices(vertices);
 
@@ -111,19 +111,19 @@ namespace obe::Graphics
 
     void LevelSprite::drawHandle(const Transform::UnitVector& camera) const
     {
-        const Transform::UnitVector position = m_positionTransformer(m_position, camera, m_layer).to<Transform::Units::WorldPixels>();
+        const Transform::UnitVector position = m_positionTransformer(m_position, camera, m_layer).to<Transform::Units::ScenePixels>();
         Rect::draw(position.x, position.y);
     }
 
     LevelSpriteHandlePoint* LevelSprite::getHandlePoint(Transform::UnitVector& cameraPosition, int posX, int posY)
     {
-        const Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::WorldPixels>();
-        Transform::UnitVector targetPos = Transform::UnitVector(posX, posY, Transform::Units::WorldPixels);
+        const Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::ScenePixels>();
+        Transform::UnitVector targetPos = Transform::UnitVector(posX, posY, Transform::Units::ScenePixels);
         targetPos = m_positionTransformer(targetPos, -pixelCamera, m_layer);
         for (int i = 0; i < 9; i++)
         {
             const Transform::Referencial refIndex = static_cast<Transform::Referencial>(i);
-            const Transform::UnitVector refPoint = Rect::getPosition(refIndex).to<Transform::Units::WorldPixels>();
+            const Transform::UnitVector refPoint = Rect::getPosition(refIndex).to<Transform::Units::ScenePixels>();
             int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
             int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
             if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound) && refIndex != Transform::Referencial::Center)
@@ -138,7 +138,7 @@ namespace obe::Graphics
         const double radAngle = obe::Utils::Math::convertToRadian(-m_angle);
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
-        const Transform::UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::WorldPixels>();
+        const Transform::UnitVector topPos = this->getPosition(Transform::Referencial::Top).to<Transform::Units::ScenePixels>();
         Transform::UnitVector rotHandle = topPos;
         Transform::UnitVector result;
         const double dy = m_size.y / 4;
@@ -210,7 +210,7 @@ namespace obe::Graphics
 
     sf::FloatRect LevelSprite::getRect()
     {
-        const Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::WorldPixels>();
+        const Transform::UnitVector realPosition = Rect::m_position.to<Transform::Units::ScenePixels>();
 
         m_sprite.setPosition(realPosition.x, realPosition.y);
         sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y, m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
@@ -277,16 +277,16 @@ namespace obe::Graphics
     {
         if (m_type == LevelSpriteHandlePointType::ScaleHandle)
         {
-            //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::WorldPixels>() << std::endl;
+            //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::ScenePixels>() << std::endl;
             //std::cout << "Set : " << x << ", " << y << std::endl;
             m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
-            const Transform::UnitVector pos = m_sprite->getPosition(m_referencial).to<Transform::Units::WorldPixels>();
-            const Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::WorldPixels>();
+            const Transform::UnitVector pos = m_sprite->getPosition(m_referencial).to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::ScenePixels>();
 
             if (Transform::isOnCorner(m_referencial))
             {
                 const Transform::UnitVector baseDist = oppositePos - m_dp;
-                Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::WorldPixels>();
+                Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::ScenePixels>();
                 scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
                 if (baseDist.x != 0 && baseDist.y != 0)
@@ -312,7 +312,7 @@ namespace obe::Graphics
         {
             m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
 
-            const Transform::UnitVector center = m_sprite->getPosition(Transform::Referencial::Center).to<Transform::Units::WorldPixels>();
+            const Transform::UnitVector center = m_sprite->getPosition(Transform::Referencial::Center).to<Transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite->getScaleFactor().y < 0) ? 180 : 0)) - 
                 (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
 
@@ -360,7 +360,7 @@ namespace obe::Graphics
         std::string spriteXTransformer;
         std::string spriteYTransformer;
         const std::string spriteUnits = data.contains(vili::NodeType::ComplexNode, "rect") ?
-            data.at<vili::DataNode>("rect", "unit").get<std::string>() : "WorldUnits";
+            data.at<vili::DataNode>("rect", "unit").get<std::string>() : "SceneUnits";
         const std::string spritePath = data.contains(vili::NodeType::DataNode, "path") ?
             data.getDataNode("path").get<std::string>() : "";
         Transform::UnitVector spritePos(0, 0);
@@ -374,8 +374,8 @@ namespace obe::Graphics
             spriteSize.unit = rectUnit;
             spriteSize.x = data.at<vili::DataNode>("rect", "w").get<double>();
             spriteSize.y = data.at<vili::DataNode>("rect", "h").get<double>();
-            spritePos = spritePos.to<Transform::Units::WorldUnits>();
-            spriteSize = spriteSize.to<Transform::Units::WorldUnits>();
+            spritePos = spritePos.to<Transform::Units::SceneUnits>();
+            spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
         }
         const double spriteRot = data.contains(vili::NodeType::DataNode, "rotation") ?
             data.getDataNode("rotation").get<double>() : 0;

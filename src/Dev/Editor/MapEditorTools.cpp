@@ -336,9 +336,9 @@ namespace obe::Editor
             testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i++);
         }
         Graphics::LevelSprite* sprToAdd = scene.createLevelSprite(testId);
-	    const Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+	    const Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
         sprToAdd->loadTexture("Sprites/LevelSprites/" + spritePath);
-        sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::WorldPixels);
+        sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::ScenePixels);
         sprToAdd->setRotation(0);
         //ADD SPRITE SIZE
         sprToAdd->useTextureSize();

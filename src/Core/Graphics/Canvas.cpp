@@ -28,8 +28,8 @@ namespace obe::Graphics::Canvas
     
     void Line::draw(sf::RenderTexture& target)
     {
-        const Transform::UnitVector p1px = p1.to<Transform::Units::WorldPixels>();
-        const Transform::UnitVector p2px = p2.to<Transform::Units::WorldPixels>();
+        const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
         sf::Vertex line[] =
         {
             sf::Vertex(sf::Vector2f(p1px.x, p1px.y), p1color),
@@ -40,13 +40,13 @@ namespace obe::Graphics::Canvas
 
     CanvasPositionable::CanvasPositionable(Canvas* parent, const std::string& id) : CanvasElement(parent, id)
     {
-        // Default Canvas elements unit is WorldPixels
-        position.unit = Transform::Units::WorldPixels;
+        // Default Canvas elements unit is ScenePixels
+        position.unit = Transform::Units::ScenePixels;
     }
 
     Rectangle::Rectangle(Canvas* parent, const std::string& id) : CanvasPositionable(parent, id)
     {
-        this->size.unit = Transform::Units::WorldPixels;
+        this->size.unit = Transform::Units::ScenePixels;
     }
     
     void Rectangle::draw(sf::RenderTexture& target)

@@ -14,7 +14,7 @@ namespace obe::Transform
         /**
         * \brief Unit used in the Class
         */
-        Units m_unit = Units::WorldUnits;
+        Units m_unit = Units::SceneUnits;
         virtual void resetUnit(Units unit) = 0;
     public:
         virtual ~UnitBasedObject() = default;

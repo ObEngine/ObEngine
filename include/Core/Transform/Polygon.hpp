@@ -78,7 +78,7 @@ namespace obe::Transform
         * \param position Position used to get the closest Line
         * \return The index of the line that is the closest one of the given Position (Line between point 0 and point 1 is index 0)
         */
-        PolygonSegment findClosestLine(const Transform::UnitVector& position);
+        PolygonSegment findClosestSegment(const Transform::UnitVector& position);
         /**
         * \brief Find the closest Point from the given Position(x, y)
         * \param position Coordinate of the Position used to get the closest Point

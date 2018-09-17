@@ -30,12 +30,12 @@ namespace obe::Transform
         * \brief ViewPercentage is an Unit used to place / scale an element using the pixels of the Scene. \n
         * Exemple : x = 4000, y = 10000
         */
-        WorldPixels,
+        ScenePixels,
         /**
-        * \brief WorldUnits is an Unit used to place / scale an element using the Scene. \n
+        * \brief SceneUnits is an Unit used to place / scale an element using the Scene. \n
         * Exemple : x = 4.5, y = 2.5
         */
-        WorldUnits
+        SceneUnits
     };
 
     /**

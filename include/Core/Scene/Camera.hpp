@@ -16,10 +16,10 @@ namespace obe::Scene
     *
     * \code
     * Camera& camera = scene.getCamera();
-    * camera.setPosition(0, 0); //Set TopLeft Corner of the Camera at Position (0, 0)::WorldUnits
-    * Transform::UnitVector newPosition(200, 1000, Transform::WorldPixels);
-    * camera.setPosition(newPosition, Camera::Center); // Set Center of the Camera at Position(200, 100)::WorldPixels
-    * camera.move(newPosition); // Move BottomRight Corner of the Camera to (400, 2000)::WorldPixels
+    * camera.setPosition(0, 0); //Set TopLeft Corner of the Camera at Position (0, 0)::SceneUnits
+    * Transform::UnitVector newPosition(200, 1000, Transform::ScenePixels);
+    * camera.setPosition(newPosition, Camera::Center); // Set Center of the Camera at Position(200, 100)::ScenePixels
+    * camera.move(newPosition); // Move BottomRight Corner of the Camera to (400, 2000)::ScenePixels
     * \endcode
     */
     class Camera : public Transform::Rect
@@ -64,7 +64,7 @@ namespace obe::Scene
         void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft) override;
         /**
         * \brief Sets the size of the Camera
-        * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 WorldUnits)
+        * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 SceneUnits)
         * \param ref Referencial used to resize the Camera
         */
         void setSize(double pSize, Transform::Referencial ref = Transform::Referencial::Center);

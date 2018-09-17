@@ -139,7 +139,7 @@ namespace obe::Bindings::TransformBindings
         (*lua)["obe"]["Polygon"].setClass(kaguya::UserdataMetatable<Transform::Polygon, 
         kaguya::MultipleBase<Transform::UnitBasedObject, Transform::Movable>>()
             .addFunction("addPoint", Polygon_addPoint_wrapper())
-            .addFunction("findClosestLine", &Transform::Polygon::findClosestLine)
+            .addFunction("findClosestSegment", &Transform::Polygon::findClosestSegment)
             .addFunction("findClosestPoint", Polygon_findClosestPoint_wrapper())
             .addFunction("getCentroid", &Transform::Polygon::getCentroid)
             .addFunction("getPointsAmount", &Transform::Polygon::getPointsAmount)
@@ -161,7 +161,7 @@ namespace obe::Bindings::TransformBindings
         (*lua)["obe"]["Units"]["ViewPercentage"] = Transform::Units::ViewPercentage;
         (*lua)["obe"]["Units"]["ViewPixels"] = Transform::Units::ViewPixels;
         (*lua)["obe"]["Units"]["ViewUnits"] = Transform::Units::ViewUnits;
-        (*lua)["obe"]["Units"]["WorldPixels"] = Transform::Units::WorldPixels;
-        (*lua)["obe"]["Units"]["WorldUnits"] = Transform::Units::WorldUnits;
+        (*lua)["obe"]["Units"]["ScenePixels"] = Transform::Units::ScenePixels;
+        (*lua)["obe"]["Units"]["SceneUnits"] = Transform::Units::SceneUnits;
     }
 }

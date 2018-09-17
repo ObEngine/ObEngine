@@ -402,7 +402,7 @@ namespace obe::Scene
             }
         }
             
-        Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::WorldPixels>();
+        Transform::UnitVector pixelCamera = m_camera.getPosition().to<Transform::Units::ScenePixels>();
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
             if (m_spriteArray[i]->isVisible())
@@ -647,8 +647,8 @@ namespace obe::Scene
 
     std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(const Transform::UnitVector& position)
     {
-        const Transform::UnitVector pPos = position.to<Transform::Units::WorldPixels>();
-        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
+        const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
             // Fix here
@@ -662,8 +662,8 @@ namespace obe::Scene
 
     Collision::PolygonalCollider* Scene::getColliderByCentroidPosition(const Transform::UnitVector& position)
     {
-        const Transform::UnitVector pPos = position.to<Transform::Units::WorldPixels>();
-        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::WorldPixels);
+        const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pTolerance = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
             if (m_colliderArray[i]->isCentroidAroundPosition(pPos, pTolerance))

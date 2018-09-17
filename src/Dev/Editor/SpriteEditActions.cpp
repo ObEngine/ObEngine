@@ -75,7 +75,7 @@ namespace obe::Editor
     {
         inputManager.getAction("MoveHandlePoint").connect([editorTriggers, &selectedHandlePoint, &cursor, &world](const Input::InputActionEvent& event)
         {
-            Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
             if (selectedHandlePoint != nullptr)
             {
                 selectedHandlePoint->moveTo(cursor.getPosition(), pixelCamera);
@@ -106,7 +106,7 @@ namespace obe::Editor
             &world]
         (const Input::InputActionEvent& event)
         {
-            Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
+            Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
             if (selectedSprite != nullptr && selectedHandlePoint == nullptr)
             {
                 selectedHandlePoint = selectedSprite->getHandlePoint(pixelCamera, cursor.getX(), cursor.getY());
@@ -136,13 +136,13 @@ namespace obe::Editor
                 Transform::UnitVector selectedSpriteOffset = selectedSprite->getPositionTransformer()(
                     cursor.getPosition() - selectedSprite->getPosition(),
                     -pixelCamera,
-                    selectedSprite->getLayer()).to<Transform::Units::WorldPixels>();
+                    selectedSprite->getLayer()).to<Transform::Units::ScenePixels>();
                 selectedSpriteOffsetX = selectedSpriteOffset.x;
                 selectedSpriteOffsetY = selectedSpriteOffset.y;
                 editorTriggers->pushParameter("SpriteSelect", "sprite", selectedSprite);
-                editorTriggers->pushParameter("SpriteSelect", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                editorTriggers->pushParameter("SpriteSelect", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::ScenePixels));
                 editorTriggers->pushParameter("SpriteSelect", "pos",
-                    pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::WorldPixels));
+                    pixelCamera + Transform::UnitVector(cursor.getX(), cursor.getY(), Transform::Units::ScenePixels));
                 editorTriggers->trigger("SpriteSelect");
                 selectedSprite->select();
 
@@ -166,12 +166,12 @@ namespace obe::Editor
             {
                 editorTriggers->pushParameter("SpriteMoved", "sprite", selectedSprite);
                 editorTriggers->pushParameter("SpriteMoved", "oldPos", selectedSprite->getPosition());
-                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::WorldPixels>();
-                Transform::UnitVector basePos(cursor.getConstrainedX() - selectedSpriteOffsetX, cursor.getConstrainedY() - selectedSpriteOffsetY, Transform::Units::WorldPixels);
+                Transform::UnitVector pixelCamera = world.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
+                Transform::UnitVector basePos(cursor.getConstrainedX() - selectedSpriteOffsetX, cursor.getConstrainedY() - selectedSpriteOffsetY, Transform::Units::ScenePixels);
                 Transform::UnitVector newPosition = selectedSprite->getPositionTransformer()(basePos, -pixelCamera, selectedSprite->getLayer());
                 selectedSprite->setPosition(newPosition);
                 editorTriggers->pushParameter("SpriteMoved", "pos", selectedSprite->getPosition());
-                editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::WorldPixels));
+                editorTriggers->pushParameter("SpriteMoved", "offset", Transform::UnitVector(selectedSpriteOffsetX, selectedSpriteOffsetY, Transform::Units::ScenePixels));
                 editorTriggers->trigger("SpriteMoved");
 
                 tooltip.setText("Selected Sprite : \n"
