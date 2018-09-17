@@ -82,6 +82,7 @@ namespace obe::Bindings
             .add("TimeUtils", &TimeBindings::LoadTimeUtils)
         // Transform
             .add("Movable", &TransformBindings::LoadMovable)
+            .add("Polygon", &TransformBindings::LoadPolygon)
             .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
             .add("Rect", &TransformBindings::LoadRect)
             .add("Referencial", &TransformBindings::LoadReferencial)

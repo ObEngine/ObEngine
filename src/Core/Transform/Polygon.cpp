@@ -53,6 +53,23 @@ namespace obe::Transform
         this->add(position);
     }
 
+    PolygonSegment::PolygonSegment(const PolygonPoint& first, const PolygonPoint& second) :
+    first(first), second(second)
+    {
+    }
+
+    double PolygonSegment::getAngle() const
+    {
+        const double deltaX = second.x - first.x;
+        const double deltaY = second.y - first.y;
+        return (std::atan2(deltaY, deltaX) * 180.0 / Utils::Math::pi);
+    }
+
+    double PolygonSegment::getLength() const
+    {
+        return first.distance(second);
+    }
+
     Polygon::Polygon() :
         Movable(Transform::MovableType::Polygon)
     {
@@ -79,16 +96,6 @@ namespace obe::Transform
                 m_points[i]->rw_index = i;
         }
             
-    }
-
-    PolygonSegment Polygon::getLine(point_index_t index)
-    {
-        if (index < m_points.size() - 1)
-            return std::pair<PolygonPoint&, PolygonPoint&>(*m_points[index], *m_points[index + 1]);
-        else if (index == m_points.size() - 1)
-            return std::pair<PolygonPoint&, PolygonPoint&>(*m_points[index], *m_points[0]);
-        else
-            throw aube::ErrorHandler::Raise("obe.Transform.Polygon.IndexOverflow", { {"method", "getLine"}, {"index", std::to_string(index) } });
     }
 
     PolygonPoint& Polygon::findClosestPoint(const Transform::UnitVector& position, bool neighbor, const std::vector<point_index_t>& excludedPoints)
@@ -187,7 +194,7 @@ namespace obe::Transform
             const double firstLength = m_points[i]->distance(position);
             const double secondLength = m_points[nextNode]->distance(position);
             if (Utils::Math::isBetween(lineLength, firstLength + secondLength - tolerance, firstLength + secondLength + tolerance))
-                return std::make_optional(this->getLine(i));
+                return std::make_optional(this->getSegment(i));
         }
         return std::nullopt;
     }
@@ -262,24 +269,12 @@ namespace obe::Transform
         return false;
     }
 
-    double Polygon::getSegmentAngle(const point_index_t segment)
+    PolygonSegment Polygon::getSegment(const point_index_t segment) const
     {
         int p2 = segment + 1;
         if (segment == m_points.size() - 1)
             p2 = 0;
-        const auto p1c = this->get(segment);
-        const auto p2c = this->get(p2);
-        const double deltaX = p2c.x - p1c.x;
-        const double deltaY = p2c.y - p1c.y;
-        return (std::atan2(deltaY, deltaX) * 180.0 / Utils::Math::pi);
-    }
-
-    double Polygon::getSegmentLength(const point_index_t segment)
-    {
-        int p2 = segment + 1;
-        if (segment == m_points.size() - 1)
-            p2 = 0;
-        return m_points[segment]->distance(this->get(p2));
+        return PolygonSegment(this->get(segment), this->get(p2));
     }
 
     UnitVector Polygon::getPosition() const

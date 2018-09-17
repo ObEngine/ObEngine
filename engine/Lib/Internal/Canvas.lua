@@ -278,6 +278,20 @@ obe.Canvas.Bases.Line = {
         color = function(self, color)
             self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
             self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
+        end,
+        p1 = function(self, p1)
+            if type(p1) == "table" then
+                if type(p1.x) == "number" then self.p1.x = p1.x; end
+                if type(p1.y) == "number" then self.p1.y = p1.y; end
+                if p1.color then self.p1color = obe.Canvas.NormalizeColor(p1.color, self.p1color); end
+            end
+        end,
+        p2 = function(self, p2)
+            if type(p2) == "table" then
+                if type(p2.x) == "number" then self.p2.x = p2.x; end
+                if type(p2.y) == "number" then self.p2.y = p2.y; end
+                if p2.color then self.p2color = obe.Canvas.NormalizeColor(p2.color, self.p2color); end
+            end
         end
     }
 };

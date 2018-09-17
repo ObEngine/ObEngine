@@ -36,7 +36,16 @@ namespace obe::Transform
         void move(const Transform::UnitVector& position);
     };
 
-    using PolygonSegment = std::pair<PolygonPoint&, PolygonPoint&>;
+    class PolygonSegment
+    {
+    public:
+        const PolygonPoint& first;
+        const PolygonPoint& second;
+        double getAngle() const;
+        double getLength() const;
+        PolygonSegment(const PolygonPoint& first, const PolygonPoint& second);
+    };
+
     using PolygonPath = std::vector<std::unique_ptr<PolygonPoint>>;
 
     /**
@@ -64,7 +73,6 @@ namespace obe::Transform
         * \param pointIndex Index where to insert the new Point, Use pointIndex = -1 <DefaultArg> to insert at the end (between last and first Point)
         */
         void addPoint(const Transform::UnitVector& position, int pointIndex = -1);
-        PolygonSegment getLine(point_index_t index);
         /**
         * \brief Finds the closest Line from the given Position
         * \param position Position used to get the closest Line
@@ -104,13 +112,12 @@ namespace obe::Transform
         * \return A float containing the value of the current angle of the PolygonalCollider
         */
         float getRotation() const;
-        /**
-        * \brief Get the angle of a side of the Polygon (0 to 360 degrees where 0 is the top)
-        * \param side Index of the side you want to get the angle. \n
-        *             For example index = 2 if the side from Point 2 to Point 3.
-        * \return A double containing the side of the angle (From 0 to 360 degrees)
+        /*
+        * \brief Gets the segment of the Polygon at index segment
+        * \param segment Index of the Segment to get
+        * \return The segment of the Polygon at index segment
         */
-        double getSegmentAngle(point_index_t segment);
+        PolygonSegment getSegment(point_index_t segment);
         /**
         * \brief Get if the Position (x, y) is on one of the side of the Polygon
         * \param position Coordinate of the Position to test
@@ -118,13 +125,6 @@ namespace obe::Transform
         * \return An unsigned int containing the index of the side containing the position or -1 if not found
         */
         std::optional<PolygonSegment> getSegmentContainingPoint(const Transform::UnitVector& position, double tolerance = 0.01);
-        /**
-        * \brief Get the length of a side of the Polygon (Undefined Unit) <REVISION>
-        * \param side Index of the side you want to get the length. \n
-        *             For example index = 2 if the side from Point 2 to Point 3.
-        * \return A double containing the length of the angle (Undefined Unit)
-        */
-        double getSegmentLength(const point_index_t segment);
         /**
         * \brief Check if the MasterPoint of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
         * \param position Coordinate of the Position to test

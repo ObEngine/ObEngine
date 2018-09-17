@@ -1,6 +1,7 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/TransformBindings.hpp>
 #include <Transform/SceneNode.hpp>
+#include <Transform/Polygon.hpp>
 #include <Transform/ProtectedUnitVector.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitBasedObject.hpp>
@@ -127,6 +128,31 @@ namespace obe::Bindings::TransformBindings
             .addProperty("y", &Transform::UnitVector::y)
             .addProperty("unit", &Transform::UnitVector::unit)
         );
+    }
+
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_addPoint_wrapper, Transform::Polygon, addPoint, 1, 2);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_findClosestPoint_wrapper, Transform::Polygon, findClosestPoint, 1, 3);
+    void LoadPolygon(kaguya::State* lua)
+    {
+        Load(lua, "obe.Movable");
+        Load(lua, "obe.UnitBasedObject");
+        (*lua)["obe"]["Polygon"].setClass(kaguya::UserdataMetatable<Transform::Polygon, 
+        kaguya::MultipleBase<Transform::UnitBasedObject, Transform::Movable>>()
+            .addFunction("addPoint", Polygon_addPoint_wrapper())
+            .addFunction("findClosestLine", &Transform::Polygon::findClosestLine)
+            .addFunction("findClosestPoint", Polygon_findClosestPoint_wrapper())
+            .addFunction("getCentroid", &Transform::Polygon::getCentroid)
+            .addFunction("getPointsAmount", &Transform::Polygon::getPointsAmount)
+            .addFunction("getPosition", &Transform::Polygon::getPosition)
+            .addFunction("getRotation", &Transform::Polygon::getRotation)
+            .addFunction("getSegment", &Transform::Polygon::getSegment)
+        );
+        (*lua)["obe"]["Polygon"]["getAllPoints"] = kaguya::function([](Transform::Polygon& polygon){
+            std::vector<Transform::PolygonPoint*> points;
+            for (const auto& point : polygon.getAllPoints())
+                points.push_back(point.get());
+            return points;
+        });
     }
 
     void LoadUnits(kaguya::State* lua)
