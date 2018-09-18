@@ -51,13 +51,15 @@ namespace obe::Bindings::CollisionBindings
         Load(lua, "obe.Selectable");
         Load(lua, "obe.Serializable");
         Load(lua, "obe.Movable");
+        Load(lua, "obe.Polygon");
         (*lua)["obe"]["PolygonalCollider"].setClass(kaguya::UserdataMetatable<Collision::PolygonalCollider,
             kaguya::MultipleBase<
             Transform::UnitBasedObject,
             Types::Selectable,
             Transform::Movable,
             Types::Serializable,
-            Types::Identifiable
+            Types::Identifiable,
+            Transform::Polygon
             >
             >()
             .setConstructors<Collision::PolygonalCollider(const std::string&)>()

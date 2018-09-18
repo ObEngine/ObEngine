@@ -30,10 +30,10 @@ namespace obe::Component
     {
     public:
 	    explicit Component(const std::string& id);
-		~Component() override = default;
+		~Component() override;
 
-        static std::vector<std::unique_ptr<T>> Pool;
-        static T& create(const std::string& id);
+        static std::vector<T*> Pool;
+        //static T& create(const std::string& id);
 		
 		void remove() override;
         void inject(unsigned int envIndex) override;
@@ -45,15 +45,24 @@ namespace obe::Component
 	template <class T>
 	Component<T>::Component(const std::string& id) : ComponentBase(id)
 	{
+		Pool.emplace_back(static_cast<T*>(this));
 	}
 
-	template<class T>
+	template <class T>
+	Component<T>::~Component()
+	{
+		Pool.erase(std::remove_if(Pool.begin(), Pool.end(), [&](T* ptr) -> bool {
+            return (this == ptr);
+        }), Pool.end());
+	}
+
+	/*template<class T>
     inline T& Component<T>::create(const std::string& id)
     {
 		T* ref = Pool.emplace_back(std::make_unique<T>(id)).get();
 		AddComponent(ref);
 		return *ref;
-    }
+    }*/
 
 	template <class T>
 	void Component<T>::inject(unsigned int envIndex)
@@ -65,9 +74,9 @@ namespace obe::Component
 	void Component<T>::remove()
 	{
 		RemoveComponent(this);
-		T::Pool.erase(std::remove_if(T::Pool.begin(), T::Pool.end(), [&](auto& elem) { return (this == elem.get()); }), T::Pool.end());
+		T::Pool.erase(std::remove_if(T::Pool.begin(), T::Pool.end(), [&](auto& elem) { return (this == elem); }), T::Pool.end());
 	}
 
 	template <class T>
-	std::vector<std::unique_ptr<T>> Component<T>::Pool;
+	std::vector<T*> Component<T>::Pool;
 }

@@ -128,11 +128,12 @@ namespace obe::Scene
 			"Scene.add<T>(id) requires T to have Component as base class"
 		);
 
-		T* reference = static_cast<T*>(m_components.emplace_back(&T::create(id)));
+		/*T* reference = static_cast<T*>(m_components.emplace_back(&T::create(id)));
 		if (m_script)
 		{
 			reference->inject(m_script->getEnvIndex());
-		}
+		}*/
+		T* reference = nullptr;
 
 		return *reference;
 	}

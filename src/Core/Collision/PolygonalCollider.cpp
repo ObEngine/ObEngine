@@ -93,8 +93,9 @@ namespace obe::Collision
         for (auto& collider : Pool)
         {
             const Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(*collider, offset);
+            Debug::Log->warn("Maximum distance before collision from {} with {} is ({}, {})", this->getId(), collider->getId(), maxDist.x, maxDist.y);
             //Add Tag check <REVISION>
-            if (maxDist != offset && collider.get() != this)
+            if (maxDist != offset && collider != this)
             {
                 limitedMaxDists.push_back(maxDist);
             }
