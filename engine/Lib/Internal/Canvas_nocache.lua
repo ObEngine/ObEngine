@@ -1,31 +1,9 @@
 local Class = require("Lib/StdLib/Class");
 local contains = require("Lib/StdLib/Contains");
 
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
-end
-
-obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
+obe.Canvas.Canvas = Class("Canvas", function(self, width, height)
     self.internal = obe.Canvas.InternalCanvas(width, height);
     self.elements = {};
-    self.useCache = usecache or false;
-    self.BMT = {
-        Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
-        Rectangle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle}, self.useCache),
-        Text = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text}, self.useCache),
-        Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle}, self.useCache)
-    };
 end);
 
 function obe.Canvas.NormalizeColor(color, base)
@@ -38,8 +16,8 @@ function obe.Canvas.NormalizeColor(color, base)
         ncolor.a = color.a or base.a;
         return ncolor;
     elseif type(color) == "number" then
-        local dalpha = base.a;
-        return SFML.Color(color, color, color, dalpha);
+        local dalpha = self.shape:getFillColor().a;
+        local ncolor = SFML.Color(color, color, color, dalpha);
     elseif type(color) == "string" then
         color = color:gsub("#","");
         if string.len(color) == 3 then
@@ -80,106 +58,49 @@ end
 
 obe.Canvas.Bases = {};
 
-function obe.Canvas.ApplyCache(element)
-    --print("Applying cache on", inspect(element));
-    local applyCacheValue = function(mt, k, v)
-        if type(k) == "number" and not mt.__setters[k] and mt.__setters.__number then
-            mt.__setters.__number(mt.__ref, k, v);
-        else
-            if mt.__setters[k] then
-                mt.__setters[k](mt.__ref, v);
-            else
-                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
-            end
-        end
-    end
-    local mt = getmetatable(element);
-    --print("Cache :", inspect(mt.__cache));
-    if #mt.__priority > 0 then
-        for k, v in pairs(mt.__priority) do
-            if mt.__cache[v] then
-                applyCacheValue(mt, v, mt.__cache[v]);
-                mt.__cache[v] = nil;
-            end
-        end
-    end
-    for k, v in pairs(mt.__cache) do
-        applyCacheValue(mt, k, v);
-    end
-    for k, v in pairs(mt.__getters) do
-        if type(v) == "table" then
-            obe.Canvas.ApplyCache(v);
-        end
-    end
-    mt.__cache = {};
-end
-
-function obe.Canvas.__set_cached(tbl, key, value)
-    local k = getmetatable(tbl);
-    if type(value) == "table" then
-        k.__getters[key](value);
-    else
-        k.__cache[key] = value;
-        k.__rcache[key] = value;
-    end
-end
-
-function obe.Canvas.__get_cached(tbl, key)
-    local k = getmetatable(tbl);
-    if k.__rcache[key] and type(k.__rcache[key]) ~= "table" then
-        return k.__rcache[key];
-    else
-        if type(k.__getters[key]) == "function" then
-            return k.__getters[key](k.__ref);
-        elseif type(key) == "number" and not k.__getters[key] and k.__getters.__number then
-            return k.__getters.__number(k.__ref, key);
-        elseif type(k.__getters[key]) == "table" then
-            --print("Found table", inspect(k.__getters[key]));
-            return k.__getters[key];
-        end
-    end
-end
-
-function obe.Canvas.__set(tbl, key, value)
-    local k = getmetatable(tbl);
-    if type(key) == "number" and not k.__setters[key] and k.__setters.__number then
-        k.__setters.__number(k.__ref, value);
-    else
-        if k.__setters[key] then
-            k.__setters[key](k.__ref, value);
-        else
-            error("Can't find obe.Canvas.Canvas attribute : " .. tostring(key));
-        end
-    end
-end
-
-function obe.Canvas.__get(tbl, key)
-    local k = getmetatable(tbl);
-    if type(k.__getters[key]) == "function" then
-        return k.__getters[key](k.__ref);
-    elseif type(key) == "number" and not k.__getters[key] and k.__getters.__number then
-        return k.__getters.__number(k.__ref);
-    elseif type(k.__getters[key]) == "table" then
-        return k.__getters[key];
-    end
-end
-
-function obe.Canvas.__call(tbl, values)
-    values = values or {};
-    for k, v in pairs(values) do
-        tbl[k] = v;
-    end
-    return tbl;
-end
-
-function obe.Canvas.MakeMT(bases, usecache)
-    usecache = usecache or false;
+function obe.Canvas.MakeMT(bases)
     local getters = {};
     local setters = {};
     local priority = {};
 
-    local tt = { __type = "CanvasMT" };
-
+    local fAccess = function(a, b, c) 
+        local k = getmetatable(a);
+        if type(b) == "number" and not k.__setters[b] and k.__setters.__number then
+            k.__setters.__number(k.__ref, c);
+        else
+            if k.__setters[b] then
+                k.__setters[b](k.__ref, c);
+            else
+                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(b));
+            end
+        end
+    end
+    local nAccess = function(a, b)
+        local k = getmetatable(a);
+        if type(k.__getters[b]) == "function" then
+            return k.__getters[b](k.__ref);
+        elseif type(b) == "number" and not k.__getters[b] and k.__getters.__number then
+            return k.__getters.__number(k.__ref);
+        elseif type(k.__getters[b]) == "table" then
+            return k.__getters[b];
+        end
+    end
+    local tAccess = function(a, b)
+        b = b or {};
+        local k = getmetatable(a);
+        if #k.__priority > 0 then
+            for k, v in pairs(k.__priority) do
+                if b[v] then
+                    a[v] = b[v];
+                    b[v] = nil;
+                end
+            end
+        end
+        for k, v in pairs(b) do
+            a[k] = v;
+        end
+        return a;
+    end
     for kb, base in pairs(bases) do
         if base.priority then
             for k, priorityName in pairs(base.priority) do
@@ -197,53 +118,39 @@ function obe.Canvas.MakeMT(bases, usecache)
     end
     for key, getter in pairs(getters) do
         if type(getter) == "table" then
-            getters[key] = obe.Canvas.MakeMT({getter}, usecache);
+            getters[key] = obe.Canvas.MakeMT({getter});
         end
     end
     for key, setter in pairs(setters) do
         if type(setter) == "table" then
-            setters[key] = obe.Canvas.MakeMT({setter}, usecache);
+            setters[key] = obe.Canvas.MakeMT({setter});
         end
     end
-    local getfunc = usecache and obe.Canvas.__get_cached or obe.Canvas.__get;
-    local setfunc = usecache and obe.Canvas.__set_cached or obe.Canvas.__set;
     local mt = {
         __ref = nil,
         __getters = getters,
         __setters = setters,
         __priority = priority,
-        __index = getfunc,
-        __newindex = setfunc,
-        __call = obe.Canvas.__call,
-        __cache = {},
-        __rcache = {}
+        __index = nAccess,
+        __newindex = fAccess,
+        __call = tAccess
     };
+    local tt = { __type = "CanvasMT" };
     setmetatable(tt, mt);
     return tt;
 end
 
-function obe.Canvas.Canvas:InstanciateMT(type, internal)
-    local instance = deepcopy(self.BMT[type]);
-    obe.Canvas.InjectInternalMT(instance, internal);
-    return instance;
-end
-
-function obe.Canvas.InjectInternalMT(tbl, ref)
+function obe.Canvas.InitializeMT(tbl, ref)
     if type(tbl) == "table" and rawget(tbl, "__type") == "CanvasMT" then
         local mt = getmetatable(tbl);
         mt.__ref = ref;
         for k, getter in pairs(mt.__getters) do
-            obe.Canvas.InjectInternalMT(getter, ref);
+            obe.Canvas.InitializeMT(getter, ref);
         end
         for k, setter in pairs(mt.__setters) do
-            obe.Canvas.InjectInternalMT(setter, ref);
+            obe.Canvas.InitializeMT(setter, ref);
         end
     end
-end
-
-local UV2V2f = function(uv)
-    local uvpx = uv:to(obe.Units.ScenePixels);
-    return SFML.Vector2f(uvpx.x, uvpx.y);
 end
 
 obe.Canvas.Bases.Drawable = {
@@ -367,13 +274,9 @@ obe.Canvas.Bases.Line = {
 };
 
 obe.Canvas.Bases.Shape = {
-    priority = {
-        "unit"
-    },
     getters = {
-        x = function(self) return self.position.x; end,
-        y = function(self) return self.position.y; end,
-        unit = function(self) return self.position.unit; end,
+        x = function(self) return self.shape:getPosition().x; end,
+        y = function(self) return self.shape:getPosition().y; end,
         angle = function(self) return self.shape:getRotation(); end,
         scale = {
             getters = {
@@ -401,22 +304,22 @@ obe.Canvas.Bases.Shape = {
                         a = function(self) return self.shape:getOutlineColor().a; end
                     },
                     setters = {
-                        r = function(self, r)
+                        r = function(self, r) 
                             local colorBuffer = self.shape:getOutlineColor();
                             colorBuffer.r = r or 0;
                             self.shape:setOutlineColor(colorBuffer);
                         end,
-                        g = function(self, g)
+                        g = function(self, g) 
                             local colorBuffer = self.shape:getOutlineColor();
                             colorBuffer.g = g or 0;
                             self.shape:setOutlineColor(colorBuffer);
                         end,
-                        b = function(self, b)
+                        b = function(self, b) 
                             local colorBuffer = self.shape:getOutlineColor();
                             colorBuffer.b = b or 0;
                             self.shape:setOutlineColor(colorBuffer);
                         end,
-                        a = function(self, a)
+                        a = function(self, a) 
                             local colorBuffer = self.shape:getOutlineColor();
                             colorBuffer.a = a or 255;
                             self.shape:setOutlineColor(colorBuffer);
@@ -440,22 +343,22 @@ obe.Canvas.Bases.Shape = {
                 a = function(self) return self.shape:getFillColor().a; end
             },
             setters = {
-                r = function(self, r)
+                r = function(self, r) 
                     local colorBuffer = self.shape:getFillColor();
                     colorBuffer.r = r or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
-                g = function(self, g)
+                g = function(self, g) 
                     local colorBuffer = self.shape:getFillColor();
                     colorBuffer.g = g or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
-                b = function(self, b)
+                b = function(self, b) 
                     local colorBuffer = self.shape:getFillColor();
                     colorBuffer.b = b or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
-                a = function(self, a)
+                a = function(self, a) 
                     local colorBuffer = self.shape:getFillColor();
                     colorBuffer.a = a or 255;
                     self.shape:setFillColor(colorBuffer);
@@ -478,15 +381,12 @@ obe.Canvas.Bases.Shape = {
             self.shape:setFillColor(obe.Canvas.NormalizeColor(color, self.shape:getFillColor()));
         end,
         x = function(self, x)
-            self.position.x = x;
-            self.shape:setPosition(UV2V2f(self.position));
+            local y = self.shape:getPosition().y;
+            self.shape:setPosition(SFML.Vector2f(x, y));
         end,
         y = function(self, y)
-            self.position.y = y;
-            self.shape:setPosition(UV2V2f(self.position));
-        end,
-        unit = function(self, unit)
-            self.position.unit = unit or obe.Units.ScenePixels;
+            local x = self.shape:getPosition().x;
+            self.shape:setPosition(SFML.Vector2f(x, y));
         end,
         angle = function(self, angle)
             self.shape:setRotation(angle or 0);
@@ -503,21 +403,17 @@ obe.Canvas.Bases.Shape = {
 
 obe.Canvas.Bases.Rectangle = {
     getters = {
-        width = function(self) return self.size.x; end,
-        height = function(self) return self.size.y; end
+        width = function(self) return self.shape:getSize().x; end,
+        height = function(self) return self.shape:getSize().y; end
     },
     setters = {
         width = function(self, width)
-            self.size.x = width;
-            self.shape:setSize(UV2V2f(self.size));
+            local height = self.shape:getSize().y;
+            self.shape:setSize(SFML.Vector2f(width, height));
         end,
         height = function(self, height)
-            self.size.y = height
-            self.shape:setSize(UV2V2f(self.size));
-        end,
-        unit = function(self, unit)
-            self.position.unit = unit or obe.Units.ScenePixels;
-            self.size.unit = unit or obe.Units.ScenePixels;
+            local width = self.shape:getSize().x;
+            self.shape:setSize(SFML.Vector2f(width, height));
         end,
     }
 }
@@ -530,17 +426,6 @@ obe.Canvas.Bases.Circle = {
     },
     setters = {
         radius = function(self, radius) return self.shape:setRadius(radius); end
-    }
-}
-
-obe.Canvas.Bases.Polygon = {
-    getters = {
-
-    },
-    setters = {
-        __number = function(self, index, vertex)
-            local i = index - 1;
-        end
     }
 }
 
@@ -564,17 +449,17 @@ obe.Canvas.Bases.Text = {
     },
     getters = {
         text = function(self)
-            local fullText = "";
+            local fulltext = "";
             for _, line in pairs(self.shape:getLines()) do
                 for _, text in pairs(line:getTexts()) do
-                    fullText = fullText .. text:getString():toAnsiString();
+                    fullText = fulltext .. text:getString():toAnsiString();
                 end
                 fullText = fullText .. "\n";
             end
             if fullText ~= "" then
                 fullText = fullText:sub(1, -2);
             end
-            return fullText;
+            return fulltext;
         end,
         size = function(self)
             return self.shape:getCharacterSize();
@@ -638,7 +523,7 @@ obe.Canvas.Bases.Text = {
                 end
             end
         end,
-        __number = function(self, index, part)
+        __number = function(self, part)
             self.shape:pushOutlineThickness(0);
             self.shape:pushOutlineColor(SFML.Color(255, 255, 255));
             self.shape:pushFillColor(SFML.Color(255, 255, 255));
@@ -673,9 +558,6 @@ obe.Canvas.Bases.Text = {
 }
 
 function obe.Canvas.Canvas:GenerateId(id)
-    if type(id) == "string" and self.internal:get(id) ~= nil then
-        error("CanvasElement '" .. tostring(id) .. "' already exists !");
-    end
     while id == nil or self.internal:get(id) ~= nil do
         id = obe.String.getRandomKey(obe.String.Alphabet .. obe.String.Numbers, 12);
     end
@@ -684,28 +566,41 @@ end
 
 function obe.Canvas.Canvas:Line(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Line", self.internal:Line(id));
-    --print(inspect(self.elements[id]));
+    self.elements[id] = obe.Canvas.MakeMT({ 
+        obe.Canvas.Bases.Drawable, 
+        obe.Canvas.Bases.Line});
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Line(id));
     return self.elements[id];
 end
 
 function obe.Canvas.Canvas:Rectangle(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Rectangle", self.internal:Rectangle(id));
+    self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Rectangle});
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Rectangle(id));
     return self.elements[id];
 end
 
 function obe.Canvas.Canvas:Text(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
+    self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Text});
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Text(id));
     self.elements[id].font = "Data/Fonts/arial.ttf";
-    --print(inspect(self.elements[id]));
     return self.elements[id];
 end
 
 function obe.Canvas.Canvas:Circle(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Circle", self.internal:Circle(id));
+    self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Circle});
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Circle(id));
     return self.elements[id];
 end
 
@@ -716,11 +611,6 @@ function obe.Canvas.Canvas:Sprite(id)
 end
 
 function obe.Canvas.Canvas:render()
-    if self.useCache then
-        for id, element in pairs(self.elements) do
-            obe.Canvas.ApplyCache(element);
-        end
-    end
     self.internal:render();
 end
 
@@ -729,11 +619,9 @@ function obe.Canvas.Canvas:setTarget(target)
 end
 
 function obe.Canvas.Canvas:clear()
-    self.elements = {};
     self.internal:clear();
 end
 
 function obe.Canvas.Canvas:remove(element)
-    self.elements[element] = nil;
     self.internal:remove(element);
 end

@@ -134,6 +134,17 @@ namespace obe::Bindings::SFMLBindings
         );
     }
 
+    void LoadSfRect(kaguya::State* lua)
+    {
+        (*lua)["SFML"]["FloatRect"].setClass(kaguya::UserdataMetatable<sf::FloatRect>()
+            .setConstructors<sf::FloatRect(), sf::FloatRect(float, float, float, float)>()
+            .addProperty("left", &sf::FloatRect::left)
+            .addProperty("top", &sf::FloatRect::top)
+            .addProperty("width", &sf::FloatRect::width)
+            .addProperty("height", &sf::FloatRect::height)
+        );
+    }
+
     std::wstring toUtf8WString(const std::string& input)
     {
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -264,6 +275,28 @@ namespace obe::Bindings::SFMLBindings
             .addFunction("getGlobalBounds", &sfe::RichText::getGlobalBounds)
             .addFunction("getLines", &sfe::RichText::getLines)
         );
+
+        (*lua)["SFML"]["RichText"]["getOutlineColor"] = kaguya::function([](sfe::RichText* text)
+        {
+            if (text->getLines().size() > 0 && text->getLines().back().getTexts().size() > 0)
+                return text->getLines().back().getTexts().back().getOutlineColor();
+            else
+                return sf::Color::White;
+        });
+        (*lua)["SFML"]["RichText"]["getFillColor"] = kaguya::function([](sfe::RichText* text)
+        {
+            if (text->getLines().size() > 0 && text->getLines().back().getTexts().size() > 0)
+                return text->getLines().back().getTexts().back().getFillColor();
+            else
+                return sf::Color::White;
+        });
+        (*lua)["SFML"]["RichText"]["getOutlineThickness"] = kaguya::function([](sfe::RichText* text)
+        {
+            if (text->getLines().size() > 0 && text->getLines().back().getTexts().size() > 0)
+                return text->getLines().back().getTexts().back().getOutlineThickness();
+            else
+                return 0.f;
+        });
 
         (*lua)["SFML"]["Style"] = kaguya::NewTable();
         (*lua)["SFML"]["Style"]["Regular"] = sf::Text::Style::Regular;

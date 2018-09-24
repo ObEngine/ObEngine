@@ -112,6 +112,7 @@ namespace obe::Bindings
         BindTree["SFML"]
             .add("Color", SFMLBindings::LoadSfColor)
             .add("Drawable", SFMLBindings::LoadSfDrawable)
+            .add("Rect", SFMLBindings::LoadSfRect)
             .add("Shape", SFMLBindings::LoadSfShape)
             .add("Text", SFMLBindings::LoadSfText)
             .add("Texture", SFMLBindings::LoadSfTexture)

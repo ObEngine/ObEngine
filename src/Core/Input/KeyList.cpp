@@ -5,6 +5,8 @@
 
 namespace obe::Input
 {
+    std::unordered_map<std::string, std::unique_ptr<InputButton>> AllKeys;
+
     void InitKeyList()
     {
         AllKeys["A"] = std::make_unique<InputButton>(sf::Keyboard::A, "A", "A", InputType::Alpha);

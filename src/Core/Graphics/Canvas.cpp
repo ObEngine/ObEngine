@@ -13,6 +13,10 @@ namespace obe::Graphics::Canvas
         this->parent = parent;
     }
 
+    CanvasElement::~CanvasElement()
+    {
+    }
+
     void CanvasElement::setLayer(const unsigned int layer)
     {
         if (this->layer != layer)

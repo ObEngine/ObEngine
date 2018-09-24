@@ -52,6 +52,8 @@ namespace obe::Triggers
     void Trigger::unregisterEnvironment(unsigned int envIndex)
     {
         Debug::Log->trace("<Trigger> Unregistering Lua Environment {0} from Trigger {1}", envIndex, m_name);
+        Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()] = kaguya::NilValue();
+        Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["LuaCore"]["TriggerList"][this->getTriggerLuaTableName()] = kaguya::NilValue();
         m_registeredEnvs.erase(std::remove_if(m_registeredEnvs.begin(), m_registeredEnvs.end(), 
             [&envIndex](const std::pair<unsigned int, std::string>& env) { return env.first == envIndex; }
         ), m_registeredEnvs.end());
@@ -74,6 +76,7 @@ namespace obe::Triggers
                     Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on Lua Environment {1} from Trigger {2}", rEnv.second, rEnv.first, m_name);
                     /*Script::ScriptEngine["ExecuteStringOnEnv"]
                     ("LuaCore.FuncInjector(" + rEnv.second + ", \"" + this->getTriggerLuaTableName() + "\")", rEnv.first);*/
+                    //Debug::Log->trace("Executing Env {}", rEnv.first);
                     Script::ScriptEngine("EnvFuncInjector(" + std::to_string(rEnv.first) + ", \"" + this->getTriggerLuaTableName() + "\")");
                 }
                 //Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FuncInjector"](rEnv.second, this->getTriggerLuaTableName());

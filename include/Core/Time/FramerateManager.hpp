@@ -24,6 +24,7 @@ namespace obe::Time
         int m_currentFrame = 0;
         int m_frameProgression = 0;
         bool m_needToRender = false;
+        bool m_syncUpdateRender = true;
     public:
         /**
         * \brief Creates a new FramerateManager

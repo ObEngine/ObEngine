@@ -137,7 +137,8 @@ namespace obe::Bindings::TransformBindings
     {
         Load(lua, "obe.Movable");
         Load(lua, "obe.UnitBasedObject");
-        (*lua)["obe"]["PolygonPoint"].setClass(kaguya::UserdataMetatable<Transform::PolygonPoint>()
+        Load(lua, "obe.UnitVector");
+        (*lua)["obe"]["PolygonPoint"].setClass(kaguya::UserdataMetatable<Transform::PolygonPoint, Transform::UnitVector>()
             .addFunction("distance", &Transform::PolygonPoint::distance)
             .addFunction("getRelativePosition", &Transform::PolygonPoint::getRelativePosition)
             .addFunction("move", &Transform::PolygonPoint::move)

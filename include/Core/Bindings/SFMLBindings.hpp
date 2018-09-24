@@ -11,6 +11,7 @@ namespace obe::Bindings::SFMLBindings
     void LoadSfDrawable(kaguya::State* lua);
     void LoadSfFont(kaguya::State* lua);
     void LoadSfGlsl(kaguya::State* lua);
+    void LoadSfRect(kaguya::State* lua);
     void LoadSfShape(kaguya::State* lua);
     void LoadSfSprite(kaguya::State* lua);
     void LoadSfText(kaguya::State* lua);

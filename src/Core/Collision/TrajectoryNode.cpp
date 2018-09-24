@@ -53,18 +53,18 @@ namespace obe::Collision
                 }
                 if (!cTraj->getStatic())
                 {
-                    Debug::Log->warn("Trajectory not static");
+                    //Debug::Log->warn("Trajectory not static");
                     cTraj->m_speed = speed;
                     Transform::UnitVector realOffset = cOffset;
                     if (m_probe != nullptr)
                     {
                         realOffset = m_probe->getMaximumDistanceBeforeCollision(cOffset);
-                        Debug::Log->warn("Probe not nullptr");
+                        //Debug::Log->warn("Probe not nullptr");
                     }
-                    Debug::Log->warn("State before ccheck : (offset diff : {}) (callback : {})", (realOffset != cOffset), (!trajectory.second->getOnCollideCallback().isNilref()));
+                    //Debug::Log->warn("State before ccheck : (offset diff : {}) (callback : {})", (realOffset != cOffset), (!trajectory.second->getOnCollideCallback().isNilref()));
                     if (realOffset != cOffset && !trajectory.second->getOnCollideCallback().isNilref())
                     {
-                        Debug::Log->warn("Calling callback !");
+                        //Debug::Log->warn("Calling callback !");
                         trajectory.second->getOnCollideCallback()(trajectory.second.get(), cOffset, realOffset);
                     }
                     m_sceneNode->move(realOffset);

@@ -161,6 +161,7 @@ namespace obe::Script
         * \param callAlias Alias (name of the callback) associated with the Trigger
         */
         void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias = "");
+        void removeExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const;
         /**
         * \brief Execute a Lua String in the Lua State of the GameObject
         * \param query String to execute

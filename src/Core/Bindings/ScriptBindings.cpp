@@ -19,6 +19,7 @@ namespace obe::Bindings::ScriptBindings
             .addFunction("getConstructor", &Script::GameObject::getConstructor)
             .addFunction("getSceneNode", &Script::GameObject::getSceneNode)
             .addFunction("getType", &Script::GameObject::getType)
+            .addFunction("removeExternalTrigger", &Script::GameObject::removeExternalTrigger)
             .addFunction("sendInitArg", &Script::GameObject::sendInitArgFromLua)
             .addFunction("useLocalTrigger", &Script::GameObject::useLocalTrigger)
             .addFunction("useExternalTrigger", useExternalTriggerProxy())

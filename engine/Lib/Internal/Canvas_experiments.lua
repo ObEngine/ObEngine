@@ -1,31 +1,10 @@
 local Class = require("Lib/StdLib/Class");
 local contains = require("Lib/StdLib/Contains");
 
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
-end
-
 obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
     self.internal = obe.Canvas.InternalCanvas(width, height);
     self.elements = {};
     self.useCache = usecache or false;
-    self.BMT = {
-        Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
-        Rectangle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle}, self.useCache),
-        Text = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text}, self.useCache),
-        Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle}, self.useCache)
-    };
 end);
 
 function obe.Canvas.NormalizeColor(color, base)
@@ -78,7 +57,34 @@ function obe.Canvas.ConvertVAlign(align)
     end
 end
 
+function deepcopy(value)
+    local orig_type = type(value);
+    local copy;
+    if orig_type == 'table' then
+        copy = {};
+        for orig_key, orig_value in next, value, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value);
+        end
+    else
+        copy = value;
+    end
+    return copy;
+end
+
 obe.Canvas.Bases = {};
+
+function obe.Canvas.ApplySetterValue(internal, setters, key, value)
+    print("Applying Setter Value", key, value);
+    if type(key) == "number" and not setters[key] and setters.__number then
+        setters.__number(internal, key, value);
+    else
+        if setters[key] then
+            setters[key](internal, value);
+        else
+            print("Can't find obe.Canvas.Canvas attribute : " .. tostring(key));
+        end
+    end
+end
 
 function obe.Canvas.ApplyCache(element)
     --print("Applying cache on", inspect(element));
@@ -172,7 +178,7 @@ function obe.Canvas.__call(tbl, values)
     return tbl;
 end
 
-function obe.Canvas.MakeMT(bases, usecache)
+function obe.Canvas.OldMakeMT(bases, usecache)
     usecache = usecache or false;
     local getters = {};
     local setters = {};
@@ -180,6 +186,14 @@ function obe.Canvas.MakeMT(bases, usecache)
 
     local tt = { __type = "CanvasMT" };
 
+    local tAccess = function(a, b)
+        b = b or {};
+        local k = getmetatable(a);
+        for k, v in pairs(b) do
+            a[k] = v;
+        end
+        return a;
+    end
     for kb, base in pairs(bases) do
         if base.priority then
             for k, priorityName in pairs(base.priority) do
@@ -214,7 +228,7 @@ function obe.Canvas.MakeMT(bases, usecache)
         __priority = priority,
         __index = getfunc,
         __newindex = setfunc,
-        __call = obe.Canvas.__call,
+        __call = tAccess,
         __cache = {},
         __rcache = {}
     };
@@ -222,10 +236,96 @@ function obe.Canvas.MakeMT(bases, usecache)
     return tt;
 end
 
-function obe.Canvas.Canvas:InstanciateMT(type, internal)
-    local instance = deepcopy(self.BMT[type]);
-    obe.Canvas.InjectInternalMT(instance, internal);
+function obe.Canvas.MakeMT(bases)
+    local getters = {};
+    local setters = {};
+    local priority = {};
+
+    local tt = { __type = "CanvasMT" };
+
+    for kb, base in pairs(bases) do
+        if base.priority then
+            for k, priorityName in pairs(base.priority) do
+                if not contains(priority, priorityName) then
+                    table.insert(priority, priorityName);
+                end
+            end
+        end
+        for getterName, getterValue in pairs(base.getters) do
+            getters[getterName] = getterValue;
+        end
+        for setterName, setterValue in pairs(base.setters) do
+            setters[setterName] = setterValue;
+        end
+    end
+    for key, getter in pairs(getters) do
+        if type(getter) == "table" then
+            getters[key] = obe.Canvas.MakeMT({getter});
+        end
+    end
+    for key, setter in pairs(setters) do
+        if type(setter) == "table" then
+            setters[key] = obe.Canvas.MakeMT({setter});
+        end
+    end
+    local mt = {
+        __getters = getters,
+        __setters = setters,
+        __priority = priority,
+        __index = obe.Canvas.__get,
+        __newindex = obe.Canvas.__set,
+        __call = obe.Canvas.__call,
+    };
+    setmetatable(tt, mt);
+    return tt;
+end
+
+function obe.Canvas.__instance_index(tbl, key)
+    local mt = getmetatable(tbl);
+    return mt.__values[key];
+end
+
+function obe.Canvas.__instance_newindex(tbl, key, value)
+    local mt = getmetatable(tbl);
+    if type(value) == "table" then
+        rawset(tbl, key, {});
+        tbl[key](value);
+    else
+        mt.__values[key] = value;
+    end
+end
+
+function obe.Canvas.__instance_call(tbl, values)
+    values = values or {};
+    for k, v in pairs(values) do
+        tbl[k] = v;
+    end
+    return tbl;
+end
+
+function obe.Canvas.InstanciateMT(type, internal)
+    local instance = {};
+    local instanceMT = {
+        __type = type,
+        __ref = internal,
+        __call = obe.Canvas.__instance_call,
+        __cache = {}
+    };
+    setmetatable(instance, instanceMT);
+    obe.Canvas.FillInstanceValues(obe.Canvas.BMT[type], instance, internal);
     return instance;
+end
+
+function obe.Canvas.FillInstanceValues(base, instance, internal)
+    local mt = getmetatable(base);
+    for k, v in pairs(mt.__getters) do
+        if type(v) == "function" then
+            instance[k] = v(internal);
+        elseif type(v) == "table" then
+            instance[k] = {};
+            obe.Canvas.FillInstanceValues(v, instance[k], internal)
+        end
+    end
 end
 
 function obe.Canvas.InjectInternalMT(tbl, ref)
@@ -233,10 +333,10 @@ function obe.Canvas.InjectInternalMT(tbl, ref)
         local mt = getmetatable(tbl);
         mt.__ref = ref;
         for k, getter in pairs(mt.__getters) do
-            obe.Canvas.InjectInternalMT(getter, ref);
+            obe.Canvas.InitializeMT(getter, ref);
         end
         for k, setter in pairs(mt.__setters) do
-            obe.Canvas.InjectInternalMT(setter, ref);
+            obe.Canvas.InitializeMT(setter, ref);
         end
     end
 end
@@ -672,6 +772,13 @@ obe.Canvas.Bases.Text = {
     }
 }
 
+obe.Canvas.BMT = {
+    Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}),
+    Rectangle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle}),
+    Text = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text}),
+    Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle})
+};
+
 function obe.Canvas.Canvas:GenerateId(id)
     if type(id) == "string" and self.internal:get(id) ~= nil then
         error("CanvasElement '" .. tostring(id) .. "' already exists !");
@@ -684,20 +791,29 @@ end
 
 function obe.Canvas.Canvas:Line(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Line", self.internal:Line(id));
+    self.elements[id] = obe.Canvas.InstanciateMT("Line", self.internal:Line(id));
     --print(inspect(self.elements[id]));
     return self.elements[id];
 end
 
 function obe.Canvas.Canvas:Rectangle(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Rectangle", self.internal:Rectangle(id));
+    self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Rectangle}, self.useCache);
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Rectangle(id));
     return self.elements[id];
 end
 
 function obe.Canvas.Canvas:Text(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
+    --[[self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Text}, self.useCache);
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Text(id));]]--
+    self.elements[id] = obe.Canvas.InstanciateMT("Text", self.internal:Text(id));
     self.elements[id].font = "Data/Fonts/arial.ttf";
     --print(inspect(self.elements[id]));
     return self.elements[id];
@@ -705,7 +821,11 @@ end
 
 function obe.Canvas.Canvas:Circle(id)
     id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Circle", self.internal:Circle(id));
+    self.elements[id] = obe.Canvas.MakeMT({
+        obe.Canvas.Bases.Drawable,
+        obe.Canvas.Bases.Shape,
+        obe.Canvas.Bases.Circle}, self.useCache);
+    obe.Canvas.InitializeMT(self.elements[id], self.internal:Circle(id));
     return self.elements[id];
 end
 
@@ -715,12 +835,52 @@ function obe.Canvas.Canvas:Sprite(id)
     return self.elements[id];
 end
 
+function obe.Canvas.ApplyChangesSub(internal, setters, priority, tbl, cache, force)
+    --print("SETTERS", inspect(setters));
+    local mt = getmetatable(tbl);
+    if #priority > 0 then
+        for k, v in pairs(priority) do
+            print("Trying to apply", k, v);
+            if tbl[v] ~= cache[v] or force then
+                obe.Canvas.ApplySetterValue(internal, setters, k, v);
+                cache[v] = deepcopy(tbl[v]);
+            end
+        end
+    end
+    for k, v in pairs(tbl) do
+        if v ~= cache[k] or force then
+            --print("Fetching index", k)
+            if k ~= "id" then
+                obe.Canvas.ApplySetterValue(internal, setters, k, v);
+            end
+        end
+    end
+end
+
+function obe.Canvas.ApplyChanges(tbl, force)
+    force = force or false;
+    local mt = getmetatable(tbl);
+    local setters = getmetatable(obe.Canvas.BMT[mt.__type]).__setters;
+    local priority = getmetatable(obe.Canvas.BMT[mt.__type]).__priority;
+    obe.Canvas.ApplyChangesSub(mt.__ref, setters, priority, tbl, mt.__cache, force);
+end
+
 function obe.Canvas.Canvas:render()
-    if self.useCache then
+    for id, element in pairs(self.elements) do
+        local mt = getmetatable(element);
+        if #mt.__cache == 0 then
+            mt.__cache = deepcopy(element);
+            obe.Canvas.ApplyChanges(element, true);
+        else
+            obe.Canvas.ApplyChanges(element)
+            mt.__cache = deepcopy(element);
+        end
+    end
+    --[[if self.useCache then
         for id, element in pairs(self.elements) do
             obe.Canvas.ApplyCache(element);
         end
-    end
+    end]]--
     self.internal:render();
 end
 

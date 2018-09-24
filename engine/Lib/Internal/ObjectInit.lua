@@ -36,10 +36,25 @@ setmetatable(Local, Local__Meta);
 
 Global__Trigger__Meta = {
     __newindex = function(object, index, value)
-        --print("Register new Global Trigger", object.triggerGroupId, index);
-        This:useExternalTrigger("Global", object.triggerGroupId, index);
-        rawset(object, index, value);
-    end
+        if type(value) == "function" then
+            This:useExternalTrigger("Global", object.triggerGroupId, index);
+            local mt = getmetatable(object);
+            mt.__storage[index] = value;
+        elseif type(value) == "nil" then
+            local mt = getmetatable(object);
+            mt.__storage[index] = nil;
+            This:removeExternalTrigger("Global", object.triggerGroupId, index);
+        end
+    end,
+    __index = function(object, index)
+        local mt = getmetatable(object);
+        if mt.__storage[index] then
+            return mt.__storage[index];
+        else
+            error("Global." .. object.triggerGroupId .. "." .. index .. " is not defined");
+        end
+    end,
+    __storage = {}
 };
 
 Global__Meta = {

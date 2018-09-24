@@ -93,12 +93,15 @@ namespace obe::Modes
                 case sf::Event::JoystickMoved:
                 case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
-                    Input::Monitors::UpdateMonitors();
+                    Input::Monitors::RequireRefresh = true;
                     if (event.key.code == sf::Keyboard::Escape)
                         System::MainWindow.close();
                     break;
                 }
             }
+
+            if (Input::Monitors::RequireRefresh)
+                Input::Monitors::UpdateMonitors();
 
             //Events
             scene.update();

@@ -3,6 +3,8 @@
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Time/TimeUtils.hpp>
+#include <thread>
+#include "Debug/Logger.hpp"
 
 namespace obe::Time
 {
@@ -12,10 +14,12 @@ namespace obe::Time
         m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit")) ? config.at<vili::DataNode>("framerateLimit") : true;
         m_framerateTarget = (config.contains(vili::NodeType::DataNode, "framerateTarget")) ? config.at<vili::DataNode>("framerateTarget") : 60;
         m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync")) ? config.at<vili::DataNode>("vsync") : true;
+        m_syncUpdateRender = (config.contains(vili::NodeType::DataNode, "syncUpdateToRender")) ? config.at<vili::DataNode>("syncUpdateToRender") : true;
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
         m_currentFrame = 0;
         m_frameProgression = 0;
         m_needToRender = false;
+        
         System::MainWindow.setVerticalSyncEnabled(m_vsyncEnabled);
     }
 
@@ -36,6 +40,10 @@ namespace obe::Time
             {
                 m_currentFrame = m_frameProgression;
                 m_needToRender = true;
+            }
+            else
+            {
+                std::this_thread::sleep_for(std::chrono::duration<double>(m_reqFramerateInterval));
             }
         }
     }

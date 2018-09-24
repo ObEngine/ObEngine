@@ -99,7 +99,7 @@ namespace obe::Script
     {
         if (!m_initialised)
         {
-            Debug::Log->debug("<GameObject> Initialising GameObject '{0}' ({1})", m_id, m_type);
+            Debug::Log->debug("<GameObject> Initialising GameObject '{0}' ({1}) [Env={2}]", m_id, m_type, m_envIndex);
             m_initialised = true;
             GAMEOBJECTENV["__OBJECT_INIT"] = true;
             m_localTriggers->trigger("Init");
@@ -344,7 +344,18 @@ namespace obe::Script
                 this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName), callbackName);
                 Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerEnvironment(m_envIndex, callbackName);
             }
+            else
+            {
+                const std::string callbackName = (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName : callAlias;
+                Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->unregisterEnvironment(m_envIndex);
+                Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->registerEnvironment(m_envIndex, callbackName);
+            }
         }
+    }
+
+    void GameObject::removeExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const
+    {
+        Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->unregisterEnvironment(m_envIndex);
     }
 
     void GameObject::exec(const std::string& query) const

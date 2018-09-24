@@ -27,6 +27,7 @@ namespace obe::Input
         if (keyPressed && (m_buttonState == InputButtonState::Idle || m_buttonState == InputButtonState::Released))
         {
             m_buttonState = InputButtonState::Pressed;
+            Monitors::RequireRefresh = true;
         }
         else if (keyPressed && m_buttonState == InputButtonState::Pressed)
         {
@@ -76,6 +77,8 @@ namespace obe::Input
 
     namespace Monitors
     {
+        std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
+        bool RequireRefresh = true;
         void UpdateMonitors()
         {
             RequireRefresh = false;

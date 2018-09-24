@@ -369,10 +369,12 @@ namespace obe::Scene
         }
         if (m_updateState)
         {
-            for (auto& gameObject : m_gameObjectArray)
+            size_t arraySize = m_gameObjectArray.size();
+            for (size_t i = 0; i < arraySize; i++)
             {
-                if (!gameObject->deletable)
-                    gameObject->update();
+                Script::GameObject& gameObject = *m_gameObjectArray[i];
+                if (!gameObject.deletable)
+                    gameObject.update();
             }
             /*m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [this](const std::unique_ptr<Script::GameObject>& ptr) {
                 if (ptr->deletable)
