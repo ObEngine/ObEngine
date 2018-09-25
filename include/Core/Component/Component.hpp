@@ -16,6 +16,7 @@ namespace obe::Component
 		static void AddComponent(ComponentBase* component);
 		static void RemoveComponent(ComponentBase* component);
     public:
+        inline static std::string ComponentType = "ComponentBase";
 		ComponentBase(const std::string& id);
 		~ComponentBase() override = default;
         virtual void inject(unsigned int envIndex) = 0;
@@ -23,12 +24,15 @@ namespace obe::Component
 	   
 	    void dump(vili::ComplexNode& target) const override = 0;
 	    void load(vili::ComplexNode& data) override = 0;
+
+        virtual std::string type() const = 0;
     };
 
     template <class T>
     class Component : public ComponentBase
     {
     public:
+        inline static std::string ComponentType = "Component";
 	    explicit Component(const std::string& id);
 		~Component() override;
 
@@ -40,6 +44,8 @@ namespace obe::Component
 	    
 	    void dump(vili::ComplexNode& target) const override = 0;
 	    void load(vili::ComplexNode& data) override = 0;
+
+        std::string type() const override;
     };
 
 	template <class T>
@@ -70,7 +76,13 @@ namespace obe::Component
 	    Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id] = static_cast<T*>(this);
     }
 
-	template <class T>
+    template <class T>
+    std::string Component<T>::type() const
+    {
+        return ComponentType;
+    }
+
+    template <class T>
 	void Component<T>::remove()
 	{
 		RemoveComponent(this);

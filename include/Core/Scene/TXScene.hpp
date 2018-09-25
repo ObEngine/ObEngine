@@ -144,8 +144,14 @@ namespace obe::Scene
 			std::is_base_of<Component::ComponentBase, T>::value,
 			"Scene.get<T>(id) requires T to have Component as base class"
 		);
-
-		return *static_cast<T*>(this->get(id));
+        if (T* castedComponent = dynamic_cast<T*>(this->get(id)); castedComponent != nullptr)
+        {
+            return *castedComponent;
+        }
+        else
+        {
+            throw aube::ErrorHandler::Raise("obe.Scene.Scene.WrongComponentType", { {"type", this->get(id).type() }, {"expected", T::ComponentType } });
+        }
 	}
 
 	template <class T>

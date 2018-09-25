@@ -62,6 +62,7 @@ namespace obe::Collision
         void resetUnit(Transform::Units unit) override;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
     public:
+        inline static std::string ComponentType = "PolygonalCollider";
         /**
         * \brief Constructs a PolygonalCollider
         * \param id Id of the PolygonalCollider (Used to retrieve it for example)
@@ -205,5 +206,7 @@ namespace obe::Collision
         * \brief Destructor of PolygonalCollider, removes origins
         */
         ~PolygonalCollider();
+
+        std::string type() const override;
     };
 }

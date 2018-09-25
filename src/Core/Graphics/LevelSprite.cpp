@@ -11,7 +11,8 @@ namespace obe::Graphics
 {
     LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite), Component(id)
     {
-        m_texture = ResourceManager::GetTexture("Sprites/Others/notexture.png");
+
+        m_texture = &ResourceManager::NullTexture;
         m_sprite.setTexture(*m_texture);
         for (int i = 0; i < 9; i++)
         {
@@ -51,6 +52,11 @@ namespace obe::Graphics
         {
             this->drawHandle(camera);
         }
+    }
+
+    std::string LevelSprite::type() const
+    {
+        return ComponentType;
     }
 
     void LevelSprite::loadTexture(const std::string& path)

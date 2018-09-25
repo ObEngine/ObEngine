@@ -21,6 +21,8 @@ namespace obe::Graphics
         static Triggers::TriggerGroupPtr m_resourceManagerTriggers;
         static std::unordered_map<std::string, std::unique_ptr<sf::Texture>> m_textureDatabase;
     public:
+        static sf::Texture NullTexture;
+        static void Init();
         static sf::Font* GetFont(const std::string& path);
         /**
         * \brief Get the texture at the given path.\n 

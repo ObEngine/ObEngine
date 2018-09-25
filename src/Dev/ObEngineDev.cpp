@@ -23,6 +23,8 @@
 #include <Utils/ExecUtils.hpp>
 
 #include "Utils/MathUtils.hpp"
+#include "Collision/PolygonalCollider.hpp"
+#include <Graphics/LevelSprite.hpp>
 
 void LoadErrors()
 {
@@ -33,12 +35,12 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
+    Graphics::ResourceManager::Init();
     Utils::Exec::RunArgsParser runParser(argc, argv);
 	const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
 
     Debug::InitLogger();
-    Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
@@ -62,8 +64,6 @@ int main(int argc, char** argv)
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
-    Debug::Log->debug("<ObEngine> Loading NoTexture asset");
-    Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

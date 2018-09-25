@@ -24,6 +24,7 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
+    Graphics::ResourceManager::Init();
     Debug::InitLogger();
     Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
@@ -49,8 +50,6 @@ int main(int argc, char** argv)
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
-    Debug::Log->debug("<ObEngine> Loading NoTexture asset");
-    Graphics::ResourceManager::GetTexture("Sprites/Others/notexture.png");
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

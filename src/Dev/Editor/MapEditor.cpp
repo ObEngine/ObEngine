@@ -240,7 +240,8 @@ namespace obe::Editor
         GUI::applyFontSize(mainPanel);
 
 		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-		System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        if (!System::Path("boot.lua").find(System::PathType::File).empty())
+		    System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
 		Script::ScriptEngine.dostring("Editor.Start()");
 
         //scene.setUpdateState(false);

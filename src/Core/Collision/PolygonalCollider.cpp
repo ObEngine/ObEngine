@@ -72,6 +72,11 @@ namespace obe::Collision
         this->removeOrigin();
     }
 
+    std::string PolygonalCollider::type() const
+    {
+        return ComponentType;
+    }
+
     void PolygonalCollider::resetUnit(Transform::Units unit)
     {
     }
