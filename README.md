@@ -32,7 +32,7 @@ There are other libraries but they are included in the repository (extlibs/ fold
 - [Catch](https://github.com/catchorg/Catch2) (Boost Software License) (Test Framework)
 - [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
 - [dynamicLinker](https://github.com/Marqin/dynamicLinker) (MIT License) (Dynamic Libs wrapper)
-- [RichText](https://github.com/Skyrpex/RichText) (No license) (sf::Text extension)
+- [RichText](https://github.com/Skyrpex/RichText) (MIT License) (sf::Text extension)
 - [fmt](https://github.com/fmtlib/fmt) (BSD 2-Clause "Simplified" License) (Formatting library)
 
 ## How do I build it ?
