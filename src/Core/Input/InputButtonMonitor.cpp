@@ -1,14 +1,30 @@
 #include <algorithm>
 
+#include <Debug/Logger.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
-#include "Debug/Logger.hpp"
+#include <Triggers/TriggerDatabase.hpp>
 
 namespace obe::Input
 {
+    Triggers::TriggerGroupPtr InputButtonMonitor::KeyTriggers;
+    void InputButtonMonitor::InitKeyTriggerGroup()
+    {
+        InputButtonMonitor::KeyTriggers = Triggers::TriggerGroupPtr(
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Keys"), 
+            Triggers::TriggerGroupPtrRemover
+        );
+    }
+
     InputButtonMonitor::InputButtonMonitor(InputButton* button)
     {
         m_button = button;
+        InputButtonMonitor::KeyTriggers->addTrigger(m_button->getName());
+    }
+
+    InputButtonMonitor::~InputButtonMonitor()
+    {
+        InputButtonMonitor::KeyTriggers->removeTrigger(m_button->getName());
     }
 
     InputButton* InputButtonMonitor::getButton() const
@@ -24,6 +40,7 @@ namespace obe::Input
     void InputButtonMonitor::update()
     {
         const bool keyPressed = m_button->isPressed();
+        InputButtonState oldState = m_buttonState;
         if (keyPressed && (m_buttonState == InputButtonState::Idle || m_buttonState == InputButtonState::Released))
         {
             m_buttonState = InputButtonState::Pressed;
@@ -41,6 +58,12 @@ namespace obe::Input
         else if (!keyPressed && m_buttonState == InputButtonState::Released)
         {
             m_buttonState = InputButtonState::Idle;
+        }
+        if (oldState != m_buttonState)
+        {
+            InputButtonMonitor::KeyTriggers->pushParameter(m_button->getName(), "previousState", oldState);
+            InputButtonMonitor::KeyTriggers->pushParameter(m_button->getName(), "state", m_buttonState);
+            InputButtonMonitor::KeyTriggers->trigger(m_button->getName());
         }
     }
 

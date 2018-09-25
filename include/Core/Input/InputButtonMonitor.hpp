@@ -5,6 +5,7 @@
 
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
+#include <Triggers/TriggerGroup.hpp>
 
 namespace obe::Input
 {
@@ -19,12 +20,15 @@ namespace obe::Input
         InputButtonState m_buttonState = InputButtonState::Idle;
         unsigned int m_references = 0;
         friend class InputButtonMonitorPtr;
+        static Triggers::TriggerGroupPtr KeyTriggers;
     public:
+        static void InitKeyTriggerGroup();
         /**
         * \brief Constuctor of InputButtonMonition
         * \param button Pointer to the InputButton to monitor
         */
         InputButtonMonitor(InputButton* button);
+        ~InputButtonMonitor();
         /**
         * \brief Gets a pointer to the monitored InputButton
         * \return A pointer to the monitored InputButton

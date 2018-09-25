@@ -110,5 +110,36 @@ namespace obe::Bindings::InputBindings
         (*lua)["obe"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
         (*lua)["obe"]["Input"]["GetAllPressedButtons"] = kaguya::function(Input::GetAllPressedButtons);
         (*lua)["obe"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
+        (*lua)["obe"]["Input"]["InputStateToString"] = kaguya::function(Input::inputButtonStateToString);
+        (*lua)["obe"]["Input"]["StringToInputState"] = kaguya::function(Input::stringToInputButtonState);
+        (*lua)["obe"]["Input"]["State"] = kaguya::NewTable();
+        (*lua)["obe"]["Input"]["State"]["Idle"] = Input::InputButtonState::Idle;
+        (*lua)["obe"]["Input"]["State"]["Hold"] = Input::InputButtonState::Hold;
+        (*lua)["obe"]["Input"]["State"]["Pressed"] = Input::InputButtonState::Pressed;
+        (*lua)["obe"]["Input"]["State"]["Released"] = Input::InputButtonState::Released;
+    }
+
+    void LoadInputButtons(kaguya::State* lua)
+    {
+        (*lua)["obe"]["Keyboard"] = kaguya::NewTable();
+        (*lua)["obe"]["Mouse"] = kaguya::NewTable();
+        (*lua)["obe"]["Gamepad"] = kaguya::NewTable();
+        for (auto& inputButtonPair : Input::AllKeys)
+        {
+            auto& inputButton = inputButtonPair.second;
+            if (inputButton->getType() == Input::InputType::Mouse)
+            {
+                (*lua)["obe"]["Mouse"][inputButton->getName()] = inputButton.get();
+            }
+            else if (inputButton->getType() == Input::InputType::GamepadAxis
+            || inputButton->getType() == Input::InputType::GamepadButton)
+            {
+                (*lua)["obe"]["Gamepad"][inputButton->getName()] = inputButton.get();
+            }
+            else
+            {
+                (*lua)["obe"]["Keyboard"][inputButton->getName()] = inputButton.get();
+            }
+        }
     }
 }
