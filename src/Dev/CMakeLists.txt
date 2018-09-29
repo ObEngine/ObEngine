@@ -22,7 +22,7 @@ target_link_libraries(ObEngineDev TGUI)
 target_link_libraries(ObEngineDev sfml-window)
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(ObEngineDev OpenGL::OpenGL)
+target_link_libraries(ObEngineDev ${OPENGL_LIBRARIES})
 
 group_files(
   ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} 
