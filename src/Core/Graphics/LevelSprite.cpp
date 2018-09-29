@@ -54,7 +54,7 @@ namespace obe::Graphics
         }
     }
 
-    std::string LevelSprite::type() const
+    std::string_view LevelSprite::type() const
     {
         return ComponentType;
     }

@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.8)
+set(OpenGL_GL_PREFERENCE GLVND)
 
 project(ObEngine)
 
@@ -8,46 +9,48 @@ add_subdirectory(extlibs/catch)
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/vili)
 
+# fmtlib is required by spdlog
 add_subdirectory(extlibs/fmt)
 add_subdirectory(extlibs/spdlog)
 
+# lua is required by kaguya
 add_subdirectory(extlibs/lua)
 add_subdirectory(extlibs/kaguya)
 
+# minizip is required by elzip
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
+# SFML 2.5 is minimum version
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+# SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
 add_subdirectory(src/Core)
 
-IF (NOT DEFINED BUILD_PLAYER)
+if (NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
-ENDIF()
+endif()
 
-if(BUILD_PLAYER)
+if (BUILD_PLAYER)
     add_subdirectory(src/Player)
-    
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
 endif()
 
-IF (NOT DEFINED BUILD_DEV)
+if (NOT DEFINED BUILD_DEV)
     set(BUILD_DEV ON CACHE BOOL "Build ObEngine Dev ?")
-ENDIF()
+endif()
 
-if(BUILD_DEV)
+if (BUILD_DEV)
     add_subdirectory(extlibs/TGUI)
-
     add_subdirectory(src/Dev)
-    
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()
 
-IF (NOT DEFINED BUILD_TESTS)
+if (NOT DEFINED BUILD_TESTS)
     set(BUILD_TESTS OFF CACHE BOOL "Build ObEngine Tests ?")
-ENDIF()
+endif()
 
-if(BUILD_TESTS)
+if (BUILD_TESTS)
     add_subdirectory(tests)
 endif()

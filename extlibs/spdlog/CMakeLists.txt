@@ -1,12 +1,10 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(spdlog)
 
 file(GLOB SPDLOG_HEADERS 
     include/spdlog/*.h 
     include/spdlog/details/*.h 
     include/spdlog/fmt/*.h 
-    include/spdlogsinks/*.h
+    include/spdlog/sinks/*.h
 )
 
 add_library(spdlog INTERFACE)

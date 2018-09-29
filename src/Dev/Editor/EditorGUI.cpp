@@ -841,7 +841,7 @@ namespace obe::Editor::GUI
                 unsigned int kIndex = 0;
                 for (auto& key : keyGen.getCombination())
                 {
-                    std::string keyName = key.first->getName();
+                    std::string keyName = key.first->getButton()->getName();
 	                const std::string stateName = Input::inputButtonStateToString(key.second[0]);
                     if (Utils::String::contains(keyName, "NumPad"))
                     {

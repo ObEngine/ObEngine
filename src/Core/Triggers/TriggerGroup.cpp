@@ -22,7 +22,7 @@ namespace obe::Triggers
         {
             return m_triggerMap[triggerName].get();
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", { {"function", "removeTrigger"}, {"trigger", triggerName}, {"group", m_name}});
+        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger", { {"function", "getTrigger"}, {"trigger", triggerName}, {"group", m_name}});
     }
 
     TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)

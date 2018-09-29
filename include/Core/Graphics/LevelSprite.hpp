@@ -97,7 +97,7 @@ namespace obe::Graphics
 
         void resetUnit(Transform::Units unit) override;
     public:
-        inline static std::string ComponentType = "LevelSprite";
+        static constexpr std::string_view ComponentType = "LevelSprite";
         bool m_layerChanged = false;
         /**
         * \brief Creates a new LevelSprite with the given Id
@@ -275,6 +275,6 @@ namespace obe::Graphics
         void useTextureSize();
 
         void draw(const Transform::UnitVector& camera);
-        std::string type() const override;
+        std::string_view type() const override;
     };
 }

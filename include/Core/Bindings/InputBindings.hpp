@@ -14,4 +14,5 @@ namespace obe::Bindings::InputBindings
     void LoadInputCondition(kaguya::State* lua);
     void LoadInputManager(kaguya::State* lua);
     void LoadInputFunctions(kaguya::State* lua);
+    void LoadInputButtons(kaguya::State* lua);
 }

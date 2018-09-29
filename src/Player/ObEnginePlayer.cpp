@@ -8,6 +8,7 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/ResourceManager.hpp>
+#include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>
 #include <System/Config.hpp>
@@ -50,6 +51,8 @@ int main(int argc, char** argv)
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
+
+    Input::InputButtonMonitor::InitKeyTriggerGroup();
 
     Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 

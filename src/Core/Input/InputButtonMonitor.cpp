@@ -1,14 +1,30 @@
 #include <algorithm>
 
+#include <Debug/Logger.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
-#include "Debug/Logger.hpp"
+#include <Triggers/TriggerDatabase.hpp>
 
 namespace obe::Input
 {
+    Triggers::TriggerGroupPtr InputButtonMonitor::KeyTriggers;
+    void InputButtonMonitor::InitKeyTriggerGroup()
+    {
+        InputButtonMonitor::KeyTriggers = Triggers::TriggerGroupPtr(
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Keys"), 
+            Triggers::TriggerGroupPtrRemover
+        );
+    }
+
     InputButtonMonitor::InputButtonMonitor(InputButton* button)
     {
         m_button = button;
+        InputButtonMonitor::KeyTriggers->addTrigger(m_button->getName());
+    }
+
+    InputButtonMonitor::~InputButtonMonitor()
+    {
+        InputButtonMonitor::KeyTriggers->removeTrigger(m_button->getName());
     }
 
     InputButton* InputButtonMonitor::getButton() const
@@ -24,6 +40,7 @@ namespace obe::Input
     void InputButtonMonitor::update()
     {
         const bool keyPressed = m_button->isPressed();
+        InputButtonState oldState = m_buttonState;
         if (keyPressed && (m_buttonState == InputButtonState::Idle || m_buttonState == InputButtonState::Released))
         {
             m_buttonState = InputButtonState::Pressed;
@@ -42,37 +59,26 @@ namespace obe::Input
         {
             m_buttonState = InputButtonState::Idle;
         }
+        if (oldState != m_buttonState)
+        {
+            InputButtonMonitor::KeyTriggers->pushParameter(m_button->getName(), "previousState", oldState);
+            InputButtonMonitor::KeyTriggers->pushParameter(m_button->getName(), "state", m_buttonState);
+            InputButtonMonitor::KeyTriggers->trigger(m_button->getName());
+        }
     }
 
-    unsigned InputButtonMonitor::getReferences() const
+    void InputButtonMonitor::remove()
     {
-        return m_references;
+        m_removed = true;
+    }
+    bool InputButtonMonitor::isRemoved() const
+    {
+        return m_removed;
     }
 
-    InputButtonMonitorPtr::InputButtonMonitorPtr(InputButtonMonitor* monitor)
+    void InputButtonMonitorPtrRemover(InputButtonMonitor* ptr)
     {
-        m_monitor = monitor;
-        m_monitor->m_references++;
-    }
-
-    InputButton* InputButtonMonitorPtr::operator->() const
-    {
-        return m_monitor->getButton();
-    }
-
-    InputButton* InputButtonMonitorPtr::getButton() const
-    {
-        return m_monitor->getButton();
-    }
-
-    InputButtonState InputButtonMonitorPtr::getState() const
-    {
-        return m_monitor->getState();
-    }
-
-    InputButtonMonitorPtr::~InputButtonMonitorPtr()
-    {
-        m_monitor->m_references--;
+        ptr->remove();
     }
 
     namespace Monitors
@@ -82,12 +88,13 @@ namespace obe::Input
         void UpdateMonitors()
         {
             RequireRefresh = false;
-            Monitors.erase(std::remove_if(Monitors.begin(), Monitors.end(), UpdateMonitorsAndRemoveIfNoReferences), Monitors.end());
+            Monitors.erase(std::remove_if(Monitors.begin(), Monitors.end(), UpdateMonitorsAndRemoveIfNotRemoved), Monitors.end());
         }
 
-        bool UpdateMonitorsAndRemoveIfNoReferences(const std::unique_ptr<InputButtonMonitor>& element)
+        bool UpdateMonitorsAndRemoveIfNotRemoved(const std::unique_ptr<InputButtonMonitor>& element)
         {
-            if (element->getReferences() > 0)
+            Debug::Log->warn("Updating {} : {}", element->getButton()->getName(), element->isRemoved());
+            if (!element->isRemoved())
             {
                 element->update();
                 return false;
@@ -113,7 +120,7 @@ namespace obe::Input
                 }
             }
             Monitors.push_back(std::make_unique<InputButtonMonitor>(button));
-            return InputButtonMonitorPtr(Monitors.back().get());
+            return InputButtonMonitorPtr(Monitors.back().get(), InputButtonMonitorPtrRemover);
         }
     }
 }

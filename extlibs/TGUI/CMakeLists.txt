@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(TGUI)
 
 file(GLOB_RECURSE TGUI_HEADERS include/TGUI/*.hpp include/TGUI/*.inl)
@@ -18,10 +16,6 @@ target_include_directories(TGUI
 
 target_compile_definitions(TGUI PRIVATE TGUI_STATIC)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
-
-if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
-endif (MSVC)

@@ -12,6 +12,7 @@ LuaCore.Lua_ReqList = {}; -- Require Parameters
 LuaCore.FTCP = {}; -- Future Trigger Call Parameters
 LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
 LuaCore.TriggerList = {};
+LuaCore.InternalMonitors = {};
 
 function ObjectInit(argtable)
     --print("INITIALIZE : ", __OBJECT_TYPE, __OBJECT_ID);
@@ -37,10 +38,16 @@ setmetatable(Local, Local__Meta);
 Global__Trigger__Meta = {
     __newindex = function(object, index, value)
         if type(value) == "function" then
+            if object.triggerGroupId == "Keys" then
+                LuaCore.InternalMonitors[index] = obe.Input.Monitors.Monitor(index);
+            end
             This:useExternalTrigger("Global", object.triggerGroupId, index);
             local mt = getmetatable(object);
             mt.__storage[index] = value;
         elseif type(value) == "nil" then
+            if object.triggerGroupId == "Keys" then
+                LuaCore.InternalMonitors[index] = nil;
+            end
             local mt = getmetatable(object);
             mt.__storage[index] = nil;
             This:removeExternalTrigger("Global", object.triggerGroupId, index);

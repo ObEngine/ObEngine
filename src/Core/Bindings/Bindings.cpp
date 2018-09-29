@@ -55,6 +55,7 @@ namespace obe::Bindings
             .add("InputAction", &InputBindings::LoadInputAction)
             .add("InputActionEvent", &InputBindings::LoadInputActionEvent)
             .add("InputButton", &InputBindings::LoadInputButton)
+            .add("InputButtons", &InputBindings::LoadInputButtons)
             .add("InputButtonMonitor", &InputBindings::LoadInputButtonMonitor)
             .add("InputCondition", &InputBindings::LoadInputCondition)
             .add("InputFunctions", &InputBindings::LoadInputFunctions)

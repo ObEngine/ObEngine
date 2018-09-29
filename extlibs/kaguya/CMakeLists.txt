@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(kaguya)
 
 file(GLOB KAGUYA_HEADERS include/kaguya/*.hpp include/kaguya/detail/*.hpp)

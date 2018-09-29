@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(dynamicLinker)
 
 file(GLOB DYLINK_HEADERS include/dynamicLinker/*.hpp)
@@ -16,10 +14,15 @@ target_include_directories(dynamicLinker
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+if (UNIX)
+    target_link_libraries(dynamicLinker ${CMAKE_DL_LIBS})
+endif()
+
+if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8.2)
+    message(FATAL_ERROR 
+    "GCC with version less than 4.8.2 is known to cause a crash with dynamicLinker lib, please update your compiler")
+endif()
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
-
-if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
-endif (MSVC)

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(lua)
 
 file(GLOB LUA_HEADERS include/lua/*.h include/lua/*.hpp)

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(catch)
 
 file(GLOB CATCH_HEADERS include/catch/catch.hpp)

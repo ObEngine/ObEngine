@@ -10,7 +10,7 @@ namespace obe::Input
     {
         for (InputCombinationElement& element : m_triggerConditions)
         {
-            if (element.first.getButton() == button)
+            if (element.first->getButton() == button)
             {
                 return true;
             }
@@ -96,7 +96,7 @@ namespace obe::Input
         bool conditionOk = true;
         for (const InputCombinationElement& element : m_triggerConditions)
         {
-            if (!Utils::Vector::contains(element.first.getState(), element.second))
+            if (!Utils::Vector::contains(element.first->getState(), element.second))
             {
                 conditionOk = false;
                 break;

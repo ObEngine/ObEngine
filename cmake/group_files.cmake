@@ -1,0 +1,18 @@
+function (group_files HEADERS SOURCES HEADERS_PATH SOURCES_PATH)
+    set(_inc_root_path ${HEADERS_PATH})
+    set(_src_root_path ${SOURCES_PATH})
+
+    foreach (_include IN ITEMS ${HEADERS})
+        get_filename_component(_include_path "${_include}" PATH)
+        file(RELATIVE_PATH _include_path_rel "${_inc_root_path}" "${_include_path}")
+        string(REPLACE "/" "\\" _group_path "${_include_path_rel}")
+        source_group("${_group_path}" FILES "${_include}")
+    endforeach()
+
+    foreach (_source IN ITEMS ${SOURCES})
+        get_filename_component(_source_path "${_source}" PATH)
+        file(RELATIVE_PATH _source_path_rel "${_src_root_path}" "${_source_path}")
+        string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+        source_group("${_group_path}" FILES "${_source}")
+    endforeach()
+endfunction()

@@ -1,11 +1,9 @@
-cmake_minimum_required(VERSION 3.6)
-
 project(minizip)
 
 file(GLOB MZIP_HEADERS include/minizip/*.h)
 file(GLOB MZIP_SOURCES src/*.c)
 
-IF (NOT WIN32)
+if (NOT WIN32)
     list(REMOVE_ITEM MZIP_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/minizip/iowin32.h)
     list(REMOVE_ITEM MZIP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/iowin32.c)
 ENDIF()

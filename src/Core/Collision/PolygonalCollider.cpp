@@ -72,7 +72,7 @@ namespace obe::Collision
         this->removeOrigin();
     }
 
-    std::string PolygonalCollider::type() const
+    std::string_view PolygonalCollider::type() const
     {
         return ComponentType;
     }
