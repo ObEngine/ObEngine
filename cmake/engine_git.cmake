@@ -1,3 +1,9 @@
+function (set_git_version BRANCH HASH VERSION)
+    set(OBENGINE_GIT_BRANCH ${BRANCH} CACHE STRING "ObEngine git branch" FORCE)
+    set(OBENGINE_GIT_COMMIT_HASH ${HASH} CACHE STRING "ObEngine git commit hash" FORCE)
+    set(OBENGINE_VERSION ${VERSION} CACHE STRING "ObEngine version" FORCE)
+endfunction()
+
 function (configure_obengine_git)
     find_program(GIT_FOUND git)
     message("Configure Git variables for ÖbEngine")
@@ -25,7 +31,7 @@ function (configure_obengine_git)
                 OUTPUT_VARIABLE GIT_COMMIT_HASH
                 OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-            
+            message("Git commit hash ${GIT_COMMIT_HASH}")
 
             # Get the version tag from git
             execute_process(
@@ -35,26 +41,24 @@ function (configure_obengine_git)
                 OUTPUT_STRIP_TRAILING_WHITESPACE
             )
             string(REGEX MATCH "v(.+)\.(.+)\.(.+)$" GIT_OBENGINE_VERSION "${GIT_OBENGINE_VERSION_UNFORMATTED}")
-            
-            set(OBENGINE_GIT_BRANCH ${GIT_BRANCH} CACHE STRING "ObEngine git branch")
-            set(OBENGINE_GIT_COMMIT_HASH ${OBENGINE_GIT_COMMIT_HASH} CACHE STRING "ObEngine git commit hash")
-            set(OBENGINE_VERSION ${GIT_OBENGINE_VERSION} CACHE STRING "ObEngine version")
+
+            set_git_version(${GIT_BRANCH} ${GIT_COMMIT_HASH} ${GIT_OBENGINE_VERSION})
             message("ÖbEngine Git version : ${OBENGINE_GIT_BRANCH}:${OBENGINE_GIT_COMMIT_HASH}")
             message("ÖbEngine version : ${OBENGINE_VERSION}")
         else()
-        message(WARNING 
-"ObEngine CMake's source dir is not a git directory, ÖbEngine won't have version available and it can cause some problems.
-Clone ObEngine properly or set the following variables : GIT_BRANCH, GIT_COMMIT_HASH, GIT_OBENGINE_VERSION.")
+            message(WARNING "ObEngine CMake's source dir is not a git directory, ÖbEngine won't have version available and it can cause some problems.\n"
+                "Clone ObEngine properly or set the following variables : OBENGINE_GIT_BRANCH, OBENGINE_GIT_COMMIT_HASH, OBENGINE_VERSION.")
+            set_git_version("unknown" "unknown" "v?.?.?")
         endif()
-        set(OBENGINE_GIT_BRANCH "" CACHE STRING "ObEngine git branch")
-        set(OBENGINE_GIT_COMMIT_HASH "" CACHE STRING "ObEngine git commit hash")
-        set(OBENGINE_VERSION "" CACHE STRING "ObEngine version")
     else()
-        message(WARNING 
-"You do not have git installed, ÖbEngine won't have version available and it can cause some problems.
-Install git or set the following variables : GIT_BRANCH, GIT_COMMIT_HASH, GIT_OBENGINE_VERSION.")
-        set(OBENGINE_GIT_BRANCH "" CACHE STRING "ObEngine git branch")
-        set(OBENGINE_GIT_COMMIT_HASH "" CACHE STRING "ObEngine git commit hash")
-        set(OBENGINE_VERSION "" CACHE STRING "ObEngine version")
+        message(WARNING "You do not have git installed, ÖbEngine won't have version available and it can cause some problems.\n"
+            "Install git or set the following variables : OBENGINE_GIT_BRANCH, OBENGINE_GIT_COMMIT_HASH, OBENGINE_VERSION.")
+        set_git_version("unknown" "unknown" "v?.?.?")
     endif()
+endfunction()
+
+function (compile_obengine_git_definitions)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")
 endfunction()

@@ -7,6 +7,12 @@ file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
 
 add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
 
+compile_obengine_git_definitions()
+
+target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
+target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
+target_compile_definitions(ObEngineCore PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")
+
 target_include_directories(ObEnginePlayer
   PRIVATE
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>

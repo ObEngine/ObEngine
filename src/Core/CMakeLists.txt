@@ -19,22 +19,6 @@ target_include_directories(ObEngineCore
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
 )
 
-if (DEFINED OBENGINE_GIT_BRANCH)
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
-else ()
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_BRANCH="unknown")
-endif()
-if (DEFINED OBENGINE_GIT_COMMIT_HASH)
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
-else ()
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_GIT_HASH="unknown")
-endif()
-if (DEFINED OBENGINE_VERSION)
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")
-else ()
-    target_compile_definitions(ObEngineCore PUBLIC OBENGINE_VERSION="v?.?.?")
-endif()
-
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
 target_link_libraries(ObEngineCore sfe)

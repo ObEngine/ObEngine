@@ -11,6 +11,8 @@ file(GLOB_RECURSE OBEDEV_SOURCES
 
 add_executable(ObEngineDev ${OBEDEV_HEADERS} ${OBEDEV_SOURCES})
 
+compile_obengine_git_definitions()
+
 target_include_directories(ObEngineDev
   PRIVATE
     $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
