@@ -34,9 +34,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 group_files(
-    ${OBE_HEADERS} ${OBE_SOURCES} 
-    ${ObEngine_SOURCE_DIR}/include/Core 
-    ${ObEngine_SOURCE_DIR}/src/Core
+    "${OBE_HEADERS}" "${OBE_SOURCES}"
+    "${ObEngine_SOURCE_DIR}/include/Core"
+    "${ObEngine_SOURCE_DIR}/src/Core"
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)

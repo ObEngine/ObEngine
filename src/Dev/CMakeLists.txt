@@ -27,9 +27,10 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(ObEngineDev ${OPENGL_LIBRARIES})
 
 group_files(
-  ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} 
-  ${ObEngine_SOURCE_DIR}/include/Dev 
-  ${ObEngine_SOURCE_DIR}/src/Dev)
+  "${OBEDEV_HEADERS}" "${OBEDEV_SOURCES}"
+  "${ObEngine_SOURCE_DIR}/include/Dev"
+  "${ObEngine_SOURCE_DIR}/src/Dev)"
+)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)

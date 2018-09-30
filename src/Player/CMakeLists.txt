@@ -22,9 +22,9 @@ target_link_libraries(ObEnginePlayer ObEngineCore)
 target_link_libraries(ObEnginePlayer sfml-window)
 
 group_files(
-    ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES} 
-    ${ObEngine_SOURCE_DIR}/include/Player 
-    ${ObEngine_SOURCE_DIR}/src/Player
+    "${OBEPLAYER_HEADERS}" "${OBEPLAYER_SOURCES}"
+    "${ObEngine_SOURCE_DIR}/include/Player"
+    "${ObEngine_SOURCE_DIR}/src/Player"
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
