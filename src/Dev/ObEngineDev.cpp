@@ -44,6 +44,8 @@ int main(int argc, char** argv)
     Debug::InitLogger();
     vili::ViliParser::StoreInCache("Obe.vili");
 
+    Debug::Log->info("Running ObEngine Dev (Version : {} ({}:{}))", OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
+
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
     Debug::Log->debug("<ObEngine> Initialising Position Transformers");

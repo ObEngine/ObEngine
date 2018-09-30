@@ -4,6 +4,7 @@ set(OpenGL_GL_PREFERENCE GLVND)
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+include(engine_git)
 
 add_subdirectory(extlibs/catch)
 add_subdirectory(extlibs/dynamicLinker)
@@ -25,6 +26,8 @@ add_subdirectory(extlibs/elzip)
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
+
+configure_obengine_git()
 
 add_subdirectory(src/Core)
 
