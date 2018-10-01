@@ -1,7 +1,8 @@
 # ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/title.png)
 
-:jack_o_lantern: Hacktoberfest people, welcome here ! There's a bunch of issues you can help with in the issue section, you can also check [this page](https://github.com/Sygmei/ObEngine/wiki/Road-to-1.0) which shows all the steps required before ÖbEngine can reach version 1.0 !
+:jack_o_lantern: Hacktoberfest people, welcome here ! There's a bunch of issues you can help with in the issue section, you can also check [this page](https://github.com/Sygmei/ObEngine/wiki/Road-to-1.0) which shows all the steps required before ÖbEngine can reach version 1.0 ! Don't hesitate to come on discord to discuss the issue or leave a comment directly in the issue !
 
+[![Discord](https://img.shields.io/discord/302123079818149888.svg?logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![Build Status](https://travis-ci.org/Sygmei/ObEngine.svg?branch=master)](https://travis-ci.org/Sygmei/ObEngine)
 [![Build status](https://ci.appveyor.com/api/projects/status/l8sr8k4shilmnm83?svg=true)](https://ci.appveyor.com/project/Sygmei/obengine)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
