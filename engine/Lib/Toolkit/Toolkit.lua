@@ -4,6 +4,7 @@ local Color = require("Lib/StdLib/ConsoleColor");
 local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
+local Table = require("Lib/StdLib/Table");
 
 function loadToolkitFunctions()
     local fileList = obe.Filesystem.getFileList("Lib/Toolkit/Functions");
@@ -64,12 +65,13 @@ function autocompleteArgs(command, query)
             print("RECURSION")
             return autocompleteArgs(recurseIn.children, pl.List(subpath):join(" "));
         else
-            print("NOT FOUND HURR DURR");
+            print("NOT FOUND");
             return {};
         end
     else
         print("Start inspection in ", inspect(command))
         local arglist = {};
+        local argIndex = 0;
         for _, arg in pairs(command) do
             if arg.type == "Node" then
                 if start ~= nil and string.sub(arg.id, 1, string.len(start)) == start then
@@ -106,9 +108,12 @@ function autocompleteArgs(command, query)
                     if getHelp(arg.children) ~= "" then
                         defaultHelp = getHelp(arg.children);
                     end
-                    arglist["<" .. arg.id .. ">"] = { children = {{ type = "Help", help = defaultHelp }}};
+                    arglist["<" .. arg.id .. " (" .. tostring(argIndex) .. ")>"] = { 
+                        children = {{ type = "Help", help = defaultHelp }}
+                    };
                 end
             end
+            argIndex = argIndex + 1;
         end
         return arglist;
     end
@@ -150,87 +155,82 @@ function getBiggestCommonRoot(baseWord, completionWords)
     end
 end
 
-function getLastArgument(command)
-  local lastArg = "";
-  while command:sub(#command, #command) ~= " " do
-    lastArg = command:sub(#command, #command) .. lastArg;
-    command = command:sub(1, -2);
-  end
-  return lastArg;
-end
-
-function decomposeCommand(command)
+function splitCommandAndArgs(command)
     local commandName = "";
-    local cargs = {};
+    local strArgs = "";
+    local commandArgs = {};
     for k, v in pairs(String.split(command, " ")) do
         if k == 1 then
             commandName = v;
         else
-            table.insert(cargs, v);
+            table.insert(commandArgs, v);
+            if #strArgs > 0 then
+                strArgs = strArgs .. " " .. v;
+            else
+                strArgs = v;
+            end
         end
     end
-    return commandName, cargs;
-end
-
-function getTableSize(mtable)
-    local size = 0;
-    for _, v in pairs(mtable) do
-        size = size + 1;
+    if command:sub(#command, #command) == " " then
+        print("LAST PART OF COMMAND IS A SPACE");
     end
-    return size;
+    return { name = commandName, args = commandArgs, full = command, strArgs = strArgs };
 end
 
-function getTableKeys(mtable)
-    local keys = {};
-    for k, v in pairs(mtable) do
-        table.insert(keys, k);
-    end
-    return keys;
-end
-
-function autocompleteHandle(ToolkitFunctions, command)
-    print("AUTOCOMPLETE HANDLE CALLED")
-    if #command > 0 then
-        local commandName, cargs = decomposeCommand(command);
-        if ToolkitFunctions[commandName] then
-            local useQuery = pl.List(cargs):join(" ");
-            if command:sub(#command, #command) == " " then
-                useQuery = useQuery .. " ";
+function autocompleteHandle(command)
+    print("3°) Autocomplete handle called")
+    local autocompleteResult = command.full;
+    if #command.full > 0 then
+        if ToolkitFunctions[command.name] then
+            local strArgs = command.strArgs;
+            if command.full:sub(#command.full, #command.full) == " " then
+                strArgs = strArgs .. " ";
             end
-            print("Use Query : <" .. useQuery .. ">");
-            local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, useQuery);
-            if getTableSize(completions) == 1 then
+            print("4°) StrArgs are : '" .. strArgs .. "'");
+            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, strArgs);
+            print("Got completions :", inspect(completions));
+            local completionKeys = Table.getKeys(completions)
+            if Table.getSize(completions) == 1 then
                 -- Only one completion found, complete and add space (if not a variable)
-                local onlyCompletion = getTableKeys(completions)[1];
+                local onlyCompletion = completionKeys[1];
                 if onlyCompletion:sub(1, 1) == "<" and onlyCompletion:sub(#onlyCompletion, #onlyCompletion) == ">" then
                     -- Variable Parameter, do nothing
+                    print("Only completion :", onlyCompletion);
                 else
-                    while command:sub(#command, #command) ~= " " do
-                        command = command:sub(1, -2);
+                    while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
+                        autocompleteResult = autocompleteResult:sub(1, -2);
                     end
-                    command = command .. getTableKeys(completions)[1] .. " ";
+                    autocompleteResult = autocompleteResult .. completionKeys[1] .. " ";
                 end
-            elseif getTableSize(completions) > 1 then
+            elseif Table.getSize(completions) > 1 then
                 -- Multiple completions found, completing with biggest common root
-                while command:sub(#command, #command) ~= " " do
-                    command = command:sub(1, -2);
+                print("Getting biggest common root");
+                while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
+                    print("Test equality : '" .. autocompleteResult:sub(#autocompleteResult, #autocompleteResult) .. "'");
+                    print("Equalize to '" .. autocompleteResult:sub(1, -2) .. "'");
+                    autocompleteResult = autocompleteResult:sub(1, -2);
                 end
-                local commonRoot = getBiggestCommonRoot(getLastArgument(command), getTableKeys(completions));
-                command = command .. commonRoot;
+                if autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " then
+                    print("last arg is space");
+                end
+                print("Checking biggest common of", command.args[#command.args], "in", inspect(completionKeys));
+                local commonRoot = getBiggestCommonRoot(command.args[#command.args], completionKeys);
+                print("Got result", autocompleteResult);
+                autocompleteResult = autocompleteResult .. commonRoot;
             end
         end
     end
-    return command;
+    return autocompleteResult;
 end
 
-function isUniqueValidCommand(command, commandName)
-    local obfuscatedCommand = 0;
+function isUniqueValidCommand(command)
+    local commandMatches = 0;
     for key, func in pairs(ToolkitFunctions) do
-        if key:sub(0, #command) == commandName then
-            obfuscatedCommand = obfuscatedCommand + 1;
+        if key:sub(0, #command.full) == command.name then
+            commandMatches = commandMatches + 1;
         end
     end
-    return obfuscatedCommand == 1;
+    return commandMatches == 1;
 end
 
 function getHelp(arg)
@@ -242,30 +242,65 @@ function getHelp(arg)
     return "";
 end
 
-function autocomplete(command)
-    print("AUTOCOMPLETE CALLED --------------------------------------------")
-    local commandName, cargs = decomposeCommand(command);
+-- Complete the workspace function name based on current input if possible
+function getMatchingToolkingFunctions(command)
+    local allFunctions = {};
+    for key, func in pairs(ToolkitFunctions) do
+        table.insert(allFunctions, key);
+    end
+
+    -- Get all commands that match input and get the common root of all commands
+    -- For example, common root of command "reset" and "restore" is "res"
+    local longestPossibleCompletion = getBiggestCommonRoot(command.full, excludeNonMatchingWords(command.full, allFunctions));
+
+    -- Fill input with common root
+    if #longestPossibleCompletion ~= #command.full then
+        _term_write(longestPossibleCompletion:sub(#command.full + 1));
+        if isUniqueValidCommand(command) then
+            _term_write(" ");
+        end
+    end
+
+    -- Display all possibilities
+    askForCompletion(command.full);
+    for key, func in pairs(ToolkitFunctions) do
+        if key:sub(0, #command.full) == command.full then
+            Color.print({
+                {text = "> ", color = Style.Default},
+                {text = key, color = Style.Command},
+                {text = " : ", color = Style.Default},
+                {text = getHelp(func.Routes), color = Style.Help}
+            }, 2);
+        end
+    end
+end
+
+function autocomplete(input)
+    print("=============================================================")
+    print("1°) Called autocomplete with input :", input);
+    local command = splitCommandAndArgs(input);
+    print("2°) Splitted input :", input, "to", inspect(command));
     _term_last();
-    if ToolkitFunctions[commandName] then
-        if isUniqueValidCommand(command, commandName) then
+    if ToolkitFunctions[command.name] then
+        if isUniqueValidCommand(command) then
             -- Adding a space when command is valid
-            if #cargs == 0 and command:sub(#command, #command) ~= " " then
-                command = command .. " ";
+            if #command.args == 0 and input:sub(#input, #input) ~= " " then
+                input = input .. " ";
                 _term_write(" ");
             end
-            local checkCurrentInput = autocompleteHandle(ToolkitFunctions, command);
+            local checkCurrentInput = autocompleteHandle(command);
             print("Check Current Input : '" .. checkCurrentInput .. "'")
-            if command == checkCurrentInput then
+            if input == checkCurrentInput then
                 local addSpace = "";
-                if command:sub(#command, #command) == " " and #cargs > 0 then
+                if input:sub(#input, #input) == " " and #command.args > 0 then
                     addSpace = " ";
                 end
-                local completions = autocompleteArgs(ToolkitFunctions[commandName].Routes, pl.List(cargs):join() .. addSpace);
-                if getTableSize(completions) == 1 and getTableKeys(completions)[1] == getLastArgument(command) then
-                    command = command .. " ";
+                local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs .. addSpace);
+                if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
+                    input = input .. " ";
                     _term_write(" ");
                 else
-                    askForCompletion(command);
+                    askForCompletion(input);
                     for compId, completion in pairs(completions) do
                         Color.print({
                             {text = "> ", color = Style.Default},
@@ -282,9 +317,9 @@ function autocomplete(command)
             end
         else
             -- When commands overlaps
-            askForCompletion(command);
+            askForCompletion(input);
             for key, func in pairs(ToolkitFunctions) do
-                if key:sub(0, #command) == command then
+                if key:sub(0, #input) == input then
                     Color.print({
                         {text = "> ", color = Style.Default},
                         {text = key, color = Style.Command},
@@ -295,77 +330,74 @@ function autocomplete(command)
             end
         end
     else
-        local allFunctions = {};
-        for key, func in pairs(ToolkitFunctions) do
-            table.insert(allFunctions, key);
-        end
-        local newCurrentInput = getBiggestCommonRoot(command, excludeNonMatchingWords(command, allFunctions));
-        print("NCI : ", newCurrentInput)
-        if #newCurrentInput ~= #command then
-            _term_write(newCurrentInput:sub(#command + 1));
-            if isUniqueValidCommand(command, commandName) then
-                _term_write(" ");
-            end
-        else
-            askForCompletion(command);
-            for key, func in pairs(ToolkitFunctions) do
-                if key:sub(0, #command) == command then
-                    Color.print({
-                        {text = "> ", color = Style.Default},
-                        {text = key, color = Style.Command},
-                        {text = " : ", color = Style.Default},
-                        {text = getHelp(func.Routes), color = Style.Help}
-                    }, 2);
-                end
-            end
-        end
+        getMatchingToolkingFunctions(command);
     end
 end
 
-function getIdentifiedArgArraySize(idargs)
-    local size = 0;
-    for _, _ in pairs(idargs) do
-        size = size + 1;
-    end
-    return size;
-end
-
+-- Try to return the function given a command and its arguments (Will also return identified args of the function)
 function reachCommand(command, branch, args, idargs)
     print("Reach Command : ", command, inspect(branch), inspect(args), inspect(idargs));
+    -- idargs can be nil, we set it to an empty table if that's the case
     local identifiedArgs = idargs or {};
-    local entries = 0;
-    local subargs = {};
+    -- Get the first part of the command arguments and store the remaining ones
+    local argCount = 0;
+    local subArgs = {};
     local nextJump = "";
     for _, content in pairs(args) do
-        if entries ~= 0 then
-            table.insert(subargs, content);
+        if argCount ~= 0 then
+            -- Store the args after the next command argument key
+            table.insert(subArgs, content);
         else
+            -- Store the next command argument key
             nextJump = content;
         end
-        entries = entries + 1;
+        argCount = argCount + 1;
     end
-    print("Next JUmp", nextJump);
+    print("Next Jump", nextJump);
+    -- If there is remaining arguments left to compute
     if nextJump ~= "" then
         local recurseIn = nil;
+        -- For all arguments children in the current argument
         for _, content in pairs(branch.children) do
+            -- If we find a "Node" argument that matches the next argument in the input
             if content.type == "Node" and content.id == nextJump then
+                -- We store the Node that will be used
                 recurseIn = content;
-                identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Node" };
+                -- We also store it as an identified argument
+                identifiedArgs[content.id] = { index = Table.getSize(identifiedArgs), type = "Node" };
                 break;
             end
         end
+        -- If the current argument did not match a "Node" argument before
+        -- (Either because the argument did not exist or because it was an "Argument" argument)
         if recurseIn == nil then
+            -- We iterate again in all arguments children in the current argument
             for _, content in pairs(branch.children) do
+                -- If we find an "Argument" argument
                 if content.type == "Argument" then
-                    -- ADD TYPE CHECK
-                    recurseIn = content;
-                    identifiedArgs[content.id] = { index = getIdentifiedArgArraySize(identifiedArgs), type = "Argument" };
-                    break;
+                    -- Argument type matching
+                    if (content.argType == "any")
+                    or (content.argType == "number" and tonumber(nextJump) ~= nil)
+                    or (content.argType == "boolean" and (nextJump == "true" or nextJump == "false"))
+                    or (content.argType == "string" and (tonumber(nextJump) == nil and nextJump ~= "false" and nextJump ~= true)) then
+                        -- It the argument value matches the Argument type
+                        -- We store the Argument that will be used
+                        recurseIn = content;
+                        -- We also store it as an identified argument
+                        identifiedArgs[content.id] = { 
+                            index = Table.getSize(identifiedArgs), 
+                            type = "Argument",
+                            argType = content.argType 
+                        };
+                        break;
+                    end
                 end
             end
         end
+        -- If we found the next Node / Argument
         if recurseIn then
-            return reachCommand(command, recurseIn, subargs, identifiedArgs);
+            -- We use recursion to reach the next Node / Argument
+            return reachCommand(command, recurseIn, subArgs, identifiedArgs);
         else
             -- Invalid Argument
             Color.print({
@@ -374,15 +406,22 @@ function reachCommand(command, branch, args, idargs)
             }, 2);
         end
     else
+        -- No remaining arguments left to compute were found
         local futureCall = nil;
+        -- We iterate in the current branch children
         for _, content in pairs(branch.children) do
+            -- If we find a "Call" Node
             if content.type == "Call" then
+                -- We copy the Node for later use
                 futureCall = copy(content);
                 break;
             end
         end
+        -- If we find a callable function
         if futureCall then
+            -- If the function is a reference (name of the function)
             if futureCall.calltype == "Ref" then
+                -- We get it from Functions table of the command
                 futureCall.ref = ToolkitFunctions[command].Functions[futureCall.ref];
             end
             return futureCall.ref, identifiedArgs;
@@ -399,51 +438,57 @@ function reachCommand(command, branch, args, idargs)
     end
 end
 
-function getAtIndex(array, index)
-    for key, content in pairs(array) do
-        if content.index == index then
-            return key;
-        end
-    end
-end
-
-function evaluate(command)
-    local commandName, cargs = decomposeCommand(command);
-    print("Evaluate : " .. command);
-    if ToolkitFunctions[commandName] then
-        print("===========> COMMAND", inspect(ToolkitFunctions[commandName]));
-        -- Command found
-        print("Cargs is ", cargs);
-        local callFunction, identifiedArgs = reachCommand(commandName, {id = "{root}", children = ToolkitFunctions[commandName].Routes}, cargs);
+-- Execute user input
+function evaluate(input)
+    local command = splitCommandAndArgs(input);
+    print("Evaluate : " .. inspect(command));
+    -- If the command is found in ToolkitFunctions
+    if ToolkitFunctions[command.name] then
+        print("===========> COMMAND", inspect(ToolkitFunctions[command.name]));
+        print("commandArgs is ", inspect(command.args));
+        -- We try to retrieve the function to call from command name
+        -- We also retrieve the command excepted arguments (name, index and type (Node / Argument))
+        local callFunction, identifiedArgs = reachCommand(command.name, {
+            id = "{root}", 
+            children = ToolkitFunctions[command.name].Routes
+        }, command.args);
+        -- If the function to call has been found and arguments has been identified
         if callFunction and identifiedArgs then
-            -- Successful Reach Command Call
+            -- For all arguments of the command
             for key, content in pairs(identifiedArgs) do
                 if content.type == "Node" then
-                    identifiedArgs[key].value = getAtIndex(identifiedArgs, content.index + 1);
+                    -- If the argument is a "Node", the argument value will be the name of the next Node / Argument
+                    identifiedArgs[key].value = Table.getKeyAtIndex(identifiedArgs, content.index + 1);
                 elseif content.type == "Argument" then
-                    identifiedArgs[key].value = cargs[content.index + 1];
+                    -- Otherwise, if the argument is an "Argument", we just fetch the value from user input
+                    identifiedArgs[key].value = command.args[content.index + 1];
                 end
             end
             local ArgMirror = require('Lib/Internal/ArgMirror');
+            -- Getting arguments names of the function
             local argList = ArgMirror.GetArgs(callFunction);
             local callArgs = {};
+            -- We create a table containing arguments of the function at the correct index
             for _, arg in pairs(argList) do
                 table.insert(callArgs, identifiedArgs[arg].value);
             end
+            -- We call the function and we unpack arguments
             callFunction(ArgMirror.Unpack(callArgs));
         end
     else
-        -- Command not found
+        -- Command not found, we display an error message
         Color.print({
             {text = "Command ", color = Style.Error},
-            {text = commandName, color = Style.Command},
-            {text = "&nbsp;not found.", color = Style.Error}
+            {text = command.name, color = Style.Command},
+            {text = " ;not found.", color = Style.Error}
         }, 2);
     end
     
 end
 
+-- Loading functions of the toolkit
 ToolkitFunctions = loadToolkitFunctions();
+-- Displaying start message
 Color.print({
     {text = "@", color = Style.Boot.At},
     {text = "ObEngine Toolkit ", color = Style.Boot.Text},

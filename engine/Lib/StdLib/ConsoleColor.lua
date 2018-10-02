@@ -2,7 +2,10 @@ local Color = {};
 
 inspect = require("Lib/StdLib/Inspect");
 
-function Color.print(texttable, indent)
+function Color.print(textTable, indent)
+    if type(textTable) == "string" then
+        textTable = {{text = textTable}};
+    end
     local indentString = "";
     if indent ~= nil then
         for i = 0, indent - 1 do
@@ -12,7 +15,7 @@ function Color.print(texttable, indent)
     local allTexts = {};
     local allColors = {};
     local firstString = true;
-    for k, v in pairs(texttable) do
+    for k, v in pairs(textTable) do
         local cText = v.text;
         if firstString then
             firstString = false;
@@ -21,7 +24,11 @@ function Color.print(texttable, indent)
             cText = v.text;
         end
         table.insert(allTexts, cText);
-        table.insert(allColors, SFML.Color(v.color[1], v.color[2], v.color[3]));
+        if v.color ~= nil then
+            table.insert(allColors, SFML.Color(v.color[1], v.color[2], v.color[3]));
+        else
+            table.insert(allColors, SFML.Color.White);
+        end
     end
     _term_display(allTexts, allColors);
 end

@@ -6,12 +6,16 @@ return {
             type = "Node",
         };
     end,
-    
-    Arg = function(id, children)
+    Arg = function(id, argType, children)
+        if children == nil then
+            children = argType;
+            argType = "any";
+        end
         return {
             id = id,
             children = children,
             type = "Argument",
+            argType = argType
         };
     end,
 
