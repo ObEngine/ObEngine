@@ -27,13 +27,13 @@ find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
-configure_obengine_git()
-
 add_subdirectory(src/Core)
 
 if (NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
 endif()
+
+configure_obengine_git()
 
 if (BUILD_PLAYER)
     add_subdirectory(src/Player)

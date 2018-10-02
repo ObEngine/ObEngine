@@ -42,7 +42,7 @@ function (configure_obengine_git)
             )
             string(REGEX MATCH "v(.+)\.(.+)\.(.+)$" GIT_OBENGINE_VERSION "${GIT_OBENGINE_VERSION_UNFORMATTED}")
 
-            set_git_version(${GIT_BRANCH} ${GIT_COMMIT_HASH} ${GIT_OBENGINE_VERSION})
+            set_git_version("${GIT_BRANCH}" "${GIT_COMMIT_HASH}" "${GIT_OBENGINE_VERSION}")
             message("ÖbEngine Git version : ${OBENGINE_GIT_BRANCH}:${OBENGINE_GIT_COMMIT_HASH}")
             message("ÖbEngine version : ${OBENGINE_VERSION}")
         else()

@@ -10,6 +10,7 @@ function loadToolkitFunctions()
     local fileList = obe.Filesystem.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
     for _, content in pairs(fileList) do
+        print("Loading Toolkit function :", "Lib/Toolkit/Functions/", content);
         allFunctions[String.split(content, ".")[1]] = require("Lib/Toolkit/Functions/" .. String.split(content, ".")[1]);
     end
     return allFunctions;
@@ -173,21 +174,19 @@ function splitCommandAndArgs(command)
     end
     if command:sub(#command, #command) == " " then
         print("LAST PART OF COMMAND IS A SPACE");
+        table.insert(commandArgs, "");
+        strArgs = strArgs .. " ";
     end
     return { name = commandName, args = commandArgs, full = command, strArgs = strArgs };
 end
 
 function autocompleteHandle(command)
-    print("3°) Autocomplete handle called")
+    print("3-) Autocomplete handle called")
     local autocompleteResult = command.full;
     if #command.full > 0 then
         if ToolkitFunctions[command.name] then
-            local strArgs = command.strArgs;
-            if command.full:sub(#command.full, #command.full) == " " then
-                strArgs = strArgs .. " ";
-            end
-            print("4°) StrArgs are : '" .. strArgs .. "'");
-            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, strArgs);
+            print("4-) StrArgs are : '" .. command.strArgs .. "'");
+            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
             print("Got completions :", inspect(completions));
             local completionKeys = Table.getKeys(completions)
             if Table.getSize(completions) == 1 then
@@ -205,6 +204,12 @@ function autocompleteHandle(command)
             elseif Table.getSize(completions) > 1 then
                 -- Multiple completions found, completing with biggest common root
                 print("Getting biggest common root");
+                local nodesOnly = {};
+                for k, v in pairs(completions) do
+                    if v.type == "Node" then
+                        nodesOnly[k] = v;
+                    end
+                end
                 while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
                     print("Test equality : '" .. autocompleteResult:sub(#autocompleteResult, #autocompleteResult) .. "'");
                     print("Equalize to '" .. autocompleteResult:sub(1, -2) .. "'");
@@ -277,9 +282,9 @@ end
 
 function autocomplete(input)
     print("=============================================================")
-    print("1°) Called autocomplete with input :", input);
+    print("1-) Called autocomplete with input :", input);
     local command = splitCommandAndArgs(input);
-    print("2°) Splitted input :", input, "to", inspect(command));
+    print("2-) Splitted input :", input, "to", inspect(command));
     _term_last();
     if ToolkitFunctions[command.name] then
         if isUniqueValidCommand(command) then
