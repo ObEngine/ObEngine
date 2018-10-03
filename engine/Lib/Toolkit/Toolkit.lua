@@ -26,119 +26,18 @@ function askForCompletion(command)
     });
 end
 
--- Autocomplete the argument parts of the command
-function autocompleteArgs(command, query)
-    print("AUTOCOMPLETE ARGS CALLED");
-    local path = {};
-    local currentWord = "";
-    local start = "";
-    print("Query : '" .. query .. "'");
-    for char in query:gmatch(".") do
-        print("Match char (" .. char .. ")");
-        if char == " " and currentWord ~= "" then
-            print("Inserting currentWord (" .. currentWord .. ")");
-            table.insert(path, currentWord);
-            currentWord = "";
-        else
-            currentWord = currentWord .. char;
+-- Checks if the value checks the Argument requirements (based on type)
+function matchCommandArgumentType(content, value)
+    if content.type == "Argument" then
+        -- Argument type matching
+        if (content.argType == "any")
+        or (content.argType == "number" and tonumber(value) ~= nil)
+        or (content.argType == "boolean" and (value == "true" or value == "false"))
+        or (content.argType == "string" and (tonumber(value) == nil and value ~= "false" and value ~= true)) then
+            return true;
         end
     end
-    print("PATH : ", inspect(path));
-    print("CURRENTWORD : ", currentWord);
-    if currentWord ~= " " then start = currentWord end
-    local entries = 0;
-    local subpath = {};
-    for _, content in pairs(path) do
-        if entries ~= 0 then
-            table.insert(subpath, content);
-        end
-        entries = entries + 1;
-    end
-    table.insert(subpath, start);
-    print("SUBPATH : ", inspect(subpath));
-    print("Entries : ", entries);
-    if entries > 0 then
-        print("Got entries");
-        local recurseIn = nil;
-        for id, content in pairs(command) do
-            if content.type == "Node" and id == path[1] then
-                recurseIn = content;
-                break;
-            elseif content.type == "Argument" then
-                recurseIn = content;
-            end
-        end
-        if recurseIn then
-            print("RECURSION")
-            return autocompleteArgs(recurseIn.children, pl.List(subpath):join(" "));
-        else
-            print("NOT FOUND");
-            return {};
-        end
-    else
-        print("Start inspection in ", inspect(command))
-        local arglist = {};
-        for id, arg in pairs(command) do
-            if arg.type == "Node" then
-                print("Encountered Node", start, " '" .. string.sub(id, 1, string.len(start)) .. "'");
-                if start ~= nil and string.sub(id, 1, string.len(start)) == start then
-                    arglist[id] = arg;
-                elseif start == nil then
-                    arglist[id] = arg;
-                end
-            elseif arg.type == "Argument" then
-                print("FOUND ARG", arg.autocomplete, start);
-                local autocompleteFunction;
-                for _, searchFunction in pairs(arg.children) do
-                    if searchFunction.type == "Autocomplete" then
-                        print("FOUND AUTOCOMPLETE FUNCTION");
-                        autocompleteFunction = searchFunction.ref;
-                        break;
-                    end
-                end
-                if autocompleteFunction then
-                    local autocompleteResult = autocompleteFunction(start);
-                    for _, content in pairs(autocompleteResult) do
-                        if start ~= nil and content:sub(1, string.len(start)) == start then
-                            -- Add help ?
-                            arglist[content] = { 
-                                children = {
-                                    { 
-                                        type = "Help", 
-                                        help = "Argument suggestion for <" .. id .. "> parameter" 
-                                    }
-                                },
-                                type = "Node"
-                            };
-                        elseif start == nil then
-                            -- Add help ?
-                            arglist[content] = { 
-                                children = {
-                                    { 
-                                        type = "Help", 
-                                        help = "Argument suggestion for <" .. id .. "> parameter" 
-                                    }
-                                },
-                                type = "Node"
-                            };
-                        end
-                    end
-                    print("GOT ACR : ", inspect(arglist));
-                else
-                    local defaultHelp = "Variable for argument <" .. id .. ">";
-                    print("Arg inspect : ", inspect(arg));
-                    print("Help Got : ", getHelp(arg.children))
-                    if getHelp(arg.children) ~= "" then
-                        defaultHelp = getHelp(arg.children);
-                    end
-                    arglist["<" .. id .. ">"] = { 
-                        children = {{ type = "Help", help = defaultHelp }}
-                    };
-                end
-            end
-        end
-        return arglist;
-    end
+    return false;
 end
 
 -- Returns a table with only the elements from matchList that starts like baseWord
@@ -154,6 +53,8 @@ function excludeNonMatchingWords(baseWord, matchList)
     return newMatchList;
 end
 
+-- We get the biggest common root of a word 
+-- Biggest common root of "res" in {"reset", "reselling", "reservations"} is "rese"
 function getBiggestCommonRoot(baseWord, completionWords)
     local completed = (#completionWords > 0);
     local baseLetter = "";
@@ -177,6 +78,7 @@ function getBiggestCommonRoot(baseWord, completionWords)
     end
 end
 
+-- We split user input into a command table containing command name and command args
 function splitCommandAndArgs(command)
     local commandName = "";
     local strArgs = "";
@@ -194,62 +96,13 @@ function splitCommandAndArgs(command)
         end
     end
     if command:sub(#command, #command) == " " then
-        print("LAST PART OF COMMAND IS A SPACE");
         table.insert(commandArgs, "");
         strArgs = strArgs .. " ";
     end
     return { name = commandName, args = commandArgs, full = command, strArgs = strArgs };
 end
 
-function autocompleteHandle(command)
-    print("3-) Autocomplete handle called")
-    local autocompleteResult = command.full;
-    if #command.full > 0 then
-        if ToolkitFunctions[command.name] then
-            print("4-) StrArgs are : '" .. command.strArgs .. "'");
-            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
-            print("Got completions :", inspect(completions));
-            local nodesOnly = {};
-            for k, v in pairs(completions) do
-                if v.type == "Node" then
-                    nodesOnly[k] = v;
-                end
-            end
-            local completionKeys = Table.getKeys(nodesOnly);
-            print("GOT COMPLETION KEYS");
-            if Table.getSize(completionKeys) == 1 then
-                -- Only one completion found, complete and add space (if not a variable)
-                local onlyCompletion = completionKeys[1];
-                if onlyCompletion:sub(1, 1) == "<" and onlyCompletion:sub(#onlyCompletion, #onlyCompletion) == ">" then
-                    -- Variable Parameter, do nothing
-                    print("Only completion :", onlyCompletion);
-                else
-                    while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
-                        autocompleteResult = autocompleteResult:sub(1, -2);
-                    end
-                    autocompleteResult = autocompleteResult .. completionKeys[1] .. " ";
-                end
-            elseif Table.getSize(completionKeys) > 1 then
-                -- Multiple completions found, completing with biggest common root
-                print("Getting biggest common root");
-                while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
-                    print("Test equality : '" .. autocompleteResult:sub(#autocompleteResult, #autocompleteResult) .. "'");
-                    print("Equalize to '" .. autocompleteResult:sub(1, -2) .. "'");
-                    autocompleteResult = autocompleteResult:sub(1, -2);
-                end
-                if autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " then
-                    print("last arg is space");
-                end
-                print("Checking biggest common of", command.args[#command.args], "in", inspect(completionKeys));
-                local commonRoot = getBiggestCommonRoot(command.args[#command.args], completionKeys);
-                print("Got result", autocompleteResult);
-                autocompleteResult = autocompleteResult .. commonRoot;
-            end
-        end
-    end
-    return autocompleteResult;
-end
-
+-- Find if the command name does not match any other commands
 function isUniqueValidCommand(command)
     local commandMatches = 0;
     for key, func in pairs(ToolkitFunctions) do
@@ -260,6 +113,7 @@ function isUniqueValidCommand(command)
     return commandMatches == 1;
 end
 
+-- Get the "Help" child in a command node
 function getHelp(arg)
     for _, child in pairs(arg) do
         if child.type == "Help" then
@@ -267,6 +121,173 @@ function getHelp(arg)
         end
     end
     return "";
+end
+
+-- Autocomplete the argument parts of the command
+function autocompleteArgs(command, query)
+    local path = {};
+    local currentWord = "";
+    local start = "";
+    -- Splitting all words to make a path
+    for char in query:gmatch(".") do
+        if char == " " and currentWord ~= "" then
+            table.insert(path, currentWord);
+            currentWord = "";
+        else
+            currentWord = currentWord .. char;
+        end
+    end
+    -- We create a table containing the next arguments
+    if currentWord ~= " " then start = currentWord end
+    local entries = 0;
+    local subpath = {};
+    for _, content in pairs(path) do
+        if entries ~= 0 then
+            table.insert(subpath, content);
+        end
+        entries = entries + 1;
+    end
+    table.insert(subpath, start);
+    -- If we need recursion to reach a sub-Node
+    if entries > 0 then
+        local recurseIn = nil;
+        -- We iterate over children of the current command
+        for id, content in pairs(command) do
+            if content.type == "Node" and id == path[1] then
+                -- We found a Node that matches the id
+                recurseIn = content;
+                break;
+            elseif matchCommandArgumentType(content, path[1]) then
+                -- We found an Argument that matches the type
+                recurseIn = content;
+            end
+        end
+        if recurseIn then
+            -- If we find a Node / Argument that matches criterias
+            return autocompleteArgs(recurseIn.children, pl.List(subpath):join(" "));
+        else
+            -- If no Node / Argument were found
+            return {};
+        end
+    else
+        -- We are at the last argument
+        local arglist = {};
+        -- We iterate over all children of the current argument
+        for id, arg in pairs(command) do
+            -- We check the type of the current child
+            if arg.type == "Node" then
+                -- If we found a Node and the beginning of the current argument value matches the id of the node
+                if start ~= nil and string.sub(id, 1, string.len(start)) == start then
+                    arglist[id] = arg;
+                elseif start == nil then
+                    arglist[id] = arg;
+                end
+            elseif arg.type == "Argument" then
+                -- If we found an Argument child
+                -- We forward-declare the function
+                local autocompleteFunction;
+                -- We iterate over children of the Argument
+                for _, searchFunction in pairs(arg.children) do
+                    -- If we find an "Autocomplete" child
+                    if searchFunction.type == "Autocomplete" then
+                        -- We store the function for later use
+                        autocompleteFunction = searchFunction.ref;
+                        break;
+                    end
+                end
+                -- If we found an autocomplete function in the Argument children
+                if autocompleteFunction then
+                    -- We call the autocomplete function
+                    local autocompleteResult = autocompleteFunction(start);
+                    -- We build a table containing all the suggestions returned by the function
+                    for _, content in pairs(autocompleteResult) do
+                        -- If the part of the last argument matches the beginning of the current completion
+                        if start ~= nil and content:sub(1, string.len(start)) == start then
+                            -- We insert it into suggestions
+                            arglist[content] = { 
+                                children = {
+                                    { 
+                                        type = "Help", 
+                                        help = "Argument suggestion for <" .. id .. "> parameter"
+                                        .. "\n            (" .. getHelp(arg.children) .. ")" 
+                                    }
+                                },
+                                type = "Node"
+                            };
+                        elseif start == nil then
+                            -- If the current argument is empty, we can insert any completion
+                            arglist[content] = { 
+                                children = {
+                                    { 
+                                        type = "Help", 
+                                        help = "Argument suggestion for <" .. id .. "> parameter"
+                                        .. "\n            (" .. getHelp(arg.children) .. ")" 
+                                    }
+                                },
+                                type = "Node"
+                            };
+                        end
+                    end
+                else
+                    -- If no autocompletion function were found, we display a default help
+                    local defaultHelp = "Variable for argument <" .. id .. ">";
+                    if getHelp(arg.children) ~= "" then
+                        defaultHelp = getHelp(arg.children);
+                    end
+                    arglist["<" .. id .. ">"] = { 
+                        children = {{ type = "Help", help = defaultHelp }}
+                    };
+                end
+            end
+        end
+        return arglist;
+    end
+end
+
+-- That function returns what the inputbox should contain after triggering autocompletion
+function autocompleteHandle(command)
+    local autocompleteResult = command.full;
+    -- If the command isn't empty
+    if #command.full > 0 then
+        -- If we find the command in available Toolkit functions
+        if ToolkitFunctions[command.name] then
+            -- We try to autocomplete the arguments
+            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
+            -- We remove
+            local nodesOnly = {};
+            for k, v in pairs(completions) do
+                if v.type == "Node" then
+                    nodesOnly[k] = v;
+                end
+            end
+            local completionKeys = Table.getKeys(nodesOnly);
+            if Table.getSize(completionKeys) == 1 then
+                -- Only one completion found, complete and add space (if not a variable)
+                local onlyCompletion = completionKeys[1];
+                if onlyCompletion:sub(1, 1) == "<" and onlyCompletion:sub(#onlyCompletion, #onlyCompletion) == ">" then
+                    -- Variable Parameter, do nothing
+                else
+                    -- If the last character of the autocompleteResult is a space
+                    while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
+                        -- We remove that space
+                        autocompleteResult = autocompleteResult:sub(1, -2);
+                    end
+                    -- We set the autocompleteResult to what should be in the inputbox
+                    autocompleteResult = autocompleteResult .. completionKeys[1] .. " ";
+                end
+            elseif Table.getSize(completionKeys) > 1 then
+                -- Multiple completions found, completing with biggest common root
+                -- We remove that trailing space
+                while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
+                    autocompleteResult = autocompleteResult:sub(1, -2);
+                end
+                -- We complete as much as we can based on the common root of available completions
+                local commonRoot = getBiggestCommonRoot(command.args[#command.args], completionKeys);
+                autocompleteResult = autocompleteResult .. commonRoot;
+            end
+        end
+    end
+    return autocompleteResult;
 end
 
 -- Complete the workspace function name based on current input if possible
@@ -303,10 +324,7 @@ function getMatchingToolkingFunctions(command)
 end
 
 function autocomplete(input)
-    print("=============================================================")
-    print("1-) Called autocomplete with input :", input);
     local command = splitCommandAndArgs(input);
-    print("2-) Splitted input :", input, "to", inspect(command));
     _term_last();
     if ToolkitFunctions[command.name] then
         if isUniqueValidCommand(command) then
@@ -315,27 +333,28 @@ function autocomplete(input)
                 input = input .. " ";
                 _term_write(" ");
             end
+            -- We call autocompleteHandle to get what text should replace the input
             local checkCurrentInput = autocompleteHandle(command);
-            print("Check Current Input : '" .. checkCurrentInput .. "'")
-            if input == checkCurrentInput then
-                local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
-                if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
-                    input = input .. " ";
-                    _term_write(" ");
-                else
-                    askForCompletion(input);
-                    for compId, completion in pairs(completions) do
-                        Color.print({
-                            {text = "> ", color = Style.Default},
-                            {text = compId, color = Style.Argument},
-                            {text = " : ", color = Style.Default},
-                            {text = getHelp(completion.children), color = Style.Help}
-                        }, 2);
-                    end
-                end
-                print("Completions gathered");
+            -- We always show all suggestions
+            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
+            if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
+                input = input .. " ";
+                _term_write(" ");
             else
+                askForCompletion(input);
+                for compId, completion in pairs(completions) do
+                    Color.print({
+                        {text = "> ", color = Style.Default},
+                        {text = compId, color = Style.Argument},
+                        {text = " : ", color = Style.Default},
+                        {text = getHelp(completion.children), color = Style.Help}
+                    }, 2);
+                end
+            end
+            -- If a completion were found
+            if input ~= checkCurrentInput then
                 _term_clear();
+                -- We modify the inputbox
                 _term_write(checkCurrentInput);
             end
         else
@@ -359,7 +378,6 @@ end
 
 -- Try to return the function given a command and its arguments (Will also return identified args of the function)
 function reachCommand(command, branch, args, idargs)
-    print("Reach Command : ", command, inspect(branch), inspect(args), inspect(idargs));
     -- idargs can be nil, we set it to an empty table if that's the case
     local identifiedArgs = idargs or {};
     -- Get the first part of the command arguments and store the remaining ones
@@ -376,7 +394,6 @@ function reachCommand(command, branch, args, idargs)
         end
         argCount = argCount + 1;
     end
-    print("Next Jump", nextJump);
     -- If there is remaining arguments left to compute
     if nextJump ~= "" then
         local recurseIn = nil;
@@ -396,24 +413,17 @@ function reachCommand(command, branch, args, idargs)
         if recurseIn == nil then
             -- We iterate again in all arguments children in the current argument
             for id, content in pairs(branch.children) do
-                -- If we find an "Argument" argument
-                if content.type == "Argument" then
-                    -- Argument type matching
-                    if (content.argType == "any")
-                    or (content.argType == "number" and tonumber(nextJump) ~= nil)
-                    or (content.argType == "boolean" and (nextJump == "true" or nextJump == "false"))
-                    or (content.argType == "string" and (tonumber(nextJump) == nil and nextJump ~= "false" and nextJump ~= true)) then
-                        -- It the argument value matches the Argument type
-                        -- We store the Argument that will be used
-                        recurseIn = content;
-                        -- We also store it as an identified argument
-                        identifiedArgs[id] = { 
-                            index = Table.getSize(identifiedArgs), 
-                            type = "Argument",
-                            argType = content.argType 
-                        };
-                        break;
-                    end
+                -- If we find an "Argument" argument that matches the expect argType
+                if matchCommandArgumentType(content, value) then
+                    -- We store the Argument that will be used
+                    recurseIn = content;
+                    -- We also store it as an identified argument
+                    identifiedArgs[id] = { 
+                        index = Table.getSize(identifiedArgs), 
+                        type = "Argument",
+                        argType = content.argType 
+                    };
+                    break;
                 end
             end
         end
@@ -464,11 +474,8 @@ end
 -- Execute user input
 function evaluate(input)
     local command = splitCommandAndArgs(input);
-    print("Evaluate : " .. inspect(command));
     -- If the command is found in ToolkitFunctions
     if ToolkitFunctions[command.name] then
-        print("===========> COMMAND", inspect(ToolkitFunctions[command.name]));
-        print("commandArgs is ", inspect(command.args));
         -- We try to retrieve the function to call from command name
         -- We also retrieve the command excepted arguments (name, index and type (Node / Argument))
         local callFunction, identifiedArgs = reachCommand(command.name, {

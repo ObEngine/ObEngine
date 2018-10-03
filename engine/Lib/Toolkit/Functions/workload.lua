@@ -6,6 +6,14 @@ function getWorkloadNames()
     return {"Alpha", "Altimeter", "Beta", "Bechamel"};
 end
 
+function suggestNums()
+    return { "100", "222", "3033", "3040" };
+end
+
+function suggestStrs()
+    return { "Bob", "1Bison", "1terpolation", "30calite" };
+end
+
 return {
     Functions = {
         create = function(workloadName, create)
@@ -30,10 +38,12 @@ return {
             workloadNameNumber = Route.NumberArg {
                 Route.Help("Name of the new Workload to create (number edition)");
                 Route.Call("create_num");
+                Route.Autocomplete(suggestNums);
             };
             workloadName = Route.StringArg {
                 Route.Help("Name of the new Workload to create (string edition)");
                 Route.Call("create");
+                Route.Autocomplete(suggestStrs);
             };
         };
         mount = Route.Node {
