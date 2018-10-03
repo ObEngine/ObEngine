@@ -127,7 +127,7 @@ end
 
 -- Checks the current command execution state
 function checkCommandExecutionState(co)
-    if coroutine.status(currentExecution) == "dead" then
+    if coroutine.status(co) == "dead" then
         return false;
     else
         return true;
@@ -136,25 +136,47 @@ end
 
 -- Builds a new command execution
 function buildCommandExecution(func, args)
-    local exec = coroutine.create(function()
-        local autocomplete = {
-            func = function() end
-        };
-        args["autocomplete"] = autocomplete;
+    local autocomplete = {
+        value = {
+            func = function() 
+                print("Called autocomplete");
+            end
+        }
+    };
+    args["autocomplete"] = autocomplete;
+    local ArgMirror = require('Lib/Internal/ArgMirror');
+    -- Getting arguments names of the function
+    local argList = ArgMirror.GetArgs(func);
+    local callArgs = {};
+    -- We create a table containing arguments of the function at the correct index
+    for _, arg in pairs(argList) do
+        table.insert(callArgs, args[arg].value);
+    end
+    local exec = coroutine.create(function() 
         local subroutine = coroutine.create(function()
-            func(ArgMirror.Unpack(args));
+            func(ArgMirror.Unpack(callArgs));
         end);
-        coroutine.resume(subroutine);
-        if checkCommandExecutionState(subroutine) then
-            local wakeType, input = coroutine.yield();
+        local ok, msg = coroutine.resume(subroutine);
+        if not ok then error(msg); end
+        local sendBuffer;
+        while checkCommandExecutionState(subroutine) do
+            local wakeType, input = coroutine.yield(sendBuffer);
+            sendBuffer = nil;
             if wakeType == "input" then
-                coroutine.resume(input);
+                local ok, msg = coroutine.resume(subroutine, input);
+                if not ok then 
+                    error(msg); 
+                else 
+                    sendBuffer = msg;
+                end
             elseif wakeType == "autocomplete" then
-                return autocomplete.func(input);
+                print("Triggering autocomplete");
+                sendBuffer = autocomplete.value.func(input);
             end
         end
     end);
-    coroutine.resume(exec);
+    local ok, msg = coroutine.resume(exec);
+    if not ok then error(msg); end
     return exec;
 end
 
@@ -235,6 +257,7 @@ function autocompleteArgs(command, query)
                     -- We call the autocomplete function
                     local autocompleteResult = autocompleteFunction(start);
                     -- We build a table containing all the suggestions returned by the function
+                    print(inspect(autocompleteResult))
                     for _, content in pairs(autocompleteResult) do
                         -- If the part of the last argument matches the beginning of the current completion
                         if start ~= nil and content:sub(1, string.len(start)) == start then
@@ -291,7 +314,7 @@ function autocompleteHandle(command)
             -- We remove
             local nodesOnly = {};
             for k, v in pairs(completions) do
-                if v.type == "Node" then
+                if v.type == "Node" and k:sub(1, 1) ~= "<" and k:sub(#k, #k) ~= ">" then
                     nodesOnly[k] = v;
                 end
             end
@@ -359,55 +382,101 @@ function getMatchingToolkingFunctions(command)
 end
 
 function autocomplete(input)
-    local command = splitCommandAndArgs(input);
-    _term_last();
-    if ToolkitFunctions[command.name] then
-        if isUniqueValidCommand(command) then
-            -- Adding a space when command is valid
-            if #command.args == 0 and input:sub(#input, #input) ~= " " then
-                input = input .. " ";
-                _term_write(" ");
-            end
-            -- We call autocompleteHandle to get what text should replace the input
-            local checkCurrentInput = autocompleteHandle(command);
-            -- We always show all suggestions
-            local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
-            if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
-                input = input .. " ";
-                _term_write(" ");
-            else
-                askForCompletion(input);
-                for compId, completion in pairs(completions) do
-                    Color.print({
-                        {text = "> ", color = Style.Default},
-                        {text = compId, color = Style.Argument},
-                        {text = " : ", color = Style.Default},
-                        {text = getHelp(completion.children), color = Style.Help}
-                    }, 2);
+    if currentExecution == nil then
+        local command = splitCommandAndArgs(input);
+        _term_last();
+        if ToolkitFunctions[command.name] then
+            if isUniqueValidCommand(command) then
+                -- Adding a space when command is valid
+                if #command.args == 0 and input:sub(#input, #input) ~= " " then
+                    input = input .. " ";
+                    _term_write(" ");
                 end
-            end
-            -- If a completion were found
-            if input ~= checkCurrentInput then
-                _term_clear();
-                -- We modify the inputbox
-                _term_write(checkCurrentInput);
+                -- We call autocompleteHandle to get what text should replace the input
+                local checkCurrentInput = autocompleteHandle(command);
+                -- We always show all suggestions
+                local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
+                if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
+                    input = input .. " ";
+                    _term_write(" ");
+                else
+                    askForCompletion(input);
+                    for compId, completion in pairs(completions) do
+                        Color.print({
+                            {text = "> ", color = Style.Default},
+                            {text = compId, color = Style.Argument},
+                            {text = " : ", color = Style.Default},
+                            {text = getHelp(completion.children), color = Style.Help}
+                        }, 2);
+                    end
+                end
+                -- If a completion were found
+                if input ~= checkCurrentInput then
+                    _term_clear();
+                    -- We modify the inputbox
+                    _term_write(checkCurrentInput);
+                end
+            else
+                -- When commands overlaps
+                askForCompletion(input);
+                for key, func in pairs(ToolkitFunctions) do
+                    if key:sub(0, #input) == input then
+                        Color.print({
+                            {text = "> ", color = Style.Default},
+                            {text = key, color = Style.Command},
+                            {text = " : ", color = Style.Default},
+                            {text = getHelp(func.Routes), color = Style.Help}
+                        }, 2);
+                    end
+                end
             end
         else
-            -- When commands overlaps
-            askForCompletion(input);
-            for key, func in pairs(ToolkitFunctions) do
-                if key:sub(0, #input) == input then
-                    Color.print({
-                        {text = "> ", color = Style.Default},
-                        {text = key, color = Style.Command},
-                        {text = " : ", color = Style.Default},
-                        {text = getHelp(func.Routes), color = Style.Help}
-                    }, 2);
-                end
-            end
+            getMatchingToolkingFunctions(command);
         end
     else
-        getMatchingToolkingFunctions(command);
+        local status, completions = coroutine.resume(currentExecution, "autocomplete", input);
+        if completions ~= nil and type(completions) == "table" then
+            local validCompletions = {};
+            local completionsInfos = {};
+            local defaultInfo = "Input suggestion"
+            for k, v in pairs(completions) do
+                local completion = v.completion or v;
+                if completion:sub(1, #input) == input then
+                    if type(v) == "string" then
+                        table.insert(validCompletions, v);
+                        table.insert(completionsInfos, defaultInfo);
+                    elseif type(v) == "table" and v.completion then
+                        table.insert(validCompletions, v.completion);
+                        if v.info then
+                            table.insert(completionsInfos, v.info);
+                        else
+                            table.insert(completionsInfos, defaultInfo);
+                        end
+                    end
+                end
+            end
+            local autocompleteResult = "";
+            for i, completion in pairs(validCompletions) do
+                Color.print({
+                    {text = "> ", color = Style.Default},
+                    {text = completion, color = Style.Argument},
+                    {text = " : ", color = Style.Default},
+                    {text = completionsInfos[i], color = Style.Help}
+                }, 2);
+            end
+            if Table.getSize(validCompletions) == 1 then
+                autocompleteResult = validCompletions[1];
+            elseif Table.getSize(validCompletions) > 1 then
+                -- We complete as much as we can based on the common root of available completions
+                local commonRoot = getBiggestCommonRoot(input, validCompletions);
+                autocompleteResult = commonRoot;
+            end
+            _term_clear();
+            _term_write(autocompleteResult);
+        end
+        if coroutine.status(currentExecution) == "dead" then
+            currentExecution = nil;
+        end
     end
 end
 
@@ -490,7 +559,17 @@ function reachCommand(command, branch, args, idargs)
             -- If the function is a reference (name of the function)
             if futureCall.calltype == "Ref" then
                 -- We get it from Functions table of the command
-                futureCall.ref = ToolkitFunctions[command].Functions[futureCall.ref];
+                if ToolkitFunctions[command].Functions[futureCall.ref] then
+                    futureCall.ref = ToolkitFunctions[command].Functions[futureCall.ref];
+                else
+                    Color.print({
+                        {text = "Bad reference to function ", color = Style.Error},
+                        {text = futureCall.ref, color = Style.Argument},
+                        {text = " for command ", color = Style.Error},
+                        {text = command, color = Style.Command}
+                    }, 1);
+                    futureCall.ref = nil;
+                end
             end
             return futureCall.ref, identifiedArgs;
         else
@@ -530,16 +609,8 @@ function evaluate(input)
                         identifiedArgs[key].value = command.args[content.index + 1];
                     end
                 end
-                local ArgMirror = require('Lib/Internal/ArgMirror');
-                -- Getting arguments names of the function
-                local argList = ArgMirror.GetArgs(callFunction);
-                local callArgs = {};
-                -- We create a table containing arguments of the function at the correct index
-                for _, arg in pairs(argList) do
-                    table.insert(callArgs, identifiedArgs[arg].value);
-                end
                 -- We call the function and we unpack arguments
-                currentExecution = buildCommandExecution(callFunction, callArgs);
+                currentExecution = buildCommandExecution(callFunction, identifiedArgs);
                 if coroutine.status(currentExecution) == "dead" then
                     currentExecution = nil;
                 end
@@ -547,13 +618,13 @@ function evaluate(input)
         else
             -- Command not found, we display an error message
             Color.print({
-                {text = "Command ", color = Style.Error},
+                {text = "Command '", color = Style.Error},
                 {text = command.name, color = Style.Command},
-                {text = " ;not found.", color = Style.Error}
+                {text = "' not found.", color = Style.Error}
             }, 2);
         end
     else
-        coroutine.resume(currentExecution, "input", input)
+        coroutine.resume(currentExecution, "input", input);
         if coroutine.status(currentExecution) == "dead" then
             currentExecution = nil;
         end

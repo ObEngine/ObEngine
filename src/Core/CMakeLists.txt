@@ -14,9 +14,9 @@ if (${BUILD_PLAYER} OR ${BUILD_DEV})
 endif()
 
 target_include_directories(ObEngineCore
-  PUBLIC
-    $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
-    $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
+    PUBLIC
+        $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
+        $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
 )
 
 target_link_libraries(ObEngineCore elzip)

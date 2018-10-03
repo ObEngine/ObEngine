@@ -10,8 +10,8 @@ add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
 compile_obengine_git_definitions()
 
 target_include_directories(ObEnginePlayer
-  PRIVATE
-    $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
+    PRIVATE
+        $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>
 )
 
 target_link_libraries(ObEnginePlayer ObEngineCore)
