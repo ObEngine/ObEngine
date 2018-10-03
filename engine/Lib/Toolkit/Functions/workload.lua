@@ -1,6 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 local Route = require("Lib/Toolkit/Route");
 local Style = require("Lib/Toolkit/Stylesheet");
+local TI = require("Lib/Toolkit/Input");
 
 function getWorkloadNames()
     return {"Alpha", "Altimeter", "Beta", "Bechamel"};
@@ -29,6 +30,8 @@ return {
         end,
         mourn = function(workloadName)
             Color.print("Workload mourned" .. workloadName);
+            Color.print("Tell me your name");
+            Color.print("Oh.. Your name is " .. TI.input());
         end
     },
     Routes = {
@@ -58,7 +61,7 @@ return {
             Route.Help("Indexes an existing Workload");
             workloadName = Route.Arg {
                 Route.Call("mourn");
-                Route.Help("Name of the Workload you want to index");
+                Route.Help("Name of the Workload you want to mourn");
                 Route.Autocomplete(getWorkloadNames);
             };
         }

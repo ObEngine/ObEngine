@@ -6,6 +6,8 @@ local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
 local Table = require("Lib/StdLib/Table");
 
+local currentExecution;
+
 -- Load all Toolkit functions located in Lib/Toolkit/Functions
 function loadToolkitFunctions()
     local fileList = obe.Filesystem.getFileList("Lib/Toolkit/Functions");
@@ -121,6 +123,39 @@ function getHelp(arg)
         end
     end
     return "";
+end
+
+-- Checks the current command execution state
+function checkCommandExecutionState(co)
+    if coroutine.status(currentExecution) == "dead" then
+        return false;
+    else
+        return true;
+    end
+end
+
+-- Builds a new command execution
+function buildCommandExecution(func, args)
+    local exec = coroutine.create(function()
+        local autocomplete = {
+            func = function() end
+        };
+        args["autocomplete"] = autocomplete;
+        local subroutine = coroutine.create(function()
+            func(ArgMirror.Unpack(args));
+        end);
+        coroutine.resume(subroutine);
+        if checkCommandExecutionState(subroutine) then
+            local wakeType, input = coroutine.yield();
+            if wakeType == "input" then
+                coroutine.resume(input);
+            elseif wakeType == "autocomplete" then
+                return autocomplete.func(input);
+            end
+        end
+    end);
+    coroutine.resume(exec);
+    return exec;
 end
 
 -- Autocomplete the argument parts of the command
@@ -414,7 +449,7 @@ function reachCommand(command, branch, args, idargs)
             -- We iterate again in all arguments children in the current argument
             for id, content in pairs(branch.children) do
                 -- If we find an "Argument" argument that matches the expect argType
-                if matchCommandArgumentType(content, value) then
+                if matchCommandArgumentType(content, nextJump) then
                     -- We store the Argument that will be used
                     recurseIn = content;
                     -- We also store it as an identified argument
@@ -473,47 +508,56 @@ end
 
 -- Execute user input
 function evaluate(input)
-    local command = splitCommandAndArgs(input);
-    -- If the command is found in ToolkitFunctions
-    if ToolkitFunctions[command.name] then
-        -- We try to retrieve the function to call from command name
-        -- We also retrieve the command excepted arguments (name, index and type (Node / Argument))
-        local callFunction, identifiedArgs = reachCommand(command.name, {
-            id = "{root}", 
-            children = ToolkitFunctions[command.name].Routes
-        }, command.args);
-        -- If the function to call has been found and arguments has been identified
-        if callFunction and identifiedArgs then
-            -- For all arguments of the command
-            for key, content in pairs(identifiedArgs) do
-                if content.type == "Node" then
-                    -- If the argument is a "Node", the argument value will be the name of the next Node / Argument
-                    identifiedArgs[key].value = Table.getKeyAtIndex(identifiedArgs, content.index + 1);
-                elseif content.type == "Argument" then
-                    -- Otherwise, if the argument is an "Argument", we just fetch the value from user input
-                    identifiedArgs[key].value = command.args[content.index + 1];
+    if currentExecution == nil then
+        local command = splitCommandAndArgs(input);
+        -- If the command is found in ToolkitFunctions
+        if ToolkitFunctions[command.name] then
+            -- We try to retrieve the function to call from command name
+            -- We also retrieve the command excepted arguments (name, index and type (Node / Argument))
+            local callFunction, identifiedArgs = reachCommand(command.name, {
+                id = "{root}", 
+                children = ToolkitFunctions[command.name].Routes
+            }, command.args);
+            -- If the function to call has been found and arguments has been identified
+            if callFunction and identifiedArgs then
+                -- For all arguments of the command
+                for key, content in pairs(identifiedArgs) do
+                    if content.type == "Node" then
+                        -- If the argument is a "Node", the argument value will be the name of the next Node / Argument
+                        identifiedArgs[key].value = Table.getKeyAtIndex(identifiedArgs, content.index + 1);
+                    elseif content.type == "Argument" then
+                        -- Otherwise, if the argument is an "Argument", we just fetch the value from user input
+                        identifiedArgs[key].value = command.args[content.index + 1];
+                    end
+                end
+                local ArgMirror = require('Lib/Internal/ArgMirror');
+                -- Getting arguments names of the function
+                local argList = ArgMirror.GetArgs(callFunction);
+                local callArgs = {};
+                -- We create a table containing arguments of the function at the correct index
+                for _, arg in pairs(argList) do
+                    table.insert(callArgs, identifiedArgs[arg].value);
+                end
+                -- We call the function and we unpack arguments
+                currentExecution = buildCommandExecution(callFunction, callArgs);
+                if coroutine.status(currentExecution) == "dead" then
+                    currentExecution = nil;
                 end
             end
-            local ArgMirror = require('Lib/Internal/ArgMirror');
-            -- Getting arguments names of the function
-            local argList = ArgMirror.GetArgs(callFunction);
-            local callArgs = {};
-            -- We create a table containing arguments of the function at the correct index
-            for _, arg in pairs(argList) do
-                table.insert(callArgs, identifiedArgs[arg].value);
-            end
-            -- We call the function and we unpack arguments
-            callFunction(ArgMirror.Unpack(callArgs));
+        else
+            -- Command not found, we display an error message
+            Color.print({
+                {text = "Command ", color = Style.Error},
+                {text = command.name, color = Style.Command},
+                {text = " ;not found.", color = Style.Error}
+            }, 2);
         end
     else
-        -- Command not found, we display an error message
-        Color.print({
-            {text = "Command ", color = Style.Error},
-            {text = command.name, color = Style.Command},
-            {text = " ;not found.", color = Style.Error}
-        }, 2);
+        coroutine.resume(currentExecution, "input", input)
+        if coroutine.status(currentExecution) == "dead" then
+            currentExecution = nil;
+        end
     end
-    
 end
 
 -- Loading functions of the toolkit
