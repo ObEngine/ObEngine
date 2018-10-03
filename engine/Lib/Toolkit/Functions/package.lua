@@ -15,6 +15,18 @@ function getPackageList()
     return allPackages;
 end
 
+function getUninstalledPackageList()
+    local fileList = obe.Filesystem.getFileList("Package/");
+    local opaqueFiles = {};
+    local extension = ".opaque";
+    for _, file in pairs(fileList) do
+        if file:sub(-extension:len()) == extension then
+            table.insert(opaqueFiles, file:sub(1, #file - #extension));
+        end
+    end
+    return opaqueFiles;
+end
+
 function Functions.install(packageName)
     Color.print({
             { text = "Installing Package &lt;", color = Style.Execute},
@@ -82,37 +94,25 @@ return {
     Functions = Functions,
     Routes = {
         Route.Help("Commands to work with Packages");
-        Route.Node("install", {
+        install = Route.Node {
             Route.Help("Installs a Package");
-            Route.Arg("packageName", {
+            packageName = Route.Arg {
                 Route.Help("Name of the .opaque package file you want to install");
                 Route.Call("install");
-                Route.Autocomplete(function(start)
-                    local fileList = obe.Filesystem.getFileList("Package/");
-                    local opaqueFiles = {};
-                    local extension = ".opaque";
-                    for _, file in pairs(fileList) do
-                        if file:sub(-extension:len()) == extension then
-                            table.insert(opaqueFiles, file:sub(1, #file - #extension));
-                        end
-                    end
-                    return opaqueFiles;
-                end)
-            });
-        }),
-        Route.Node("mount", {
+                Route.Autocomplete(getUninstalledPackageList);
+            };
+        };
+        mount = Route.Node {
             Route.Help("Mount a Package");
-            Route.Arg("packageName", {
+            packageName = Route.Arg {
                 Route.Help("Name of the package you want to mount");
                 Route.Call("mount");
-            });
-            Route.Autocomplete(function(start)
-                return getPackageList();
-            end)
-        }),
-        Route.Node("list", {
+            };
+            Route.Autocomplete(getPackageList)
+        };
+        list = Route.Node {
             Route.Help("Lists all Packages");
             Route.Call("list");
-        });
+        }
     }
 };

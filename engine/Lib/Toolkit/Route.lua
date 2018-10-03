@@ -1,21 +1,40 @@
 return {
-    Node = function(id, children)
+    Node = function(children)
         return {
-            id = id,
             children = children,
             type = "Node",
         };
     end,
-    Arg = function(id, argType, children)
-        if children == nil then
-            children = argType;
-            argType = "any";
-        end
+
+    Arg = function(children)
         return {
-            id = id,
             children = children,
             type = "Argument",
-            argType = argType
+            argType = "any"
+        };
+    end,
+
+    NumberArg = function(children)
+        return {
+            children = children,
+            type = "Argument",
+            argType = "number"
+        };
+    end,
+
+    StringArg = function(children)
+        return {
+            children = children,
+            type = "Argument",
+            argType = "string"
+        };
+    end,
+
+    BooleanArg = function(children)
+        return {
+            children = children,
+            type = "Argument",
+            argType = "boolean"
         };
     end,
 
@@ -46,10 +65,4 @@ return {
             help = helpString
         }
     end,
-
-    Types = {
-        String = "String",
-        Int = "Int",
-        Any = "Any"
-    }
 }

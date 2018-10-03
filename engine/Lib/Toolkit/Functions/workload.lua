@@ -12,6 +12,10 @@ return {
             print("fn called", create);
             Color.print("Workload created " .. workloadName);
         end,
+        create_num = function(workloadNameNumber, create)
+            print("fn called", create);
+            Color.print("Workload created " .. workloadNameNumber);
+        end,
         mount = function(workloadName)
             Color.print("Workload mounted" .. workloadName);
         end,
@@ -21,36 +25,32 @@ return {
     },
     Routes = {
         Route.Help("Commands to work with Workloads");
-        Route.Node("create", {
+        create = Route.Node {
             Route.Help("Creates a new Workload");
-            Route.Arg("workloadName", "number", {
+            workloadNameNumber = Route.NumberArg {
                 Route.Help("Name of the new Workload to create (number edition)");
-                Route.Call("create");
-            });
-            Route.Arg("workloadName", "string", {
+                Route.Call("create_num");
+            };
+            workloadName = Route.StringArg {
                 Route.Help("Name of the new Workload to create (string edition)");
                 Route.Call("create");
-            });
-        }),
-        Route.Node("mount", {
+            };
+        };
+        mount = Route.Node {
             Route.Help("Mounts a Workload");
-            Route.Arg("workloadName", {
+            workloadName = Route.Arg {
                 Route.Call("mount");
                 Route.Help("Name of the Workload you want to mount");
-                Route.Autocomplete(function(start)
-                    return getWorkloadNames();
-                end)
-            });
-        }),
-        Route.Node("mourn", {
+                Route.Autocomplete(getWorkloadNames);
+            };
+        };
+        mourn = Route.Node {
             Route.Help("Indexes an existing Workload");
-            Route.Arg("workloadName", {
+            workloadName = Route.Arg {
                 Route.Call("mourn");
                 Route.Help("Name of the Workload you want to index");
-                Route.Autocomplete(function(start)
-                    return getWorkloadNames();
-                end)
-            });
-        })
+                Route.Autocomplete(getWorkloadNames);
+            };
+        }
     }
 };

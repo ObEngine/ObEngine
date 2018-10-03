@@ -6,6 +6,7 @@ local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
 local Table = require("Lib/StdLib/Table");
 
+-- Load all Toolkit functions located in Lib/Toolkit/Functions
 function loadToolkitFunctions()
     local fileList = obe.Filesystem.getFileList("Lib/Toolkit/Functions");
     local allFunctions = {};
@@ -16,6 +17,7 @@ function loadToolkitFunctions()
     return allFunctions;
 end
 
+-- Display the current input to the user
 function askForCompletion(command)
     Color.print({
         {text = "> ", color = Style.CompletionPrompt.Prompt},
@@ -24,6 +26,7 @@ function askForCompletion(command)
     });
 end
 
+-- Autocomplete the argument parts of the command
 function autocompleteArgs(command, query)
     print("AUTOCOMPLETE ARGS CALLED");
     local path = {};
@@ -31,7 +34,9 @@ function autocompleteArgs(command, query)
     local start = "";
     print("Query : '" .. query .. "'");
     for char in query:gmatch(".") do
-        if char == " " then
+        print("Match char (" .. char .. ")");
+        if char == " " and currentWord ~= "" then
+            print("Inserting currentWord (" .. currentWord .. ")");
             table.insert(path, currentWord);
             currentWord = "";
         else
@@ -40,7 +45,7 @@ function autocompleteArgs(command, query)
     end
     print("PATH : ", inspect(path));
     print("CURRENTWORD : ", currentWord);
-    if currentWord ~= "" then start = currentWord end
+    if currentWord ~= " " then start = currentWord end
     local entries = 0;
     local subpath = {};
     for _, content in pairs(path) do
@@ -53,9 +58,10 @@ function autocompleteArgs(command, query)
     print("SUBPATH : ", inspect(subpath));
     print("Entries : ", entries);
     if entries > 0 then
+        print("Got entries");
         local recurseIn = nil;
-        for _, content in pairs(command) do
-            if content.type == "Node" and content.id == path[1] then
+        for id, content in pairs(command) do
+            if content.type == "Node" and id == path[1] then
                 recurseIn = content;
                 break;
             elseif content.type == "Argument" then
@@ -72,13 +78,13 @@ function autocompleteArgs(command, query)
     else
         print("Start inspection in ", inspect(command))
         local arglist = {};
-        local argIndex = 0;
-        for _, arg in pairs(command) do
+        for id, arg in pairs(command) do
             if arg.type == "Node" then
-                if start ~= nil and string.sub(arg.id, 1, string.len(start)) == start then
-                    arglist[arg.id] = arg;
+                print("Encountered Node", start, " '" .. string.sub(id, 1, string.len(start)) .. "'");
+                if start ~= nil and string.sub(id, 1, string.len(start)) == start then
+                    arglist[id] = arg;
                 elseif start == nil then
-                    arglist[arg.id] = arg;
+                    arglist[id] = arg;
                 end
             elseif arg.type == "Argument" then
                 print("FOUND ARG", arg.autocomplete, start);
@@ -95,26 +101,41 @@ function autocompleteArgs(command, query)
                     for _, content in pairs(autocompleteResult) do
                         if start ~= nil and content:sub(1, string.len(start)) == start then
                             -- Add help ?
-                            arglist[content] = { children = {{ type = "Help", help = "Argument suggestion for <" .. arg.id .. "> parameter" }}};
+                            arglist[content] = { 
+                                children = {
+                                    { 
+                                        type = "Help", 
+                                        help = "Argument suggestion for <" .. id .. "> parameter" 
+                                    }
+                                },
+                                type = "Node"
+                            };
                         elseif start == nil then
                             -- Add help ?
-                            arglist[content] = { children = {{ type = "Help", help = "Argument suggestion for <" .. arg.id .. "> parameter" }}};
+                            arglist[content] = { 
+                                children = {
+                                    { 
+                                        type = "Help", 
+                                        help = "Argument suggestion for <" .. id .. "> parameter" 
+                                    }
+                                },
+                                type = "Node"
+                            };
                         end
                     end
                     print("GOT ACR : ", inspect(arglist));
                 else
-                    local defaultHelp = "Variable for argument <" .. arg.id .. ">";
+                    local defaultHelp = "Variable for argument <" .. id .. ">";
                     print("Arg inspect : ", inspect(arg));
                     print("Help Got : ", getHelp(arg.children))
                     if getHelp(arg.children) ~= "" then
                         defaultHelp = getHelp(arg.children);
                     end
-                    arglist["<" .. arg.id .. " (" .. tostring(argIndex) .. ")>"] = { 
+                    arglist["<" .. id .. ">"] = { 
                         children = {{ type = "Help", help = defaultHelp }}
                     };
                 end
             end
-            argIndex = argIndex + 1;
         end
         return arglist;
     end
@@ -188,8 +209,15 @@ function autocompleteHandle(command)
             print("4-) StrArgs are : '" .. command.strArgs .. "'");
             local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
             print("Got completions :", inspect(completions));
-            local completionKeys = Table.getKeys(completions)
-            if Table.getSize(completions) == 1 then
+            local nodesOnly = {};
+            for k, v in pairs(completions) do
+                if v.type == "Node" then
+                    nodesOnly[k] = v;
+                end
+            end
+            local completionKeys = Table.getKeys(nodesOnly);
+            print("GOT COMPLETION KEYS");
+            if Table.getSize(completionKeys) == 1 then
                 -- Only one completion found, complete and add space (if not a variable)
                 local onlyCompletion = completionKeys[1];
                 if onlyCompletion:sub(1, 1) == "<" and onlyCompletion:sub(#onlyCompletion, #onlyCompletion) == ">" then
@@ -201,15 +229,9 @@ function autocompleteHandle(command)
                     end
                     autocompleteResult = autocompleteResult .. completionKeys[1] .. " ";
                 end
-            elseif Table.getSize(completions) > 1 then
+            elseif Table.getSize(completionKeys) > 1 then
                 -- Multiple completions found, completing with biggest common root
                 print("Getting biggest common root");
-                local nodesOnly = {};
-                for k, v in pairs(completions) do
-                    if v.type == "Node" then
-                        nodesOnly[k] = v;
-                    end
-                end
                 while autocompleteResult:sub(#autocompleteResult, #autocompleteResult) ~= " " do
                     print("Test equality : '" .. autocompleteResult:sub(#autocompleteResult, #autocompleteResult) .. "'");
                     print("Equalize to '" .. autocompleteResult:sub(1, -2) .. "'");
@@ -296,11 +318,7 @@ function autocomplete(input)
             local checkCurrentInput = autocompleteHandle(command);
             print("Check Current Input : '" .. checkCurrentInput .. "'")
             if input == checkCurrentInput then
-                local addSpace = "";
-                if input:sub(#input, #input) == " " and #command.args > 0 then
-                    addSpace = " ";
-                end
-                local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs .. addSpace);
+                local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
                 if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
                     input = input .. " ";
                     _term_write(" ");
@@ -363,13 +381,13 @@ function reachCommand(command, branch, args, idargs)
     if nextJump ~= "" then
         local recurseIn = nil;
         -- For all arguments children in the current argument
-        for _, content in pairs(branch.children) do
+        for id, content in pairs(branch.children) do
             -- If we find a "Node" argument that matches the next argument in the input
-            if content.type == "Node" and content.id == nextJump then
+            if content.type == "Node" and id == nextJump then
                 -- We store the Node that will be used
                 recurseIn = content;
                 -- We also store it as an identified argument
-                identifiedArgs[content.id] = { index = Table.getSize(identifiedArgs), type = "Node" };
+                identifiedArgs[id] = { index = Table.getSize(identifiedArgs), type = "Node" };
                 break;
             end
         end
@@ -377,7 +395,7 @@ function reachCommand(command, branch, args, idargs)
         -- (Either because the argument did not exist or because it was an "Argument" argument)
         if recurseIn == nil then
             -- We iterate again in all arguments children in the current argument
-            for _, content in pairs(branch.children) do
+            for id, content in pairs(branch.children) do
                 -- If we find an "Argument" argument
                 if content.type == "Argument" then
                     -- Argument type matching
@@ -389,7 +407,7 @@ function reachCommand(command, branch, args, idargs)
                         -- We store the Argument that will be used
                         recurseIn = content;
                         -- We also store it as an identified argument
-                        identifiedArgs[content.id] = { 
+                        identifiedArgs[id] = { 
                             index = Table.getSize(identifiedArgs), 
                             type = "Argument",
                             argType = content.argType 
@@ -434,7 +452,7 @@ function reachCommand(command, branch, args, idargs)
             -- No callable function found
             Color.print({
                 {text = "Nothing to call with argument ", color = Style.Error},
-                {text = branch.id, color = Style.Argument},
+                {text = id, color = Style.Argument},
                 {text = " in command ", color = Style.Error},
                 {text = command, color = Style.Command}
             }, 2);

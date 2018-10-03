@@ -107,17 +107,17 @@ return {
     Functions = Functions,
     Routes = {
         Route.Help("Commands to work with GameObjects");
-        Route.Node("create", {
+        create = Route.Node {
             Route.Help("Creates a new GameObject");
-            Route.Arg("objectName", {
-                Route.Arg("components", {
+            objectName = Route.Arg {
+                components = Route.Arg {
                     Route.Call("create");
-                })
-            })
-        }),
-        Route.Node("list", {
+                };
+            };
+        };
+        list = Route.Node {
             Route.Help("List all existing GameObjects");
             Route.Call("list");
-        });
+        };
     }
 };

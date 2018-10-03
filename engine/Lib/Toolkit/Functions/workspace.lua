@@ -131,36 +131,32 @@ return {
     Functions = Functions,
     Routes = {
         Route.Help("Commands to work with Workspaces");
-        Route.Node("create", {
+        create = Route.Node {
             Route.Help("Creates a new Workspace");
-            Route.Arg("workspaceName", {
+            workspaceName = Route.Arg {
                 Route.Help("Name of the new Workspace to create");
                 Route.Call("create");
-            });
-        }),
-        Route.Node("mount", {
+            };
+        },
+        mount = Route.Node {
             Route.Help("Mounts a Workspace");
-            Route.Arg("workspaceName", {
+            workspaceName = Route.Arg {
                 Route.Call("mount");
                 Route.Help("Name of the Workspace you want to mount");
-                Route.Autocomplete(function(start)
-                    return getWorkspaceList();
-                end)
-            });
-        }),
-        Route.Node("index", {
+                Route.Autocomplete(getWorkspaceList);
+            };
+        };
+        index = Route.Node {
             Route.Help("Indexes an existing Workspace");
-            Route.Arg("workspaceName", {
+            workspaceName = Route.Arg {
                 Route.Call("index");
                 Route.Help("Name of the Workspace you want to index");
-                Route.Autocomplete(function(start)
-                    return getNonIndexedWorkspaces();
-                end)
-            });
-        }),
-        Route.Node("list", {
+                Route.Autocomplete(getNonIndexedWorkspaces);
+            };
+        };
+        list = Route.Node {
             Route.Help("Lists all exsiting Workspaces");
             Route.Call("list");
-        })
+        };
     }
 };
