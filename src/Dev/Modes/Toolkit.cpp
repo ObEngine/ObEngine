@@ -102,7 +102,7 @@ namespace obe::Modes
         });
         toolkitEngine["_term_display"] = kaguya::function(
             [&content, &toolkitFont]
-        (const std::vector<std::string>& strings, const std::vector<sf::Color>& colors)
+        (const std::vector<sf::String>& strings, const std::vector<sf::Color>& colors)
         {
             sfe::RichText newtext(toolkitFont);
             newtext.setCharacterSize(16);
