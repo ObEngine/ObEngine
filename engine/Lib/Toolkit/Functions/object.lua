@@ -13,9 +13,9 @@ function Functions.create(objectName, components)
     local haveCollider = false;
     local haveScript = false;
     Color.print({
-        { text = "Creating GameObject &lt;", color = Style.Execute},
+        { text = "Creating GameObject '", color = Style.Execute},
         { text = objectName, color = Style.Object},
-        { text = "&gt; ...", color = Style.Execute}
+        { text = "' ...", color = Style.Execute}
     }, 1);
     os.execute(("mkdir " .. currentWs .. "/Data/GameObjects/" .. objectName):gsub("/", obe.Filesystem.separator()));
     local objSaveFile = Vili.ViliParser.new();
@@ -84,9 +84,9 @@ function Functions.create(objectName, components)
     objSaveFile:writeFile((currentWs .. "/Data/GameObjects/" ..
         objectName .. "/" .. objectName .. ".obj.vili"):gsub("/", obe.Filesystem.separator()));
     Color.print({
-        { text = "GameObject &lt;", color = Style.Success},
+        { text = "GameObject '", color = Style.Success},
         { text = objectName, color = Style.Object},
-        { text = "&gt; has been successfully created !", color = Style.Success}
+        { text = "' has been successfully created !", color = Style.Success}
     }, 1);
 end
 
