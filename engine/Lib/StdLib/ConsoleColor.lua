@@ -23,7 +23,7 @@ function Color.print(textTable, indent)
         else
             cText = v.text;
         end
-        table.insert(allTexts, cText);
+        table.insert(allTexts, SFML.WString(cText));
         if v.color ~= nil then
             table.insert(allColors, SFML.Color(v.color[1], v.color[2], v.color[3]));
         else
