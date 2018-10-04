@@ -37,7 +37,7 @@ Functions.mount = function(workspaceName)
     if (parser:root():contains(Vili.NodeType.ComplexNode, workspaceName)) then
         obe.Filesystem.copy("Workspace/" .. workspaceName .. "/Mount.vili", "Mount.vili");
         Color.print({
-            { text = "Workspace ", color = Style.Success},
+            { text = "Workspace '", color = Style.Success},
             { text = workspaceName, color = Style.Workspace},
             { text = "' has  been successfully mounted !", color = Style.Success},
         }, 2);
