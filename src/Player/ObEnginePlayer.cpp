@@ -51,6 +51,7 @@ int main(int argc, char** argv)
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
+	Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
 
     Input::InputButtonMonitor::InitKeyTriggerGroup();
 
