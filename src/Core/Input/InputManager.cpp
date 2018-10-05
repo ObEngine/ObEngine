@@ -68,7 +68,7 @@ namespace obe::Input
         std::vector<std::string> alreadyInFile;
         for (vili::ComplexNode* context : config.getAll<vili::ComplexNode>())
         {
-            for (vili::DataNode* action : context->getAll<vili::DataNode>())
+            for (vili::Node* action : context->getAll())
             {
                 if (!this->actionExists(action->getId()))
                 {
@@ -78,10 +78,23 @@ namespace obe::Input
                 {
                     this->getAction(action->getId()).clearConditions();
                 }
-                InputCondition actionCondition;
-                actionCondition.setCombinationCode(action->get<std::string>());
-                Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'", action->get<std::string>(), action->getId());
-                this->getAction(action->getId()).addCondition(actionCondition);
+                auto inputCondition = [](InputManager* inputManager, vili::Node* action, vili::DataNode* condition) {
+                    InputCondition actionCondition;
+                    actionCondition.setCombinationCode(condition->get<std::string>());
+                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'", condition->get<std::string>(), action->getId());
+                    inputManager->getAction(action->getId()).addCondition(actionCondition);
+                };
+                if (action->getType() == vili::NodeType::DataNode)
+                {
+                    inputCondition(this, action, static_cast<vili::DataNode*>(action));
+                }
+                else if (action->getType() == vili::NodeType::ArrayNode)
+                {
+                    for (vili::DataNode* condition : *static_cast<vili::ArrayNode*>(action))
+                    {
+                        inputCondition(this, action, condition);
+                    }
+                }
                 this->getAction(action->getId()).addContext(context->getId());
                 alreadyInFile.push_back(action->getId());
             }
