@@ -472,21 +472,19 @@ namespace obe::Editor
                 }
                 gui.handleEvent(event);
             }
-
-            if (Input::Monitors::RequireRefresh)
-                Input::Monitors::UpdateMonitors();
-
+  
             //Events
             scene.update();
             Triggers::TriggerDatabase::GetInstance()->update();
             inputManager.update();
+            if (Input::Monitors::RequireRefresh)
+                Input::Monitors::UpdateMonitors();
             cursor.update();
             if (drawFPS) fps.uTick();
             if (drawFPS && framerateManager.doRender()) fps.tick();
 
             //Triggers Handling
             networkHandler.handleTriggers();
-            //cursor.handleTriggers();
 
             //Draw Everything Here
             if (framerateManager.doRender())

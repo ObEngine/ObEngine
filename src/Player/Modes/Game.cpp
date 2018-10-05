@@ -101,13 +101,12 @@ namespace obe::Modes
                 }
             }
 
-            if (Input::Monitors::RequireRefresh)
-                Input::Monitors::UpdateMonitors();
-
             //Events
             scene.update();
             Triggers::TriggerDatabase::GetInstance()->update();
             inputManager.update();
+            if (Input::Monitors::RequireRefresh)
+                Input::Monitors::UpdateMonitors();
             cursor.update();
 
             if (framerateManager.doRender())
