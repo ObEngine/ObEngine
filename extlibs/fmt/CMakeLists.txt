@@ -1,6 +1,7 @@
 project(fmt)
 
-file(GLOB FMT_HEADERS include/fmt/*.h include/fmt/*.cc)
+file(GLOB FMT_HEADERS include/fmt/*.h)
+file(GLOB FMT_SOURCES src/*.cc)
 
 add_library(fmt ${FMT_HEADERS} ${FMT_SOURCES})
 

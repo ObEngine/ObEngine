@@ -8,8 +8,9 @@ file(GLOB SPDLOG_HEADERS
 )
 
 add_library(spdlog INTERFACE)
-
 target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
+target_link_libraries(spdlog INTERFACE fmt)
+#target_link_libraries(spdlog INTERFACE log)
 target_include_directories(spdlog
     INTERFACE
         $<INSTALL_INTERFACE:include>    

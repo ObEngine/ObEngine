@@ -27,6 +27,7 @@ int main(int argc, char** argv)
 {
     Graphics::ResourceManager::Init();
     Debug::InitLogger();
+    Debug::Log->info("Starting ObEngine Player !");
     Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
 

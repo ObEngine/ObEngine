@@ -29,6 +29,12 @@ add_subdirectory(extlibs/sfe)
 
 add_subdirectory(src/Core)
 
+if (BUILD_ANDROID)
+    set(BUILD_PLAYER OFF)
+    set(BUILD_DEV OFF)
+    add_subdirectory(src/Android)
+endif()
+
 if (NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
 endif()

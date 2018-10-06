@@ -5,7 +5,11 @@ include(group_files)
 file(GLOB_RECURSE OBEPLAYER_HEADERS "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
 file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
 
-add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
+if (BUILD_ANDROID)
+    add_library(ObEnginePlayer SHARED ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
+else()
+    add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
+endif()
 
 compile_obengine_git_definitions()
 
