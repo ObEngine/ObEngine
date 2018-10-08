@@ -66,5 +66,6 @@ deploy:
     secure: 5E+JB7x9O0JbU2cR2rjoec5G/KJMmYkRhKE2lliwU9fwn8yPxm+qGn59yEh/vRUU
   artifact: ObEngine-win64.zip
   prerelease: true
+  force_update: true
   on:
     branch: master
