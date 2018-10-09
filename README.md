@@ -1,4 +1,4 @@
-# ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/title.png)
+# ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
 
 :jack_o_lantern: Hacktoberfest people, welcome here ! There's a bunch of issues you can help with in the issue section, you can also check [this page](https://github.com/Sygmei/ObEngine/wiki/Road-to-1.0) which shows all the steps required before ÖbEngine can reach version 1.0 ! Don't hesitate to come on discord to discuss the issue or leave a comment directly in the issue !
 
@@ -18,7 +18,7 @@
 - [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
 
 ## What the hell is ÖbEngine ?
-ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML !
+ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time as a student, it might not be really stable right now but I'm working on it.
 
 ## What do I need to build it ?
 You will need SFML :
@@ -42,14 +42,16 @@ There are other libraries but they are included in the repository (extlibs/ fold
 Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
 
 ## Could you give an example of what I can do with your engine ?
-Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D (maybe partial 3D support in a future update).
-You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
-If you want to check out games made with ÖbEngine, you can check out those [**open-source projects**](https://github.com/Sygmei/ObEngineExamples) !
+Well, you can do approximatively everything with it as long as it's in 2D. ÖbEngine doesn't handle 3D (maybe partial 3D support in a future update).
+You can do some platformers, RPGs, 2D racing games, visual novels, roguelikes, metroidvanias, etc..
+
+If you want to check out games made with ÖbEngine, you can check out those [:eggplant:**open-source projects**:eggplant:](https://github.com/Sygmei/ObEngineExamples) !
 
 ## Is it free ?
 Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
 You can also modify the sources.
-There's no need to write somewhere that your game is made with ÖbE (but it's nice if you do it !)
+There's no need to write somewhere that your game is made with ÖbEngine (but it's nice if you do it !).
+The engine is MIT licensed so you're free to do whatever you want with the engine.
 
 ## On which platforms can I export my game made with ÖbEngine ?
 
@@ -58,7 +60,7 @@ There's no need to write somewhere that your game is made with ÖbE (but it's ni
 - Linux (Debian, Arch)
 - MacOS
 
-ÖbEngine will have export for Android and HTML5 available in a future update.
+ÖbEngine will have export for Android, iOS and HTML5 available in a future update.
 
 ## Give me some interesting features
 Here you go :
@@ -87,16 +89,26 @@ Here you go :
 - Light & particle system
 - C++ GameObjects
 - Multiple windows
-- Android and HTML5 export
+- Android, iOS and HTML5 export
 - Tiled Map Editor support
 
 ## ObEngine's versions
-
-- 0.37 Aurvandil (April 2016) - First usable version of ObEngine
-- 0.55 Baldur (June 2016) - Better scripting support
-- 0.81 Clue (January 2017) - Big engine rework
-- 0.99 Dagr (February 2017) - First released dev version of ObEngine
-- 1.0 Eir (Fall 2017) - First public released version
+### Pre-alpha versions
+|Version number|Version name|Word origin|Release date|Description|
+|--------------|------------|-----------|------------|-----------|
+|0.1.0|Aubergine|French|April 2016|First usable version of ÖbEngine|
+|0.2.0|Berjinez|Breton|June 2016|Better scripting support|
+|0.3.0|Cà tím|Vietnamese|January 2017|Big engine rework|
+|0.4.0|Eggplant|English|February 2017|First released dev version of ÖbEngine|
+|0.5.0|Gaji|Korean|September 2017|First public released version (still unstable)|
+|0.6.0|Hkaramsee|Birman|November 2017|C++17 support|
+|0.7.0|Igba|Yoruba|March 2018|Cleaning the engine code, new build system|
+|0.8.0|Lilek|Czech|April 2018|Working on new Qt UI|
+|0.9.0|Mbilingani|Swahili|September 2018|Cleaning engine code again !|
+### Beta versions
+|Version number|Version name|Word origin|Release date|Description|
+|--------------|------------|-----------|------------|-----------|
+|1.0.0|Melanzana|Italian|?|First stable version of ÖbEngine !|
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
@@ -164,3 +176,22 @@ end
 ```
 
 Check the Wiki for more examples !
+
+## Contributors / Thanks
+
+Main contributor : Sygmei
+
+### Contributors
+
+- [@PierrickLP](https://github.com/PierrickLP)
+- @LePatissier
+- [@Arthapz](https://github.com/Arthapz)
+- @ZanyMonk
+
+### Special thanks
+
+- [@eXpl0it3r](https://github.com/eXpl0it3r)
+- @WaWan
+- [@texus](https://github.com/texus)
+- [@MarioLiebisch](https://github.com/MarioLiebisch)
+- And many more !
