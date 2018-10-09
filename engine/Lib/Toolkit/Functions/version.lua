@@ -30,6 +30,20 @@ return {
                 { text = "ÖbEngine's patch version is ", color = Style.Default},
                 { text = patch_version, color = Style.Workspace},
             }, 1);
+        end,
+        commit = function()
+            local commit_version = obe.commit;
+            Color.print({
+                { text = "ÖbEngine's commit version is ", color = Style.Default},
+                { text = commit_version, color = Style.Workspace},
+            }, 1);
+        end,
+        branch = function()
+            local branch_version = obe.branch;
+            Color.print({
+                { text = "ÖbEngine's branch version is ", color = Style.Default},
+                { text = branch_version, color = Style.Workspace},
+            }, 1);
         end
     },
     Routes = {
@@ -46,6 +60,14 @@ return {
         patch = Route.Node {
             Route.Help("Get ÖbEngine's patch version");
             Route.Call("patch");
+        },
+        commit = Route.Node {
+            Route.Help("Get ÖbEngine's commit version");
+            Route.Call("commit");
+        },
+        branch = Route.Node {
+            Route.Help("Get ÖbEngine's branch version");
+            Route.Call("branch");
         }
     }
 };

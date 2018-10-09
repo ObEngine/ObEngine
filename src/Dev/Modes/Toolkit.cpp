@@ -93,6 +93,8 @@ namespace obe::Modes
         toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
         Bindings::BindTree(&toolkitEngine);
         toolkitEngine["obe"]["version"] = OBENGINE_VERSION;
+        toolkitEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
+        toolkitEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
 
         toolkitEngine["_term_set_input_color"] = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b)
         {

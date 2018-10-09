@@ -27,7 +27,6 @@ int main(int argc, char** argv)
 {
     Graphics::ResourceManager::Init();
     Debug::InitLogger();
-    Debug::Log->info("Starting ObEngine Player !");
     Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
 
@@ -53,6 +52,8 @@ int main(int argc, char** argv)
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
     Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
+    Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
+    Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
 
     Input::InputButtonMonitor::InitKeyTriggerGroup();
 

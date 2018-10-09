@@ -68,6 +68,8 @@ int main(int argc, char** argv)
     Debug::Log->debug("<ObEngine> Initialising Lua State");
     Script::InitScriptEngine();
     Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
+    Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
+    Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
 
     Input::InputButtonMonitor::InitKeyTriggerGroup();
 
@@ -101,6 +103,7 @@ int main(int argc, char** argv)
         Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine Dev Menu by default", startMode);
         Modes::startDevMenu();
     }
+        
 
     return 0;
 }
