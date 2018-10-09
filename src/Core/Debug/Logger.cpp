@@ -34,6 +34,7 @@ namespace obe::Debug
         Log = std::make_shared<spdlog::logger>("Log", dist_sink);
         Log->set_pattern("[%H:%M:%S.%e]<%l> : %v");
         Log->set_level(spd::level::info);
+        Log->flush_on(spd::level::trace);
         Log->info("Logger initialised");
     }
 

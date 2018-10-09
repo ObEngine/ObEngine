@@ -19,7 +19,6 @@ namespace obe::Input
         InputButton* m_button = nullptr;
         InputButtonState m_buttonState = InputButtonState::Idle;
         static Triggers::TriggerGroupPtr KeyTriggers;
-        bool m_removed = false;
     public:
         static void InitKeyTriggerGroup();
         /**
@@ -42,12 +41,9 @@ namespace obe::Input
         * \brief Updates the InputButtonMonitor (needed to modify the linked InputButtonState)
         */
         void update();
-        void remove();
-        bool isRemoved() const;
     };
 
     using InputButtonMonitorPtr = std::shared_ptr<InputButtonMonitor>;
-    void InputButtonMonitorPtrRemover(InputButtonMonitor* ptr);
 
     /**
     * \brief Various functions used to manage InputButtonMonitor
@@ -57,7 +53,7 @@ namespace obe::Input
         /**
         * \brief Global list of all InputButtonMonitor
         */
-        extern std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
+        extern std::vector<std::weak_ptr<InputButtonMonitor>> Monitors;
         extern bool RequireRefresh;
         /**
         * \brief Updates all the InputButtonMonitor
@@ -68,7 +64,7 @@ namespace obe::Input
         * \param element InputButtonMonitor to update
         * \return true if the InputButtonMonitor should be removed, false otherwise
         */
-        bool UpdateMonitorsAndRemoveIfNotRemoved(const std::unique_ptr<InputButtonMonitor>& element);
+        bool UpdateMonitorsAndRemoveIfNotRemoved(const std::weak_ptr<InputButtonMonitor>& element);
         /**
         * \brief Creates a new InputButtonMonitor from an InputButton id
         * \param buttonId Id of the InputButton to monitor

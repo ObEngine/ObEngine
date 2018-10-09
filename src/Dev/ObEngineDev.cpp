@@ -101,7 +101,6 @@ int main(int argc, char** argv)
         Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine Dev Menu by default", startMode);
         Modes::startDevMenu();
     }
-        
 
     return 0;
 }

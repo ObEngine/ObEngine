@@ -40,7 +40,7 @@ namespace obe::Input
     void InputButtonMonitor::update()
     {
         const bool keyPressed = m_button->isPressed();
-        InputButtonState oldState = m_buttonState;
+        const InputButtonState oldState = m_buttonState;
         if (keyPressed && (m_buttonState == InputButtonState::Idle || m_buttonState == InputButtonState::Released))
         {
             m_buttonState = InputButtonState::Pressed;
@@ -67,23 +67,9 @@ namespace obe::Input
         }
     }
 
-    void InputButtonMonitor::remove()
-    {
-        m_removed = true;
-    }
-    bool InputButtonMonitor::isRemoved() const
-    {
-        return m_removed;
-    }
-
-    void InputButtonMonitorPtrRemover(InputButtonMonitor* ptr)
-    {
-        ptr->remove();
-    }
-
     namespace Monitors
     {
-        std::vector<std::unique_ptr<InputButtonMonitor>> Monitors;
+        std::vector<std::weak_ptr<InputButtonMonitor>> Monitors;
         bool RequireRefresh = true;
         void UpdateMonitors()
         {
@@ -91,17 +77,16 @@ namespace obe::Input
             Monitors.erase(std::remove_if(Monitors.begin(), Monitors.end(), UpdateMonitorsAndRemoveIfNotRemoved), Monitors.end());
         }
 
-        bool UpdateMonitorsAndRemoveIfNotRemoved(const std::unique_ptr<InputButtonMonitor>& element)
+        bool UpdateMonitorsAndRemoveIfNotRemoved(const std::weak_ptr<InputButtonMonitor>& element)
         {
-            Debug::Log->warn("Updating {} : {}", element->getButton()->getName(), element->isRemoved());
-            if (!element->isRemoved())
+            if (auto monitor = element.lock())
             {
-                element->update();
-                return false;
+                monitor->update();
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
@@ -114,13 +99,14 @@ namespace obe::Input
         {
             for (auto& monitor : Monitors)
             {
-                if (monitor->getButton() == button)
+                if (const auto sharedMonitor = monitor.lock(); sharedMonitor->getButton() == button)
                 {
-                    return InputButtonMonitorPtr(monitor.get());
+                    return InputButtonMonitorPtr(sharedMonitor);
                 }
             }
-            Monitors.push_back(std::make_unique<InputButtonMonitor>(button));
-            return InputButtonMonitorPtr(Monitors.back().get(), InputButtonMonitorPtrRemover);
+            InputButtonMonitorPtr monitor = std::make_shared<InputButtonMonitor>(button);
+            Monitors.push_back(monitor);
+            return std::move(monitor);
         }
     }
 }
