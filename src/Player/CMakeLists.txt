@@ -8,7 +8,7 @@ file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
 if (BUILD_ANDROID)
     add_library(ObEnginePlayer SHARED ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
 else()
-    add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})
+    add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES} ${OBENGINE_ICON})
 endif()
 
 compile_obengine_git_definitions()

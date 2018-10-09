@@ -9,7 +9,7 @@ file(GLOB_RECURSE OBEDEV_SOURCES
 file(GLOB_RECURSE OBEPLAYER_GAME_SOURCE 
     ${ObEngine_SOURCE_DIR}/src/Player/Modes/Game.cpp)
 
-add_executable(ObEngineDev ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} ${OBEPLAYER_GAME_SOURCE})
+add_executable(ObEngineDev ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} ${OBEPLAYER_GAME_SOURCE} ${OBENGINE_ICON})
 
 compile_obengine_git_definitions()
 

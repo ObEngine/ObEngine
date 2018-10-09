@@ -40,6 +40,11 @@ if (NOT DEFINED BUILD_PLAYER)
 endif()
 
 configure_obengine_git()
+if (WIN32)
+    file(GLOB OBENGINE_ICON ${CMAKE_SOURCE_DIR}/resources/resource.rc)
+else()
+    set(OBENGINE_ICON "")
+endif()
 
 if (BUILD_PLAYER)
     add_subdirectory(src/Player)
