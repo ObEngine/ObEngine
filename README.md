@@ -44,6 +44,7 @@ Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/Ob
 ## Could you give an example of what I can do with your engine ?
 Well, you can do approximatively everything with it as long as it's in 2D. ÖbE doesn't handle 3D (maybe partial 3D support in a future update).
 You can do some Platformers, RPGs, 2D racing games, Visual Novels, Roguelikes, Metroidvanias, etc..
+If you want to check out games made with ÖbEngine, you can check out those [**open-source projects**](https://github.com/Sygmei/ObEngineExamples) !
 
 ## Is it free ?
 Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
