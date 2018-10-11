@@ -18,14 +18,14 @@ namespace obe::Input
 
     InputButtonMonitor::InputButtonMonitor(InputButton* button)
     {
-        Debug::Log->warn("Monitoring {}", button->getName());
+        Debug::Log->trace("Started monitoring InputButton {}", button->getName());
         m_button = button;
         InputButtonMonitor::KeyTriggers->addTrigger(m_button->getName());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        Debug::Log->warn("Un-monitoring {}", m_button->getName());
+        Debug::Log->trace("Un-monitoring InputButton {}", m_button->getName());
         InputButtonMonitor::KeyTriggers->removeTrigger(m_button->getName());
     }
 
@@ -101,9 +101,10 @@ namespace obe::Input
         {
             for (auto& monitor : Monitors)
             {
-                if (const auto sharedMonitor = monitor.lock(); sharedMonitor->getButton() == button)
+                if (const auto sharedMonitor = monitor.lock())
                 {
-                    return InputButtonMonitorPtr(sharedMonitor);
+                    if (sharedMonitor->getButton() == button)
+                        return InputButtonMonitorPtr(sharedMonitor);
                 }
             }
             InputButtonMonitorPtr monitor = std::make_shared<InputButtonMonitor>(button);

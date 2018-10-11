@@ -50,6 +50,7 @@ namespace obe::Bindings
             .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
             .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
             .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
+            .add("Shader", &GraphicsBindings::LoadShader)
             .add("Utils", &GraphicsBindings::LoadGraphicsUtils)
         // Input
             .add("InputAction", &InputBindings::LoadInputAction)
