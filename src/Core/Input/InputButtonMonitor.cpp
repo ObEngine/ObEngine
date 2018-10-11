@@ -101,9 +101,10 @@ namespace obe::Input
         {
             for (auto& monitor : Monitors)
             {
-                if (const auto sharedMonitor = monitor.lock(); sharedMonitor->getButton() == button)
+                if (const auto sharedMonitor = monitor.lock())
                 {
-                    return InputButtonMonitorPtr(sharedMonitor);
+                    if (sharedMonitor->getButton() == button)
+                        return InputButtonMonitorPtr(sharedMonitor);
                 }
             }
             InputButtonMonitorPtr monitor = std::make_shared<InputButtonMonitor>(button);
