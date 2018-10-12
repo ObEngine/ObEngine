@@ -18,6 +18,7 @@ namespace obe::Transform
             UnitVector offset = position - m_position;
             child->move(offset);
         }
+        Movable::setPosition(position);
     }
 
     void SceneNode::move(const UnitVector& position)
@@ -26,5 +27,6 @@ namespace obe::Transform
         {
             child->move(position);
         }
+        Movable::move(position);
     }
 }
