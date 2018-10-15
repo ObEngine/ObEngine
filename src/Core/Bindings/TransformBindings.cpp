@@ -38,36 +38,36 @@ namespace obe::Bindings::TransformBindings
     }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_getPosition_proxy, Transform::Rect, getPosition, 0, 1, Transform::UnitVector(Transform::Rect::*)(Transform::Referencial)
+        Rect_getPosition_wrapper, Transform::Rect, getPosition, 0, 1, Transform::UnitVector(Transform::Rect::*)(Transform::Referencial)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_movePoint_uv_proxy, Transform::Rect, movePoint, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_movePoint_wrapper, Transform::Rect, movePoint, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_scale_uv_proxy, Transform::Rect, scale, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_scale_wrapper, Transform::Rect, scale, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setPointPosition_uv_proxy, Transform::Rect, setPointPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setPointPosition_wrapper, Transform::Rect, setPointPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setPosition_uv_proxy, Transform::Rect, setPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setPosition_wrapper, Transform::Rect, setPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setSize_uv_proxy, Transform::Rect, setSize, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setSize_wrapper, Transform::Rect, setSize, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
     );
     void LoadRect(kaguya::State* lua)
     {
         Load(lua, "obe.Movable");
         (*lua)["obe"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect, Transform::Movable>()
-            .addFunction("getPosition", Rect_getPosition_proxy())
+            .addFunction("getPosition", Rect_getPosition_wrapper())
             .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
             .addFunction("getSize", &Transform::Rect::getSize)
             .addFunction("move", &Transform::Rect::move)
-            .addFunction("movePoint", Rect_movePoint_uv_proxy())
-            .addFunction("scale", Rect_scale_uv_proxy())
-            .addFunction("setPointPosition", Rect_setPointPosition_uv_proxy())
-            .addFunction("setPosition", Rect_setPosition_uv_proxy())
-            .addFunction("setSize", Rect_setSize_uv_proxy())
+            .addFunction("movePoint", Rect_movePoint_wrapper())
+            .addFunction("scale", Rect_scale_wrapper())
+            .addFunction("setPointPosition", Rect_setPointPosition_wrapper())
+            .addFunction("setPosition", Rect_setPosition_wrapper())
+            .addFunction("setSize", Rect_setSize_wrapper())
             .addFunction("transformRef", &Transform::Rect::transformRef)
         );
     }
@@ -130,9 +130,25 @@ namespace obe::Bindings::TransformBindings
         );
     }
 
+    Transform::PolygonSegment* Polygon_getSegmentContainingPoint_subwrapper(
+        Transform::Polygon& polygon, 
+        const Transform::UnitVector& position, 
+        double tolerance = Transform::Polygon::DefaultTolerance)
+    {
+        auto optret = polygon.getSegmentContainingPoint(position, tolerance);
+        if (optret.has_value())
+        {
+            return &optret.value();
+        }
+        else
+        {
+            Transform::PolygonSegment* nullsegment = nullptr;
+            return nullsegment;
+        }
+    }
+    KAGUYA_FUNCTION_OVERLOADS(Polygon_getSegmentContainingPoint_wrapper, Polygon_getSegmentContainingPoint_subwrapper, 2, 3)
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_addPoint_wrapper, Transform::Polygon, addPoint, 1, 2);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_findClosestPoint_wrapper, Transform::Polygon, findClosestPoint, 1, 3);
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Polygon_getSegmentContainingPoint_wrapper, Transform::Polygon, getSegmentContainingPoint, 1, 2)
     void LoadPolygon(kaguya::State* lua)
     {
         Load(lua, "obe.Movable");
@@ -145,6 +161,9 @@ namespace obe::Bindings::TransformBindings
             .addFunction("remove", &Transform::PolygonPoint::remove)
             .addFunction("setRelativePosition", &Transform::PolygonPoint::setRelativePosition)
         );
+        (*lua)["obe"]["PolygonPoint"]["RelativePositionFrom"] = kaguya::NewTable();
+        (*lua)["obe"]["PolygonPoint"]["RelativePositionFrom"]["Point0"] = Transform::PolygonPoint::RelativePositionFrom::Point0;
+        (*lua)["obe"]["PolygonPoint"]["RelativePositionFrom"]["Centroid"] = Transform::PolygonPoint::RelativePositionFrom::Centroid;
         (*lua)["obe"]["PolygonPoint"]["index"] = kaguya::function([](Transform::PolygonPoint& point) {
             return point.index;
         });
@@ -165,12 +184,10 @@ namespace obe::Bindings::TransformBindings
             .addFunction("findClosestSegment", &Transform::Polygon::findClosestSegment)
             .addFunction("findClosestPoint", Polygon_findClosestPoint_wrapper())
             .addFunction("getCentroid", &Transform::Polygon::getCentroid)
-            .addFunction("getPointAroundPosition", &Transform::Polygon::getPointAroundPosition)
             .addFunction("getPointsAmount", &Transform::Polygon::getPointsAmount)
             .addFunction("getPosition", &Transform::Polygon::getPosition)
             .addFunction("getRotation", &Transform::Polygon::getRotation)
             .addFunction("getSegment", &Transform::Polygon::getSegment)
-            .addFunction("getSegmentContainingPoint", Polygon_getSegmentContainingPoint_wrapper())
             .addFunction("isCentroidAroundPosition", &Transform::Polygon::isCentroidAroundPosition)
             .addFunction("move", &Transform::Polygon::move)
             .addFunction("rotate", &Transform::Polygon::rotate)
@@ -187,6 +204,21 @@ namespace obe::Bindings::TransformBindings
                 points.push_back(point.get());
             return points;
         });
+        (*lua)["obe"]["Polygon"]["getPointAroundPosition"] = kaguya::function(
+            [](Transform::Polygon& polygon, const Transform::UnitVector& position, const Transform::UnitVector& tolerance) {
+                auto optret = polygon.getPointAroundPosition(position, tolerance);
+                if (optret.has_value())
+                {
+                    return optret.value();
+                }
+                else
+                {
+                    Transform::PolygonPoint* nullpoint = nullptr;
+                    return nullpoint;
+                }
+            }
+        );
+        (*lua)["obe"]["Polygon"]["getSegmentContainingPoint"] = kaguya::function(Polygon_getSegmentContainingPoint_wrapper());
     }
 
     void LoadUnits(kaguya::State* lua)

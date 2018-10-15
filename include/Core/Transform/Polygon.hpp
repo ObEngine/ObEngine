@@ -63,6 +63,7 @@ namespace obe::Transform
 
         void resetUnit(Transform::Units unit) override;
     public:
+        static constexpr double DefaultTolerance = 0.02;
         /**
         * \brief Constructs a Polygon
         */
@@ -124,7 +125,7 @@ namespace obe::Transform
         * \param tolerance
         * \return An unsigned int containing the index of the side containing the position or -1 if not found
         */
-        std::optional<PolygonSegment> getSegmentContainingPoint(const Transform::UnitVector& position, double tolerance = 0.01);
+        std::optional<PolygonSegment> getSegmentContainingPoint(const Transform::UnitVector& position, double tolerance = DefaultTolerance);
         /**
         * \brief Check if the MasterPoint of the Polygon is on Position (x - tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
         * \param position Coordinate of the Position to test
