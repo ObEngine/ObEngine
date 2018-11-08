@@ -27,6 +27,7 @@ namespace obe::System
         bool m_visible = true;
         Triggers::TriggerGroupPtr m_cursorTriggers;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
+        std::function<bool()> m_constraintCondition;
         std::map<sf::Mouse::Button, bool> m_buttonState;
     public:
         /**
@@ -84,7 +85,8 @@ namespace obe::System
         * \brief Sets the Cursor's constraint
         * \param constraint A function returning the constrained Position of the Cursor (a std::pair<int, int>) and taking the Cursor pointer in parameter
         */
-        void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint);
+        void setConstraint(std::function<std::pair<int, int>(Cursor*)> constraint, std::function<bool()> condition = []() { return true; });
+        bool isPressed(sf::Mouse::Button button);
     };
 
     /**

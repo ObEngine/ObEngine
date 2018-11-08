@@ -83,6 +83,11 @@ namespace obe::Graphics
         m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }
 
+    void LevelSprite::setTextureRect(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+    {
+        m_sprite.setTextureRect(sf::IntRect(x, y, width, height));
+    }
+
     const sf::Texture& LevelSprite::getTexture() const
     {
         return *m_texture;
@@ -281,11 +286,11 @@ namespace obe::Graphics
 
     void LevelSpriteHandlePoint::moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera)
     {
+        m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
         if (m_type == LevelSpriteHandlePointType::ScaleHandle)
         {
             //std::cout << "Was at : " << m_rect->getPosition(m_referencial).to<Transform::Units::ScenePixels>() << std::endl;
             //std::cout << "Set : " << x << ", " << y << std::endl;
-            m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
             const Transform::UnitVector pos = m_sprite->getPosition(m_referencial).to<Transform::Units::ScenePixels>();
             const Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferencial(m_referencial)).to<Transform::Units::ScenePixels>();
 
@@ -293,31 +298,29 @@ namespace obe::Graphics
             {
                 const Transform::UnitVector baseDist = oppositePos - m_dp;
                 Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::ScenePixels>();
-                scaleVector.set((isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
+                scaleVector.set(
+                    (isOnRightSide(m_referencial)) ? -scaleVector.x : scaleVector.x, 
+                    (isOnBottomSide(m_referencial)) ? -scaleVector.y : scaleVector.y);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
                 if (baseDist.x != 0 && baseDist.y != 0)
                     m_sprite->scale(Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit), Transform::reverseReferencial(m_referencial));
             }
             else
             {
-                const float e1_x = oppositePos.x - pos.x;
-                const float e1_y = oppositePos.y - pos.y;
-                const float e2_x = m_dp.x - pos.x;
-                const float e2_y = m_dp.y - pos.y;
+                const Transform::UnitVector e1 = oppositePos - pos;
+                const Transform::UnitVector e2 = m_dp - pos;
 
-                const float valDp = e1_x * e2_x + e1_y * e2_y;
-                const float len = e1_x * e1_x + e1_y * e1_y;
+                const double valDp = e1.x * e2.x + e1.y * e2.y;
+                const double len = e1.x * e1.x + e1.y * e1.y;
 
-                m_dp.x = pos.x + (valDp * e1_x) / len;
-                m_dp.y = pos.y + (valDp * e1_y) / len;
-
-                m_sprite->setPointPosition(m_dp, m_referencial);
+                /*m_dp.x = pos.x + (valDp * e1.x) / len;
+                m_dp.y = pos.y + (valDp * e1.y) / len;*/
+                const Transform::UnitVector npp(pos.x + (valDp * e1.x) / len, pos.y + (valDp * e1.y) / len, m_dp.unit);
+                m_sprite->setPointPosition(npp, m_referencial);
             }
         }
         else
         {
-            m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
-
             const Transform::UnitVector center = m_sprite->getPosition(Transform::Referencial::Center).to<Transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite->getScaleFactor().y < 0) ? 180 : 0)) - 
                 (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;

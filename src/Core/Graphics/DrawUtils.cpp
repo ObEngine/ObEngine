@@ -44,13 +44,17 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         polyPt.setFillColor(pointColor);
         for (unsigned int i = 0; i < points.size(); i++)
         {
-            sf::Vector2i& point1 = points[i];
-            sf::Vector2i& point2 = points[(i == points.size() - 1) ? 0 : i + 1];
+            const sf::Vector2i& point1 = points[i];
+            const sf::Vector2i& point2 = points[(i == points.size() - 1) ? 0 : i + 1];
             if (drawLines)
             {
                 const sf::Color currentLineColor = findOptionOrDefault(options, ("line_color_" + std::to_string(i)).c_str(), lineColor);
                 drawLine(point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
             }
+        }
+        for (unsigned int i = 0; i < points.size(); i++)
+        {
+            const sf::Vector2i& point1 = points[i];
             if (drawPoints)
             {
                 const sf::Color currentPointColor = findOptionOrDefault(options, ("point_color_" + std::to_string(i)).c_str(), pointColor);

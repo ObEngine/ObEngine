@@ -59,6 +59,7 @@ namespace obe::Collision
         return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
     }
 
+    std::map<std::string, sf::Color> PolygonalCollider::TagsColor;
     PolygonalCollider::PolygonalCollider(const std::string& id) : 
         Selectable(false), 
         Component(id)
@@ -81,6 +82,17 @@ namespace obe::Collision
     {
     }
 
+    std::vector<std::string> PolygonalCollider::retrieveTagVector(ColliderTagType tagType) const
+    {
+        switch (tagType)
+        {
+        case ColliderTagType::Tag: return m_tags;
+        case ColliderTagType::Accepted: return m_acceptedTags;
+        case ColliderTagType::Rejected: return m_rejectedTags;
+        }
+        throw aube::ErrorHandler::Raise("ObEngine.Collision.PolygonalCollider.WrongColliderTagType");
+    }
+
     std::vector<std::string>& PolygonalCollider::retrieveTagVector(ColliderTagType tagType)
     {
         switch (tagType)
@@ -97,12 +109,14 @@ namespace obe::Collision
         std::vector<Transform::UnitVector> limitedMaxDists;
         for (auto& collider : Pool)
         {
-            const Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(*collider, offset);
-            //Debug::Log->warn("Maximum distance before collision from {} with {} is ({}, {})", this->getId(), collider->getId(), maxDist.x, maxDist.y);
-            //Add Tag check <REVISION>
-            if (maxDist != offset && collider != this)
+            if (checkTags(*collider))
             {
-                limitedMaxDists.push_back(maxDist);
+                const Transform::UnitVector maxDist = this->getMaximumDistanceBeforeCollision(*collider, offset);
+                //Debug::Log->warn("Maximum distance before collision from {} with {} is ({}, {})", this->getId(), collider->getId(), maxDist.x, maxDist.y);
+                if (maxDist != offset && collider != this)
+                {
+                    limitedMaxDists.push_back(maxDist);
+                }
             }
         }
 
@@ -161,7 +175,8 @@ namespace obe::Collision
                 { "lines", drawLines },
                 { "points", drawPoints },
                 { "radius", r },
-                { "point_color", sf::Color::White } 
+                { "point_color", sf::Color::White },
+                { "line_color", getTagColor() }
             };
 
             std::vector<sf::Vector2i> lDrawPoints;
@@ -365,10 +380,10 @@ namespace obe::Collision
         return Utils::Vector::contains(tag, this->retrieveTagVector(tagType));
     }
 
-    bool PolygonalCollider::doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags)
+    bool PolygonalCollider::doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags) const
     {
         if (m_tags.size() == 0) return false;
-        for (const std::string tag : tags)
+        for (const std::string& tag : tags)
         {
             if (Utils::Vector::contains(tag, this->retrieveTagVector(tagType)))
                 return true;
@@ -376,7 +391,7 @@ namespace obe::Collision
         return false;
     }
 
-    std::vector<std::string> PolygonalCollider::getAllTags(ColliderTagType tagType)
+    std::vector<std::string> PolygonalCollider::getAllTags(ColliderTagType tagType) const
     {
         return this->retrieveTagVector(tagType);
     }
@@ -556,5 +571,32 @@ namespace obe::Collision
             for (vili::DataNode* rTag : data.at<vili::ArrayNode>("reject"))
                 this->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
         }
+    }
+
+    bool PolygonalCollider::checkTags(const PolygonalCollider& collider) const
+    {
+        if (this->doesHaveAnyTag(ColliderTagType::Rejected, collider.getAllTags(ColliderTagType::Tag)))
+            return false;
+        if (!m_acceptedTags.empty() && !this->doesHaveAnyTag(ColliderTagType::Accepted, collider.getAllTags(ColliderTagType::Tag)))
+            return false;
+        return true;
+    }
+
+    sf::Color PolygonalCollider::getTagColor()
+    {
+        for (const std::string& tag : m_tags)
+        {
+            for (auto& tagColor : TagsColor)
+            {
+                if (tag == tagColor.first)
+                    return tagColor.second;
+            }
+        }
+        return sf::Color::White;
+    }
+
+    void PolygonalCollider::SetTagColor(const std::string& tag, sf::Color color)
+    {
+        TagsColor[tag] = color;
     }
 }

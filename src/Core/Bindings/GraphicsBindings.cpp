@@ -64,6 +64,7 @@ namespace obe::Bindings::GraphicsBindings
             .addFunction("setScalingOrigin", &Graphics::LevelSprite::setScalingOrigin)
             .addFunction("setShader", &Graphics::LevelSprite::setShader)
             .addFunction("setTexture", &Graphics::LevelSprite::setTexture)
+            .addFunction("setTextureRect", &Graphics::LevelSprite::setTextureRect)
             .addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
             .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
             .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)

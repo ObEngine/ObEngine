@@ -196,7 +196,7 @@ namespace obe::Modes
                 if (event.type == sf::Event::TextEntered && event.text.unicode == 63)
                 {
                     toolkitInput->setText(Utils::String::replace(toolkitInput->getText().toAnsiString(), "?", ""));
-                    toolkitEngine["getHelp"](toolkitInput->getText().toAnsiString());
+                    toolkitEngine["printHelp"](toolkitInput->getText().toAnsiString());
                 }
             }
 

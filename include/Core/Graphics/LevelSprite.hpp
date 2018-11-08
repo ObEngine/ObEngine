@@ -30,7 +30,7 @@ namespace obe::Graphics
     class LevelSpriteHandlePoint
     {
     private:
-        LevelSprite * m_sprite;
+        LevelSprite* m_sprite;
         Transform::Referencial m_referencial;
         LevelSpriteHandlePointType m_type;
     public:
@@ -253,6 +253,7 @@ namespace obe::Graphics
         * \param texture Texture to set
         */
         void setTexture(const sf::Texture& texture);
+        void setTextureRect(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
         /**
         * \brief Set the translation origin of the LevelSprite
         * \param x x Coordinate of the new translation origin of the LevelSprite

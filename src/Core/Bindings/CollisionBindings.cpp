@@ -63,6 +63,7 @@ namespace obe::Bindings::CollisionBindings
             >
             >()
             .setConstructors<Collision::PolygonalCollider(const std::string&)>()
+            .addStaticFunction("SetTagColor", &Collision::PolygonalCollider::SetTagColor)
             .addFunction("addOriginChild", &Collision::PolygonalCollider::addOriginChild)
             .addFunction("addPoint", PolygonalCollider_addPoint_wrapper())
             .addFunction("addTag", &Collision::PolygonalCollider::addTag)

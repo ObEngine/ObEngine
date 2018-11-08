@@ -9,6 +9,8 @@
 #include <Types/Selectable.hpp>
 #include <Types/Serializable.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+
 namespace obe::Scene
 {
     class Scene;
@@ -50,6 +52,9 @@ namespace obe::Collision
         public Component::Component<PolygonalCollider>
     {
     private:
+        static std::map<std::string, sf::Color> TagsColor;
+        sf::Color getTagColor();
+
         std::vector<std::string> m_acceptedTags;
         std::vector<int> m_highlightedLines;
         std::vector<int> m_highlightedPoints;
@@ -60,9 +65,11 @@ namespace obe::Collision
         std::vector<std::string> m_tags;
 
         void resetUnit(Transform::Units unit) override;
+        std::vector<std::string> retrieveTagVector(ColliderTagType tagType) const;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
     public:
         static constexpr std::string_view ComponentType = "PolygonalCollider";
+        static void SetTagColor(const std::string& tag, sf::Color color);
         /**
         * \brief Constructs a PolygonalCollider
         * \param id Id of the PolygonalCollider (Used to retrieve it for example)
@@ -108,7 +115,7 @@ namespace obe::Collision
         * \param tags List of Tags you want to check the existence
         * \return true if at least one Tag has been found, false otherwise
         */
-        bool doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags);
+        bool doesHaveAnyTag(ColliderTagType tagType, const std::vector<std::string>& tags) const;
         /**
         * \brief Checks if the Collider contains a Tag
         * \param tagType List from where you want to check the Tag existence (Tag / Accepted / Rejected)
@@ -135,7 +142,7 @@ namespace obe::Collision
         * \param tagType List where you want to get all the Tags from (Tag / Accepted / Rejected)
         * \return A std::vector containing all the Tags of the chosen List
         */
-        std::vector<std::string> getAllTags(ColliderTagType tagType);
+        std::vector<std::string> getAllTags(ColliderTagType tagType) const;
         /**
         * \brief Gets the Maximum distance before Collision in all the Colliders of the Scene
         * \param offset Distance the Collider should move to (if nothing collides)
@@ -201,7 +208,7 @@ namespace obe::Collision
         * \param parent A std::string containing the Id of the parent of the Collider
         */
         void setParentId(const std::string& parent);
-
+        bool checkTags(const PolygonalCollider& collider) const;
         /**
         * \brief Destructor of PolygonalCollider, removes origins
         */

@@ -32,6 +32,7 @@ namespace obe::System
     m_cursorTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Cursor"), Triggers::TriggerGroupPtrRemover)
     {
         m_constraint = Constraints::Default;
+        m_constraintCondition = []() { return true; };
 
         m_buttonState[sf::Mouse::Button::Left] = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         m_buttonState[sf::Mouse::Button::Middle] = sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle);
@@ -126,7 +127,11 @@ namespace obe::System
             m_cursorTriggers->trigger("Move");
             m_saveOldPos = mousePos;
         }
-        const std::pair<int, int> constrainedPosition = m_constraint(this);
+        std::pair<int, int> constrainedPosition;
+        if (m_constraintCondition())
+            constrainedPosition = m_constraint(this);
+        else
+            constrainedPosition = std::make_pair(m_x, m_y);
         m_constrainedX = constrainedPosition.first;
         m_constrainedY = constrainedPosition.second;
 
@@ -159,6 +164,7 @@ namespace obe::System
                 state.second = false;
                 release = true;
             }
+            m_buttonState[state.first] = sf::Mouse::isButtonPressed(state.first);
         }
 
         if (hold) m_cursorTriggers->trigger("Hold");
@@ -166,8 +172,14 @@ namespace obe::System
         if (release) m_cursorTriggers->trigger("Release");
     }
 
-    void Cursor::setConstraint(const std::function<std::pair<int, int>(Cursor*)> constraint)
+    void Cursor::setConstraint(const std::function<std::pair<int, int>(Cursor*)> constraint, std::function<bool()> condition)
     {
         m_constraint = constraint;
+        m_constraintCondition = condition;
+    }
+
+    bool Cursor::isPressed(sf::Mouse::Button button)
+    {
+        return m_buttonState[button];
     }
 }

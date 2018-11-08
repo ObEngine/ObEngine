@@ -665,6 +665,8 @@ namespace obe::Editor::GUI
                 {
                     return System::Constraints::Default(cursor);
                 }
+            }, [&cursor]() {
+                return cursor.isPressed(sf::Mouse::Button::Left);
             });
         });
 

@@ -155,7 +155,6 @@ namespace obe::Editor
                 else
                 {
                     snapGridCheckbox->check();
-                        
                 }
             }
         });
