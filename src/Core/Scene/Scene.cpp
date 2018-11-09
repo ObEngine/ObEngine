@@ -376,7 +376,7 @@ namespace obe::Scene
                 if (!gameObject.deletable)
                     gameObject.update();
             }
-            /*m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [this](const std::unique_ptr<Script::GameObject>& ptr) {
+            m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [this](const std::unique_ptr<Script::GameObject>& ptr) {
                 if (ptr->deletable)
                 {
                     if (ptr->m_hasLevelSprite)
@@ -385,7 +385,7 @@ namespace obe::Scene
                         this->removeCollider(ptr->getCollider()->getId());
                     return true;
                 }
-            }), m_gameObjectArray.end());*/
+            }), m_gameObjectArray.end());
         }
     }
 
