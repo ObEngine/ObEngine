@@ -368,6 +368,12 @@ namespace obe::Script
         Debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
         m_localTriggers->trigger("Delete");
         this->deletable = true;
+        GAMEOBJECTENV["__ENV_ENABLED"] = false;
+        //GAMEOBJECTENV = nullptr;
+    }
+
+    void GameObject::clean()
+    {
         for (auto& trigger : m_registeredTriggers)
         {
             trigger.first->unregisterEnvironment(m_envIndex);
@@ -380,7 +386,6 @@ namespace obe::Script
             ), 
             AllEnvs.end()
         );
-        //GAMEOBJECTENV = nullptr;
     }
 
     void GameObject::setPermanent(bool permanent)

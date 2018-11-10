@@ -201,6 +201,7 @@ namespace obe::Script
         * \brief Deletes the GameObject
         */
         void deleteObject();
+        void clean();
         /**
         * \brief Delete State of the GameObject (false = not deleted)
         */

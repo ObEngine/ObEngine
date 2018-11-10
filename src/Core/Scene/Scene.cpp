@@ -383,8 +383,10 @@ namespace obe::Scene
                         this->removeLevelSprite(ptr->getLevelSprite()->getId());
                     if (ptr->m_hasCollider)
                         this->removeCollider(ptr->getCollider()->getId());
+                    ptr->clean();
                     return true;
                 }
+                return false;
             }), m_gameObjectArray.end());
         }
     }
