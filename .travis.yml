@@ -94,6 +94,9 @@ deploy:
   file: obengine-linux.tar.gz
   name: obengine-unstable
   prerelease: true
+  overwrite: true
+  target_commitish: $TRAVIS_COMMIT
+  tag_name: obengine-unstable
   on:
     repo: Sygmei/ObEngine
 branch: master
