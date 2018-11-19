@@ -16,6 +16,7 @@
 
 #include <Bindings/Bindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
+#include <SFML/System/Time.hpp>
 
 namespace obe::Bindings::SFMLBindings
 {
@@ -316,6 +317,29 @@ namespace obe::Bindings::SFMLBindings
             .addFunction("setRepeated", &sf::Texture::setRepeated)
             .addFunction("setSmooth", &sf::Texture::setSmooth)
         );
+    }
+
+    void LoadSfTime(kaguya::State* lua)
+    {
+        (*lua)["SFML"]["Time"].setClass(kaguya::UserdataMetatable<sf::Time>()
+            .setConstructors<sf::Time()>()
+            .addFunction("asMicroseconds", &sf::Time::asMicroseconds)
+            .addFunction("asMilliseconds", &sf::Time::asMilliseconds)
+            .addFunction("asSeconds", &sf::Time::asSeconds)
+            .addStaticField("Zero", &sf::Time::Zero)
+        );
+        (*lua)["SFML"]["Time"]["Seconds"] = kaguya::function([](float seconds)
+        {
+            return std::move(sf::seconds(seconds));
+        });
+        (*lua)["SFML"]["Time"]["Milliseconds"] = kaguya::function([](sf::Int32 milliseconds)
+        {
+            return std::move(sf::milliseconds(milliseconds));
+        });
+        (*lua)["SFML"]["Time"]["Microseconds"] = kaguya::function([](sf::Int64 microseconds)
+        {
+            return std::move(sf::microseconds(microseconds));
+        });
     }
 
     void LoadSfTransformable(kaguya::State* lua)

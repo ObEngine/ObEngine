@@ -118,6 +118,7 @@ namespace obe::Bindings
             .add("Shape", SFMLBindings::LoadSfShape)
             .add("Text", SFMLBindings::LoadSfText)
             .add("Texture", SFMLBindings::LoadSfTexture)
+            .add("Time", SFMLBindings::LoadSfTime)
             .add("Transformable", SFMLBindings::LoadSfTransformable)
             .add("Vector", SFMLBindings::LoadSfVector);
 
