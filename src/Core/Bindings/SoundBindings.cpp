@@ -2,6 +2,8 @@
 #include <Sound/Music.hpp>
 #include <Sound/Sound.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::SoundBindings
 {
     void LoadMusic(kaguya::State* lua)

@@ -8,13 +8,15 @@
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::GraphicsBindings
 {
     void LoadLevelSpriteHandlePoint(kaguya::State* lua)
     {
         (*lua)["obe"]["LevelSpriteHandlePoint"].setClass(kaguya::UserdataMetatable<Graphics::LevelSpriteHandlePoint>()
             .addFunction("getRect", &Graphics::LevelSpriteHandlePoint::getRect)
-            .addFunction("getReferencial", &Graphics::LevelSpriteHandlePoint::getReferencial)
+            .addFunction("getReferential", &Graphics::LevelSpriteHandlePoint::getReferential)
             .addFunction("moveTo", &Graphics::LevelSpriteHandlePoint::moveTo)
         );
     }

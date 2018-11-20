@@ -5,6 +5,8 @@
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::SceneBindings
 {
     void LoadCamera(kaguya::State* lua)

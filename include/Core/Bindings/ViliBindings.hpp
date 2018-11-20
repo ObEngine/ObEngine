@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kaguya/kaguya.hpp>
+namespace kaguya { class State; }
 
 /**
 * \brief Bindings to Vili related classes and functions

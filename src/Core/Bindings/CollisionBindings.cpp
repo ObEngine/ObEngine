@@ -4,6 +4,7 @@
 #include <Collision/Trajectory.hpp>
 #include <Collision/TrajectoryNode.hpp>
 
+#include <kaguya/kaguya.hpp>
 
 namespace obe::Bindings::CollisionBindings
 {

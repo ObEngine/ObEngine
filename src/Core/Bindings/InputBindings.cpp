@@ -6,6 +6,7 @@
 #include <Input/KeyList.hpp>
 #include <Types/Identifiable.hpp>
 
+#include <kaguya/kaguya.hpp>
 
 namespace obe::Bindings::InputBindings
 {

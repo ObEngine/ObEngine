@@ -72,7 +72,7 @@ namespace obe::Script
         bool m_hasCollider = false;
         bool m_hasLevelSprite = false;
         bool m_hasScriptEngine = false;
-        bool m_initialised = false;
+        bool m_active = false;
         bool m_canUpdate = true;
 
         friend class Scene::Scene;
@@ -201,7 +201,6 @@ namespace obe::Script
         * \brief Deletes the GameObject
         */
         void deleteObject();
-        void clean();
         /**
         * \brief Delete State of the GameObject (false = not deleted)
         */

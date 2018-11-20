@@ -21,7 +21,7 @@ namespace obe::Scene
         std::string m_futureLoad = "";
         Camera m_camera;
         Transform::UnitVector m_cameraInitialPosition;
-        Transform::Referencial m_cameraInitialReferencial;
+        Transform::Referential m_cameraInitialReferential;
         bool m_updateState = true;
 
         std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;

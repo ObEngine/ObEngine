@@ -100,18 +100,18 @@ namespace obe::Scene
 				view.at<vili::DataNode>("pos", "x").get<double>(),
 				view.at<vili::DataNode>("pos", "y").get<double>(),
 				Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
-			m_cameraInitialReferencial = Transform::Referencial::TopLeft;
-			if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
+			m_cameraInitialReferential = Transform::Referential::TopLeft;
+			if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referential"))
 			{
-				m_cameraInitialReferencial = Transform::stringToReferencial(
-					m_levelFile->at("View", "referencial").getDataNode("referencial").get<std::string>()
+				m_cameraInitialReferential = Transform::stringToReferential(
+					m_levelFile->at("View", "referential").getDataNode("referential").get<std::string>()
 				);
 			}
-			Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referencial {2}",
+			Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referential {2}",
 				m_cameraInitialPosition.x,
 				m_cameraInitialPosition.y,
-				Transform::referencialToString(m_cameraInitialReferencial));
-			m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
+				Transform::referentialToString(m_cameraInitialReferential));
+			m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
 			std::cout << m_camera.getPosition() << std::endl;
 		}
 		else

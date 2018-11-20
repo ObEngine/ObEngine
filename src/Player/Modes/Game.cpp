@@ -122,7 +122,7 @@ namespace obe::Modes
         }
         gameTriggers->trigger("End");
         Triggers::TriggerDatabase::GetInstance()->update();
-            
+        scene.clear();
         scene.update();
         System::MainWindow.close();
     }

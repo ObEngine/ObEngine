@@ -140,18 +140,18 @@ namespace obe::Scene
                 view.at<vili::DataNode>("pos", "x").get<double>(),
                 view.at<vili::DataNode>("pos", "y").get<double>(),
                 Transform::stringToUnits(view.at<vili::DataNode>("pos", "unit").get<std::string>()));
-            m_cameraInitialReferencial = Transform::Referencial::TopLeft;
-            if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referencial"))
+            m_cameraInitialReferential = Transform::Referential::TopLeft;
+            if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referential"))
             {
-                m_cameraInitialReferencial = Transform::stringToReferencial(
-                    m_levelFile->at("View", "referencial").getDataNode("referencial").get<std::string>()
+                m_cameraInitialReferential = Transform::stringToReferential(
+                    m_levelFile->at("View", "referential").getDataNode("referential").get<std::string>()
                 );
             }
-            Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referencial {2}", 
+            Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referential {2}", 
                 m_cameraInitialPosition.x, 
                 m_cameraInitialPosition.y, 
-                Transform::referencialToString(m_cameraInitialReferencial));
-            m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferencial);
+                Transform::referentialToString(m_cameraInitialReferential));
+            m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
             std::cout << m_camera.getPosition() << std::endl;
         }
         else
@@ -298,10 +298,10 @@ namespace obe::Scene
         dataStore->at("View", "pos").useTemplate(dataStore->getTemplate(
             "Vector2<" + Transform::unitsToString(m_cameraInitialPosition.unit) + ">")
         );
-        dataStore->at("View").createComplexNode("referencial");
-        dataStore->at("View", "referencial").createDataNode("referencial", Transform::referencialToString(m_cameraInitialReferencial));
-        dataStore->at("View", "referencial").useTemplate(dataStore->getTemplate(
-            "Referencial<" + Transform::referencialToString(m_cameraInitialReferencial) + ">"
+        dataStore->at("View").createComplexNode("referential");
+        dataStore->at("View", "referential").createDataNode("referential", Transform::referentialToString(m_cameraInitialReferential));
+        dataStore->at("View", "referential").useTemplate(dataStore->getTemplate(
+            "Referential<" + Transform::referentialToString(m_cameraInitialReferential) + ">"
         ));
 
         //LevelSprites
@@ -379,11 +379,11 @@ namespace obe::Scene
             m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [this](const std::unique_ptr<Script::GameObject>& ptr) {
                 if (ptr->deletable)
                 {
+                    Debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
                     if (ptr->m_hasLevelSprite)
                         this->removeLevelSprite(ptr->getLevelSprite()->getId());
                     if (ptr->m_hasCollider)
                         this->removeCollider(ptr->getCollider()->getId());
-                    ptr->clean();
                     return true;
                 }
                 return false;
@@ -588,9 +588,9 @@ namespace obe::Scene
     Graphics::LevelSprite* Scene::getLevelSpriteByPosition(const Transform::UnitVector& position, const Transform::UnitVector& camera, const int layer)
     {
         Graphics::LevelSprite* returnSpr = nullptr;
-        std::vector<Transform::Referencial> rectPts = { 
-            Transform::Referencial::TopLeft, Transform::Referencial::TopRight,
-            Transform::Referencial::BottomRight, Transform::Referencial::BottomLeft 
+        std::vector<Transform::Referential> rectPts = { 
+            Transform::Referential::TopLeft, Transform::Referential::TopRight,
+            Transform::Referential::BottomRight, Transform::Referential::BottomLeft 
         };
         const Transform::UnitVector zeroOffset(0, 0);
             
@@ -600,7 +600,7 @@ namespace obe::Scene
             Collision::PolygonalCollider positionCollider("positionCollider");
             positionCollider.addPoint(getSpriteVec[i]->getPositionTransformer()(position, camera, layer));
             Collision::PolygonalCollider sprCollider("sprCollider");
-            for (Transform::Referencial& ref : rectPts)
+            for (Transform::Referential& ref : rectPts)
             {
                 sprCollider.addPoint(getSpriteVec[i]->getPosition(ref));
             }

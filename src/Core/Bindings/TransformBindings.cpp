@@ -7,6 +7,8 @@
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::TransformBindings
 {
     void LoadMovable(kaguya::State* lua)
@@ -38,22 +40,22 @@ namespace obe::Bindings::TransformBindings
     }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_getPosition_wrapper, Transform::Rect, getPosition, 0, 1, Transform::UnitVector(Transform::Rect::*)(Transform::Referencial)
+        Rect_getPosition_wrapper, Transform::Rect, getPosition, 0, 1, Transform::UnitVector(Transform::Rect::*)(Transform::Referential)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_movePoint_wrapper, Transform::Rect, movePoint, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_movePoint_wrapper, Transform::Rect, movePoint, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referential)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_scale_wrapper, Transform::Rect, scale, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_scale_wrapper, Transform::Rect, scale, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referential)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setPointPosition_wrapper, Transform::Rect, setPointPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setPointPosition_wrapper, Transform::Rect, setPointPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referential)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setPosition_wrapper, Transform::Rect, setPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setPosition_wrapper, Transform::Rect, setPosition, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referential)
     );
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        Rect_setSize_wrapper, Transform::Rect, setSize, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referencial)
+        Rect_setSize_wrapper, Transform::Rect, setSize, 1, 2, void(Transform::Rect::*)(const Transform::UnitVector&, Transform::Referential)
     );
     void LoadRect(kaguya::State* lua)
     {
@@ -72,18 +74,18 @@ namespace obe::Bindings::TransformBindings
         );
     }
 
-    void LoadReferencial(kaguya::State* lua)
+    void LoadReferential(kaguya::State* lua)
     {
-        (*lua)["obe"]["Referencial"] = kaguya::NewTable();
-        (*lua)["obe"]["Referencial"]["Bottom"] = Transform::Referencial::Bottom;
-        (*lua)["obe"]["Referencial"]["BottomLeft"] = Transform::Referencial::BottomLeft;
-        (*lua)["obe"]["Referencial"]["BottomRight"] = Transform::Referencial::BottomRight;
-        (*lua)["obe"]["Referencial"]["Center"] = Transform::Referencial::Center;
-        (*lua)["obe"]["Referencial"]["Left"] = Transform::Referencial::Left;
-        (*lua)["obe"]["Referencial"]["Right"] = Transform::Referencial::Right;
-        (*lua)["obe"]["Referencial"]["Top"] = Transform::Referencial::Top;
-        (*lua)["obe"]["Referencial"]["TopLeft"] = Transform::Referencial::TopLeft;
-        (*lua)["obe"]["Referencial"]["TopRight"] = Transform::Referencial::TopRight;
+        (*lua)["obe"]["Referential"] = kaguya::NewTable();
+        (*lua)["obe"]["Referential"]["Bottom"] = Transform::Referential::Bottom;
+        (*lua)["obe"]["Referential"]["BottomLeft"] = Transform::Referential::BottomLeft;
+        (*lua)["obe"]["Referential"]["BottomRight"] = Transform::Referential::BottomRight;
+        (*lua)["obe"]["Referential"]["Center"] = Transform::Referential::Center;
+        (*lua)["obe"]["Referential"]["Left"] = Transform::Referential::Left;
+        (*lua)["obe"]["Referential"]["Right"] = Transform::Referential::Right;
+        (*lua)["obe"]["Referential"]["Top"] = Transform::Referential::Top;
+        (*lua)["obe"]["Referential"]["TopLeft"] = Transform::Referential::TopLeft;
+        (*lua)["obe"]["Referential"]["TopRight"] = Transform::Referential::TopRight;
     }
 
     void LoadUnitBasedObject(kaguya::State* lua)

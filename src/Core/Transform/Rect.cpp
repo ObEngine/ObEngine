@@ -46,7 +46,7 @@ namespace obe::Transform
     }
 
     //TODO remove calculation when dx and dy are equal to 0. Directly add to vec in switch case.
-    void Rect::transformRef(UnitVector& vec, Referencial ref, ConversionType type) const
+    void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const
     {
         const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
         double dx, dy;
@@ -57,47 +57,47 @@ namespace obe::Transform
 
         switch (ref)
         {
-        case Referencial::TopLeft:
+        case Referential::TopLeft:
             dx = 0;
             dy = 0;
             break;
 
-        case Referencial::Top:
+        case Referential::Top:
             dx = m_size.x / 2;
             dy = 0;
             break;
 
-        case Referencial::TopRight:
+        case Referential::TopRight:
             dx = m_size.x;
             dy = 0;
             break;
 
-        case Referencial::Left:
+        case Referential::Left:
             dx = 0;
             dy = m_size.y / 2;
             break;
 
-        case Referencial::Center:
+        case Referential::Center:
             dx = m_size.x / 2;
             dy = m_size.y / 2;
             break;
 
-        case Referencial::Right:
+        case Referential::Right:
             dx = m_size.x;
             dy = m_size.y / 2;
             break;
 
-        case Referencial::BottomLeft:
+        case Referential::BottomLeft:
             dx = 0;
             dy = m_size.y;
             break;
 
-        case Referencial::Bottom:
+        case Referential::Bottom:
             dx = m_size.x / 2;
             dy = m_size.y;
             break;
 
-        case Referencial::BottomRight:
+        case Referential::BottomRight:
             dx = m_size.x;
             dy = m_size.y;
             break;
@@ -117,10 +117,10 @@ namespace obe::Transform
         std::vector<sf::Vector2i> drawPoints;
         UnitVector dPos(posX, posY, Transform::Units::ScenePixels);
 
-        const std::vector<Referencial> fixDisplayOrder =
-        { Referencial::TopLeft, Referencial::Top, Referencial::TopRight,
-            Referencial::Right, Referencial::BottomRight,
-            Referencial::Bottom, Referencial::BottomLeft, Referencial::Left };
+        const std::vector<Referential> fixDisplayOrder =
+        { Referential::TopLeft, Referential::Top, Referential::TopRight,
+            Referential::Right, Referential::BottomRight,
+            Referential::Bottom, Referential::BottomLeft, Referential::Left };
 
         for (uint8_t i = 0; i < 8; ++i)
         {
@@ -135,7 +135,7 @@ namespace obe::Transform
         double cosAngle = std::cos(radAngle);
         double sinAngle = std::sin(radAngle);
         UnitVector topPos;
-        this->transformRef(topPos, Referencial::Top, ConversionType::From);
+        this->transformRef(topPos, Referential::Top, ConversionType::From);
         topPos = topPos.to<Units::ScenePixels>();
         topPos += dPos;
         UnitVector vec = topPos;
@@ -161,10 +161,10 @@ namespace obe::Transform
     }
 
 
-    void Rect::setPointPosition(const UnitVector& position, Referencial ref)
+    void Rect::setPointPosition(const UnitVector& position, Referential ref)
     {
         UnitVector refPosition = this->getPosition(ref);
-        UnitVector oppositePointPosition = this->getPosition(reverseReferencial(ref));
+        UnitVector oppositePointPosition = this->getPosition(reverseReferential(ref));
         double radAngle = Utils::Math::convertToRadian(-m_angle);
         UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
@@ -205,21 +205,21 @@ namespace obe::Transform
         }
     }
 
-    UnitVector Rect::getPosition(Referencial ref) const
+    UnitVector Rect::getPosition(Referential ref) const
     {
         UnitVector getPosVec = m_position;
         this->transformRef(getPosVec, ref, ConversionType::From);
         return getPosVec;
     }
 
-    void Rect::setPosition(const UnitVector& position, Referencial ref)
+    void Rect::setPosition(const UnitVector& position, Referential ref)
     {
         UnitVector pVec = position.to<Units::SceneUnits>();
         this->transformRef(pVec, ref, ConversionType::To);
         m_position.set(pVec);
     }
 
-    void Rect::setSize(const UnitVector& size, Referencial ref)
+    void Rect::setSize(const UnitVector& size, Referential ref)
     {
         UnitVector savePosition = this->getPosition(ref);
         m_size.set(size);
@@ -228,12 +228,12 @@ namespace obe::Transform
 
     void Rect::setPosition(const UnitVector& position)
     {
-        this->setPosition(position, Referencial::TopLeft);
+        this->setPosition(position, Referential::TopLeft);
     }
 
     UnitVector Rect::getPosition() const
     {
-        return this->getPosition(Referencial::TopLeft);
+        return this->getPosition(Referential::TopLeft);
     }
 
     void Rect::move(const UnitVector& position)
@@ -241,7 +241,7 @@ namespace obe::Transform
         m_position += position;
     }
 
-    void Rect::scale(const UnitVector& size, Referencial ref)
+    void Rect::scale(const UnitVector& size, Referential ref)
     {
         UnitVector savePosition = this->getPosition(ref);
         m_size *= size;
@@ -253,7 +253,7 @@ namespace obe::Transform
         return m_size;
     }
 
-    void Rect::movePoint(const UnitVector& position, Referencial ref)
+    void Rect::movePoint(const UnitVector& position, Referential ref)
     {
     }
 

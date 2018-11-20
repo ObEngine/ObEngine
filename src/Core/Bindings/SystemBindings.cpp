@@ -1,15 +1,16 @@
+#include <SFML/Graphics/Font.hpp>
+
 #include <Bindings/SystemBindings.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
+#include <System/MountablePath.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
+#include <System/Window.hpp>
 #include <System/Workspace.hpp>
 #include <Transform/UnitVector.hpp>
-#include <System/Window.hpp>
-#include <kaguya/metatable.hpp>
-#include <Script/GlobalState.hpp>
-#include "System/MountablePath.hpp"
-#include <SFML/Graphics/Font.hpp>
+
+#include <kaguya/kaguya.hpp>
 
 namespace obe::Bindings::SystemBindings
 {

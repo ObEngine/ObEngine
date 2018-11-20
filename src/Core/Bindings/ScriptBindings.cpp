@@ -2,6 +2,8 @@
 #include <Bindings/ScriptBindings.hpp>
 #include <Script/GameObject.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::ScriptBindings
 {
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useExternalTriggerProxy, GameObject, useExternalTrigger, 3, 4,

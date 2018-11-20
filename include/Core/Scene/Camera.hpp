@@ -3,7 +3,7 @@
 #include <SFML/Graphics/View.hpp>
 
 #include <Transform/Rect.hpp>
-#include <Transform/Referencial.hpp>
+#include <Transform/Referential.hpp>
 #include <Transform/UnitVector.hpp>
 
 namespace obe::Scene
@@ -34,10 +34,10 @@ namespace obe::Scene
         Camera();
         /**
         * \brief Gets the Position of the Camera
-        * \param ref Referencial used to get the Position of the Camera
+        * \param ref Referential used to get the Position of the Camera
         * \return The Position of the Camera
         */
-        Transform::UnitVector getPosition(Transform::Referencial ref = Transform::Referencial::TopLeft) const override;
+        Transform::UnitVector getPosition(Transform::Referential ref = Transform::Referential::TopLeft) const override;
         /**
         * \brief Gets an UnitVector containing the size of the Camera (Width and Height)
         * \return An UnitVector containing the size of the Camera (Width and Height)
@@ -52,21 +52,21 @@ namespace obe::Scene
         /**
         * \brief Scales the Camera
         * \param pScale Factor used to multiply the current size
-        * \param ref Referencial used to resize the Camera
+        * \param ref Referential used to resize the Camera
         */
-        void scale(double pScale, Transform::Referencial ref = Transform::Referencial::Center);
+        void scale(double pScale, Transform::Referential ref = Transform::Referential::Center);
         //void setAngle(double angle);
         /**
         * \brief Sets the Position of the Camera
         * \param position New Position of the Camera
-        * \param ref Referencial used to position the Camera
+        * \param ref Referential used to position the Camera
         */
-        void setPosition(const Transform::UnitVector& position, Transform::Referencial ref = Transform::Referencial::TopLeft) override;
+        void setPosition(const Transform::UnitVector& position, Transform::Referential ref = Transform::Referential::TopLeft) override;
         /**
         * \brief Sets the size of the Camera
         * \param pSize Size of the Camera (1 = Normal Size meaning Screen Height = 2 SceneUnits)
-        * \param ref Referencial used to resize the Camera
+        * \param ref Referential used to resize the Camera
         */
-        void setSize(double pSize, Transform::Referencial ref = Transform::Referencial::Center);
+        void setSize(double pSize, Transform::Referential ref = Transform::Referential::Center);
     };
 }

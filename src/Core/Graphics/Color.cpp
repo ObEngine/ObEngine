@@ -25,7 +25,7 @@ namespace obe::Graphics
 
     void Color::fromHex(std::string hexCode)
     {
-        std::array<int, 3> rgb;
+        std::array<unsigned char, 3> rgb {};
         std::stringstream ss;
         std::string str;
 

@@ -2,6 +2,8 @@
 #include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings
 {
     std::function<void(kaguya::State*)> InitTreeNodeAsTable(const std::string& nodeName)

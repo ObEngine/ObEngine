@@ -4,6 +4,8 @@
 #include <Types/Serializable.hpp>
 #include <Types/Togglable.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::TypesBindings
 {
     void LoadIdentifiable(kaguya::State* lua)

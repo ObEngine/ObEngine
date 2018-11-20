@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include <kaguya/kaguya.hpp>
+namespace kaguya { class State; }
 
 #include <Bindings/BindingTree.hpp>
 

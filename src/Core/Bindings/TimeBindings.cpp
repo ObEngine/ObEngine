@@ -4,6 +4,8 @@
 #include <Time/FramerateManager.hpp>
 #include <Time/TimeUtils.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::TimeBindings
 {
     void LoadChronometer(kaguya::State* lua)

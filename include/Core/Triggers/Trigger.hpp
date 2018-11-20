@@ -9,6 +9,16 @@ namespace obe::Triggers
 {
     class TriggerGroup;
 
+    class TriggerEnv
+    {
+    public:
+        unsigned int envIndex;
+        std::string callbackName;
+        bool* envActive = nullptr;
+        TriggerEnv(unsigned int envIndex, const std::string& callbackName, bool* envActive)
+            : envIndex(envIndex), callbackName(callbackName), envActive(envActive) {}
+    };
+
     /**
     * \brief A Class that does represents a triggerable event
     * @Bind
@@ -19,7 +29,9 @@ namespace obe::Triggers
         TriggerGroup* m_parent;
         std::string m_name;
         std::string m_fullName;
-        std::vector<std::pair<unsigned int, std::string>> m_registeredEnvs;
+        std::vector<TriggerEnv> m_registeredEnvs;
+        std::vector<unsigned int> m_envsToRemove;
+        bool m_currentlyTriggered = false;
         bool m_enabled = false;
         friend class TriggerGroup;
         friend class TriggerDatabase;
@@ -37,7 +49,7 @@ namespace obe::Triggers
         * \param name Name of the Parameter to push
         * \param parameter Value of the parameter (LuaRef can be anything)
         */
-        void pushParameterFromLua(const std::string& name, kaguya::LuaRef parameter);
+        void pushParameterFromLua(const std::string& name, const kaguya::LuaRef& parameter) const;
         /**
         * \brief Gets the Lua Table path used to store Trigger Parameters
         * \return The path to the Lua Table used to store Trigger Parameters
@@ -74,8 +86,10 @@ namespace obe::Triggers
         /**
         * \brief Registers a Lua State that will be triggered
         * \param envIndex Index of the Lua Env to register
+        * \param callbackName Name of the callback to register
+        * \param envActive Pointer to the boolean that indicate if an environment is active or not
         */
-        void registerEnvironment(unsigned int envIndex, const std::string& callbackName);
+        void registerEnvironment(unsigned int envIndex, const std::string& callbackName, bool* envActive);
         /**
         * \brief Removes an environment from Trigger Execution
         * \param envIndex Index of the Lua environment
@@ -84,19 +98,14 @@ namespace obe::Triggers
         /**
         * \brief Triggers callbacks
         */
-        void execute() const;
+        void execute();
     };
 
     template <typename P>
     void Trigger::pushParameter(const std::string& name, P parameter)
     {
         Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
-        for (auto& rEnv : m_registeredEnvs)
-        {
-            // Future Trigger Call Parameters
-            Debug::Log->trace("<Trigger> Pushing parameter {0} to Lua Environment {1} from Trigger {2}", name, rEnv.first, m_fullName);
-            Script::ScriptEngine["__ENVIRONMENTS"][rEnv.first]["LuaCore"]["FTCP"][this->getTriggerLuaTableName()][name] = parameter;
-        }
+        Script::ScriptEngine["__TRIGGER_ARG_TABLE"][this->getTriggerLuaTableName()][name] = parameter;
     }
 }
 

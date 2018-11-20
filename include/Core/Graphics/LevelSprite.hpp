@@ -8,7 +8,7 @@
 #include <Script/GlobalState.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
-#include <Transform/Referencial.hpp>
+#include <Transform/Referential.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Types/Selectable.hpp>
 #include <Types/Serializable.hpp>
@@ -31,7 +31,7 @@ namespace obe::Graphics
     {
     private:
         LevelSprite* m_sprite;
-        Transform::Referencial m_referencial;
+        Transform::Referential m_referential;
         LevelSpriteHandlePointType m_type;
     public:
         Transform::UnitVector m_dp;
@@ -42,9 +42,9 @@ namespace obe::Graphics
         /**
         * \brief Creates a Scale HandlePoint
         * \param parent Rect of the parent LevelSprite
-        * \param ref Referencial of the HandlePoint
+        * \param ref Referential of the HandlePoint
         */
-        LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referencial ref);
+        LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referential ref);
         /**
         * \brief Creates a Rotate HandlePoint
         * \param parent Rect of the parent LevelSprite
@@ -56,10 +56,10 @@ namespace obe::Graphics
         */
         Transform::Rect& getRect() const;
         /**
-        * \brief Get the Referencial of the HandlePoint
-        * \return The Referencial value
+        * \brief Get the Referential of the HandlePoint
+        * \return The Referential value
         */
-        Transform::Referencial getReferencial() const;
+        Transform::Referential getReferential() const;
         /**
         * \brief Gets the type of the LevelSpriteHandlePoint (either Rotate or Scale)
         * \return An enum value from LevelSpriteHandlePointType representing the type of the Handle Point

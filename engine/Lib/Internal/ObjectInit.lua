@@ -9,7 +9,6 @@ Object = {
 
 LuaCore = {};
 LuaCore.Lua_ReqList = {}; -- Require Parameters
-LuaCore.FTCP = {}; -- Future Trigger Call Parameters
 LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor Menu
 LuaCore.TriggerList = {};
 LuaCore.InternalMonitors = {};
@@ -100,8 +99,8 @@ function LuaCore.FuncInjector(funcToCall, triggerRegisterName)
         local Lua_Func_ArgList = LuaCore.TriggerList[triggerRegisterName].args;
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
-            if (LuaCore.FTCP[triggerRegisterName]) then
-                table.insert(Lua_Func_CallArgs, LuaCore.FTCP[triggerRegisterName][i]);
+            if (__TRIGGER_ARG_TABLE[triggerRegisterName]) then
+                table.insert(Lua_Func_CallArgs, __TRIGGER_ARG_TABLE[triggerRegisterName][i]);
             end
         end
         funcToCall(ArgMirror.Unpack(Lua_Func_CallArgs));

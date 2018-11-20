@@ -18,6 +18,8 @@
 #include <Bindings/SFMLBindings.hpp>
 #include <SFML/System/Time.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::SFMLBindings
 {
     void LoadSfColor(kaguya::State* lua)

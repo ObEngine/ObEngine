@@ -4,6 +4,8 @@
 #include <Bindings/AnimationBindings.hpp>
 #include <Graphics/LevelSprite.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::AnimationBindings
 {
     void LoadAnimation(kaguya::State* lua)

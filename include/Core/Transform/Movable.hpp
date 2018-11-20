@@ -35,7 +35,7 @@ namespace obe::Transform
         virtual void move(const UnitVector& position);
         /**
         * \brief Get the Position of the Movable
-        * \return The Position of the given Referencial of the Movable
+        * \return The Position of the given Referential of the Movable
         */
         virtual UnitVector getPosition() const;
         /**

@@ -3,6 +3,8 @@
 #include <Triggers/TriggerDatabase.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::TriggersBindings
 {
     void LoadTrigger(kaguya::State* lua)

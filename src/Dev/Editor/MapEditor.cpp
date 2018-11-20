@@ -400,14 +400,14 @@ namespace obe::Editor
                 + std::to_string(cursor.getY()) 
                 + ")" 
                 + std::string("   Camera : (") 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().x)) 
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referential::TopLeft).to<Transform::Units::ScenePixels>().x)) 
                 + ", " 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().y))
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referential::TopLeft).to<Transform::Units::ScenePixels>().y))
                 + ")" 
                 + std::string("   Sum : (") 
-                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().x)
+                + std::to_string(int(scene.getCamera()->getPosition(Transform::Referential::TopLeft).to<Transform::Units::ScenePixels>().x)
                     + int(cursor.getX())) 
-                + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referencial::TopLeft).to<Transform::Units::ScenePixels>().y)
+                + ", " + std::to_string(int(scene.getCamera()->getPosition(Transform::Referential::TopLeft).to<Transform::Units::ScenePixels>().y)
                     + int(cursor.getY())) 
                 + ")" 
                 + std::string("   Layer : ") 
@@ -489,10 +489,10 @@ namespace obe::Editor
             //Draw Everything Here
             if (framerateManager.doRender())
             {
-                if (saveCamPosX != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x || saveCamPosY != scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y)
+                if (saveCamPosX != scene.getCamera()->getPosition(Transform::Referential::TopLeft).x || saveCamPosY != scene.getCamera()->getPosition(Transform::Referential::TopLeft).y)
                 {
-                    saveCamPosX = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).x;
-                    saveCamPosY = scene.getCamera()->getPosition(Transform::Referencial::TopLeft).y;
+                    saveCamPosX = scene.getCamera()->getPosition(Transform::Referential::TopLeft).x;
+                    saveCamPosY = scene.getCamera()->getPosition(Transform::Referential::TopLeft).y;
                     cameraPositionXInput->setText(std::to_string(saveCamPosX));
                     cameraPositionYInput->setText(std::to_string(saveCamPosY));
                 }
@@ -528,7 +528,7 @@ namespace obe::Editor
         gameTriggers->trigger("End");
         Triggers::TriggerDatabase::GetInstance()->update();
         scene.update();
-
+        scene.clear();
         System::MainWindow.close();
         gui.removeAllWidgets();
     }

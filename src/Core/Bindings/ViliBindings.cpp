@@ -7,6 +7,8 @@
 #include <Bindings/ViliBindings.hpp>
 #include <Utils/VectorUtils.hpp>
 
+#include <kaguya/kaguya.hpp>
+
 namespace obe::Bindings::ViliBindings
 {
     void LoadViliDataType(kaguya::State* lua)

@@ -1,6 +1,7 @@
 #include <Bindings/AnimationBindings.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
+#include <Bindings/DebugBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
@@ -15,11 +16,10 @@
 #include <Bindings/UtilsBindings.hpp>
 #include <Bindings/ViliBindings.hpp>
 #include <Debug/Logger.hpp>
-#include <System/Path.hpp>
-#include <Utils/FileUtils.hpp>
+#include <System/Plugin.hpp>
 #include <Utils/StringUtils.hpp>
-#include <Utils/VectorUtils.hpp>
-#include "System/Plugin.hpp"
+
+#include <kaguya/kaguya.hpp>
 
 namespace obe::Bindings
 {
@@ -27,8 +27,8 @@ namespace obe::Bindings
 
     void Load(kaguya::State* lua, const std::string& lib)
     {
-        const std::vector<std::string> splittedLibPath = Utils::String::split(lib, ".");
-        BindTree.walkTo(splittedLibPath)(lua);
+        const std::vector<std::string> splitLibPath = Utils::String::split(lib, ".");
+        BindTree.walkTo(splitLibPath)(lua);
     }
 
     void IndexBaseBindings()
@@ -44,6 +44,8 @@ namespace obe::Bindings
             .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider)
             .add("Trajectory", &CollisionBindings::LoadTrajectory)
             .add("TrajectoryNode", &CollisionBindings::LoadTrajectoryNode)
+        //Debug
+            .add("Log", &DebugBindings::LoadLog)
         // Graphics
             .add("Canvas", &GraphicsBindings::LoadCanvas)
             .add("Color", &GraphicsBindings::LoadColor)
@@ -87,7 +89,7 @@ namespace obe::Bindings
             .add("Polygon", &TransformBindings::LoadPolygon)
             .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
             .add("Rect", &TransformBindings::LoadRect)
-            .add("Referencial", &TransformBindings::LoadReferencial)
+            .add("Referential", &TransformBindings::LoadReferential)
             .add("SceneNode", &TransformBindings::LoadSceneNode)
             .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
             .add("Units", &TransformBindings::LoadUnits)

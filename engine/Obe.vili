@@ -237,65 +237,65 @@ Rect<SceneUnits>:
 
 Template(Rect<SceneUnits>);
 
-Referencial<TopLeft>:
+Referential<TopLeft>:
     __init__:
     __body__:
-        referencial:"TopLeft"
+        referential:"TopLeft"
 
-Template(Referencial<TopLeft>);
+Template(Referential<TopLeft>);
 
-Referencial<Top>:
+Referential<Top>:
     __init__:
     __body__:
-        referencial:"Top"
+        referential:"Top"
 
-Template(Referencial<Top>);
+Template(Referential<Top>);
 
-Referencial<TopRight>:
+Referential<TopRight>:
     __init__:
     __body__:
-        referencial:"TopRight"
+        referential:"TopRight"
 
-Template(Referencial<TopRight>);
+Template(Referential<TopRight>);
 
-Referencial<Left>:
+Referential<Left>:
     __init__:
     __body__:
-        referencial:"Left"
+        referential:"Left"
 
-Template(Referencial<Left>);
+Template(Referential<Left>);
 
-Referencial<Center>:
+Referential<Center>:
     __init__:
     __body__:
-        referencial:"Center"
+        referential:"Center"
 
-Template(Referencial<Center>);
+Template(Referential<Center>);
 
-Referencial<Right>:
+Referential<Right>:
     __init__:
     __body__:
-        referencial:"Right"
+        referential:"Right"
 
-Template(Referencial<Right>);
+Template(Referential<Right>);
 
-Referencial<BottomLeft>:
+Referential<BottomLeft>:
     __init__:
     __body__:
-        referencial:"BottomLeft"
+        referential:"BottomLeft"
 
-Template(Referencial<BottomLeft>);
+Template(Referential<BottomLeft>);
 
-Referencial<Bottom>:
+Referential<Bottom>:
     __init__:
     __body__:
-        referencial:"Bottom"
+        referential:"Bottom"
 
-Template(Referencial<Bottom>);
+Template(Referential<Bottom>);
 
-Referencial<BottomRight>:
+Referential<BottomRight>:
     __init__:
     __body__:
-        referencial:"BottomRight"
+        referential:"BottomRight"
 
-Template(Referencial<BottomRight>);
+Template(Referential<BottomRight>);

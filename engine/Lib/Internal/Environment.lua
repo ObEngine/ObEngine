@@ -1,4 +1,4 @@
-__ENV_COUNT = 0;
+local __ENV_COUNT = 0; -- Remove local for weird bug
 __ENVIRONMENTS = {};
 
 local inspect = require("Lib/StdLib/Inspect");

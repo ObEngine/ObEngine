@@ -1,7 +1,9 @@
 Core = {}; -- Core Lib
+__TRIGGER_ARG_TABLE = {}; -- Future Trigger Call Parameters
 Scenes = {};
 LuaUtil = {};
 pl = {};
+Debug = {};
 
 inspect = require("Lib/StdLib/Inspect");
 pl.Date = require("Lib/StdLib/pl/Date");
