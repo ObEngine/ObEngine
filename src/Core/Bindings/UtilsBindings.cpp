@@ -49,6 +49,8 @@ namespace obe::Bindings::UtilsBindings
         (*lua)["obe"]["Math"]["isBetween"] = kaguya::function(Utils::Math::isBetween<double, double, double>);
         (*lua)["obe"]["Math"]["isDoubleInt"] = kaguya::function(Utils::Math::isDoubleInt);
         (*lua)["obe"]["Math"]["sign"] = kaguya::function(Utils::Math::sign<double>);
+        (*lua)["obe"]["Math"]["atan2"] = kaguya::function(static_cast<double(*)(double, double)>(std::atan2));
+        (*lua)["obe"]["Math"]["pi"] = Utils::Math::pi;
     }
 
     void loadStringUtils(kaguya::State* lua)

@@ -261,6 +261,9 @@ obe.Canvas.Bases.Drawable = {
 obe.Canvas.Bases.Line = {
     getters = {
         p1 = {
+            priority = {
+                "unit"
+            },
             getters = {
                 x = function(self) return self.p1.x; end,
                 y = function(self) return self.p1.y; end,
@@ -292,6 +295,9 @@ obe.Canvas.Bases.Line = {
             }
         },
         p2 = {
+            priority = {
+                "unit"
+            },
             getters = {
                 x = function(self) return self.p2.x; end,
                 y = function(self) return self.p2.y; end,
@@ -354,6 +360,7 @@ obe.Canvas.Bases.Line = {
                 if type(p1.x) == "number" then self.p1.x = p1.x; end
                 if type(p1.y) == "number" then self.p1.y = p1.y; end
                 if p1.color then self.p1color = obe.Canvas.NormalizeColor(p1.color, self.p1color); end
+                if p1.unit then self.p1.unit = p1.unit or obe.Units.ScenePixels; end
             end
         end,
         p2 = function(self, p2)
@@ -361,6 +368,7 @@ obe.Canvas.Bases.Line = {
                 if type(p2.x) == "number" then self.p2.x = p2.x; end
                 if type(p2.y) == "number" then self.p2.y = p2.y; end
                 if p2.color then self.p2color = obe.Canvas.NormalizeColor(p2.color, self.p2color); end
+                if p2.unit then self.p2.unit = p2.unit or obe.Units.ScenePixels; end
             end
         end
     }
@@ -502,6 +510,9 @@ obe.Canvas.Bases.Shape = {
 }
 
 obe.Canvas.Bases.Rectangle = {
+    priority = {
+        "unit"
+    },
     getters = {
         width = function(self) return self.size.x; end,
         height = function(self) return self.size.y; end

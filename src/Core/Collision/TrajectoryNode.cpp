@@ -6,7 +6,7 @@
 
 namespace obe::Collision
 {
-    TrajectoryNode::TrajectoryNode(Transform::SceneNode* sceneNode)
+    TrajectoryNode::TrajectoryNode(Scene::SceneNode* sceneNode)
     {
         m_sceneNode = sceneNode;
     }
@@ -73,7 +73,7 @@ namespace obe::Collision
         }
     }
 
-    Transform::SceneNode* TrajectoryNode::getSceneNode() const
+    Scene::SceneNode* TrajectoryNode::getSceneNode() const
     {
         return m_sceneNode;
     }

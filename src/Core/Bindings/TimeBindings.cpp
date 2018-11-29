@@ -5,6 +5,7 @@
 #include <Time/TimeUtils.hpp>
 
 #include <kaguya/kaguya.hpp>
+#include "Time/TimeCheck.hpp"
 
 namespace obe::Bindings::TimeBindings
 {
@@ -45,6 +46,19 @@ namespace obe::Bindings::TimeBindings
             .addFunction("setSpeedCoeff", &Time::FramerateManager::setSpeedCoeff)
             .addFunction("setVSyncEnabled", &Time::FramerateManager::setVSyncEnabled)
             .addFunction("update", &Time::FramerateManager::update)
+        );
+    }
+
+    void LoadTimeCheck(kaguya::State* lua)
+    {
+        (*lua)["obe"]["TimeCheck"].setClass(kaguya::UserdataMetatable<Time::TimeCheck>()
+            .setConstructors<Time::TimeCheck(Time::TimeUnit), Time::TimeCheck(Time::TimeUnit, bool)>()
+            .addFunction("getDelay", &Time::TimeCheck::getDelay)
+            .addFunction("goToOver", &Time::TimeCheck::goToOver)
+            .addFunction("over", &Time::TimeCheck::over)
+            .addFunction("reset", &Time::TimeCheck::reset)
+            .addFunction("resetIfOver", &Time::TimeCheck::resetIfOver)
+            .addFunction("setDelay", &Time::TimeCheck::setDelay)
         );
     }
 

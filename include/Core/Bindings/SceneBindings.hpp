@@ -9,5 +9,6 @@ namespace obe::Bindings::SceneBindings
 {
     void LoadCamera(kaguya::State* lua);
     void LoadScene(kaguya::State* lua);
+    void LoadSceneNode(kaguya::State* lua);
 	void LoadTXScene(kaguya::State* lua);
 }

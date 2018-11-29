@@ -64,7 +64,6 @@ namespace obe::Collision
         Selectable(false), 
         Component(id)
     {
-        m_type = Transform::MovableType::PolygonalCollider;
     }
 
     PolygonalCollider::~PolygonalCollider()

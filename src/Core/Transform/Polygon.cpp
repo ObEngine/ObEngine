@@ -78,11 +78,6 @@ namespace obe::Transform
         return first.distance(second);
     }
 
-    Polygon::Polygon() :
-        Movable(Transform::MovableType::Polygon)
-    {
-    }
-
     void Polygon::resetUnit(Transform::Units unit)
     {
     }
@@ -365,5 +360,28 @@ namespace obe::Transform
             return *m_points[i];
         else
             throw aube::ErrorHandler::Raise("obe.Transform.Polygon.IndexOverflow", { { "method", "operator[]" },{ "index", std::to_string(i) } });
+    }
+
+    Rect Polygon::getBoundingBox() const
+    {
+        auto minX = std::min_element(m_points.begin(), m_points.end(), [](auto& point1, auto& point2)
+        {
+            return point1->x < point2->x;
+        });
+        auto minY = std::min_element(m_points.begin(), m_points.end(), [](auto& point1, auto& point2)
+        {
+            return point1->y < point2->y;
+        });
+        auto maxX = std::max_element(m_points.begin(), m_points.end(), [](auto& point1, auto& point2)
+        {
+            return point1->x < point2->x;
+        });
+        auto maxY = std::max_element(m_points.begin(), m_points.end(), [](auto& point1, auto& point2)
+        {
+            return point1->y < point2->y;
+        });
+        const double width = maxX->get()->x - minX->get()->x;
+        const double height = maxY->get()->y - minY->get()->y;
+        return Rect(Transform::UnitVector(minX->get()->x, minY->get()->y), Transform::UnitVector(width, height));
     }
 }

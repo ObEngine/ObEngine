@@ -2,7 +2,7 @@
 
 namespace obe::Scene
 {
-    Camera::Camera() : Rect(Transform::MovableType::Camera)
+    Camera::Camera()
     {
         Transform::UnitVector::Init(m_camera);
     }

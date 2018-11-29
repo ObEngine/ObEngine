@@ -1,6 +1,7 @@
 #include <Bindings/AnimationBindings.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
+#include <Bindings/CPPBindings.hpp>
 #include <Bindings/DebugBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
@@ -66,6 +67,7 @@ namespace obe::Bindings
         // Scene
             .add("Camera", &SceneBindings::LoadCamera)
             .add("Scene", &SceneBindings::LoadScene)
+            .add("SceneNode", &SceneBindings::LoadSceneNode)
         // Script
             .add("Script", &ScriptBindings::LoadGameObject)
         // Sound
@@ -83,6 +85,7 @@ namespace obe::Bindings
             .add("Chronometer", &TimeBindings::LoadChronometer)
             .add("FPSCounter", &TimeBindings::LoadFPSCounter)
             .add("FramerateManager", &TimeBindings::LoadFramerateManager)
+            .add("TimeCheck", &TimeBindings::LoadTimeCheck)
             .add("TimeUtils", &TimeBindings::LoadTimeUtils)
         // Transform
             .add("Movable", &TransformBindings::LoadMovable)
@@ -90,7 +93,6 @@ namespace obe::Bindings
             .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
             .add("Rect", &TransformBindings::LoadRect)
             .add("Referential", &TransformBindings::LoadReferential)
-            .add("SceneNode", &TransformBindings::LoadSceneNode)
             .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
             .add("Units", &TransformBindings::LoadUnits)
             .add("UnitVector", &TransformBindings::LoadUnitVector)

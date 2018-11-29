@@ -21,10 +21,6 @@ namespace obe::Transform
         return moved;
     };
 
-    Rect::Rect(MovableType type) : Movable(type)
-    {
-    }
-
     float Rect::getRotation() const
     {
         return m_angle;
@@ -110,6 +106,16 @@ namespace obe::Transform
         vec.add(result);
     }
 
+    Rect::Rect()
+    {
+    }
+
+    Rect::Rect(const Transform::UnitVector& position, const Transform::UnitVector& size)
+    {
+        m_position = position;
+        m_size = size;
+    }
+
     void Rect::draw(int posX, int posY) const
     {
         int r = 6;
@@ -131,9 +137,9 @@ namespace obe::Transform
             drawPoints.emplace_back(world.x, world.y);
         }
 
-        double radAngle = Utils::Math::convertToRadian(-m_angle);
-        double cosAngle = std::cos(radAngle);
-        double sinAngle = std::sin(radAngle);
+        const double radAngle = Utils::Math::convertToRadian(-m_angle);
+        const double cosAngle = std::cos(radAngle);
+        const double sinAngle = std::sin(radAngle);
         UnitVector topPos;
         this->transformRef(topPos, Referential::Top, ConversionType::From);
         topPos = topPos.to<Units::ScenePixels>();
@@ -221,7 +227,7 @@ namespace obe::Transform
 
     void Rect::setSize(const UnitVector& size, Referential ref)
     {
-        UnitVector savePosition = this->getPosition(ref);
+        const UnitVector savePosition = this->getPosition(ref);
         m_size.set(size);
         this->setPosition(savePosition, ref);
     }
@@ -243,7 +249,7 @@ namespace obe::Transform
 
     void Rect::scale(const UnitVector& size, Referential ref)
     {
-        UnitVector savePosition = this->getPosition(ref);
+        const UnitVector savePosition = this->getPosition(ref);
         m_size *= size;
         this->setPosition(savePosition, ref);
     }

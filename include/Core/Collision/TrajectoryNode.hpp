@@ -6,7 +6,7 @@
 
 #include <Collision/PolygonalCollider.hpp>
 #include <Collision/Trajectory.hpp>
-#include <Transform/SceneNode.hpp>
+#include <Scene/SceneNode.hpp>
 
 namespace obe::Collision
 {
@@ -17,12 +17,12 @@ namespace obe::Collision
     {
     private:
         PolygonalCollider* m_probe = nullptr;
-        Transform::SceneNode* m_sceneNode;
+        Scene::SceneNode* m_sceneNode;
         std::unordered_map<std::string, std::unique_ptr<Trajectory>> m_trajectories;
     public:
-        TrajectoryNode(Transform::SceneNode* sceneNode);
+        TrajectoryNode(Scene::SceneNode* sceneNode);
         Trajectory* addTrajectory(const std::string& id, Transform::Units unit = Transform::Units::SceneUnits);
-        Transform::SceneNode* getSceneNode() const;
+        Scene::SceneNode* getSceneNode() const;
         Trajectory* getTrajectory(const std::string& id);
         void removeTrajectory(const std::string& id);
         void setProbe(PolygonalCollider* probe);

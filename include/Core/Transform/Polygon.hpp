@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <Transform/Movable.hpp>
+#include <Transform/Rect.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 
@@ -64,10 +65,6 @@ namespace obe::Transform
         void resetUnit(Transform::Units unit) override;
     public:
         static constexpr double DefaultTolerance = 0.02;
-        /**
-        * \brief Constructs a Polygon
-        */
-        explicit Polygon();
         /**
         * \brief Adds a new Point to the Polygon at Position (x, y)
         * \param position Coordinate of the Position where to add the new Point
@@ -165,5 +162,6 @@ namespace obe::Transform
         void setPositionFromCentroid(const Transform::UnitVector& position);
         PolygonPoint& operator[](point_index_t i);
         PolygonPoint& get(point_index_t i);
+        Rect getBoundingBox() const;
     };
 }

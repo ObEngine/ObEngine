@@ -1,6 +1,5 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/TransformBindings.hpp>
-#include <Transform/SceneNode.hpp>
 #include <Transform/Polygon.hpp>
 #include <Transform/ProtectedUnitVector.hpp>
 #include <Transform/Rect.hpp>
@@ -16,19 +15,8 @@ namespace obe::Bindings::TransformBindings
         Load(lua, "obe.Identifiable");
         (*lua)["obe"]["Movable"].setClass(kaguya::UserdataMetatable<Transform::Movable>()
             .addFunction("getPosition", &Transform::Movable::getPosition)
-            .addFunction("getType", &Transform::Movable::getType)
             .addFunction("move", &Transform::Movable::move)
             .addFunction("setPosition", &Transform::Movable::setPosition)
-        );
-    }
-
-    void LoadSceneNode(kaguya::State* lua)
-    {
-        Load(lua, "obe.Movable");
-        (*lua)["obe"]["SceneNode"].setClass(kaguya::UserdataMetatable<Transform::SceneNode, Transform::Movable>()
-            .addFunction("addChild", &Transform::SceneNode::addChild)
-            .addFunction("move", &Transform::SceneNode::move)
-            .addFunction("setPosition", &Transform::SceneNode::setPosition)
         );
     }
 
@@ -61,6 +49,7 @@ namespace obe::Bindings::TransformBindings
     {
         Load(lua, "obe.Movable");
         (*lua)["obe"]["Rect"].setClass(kaguya::UserdataMetatable<Transform::Rect, Transform::Movable>()
+            .setConstructors<Transform::Rect(), Transform::Rect(const Transform::UnitVector&, const Transform::UnitVector&)>()
             .addFunction("getPosition", Rect_getPosition_wrapper())
             .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
             .addFunction("getSize", &Transform::Rect::getSize)
@@ -185,6 +174,7 @@ namespace obe::Bindings::TransformBindings
             .addFunction("addPoint", Polygon_addPoint_wrapper())
             .addFunction("findClosestSegment", &Transform::Polygon::findClosestSegment)
             .addFunction("findClosestPoint", Polygon_findClosestPoint_wrapper())
+            .addFunction("getBoundingBox", &Transform::Polygon::getBoundingBox)
             .addFunction("getCentroid", &Transform::Polygon::getCentroid)
             .addFunction("getPointsAmount", &Transform::Polygon::getPointsAmount)
             .addFunction("getPosition", &Transform::Polygon::getPosition)

@@ -5,24 +5,12 @@
 
 namespace obe::Transform
 {
-    enum class MovableType
-    {
-        Movable,
-        Rect,
-        Camera,
-        LevelSprite,
-        Polygon,
-        PolygonalCollider,
-        SceneNode
-    };
     class Movable
     {
     protected:
-        MovableType m_type;
         UnitVector m_position;
     public:
 	    virtual ~Movable() = default;
-	    Movable(MovableType type);
         /**
         * \brief Set the position of the Movable using an UnitVector
         * \param position Position to affect to the Movable
@@ -42,6 +30,5 @@ namespace obe::Transform
         * \brief Gets the type of the Movable object
         * \return An enum value from MovableType
         */
-        MovableType getType() const;
     };
 }

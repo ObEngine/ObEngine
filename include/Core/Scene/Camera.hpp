@@ -26,7 +26,7 @@ namespace obe::Scene
     {
     private:
         double m_angle = 0;
-        Transform::ViewStruct* m_camera;
+        Transform::ViewStruct* m_camera{};
         sf::View m_view;
 
         void apply() const;

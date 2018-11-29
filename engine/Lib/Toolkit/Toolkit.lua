@@ -713,7 +713,7 @@ function evaluate(input)
             end
         else
             -- Command not found, we display an error 
-            messageColor.print({
+            Color.print({
                 {text = "Command '", color = Style.Error},
                 {text = command.name, color = Style.Command},
                 {text = "' not found.", color = Style.Error}

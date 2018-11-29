@@ -1,27 +1,23 @@
-#include <Transform/SceneNode.hpp>
+#include <Scene/SceneNode.hpp>
 
-namespace obe::Transform
+namespace obe::Scene
 {
-    SceneNode::SceneNode() : Movable(MovableType::SceneNode)
-    {
-    }
-
     void SceneNode::addChild(Movable* child)
     {
         m_children.push_back(child);
     }
 
-    void SceneNode::setPosition(const UnitVector& position)
+    void SceneNode::setPosition(const Transform::UnitVector& position)
     {
         for (auto& child : m_children)
         {
-            UnitVector offset = position - m_position;
+            Transform::UnitVector offset = position - m_position;
             child->move(offset);
         }
         Movable::setPosition(position);
     }
 
-    void SceneNode::move(const UnitVector& position)
+    void SceneNode::move(const Transform::UnitVector& position)
     {
         for (auto& child : m_children)
         {

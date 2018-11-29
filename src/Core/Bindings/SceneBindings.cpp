@@ -1,6 +1,8 @@
+#include <Bindings/Bindings.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Scene/Camera.hpp>
 #include <Scene/Scene.hpp>
+#include <Scene/SceneNode.hpp>
 #include <Scene/TXScene.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
@@ -79,6 +81,16 @@ namespace obe::Bindings::SceneBindings
         });
 
         (*lua)["obe"]["Scene"]["createGameObject"] = kaguya::function(Scene_createGameObject_wrapper());
+    }
+
+    void LoadSceneNode(kaguya::State* lua)
+    {
+        Load(lua, "obe.Movable");
+        (*lua)["obe"]["SceneNode"].setClass(kaguya::UserdataMetatable<Scene::SceneNode, Transform::Movable>()
+            .addFunction("addChild", &Scene::SceneNode::addChild)
+            .addFunction("move", &Scene::SceneNode::move)
+            .addFunction("setPosition", &Scene::SceneNode::setPosition)
+        );
     }
 
     void LoadTXScene(kaguya::State* lua)

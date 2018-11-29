@@ -7,7 +7,7 @@
 #include <Graphics/LevelSprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Script/GameObject.hpp>
-#include <Transform/SceneNode.hpp>
+#include <Scene/SceneNode.hpp>
 #include <Types/Registrable.hpp>
 #include <Types/Serializable.hpp>
 #include <Utils/TypeUtils.hpp>

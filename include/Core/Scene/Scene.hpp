@@ -3,8 +3,9 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Scene/Camera.hpp>
+#include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
-#include <Transform/SceneNode.hpp>
+#include <Scene/SceneNode.hpp>
 #include <Types/Registrable.hpp>
 
 namespace obe::Scene
@@ -28,7 +29,7 @@ namespace obe::Scene
         std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
         std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
         std::vector<std::string> m_scriptArray;
-        Transform::SceneNode m_sceneRoot;
+        SceneNode m_sceneRoot;
 
         vili::ViliParser m_levelFile;
         std::string m_levelFileName;
@@ -238,7 +239,7 @@ namespace obe::Scene
         * \param id Id of the Collider to remove
         */
         void removeCollider(const std::string& id);
-        Transform::SceneNode& getSceneRootNode();
+        SceneNode& getSceneRootNode();
 
         //Other
         /**

@@ -9,7 +9,7 @@
 
 namespace obe::Graphics
 {
-    LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Rect(Transform::MovableType::LevelSprite), Component(id)
+    LevelSprite::LevelSprite(const std::string& id) : Selectable(false), Component(id)
     {
 
         m_texture = &ResourceManager::NullTexture;

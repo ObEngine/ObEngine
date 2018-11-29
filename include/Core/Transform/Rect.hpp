@@ -42,7 +42,8 @@ namespace obe::Transform
         */
         void transformRef(UnitVector& vec, Referential ref, ConversionType type) const;
 
-        Rect(MovableType type);
+        Rect();
+        Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
         /**
         * \brief Set the position of the Rect (Movable override) using an UnitVector
         * \param position Position to affect to the Rect (Movable override)

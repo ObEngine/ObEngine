@@ -708,7 +708,7 @@ namespace obe::Scene
         }), m_colliderArray.end());
     }
 
-    Transform::SceneNode& Scene::getSceneRootNode()
+    SceneNode& Scene::getSceneRootNode()
     {
         return m_sceneRoot;
     }
