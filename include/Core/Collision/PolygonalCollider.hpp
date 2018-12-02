@@ -102,6 +102,7 @@ namespace obe::Collision
         * \param tagType List you want to clear (Tag / Accepted /Rejected)
         */
         void clearTags(ColliderTagType tagType);
+        bool doesCollide(const Transform::UnitVector& offset) const;
         /**
         * \brief Checks if two polygons are intersecting
         * \param collider The other collider to test

@@ -66,4 +66,4 @@ KeyBinding:
         ConsoleToggle:"Pressed:F1"
     
 Debug:
-    logLevel:3
+    logLevel:1

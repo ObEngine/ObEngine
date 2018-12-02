@@ -23,7 +23,7 @@ namespace obe::Transform
     {
         switch (unit)
         {
-        case Units::ViewPercentage: return "ViewPercentage0";
+        case Units::ViewPercentage: return "ViewPercentage";
         case Units::ViewPixels: return "ViewPixels";
         case Units::ViewUnits: return "ViewUnits";
         case Units::ScenePixels: return "ScenePixels";

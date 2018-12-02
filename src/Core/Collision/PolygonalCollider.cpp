@@ -369,6 +369,26 @@ namespace obe::Collision
         this->retrieveTagVector(tagType).clear();
     }
 
+    bool PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
+    {
+        bool collided = false;
+        for (auto& collider : Pool)
+        {
+            if (checkTags(*collider))
+            {
+                Debug::Log->debug("Tags ok {}", collider->getId());
+                if (this->doesCollide(*collider, offset))
+                {
+                    Debug::Log->debug("Collided with {}", collider->getId());
+                    return true;
+                }
+                    
+            }
+        }
+
+        return false;
+    }
+
     void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)
     {
         Utils::Vector::eraseAll(this->retrieveTagVector(tagType), tag);

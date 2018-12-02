@@ -57,14 +57,13 @@ namespace obe::Animation
 
     void Animator::setKey(const std::string& key)
     {
-        Debug::Log->trace("<Animator> Set Animation Key {0} for Animator at {1}", key, m_animatorPath.toString());
-        if (m_animationSet.find(key) == m_animationSet.end())
+        Debug::Log->debug("<Animator> Set Animation Key {0} for Animator at {1} {2}", key, m_animatorPath.toString(), m_animationSet.size());
+        if (!m_animationSet.empty() && m_animationSet.find(key) == m_animationSet.end())
         {
             throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound", {
                 {"function", "setKey"},{"animation", key},{"%animator", m_animatorPath.toString()}
             });
         }
-
         if (key != m_currentAnimationName)
         {
             bool changeAnim = false;
@@ -94,7 +93,7 @@ namespace obe::Animation
 
     void Animator::loadAnimator()
     {
-        Debug::Log->trace("<Animator> Loading Animator at {0}", m_animatorPath.toString());
+        Debug::Log->debug("<Animator> Loading Animator at {0}", m_animatorPath.toString());
         std::vector<std::string> listDir;
         m_animatorPath.loadResource(&listDir, System::Loaders::dirPathLoader);
         std::vector<std::string> allFiles;

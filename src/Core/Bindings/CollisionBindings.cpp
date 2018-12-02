@@ -71,7 +71,16 @@ namespace obe::Bindings::CollisionBindings
             .addFunction("clearHighlights", PolygonalCollider_clearHighlights_wrapper())
             .addFunction("clearOriginChildren", &Collision::PolygonalCollider::clearOriginChildren)
             .addFunction("clearTags", &Collision::PolygonalCollider::clearTags)
-            .addFunction("doesCollide", &Collision::PolygonalCollider::doesCollide)
+            .addOverloadedFunctions("doesCollide",
+                static_cast<bool
+                    (Collision::PolygonalCollider::*)
+                    (const Transform::UnitVector&) const>
+                    (&Collision::PolygonalCollider::doesCollide),
+                static_cast<bool
+                    (Collision::PolygonalCollider::*)
+                    (Collision::PolygonalCollider&, const Transform::UnitVector&) const>
+                    (&Collision::PolygonalCollider::doesCollide)
+            )
             .addFunction("doesHaveAnyTag", &Collision::PolygonalCollider::doesHaveAnyTag)
             .addFunction("doesHaveTag", &Collision::PolygonalCollider::doesHaveTag)
             .addFunction("getAllTags", &Collision::PolygonalCollider::getAllTags)
