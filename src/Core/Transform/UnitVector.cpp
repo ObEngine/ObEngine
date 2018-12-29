@@ -262,6 +262,11 @@ namespace obe::Transform
         }
     }
 
+    std::tuple<double, double> UnitVector::unpack() const
+    {
+        return std::make_tuple(x, y);
+    }
+
     std::ostream& operator<<(std::ostream& os, const UnitVector& m)
     {
         os << "(" << m.x << ", " << m.y << ")::" << unitsToString(m.unit).c_str();

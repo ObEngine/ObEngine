@@ -14,10 +14,10 @@ namespace obe::Graphics
 
         m_texture = &ResourceManager::NullTexture;
         m_sprite.setTexture(*m_texture);
-        for (int i = 0; i < 9; i++)
+        
+        for (Transform::Referential& ref : Transform::Referential::Referentials)
         {
-            Transform::Referential refIndex = static_cast<Transform::Referential>(i);
-            m_handlePoints.emplace_back(this, refIndex);
+            m_handlePoints.emplace_back(this, ref);
         }
         m_handlePoints.emplace_back(this);
     }
@@ -131,19 +131,20 @@ namespace obe::Graphics
         const Transform::UnitVector pixelCamera = cameraPosition.to<Transform::Units::ScenePixels>();
         Transform::UnitVector targetPos = Transform::UnitVector(posX, posY, Transform::Units::ScenePixels);
         targetPos = m_positionTransformer(targetPos, -pixelCamera, m_layer);
-        for (int i = 0; i < 9; i++)
+        unsigned int i = 0;
+        for (Transform::Referential& ref : Transform::Referential::Referentials)
         {
-            const Transform::Referential refIndex = static_cast<Transform::Referential>(i);
-            const Transform::UnitVector refPoint = Rect::getPosition(refIndex).to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector refPoint = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
             int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
             int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius, refPoint.x + LevelSpriteHandlePoint::radius);
-            if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound) && refIndex != Transform::Referential::Center)
+            if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound) && ref != Transform::Referential::Center)
             {
                 int lowerYBound = std::min(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
                 int upperYBound = std::max(refPoint.y - LevelSpriteHandlePoint::radius, refPoint.y + LevelSpriteHandlePoint::radius);
                 if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                     return &m_handlePoints[i];
             }
+            i++;
         }
 
         const double radAngle = obe::Utils::Math::convertToRadian(-m_angle);
@@ -272,9 +273,9 @@ namespace obe::Graphics
 
     unsigned int LevelSpriteHandlePoint::radius = 6;
     LevelSpriteHandlePoint::LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referential ref)
+    : m_referential(ref)
     {
         m_sprite = parent;
-        m_referential = ref;
         m_type = LevelSpriteHandlePointType::ScaleHandle;
     }
 
@@ -292,18 +293,21 @@ namespace obe::Graphics
             //std::cout << "Was at : " << m_rect->getPosition(m_referential).to<Transform::Units::ScenePixels>() << std::endl;
             //std::cout << "Set : " << x << ", " << y << std::endl;
             const Transform::UnitVector pos = m_sprite->getPosition(m_referential).to<Transform::Units::ScenePixels>();
-            const Transform::UnitVector oppositePos = m_sprite->getPosition(Transform::reverseReferential(m_referential)).to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector oppositePos = m_sprite->getPosition(m_referential.flip()).to<Transform::Units::ScenePixels>();
 
-            if (Transform::isOnCorner(m_referential))
+            if (m_referential.isOnCorner())
             {
                 const Transform::UnitVector baseDist = oppositePos - m_dp;
                 Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::ScenePixels>();
                 scaleVector.set(
-                    (isOnRightSide(m_referential)) ? -scaleVector.x : scaleVector.x, 
-                    (isOnBottomSide(m_referential)) ? -scaleVector.y : scaleVector.y);
+                    m_referential.isOnRightSide() ? -scaleVector.x : scaleVector.x, 
+                    m_referential.isOnBottomSide() ? -scaleVector.y : scaleVector.y);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
                 if (baseDist.x != 0 && baseDist.y != 0)
-                    m_sprite->scale(Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit), Transform::reverseReferential(m_referential));
+                    m_sprite->scale(
+                        Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit), 
+                        m_referential.flip()
+                    );
             }
             else
             {

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <exception>
 #include <sstream>
 
 #include <minizip/zlib.h>
@@ -194,5 +195,6 @@ namespace ziputils
             delete[] buf;
             return ret;
         }
+        throw std::runtime_error("Entry is not opened");
     }
 };

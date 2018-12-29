@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 #include <Transform/Units.hpp>
 #include <Transform/UnitStructures.hpp>
 
@@ -212,6 +214,12 @@ namespace obe::Transform
         * \return A new UnitVector containing the converted values with the new Units
         */
         UnitVector to(Units pUnit) const;
+
+        /**
+         * \brief Unpacks the UnitVector to a tuple (can be used with structured bindings)
+         * \return A tuple containing two doubles (x and y)
+         */
+        std::tuple<double, double> unpack() const;
 
         /**
         * \brief Display an UnitVector for debug purposes

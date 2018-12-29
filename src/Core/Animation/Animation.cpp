@@ -1,4 +1,7 @@
+// Corresponding header
 #include <Animation/Animation.hpp>
+
+// ObEngineCore headers
 #include <Debug/Logger.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>

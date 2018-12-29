@@ -12,7 +12,10 @@ namespace obe::Scene
 {
     Scene::Scene() : 
     Registrable("Scene"),
-    m_sceneTriggers(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), Triggers::TriggerGroupPtrRemover)
+    m_sceneTriggers(
+        Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Scene"), 
+        Triggers::TriggerGroupPtrRemover)
+    
     {
         System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
         Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
@@ -143,14 +146,14 @@ namespace obe::Scene
             m_cameraInitialReferential = Transform::Referential::TopLeft;
             if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referential"))
             {
-                m_cameraInitialReferential = Transform::stringToReferential(
+                m_cameraInitialReferential = Transform::Referential::FromString(
                     m_levelFile->at("View", "referential").getDataNode("referential").get<std::string>()
                 );
             }
             Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using Referential {2}", 
                 m_cameraInitialPosition.x, 
                 m_cameraInitialPosition.y, 
-                Transform::referentialToString(m_cameraInitialReferential));
+                m_cameraInitialReferential.toString());
             m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
             std::cout << m_camera.getPosition() << std::endl;
         }
@@ -299,10 +302,12 @@ namespace obe::Scene
             "Vector2<" + Transform::unitsToString(m_cameraInitialPosition.unit) + ">")
         );
         dataStore->at("View").createComplexNode("referential");
-        dataStore->at("View", "referential").createDataNode("referential", Transform::referentialToString(m_cameraInitialReferential));
-        dataStore->at("View", "referential").useTemplate(dataStore->getTemplate(
-            "Referential<" + Transform::referentialToString(m_cameraInitialReferential) + ">"
-        ));
+        dataStore->at("View", "referential").createDataNode("referential", 
+            m_cameraInitialReferential.toString("{}"));
+        if (m_cameraInitialReferential.isKnown())
+            dataStore->at("View", "referential").useTemplate(dataStore->getTemplate(
+                m_cameraInitialReferential.toString()
+            ));
 
         //LevelSprites
         if (m_spriteArray.size() > 0) (*dataStore)->createComplexNode("LevelSprites");

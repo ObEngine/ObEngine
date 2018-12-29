@@ -5,6 +5,8 @@
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
+#include <cmath>
+
 #include <kaguya/kaguya.hpp>
 
 #define UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE(fNamespace, funcName, func) \

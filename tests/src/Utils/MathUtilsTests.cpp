@@ -4,7 +4,11 @@
 
 using namespace obe::Utils::Math;
 
-TEST_CASE("A double should be truncated to an int without data loss (including floating point precision)", "[obe.Utils.Math.isDoubleInt]") 
+TEST_CASE(
+    "A double should be truncated to an int without data loss"
+    " (including floating point precision)", 
+    "[obe.Utils.Math.isDoubleInt]"
+) 
 {
     SECTION("Correct Positive values")
     {
@@ -30,7 +34,10 @@ TEST_CASE("A double should be truncated to an int without data loss (including f
     }
 }
 
-TEST_CASE("A value should be converted from degrees to radians", "[obe.Utils.Math.convertToRadian]") 
+TEST_CASE(
+    "A value should be converted from degrees to radians", 
+    "[obe.Utils.Math.convertToRadian]"
+) 
 {
     SECTION("Positive Known Angles")
     {
@@ -55,7 +62,10 @@ TEST_CASE("A value should be converted from degrees to radians", "[obe.Utils.Mat
     }
 }
 
-TEST_CASE("A value should be converted from radians to degrees", "[obe.Utils.Math.convertToDegree]")
+TEST_CASE(
+    "A value should be converted from radians to degrees", 
+    "[obe.Utils.Math.convertToDegree]"
+)
 {
     SECTION("Positive Known Angles")
     {
@@ -80,7 +90,10 @@ TEST_CASE("A value should be converted from radians to degrees", "[obe.Utils.Mat
     }
 }
 
-TEST_CASE("A value should be normalised from start to end", "[obe.Utils.Math.normalise]")
+TEST_CASE(
+    "A value should be normalised from start to end", 
+    "[obe.Utils.Math.normalise]"
+)
 {
     SECTION("Angle normalisation")
     {

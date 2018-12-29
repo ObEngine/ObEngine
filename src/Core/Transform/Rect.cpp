@@ -41,69 +41,22 @@ namespace obe::Transform
             m_angle = Utils::Math::normalise(m_angle, 0, 360);
     }
 
-    //TODO remove calculation when dx and dy are equal to 0. Directly add to vec in switch case.
     void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const
     {
         const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
-        double dx, dy;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
         UnitVector result;
 
-        switch (ref)
-        {
-        case Referential::TopLeft:
-            dx = 0;
-            dy = 0;
-            break;
+        auto [dx, dy] = ref.getOffset().unpack();
+        dx += 1; dx /= 2.f;
+        dy += 1; dy /= 2.f;
 
-        case Referential::Top:
-            dx = m_size.x / 2;
-            dy = 0;
-            break;
-
-        case Referential::TopRight:
-            dx = m_size.x;
-            dy = 0;
-            break;
-
-        case Referential::Left:
-            dx = 0;
-            dy = m_size.y / 2;
-            break;
-
-        case Referential::Center:
-            dx = m_size.x / 2;
-            dy = m_size.y / 2;
-            break;
-
-        case Referential::Right:
-            dx = m_size.x;
-            dy = m_size.y / 2;
-            break;
-
-        case Referential::BottomLeft:
-            dx = 0;
-            dy = m_size.y;
-            break;
-
-        case Referential::Bottom:
-            dx = m_size.x / 2;
-            dy = m_size.y;
-            break;
-
-        case Referential::BottomRight:
-            dx = m_size.x;
-            dy = m_size.y;
-            break;
-
-        default:
-            break;
-        }
-        result.x = (dx * cosAngle - dy * sinAngle) * factor;
-        result.y = (dx * sinAngle + dy * cosAngle) * factor;
-        vec.add(result);
+        vec.add(UnitVector(
+            (dx * cosAngle - dy * sinAngle) * factor,
+            (dx * sinAngle + dy * cosAngle) * factor
+        ));
     }
 
     Rect::Rect()
@@ -170,15 +123,15 @@ namespace obe::Transform
     void Rect::setPointPosition(const UnitVector& position, Referential ref)
     {
         UnitVector refPosition = this->getPosition(ref);
-        UnitVector oppositePointPosition = this->getPosition(reverseReferential(ref));
+        UnitVector oppositePointPosition = this->getPosition(ref.flip());
         double radAngle = Utils::Math::convertToRadian(-m_angle);
         UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
         this->setPosition(position, ref);
 
-        if (isOnCorner(ref))
+        if (ref.isOnCorner())
         {
-            if (isOnTopSide(ref))
+            if (ref.isOnTopSide())
             {
                 this->setSize({ movedPoint.x - position.x , movedPoint.y - position.y }, ref);
             }
@@ -187,9 +140,9 @@ namespace obe::Transform
                 this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
             }
         }
-        if (isOnLeftSide(ref) || isOnRightSide(ref))
+        if (ref.isOnLeftSide() || ref.isOnRightSide())
         {
-            if (isOnLeftSide(ref))
+            if (ref.isOnLeftSide())
             {
                 this->setSize({ movedPoint.x - position.x , m_size.y }, ref);
             }
@@ -198,9 +151,9 @@ namespace obe::Transform
                 this->setSize({ position.x - movedPoint.x, m_size.y }, ref);
             }
         }
-        else // we are on TopSide or LeftSide here, no need to specify the condition [Retard Sygmei] 
+        else // we are on TopSide or BottomSide here, no need to specify the condition
         {
-            if (isOnTopSide(ref))
+            if (ref.isOnTopSide())
             {
                 this->setSize({ m_size.x, movedPoint.y - position.y }, ref);
             }

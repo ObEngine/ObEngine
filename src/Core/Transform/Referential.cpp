@@ -1,206 +1,129 @@
 #include <Transform/Referential.hpp>
-#include "vili/ErrorHandler.hpp"
+
+#include <regex>
+
+#include <fmt/format.h>
+#include <vili/ErrorHandler.hpp>
 
 namespace obe::Transform
 {
-    Referential reverseReferential(Referential ref)
+    Referential Referential::TopLeft = Referential(-1, -1);
+    Referential Referential::Top = Referential(0, -1);
+    Referential Referential::TopRight = Referential(1, -1);
+    Referential Referential::Left = Referential(-1, 0);
+    Referential Referential::Center = Referential(0, 0);
+    Referential Referential::Right = Referential(1, 0);
+    Referential Referential::BottomLeft = Referential(-1, 1);
+    Referential Referential::Bottom = Referential(0, 1);
+    Referential Referential::BottomRight = Referential(1, 1);
+    std::array<Referential, 9> Referential::Referentials = {
+        Referential::TopLeft, Referential::Top, Referential::TopRight,
+        Referential::Left, Referential::Center, Referential::Right,
+        Referential::BottomLeft, Referential::Bottom, Referential::BottomRight
+    };
+
+    Referential::Referential() :
+        m_refX(0), m_refY(0)
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return Referential::BottomRight;
-        case Referential::Top: return Referential::Bottom;
-        case Referential::TopRight: return Referential::BottomLeft;
-        case Referential::Left: return Referential::Right;
-        case Referential::Center: return Referential::Center;
-        case Referential::Right: return Referential::Left;
-        case Referential::BottomLeft: return Referential::TopRight;
-        case Referential::Bottom: return Referential::Top;
-        case Referential::BottomRight: return Referential::TopLeft;
-        default: return Referential::Center;
-        }
+
     }
 
-    Referential horizontallyReverseReferential(Referential ref)
+    Referential::Referential(const double refX, const double refY) :
+        m_refX(refX), m_refY(refY)
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return Referential::TopRight;
-        case Referential::Top: return Referential::Top;
-        case Referential::TopRight: return Referential::TopLeft;
-        case Referential::Left: return Referential::Right;
-        case Referential::Center: return Referential::Center;
-        case Referential::Right: return Referential::Left;
-        case Referential::BottomLeft: return Referential::BottomRight;
-        case Referential::Bottom: return Referential::Bottom;
-        case Referential::BottomRight: return Referential::BottomLeft;
-        default: return Referential::Center;
-        }
+        assert(refX >= -1 && refX <= 1);
+        assert(refY >= -1 && refY <= 1);
+    }
+    bool Referential::operator==(const Referential& ref) const
+    {
+        return (getOffset() == ref.getOffset());
+    }
+    bool Referential::operator!=(const Referential& ref) const
+    {
+        return !((*this) == ref);
     }
 
-    Referential verticallyReverseReferential(Referential ref)
+    Referential Referential::flip(Referential::Axis axis) const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return Referential::BottomLeft;
-        case Referential::Top: return Referential::Bottom;
-        case Referential::TopRight: return Referential::BottomRight;
-        case Referential::Left: return Referential::Left;
-        case Referential::Center: return Referential::Center;
-        case Referential::Right: return Referential::Right;
-        case Referential::BottomLeft: return Referential::TopLeft;
-        case Referential::Bottom: return Referential::Top;
-        case Referential::BottomRight: return Referential::TopRight;
-        default: return Referential::Center;
-        }
+        const bool bothOrHorizontal = 
+            (axis == Referential::Axis::Both || 
+            axis == Referential::Axis::Horizontal);
+        const bool bothOrVertical = 
+            (axis == Referential::Axis::Both || 
+            axis == Referential::Axis::Vertical);
+        return Referential(
+            bothOrHorizontal ? -m_refX : m_refX,
+            bothOrVertical ? -m_refY : m_refY);
     }
 
-    bool isOnLeftSide(Referential ref)
+    bool Referential::isOnLeftSide() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return true;
-        case Referential::Top: return false;
-        case Referential::TopRight: return false;
-        case Referential::Left: return true;
-        case Referential::Center: return false;
-        case Referential::Right: return false;
-        case Referential::BottomLeft: return true;
-        case Referential::Bottom: return false;
-        case Referential::BottomRight: return false;
-        default: return false;
-        }
+        return m_refX == -1;
     }
 
-    bool isOnRightSide(Referential ref)
+    bool Referential::isOnRightSide() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return false;
-        case Referential::Top: return false;
-        case Referential::TopRight: return true;
-        case Referential::Left: return false;
-        case Referential::Center: return false;
-        case Referential::Right: return true;
-        case Referential::BottomLeft: return false;
-        case Referential::Bottom: return false;
-        case Referential::BottomRight: return true;
-        default: return false;
-        }
+        return m_refX == 1;
     }
 
-    bool isOnTopSide(Referential ref)
+    bool Referential::isOnTopSide() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return true;
-        case Referential::Top: return true;
-        case Referential::TopRight: return true;
-        case Referential::Left: return false;
-        case Referential::Center: return false;
-        case Referential::Right: return false;
-        case Referential::BottomLeft: return false;
-        case Referential::Bottom: return false;
-        case Referential::BottomRight: return false;
-        default: return false;
-        }
+        return m_refY == -1;
     }
 
-    bool isOnBottomSide(Referential ref)
+    bool Referential::isOnBottomSide() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return false;
-        case Referential::Top: return false;
-        case Referential::TopRight: return false;
-        case Referential::Left: return false;
-        case Referential::Center: return false;
-        case Referential::Right: return false;
-        case Referential::BottomLeft: return true;
-        case Referential::Bottom: return true;
-        case Referential::BottomRight: return true;
-        default: return false;
-        }
+        return m_refY == 1;
     }
 
-    bool isOnCorner(Referential ref)
+    bool Referential::isOnCorner() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return true;
-        case Referential::Top: return false;
-        case Referential::TopRight: return true;
-        case Referential::Left: return false;
-        case Referential::Center: return false;
-        case Referential::Right: return false;
-        case Referential::BottomLeft: return true;
-        case Referential::Bottom: return false;
-        case Referential::BottomRight: return true;
-        default: return false;
-        }
+        return (isOnLeftSide() || isOnRightSide())
+            && (isOnTopSide() || isOnBottomSide());
     }
 
-    bool isOnSide(Referential ref)
+    bool Referential::isOnSide() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return false;
-        case Referential::Top: return true;
-        case Referential::TopRight: return false;
-        case Referential::Left: return true;
-        case Referential::Center: return false;
-        case Referential::Right: return true;
-        case Referential::BottomLeft: return false;
-        case Referential::Bottom: return true;
-        case Referential::BottomRight: return false;
-        default: return false;
-        }
+        return (isOnLeftSide() || isOnRightSide())
+            ^ (isOnTopSide() || isOnBottomSide());
     }
 
-    UnitVector getReferentialOffset(Referential ref)
+    bool Referential::isKnown() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft:
-            return UnitVector(1, 1);
-        case Referential::Top:
-            return UnitVector(0, 1);
-        case Referential::TopRight:
-            return UnitVector(-1, 1);
-        case Referential::Left:
-            return UnitVector(1, 0);
-        case Referential::Center:
-            return UnitVector(0, 0);
-        case Referential::Right:
-            return UnitVector(-1, 0);
-        case Referential::BottomLeft:
-            return UnitVector(1, -1);
-        case Referential::Bottom:
-            return UnitVector(0, -1);
-        case Referential::BottomRight:
-            return UnitVector(-1, -1);
-        default:
-            return UnitVector(0, 0);
-        }
+        return (m_refX == -1 || m_refX == 0 || m_refX == 1) 
+        && (m_refY == -1 || m_refY == 0 || m_refY == 1);
     }
 
-    std::string referentialToString(Referential ref)
+    UnitVector Referential::getOffset() const
     {
-        switch (ref)
-        {
-        case Referential::TopLeft: return "TopLeft";
-        case Referential::Top: return "Top";
-        case Referential::TopRight: return "TopRight";
-        case Referential::Left: return "Left";
-        case Referential::Center: return "Center";
-        case Referential::Right: return "Right";
-        case Referential::BottomLeft: return "BottomLeft";
-        case Referential::Bottom: return "Bottom";
-        case Referential::BottomRight: return "BottomRight";
-        default: return "Error";
-        }
+        return UnitVector(m_refX, m_refY);
     }
 
-    Referential stringToReferential(const std::string& ref)
+    std::string Referential::toString(const std::string& format) const
+    {
+        if (m_refX == -1 && m_refY == -1)
+            return fmt::format(format, "TopLeft");
+        if (m_refX == 0 && m_refY == -1)
+            return fmt::format(format, "Top");
+        if (m_refX == 1 && m_refY == -1)
+            return fmt::format(format, "TopRight");
+        if (m_refX == -1 && m_refY == 0)
+            return fmt::format(format, "Left");
+        if (m_refX == 0 && m_refY == 0)
+            return fmt::format(format, "Center");
+        if (m_refX == 1 && m_refY == 0)
+            return fmt::format(format, "Right");
+        if (m_refX == -1 && m_refY == 1)
+            return fmt::format(format, "BottomLeft");
+        if (m_refX == 0 && m_refY == 1)
+            return fmt::format(format, "Bottom");
+        if (m_refX == 1 && m_refY == 1)
+            return fmt::format(format, "BottomRight");
+        else
+            return fmt::format(format, fmt::format("{}, {}", m_refX, m_refY), m_refX, m_refY);
+    }
+
+    Referential Referential::FromString(const std::string& ref)
     {
         if (ref == "TopLeft")
             return Referential::TopLeft;
@@ -220,12 +143,19 @@ namespace obe::Transform
             return Referential::Bottom;
         if (ref == "BottomRight")
             return Referential::BottomRight;
+        std::cmatch regMatch;
+        std::regex refRegex("Referential<\\s*(-?\\d+(\\.\\d+)?)\\s*,\\s*(-?\\d+(\\.\\d+)?)\\s*>");
+        std::regex_match(ref.c_str(), regMatch, refRegex);
+        if (regMatch.size() == 5)
+        {
+            return Referential(std::stod(regMatch[1]), std::stod(regMatch[3]));
+        }
         throw aube::ErrorHandler::Raise("ObEngine.Transform.Referential.UnknownReferential", { {"referential", ref} });
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)
     {
-        os << referentialToString(m);
+        os << m.toString();
         return os;
     }
 }

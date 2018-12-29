@@ -92,10 +92,10 @@ namespace obe::Bindings::GraphicsBindings
         Load(lua, "obe.UnitVector");
         Load(lua, "SFML.Color");
         (*lua)["obe"]["Canvas"] = kaguya::NewTable();
-        (*lua)["obe"]["Canvas"]["CanvasElement"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement>()
+        (*lua)["obe"]["Canvas"]["CanvasElement"].setClass(
+            kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement, Types::ProtectedIdentifiable>()
             .addProperty("layer", &Graphics::Canvas::CanvasElement::layer)
             .addProperty("visible", &Graphics::Canvas::CanvasElement::visible)
-            .addProperty("id", &Graphics::Canvas::CanvasElement::id)
             .addFunction("setLayer", &Graphics::Canvas::CanvasElement::setLayer)
         );
         (*lua)["obe"]["Canvas"]["CanvasShape"].setClass(kaguya::UserdataMetatable<Graphics::Canvas::CanvasPositionable>()

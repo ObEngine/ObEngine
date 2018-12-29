@@ -7,9 +7,8 @@
 
 namespace obe::Graphics::Canvas
 {     
-    CanvasElement::CanvasElement(Canvas* parent, const std::string& id)
+    CanvasElement::CanvasElement(Canvas* parent, const std::string& id) : ProtectedIdentifiable(id)
     {
-        this->id = id;
         this->parent = parent;
     }
 
@@ -122,7 +121,7 @@ namespace obe::Graphics::Canvas
     {
         for (auto& elem : m_elements)
         {
-            if (elem->id == id)
+            if (elem->getId() == id)
             {
                 return elem.get();
             }
@@ -163,7 +162,7 @@ namespace obe::Graphics::Canvas
     {
         m_elements.erase(std::remove_if(m_elements.begin(), m_elements.end(), [&id](auto& elem)
         {
-            return elem->id == id;
+            return elem->getId() == id;
         }), m_elements.end());
     }
 

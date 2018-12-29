@@ -1,7 +1,10 @@
+// Corresponding header
 #include <Animation/Animator.hpp>
+
+// ObEngineCore headers
+#include <Graphics/LevelSprite.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
-#include "Graphics/LevelSprite.hpp"
 
 namespace obe::Animation
 {

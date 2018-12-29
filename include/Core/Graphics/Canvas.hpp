@@ -9,6 +9,7 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/LevelSprite.hpp>
 #include <Transform/Polygon.hpp>
+#include <Types/Identifiable.hpp>
 
 namespace obe::Graphics::Canvas
 {
@@ -27,13 +28,12 @@ namespace obe::Graphics::Canvas
     /**
     * \brief A Drawable Canvas Element
     */
-    class CanvasElement
+    class CanvasElement : public Types::ProtectedIdentifiable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::CanvasElement;
 
         Canvas* parent;
-        std::string id; // <REVISION> Possible id overlap in Canvas
         unsigned int layer = 1;
         bool visible = true;
         CanvasElementType type;
@@ -266,8 +266,13 @@ namespace obe::Graphics::Canvas
         if (this->get(id) == nullptr)
         {
             m_sortRequired = true;
-            m_elements.push_back(std::make_unique<S>(this, id));
-            return static_cast<S*>(m_elements.back().get());
+            std::unique_ptr<S> newElement = std::make_unique<S>(this, id);
+            auto insert_it = std::find_if(
+                m_elements.begin(), m_elements.end(), 
+                [&newElement](const CanvasElement::Ptr& elem) { return newElement->layer <= elem->layer; }
+            );
+            auto elem_it = m_elements.insert(insert_it, std::move(newElement));
+            return static_cast<S*>(elem_it->get());
         }
         else if (this->get(id)->type == S::Type)
         {

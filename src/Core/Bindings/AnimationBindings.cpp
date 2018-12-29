@@ -1,10 +1,16 @@
+// Corresponding header
+#include <Bindings/AnimationBindings.hpp>
+
+// ObEngineCore headers
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
-#include <Bindings/AnimationBindings.hpp>
 #include <Graphics/LevelSprite.hpp>
 
-#include <kaguya/kaguya.hpp>
+// extlibs headers
+#include <kaguya/metatable.hpp>
+#include <kaguya/native_function.hpp>
+#include <kaguya/state.hpp>
 
 namespace obe::Bindings::AnimationBindings
 {

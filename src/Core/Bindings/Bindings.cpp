@@ -1,13 +1,16 @@
-#include <Bindings/AnimationBindings.hpp>
+// Corresponding header
 #include <Bindings/Bindings.hpp>
+
+// ObEngineCore headers
+#include <Bindings/AnimationBindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
 #include <Bindings/CPPBindings.hpp>
 #include <Bindings/DebugBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
-#include <Bindings/SFMLBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>
+#include <Bindings/SFMLBindings.hpp>
 #include <Bindings/SoundBindings.hpp>
 #include <Bindings/SystemBindings.hpp>
 #include <Bindings/TimeBindings.hpp>
@@ -20,6 +23,7 @@
 #include <System/Plugin.hpp>
 #include <Utils/StringUtils.hpp>
 
+// extlibs headers
 #include <kaguya/kaguya.hpp>
 
 namespace obe::Bindings
