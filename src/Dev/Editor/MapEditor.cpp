@@ -449,12 +449,18 @@ namespace obe::Editor
                 case sf::Event::MouseWheelMoved:
                     if (event.mouseWheel.delta >= scrollSensitive)
                     {
-                        scene.getCamera()->scale(0.9);
+                        scene.getCamera()->scale(0.9, Transform::Referential(
+                            double(cursor.getX()) / double(System::MainWindow.getSize().x),
+                            double(cursor.getY()) / double(System::MainWindow.getSize().y)
+                        ));
                         gameConsole.scroll(-1);
                     }
                     else if (event.mouseWheel.delta <= -scrollSensitive)
                     {
-                        scene.getCamera()->scale(1.1);
+                        scene.getCamera()->scale(1.1, Transform::Referential(
+                            double(cursor.getX()) / double(System::MainWindow.getSize().x),
+                            double(cursor.getY()) / double(System::MainWindow.getSize().y)
+                        ));
                         gameConsole.scroll(1);
                     }
                     cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));

@@ -1,5 +1,6 @@
 #include <Transform/Referential.hpp>
 
+#include <array>
 #include <regex>
 
 #include <fmt/format.h>
@@ -7,14 +8,14 @@
 
 namespace obe::Transform
 {
-    Referential Referential::TopLeft = Referential(-1, -1);
-    Referential Referential::Top = Referential(0, -1);
-    Referential Referential::TopRight = Referential(1, -1);
-    Referential Referential::Left = Referential(-1, 0);
-    Referential Referential::Center = Referential(0, 0);
-    Referential Referential::Right = Referential(1, 0);
-    Referential Referential::BottomLeft = Referential(-1, 1);
-    Referential Referential::Bottom = Referential(0, 1);
+    Referential Referential::TopLeft = Referential(0, 0);
+    Referential Referential::Top = Referential(0.5, 0);
+    Referential Referential::TopRight = Referential(1, 0);
+    Referential Referential::Left = Referential(0, 0.5);
+    Referential Referential::Center = Referential(0.5, 0.5);
+    Referential Referential::Right = Referential(1, 0.5);
+    Referential Referential::BottomLeft = Referential(0, 1);
+    Referential Referential::Bottom = Referential(0.5, 1);
     Referential Referential::BottomRight = Referential(1, 1);
     std::array<Referential, 9> Referential::Referentials = {
         Referential::TopLeft, Referential::Top, Referential::TopRight,

@@ -33,7 +33,7 @@ namespace obe::Transform
 
     void Rect::rotate(float angle, Transform::UnitVector origin)
     {
-        double radAngle = Utils::Math::convertToRadian(-angle);
+        const double radAngle = Utils::Math::convertToRadian(-angle);
             
         m_position = rotatePointAroundCenter(origin, m_position, radAngle);
         m_angle += angle;
@@ -49,9 +49,7 @@ namespace obe::Transform
         const double sinAngle = std::sin(radAngle);
         UnitVector result;
 
-        auto [dx, dy] = ref.getOffset().unpack();
-        dx += 1; dx /= 2.f;
-        dy += 1; dy /= 2.f;
+        auto [dx, dy] = (ref.getOffset() * m_size).unpack();
 
         vec.add(UnitVector(
             (dx * cosAngle - dy * sinAngle) * factor,
