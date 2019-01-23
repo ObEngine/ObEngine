@@ -20,7 +20,7 @@
 
 ## What do I need to build it ?
 You will need SFML :
-- [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2/index-fr.php) (Display, Input, Network, Sound and much more)
+- [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/index-fr.php) (Display, Input, Network, Sound and much more)
 
 There are other libraries but they are included in the repository (extlibs/ folder) :
 
