@@ -3,7 +3,7 @@ __ENVIRONMENTS = {};
 
 local inspect = require("Lib/StdLib/Inspect");
 
-function CreateNewEnv(env)
+function LuaCore.CreateNewEnv(env)
     local ENV = env or {};
     if env == nil then
         ENV["__ENV_ID"] = __ENV_COUNT;
@@ -15,7 +15,7 @@ function CreateNewEnv(env)
     return __ENV_COUNT - 1;
 end
 
-function ExecuteFileOnEnv(file, envIndex)
+function LuaCore.ExecuteFileOnEnv(file, envIndex)
     --print("Call file : ", file, "with index", envIndex);
     --print(inspect(__ENVIRONMENTS[envIndex]));
     assert(loadfile(file, "t", __ENVIRONMENTS[envIndex]))();
@@ -23,11 +23,11 @@ function ExecuteFileOnEnv(file, envIndex)
     --print("Call file : ", file, " is over");
 end
 
-function ExecuteStringOnEnv(code, envIndex)
+function LuaCore.ExecuteStringOnEnv(code, envIndex)
     assert(load(code, nil, "t", __ENVIRONMENTS[envIndex]))();
 end
 
-function EnvFuncInjector(env, triggerName)
+function LuaCore.EnvFuncInjector(env, triggerName)
     _ENV = __ENVIRONMENTS[env];
     local func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
     if type(func) == "string" then

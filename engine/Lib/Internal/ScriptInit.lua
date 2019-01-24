@@ -1,7 +1,5 @@
 Core = {}; -- Core Lib
-__TRIGGER_ARG_TABLE = {}; -- Future Trigger Call Parameters
 Scenes = {};
-LuaUtil = {};
 pl = {};
 Debug = {};
 
@@ -30,7 +28,7 @@ pl.Utils = require("Lib/StdLib/pl/utils");
 
 pl.String:import();
 
-function LuaUtil.Exists(path)
+function LuaCore.Exists(path)
     local pathToTest = load("return " .. path);
     noError, noNil = pcall(pathToTest);
     if not noError or noNil == nil then
@@ -39,10 +37,10 @@ function LuaUtil.Exists(path)
     return true;
 end
 
-LuaUtil.libList = {};
+LuaCore.libList = {};
 
-function LuaUtil.IsLibLoaded(lib)
-    for _, v in pairs(LuaUtil.libList) do
+function LuaCore.IsLibLoaded(lib)
+    for _, v in pairs(LuaCore.libList) do
         if v == lib then
             return true;
         end

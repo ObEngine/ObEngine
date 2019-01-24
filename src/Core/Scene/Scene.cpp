@@ -462,7 +462,7 @@ namespace obe::Scene
         const unsigned int envCount = Script::ScriptEngine["__ENV_COUNT"];
         for (unsigned int i = 0; i < envCount; i++)
         {
-            const bool exists = Script::ScriptEngine["LuaUtil"]["Exists"]("__ENVIRONMENTS[" + std::to_string(i) + "]");
+            const bool exists = Script::ScriptEngine["LuaCore"]["Exists"]("__ENVIRONMENTS[" + std::to_string(i) + "]");
             if (exists)
             {
                 Script::ScriptEngine["__ENVIRONMENTS"][i]["__ENV_ENABLED"] = state;

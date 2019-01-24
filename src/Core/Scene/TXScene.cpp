@@ -215,7 +215,7 @@ namespace obe::Scene
         Triggers::TriggerDatabase::GetInstance()->createNamespace(m_triggerNamespace);
         m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_triggerNamespace, "Local"), Triggers::TriggerGroupPtrRemover);
 
-        m_envIndex = Script::ScriptEngine["CreateNewEnv"]();
+        m_envIndex = Script::CreateNewEnvironment();
         AllEnvs.push_back(m_envIndex);
         //std::cout << "Environment Index is : " << m_envIndex << std::endl;
 

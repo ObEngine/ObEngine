@@ -33,6 +33,8 @@ namespace obe::Triggers
         std::vector<unsigned int> m_envsToRemove;
         bool m_currentlyTriggered = false;
         bool m_enabled = false;
+        std::function<void(const TriggerEnv&)> m_onRegisterCallback;
+        std::function<void(const TriggerEnv&)> m_onUnregisterCallback;
         friend class TriggerGroup;
         friend class TriggerDatabase;
     protected:
@@ -99,13 +101,15 @@ namespace obe::Triggers
         * \brief Triggers callbacks
         */
         void execute();
+        void onRegister(std::function<void(const TriggerEnv&)> callback);
+        void onUnregister(std::function<void(const TriggerEnv&)> callback);
     };
 
     template <typename P>
     void Trigger::pushParameter(const std::string& name, P parameter)
     {
         Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
-        Script::ScriptEngine["__TRIGGER_ARG_TABLE"][this->getTriggerLuaTableName()][name] = parameter;
+        Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()][name] = parameter;
     }
 }
 

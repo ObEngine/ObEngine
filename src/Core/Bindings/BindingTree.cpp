@@ -19,7 +19,7 @@ namespace obe::Bindings
 
     bool checkIfLuaElementExists(kaguya::State* lua, const std::string& path)
     {
-        const bool exists = (*lua)["LuaUtil"]["IsLibLoaded"](path);
+        const bool exists = (*lua)["LuaCore"]["IsLibLoaded"](path);
         return exists;
     }
 
@@ -140,7 +140,7 @@ namespace obe::Bindings
         if (!elementAlreadyExists && m_hasLib)
         {
             Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
-            (*lua)("table.insert(LuaUtil.libList, '" + this->getNodePath() + "');");
+            (*lua)("table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
             m_lib(lua);
         }
         if (spreads)

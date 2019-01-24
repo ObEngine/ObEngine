@@ -40,7 +40,6 @@ int main(int argc, char** argv)
     Utils::Exec::RunArgsParser runParser(argc, argv);
 	const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
-
     Debug::InitLogger();
     vili::ViliParser::StoreInCache("Obe.vili");
 

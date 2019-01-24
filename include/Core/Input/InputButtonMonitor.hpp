@@ -19,6 +19,7 @@ namespace obe::Input
         InputButton* m_button = nullptr;
         InputButtonState m_buttonState = InputButtonState::Idle;
         static Triggers::TriggerGroupPtr KeyTriggers;
+        static std::vector<std::shared_ptr<InputButtonMonitor>> TriggerMonitors;
     public:
         static void InitKeyTriggerGroup();
         /**

@@ -152,7 +152,7 @@ namespace obe::Script
             Triggers::TriggerDatabase::GetInstance()->createNamespace(m_privateKey);
             m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(m_privateKey, "Local"), Triggers::TriggerGroupPtrRemover);
 
-            m_envIndex = ScriptEngine["CreateNewEnv"]();
+            m_envIndex = CreateNewEnvironment();
             Debug::Log->trace("<GameObject> GameObject '{}' received Environment ID {}", m_id, m_envIndex);
             AllEnvs.push_back(m_envIndex);
 
@@ -365,7 +365,7 @@ namespace obe::Script
 
     void GameObject::exec(const std::string& query) const
     {
-        ScriptEngine["ExecuteStringOnEnv"](query, m_envIndex);
+        executeString(m_envIndex, query);
     }
 
     void GameObject::deleteObject()
