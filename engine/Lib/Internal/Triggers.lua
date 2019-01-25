@@ -1,7 +1,7 @@
 LuaCore.TriggerList = {}; -- TriggerList cache
 LuaCore.TriggerArgTable = {}; -- Future Trigger Call Parameters
 
-function LuaCore.MakeTriggerGroupSubTable(namespace)
+function LuaCore.MakeTriggerGroupSubTable(This, namespace)
     return {
         __newindex = function(object, index, value)
             if type(value) == "function" then
@@ -26,14 +26,14 @@ function LuaCore.MakeTriggerGroupSubTable(namespace)
     };    
 end
 
-function LuaCore.MakeTriggerGroupHook(namespace)
+function LuaCore.MakeTriggerGroupHook(This, namespace)
     local hook_mt = {
         __index = function(table, key)
             for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });
-                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(namespace));
+                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace));
                     end
                     return rawget(table, key);
                 end

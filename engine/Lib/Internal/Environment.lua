@@ -16,8 +16,6 @@ function LuaCore.CreateNewEnv(env)
 end
 
 function LuaCore.ExecuteFileOnEnv(file, envIndex)
-    --print("Call file : ", file, "with index", envIndex);
-    --print(inspect(__ENVIRONMENTS[envIndex]));
     assert(loadfile(file, "t", __ENVIRONMENTS[envIndex]))();
     --print("CALL RESULT : ", f, err);
     --print("Call file : ", file, " is over");

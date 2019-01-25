@@ -25,7 +25,7 @@ Local__Meta = {
 setmetatable(Local, Local__Meta);
 
 -- Global Triggers
-Global = LuaCore.MakeTriggerGroupHook("Global");
+Global = LuaCore.MakeTriggerGroupHook(This, "Global");
 
 function LuaCore.InjectInitInjectionTable()
     for k, v in pairs(LuaCore.ObjectInitInjectionTable) do
