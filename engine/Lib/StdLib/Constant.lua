@@ -1,5 +1,5 @@
 const_protected = {};
-function const(key, value)
+local function const(key, value)
     if _G[key] then
         protected[key] = _G[key];
         _G[key] = nil;

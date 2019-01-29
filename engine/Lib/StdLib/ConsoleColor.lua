@@ -1,7 +1,5 @@
 local Color = {};
 
-inspect = require("Lib/StdLib/Inspect");
-
 function Color.print(textTable, indent)
     if type(textTable) == "string" then
         textTable = {{text = textTable}};
