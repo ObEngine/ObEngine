@@ -53,13 +53,13 @@ namespace obe::Transform
             (axis == Referential::Axis::Both || 
             axis == Referential::Axis::Vertical);
         return Referential(
-            bothOrHorizontal ? -m_refX : m_refX,
-            bothOrVertical ? -m_refY : m_refY);
+            bothOrHorizontal ? 1 - m_refX : m_refX,
+            bothOrVertical ? 1 - m_refY : m_refY);
     }
 
     bool Referential::isOnLeftSide() const
     {
-        return m_refX == -1;
+        return m_refX == 0;
     }
 
     bool Referential::isOnRightSide() const
@@ -69,7 +69,7 @@ namespace obe::Transform
 
     bool Referential::isOnTopSide() const
     {
-        return m_refY == -1;
+        return m_refY == 0;
     }
 
     bool Referential::isOnBottomSide() const
@@ -91,8 +91,8 @@ namespace obe::Transform
 
     bool Referential::isKnown() const
     {
-        return (m_refX == -1 || m_refX == 0 || m_refX == 1) 
-        && (m_refY == -1 || m_refY == 0 || m_refY == 1);
+        return (m_refX == 0 || m_refX == 0.5 || m_refX == 1) 
+        && (m_refY == 0 || m_refY == 0.5 || m_refY == 1);
     }
 
     UnitVector Referential::getOffset() const
@@ -102,21 +102,21 @@ namespace obe::Transform
 
     std::string Referential::toString(const std::string& format) const
     {
-        if (m_refX == -1 && m_refY == -1)
-            return fmt::format(format, "TopLeft");
-        if (m_refX == 0 && m_refY == -1)
-            return fmt::format(format, "Top");
-        if (m_refX == 1 && m_refY == -1)
-            return fmt::format(format, "TopRight");
-        if (m_refX == -1 && m_refY == 0)
-            return fmt::format(format, "Left");
         if (m_refX == 0 && m_refY == 0)
-            return fmt::format(format, "Center");
+            return fmt::format(format, "TopLeft");
+        if (m_refX == 0.5 && m_refY == 0)
+            return fmt::format(format, "Top");
         if (m_refX == 1 && m_refY == 0)
+            return fmt::format(format, "TopRight");
+        if (m_refX == 0 && m_refY == 0.5)
+            return fmt::format(format, "Left");
+        if (m_refX == 0.5 && m_refY == 0.5)
+            return fmt::format(format, "Center");
+        if (m_refX == 1 && m_refY == 0.5)
             return fmt::format(format, "Right");
-        if (m_refX == -1 && m_refY == 1)
-            return fmt::format(format, "BottomLeft");
         if (m_refX == 0 && m_refY == 1)
+            return fmt::format(format, "BottomLeft");
+        if (m_refX == 0.5 && m_refY == 1)
             return fmt::format(format, "Bottom");
         if (m_refX == 1 && m_refY == 1)
             return fmt::format(format, "BottomRight");
@@ -145,7 +145,7 @@ namespace obe::Transform
         if (ref == "BottomRight")
             return Referential::BottomRight;
         std::cmatch regMatch;
-        std::regex refRegex("Referential<\\s*(-?\\d+(\\.\\d+)?)\\s*,\\s*(-?\\d+(\\.\\d+)?)\\s*>");
+        const std::regex refRegex(R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
         std::regex_match(ref.c_str(), regMatch, refRegex);
         if (regMatch.size() == 5)
         {

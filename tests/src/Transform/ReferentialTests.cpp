@@ -48,10 +48,10 @@ TEST_CASE(
     }
     SECTION("Flipping both axis of random referentials")
     {
-        REQUIRE( Referential(0.1, 0.4).flip() == Referential(-0.1, -0.4) );
-        REQUIRE( Referential(-0.4, 0.666).flip() == Referential(0.4, -0.666) );
-        REQUIRE( Referential(0.9, -0.23).flip() == Referential(-0.9, 0.23) );
-        REQUIRE( Referential(-0.123, -0.456).flip() == Referential(0.123, 0.456) );
+        REQUIRE( Referential(0.1, 0.4).flip() == Referential(0.9, 0.6) );
+        REQUIRE( Referential(0.4, 0.666).flip() == Referential(0.6, 0.334) );
+        REQUIRE( Referential(0.9, 0.23).flip() == Referential(-0.9, 0.23) );
+        REQUIRE( Referential(0.123, 0.456).flip() == Referential(0.123, 0.456) );
     }
 }
 

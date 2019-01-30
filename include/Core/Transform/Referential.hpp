@@ -12,8 +12,7 @@ namespace obe::Transform
     class Referential
     {
     private:
-        double m_refX;
-        double m_refY;
+        Vector2 m_xy;
     public:
         enum class Axis
         {
@@ -79,7 +78,7 @@ namespace obe::Transform
 
         /**
          * \brief Get the name of a Referential in std::string form
-         * \param ref Referential you want to get the name
+         * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
         std::string toString(const std::string& format = "Referential<{}>") const;
