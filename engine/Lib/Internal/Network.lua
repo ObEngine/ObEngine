@@ -1,14 +1,15 @@
 local binser = require("Lib/Extlibs/binser");
 
+function obe.Network.DefaultAcceptClient(self, client)
+    self.accept(client);
+end
+
 obe.Network.TCPServer = Class("Server", function(self, port)
     self.port = port;
     self.server = obe.Network.InternalServer(port);
     self.server:setBlocking(false, false);
-    self.server:listen();
-    self.hooks = obe.Triggers.Listen(self.server, obe.Triggers.DefaultGroup);
-    self.hooks.OnConnect = function(client)
-        return true;
-    end
+    self.server:listen(obe.Network.DefaultAcceptClient);
+    self.hooks = obe.Listen(self.server.privateKey, "Default");
 end)
 
 function obe.Network.TCPServer:getHooks(This)

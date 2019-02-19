@@ -218,7 +218,7 @@ class = setmetatable({},{
             io.stderr:write('require("pl.class").class is deprecated. Use require("pl.class")\n')
             return class
         end
-        compat = compat or require 'Lib.StdLib.pl.compat'
+        compat = compat or require 'Lib.Extlibs.pl.compat'
         local env = compat.getfenv(2)
         return function(...)
             local c = _class(...)

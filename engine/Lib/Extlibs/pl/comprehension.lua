@@ -2,7 +2,7 @@
 --
 -- See the [wiki page](http://lua-users.org/wiki/ListComprehensions)
 --
---    local C= require 'Lib.StdLib.pl.comprehension' . new()
+--    local C= require 'Lib.Extlibs.pl.comprehension' . new()
 --
 --    C ('x for x=1,10') ()
 --    ==> {1,2,3,4,5,6,7,8,9,10}
@@ -30,9 +30,9 @@
 -- See @{07-functional.md.List_Comprehensions|the Guide}
 -- @module pl.comprehension
 
-local utils = require 'Lib.StdLib.pl.utils'
+local utils = require 'Lib.Extlibs.pl.utils'
 
-local status,lb = pcall(require, "Lib.StdLib.pl.luabalanced")
+local status,lb = pcall(require, "Lib.Extlibs.pl.luabalanced")
 if not status then
     lb = require 'luabalanced'
 end

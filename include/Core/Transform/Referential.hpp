@@ -12,7 +12,8 @@ namespace obe::Transform
     class Referential
     {
     private:
-        Vector2 m_xy;
+        double m_refX;
+        double m_refY;
     public:
         enum class Axis
         {

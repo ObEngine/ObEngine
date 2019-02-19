@@ -1,6 +1,8 @@
 #include <Network/NetworkHandler.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
+#include <iostream>
+
 namespace obe::Network
 {
     NetworkHandler::NetworkHandler() : 

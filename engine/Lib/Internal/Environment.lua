@@ -1,8 +1,6 @@
 local __ENV_COUNT = 0; -- Remove local for weird bug
 __ENVIRONMENTS = {};
 
-local inspect = require("Lib/StdLib/Inspect");
-
 function LuaCore.CreateNewEnv(env)
     local ENV = env or {};
     if env == nil then

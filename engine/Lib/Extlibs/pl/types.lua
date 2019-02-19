@@ -3,7 +3,7 @@
 -- Dependencies `pl.utils`
 -- @module pl.types
 
-local utils = require 'Lib.StdLib.pl.utils'
+local utils = require 'Lib.Extlibs.pl.utils'
 local types = {}
 
 --- is the object either a function or a callable object?.

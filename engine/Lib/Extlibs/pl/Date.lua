@@ -5,10 +5,10 @@
 -- @classmod pl.Date
 -- @pragma nostrip
 
-local class = require 'Lib.StdLib.pl.class'
+local class = require 'Lib.Extlibs.pl.class'
 local os_time, os_date = os.time, os.date
-local stringx = require 'Lib.StdLib.pl.stringx'
-local utils = require 'Lib.StdLib.pl.utils'
+local stringx = require 'Lib.Extlibs.pl.stringx'
+local utils = require 'Lib.Extlibs.pl.utils'
 local assert_arg,assert_string = utils.assert_arg,utils.assert_string
 
 local Date = class()
