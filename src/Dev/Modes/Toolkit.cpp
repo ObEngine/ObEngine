@@ -90,6 +90,7 @@ namespace obe::Modes
         });
 
         toolkitEngine["This"] = &toolkitEngine;
+        toolkitEngine.dofile("Lib/Internal/LuaCore.lua");
         toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
         Bindings::BindTree(&toolkitEngine);
         toolkitEngine["obe"]["version"] = OBENGINE_VERSION;

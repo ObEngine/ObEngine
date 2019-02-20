@@ -1,7 +1,6 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 local Route = require("Lib/Toolkit/Route");
 local Style = require("Lib/Toolkit/Stylesheet")
-local inspect = require("Lib/StdLib/Inspect");
 
 local Functions = {};
 

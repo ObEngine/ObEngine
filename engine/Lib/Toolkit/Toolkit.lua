@@ -1,7 +1,6 @@
 -- Dependancies
 local String = require("Lib/StdLib/String");
 local Color = require("Lib/StdLib/ConsoleColor");
-local inspect = require("Lib/StdLib/Inspect");
 local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
 local Table = require("Lib/StdLib/Table");
