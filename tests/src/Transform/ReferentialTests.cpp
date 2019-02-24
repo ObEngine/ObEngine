@@ -49,9 +49,9 @@ TEST_CASE(
     SECTION("Flipping both axis of random referentials")
     {
         REQUIRE( Referential(0.1, 0.4).flip() == Referential(0.9, 0.6) );
-        REQUIRE( Referential(0.4, 0.666).flip() == Referential(0.6, 0.334) );
-        REQUIRE( Referential(0.9, 0.23).flip() == Referential(-0.9, 0.23) );
-        REQUIRE( Referential(0.123, 0.456).flip() == Referential(0.123, 0.456) );
+        REQUIRE( Referential(0.4, 0.6).flip() == Referential(0.6, 0.4) );
+        REQUIRE( Referential(0.2, 0.2).flip() == Referential(0.8, 0.8) );
+        REQUIRE( Referential(0.3, 0.5).flip() == Referential(0.7, 0.5) );
     }
 }
 
@@ -135,17 +135,17 @@ TEST_CASE(
     SECTION("Testing random referentials and their positions")
     {
         REQUIRE( Referential(1, 0.33).isOnRightSide() );
-        REQUIRE( Referential(-1, 0.66).isOnLeftSide() );
+        REQUIRE( Referential(0, 0.66).isOnLeftSide() );
         REQUIRE( Referential(0.22, 1).isOnBottomSide() );
-        REQUIRE( Referential(-0.11, -1).isOnTopSide() );
+        REQUIRE( Referential(-0.11, 0).isOnTopSide() );
         REQUIRE( Referential(0.99, 1).isOnSide() );
-        REQUIRE( Referential(-1, -1).isOnCorner() );
+        REQUIRE( Referential(0, 0).isOnCorner() );
         REQUIRE_FALSE( Referential(0.999, 0.33).isOnRightSide() );
         REQUIRE_FALSE( Referential(1, 0.66).isOnLeftSide() );
-        REQUIRE_FALSE( Referential(0.22, -1).isOnBottomSide() );
-        REQUIRE_FALSE( Referential(-0.11, 1).isOnTopSide() );
+        REQUIRE_FALSE( Referential(0.22, 0).isOnBottomSide() );
+        REQUIRE_FALSE( Referential(0.11, 1).isOnTopSide() );
         REQUIRE_FALSE( Referential(0.99, 0.99).isOnSide() );
-        REQUIRE_FALSE( Referential(-0.4, -1).isOnCorner() );
+        REQUIRE_FALSE( Referential(0.4, 0).isOnCorner() );
     }
 }
 
