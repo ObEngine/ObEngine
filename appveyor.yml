@@ -59,7 +59,7 @@ artifacts:
     name: ObEngine-win64
 
 deploy:
-  release: obengine-unstable
+  release: obengine-unstable-win
   description: 'ObEngine Unstable Release (From latest commit)'
   provider: GitHub
   auth_token:
