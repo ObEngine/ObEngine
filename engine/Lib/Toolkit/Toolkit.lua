@@ -119,7 +119,6 @@ function printHelp(arg)
     local command = splitCommandAndArgs(arg);
     table.insert(helpParts, {text = command.name .. " ", color = Style.Command});
     for i = 1, #command.args do
-        print(i, i == #command.args);
         if i == #command.args then
             table.insert(helpParts, {text = command.args[i] .. " ", color = Style.Workspace})
         else
@@ -134,11 +133,8 @@ end
 -- Get the "Help" child in a command node
 function getHelp(arg)
     if type(arg) == "table" then
-        print("Inspecting help for table", inspect(arg))
         for _, child in pairs(arg) do
-            print("Child ! ", inspect(child))
             if child.type == "Help" then
-                print("Found help", child.help)
                 return child.help;
             end
         end
@@ -149,7 +145,6 @@ function getHelp(arg)
                 id = "{root}", 
                 children = ToolkitFunctions[command.name].Routes
             }, command.args);
-            print(inspect(node.children))
             return getHelp(node.children);
         else
             Color.print({
@@ -207,7 +202,6 @@ function buildCommandExecution(func, args)
                     sendBuffer = msg;
                 end
             elseif wakeType == "autocomplete" then
-                print("Triggering autocomplete");
                 sendBuffer = autocomplete.value.func(input);
             end
         end
@@ -271,10 +265,11 @@ function autocompleteArgs(command, query)
             -- We check the type of the current child
             if arg.type == "Node" then
                 -- If we found a Node and the beginning of the current argument value matches the id of the node
+                arg.name = id;
                 if start ~= nil and string.sub(id, 1, string.len(start)) == start then
-                    arglist[id] = arg;
+                    table.insert(arglist, arg);
                 elseif start == nil then
-                    arglist[id] = arg;
+                    table.insert(arglist, arg);
                 end
             elseif arg.type == "Argument" then
                 -- If we found an Argument child
@@ -294,12 +289,11 @@ function autocompleteArgs(command, query)
                     -- We call the autocomplete function
                     local autocompleteResult = autocompleteFunction(start);
                     -- We build a table containing all the suggestions returned by the function
-                    print(inspect(autocompleteResult))
                     for _, content in pairs(autocompleteResult) do
                         -- If the part of the last argument matches the beginning of the current completion
                         if start ~= nil and content:sub(1, string.len(start)) == start then
                             -- We insert it into suggestions
-                            arglist[content] = { 
+                            table.insert(arglist, { 
                                 children = {
                                     { 
                                         type = "Help", 
@@ -307,11 +301,12 @@ function autocompleteArgs(command, query)
                                         .. "\n            (" .. getHelp(arg.children) .. ")" 
                                     }
                                 },
-                                type = "Node"
-                            };
+                                type = "Node",
+                                name = content
+                            });
                         elseif start == nil then
                             -- If the current argument is empty, we can insert any completion
-                            arglist[content] = { 
+                            table.insert(arglist, { 
                                 children = {
                                     { 
                                         type = "Help", 
@@ -319,8 +314,9 @@ function autocompleteArgs(command, query)
                                         .. "\n            (" .. getHelp(arg.children) .. ")" 
                                     }
                                 },
-                                type = "Node"
-                            };
+                                type = "Node",
+                                name = content
+                            });
                         end
                     end
                 else
@@ -329,9 +325,15 @@ function autocompleteArgs(command, query)
                     if getHelp(arg.children) ~= "" then
                         defaultHelp = getHelp(arg.children);
                     end
-                    arglist["<" .. id .. ">"] = { 
-                        children = {{ type = "Help", help = defaultHelp }}
-                    };
+                    table.insert({ 
+                        children = {
+                            { 
+                                type = "Help", 
+                                help = defaultHelp 
+                            }
+                        },
+                        name = "<" .. id .. ">"
+                    });
                 end
             end
         end
@@ -350,9 +352,9 @@ function autocompleteHandle(command)
             local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
             -- We remove
             local nodesOnly = {};
-            for k, v in pairs(completions) do
-                if v.type == "Node" and k:sub(1, 1) ~= "<" and k:sub(#k, #k) ~= ">" then
-                    nodesOnly[k] = v;
+            for _, v in pairs(completions) do
+                if v.type == "Node" and v.name:sub(1, 1) ~= "<" and v.name:sub(#v.name, #v.name) ~= ">" then
+                    nodesOnly[v.name] = v;
                 end
             end
             local completionKeys = Table.getKeys(nodesOnly);
@@ -433,15 +435,15 @@ function autocomplete(input)
                 local checkCurrentInput = autocompleteHandle(command);
                 -- We always show all suggestions
                 local completions = autocompleteArgs(ToolkitFunctions[command.name].Routes, command.strArgs);
-                if Table.getSize(completions) == 1 and Table.getKeys(completions)[1] == command.args[#command.args] then
+                if Table.getSize(completions) == 1 and completions[1].name == command.args[#command.args] then
                     input = input .. " ";
                     _term_write(" ");
                 else
                     askForCompletion(input);
-                    for compId, completion in pairs(completions) do
+                    for _, completion in pairs(completions) do
                         Color.print({
                             {text = "> ", color = Style.Default},
-                            {text = compId, color = Style.Argument},
+                            {text = completion.name, color = Style.Argument},
                             {text = " : ", color = Style.Default},
                             {text = getHelp(completion.children), color = Style.Help}
                         }, 2);
