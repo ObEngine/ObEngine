@@ -10,4 +10,6 @@ namespace obe::Debug
 
     void InitLogger();
     void InitLoggerLevel();
+    void SetLoggerLevel(const spdlog::level::level_enum);
+
 }

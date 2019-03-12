@@ -45,4 +45,11 @@ namespace obe::Debug
         if (System::Config->contains("Debug") && System::Config.at("Debug").contains("logLevel"))
             Log->set_level(lvle);
     }
+
+    void SetLoggerLevel(const spdlog::level::level_enum lvle)
+    {
+        System::Config.at("Debug").getDataNode("logLevel").set(static_cast<int>(lvle));
+        //System::Config.writeFile(); Waiting for MultipleViliParser
+        InitLoggerLevel();
+    }
 }

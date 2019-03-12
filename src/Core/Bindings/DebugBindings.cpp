@@ -11,6 +11,7 @@ namespace obe::Bindings::DebugBindings
     void LoadLog(kaguya::State* lua)
     {
         (*lua)["obe"]["Debug"] = kaguya::NewTable();
+        (*lua)["obe"]["Debug"]["setLevel"] = kaguya::function(Debug::SetLoggerLevel);
         (*lua)["obe"]["Debug"]["__critical_internal"] = kaguya::function([](const std::string& str)
         {
             Debug::Log->critical(str);
