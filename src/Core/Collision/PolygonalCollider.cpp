@@ -376,10 +376,8 @@ namespace obe::Collision
         {
             if (checkTags(*collider))
             {
-                Debug::Log->debug("Tags ok {}", collider->getId());
                 if (this->doesCollide(*collider, offset))
                 {
-                    Debug::Log->debug("Collided with {}", collider->getId());
                     return true;
                 }
                     

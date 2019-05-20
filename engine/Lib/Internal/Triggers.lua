@@ -1,4 +1,3 @@
-LuaCore.TriggerList = {}; -- TriggerList cache
 LuaCore.TriggerArgTable = {}; -- Future Trigger Call Parameters
 
 function LuaCore.MakeTriggerGroupSubTable(This, namespace)
@@ -47,16 +46,16 @@ function LuaCore.MakeTriggerGroupHook(This, namespace)
 end
 
 local ArgMirror = require('Lib/Internal/ArgMirror');
-function LuaCore.IndexTriggerArgList(triggerName, funcToCall)
-    LuaCore.TriggerList[triggerName].args = ArgMirror.GetArgs(funcToCall);
+function LuaCore.IndexTriggerArgList(env, triggerName, funcToCall)
+    env["__TRIGGERS"][triggerName].args = ArgMirror.GetArgs(funcToCall);
 end
 
-function LuaCore.FuncInjector(funcToCall, triggerRegisterName)
+function LuaCore.FuncInjector(env, funcToCall, triggerRegisterName)
     if type(funcToCall) == "function" then
-        if not LuaCore.TriggerList[triggerRegisterName].args then
-            LuaCore.IndexTriggerArgList(triggerRegisterName, funcToCall);
+        if not env["__TRIGGERS"][triggerRegisterName].args then
+            LuaCore.IndexTriggerArgList(env, triggerRegisterName, funcToCall);
         end
-        local Lua_Func_ArgList = LuaCore.TriggerList[triggerRegisterName].args;
+        local Lua_Func_ArgList = env["__TRIGGERS"][triggerRegisterName].args;
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
             if (LuaCore.TriggerArgTable[triggerRegisterName]) then

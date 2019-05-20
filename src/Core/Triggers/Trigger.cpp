@@ -54,14 +54,12 @@ namespace obe::Triggers
         Script::ScriptEngine
             ["__ENVIRONMENTS"]
             [envIndex]
-            ["LuaCore"]
-            ["TriggerList"]
+            ["__TRIGGERS"]
             [this->getTriggerLuaTableName()] = kaguya::NewTable();
         Script::ScriptEngine
             ["__ENVIRONMENTS"]
             [envIndex]
-            ["LuaCore"]
-            ["TriggerList"]
+            ["__TRIGGERS"]
             [this->getTriggerLuaTableName()]
             ["callback"] = callbackName;
         if (m_onRegisterCallback)
@@ -80,8 +78,7 @@ namespace obe::Triggers
         Script::ScriptEngine
             ["__ENVIRONMENTS"]
             [envIndex]
-            ["LuaCore"]
-            ["TriggerList"]
+            ["__TRIGGERS"]
             [this->getTriggerLuaTableName()] = kaguya::NilValue();
         for (const TriggerEnv& triggerEnv : m_registeredEnvs)
         {

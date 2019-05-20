@@ -6,6 +6,7 @@ function LuaCore.CreateNewEnv(env)
     if env == nil then
         ENV["__ENV_ID"] = __ENV_COUNT;
         ENV["__ENV_ENABLED"] = true;
+        ENV["__TRIGGERS"] = {};
         setmetatable(ENV, {__index=_G});
         __ENVIRONMENTS[__ENV_COUNT] = ENV;
         __ENV_COUNT = __ENV_COUNT + 1;
@@ -25,11 +26,11 @@ end
 
 function LuaCore.EnvFuncInjector(env, triggerName)
     _ENV = __ENVIRONMENTS[env];
-    local func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
+    local func = _ENV["__TRIGGERS"][triggerName].callback;
     if type(func) == "string" then
-        _ENV["LuaCore"]["TriggerList"][triggerName].callback = assert(load("return " .. func, nil, "t", _ENV))();
-        func = _ENV["LuaCore"]["TriggerList"][triggerName].callback;
+        _ENV["__TRIGGERS"][triggerName].callback = assert(load("return " .. func, nil, "t", _ENV))();
+        func = _ENV["__TRIGGERS"][triggerName].callback;
     end
-    _ENV["LuaCore"].FuncInjector(func, triggerName);
+    LuaCore.FuncInjector(_ENV, func, triggerName);
     _ENV = _G;
 end
