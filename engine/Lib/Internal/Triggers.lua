@@ -1,16 +1,17 @@
 LuaCore.TriggerArgTable = {}; -- Future Trigger Call Parameters
 
-function LuaCore.MakeTriggerGroupSubTable(This, namespace)
+function LuaCore.MakeTriggerGroupSubTable(This, namespace, aliasFunction)
     return {
         __newindex = function(object, index, value)
             if type(value) == "function" then
-                This:useExternalTrigger(namespace, object.triggerGroupId, index);
+                local alias = aliasFunction(namespace, object.triggerGroupId, index);
+                This:useTrigger(namespace, object.triggerGroupId, index, alias);
                 local mt = getmetatable(object);
                 mt.__storage[index] = value;
             elseif type(value) == "nil" then
                 local mt = getmetatable(object);
                 mt.__storage[index] = nil;
-                This:removeExternalTrigger(namespace, object.triggerGroupId, index);
+                This:removeTrigger(namespace, object.triggerGroupId, index);
             end
         end,
         __index = function(object, index)
@@ -25,14 +26,19 @@ function LuaCore.MakeTriggerGroupSubTable(This, namespace)
     };    
 end
 
-function LuaCore.MakeTriggerGroupHook(This, namespace)
+function LuaCore.DefaultTriggerAlias(namespace, group, id)
+    return namespace .. "." .. group .. "." .. id;
+end
+
+function LuaCore.MakeTriggerGroupHook(This, namespace, aliasFunction)
+    aliasFunction = aliasFunction or LuaCore.DefaultTriggerAlias;
     local hook_mt = {
         __index = function(table, key)
             for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });
-                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace));
+                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace, aliasFunction));
                     end
                     return rawget(table, key);
                 end

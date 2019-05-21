@@ -6,7 +6,7 @@
 
 namespace obe::Bindings::ScriptBindings
 {
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useExternalTriggerProxy, GameObject, useExternalTrigger, 3, 4,
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useTriggerProxy, GameObject, useTrigger, 3, 4,
         void(Script::GameObject::*)(std::string, std::string, std::string, std::string));
     void LoadGameObject(kaguya::State* lua)
     {
@@ -21,10 +21,9 @@ namespace obe::Bindings::ScriptBindings
             .addFunction("getConstructor", &Script::GameObject::getConstructor)
             .addFunction("getSceneNode", &Script::GameObject::getSceneNode)
             .addFunction("getType", &Script::GameObject::getType)
-            .addFunction("removeExternalTrigger", &Script::GameObject::removeExternalTrigger)
+            .addFunction("removeTrigger", &Script::GameObject::removeTrigger)
             .addFunction("sendInitArg", &Script::GameObject::sendInitArgFromLua)
-            .addFunction("useLocalTrigger", &Script::GameObject::useLocalTrigger)
-            .addFunction("useExternalTrigger", useExternalTriggerProxy())
+            .addFunction("useTrigger", useTriggerProxy())
             .addFunction("access", &Script::GameObject::access)
         );
     }

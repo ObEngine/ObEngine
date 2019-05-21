@@ -144,24 +144,14 @@ namespace obe::Script
         */
         Scene::SceneNode* getSceneNode();
         /**
-        * \brief Gets the TriggerGroup managing Local Triggers of the GameObject
-        * \return A pointer to the TriggerGroup of the GameObject
-        */
-        Triggers::TriggerGroup* getLocalTriggers() const;
-        /**
-        * \brief Enables the use of a LocalTrigger (Internal Use Only)
-        * \param trName Name of the Local Trigger to enable (Init, Update, etc..)
-        */
-        void useLocalTrigger(const std::string& trName);
-        /**
         * \brief Register a non-local Trigger for the GameObject
         * \param trNsp Namespace where the Trigger to register is
         * \param trGrp TriggerGroup where the Trigger to register is
         * \param trName Name of the Trigger to register
         * \param callAlias Alias (name of the callback) associated with the Trigger
         */
-        void useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias = "");
-        void removeExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const;
+        void useTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias = "");
+        void removeTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const;
         /**
         * \brief Execute a Lua String in the Lua State of the GameObject
         * \param query String to execute

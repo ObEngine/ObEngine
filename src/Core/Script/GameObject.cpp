@@ -14,9 +14,6 @@
 
 namespace obe::Script
 {
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(useExternalTriggerProxy, GameObject, useExternalTrigger, 3, 4,
-        void(GameObject::*)(std::string, std::string, std::string, std::string));
-
     /*kaguya::LuaTable GameObject::access(kaguya::State* lua) const
     {
         return (*m_objectScript)["Object"];
@@ -309,25 +306,14 @@ namespace obe::Script
         throw aube::ErrorHandler::Raise("ObEngine.Script.GameObject.NoAnimator", {{"id", m_id}});
     }
 
-    Triggers::TriggerGroup* GameObject::getLocalTriggers() const
-    {
-        return m_localTriggers.operator->();
-    }
-
-    void GameObject::useLocalTrigger(const std::string& trName)
-    {
-        this->registerTrigger(Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName), "Local." + trName);
-        Triggers::TriggerDatabase::GetInstance()->getTrigger(m_privateKey, "Local", trName)->registerEnvironment(m_envIndex, "Local." + trName, &m_active);
-    }
-
-    void GameObject::useExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
+    void GameObject::useTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName, const std::string& callAlias)
     {
         if (trName == "*")
         {
             std::vector<std::string> allTrg = Triggers::TriggerDatabase::GetInstance()->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
             for (int i = 0; i < allTrg.size(); i++)
             {
-                this->useExternalTrigger(trNsp, trGrp, trName, 
+                this->useTrigger(trNsp, trGrp, trName, 
                     (Utils::String::occurencesInString(callAlias, "*")) ? 
                     Utils::String::replace(callAlias, "*", allTrg[i]) : 
                     "");
@@ -358,7 +344,7 @@ namespace obe::Script
         }
     }
 
-    void GameObject::removeExternalTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const
+    void GameObject::removeTrigger(const std::string& trNsp, const std::string& trGrp, const std::string& trName) const
     {
         Triggers::TriggerDatabase::GetInstance()->getTrigger(trNsp, trGrp, trName)->unregisterEnvironment(m_envIndex);
     }

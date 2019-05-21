@@ -14,15 +14,14 @@ function ObjectInit(argtable)
     return Object;
 end
 
--- Local Triggers
-Local = {};
-Local__Meta = {
-    __newindex = function(object, index, value)
-        rawset(object, index, value);
-        This:useLocalTrigger(index);
+__PRIVATE_TRIGGERS = LuaCore.MakeTriggerGroupHook(This, Private, function(namespace, group, id)
+    if group == "Local" then
+        return "Local." .. id;
+    else
+        return LuaCore.DefaultTriggerAlias(namespace, group, id);
     end
-}
-setmetatable(Local, Local__Meta);
+end);
+Local = __PRIVATE_TRIGGERS["Local"];
 
 -- Global Triggers
 Global = LuaCore.MakeTriggerGroupHook(This, "Global");
