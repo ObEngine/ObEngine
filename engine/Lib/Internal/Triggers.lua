@@ -1,12 +1,18 @@
 LuaCore.TriggerArgTable = {}; -- Future Trigger Call Parameters
 
-function LuaCore.MakeTriggerGroupSubTable(This, namespace, aliasFunction)
+function LuaCore.DefaultTriggerAlias(namespace, group, id)
+    return namespace .. "." .. group .. "." .. id;
+end
+
+function LuaCore.MakeTriggerGroupSubTable(This, namespace)
     return {
+        __alias_function = LuaCore.DefaultTriggerAlias,
         __newindex = function(object, index, value)
             if type(value) == "function" then
-                local alias = aliasFunction(namespace, object.triggerGroupId, index);
-                This:useTrigger(namespace, object.triggerGroupId, index, alias);
                 local mt = getmetatable(object);
+                print(inspect(mt))
+                local alias = mt.__alias_function(namespace, object.triggerGroupId, index);
+                This:useTrigger(namespace, object.triggerGroupId, index, alias);
                 mt.__storage[index] = value;
             elseif type(value) == "nil" then
                 local mt = getmetatable(object);
@@ -26,19 +32,16 @@ function LuaCore.MakeTriggerGroupSubTable(This, namespace, aliasFunction)
     };    
 end
 
-function LuaCore.DefaultTriggerAlias(namespace, group, id)
-    return namespace .. "." .. group .. "." .. id;
-end
 
-function LuaCore.MakeTriggerGroupHook(This, namespace, aliasFunction)
-    aliasFunction = aliasFunction or LuaCore.DefaultTriggerAlias;
+
+function LuaCore.MakeTriggerGroupHook(This, namespace)
     local hook_mt = {
         __index = function(table, key)
             for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });
-                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace, aliasFunction));
+                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace));
                     end
                     return rawget(table, key);
                 end

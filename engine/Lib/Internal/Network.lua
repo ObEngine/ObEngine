@@ -1,4 +1,4 @@
-local binser = require("Lib/Extlibs/binser");
+--local binser = require("Lib/Extlibs/binser");
 
 --[[function obe.Network.DefaultAcceptClient(self, client)
     self.accept(client);
@@ -22,8 +22,3 @@ end
 
 obe.Network.Client = Class("Server")]]
 
-obe.Network.__SERVER_LIST = {};
-function obe.Network.Server(port)
-    obe.Network.__SERVER_LIST[port].server = obe.Network.TcpServer(port);
-    return Server;
-end

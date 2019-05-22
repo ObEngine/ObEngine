@@ -8,6 +8,7 @@
 #include <Bindings/DebugBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
+#include <Bindings/NetworkBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
@@ -68,6 +69,8 @@ namespace obe::Bindings
             .add("InputCondition", &InputBindings::LoadInputCondition)
             .add("InputFunctions", &InputBindings::LoadInputFunctions)
             .add("InputManager", &InputBindings::LoadInputManager)
+		//Network
+			.add("TcpServer", &NetworkBindings::LoadTcpServer)
         // Scene
             .add("Camera", &SceneBindings::LoadCamera)
             .add("Scene", &SceneBindings::LoadScene)

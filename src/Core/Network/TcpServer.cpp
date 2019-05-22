@@ -10,7 +10,7 @@ namespace obe::Network
     {
 		if (!triggerNamespace.empty())
 		{
-			m_socketTriggers.reset(
+			m_socketTriggers = std::shared_ptr<Triggers::TriggerGroup>(
 				Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
 					triggerNamespace, 
 					triggerGroup
