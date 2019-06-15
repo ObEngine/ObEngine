@@ -11,7 +11,7 @@ namespace vili
      */
     class ViliParser
     {
-    private:
+    protected:
         static std::map<std::string, std::unique_ptr<ViliParser>> ViliCache;
         std::vector<std::string> m_quickLook;
         std::vector<std::string> m_quickLookMatches;

@@ -69,7 +69,7 @@ namespace obe::Bindings::SystemBindings
     }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(
-        System_find_proxy, System::Path, find, 0, 1, std::string(System::Path::*)(System::PathType)
+        System_find_wrapper, System::Path, find, 0, 1, std::string(System::Path::*)(System::PathType)
     );
     void LoadPath(kaguya::State* lua)
     {
@@ -78,7 +78,7 @@ namespace obe::Bindings::SystemBindings
             .addStaticFunction("Mount", &System::Path::Mount)
             .addStaticFunction("Paths", &System::Path::Paths)
             .addFunction("add", &System::Path::add)
-            .addFunction("find", System_find_proxy())
+            .addFunction("find", System_find_wrapper())
             .addFunction("getPath", &System::Path::getPath)
             .addFunction("last", &System::Path::last)
             .addFunction("toString", &System::Path::toString)
