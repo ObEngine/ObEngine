@@ -30,11 +30,11 @@ namespace obe::Bindings::GraphicsBindings
         Load(lua, "obe.Identifiable");
         (*lua)["obe"]["LevelSprite"].setClass(kaguya::UserdataMetatable<Graphics::LevelSprite,
             kaguya::MultipleBase<
-            Transform::UnitBasedObject,
-            Types::Selectable,
-            Transform::Rect,
-            Types::Serializable,
-            Types::Identifiable
+                Transform::UnitBasedObject,
+                Types::Selectable,
+                Transform::Rect,
+                Types::Serializable,
+                Types::Identifiable
             >
             >()
             .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)

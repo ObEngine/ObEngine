@@ -13,11 +13,11 @@ namespace obe::Bindings::NetworkBindings
 		(*lua)["obe"]["Network"]["TcpServer"].setClass(
 			kaguya::UserdataMetatable<obe::Network::TcpServer>()
 				.setConstructors<
-					obe::Network::TcpServer(int),
-					obe::Network::TcpServer(int, std::string, std::string)
+					Network::TcpServer(int),
+					Network::TcpServer(int, std::string, std::string)
 				>()
-				.addFunction("setBufferSize", &obe::Network::TcpServer::setBufferSize)
-				.addFunction("update", &obe::Network::TcpServer::update)
+				.addFunction("setBufferSize", &Network::TcpServer::setBufferSize)
+				.addFunction("update", &Network::TcpServer::update)
 		);
 		System::Path("Lib/Internal/Network.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
 	}

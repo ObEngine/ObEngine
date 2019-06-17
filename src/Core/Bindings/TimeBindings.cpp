@@ -2,10 +2,10 @@
 #include <Time/FramerateCounter.hpp>
 #include <Time/Chronometer.hpp>
 #include <Time/FramerateManager.hpp>
+#include <Time/TimeCheck.hpp>
 #include <Time/TimeUtils.hpp>
 
 #include <kaguya/kaguya.hpp>
-#include "Time/TimeCheck.hpp"
 
 namespace obe::Bindings::TimeBindings
 {
@@ -62,7 +62,7 @@ namespace obe::Bindings::TimeBindings
         );
     }
 
-    void LoadTimeUtils(kaguya::State * lua)
+    void LoadTimeUtils(kaguya::State* lua)
     {
         (*lua)["obe"]["TickSinceEpoch"] = kaguya::function(Time::getTickSinceEpoch);
         (*lua)["obe"]["TickSinceEpochMicro"] = kaguya::function(Time::getTickSinceEpochMicro);
