@@ -9,7 +9,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: echo hello from Linux
-  - sudo apt-get purge cmake
+  - script: sudo apt-get purge cmake
   - script: mkdir ~/temp
   - script: cd ~/temp
   - script: wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
