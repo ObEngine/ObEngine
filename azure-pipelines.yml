@@ -23,6 +23,7 @@ jobs:
     vmImage: 'windows-2019'
   steps:
   - script: echo hello from Windows
+  - script: wmic logicaldisk get name
   - script: C:\
   - script: cd C:\
   - script: mkdir Libraries
