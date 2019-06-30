@@ -23,8 +23,13 @@ jobs:
   - script: which cmake
   - script: cmake --version
   - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
-  - script: unzip SFML-2.5.1-sources.zip > sfml-downloadlog
-  - script: cd SFML-2.5.0
+  - script: unzip SFML-2.5.1-sources.zip
+  - script: cd SFML-2.5.1
+  - script: mkdir build/
+  - script: cd build
+  - script: /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE
+  - script: make
+  - script: sudo make install
 - job: macOS
   pool:
     vmImage: 'macOS-10.14'
