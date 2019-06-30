@@ -14,7 +14,9 @@ jobs:
   - script: cd ~/temp
   - script: wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
   - script: tar xzvf cmake-3.10.0-rc4.tar.gz > cmake-extractlog
+  - script: pwd
   - script: cd cmake-3.10.0-rc4/
+  - script: pwd
   - script: ls
   - script: ./bootstrap > bootstrap-log
   - script: make -j4 > makelog
