@@ -18,6 +18,11 @@ add_subdirectory(extlibs/spdlog)
 add_subdirectory(extlibs/lua)
 add_subdirectory(extlibs/kaguya)
 
+if (APPLE OR USE_FILESYSTEM_FALLBACK)
+    add_subdirectory(extlibs/tinydir)
+    set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
+endif()
+
 # minizip is required by elzip
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)

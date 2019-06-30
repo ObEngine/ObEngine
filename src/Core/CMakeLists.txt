@@ -33,6 +33,12 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(ObEngineCore stdc++fs)
 endif()
 
+if (USE_FILESYSTEM_FALLBACK)
+    message("Using filesystem fallback")
+    target_link_libraries(ObEngineCore tinydir)
+    target_compile_definitions(ObEngineCore PUBLIC _USE_FILESYSTEM_FALLBACK)
+endif()
+
 group_files(
     "${OBE_HEADERS}" "${OBE_SOURCES}"
     "${ObEngine_SOURCE_DIR}/include/Core"

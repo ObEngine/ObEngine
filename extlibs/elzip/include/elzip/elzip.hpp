@@ -1,10 +1,6 @@
 #pragma once
 
-#include <experimental/filesystem>
-#include <iostream>
-#include <fstream>
-
-#include <unzipper.hpp>
+#include <string>
 
 namespace elz
 {

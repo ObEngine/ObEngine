@@ -1,13 +1,28 @@
 project(elzip)
 
 file(GLOB LZIP_HEADERS include/elzip/*.hpp)
-file(GLOB LZIP_SOURCES src/*.cpp)
+
+if (USE_FILESYSTEM_FALLBACK)
+    set(ELZIP_CPP src/elzip_fs_fallback.cpp)
+else()
+    set(ELZIP_CPP src/elzip.cpp)
+endif()
+
+file(GLOB LZIP_SOURCES 
+    ${ELZIP_CPP}
+    src/unzipper.cpp
+    src/zipper.cpp
+)
 
 add_library(elzip ${LZIP_HEADERS} ${LZIP_SOURCES})
 target_link_libraries(elzip minizip)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(elzip stdc++fs)
+endif()
+
+if (USE_FILESYSTEM_FALLBACK)
+    target_link_libraries(elzip tinydir)
 endif()
 
 target_include_directories(elzip

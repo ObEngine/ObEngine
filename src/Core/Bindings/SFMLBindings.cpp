@@ -13,6 +13,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Network/TcpSocket.hpp>
 
 #include <Bindings/Bindings.hpp>
 #include <Bindings/SFMLBindings.hpp>
@@ -218,6 +219,21 @@ namespace obe::Bindings::SFMLBindings
             .addFunction("setTextureRect", &sf::Sprite::setTextureRect)
         );
     }
+
+	void LoadSfTcpSocket(kaguya::State* lua)
+	{
+		/*(*lua)["SFML"]["TcpSocket"].setClass(kaguya::UserdataMetatable<sf::TcpSocket>()
+			.addFunction("connect", &sf::TcpSocket::connect)
+			.addFunction("disconnect", &sf::TcpSocket::disconnect)
+			.addFunction("getLocalPort", &sf::TcpSocket::getLocalPort)
+			.addFunction("getRemoteAddress", &sf::TcpSocket::getRemoteAddress)
+			.addFunction("getRemotePort", &sf::TcpSocket::getRemotePort)
+			.addFunction("isBlocking", &sf::TcpSocket::isBlocking)
+			//.addFunction("receive", &sf::TcpSocket::receive)
+			//.addFunction("send", &sf::TcpSocket::send)
+			.addFunction("setBlocking", &sf::TcpSocket::setBlocking)
+		);*/
+	}
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(SFML_String_toAnsiString_wrapper, sf::String, toAnsiString, 0, 1);
     void LoadSfText(kaguya::State* lua)
