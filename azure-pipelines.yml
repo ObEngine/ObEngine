@@ -25,7 +25,7 @@ jobs:
   - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
   - script: unzip SFML-2.5.1-sources.zip
   - script: cd SFML-2.5.1 && mkdir build/
-  - script: cd SFML-2.5.1/build && /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE
+  - script: cd SFML-2.5.1/build && /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE ..
   - script: cd SFML-2.5.1/build && make && sudo make install
 - job: macOS
   pool:
