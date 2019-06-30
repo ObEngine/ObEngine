@@ -23,8 +23,10 @@ jobs:
     vmImage: 'windows-2019'
   steps:
   - script: echo hello from Windows
+  - script: C:\
   - script: cd C:\
   - script: mkdir Libraries
+  - script: tree
   - script: cd C:\Libraries
   - powershell: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
   - script: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
