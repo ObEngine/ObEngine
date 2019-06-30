@@ -9,6 +9,11 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: echo hello from Linux
+  - script: sudo apt-get install cmake
+  - script: cmake --version
+  - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
+  - script: unzip SFML-2.5.1-sources.zip > sfml-downloadlog
+  - script: cd SFML-2.5.0
 - job: macOS
   pool:
     vmImage: 'macOS-10.14'
