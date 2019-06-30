@@ -17,9 +17,9 @@ jobs:
   - script: pwd
   - script: pwd
   - script: ls
-  - script: cmake-3.10.0-rc4/bootstrap
-  - script: cd cmake-3.10.0-rc4 && make -j4
-  - script: cd cmake-3.10.0-rc4 && sudo make install
+  - script: cd cmake-3.10.0-rc4 && ./bootstrap
+  - script: cd cmake-3.10.0-rc4 && ls && make -j4
+  - script: cd cmake-3.10.0-rc4 && ls && sudo make install
   - script: which cmake
   - script: cmake --version
   - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
