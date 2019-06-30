@@ -15,7 +15,22 @@ jobs:
   steps:
   - script: echo hello from macOS
 - job: Windows
+  variables:
+    MSVC_DEFAULT_OPTIONS: ON
+    SFML_DIR: C:\Libraries\SFML-2.5.1
+    Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
   pool:
     vmImage: 'windows-2019'
   steps:
   - script: echo hello from Windows
+  - script: cd C:\
+  - script: mkdir Libraries
+  - script: cd C:\Libraries
+  - powershell: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
+  - script: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
+  - script: cd C:\projects\ObEngine
+  - script: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
+  - script: dir
+  - task: VSBuild@1
+    inputs:
+      solution: '**\*.sln'
