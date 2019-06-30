@@ -24,6 +24,7 @@ jobs:
   steps:
   - script: echo hello from Windows
   - script: wmic logicaldisk get name
+  - script: cd
   - script: C:\
   - script: cd C:\
   - script: mkdir Libraries
