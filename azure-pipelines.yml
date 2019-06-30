@@ -27,7 +27,9 @@ jobs:
   - script: mkdir Libraries
   - script: tree
   - script: cd Libraries
-  - powershell: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip'
   - script: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
   - script: cd C:\projects\ObEngine
   - script: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
