@@ -36,11 +36,14 @@ jobs:
   - script: cd build && /usr/local/bin/cmake -DBUILD_TESTS=ON ..
   - script: cd build && make -j6
   - script: cd build && ./tests/ObEngineTests
+
 - job: macOS
   pool:
     vmImage: 'macOS-10.14'
   steps:
   - script: echo hello from macOS
+  - script: cmake --version
+ 
 - job: Windows
   variables:
     MSVC_DEFAULT_OPTIONS: ON
