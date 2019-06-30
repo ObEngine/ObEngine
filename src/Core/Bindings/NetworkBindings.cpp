@@ -19,6 +19,14 @@ namespace obe::Bindings::NetworkBindings
 				.addFunction("setBufferSize", &Network::TcpServer::setBufferSize)
 				.addFunction("update", &Network::TcpServer::update)
 		);
+		/*(*lua)["obe"]["Network"]["TcpServer"]["getClients"] = kaguya::function([](Network::TcpServer* self) {
+			std::vector<sf::TcpSocket*> ptrVector;
+			for (sf::TcpSocket& client : self->getClients())
+			{
+				ptrVector.push_back(&client);
+			}
+			return ptrVector;
+		});*/
 		System::Path("Lib/Internal/Network.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
 	}
 }

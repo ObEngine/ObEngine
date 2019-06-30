@@ -10,7 +10,6 @@ function LuaCore.MakeTriggerGroupSubTable(This, namespace)
         __newindex = function(object, index, value)
             if type(value) == "function" then
                 local mt = getmetatable(object);
-                print(inspect(mt))
                 local alias = mt.__alias_function(namespace, object.triggerGroupId, index);
                 This:useTrigger(namespace, object.triggerGroupId, index, alias);
                 mt.__storage[index] = value;

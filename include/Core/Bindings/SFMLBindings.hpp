@@ -14,6 +14,7 @@ namespace obe::Bindings::SFMLBindings
     void LoadSfRect(kaguya::State* lua);
     void LoadSfShape(kaguya::State* lua);
     void LoadSfSprite(kaguya::State* lua);
+	void LoadSfTcpSocket(kaguya::State* lua);
     void LoadSfText(kaguya::State* lua);
     void LoadSfTexture(kaguya::State* lua);
     void LoadSfTime(kaguya::State* lua);

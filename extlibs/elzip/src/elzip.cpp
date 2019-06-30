@@ -1,4 +1,9 @@
+#include <experimental/filesystem>
+#include <fstream>
+#include <iostream>
+
 #include <elzip.hpp>
+#include <unzipper.hpp>
 
 namespace fs = std::experimental::filesystem;
 

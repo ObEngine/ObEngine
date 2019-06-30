@@ -69,4 +69,14 @@ namespace obe::Network
         m_maxBufferSize = maxBufferSize;
         m_data.resize(m_maxBufferSize);
     }
+
+	/*std::vector<sf::TcpSocket&> TcpServer::getClients()
+	{
+		std::vector<sf::TcpSocket&> clientReferences;
+		for (auto& client : m_clients)
+		{
+			clientReferences.push_back(*client.get());
+		}
+		return clientReferences;
+	}*/
 }
