@@ -8,20 +8,12 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: echo hello from Linux
   - script: sudo apt-get purge cmake
-  - script: mkdir ~/temp
-  - script: cd ~/temp
   - script: wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
-  - script: tar xzvf cmake-3.10.0-rc4.tar.gz > cmake-extractlog
-  - script: pwd
-  - script: pwd
-  - script: ls
+  - script: tar xzvf cmake-3.10.0-rc4.tar.gz
   - script: cd cmake-3.10.0-rc4 && ./bootstrap
   - script: cd cmake-3.10.0-rc4 && ls && make -j4
   - script: cd cmake-3.10.0-rc4 && ls && sudo make install
-  - script: which cmake
-  - script: cmake --version
   - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
   - script: unzip SFML-2.5.1-sources.zip
   - script: cd SFML-2.5.1 && mkdir build/
@@ -35,20 +27,16 @@ jobs:
   - script: mkdir build
   - script: cd build && /usr/local/bin/cmake -DBUILD_TESTS=ON ..
   - script: cd build && make -j6
-  - script: ls
   - script: cd build && ./tests/ObEngineTests
 
 - job: macOS
   pool:
     vmImage: 'macOS-10.14'
   steps:
-  - script: echo hello from macOS
-  - script: cmake --version
   - script: brew install sfml
   - script: mkdir build
   - script: cd build && cmake -DBUILD_TESTS=ON ..
-  - script: cd build && make
-  - script: ls
+  - script: cd build && make -j6
   - script: cd build && ./tests/ObEngineTests
  
 - job: Windows
@@ -59,11 +47,6 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: echo hello from Windows
-  - script: wmic logicaldisk get name
-  - script: cd
-  - script: mkdir Libraries
-  - script: tree
   - task: DownloadFile@1
     inputs:
       FileUrl: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip'
