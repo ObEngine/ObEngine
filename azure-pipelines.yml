@@ -35,6 +35,7 @@ jobs:
   - script: mkdir build
   - script: cd build && /usr/local/bin/cmake -DBUILD_TESTS=ON ..
   - script: cd build && make -j6
+  - script: ls
   - script: cd build && ./tests/ObEngineTests
 
 - job: macOS
@@ -43,6 +44,12 @@ jobs:
   steps:
   - script: echo hello from macOS
   - script: cmake --version
+  - script: brew install sfml
+  - script: mkdir build
+  - script: cd build && cmake -DBUILD_TESTS=ON ..
+  - script: cd build && make
+  - script: ls
+  - script: cd build && ./tests/ObEngineTests
  
 - job: Windows
   variables:
@@ -67,7 +74,7 @@ jobs:
       archiveFilePatterns: 'SFML-2.5.1-windows-vc15-64-bit.zip'
       destinationFolder: 'Libraries'
       cleanDestinationFolder: true
-  - script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
+  - script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DBUILD_TESTS=ON .
   - script: dir
   - task: VSBuild@1
     inputs:
