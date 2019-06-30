@@ -26,12 +26,16 @@ jobs:
   - script: wmic logicaldisk get name
   - script: mkdir Libraries
   - script: tree
-  - script: cd Libraries
-  - task: DownloadSecureFile@1
+  - task: DownloadFile@1
     inputs:
-      secureFile: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip'
-  - script: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
-  - script: cd C:\projects\ObEngine
+      FileUrl: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-32-bit.zip'
+      DestinationFolder: '$(System.DefaultWorkingDirectory)'
+      requireAuthentication: false
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: 'SFML-2.5.1-windows-vc15-64-bit.zip'
+      destinationFolder: 'Libraries'
+      cleanDestinationFolder: true
   - script: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
   - script: dir
   - task: VSBuild@1
