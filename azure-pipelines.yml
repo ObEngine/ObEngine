@@ -15,12 +15,11 @@ jobs:
   - script: wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
   - script: tar xzvf cmake-3.10.0-rc4.tar.gz > cmake-extractlog
   - script: pwd
-  - script: cd cmake-3.10.0-rc4/
   - script: pwd
   - script: ls
-  - script: ./bootstrap > bootstrap-log
-  - script: make -j4 > makelog
-  - script: sudo make install > makelog-install
+  - script: cmake-3.10.0-rc4/bootstrap > bootstrap-log
+  - script: cd cmake-3.10.0-rc4 && make -j4 > makelog
+  - script: cd cmake-3.10.0-rc4 && sudo make install > makelog-install
   - script: which cmake
   - script: cmake --version
   - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
