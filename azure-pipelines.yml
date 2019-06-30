@@ -37,7 +37,7 @@ jobs:
       archiveFilePatterns: 'SFML-2.5.1-windows-vc15-64-bit.zip'
       destinationFolder: 'Libraries'
       cleanDestinationFolder: true
-  - script: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
+  - script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
   - script: dir
   - task: VSBuild@1
     inputs:
