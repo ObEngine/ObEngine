@@ -17,18 +17,19 @@ jobs:
 - job: Windows
   variables:
     MSVC_DEFAULT_OPTIONS: ON
-    SFML_DIR: C:\Libraries\SFML-2.5.1
+    SFML_DIR: D:\a\1\s\Libraries\SFML-2.5.1
     Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
   pool:
     vmImage: 'windows-2019'
   steps:
   - script: echo hello from Windows
   - script: wmic logicaldisk get name
+  - script: cd
   - script: mkdir Libraries
   - script: tree
   - task: DownloadFile@1
     inputs:
-      FileUrl: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-32-bit.zip'
+      FileUrl: 'https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip'
       DestinationFolder: '$(System.DefaultWorkingDirectory)'
       requireAuthentication: false
   - task: ExtractFiles@1
