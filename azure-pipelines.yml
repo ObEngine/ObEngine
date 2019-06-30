@@ -24,12 +24,9 @@ jobs:
   steps:
   - script: echo hello from Windows
   - script: wmic logicaldisk get name
-  - script: cd
-  - script: C:\
-  - script: cd C:\
   - script: mkdir Libraries
   - script: tree
-  - script: cd C:\Libraries
+  - script: cd Libraries
   - powershell: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
   - script: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
   - script: cd C:\projects\ObEngine
