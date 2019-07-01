@@ -4,34 +4,6 @@
 # https://aka.ms/yaml
 
 jobs:
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - script: sudo apt-get purge cmake
-  - script: wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
-  - script: tar xzvf cmake-3.10.0-rc4.tar.gz
-  - script: cd cmake-3.10.0-rc4 && ./bootstrap
-  - script: cd cmake-3.10.0-rc4 && ls && make -j4
-  - script: cd cmake-3.10.0-rc4 && ls && sudo make install
-  - script: wget https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
-  - script: unzip SFML-2.5.1-sources.zip
-  - script: cd SFML-2.5.1 && mkdir build/
-  - script: sudo apt-get install -y software-properties-common
-  - script: sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-  - script: sudo apt update
-  - script: sudo apt-get install g++-7 libfreetype6-dev libjpeg-dev libx11-dev libxrandr-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libgl1-mesa-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libpthread-stubs0-dev libstdc++6 libc6 libgcc1 libglew-dev libgpgme11-dev libsndfile1-dev libudev-dev
-  - script: cd SFML-2.5.1/build && /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE ..
-  - script: cd SFML-2.5.1/build && make && sudo make install
-  - script: cd SFML-2.5.1/build && sudo ldconfig
-  - script: export CC=/usr/bin/gcc-7
-  - script: export CXX=/usr/bin/g++-7
-  - script: gcc -v && g++ -v && /usr/local/bin/cmake --version
-  - script: mkdir build
-  - script: cd build && /usr/local/bin/cmake -DBUILD_TESTS=ON ..
-  - script: cd build && make -j6
-  - script: cd build && ./tests/ObEngineTests
-
 - job: macOS
   pool:
     vmImage: 'macOS-10.14'
