@@ -1,3 +1,4 @@
 *.qmlc
 .vscode/
 build/
+.DS_Store

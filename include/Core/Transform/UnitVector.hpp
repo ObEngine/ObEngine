@@ -228,6 +228,7 @@ namespace obe::Transform
         * \return The stream passed by reference (To chain calls)
         */
         friend std::ostream& operator<<(std::ostream& os, const UnitVector& m);
+        UnitVector rotate(double angle, UnitVector zero = UnitVector(0, 0)) const;
     };
 
     template <>

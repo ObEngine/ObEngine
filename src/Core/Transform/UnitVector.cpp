@@ -1,6 +1,9 @@
 #include <ostream>
 
 #include <Transform/UnitVector.hpp>
+#include <Transform/Matrix2D.hpp>
+#include <Utils/MathUtils.hpp>
+#include <cmath>
 
 namespace obe::Transform
 {
@@ -271,5 +274,12 @@ namespace obe::Transform
     {
         os << "(" << m.x << ", " << m.y << ")::" << unitsToString(m.unit).c_str();
         return os;
+    }
+
+    UnitVector UnitVector::rotate(double angle, UnitVector zero) const {
+        double rad_angle = Utils::Math::convertToRadian(angle);
+        Matrix2D rot({std::cos(rad_angle), -std::sin(rad_angle), std::sin(rad_angle), std::cos(rad_angle)});
+        UnitVector result = rot.product(*this - zero) + zero;
+        return result;
     }
 }

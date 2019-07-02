@@ -297,13 +297,15 @@ namespace obe::Graphics
 
             if (m_referential.isOnCorner())
             {
-                const Transform::UnitVector baseDist = oppositePos - m_dp;
-                Transform::UnitVector scaleVector = baseDist / m_sprite->getSize().to<Transform::Units::ScenePixels>();
-                scaleVector.set(
-                    m_referential.isOnRightSide() ? -scaleVector.x : scaleVector.x, 
-                    m_referential.isOnBottomSide() ? -scaleVector.y : scaleVector.y);
+                const Transform::UnitVector centerSpritePos = m_sprite->getPosition(Transform::Referential::Center);
+                const double spriteAngle = m_sprite->getRotation();
+                const Transform::UnitVector oppositePosInRef = oppositePos.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector posInRef = pos.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector cursorInRef = m_dp.rotate(spriteAngle, centerSpritePos);
+                Transform::UnitVector scaleVector = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
-                if (baseDist.x != 0 && baseDist.y != 0)
+                Debug::Log->debug("{} / {} = {}", (cursorInRef - oppositePosInRef), (posInRef - oppositePosInRef), scaleVector);
+                if ((cursorInRef - oppositePosInRef).x != 0 && (cursorInRef - oppositePosInRef).y != 0)
                     m_sprite->scale(
                         Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit), 
                         m_referential.flip()
