@@ -16,13 +16,15 @@ class sink
 public:
     sink()
         : level_(level::trace)
-        , formatter_(new pattern_formatter("%+"))
+        , formatter_(new pattern_formatter())
     {
     }
 
     explicit sink(std::unique_ptr<spdlog::pattern_formatter> formatter)
         : level_(level::trace)
-        , formatter_(std::move(formatter)){};
+        , formatter_(std::move(formatter))
+    {
+    }
 
     virtual ~sink() = default;
     virtual void log(const details::log_msg &msg) = 0;

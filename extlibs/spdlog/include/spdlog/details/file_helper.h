@@ -5,13 +5,12 @@
 
 #pragma once
 
-// Helper class for file sink
-// When failing to open a file, retry several times(5) with small delay between
-// the tries(10 ms)
-// Throw spdlog_ex exception on errors
+// Helper class for file sinks.
+// When failing to open a file, retry several times(5) with a delay interval(10 ms).
+// Throw spdlog_ex exception on errors.
 
-#include "../details/log_msg.h"
-#include "../details/os.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/os.h"
 
 #include <cerrno>
 #include <chrono>
@@ -123,7 +122,7 @@ public:
     // ".mylog" => (".mylog". "")
     // "my_folder/.mylog" => ("my_folder/.mylog", "")
     // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-    static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t &fname)
+    static std::tuple<filename_t, filename_t> split_by_extension(const spdlog::filename_t &fname)
     {
         auto ext_index = fname.rfind('.');
 
@@ -146,7 +145,7 @@ public:
     }
 
 private:
-    FILE *fd_{nullptr};
+    std::FILE *fd_{nullptr};
     filename_t _filename;
 };
 } // namespace details

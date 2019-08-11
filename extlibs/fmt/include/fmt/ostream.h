@@ -1,6 +1,6 @@
 // Formatting library for C++ - std::ostream support
 //
-// Copyright (c) 2012 - 2016, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -68,18 +68,7 @@ class is_streamable {
   typedef decltype(test<T>(0)) result;
 
  public:
-  // std::string operator<< is not considered user-defined because we handle strings
-  // specially.
-  static const bool value = result::value && !std::is_same<T, std::string>::value;
-};
-
-// Disable conversion to int if T has an overloaded operator<< which is a free
-// function (not a member of std::ostream).
-template <typename T, typename Char>
-class convert_to_int<T, Char, true> {
- public:
-  static const bool value =
-    convert_to_int<T, Char, false>::value && !is_streamable<T, Char>::value;
+  static const bool value = result::value;
 };
 
 // Write the content of buf to os.
@@ -106,17 +95,24 @@ void format_value(basic_buffer<Char> &buffer, const T &value) {
   output << value;
   buffer.resize(buffer.size());
 }
-
-// Disable builtin formatting of enums and use operator<< instead.
-template <typename T>
-struct format_enum<T,
-    typename std::enable_if<std::is_enum<T>::value>::type> : std::false_type {};
 }  // namespace internal
+
+// Disable conversion to int if T has an overloaded operator<< which is a free
+// function (not a member of std::ostream).
+template <typename T, typename Char>
+struct convert_to_int<T, Char, void> {
+  static const bool value =
+    convert_to_int<T, Char, int>::value &&
+    !internal::is_streamable<T, Char>::value;
+};
 
 // Formats an object of type T that has an overloaded ostream operator<<.
 template <typename T, typename Char>
 struct formatter<T, Char,
-    typename std::enable_if<internal::is_streamable<T, Char>::value>::type>
+    typename std::enable_if<
+      internal::is_streamable<T, Char>::value &&
+      !internal::format_type<
+        typename buffer_context<Char>::type, T>::value>::type>
     : formatter<basic_string_view<Char>, Char> {
 
   template <typename Context>
@@ -124,8 +120,7 @@ struct formatter<T, Char,
     basic_memory_buffer<Char> buffer;
     internal::format_value(buffer, value);
     basic_string_view<Char> str(buffer.data(), buffer.size());
-    formatter<basic_string_view<Char>, Char>::format(str, ctx);
-    return ctx.out();
+    return formatter<basic_string_view<Char>, Char>::format(str, ctx);
   }
 };
 
@@ -134,7 +129,7 @@ inline void vprint(std::basic_ostream<Char> &os,
                    basic_string_view<Char> format_str,
                    basic_format_args<typename buffer_context<Char>::type> args) {
   basic_memory_buffer<Char> buffer;
-  vformat_to(buffer, format_str, args);
+  internal::vformat_to(buffer, format_str, args);
   internal::write(os, buffer);
 }
 /**
@@ -146,16 +141,12 @@ inline void vprint(std::basic_ostream<Char> &os,
     fmt::print(cerr, "Don't {}!", "panic");
   \endrst
  */
-template <typename... Args>
-inline void print(std::ostream &os, string_view format_str,
-                  const Args & ... args) {
-  vprint<char>(os, format_str, make_format_args<format_context>(args...));
-}
-
-template <typename... Args>
-inline void print(std::wostream &os, wstring_view format_str,
-                  const Args & ... args) {
-  vprint<wchar_t>(os, format_str, make_format_args<wformat_context>(args...));
+template <typename S, typename... Args>
+inline typename std::enable_if<internal::is_string<S>::value>::type
+print(std::basic_ostream<FMT_CHAR(S)> &os, const S &format_str,
+      const Args & ... args) {
+  internal::checked_args<S, Args...> ca(format_str, args...);
+  vprint(os, to_string_view(format_str), *ca);
 }
 FMT_END_NAMESPACE
 
