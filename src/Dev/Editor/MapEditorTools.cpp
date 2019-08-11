@@ -281,7 +281,7 @@ namespace obe::Editor
         tgui::Button::Ptr backButton = tgui::Button::create();
         spritesPanel->add(backButton, "LS_ELEM_BACK");
         sf::Texture sprback;
-        sprback.loadFromFile("Sprites/Others/back.png");
+        System::Path("Sprites/Others/back.png").loadResource(&sprback, System::Loaders::textureLoader);
         sprback.setSmooth(true);
         backButton->getRenderer()->setTexture(sprback);
         backButton->setSize(sprSize, sprSize);

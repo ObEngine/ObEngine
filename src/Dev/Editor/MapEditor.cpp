@@ -88,7 +88,7 @@ namespace obe::Editor
 
         //Font
         sf::Font font;
-        font.loadFromFile("Data/Fonts/arial.ttf");
+        System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
 
         //Config
         vili::ComplexNode& gameConfig = System::Config->at("GameConfig");

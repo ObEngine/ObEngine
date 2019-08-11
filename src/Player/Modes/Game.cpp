@@ -32,10 +32,6 @@ namespace obe::Modes
 			->addTrigger("Update")
 			->addTrigger("Render");
 
-        //Font <REVISION> Remove this
-        sf::Font font;
-        font.loadFromFile("Data/Fonts/arial.ttf");
-
         //Config
         vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
 
@@ -60,8 +56,6 @@ namespace obe::Modes
         sf::Event event;
 
         //Framerate / DeltaTime
-        Time::FPSCounter fps;
-        fps.loadFont(font);
         Time::FramerateManager framerateManager(gameConfig);
 
 		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);

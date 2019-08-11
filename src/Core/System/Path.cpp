@@ -74,18 +74,12 @@ namespace obe::System
 
     void Path::orderMountedPaths()
     {
-        bool noChange = false;
-        while (!noChange)
-        {
-            noChange = true;
-            for (unsigned int i = 0; i < MountedPaths.size(); i++)
-            {
-                if (i != MountedPaths.size() - 1 && MountedPaths[i].priority < MountedPaths[i + 1].priority)
-                {
-                    iter_swap(MountedPaths.begin() + i, MountedPaths.begin() + i + 1);
-                    noChange = false;
-                }
+        std::sort(
+            MountedPaths.begin(),
+            MountedPaths.end(),
+            [](const MountablePath& first, const MountablePath& second) {
+                return first.priority > second.priority;
             }
-        }
+        );
     }
 }
