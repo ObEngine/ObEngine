@@ -74,7 +74,7 @@ namespace obe::System
         * \return The Path used to load the resource in std::string form
         */
         template <typename R, typename F>
-        std::string loadResource(R* resource, F lambda) const;
+        std::string loadResource(R* resource, F lambda, bool allowFailure = false) const;
         /**
         * \brief Add a Path to Mounted Paths
         * \param path Path to mount
@@ -92,7 +92,7 @@ namespace obe::System
     };
 
     template <typename R, typename F>
-    std::string Path::loadResource(R* resource, F lambda) const
+    std::string Path::loadResource(R* resource, F lambda, bool allowFailure) const
     {
         int loadSum = 0;
         for (MountablePath& mountedPath : MountedPaths)
@@ -111,6 +111,9 @@ namespace obe::System
         }
         if (loadSum > 0)
             return "*";
-        throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", {{"path", m_path}});
+		if (!allowFailure)
+			throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", { {"path", m_path} });
+		else
+			return "";
     }
 }

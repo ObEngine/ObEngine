@@ -310,7 +310,11 @@ namespace obe::Editor
         for (std::string element : fileList)
         {
             sf::Texture textureLoadChecker;
-            System::Path("Sprites/LevelSprites").add(path).add(element).loadResource(&textureLoadChecker, System::Loaders::textureLoader);
+            System::Path("Sprites/LevelSprites").add(path).add(element).loadResource(
+				&textureLoadChecker, 
+				System::Loaders::textureLoader, 
+				true
+			);
             if (textureLoadChecker.getSize().x != 0)
             {
                 std::tie(xpos, ypos) = getSpritePos(elemIndex);
