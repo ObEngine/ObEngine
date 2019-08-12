@@ -28,7 +28,7 @@ namespace obe::Scene
     private:
         unsigned int m_envIndex;
         Triggers::TriggerGroupPtr m_localTriggers;
-		std::vector<std::string> m_sources;
+        std::vector<std::string> m_sources;
 
         std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
@@ -57,10 +57,10 @@ namespace obe::Scene
         void initialize();
 
         void execute(const std::string& path) const;
-		void addSource(const std::string& path);
+        void addSource(const std::string& path);
 
-	    void dump(vili::ComplexNode& target) const override;
-	    void load(vili::ComplexNode& data) override;
+        void dump(vili::ComplexNode& target) const override;
+        void load(vili::ComplexNode& data) override;
     };
 
     class TXScene : public Types::Serializable, public Types::Identifiable
@@ -68,13 +68,13 @@ namespace obe::Scene
     private:
         bool m_permanent = false;
         std::vector<Component::ComponentBase*> m_components;
-		std::vector<std::unique_ptr<TXScene>> m_children;
+        std::vector<std::unique_ptr<TXScene>> m_children;
         std::unique_ptr<LuaComponent> m_script;
-		std::string m_name;
+        std::string m_name;
     public:
-		static TXScene CreateRootScene();
+        static TXScene CreateRootScene();
         explicit TXScene(const std::string& id, bool scriptable = false);
-		TXScene(TXScene&& scene);
+        TXScene(TXScene&& scene);
 
         ~TXScene();
 
@@ -93,57 +93,57 @@ namespace obe::Scene
         */
         void remove();
         
-		template <class T>
-		T& add(const std::string& id);
+        template <class T>
+        T& add(const std::string& id);
 
-		Component::ComponentBase& get(const std::string& id);
-		template <class T>
-		T& get(const std::string& id);
+        Component::ComponentBase& get(const std::string& id);
+        template <class T>
+        T& get(const std::string& id);
 
-		template <class T>
-		std::vector<T&> getAll();
+        template <class T>
+        std::vector<T&> getAll();
 
-		/**
-		* \brief Removes all elements in the Scene
-		*/
-		void clear();
+        /**
+        * \brief Removes all elements in the Scene
+        */
+        void clear();
 
-	    void dump(vili::ComplexNode& target) const override;
-	    void load(vili::ComplexNode& data) override;
+        void dump(vili::ComplexNode& target) const override;
+        void load(vili::ComplexNode& data) override;
 
-		void setName(const std::string& name);
-		std::string getName() const;
+        void setName(const std::string& name);
+        std::string getName() const;
 
-		/**
-		* \brief Delete State of the GameObject (false = not deleted)
-		*/
+        /**
+        * \brief Delete State of the GameObject (false = not deleted)
+        */
         bool deletable = false;
     };
 
-	template <class T>
-	T& TXScene::add(const std::string& id)
-	{
-		static_assert(
-			std::is_base_of<Component::ComponentBase, T>::value, 
-			"Scene.add<T>(id) requires T to have Component as base class"
-		);
+    template <class T>
+    T& TXScene::add(const std::string& id)
+    {
+        static_assert(
+            std::is_base_of<Component::ComponentBase, T>::value, 
+            "Scene.add<T>(id) requires T to have Component as base class"
+        );
 
-		/*T* reference = static_cast<T*>(m_components.emplace_back(&T::create(id)));
-		if (m_script)
-		{
-			reference->inject(m_script->getEnvIndex());
-		}*/
-		T* reference = nullptr;
+        /*T* reference = static_cast<T*>(m_components.emplace_back(&T::create(id)));
+        if (m_script)
+        {
+            reference->inject(m_script->getEnvIndex());
+        }*/
+        T* reference = nullptr;
 
-		return *reference;
-	}
-	template<class T>
-	inline T& TXScene::get(const std::string& id)
-	{
-		static_assert(
-			std::is_base_of<Component::ComponentBase, T>::value,
-			"Scene.get<T>(id) requires T to have Component as base class"
-		);
+        return *reference;
+    }
+    template<class T>
+    inline T& TXScene::get(const std::string& id)
+    {
+        static_assert(
+            std::is_base_of<Component::ComponentBase, T>::value,
+            "Scene.get<T>(id) requires T to have Component as base class"
+        );
         if (T* castedComponent = dynamic_cast<T*>(this->get(id)); castedComponent != nullptr)
         {
             return *castedComponent;
@@ -152,24 +152,24 @@ namespace obe::Scene
         {
             throw aube::ErrorHandler::Raise("obe.Scene.Scene.WrongComponentType", { {"type", this->get(id).type() }, {"expected", T::ComponentType } });
         }
-	}
+    }
 
-	template <class T>
-	std::vector<T&> TXScene::getAll()
-	{
-		static_assert(
-			std::is_base_of<Component::ComponentBase, T>::value,
-			"Scene.getAll<T>() requires T to have Component as base class"
-		);
-		std::vector<T&> componentsOfTypeT;
-		for (Component::ComponentBase* component : m_components)
-		{
-			if (T* castedComponent = dynamic_cast<T*>(component); castedComponent != nullptr)
-			{
-				componentsOfTypeT.push_back(*castedComponent);
-			}
-		}
+    template <class T>
+    std::vector<T&> TXScene::getAll()
+    {
+        static_assert(
+            std::is_base_of<Component::ComponentBase, T>::value,
+            "Scene.getAll<T>() requires T to have Component as base class"
+        );
+        std::vector<T&> componentsOfTypeT;
+        for (Component::ComponentBase* component : m_components)
+        {
+            if (T* castedComponent = dynamic_cast<T*>(component); castedComponent != nullptr)
+            {
+                componentsOfTypeT.push_back(*castedComponent);
+            }
+        }
 
-		return componentsOfTypeT;
-	}
+        return componentsOfTypeT;
+    }
 }

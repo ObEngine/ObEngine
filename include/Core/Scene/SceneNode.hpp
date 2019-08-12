@@ -7,8 +7,8 @@
 namespace obe::Scene
 {
     /**
-	* \brief A SceneNode holds objects herited from Movable class and "links" their position
-	*/
+    * \brief A SceneNode holds objects herited from Movable class and "links" their position
+    */
     class SceneNode : public Transform::Movable
     {
     private:

@@ -55,11 +55,11 @@ namespace obe::Bindings::TransformBindings
             .addFunction("getSize", &Transform::Rect::getSize)
             .addFunction("move", &Transform::Rect::move)
             .addFunction("movePoint", Rect_movePoint_wrapper())
-			.addFunction("rotate", &Transform::Rect::rotate)
+            .addFunction("rotate", &Transform::Rect::rotate)
             .addFunction("scale", Rect_scale_wrapper())
             .addFunction("setPointPosition", Rect_setPointPosition_wrapper())
             .addFunction("setPosition", Rect_setPosition_wrapper())
-			.addFunction("setRotation", &Transform::Rect::setRotation)
+            .addFunction("setRotation", &Transform::Rect::setRotation)
             .addFunction("setSize", Rect_setSize_wrapper())
             .addFunction("transformRef", &Transform::Rect::transformRef)
         );

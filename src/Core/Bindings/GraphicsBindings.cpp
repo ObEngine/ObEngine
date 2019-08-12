@@ -155,7 +155,7 @@ namespace obe::Bindings::GraphicsBindings
         (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"]["Center"] = Graphics::Canvas::TextVerticalAlign::Center;
         (*lua)["obe"]["Canvas"]["Alignment"]["Vertical"]["Bottom"] = Graphics::Canvas::TextVerticalAlign::Bottom;
 
-        System::Path("Lib/Internal/Canvas.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/Canvas.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
     }
 
     void LoadGraphicsUtils(kaguya::State* lua)

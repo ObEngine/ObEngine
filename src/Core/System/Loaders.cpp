@@ -1,32 +1,137 @@
 #include <System/Loaders.hpp>
 #include <Utils/FileUtils.hpp>
 
+namespace obe::System
+{
+    // LoaderResult Implementation
+    LoaderResult::LoaderResult()
+    {
+        m_success = false;
+    }
+
+    LoaderResult::LoaderResult(const std::string& path)
+    {
+        m_success = true;
+        m_path = path;
+    }
+
+    std::string LoaderResult::path() const
+    {
+        return m_path;
+    }
+
+    bool LoaderResult::success() const
+    {
+        return m_success;
+    }
+
+    LoaderResult::operator bool() const
+    {
+        return this->success();
+    }
+
+    // LoaderMultipleResult Implementation
+    LoaderMultipleResult::LoaderMultipleResult()
+    {
+        m_loadCount = 0;
+    }
+    LoaderMultipleResult::LoaderMultipleResult(const std::vector<std::string>& paths)
+    {
+        m_loadCount = paths.size();
+        m_paths = paths;
+    }
+    std::vector<std::string> LoaderMultipleResult::paths() const
+    {
+        return m_paths;
+    }
+    unsigned int LoaderMultipleResult::loadCount() const
+    {
+        return m_loadCount;
+    }
+    bool LoaderMultipleResult::success() const
+    {
+        return m_loadCount > 0;
+    }
+    LoaderMultipleResult::operator bool() const
+    {
+        return this->success();
+    }
+}
+
 namespace obe::System::Loaders
 {
-    std::function<int(sf::Texture*, const std::string&)> textureLoader = 
-        [](sf::Texture* obj, const std::string& path) -> int { return obj->loadFromFile(path); };
-    std::function<int(vili::ViliParser*, const std::string&)> dataLoader = 
-        [](vili::ViliParser* obj, const std::string& path) -> int { return obj->parseFile(path); };
-    std::function<int(sf::Font*, const std::string&)> fontLoader = 
-        [](sf::Font* obj, const std::string& path) -> int { return obj->loadFromFile(path); };
-    std::function<int(std::vector<std::string>*, const std::string&)> dirPathLoader = 
-        [](std::vector<std::string>* obj, const std::string& path) -> int
-    {
-        std::vector<std::string> newPaths = Utils::File::getDirectoryList(path);
-        obj->insert(obj->end(), newPaths.begin(), newPaths.end());
-        return 0x002;
-    };
-    std::function<int(std::vector<std::string>*, const std::string&)> filePathLoader = 
-        [](std::vector<std::string>* obj, const std::string& path) -> int
-    {
-        std::vector<std::string> newFiles = Utils::File::getFileList(path);
-        obj->insert(obj->end(), newFiles.begin(), newFiles.end());
-        return 0x002;
-    };
-    std::function<int(kaguya::State*, const std::string&)> luaLoader = 
-        [](kaguya::State* obj, const std::string& path) -> int { return obj->dofile(path); };
-    std::function<int(sf::SoundBuffer*, const std::string&)> soundLoader = 
-        [](sf::SoundBuffer* sound, const std::string& path) -> int { return sound->loadFromFile(path); };
-    std::function<int(sf::Music*, const std::string&)> musicLoader = 
-        [](sf::Music* music, const std::string& path) -> int { return music->openFromFile(path); };
+    // Loaders
+    Loader<sf::Texture> textureLoader(
+        [](sf::Texture& obj, const std::string& path) -> bool
+        {
+            return obj.loadFromFile(path);
+        }
+    );
+
+    Loader<vili::ViliParser> dataLoader(
+        [](vili::ViliParser& obj, const std::string& path) -> bool
+        {
+            return obj.parseFile(path);
+        }
+    );
+
+    Loader<sf::Font> fontLoader(
+        [](sf::Font& obj, const std::string& path) -> bool
+        {
+            return obj.loadFromFile(path);
+        }
+    );
+
+    Loader<std::vector<std::string>> dirPathLoader(
+        [](std::vector<std::string>& obj, const std::string& path) -> bool
+        {
+            if (Utils::File::directoryExists(path))
+            {
+                std::vector<std::string> newPaths = Utils::File::getDirectoryList(path);
+                obj.insert(obj.end(), newPaths.begin(), newPaths.end());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    );
+
+    Loader<std::vector<std::string>> filePathLoader(
+        [](std::vector<std::string>& obj, const std::string& path) -> bool
+        {
+            if (Utils::File::directoryExists(path))
+            {
+                std::vector<std::string> newFiles = Utils::File::getFileList(path);
+                obj.insert(obj.end(), newFiles.begin(), newFiles.end());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    );
+
+    Loader<kaguya::State> luaLoader(
+        [](kaguya::State& obj, const std::string& path) -> bool
+        {
+            return obj.dofile(path);
+        }
+    );
+
+    Loader<sf::SoundBuffer> soundLoader(
+        [](sf::SoundBuffer& sound, const std::string& path) -> bool
+        {
+            return sound.loadFromFile(path);
+        }
+    );
+
+    Loader<sf::Music> musicLoader(
+        [](sf::Music& music, const std::string& path) -> bool
+        {
+            return music.openFromFile(path);
+        }
+    );
 }

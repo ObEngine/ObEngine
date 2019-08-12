@@ -19,7 +19,7 @@
 
 namespace obe::Modes
 {
-	void startToolkitMode()
+    void startToolkitMode()
     {
         bool continueToolkit = true;
         std::vector<std::string> commandHistory;
@@ -31,7 +31,7 @@ namespace obe::Modes
         toolkitFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
 
         sf::Font font;
-        System::Path("Data/Fonts/weblysleekuil.ttf").loadResource(&font, System::Loaders::fontLoader);
+        System::Path("Data/Fonts/weblysleekuil.ttf").load(System::Loaders::fontLoader, font);
 
         tgui::Gui gui(window);
         gui.setFont(font);

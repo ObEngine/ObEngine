@@ -19,8 +19,8 @@ namespace obe::Editor::GUI
     void calculateFontSize()
     {
         double wCoeff;
-		const sf::Vector2u windowSize = System::MainWindow.getSize();
-		const unsigned int screenWidth = sf::VideoMode::getDesktopMode().width;
+        const sf::Vector2u windowSize = System::MainWindow.getSize();
+        const unsigned int screenWidth = sf::VideoMode::getDesktopMode().width;
 
         if (windowSize.x < screenWidth)
             wCoeff = (double(screenWidth - System::MainWindow.getSize().x) / double(screenWidth)) * 0.5 + 1.0;
@@ -79,7 +79,7 @@ namespace obe::Editor::GUI
     void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
     {
         static int previousScrolbarValue = 0;
-	    const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
+        const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
 
         for (auto& widget : panel->getWidgets())
             widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
@@ -813,7 +813,7 @@ namespace obe::Editor::GUI
         keybindingCatLabel->setText("[ Keybinding Settings ]");
 
         vili::ViliParser viliConfig;
-        System::Path("Data/config.cfg.vili").loadResource(&viliConfig, System::Loaders::dataLoader);
+        System::Path("Data/config.cfg.vili").load(System::Loaders::dataLoader, viliConfig);
         vili::ComplexNode& keybinding = viliConfig.at("KeyBinding");
         unsigned int yPos = 80;
         for (vili::ComplexNode* context : keybinding.getAll<vili::ComplexNode>())
@@ -844,7 +844,7 @@ namespace obe::Editor::GUI
                 for (auto& key : keyGen.getCombination())
                 {
                     std::string keyName = key.first->getButton()->getName();
-	                const std::string stateName = Input::inputButtonStateToString(key.second[0]);
+                    const std::string stateName = Input::inputButtonStateToString(key.second[0]);
                     if (Utils::String::contains(keyName, "NumPad"))
                     {
                         System::Path numImgPath("Sprites/Keys/Keyboard/Key_Num.png");                                
@@ -872,7 +872,7 @@ namespace obe::Editor::GUI
                     System::Path stateImgPath("Sprites/Keys/Keyboard/" + stateName + ".png");
                     if (kIndex > 0)
                     {
-	                    const tgui::Label::Ptr addSymbol = tgui::Label::create();
+                        const tgui::Label::Ptr addSymbol = tgui::Label::create();
                         keybindingPanel->add(addSymbol);
                         contextLbl->setPosition(xPos - 50, yPos - 40);
                         contextLbl->setTextSize(bigFontSize * 3);

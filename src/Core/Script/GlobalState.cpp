@@ -8,10 +8,10 @@ namespace obe::Script
     kaguya::State ScriptEngine;
     void InitScriptEngine()
     {
-        System::Path("Lib/Internal/LuaCore.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-        System::Path("Lib/Internal/Environment.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-        System::Path("Lib/Internal/ScriptInit.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
-        System::Path("Lib/Internal/Triggers.lua").loadResource(&ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/LuaCore.lua").load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/Environment.lua").load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/ScriptInit.lua").load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/Triggers.lua").load(System::Loaders::luaLoader, ScriptEngine);
         Bindings::BindTree(&ScriptEngine);
         ScriptEngine["Hook"] = kaguya::NewTable();
         ScriptEngine.dofile("Lib/Internal/Canvas.lua");

@@ -7,5 +7,5 @@ namespace kaguya { class State; }
 */
 namespace obe::Bindings::NetworkBindings
 {
-	void LoadTcpServer(kaguya::State* lua);
+    void LoadTcpServer(kaguya::State* lua);
 }

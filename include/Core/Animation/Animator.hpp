@@ -48,7 +48,7 @@ namespace obe::Animation
     * - Walking/
     *  - walking_01.png
     *  - walking_02.png
-    *	- Walking.ani.vili
+    *    - Walking.ani.vili
     * - Running/
     *  - running_01.png
     *  - running_02.png

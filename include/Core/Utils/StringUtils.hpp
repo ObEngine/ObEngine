@@ -16,7 +16,7 @@ namespace obe::Utils::String
     /**
     * \brief A std::string containing all the numbers from 0 to 9
     */
-	const std::string Numbers = "0123456789";
+    const std::string Numbers = "0123456789";
 
     /**
     * \brief Splits a std::string using a delimited

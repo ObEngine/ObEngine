@@ -49,7 +49,7 @@ namespace obe::Animation
         /**
         * \brief The Animation will call another one.\n
         *        The name of the Animation to call is stored in m_animationToCall.\n
-        *	     You can also get the Animation name to call by using Animation::getCalledAnimation().
+        *         You can also get the Animation name to call by using Animation::getCalledAnimation().
         */
         Call
     };
@@ -83,7 +83,7 @@ namespace obe::Animation
         * \brief Apply global Animation parameters (Sprite offset and priority)
         * \param parameters A vili::ComplexAttribute that contains the following facultative parameters :\n
         *                   - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in pixels.\n
-        *					 - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in pixels.\n
+        *                     - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in pixels.\n
         *                   - priority : Priority of the Animation (A higher Animation priority can't be interrupted by an Animation with a lower one).
         */
         void applyParameters(vili::ComplexNode& parameters);
@@ -100,7 +100,7 @@ namespace obe::Animation
         unsigned int getAnimationDelay() const;
         /**
         * \brief Get AnimationGroup pointer by groupName.\n
-        *		  It will throws a ObEngine.Animation.Animation.AnimationGroupNotFound if the AnimationGroup is not found.
+        *          It will throws a ObEngine.Animation.Animation.AnimationGroupNotFound if the AnimationGroup is not found.
         * \param groupName The name of the AnimationGroup to return
         * \return A pointer to the AnimationGroup
         */
@@ -114,16 +114,16 @@ namespace obe::Animation
         /**
         * \brief Get the Animation Play Mode
         * \return An enum value containing the AnimationPlayMode, it can be one of these modes :\n
-        *		   - AnimationPlayMode::OneTime\n
-        *		   - AnimationPlayMode::Loop\n
+        *           - AnimationPlayMode::OneTime\n
+        *           - AnimationPlayMode::Loop\n
         *         - AnimationPlayMode::Force\n
         */
         AnimationPlayMode getAnimationPlayMode() const;
         /**
         * \brief Get the Animation Status
         * \return An enum value containing the AnimationStatus, it can be one of these modes ;\n
-        *		   - AnimationStatus::Play\n
-        *		   - AnimationStatus::Call\n
+        *           - AnimationStatus::Play\n
+        *           - AnimationStatus::Call\n
         */
         AnimationStatus getAnimationStatus() const;
         /**

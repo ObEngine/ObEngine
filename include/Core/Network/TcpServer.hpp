@@ -19,6 +19,6 @@ namespace obe::Network
         TcpServer(unsigned short port, std::string triggerNamespace = "", std::string triggerGroup = "");
         void update();
         void setBufferSize(unsigned int maxBufferSize);
-		//std::vector<sf::TcpSocket&> getClients();
+        //std::vector<sf::TcpSocket&> getClients();
     };
 }

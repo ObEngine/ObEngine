@@ -194,12 +194,12 @@ namespace vili
         throw aube::ErrorHandler::Raise("Vili.Vili.DataNode.WrongStringCastOperator", {{"path", getNodePath()}});
     }
 
-	DataNode::operator unsigned int() const
-	{
-		return int(*this);
-	}
+    DataNode::operator unsigned int() const
+    {
+        return int(*this);
+    }
 
-	DataNode::operator int() const
+    DataNode::operator int() const
     {
         if (m_dataType == DataType::Int)
             return std::get<int>(m_data);

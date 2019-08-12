@@ -4,6 +4,7 @@
 
 #include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
+#include <System/Loaders.hpp>
 #include <Utils/FileUtils.hpp>
 
 namespace obe::System
@@ -65,16 +66,13 @@ namespace obe::System
         * \return The Path in std::string form
         */
         std::string toString() const;
-        /**
-        * \brief 
-        * \tparam R Pointer where the resource will be loaded
-        * \tparam F Loader which is a lambda (Called if the file is found to load the resource)
-        * \param resource Pointer where the resource will be loaded
-        * \param lambda Loader which is a lambda (Called if the file is found to load the resource)
-        * \return The Path used to load the resource in std::string form
-        */
-        template <typename R, typename F>
-        std::string loadResource(R* resource, F lambda, bool allowFailure = false) const;
+
+        template <template <class ResourceType> class LoaderType, class ResourceType>
+        LoaderResult load(const LoaderType<ResourceType>& loader, ResourceType& resource, bool allowFailure = false) const;
+
+        template <template <class ResourceType> class LoaderType, class ResourceType>
+        LoaderMultipleResult loadAll(const LoaderType<ResourceType>& loader, ResourceType& resource, bool allowFailure = false) const;
+
         /**
         * \brief Add a Path to Mounted Paths
         * \param path Path to mount
@@ -91,29 +89,46 @@ namespace obe::System
         static std::vector<MountablePath>& Paths();
     };
 
-    template <typename R, typename F>
-    std::string Path::loadResource(R* resource, F lambda, bool allowFailure) const
+    template <template <class ResourceType> class LoaderType, class ResourceType>
+    inline LoaderResult Path::load(const LoaderType<ResourceType>& loader, ResourceType& resource, bool allowFailure) const
     {
-        int loadSum = 0;
         for (MountablePath& mountedPath : MountedPaths)
         {
-            int loadResponse = 0;
             std::string loadPath = mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
             if (Utils::File::fileExists(loadPath) || Utils::File::directoryExists(loadPath))
             {
                 Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
-                loadResponse = lambda(resource, loadPath);
+                if (loader.load(resource, loadPath))
+                {
+                    return LoaderResult(loadPath);
+                }
             }
-
-            loadSum += loadResponse;
-            if (loadResponse == 1)
-                return mountedPath.basePath;
         }
-        if (loadSum > 0)
-            return "*";
-		if (!allowFailure)
-			throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", { {"path", m_path} });
-		else
-			return "";
+        if (allowFailure)
+            return LoaderResult();
+        else
+            throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", { {"path", m_path} });
+    }
+
+    template <template <class ResourceType> class LoaderType, class ResourceType>
+    inline LoaderMultipleResult Path::loadAll(const LoaderType<ResourceType>& loader, ResourceType& resource, bool allowFailure) const
+    {
+        std::vector<std::string> paths;
+        for (MountablePath& mountedPath : MountedPaths)
+        {
+            std::string loadPath = mountedPath.basePath + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+            if (Utils::File::fileExists(loadPath) || Utils::File::directoryExists(loadPath))
+            {
+                Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
+                if (loader.load(resource, loadPath))
+                {
+                    paths.push_back(loadPath);
+                }
+            }
+        }
+        if (!allowFailure && paths.empty())
+            throw aube::ErrorHandler::Raise("ObEngine.System.Path.CantFindResource", { {"path", m_path} });
+        else
+            return LoaderMultipleResult(paths);
     }
 }

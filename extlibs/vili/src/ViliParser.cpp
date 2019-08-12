@@ -154,7 +154,7 @@ namespace vili
             {
                 Functions::String::StringExtractor stringsInLine = Functions::String::extractAllStrings(currentLine);
                 std::string rawLine = Functions::Vector::join(std::get<1>(stringsInLine), "");
-                Functions::String::replaceStringInPlace(rawLine, "	", std::string(m_spacing, ' '));
+                Functions::String::replaceStringInPlace(rawLine, "    ", std::string(m_spacing, ' '));
                 unsigned int currentIndent = 0;
                 unsigned int spacingAmount = 0;
                 for (int i = 0; i < rawLine.size(); i++)
@@ -180,8 +180,8 @@ namespace vili
                         addParsedLine += "\"" + std::get<0>(stringsInLine)[std::get<2>(stringsInLine)[i].second] + "\"";
                     else
                     {
-                        std::string removeRawSpacing = Functions::String::replaceString(std::get<1>(stringsInLine)[std::get<2>(stringsInLine)[i].second], "	", "");
-                        Functions::String::replaceStringInPlace(removeRawSpacing, "	", ""); //Tabs
+                        std::string removeRawSpacing = Functions::String::replaceString(std::get<1>(stringsInLine)[std::get<2>(stringsInLine)[i].second], "    ", "");
+                        Functions::String::replaceStringInPlace(removeRawSpacing, "    ", ""); //Tabs
                         Functions::String::replaceStringInPlace(removeRawSpacing, " ", ""); //Spaces
                         for (int j = 0; j < removeRawSpacing.size(); j++)
                         {

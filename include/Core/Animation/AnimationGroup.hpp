@@ -100,7 +100,7 @@ namespace obe::Animation
         /**
         * \brief Increment index of the current texture to be displayed.\n
         *        If max index is reached and no more loops, the AnimationGroup will be over.\n
-        *	      If max index is reached but there is some loops left, index will go back to 0.\n
+        *          If max index is reached but there is some loops left, index will go back to 0.\n
         */
         void next();
         /**

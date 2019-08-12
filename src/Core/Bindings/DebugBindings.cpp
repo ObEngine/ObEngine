@@ -36,6 +36,6 @@ namespace obe::Bindings::DebugBindings
         {
             Debug::Log->trace(str);
         });
-        System::Path("Lib/Internal/Debug.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/Debug.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
     }
 }

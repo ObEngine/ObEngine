@@ -17,7 +17,7 @@ namespace obe::Modes
     void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
     {
         static int previousScrolbarValue = 0;
-	    const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
+        const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
 
         for (auto& widget : panel->getWidgets())
             widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
@@ -35,7 +35,7 @@ namespace obe::Modes
         middlePanel->removeAllWidgets();
 
         std::vector<std::string> allMapsTemp;
-        System::Path("Data/Maps").loadResource(&allMapsTemp, System::Loaders::filePathLoader);
+        System::Path("Data/Maps").loadAll(System::Loaders::filePathLoader, allMapsTemp);
         std::vector<std::string> allMaps;
         for (int i = 0; i < allMapsTemp.size(); i++)
         {
@@ -46,8 +46,8 @@ namespace obe::Modes
         {
             vili::ViliParser mapInfoParser;
             mapInfoParser.setQuickLookAttributes({ "Meta" });
-            System::Path("Data/Maps").add(allMaps[i]).loadResource(&mapInfoParser, System::Loaders::dataLoader);
-	        const std::string filename = allMaps[i];
+            System::Path("Data/Maps").add(allMaps[i]).load(System::Loaders::dataLoader, mapInfoParser);
+            const std::string filename = allMaps[i];
             std::string levelName = "???";
 
             if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
@@ -71,7 +71,7 @@ namespace obe::Modes
 
     void createLevel(tgui::EditBox::Ptr input)
     {
-	    const std::string newLevelName = input->getText();
+        const std::string newLevelName = input->getText();
         if (newLevelName != "")
         {
             if (!Utils::File::fileExists(System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString()))
@@ -234,7 +234,7 @@ namespace obe::Modes
         return currentMap;
     }
 
-	void startDevMenu()
+    void startDevMenu()
     {
         sf::RenderWindow window({636, 636}, "ObEngine Development Window", sf::Style::None);
 

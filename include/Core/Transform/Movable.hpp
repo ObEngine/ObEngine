@@ -10,7 +10,7 @@ namespace obe::Transform
     protected:
         UnitVector m_position;
     public:
-	    virtual ~Movable() = default;
+        virtual ~Movable() = default;
         /**
         * \brief Set the position of the Movable using an UnitVector
         * \param position Position to affect to the Movable

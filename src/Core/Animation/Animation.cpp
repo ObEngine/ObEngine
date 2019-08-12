@@ -77,7 +77,7 @@ namespace obe::Animation
     {
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
         vili::ViliParser animFile;
-        path.add(path.last() + ".ani.vili").loadResource(&animFile, System::Loaders::dataLoader);
+        path.add(path.last() + ".ani.vili").load(System::Loaders::dataLoader, animFile);
         //Meta
         vili::ComplexNode& meta = animFile.at("Meta");
         m_animationName = meta.at<vili::DataNode>("name").get<std::string>();

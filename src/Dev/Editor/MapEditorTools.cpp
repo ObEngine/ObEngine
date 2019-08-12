@@ -16,9 +16,9 @@ namespace obe::Editor
 
     Thumbnailer::Thumbnailer()
     {
-        System::Path("Data/Fonts/arial.ttf").loadResource(&m_font, System::Loaders::fontLoader);
+        System::Path("Data/Fonts/arial.ttf").load(System::Loaders::fontLoader, m_font);
         m_renderer.create(246, 246);
-        System::Path("Sprites/Others/folder.png").loadResource(&m_folderTexture, System::Loaders::textureLoader);
+        System::Path("Sprites/Others/folder.png").load(System::Loaders::textureLoader, m_folderTexture);
     }
 
     sf::Texture* Thumbnailer::GetSpriteThumbnail(const std::string& path)
@@ -28,12 +28,12 @@ namespace obe::Editor
         if (m_instance->m_cache.find(path) != m_instance->m_cache.end())
             return m_instance->m_cache[path];
         sf::Texture sprTexture;
-        System::Path("Sprites/LevelSprites/" + path).loadResource(&sprTexture, System::Loaders::textureLoader);
+        System::Path("Sprites/LevelSprites/" + path).load(System::Loaders::textureLoader, sprTexture);
         sf::Sprite sprite;
         sprite.setTexture(sprTexture);
-	    const double texW = sprTexture.getSize().x;
-	    const double texH = sprTexture.getSize().y;
-	    const double scale = (texW >= texH) ? m_size / texW : m_size / texH;
+        const double texW = sprTexture.getSize().x;
+        const double texH = sprTexture.getSize().y;
+        const double scale = (texW >= texH) ? m_size / texW : m_size / texH;
         sprite.setScale(scale, scale);
         sprite.setPosition(
             sf::Vector2f(
@@ -95,7 +95,7 @@ namespace obe::Editor
         tgui::Scrollbar::Ptr objectsScrollbar)
     {
         std::vector<std::string> allGameObjects;
-        System::Path("Data/GameObjects").loadResource(&allGameObjects, System::Loaders::dirPathLoader);
+        System::Path("Data/GameObjects").loadAll(System::Loaders::dirPathLoader, allGameObjects);
         const unsigned int panelWidth = objectPanel->getSize().x;
         const int btnSize = float(panelWidth) * 0.115;
         const unsigned int btnOff = 10;
@@ -105,7 +105,7 @@ namespace obe::Editor
         unsigned int xpos;
         unsigned int ypos = xpos = 0;
 
-	    const auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
+        const auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
         {
             unsigned int ixPos = (index % maxElementsPerRow) * (btnSize + btnOff) + xOff;
             unsigned int iyPos = index / maxElementsPerRow * (btnSize + btnOff) + yOff;
@@ -135,7 +135,7 @@ namespace obe::Editor
     void buildRequiresObjectTab(Scene::Scene& scene, tgui::Panel::Ptr& requiresPanel, tgui::Theme& baseTheme, const std::string& objName)
     {
         vili::ComplexNode* requires = Script::GameObjectDatabase::GetRequirementsForGameObject(objName);
-	    const std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+        const std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
         vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
         if (requires != nullptr)
         {
@@ -160,7 +160,7 @@ namespace obe::Editor
             int widgetVerticalPosition = 70;
             for (vili::ComplexNode* complexRequire : requireInput.getAll<vili::ComplexNode>())
             {
-	            const std::string requireItem = complexRequire->getId();
+                const std::string requireItem = complexRequire->getId();
                 tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
                 currentRequirementLabel->setPosition(50, widgetVerticalPosition);
                 currentRequirementLabel->setTextSize(18);
@@ -227,7 +227,7 @@ namespace obe::Editor
 
     void buildObjectThroughRequire(Scene::Scene& scene, const std::string& objName, vili::ComplexNode* requires)
     {
-	    const std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+        const std::string key = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
         Script::GameObject* newGameObject = scene.createGameObject(objName, key);
             
         requires->at("Output").walk([](vili::NodeIterator& node)
@@ -256,8 +256,8 @@ namespace obe::Editor
 
         std::vector<std::string> fileList;
         std::vector<std::string> folderList;
-        System::Path("Sprites/LevelSprites" + path).loadResource(&folderList, System::Loaders::dirPathLoader);
-        System::Path("Sprites/LevelSprites" + path).loadResource(&fileList, System::Loaders::filePathLoader);
+        System::Path("Sprites/LevelSprites" + path).loadAll(System::Loaders::dirPathLoader, folderList);
+        System::Path("Sprites/LevelSprites" + path).loadAll(System::Loaders::filePathLoader, fileList);
 
         const int sprSize = spritesPanel->getSize().x * 0.115;
         const int panelWidth = spritesPanel->getSize().x;
@@ -267,7 +267,7 @@ namespace obe::Editor
         const int yOff = 70;
         unsigned int maxElementsPerRow = float(panelWidth) / (float(sprSize) + float(sprOff));
         unsigned int elemIndex = 0;
-	    const auto getSpritePos = [&sprSize, &sprOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
+        const auto getSpritePos = [&sprSize, &sprOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](unsigned int& index)
         {
             unsigned int ixPos = (index % maxElementsPerRow) * (sprSize + sprOff) + xOff;
             unsigned int iyPos = index / maxElementsPerRow * (sprSize + sprOff) + yOff;
@@ -281,7 +281,7 @@ namespace obe::Editor
         tgui::Button::Ptr backButton = tgui::Button::create();
         spritesPanel->add(backButton, "LS_ELEM_BACK");
         sf::Texture sprback;
-        System::Path("Sprites/Others/back.png").loadResource(&sprback, System::Loaders::textureLoader);
+        System::Path("Sprites/Others/back.png").load(System::Loaders::textureLoader, sprback);
         sprback.setSmooth(true);
         backButton->getRenderer()->setTexture(sprback);
         backButton->setSize(sprSize, sprSize);
@@ -310,11 +310,11 @@ namespace obe::Editor
         for (std::string element : fileList)
         {
             sf::Texture textureLoadChecker;
-            System::Path("Sprites/LevelSprites").add(path).add(element).loadResource(
-				&textureLoadChecker, 
-				System::Loaders::textureLoader, 
-				true
-			);
+            System::Path("Sprites/LevelSprites").add(path).add(element).load(
+                System::Loaders::textureLoader,
+                textureLoadChecker,
+                true
+            );
             if (textureLoadChecker.getSize().x != 0)
             {
                 std::tie(xpos, ypos) = getSpritePos(elemIndex);
@@ -340,7 +340,7 @@ namespace obe::Editor
             testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i++);
         }
         Graphics::LevelSprite* sprToAdd = scene.createLevelSprite(testId);
-	    const Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pixelCamera = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
         sprToAdd->loadTexture("Sprites/LevelSprites/" + spritePath);
         sprToAdd->getPosition() += Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y, Transform::Units::ScenePixels);
         sprToAdd->setRotation(0);

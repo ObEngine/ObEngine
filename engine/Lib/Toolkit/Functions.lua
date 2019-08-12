@@ -10,7 +10,7 @@ promptType = "Toolkit";
 
 -- Commands Definition
 Toolkit.commands.exit = {
-	shortcuts = {"q", "quit", "exit"}
+    shortcuts = {"q", "quit", "exit"}
 };
 Toolkit.commands.help = {
     shortcuts = {"h", "help", "?"}
@@ -31,7 +31,7 @@ Toolkit.commands.package = {
     }
 };
 Toolkit.commands.reload = {
-	shortcuts = {"r", "reload"}, 
+    shortcuts = {"r", "reload"}, 
 };
 Toolkit.commands.workspace = {
     shortcuts = {"w", "ws", "workspace"},

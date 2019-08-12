@@ -16,7 +16,7 @@ namespace obe::Sound
         if (SoundBank.find(filename) == SoundBank.end())
         {
             sf::SoundBuffer loadSound;
-            System::Path(filename).loadResource(&loadSound, System::Loaders::soundLoader);
+            System::Path(filename).load(System::Loaders::soundLoader, loadSound);
             SoundBank[filename] = loadSound;
         }
         m_sound.setBuffer(SoundBank[filename]);

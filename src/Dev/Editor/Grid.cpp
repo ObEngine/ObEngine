@@ -86,8 +86,8 @@ namespace obe::Editor
 
     std::pair<int, int> EditorGrid::getClosestIntersection(const int x, const int y, const int offsetX, const int offsetY) const
     {
-	    const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX;
-	    const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
+        const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX;
+        const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
         int snappedX = std::round(float(x) / float(m_gridSizeX)) * m_gridSizeX + startGridX;
         int snappedY = std::round(float(y) / float(m_gridSizeY)) * m_gridSizeY + startGridY;
         Graphics::Utils::drawPoint(snappedX, snappedY, 4, sf::Color::Magenta);
@@ -109,13 +109,13 @@ namespace obe::Editor
     {
         int stackX = -1;
         int stackY = -1;
-	    const sf::Color selectedLineColor(0, 125, 255, 255);
-	    const sf::Color normalLineColor(125, 125, 125, 255);
+        const sf::Color selectedLineColor(0, 125, 255, 255);
+        const sf::Color normalLineColor(125, 125, 125, 255);
         while (offsetX < 0)
             offsetX += m_gridSizeX;
         while (offsetY < 0)
             offsetY += m_gridSizeY;
-	    const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX; //<REVISION>
+        const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX; //<REVISION>
         for (int i = startGridX; i < Transform::UnitVector::Screen.w; i += m_gridSizeX)
         {
             if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
@@ -128,7 +128,7 @@ namespace obe::Editor
                 Graphics::Utils::drawLine(i, 0, i, Transform::UnitVector::Screen.h, 2, normalLineColor);
             }
         }
-	    const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
+        const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
         for (int i = startGridY; i < Transform::UnitVector::Screen.h; i += m_gridSizeY)
         {
             if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))

@@ -86,30 +86,30 @@ namespace obe::Bindings::SystemBindings
         (*lua)["obe"]["Path"]["FileListLoader"] = kaguya::function([](const System::Path& path)
         {
             std::vector<std::string> fileList;
-            path.loadResource(&fileList, System::Loaders::filePathLoader);
+            path.loadAll(System::Loaders::filePathLoader, fileList);
             return fileList;
         });
         (*lua)["obe"]["Path"]["DirectoryListLoader"] = kaguya::function([](const System::Path& path)
         {
             std::vector<std::string> dirList;
-            path.loadResource(&dirList, System::Loaders::dirPathLoader);
+            path.loadAll(System::Loaders::dirPathLoader, dirList);
             return dirList;
         });
         (*lua)["obe"]["Path"]["DataLoader"] = kaguya::function([](const System::Path& path)
         {
             vili::ViliParser parsedFile;
-            path.loadResource(&parsedFile, System::Loaders::dataLoader);
+            path.load(System::Loaders::dataLoader, parsedFile);
             return parsedFile;
         });
         (*lua)["obe"]["Path"]["FontLoader"] = kaguya::function([](const System::Path& path)
         {
             sf::Font loadedFont;
-            path.loadResource(&loadedFont, System::Loaders::fontLoader);
+            path.load(System::Loaders::fontLoader, loadedFont);
             return loadedFont;
         });
         (*lua)["obe"]["Path"]["LuaLoader"] = kaguya::function([](const System::Path& path, kaguya::State* lua)
         {
-            path.loadResource(lua, System::Loaders::luaLoader);
+            path.load(System::Loaders::luaLoader, *lua);
         });
 
         (*lua)["obe"]["PathType"] = kaguya::NewTable();

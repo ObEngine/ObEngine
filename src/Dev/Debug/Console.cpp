@@ -18,11 +18,11 @@ namespace obe::Debug
         m_font.loadFromFile("Data/Fonts/arial.ttf");
 
         m_consoleTriggers->addTrigger("UserInput")
-			->addTrigger("CursorMoved")
-			->addTrigger("ConsoleScrolled")
-			->addTrigger("NewMessage")
-			->addTrigger("ConsoleToggled")
-			->addTrigger("NewStream");
+            ->addTrigger("CursorMoved")
+            ->addTrigger("ConsoleScrolled")
+            ->addTrigger("NewMessage")
+            ->addTrigger("ConsoleToggled")
+            ->addTrigger("NewStream");
 
         m_debugStream = this->createStream("ScriptEngine", true);
         m_errorStream = this->createStream("ScriptError", true);
@@ -31,7 +31,7 @@ namespace obe::Debug
 
     void Console::scroll(int power)
     {
-	    const int oldScroll = m_consoleScroll;
+        const int oldScroll = m_consoleScroll;
         if (m_consoleScroll + power > 0)
         {
             if (m_consoleScroll + power <= static_cast<int>(m_consoleText.size()) - 52)
@@ -206,7 +206,7 @@ namespace obe::Debug
         bool alternBackground = false;
         sf::Color backgroundColor = sf::Color(30, 30, 30, 200);
         sf::RectangleShape rectangle = sf::RectangleShape(sf::Vector2f(Transform::UnitVector::Screen.w, 20));
-	    const int textX = 5;
+        const int textX = 5;
         int textY = 1;
         for (unsigned int i = 0; i < 1040; i += 20)
         {
@@ -251,7 +251,7 @@ namespace obe::Debug
         estimate.setFont(m_font);
         estimate.setCharacterSize(26);
         estimate.setString(m_inputBuffer.substr(0, m_virtualCursor));
-	    const int consoleCurPos = estimate.getGlobalBounds().width;
+        const int consoleCurPos = estimate.getGlobalBounds().width;
         rectangleCursor.setPosition(consoleCurPos + 2, Transform::UnitVector::Screen.h - 35);
         rectangleCursor.setFillColor(sf::Color(200, 200, 200));
         System::MainWindow.draw(rectangleCursor);

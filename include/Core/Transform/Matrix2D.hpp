@@ -10,7 +10,7 @@ namespace obe::Transform
     private:
         std::array<double, 4> m_elements;
     public:
-	    Matrix2D(std::array<double, 4> elements);
+        Matrix2D(std::array<double, 4> elements);
         UnitVector product(UnitVector vector);
     };
 }

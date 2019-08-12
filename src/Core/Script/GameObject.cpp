@@ -41,7 +41,7 @@ namespace obe::Script
         if (!allRequires.root().contains(type))
         {
             vili::ViliParser getGameObjectFile;
-            System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
+            System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").load(System::Loaders::dataLoader, getGameObjectFile);
             if (getGameObjectFile->contains("Requires"))
             {
                 vili::ComplexNode& requiresData = getGameObjectFile.at<vili::ComplexNode>("Requires");
@@ -60,7 +60,7 @@ namespace obe::Script
         if (!allDefinitions.root().contains(type))
         {
             vili::ViliParser getGameObjectFile;
-            System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").loadResource(&getGameObjectFile, System::Loaders::dataLoader);
+            System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").load(System::Loaders::dataLoader, getGameObjectFile);
             if (getGameObjectFile->contains(type))
             {
                 vili::ComplexNode& definitionData = getGameObjectFile.at<vili::ComplexNode>(type);

@@ -32,7 +32,7 @@ namespace obe::Transform
 
     void UnitVector::set(const UnitVector& vec)
     {
-	    const UnitVector pVec = vec.to(unit);
+        const UnitVector pVec = vec.to(unit);
         x = pVec.x;
         y = pVec.y;
     }
@@ -45,7 +45,7 @@ namespace obe::Transform
 
     void UnitVector::add(const UnitVector& vec)
     {
-	    const UnitVector pVec = vec.to(unit);
+        const UnitVector pVec = vec.to(unit);
         x += pVec.x;
         y += pVec.y;
     }
@@ -58,13 +58,13 @@ namespace obe::Transform
 
     UnitVector UnitVector::operator+(const UnitVector& add) const
     {
-	    const UnitVector pVec = add.to(unit);
+        const UnitVector pVec = add.to(unit);
         return UnitVector(x + pVec.x, y + pVec.y, unit);
     }
 
     UnitVector& UnitVector::operator+=(const UnitVector& add)
     {
-	    const UnitVector pVec = add.to(unit);
+        const UnitVector pVec = add.to(unit);
         x += pVec.x;
         y += pVec.y;
         return *this;
@@ -72,13 +72,13 @@ namespace obe::Transform
 
     UnitVector UnitVector::operator-(const UnitVector& sub) const
     {
-	    const UnitVector pVec = sub.to(unit);
+        const UnitVector pVec = sub.to(unit);
         return UnitVector(x - pVec.x, y - pVec.y, unit);
     }
 
     UnitVector& UnitVector::operator-=(const UnitVector& sub)
     {
-	    const UnitVector pVec = sub.to(unit);
+        const UnitVector pVec = sub.to(unit);
         x -= pVec.x;
         y -= pVec.y;
         return *this;
@@ -86,13 +86,13 @@ namespace obe::Transform
 
     UnitVector UnitVector::operator*(const UnitVector& mul) const
     {
-	    const UnitVector pVec = mul.to(unit);
+        const UnitVector pVec = mul.to(unit);
         return UnitVector(x * pVec.x, y * pVec.y, unit);
     }
 
     UnitVector& UnitVector::operator*=(const UnitVector& mul)
     {
-	    const UnitVector pVec = mul.to(unit);
+        const UnitVector pVec = mul.to(unit);
         x *= pVec.x;
         y *= pVec.y;
         return *this;
@@ -100,13 +100,13 @@ namespace obe::Transform
 
     UnitVector UnitVector::operator/(const UnitVector& div) const
     {
-	    const UnitVector pVec = div.to(unit);
+        const UnitVector pVec = div.to(unit);
         return UnitVector(x / pVec.x, y / pVec.y, unit);
     }
 
     UnitVector& UnitVector::operator/=(const UnitVector& div)
     {
-	    const UnitVector pVec = div.to(unit);
+        const UnitVector pVec = div.to(unit);
         x /= pVec.x;
         y /= pVec.y;
         return *this;
@@ -167,13 +167,13 @@ namespace obe::Transform
 
     bool UnitVector::operator==(const UnitVector& vec) const
     {
-	    const UnitVector pVec = vec.to(unit);
+        const UnitVector pVec = vec.to(unit);
         return (x == pVec.x && y == pVec.y);
     }
 
     bool UnitVector::operator!=(const UnitVector& vec) const
     {
-	    const UnitVector pVec = vec.to(unit);
+        const UnitVector pVec = vec.to(unit);
         return (x != pVec.x || y != pVec.y);
     }
 

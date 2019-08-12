@@ -11,7 +11,7 @@ namespace obe::Sound
 
     void MusicWrapper::load(const std::string& filename)
     {
-        System::Path(filename).loadResource(&m_music, System::Loaders::musicLoader);
+        System::Path(filename).load(System::Loaders::musicLoader, m_music);
     }
 
     float MusicWrapper::getSpatialAttenuation() const

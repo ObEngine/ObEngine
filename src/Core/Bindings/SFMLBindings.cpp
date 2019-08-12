@@ -220,20 +220,20 @@ namespace obe::Bindings::SFMLBindings
         );
     }
 
-	void LoadSfTcpSocket(kaguya::State* lua)
-	{
-		/*(*lua)["SFML"]["TcpSocket"].setClass(kaguya::UserdataMetatable<sf::TcpSocket>()
-			.addFunction("connect", &sf::TcpSocket::connect)
-			.addFunction("disconnect", &sf::TcpSocket::disconnect)
-			.addFunction("getLocalPort", &sf::TcpSocket::getLocalPort)
-			.addFunction("getRemoteAddress", &sf::TcpSocket::getRemoteAddress)
-			.addFunction("getRemotePort", &sf::TcpSocket::getRemotePort)
-			.addFunction("isBlocking", &sf::TcpSocket::isBlocking)
-			//.addFunction("receive", &sf::TcpSocket::receive)
-			//.addFunction("send", &sf::TcpSocket::send)
-			.addFunction("setBlocking", &sf::TcpSocket::setBlocking)
-		);*/
-	}
+    void LoadSfTcpSocket(kaguya::State* lua)
+    {
+        /*(*lua)["SFML"]["TcpSocket"].setClass(kaguya::UserdataMetatable<sf::TcpSocket>()
+            .addFunction("connect", &sf::TcpSocket::connect)
+            .addFunction("disconnect", &sf::TcpSocket::disconnect)
+            .addFunction("getLocalPort", &sf::TcpSocket::getLocalPort)
+            .addFunction("getRemoteAddress", &sf::TcpSocket::getRemoteAddress)
+            .addFunction("getRemotePort", &sf::TcpSocket::getRemotePort)
+            .addFunction("isBlocking", &sf::TcpSocket::isBlocking)
+            //.addFunction("receive", &sf::TcpSocket::receive)
+            //.addFunction("send", &sf::TcpSocket::send)
+            .addFunction("setBlocking", &sf::TcpSocket::setBlocking)
+        );*/
+    }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(SFML_String_toAnsiString_wrapper, sf::String, toAnsiString, 0, 1);
     void LoadSfText(kaguya::State* lua)

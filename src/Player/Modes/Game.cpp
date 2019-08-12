@@ -26,11 +26,11 @@ namespace obe::Modes
             Triggers::TriggerGroupPtrRemover);
 
         gameTriggers
-			->addTrigger("Start")
-			->trigger("Start")
-			->addTrigger("End")
-			->addTrigger("Update")
-			->addTrigger("Render");
+            ->addTrigger("Start")
+            ->trigger("Start")
+            ->addTrigger("End")
+            ->addTrigger("Update")
+            ->addTrigger("Render");
 
         //Config
         vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
@@ -40,7 +40,7 @@ namespace obe::Modes
 
         //Scene Creation / Loading
         Scene::Scene scene;
-		//Scene::TXScene scene = Scene::TXScene::CreateRootScene();
+        //Scene::TXScene scene = Scene::TXScene::CreateRootScene();
 
         Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
         {
@@ -58,9 +58,8 @@ namespace obe::Modes
         //Framerate / DeltaTime
         Time::FramerateManager framerateManager(gameConfig);
 
-		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-        if (!System::Path("boot.lua").find(System::PathType::File).empty())
-            System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/GameInit.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
+        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
         Script::ScriptEngine.dostring("Game.Start()");
 
         //Game Starts
@@ -107,9 +106,9 @@ namespace obe::Modes
             {
                 System::MainWindow.clear(Graphics::Utils::ClearColor);
                 scene.draw();
-				for (auto& sprite : Graphics::LevelSprite::Pool)
-				{
-				}
+                for (auto& sprite : Graphics::LevelSprite::Pool)
+                {
+                }
 
                 System::MainWindow.display();
             }

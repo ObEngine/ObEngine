@@ -23,10 +23,10 @@ namespace ziputils
 
     // open a zip file.
     // param:
-    // 		filename	path and the filename of the zip file to open
+    //         filename    path and the filename of the zip file to open
     //
     // return:
-    // 		true if open, false otherwise
+    //         true if open, false otherwise
     bool unzipper::open(const char* filename)
     {
         close();
@@ -55,7 +55,7 @@ namespace ziputils
 
     // Check if a zipfile is open.
     // return:
-    //		true if open, false otherwise
+    //        true if open, false otherwise
     bool unzipper::isOpen()
     {
         return zipFile_ != nullptr;
@@ -75,7 +75,7 @@ namespace ziputils
 
     // open an existing zip entry.
     // return:
-    //		true if open, false otherwise
+    //        true if open, false otherwise
     bool unzipper::openEntry(const char* filename)
     {
         if (isOpen())
@@ -103,7 +103,7 @@ namespace ziputils
 
     // Check if there is a currently open zip entry.
     // return:
-    //		true if open, false otherwise
+    //        true if open, false otherwise
     bool unzipper::isOpenEntry()
     {
         return entryOpen_;
@@ -111,7 +111,7 @@ namespace ziputils
 
     // Get the zip entry uncompressed size.
     // return:
-    //		zip entry uncompressed size
+    //        zip entry uncompressed size
     unsigned int unzipper::getEntrySize()
     {
         if (entryOpen_)

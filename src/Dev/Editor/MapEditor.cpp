@@ -88,11 +88,11 @@ namespace obe::Editor
 
         //Font
         sf::Font font;
-        System::Path("Data/Fonts/arial.ttf").loadResource(&font, System::Loaders::fontLoader);
+        System::Path("Data/Fonts/arial.ttf").load(System::Loaders::fontLoader, font);
 
         //Config
         vili::ComplexNode& gameConfig = System::Config->at("GameConfig");
-	    const int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
+        const int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
         //Cursor
         System::Cursor cursor;
@@ -166,8 +166,8 @@ namespace obe::Editor
         tgui::EditBox::Ptr mapNameInput = gui.get<tgui::EditBox>("mapNameInput");
         tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
         tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
-	    const tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
-	    const tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
+        const tgui::CheckBox::Ptr displayFramerateCheckbox = gui.get<tgui::CheckBox>("displayFramerateCheckbox");
+        const tgui::CheckBox::Ptr saveCameraPositionCheckbox = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
 
         //Map Editor
         Graphics::LevelSprite* hoveredSprite = nullptr;
@@ -239,10 +239,9 @@ namespace obe::Editor
         GUI::calculateFontSize();
         GUI::applyFontSize(mainPanel);
 
-		System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-        if (!System::Path("boot.lua").find(System::PathType::File).empty())
-		    System::Path("boot.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
-		Script::ScriptEngine.dostring("Editor.Start()");
+        System::Path("Lib/Internal/GameInit.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
+        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
+        Script::ScriptEngine.dostring("Editor.Start()");
 
         //scene.setUpdateState(false);
 
@@ -269,7 +268,7 @@ namespace obe::Editor
                     waitForMapSaving = -1;
             }
 
-	        const bool drawFPS = displayFramerateCheckbox->isChecked();
+            const bool drawFPS = displayFramerateCheckbox->isChecked();
 
             if (editorPanel->isVisible() && saveEditMode < 0)
             {
@@ -372,7 +371,7 @@ namespace obe::Editor
             //Collision Edition
             if (editMode->getSelectedItem() == "Collisions")
             {
-	            const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
+                const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x, cursor.getConstrainedY() + pixelCamera.y);
 
                 scene.enableShowCollision(true, true, true, true);
                 if (selectedMasterCollider != nullptr)

@@ -142,7 +142,7 @@ namespace vili
         /**
         * \brief Returns the Data contained in the DataNode casted to an unsigned int
         */
-		operator unsigned int() const;
+        operator unsigned int() const;
         /**
         * \brief Returns the Data contained in the DataNode casted to an int
         */

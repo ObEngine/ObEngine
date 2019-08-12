@@ -12,9 +12,9 @@ namespace obe::Transform
     class Rect : public Movable
     {
     protected:
-		/**
-		* \brief Size of the Rect
-		*/
+        /**
+        * \brief Size of the Rect
+        */
         UnitVector m_size;
         float m_angle = 0;
     public:
@@ -37,8 +37,8 @@ namespace obe::Transform
         * \param vec The UnitVector you want to transform
         * \param ref The chosen Rect::Referential
         * \param type The way you want to transform your UnitVector
-        *			   - From : Referential::TopLeft to ref
-        *			   - To : ref to Referential::TopLeft
+        *               - From : Referential::TopLeft to ref
+        *               - To : ref to Referential::TopLeft
         */
         void transformRef(UnitVector& vec, Referential ref, ConversionType type) const;
 
@@ -59,7 +59,7 @@ namespace obe::Transform
         * \param position Position to affect to the Rect
         * \param ref Referential used to set the Position
         */
-	    virtual void setPosition(const UnitVector& position, Referential ref);
+        virtual void setPosition(const UnitVector& position, Referential ref);
         /**
         * \brief Moves the Rectangle (Adds the given position to the current one)
         * \param position Position to add to the current Position
@@ -70,7 +70,7 @@ namespace obe::Transform
         * \param ref Referential of the Rect you want to use to get the Position
         * \return The Position of the given Referential of the Rect
         */
-	    virtual UnitVector getPosition(Referential ref) const;
+        virtual UnitVector getPosition(Referential ref) const;
 
         /**
         * \brief Set the Position of a specific Referential of the Rect (The opposite Point won't move)
@@ -101,7 +101,7 @@ namespace obe::Transform
         * \brief Get the Size of the Rect
         * \return An UnitVector containing the size of the Rect (Default Unit is SceneUnits)
         */
-	    virtual UnitVector getSize() const;
+        virtual UnitVector getSize() const;
         /**
         * \brief Get the Scale Factor of the Rect
         * \return An UnitVector containing the Scale Factors of the Rect. \n

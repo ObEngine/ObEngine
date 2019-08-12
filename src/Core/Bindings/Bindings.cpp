@@ -69,8 +69,8 @@ namespace obe::Bindings
             .add("InputCondition", &InputBindings::LoadInputCondition)
             .add("InputFunctions", &InputBindings::LoadInputFunctions)
             .add("InputManager", &InputBindings::LoadInputManager)
-		//Network
-			.add("TcpServer", &NetworkBindings::LoadTcpServer)
+        //Network
+            .add("TcpServer", &NetworkBindings::LoadTcpServer)
         // Scene
             .add("Camera", &SceneBindings::LoadCamera)
             .add("Scene", &SceneBindings::LoadScene)

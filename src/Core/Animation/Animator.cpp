@@ -98,14 +98,16 @@ namespace obe::Animation
     {
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_animatorPath.toString());
         std::vector<std::string> listDir;
-        m_animatorPath.loadResource(&listDir, System::Loaders::dirPathLoader);
+        m_animatorPath.loadAll(System::Loaders::dirPathLoader, listDir);
         std::vector<std::string> allFiles;
-        m_animatorPath.loadResource(&allFiles, System::Loaders::filePathLoader);
+        m_animatorPath.loadAll(System::Loaders::filePathLoader, allFiles);
         vili::ViliParser animatorCfgFile;
         std::unordered_map<std::string, vili::ComplexNode*> animationParameters;
         if (Utils::Vector::contains(std::string("animator.cfg.vili"), allFiles))
         {
-            System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili").loadResource(&animatorCfgFile, System::Loaders::dataLoader);
+            System::Path(
+                m_animatorPath.toString() + "/" + "animator.cfg.vili"
+            ).load(System::Loaders::dataLoader, animatorCfgFile);
             for (vili::ComplexNode* currentAnim : animatorCfgFile.at("Animator").getAll<vili::ComplexNode>())
                 animationParameters[currentAnim->getId()] = &animatorCfgFile.at("Animator", currentAnim->getId());
         }

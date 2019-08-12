@@ -99,7 +99,7 @@ namespace obe::Utils::File
         bool fileFound = (stat(path.c_str(), &buffer) == 0);
         return fileFound;
         #else
-		return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_regular_file(path);
+        return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_regular_file(path);
         #endif
     }
 

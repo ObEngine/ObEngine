@@ -14,7 +14,7 @@ namespace obe::Graphics
         if (m_textureDatabase.find(path) == m_textureDatabase.end())
         {
             std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
-            System::Path(path).loadResource(tempTexture.get(), System::Loaders::textureLoader);
+            System::Path(path).load(System::Loaders::textureLoader, *tempTexture.get());
                 
             if (tempTexture != nullptr)
             {
@@ -49,8 +49,8 @@ namespace obe::Graphics
         if (m_fontDatabase.find(path) == m_fontDatabase.end())
         {
             std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
-            const std::string foundAt = System::Path(path).loadResource(tempFont.get(), System::Loaders::fontLoader);
-            std::cout << "Font : " << path << " : found at : " << foundAt << std::endl;
+            System::LoaderResult loadResult = System::Path(path).load(System::Loaders::fontLoader, *tempFont.get());
+            std::cout << "Font : " << path << " : found at : " << loadResult.path() << std::endl;
                 
             if (tempFont != nullptr)
                 m_fontDatabase[path] = move(tempFont);

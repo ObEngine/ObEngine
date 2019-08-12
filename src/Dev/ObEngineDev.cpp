@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 {
     Graphics::ResourceManager::Init();
     Utils::Exec::RunArgsParser runParser(argc, argv);
-	const std::string startMode = runParser.getArgumentValue("-mode");
+    const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
     Debug::InitLogger();
     vili::ViliParser::StoreInCache("Obe.vili");
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     if (startMode == "edit")
     {
         Debug::Log->info("<ObEngine> Starting ObEngine MapEditor");
-	    const std::string editMapName = Modes::chooseMapMenu();
+        const std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
             Editor::editMap(editMapName);
         //Editor::startEditor();

@@ -17,7 +17,7 @@ namespace obe::Scene
         Triggers::TriggerGroupPtrRemover)
     
     {
-        System::Path("Lib/Internal/GameInit.lua").loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+        System::Path("Lib/Internal/GameInit.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
         Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
         m_showCollisionModes["drawLines"] = false;
         m_showCollisionModes["drawPoints"] = false;
@@ -123,7 +123,7 @@ namespace obe::Scene
         if (filename != m_levelFileName)
         {
             m_levelFile = vili::ViliParser();
-            m_baseFolder = System::Path("Data/Maps").add(filename).loadResource(&m_levelFile, System::Loaders::dataLoader);
+            m_baseFolder = System::Path("Data/Maps").add(filename).load(System::Loaders::dataLoader, m_levelFile);
             m_levelFileName = filename;
         }
 
@@ -211,14 +211,14 @@ namespace obe::Scene
             vili::ComplexNode& script = m_levelFile.at("Script");
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
-                System::Path(script.at<vili::DataNode>("source")).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+                System::Path(script.at<vili::DataNode>("source")).load(System::Loaders::luaLoader, Script::ScriptEngine);
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
             else if (script.contains(vili::NodeType::ArrayNode, "sources"))
             {
                 for (vili::DataNode* scriptName : script.getArrayNode("sources"))
                 {
-                    System::Path(*scriptName).loadResource(&Script::ScriptEngine, System::Loaders::luaLoader);
+                    System::Path(*scriptName).load(System::Loaders::luaLoader, Script::ScriptEngine);
                     m_scriptArray.push_back(*scriptName);
                 }
             }

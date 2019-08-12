@@ -31,15 +31,15 @@ vec4 vec4pow( in vec4 v, in float p ) {
 
 void main()
 {
-	vec2 p = gl_TexCoord[0].xy / iResolution.xy;
+    vec2 p = gl_TexCoord[0].xy / iResolution.xy;
     vec4 c = vec4(0.0,0.0,0.0,1.0);
     
     // Elevating shift values to some high power (between 8 and 16 looks good)
     // helps make the stuttering look more sudden
     vec4 shift = vec4pow(noise(vec2(speed*iGlobalTime,2.0*speed*iGlobalTime/25.0 )),8.0)
-        		*vec4(amplitude,amplitude,amplitude,1.0);;
+                *vec4(amplitude,amplitude,amplitude,1.0);;
     
     c += rgbShift(p, shift);
     
-	gl_FragColor = c;
+    gl_FragColor = c;
 }
