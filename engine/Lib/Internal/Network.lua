@@ -21,4 +21,3 @@ function obe.Network.TCPServer:send(...)
 end
 
 obe.Network.Client = Class("Server")]]
-
