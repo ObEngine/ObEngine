@@ -19,7 +19,7 @@ namespace obe::Triggers
         m_enabled = startState;
         m_fullName = this->getNamespace() + "." + this->getGroup() + "." + m_name;
         Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()] = kaguya::NewTable();
-        Debug::Log->trace("<Trigger> Creating Trigger {0} @{1}", m_fullName, long(this));
+        Debug::Log->trace("<Trigger> Creating Trigger {0} @{1}", m_fullName, fmt::ptr(this));
     }
 
     bool Trigger::getState() const

@@ -72,7 +72,7 @@ namespace dynamicLinker {
       std::string name = "";
       void * getSymbol() {
         #ifdef _WIN32
-          return GetProcAddress( (HINSTANCE) parent->lib->ptr() , name.c_str() );
+          return (void*)(GetProcAddress( (HINSTANCE) parent->lib->ptr() , name.c_str() ));
         #else
           return dlsym( parent->lib->ptr(), name.c_str() );
         #endif

@@ -1,11 +1,9 @@
-#include <experimental/filesystem>
+#include <fswrapper/fswrapper.hpp>
 #include <fstream>
 #include <iostream>
 
 #include <elzip.hpp>
 #include <unzipper.hpp>
-
-namespace fs = std::experimental::filesystem;
 
 namespace elz
 {
@@ -15,10 +13,10 @@ namespace elz
         zipFile.open(zipname.c_str());
         for (std::string filename : zipFile.getFilenames())
         {
-            fs::path cDir(target + ((fs::path(filename).parent_path().string() == "") ? "" : "/") + fs::path(filename).parent_path().string());
-            fs::path cFile(target + "/" + filename);
-            fs::path fillPath;
-            for (fs::path pathPart : cDir)
+            std::filesystem::path cDir(target + ((std::filesystem::path(filename).parent_path().string() == "") ? "" : "/") + std::filesystem::path(filename).parent_path().string());
+            std::filesystem::path cFile(target + "/" + filename);
+            std::filesystem::path fillPath;
+            for (std::filesystem::path pathPart : cDir)
             {
                 fillPath /= pathPart;
                 if (!exists(fillPath))

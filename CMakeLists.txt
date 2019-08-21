@@ -9,6 +9,7 @@ include(engine_git)
 add_subdirectory(extlibs/catch)
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/vili)
+add_subdirectory(extlibs/fswrapper)
 
 # fmtlib is required by spdlog
 add_subdirectory(extlibs/fmt)

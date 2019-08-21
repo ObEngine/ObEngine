@@ -16,13 +16,12 @@ file(GLOB LZIP_SOURCES
 
 add_library(elzip ${LZIP_HEADERS} ${LZIP_SOURCES})
 target_link_libraries(elzip minizip)
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(elzip stdc++fs)
-endif()
+target_link_libraries(elzip fswrapper)
 
 if (USE_FILESYSTEM_FALLBACK)
     target_link_libraries(elzip tinydir)
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(elzip stdc++fs)
 endif()
 
 target_include_directories(elzip
@@ -34,6 +33,6 @@ target_include_directories(elzip
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)

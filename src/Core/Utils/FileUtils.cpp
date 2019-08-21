@@ -19,7 +19,7 @@
 #define GetCurrentDir getcwd
 #endif
 #else
-#include <experimental/filesystem>
+#include <fswrapper/fswrapper.hpp>
 #endif
 
 #include <Debug/Logger.hpp>
@@ -47,11 +47,11 @@ namespace obe::Utils::File
         }
         tinydir_close(&dir);
         #else
-        for (auto& p : std::experimental::filesystem::directory_iterator(path))
+        for (auto& p : std::filesystem::directory_iterator(path))
         {
-            if (std::experimental::filesystem::is_directory(p))
+            if (std::filesystem::is_directory(p))
             {
-                folderList.push_back(std::experimental::filesystem::path(p.path()).filename().string());
+                folderList.push_back(std::filesystem::path(p.path()).filename().string());
             }
         }
         #endif
@@ -79,11 +79,11 @@ namespace obe::Utils::File
         }
         tinydir_close(&dir);
         #else
-        for (auto& p : std::experimental::filesystem::directory_iterator(path))
+        for (auto& p : std::filesystem::directory_iterator(path))
         {
-            if (std::experimental::filesystem::is_regular_file(p))
+            if (std::filesystem::is_regular_file(p))
             {
-                fileList.push_back(std::experimental::filesystem::path(p.path()).filename().string());
+                fileList.push_back(std::filesystem::path(p.path()).filename().string());
             }
         }
         #endif
@@ -99,7 +99,7 @@ namespace obe::Utils::File
         bool fileFound = (stat(path.c_str(), &buffer) == 0);
         return fileFound;
         #else
-        return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_regular_file(path);
+        return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
         #endif
     }
 
@@ -116,7 +116,7 @@ namespace obe::Utils::File
         }
         return false;
         #else
-        return std::experimental::filesystem::exists(path) && std::experimental::filesystem::is_directory(path);
+        return std::filesystem::exists(path) && std::filesystem::is_directory(path);
         #endif
     }
 
@@ -131,7 +131,7 @@ namespace obe::Utils::File
         return bool(mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IXUSR));    //   grant owner access only
         #endif
         #else
-        return std::experimental::filesystem::create_directory(path);
+        return std::filesystem::create_directory(path);
         #endif
     }
 
@@ -146,7 +146,7 @@ namespace obe::Utils::File
     { 
         Debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
 
-        //std::experimental::filesystem::copy(source, target); (Doesn't work for now)
+        //std::filesystem::copy(source, target); (Doesn't work for now)
         std::ifstream src(source, std::ios::binary);
         std::ofstream dst(target, std::ios::binary);
 
@@ -168,7 +168,7 @@ namespace obe::Utils::File
         Debug::Log->error("<FileUtils> Unimplemented deleteDirectory for filesystem fallback");
         #else
         if (directoryExists(path))
-            return std::experimental::filesystem::remove(path);
+            return std::filesystem::remove(path);
         #endif
         return false;
     }
@@ -181,7 +181,7 @@ namespace obe::Utils::File
         std::string current_working_dir(buff);
         return current_working_dir;
         #else
-        return std::experimental::filesystem::current_path().string();
+        return std::filesystem::current_path().string();
         #endif
     }
 

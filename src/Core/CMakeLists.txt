@@ -29,14 +29,12 @@ target_link_libraries(ObEngineCore fmt)
 target_link_libraries(ObEngineCore kaguya)
 target_link_libraries(ObEngineCore sfml-graphics sfml-audio sfml-system sfml-network)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(ObEngineCore stdc++fs)
-endif()
-
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
     target_link_libraries(ObEngineCore tinydir)
     target_compile_definitions(ObEngineCore PUBLIC _USE_FILESYSTEM_FALLBACK)
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(ObEngineCore stdc++fs)
 endif()
 
 group_files(
