@@ -152,7 +152,7 @@ namespace obe::System
         if (!m_docked)
             return m_window.getSize();
         else
-            m_surface.getSize();
+            return m_surface.getSize();
     }
 
     bool Window::isOpen() const

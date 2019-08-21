@@ -493,8 +493,7 @@ namespace obe::Scene
     void Scene::removeGameObject(const std::string& id)
     {
         m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(), [&id](const std::unique_ptr<Script::GameObject>& ptr){
-            if (ptr->getId() == id)
-                return true;
+            return (ptr->getId() == id);
         }), m_gameObjectArray.end());
     }
 
