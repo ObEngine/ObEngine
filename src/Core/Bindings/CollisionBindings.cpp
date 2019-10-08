@@ -135,10 +135,13 @@ namespace obe::Bindings::CollisionBindings
                              &Collision::PolygonalCollider::setOrigin)
                 .addFunction("setParentId",
                              &Collision::PolygonalCollider::setParentId));
-        (*lua)["obe"]["ColliderTagType"] =
-            kaguya::enum_<Collision::ColliderTagType>("ColliderTagType")
-                .value("Accepted", Collision::ColliderTagType::Accepted)
-                .value("Rejected", Collision::ColliderTagType::Rejected)
-                .value("Tag", Collision::ColliderTagType::Tag);
+
+        (*lua)["obe"]["ColliderTagType"] = kaguya::NewTable();
+        (*lua)["obe"]["ColliderTagType"]["Accepted"] =
+            Collision::ColliderTagType::Accepted;
+        (*lua)["obe"]["ColliderTagType"]["Rejected"] =
+            Collision::ColliderTagType::Rejected;
+        (*lua)["obe"]["ColliderTagType"]["Tag"] =
+            Collision::ColliderTagType::Tag;
     }
 } // namespace obe::Bindings::CollisionBindings

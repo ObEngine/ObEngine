@@ -152,6 +152,7 @@ namespace obe::Bindings
         {
             Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}",
                               this->getNodePath());
+            Debug::Log->flush();
             (*lua)("table.insert(LuaCore.libList, '" + this->getNodePath() +
                    "');");
             m_lib(lua);
