@@ -51,4 +51,4 @@ namespace obe::Time
             m_clock = getTickSinceEpoch() - m_waitFor;
         }
     }
-}
+} // namespace obe::Time

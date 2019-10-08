@@ -12,14 +12,14 @@ namespace obe::Bindings::NetworkBindings
         (*lua)["obe"]["Network"] = kaguya::NewTable();
         (*lua)["obe"]["Network"]["TcpServer"].setClass(
             kaguya::UserdataMetatable<obe::Network::TcpServer>()
-                .setConstructors<
-                    Network::TcpServer(int),
-                    Network::TcpServer(int, std::string, std::string)
-                >()
-                .addFunction("setBufferSize", &Network::TcpServer::setBufferSize)
-                .addFunction("update", &Network::TcpServer::update)
-        );
-        /*(*lua)["obe"]["Network"]["TcpServer"]["getClients"] = kaguya::function([](Network::TcpServer* self) {
+                .setConstructors<Network::TcpServer(int),
+                                 Network::TcpServer(int, std::string,
+                                                    std::string)>()
+                .addFunction("setBufferSize",
+                             &Network::TcpServer::setBufferSize)
+                .addFunction("update", &Network::TcpServer::update));
+        /*(*lua)["obe"]["Network"]["TcpServer"]["getClients"] =
+        kaguya::function([](Network::TcpServer* self) {
             std::vector<sf::TcpSocket*> ptrVector;
             for (sf::TcpSocket& client : self->getClients())
             {
@@ -27,6 +27,7 @@ namespace obe::Bindings::NetworkBindings
             }
             return ptrVector;
         });*/
-        System::Path("Lib/Internal/Network.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
+        System::Path("Lib/Internal/Network.lua")
+            .load(System::Loaders::luaLoader, Script::ScriptEngine);
     }
-}
+} // namespace obe::Bindings::NetworkBindings

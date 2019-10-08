@@ -18,19 +18,16 @@ namespace obe::Transform
     Referential Referential::Bottom = Referential(0.5, 1);
     Referential Referential::BottomRight = Referential(1, 1);
     std::array<Referential, 9> Referential::Referentials = {
-        Referential::TopLeft, Referential::Top, Referential::TopRight,
-        Referential::Left, Referential::Center, Referential::Right,
-        Referential::BottomLeft, Referential::Bottom, Referential::BottomRight
-    };
+        Referential::TopLeft,    Referential::Top,    Referential::TopRight,
+        Referential::Left,       Referential::Center, Referential::Right,
+        Referential::BottomLeft, Referential::Bottom, Referential::BottomRight};
 
-    Referential::Referential() :
-        m_refX(0), m_refY(0)
+    Referential::Referential() : m_refX(0), m_refY(0)
     {
-
     }
 
-    Referential::Referential(const double refX, const double refY) :
-        m_refX(refX), m_refY(refY)
+    Referential::Referential(const double refX, const double refY)
+        : m_refX(refX), m_refY(refY)
     {
         assert(refX >= -1 && refX <= 1);
         assert(refY >= -1 && refY <= 1);
@@ -46,15 +43,12 @@ namespace obe::Transform
 
     Referential Referential::flip(Referential::Axis axis) const
     {
-        const bool bothOrHorizontal = 
-            (axis == Referential::Axis::Both || 
-            axis == Referential::Axis::Horizontal);
-        const bool bothOrVertical = 
-            (axis == Referential::Axis::Both || 
-            axis == Referential::Axis::Vertical);
-        return Referential(
-            bothOrHorizontal ? 1 - m_refX : m_refX,
-            bothOrVertical ? 1 - m_refY : m_refY);
+        const bool bothOrHorizontal = (axis == Referential::Axis::Both ||
+                                       axis == Referential::Axis::Horizontal);
+        const bool bothOrVertical = (axis == Referential::Axis::Both ||
+                                     axis == Referential::Axis::Vertical);
+        return Referential(bothOrHorizontal ? 1 - m_refX : m_refX,
+                           bothOrVertical ? 1 - m_refY : m_refY);
     }
 
     bool Referential::isOnLeftSide() const
@@ -79,20 +73,20 @@ namespace obe::Transform
 
     bool Referential::isOnCorner() const
     {
-        return (isOnLeftSide() || isOnRightSide())
-            && (isOnTopSide() || isOnBottomSide());
+        return (isOnLeftSide() || isOnRightSide()) &&
+               (isOnTopSide() || isOnBottomSide());
     }
 
     bool Referential::isOnSide() const
     {
-        return (isOnLeftSide() || isOnRightSide())
-            ^ (isOnTopSide() || isOnBottomSide());
+        return (isOnLeftSide() || isOnRightSide()) ^
+               (isOnTopSide() || isOnBottomSide());
     }
 
     bool Referential::isKnown() const
     {
-        return (m_refX == 0 || m_refX == 0.5 || m_refX == 1) 
-        && (m_refY == 0 || m_refY == 0.5 || m_refY == 1);
+        return (m_refX == 0 || m_refX == 0.5 || m_refX == 1) &&
+               (m_refY == 0 || m_refY == 0.5 || m_refY == 1);
     }
 
     UnitVector Referential::getOffset() const
@@ -121,7 +115,8 @@ namespace obe::Transform
         if (m_refX == 1 && m_refY == 1)
             return fmt::format(format, "BottomRight");
         else
-            return fmt::format(format, fmt::format("{}, {}", m_refX, m_refY), m_refX, m_refY);
+            return fmt::format(format, fmt::format("{}, {}", m_refX, m_refY),
+                               m_refX, m_refY);
     }
 
     Referential Referential::FromString(const std::string& ref)
@@ -145,13 +140,16 @@ namespace obe::Transform
         if (ref == "BottomRight")
             return Referential::BottomRight;
         std::cmatch regMatch;
-        const std::regex refRegex(R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
+        const std::regex refRegex(
+            R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
         std::regex_match(ref.c_str(), regMatch, refRegex);
         if (regMatch.size() == 5)
         {
             return Referential(std::stod(regMatch[1]), std::stod(regMatch[3]));
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Transform.Referential.UnknownReferential", { {"referential", ref} });
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Transform.Referential.UnknownReferential",
+            {{"referential", ref}});
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)
@@ -159,4 +157,4 @@ namespace obe::Transform
         os << m.toString();
         return os;
     }
-}
+} // namespace obe::Transform

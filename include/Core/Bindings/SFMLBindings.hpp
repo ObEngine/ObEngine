@@ -1,10 +1,13 @@
 #pragma once
 
-namespace kaguya { class State; }
+namespace kaguya
+{
+    class State;
+}
 
 /**
-* \brief Bindings to SFML related classes and functions
-*/
+ * \brief Bindings to SFML related classes and functions
+ */
 namespace obe::Bindings::SFMLBindings
 {
     void LoadSfColor(kaguya::State* lua);
@@ -20,4 +23,4 @@ namespace obe::Bindings::SFMLBindings
     void LoadSfTime(kaguya::State* lua);
     void LoadSfTransformable(kaguya::State* lua);
     void LoadSfVector(kaguya::State* lua);
-}
+} // namespace obe::Bindings::SFMLBindings

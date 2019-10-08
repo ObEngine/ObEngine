@@ -12,4 +12,4 @@ namespace obe::Transform
     {
         return m_unit;
     }
-}
+} // namespace obe::Transform

@@ -1,7 +1,7 @@
 #include <algorithm>
 
-#include <Utils/ExecUtils.hpp>
 #include "Utils/MathUtils.hpp"
+#include <Utils/ExecUtils.hpp>
 
 namespace obe::Utils::Exec
 {
@@ -25,4 +25,4 @@ namespace obe::Utils::Exec
         }
         return "";
     }
-}
+} // namespace obe::Utils::Exec

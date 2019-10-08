@@ -5,48 +5,48 @@
 namespace obe::Input
 {
     /**
-    * \brief The type of Input
-    */
+     * \brief The type of Input
+     */
     enum class InputType
     {
         /**
-        * \brief All letters from A to Z
-        */
+         * \brief All letters from A to Z
+         */
         Alpha,
         /**
-        * \brief All numbers from 0 to 9
-        */
+         * \brief All numbers from 0 to 9
+         */
         Numeric,
         /**
-        * \brief All numbers from 0 to 9 on Numpad
-        */
+         * \brief All numbers from 0 to 9 on Numpad
+         */
         NumericNP,
         /**
-        * \brief All arrow keys (Left, Up, Down, Right)
-        */
+         * \brief All arrow keys (Left, Up, Down, Right)
+         */
         Arrows,
         /**
-        * \brief All Functions keys from F1 to F12 on most keyboards
-        */
+         * \brief All Functions keys from F1 to F12 on most keyboards
+         */
         Functions,
         /**
-        * \brief All Mouse buttons (Left / Right clic)
-        */
+         * \brief All Mouse buttons (Left / Right clic)
+         */
         Mouse,
         /**
-        * \brief Other keys (Symbols etc..)
-        */
+         * \brief Other keys (Symbols etc..)
+         */
         Others,
         /**
-        * \brief All Gamepad buttons
-        */
+         * \brief All Gamepad buttons
+         */
         GamepadButton,
         /**
-        * \brief All Gamepad Axis (Joysticks, triggers)
-        */
+         * \brief All Gamepad Axis (Joysticks, triggers)
+         */
         GamepadAxis
     };
 
     std::string inputTypeToString(InputType type);
     std::ostream& operator<<(std::ostream& os, InputType m);
-}
+} // namespace obe::Input

@@ -6,8 +6,7 @@
 
 namespace obe::Types
 {
-    template <class T> 
-    class Registrable
+    template <class T> class Registrable
     {
     public:
         Registrable(const std::string& id)
@@ -15,4 +14,4 @@ namespace obe::Types
             Script::ScriptEngine[id] = static_cast<T*>(this);
         }
     };
-}
+} // namespace obe::Types

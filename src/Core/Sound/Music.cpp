@@ -103,11 +103,15 @@ namespace obe::Sound
     {
         switch (m_music.getStatus())
         {
-        case sf::SoundSource::Stopped: return "Stopped";
-        case sf::SoundSource::Paused: return "Paused";
-        case sf::SoundSource::Playing: return "Playing";
+        case sf::SoundSource::Stopped:
+            return "Stopped";
+        case sf::SoundSource::Paused:
+            return "Paused";
+        case sf::SoundSource::Playing:
+            return "Playing";
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Sound.MusicWrapper.IncorrectStatus");
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Sound.MusicWrapper.IncorrectStatus");
     }
 
     void MusicWrapper::pause()
@@ -124,4 +128,4 @@ namespace obe::Sound
     {
         m_music.stop();
     }
-}
+} // namespace obe::Sound

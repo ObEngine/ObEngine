@@ -92,7 +92,8 @@ namespace obe
     }
 
     /**
-     * \brief Classes and Functions to handle all types of 2d Transformations in the Engine
+     * \brief Classes and Functions to handle all types of 2d Transformations in
+     * the Engine
      */
     namespace Transform
     {
@@ -118,4 +119,4 @@ namespace obe
     namespace Utils
     {
     }
-}
+} // namespace obe

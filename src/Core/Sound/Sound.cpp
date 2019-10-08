@@ -4,7 +4,8 @@
 
 namespace obe::Sound
 {
-    std::map<std::string, sf::SoundBuffer> SoundWrapper::SoundBank = std::map<std::string, sf::SoundBuffer>();
+    std::map<std::string, sf::SoundBuffer> SoundWrapper::SoundBank =
+        std::map<std::string, sf::SoundBuffer>();
 
     SoundWrapper::SoundWrapper(const std::string& filename)
     {
@@ -16,7 +17,8 @@ namespace obe::Sound
         if (SoundBank.find(filename) == SoundBank.end())
         {
             sf::SoundBuffer loadSound;
-            System::Path(filename).load(System::Loaders::soundLoader, loadSound);
+            System::Path(filename).load(System::Loaders::soundLoader,
+                                        loadSound);
             SoundBank[filename] = loadSound;
         }
         m_sound.setBuffer(SoundBank[filename]);
@@ -106,11 +108,15 @@ namespace obe::Sound
     {
         switch (m_sound.getStatus())
         {
-        case sf::SoundSource::Stopped: return "Stopped";
-        case sf::SoundSource::Paused: return "Paused";
-        case sf::SoundSource::Playing: return "Playing";
+        case sf::SoundSource::Stopped:
+            return "Stopped";
+        case sf::SoundSource::Paused:
+            return "Paused";
+        case sf::SoundSource::Playing:
+            return "Playing";
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Sound.SoundWrapper.IncorrectStatus");
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Sound.SoundWrapper.IncorrectStatus");
     }
 
     void SoundWrapper::pause()
@@ -127,4 +133,4 @@ namespace obe::Sound
     {
         m_sound.stop();
     }
-}
+} // namespace obe::Sound

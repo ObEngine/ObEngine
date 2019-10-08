@@ -13,9 +13,12 @@ namespace obe::System
     void IndexPlugins();
 
     template <class T>
-    using PluginFunction = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
+    using PluginFunction =
+        std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
     template <class T>
-    PluginFunction<T> getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName);
+    PluginFunction<T>
+    getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl,
+                      const std::string& fnName);
 
     class Plugin : public Types::Identifiable
     {
@@ -31,6 +34,7 @@ namespace obe::System
         PluginFunction<void()> m_onRenderFn;
         bool m_hasOnExitFn;
         PluginFunction<void()> m_onExitFn;
+
     public:
         Plugin(const std::string& id, const std::string& path);
         void onLoadBindings(kaguya::State* lua) const;
@@ -47,8 +51,12 @@ namespace obe::System
     extern std::vector<std::unique_ptr<Plugin>> Plugins;
 
     template <class T>
-    PluginFunction<T> getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName)
+    PluginFunction<T>
+    getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl,
+                      const std::string& fnName)
     {
-        return std::move(std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(dl->getFunction<T>(fnName)));
+        return std::move(
+            std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(
+                dl->getFunction<T>(fnName)));
     }
-}
+} // namespace obe::System

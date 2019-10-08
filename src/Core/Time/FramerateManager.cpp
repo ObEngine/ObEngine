@@ -1,32 +1,44 @@
 #include <cmath>
 
+#include "Debug/Logger.hpp"
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Time/TimeUtils.hpp>
 #include <thread>
-#include "Debug/Logger.hpp"
 
 namespace obe::Time
 {
     FramerateManager::FramerateManager(vili::ComplexNode& config)
     {
         m_frameLimiterClock = getTickSinceEpoch();
-        m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit")) ? config.at<vili::DataNode>("framerateLimit") : true;
-        m_framerateTarget = (config.contains(vili::NodeType::DataNode, "framerateTarget")) ? config.at<vili::DataNode>("framerateTarget") : 60;
-        m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync")) ? config.at<vili::DataNode>("vsync") : true;
-        m_syncUpdateRender = (config.contains(vili::NodeType::DataNode, "syncUpdateToRender")) ? config.at<vili::DataNode>("syncUpdateToRender") : true;
+        m_limitFPS =
+            (config.contains(vili::NodeType::DataNode, "framerateLimit"))
+                ? config.at<vili::DataNode>("framerateLimit")
+                : true;
+        m_framerateTarget =
+            (config.contains(vili::NodeType::DataNode, "framerateTarget"))
+                ? config.at<vili::DataNode>("framerateTarget")
+                : 60;
+        m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync"))
+                             ? config.at<vili::DataNode>("vsync")
+                             : true;
+        m_syncUpdateRender =
+            (config.contains(vili::NodeType::DataNode, "syncUpdateToRender"))
+                ? config.at<vili::DataNode>("syncUpdateToRender")
+                : true;
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
         m_currentFrame = 0;
         m_frameProgression = 0;
         m_needToRender = false;
-        
+
         System::MainWindow.setVerticalSyncEnabled(m_vsyncEnabled);
     }
 
     void FramerateManager::update()
     {
         sf::Time timeBuffer = m_deltaClock.restart();
-        m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
+        m_deltaTime =
+            static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
         if (m_limitFPS)
         {
             if (getTickSinceEpoch() - m_frameLimiterClock > 1000)
@@ -34,7 +46,9 @@ namespace obe::Time
                 m_frameLimiterClock = getTickSinceEpoch();
                 m_currentFrame = 0;
             }
-            m_frameProgression = round((getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
+            m_frameProgression =
+                round((getTickSinceEpoch() - m_frameLimiterClock) /
+                      (m_reqFramerateInterval * 1000));
             m_needToRender = false;
             if (m_frameProgression > m_currentFrame)
             {
@@ -43,7 +57,8 @@ namespace obe::Time
             }
             else
             {
-                std::this_thread::sleep_for(std::chrono::duration<double>(m_reqFramerateInterval));
+                std::this_thread::sleep_for(
+                    std::chrono::duration<double>(m_reqFramerateInterval));
             }
         }
     }
@@ -103,4 +118,4 @@ namespace obe::Time
     {
         return (!m_limitFPS || m_needToRender);
     }
-}
+} // namespace obe::Time

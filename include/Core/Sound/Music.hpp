@@ -5,22 +5,23 @@
 namespace obe::Sound
 {
     /**
-    * \brief A Wrapper around sf::Music
-    * @Bind
-    */
+     * \brief A Wrapper around sf::Music
+     * @Bind
+     */
     class MusicWrapper
     {
     private:
         sf::Music m_music;
+
     public:
         /**
-        * \brief Default constructor of MusicWrapper
-        */
+         * \brief Default constructor of MusicWrapper
+         */
         MusicWrapper() = default;
         /**
-        * \brief Load Constructor of MusicWrapper
-        * \param filename Path to the music file to load
-        */
+         * \brief Load Constructor of MusicWrapper
+         * \param filename Path to the music file to load
+         */
         explicit MusicWrapper(const std::string& filename);
         bool doesUsesSoundPosition() const;
         sf::Time getDuration() const;
@@ -33,9 +34,9 @@ namespace obe::Sound
         float getVolume() const;
         bool isLooping() const;
         /**
-        * \brief Loads a Music at the given path
-        * \param filename Path to the Music to load
-        */
+         * \brief Loads a Music at the given path
+         * \param filename Path to the Music to load
+         */
         void load(const std::string& filename);
         void pause();
         void play();
@@ -49,4 +50,4 @@ namespace obe::Sound
         void stop();
         void useSoundPosition(bool usePosition);
     };
-}
+} // namespace obe::Sound

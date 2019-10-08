@@ -4,10 +4,9 @@
 
 namespace obe::Input
 {
-    InputAction::InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id) :
-    Identifiable(id), 
-    m_interval(0), 
-    m_repeat(0)
+    InputAction::InputAction(Triggers::TriggerGroup* triggerPtr,
+                             const std::string& id)
+        : Identifiable(id), m_interval(0), m_repeat(0)
     {
         m_actionTrigger = triggerPtr;
         triggerPtr->addTrigger(id);
@@ -67,7 +66,8 @@ namespace obe::Input
             {
                 if (m_state)
                 {
-                    if (m_repeat.resetIfOver()) // Reset repeat when combination is unchecked <REVISION>
+                    if (m_repeat.resetIfOver()) // Reset repeat when combination
+                                                // is unchecked <REVISION>
                     {
                         const InputActionEvent ev(this, &combination);
                         m_callback(ev);
@@ -77,7 +77,9 @@ namespace obe::Input
                 }
                 else
                 {
-                    if (m_interval.resetIfOver()) // What is this for, when does m_state goes back to false ? <REVISION>
+                    if (m_interval.resetIfOver()) // What is this for, when does
+                                                  // m_state goes back to false
+                                                  // ? <REVISION>
                     {
                         m_state = true;
                         m_callback(InputActionEvent(this, &combination));
@@ -108,4 +110,4 @@ namespace obe::Input
         }
         return false;
     }
-}
+} // namespace obe::Input

@@ -7,4 +7,4 @@ namespace obe::Bindings
         IndexBaseBindings();
         IndexPluginsBindings();
     }
-}
+} // namespace obe::Bindings

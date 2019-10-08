@@ -1,7 +1,7 @@
 #pragma once
 
-#include <spdlog/spdlog.h>
 #include <fmt/ostream.h>
+#include <spdlog/spdlog.h>
 
 namespace obe::Debug
 {
@@ -11,5 +11,4 @@ namespace obe::Debug
     void InitLogger();
     void InitLoggerLevel();
     void SetLoggerLevel(const spdlog::level::level_enum);
-
-}
+} // namespace obe::Debug

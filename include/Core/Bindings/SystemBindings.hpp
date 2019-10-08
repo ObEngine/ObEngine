@@ -1,10 +1,13 @@
 #pragma once
 
-namespace kaguya { class State; }
+namespace kaguya
+{
+    class State;
+}
 
 /**
-* \brief Bindings to System related classes and functions
-*/
+ * \brief Bindings to System related classes and functions
+ */
 namespace obe::Bindings::SystemBindings
 {
     void LoadSystemConstants(kaguya::State* lua);
@@ -14,4 +17,4 @@ namespace obe::Bindings::SystemBindings
     void LoadPackage(kaguya::State* lua);
     void LoadWorkspace(kaguya::State* lua);
     void LoadWindow(kaguya::State* lua);
-}
+} // namespace obe::Bindings::SystemBindings

@@ -18,8 +18,11 @@ namespace obe::Time
 
     TimeUnit Chronometer::getTime()
     {
-        if (m_started) m_chronoCurrent = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(m_chronoCurrent - m_chronoStart).count();
+        if (m_started)
+            m_chronoCurrent = std::chrono::high_resolution_clock::now();
+        return std::chrono::duration_cast<std::chrono::milliseconds>(
+                   m_chronoCurrent - m_chronoStart)
+            .count();
     }
 
     void Chronometer::setLimit(const TimeUnit limit)
@@ -31,4 +34,4 @@ namespace obe::Time
     {
         return (m_started && this->getTime() > m_limit);
     }
-}
+} // namespace obe::Time

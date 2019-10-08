@@ -1,8 +1,8 @@
 #include <fstream>
 #include <iostream>
 
-#include <vili/Vili.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <vili/Vili.hpp>
 
 #include <Bindings/Bindings.hpp>
 #include <Debug/Logger.hpp>
@@ -31,13 +31,16 @@ int main(int argc, char** argv)
     vili::ViliParser::StoreInCache("Obe.vili");
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
-    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
+                                sf::VideoMode::getDesktopMode().height);
     Debug::Log->debug("<ObEngine> Initialising Position Transformers");
     Graphics::InitPositionTransformer();
     Debug::Log->debug("<ObEngine> Initialising Input Handling");
     Input::InitKeyList();
 
-    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}", Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
+    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
+                     Transform::UnitVector::Screen.w,
+                     Transform::UnitVector::Screen.h);
 
     Debug::Log->debug("<ObEngine> Initialising Errors Handling");
     LoadErrors();

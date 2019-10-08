@@ -1,10 +1,13 @@
 #pragma once
 
-namespace kaguya { class State; }
+namespace kaguya
+{
+    class State;
+}
 
 /**
-* \brief Bindings to Vili related classes and functions
-*/
+ * \brief Bindings to Vili related classes and functions
+ */
 namespace obe::Bindings::ViliBindings
 {
     void LoadViliDataType(kaguya::State* lua);
@@ -20,4 +23,4 @@ namespace obe::Bindings::ViliBindings
     void LoadViliNodeTemplate(kaguya::State* lua);
     void LoadViliNodeConstraintManager(kaguya::State* lua);
     void LoadViliErrorHandler(kaguya::State* lua);
-}
+} // namespace obe::Bindings::ViliBindings

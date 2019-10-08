@@ -8,12 +8,12 @@ namespace obe::Network
     {
     private:
         std::string m_serializedObject;
-    public:
 
+    public:
     };
 
     class TcpSocket : public sf::TcpSocket
     {
     public:
     };
-}
+} // namespace obe::Network

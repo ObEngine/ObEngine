@@ -1,10 +1,13 @@
 #pragma once
 
-namespace kaguya { class State; }
+namespace kaguya
+{
+    class State;
+}
 
 /**
-* \brief Bindings to Input related classes and functions
-*/
+ * \brief Bindings to Input related classes and functions
+ */
 namespace obe::Bindings::InputBindings
 {
     void LoadInputAction(kaguya::State* lua);
@@ -15,4 +18,4 @@ namespace obe::Bindings::InputBindings
     void LoadInputManager(kaguya::State* lua);
     void LoadInputFunctions(kaguya::State* lua);
     void LoadInputButtons(kaguya::State* lua);
-}
+} // namespace obe::Bindings::InputBindings

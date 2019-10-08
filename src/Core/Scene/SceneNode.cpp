@@ -25,4 +25,4 @@ namespace obe::Scene
         }
         Movable::move(position);
     }
-}
+} // namespace obe::Scene

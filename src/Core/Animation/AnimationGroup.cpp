@@ -125,4 +125,4 @@ namespace obe::Animation
     {
         return m_groupDelay;
     }
-}
+} // namespace obe::Animation
