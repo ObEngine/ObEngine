@@ -108,6 +108,7 @@ namespace obe::Script
     GameObject::~GameObject()
     {
         Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
+        this->deleteObject();
         AllEnvs.erase(
             std::remove_if(
                 AllEnvs.begin(),

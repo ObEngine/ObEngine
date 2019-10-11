@@ -1,6 +1,7 @@
 #include <catch/catch.hpp>
 
 #include <Utils/MathUtils.hpp>
+#include <Collision/PolygonalCollider.hpp>
 
 using namespace obe::Utils::Math;
 
@@ -103,5 +104,33 @@ TEST_CASE(
         REQUIRE(normalise(720, 0, 360) == 0);
         REQUIRE(normalise(1000, 0, 360) == 280);
         REQUIRE(normalise(-650, 0, 360) == 70);
+    }
+}
+
+TEST_CASE(
+    "A random number should be between min and max value",
+    "[obe.Utils.Math.randint]"
+)
+{
+    SECTION("Positive bounds")
+    {
+        REQUIRE(randint(0, 100) >= 0);
+        REQUIRE(randint(0, 100) <= 100);
+    }
+}
+
+TEST_CASE(
+    "A random number should be between 0 and 1",
+    "[obe.Utils.Math.randfloat]"
+)
+{
+    SECTION("100 random float")
+    {
+        for (unsigned int i = 0; i < 100; i++)
+        {
+            float value = randfloat();
+            REQUIRE(value >= 0.f);
+            REQUIRE(value <= 1.f);
+        }
     }
 }

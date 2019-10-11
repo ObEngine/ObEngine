@@ -23,12 +23,18 @@ namespace obe::Scene
         T& get(const std::string& id);
     };
 
+    enum class ExecuteType
+    {
+        FilePath,
+        Source
+    };
+
     class LuaComponent : public Types::Serializable
     {
     private:
         unsigned int m_envIndex;
         Triggers::TriggerGroupPtr m_localTriggers;
-        std::vector<std::string> m_sources;
+        std::vector<std::tuple<ExecuteType, std::string>> m_sources;
 
         std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>> m_registeredAliases;
@@ -56,8 +62,8 @@ namespace obe::Scene
         */
         void initialize();
 
-        void execute(const std::string& path) const;
-        void addSource(const std::string& path);
+        void execute(ExecuteType type, const std::string& source) const;
+        void addSource(ExecuteType type, const std::string& path);
 
         void dump(vili::ComplexNode& target) const override;
         void load(vili::ComplexNode& data) override;

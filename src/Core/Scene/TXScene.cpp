@@ -6,6 +6,8 @@
 #include <Triggers/TriggerDatabase.hpp>
 #include <Utils/StringUtils.hpp>
 
+#define LUA_COMPONENT_ENV Script::ScriptEngine["__ENVIRONMENTS"][m_envIndex]
+
 namespace obe::Scene
 {
     TXScene TXScene::CreateRootScene()
@@ -135,19 +137,7 @@ namespace obe::Scene
                 else if (componentType == "Script")
                 {
                     m_script = std::make_unique<LuaComponent>();
-                    if (component->contains(vili::NodeType::DataNode, "source"))
-                    {
-                        m_script->execute(component->at<vili::DataNode>("source"));
-                        m_script->addSource(component->at<vili::DataNode>("source"));
-                    }
-                    else if (component->contains(vili::NodeType::ArrayNode, "sources"))
-                    {
-                        for (vili::DataNode* scriptName : component->getArrayNode("sources"))
-                        {
-                            m_script->execute(*scriptName);
-                            m_script->addSource(*scriptName);
-                        }
-                    }
+                    m_script->load(*component);
                 }
             }
         }
@@ -236,19 +226,32 @@ namespace obe::Scene
         Script::executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
     }
 
+    kaguya::LuaTable LuaComponent::access() const
+    {
+        return LUA_COMPONENT_ENV["Object"];
+    }
+
+    kaguya::LuaFunction LuaComponent::getConstructor() const
+    {
+        return LUA_COMPONENT_ENV["ObjectInit"];
+    }
+
     unsigned LuaComponent::getEnvIndex() const
     {
         return m_envIndex;
     }
 
-    void LuaComponent::execute(const std::string& path) const
+    void LuaComponent::execute(ExecuteType type, const std::string& source) const
     {
-        Script::executeFile(m_envIndex, System::Path(path).find());
+        if (type == ExecuteType::FilePath)
+            Script::executeFile(m_envIndex, System::Path(source).find());
+        else if (type == ExecuteType::Source)
+            Script::executeString(m_envIndex, source);
     }
 
-    void LuaComponent::addSource(const std::string& path)
+    void LuaComponent::addSource(ExecuteType type, const std::string& path)
     {
-        m_sources.push_back(path);
+        m_sources.push_back(std::make_tuple(type, path));
     }
 
     void LuaComponent::dump(vili::ComplexNode& target) const
@@ -257,5 +260,31 @@ namespace obe::Scene
 
     void LuaComponent::load(vili::ComplexNode& data)
     {
+        if (data.contains(vili::NodeType::DataNode, "source"))
+        {
+            this->execute(ExecuteType::FilePath, data.at<vili::DataNode>("source"));
+            this->addSource(ExecuteType::FilePath, data.at<vili::DataNode>("source"));
+        }
+        else if (data.contains(vili::NodeType::ArrayNode, "sources"))
+        {
+            for (vili::DataNode* scriptName : data.getArrayNode("sources"))
+            {
+                this->execute(ExecuteType::FilePath, *scriptName);
+                this->addSource(ExecuteType::FilePath, *scriptName);
+            }
+        }
+        if (data.contains(vili::NodeType::DataNode, "string"))
+        {
+            this->execute(ExecuteType::Source, data.at<vili::DataNode>("string"));
+            this->addSource(ExecuteType::Source, data.at<vili::DataNode>("string"));
+        }
+        else if (data.contains(vili::NodeType::ArrayNode, "strings"))
+        {
+            for (vili::DataNode* sourceString : data.getArrayNode("strings"))
+            {
+                this->execute(ExecuteType::Source, *sourceString);
+                this->addSource(ExecuteType::Source, *sourceString);
+            }
+        }
     }
 }
