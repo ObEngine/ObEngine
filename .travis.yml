@@ -5,7 +5,7 @@ dist: trusty
 sudo: required
 cache:
   directories:
-  - "/usr/local/bin/"
+  - $HOME/build_pkgs
 addons:
   apt:
     sources:
@@ -35,47 +35,52 @@ addons:
     - libgpgme11-dev
     - libsndfile1-dev
     - libudev-dev
-script:
-- sudo apt-get purge cmake
-- mkdir ~/temp
-- cd ~/temp
-- echo "(Step 1/5) Downloading latest CMake.." && wget https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
-- echo "(Step 2/5) Extracting CMake.." && tar xzvf cmake-3.10.0-rc4.tar.gz > cmake-extractlog
-- cd cmake-3.10.0-rc4/
-- echo "(Step 3/5) Bootstrapping CMake.." && ./bootstrap > bootstrap-log
-- echo "(Step 4/5) Make CMake.." && make -j4 > makelog
-- echo "(Step 5/5) Install CMake.." && sudo make install > makelog-install
-- which cmake
-- cd ~/temp
+
+before_script:
+- BUILD_PKG=${HOME}/build_pkgs
+- mkdir -p ${BUILD_PKG} && cd ${BUILD_PKG}
+- echo "Installing cmake..."
+- |
+  if [ ! -d "cmake-3.10.0-rc4/" ]; then
+    wget -nv https://cmake.org/files/v3.10/cmake-3.10.0-rc4.tar.gz
+    tar xzf cmake-3.10.0-rc4.tar.gz
+    cd cmake-3.10.0-rc4/
+    ./bootstrap > /dev/null
+    make -j$(nproc) > /dev/null
+  else
+    cd cmake-3.10.0-rc4/
+    echo "cmake build cache found"
+  fi
+- sudo make install > /dev/null
+- /usr/local/bin/cmake --version
+
+- cd ${BUILD_PKG}
 - echo "Installing SFML..."
-- pwd
-- ls
-- wget https://www.sfml-dev.org/files/SFML-2.5.0-sources.zip
-- unzip SFML-2.5.0-sources.zip > sfml-downloadlog
-- pwd
-- ls
-- cd SFML-2.5.0
-#- src/SFML/Graphics
-#- rm CMakeLists.txt
-#- wget https://raw.githubusercontent.com/Sygmei/ObEngine/master/extlibs/SFML/Graphics/CMakeLists.txt
-#- cd ../../../
-- mkdir build/
-- cd build
-- /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE
-  .. > install.log
-- make >> install.log
-- sudo make install >> install.log
+- |
+  if [ ! -d "SFML-2.5.0" ]; then
+    wget -nv https://www.sfml-dev.org/files/SFML-2.5.0-sources.zip
+    unzip -qq SFML-2.5.0-sources.zip
+    mkdir -p SFML-2.5.0/build/
+    cd SFML-2.5.0/build
+    /usr/local/bin/cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=TRUE .. > /dev/null
+    make -j$(nproc) > /dev/null
+  else
+    echo "SFML build cache found"
+    cd SFML-2.5.0/build
+  fi
+- sudo make install > /dev/null
 - sudo ldconfig
-- cd /home/travis/build/Sygmei/ObEngine
+
+script:
+- cd ${TRAVIS_BUILD_DIR}
+- mkdir -p build && cd build
 - export CC=/usr/bin/gcc-7
 - export CXX=/usr/bin/g++-7
-- gcc -v && g++ -v && /usr/local/bin/cmake --version
-- mkdir build
-- cd build
-- "/usr/local/bin/cmake -DBUILD_TESTS=ON .."
-- make -j6
+- /usr/local/bin/cmake -DBUILD_TESTS=ON ..
+- make -j$(nproc)
 - mv tests/ObEngineTests Tests
-- "./Tests"
+- ./Tests
+
 before_deploy:
 - ls
 - ls ../
