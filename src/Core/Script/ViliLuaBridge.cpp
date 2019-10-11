@@ -12,7 +12,8 @@ namespace obe::Script::DataBridge
         }
         else if (convert->getType() == vili::NodeType::ComplexNode)
         {
-            complexNodeToLuaTable(target, static_cast<vili::ComplexNode*>(convert));
+            complexNodeToLuaTable(target,
+                                  static_cast<vili::ComplexNode*>(convert));
         }
         else if (convert->getType() == vili::NodeType::DataNode)
         {
@@ -22,11 +23,12 @@ namespace obe::Script::DataBridge
 
     vili::Node* luaToData(kaguya::LuaRef& convert)
     {
-        //return Attribute();
+        // return Attribute();
         return nullptr;
     }
 
-    void complexNodeToLuaTable(kaguya::LuaTable& target, vili::ComplexNode* convert)
+    void complexNodeToLuaTable(kaguya::LuaTable& target,
+                               vili::ComplexNode* convert)
     {
         target[convert->getId()] = kaguya::NewTable();
         kaguya::LuaTable injectTable = target[convert->getId()];
@@ -35,15 +37,18 @@ namespace obe::Script::DataBridge
         {
             if (node->getType() == vili::NodeType::DataNode)
             {
-                dataNodeToLuaElement(injectTable, &convert->getDataNode(node->getId()));
+                dataNodeToLuaElement(injectTable,
+                                     &convert->getDataNode(node->getId()));
             }
             else if (node->getType() == vili::NodeType::ComplexNode)
             {
-                complexNodeToLuaTable(injectTable, &convert->getComplexNode(node->getId()));
+                complexNodeToLuaTable(injectTable,
+                                      &convert->getComplexNode(node->getId()));
             }
             else if (node->getType() == vili::NodeType::ArrayNode)
             {
-                arrayNodeToLuaTable(injectTable, &convert->getArrayNode(node->getId()));
+                arrayNodeToLuaTable(injectTable,
+                                    &convert->getArrayNode(node->getId()));
             }
         }
         target[convert->getId()] = injectTable;
@@ -78,33 +83,40 @@ namespace obe::Script::DataBridge
         }
     }
 
-    vili::ComplexNode* luaTableToComplexNode(const std::string& id, kaguya::LuaRef& convert)
+    vili::ComplexNode* luaTableToComplexNode(const std::string& id,
+                                             kaguya::LuaRef& convert)
     {
         if (convert.type() == 0 || convert.type() == 5)
         {
             vili::ComplexNode* returnElement = new vili::ComplexNode(id);
             std::map<std::string, kaguya::LuaRef> tableMap = convert;
-            for (const std::pair<std::string, kaguya::LuaRef> tableItem : tableMap)
+            for (const std::pair<std::string, kaguya::LuaRef> tableItem :
+                 tableMap)
             {
                 const std::string tableKey = tableItem.first;
                 if (convert[tableKey].type() == 5)
                 {
                     kaguya::LuaRef tempTableRef = convert[tableKey];
-                    returnElement->pushComplexNode(luaTableToComplexNode(tableKey, tempTableRef));
+                    returnElement->pushComplexNode(
+                        luaTableToComplexNode(tableKey, tempTableRef));
                 }
-                else if (Utils::Vector::contains(convert[tableKey].type(), std::vector<int>({1, 3, 4})))
+                else if (Utils::Vector::contains(convert[tableKey].type(),
+                                                 std::vector<int>({1, 3, 4})))
                 {
                     kaguya::LuaRef tempElemRef = convert[tableKey];
-                    returnElement->pushDataNode(luaElementToDataNode(tableKey, tempElemRef));
+                    returnElement->pushDataNode(
+                        luaElementToDataNode(tableKey, tempElemRef));
                 }
             }
 
             return returnElement;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Script.ViliLuaBridge.NotATable", { { "id", id } });
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Script.ViliLuaBridge.NotATable", {{"id", id}});
     }
 
-    vili::DataNode* luaElementToDataNode(const std::string& id, kaguya::LuaRef& convert)
+    vili::DataNode* luaElementToDataNode(const std::string& id,
+                                         kaguya::LuaRef& convert)
     {
         vili::DataNode* returnAttribute = nullptr;
         if (convert.type() == 3 && Utils::String::isStringInt(convert))
@@ -132,7 +144,8 @@ namespace obe::Script::DataBridge
         return returnAttribute;
     }
 
-    vili::ArrayNode* luaTableToArrayNode(const std::string& id, kaguya::LuaTable& convert)
+    vili::ArrayNode* luaTableToArrayNode(const std::string& id,
+                                         kaguya::LuaTable& convert)
     {
         /*ListAttribute* returnElement = new ListAttribute(id, dataType);
         std::cout << "Table Type : " << convert.type() << std::endl;
@@ -143,18 +156,23 @@ namespace obe::Script::DataBridge
                 std::cout << "Current Table Key : " << tableKey << std::endl;
                 if (convert[tableKey].type() == 5) {
                     kaguya::LuaRef tempTableRef = convert[tableKey];
-                    returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey, tempTableRef));
+                    returnElement->pushComplexAttribute(luaTableToComplexAttribute(tableKey,
+        tempTableRef));
                 }
-                else if (Utils::Vector::contains(convert[tableKey].type(), std::vector<int>({ 1, 3, 4 }))) {
-                    kaguya::LuaRef tempElemRef = convert[tableKey];
-                    returnElement->pushBaseAttribute(luaElementToBaseAttribute(tableKey, tempElemRef));
+                else if (Utils::Vector::contains(convert[tableKey].type(),
+        std::vector<int>({ 1, 3, 4 }))) { kaguya::LuaRef tempElemRef =
+        convert[tableKey];
+                    returnElement->pushBaseAttribute(luaElementToBaseAttribute(tableKey,
+        tempElemRef));
                 }
             }
         }
         else {
-            std::cout << "<Error:ViliLuaBridge:DataBridge>[luaTableToComplexAttribute] LuaElement " << id << " is not a table" << std::endl;
+            std::cout <<
+        "<Error:ViliLuaBridge:DataBridge>[luaTableToComplexAttribute] LuaElement
+        " << id << " is not a table" << std::endl;
         }
         return returnElement;*/
         return nullptr;
     }
-}
+} // namespace obe::Script::DataBridge

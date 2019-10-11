@@ -10,8 +10,9 @@ namespace obe::Collision
     class TrajectoryNode;
 
     /**
-    * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and acceleration (Linear Trajectory)
-    */
+     * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
+     * acceleration (Linear Trajectory)
+     */
     class Trajectory : public Types::Togglable
     {
     private:
@@ -23,6 +24,7 @@ namespace obe::Collision
         bool m_static = false;
         Transform::Units m_unit;
         friend class TrajectoryNode;
+
     public:
         Trajectory(Transform::Units unit = Transform::Units::SceneUnits);
         Trajectory* addAcceleration(double acceleration);
@@ -42,4 +44,4 @@ namespace obe::Collision
         Trajectory* setSpeed(double speed);
         Trajectory* setStatic(bool tStatic);
     };
-}
+} // namespace obe::Collision

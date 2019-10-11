@@ -31,4 +31,4 @@ namespace obe::Types
     {
         return m_selected;
     }
-}
+} // namespace obe::Types

@@ -8,9 +8,9 @@
 namespace obe::Time
 {
     /**
-    * \brief Class to display the amount of Frame and Update per Seconds
-    * @Bind
-    */
+     * \brief Class to display the amount of Frame and Update per Seconds
+     * @Bind
+     */
     class FPSCounter
     {
     private:
@@ -22,23 +22,24 @@ namespace obe::Time
         bool m_canUpdateFPS = false;
         sf::Text m_text;
         sf::Font m_font;
+
     public:
         /**
-        * \brief Called when screen is refreshed.
-        */
+         * \brief Called when screen is refreshed.
+         */
         void tick();
         /**
-        * \brief Called when game is updated
-        */
+         * \brief Called when game is updated
+         */
         void uTick();
         /**
-        * \brief Load a new font to use when drawing the stats
-        * \param font Font to use to draw the amount of fps / ups
-        */
+         * \brief Load a new font to use when drawing the stats
+         * \param font Font to use to draw the amount of fps / ups
+         */
         void loadFont(sf::Font& font);
         /**
-        * \brief Draws the calculated stats on the screen
-        */
+         * \brief Draws the calculated stats on the screen
+         */
         void draw();
     };
-}
+} // namespace obe::Time

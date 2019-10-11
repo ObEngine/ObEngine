@@ -94,4 +94,4 @@ namespace obe::Collision
     {
         return m_onCollideCallback;
     }
-}
+} // namespace obe::Collision

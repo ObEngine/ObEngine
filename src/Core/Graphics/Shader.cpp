@@ -15,15 +15,14 @@ namespace obe::Graphics
 
     void Shader::loadShader(const std::string& path)
     {
-        this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);
+        this->loadFromFile(System::Path(path).find(),
+                           sf::Shader::Type::Fragment);
         m_path = path;
     }
     void Shader::dump(vili::ComplexNode& target) const
     {
-            
     }
     void Shader::load(vili::ComplexNode& data)
     {
-        
     }
-}
+} // namespace obe::Graphics

@@ -9,13 +9,13 @@ namespace obe::Bindings
         IndexBaseBindings();
 
         BindTree["obe"]
-        // Debug
+            // Debug
             .add("Console", &DebugBindings::LoadConsole)
             .add("ConsoleMessage", &DebugBindings::LoadConsoleMessage)
             .add("ConsoleStream", &DebugBindings::LoadConsoleStream)
-        // Editor
+            // Editor
             .add("EditorGrid", &EditorBindings::LoadEditorGrid);
 
         IndexPluginsBindings();
     }
-}
+} // namespace obe::Bindings

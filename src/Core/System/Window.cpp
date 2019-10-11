@@ -11,7 +11,8 @@ namespace obe::System
     {
         vili::ViliParser windowConfig;
         std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-        Path("Data/window.cfg.vili").loadAll(System::Loaders::dataLoader, windowConfig);
+        Path("Data/window.cfg.vili")
+            .loadAll(System::Loaders::dataLoader, windowConfig);
         std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
 
         unsigned int width = 1280;
@@ -39,9 +40,11 @@ namespace obe::System
 
         if (wconf->contains("width"))
         {
-            if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
+            if (wconf->getDataNode("width").getDataType() ==
+                vili::DataType::Int)
                 width = wconf->getDataNode("width").get<int>();
-            else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
+            else if (wconf->getDataNode("width").getDataType() ==
+                     vili::DataType::String)
             {
                 if (wconf->getDataNode("width").get<std::string>() == "Fill")
                     width = Transform::UnitVector::Screen.w;
@@ -51,9 +54,11 @@ namespace obe::System
             width = Transform::UnitVector::Screen.w;
         if (wconf->contains("height"))
         {
-            if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
+            if (wconf->getDataNode("height").getDataType() ==
+                vili::DataType::Int)
                 height = wconf->getDataNode("height").get<int>();
-            else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
+            else if (wconf->getDataNode("height").getDataType() ==
+                     vili::DataType::String)
             {
                 if (wconf->getDataNode("height").get<std::string>() == "Fill")
                 {
@@ -130,7 +135,8 @@ namespace obe::System
             m_surface.display();
     }
 
-    void Window::draw(const sf::Drawable& drawable, const sf::RenderStates& states)
+    void Window::draw(const sf::Drawable& drawable,
+                      const sf::RenderStates& states)
     {
         if (!m_docked)
             m_window.draw(drawable, states);
@@ -138,8 +144,8 @@ namespace obe::System
             m_surface.draw(drawable, states);
     }
 
-    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
-        const sf::RenderStates& states)
+    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount,
+                      sf::PrimitiveType type, const sf::RenderStates& states)
     {
         if (!m_docked)
             m_window.draw(vertices, vertexCount, type, states);
@@ -152,7 +158,7 @@ namespace obe::System
         if (!m_docked)
             return m_window.getSize();
         else
-            m_surface.getSize();
+            return m_surface.getSize();
     }
 
     bool Window::isOpen() const
@@ -173,7 +179,7 @@ namespace obe::System
 
     void Window::setTitle(const std::string& title)
     {
-        
+
         if (!m_docked)
             m_window.setTitle(title);
     }
@@ -220,4 +226,4 @@ namespace obe::System
             m_surface.create(width, height);
         this->setView(sf::View(sf::FloatRect(0, 0, width, height)));
     }
-}
+} // namespace obe::System

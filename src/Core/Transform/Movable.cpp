@@ -16,4 +16,4 @@ namespace obe::Transform
     {
         return m_position;
     }
-}
+} // namespace obe::Transform

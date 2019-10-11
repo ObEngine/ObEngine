@@ -2,11 +2,11 @@ project(ObEngineDev)
 
 include(group_files)
 
-file(GLOB_RECURSE OBEDEV_HEADERS 
+file(GLOB_RECURSE OBEDEV_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Dev/*.hpp)
-file(GLOB_RECURSE OBEDEV_SOURCES 
+file(GLOB_RECURSE OBEDEV_SOURCES
     ${ObEngine_SOURCE_DIR}/src/Dev/*.cpp)
-file(GLOB_RECURSE OBEPLAYER_GAME_SOURCE 
+file(GLOB_RECURSE OBEPLAYER_GAME_SOURCE
     ${ObEngine_SOURCE_DIR}/src/Player/Modes/Game.cpp)
 
 add_executable(ObEngineDev ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} ${OBEPLAYER_GAME_SOURCE} ${OBENGINE_ICON})

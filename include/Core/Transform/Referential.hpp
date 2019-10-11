@@ -14,6 +14,7 @@ namespace obe::Transform
     private:
         double m_refX;
         double m_refY;
+
     public:
         enum class Axis
         {
@@ -21,7 +22,7 @@ namespace obe::Transform
             Vertical,
             Both
         };
-        
+
         Referential();
         Referential(double refX, double refY);
 
@@ -30,17 +31,18 @@ namespace obe::Transform
 
         /**
          * \brief Get the opposite Referential in a Rect
-         * \return The opposite of the given Referential (BottomRight => TopLeft for example)
+         * \return The opposite of the given Referential (BottomRight => TopLeft
+         * for example)
          */
         Referential flip(Axis axis = Axis::Both) const;
         /**
-         * \brief Get if the Referential is on the left side of a normalized Rect
-         * \return true if Referential is on left side, false otherwise
+         * \brief Get if the Referential is on the left side of a normalized
+         * Rect \return true if Referential is on left side, false otherwise
          */
         bool isOnLeftSide() const;
         /**
-         * \brief Get if the Referential is on the right side of a normalized Rect
-         * \return true if Referential is on right side, false otherwise
+         * \brief Get if the Referential is on the right side of a normalized
+         * Rect \return true if Referential is on right side, false otherwise
          */
         bool isOnRightSide() const;
         /**
@@ -49,8 +51,8 @@ namespace obe::Transform
          */
         bool isOnTopSide() const;
         /**
-         * \brief Get if the Referential is on the bottom side of a normalized Rect
-         * \return true if Referential is on bottom side, false otherwise
+         * \brief Get if the Referential is on the bottom side of a normalized
+         * Rect \return true if Referential is on bottom side, false otherwise
          */
         bool isOnBottomSide() const;
         /**
@@ -66,12 +68,13 @@ namespace obe::Transform
         bool isOnSide() const;
         /**
          * \brief Get if the Referential is one of the 9 known referentials
-         * (TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom, BottomRight)
-         * \return true is the Referential is one of the 9 known referentials, false otherwise
+         * (TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom,
+         * BottomRight) \return true is the Referential is one of the 9 known
+         * referentials, false otherwise
          */
         bool isKnown() const;
         /**
-         * \brief Get the normalized position of a Referential in a Rect 
+         * \brief Get the normalized position of a Referential in a Rect
          * (-1 : Left / Top, 0 = Center, 1 = Right / Bottom)
          * \return The normalized position of a Referential in a Rect
          */
@@ -82,7 +85,8 @@ namespace obe::Transform
          * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
-        std::string toString(const std::string& format = "Referential<{}>") const;
+        std::string
+        toString(const std::string& format = "Referential<{}>") const;
         /**
          * \brief Gets a Referential based on its name
          * \param ref Name of the Referential
@@ -215,4 +219,4 @@ namespace obe::Transform
         static Referential BottomRight;
         static std::array<Referential, 9> Referentials;
     };
-}
+} // namespace obe::Transform

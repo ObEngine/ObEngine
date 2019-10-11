@@ -1,6 +1,9 @@
 #pragma once
 
-namespace kaguya { class State; }
+namespace kaguya
+{
+    class State;
+}
 
 namespace obe::Bindings::DebugBindings
 {

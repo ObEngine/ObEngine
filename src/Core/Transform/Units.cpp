@@ -16,19 +16,25 @@ namespace obe::Transform
             return Units::ScenePixels;
         if (unit == "SceneUnits")
             return Units::SceneUnits;
-        throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownStringUnit", {{"unit", unit}});
+        throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownStringUnit",
+                                        {{"unit", unit}});
     }
 
     std::string unitsToString(Units unit)
     {
         switch (unit)
         {
-        case Units::ViewPercentage: return "ViewPercentage";
-        case Units::ViewPixels: return "ViewPixels";
-        case Units::ViewUnits: return "ViewUnits";
-        case Units::ScenePixels: return "ScenePixels";
-        case Units::SceneUnits: return "SceneUnits";
+        case Units::ViewPercentage:
+            return "ViewPercentage";
+        case Units::ViewPixels:
+            return "ViewPixels";
+        case Units::ViewUnits:
+            return "ViewUnits";
+        case Units::ScenePixels:
+            return "ScenePixels";
+        case Units::SceneUnits:
+            return "SceneUnits";
         }
         throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownUnit");
     }
-}
+} // namespace obe::Transform

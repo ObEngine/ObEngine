@@ -16,4 +16,4 @@ namespace obe::Types
     {
         return m_id;
     }
-}
+} // namespace obe::Types

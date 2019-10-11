@@ -5,4 +5,4 @@ namespace obe::Transform
 {
     ViewStruct UnitVector::View;
     ScreenStruct UnitVector::Screen;
-}
+} // namespace obe::Transform

@@ -7,4 +7,4 @@ namespace obe::Triggers
         m_trigger = trigger;
         m_delay = delay;
     }
-}
+} // namespace obe::Triggers

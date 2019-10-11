@@ -15,10 +15,12 @@ namespace obe::Network
         Triggers::TriggerGroupPtr m_socketTriggers;
         size_t m_maxBufferSize = 4096;
         std::vector<char> m_data;
+
     public:
-        TcpServer(unsigned short port, std::string triggerNamespace = "", std::string triggerGroup = "");
+        TcpServer(unsigned short port, std::string triggerNamespace = "",
+                  std::string triggerGroup = "");
         void update();
         void setBufferSize(unsigned int maxBufferSize);
-        //std::vector<sf::TcpSocket&> getClients();
+        // std::vector<sf::TcpSocket&> getClients();
     };
-}
+} // namespace obe::Network

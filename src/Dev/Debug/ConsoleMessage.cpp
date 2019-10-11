@@ -3,7 +3,9 @@
 
 namespace obe::Debug
 {
-    ConsoleMessage::ConsoleMessage(const std::string& header, const std::string& message, const sf::Color& textColor)
+    ConsoleMessage::ConsoleMessage(const std::string& header,
+                                   const std::string& message,
+                                   const sf::Color& textColor)
     {
         this->m_header = header;
         this->m_text = message;
@@ -49,4 +51,4 @@ namespace obe::Debug
     {
         m_color = color;
     }
-}
+} // namespace obe::Debug

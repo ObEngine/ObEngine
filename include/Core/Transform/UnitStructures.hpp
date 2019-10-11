@@ -3,8 +3,9 @@
 namespace obe::Transform
 {
     /**
-    * \brief Struct representing the View used for internal UnitVector conversions
-    */
+     * \brief Struct representing the View used for internal UnitVector
+     * conversions
+     */
     struct ViewStruct
     {
         double w;
@@ -14,11 +15,12 @@ namespace obe::Transform
     };
 
     /**
-    * \brief Struct representing the Screen used for internal UnitVector conversions
-    */
+     * \brief Struct representing the Screen used for internal UnitVector
+     * conversions
+     */
     struct ScreenStruct
     {
         double w;
         double h;
     };
-}
+} // namespace obe::Transform

@@ -74,3 +74,39 @@ endif()
 if (BUILD_TESTS)
     add_subdirectory(tests)
 endif()
+
+if (NOT DEFINED RUN_CI_TOOLS)
+    set(RUN_CI_TOOLS OFF CACHE BOOL "Run CI tools ?")
+endif()
+
+set(CMAKE_CXX_CLANG_TIDY "")
+set(CMAKE_CXX_CPPCHECK "")
+set(MAKE_CXX_INCLUDE_WHAT_YOU_USE "")
+if (RUN_CI_TOOLS)
+    find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
+    find_program(CPPCHECK_COMMAND NAMES cppcheck)
+    find_program(IWYU_COMMAND NAMES iwyu-tool)
+
+    if (CLANG_TIDY_COMMAND)
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND};-checks=*,-fuchsia-default-arguments")
+    endif()
+    if (CPPCHECK_COMMAND)
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_COMMAND};--std=c++11")
+    endif()
+    if (IWYU_COMMAND)
+        set(MAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_COMMAND};--transitive_includes_only")
+    endif()
+    set(CMAKE_LINK_WHAT_YOU_USE TRUE)
+
+    get_property(OBENGINE_CORE_SRC TARGET ObEngineCore PROPERTY SOURCES)
+    get_property(OBENGINE_PLAYER_SRC TARGET ObEnginePlayer PROPERTY SOURCES)
+    get_property(OBENGINE_DEV_SRC TARGET ObEngineDev PROPERTY SOURCES)
+
+    include(clang_format)
+
+    clangformat_setup(
+        ${OBENGINE_CORE_SRC}
+        ${OBENGINE_PLAYER_SRC}
+        ${OBENGINE_DEV_SRC}
+    )
+endif()

@@ -1,0 +1,19 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+# Force pointers to the type for C++.
+AccessModifierOffset: -4
+DerivePointerAlignment: false
+PointerAlignment: Left
+BreakBeforeBraces: Allman
+ColumnLimit: 80
+NamespaceIndentation: All
+SortIncludes: true
+SortUsingDeclarations: true
+AllowShortIfStatementsOnASingleLine: false
+Standard: Cpp11
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: false
+BinPackParameters: true
+ReflowComments: true

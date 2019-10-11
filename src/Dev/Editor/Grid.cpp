@@ -1,15 +1,15 @@
 #include <cmath>
 
 #include <Editor/Grid.hpp>
-#include <Transform/UnitVector.hpp>
 #include <Graphics/DrawUtils.hpp>
+#include <Transform/UnitVector.hpp>
 #include <Utils/MathUtils.hpp>
 
 namespace obe::Editor
 {
-    EditorGrid::EditorGrid(const unsigned int sizeX, const unsigned int sizeY, const int offsetX, const int offsetY) : 
-    Togglable(false),
-    Registrable("Grid")
+    EditorGrid::EditorGrid(const unsigned int sizeX, const unsigned int sizeY,
+                           const int offsetX, const int offsetY)
+        : Togglable(false), Registrable("Grid")
     {
         m_gridSizeX = sizeX;
         m_gridSizeY = sizeY;
@@ -29,9 +29,11 @@ namespace obe::Editor
         m_gridSizeY = cellHeight;
     }
 
-    void EditorGrid::setSize(const unsigned int cellWidth, const unsigned int cellHeight)
+    void EditorGrid::setSize(const unsigned int cellWidth,
+                             const unsigned int cellHeight)
     {
-        Debug::Log->trace("<EditorGrid> Set Cell Size : {0}x{1}", cellWidth, cellHeight);
+        Debug::Log->trace("<EditorGrid> Set Cell Size : {0}x{1}", cellWidth,
+                          cellHeight);
         this->setCellWidth(cellWidth);
         this->setCellHeight(cellHeight);
     }
@@ -50,7 +52,8 @@ namespace obe::Editor
 
     void EditorGrid::setOffset(const int offsetX, const int offsetY)
     {
-        Debug::Log->trace("<EditorGrid> Set Cell Offset : {0}, {1}", offsetX, offsetY);
+        Debug::Log->trace("<EditorGrid> Set Cell Offset : {0}, {1}", offsetX,
+                          offsetY);
         this->setOffsetX(offsetX);
         this->setOffsetY(offsetY);
     }
@@ -79,28 +82,39 @@ namespace obe::Editor
     {
         if (m_gridMagnetX != -1 && m_gridMagnetY != -1)
         {
-            Debug::Log->trace("<EditorGrid> Magnetize Cursor on {0}, {1}", m_gridMagnetX, m_gridMagnetY);
+            Debug::Log->trace("<EditorGrid> Magnetize Cursor on {0}, {1}",
+                              m_gridMagnetX, m_gridMagnetY);
             cursor.setPosition(m_gridMagnetX, m_gridMagnetY);
         }
     }
 
-    std::pair<int, int> EditorGrid::getClosestIntersection(const int x, const int y, const int offsetX, const int offsetY) const
+    std::pair<int, int> EditorGrid::getClosestIntersection(
+        const int x, const int y, const int offsetX, const int offsetY) const
     {
-        const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX;
-        const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
-        int snappedX = std::round(float(x) / float(m_gridSizeX)) * m_gridSizeX + startGridX;
-        int snappedY = std::round(float(y) / float(m_gridSizeY)) * m_gridSizeY + startGridY;
+        const int startGridX =
+            (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) %
+            m_gridSizeX;
+        const int startGridY =
+            (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) %
+            m_gridSizeY;
+        int snappedX = std::round(float(x) / float(m_gridSizeX)) * m_gridSizeX +
+                       startGridX;
+        int snappedY = std::round(float(y) / float(m_gridSizeY)) * m_gridSizeY +
+                       startGridY;
         Graphics::Utils::drawPoint(snappedX, snappedY, 4, sf::Color::Magenta);
         return std::pair<int, int>(snappedX, snappedY);
     }
 
-    void EditorGrid::moveMagnet(System::Cursor& cursor, const int x, const int y)
+    void EditorGrid::moveMagnet(System::Cursor& cursor, const int x,
+                                const int y)
     {
         if (m_gridMagnetX != -1 && m_gridMagnetY != -1)
         {
             Debug::Log->trace("<EditorGrid> Move Magnet to {0}, {1}", x, y);
-            if (x != 0) m_gridMagnetX += (m_gridSizeX * x);
-            if (y != 0) m_gridMagnetY += (m_gridSizeY * y);
+            if (x != 0)
+                m_gridMagnetX += (m_gridSizeX * x);
+            if (y != 0)
+                m_gridMagnetY += (m_gridSizeY * y);
             cursor.setPosition(m_gridMagnetX, m_gridMagnetY);
         }
     }
@@ -115,30 +129,52 @@ namespace obe::Editor
             offsetX += m_gridSizeX;
         while (offsetY < 0)
             offsetY += m_gridSizeY;
-        const int startGridX = (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) % m_gridSizeX; //<REVISION>
-        for (int i = startGridX; i < Transform::UnitVector::Screen.w; i += m_gridSizeX)
+        const int startGridX =
+            (m_gridSizeX - ((m_gridOffX + offsetX) % m_gridSizeX)) %
+            m_gridSizeX; //<REVISION>
+        for (int i = startGridX; i < Transform::UnitVector::Screen.w;
+             i += m_gridSizeX)
         {
-            if (Utils::Math::isBetween(i, cursor.getX() - (static_cast<int>(floor(m_gridSizeX / 2)) - 1), cursor.getX() + (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
+            if (Utils::Math::isBetween(
+                    i,
+                    cursor.getX() -
+                        (static_cast<int>(floor(m_gridSizeX / 2)) - 1),
+                    cursor.getX() +
+                        (static_cast<int>(floor(m_gridSizeX / 2)) - 1)))
             {
-                Graphics::Utils::drawLine(i, 0, i, Transform::UnitVector::Screen.h, 2, selectedLineColor);
+                Graphics::Utils::drawLine(i, 0, i,
+                                          Transform::UnitVector::Screen.h, 2,
+                                          selectedLineColor);
                 stackX = i;
             }
             else
             {
-                Graphics::Utils::drawLine(i, 0, i, Transform::UnitVector::Screen.h, 2, normalLineColor);
+                Graphics::Utils::drawLine(i, 0, i,
+                                          Transform::UnitVector::Screen.h, 2,
+                                          normalLineColor);
             }
         }
-        const int startGridY = (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) % m_gridSizeY;
-        for (int i = startGridY; i < Transform::UnitVector::Screen.h; i += m_gridSizeY)
+        const int startGridY =
+            (m_gridSizeY - ((m_gridOffY + offsetY) % m_gridSizeY)) %
+            m_gridSizeY;
+        for (int i = startGridY; i < Transform::UnitVector::Screen.h;
+             i += m_gridSizeY)
         {
-            if (Utils::Math::isBetween(i, cursor.getY() - (static_cast<int>(floor(m_gridSizeY / 2)) - 1), cursor.getY() + (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))
+            if (Utils::Math::isBetween(
+                    i,
+                    cursor.getY() -
+                        (static_cast<int>(floor(m_gridSizeY / 2)) - 1),
+                    cursor.getY() +
+                        (static_cast<int>(floor(m_gridSizeY / 2)) - 1)))
             {
-                Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w, i, 2, selectedLineColor);
+                Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w,
+                                          i, 2, selectedLineColor);
                 stackY = i;
             }
             else
             {
-                Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w, i, 2, normalLineColor);
+                Graphics::Utils::drawLine(0, i, Transform::UnitVector::Screen.w,
+                                          i, 2, normalLineColor);
             }
         }
         if (stackX != -1 && stackY != -1)
@@ -152,4 +188,4 @@ namespace obe::Editor
             m_gridMagnetY = -1;
         }
     }
-}
+} // namespace obe::Editor

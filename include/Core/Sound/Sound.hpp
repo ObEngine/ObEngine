@@ -8,29 +8,30 @@
 namespace obe::Sound
 {
     /**
-    * \brief A wrapper around sf::Sound
-    * @Bind
-    */
+     * \brief A wrapper around sf::Sound
+     * @Bind
+     */
     class SoundWrapper
     {
     private:
         static std::map<std::string, sf::SoundBuffer> SoundBank;
         sf::Sound m_sound;
+
     public:
         /**
-        * \brief Default constructor of SoundWrapper
-        */
+         * \brief Default constructor of SoundWrapper
+         */
         SoundWrapper() = default;
         /**
-        * \brief Load constructor of SoundWrapper
-        * \param filename Path to the Sound you want to load
-        */
+         * \brief Load constructor of SoundWrapper
+         * \param filename Path to the Sound you want to load
+         */
         explicit SoundWrapper(const std::string& filename);
 
         /**
-        * \brief Loads a Sound at the given path
-        * \param filename Path to the Sound to load
-        */
+         * \brief Loads a Sound at the given path
+         * \param filename Path to the Sound to load
+         */
         void load(const std::string& filename);
 
         bool isLooping() const;
@@ -62,4 +63,4 @@ namespace obe::Sound
         void play();
         void stop();
     };
-}
+} // namespace obe::Sound

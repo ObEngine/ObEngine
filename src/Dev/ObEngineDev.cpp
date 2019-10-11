@@ -23,8 +23,8 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
 
-#include "Utils/MathUtils.hpp"
 #include "Collision/PolygonalCollider.hpp"
+#include "Utils/MathUtils.hpp"
 #include <Graphics/LevelSprite.hpp>
 
 void LoadErrors()
@@ -43,16 +43,20 @@ int main(int argc, char** argv)
     Debug::InitLogger();
     vili::ViliParser::StoreInCache("Obe.vili");
 
-    Debug::Log->info("Running ObEngine Dev (Version : {} ({}:{}))", OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
+    Debug::Log->info("Running ObEngine Dev (Version : {} ({}:{}))",
+                     OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
-    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
+                                sf::VideoMode::getDesktopMode().height);
     Debug::Log->debug("<ObEngine> Initialising Position Transformers");
     Graphics::InitPositionTransformer();
     Debug::Log->debug("<ObEngine> Initialising Input Handling");
     Input::InitKeyList();
 
-    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}", Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
+    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
+                     Transform::UnitVector::Screen.w,
+                     Transform::UnitVector::Screen.h);
 
     Debug::Log->debug("<ObEngine> Initialising Errors Handling");
     LoadErrors();
@@ -80,7 +84,7 @@ int main(int argc, char** argv)
         const std::string editMapName = Modes::chooseMapMenu();
         if (editMapName != "")
             Editor::editMap(editMapName);
-        //Editor::startEditor();
+        // Editor::startEditor();
     }
     else if (startMode == "play")
     {
@@ -99,10 +103,11 @@ int main(int argc, char** argv)
     }
     else
     {
-        Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine Dev Menu by default", startMode);
+        Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine Dev "
+                         "Menu by default",
+                         startMode);
         Modes::startDevMenu();
     }
-        
 
     return 0;
 }

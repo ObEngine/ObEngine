@@ -5,40 +5,40 @@
 namespace obe::Input
 {
     /**
-    * \brief Possible states of InputButton
-    */
+     * \brief Possible states of InputButton
+     */
     enum class InputButtonState
     {
         /**
-        * \brief InputButton is not pressed
-        */
+         * \brief InputButton is not pressed
+         */
         Idle,
         /**
-        * \brief InputButton is being hold
-        */
+         * \brief InputButton is being hold
+         */
         Hold,
         /**
-        * \brief InputButton is just being pressed
-        */
+         * \brief InputButton is just being pressed
+         */
         Pressed,
         /**
-        * \brief InputButton is just being released
-        */
+         * \brief InputButton is just being released
+         */
         Released
     };
 
     /**
-    * \brief Converts an InputButtonState to a std::string
-    * \param state InputButtonState to convert
-    * \return A std::string containing the name of the given InputButtonState
-    */
+     * \brief Converts an InputButtonState to a std::string
+     * \param state InputButtonState to convert
+     * \return A std::string containing the name of the given InputButtonState
+     */
     std::string inputButtonStateToString(InputButtonState state);
     std::ostream& operator<<(std::ostream& os, InputButtonState m);
     /**
-    * \brief Converts a string to the corresponding InputButtonState
-    * \param state InputButtonState in string form
-    * \return The corresponding InputButtonState
-    */
+     * \brief Converts a string to the corresponding InputButtonState
+     * \param state InputButtonState in string form
+     * \return The corresponding InputButtonState
+     */
     InputButtonState stringToInputButtonState(const std::string& state);
-    
-}
+
+} // namespace obe::Input

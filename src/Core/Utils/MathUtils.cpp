@@ -6,7 +6,7 @@
 namespace obe::Utils::Math
 {
     std::random_device rd;
-    std::mt19937 rng { rd() };
+    std::mt19937 rng{rd()};
 
     int randint(const int& min, const int& max)
     {
@@ -27,12 +27,12 @@ namespace obe::Utils::Math
 
     double convertToRadian(const double value)
     {
-        return  (Utils::Math::pi / 180.0) * value;
+        return (Utils::Math::pi / 180.0) * value;
     }
 
     double convertToDegree(const double value)
     {
-        return    (180.0 / Utils::Math::pi) * value;
+        return (180.0 / Utils::Math::pi) * value;
     }
 
     double normalise(const double value, const double start, const double end)
@@ -42,4 +42,4 @@ namespace obe::Utils::Math
 
         return (offsetValue - (floor(offsetValue / width) * width)) + start;
     }
-}
+} // namespace obe::Utils::Math

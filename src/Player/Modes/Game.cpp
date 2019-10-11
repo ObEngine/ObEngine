@@ -1,3 +1,4 @@
+#include "Scene/TXScene.hpp"
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
@@ -11,43 +12,42 @@
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerDatabase.hpp>
-#include "Scene/TXScene.hpp"
 
 namespace obe::Modes
 {
     void startGame()
     {
-        //Creating Window
+        // Creating Window
         System::MainWindow.init(System::WindowContext::GameWindow);
 
-        //Game Triggers
+        // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup("Global", "Game"),
+            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+                "Global", "Game"),
             Triggers::TriggerGroupPtrRemover);
 
-        gameTriggers
-            ->addTrigger("Start")
+        gameTriggers->addTrigger("Start")
             ->trigger("Start")
             ->addTrigger("End")
             ->addTrigger("Update")
             ->addTrigger("Render");
 
-        //Config
+        // Config
         vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
 
-        //Cursor
+        // Cursor
         System::Cursor cursor;
 
-        //Scene Creation / Loading
+        // Scene Creation / Loading
         Scene::Scene scene;
-        //Scene::TXScene scene = Scene::TXScene::CreateRootScene();
+        // Scene::TXScene scene = Scene::TXScene::CreateRootScene();
 
-        Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message)
-        {
-            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
-        });
+        Script::ScriptEngine.setErrorHandler(
+            [](int statuscode, const char* message) {
+                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+            });
 
-        //Keybinding
+        // Keybinding
         Input::InputManager inputManager;
 
         inputManager.configure(System::Config.at("KeyBinding"));
@@ -55,21 +55,24 @@ namespace obe::Modes
 
         sf::Event event;
 
-        //Framerate / DeltaTime
+        // Framerate / DeltaTime
         Time::FramerateManager framerateManager(gameConfig);
 
-        System::Path("Lib/Internal/GameInit.lua").load(System::Loaders::luaLoader, Script::ScriptEngine);
-        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
+        System::Path("Lib/Internal/GameInit.lua")
+            .load(System::Loaders::luaLoader, Script::ScriptEngine);
+        System::Path("boot.lua")
+            .load(System::Loaders::luaLoader, Script::ScriptEngine, true);
         Script::ScriptEngine.dostring("Game.Start()");
 
-        //Game Starts
+        // Game Starts
         while (System::MainWindow.isOpen())
         {
             framerateManager.update();
 
-            gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
+            gameTriggers->pushParameter("Update", "dt",
+                                        framerateManager.getGameSpeed());
             gameTriggers->trigger("Update");
-                
+
             if (framerateManager.doRender())
                 gameTriggers->trigger("Render");
 
@@ -94,7 +97,7 @@ namespace obe::Modes
                 }
             }
 
-            //Events
+            // Events
             scene.update();
             Triggers::TriggerDatabase::GetInstance()->update();
             inputManager.update();
@@ -119,4 +122,4 @@ namespace obe::Modes
         scene.update();
         System::MainWindow.close();
     }
-}
+} // namespace obe::Modes
