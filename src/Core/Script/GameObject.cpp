@@ -174,8 +174,11 @@ namespace obe::Script
         if (obj.contains(vili::NodeType::ComplexNode, "Script"))
         {
             m_hasScriptEngine = true;
-            m_privateKey = Utils::String::getRandomKey(
-                Utils::String::Alphabet + Utils::String::Numbers, 12);
+            m_privateKey =
+                Utils::String::getRandomKey(Utils::String::Alphabet, 1) +
+                Utils::String::getRandomKey(
+                    Utils::String::Alphabet + Utils::String::Numbers, 11
+                );
             Triggers::TriggerDatabase::GetInstance()->createNamespace(
                 m_privateKey);
             m_localTriggers.reset(
@@ -365,13 +368,14 @@ namespace obe::Script
             std::vector<std::string> allTrg =
                 Triggers::TriggerDatabase::GetInstance()
                     ->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
-            for (int i = 0; i < allTrg.size(); i++)
+            for (const std::string& triggerName : allTrg)
             {
                 this->useTrigger(
-                    trNsp, trGrp, trName,
-                    (Utils::String::occurencesInString(callAlias, "*"))
-                        ? Utils::String::replace(callAlias, "*", allTrg[i])
-                        : "");
+                    trNsp, trGrp, triggerName,
+                    (Utils::String::occurencesInString(callAlias, "*")
+                         ? Utils::String::replace(callAlias, "*", triggerName)
+                        : ""
+                    ));
             }
         }
         else
