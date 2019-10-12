@@ -264,7 +264,7 @@ namespace obe::Scene
          * \return A std::string containing the folder where was loaded the map
          * file
          */
-        std::string getBaseFolder() const;
+        std::string getFilePath() const;
         /**
          * \brief Reloads the Scene from the level file
          */

@@ -59,7 +59,7 @@ namespace obe::Bindings::SceneBindings
                              &Scene::Scene::getAllGameObjects)
                 .addFunction("getAllLevelSprites",
                              &Scene::Scene::getAllLevelSprites)
-                .addFunction("getBaseFolder", &Scene::Scene::getBaseFolder)
+                .addFunction("getFilePath", &Scene::Scene::getFilePath)
                 .addFunction("getCamera", &Scene::Scene::getCamera)
                 .addFunction("getColliderAmount",
                              &Scene::Scene::getColliderAmount)

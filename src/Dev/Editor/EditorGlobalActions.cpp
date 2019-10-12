@@ -241,9 +241,9 @@ namespace obe::Editor
              saveCameraPositionCheckbox](const Input::InputActionEvent& event) {
                 Debug::Log->info("<EditorGlobalActions> Saving Map '{0}'",
                                  mapName);
-                scene.dump(saveCameraPositionCheckbox->isChecked())
-                    ->writeFile(scene.getBaseFolder() + "/Data/Maps/" + mapName,
-                                true);
+                vili::ViliParser* sceneDump =
+                    scene.dump(saveCameraPositionCheckbox->isChecked());
+                sceneDump->writeFile(scene.getFilePath(), true);
                 if (waitForMapSaving < 0)
                 {
                     savedLabel->showWithEffect(

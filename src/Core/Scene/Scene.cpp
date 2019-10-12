@@ -108,7 +108,7 @@ namespace obe::Scene
         return m_colliderArray.size();
     }
 
-    std::string Scene::getBaseFolder() const
+    std::string Scene::getFilePath() const
     {
         return m_baseFolder;
     }
@@ -137,7 +137,9 @@ namespace obe::Scene
             m_levelFile = vili::ViliParser();
             m_baseFolder = System::Path("Data/Maps")
                                .add(filename)
-                               .load(System::Loaders::dataLoader, m_levelFile);
+                               .load(System::Loaders::dataLoader, m_levelFile)
+                               .path();
+            Debug::Log->debug("Scene File base folder : {}", m_baseFolder);
             m_levelFileName = filename;
         }
 
