@@ -201,11 +201,20 @@ namespace obe::Script
             executeFile(m_envIndex,
                         System::Path("Lib/Internal/ObjectInit.lua").find());
 
+            auto loadSource = [&](const std::string& path) {
+                const std::string fullPath = System::Path(path).find();
+                if (fullPath.empty())
+                {
+                    throw aube::ErrorHandler::Raise(
+                        "obe.Script.GameObject.ScriptFileNotFound",
+                        {{"source", path}});
+                }
+                executeFile(m_envIndex, fullPath);
+            };
             if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
             {
-                const std::string getScrName =
-                    obj.at("Script").getDataNode("source").get<std::string>();
-                executeFile(m_envIndex, System::Path(getScrName).find());
+                loadSource(
+                    obj.at("Script").getDataNode("source").get<std::string>());
             }
             else if (obj.at("Script").contains(vili::NodeType::ArrayNode,
                                                "sources"))
@@ -214,11 +223,10 @@ namespace obe::Script
                     obj.at("Script").getArrayNode("sources").size();
                 for (int i = 0; i < scriptListSize; i++)
                 {
-                    const std::string getScrName = obj.at("Script")
-                                                       .getArrayNode("sources")
-                                                       .get(i)
-                                                       .get<std::string>();
-                    executeFile(m_envIndex, System::Path(getScrName).find());
+                    loadSource(obj.at("Script")
+                                   .getArrayNode("sources")
+                                   .get(i)
+                                   .get<std::string>());
                 }
             }
         }
@@ -380,8 +388,9 @@ namespace obe::Script
             for (auto& triggerPair : m_registeredTriggers)
             {
                 if (triggerPair.first.lock() ==
-                    Triggers::TriggerDatabase::GetInstance()->getTrigger(
-                        trNsp, trGrp, trName).lock())
+                    Triggers::TriggerDatabase::GetInstance()
+                        ->getTrigger(trNsp, trGrp, trName)
+                        .lock())
                 {
                     triggerNotFound = false;
                 }
@@ -396,7 +405,8 @@ namespace obe::Script
                         trNsp, trGrp, trName),
                     callbackName);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName).lock()
+                    ->getTrigger(trNsp, trGrp, trName)
+                    .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
             else
@@ -405,10 +415,12 @@ namespace obe::Script
                     (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName
                                         : callAlias;
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName).lock()
+                    ->getTrigger(trNsp, trGrp, trName)
+                    .lock()
                     ->unregisterEnvironment(m_envIndex);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName).lock()
+                    ->getTrigger(trNsp, trGrp, trName)
+                    .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
         }
@@ -419,7 +431,8 @@ namespace obe::Script
                                    const std::string& trName) const
     {
         Triggers::TriggerDatabase::GetInstance()
-            ->getTrigger(trNsp, trGrp, trName).lock()
+            ->getTrigger(trNsp, trGrp, trName)
+            .lock()
             ->unregisterEnvironment(m_envIndex);
     }
 
