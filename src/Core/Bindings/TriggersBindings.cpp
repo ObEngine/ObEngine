@@ -70,8 +70,6 @@ namespace obe::Bindings::TriggersBindings
                 .addFunction("getName", &Triggers::TriggerGroup::getName)
                 .addFunction("getNamespace",
                              &Triggers::TriggerGroup::getNamespace)
-                .addFunction("getState", &Triggers::TriggerGroup::getState)
-                .addFunction("getTrigger", &Triggers::TriggerGroup::getTrigger)
                 .addFunction("isJoinable", &Triggers::TriggerGroup::isJoinable)
                 .addOverloadedFunctions(
                     "pushParameter",
@@ -116,5 +114,10 @@ namespace obe::Bindings::TriggersBindings
                 .addFunction("setJoinable",
                              &Triggers::TriggerGroup::setJoinable)
                 .addFunction("trigger", &Triggers::TriggerGroup::trigger));
+        (*lua)["obe"]["TriggerGroup"]["getTrigger"] = kaguya::function(
+            [](Triggers::TriggerGroup* self, const std::string& triggerName) {
+                return self->getTrigger(triggerName).lock().get();
+            }
+        );
     }
 } // namespace obe::Bindings::TriggersBindings

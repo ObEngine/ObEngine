@@ -1,11 +1,10 @@
-local __ENV_COUNT = 0; -- Remove local for weird bug
+__ENV_COUNT = 0; -- Remove local for weird bug
 __ENVIRONMENTS = {};
 
 function LuaCore.CreateNewEnv(env)
     local ENV = env or {};
     if env == nil then
         ENV["__ENV_ID"] = __ENV_COUNT;
-        ENV["__ENV_ENABLED"] = true;
         ENV["__TRIGGERS"] = {};
         setmetatable(ENV, {__index=_G});
         __ENVIRONMENTS[__ENV_COUNT] = ENV;

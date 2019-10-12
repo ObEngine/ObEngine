@@ -66,7 +66,7 @@ namespace obe::Script
         Triggers::TriggerGroupPtr m_localTriggers;
         Scene::SceneNode m_objectNode;
 
-        std::vector<std::pair<Triggers::Trigger*, std::string>>
+        std::vector<std::pair<std::weak_ptr<Triggers::Trigger>, std::string>>
             m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>>
             m_registeredAliases;
@@ -198,7 +198,7 @@ namespace obe::Script
          * \param callbackName Name of the callback to call when Trigger will be
          * enabled
          */
-        void registerTrigger(Triggers::Trigger* trg,
+        void registerTrigger(std::weak_ptr<Triggers::Trigger> trg,
                              const std::string& callbackName);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
@@ -251,6 +251,8 @@ namespace obe::Script
          * otherwise
          */
         bool isPermanent() const;
+
+        void setState(bool state);
     };
 
     template <typename U>

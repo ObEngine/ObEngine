@@ -17,11 +17,11 @@ namespace obe::Triggers
     {
     }
 
-    Trigger* TriggerGroup::getTrigger(const std::string& triggerName)
+    std::weak_ptr<Trigger> TriggerGroup::getTrigger(const std::string& triggerName)
     {
         if (m_triggerMap.find(triggerName) != m_triggerMap.end())
         {
-            return m_triggerMap[triggerName].get();
+            return m_triggerMap[triggerName];
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Triggers.TriggerGroup.UnknownTrigger",
@@ -61,7 +61,7 @@ namespace obe::Triggers
                                     Time::TimeUnit delay)
     {
         m_delayedTriggers.push_back(
-            std::make_unique<TriggerDelay>(getTrigger(triggerName), delay));
+            std::make_unique<TriggerDelay>(m_triggerMap[triggerName].get(), delay));
         return this;
     }
 
@@ -70,13 +70,8 @@ namespace obe::Triggers
         Debug::Log->trace(
             "<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}", triggerName,
             m_fromNsp, m_name);
-        this->getTrigger(triggerName)->execute();
+        m_triggerMap[triggerName]->execute();
         return this;
-    }
-
-    bool TriggerGroup::getState(const std::string& triggerName)
-    {
-        return this->getTrigger(triggerName)->getState();
     }
 
     void TriggerGroup::setJoinable(bool joinable)
@@ -93,8 +88,7 @@ namespace obe::Triggers
                                             const std::string& parameterName,
                                             kaguya::LuaRef parameter)
     {
-        this->getTrigger(triggerName)
-            ->pushParameterFromLua(parameterName, parameter);
+        m_triggerMap[triggerName]->pushParameterFromLua(parameterName, parameter);
     }
 
     std::vector<std::string> TriggerGroup::getAllTriggersName()

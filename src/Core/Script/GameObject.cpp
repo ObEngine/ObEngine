@@ -129,16 +129,14 @@ namespace obe::Script
 
     GameObject::~GameObject()
     {
-        Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
+        Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id,
+                          m_type);
         this->deleteObject();
-        AllEnvs.erase(
-            std::remove_if(
-                AllEnvs.begin(),
-                AllEnvs.end(),
-                [this](const unsigned int& envIndex) { return envIndex == m_envIndex; }
-            ),
-            AllEnvs.end()
-        );
+        AllEnvs.erase(std::remove_if(AllEnvs.begin(), AllEnvs.end(),
+                                     [this](const unsigned int& envIndex) {
+                                         return envIndex == m_envIndex;
+                                     }),
+                      AllEnvs.end());
         if (m_hasScriptEngine)
         {
             m_localTriggers.reset();
@@ -156,7 +154,7 @@ namespace obe::Script
         m_localTriggers->pushParameterFromLua("Init", argName, value);
     }
 
-    void GameObject::registerTrigger(Triggers::Trigger* trg,
+    void GameObject::registerTrigger(std::weak_ptr<Triggers::Trigger> trg,
                                      const std::string& callbackName)
     {
         m_registeredTriggers.emplace_back(trg, callbackName);
@@ -177,8 +175,7 @@ namespace obe::Script
             m_privateKey =
                 Utils::String::getRandomKey(Utils::String::Alphabet, 1) +
                 Utils::String::getRandomKey(
-                    Utils::String::Alphabet + Utils::String::Numbers, 11
-                );
+                    Utils::String::Alphabet + Utils::String::Numbers, 11);
             Triggers::TriggerDatabase::GetInstance()->createNamespace(
                 m_privateKey);
             m_localTriggers.reset(
@@ -374,8 +371,7 @@ namespace obe::Script
                     trNsp, trGrp, triggerName,
                     (Utils::String::occurencesInString(callAlias, "*")
                          ? Utils::String::replace(callAlias, "*", triggerName)
-                        : ""
-                    ));
+                         : ""));
             }
         }
         else
@@ -383,9 +379,9 @@ namespace obe::Script
             bool triggerNotFound = true;
             for (auto& triggerPair : m_registeredTriggers)
             {
-                if (triggerPair.first ==
+                if (triggerPair.first.lock() ==
                     Triggers::TriggerDatabase::GetInstance()->getTrigger(
-                        trNsp, trGrp, trName))
+                        trNsp, trGrp, trName).lock())
                 {
                     triggerNotFound = false;
                 }
@@ -400,7 +396,7 @@ namespace obe::Script
                         trNsp, trGrp, trName),
                     callbackName);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    ->getTrigger(trNsp, trGrp, trName).lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
             else
@@ -409,10 +405,10 @@ namespace obe::Script
                     (callAlias.empty()) ? trNsp + "." + trGrp + "." + trName
                                         : callAlias;
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    ->getTrigger(trNsp, trGrp, trName).lock()
                     ->unregisterEnvironment(m_envIndex);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    ->getTrigger(trNsp, trGrp, trName).lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
         }
@@ -423,7 +419,7 @@ namespace obe::Script
                                    const std::string& trName) const
     {
         Triggers::TriggerDatabase::GetInstance()
-            ->getTrigger(trNsp, trGrp, trName)
+            ->getTrigger(trNsp, trGrp, trName).lock()
             ->unregisterEnvironment(m_envIndex);
     }
 
@@ -439,10 +435,12 @@ namespace obe::Script
         m_localTriggers->trigger("Delete");
         this->deletable = true;
         m_active = false;
-        GAMEOBJECTENV["__ENV_ENABLED"] = false;
-        for (auto& trigger : m_registeredTriggers)
+        for (auto& triggerRef : m_registeredTriggers)
         {
-            trigger.first->unregisterEnvironment(m_envIndex);
+            if (auto trigger = triggerRef.first.lock())
+            {
+                trigger->unregisterEnvironment(m_envIndex);
+            }
         }
         // GAMEOBJECTENV = nullptr;
     }
@@ -455,5 +453,9 @@ namespace obe::Script
     bool GameObject::isPermanent() const
     {
         return m_permanent;
+    }
+    void GameObject::setState(bool state)
+    {
+        m_active = state;
     }
 } // namespace obe::Script

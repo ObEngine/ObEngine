@@ -37,7 +37,7 @@ namespace obe::Triggers
          * \param triggerName Name of the Trigger
          * \return A pointer of the Trigger if found
          */
-        Trigger* getTrigger(const std::string& namespaceName,
+        std::weak_ptr<Trigger> getTrigger(const std::string& namespaceName,
                             const std::string& triggerGroupName,
                             const std::string& triggerName);
         /**

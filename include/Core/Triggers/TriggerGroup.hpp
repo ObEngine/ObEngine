@@ -13,7 +13,7 @@ namespace obe::Triggers
     private:
         std::string m_name;
         std::string m_fromNsp;
-        std::map<std::string, std::unique_ptr<Trigger>> m_triggerMap;
+        std::map<std::string, std::shared_ptr<Trigger>> m_triggerMap;
         std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
         bool m_joinable = false;
         friend class TriggerDatabase;
@@ -44,7 +44,7 @@ namespace obe::Triggers
          * \param triggerName Name of the Trigger to get
          * \return A pointer to the Trigger if found (throws an error otherwise)
          */
-        Trigger* getTrigger(const std::string& triggerName);
+        std::weak_ptr<Trigger> getTrigger(const std::string& triggerName);
         /**
          * \brief Creates a new Trigger in the TriggerGroup
          * \param triggerName Name of the Trigger to create
@@ -71,12 +71,6 @@ namespace obe::Triggers
          * \return Pointer to the TriggerGroup to chain calls
          */
         TriggerGroup* trigger(const std::string& triggerName);
-        /**
-         * \brief Get the current state of a Trigger
-         * \param triggerName Name of the Trigger to get the state
-         * \return true if the Trigger is enabled, false otherwise
-         */
-        bool getState(const std::string& triggerName);
         /**
          * \brief Pushes a Parameter to a Trigger
          * \tparam P Type of the Parameter
@@ -127,6 +121,6 @@ namespace obe::Triggers
                                      const std::string& parameterName,
                                      P parameter)
     {
-        getTrigger(triggerName)->pushParameter(parameterName, parameter);
+        m_triggerMap[triggerName]->pushParameter(parameterName, parameter);
     }
 } // namespace obe::Triggers

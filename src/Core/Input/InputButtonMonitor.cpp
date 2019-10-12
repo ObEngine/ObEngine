@@ -22,7 +22,7 @@ namespace obe::Input
         {
             Input::InputButton* button = val.get();
             InputButtonMonitor::KeyTriggers->addTrigger(button->getName());
-            InputButtonMonitor::KeyTriggers->getTrigger(button->getName())
+            InputButtonMonitor::KeyTriggers->getTrigger(button->getName()).lock()
                 ->onRegister([button](const Triggers::TriggerEnv& env) {
                     for (auto& monitor : InputButtonMonitor::TriggerMonitors)
                     {
@@ -32,7 +32,7 @@ namespace obe::Input
                     InputButtonMonitor::TriggerMonitors.push_back(
                         Monitors::Monitor(button));
                 });
-            InputButtonMonitor::KeyTriggers->getTrigger(button->getName())
+            InputButtonMonitor::KeyTriggers->getTrigger(button->getName()).lock()
                 ->onUnregister([button](const Triggers::TriggerEnv& env) {
                     InputButtonMonitor::TriggerMonitors.erase(
                         std::remove_if(

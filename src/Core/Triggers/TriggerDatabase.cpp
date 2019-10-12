@@ -20,7 +20,7 @@ namespace obe::Triggers
         return m_instance;
     }
 
-    Trigger* TriggerDatabase::getTrigger(const std::string& groupNamespace,
+    std::weak_ptr<Trigger> TriggerDatabase::getTrigger(const std::string& groupNamespace,
                                          const std::string& triggerGroupName,
                                          const std::string& triggerName)
     {
