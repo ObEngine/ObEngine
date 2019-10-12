@@ -401,20 +401,19 @@ namespace obe::Scene
             dataStore->at("GameObjects").createComplexNode(gameObject->getId());
             dataStore->at("GameObjects", gameObject->getId())
                 .createDataNode("type", gameObject->getType());
-            /*(*it->second->m_objectScript)("inspect =
-            require('Lib/StdLib/Inspect');");
-            //kaguya::LuaRef saveTableRef =
-            (*it->second->m_objectScript)["Local"]["Save"]();
-            //(*it->second->m_objectScript)("print('Saving : ', This:getId())");
-            //(*it->second->m_objectScript)("print(inspect(Local.Save()));");
-            //(*it->second->m_objectScript)("print('Processing...')");
-            vili::ComplexNode* saveRequirements =
-            Script::DataBridge::luaTableToComplexNode( "Requires",
-            saveTableRef); if (saveRequirements->getAll().size() > 0)
-                dataStore->at("LevelObjects",
-            it->first).pushComplexNode(saveRequirements);
-            //(*it->second->m_objectScript)("print('Saving over for : ',
-            This:getId())");*/
+            auto& objectEnv = Script::ScriptEngine["__ENVIRONMENTS"]
+                                                  [gameObject->getEnvIndex()];
+
+            auto dumpFunction = gameObject->access()["Dump"];
+            if (dumpFunction)
+            {
+                kaguya::LuaRef saveTableRef = dumpFunction();
+                vili::ComplexNode* saveRequirements =
+                    Script::DataBridge::luaTableToComplexNode("Requires",
+                                                              saveTableRef);
+                if (saveRequirements->getAll().size() > 0)
+                    dataStore->at("GameObjects", gameObject->getId()).pushComplexNode(saveRequirements);
+            }
         }
         if (m_scriptArray.size() > 0)
         {
