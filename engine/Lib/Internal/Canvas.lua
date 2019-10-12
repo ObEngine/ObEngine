@@ -28,18 +28,6 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
     };
 end);
 
-function obe.Canvas.__applyValue(t, k, v)
-    if type(k) == "number" and not t.__setters[k] and t.__setters.__number then
-        t.__setters.__number(t.__ref, k, v);
-    else
-        if t.__setters[k] then
-            t.__setters[k](t.__ref, v);
-        else
-            error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
-        end
-    end
-end
-
 function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
         local ncolor = SFML.Color();
@@ -67,6 +55,7 @@ function obe.Canvas.ConvertHAlign(align)
         if align == "Left" then return obe.Canvas.Alignment.Horizontal.Left;
         elseif align == "Center" then return obe.Canvas.Alignment.Horizontal.Center;
         elseif align == "Right" then return obe.Canvas.Alignment.Horizontal.Right;
+        else error("Horizontal Alignment", align, "does not exists, use one of those [Left, Center, Right]")
         end
     else
         if align == obe.Canvas.Alignment.Horizontal.Left then return "Left";
@@ -81,6 +70,7 @@ function obe.Canvas.ConvertVAlign(align)
         if align == "Top" then return obe.Canvas.Alignment.Vertical.Top;
         elseif align == "Center" then return obe.Canvas.Alignment.Vertical.Center;
         elseif align == "Bottom" then return obe.Canvas.Alignment.Vertical.Bottom;
+        else error("Vertical Alignment", align, "does not exists, use one of those [Top, Center, Botton]")
         end
     else
         if align == obe.Canvas.Alignment.Vertical.Top then return "Top";
@@ -98,13 +88,13 @@ function obe.Canvas.ApplyCache(element)
     if #mt.__priority > 0 then
         for k, v in pairs(mt.__priority) do
             if mt.__cache[v] then
-                obe.Canvas.__applyValue(mt, v, mt.__cache[v]);
+                obe.Canvas.__set(element, v, mt.__cache[v]);
                 mt.__cache[v] = nil;
             end
         end
     end
     for k, v in pairs(mt.__cache) do
-        obe.Canvas.__applyValue(mt, k, v);
+        obe.Canvas.__set(element, k, v);
     end
     for k, v in pairs(mt.__getters) do
         if type(v) == "table" then
@@ -143,7 +133,7 @@ end
 function obe.Canvas.__set(tbl, key, value)
     local k = getmetatable(tbl);
     if type(key) == "number" and not k.__setters[key] and k.__setters.__number then
-        k.__setters.__number(k.__ref, value);
+        k.__setters.__number(k.__ref, key, value);
     else
         if k.__setters[key] then
             k.__setters[key](k.__ref, value);
@@ -175,13 +165,13 @@ function obe.Canvas.__call(tbl, values, usecache)
         if #mt.__priority > 0 then
             for k, v in pairs(mt.__priority) do
                 if values[v] then
-                    obe.Canvas.__applyValue(mt, v, values[v]);
+                    obe.Canvas.__set(tbl, v, values[v]);
                     values[v] = nil;
                 end
             end
         end
         for k, v in pairs(values) do
-            obe.Canvas.__applyValue(mt, k, v);
+            obe.Canvas.__set(tbl, k, v);
         end
     end
     return tbl;
@@ -229,7 +219,7 @@ function obe.Canvas.MakeMT(bases, usecache)
         __priority = priority,
         __index = getfunc,
         __newindex = setfunc,
-        __call = function(t, v) obe.Canvas.__call(t, v, usecache) end,
+        __call = function(t, v) return obe.Canvas.__call(t, v, usecache) end,
         __cache = {},
         __rcache = {}
     };
@@ -725,7 +715,6 @@ function obe.Canvas.Canvas:Text(id)
     id = self:GenerateId(id);
     self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
     self.elements[id].font = "Data/Fonts/arial.ttf";
-    --print(inspect(self.elements[id]));
     return self.elements[id];
 end
 
