@@ -28,6 +28,18 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
     };
 end);
 
+function obe.Canvas.__applyValue(t, k, v)
+    if type(k) == "number" and not t.__setters[k] and t.__setters.__number then
+        t.__setters.__number(t.__ref, k, v);
+    else
+        if t.__setters[k] then
+            t.__setters[k](t.__ref, v);
+        else
+            error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
+        end
+    end
+end
+
 function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
         local ncolor = SFML.Color();
@@ -81,30 +93,18 @@ end
 obe.Canvas.Bases = {};
 
 function obe.Canvas.ApplyCache(element)
-    --print("Applying cache on", inspect(element));
-    local applyCacheValue = function(mt, k, v)
-        if type(k) == "number" and not mt.__setters[k] and mt.__setters.__number then
-            mt.__setters.__number(mt.__ref, k, v);
-        else
-            if mt.__setters[k] then
-                mt.__setters[k](mt.__ref, v);
-            else
-                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
-            end
-        end
-    end
     local mt = getmetatable(element);
     --print("Cache :", inspect(mt.__cache));
     if #mt.__priority > 0 then
         for k, v in pairs(mt.__priority) do
             if mt.__cache[v] then
-                applyCacheValue(mt, v, mt.__cache[v]);
+                obe.Canvas.__applyValue(mt, v, mt.__cache[v]);
                 mt.__cache[v] = nil;
             end
         end
     end
     for k, v in pairs(mt.__cache) do
-        applyCacheValue(mt, k, v);
+        obe.Canvas.__applyValue(mt, k, v);
     end
     for k, v in pairs(mt.__getters) do
         if type(v) == "table" then
@@ -164,10 +164,25 @@ function obe.Canvas.__get(tbl, key)
     end
 end
 
-function obe.Canvas.__call(tbl, values)
+function obe.Canvas.__call(tbl, values, usecache)
     values = values or {};
-    for k, v in pairs(values) do
-        tbl[k] = v;
+    local mt = getmetatable(tbl);
+    if usecache then
+        for k, v in pairs(values) do
+            mt.__cache[k] = v;
+        end
+    else
+        if #mt.__priority > 0 then
+            for k, v in pairs(mt.__priority) do
+                if values[v] then
+                    obe.Canvas.__applyValue(mt, v, values[v]);
+                    values[v] = nil;
+                end
+            end
+        end
+        for k, v in pairs(values) do
+            obe.Canvas.__applyValue(mt, k, v);
+        end
     end
     return tbl;
 end
@@ -214,7 +229,7 @@ function obe.Canvas.MakeMT(bases, usecache)
         __priority = priority,
         __index = getfunc,
         __newindex = setfunc,
-        __call = obe.Canvas.__call,
+        __call = function(t, v) obe.Canvas.__call(t, v, usecache) end,
         __cache = {},
         __rcache = {}
     };
