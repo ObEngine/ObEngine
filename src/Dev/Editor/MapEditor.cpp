@@ -8,6 +8,7 @@
 #include <Editor/EditorTooltip.hpp>
 #include <Editor/Grid.hpp>
 #include <Editor/MapEditor.hpp>
+#include <Editor/SceneNodeEditActions.hpp>
 #include <Editor/SpriteEditActions.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
@@ -67,6 +68,10 @@ namespace obe::Editor
             ->addTrigger("SpriteMoved")
             ->addTrigger("SpriteUnselect")
             ->addTrigger("SpriteRemoved");
+        // SceneNode Triggers
+        editorTriggers->addTrigger("SceneNodePicked")
+            ->addTrigger("SceneNodeMoved")
+            ->addTrigger("SceneNodeReleased");
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
@@ -187,6 +192,7 @@ namespace obe::Editor
         Graphics::LevelSprite* hoveredSprite = nullptr;
         Graphics::LevelSprite* selectedSprite = nullptr;
         Graphics::LevelSpriteHandlePoint* selectedHandlePoint = nullptr;
+        Scene::SceneNode* sceneNodeGrabbed = nullptr;
         int selectedSpriteOffsetX = 0;
         int selectedSpriteOffsetY = 0;
         int cameraSpeed = Transform::UnitVector::Screen.h;
@@ -230,6 +236,8 @@ namespace obe::Editor
         connectCollidersActions(editorTriggers.get(), inputManager, scene,
                                 cursor, colliderPtGrabbed,
                                 selectedMasterCollider, masterColliderGrabbed);
+        connectSceneNodeActions(editorTriggers.get(), inputManager, scene,
+                                cursor, sceneNodeGrabbed);
         connectGameConsoleActions(inputManager, gameConsole);
         connectCopyPasteActions(editorTriggers.get(), inputManager, scene,
                                 sceneClipboard, savedLabel,
@@ -258,6 +266,14 @@ namespace obe::Editor
             else
             {
                 inputManager.removeContext("colliderEditing");
+            }
+            if (editMode->getSelectedItem() == "SceneNodes")
+            {
+                inputManager.addContext("sceneNodeEditing");
+            }
+            else
+            {
+                inputManager.removeContext("sceneNodeEditing");
             }
         };
 
@@ -341,6 +357,7 @@ namespace obe::Editor
             // Sprite Editing
             if (editMode->getSelectedItem() == "LevelSprites")
             {
+                scene.enableShowSceneNodes(true);
                 scene.enableShowCollision(true, true, false, false);
 
                 if (hoveredSprite == nullptr)
@@ -417,6 +434,7 @@ namespace obe::Editor
                     cursor.getConstrainedX() + pixelCamera.x,
                     cursor.getConstrainedY() + pixelCamera.y);
 
+                scene.enableShowSceneNodes(true);
                 scene.enableShowCollision(true, true, true, true);
                 if (selectedMasterCollider != nullptr)
                 {
@@ -436,6 +454,25 @@ namespace obe::Editor
                                     col->getId(),
                                     col->getPosition().to(editorUnit).x,
                                     col->getPosition().to(editorUnit).y);
+                    tooltip.setPosition(cursor.getX() + 40, cursor.getY());
+                }
+            }
+
+            if (editMode->getSelectedItem() == "SceneNodes")
+            {
+                const Transform::UnitVector cursCoord(
+                    cursor.getConstrainedX() + pixelCamera.x,
+                    cursor.getConstrainedY() + pixelCamera.y);
+
+                scene.enableShowCollision(true, true, false, false);
+                scene.enableShowSceneNodes(true);
+                if (auto sceneNode = scene.getSceneNodeByPosition(
+                        cursor.getPosition() + pixelCamera))
+                {
+                    tooltip.setText("Hovered SceneNode : \n"
+                                    "   Pos : {}, {}\n",
+                                    sceneNode->getPosition().to(editorUnit).x,
+                                    sceneNode->getPosition().to(editorUnit).y);
                     tooltip.setPosition(cursor.getX() + 40, cursor.getY());
                 }
             }
@@ -599,11 +636,7 @@ namespace obe::Editor
                                                               // (Grid Draw
                                                               // Offset)
                                                               // <REVISION>
-                // Show Collision
-                if (editMode->getSelectedItem() == "Collisions")
-                    scene.enableShowCollision(true);
-                else
-                    scene.enableShowCollision(false);
+
                 if (editorGrid.isEnabled())
                     editorGrid.draw(cursor, pixelCamera.x, pixelCamera.y);
                 // HUD & GUI

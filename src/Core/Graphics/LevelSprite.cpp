@@ -33,26 +33,27 @@ namespace obe::Graphics
 
     void LevelSprite::draw(const Transform::UnitVector& camera)
     {
+        const Transform::UnitVector position =
+            m_positionTransformer(m_position, camera, m_layer);
         const auto toVertex = [](const Transform::UnitVector& uv) {
             return sf::Vertex(sf::Vector2f(uv.x, uv.y));
         };
         std::array<sf::Vertex, 4> vertices;
-        vertices[0] =
-            toVertex(Rect::getPosition(Transform::Referential::TopLeft)
-                         .to<Transform::Units::ScenePixels>() -
-                     camera);
-        vertices[1] =
-            toVertex(Rect::getPosition(Transform::Referential::BottomLeft)
-                         .to<Transform::Units::ScenePixels>() -
-                     camera);
-        vertices[2] =
-            toVertex(Rect::getPosition(Transform::Referential::TopRight)
-                         .to<Transform::Units::ScenePixels>() -
-                     camera);
-        vertices[3] =
-            toVertex(Rect::getPosition(Transform::Referential::BottomRight)
-                         .to<Transform::Units::ScenePixels>() -
-                     camera);
+        std::array<Transform::Referential, 4> referentials = {
+            Transform::Referential::TopLeft, Transform::Referential::BottomLeft,
+            Transform::Referential::TopRight, Transform::Referential::BottomRight
+        };
+        unsigned int vertexIndex = 0;
+        for (Transform::Referential referential : referentials)
+        {
+            vertices[vertexIndex++] =
+                toVertex(
+                    m_positionTransformer(
+                        Rect::getPosition(referential),
+                        camera, 
+                        m_layer
+                    ).to<Transform::Units::ScenePixels>());
+        }
 
         m_sprite.setVertices(vertices);
 

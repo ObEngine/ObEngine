@@ -6,6 +6,7 @@
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
 #include <Triggers/TriggerDatabase.hpp>
+#include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Scene
@@ -21,10 +22,11 @@ namespace obe::Scene
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
         Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
-        m_showCollisionModes["drawLines"] = false;
-        m_showCollisionModes["drawPoints"] = false;
-        m_showCollisionModes["drawMasterPoint"] = false;
-        m_showCollisionModes["drawSkel"] = false;
+        m_showElements["CollisionLines"] = false;
+        m_showElements["CollisionPoints"] = false;
+        m_showElements["CollisionMasterPoint"] = false;
+        m_showElements["CollisionSkeleton"] = false;
+        m_showElements["SceneNodes"] = false;
 
         m_sceneTriggers->addTrigger("MapLoaded");
     }
@@ -401,18 +403,16 @@ namespace obe::Scene
             dataStore->at("GameObjects").createComplexNode(gameObject->getId());
             dataStore->at("GameObjects", gameObject->getId())
                 .createDataNode("type", gameObject->getType());
-            auto& objectEnv = Script::ScriptEngine["__ENVIRONMENTS"]
-                                                  [gameObject->getEnvIndex()];
 
-            auto dumpFunction = gameObject->access()["Dump"];
-            if (dumpFunction)
+            if (auto dumpFunction = gameObject->access()["Dump"])
             {
                 kaguya::LuaRef saveTableRef = dumpFunction();
                 vili::ComplexNode* saveRequirements =
                     Script::DataBridge::luaTableToComplexNode("Requires",
                                                               saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
-                    dataStore->at("GameObjects", gameObject->getId()).pushComplexNode(saveRequirements);
+                    dataStore->at("GameObjects", gameObject->getId())
+                        .pushComplexNode(saveRequirements);
             }
         }
         if (m_scriptArray.size() > 0)
@@ -501,18 +501,39 @@ namespace obe::Scene
             }
         }
 
-        if (m_showCollisionModes["drawLines"] ||
-            m_showCollisionModes["drawPoints"] ||
-            m_showCollisionModes["drawMasterPoint"] ||
-            m_showCollisionModes["drawSkel"])
+        if (m_showElements["CollisionLines"] ||
+            m_showElements["CollisionPoints"] ||
+            m_showElements["CollisionMasterPoint"] ||
+            m_showElements["CollisionSkeleton"])
         {
             for (unsigned int i = 0; i < m_colliderArray.size(); i++)
             {
-                m_colliderArray[i]->draw(
-                    m_camera, m_showCollisionModes["drawLines"],
-                    m_showCollisionModes["drawPoints"],
-                    m_showCollisionModes["drawMasterPoint"],
-                    m_showCollisionModes["drawSkel"]);
+                m_colliderArray[i]->draw(m_camera,
+                                         m_showElements["CollisionLines"],
+                                         m_showElements["CollisionPoints"],
+                                         m_showElements["CollisionMasterPoint"],
+                                         m_showElements["CollisionSkeleton"]);
+            }
+        }
+        if (m_showElements["SceneNodes"])
+        {
+            for (auto& gameObject : m_gameObjectArray)
+            {
+                sf::CircleShape sceneNodeRepr;
+                SceneNode* sceneNode = gameObject->getSceneNode();
+                Transform::UnitVector sceneNodePosition = sceneNode
+                    ->getPosition()
+                    .to<Transform::Units::ViewPixels>();
+                sceneNodeRepr.setPosition(sceneNodePosition.x - 3,
+                                          sceneNodePosition.y - 3);
+                if (sceneNode->isSelected())
+                    sceneNodeRepr.setFillColor(sf::Color::Green);
+                else
+                    sceneNodeRepr.setFillColor(sf::Color::Red);
+                sceneNodeRepr.setOutlineColor(sf::Color::Black);
+                sceneNodeRepr.setOutlineThickness(2);
+                sceneNodeRepr.setRadius(6);
+                System::MainWindow.draw(sceneNodeRepr);
             }
         }
     }
@@ -750,10 +771,39 @@ namespace obe::Scene
                                     const bool drawMasterPoint,
                                     const bool drawSkel)
     {
-        m_showCollisionModes["drawLines"] = drawLines;
-        m_showCollisionModes["drawPoints"] = drawPoints;
-        m_showCollisionModes["drawMasterPoint"] = drawMasterPoint;
-        m_showCollisionModes["drawSkel"] = drawSkel;
+        m_showElements["CollisionLines"] = drawLines;
+        m_showElements["CollisionPoints"] = drawPoints;
+        m_showElements["CollisionMasterPoint"] = drawMasterPoint;
+        m_showElements["CollisionSkeleton"] = drawSkel;
+    }
+
+    void Scene::enableShowSceneNodes(bool showNodes)
+    {
+        m_showElements["SceneNodes"] = showNodes;
+    }
+
+    SceneNode* Scene::getSceneNodeByPosition(const Transform::UnitVector& position) const
+    {
+        for (auto& gameObject : m_gameObjectArray)
+        {
+            const Transform::UnitVector sceneNodePosition =
+                gameObject->getSceneNode()->getPosition();
+            const Transform::UnitVector pVec =
+                position.to<Transform::Units::SceneUnits>();
+            const Transform::UnitVector pTolerance = Transform::UnitVector(
+                6, 6, Transform::Units::ScenePixels).to<Transform::Units::SceneUnits>();
+            
+            if (Utils::Math::isBetween(pVec.x,
+                                       sceneNodePosition.x - pTolerance.x,
+                                       sceneNodePosition.x + pTolerance.x))
+            {
+                if (Utils::Math::isBetween(pVec.y,
+                                           sceneNodePosition.y - pTolerance.x,
+                                           sceneNodePosition.y + pTolerance.y))
+                    return gameObject->getSceneNode();
+            }
+        }
+        return nullptr;
     }
 
     std::pair<Collision::PolygonalCollider*, int>

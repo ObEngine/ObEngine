@@ -164,6 +164,7 @@ namespace obe::Editor::GUI
         editMode->addItem("LevelSprites");
         editMode->addItem("Collisions");
         editMode->addItem("Play");
+        editMode->addItem("SceneNodes");
         editMode->addItem("None");
         editMode->setSelectedItem("None");
         editMode->setSize("10.5%", "100% - 1");
@@ -807,7 +808,8 @@ namespace obe::Editor::GUI
                 cursor.setConstraint(
                     [editMode, &editorGrid, &scene](System::Cursor* cursor) {
                         if (editMode->getSelectedItem() == "LevelSprites" ||
-                            editMode->getSelectedItem() == "Collisions")
+                            editMode->getSelectedItem() == "Collisions" ||
+                            editMode->getSelectedItem() == "SceneNodes")
                         {
                             Transform::UnitVector pixelCamera =
                                 scene.getCamera()

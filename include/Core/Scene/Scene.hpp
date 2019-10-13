@@ -33,7 +33,7 @@ namespace obe::Scene
 
         vili::ViliParser m_levelFile;
         std::string m_levelFileName;
-        std::map<std::string, bool> m_showCollisionModes;
+        std::map<std::string, bool> m_showElements;
         kaguya::LuaFunction m_onLoadCallback;
         Triggers::TriggerGroupPtr m_sceneTriggers;
 
@@ -291,5 +291,7 @@ namespace obe::Scene
                                  bool drawPoints = false,
                                  bool drawMasterPoint = false,
                                  bool drawSkel = false);
+        void enableShowSceneNodes(bool showNodes);
+        SceneNode* getSceneNodeByPosition(const Transform::UnitVector& position) const;
     };
 } // namespace obe::Scene

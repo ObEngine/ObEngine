@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <Transform/Movable.hpp>
+#include <Types/Selectable.hpp>
 
 namespace obe::Scene
 {
@@ -10,7 +11,7 @@ namespace obe::Scene
      * \brief A SceneNode holds objects herited from Movable class and "links"
      * their position
      */
-    class SceneNode : public Transform::Movable
+    class SceneNode : public Transform::Movable, public Types::Selectable
     {
     private:
         std::vector<Movable*> m_children;

@@ -63,7 +63,7 @@ namespace obe::Animation
 
     void Animator::setKey(const std::string& key)
     {
-        Debug::Log->debug(
+        Debug::Log->trace(
             "<Animator> Set Animation Key {0} for Animator at {1} {2}", key,
             m_animatorPath.toString(), m_animationSet.size());
         if (!m_animationSet.empty() &&

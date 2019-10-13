@@ -415,16 +415,10 @@ namespace obe::Transform
 
     Rect Polygon::getBoundingBox() const
     {
-        auto minX = std::min_element(
+        auto [minX, maxX] = std::minmax_element(
             m_points.begin(), m_points.end(),
             [](auto& point1, auto& point2) { return point1->x < point2->x; });
-        auto minY = std::min_element(
-            m_points.begin(), m_points.end(),
-            [](auto& point1, auto& point2) { return point1->y < point2->y; });
-        auto maxX = std::max_element(
-            m_points.begin(), m_points.end(),
-            [](auto& point1, auto& point2) { return point1->x < point2->x; });
-        auto maxY = std::max_element(
+        auto [minY, maxY] = std::minmax_element(
             m_points.begin(), m_points.end(),
             [](auto& point1, auto& point2) { return point1->y < point2->y; });
         const double width = maxX->get()->x - minX->get()->x;
