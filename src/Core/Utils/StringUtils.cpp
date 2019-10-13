@@ -54,8 +54,10 @@ namespace obe::Utils::String
         if (!str.empty())
         {
             if (str.substr(0, 1) == "-")
-                return all_of(str.substr(1).begin(), str.substr(1).end(),
-                              isdigit);
+            {
+                std::string withoutSign = str.substr(1);
+                return all_of(withoutSign.begin(), withoutSign.end(), isdigit);
+            }
             return all_of(str.begin(), str.end(), isdigit);
         }
         return false;

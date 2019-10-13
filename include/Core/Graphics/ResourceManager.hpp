@@ -37,6 +37,6 @@ namespace obe::Graphics
          * to the texture stored in the cache
          */
         static sf::Texture* GetTexture(const std::string& path,
-                                       bool antiAliasing = false);
+                                       bool antiAliasing = true);
     };
 } // namespace obe::Graphics

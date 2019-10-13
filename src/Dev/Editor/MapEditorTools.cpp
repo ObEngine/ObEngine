@@ -403,9 +403,8 @@ namespace obe::Editor
                 ->getPosition()
                 .to<Transform::Units::ScenePixels>();
         sprToAdd->loadTexture("Sprites/LevelSprites/" + spritePath);
-        sprToAdd->getPosition() +=
-            Transform::UnitVector(960 + pixelCamera.x, 540 + pixelCamera.y,
-                                  Transform::Units::ScenePixels);
+        sprToAdd->setPosition(pixelCamera);
+            
         sprToAdd->setRotation(0);
         // ADD SPRITE SIZE
         sprToAdd->useTextureSize();
