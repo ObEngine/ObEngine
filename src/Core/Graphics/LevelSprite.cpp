@@ -500,6 +500,7 @@ namespace obe::Graphics
 
         if (spritePath != "")
             this->loadTexture(spritePath);
+		this->setRotation(spriteRot);
         this->setPosition(spritePos);
         this->setSize(spriteSize);
         this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
@@ -508,7 +509,6 @@ namespace obe::Graphics
         this->setPositionTransformer(positionTransformer);
         this->setLayer(layer);
         this->setZDepth(zdepth);
-        this->setRotation(spriteRot);
     }
 
     void LevelSprite::setShader(Shader* shader)
