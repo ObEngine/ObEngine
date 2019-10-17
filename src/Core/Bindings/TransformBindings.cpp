@@ -61,6 +61,7 @@ namespace obe::Bindings::TransformBindings
                                      const Transform::UnitVector&,
                                      const Transform::UnitVector&)>()
                 .addFunction("getPosition", Rect_getPosition_wrapper())
+                .addFunction("getRotation", &Transform::Rect::getRotation)
                 .addFunction("getScaleFactor", &Transform::Rect::getScaleFactor)
                 .addFunction("getSize", &Transform::Rect::getSize)
                 .addFunction("move", &Transform::Rect::move)
