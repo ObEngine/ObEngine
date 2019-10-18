@@ -25,10 +25,18 @@ function Mirror.GetArgs(fun)
     return args
 end
 
+__nil_table = {
+    __NIL = true
+};
+
 function Mirror.Unpack(t, i)
     i = i or 1
     if t[i] ~= nil then
-        return t[i], Mirror.Unpack(t, i + 1)
+        if t[i] == __nil_table then
+            return nil, Mirror.Unpack(t, i + 1)
+        else
+            return t[i], Mirror.Unpack(t, i + 1)
+        end
     end
 end
 

@@ -234,12 +234,12 @@ namespace obe::Editor
             createObjectButton->setPosition(10, "100% - 60");
             createObjectButton->setSize("100% - 20", 50);
             createObjectButton->setRenderer(baseTheme.getRenderer("Button"));
-            createObjectButton->setTextSize(22);
+            createObjectButton->setTextSize(20);
             createObjectButton->setText("Create Object");
 
             createObjectButton->connect(
                 "pressed", [objName, requireComboBoxes, requireEditBoxes, key,
-                            requireCopy, &scene]() mutable {
+                            requireCopy, &scene, &requiresPanel]() mutable {
                     for (auto& cReq : requireComboBoxes)
                     {
                         requireCopy->at("Input", cReq.first)
@@ -252,6 +252,7 @@ namespace obe::Editor
                             .createDataNode("value", cReq.second->getText());
                     }
                     buildObjectThroughRequire(scene, objName, requireCopy);
+                    requiresPanel->hide();
                 });
 
             requiresPanel->add(createObjectButton);
