@@ -144,13 +144,16 @@ namespace obe::Input
     {
         //<REVISION> Multiple context, keep which one, remove keys of wrong
         //context
-        m_allActions.erase(
+        m_currentActions.erase(
             std::remove_if(
-                m_allActions.begin(), m_allActions.end(),
-                [&context](std::unique_ptr<InputAction>& inputAction) -> bool {
-                    return (inputAction->getId() == context);
+				m_currentActions.begin(), m_currentActions.end(),
+                [&context](const InputAction* inputAction) -> bool {
+                    auto& contexts = inputAction->getContexts();
+                    return std::find(contexts.begin(),
+                                    contexts.end(),
+                                    context) != contexts.end();
                 }),
-            m_allActions.end());
+            m_currentActions.end());
 
         return *this;
     }
