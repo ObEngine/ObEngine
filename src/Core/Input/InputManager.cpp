@@ -148,7 +148,7 @@ namespace obe::Input
             std::remove_if(
 				m_currentActions.begin(), m_currentActions.end(),
                 [&context](const InputAction* inputAction) -> bool {
-                    auto& contexts = inputAction->getContexts();
+                    const auto& contexts = inputAction->getContexts();
                     return std::find(contexts.begin(),
                                     contexts.end(),
                                     context) != contexts.end();
