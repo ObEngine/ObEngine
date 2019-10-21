@@ -1,4 +1,5 @@
 # ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
@@ -184,6 +185,15 @@ Check the Wiki for more examples !
 
 ## Contributors / Thanks
 
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/Skealz"><img src="https://avatars3.githubusercontent.com/u/11155537?v=4" width="100px;" alt="Skealz"/><br /><sub><b>Skealz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Skealz" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
 <table>
