@@ -103,14 +103,13 @@ Here you go :
 ## ObEngine's versions
 
 Each major release will have a name based on a translation of the word "Eggplant".
-The current major release is "Melanzana".
-Being at a major release doesn't mean ÖbEngine is stable or complete yet (actually far from it).
+
 ÖbEngine just follows [semver rules](https://semver.org/) which means any version will be tagged (X.Y.Z) with X: Major, Y: Minor and Z: Patch.
 
 ### Pre-alpha versions
 |Version number|Version name|Word origin|Release date|Description|
 |--------------|------------|-----------|------------|-----------|
-|1.0.0|Melanzana|Italian|Octobre 2019|First release of|
+|1.0.0|Melanzana|Italian|?|First production release of ÖbEngine|
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
