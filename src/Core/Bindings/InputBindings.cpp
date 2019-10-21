@@ -75,8 +75,9 @@ namespace obe::Bindings::InputBindings
 
     void LoadInputManager(kaguya::State* lua)
     {
+        Load(lua, "obe.Togglable");
         (*lua)["obe"]["InputManager"].setClass(
-            kaguya::UserdataMetatable<Input::InputManager>()
+            kaguya::UserdataMetatable<Input::InputManager, Types::Togglable>()
                 .addFunction("actionExists", &Input::InputManager::actionExists)
                 .addFunction("clear", &Input::InputManager::clear)
                 .addFunction("clearContexts",
@@ -84,7 +85,6 @@ namespace obe::Bindings::InputBindings
                 .addFunction("configure", &Input::InputManager::configure)
                 .addFunction("getAction", &Input::InputManager::getAction)
                 .addFunction("setContext", &Input::InputManager::setContext)
-                .addFunction("setEnabled", &Input::InputManager::setEnabled)
                 .addFunction("update", &Input::InputManager::update));
 
         (*lua)["obe"]["InputManager"]["addContext"] = kaguya::function(
