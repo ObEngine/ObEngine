@@ -5,7 +5,7 @@
   "imageSize": 100,
   "commit": false,
   "contributors": [
-   {
+    {
       "login": "Sygmei",
       "name": "Sygmei",
       "avatar_url": "https://avatars1.githubusercontent.com/u/3835355?v=4",
@@ -31,7 +31,16 @@
       "contributions": [
         "code"
       ]
-   }
+    },
+    {
+      "login": "TeddyTrqt",
+      "name": "TeddyTrqt",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/25806305?v=4",
+      "profile": "https://github.com/TeddyTrqt",
+      "contributions": [
+        "code"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "projectName": "ObEngine",
