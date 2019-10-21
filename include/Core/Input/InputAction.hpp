@@ -12,7 +12,7 @@
 namespace obe::Input
 {
     /**
-     * \brief Function callback type for KeyboardAction
+     * \brief Function callback type for InputAction
      */
     using ActionCallback = std::function<void(const InputActionEvent& event)>;
 
@@ -33,9 +33,9 @@ namespace obe::Input
 
     public:
         /**
-         * \brief Creates a new KeyboardAction
+         * \brief Creates a new InputAction
          * \param triggerPtr Pointer to the TriggerGroup
-         * \param id Id of the KeyboardAction
+         * \param id Id of the InputAction
          */
         explicit InputAction(Triggers::TriggerGroup* triggerPtr,
                              const std::string& id);
@@ -45,8 +45,8 @@ namespace obe::Input
          */
         void addCondition(InputCondition condition);
         /**
-         * \brief Adds a context to the KeyboardAction
-         * \param context New context for the KeyboardAction
+         * \brief Adds a context to the InputAction
+         * \param context New context for the InputAction
          */
         void addContext(const std::string& context);
         /**
@@ -65,13 +65,13 @@ namespace obe::Input
          */
         void connect(ActionCallback callback);
         /**
-         * \brief Get all the contexts the KeyboardAction is in
+         * \brief Get all the contexts the InputAction is in
          * \return A std::vector of std::string containing all the contexts
          */
         std::vector<std::string> getContexts() const;
         /**
-         * \brief Gets the delay required between two KeyboardAction triggerings
-         * \return The delay required between two KeyboardAction triggerings (in
+         * \brief Gets the delay required between two InputAction triggerings
+         * \return The delay required between two InputAction triggerings (in
          * ms)
          */
         Time::TimeUnit getInterval() const;
@@ -81,8 +81,8 @@ namespace obe::Input
          */
         Time::TimeUnit getRepeat() const;
         /**
-         * \brief Sets the delay required between two KeyboardAction triggerings
-         * \param delay Delay required between two KeyboardAction triggerings
+         * \brief Sets the delay required between two InputAction triggerings
+         * \param delay Delay required between two InputAction triggerings
          * (in ms)
          */
         void setInterval(Time::TimeUnit delay);
@@ -92,7 +92,7 @@ namespace obe::Input
          */
         void setRepeat(Time::TimeUnit delay);
         /**
-         * \brief Updates the KeyboardAction
+         * \brief Updates the InputAction
          */
         void update();
     };

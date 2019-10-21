@@ -7,6 +7,7 @@
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Registrable.hpp>
+#include <Types/Togglable.hpp>
 
 namespace obe::Input
 {
@@ -14,14 +15,13 @@ namespace obe::Input
      * \brief Class used to manage KeyClass and KeyboardAction
      * @Bind
      */
-    class InputManager : public Types::Registrable<InputManager>
+    class InputManager : public Types::Registrable<InputManager>, public Types::Togglable
     {
     private:
         Triggers::TriggerGroupPtr m_actionTriggers;
-        std::vector<std::unique_ptr<InputAction>> m_allActions;
-        bool m_binderEnabled = true;
-        std::vector<InputAction*> m_currentActions;
-
+        std::vector<std::shared_ptr<InputAction>> m_allActions;
+        std::vector<std::weak_ptr<InputAction>> m_currentActions;
+        bool isActionCurrentlyInUse(const std::string& actionId);
     public:
         /**
          * \brief Creates a new KeyboardManager
@@ -77,12 +77,6 @@ namespace obe::Input
          * \param context Name of the only context to use
          */
         void setContext(const std::string& context);
-        /**
-         * \brief Enables or disables the KeyboardManager
-         * \param state true if the KeyboardManager should be enabled, false
-         * otherwise
-         */
-        void setEnabled(bool state);
         /**
          * \brief Updates the KeyboardManager
          */
