@@ -1,11 +1,9 @@
 # ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/Sygmei/ObEngine/releases)
 [![Codacy Badge](https://img.shields.io/codacy/grade/81846da629d244f69f357568a2f8d690.svg?style=for-the-badge)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 ## CI/CD status
 
@@ -24,7 +22,7 @@
 - [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
 
 ## What the hell is ÖbEngine ?
-ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time as a student, it might not be really stable right now but I'm working on it.
+ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time, it might not be really stable right now but I'm working on it.
 
 ## What do I need to build it ?
 You will need SFML :
@@ -32,17 +30,21 @@ You will need SFML :
 
 There are other libraries but they are included in the repository (extlibs/ folder) :
 
-- [11zip](https://github.com/Sygmei/11Zip)  (MIT License) (minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/))
-- [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
-- [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (zlib License) (Scripting language)
-- [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
-- [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
-- [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
-- [Catch](https://github.com/catchorg/Catch2) (Boost Software License) (Test Framework)
-- [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
-- [dynamicLinker](https://github.com/Marqin/dynamicLinker) (MIT License) (Dynamic Libs wrapper)
-- [RichText](https://github.com/Skyrpex/RichText) (MIT License) (sf::Text extension)
-- [fmt](https://github.com/fmtlib/fmt) (BSD 2-Clause "Simplified" License) (Formatting library)
+### Bundled dependencies
+
+|Library|Description|License|
+|-------|-----------|-------|
+|[11zip](https://github.com/Sygmei/11Zip)|minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/)|MIT License|
+|[Catch2](https://github.com/catchorg/Catch2)|Test Framework|Boost Software License|
+|[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
+|[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
+|[Kaguya](https://github.com/satoren/kaguya)|C++ binding library to Lua|Boost Software License|
+|[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
+|[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
+|[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
+|[tgui](https://github.com/texus/TGUI)|GUI library|zlib license|
+|[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
+|[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
 ## How do I build it ?
 Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
@@ -99,22 +101,16 @@ Here you go :
 - Tiled Map Editor support
 
 ## ObEngine's versions
+
+Each major release will have a name based on a translation of the word "Eggplant".
+The current major release is "Melanzana".
+Being at a major release doesn't mean ÖbEngine is stable or complete yet (actually far from it).
+ÖbEngine just follows [semver rules](https://semver.org/) which means any version will be tagged (X.Y.Z) with X: Major, Y: Minor and Z: Patch.
+
 ### Pre-alpha versions
 |Version number|Version name|Word origin|Release date|Description|
 |--------------|------------|-----------|------------|-----------|
-|0.1.0|Aubergine|French|April 2016|First usable version of ÖbEngine|
-|0.2.0|Berjinez|Breton|June 2016|Better scripting support|
-|0.3.0|Cà tím|Vietnamese|January 2017|Big engine rework|
-|0.4.0|Eggplant|English|February 2017|First released dev version of ÖbEngine|
-|0.5.0|Gaji|Korean|September 2017|First public released version (still unstable)|
-|0.6.0|Hkaramsee|Birman|November 2017|C++17 support|
-|0.7.0|Igba|Yoruba|March 2018|Cleaning the engine code, new build system|
-|0.8.0|Lilek|Czech|April 2018|Working on new Qt UI|
-|0.9.0|Mbilingani|Swahili|September 2018|Cleaning engine code again !|
-### Beta versions
-|Version number|Version name|Word origin|Release date|Description|
-|--------------|------------|-----------|------------|-----------|
-|1.0.0|Melanzana|Italian|?|First stable version of ÖbEngine !|
+|1.0.0|Melanzana|Italian|Octobre 2019|First release of|
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
