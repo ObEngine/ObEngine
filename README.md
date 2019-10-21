@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/Sygmei/ObEngine/releases)
 [![Codacy Badge](https://img.shields.io/codacy/grade/81846da629d244f69f357568a2f8d690.svg?style=for-the-badge)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=for-the-badge)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 ## CI/CD status
 
@@ -189,6 +189,7 @@ Check the Wiki for more examples !
 <table>
   <tr>
     <td align="center"><a href="https://github.com/Sygmei"><img src="https://avatars1.githubusercontent.com/u/3835355?v=4" width="100px;" alt="Sygmei"/><br /><sub><b>Sygmei</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Sygmei" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/PierrickLP"><img src="https://avatars1.githubusercontent.com/u/19671805?v=4" width="100px;" alt="PierrickLP"/><br /><sub><b>PierrickLP</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=PierrickLP" title="Code">💻</a></td>
   </tr>
 </table>
 
