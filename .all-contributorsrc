@@ -5,7 +5,7 @@
   "imageSize": 100,
   "commit": false,
   "contributors": [
-    {
+   {
       "login": "Sygmei",
       "name": "Sygmei",
       "avatar_url": "https://avatars1.githubusercontent.com/u/3835355?v=4",
@@ -22,13 +22,22 @@
       "contributions": [
         "code"
       ]
-    }
+    },
+    {
+      "login": "Skealz",
+      "name": "Skealz",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11155537?v=4",
+      "profile": "https://github.com/Skealz",
+      "contributions": [
+        "code"
+      ]
+   }
   ],
   "contributorsPerLine": 7,
   "projectName": "ObEngine",
   "projectOwner": "Sygmei",
   "repoType": "github",
-  "repoHost": "https://github.com",
+  "repoHost": "https://github.com"
   "types": {
     "help": {
       "symbol": "ℹ️",
