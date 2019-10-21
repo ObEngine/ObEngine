@@ -28,5 +28,12 @@
   "projectName": "ObEngine",
   "projectOwner": "Sygmei",
   "repoType": "github",
-  "repoHost": "https://github.com"
+  "repoHost": "https://github.com",
+  "types": {
+    "help": {
+      "symbol": "ℹ️",
+      "description": "Someone who provided help and advices.",
+      "link": "[<%= symbol %>](<%= url %> \"<%= description %>\"),"
+    }
+  }
 }
