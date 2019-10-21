@@ -1,10 +1,10 @@
 # ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/Sygmei/ObEngine/releases)
 [![Codacy Badge](https://img.shields.io/codacy/grade/81846da629d244f69f357568a2f8d690.svg?style=for-the-badge)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=for-the-badge)](#contributors)
 
 ## CI/CD status
 
@@ -193,19 +193,3 @@ Check the Wiki for more examples !
 </table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-Main contributor : Sygmei
-
-### Contributors
-
-- [@PierrickLP](https://github.com/PierrickLP)
-- @LePatissier
-- [@Arthapz](https://github.com/Arthapz)
-- @ZanyMonk
-
-### Special thanks
-
-- [@eXpl0it3r](https://github.com/eXpl0it3r)
-- @WaWan
-- [@texus](https://github.com/texus)
-- [@MarioLiebisch](https://github.com/MarioLiebisch)
-- And many more !
