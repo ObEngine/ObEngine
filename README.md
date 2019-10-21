@@ -1,5 +1,5 @@
 # ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
@@ -192,6 +192,7 @@ Check the Wiki for more examples !
     <td align="center"><a href="https://github.com/Sygmei"><img src="https://avatars1.githubusercontent.com/u/3835355?v=4" width="100px;" alt="Sygmei"/><br /><sub><b>Sygmei</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Sygmei" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/PierrickLP"><img src="https://avatars1.githubusercontent.com/u/19671805?v=4" width="100px;" alt="PierrickLP"/><br /><sub><b>PierrickLP</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=PierrickLP" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Skealz"><img src="https://avatars3.githubusercontent.com/u/11155537?v=4" width="100px;" alt="Skealz"/><br /><sub><b>Skealz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Skealz" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/TeddyTrqt"><img src="https://avatars3.githubusercontent.com/u/25806305?v=4" width="100px;" alt="TeddyTrqt"/><br /><sub><b>TeddyTrqt</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=TeddyTrqt" title="Code">💻</a></td>
   </tr>
 </table>
 
