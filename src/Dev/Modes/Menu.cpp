@@ -72,7 +72,7 @@ namespace obe::Modes
                 filename.substr(0, allMapsTemp[i].size() - 9) + ")");
             selectMapButton->setRenderer(
                 baseTheme.getRenderer("MapSelectButton"));
-            selectMapButton->setSize("630", "100");
+            selectMapButton->setSize("100%", "20%");
             selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
             selectMapButton->connect(
                 "pressed", [&currentMap, filename] { currentMap = filename; });
@@ -128,7 +128,8 @@ namespace obe::Modes
 
     std::string chooseMapMenu()
     {
-        sf::RenderWindow window({636, 636}, "ObEngine Map Selector",
+        unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
+        sf::RenderWindow window({windowSize, windowSize}, "ObEngine Map Selector",
                                 sf::Style::None);
 
         tgui::Gui gui(window);
@@ -166,22 +167,22 @@ namespace obe::Modes
 
         titleLabel->setRenderer(baseTheme.getRenderer("Label"));
         titleLabel->setText("ObEngine");
-        titleLabel->setTextSize(34);
-        titleLabel->setPosition("2.5%", "25%");
+        titleLabel->setTextSize(windowSize * 0.06);
+        titleLabel->setPosition("2.5%", "15=5%");
 
         mapEditorLabel->setRenderer(baseTheme.getRenderer("Label"));
         mapEditorLabel->setText("<Map Editor>");
-        mapEditorLabel->setTextSize(22);
-        mapEditorLabel->setPosition("25%", "40%");
+        mapEditorLabel->setTextSize(windowSize * 0.035);
+        mapEditorLabel->setPosition(tgui::bindRight(titleLabel) + 20, "40%");
 
         closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
-        closeButton->setSize("32", "32");
+        closeButton->setSize("height", "50%");
         closeButton->setPosition("92%", "25%");
         closeButton->connect("pressed", [&window]() { window.close(); });
 
         createMapLabel->setRenderer(baseTheme.getRenderer("Label"));
         createMapLabel->setText("Create Level : ");
-        createMapLabel->setTextSize(30);
+        createMapLabel->setTextSize(windowSize * 0.045);
         createMapLabel->setPosition("2.5%", "20%");
 
         auto createMapLambda = [createMapInput, middlePanel, scrollbar,
@@ -191,12 +192,12 @@ namespace obe::Modes
         };
 
         createMapButton->setRenderer(baseTheme.getRenderer("AddButton"));
-        createMapButton->setSize("32", "32");
+        createMapButton->setSize("height", "50%");
         createMapButton->setPosition("90%", "25%");
         createMapButton->connect("pressed", createMapLambda);
 
         createMapInput->setRenderer(baseTheme.getRenderer("TextBox"));
-        createMapInput->setSize("300", "32");
+        createMapInput->setSize("47%", "50%");
         createMapInput->setPosition("35%", "25%");
         createMapInput->connect("returnkeypressed", createMapLambda);
 
@@ -267,7 +268,9 @@ namespace obe::Modes
 
     void startDevMenu()
     {
-        sf::RenderWindow window({636, 636}, "ObEngine Development Window",
+        unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
+        sf::RenderWindow window({ windowSize, windowSize },
+            "ObEngine Development Window",
                                 sf::Style::None);
 
         tgui::Gui gui(window);
@@ -294,11 +297,11 @@ namespace obe::Modes
 
         titleLabel->setRenderer(baseTheme.getRenderer("Label"));
         titleLabel->setText("ObEngine Development Menu");
-        titleLabel->setTextSize(34);
+        titleLabel->setTextSize(float(windowSize) * 0.06);
         titleLabel->setPosition("2.5%", "15%");
 
         closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
-        closeButton->setSize("32", "32");
+        closeButton->setSize("height", "50%");
         closeButton->setPosition("92%", "25%");
         closeButton->connect("pressed", [&window]() { window.close(); });
 
@@ -329,7 +332,7 @@ namespace obe::Modes
         checkMapFolder();
 
         playButton->setRenderer(baseTheme.getRenderer("PlaySquareButton"));
-        playButton->setSize("318", "286");
+        playButton->setSize("50%", "50%");
         playButton->setPosition("0", "0");
         playButton->connect("pressed", [&checkBootFile, &checkMapFolder]() {
             startGame();
@@ -338,7 +341,7 @@ namespace obe::Modes
         });
 
         editButton->setRenderer(baseTheme.getRenderer("EditSquareButton"));
-        editButton->setSize("318", "286");
+        editButton->setSize("50%", "50%");
         editButton->setPosition(tgui::bindRight(playButton), "0");
         editButton->connect("pressed", [&checkBootFile, &checkMapFolder]() {
             std::string editMapName = chooseMapMenu();
@@ -350,7 +353,7 @@ namespace obe::Modes
 
         toolkitButton->setRenderer(
             baseTheme.getRenderer("ToolkitSquareButton"));
-        toolkitButton->setSize("318", "286");
+        toolkitButton->setSize("50%", "50%");
         toolkitButton->setPosition("0", tgui::bindBottom(playButton));
         toolkitButton->connect("pressed",
                                [&window, &checkBootFile, &checkMapFolder]() {
@@ -361,7 +364,7 @@ namespace obe::Modes
                                });
 
         helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));
-        helpButton->setSize("318", "286");
+        helpButton->setSize("50%", "50%");
         helpButton->setPosition(tgui::bindLeft(editButton),
                                 tgui::bindBottom(playButton));
         // helpButton->connect("pressed", [&window]()

@@ -20,10 +20,12 @@ namespace obe::Modes
 {
     void startToolkitMode()
     {
+        unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
         bool continueToolkit = true;
         std::vector<std::string> commandHistory;
         unsigned commandHistoryIndex = 0;
-        sf::RenderWindow window({636, 636}, "ObEngine Toolkit",
+        sf::RenderWindow window(
+            { windowSize, windowSize }, "ObEngine Toolkit",
                                 sf::Style::None);
         sf::Color inputColor(255, 255, 255);
 
@@ -41,6 +43,7 @@ namespace obe::Modes
         std::string currentMap = "";
 
         tgui::Panel::Ptr mainPanel = tgui::Panel::create();
+        tgui::Panel::Ptr titlePanel = tgui::Panel::create();
         tgui::ToolkitContentBox::Ptr content =
             tgui::ToolkitContentBox::create();
         tgui::Scrollbar::Ptr scrollbar = tgui::Scrollbar::create();
@@ -49,41 +52,46 @@ namespace obe::Modes
         tgui::EditBox::Ptr toolkitInput = tgui::EditBox::create();
 
         gui.add(mainPanel, "mainPanel");
+        gui.add(titlePanel, "titlePanel");
 
         mainPanel->setRenderer(baseTheme.getRenderer("Panel"));
         mainPanel->setSize(window.getSize().x, window.getSize().y);
         mainPanel->setPosition("0", "0");
 
+        titlePanel->setRenderer(baseTheme.getRenderer("Panel"));
+        titlePanel->setSize("100%", "10%");
+        titlePanel->setPosition("0", "0");
+
         content->setRenderer(baseTheme.getRenderer("ChatBox"));
-        content->setSize("100%", "534");
-        content->setPosition("0", "70");
+        content->setSize("100%", "84%");
+        content->setPosition("0", tgui::bindBottom(titlePanel));
         content->setLinesStartFromTop();
         mainPanel->add(content, "contentPanel");
 
         titleLabel->setRenderer(baseTheme.getRenderer("Label"));
         titleLabel->setText("ObEngine Toolkit");
-        titleLabel->setTextSize(34);
+        titleLabel->setTextSize(float(windowSize) * 0.06);
         titleLabel->setPosition("10", "10");
-        mainPanel->add(titleLabel);
+        titlePanel->add(titleLabel);
 
         closeButton->setRenderer(baseTheme.getRenderer("CloseButton"));
-        closeButton->setSize("32", "32");
-        closeButton->setPosition("92%", "3%");
+        closeButton->setSize("height", "50%");
+        closeButton->setPosition("92%", "25%");
         closeButton->connect("pressed", [&window]() { window.close(); });
-        mainPanel->add(closeButton);
+        titlePanel->add(closeButton);
 
         toolkitInput->setRenderer(baseTheme.getRenderer("TextBox"));
-        toolkitInput->setSize("100%", "32");
-        toolkitInput->setPosition("0", "100% - 32");
+        toolkitInput->setSize("100%", "6%");
+        toolkitInput->setPosition("0", tgui::bindBottom(content));
         mainPanel->add(toolkitInput);
 
         kaguya::State toolkitEngine;
         toolkitInput->connect(
             "returnkeypressed",
             [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine,
-             &commandHistory, &commandHistoryIndex]() {
+             &commandHistory, &commandHistoryIndex, windowSize]() {
                 sfe::RichText newtext(toolkitFont);
-                newtext.setCharacterSize(16);
+                newtext.setCharacterSize(windowSize * 0.025);
                 std::string inputText = toolkitInput->getText().toAnsiString();
                 newtext.pushString(">> " + inputText);
                 newtext.pushFillColor(inputColor);
@@ -115,10 +123,10 @@ namespace obe::Modes
                 inputColor.b = b;
             });
         toolkitEngine["_term_display"] = kaguya::function(
-            [&content, &toolkitFont](const std::vector<sf::String>& strings,
+            [&content, &toolkitFont, windowSize](const std::vector<sf::String>& strings,
                                      const std::vector<sf::Color>& colors) {
                 sfe::RichText newtext(toolkitFont);
-                newtext.setCharacterSize(16);
+                newtext.setCharacterSize(windowSize * 0.025);
                 for (int i = 0; i < strings.size(); i++)
                 {
                     newtext.pushFillColor(colors.at(i));
