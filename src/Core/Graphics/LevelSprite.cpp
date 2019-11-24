@@ -79,7 +79,8 @@ namespace obe::Graphics
         {
             m_path = path;
             const std::string fPath = System::Path(path).find();
-            m_texture = ResourceManager::GetTexture(fPath);
+            Debug::Log->debug("antiAliasing at loadTexture: {}", m_antiAliasing);
+            m_texture = ResourceManager::GetTexture(fPath, m_antiAliasing);
 
             m_sprite.setTexture(*m_texture);
             m_sprite.setTextureRect(sf::IntRect(0, 0, m_texture->getSize().x,
@@ -120,6 +121,11 @@ namespace obe::Graphics
     {
         m_zdepth = zdepth;
         m_layerChanged = true;
+    }
+
+    void LevelSprite::setAntiAliasing(bool antiAliasing)
+    {
+        m_antiAliasing = antiAliasing;
     }
 
     void LevelSprite::setRotation(double rotate)
@@ -486,6 +492,10 @@ namespace obe::Graphics
         const int zdepth = data.contains(vili::NodeType::DataNode, "z-depth")
                                ? data.getDataNode("z-depth").get<int>()
                                : 1;
+        
+        const bool antiAliasing = data.contains(vili::NodeType::DataNode, "antiAliasing")
+                               ? data.getDataNode("antiAliasing").get<bool>()
+                               : true;
 
         if (data.contains(vili::NodeType::DataNode, "xTransform"))
             spriteXTransformer =
@@ -497,6 +507,8 @@ namespace obe::Graphics
                 data.at<vili::DataNode>("yTransform").get<std::string>();
         else
             spriteYTransformer = "Position";
+
+        this->setAntiAliasing(antiAliasing);
 
         if (spritePath != "")
             this->loadTexture(spritePath);
