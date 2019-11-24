@@ -67,6 +67,7 @@ namespace obe::Modes
             }
 
             tgui::Button::Ptr selectMapButton = tgui::Button::create();
+            middlePanel->add(selectMapButton);
             selectMapButton->setText(
                 levelName + " (" +
                 filename.substr(0, allMapsTemp[i].size() - 9) + ")");
@@ -76,7 +77,6 @@ namespace obe::Modes
             selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
             selectMapButton->connect(
                 "pressed", [&currentMap, filename] { currentMap = filename; });
-            middlePanel->add(selectMapButton);
             scrollBoxSize += selectMapButton->getSize().y - 1;
         }
         scrollbar->setLowValue(middlePanel->getSize().y);
