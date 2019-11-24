@@ -1,6 +1,7 @@
 project(ObEngineDev)
 
 include(group_files)
+include(setup_environment)
 
 file(GLOB_RECURSE OBEDEV_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Dev/*.hpp)
@@ -35,3 +36,5 @@ group_files(
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
+
+copy_required_dlls(ObEngineDev)
