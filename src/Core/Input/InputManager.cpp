@@ -55,7 +55,7 @@ namespace obe::Input
             {
                 if (auto action = actionPtr.lock())
                 {
-                    Debug::Log->debug("Updating action {}", action->getId());
+                    Debug::Log->trace("Updating action {}", action->getId());
                     action->update();
                 }
             }

@@ -65,7 +65,7 @@ namespace obe::Graphics
                 m_fontDatabase[path] = move(tempFont);
             else
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.RessourceManager.LoadTexture",
+                    "ObEngine.Animation.RessourceManager.LoadFont",
                     {{"file", path}});
         }
         return m_fontDatabase[path].get();

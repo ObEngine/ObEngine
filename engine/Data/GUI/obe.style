@@ -1,80 +1,80 @@
 Button {
-    Texture      = "Button/Simple/idle.png";
-    TextureHover = "Button/Simple/hover.png";
-    TextureDown  = "Button/Simple/pushed.png";
+    Texture      = "Button/Simple/idle.png" smooth;
+    TextureHover = "Button/Simple/hover.png" smooth;
+    TextureDown  = "Button/Simple/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 SelectedButton {
-    Texture      = "Button/Simple/idle.png";
-    TextureHover = "Button/Simple/hover.png";
-    TextureDown  = "Button/Simple/pushed.png";
+    Texture      = "Button/Simple/idle.png" smooth;
+    TextureHover = "Button/Simple/hover.png" smooth;
+    TextureDown  = "Button/Simple/pushed.png" smooth;
     TextColor    = rgb(0, 150, 255);
 }
 
 ObjectButton {
-    Texture      = "Button/Object/idle.png";
-    TextureHover = "Button/Object/hover.png";
-    TextureDown  = "Button/Object/pushed.png";
+    Texture      = "Button/Object/idle.png" smooth;
+    TextureHover = "Button/Object/hover.png" smooth;
+    TextureDown  = "Button/Object/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 CloseButton {
-    Texture      = "Button/Close/idle.png";
-    TextureHover = "Button/Close/hover.png";
-    TextureDown  = "Button/Close/pushed.png";
+    Texture      = "Button/Close/idle.png" smooth;
+    TextureHover = "Button/Close/hover.png" smooth;
+    TextureDown  = "Button/Close/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 MapSelectButton {
-    Texture      = "Button/MapSelect/idle.png";
-    TextureHover = "Button/MapSelect/hover.png";
-    TextureDown  = "Button/MapSelect/pushed.png";
+    Texture      = "Button/MapSelect/idle.png" smooth;
+    TextureHover = "Button/MapSelect/hover.png" smooth;
+    TextureDown  = "Button/MapSelect/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 AddButton {
-    Texture      = "Button/Add/idle.png";
-    TextureHover = "Button/Add/hover.png";
-    TextureDown  = "Button/Add/pushed.png";
+    Texture      = "Button/Add/idle.png" smooth;
+    TextureHover = "Button/Add/hover.png" smooth;
+    TextureDown  = "Button/Add/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 
 ApplyButton {
-    Texture      = "Button/Apply/idle.png";
-    TextureHover = "Button/Apply/hover.png";
-    TextureDown  = "Button/Apply/pushed.png";
+    Texture      = "Button/Apply/idle.png" smooth;
+    TextureHover = "Button/Apply/hover.png" smooth;
+    TextureDown  = "Button/Apply/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 PlaySquareButton {
-    Texture      = "Button/Play/idle.png";
-    TextureHover = "Button/Play/hover.png";
-    TextureDown  = "Button/Play/pushed.png";
-    TextureDisabled = "Button/Play/disabled.png";
+    Texture      = "Button/Play/idle.png" smooth;
+    TextureHover = "Button/Play/hover.png" smooth;
+    TextureDown  = "Button/Play/pushed.png" smooth;
+    TextureDisabled = "Button/Play/disabled.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 EditSquareButton {
-    Texture      = "Button/Edit/idle.png";
-    TextureHover = "Button/Edit/hover.png";
-    TextureDown  = "Button/Edit/pushed.png";
-    TextureDisabled = "Button/Edit/disabled.png";
+    Texture      = "Button/Edit/idle.png" smooth;
+    TextureHover = "Button/Edit/hover.png" smooth;
+    TextureDown  = "Button/Edit/pushed.png" smooth;
+    TextureDisabled = "Button/Edit/disabled.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 ToolkitSquareButton {
-    Texture      = "Button/Toolkit/idle.png";
-    TextureHover = "Button/Toolkit/hover.png";
-    TextureDown  = "Button/Toolkit/pushed.png";
+    Texture      = "Button/Toolkit/idle.png" smooth;
+    TextureHover = "Button/Toolkit/hover.png" smooth;
+    TextureDown  = "Button/Toolkit/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
 HelpSquareButton {
-    Texture      = "Button/Help/idle.png";
-    TextureHover = "Button/Help/hover.png";
-    TextureDown  = "Button/Help/pushed.png";
+    Texture      = "Button/Help/idle.png" smooth;
+    TextureHover = "Button/Help/hover.png" smooth;
+    TextureDown  = "Button/Help/pushed.png" smooth;
     TextColor    = rgb(255, 255, 255);
 }
 
