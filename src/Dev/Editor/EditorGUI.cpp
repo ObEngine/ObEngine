@@ -1,6 +1,7 @@
 #include <Editor/EditorGUI.hpp>
 #include <Editor/MapEditorTools.hpp>
 #include <Input/InputCondition.hpp>
+#include <System/Config.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
 #include <Utils/StringUtils.hpp>
@@ -995,10 +996,7 @@ namespace obe::Editor::GUI
         keybindingCatLabel->setRenderer(baseTheme.getRenderer("Label"));
         keybindingCatLabel->setText("[ Keybinding Settings ]");
 
-        vili::ViliParser viliConfig;
-        System::Path("Data/config.cfg.vili")
-            .load(System::Loaders::dataLoader, viliConfig);
-        vili::ComplexNode& keybinding = viliConfig.at("KeyBinding");
+        vili::ComplexNode& keybinding = System::Config.at("KeyBinding");
         unsigned int yPos = 80;
         for (vili::ComplexNode* context :
              keybinding.getAll<vili::ComplexNode>())
