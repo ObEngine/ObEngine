@@ -157,10 +157,10 @@ namespace obe::Bindings
 
     void IndexPluginsBindings()
     {
-        Debug::Log->error("INDEXING PLUGINS BINDINGS");
+        Debug::Log->info("Indexing Plugins...");
         for (auto& plugin : System::Plugins)
         {
-            Debug::Log->error("INDEXING PLUGINS BINDING {} ({})",
+            Debug::Log->info("Indexing plugin bindings {} ({})",
                               plugin->getId(), plugin->hasOnLoadBindings());
             if (plugin->hasOnLoadBindings())
                 BindTree.add(plugin->getId(), [&plugin](kaguya::State* lua) {
