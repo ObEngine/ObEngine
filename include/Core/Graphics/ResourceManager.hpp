@@ -10,6 +10,8 @@
 
 namespace obe::Graphics
 {
+    using pairTexture = std::pair<std::unique_ptr<sf::Texture>,
+                                 std::unique_ptr<sf::Texture>>;
     /**
      * \brief Singleton Class that manages and caches textures
      * @Bind
@@ -20,7 +22,7 @@ namespace obe::Graphics
         static std::unordered_map<std::string, std::unique_ptr<sf::Font>>
             m_fontDatabase;
         static Triggers::TriggerGroupPtr m_resourceManagerTriggers;
-        static std::unordered_map<std::string, std::unique_ptr<sf::Texture>>
+        static std::unordered_map<std::string, pairTexture>
             m_textureDatabase;
 
     public:
@@ -40,3 +42,4 @@ namespace obe::Graphics
                                        bool antiAliasing = true);
     };
 } // namespace obe::Graphics
+
