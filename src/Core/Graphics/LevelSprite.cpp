@@ -79,7 +79,6 @@ namespace obe::Graphics
         {
             m_path = path;
             const std::string fPath = System::Path(path).find();
-            Debug::Log->debug("antiAliasing at loadTexture: {}", m_antiAliasing);
             m_texture = ResourceManager::GetTexture(fPath, m_antiAliasing);
 
             m_sprite.setTexture(*m_texture);
@@ -267,6 +266,11 @@ namespace obe::Graphics
     int LevelSprite::getZDepth() const
     {
         return m_zdepth;
+    }
+
+    bool LevelSprite::getAntiAliasing() const
+    {
+        return m_antiAliasing;
     }
 
     std::string LevelSprite::getPath() const

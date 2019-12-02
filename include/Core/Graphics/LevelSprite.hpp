@@ -204,6 +204,7 @@ namespace obe::Graphics
          * z-depth is behind lower ones)
          */
         int getZDepth() const;
+        bool getAntiAliasing() const;
         bool hasShader() const;
         /**
          * \brief Get the visibility of the LevelSprite
