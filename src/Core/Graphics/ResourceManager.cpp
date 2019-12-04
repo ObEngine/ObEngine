@@ -3,9 +3,12 @@
 #include <System/Path.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
+
 namespace obe::Graphics
 {
-    std::unordered_map<std::string, std::unique_ptr<sf::Texture>>
+    /*std::unordered_map<std::pair<std::string, bool>, std::unique_ptr<sf::Texture>>
+        ResourceManager::m_textureDatabase;*/
+    std::unordered_map<std::string, pairTexture>
         ResourceManager::m_textureDatabase;
     std::unordered_map<std::string, std::unique_ptr<sf::Font>>
         ResourceManager::m_fontDatabase;
@@ -14,7 +17,9 @@ namespace obe::Graphics
     sf::Texture* ResourceManager::GetTexture(const std::string& path,
                                              bool antiAliasing)
     {
-        if (m_textureDatabase.find(path) == m_textureDatabase.end())
+        if (m_textureDatabase.find(path) == m_textureDatabase.end()
+            || (!m_textureDatabase[path].first && !antiAliasing)
+            || (!m_textureDatabase[path].second && antiAliasing))
         {
             std::unique_ptr<sf::Texture> tempTexture =
                 std::make_unique<sf::Texture>();
@@ -24,14 +29,34 @@ namespace obe::Graphics
             if (tempTexture != nullptr)
             {
                 tempTexture->setSmooth(antiAliasing);
-                m_textureDatabase[path] = move(tempTexture);
+                if (!antiAliasing)
+                {
+                    m_textureDatabase[path].first = move(tempTexture);
+                    return m_textureDatabase[path].first.get();
+                }
+                else
+                {
+                    m_textureDatabase[path].second = move(tempTexture);
+                    return m_textureDatabase[path].second.get();
+                }
             }
             else
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Animation.RessourceManager.LoadTexture",
                     {{"file", path}});
         }
-        return m_textureDatabase[path].get();
+        else
+        {
+            if (antiAliasing)
+            {
+                return m_textureDatabase[path].second.get();
+            }
+            else
+            {
+                return m_textureDatabase[path].first.get();
+            }
+        }
+        
     }
 
     void ResourceManager::Init()

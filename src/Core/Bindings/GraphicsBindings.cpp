@@ -60,6 +60,7 @@ namespace obe::Bindings::GraphicsBindings
                 .addFunction("getYScaleFactor",
                              &Graphics::LevelSprite::getYScaleFactor)
                 .addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
+                .addFunction("getAntiAliasing", &Graphics::LevelSprite::getAntiAliasing)
                 .addFunction("hasShader", &Graphics::LevelSprite::hasShader)
                 .addFunction("isVisible", &Graphics::LevelSprite::isVisible)
                 .addFunction("loadTexture", &Graphics::LevelSprite::loadTexture)
@@ -82,6 +83,7 @@ namespace obe::Bindings::GraphicsBindings
                              &Graphics::LevelSprite::setTranslationOrigin)
                 .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
                 .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
+                .addFunction("setAntiAliasing", &Graphics::LevelSprite::setAntiAliasing)
                 .addFunction("useTextureSize",
                              &Graphics::LevelSprite::useTextureSize));
 

@@ -96,6 +96,7 @@ namespace obe::Graphics
         const sf::Texture* m_texture;
         bool m_visible = true;
         int m_zdepth = 0;
+        bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;
 
@@ -203,6 +204,7 @@ namespace obe::Graphics
          * z-depth is behind lower ones)
          */
         int getZDepth() const;
+        bool getAntiAliasing() const;
         bool hasShader() const;
         /**
          * \brief Get the visibility of the LevelSprite
@@ -292,6 +294,7 @@ namespace obe::Graphics
          * ones)
          */
         void setZDepth(int zdepth);
+        void setAntiAliasing(bool antiAliasing);
         /**
          * \brief Reset internal LevelSprite Rect using texture size
          */
