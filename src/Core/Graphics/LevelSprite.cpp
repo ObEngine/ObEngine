@@ -124,7 +124,16 @@ namespace obe::Graphics
 
     void LevelSprite::setAntiAliasing(bool antiAliasing)
     {
-        m_antiAliasing = antiAliasing;
+        if (antiAliasing != m_antiAliasing && m_texture && !m_path.empty())
+        {
+            m_antiAliasing = antiAliasing;
+            this->loadTexture(m_path);
+        }
+        else
+        {
+            m_antiAliasing = antiAliasing;
+        }
+        
     }
 
     void LevelSprite::setRotation(double rotate)

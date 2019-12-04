@@ -45,6 +45,18 @@ namespace obe::Graphics
                     "ObEngine.Animation.RessourceManager.LoadTexture",
                     {{"file", path}});
         }
+        else
+        {
+            if (antiAliasing)
+            {
+                return m_textureDatabase[path].second.get();
+            }
+            else
+            {
+                return m_textureDatabase[path].first.get();
+            }
+        }
+        
     }
 
     void ResourceManager::Init()
