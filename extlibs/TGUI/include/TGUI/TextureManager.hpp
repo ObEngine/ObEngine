@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -56,7 +56,7 @@ namespace tgui
         /// @return Texture data when loaded successfully, nullptr otherwise
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static std::shared_ptr<TextureData> getTexture(Texture& texture, const std::string& filename, const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0));
+        static std::shared_ptr<TextureData> getTexture(Texture& texture, const sf::String& filename, const sf::IntRect& partRect = sf::IntRect(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
-        static std::map<std::string, std::list<TextureDataHolder>> m_imageMap;
+        static std::map<sf::String, std::list<TextureDataHolder>> m_imageMap;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

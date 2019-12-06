@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,6 +30,10 @@
 #include <locale>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if defined(SFML_SYSTEM_WINDOWS) && defined(_MSC_VER)
+    #pragma warning(disable:26444)  // Ignore "Avoid unnamed objects with custom construction and destruction" warning on imbue call
+#endif
 
 namespace tgui
 {

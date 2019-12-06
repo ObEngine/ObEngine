@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,12 +26,17 @@
 #ifndef TGUI_ANIMATION_HPP
 #define TGUI_ANIMATION_HPP
 
-#include <TGUI/Widget.hpp>
+#include <TGUI/Vector2f.hpp>
+#include <SFML/System/Time.hpp>
+#include <functional>
+#include <memory>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace tgui
 {
+    class Widget;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Type of animation to show/hide widget
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,15 +70,25 @@ namespace tgui
                 Fade = 4
             };
 
+            // Move constructor has to be explicitly declared since this class has a destructor
+            Animation() = default;
+            Animation(const Animation&) = default;
+            Animation(Animation&&) = default;
+            Animation& operator=(const Animation&) = default;
+            Animation& operator=(Animation&&) = default;
+            virtual ~Animation() = default;
+
             Type getType() const;
 
             virtual bool update(sf::Time elapsedTime) = 0;
-
             virtual void finish();
 
         protected:
+            Animation(Type type, std::shared_ptr<Widget> widget, sf::Time duration, std::function<void()> finishedCallback);
+
+        protected:
             Type m_type = Type::None;
-            Widget::Ptr m_widget;
+            std::shared_ptr<Widget> m_widget;
 
             sf::Time m_totalDuration;
             sf::Time m_elapsedTime;
@@ -86,15 +101,15 @@ namespace tgui
         class TGUI_API MoveAnimation : public Animation
         {
         public:
-            MoveAnimation(Widget::Ptr widget, sf::Vector2f start, sf::Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
+            MoveAnimation(std::shared_ptr<Widget> widget, Vector2f start, Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
             bool update(sf::Time elapsedTime) override;
 
             void finish() override;
 
         private:
-            sf::Vector2f m_startPos;
-            sf::Vector2f m_endPos;
+            Vector2f m_startPos;
+            Vector2f m_endPos;
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,15 +117,15 @@ namespace tgui
         class TGUI_API ResizeAnimation : public Animation
         {
         public:
-            ResizeAnimation(Widget::Ptr widget, sf::Vector2f start, sf::Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
+            ResizeAnimation(std::shared_ptr<Widget> widget, Vector2f start, Vector2f end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
             bool update(sf::Time elapsedTime) override;
 
             void finish() override;
 
         private:
-            sf::Vector2f m_startSize;
-            sf::Vector2f m_endSize;
+            Vector2f m_startSize;
+            Vector2f m_endSize;
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +133,7 @@ namespace tgui
         class TGUI_API FadeAnimation : public Animation
         {
         public:
-            FadeAnimation(Widget::Ptr widget, float start, float end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
+            FadeAnimation(std::shared_ptr<Widget> widget, float start, float end, sf::Time duration, std::function<void()> finishedCallback = nullptr);
 
             bool update(sf::Time elapsedTime) override;
 

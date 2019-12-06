@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,8 @@
 
 #include <TGUI/Widgets/ClickableWidget.hpp>
 #include <TGUI/Renderers/LabelRenderer.hpp>
+#include <TGUI/CopiedSharedPtr.hpp>
+#include <TGUI/Widgets/Scrollbar.hpp>
 #include <TGUI/Text.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +47,10 @@ namespace tgui
         typedef std::shared_ptr<Label> Ptr; ///< Shared widget pointer
         typedef std::shared_ptr<const Label> ConstPtr; ///< Shared constant widget pointer
 
+#ifndef TGUI_REMOVE_DEPRECATED_CODE
+        /// @brief Defines when the scrollbar shows up
+        using ScrollbarPolicy TGUI_DEPRECATED("Use tgui::Scrollbar::Policy instead") = Scrollbar::Policy;
+#endif
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief The horizontal text alignment
@@ -98,14 +104,18 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
-        ///
-        /// @return Temporary pointer to the renderer
-        ///
+        /// @return Temporary pointer to the renderer that may be shared with other widgets using the same renderer
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        LabelRenderer* getRenderer() const
-        {
-            return aurora::downcast<LabelRenderer*>(m_renderer.get());
-        }
+        LabelRenderer* getSharedRenderer();
+        const LabelRenderer* getSharedRenderer() const;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        /// @return Temporary pointer to the renderer
+        /// @warning After calling this function, the widget has its own copy of the renderer and it will no longer be shared.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        LabelRenderer* getRenderer();
+        const LabelRenderer* getRenderer() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,6 +218,20 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes when the vertical scrollbar should be displayed
+        /// @param policy  The policy for displaying the vertical scrollbar
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setScrollbarPolicy(Scrollbar::Policy policy);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns when the vertical scrollbar should be displayed
+        /// @return The policy for displaying the vertical scrollbar
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Scrollbar::Policy getScrollbarPolicy() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Changes whether the label is auto-sized or not
         ///
         /// @param autoSize  Should the size of the label be changed when the text changes?
@@ -258,6 +282,24 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Sets whether the widget should completely ignore mouse events and let them pass to the widgets behind it
+        ///
+        /// @param ignore  Should mouse events be ignored by this widget?
+        ///
+        /// By default, mouse events are NOT ignored.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void ignoreMouseEvents(bool ignore = true);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the widget is ignoring mouse events and letting them pass to the widgets behind it
+        ///
+        /// @return Are mouse events ignored by this widget?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isIgnoringMouseEvents() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// This function is called when the widget is added to a container.
         /// You should not call this function yourself.
@@ -266,9 +308,38 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @internal
+        /// @brief Returns whether the widget can gain focus
+        /// @return Can the widget be focused?
+        ///
+        /// This function returns false for Label widgets.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMouseReleased(sf::Vector2f pos) override;
+        bool canGainFocus() const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
+        /// @return Is the mouse on top of the widget?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool mouseOnWidget(Vector2f pos) const override;
+
+
+        /// @internal
+        void leftMousePressed(Vector2f pos) override;
+
+        /// @internal
+        void leftMouseReleased(Vector2f pos) override;
+
+        /// @internal
+        void mouseMoved(Vector2f pos) override;
+
+        /// @internal
+        bool mouseWheelScrolled(float delta, Vector2f pos) override;
+
+        /// @internal
+        void mouseNoLongerOnWidget() override;
+
+        /// @internal
+        void leftMouseButtonNoLongerDown() override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,6 +377,18 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Saves the widget as a tree node in order to save it to a file
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::unique_ptr<DataIO::Node> save(SavingRenderersMap& renderers) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Loads the widget from a tree of nodes
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void load(const std::unique_ptr<DataIO::Node>& node, const LoadingRenderersMap& renderers) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function is called every frame with the time passed since the last frame.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void update(sf::Time elapsedTime) override;
@@ -338,7 +421,7 @@ namespace tgui
         sf::String m_string;
         std::vector<Text> m_lines;
 
-        unsigned int m_textSize = 18;
+        unsigned int m_textSize = 0;
         HorizontalAlignment m_horizontalAlignment = HorizontalAlignment::Left;
         VerticalAlignment m_verticalAlignment = VerticalAlignment::Top;
 
@@ -346,8 +429,19 @@ namespace tgui
 
         float m_maximumTextWidth = 0;
 
+        bool m_ignoringMouseEvents = false;
+
         // Will be set to true after the first click, but gets reset to false when the second click does not occur soon after
         bool m_possibleDoubleClick = false;
+
+        CopiedSharedPtr<ScrollbarChildWidget> m_scrollbar;
+#ifdef TGUI_NEXT
+        Scrollbar::Policy  m_scrollbarPolicy = Scrollbar::Policy::Automatic;
+#else
+        Scrollbar::Policy  m_scrollbarPolicy = Scrollbar::Policy::Never;
+#endif
+
+        Sprite    m_spriteBackground;
 
         // Cached renderer properties
         Borders   m_bordersCached;
@@ -356,6 +450,8 @@ namespace tgui
         Color     m_textColorCached;
         Color     m_borderColorCached;
         Color     m_backgroundColorCached;
+        Color     m_textOutlineColorCached;
+        float     m_textOutlineThicknessCached = 0;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };

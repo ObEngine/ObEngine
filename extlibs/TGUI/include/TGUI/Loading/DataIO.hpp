@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -67,11 +67,11 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         struct ValueNode
         {
-            ValueNode(const sf::String& v = "") : value(v) {}
+            ValueNode(const std::string& v = "") : value(v) {}
 
-            sf::String value;
+            std::string value;
             bool listNode = false;
-            std::vector<sf::String> valueList;
+            std::vector<std::string> valueList;
         };
 
 

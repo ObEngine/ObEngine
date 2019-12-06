@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,7 @@
 #define TGUI_RENDERER_DEFINES_HPP
 
 
-#include <TGUI/Global.hpp>
+#include <TGUI/Loading/Theme.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,6 +98,26 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define TGUI_RENDERER_PROPERTY_GET_BOOL(CLASS, NAME, DEFAULT) \
+    bool CLASS::get##NAME() const \
+    { \
+        const auto it = m_data->propertyValuePairs.find(toLower(#NAME)); \
+        if (it != m_data->propertyValuePairs.end()) \
+            return it->second.getBool(); \
+        else \
+            return DEFAULT; \
+    }
+
+#define TGUI_RENDERER_PROPERTY_BOOL(CLASS, NAME, DEFAULT) \
+    TGUI_RENDERER_PROPERTY_GET_BOOL(CLASS, NAME, DEFAULT) \
+    void CLASS::set##NAME(bool flag) \
+    { \
+        setProperty(toLower(#NAME), ObjectConverter{flag}); \
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// TGUI_NEXT: const reference
 #define TGUI_RENDERER_PROPERTY_TEXTURE(CLASS, NAME) \
     Texture& CLASS::get##NAME() const \
     { \
@@ -117,7 +137,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define TGUI_RENDERER_PROPERTY_RENDERER(CLASS, NAME) \
+#define TGUI_RENDERER_PROPERTY_RENDERER(CLASS, NAME, RENDERER) \
     std::shared_ptr<RendererData> CLASS::get##NAME() const \
     { \
         const auto it = m_data->propertyValuePairs.find(toLower(#NAME)); \
@@ -125,8 +145,9 @@
             return it->second.getRenderer(); \
         else \
         { \
-            m_data->propertyValuePairs[toLower(#NAME)] = {RendererData::create()}; \
-            return m_data->propertyValuePairs[toLower(#NAME)].getRenderer(); \
+            const auto& renderer = Theme::getDefault()->getRendererNoThrow(RENDERER); \
+            m_data->propertyValuePairs[toLower(#NAME)] = {renderer ? renderer : RendererData::create()}; \
+            return renderer; \
         } \
     } \
     void CLASS::set##NAME(std::shared_ptr<RendererData> renderer) \

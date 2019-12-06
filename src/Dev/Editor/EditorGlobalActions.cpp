@@ -186,8 +186,8 @@ namespace obe::Editor
                 editorTriggers->pushParameter("GridToggled", "state",
                                               enableGridCheckbox->isChecked());
                 editorTriggers->trigger("GridToggled");
-                enableGridCheckbox->isChecked() ? enableGridCheckbox->uncheck()
-                                                : enableGridCheckbox->check();
+                enableGridCheckbox->isChecked() ? enableGridCheckbox->setChecked(false)
+                                                : enableGridCheckbox->setChecked(true);
             });
         inputManager.getAction("ToggleGridSnap")
             .connect([editorTriggers,
@@ -200,11 +200,11 @@ namespace obe::Editor
                     editorTriggers->trigger("GridSnapToggled");
                     if (snapGridCheckbox->isChecked())
                     {
-                        snapGridCheckbox->uncheck();
+                        snapGridCheckbox->setChecked(false);
                     }
                     else
                     {
-                        snapGridCheckbox->check();
+                        snapGridCheckbox->setChecked(true);
                     }
                 }
             });
@@ -224,8 +224,8 @@ namespace obe::Editor
             });
         inputManager.getAction("ToggleEditorMenu")
             .connect([editorPanel](const Input::InputActionEvent& event) {
-                editorPanel->isVisible() ? editorPanel->hide()
-                                         : editorPanel->show();
+                editorPanel->isVisible() ? editorPanel->setVisible(false)
+                                         : editorPanel->setVisible(true);
             });
     }
 

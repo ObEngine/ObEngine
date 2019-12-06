@@ -152,7 +152,7 @@ namespace obe::Editor
             requires->getComplexNode("Input").copy(requireCopy, "Input");
             requires->getComplexNode("Output").copy(requireCopy, "Output");
             vili::ComplexNode& requireInput = requires->at("Input");
-            requiresPanel->show();
+            requiresPanel->setVisible(true);
             tgui::Panel::Ptr content =
                 requiresPanel->get<tgui::Panel>("content");
             content->removeAllWidgets();
@@ -239,7 +239,7 @@ namespace obe::Editor
 
             createObjectButton->connect(
                 "pressed", [objName, requireComboBoxes, requireEditBoxes, key,
-                            requireCopy, &scene, &requiresPanel]() mutable {
+                            requireCopy, &scene, &requiresPanel]() {
                     for (auto& cReq : requireComboBoxes)
                     {
                         requireCopy->at("Input", cReq.first)
@@ -252,7 +252,7 @@ namespace obe::Editor
                             .createDataNode("value", cReq.second->getText());
                     }
                     buildObjectThroughRequire(scene, objName, requireCopy);
-                    requiresPanel->hide();
+                    requiresPanel->setVisible(false);
                 });
 
             requiresPanel->add(createObjectButton);

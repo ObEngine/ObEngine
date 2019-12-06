@@ -13,7 +13,6 @@ namespace obe::Editor::GUI
     void init()
     {
         calculateFontSize();
-        baseTheme = tgui::Theme();
         baseTheme.load("Data/GUI/obe.style");
     }
 
@@ -100,9 +99,10 @@ namespace obe::Editor::GUI
         buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
     }
 
-    void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel)
+    /*void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel)
     {
         mainPanel->get<tgui::Scrollbar>("keybindingScrollbar")
+            ->setV
             ->setLowValue(
                 mainPanel->get<tgui::Panel>("keybindingPanel")->getSize().y);
         mainPanel->get<tgui::Scrollbar>("spritesScrollbar")
@@ -112,7 +112,7 @@ namespace obe::Editor::GUI
             ->setLowValue(
                 mainPanel->get<tgui::Panel>("objectsPanel")->getSize().y);
         // mainPanel->get<tgui::Scrollbar>("inspectorScrollbar")->setLowValue(mainPanel->get<tgui::Panel>("inspectorPanel")->getSize().y);
-    }
+    }*/
 
     void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
     {
@@ -173,8 +173,6 @@ namespace obe::Editor::GUI
             tgui::bindWidth(titlePanel) - tgui::bindWidth(editMode) - 1, 0);
         editMode->setTextSize(mediumFontSize);
         editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
-        editMode->getRenderer()->getTextureArrowUp().setSmooth(true);
-        editMode->getRenderer()->getTextureArrowDown().setSmooth(true);
 
         updateStateCheckbox->setSize(128, "100% - 1");
         updateStateCheckbox->setPosition(
@@ -185,7 +183,7 @@ namespace obe::Editor::GUI
         updateStateCheckbox->getRenderer()->getTextureChecked().setSmooth(true);
         updateStateCheckbox->getRenderer()->getTextureUnchecked().setSmooth(
             true);
-        updateStateCheckbox->check();
+        updateStateCheckbox->setChecked(true);
 
         editorButton->setSize("9.8%", "100%");
         editorButton->setPosition(tgui::bindLeft(updateStateCheckbox) -
@@ -199,11 +197,11 @@ namespace obe::Editor::GUI
         savedLabel->setTextSize(smallFontSize);
         savedLabel->setRenderer(baseTheme.getRenderer("GreenLabel"));
         savedLabel->setText("Saved");
-        savedLabel->hide();
+        savedLabel->setVisible(false);
 
         editorButton->connect("pressed", [editorPanel]() {
-            editorPanel->isVisible() ? editorPanel->hide()
-                                     : editorPanel->show();
+            editorPanel->isVisible() ? editorPanel->setVisible(false)
+                                     : editorPanel->setVisible(true);
         });
 
         updateStateCheckbox->connect(
@@ -234,7 +232,7 @@ namespace obe::Editor::GUI
         editorPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
         editorPanel->setSize("100% - 100", "100% - 100");
         editorPanel->setPosition(50, 70);
-        editorPanel->hide();
+        editorPanel->setVisible(false);
 
         editorPanel->add(mapPanel, "mapPanel");
         editorPanel->add(settingsPanel, "settingsPanel");
@@ -300,7 +298,7 @@ namespace obe::Editor::GUI
                                                tgui::bindHeight(objectsButton));
         keybindingScrollbar->connect("ValueChanged", scrollPanel,
                                      keybindingPanel, keybindingScrollbar);
-        keybindingScrollbar->setLowValue(keybindingPanel->getSize().y);
+        // keybindingScrollbar->setLowValue(keybindingPanel->getSize().y);
 
         spritesPanel->setRenderer(
             baseTheme.getRenderer("DarkTransparentPanel"));
@@ -311,7 +309,7 @@ namespace obe::Editor::GUI
         spritesScrollbar->setSize("16", "100% - 30");
         spritesScrollbar->connect("ValueChanged", scrollPanel, spritesPanel,
                                   spritesScrollbar);
-        spritesScrollbar->setLowValue(spritesPanel->getSize().y);
+        // spritesScrollbar->setLowValue(spritesPanel->getSize().y);
 
         objectsPanel->setRenderer(
             baseTheme.getRenderer("DarkTransparentPanel"));
@@ -324,22 +322,22 @@ namespace obe::Editor::GUI
                                             tgui::bindHeight(objectsButton));
         objectsScrollbar->connect("ValueChanged", scrollPanel, objectsPanel,
                                   objectsScrollbar);
-        objectsScrollbar->setLowValue(objectsPanel->getSize().y);
+        // objectsScrollbar->setLowValue(objectsPanel->getSize().y);
 
         mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
-        settingsPanel->hide();
-        keybindingPanel->hide();
-        spritesPanel->hide();
-        objectsPanel->hide();
+        settingsPanel->setVisible(false);
+        keybindingPanel->setVisible(false);
+        spritesPanel->setVisible(false);
+        objectsPanel->setVisible(false);
 
         mapButton->connect("pressed", [mainPanel, spritesScrollbar,
                                        objectsScrollbar,
                                        keybindingScrollbar]() {
-            mainPanel->get<tgui::Panel>("mapPanel")->show();
-            mainPanel->get<tgui::Panel>("settingsPanel")->hide();
-            mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
-            mainPanel->get<tgui::Panel>("spritesPanel")->hide();
-            mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+            mainPanel->get<tgui::Panel>("mapPanel")->setVisible(true);
+            mainPanel->get<tgui::Panel>("settingsPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("keybindingPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("spritesPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("objectsPanel")->setVisible(false);
             mainPanel->get<tgui::Button>("mapButton")
                 ->setRenderer(baseTheme.getRenderer("SelectedButton"));
             mainPanel->get<tgui::Button>("settingsButton")
@@ -350,19 +348,19 @@ namespace obe::Editor::GUI
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("objectsButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
-            spritesScrollbar->hide();
-            objectsScrollbar->hide();
-            keybindingScrollbar->hide();
+            spritesScrollbar->setVisible(false);
+            objectsScrollbar->setVisible(false);
+            keybindingScrollbar->setVisible(false);
         });
 
         settingsButton->connect("pressed", [mainPanel, spritesScrollbar,
                                             objectsScrollbar,
                                             keybindingScrollbar]() {
-            mainPanel->get<tgui::Panel>("mapPanel")->hide();
-            mainPanel->get<tgui::Panel>("settingsPanel")->show();
-            mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
-            mainPanel->get<tgui::Panel>("spritesPanel")->hide();
-            mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+            mainPanel->get<tgui::Panel>("mapPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("settingsPanel")->setVisible(true);
+            mainPanel->get<tgui::Panel>("keybindingPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("spritesPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("objectsPanel")->setVisible(false);
             mainPanel->get<tgui::Button>("mapButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("settingsButton")
@@ -373,9 +371,9 @@ namespace obe::Editor::GUI
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("objectsButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
-            spritesScrollbar->hide();
-            objectsScrollbar->hide();
-            keybindingScrollbar->hide();
+            spritesScrollbar->setVisible(false);
+            objectsScrollbar->setVisible(false);
+            keybindingScrollbar->setVisible(false);
         });
 
         keybindingButton->connect(
@@ -385,11 +383,11 @@ namespace obe::Editor::GUI
                 tgui::Scrollbar::Ptr keybindingScrollbar =
                     mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
                 buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
-                mainPanel->get<tgui::Panel>("mapPanel")->hide();
-                mainPanel->get<tgui::Panel>("settingsPanel")->hide();
-                mainPanel->get<tgui::Panel>("keybindingPanel")->show();
-                mainPanel->get<tgui::Panel>("spritesPanel")->hide();
-                mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+                mainPanel->get<tgui::Panel>("mapPanel")->setVisible(false);
+                mainPanel->get<tgui::Panel>("settingsPanel")->setVisible(false);
+                mainPanel->get<tgui::Panel>("keybindingPanel")->setVisible(true);
+                mainPanel->get<tgui::Panel>("spritesPanel")->setVisible(false);
+                mainPanel->get<tgui::Panel>("objectsPanel")->setVisible(false);
                 mainPanel->get<tgui::Button>("mapButton")
                     ->setRenderer(baseTheme.getRenderer("Button"));
                 mainPanel->get<tgui::Button>("settingsButton")
@@ -400,19 +398,19 @@ namespace obe::Editor::GUI
                     ->setRenderer(baseTheme.getRenderer("Button"));
                 mainPanel->get<tgui::Button>("objectsButton")
                     ->setRenderer(baseTheme.getRenderer("Button"));
-                spritesScrollbar->hide();
-                objectsScrollbar->hide();
-                keybindingScrollbar->show();
+                spritesScrollbar->setVisible(false);
+                objectsScrollbar->setVisible(false);
+                keybindingScrollbar->setVisible(true);
             });
 
         spritesButton->connect("pressed", [mainPanel, spritesScrollbar,
                                            objectsScrollbar,
                                            keybindingScrollbar]() {
-            mainPanel->get<tgui::Panel>("mapPanel")->hide();
-            mainPanel->get<tgui::Panel>("settingsPanel")->hide();
-            mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
-            mainPanel->get<tgui::Panel>("spritesPanel")->show();
-            mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+            mainPanel->get<tgui::Panel>("mapPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("settingsPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("keybindingPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("spritesPanel")->setVisible(true);
+            mainPanel->get<tgui::Panel>("objectsPanel")->setVisible(false);
             mainPanel->get<tgui::Button>("mapButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("settingsButton")
@@ -423,19 +421,19 @@ namespace obe::Editor::GUI
                 ->setRenderer(baseTheme.getRenderer("SelectedButton"));
             mainPanel->get<tgui::Button>("objectsButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
-            spritesScrollbar->show();
-            objectsScrollbar->hide();
-            keybindingScrollbar->hide();
+            spritesScrollbar->setVisible(true);
+            objectsScrollbar->setVisible(false);
+            keybindingScrollbar->setVisible(false);
         });
 
         objectsButton->connect("pressed", [mainPanel, spritesScrollbar,
                                            objectsScrollbar,
                                            keybindingScrollbar]() {
-            mainPanel->get<tgui::Panel>("mapPanel")->hide();
-            mainPanel->get<tgui::Panel>("settingsPanel")->hide();
-            mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
-            mainPanel->get<tgui::Panel>("spritesPanel")->hide();
-            mainPanel->get<tgui::Panel>("objectsPanel")->show();
+            mainPanel->get<tgui::Panel>("mapPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("settingsPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("keybindingPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("spritesPanel")->setVisible(false);
+            mainPanel->get<tgui::Panel>("objectsPanel")->setVisible(true);
             mainPanel->get<tgui::Button>("mapButton")
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("settingsButton")
@@ -446,9 +444,9 @@ namespace obe::Editor::GUI
                 ->setRenderer(baseTheme.getRenderer("Button"));
             mainPanel->get<tgui::Button>("objectsButton")
                 ->setRenderer(baseTheme.getRenderer("SelectedButton"));
-            spritesScrollbar->hide();
-            objectsScrollbar->show();
-            keybindingScrollbar->hide();
+            spritesScrollbar->setVisible(false);
+            objectsScrollbar->setVisible(true);
+            keybindingScrollbar->setVisible(false);
         });
     }
 
@@ -650,7 +648,7 @@ namespace obe::Editor::GUI
         enableGridCheckbox->connect(
             "checked", [&editorGrid, snapGridCheckbox]() {
                 editorGrid.enable();
-                snapGridCheckbox->enable();
+                snapGridCheckbox->setEnabled(true);
                 snapGridCheckbox->getRenderer()->setTextColor(
                     sf::Color(255, 255, 255));
             });
@@ -660,8 +658,8 @@ namespace obe::Editor::GUI
                 editorGrid.disable();
                 snapGridCheckbox->getRenderer()->setTextColor(
                     sf::Color(100, 100, 100));
-                snapGridCheckbox->uncheck();
-                snapGridCheckbox->disable();
+                snapGridCheckbox->setChecked(false);
+                snapGridCheckbox->setEnabled(false);
             });
 
         gridDimensionLabel->setPosition(
@@ -802,7 +800,7 @@ namespace obe::Editor::GUI
         snapGridCheckbox->setSize(16, 16);
         snapGridCheckbox->setTextSize(mediumFontSize);
         snapGridCheckbox->setText("Snap to Grid ?");
-        snapGridCheckbox->disable();
+        snapGridCheckbox->setEnabled(false);
 
         snapGridCheckbox->connect(
             "checked", [&editorGrid, &cursor, editMode, &scene]() {
@@ -962,13 +960,13 @@ namespace obe::Editor::GUI
             baseTheme.getRenderer("DarkTransparentPanel"));
         requiresPanel->setSize("33%", "66%");
         requiresPanel->setPosition("33%", "17%");
-        requiresPanel->hide();
+        requiresPanel->setVisible(false);
 
         requiresCloseButton->setRenderer(baseTheme.getRenderer("CloseButton"));
         requiresCloseButton->setSize("32", "32");
         requiresCloseButton->setPosition("100% - 40", "8");
         requiresCloseButton->connect(
-            "pressed", [requiresPanel]() { requiresPanel->hide(); });
+            "pressed", [requiresPanel]() { requiresPanel->setVisible(false); });
         requiresPanel->add(requiresCloseButton, "requiresCloseButton");
 
         requiresTitleLabel->setPosition(30, 15);
@@ -1037,8 +1035,8 @@ namespace obe::Editor::GUI
                         keyName = Utils::String::replace(keyName, "NumPad", "");
                         if (numImgPath.find() != "")
                         {
-                            tgui::Picture::Ptr numImg = tgui::Picture::create();
-                            numImg->setTexture(numImgPath.find());
+                            tgui::Picture::Ptr numImg
+                                = tgui::Picture::create(numImgPath.find());
                             numImg->setPosition(xPos, yPos - 35);
                             keybindingPanel->add(numImg);
                             xPos = xPos + 100;
@@ -1070,8 +1068,8 @@ namespace obe::Editor::GUI
                     }
                     if (keyImgPath.find() != "")
                     {
-                        tgui::Picture::Ptr keyImg = tgui::Picture::create();
-                        keyImg->setTexture(keyImgPath.find());
+                        tgui::Picture::Ptr keyImg
+                            = tgui::Picture::create(keyImgPath.find());
                         keyImg->setPosition(xPos, yPos - 35);
 
                         keybindingPanel->add(keyImg);
@@ -1088,8 +1086,8 @@ namespace obe::Editor::GUI
                     }
                     if (stateImgPath.find() != "")
                     {
-                        tgui::Picture::Ptr stateImg = tgui::Picture::create();
-                        stateImg->setTexture(stateImgPath.find());
+                        tgui::Picture::Ptr stateImg
+                            = tgui::Picture::create(stateImgPath.find());
                         stateImg->setPosition(xPos, yPos - 35);
 
                         keybindingPanel->add(stateImg);

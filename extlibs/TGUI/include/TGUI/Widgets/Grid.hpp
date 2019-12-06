@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -175,14 +175,14 @@ namespace tgui
         /// @param widget    Pointer to a fully created widget that will be added to the grid
         /// @param row       The row in which the widget should be placed
         /// @param column    The column in which the widget should be placed
-        /// @param borders   Distance from the grid cell to the widget (left, top, right, bottom)
+        /// @param padding   Distance from the grid cell to the widget (left, top, right, bottom)
         /// @param alignment Where the widget is located in the cell
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void addWidget(const Widget::Ptr& widget,
                        std::size_t        row,
                        std::size_t        column,
-                       const Borders&     borders   = Borders{0},
+                       const Padding&     padding   = Padding{0},
                        Alignment          alignment = Alignment::Center);
 
 
@@ -209,47 +209,47 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Changes borders of a given widget
+        /// @brief Changes padding of a given widget
         ///
-        /// @param widget  The widget to which borders should be added
-        /// @param borders The new borders around the widget
+        /// @param widget  The widget to which padding should be added
+        /// @param padding The new padding around the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetBorders(const Widget::Ptr& widget, const Borders& borders = Borders(0, 0, 0, 0));
+        void setWidgetPadding(const Widget::Ptr& widget, const Padding& padding = Padding(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Changes borders of a widget in a certain cell
+        /// @brief Changes padding of a widget in a certain cell
         ///
         /// @param row     The row that the widget is in
         /// @param column  The column that the widget is in
-        /// @param borders The new borders around the widget
+        /// @param padding The new padding around the widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setWidgetBorders(std::size_t row, std::size_t column, const Borders& borders = Borders(0, 0, 0, 0));
+        void setWidgetPadding(std::size_t row, std::size_t column, const Padding& padding = Padding(0, 0, 0, 0));
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the borders around a widget
+        /// @brief Returns the padding around a widget
         ///
-        /// @param widget  The widget to get the borders from
+        /// @param widget  The widget to get the padding from
         ///
-        /// @return The borders inside the around the widget, or Borders{0} when the widget wasn't part of the grid
+        /// @return The padding inside the around the widget, or Padding{0} when the widget wasn't part of the grid
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Borders getWidgetBorders(const Widget::Ptr& widget) const;
+        Padding getWidgetPadding(const Widget::Ptr& widget) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the borders around a widget in a specific cell of the grid
+        /// @brief Returns the padding around a widget in a specific cell of the grid
         ///
         /// @param row     The row that the widget is in
         /// @param column  The column that the widget is in
         ///
-        /// @return The borders inside the given cell, or Borders{0} when the cell doesn't contain a widget
+        /// @return The padding inside the given cell, or Padding{0} when the cell doesn't contain a widget
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Borders getWidgetBorders(std::size_t row, std::size_t column) const;
+        Padding getWidgetPadding(std::size_t row, std::size_t column) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ namespace tgui
         /// @return Is the mouse on top of the widget?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        bool mouseOnWidget(Vector2f pos) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,11 +327,22 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Saves the widget as a tree node in order to save it to a file
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::unique_ptr<DataIO::Node> save(SavingRenderersMap& renderers) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Loads the widget from a tree of nodes
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void load(const std::unique_ptr<DataIO::Node>& node, const LoadingRenderersMap& renderers) override;
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Returns the minimum size required by the grid to display correctly all widgets.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Vector2f getMinimumSize() const;
+        Vector2f getMinimumSize() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,7 +372,7 @@ namespace tgui
         bool m_autoSize = true;
 
         std::vector<std::vector<Widget::Ptr>> m_gridWidgets;
-        std::vector<std::vector<Borders>>     m_objBorders;
+        std::vector<std::vector<Padding>>     m_objPadding;
         std::vector<std::vector<Alignment>>   m_objAlignment;
 
         std::vector<float> m_rowHeight;

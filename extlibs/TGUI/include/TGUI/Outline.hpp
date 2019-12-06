@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,8 +26,8 @@
 #ifndef TGUI_OUTLINE_HPP
 #define TGUI_OUTLINE_HPP
 
+#include <TGUI/Vector2f.hpp>
 #include <TGUI/AbsoluteOrRelativeValue.hpp>
-#include <SFML/System/Vector2.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,6 +153,16 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returnes the width of the left and top borders
+        /// @return Left and top borders
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR Vector2f getOffset() const
+        {
+            return Vector2f(getLeft(), getTop());
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Compares two outlines
         ///
         /// @param outline  The outline to compare with this instance
@@ -181,13 +191,68 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Adds two outlines together (e.g. to add padding and borders)
+        ///
+        /// @param other  The outline to add together with this instance
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR Outline operator+(const Outline& other) const
+        {
+            return {getLeft() + other.getLeft(),
+                    getTop() + other.getTop(),
+                    getRight() + other.getRight(),
+                    getBottom() + other.getBottom()};
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Subtracts two outlines from each other
+        ///
+        /// @param other  The outline to subtract from this instance
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR Outline operator-(const Outline& other) const
+        {
+            return {getLeft() - other.getLeft(),
+                    getTop() - other.getTop(),
+                    getRight() - other.getRight(),
+                    getBottom() - other.getBottom()};
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Adds an outline to this instance (e.g. to add padding and borders)
+        ///
+        /// @param other  The outline to add to this instance
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR Outline& operator+=(const Outline& other)
+        {
+            m_left = getLeft() + other.getLeft();
+            m_top = getTop() + other.getTop();
+            m_right = getRight() + other.getRight();
+            m_bottom = getBottom() + other.getBottom();
+            return *this;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Subtracts an outline from this instance
+        ///
+        /// @param other  The outline to subtract from this instance
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR Outline& operator-=(const Outline& other)
+        {
+            m_left = getLeft() - other.getLeft();
+            m_top = getTop() - other.getTop();
+            m_right = getRight() - other.getRight();
+            m_bottom = getBottom() - other.getBottom();
+            return *this;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Update the size to which the outline depends on if its values are relative
         ///
         /// @param newParentSize  New size from which to take the relative value
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void updateParentSize(sf::Vector2f newParentSize)
+        void updateParentSize(Vector2f newParentSize)
         {
             m_left.updateParentSize(newParentSize.x);
             m_top.updateParentSize(newParentSize.y);

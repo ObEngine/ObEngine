@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,11 +29,12 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <TGUI/Global.hpp>
+#include <TGUI/Vector2f.hpp>
+#include <TGUI/Animation.hpp>
 #include <SFML/System/String.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <type_traits>
 #include <functional>
 #include <typeindex>
-#include <cstddef>
 #include <memory>
 #include <vector>
 #include <deque>
@@ -52,6 +53,166 @@ namespace tgui
         extern TGUI_API std::deque<const void*> parameters;
     }
 
+    /// @brief Lists the names of all signals for all widgets
+    namespace Signals
+    {
+        struct Widget
+        {
+            static constexpr const char* const PositionChanged = "PositionChanged";     ///< The position of the widget changed. Optional parameter: new position
+            static constexpr const char* const SizeChanged = "SizeChanged";             ///< The size of the widget changed. Optional parameter: new size
+            static constexpr const char* const Focused = "Focused";                     ///< The widget was focused
+            static constexpr const char* const Unfocused = "Unfocused";                 ///< The widget was unfocused
+            static constexpr const char* const MouseEntered = "MouseEntered";           ///< The mouse entered the widget
+            static constexpr const char* const MouseLeft = "MouseLeft";                 ///< The mouse left the widget
+            static constexpr const char* const AnimationFinished = "AnimationFinished"; ///< A show or hide animation finished. Optional parameters: animation type, new widget visibility or both
+        };
+
+        struct ClickableWidget : public Widget
+        {
+            static constexpr const char* const MousePressed = "MousePressed";               ///< The mouse went down on the widget. Optional parameter: mouse position relative to widget
+            static constexpr const char* const MouseReleased = "MouseReleased";             ///< The mouse was released on top of the widget. Optional parameter: mouse position relative to widget
+            static constexpr const char* const Clicked = "Clicked";                         ///< The widget was clicked. Optional parameter: mouse position relative to widget
+            static constexpr const char* const RightMousePressed = "RightMousePressed";     ///< The right mouse button went down on the widget. Optional parameter: mouse position relative to widget
+            static constexpr const char* const RightMouseReleased = "RightMouseReleased";   ///< The right mouse button was released on top of the widget. Optional parameter: mouse position relative to widget
+            static constexpr const char* const RightClicked = "RightClicked";               ///< The widget was right clicked. Optional parameter: mouse position relative to widget
+        };
+
+        struct Button : public ClickableWidget
+        {
+            static constexpr const char* const Pressed = "Pressed"; ///< The button was pressed. Optional parameter: text of the button
+        };
+
+        struct ChildWindow : public Widget
+        {
+            static constexpr const char* const MousePressed = "MousePressed";           ///< The mouse went down on the widget
+            static constexpr const char* const Closed = "Closed";                       ///< The window was closed. Optional parameter: pointer to the window
+            static constexpr const char* const Minimized = "Minimized";                 ///< The window was minimized. Optional parameter: pointer to the window
+            static constexpr const char* const Maximized = "Maximized";                 ///< The window was maximized. Optional parameter: pointer to the window
+            static constexpr const char* const EscapeKeyPressed = "EscapeKeyPressed";   ///< The escape key was pressed while the child window was focused. Optional parameter: pointer to the window
+        };
+
+        struct ComboBox : public Widget
+        {
+            static constexpr const char* const ItemSelected = "ItemSelected";   ///< An item was selected in the combo box. Optional parameter: selected item or its index
+        };
+
+        struct EditBox : public ClickableWidget
+        {
+            static constexpr const char* const TextChanged = "TextChanged";             ///< The text was changed. Optional parameter: new text
+            static constexpr const char* const ReturnKeyPressed = "ReturnKeyPressed";   ///< The return key was pressed. Optional parameter: text in the edit box
+        };
+
+        struct Knob : public Widget
+        {
+            static constexpr const char* const ValueChanged = "ValueChanged";   ///< The value of the know changed. Optional parameter: new value
+        };
+
+        struct Label : public ClickableWidget
+        {
+            static constexpr const char* const DoubleClicked = "DoubleClicked"; ///< The label was double clicked. Optional parameter: text of the label
+        };
+
+        struct ListBox : public Widget
+        {
+            static constexpr const char* const ItemSelected = "ItemSelected";   ///< An item was selected in the list box. Optional parameter: selected item or its index
+            static constexpr const char* const MousePressed = "MousePressed";   ///< The mouse went down on an item. Optional parameter: selected item or its index
+            static constexpr const char* const MouseReleased = "MouseReleased"; ///< The mouse was released on one of the items. Optional parameter: selected item or its index
+            static constexpr const char* const DoubleClicked = "DoubleClicked"; ///< An item was double clicked. Optional parameter: selected item or its index
+        };
+
+        struct ListView : public Widget
+        {
+            static constexpr const char* const ItemSelected = "ItemSelected";   ///< An item was selected in the list view. Optional parameter: selected item index (-1 when deselecting)
+            static constexpr const char* const DoubleClicked = "DoubleClicked"; ///< An item was double clicked. Optional parameter: selected item index
+            static constexpr const char* const RightClicked = "RightClicked";   ///< Right mouse clicked. Optional parameter: index of item below mouse (-1 when not on top of item)
+            static constexpr const char* const HeaderClicked = "HeaderClicked"; ///< The header was clicked. Optional parameter: column index
+        };
+
+        struct MenuBar : public Widget
+        {
+            /// One of the menu items was clicked.
+            /// Optional parameters:
+            ///     - The text of the clicked menu item
+            ///     - List containing both the name of the menu and the menu item that was clicked
+            static constexpr const char* const MenuItemClicked = "MenuItemClicked";
+        };
+
+        struct MessageBox : public ChildWindow
+        {
+            static constexpr const char* const ButtonPressed = "ButtonPressed"; ///< One of the buttons was pressed. Optional parameter: text of the pressed button
+        };
+
+        struct Panel : public Widget
+        {
+            static constexpr const char* const MousePressed = "MousePressed";               ///< The mouse went down on the panel. Optional parameter: mouse position relative to panel
+            static constexpr const char* const MouseReleased = "MouseReleased";             ///< The mouse was released on top of the panel. Optional parameter: mouse position relative to panel
+            static constexpr const char* const Clicked = "Clicked";                         ///< The panel was clicked. Optional parameter: mouse position relative to panel
+            static constexpr const char* const RightMousePressed = "RightMousePressed";     ///< The right mouse button went down on the panel. Optional parameter: mouse position relative to panel
+            static constexpr const char* const RightMouseReleased = "RightMouseReleased";   ///< The right mouse button was released on top of the panel. Optional parameter: mouse position relative to panel
+            static constexpr const char* const RightClicked = "RightClicked";               ///< The panel was right clicked. Optional parameter: mouse position relative to panel
+        };
+
+        struct Picture : public ClickableWidget
+        {
+            static constexpr const char* const DoubleClicked = "DoubleClicked"; ///< The picture was double clicked. Optional parameter: mouse position relative to picture
+        };
+
+        struct ProgressBar : public ClickableWidget
+        {
+            static constexpr const char* const ValueChanged = "ValueChanged";   ///< Value of the progress bar changed. Optional parameter: new value
+            static constexpr const char* const Full = "Full";                   ///< Value of the progress bar changed and he progress bar became full
+        };
+
+        struct RadioButton : public ClickableWidget
+        {
+            static constexpr const char* const Checked = "Checked";     ///< Radio button was checked. Optional parameter: bool which is always true
+            static constexpr const char* const Unchecked = "Unchecked"; ///< Radio button was unchecked. Optional parameter: bool which is always false
+            static constexpr const char* const Changed = "Changed";     ///< Radio button was checked or unchecked. Optional parameter: bool indicating whether it is checked
+        };
+
+        struct RangeSlider : public Widget
+        {
+            static constexpr const char* const RangeChanged = "RangeChanged";   ///< Value of the slider changed. Optional parameter: new value
+        };
+
+        struct Scrollbar : public Widget
+        {
+            static constexpr const char* const ValueChanged = "ValueChanged";   ///< Value of the scrollbar changed. Optional parameter: new value
+        };
+
+        struct Slider : public Widget
+        {
+            static constexpr const char* const ValueChanged = "ValueChanged";   ///< Value of the slider changed. Optional parameter: new value
+        };
+
+        struct SpinButton : public ClickableWidget
+        {
+            static constexpr const char* const ValueChanged = "ValueChanged";   ///< Value of the spin button changed. Optional parameter: new value
+        };
+
+        struct Tabs : public Widget
+        {
+            static constexpr const char* const TabSelected = "TabSelected";   ///< A tab that was selected. Optional parameter: selected item
+        };
+
+        struct TextBox : public Widget
+        {
+            static constexpr const char* const TextChanged = "TextChanged";             ///< The text was changed. Optional parameter: new text
+            static constexpr const char* const SelectionChanged = "SelectionChanged";   ///< Selected text changed
+        };
+
+        struct TreeView : public Widget
+        {
+            static constexpr const char* const ItemSelected = "ItemSelected";   ///< An node was selected in the tree view. Optional parameter: selected node
+            static constexpr const char* const DoubleClicked = "DoubleClicked"; ///< A leaf node was double clicked. Optional parameter: selected node
+            static constexpr const char* const Expanded = "Expanded";           ///< A branch node was expanded in the tree view. Optional parameter: expanded node
+            static constexpr const char* const Collapsed = "Collapsed";         ///< A branch node was collapsed in the tree view. Optional parameter: collapsed node
+        };
+
+        using BitmapButton = Button;
+        using CheckBox = RadioButton;
+        using ScrollablePanel = Panel;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Signal to which the user can subscribe to get callbacks from
@@ -62,6 +223,9 @@ namespace tgui
 
         using Delegate = std::function<void()>;
         using DelegateEx = std::function<void(std::shared_ptr<Widget>, const std::string&)>;
+
+
+        virtual ~Signal() = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +251,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Default move constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Signal(Signal&& other) = default;
+        Signal(Signal&& other) noexcept = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +263,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Default move assignment operator
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Signal& operator=(Signal&& other) = default;
+        Signal& operator=(Signal&& other) noexcept = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,12 +311,14 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool emit(const Widget* widget)
         {
-            if (m_handlers.empty())
+            if (m_handlers.empty() || !m_enabled)
                 return false;
 
             internal_signal::parameters[0] = static_cast<const void*>(&widget);
 
-            for (auto& handler : m_handlers)
+            // Copy the handlers before calling them in case the widget (and this signal) gets destroyed during the handler
+            auto handlers = m_handlers;
+            for (auto& handler : handlers)
                 handler.second();
 
             return true;
@@ -171,11 +337,39 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes whether this signal calls the connected functions when triggered
+        ///
+        /// @param enabled  Is the signal enabled?
+        ///
+        /// Signals are enabled by default. Temporarily disabling the signal is the better alternative to disconnecting the
+        /// handler and connecting it again a few lines later.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setEnabled(bool enabled)
+        {
+            m_enabled = enabled;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether this signal calls the connected functions when triggered
+        ///
+        /// @return Is the signal enabled?
+        ///
+        /// Signals are enabled by default. Temporarily disabling the signal is the better alternative to disconnecting the
+        /// handler and connecting it again a few lines later.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isEnabled() const
+        {
+            return m_enabled;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Checks whether the unbound parameters match with this signal
         /// @return The index in the parameters list where the parameters will be stored
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters);
+        virtual unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,10 +385,10 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected:
 
+        bool m_enabled = true;
         std::string m_name;
         std::map<unsigned int, std::function<void()>> m_handlers;
     };
-
 
     #define TGUI_SIGNAL_VALUE_DECLARATION(TypeName, Type) \
     /**************************************************************************************************************************** \
@@ -237,30 +431,30 @@ namespace tgui
          * @internal
          * @brief Call all connected signal handlers
          ************************************************************************************************************************/ \
-        bool emit(const Widget* widget, Type strParam) \
+        bool emit(const Widget* widget, Type param) \
         { \
             if (m_handlers.empty()) \
                 return false; \
          \
-            internal_signal::parameters[1] = static_cast<const void*>(&strParam); \
+            internal_signal::parameters[1] = static_cast<const void*>(&param); \
             return Signal::emit(widget); \
         } \
         \
+    private: \
         /************************************************************************************************************************ \
          * @internal
          * @brief Checks whether the unbound parameters match with this signal
          * @return The index in the parameters list where the parameters will be stored
          ************************************************************************************************************************/ \
-        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override; \
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override; \
     };
-
 
     TGUI_SIGNAL_VALUE_DECLARATION(Int, int)
     TGUI_SIGNAL_VALUE_DECLARATION(UInt, unsigned int)
     TGUI_SIGNAL_VALUE_DECLARATION(Bool, bool)
     TGUI_SIGNAL_VALUE_DECLARATION(Float, float)
     TGUI_SIGNAL_VALUE_DECLARATION(String, const sf::String&)
-    TGUI_SIGNAL_VALUE_DECLARATION(Vector2f, sf::Vector2f)
+    TGUI_SIGNAL_VALUE_DECLARATION(Vector2f, Vector2f)
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,11 +464,9 @@ namespace tgui
     {
     public:
 
-        using DelegateRange = std::function<void(int, int)>;
-        using DelegateRangeEx = std::function<void(std::shared_ptr<Widget>, const std::string&, int, int)>;
-
+        using DelegateRange = std::function<void(float, float)>;
+        using DelegateRangeEx = std::function<void(std::shared_ptr<Widget>, const std::string&, float, float)>;
         using Signal::connect;
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructor
@@ -309,15 +501,17 @@ namespace tgui
         /// @internal
         /// @brief Call all connected signal handlers
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool emit(const Widget* widget, int value1, int value2);
+        bool emit(const Widget* widget, float value1, float value2);
 
+
+    private:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Checks whether the unbound parameters match with this signal
         /// @return The index in the parameters list where the parameters will be stored
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +527,6 @@ namespace tgui
 
         using DelegateChildWindow = std::function<void(std::shared_ptr<ChildWindow>)>;
         using DelegateChildWindowEx = std::function<void(std::shared_ptr<Widget>, const std::string&, std::shared_ptr<ChildWindow>)>;
-
         using Signal::connect;
 
 
@@ -370,15 +563,17 @@ namespace tgui
         /// @internal
         /// @brief Call all connected signal handlers
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool emit(const ChildWindow* param);
+        bool emit(ChildWindow* param);
 
+
+    private:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Checks whether the unbound parameters match with this signal
         /// @return The index in the parameters list where the parameters will be stored
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -394,9 +589,10 @@ namespace tgui
 
         using DelegateItem = std::function<void(const sf::String&)>;
         using DelegateItemAndId = std::function<void(const sf::String&, const sf::String&)>;
+        using DelegateItemIndex = std::function<void(int)>;
         using DelegateItemEx = std::function<void(std::shared_ptr<Widget>, const std::string&, const sf::String&)>;
         using DelegateItemAndIdEx = std::function<void(std::shared_ptr<Widget>, const std::string&, const sf::String&, const sf::String&)>;
-
+        using DelegateItemIndexEx = std::function<void(std::shared_ptr<Widget>, const std::string&, int)>;
         using Signal::connect;
 
 
@@ -404,7 +600,7 @@ namespace tgui
         /// @brief Constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         SignalItem(std::string&& name) :
-            Signal{std::move(name), 2}
+            Signal{std::move(name), 3}
         {
         }
 
@@ -450,26 +646,98 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param handler  Callback function that is given the index of the item as argument
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int connect(const DelegateItemIndex& handler);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param handler  Callback function that is given a pointer to the widget, the name of the signal and the index of the item as arguments
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int connect(const DelegateItemIndexEx& handler);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Call all connected signal handlers
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool emit(const Widget* widget, const sf::String& item, const sf::String& id)
+        bool emit(const Widget* widget, const sf::String& item, const sf::String& id, int index)
         {
             if (m_handlers.empty())
                 return false;
 
             internal_signal::parameters[1] = static_cast<const void*>(&item);
             internal_signal::parameters[2] = static_cast<const void*>(&id);
+            internal_signal::parameters[3] = static_cast<const void*>(&index);
             return Signal::emit(widget);
         }
 
+
+    private:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Checks whether the unbound parameters match with this signal
         /// @return The index in the parameters list where the parameters will be stored
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Signal to which the user can subscribe to get callbacks from
+    ///
+    /// Possible optional parameters:
+    /// - ShowAnimationType
+    /// - bool
+    /// - ShowAnimationType, bool
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TGUI_API SignalAnimation : public Signal
+    {
+    public:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Constructor
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        SignalAnimation(std::string&& name) :
+            Signal{std::move(name), 2}
+        {
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Call all connected signal handlers
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool emit(const Widget* widget, ShowAnimationType type, bool visible)
+        {
+            if (m_handlers.empty())
+                return false;
+
+            internal_signal::parameters[1] = static_cast<const void*>(&type);
+            internal_signal::parameters[2] = static_cast<const void*>(&visible);
+            return Signal::emit(widget);
+        }
+
+
+    private:
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @internal
+        /// @brief Checks whether the unbound parameters match with this signal
+        /// @return The index in the parameters list where the parameters will be stored
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -479,7 +747,7 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Signal to which the user can subscribe to get callbacks from
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    class TGUI_API SignalMenuItem : public Signal
+    class TGUI_API SignalItemHierarchy : public Signal
     {
     public:
 
@@ -487,14 +755,13 @@ namespace tgui
         using DelegateMenuItemFull = std::function<void(const std::vector<sf::String>&)>;
         using DelegateMenuItemEx = std::function<void(std::shared_ptr<Widget>, const std::string&, const sf::String&)>;
         using DelegateMenuItemFullEx = std::function<void(std::shared_ptr<Widget>, const std::string&, const std::vector<sf::String>&)>;
-
         using Signal::connect;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Constructor
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        SignalMenuItem(std::string&& name) :
+        SignalItemHierarchy(std::string&& name) :
             Signal{std::move(name), 2}
         {
         }
@@ -555,151 +822,22 @@ namespace tgui
         }
 
 
+    private:
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Checks whether the unbound parameters match with this signal
         /// @return The index in the parameters list where the parameters will be stored
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) override;
+        unsigned int validateTypes(std::initializer_list<std::type_index> unboundParameters) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     };
 
-
-    namespace internal_signal
-    {
-        // void_t only exists in c++17 so we use our own implementation to support c++14 compilers
-        template<typename...>
-        using void_t = void;
-
-        // Type to pass a list of template types
-        template <typename...>
-        struct TypeSet;
-
-        // Used for static_assert errors inside template functions
-        template <typename...>
-        struct always_false : std::false_type {};
-
-        // The dereference function turns the void* elements in the parameters list back into its original type right before calling the signal handler
-        template <typename Type, typename std::enable_if<std::is_same<Type, std::string>::value>::type* = nullptr>
-        decltype(auto) dereference(const void* obj)
-        {
-            // Signal handlers are allowed to have std::string parameters while the signal sends sf::String
-            return static_cast<std::string>(*static_cast<const sf::String*>(obj));
-        }
-
-        template <typename Type, typename std::enable_if<!std::is_same<Type, std::string>::value>::type* = nullptr>
-        decltype(auto) dereference(const void* obj)
-        {
-            return *static_cast<const Type*>(obj);
-        }
-
-        // std::invoke only exists in c++17 so we use our own implementation to support c++14 compilers
-        // Visual Studio compiler did not like it when the function was called "invoke"
-        template <typename Func, typename... Args, typename std::enable_if<std::is_member_pointer<typename std::decay<Func>::type>::value>::type* = nullptr>
-        void invokeFunc(Func&& func, Args&&... args)
-        {
-            std::mem_fn(func)(std::forward<Args>(args)...);
-        }
-
-        template <typename Func, typename... Args, typename std::enable_if<!std::is_member_pointer<typename std::decay<Func>::type>::value>::type* = nullptr>
-        void invokeFunc(Func&& func, Args&&... args)
-        {
-            std::forward<Func>(func)(std::forward<Args>(args)...);
-        }
-
-        // The binder will figure out the unbound parameters and bind them if they correspond to what the signal sends
-        template <typename... Args>
-        struct binder;
-
-        template <typename Arg, typename... AllArgs, typename BoundArg, typename... BoundArgs>
-        struct binder<TypeSet<Arg, AllArgs...>, TypeSet<BoundArg, BoundArgs...>>
-            : binder<TypeSet<AllArgs...>, TypeSet<BoundArgs...>>
-        {
-        };
-
-        template <typename... UnboundArgs>
-        struct binder<TypeSet<std::shared_ptr<Widget>, std::string, UnboundArgs...>, TypeSet<>>
-        {
-            template <typename Func, typename... BoundArgs>
-            static decltype(auto) bind(Signal& signal, Func&& func, BoundArgs&&... args)
-            {
-                return bindImpl(std::index_sequence_for<UnboundArgs...>{}, signal, std::forward<Func>(func), std::forward<BoundArgs>(args)...);
-            }
-
-        private:
-
-            template <typename Func, typename... BoundArgs, std::size_t... Indices>
-            static decltype(auto) bindImpl(std::index_sequence<Indices...>, Signal& signal, Func&& func, BoundArgs&&... args)
-            {
-                const std::size_t offset = (sizeof...(UnboundArgs) > 0) ? signal.validateTypes({typeid(UnboundArgs)...}) : 0;
-                return [=, f=func](const std::shared_ptr<Widget>& widget, const std::string& signalName) {  // f=func is needed to decay free functions
-                    invokeFunc(f,
-                               args...,
-                               widget,
-                               signalName,
-                               internal_signal::dereference<UnboundArgs>(internal_signal::parameters[offset + Indices])...);
-                };
-            }
-        };
-
-        template <typename... UnboundArgs>
-        struct binder<TypeSet<UnboundArgs...>, TypeSet<>>
-        {
-            template <typename Func, typename... BoundArgs>
-            static decltype(auto) bind(Signal& signal, Func&& func, BoundArgs&&... args)
-            {
-                return bindImpl(std::index_sequence_for<UnboundArgs...>{}, signal, std::forward<Func>(func), std::forward<BoundArgs>(args)...);
-            }
-
-        private:
-
-            template <typename Func, typename... BoundArgs, std::size_t... Indices>
-            static decltype(auto) bindImpl(std::index_sequence<Indices...>, Signal& signal, Func&& func, BoundArgs&&... args)
-            {
-                const std::size_t offset = (sizeof...(UnboundArgs) > 0) ? signal.validateTypes({typeid(UnboundArgs)...}) : 0;
-                return [=, f=func]() {  // f=func is needed to decay free functions
-                    invokeFunc(f,
-                               args...,
-                               internal_signal::dereference<UnboundArgs>(internal_signal::parameters[offset + Indices])...);
-                };
-            }
-        };
-
-
-        // Error case (function signature did not match anything)
-        template <typename Enable, typename Func, typename... BoundArgs>
-        struct func_traits;
-
-        // Normal function or lambda
-        template <typename Func, typename... BoundArgs>
-        struct func_traits<void_t<decltype(&Func::operator())>, Func, BoundArgs...>
-            : public func_traits<void, decltype(&Func::operator()), Func*, BoundArgs...>
-        {
-        };
-
-        // Non-const member function
-        template <typename Class, typename... Args, typename... BoundArgs>
-        struct func_traits<void, void(Class::*)(Args...), BoundArgs...>
-            : binder<TypeSet<Class*, typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
-        {
-        };
-
-        // Const member function
-        template <typename Class, typename... Args, typename... BoundArgs>
-        struct func_traits<void, void(Class::*)(Args...) const, BoundArgs...>
-            : binder<TypeSet<const Class*, typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
-        {
-        };
-
-        // Free function
-        template <typename... Args, typename... BoundArgs>
-        struct func_traits<void, void(*)(Args...), BoundArgs...>
-            : binder<TypeSet<typename std::decay<Args>::type...>, TypeSet<BoundArgs...>>
-        {
-        };
-    }
+#ifndef TGUI_REMOVE_DEPRECATED_CODE
+    using SignalMenuItem = SignalItemHierarchy;
+#endif
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -709,6 +847,22 @@ namespace tgui
     {
     public:
 
+        virtual ~SignalWidgetBase() = default;
+
+#if defined(__cpp_if_constexpr) && (__cpp_if_constexpr >= 201606L)
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Connects a signal handler that will be called when this signal is emitted
+        ///
+        /// @param signalName   Name of the signal
+        /// @param handler      Callback function that is given the extra arguments provided to this function as arguments
+        /// @param args         Optional extra arguments to pass to the signal handler when the signal is emitted
+        ///
+        /// @return Unique id of the connection
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        template <typename Func, typename... BoundArgs>
+        unsigned int connect(std::string signalName, Func&& handler, const BoundArgs&... args);
+
+#else
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Connects a signal handler that will be called when this signal is emitted
         ///
@@ -719,12 +873,7 @@ namespace tgui
         /// @return Unique id of the connection
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename Func, typename... Args, typename std::enable_if<std::is_convertible<Func, std::function<void(const Args&...)>>::value>::type* = nullptr>
-        unsigned int connect(std::string signalName, Func&& handler, const Args&... args)
-        {
-            const unsigned int id = getSignal(toLower(signalName)).connect([f=std::function<void(const Args&...)>(handler),args...](){ f(args...); });
-            m_connectedSignals[id] = toLower(signalName);
-            return id;
-        }
+        unsigned int connect(std::string signalName, Func&& handler, const Args&... args);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -737,17 +886,9 @@ namespace tgui
         ///
         /// @return Unique id of the connection
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        template <typename Func, typename... BoundArgs, typename std::enable_if<std::is_convertible<Func, std::function<void(const BoundArgs&..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
-        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args)
-        {
-            const unsigned int id = getSignal(toLower(signalName)).connect(
-                                        [f=std::function<void(const BoundArgs&..., const std::shared_ptr<Widget>&, const std::string&)>(handler), args...]
-                                        (const std::shared_ptr<Widget>& w, const std::string& s)
-                                        { f(args..., w, s); }
-                                    );
-            m_connectedSignals[id] = toLower(signalName);
-            return id;
-        }
+        template <typename Func, typename... BoundArgs, typename std::enable_if<!std::is_convertible<Func, std::function<void(const BoundArgs&...)>>::value // Ambigious otherwise when passing bind expression
+                                                                             && std::is_convertible<Func, std::function<void(const BoundArgs&..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
+        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -761,15 +902,8 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename Func, typename... BoundArgs, typename std::enable_if<!std::is_convertible<Func, std::function<void(const BoundArgs&...)>>::value
                                                                              && !std::is_convertible<Func, std::function<void(const BoundArgs&..., std::shared_ptr<Widget>, const std::string&)>>::value>::type* = nullptr>
-        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args)
-        {
-            Signal& signal = getSignal(toLower(signalName));
-            using binder = internal_signal::func_traits<void, typename std::decay<Func>::type, BoundArgs...>;
-            const unsigned int id = signal.connect(binder::bind(signal, std::forward<Func>(handler), std::forward<BoundArgs>(args)...));
-            m_connectedSignals[id] = toLower(signalName);
-            return id;
-        }
-
+        unsigned int connect(std::string signalName, Func&& handler, BoundArgs&&... args);
+#endif
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Connect a signal handler to multiple signals
@@ -781,14 +915,7 @@ namespace tgui
         /// @return Unique id of the last connection. When passing e.g. 2 signal names, the first signal will correspond to id-1.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename Func, typename... BoundArgs>
-        unsigned int connect(std::initializer_list<std::string> signalNames, Func&& handler, BoundArgs&&... args)
-        {
-            unsigned int lastId = 0;
-            for (auto& signalName : signalNames)
-                lastId = connect(std::move(signalName), handler, args...);
-
-            return lastId;
-        }
+        unsigned int connect(std::initializer_list<std::string> signalNames, Func&& handler, BoundArgs&&... args);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -798,18 +925,7 @@ namespace tgui
         ///
         /// @return True when a connection with this id existed and was removed
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool disconnect(unsigned int id)
-        {
-            auto it = m_connectedSignals.find(id);
-            if (it != m_connectedSignals.end())
-            {
-                const bool ret = getSignal(it->second).disconnect(id);
-                m_connectedSignals.erase(it);
-                return ret;
-            }
-            else // The id was not found
-                return false;
-        }
+        bool disconnect(unsigned int id);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

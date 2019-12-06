@@ -526,7 +526,7 @@ namespace obe::Editor
                                                        event.size.height)));
                     GUI::calculateFontSize();
                     GUI::applyFontSize(mainPanel);
-                    GUI::applyScrollbarMaxValue(mainPanel);
+                    // GUI::applyScrollbarMaxValue(mainPanel);
                     break;
                 case sf::Event::JoystickConnected:
                     Input::SetGamepadList();

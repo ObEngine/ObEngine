@@ -14,7 +14,7 @@ namespace obe::Editor::GUI
     void init();
     void calculateFontSize();
     void applyFontSize(tgui::Panel::Ptr& mainPanel);
-    void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel);
+    // void applyScrollbarMaxValue(tgui::Panel::Ptr& mainPanel);
     void buildToolbar(tgui::Panel::Ptr& mainPanel,
                       tgui::Panel::Ptr& editorPanel, Scene::Scene& scene);
     void buildEditorMenu(tgui::Panel::Ptr& mainPanel);

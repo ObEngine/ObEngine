@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,7 @@
 
 #include <TGUI/Config.hpp>
 #include <TGUI/ObjectConverter.hpp>
+#include <TGUI/Loading/DataIO.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,8 +49,28 @@ namespace tgui
             return data;
         }
 
+        /// @internal
+        static std::shared_ptr<RendererData> createFromDataIONode(const DataIO::Node* rendererNode)
+        {
+            auto rendererData = std::make_shared<RendererData>();
+            rendererData->shared = false;
+
+            for (const auto& pair : rendererNode->propertyValuePairs)
+                rendererData->propertyValuePairs[pair.first] = ObjectConverter(pair.second->value); // Did not compile with VS2015 Update 2 when using braces
+
+            for (const auto& nestedProperty : rendererNode->children)
+            {
+                std::stringstream ss;
+                DataIO::emit(nestedProperty, ss);
+                rendererData->propertyValuePairs[toLower(nestedProperty->name)] = {sf::String{"{\n" + ss.str() + "}"}};
+            }
+
+            return rendererData;
+        };
+
         std::map<std::string, ObjectConverter> propertyValuePairs;
-        std::map<void*, std::function<void(const std::string& property)>> observers;
+        std::map<const void*, std::function<void(const std::string& property)>> observers;
+        bool shared = true;
     };
 
 
@@ -82,7 +103,7 @@ namespace tgui
         /// @brief Virtual destructor
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~WidgetRenderer() {};
+        virtual ~WidgetRenderer() = default;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +122,25 @@ namespace tgui
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         float getOpacity() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes the opacity of the widget when it is disabled
+        ///
+        /// @param opacity  The opacity of the widget in disabled state.
+        ///                 0 means completely transparent, while 1 (default) means fully opaque.
+        ///                 Set to -1 (default) to use the normal opacity value even when the widget is disabled.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setOpacityDisabled(float opacity);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the opacity of the widget when it is disabled
+        ///
+        /// @return The opacity of the widget in disabled state, or -1 when using the not using a different opacity when
+        ///         the widget is enabled or disabled.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        float getOpacityDisabled() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,16 +164,24 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Changes a property of the renderer
+        /// @brief Sets whether mouse events should be ignored on transparent parts of the texture of the widget in normal state
         ///
-        /// @param property  The property that you would like to change
-        /// @param value     The new value that you like to assign to the property.
-        ///                  The value can either be a string value or a serialized string
+        /// @brief ignoreTransparentParts  Should mouse events on transparent texture parts be ignored?
         ///
-        /// @throw Exception for unknown properties or when value was of a wrong type
+        /// When mouse events are ignored, they are passed to a widget behind the widget.
+        /// By default, mouse events are NOT ignored and the widget will receive mouse events even on transparent texture parts.
         ///
+        /// This property does nothing if the widget doesn't use textures.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setProperty(const std::string& property, const std::string& value);
+        void setTransparentTexture(bool ignoreTransparentParts);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether mouse events should be ignored on transparent parts of the texture of the widget
+        /// @return Whether mouse events on transparent texture parts are ignored
+        /// @see setTransparentTexture
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool getTransparentTexture() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +225,7 @@ namespace tgui
         /// @param function Callback function to call when the renderer changes
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void subscribe(void* id, const std::function<void(const std::string& property)>& function);
+        void subscribe(const void* id, const std::function<void(const std::string& property)>& function);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,7 +234,7 @@ namespace tgui
         /// @param id  Unique identifier used when subscribing the callback function
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void unsubscribe(void* id);
+        void unsubscribe(const void* id);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

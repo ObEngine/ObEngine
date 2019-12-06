@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -74,14 +74,18 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
-        ///
-        /// @return Temporary pointer to the renderer
-        ///
+        /// @return Temporary pointer to the renderer that may be shared with other widgets using the same renderer
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        TabsRenderer* getRenderer() const
-        {
-            return aurora::downcast<TabsRenderer*>(m_renderer.get());
-        }
+        TabsRenderer* getSharedRenderer();
+        const TabsRenderer* getSharedRenderer() const;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        /// @return Temporary pointer to the renderer
+        /// @warning After calling this function, the widget has its own copy of the renderer and it will no longer be shared.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TabsRenderer* getRenderer();
+        const TabsRenderer* getRenderer() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +101,16 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setSize(const Layout2d& size) override;
         using Widget::setSize;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Enables or disables the widget
+        /// @param enabled  Is the widget enabled?
+        ///
+        /// The disabled widget will no longer receive events and thus no longer send callbacks.
+        /// All widgets are enabled by default.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setEnabled(bool enabled) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,29 +186,25 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Selects the tab with a given text
-        ///
         /// @param text  The text of the tab to select
-        ///
-        /// When the text doen't match any tab then nothing will be changed.
-        /// If there are multiple tabs with the same text then the first one will be selected.
-        ///
+        /// @return Whether a tab was selected, false is returned if tab doesn't exist or is invisible or disabled
         /// @see select(int)
         ///
+        /// If there are multiple tabs with the same text then the first one will be selected.
+        /// When false is returned, the selected tab will still be deselected.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void select(const sf::String& text);
+        bool select(const sf::String& text);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Selects the tab with a given index
-        ///
         /// @param index  The index of the tab to select
-        ///
-        /// When the index is too high then nothing will happen.
-        ///
+        /// @return Whether a tab was selected, false is returned if the index was too high or if tab is invisible or disabled
         /// @see select(sf::String)
         ///
+        /// When false is returned, the selected tab will still be deselected.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void select(std::size_t index);
+        bool select(std::size_t index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,28 +216,21 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Removes a tab with a given text
-        ///
         /// @param text  The text on the tab to remove
-        ///
-        /// When multiple tabs have the same text, only the first will be removed.
-        ///
-        /// @see remove(unsigned int)
-        ///
+        /// @return Whether a tab was removed, false is returned when the text didn't match any tab
+        /// @see remove(std::size_t)
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void remove(const sf::String& text);
+        bool remove(const sf::String& text);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Removes a tab with a given index
-        ///
         /// @param index  The index of the tab to remove
-        ///
-        /// When the index is too high then nothing will happen.
-        ///
+        /// @return Whether a tab was removed, false is returned when the index was too high
         /// @see remove(sf::String)
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void remove(std::size_t index);
+        bool remove(std::size_t index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,10 +263,42 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes whether a tab is visible
+        /// @param index   The index of the tab to show or hide
+        /// @param visible Is the tab shown?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTabVisible(std::size_t index, bool visible);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the tab is shown or hidden
+        /// @param index  The index of the tab
+        /// @return Whether the tab is visible
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool getTabVisible(std::size_t index) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Changes whether a tab is enabled
+        /// @param index   The index of the tab to enable or disable
+        /// @param enabled Is the tab enabled?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setTabEnabled(std::size_t index, bool enabled);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the tab is enabled or disabled
+        /// @param index  The index of the tab
+        /// @return Whether the tab is enabled
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool getTabEnabled(std::size_t index) const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Changes the character size of the text
         ///
         /// @param size  The new size of the text
-        ///              If the size is 0 (default) then the text will be scaled to fit in the tab.
+        ///              If the size is 0 then the text will be scaled to fit in the tab.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void setTextSize(unsigned int size);
@@ -359,17 +394,17 @@ namespace tgui
         /// @return Is the mouse on top of the widget?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        bool mouseOnWidget(Vector2f pos) const override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMousePressed(sf::Vector2f pos) override;
+        void leftMousePressed(Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void mouseMoved(sf::Vector2f pos) override;
+        void mouseMoved(Vector2f pos) override;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
@@ -424,6 +459,18 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Saves the widget as a tree node in order to save it to a file
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::unique_ptr<DataIO::Node> save(SavingRenderersMap& renderers) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Loads the widget from a tree of nodes
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void load(const std::unique_ptr<DataIO::Node>& node, const LoadingRenderersMap& renderers) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Makes a copy of the widget
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Widget::Ptr clone() const override
@@ -435,7 +482,7 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public:
 
-        SignalString onTabSelect = {"TabSelected"}; ///< An item was selected in the list box. Optional parameter: selected item
+        SignalString onTabSelect = {"TabSelected"}; ///< A tab that was selected. Optional parameter: selected item
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,21 +494,33 @@ namespace tgui
         int                m_selectedTab = -1;
         int                m_hoveringTab = -1;
         bool               m_autoSize = true;
-        std::vector<float> m_tabWidth;
-        std::vector<Text>  m_tabTexts;
+
+        struct Tab
+        {
+            bool  visible;
+            bool  enabled;
+            float width;
+            Text  text;
+        };
+        std::vector<Tab> m_tabs;
 
         Sprite m_spriteTab;
+        Sprite m_spriteTabHover;
         Sprite m_spriteSelectedTab;
+        Sprite m_spriteSelectedTabHover;
+        Sprite m_spriteDisabledTab;
 
         // Cached renderer properties
         Borders   m_bordersCached;
         Color     m_borderColorCached;
         Color     m_backgroundColorCached;
         Color     m_backgroundColorHoverCached;
+        Color     m_backgroundColorDisabledCached;
         Color     m_selectedBackgroundColorCached;
         Color     m_selectedBackgroundColorHoverCached;
         Color     m_textColorCached;
         Color     m_textColorHoverCached;
+        Color     m_textColorDisabledCached;
         Color     m_selectedTextColorCached;
         Color     m_selectedTextColorHoverCached;
         float     m_distanceToSideCached = 0;

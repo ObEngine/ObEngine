@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -53,14 +53,18 @@ namespace tgui
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
-        ///
-        /// @return Temporary pointer to the renderer
-        ///
+        /// @return Temporary pointer to the renderer that may be shared with other widgets using the same renderer
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        BoxLayoutRenderer* getRenderer() const
-        {
-            return aurora::downcast<BoxLayoutRenderer*>(m_renderer.get());
-        }
+        BoxLayoutRenderer* getSharedRenderer();
+        const BoxLayoutRenderer* getSharedRenderer() const;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        /// @return Temporary pointer to the renderer
+        /// @warning After calling this function, the widget has its own copy of the renderer and it will no longer be shared.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        BoxLayoutRenderer* getRenderer();
+        const BoxLayoutRenderer* getRenderer() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +84,7 @@ namespace tgui
         /// @param widgetName  An identifier to access to the widget later
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void add(const tgui::Widget::Ptr& widget, const sf::String& widgetName = "") override;
+        void add(const Widget::Ptr& widget, const sf::String& widgetName = "") override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +97,7 @@ namespace tgui
         /// If the index is too high, the widget will simply be added at the end of the list.
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void insert(std::size_t index, const tgui::Widget::Ptr& widget, const sf::String& widgetName = "");
+        virtual void insert(std::size_t index, const Widget::Ptr& widget, const sf::String& widgetName = "");
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +108,7 @@ namespace tgui
         /// @return True if widget is removed, false if widget was not found
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool remove(const tgui::Widget::Ptr& widget) override;
+        bool remove(const Widget::Ptr& widget) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +119,7 @@ namespace tgui
         /// @return False if the index was too high
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool remove(std::size_t index);
+        virtual bool remove(std::size_t index);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@
 
 #include <Bindings/Bindings.hpp>
 #include <Modes/Toolkit.hpp>
-#include <Modes/ToolkitContentBox.hpp>
+// #include <Modes/ToolkitContentBox.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
@@ -20,7 +20,7 @@ namespace obe::Modes
 {
     void startToolkitMode()
     {
-        unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
+        /*unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
         bool continueToolkit = true;
         std::vector<std::string> commandHistory;
         unsigned commandHistoryIndex = 0;
@@ -154,8 +154,6 @@ namespace obe::Modes
         sf::Vector2i grabbedOffset;
         bool grabbedWindow = false;
 
-        gui.focusWidget(toolkitInput);
-
         while (window.isOpen() && continueToolkit)
         {
             sf::Event event;
@@ -232,6 +230,6 @@ namespace obe::Modes
             window.clear();
             gui.draw();
             window.display();
-        }
+        }*/
     }
 } // namespace obe::Modes

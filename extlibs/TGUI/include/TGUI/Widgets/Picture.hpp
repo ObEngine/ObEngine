@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,7 @@
 
 
 #include <TGUI/Widgets/ClickableWidget.hpp>
+#include <TGUI/Renderers/PictureRenderer.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,29 +55,18 @@ namespace tgui
         /// @brief Constructor to create the picture from a texture
         ///
         /// @param texture  The texture to load the picture from
-        /// @param fullyClickable This affects what happens when clicking on a transparent pixel in the image.
-        ///                       Is the click caught by the picture, or does the event pass to the widgets behind it?
-        ///
-        /// @code
-        /// Picture picture1("image.png");
-        ///
-        /// Picture picture2({"image.png", {20, 15, 60, 40}}); // Only load the part of the image from (20,15) to (80,55)
-        ///
-        /// sf::Texture texture;
-        /// texture.loadFromFile("image.png", {20, 15, 60, 40});
-        /// Picture picture3(texture);
-        /// @endcode
-        ///
+        /// @param transparentTexture  Are there transparent parts in the texture where the mouse events should be passed
+        ///                            to the widget behind the picture?
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Picture(const Texture& texture, bool fullyClickable = true);
+        Picture(const Texture& texture, bool transparentTexture = false);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Creates a new picture widget
         ///
         /// @param texture  The texture to load the picture from
-        /// @param fullyClickable This affects what happens when clicking on a transparent pixel in the image.
-        ///                       Is the click caught by the picture, or does the event pass to the widgets behind it?
+        /// @param transparentTexture  Are there transparent parts in the texture where the mouse events should be passed to
+        ///                            the widget behind the picture?
         ///
         /// @return The new picture
         ///
@@ -89,9 +79,8 @@ namespace tgui
         /// texture.loadFromFile("image.png", {20, 15, 60, 40});
         /// auto picture3 = Picture::create(texture);
         /// @endcode
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        static Picture::Ptr create(const Texture& texture = {}, bool fullyClickable = true);
+        static Picture::Ptr create(const Texture& texture = {}, bool transparentTexture = false);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,42 +95,19 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Changes the image
-        ///
-        /// @param texture  The texture to load the picture from
-        /// @param fullyClickable This affects what happens when clicking on a transparent pixel in the image.
-        ///                       Is the click caught by the picture, or does the event pass to the widgets behind it?
-        ///
-        /// @code
-        /// picture1->setTexture("image.png");
-        ///
-        /// picture2->setTexture({"image.png", {20, 15, 60, 40}}); // Only load the part of the image from (20,15) to (80,55)
-        ///
-        /// sf::Texture texture;
-        /// texture.loadFromFile("image.png", {20, 15, 60, 40});
-        /// picture3->setTexture(texture);
-        /// @endcode
-        ///
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        /// @return Temporary pointer to the renderer that may be shared with other widgets using the same renderer
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setTexture(const Texture& texture, bool fullyClickable = true);
-
+        PictureRenderer* getSharedRenderer();
+        const PictureRenderer* getSharedRenderer() const;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the texture used by the picture
-        ///
-        /// @return Internal texture
-        ///
+        /// @brief Returns the renderer, which gives access to functions that determine how the widget is displayed
+        /// @return Temporary pointer to the renderer
+        /// @warning After calling this function, the widget has its own copy of the renderer and it will no longer be shared.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        const Texture& getTexture() const;
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Returns the texture used by the picture
-        ///
-        /// @return Reference to the internal texture
-        ///
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Texture& getTexture();
+        PictureRenderer* getRenderer();
+        const PictureRenderer* getRenderer() const;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,18 +123,45 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Sets whether the widget should completely ignore mouse events and let them pass to the widgets behind it
+        ///
+        /// @param ignore  Should mouse events be ignored by this widget?
+        ///
+        /// By default, mouse events are NOT ignored.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void ignoreMouseEvents(bool ignore = true);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the widget is ignoring mouse events and letting them pass to the widgets behind it
+        ///
+        /// @return Are mouse events ignored by this widget?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isIgnoringMouseEvents() const;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the widget can gain focus
+        /// @return Can the widget be focused?
+        ///
+        /// This function returns false for Picture widgets.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool canGainFocus() const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Returns whether the mouse position (which is relative to the parent widget) lies on top of the widget
         ///
         /// @return Is the mouse on top of the widget?
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool mouseOnWidget(sf::Vector2f pos) const override;
+        bool mouseOnWidget(Vector2f pos) const override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        void leftMouseReleased(sf::Vector2f pos) override;
+        void leftMouseReleased(Vector2f pos) override;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +208,18 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Saves the widget as a tree node in order to save it to a file
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        std::unique_ptr<DataIO::Node> save(SavingRenderersMap& renderers) const override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Loads the widget from a tree of nodes
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void load(const std::unique_ptr<DataIO::Node>& node, const LoadingRenderersMap& renderers) override;
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // This function is called every frame with the time passed since the last frame.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void update(sf::Time elapsedTime) override;
@@ -234,8 +239,7 @@ namespace tgui
 
         Sprite  m_sprite;
 
-        // Set to false when clicks on transparent parts of the picture should go to the widgets behind the picture
-        bool m_fullyClickable = true;
+        bool m_ignoringMouseEvents = false;
 
         // Will be set to true after the first click, but gets reset to false when the second click does not occur soon after
         bool m_possibleDoubleClick = false;

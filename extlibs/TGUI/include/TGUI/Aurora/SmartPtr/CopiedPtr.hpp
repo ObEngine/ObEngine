@@ -118,7 +118,7 @@ class CopiedPtr
 		///  Otherwise, this instance will hold the pointer returned by the cloner.
 		CopiedPtr(const CopiedPtr& origin)
 		: mOwner(origin ? origin.mOwner->clone() : nullptr)
-		, mPointer(origin ? mOwner->getPointer() : nullptr)
+		, mPointer(mOwner ? mOwner->getPointer() : nullptr)
 		{
 		}
 
@@ -135,7 +135,7 @@ class CopiedPtr
 
 		/// @brief Move constructor
 		/// @param source RValue reference to object of which the ownership is taken.
-		CopiedPtr(CopiedPtr&& source)
+		CopiedPtr(CopiedPtr&& source) noexcept
 		: mOwner(source.mOwner)
 		, mPointer(source.mPointer)
 		{
@@ -190,7 +190,7 @@ class CopiedPtr
 
 		/// @brief Move assignment operator
 		/// @param source RValue reference to object of which the ownership is taken.
-		CopiedPtr& operator= (CopiedPtr&& source)
+		CopiedPtr& operator= (CopiedPtr&& source) noexcept
 		{
 			CopiedPtr(std::move(source)).swap(*this);
 			return *this;

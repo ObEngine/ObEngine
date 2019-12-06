@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -84,12 +84,12 @@ namespace tgui
             if (!expression.empty() && (expression.back() == '%'))
             {
                 m_constant = false;
-                m_ratio    = tgui::stof(expression.substr(0, expression.length()-1)) / 100.f;
+                m_ratio    = strToFloat(expression.substr(0, expression.length()-1)) / 100.f;
             }
             else
             {
                 m_constant = true;
-                m_value    = tgui::stof(expression.substr(0, expression.length()));
+                m_value    = strToFloat(expression.substr(0, expression.length()));
             }
         }
 
@@ -113,6 +113,17 @@ namespace tgui
         TGUI_CONSTEXPR float getRatio() const
         {
             return m_ratio;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Returns whether the value is constant or a ratio
+        ///
+        /// @return Does the value contain a constant?
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        TGUI_CONSTEXPR bool isConstant() const
+        {
+            return m_constant;
         }
 
 

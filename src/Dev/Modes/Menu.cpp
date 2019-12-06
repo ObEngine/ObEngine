@@ -33,7 +33,7 @@ namespace obe::Modes
     {
         int scrollBoxSize = 0;
 
-        scrollbar->setLowValue(middlePanel->getSize().y);
+        // scrollbar->setLowValue(middlePanel->getSize().y);
         scrollbar->setMaximum(scrollBoxSize);
 
         middlePanel->removeAllWidgets();
@@ -79,7 +79,7 @@ namespace obe::Modes
                 "pressed", [&currentMap, filename] { currentMap = filename; });
             scrollBoxSize += selectMapButton->getSize().y - 1;
         }
-        scrollbar->setLowValue(middlePanel->getSize().y);
+        // scrollbar->setLowValue(middlePanel->getSize().y);
         scrollbar->setMaximum(scrollBoxSize);
     }
 
@@ -308,11 +308,11 @@ namespace obe::Modes
         auto checkBootFile = [playButton]() {
             if (System::Path("boot.lua").find() == "")
             {
-                playButton->disable();
+                playButton->setEnabled(false);
             }
             else
             {
-                playButton->enable();
+                playButton->setEnabled(true);
             }
         };
 
@@ -320,11 +320,11 @@ namespace obe::Modes
             if (System::Path("Data/Maps").find(System::PathType::Directory) ==
                 "")
             {
-                editButton->disable();
+                editButton->setEnabled(false);
             }
             else
             {
-                editButton->enable();
+                editButton->setEnabled(true);
             }
         };
 

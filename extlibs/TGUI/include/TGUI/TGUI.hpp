@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,9 +37,9 @@
 #include <TGUI/Loading/Deserializer.hpp>
 #include <TGUI/Loading/Serializer.hpp>
 #include <TGUI/Loading/Theme.hpp>
-#include <TGUI/Loading/WidgetLoader.hpp>
-#include <TGUI/Loading/WidgetSaver.hpp>
+#include <TGUI/Loading/WidgetFactory.hpp>
 
+#include <TGUI/Widgets/BitmapButton.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Canvas.hpp>
 #include <TGUI/Widgets/ChatBox.hpp>
@@ -55,6 +55,7 @@
 #include <TGUI/Widgets/Knob.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/ListBox.hpp>
+#include <TGUI/Widgets/ListView.hpp>
 #include <TGUI/Widgets/MenuBar.hpp>
 #include <TGUI/Widgets/MessageBox.hpp>
 #include <TGUI/Widgets/Panel.hpp>
@@ -69,9 +70,15 @@
 #include <TGUI/Widgets/SpinButton.hpp>
 #include <TGUI/Widgets/Tabs.hpp>
 #include <TGUI/Widgets/TextBox.hpp>
+#include <TGUI/Widgets/TreeView.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
 
+#include <TGUI/SignalImpl.hpp>
+
 #include <SFML/Graphics.hpp>
+#ifdef SFML_SYSTEM_IOS
+  #include <SFML/Main.hpp>
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

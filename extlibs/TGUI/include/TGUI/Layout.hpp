@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,7 @@
 #define TGUI_LAYOUT_HPP
 
 #include <TGUI/Config.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <TGUI/Vector2f.hpp>
 #include <type_traits>
 #include <functional>
 #include <memory>
@@ -57,10 +57,14 @@ namespace tgui
             Minus,
             Multiplies,
             Divides,
+            Minimum,
+            Maximum,
             BindingLeft,
             BindingTop,
             BindingWidth,
             BindingHeight,
+            BindingInnerWidth,
+            BindingInnerHeight,
             BindingString
         };
 
@@ -157,6 +161,17 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Return whether the layout stores a constant value
+        ///
+        /// @return Value of the layout
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isConstant() const
+        {
+            return m_operation == Operation::Value;
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @internal
         /// @brief Converts the layout to a string representation
         ///
@@ -193,11 +208,24 @@ namespace tgui
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private:
 
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // If a widget is bound, inform it that the layout no longer binds it
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void unbindLayout();
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Resets the parent pointers of the left and right operands if they exist and tell the bound widget that this layout
         // requires information about changes to its position or size when the operation requires a widget to be bound.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         void resetPointers();
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Check whether sublayouts contain a string that refers to a widget which should be bound.
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void parseBindingStringRecursive(Widget* widget, bool xAxis);
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,8 +243,7 @@ namespace tgui
         std::unique_ptr<Layout> m_leftOperand = nullptr; // The left operand of the operation in case the operation is a math operation
         std::unique_ptr<Layout> m_rightOperand = nullptr; // The left operand of the operation in case the operation is a math operation
         Widget* m_boundWidget = nullptr; // The widget on which this layout depends in case the operation is a binding
-        std::string m_boundString; // String referring  to a widget on which this layout depends in case the layout was created from a string and contains a binding operation
-        Widget* m_connectedWidget = nullptr; // The widget that uses this layout for its position or size
+        std::string m_boundString; // String referring to a widget on which this layout depends in case the layout was created from a string and contains a binding operation
         std::function<void()> m_connectedWidgetCallback = nullptr; // Function to call when the value of the layout changes in case the layout and sublayouts are not all constants
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,18 +253,30 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Class to store the position or size of a widget
     ///
-    /// You don't have to explicitly create an instance of this class, sf::Vector2f is implicitly converted.
+    /// You don't have to explicitly create an instance of this class, sf::Vector2f and tgui::Vector2f are implicitly converted.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     class TGUI_API Layout2d
     {
     public:
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief Default constructor to implicitly construct from an sf::Vector2f.
+        /// @brief Default constructor to implicitly construct from a tgui::Vector2f.
         ///
         /// @param constant  Value of the layout
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Layout2d(sf::Vector2f constant = {0, 0}) :
+        Layout2d(Vector2f constant = {0, 0}) :
+            x{constant.x},
+            y{constant.y}
+        {
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @brief Default constructor to implicitly construct from a sf::Vector2f.
+        ///
+        /// @param constant  Value of the layout
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Layout2d(sf::Vector2f constant) :
             x{constant.x},
             y{constant.y}
         {
@@ -290,7 +329,7 @@ namespace tgui
         ///
         /// @return Value of the layout
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        sf::Vector2f getValue() const
+        Vector2f getValue() const
         {
             return {x.getValue(), y.getValue()};
         }
@@ -407,6 +446,12 @@ namespace tgui
 
         /// @brief Bind to the size of the gui view
         TGUI_API Layout2d bindSize(Gui& gui);
+
+        /// @brief Bind to the minimum value of two layouts
+        TGUI_API Layout bindMin(const Layout& value1, const Layout& value2);
+
+        /// @brief Bind to the maximum value of two layouts
+        TGUI_API Layout bindMax(const Layout& value1, const Layout& value2);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

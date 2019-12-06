@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,7 +26,7 @@
 #ifndef TGUI_VERTICAL_LAYOUT_HPP
 #define TGUI_VERTICAL_LAYOUT_HPP
 
-#include <TGUI/Widgets/BoxLayout.hpp>
+#include <TGUI/Widgets/BoxLayoutRatios.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,9 +36,8 @@ namespace tgui
     /// @brief Container that automatically resizes children to fit the entire available space between children
     ///
     /// The children are stacked vertically.
-    ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    class TGUI_API VerticalLayout : public BoxLayout
+    class TGUI_API VerticalLayout : public BoxLayoutRatios
     {
     public:
         typedef std::shared_ptr<VerticalLayout> Ptr; ///< Shared widget pointer
@@ -57,7 +56,6 @@ namespace tgui
         /// @param size  Size of the vertical layout
         ///
         /// @return The new vertical layout
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         static VerticalLayout::Ptr create(const Layout2d& size = {"100%", "100%"});
 
@@ -68,7 +66,6 @@ namespace tgui
         /// @param layout  The other layout
         ///
         /// @return The new layout
-        ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         static VerticalLayout::Ptr copy(ConstPtr layout);
 

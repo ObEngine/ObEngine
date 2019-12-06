@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // TGUI - Texus' Graphical User Interface
-// Copyright (C) 2012-2017 Bruno Van de Velde (vdv_b@tgui.eu)
+// Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,11 +28,12 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <TGUI/Config.hpp>
+#include <TGUI/SvgImage.hpp>
 
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <memory>
 #include <string>
@@ -46,9 +47,14 @@ namespace tgui
     // Used by the Texture class
     struct TGUI_API TextureData
     {
-        std::unique_ptr<sf::Image> image;
+        std::shared_ptr<sf::Image> image;
+        std::unique_ptr<SvgImage> svgImage;
         sf::Texture texture;
         sf::IntRect rect;
+
+#ifndef TGUI_NEXT
+        sf::Shader* shader = nullptr;
+#endif
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
