@@ -1,6 +1,7 @@
 project(ObEnginePlayer)
 
 include(group_files)
+include(setup_environment)
 
 file(GLOB_RECURSE OBEPLAYER_HEADERS "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
 file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
