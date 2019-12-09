@@ -4,9 +4,9 @@ GameConfig:
     antiAliasing:True
     scrollSensibility:1
     framerateLimit:True
-    framerateTarget:144
+    framerateTarget:60
     vsync:True
-    
+
 KeyBinding:
     mapEditor:
         SpriteMode:"Pressed:1"
@@ -69,6 +69,6 @@ KeyBinding:
         ConsoleDownHistory:"Pressed:Down"
         ConsoleToggle:"Pressed:F1"
         ExitEditor:"Pressed:Escape"
-    
+
 Debug:
     logLevel:1

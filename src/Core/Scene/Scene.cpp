@@ -179,7 +179,6 @@ namespace obe::Scene
                               m_cameraInitialReferential.toString());
             m_camera.setPosition(m_cameraInitialPosition,
                                  m_cameraInitialReferential);
-            std::cout << m_camera.getPosition() << std::endl;
         }
         else
             throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView",

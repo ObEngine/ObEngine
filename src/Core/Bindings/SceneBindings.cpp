@@ -11,15 +11,19 @@
 
 namespace obe::Bindings::SceneBindings
 {
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(
+        Camera_getPosition_wrapper, Scene::Camera, getPosition, 0, 1);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(
+        Camera_setPosition_wrapper, Scene::Camera, setPosition, 1, 2);
     void LoadCamera(kaguya::State* lua)
     {
         (*lua)["obe"]["Camera"].setClass(
             kaguya::UserdataMetatable<Scene::Camera>()
-                .addFunction("getPosition", &Scene::Camera::getPosition)
+                .addFunction("getPosition", Camera_getPosition_wrapper())
                 .addFunction("getSize", &Scene::Camera::getSize)
                 .addFunction("move", &Scene::Camera::move)
                 .addFunction("scale", &Scene::Camera::scale)
-                .addFunction("setPosition", &Scene::Camera::setPosition)
+                .addFunction("setPosition", Camera_setPosition_wrapper())
                 .addFunction("setSize", &Scene::Camera::setSize));
     }
 

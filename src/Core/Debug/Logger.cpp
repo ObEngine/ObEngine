@@ -44,13 +44,13 @@ namespace obe::Debug
 
     void InitLoggerLevel()
     {
-        const spdlog::level::level_enum lvle =
-            static_cast<spdlog::level::level_enum>(
-                System::Config.at("Debug").getDataNode("logLevel").get<int>());
-        std::cout << "Debug level : " << lvle << std::endl;
+        const unsigned int logLevel
+            = System::Config.at("Debug").getDataNode("logLevel").get<int>();
+        const spdlog::level::level_enum lvle = static_cast<spdlog::level::level_enum>(logLevel);
         if (System::Config->contains("Debug") &&
             System::Config.at("Debug").contains("logLevel"))
             Log->set_level(lvle);
+        Log->info("Log Level {}", logLevel);
     }
 
     void SetLoggerLevel(const spdlog::level::level_enum lvle)

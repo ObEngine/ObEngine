@@ -635,7 +635,7 @@ namespace vili
         std::cout << "Storing : " << path << " in Cache" << std::endl;
         std::unique_ptr<ViliParser> fCache = std::make_unique<ViliParser>();
         std::cout << "Parsing to fill Cache" << std::endl;
-        fCache->parseFile(path, true);
+        fCache->parseFile(path);
         std::cout << "Parsing over" << std::endl;
         ViliCache[path] = std::move(fCache);
     }

@@ -509,7 +509,6 @@ namespace obe::Editor::GUI
                                               .at("LevelSprites")
                                               .getAll<vili::ComplexNode>())
             {
-                std::cout << spr->getId() << std::endl;
                 tgui::Panel::Ptr inspectorSprPanel = tgui::Panel::create();
                 inspectorLeftPanel->add(inspectorSprPanel);
                 inspectorSprPanel->setRenderer(

@@ -31,6 +31,13 @@ namespace obe::Time
         m_frameProgression = 0;
         m_needToRender = false;
 
+        Debug::Log->info(
+            "Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
+            m_framerateTarget, (m_limitFPS) ? "capped" : "uncapped",
+            (m_vsyncEnabled) ? "enabled" : "disabled",
+            (m_syncUpdateRender) ? "enabled" : "disabled"
+        );
+
         System::MainWindow.setVerticalSyncEnabled(m_vsyncEnabled);
     }
 
