@@ -74,6 +74,7 @@ namespace obe::Modes
             selectMapButton->setRenderer(
                 baseTheme.getRenderer("MapSelectButton"));
             selectMapButton->setSize("100%", "20%");
+            middlePanel->add(selectMapButton);
             selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
             selectMapButton->connect(
                 "pressed", [&currentMap, filename] { currentMap = filename; });
