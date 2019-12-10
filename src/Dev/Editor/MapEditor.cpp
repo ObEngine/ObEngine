@@ -661,5 +661,6 @@ namespace obe::Editor
         scene.clear();
         System::MainWindow.close();
         gui.removeAllWidgets();
+        Script::GameObjectDatabase::Clear();
     }
 } // namespace obe::Editor

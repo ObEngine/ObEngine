@@ -101,6 +101,12 @@ namespace obe::Script
         }
     }
 
+    void GameObjectDatabase::Clear()
+    {
+        allDefinitions->clear();
+        allRequires->clear();
+    }
+
     // GameObject
     std::vector<unsigned int> GameObject::AllEnvs;
 

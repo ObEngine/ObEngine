@@ -166,7 +166,9 @@ namespace obe::Bindings::TransformBindings
                         &Transform::UnitVector::to))
                 .addProperty("x", &Transform::UnitVector::x)
                 .addProperty("y", &Transform::UnitVector::y)
-                .addProperty("unit", &Transform::UnitVector::unit));
+                .addProperty("unit", &Transform::UnitVector::unit)
+                .addFunction("distance", &Transform::UnitVector::distance)
+        );
     }
 
     Transform::PolygonSegment* Polygon_getSegmentContainingPoint_subwrapper(

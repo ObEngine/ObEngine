@@ -311,4 +311,8 @@ namespace obe::Transform
         UnitVector result = rot.product(*this - zero) + zero;
         return result;
     }
+    double UnitVector::distance(const UnitVector& vec) const
+    {
+        return std::sqrt(std::pow(x - vec.x, 2) + std::pow(y - vec.y, 2));
+    }
 } // namespace obe::Transform

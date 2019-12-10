@@ -120,6 +120,7 @@ namespace obe::Modes
         Triggers::TriggerDatabase::GetInstance()->update();
         scene.clear();
         scene.update();
+        Script::GameObjectDatabase::Clear();
         System::MainWindow.close();
     }
 } // namespace obe::Modes

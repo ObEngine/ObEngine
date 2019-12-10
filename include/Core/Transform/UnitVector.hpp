@@ -242,6 +242,7 @@ namespace obe::Transform
         friend std::ostream& operator<<(std::ostream& os, const UnitVector& m);
         UnitVector rotate(double angle,
                           UnitVector zero = UnitVector(0, 0)) const;
+        double distance(const UnitVector& vec) const;
     };
 
     template <> inline UnitVector UnitVector::to<Units::ViewPercentage>() const

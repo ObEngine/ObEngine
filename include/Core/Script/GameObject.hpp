@@ -50,6 +50,10 @@ namespace obe::Script
          */
         static void ApplyRequirements(GameObject* obj,
                                       vili::ComplexNode& requires);
+        /*
+         * \brief Clears the GameObjectDatabase (cache reload)
+         */
+        static void Clear();
     };
 
     /**
