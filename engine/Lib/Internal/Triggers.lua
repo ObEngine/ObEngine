@@ -28,7 +28,7 @@ function LuaCore.MakeTriggerGroupSubTable(This, namespace)
             end
         end,
         __storage = {}
-    };    
+    };
 end
 
 

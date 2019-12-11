@@ -38,14 +38,13 @@ namespace obe::Input
 
                     std::vector<std::string> stateList =
                         Utils::String::split(stateAndButton[0], ",");
-                    std::vector<InputButtonState> buttonStates;
+                    Types::FlagSet<InputButtonState> buttonStates;
                     for (std::string& buttonState : stateList)
                     {
                         if (Utils::Vector::contains(buttonState,
                                 { "Idle", "Hold", "Pressed", "Released" }))
                         {
-                            buttonStates.push_back(
-                                stringToInputButtonState(buttonState));
+                            buttonStates |= stringToInputButtonState(buttonState);
                         }
                         else
                         {
@@ -110,8 +109,7 @@ namespace obe::Input
         bool conditionOk = true;
         for (const InputCombinationElement& element : m_triggerConditions)
         {
-            if (!Utils::Vector::contains(element.first->getState(),
-                                         element.second))
+            if (!(element.second & element.first->getState()))
             {
                 conditionOk = false;
                 break;

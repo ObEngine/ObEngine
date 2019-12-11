@@ -24,7 +24,8 @@ namespace obe::Input
         /**
          * \brief InputButton is just being released
          */
-        Released
+        Released,
+        LAST__
     };
 
     /**

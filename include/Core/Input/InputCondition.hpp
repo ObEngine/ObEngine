@@ -5,11 +5,12 @@
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/InputButtonState.hpp>
+#include <Types/FlagSet.hpp>
 
 namespace obe::Input
 {
     using InputCombinationElement =
-        std::pair<InputButtonMonitorPtr, std::vector<InputButtonState>>;
+        std::pair<InputButtonMonitorPtr, Types::FlagSet<InputButtonState>>;
     using InputCombination = std::vector<InputCombinationElement>;
 
     /**
