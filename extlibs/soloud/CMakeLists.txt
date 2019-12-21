@@ -1,14 +1,33 @@
 project(Soloud)
 
 file(GLOB SOLOUD_HEADERS include/soloud/*.h)
-file(GLOB_RECURSE SOLOUD_SOURCES src/*.c src/*.cpp)
+file(GLOB_RECURSE SOLOUD_SOURCES
+    src/audiosource/*.c src/audiosource/*.cpp
+    src/filter/*.cpp
+    src/core/*.cpp
+)
 
-add_library(Soloud ${SOLOUD_HEADERS} ${SOLOUD_SOURCES})
+if (WIN32)
+    file(GLOB_RECURSE BACKEND_SOURCES
+        src/backend/winmm/soloud_winmm.cpp
+    )
+elseif(UNIX AND NOT APPLE)
+    file(GLOB_RECURSE BACKEND_SOURCES
+        src/backend/alsa/soloud_alsa.cpp
+    )
+elseif(APPLE)
+    file(GLOB_RECURSE BACKEND_SOURCES
+        src/backend/coreaudio/soloud_coreauio.cpp
+    )
+endif()
+
+add_library(Soloud ${SOLOUD_SOURCES} ${BACKEND_SOURCES})
 
 target_include_directories(Soloud
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/soloud>
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
@@ -16,3 +35,11 @@ target_include_directories(Soloud
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
+
+if (WIN32)
+    target_compile_definitions(Soloud PUBLIC WITH_WINMM=1)
+elseif(UNIX AND NOT APPLE)
+    target_compile_definitions(Soloud PUBLIC WITH_ALSA=1)
+elseif(APPLE)
+    target_compile_definitions(Soloud PUBLIC WITH_COREAUDIO=1)
+endif()

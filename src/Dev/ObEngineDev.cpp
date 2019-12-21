@@ -27,6 +27,9 @@
 #include "Utils/MathUtils.hpp"
 #include <Graphics/LevelSprite.hpp>
 
+#include <soloud/soloud.h>
+#include <soloud/soloud_wav.h>
+
 void LoadErrors()
 {
     aube::LoadErrors("Data/Errors.vili");
@@ -34,8 +37,26 @@ void LoadErrors()
 
 using namespace obe;
 
+void testSoloud()
+{
+    // Declare some variables
+    SoLoud::Soloud soloud; // Engine core
+    SoLoud::Wav sample;    // One sample
+
+    // Initialize SoLoud (automatic back-end selection)
+    soloud.init();
+
+    sample.load("test.wav"); // Load a wave file
+    soloud.play(sample);     // Play it
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
 int main(int argc, char** argv)
 {
+    testSoloud();
     Graphics::ResourceManager::Init();
     Utils::Exec::RunArgsParser runParser(argc, argv);
     const std::string startMode = runParser.getArgumentValue("-mode");

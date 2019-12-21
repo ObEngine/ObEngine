@@ -22,6 +22,7 @@ target_include_directories(ObEngineDev
 target_link_libraries(ObEngineDev ObEngineCore)
 target_link_libraries(ObEngineDev TGUI)
 target_link_libraries(ObEngineDev sfml-window)
+target_link_libraries(ObEngineDev Soloud)
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(ObEngineDev ${OPENGL_LIBRARIES})
