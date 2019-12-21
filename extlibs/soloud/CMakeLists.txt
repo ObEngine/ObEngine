@@ -8,19 +8,20 @@ file(GLOB_RECURSE SOLOUD_SOURCES
 )
 
 if (WIN32)
-    file(GLOB_RECURSE BACKEND_SOURCES
+    file(GLOB BACKEND_SOURCES
         src/backend/winmm/soloud_winmm.cpp
     )
 elseif(UNIX AND NOT APPLE)
-    file(GLOB_RECURSE BACKEND_SOURCES
+    file(GLOB BACKEND_SOURCES
         src/backend/alsa/soloud_alsa.cpp
     )
 elseif(APPLE)
-    file(GLOB_RECURSE BACKEND_SOURCES
-        src/backend/coreaudio/soloud_coreauio.cpp
+    file(GLOB BACKEND_SOURCES
+        src/backend/coreaudio/soloud_coreaudio.cpp
     )
 endif()
 
+message("Soloud Backend file : " ${BACKEND_SOURCES})
 add_library(Soloud ${SOLOUD_SOURCES} ${BACKEND_SOURCES})
 
 target_include_directories(Soloud
@@ -42,4 +43,7 @@ elseif(UNIX AND NOT APPLE)
     target_compile_definitions(Soloud PUBLIC WITH_ALSA=1)
 elseif(APPLE)
     target_compile_definitions(Soloud PUBLIC WITH_COREAUDIO=1)
+    target_link_libraries(Soloud "-framework CoreFoundation")
+    target_link_libraries(Soloud "-framework CoreAudio")
+    target_link_libraries(Soloud "-framework AudioToolbox")
 endif()
