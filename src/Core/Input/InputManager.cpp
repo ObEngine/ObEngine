@@ -1,3 +1,5 @@
+#include <set>
+
 #include <Input/InputManager.hpp>
 #include <Input/KeyList.hpp>
 #include <Triggers/TriggerDatabase.hpp>
@@ -196,14 +198,18 @@ namespace obe::Input
 
     std::vector<std::string> InputManager::getContexts()
     {
-        std::vector<std::string> allContexts;
+        std::set<std::string> allContexts;
+
         for (const auto& actionPtr : m_currentActions)
         {
-            if (const auto& action = actionPtr.lock())
+            if (auto action = actionPtr.lock())
             {
-                allContexts.push_back(action->getId());
+                for (const auto& context : action->getContexts())
+                {
+                    allContexts.emplace(context);
+                }
             }
         }
-        return allContexts;
+        return std::vector(allContexts.begin(), allContexts.end());
     }
 } // namespace obe::Input

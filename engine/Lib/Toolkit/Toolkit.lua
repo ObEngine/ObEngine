@@ -54,7 +54,7 @@ function excludeNonMatchingWords(baseWord, matchList)
     return newMatchList;
 end
 
--- We get the biggest common root of a word 
+-- We get the biggest common root of a word
 -- Biggest common root of "res" in {"reset", "reselling", "reservations"} is "rese"
 function getBiggestCommonRoot(baseWord, completionWords)
     local completed = (#completionWords > 0);
@@ -142,7 +142,7 @@ function getHelp(arg)
         local command = splitCommandAndArgs(arg);
         if ToolkitFunctions[command.name] then
             local node = reachNode(command.name, {
-                id = "{root}", 
+                id = "{root}",
                 children = ToolkitFunctions[command.name].Routes
             }, command.args);
             return getHelp(node.children);
@@ -170,7 +170,7 @@ end
 function buildCommandExecution(func, args)
     local autocomplete = {
         value = {
-            func = function() 
+            func = function()
                 print("Called autocomplete");
             end
         }
@@ -184,7 +184,7 @@ function buildCommandExecution(func, args)
     for _, arg in pairs(argList) do
         table.insert(callArgs, args[arg].value);
     end
-    local exec = coroutine.create(function() 
+    local exec = coroutine.create(function()
         local subroutine = coroutine.create(function()
             func(ArgMirror.Unpack(callArgs));
         end);
@@ -196,9 +196,9 @@ function buildCommandExecution(func, args)
             sendBuffer = nil;
             if wakeType == "input" then
                 local ok, msg = coroutine.resume(subroutine, input);
-                if not ok then 
-                    error(msg); 
-                else 
+                if not ok then
+                    error(msg);
+                else
                     sendBuffer = msg;
                 end
             elseif wakeType == "autocomplete" then
@@ -293,12 +293,12 @@ function autocompleteArgs(command, query)
                         -- If the part of the last argument matches the beginning of the current completion
                         if start ~= nil and content:sub(1, string.len(start)) == start then
                             -- We insert it into suggestions
-                            table.insert(arglist, { 
+                            table.insert(arglist, {
                                 children = {
-                                    { 
-                                        type = "Help", 
+                                    {
+                                        type = "Help",
                                         help = "Argument suggestion for <" .. id .. "> parameter"
-                                        .. "\n            (" .. getHelp(arg.children) .. ")" 
+                                        .. "\n            (" .. getHelp(arg.children) .. ")"
                                     }
                                 },
                                 type = "Node",
@@ -306,12 +306,12 @@ function autocompleteArgs(command, query)
                             });
                         elseif start == nil then
                             -- If the current argument is empty, we can insert any completion
-                            table.insert(arglist, { 
+                            table.insert(arglist, {
                                 children = {
-                                    { 
-                                        type = "Help", 
+                                    {
+                                        type = "Help",
                                         help = "Argument suggestion for <" .. id .. "> parameter"
-                                        .. "\n            (" .. getHelp(arg.children) .. ")" 
+                                        .. "\n            (" .. getHelp(arg.children) .. ")"
                                     }
                                 },
                                 type = "Node",
@@ -325,14 +325,16 @@ function autocompleteArgs(command, query)
                     if getHelp(arg.children) ~= "" then
                         defaultHelp = getHelp(arg.children);
                     end
-                    table.insert({ 
-                        children = {
-                            { 
-                                type = "Help", 
-                                help = defaultHelp 
-                            }
-                        },
-                        name = "<" .. id .. ">"
+                    table.insert(
+                        arglist,
+                        {
+                            children = {
+                                {
+                                    type = "Help",
+                                    help = defaultHelp
+                                }
+                            },
+                            name = "<" .. id .. ">"
                     });
                 end
             end
@@ -619,10 +621,10 @@ function reachCommand(command, branch, args, idargs)
                     -- We store the Argument that will be used
                     recurseIn = content;
                     -- We also store it as an identified argument
-                    identifiedArgs[id] = { 
-                        index = Table.getSize(identifiedArgs), 
+                    identifiedArgs[id] = {
+                        index = Table.getSize(identifiedArgs),
                         type = "Argument",
-                        argType = content.argType 
+                        argType = content.argType
                     };
                     break;
                 end
@@ -691,7 +693,7 @@ function evaluate(input)
             -- We try to retrieve the function to call from command name
             -- We also retrieve the command excepted arguments (name, index and type (Node / Argument))
             local callFunction, identifiedArgs = reachCommand(command.name, {
-                id = "{root}", 
+                id = "{root}",
                 children = ToolkitFunctions[command.name].Routes
             }, command.args);
             -- If the function to call has been found and arguments has been identified
@@ -713,13 +715,12 @@ function evaluate(input)
                 end
             end
         else
-            -- Command not found, we display an error 
+            -- Command not found, we display an error
             Color.print({
                 {text = "Command '", color = Style.Error},
                 {text = command.name, color = Style.Command},
                 {text = "' not found.", color = Style.Error}
             }, 2);
-            
         end
     else
         coroutine.resume(currentExecution, "input", input);

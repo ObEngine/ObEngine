@@ -13,9 +13,9 @@ local Quests = {
             Color.print("Soo, let's imagine you have three rooms in front of you");
             Color.print("The first one is blue, the other one is red, the last one is green");
             Color.print("Which one do you choose ?");
-            autocomplete.func = TM.completions { 
-                {"blue", "The nice cyan-looking room"}, 
-                {"red", "The edgy crimson room"}, 
+            autocomplete.func = TM.completions {
+                {"blue", "The nice cyan-looking room"},
+                {"red", "The edgy crimson room"},
                 {"green", "Green, because you like nature and all that stuff" }
             };
             ::askcolor::
@@ -57,10 +57,6 @@ function QuestFunctions.list()
             {text = quest.description, color = Style.Help}
         }, 2);
     end
-end
-
-function QuestFunctions.create(questName)
-
 end
 
 function QuestFunctions.start(autocomplete, questName)
