@@ -210,6 +210,6 @@ namespace obe::Input
                 }
             }
         }
-        return std::vector(allContexts.begin(), allContexts.end());
+        return std::vector<std::string>(allContexts.begin(), allContexts.end());
     }
 } // namespace obe::Input
