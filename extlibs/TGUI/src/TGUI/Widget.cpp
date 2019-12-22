@@ -4,12 +4,11 @@
 // Copyright (C) 2012-2019 Bruno Van de Velde (vdv_b@tgui.eu)
 //
 // This software is provided 'as-is', without any express or implied warranty.
-// In no event will the authors be held liable for any damages arising from the
-// use of this software.
+// In no event will the authors be held liable for any damages arising from the use of this software.
 //
 // Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
 //
 // 1. The origin of this software must not be misrepresented;
 //    you must not claim that you wrote the original software.
@@ -23,13 +22,14 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Err.hpp>
-#include <TGUI/Animation.hpp>
-#include <TGUI/Container.hpp>
-#include <TGUI/Loading/WidgetFactory.hpp>
+
 #include <TGUI/ToolTip.hpp>
+#include <TGUI/Container.hpp>
+#include <TGUI/Animation.hpp>
 #include <TGUI/Vector2f.hpp>
+#include <TGUI/Loading/WidgetFactory.hpp>
+#include <SFML/System/Err.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,28 +39,18 @@ namespace tgui
 
     namespace
     {
-        void finishExistingConflictingAnimations(
-            std::vector<std::shared_ptr<priv::Animation>>& animations,
-            ShowAnimationType type)
+        void finishExistingConflictingAnimations(std::vector<std::shared_ptr<priv::Animation>>& animations, ShowAnimationType type)
         {
-            // Only one animation of each type can be played at the same type.
-            // If e.g. a fade animation was already in progress when starting a
-            // new one, the old animation is finished immediately. Different
-            // types of animations (e.g. fading and moving) can occur at the
-            // same time.
+            // Only one animation of each type can be played at the same type. If e.g. a fade animation was already in progress
+            // when starting a new one, the old animation is finished immediately.
+            // Different types of animations (e.g. fading and moving) can occur at the same time.
             auto animIt = animations.begin();
             while (animIt != animations.end())
             {
                 auto& animation = *animIt;
-                if (((type == ShowAnimationType::Fade)
-                        && (animation->getType()
-                            == priv::Animation::Type::Fade))
-                    || ((type == ShowAnimationType::Scale)
-                        && (animation->getType()
-                            == priv::Animation::Type::Resize))
-                    || ((type != ShowAnimationType::Fade)
-                        && (animation->getType()
-                            == priv::Animation::Type::Move)))
+                if (((type == ShowAnimationType::Fade) && (animation->getType() == priv::Animation::Type::Fade))
+                 || ((type == ShowAnimationType::Scale) && (animation->getType() == priv::Animation::Type::Resize))
+                 || ((type != ShowAnimationType::Fade) && (animation->getType() == priv::Animation::Type::Move)))
                 {
                     animation->finish();
                     animIt = animations.erase(animIt);
@@ -75,19 +65,16 @@ namespace tgui
         static Layout2d parseLayout(std::string str)
         {
             if (str.empty())
-                throw Exception { "Failed to parse layout '" + str
-                    + "'. String was empty." };
+                throw Exception{"Failed to parse layout '" + str + "'. String was empty."};
 
             // Remove the brackets around the value
-            if (((str.front() == '(') && (str.back() == ')'))
-                || ((str.front() == '{') && (str.back() == '}')))
+            if (((str.front() == '(') && (str.back() == ')')) || ((str.front() == '{') && (str.back() == '}')))
                 str = str.substr(1, str.length() - 2);
 
             if (str.empty())
-                return { 0, 0 };
+                return {0, 0};
 
-            // Find the comma that splits the x and y layouts, taking into
-            // account that these layouts may contain commas too
+            // Find the comma that splits the x and y layouts, taking into account that these layouts may contain commas too
             unsigned int bracketCount = 0;
             auto commaOrBracketPos = str.find_first_of(",()");
             decltype(commaOrBracketPos) commaPos = 0;
@@ -98,8 +85,7 @@ namespace tgui
                 else if (str[commaOrBracketPos] == ')')
                 {
                     if (bracketCount == 0)
-                        throw Exception { "Failed to parse layout '" + str
-                            + "'. Brackets didn't match." };
+                        throw Exception{"Failed to parse layout '" + str + "'. Brackets didn't match."};
 
                     bracketCount--;
                 }
@@ -109,22 +95,19 @@ namespace tgui
                         commaPos = commaOrBracketPos;
                 }
 
-                commaOrBracketPos
-                    = str.find_first_of(",()", commaOrBracketPos + 1);
+                commaOrBracketPos = str.find_first_of(",()", commaOrBracketPos + 1);
             }
 
             // Remove quotes around the values
             std::string x = trim(str.substr(0, commaPos));
-            if ((x.size() >= 2)
-                && ((x[0] == '"') && (x[x.length() - 1] == '"')))
-                x = x.substr(1, x.length() - 2);
+            if ((x.size() >= 2) && ((x[0] == '"') && (x[x.length()-1] == '"')))
+                x = x.substr(1, x.length()-2);
 
             std::string y = trim(str.substr(commaPos + 1));
-            if ((y.size() >= 2)
-                && ((y[0] == '"') && (y[y.length() - 1] == '"')))
-                y = y.substr(1, y.length() - 2);
+            if ((y.size() >= 2) && ((y[0] == '"') && (y[y.length()-1] == '"')))
+                y = y.substr(1, y.length()-2);
 
-            return { x, y };
+            return {x, y};
         }
     }
 
@@ -152,76 +135,68 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Widget::Widget(const Widget& other)
-        : SignalWidgetBase { other }
-        , enable_shared_from_this<Widget> { other }
-        , m_type { other.m_type }
-        , m_position { other.m_position }
-        , m_size { other.m_size }
-        , m_boundPositionLayouts {}
-        , m_boundSizeLayouts {}
-        , m_enabled { other.m_enabled }
-        , m_visible { other.m_visible }
-        , m_parent { nullptr }
-        , m_draggableWidget { other.m_draggableWidget }
-        , m_containerWidget { other.m_containerWidget }
-        , m_toolTip { other.m_toolTip ? other.m_toolTip->clone() : nullptr }
-        , m_renderer { other.m_renderer }
-        , m_showAnimations { other.m_showAnimations }
-        , m_fontCached { other.m_fontCached }
-        , m_opacityCached { other.m_opacityCached }
+    Widget::Widget(const Widget& other) :
+        SignalWidgetBase               {other},
+        enable_shared_from_this<Widget>{other},
+        m_type                         {other.m_type},
+        m_position                     {other.m_position},
+        m_size                         {other.m_size},
+        m_boundPositionLayouts         {},
+        m_boundSizeLayouts             {},
+        m_enabled                      {other.m_enabled},
+        m_visible                      {other.m_visible},
+        m_parent                       {nullptr},
+        m_draggableWidget              {other.m_draggableWidget},
+        m_containerWidget              {other.m_containerWidget},
+        m_toolTip                      {other.m_toolTip ? other.m_toolTip->clone() : nullptr},
+        m_renderer                     {other.m_renderer},
+        m_showAnimations               {other.m_showAnimations},
+        m_fontCached                   {other.m_fontCached},
+        m_opacityCached                {other.m_opacityCached}
     {
-        m_position.x.connectWidget(
-            this, true, [this] { setPosition(getPositionLayout()); });
-        m_position.y.connectWidget(
-            this, false, [this] { setPosition(getPositionLayout()); });
-        m_size.x.connectWidget(
-            this, true, [this] { setSize(getSizeLayout()); });
-        m_size.y.connectWidget(
-            this, false, [this] { setSize(getSizeLayout()); });
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
         m_renderer->subscribe(this, m_rendererChangedCallback);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Widget::Widget(Widget&& other)
-        : SignalWidgetBase { std::move(other) }
-        , enable_shared_from_this<Widget> { std::move(other) }
-        , onPositionChange { std::move(other.onPositionChange) }
-        , onSizeChange { std::move(other.onSizeChange) }
-        , onFocus { std::move(other.onFocus) }
-        , onUnfocus { std::move(other.onUnfocus) }
-        , onMouseEnter { std::move(other.onMouseEnter) }
-        , onMouseLeave { std::move(other.onMouseLeave) }
-        , m_type { std::move(other.m_type) }
-        , m_position { std::move(other.m_position) }
-        , m_size { std::move(other.m_size) }
-        , m_boundPositionLayouts { std::move(other.m_boundPositionLayouts) }
-        , m_boundSizeLayouts { std::move(other.m_boundSizeLayouts) }
-        , m_enabled { std::move(other.m_enabled) }
-        , m_visible { std::move(other.m_visible) }
-        , m_parent { nullptr }
-        , m_mouseHover { std::move(other.m_mouseHover) }
-        , m_mouseDown { std::move(other.m_mouseDown) }
-        , m_focused { std::move(other.m_focused) }
-        , m_animationTimeElapsed { std::move(other.m_animationTimeElapsed) }
-        , m_draggableWidget { std::move(other.m_draggableWidget) }
-        , m_containerWidget { std::move(other.m_containerWidget) }
-        , m_toolTip { std::move(other.m_toolTip) }
-        , m_renderer { other.m_renderer }
-        , m_showAnimations { std::move(other.m_showAnimations) }
-        , m_fontCached { std::move(other.m_fontCached) }
-        , m_opacityCached { std::move(other.m_opacityCached) }
+    Widget::Widget(Widget&& other) :
+        SignalWidgetBase               {std::move(other)},
+        enable_shared_from_this<Widget>{std::move(other)},
+        onPositionChange               {std::move(other.onPositionChange)},
+        onSizeChange                   {std::move(other.onSizeChange)},
+        onFocus                        {std::move(other.onFocus)},
+        onUnfocus                      {std::move(other.onUnfocus)},
+        onMouseEnter                   {std::move(other.onMouseEnter)},
+        onMouseLeave                   {std::move(other.onMouseLeave)},
+        m_type                         {std::move(other.m_type)},
+        m_position                     {std::move(other.m_position)},
+        m_size                         {std::move(other.m_size)},
+        m_boundPositionLayouts         {std::move(other.m_boundPositionLayouts)},
+        m_boundSizeLayouts             {std::move(other.m_boundSizeLayouts)},
+        m_enabled                      {std::move(other.m_enabled)},
+        m_visible                      {std::move(other.m_visible)},
+        m_parent                       {nullptr},
+        m_mouseHover                   {std::move(other.m_mouseHover)},
+        m_mouseDown                    {std::move(other.m_mouseDown)},
+        m_focused                      {std::move(other.m_focused)},
+        m_animationTimeElapsed         {std::move(other.m_animationTimeElapsed)},
+        m_draggableWidget              {std::move(other.m_draggableWidget)},
+        m_containerWidget              {std::move(other.m_containerWidget)},
+        m_toolTip                      {std::move(other.m_toolTip)},
+        m_renderer                     {other.m_renderer},
+        m_showAnimations               {std::move(other.m_showAnimations)},
+        m_fontCached                   {std::move(other.m_fontCached)},
+        m_opacityCached                {std::move(other.m_opacityCached)}
     {
-        m_position.x.connectWidget(
-            this, true, [this] { setPosition(getPositionLayout()); });
-        m_position.y.connectWidget(
-            this, false, [this] { setPosition(getPositionLayout()); });
-        m_size.x.connectWidget(
-            this, true, [this] { setSize(getSizeLayout()); });
-        m_size.y.connectWidget(
-            this, false, [this] { setSize(getSizeLayout()); });
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
         other.m_renderer->unsubscribe(&other);
         m_renderer->subscribe(this, m_rendererChangedCallback);
@@ -247,34 +222,30 @@ namespace tgui
             onMouseEnter.disconnectAll();
             onMouseLeave.disconnectAll();
 
-            m_type = other.m_type;
-            m_position = other.m_position;
-            m_size = other.m_size;
+            m_type                 = other.m_type;
+            m_position             = other.m_position;
+            m_size                 = other.m_size;
             m_boundPositionLayouts = {};
-            m_boundSizeLayouts = {};
-            m_enabled = other.m_enabled;
-            m_visible = other.m_visible;
-            m_parent = nullptr;
-            m_mouseHover = false;
-            m_mouseDown = false;
-            m_focused = false;
+            m_boundSizeLayouts     = {};
+            m_enabled              = other.m_enabled;
+            m_visible              = other.m_visible;
+            m_parent               = nullptr;
+            m_mouseHover           = false;
+            m_mouseDown            = false;
+            m_focused              = false;
             m_animationTimeElapsed = {};
-            m_draggableWidget = other.m_draggableWidget;
-            m_containerWidget = other.m_containerWidget;
-            m_toolTip = other.m_toolTip ? other.m_toolTip->clone() : nullptr;
-            m_renderer = other.m_renderer;
-            m_showAnimations = {};
-            m_fontCached = other.m_fontCached;
-            m_opacityCached = other.m_opacityCached;
+            m_draggableWidget      = other.m_draggableWidget;
+            m_containerWidget      = other.m_containerWidget;
+            m_toolTip              = other.m_toolTip ? other.m_toolTip->clone() : nullptr;
+            m_renderer             = other.m_renderer;
+            m_showAnimations       = {};
+            m_fontCached           = other.m_fontCached;
+            m_opacityCached        = other.m_opacityCached;
 
-            m_position.x.connectWidget(
-                this, true, [this] { setPosition(getPositionLayout()); });
-            m_position.y.connectWidget(
-                this, false, [this] { setPosition(getPositionLayout()); });
-            m_size.x.connectWidget(
-                this, true, [this] { setSize(getSizeLayout()); });
-            m_size.y.connectWidget(
-                this, false, [this] { setSize(getSizeLayout()); });
+            m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+            m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+            m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+            m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
             m_renderer->subscribe(this, m_rendererChangedCallback);
         }
@@ -294,40 +265,36 @@ namespace tgui
             SignalWidgetBase::operator=(std::move(other));
             enable_shared_from_this::operator=(std::move(other));
 
-            onPositionChange = std::move(other.onPositionChange);
-            onSizeChange = std::move(other.onSizeChange);
-            onFocus = std::move(other.onFocus);
-            onUnfocus = std::move(other.onUnfocus);
-            onMouseEnter = std::move(other.onMouseEnter);
-            onMouseLeave = std::move(other.onMouseLeave);
-            m_type = std::move(other.m_type);
-            m_position = std::move(other.m_position);
-            m_size = std::move(other.m_size);
+            onPositionChange       = std::move(other.onPositionChange);
+            onSizeChange           = std::move(other.onSizeChange);
+            onFocus                = std::move(other.onFocus);
+            onUnfocus              = std::move(other.onUnfocus);
+            onMouseEnter           = std::move(other.onMouseEnter);
+            onMouseLeave           = std::move(other.onMouseLeave);
+            m_type                 = std::move(other.m_type);
+            m_position             = std::move(other.m_position);
+            m_size                 = std::move(other.m_size);
             m_boundPositionLayouts = std::move(other.m_boundPositionLayouts);
-            m_boundSizeLayouts = std::move(other.m_boundSizeLayouts);
-            m_enabled = std::move(other.m_enabled);
-            m_visible = std::move(other.m_visible);
-            m_parent = nullptr;
-            m_mouseHover = std::move(other.m_mouseHover);
-            m_mouseDown = std::move(other.m_mouseDown);
-            m_focused = std::move(other.m_focused);
+            m_boundSizeLayouts     = std::move(other.m_boundSizeLayouts);
+            m_enabled              = std::move(other.m_enabled);
+            m_visible              = std::move(other.m_visible);
+            m_parent               = nullptr;
+            m_mouseHover           = std::move(other.m_mouseHover);
+            m_mouseDown            = std::move(other.m_mouseDown);
+            m_focused              = std::move(other.m_focused);
             m_animationTimeElapsed = std::move(other.m_animationTimeElapsed);
-            m_draggableWidget = std::move(other.m_draggableWidget);
-            m_containerWidget = std::move(other.m_containerWidget);
-            m_toolTip = std::move(other.m_toolTip);
-            m_renderer = std::move(other.m_renderer);
-            m_showAnimations = std::move(other.m_showAnimations);
-            m_fontCached = std::move(other.m_fontCached);
-            m_opacityCached = std::move(other.m_opacityCached);
+            m_draggableWidget      = std::move(other.m_draggableWidget);
+            m_containerWidget      = std::move(other.m_containerWidget);
+            m_toolTip              = std::move(other.m_toolTip);
+            m_renderer             = std::move(other.m_renderer);
+            m_showAnimations       = std::move(other.m_showAnimations);
+            m_fontCached           = std::move(other.m_fontCached);
+            m_opacityCached        = std::move(other.m_opacityCached);
 
-            m_position.x.connectWidget(
-                this, true, [this] { setPosition(getPositionLayout()); });
-            m_position.y.connectWidget(
-                this, false, [this] { setPosition(getPositionLayout()); });
-            m_size.x.connectWidget(
-                this, true, [this] { setSize(getSizeLayout()); });
-            m_size.y.connectWidget(
-                this, false, [this] { setSize(getSizeLayout()); });
+            m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+            m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+            m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+            m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
             m_renderer->subscribe(this, m_rendererChangedCallback);
 
@@ -352,17 +319,14 @@ namespace tgui
         m_renderer->subscribe(this, m_rendererChangedCallback);
         rendererData->shared = true;
 
-        // Tell the widget about all the updated properties, both new ones and
-        // old ones that were now reset to their default value
+        // Tell the widget about all the updated properties, both new ones and old ones that were now reset to their default value
         auto oldIt = oldData->propertyValuePairs.begin();
         auto newIt = rendererData->propertyValuePairs.begin();
-        while (oldIt != oldData->propertyValuePairs.end()
-            && newIt != rendererData->propertyValuePairs.end())
+        while (oldIt != oldData->propertyValuePairs.end() && newIt != rendererData->propertyValuePairs.end())
         {
             if (oldIt->first < newIt->first)
             {
-                // Update values that no longer exist in the new renderer and
-                // are now reset to the default value
+                // Update values that no longer exist in the new renderer and are now reset to the default value
                 rendererChanged(oldIt->first);
                 ++oldIt;
             }
@@ -396,8 +360,7 @@ namespace tgui
 
     const WidgetRenderer* Widget::getSharedRenderer() const
     {
-        // You should not be allowed to call setters on the renderer when the
-        // widget is const
+        // You should not be allowed to call setters on the renderer when the widget is const
         return m_renderer.get();
     }
 
@@ -420,8 +383,7 @@ namespace tgui
             m_renderer->getData()->shared = false;
         }
 
-        // You should not be allowed to call setters on the renderer when the
-        // widget is const
+        // You should not be allowed to call setters on the renderer when the widget is const
         return m_renderer.get();
     }
 
@@ -445,10 +407,8 @@ namespace tgui
     void Widget::setPosition(const Layout2d& position)
     {
         m_position = position;
-        m_position.x.connectWidget(
-            this, true, [this] { setPosition(getPositionLayout()); });
-        m_position.y.connectWidget(
-            this, false, [this] { setPosition(getPositionLayout()); });
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
 
         if (getPosition() != m_prevPosition)
         {
@@ -465,10 +425,8 @@ namespace tgui
     void Widget::setSize(const Layout2d& size)
     {
         m_size = size;
-        m_size.x.connectWidget(
-            this, true, [this] { setSize(getSizeLayout()); });
-        m_size.y.connectWidget(
-            this, false, [this] { setSize(getSizeLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
 
         if (getSize() != m_prevSize)
         {
@@ -492,8 +450,7 @@ namespace tgui
     Vector2f Widget::getAbsolutePosition() const
     {
         if (m_parent)
-            return m_parent->getAbsolutePosition()
-                + m_parent->getChildWidgetsOffset() + getPosition();
+            return m_parent->getAbsolutePosition() + m_parent->getChildWidgetsOffset() + getPosition();
         else
             return getPosition();
     }
@@ -502,7 +459,7 @@ namespace tgui
 
     Vector2f Widget::getWidgetOffset() const
     {
-        return Vector2f { 0, 0 };
+        return Vector2f{0, 0};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -511,124 +468,87 @@ namespace tgui
     {
         setVisible(true);
 
-        // We store the state the widget is currently in. In the event another
-        // animation was already playing, we should try to use the current state
-        // to start our animation at, but this is not the state that the widget
-        // should end at. We must get this state BEFORE finishing the previous
-        // animation which is done by finishExistingConflictingAnimations.
+        // We store the state the widget is currently in. In the event another animation was already playing, we should try to
+        // use the current state to start our animation at, but this is not the state that the widget should end at. We must
+        // get this state BEFORE finishing the previous animation which is done by finishExistingConflictingAnimations.
         const float startOpacity = getInheritedOpacity();
-        // const Vector2f startPosition = getPosition();
-        // const Vector2f startSize = getSize();
+        //const Vector2f startPosition = getPosition();
+        //const Vector2f startSize = getSize();
 
         finishExistingConflictingAnimations(m_showAnimations, type);
 
         switch (type)
         {
-        case ShowAnimationType::Fade:
-        {
-            // Start from fully transparent, unless a fade animation was already
-            // playing
-            float animStartOpacity = startOpacity;
-            const float endOpacity = getInheritedOpacity();
-            if (startOpacity == endOpacity)
+            case ShowAnimationType::Fade:
             {
-                setInheritedOpacity(0);
-                animStartOpacity = 0;
-            }
-            else // If fading was already in progress then adapt the duration to
-                 // finish the animation sooner
-                duration *= (startOpacity / endOpacity);
+                // Start from fully transparent, unless a fade animation was already playing
+                float animStartOpacity = startOpacity;
+                const float endOpacity = getInheritedOpacity();
+                if (startOpacity == endOpacity)
+                {
+                    setInheritedOpacity(0);
+                    animStartOpacity = 0;
+                }
+                else // If fading was already in progress then adapt the duration to finish the animation sooner
+                    duration *= (startOpacity / endOpacity);
 
-            m_showAnimations.push_back(std::make_shared<priv::FadeAnimation>(
-                shared_from_this(), animStartOpacity, endOpacity, duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    onAnimationFinished.emit(this, type, true);
-                }));
-            break;
-        }
-        case ShowAnimationType::Scale:
-        {
-            m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(
-                shared_from_this(), getPosition() + (getSize() / 2.f),
-                getPosition(), duration));
-            m_showAnimations.push_back(std::make_shared<priv::ResizeAnimation>(
-                shared_from_this(), Vector2f { 0, 0 }, getSize(), duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    onAnimationFinished.emit(this, type, true);
-                }));
-            setPosition(getPosition() + (getSize() / 2.f));
-            setSize(0, 0);
-            break;
-        }
-        case ShowAnimationType::SlideFromLeft:
-        {
-            m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(
-                shared_from_this(),
-                Vector2f { -getFullSize().x, getPosition().y }, getPosition(),
-                duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    onAnimationFinished.emit(this, type, true);
-                }));
-            setPosition({ -getFullSize().x, getPosition().y });
-            break;
-        }
-        case ShowAnimationType::SlideFromRight:
-        {
-            if (getParent())
-            {
-                m_showAnimations.push_back(
-                    std::make_shared<priv::MoveAnimation>(
-                        shared_from_this(),
-                        Vector2f {
-                            getParent()->getSize().x + getWidgetOffset().x,
-                            getPosition().y },
-                        getPosition(), duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                            onAnimationFinished.emit(this, type, true);
-                        }));
-                setPosition({ getParent()->getSize().x + getWidgetOffset().x,
-                    getPosition().y });
+                m_showAnimations.push_back(std::make_shared<priv::FadeAnimation>(shared_from_this(), animStartOpacity, endOpacity, duration,
+                                                                                 TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                break;
             }
-            else
+            case ShowAnimationType::Scale:
             {
-                TGUI_PRINT_WARNING("showWithEffect(SlideFromRight) does not "
-                                   "work before widget has a parent.");
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), getPosition() + (getSize() / 2.f), getPosition(), duration));
+                m_showAnimations.push_back(std::make_shared<priv::ResizeAnimation>(shared_from_this(), Vector2f{0, 0}, getSize(), duration,
+                                                                                   TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                setPosition(getPosition() + (getSize() / 2.f));
+                setSize(0, 0);
+                break;
             }
+            case ShowAnimationType::SlideFromLeft:
+            {
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), Vector2f{-getFullSize().x, getPosition().y}, getPosition(), duration,
+                                                                                 TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                setPosition({-getFullSize().x, getPosition().y});
+                break;
+            }
+            case ShowAnimationType::SlideFromRight:
+            {
+                if (getParent())
+                {
+                    m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), Vector2f{getParent()->getSize().x + getWidgetOffset().x, getPosition().y}, getPosition(), duration,
+                                                                                     TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                    setPosition({getParent()->getSize().x + getWidgetOffset().x, getPosition().y});
+                }
+                else
+                {
+                    TGUI_PRINT_WARNING("showWithEffect(SlideFromRight) does not work before widget has a parent.");
+                }
 
-            break;
-        }
-        case ShowAnimationType::SlideFromTop:
-        {
-            m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(
-                shared_from_this(),
-                Vector2f { getPosition().x, -getFullSize().y }, getPosition(),
-                duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    onAnimationFinished.emit(this, type, true);
-                }));
-            setPosition({ getPosition().x, -getFullSize().y });
-            break;
-        }
-        case ShowAnimationType::SlideFromBottom:
-        {
-            if (getParent())
-            {
-                m_showAnimations.push_back(
-                    std::make_shared<priv::MoveAnimation>(
-                        shared_from_this(),
-                        Vector2f { getPosition().x,
-                            getParent()->getSize().y + getWidgetOffset().y },
-                        getPosition(), duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                            onAnimationFinished.emit(this, type, true);
-                        }));
-                setPosition({ getPosition().x,
-                    getParent()->getSize().y + getWidgetOffset().y });
+                break;
             }
-            else
+            case ShowAnimationType::SlideFromTop:
             {
-                TGUI_PRINT_WARNING("showWithEffect(SlideFromBottom) does not "
-                                   "work before widget has a parent.");
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), Vector2f{getPosition().x, -getFullSize().y}, getPosition(), duration,
+                                                                                 TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                setPosition({getPosition().x, -getFullSize().y});
+                break;
             }
+            case ShowAnimationType::SlideFromBottom:
+            {
+                if (getParent())
+                {
+                    m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), Vector2f{getPosition().x, getParent()->getSize().y + getWidgetOffset().y}, getPosition(), duration,
+                                                                                     TGUI_LAMBDA_CAPTURE_EQ_THIS{onAnimationFinished.emit(this, type, true); }));
+                    setPosition({getPosition().x, getParent()->getSize().y + getWidgetOffset().y});
+                }
+                else
+                {
+                    TGUI_PRINT_WARNING("showWithEffect(SlideFromBottom) does not work before widget has a parent.");
+                }
 
-            break;
-        }
+                break;
+            }
         }
     }
 
@@ -636,14 +556,12 @@ namespace tgui
 
     void Widget::hideWithEffect(ShowAnimationType type, sf::Time duration)
     {
-        // We store the state the widget is currently in. In the event another
-        // animation was already playing, we should try to use the current state
-        // to start our animation at, but this is not the state that the widget
-        // should end at. We must get this state BEFORE finishing the previous
-        // animation which is done by finishExistingConflictingAnimations.
+        // We store the state the widget is currently in. In the event another animation was already playing, we should try to
+        // use the current state to start our animation at, but this is not the state that the widget should end at. We must
+        // get this state BEFORE finishing the previous animation which is done by finishExistingConflictingAnimations.
         const float startOpacity = getInheritedOpacity();
-        // const Vector2f startPosition = getPosition();
-        // const Vector2f startSize = getSize();
+        //const Vector2f startPosition = getPosition();
+        //const Vector2f startSize = getSize();
 
         finishExistingConflictingAnimations(m_showAnimations, type);
 
@@ -651,113 +569,66 @@ namespace tgui
 
         switch (type)
         {
-        case ShowAnimationType::Fade:
-        {
-            const float endOpacity
-                = getInheritedOpacity(); // Value to reset to after widget is
-                                         // hidden
-
-            // If fading was already in progress then adapt the duration to
-            // finish the animation sooner
-            if (startOpacity != endOpacity)
-                duration *= (startOpacity / endOpacity);
-
-            m_showAnimations.push_back(std::make_shared<priv::FadeAnimation>(
-                shared_from_this(), startOpacity, 0.f, duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    setVisible(false);
-                    setInheritedOpacity(endOpacity);
-                    onAnimationFinished.emit(this, type, false);
-                }));
-            break;
-        }
-        case ShowAnimationType::Scale:
-        {
-            const auto size = getSize();
-            m_showAnimations.push_back(
-                std::make_shared<priv::MoveAnimation>(shared_from_this(),
-                    position, position + (size / 2.f), duration));
-            m_showAnimations.push_back(std::make_shared<priv::ResizeAnimation>(
-                shared_from_this(), size, Vector2f { 0, 0 }, duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    setVisible(false);
-                    setPosition(position);
-                    setSize(size);
-                    onAnimationFinished.emit(this, type, false);
-                }));
-            break;
-        }
-        case ShowAnimationType::SlideToRight:
-        {
-            if (getParent())
+            case ShowAnimationType::Fade:
             {
-                m_showAnimations.push_back(
-                    std::make_shared<priv::MoveAnimation>(
-                        shared_from_this(), position,
-                        Vector2f {
-                            getParent()->getSize().x + getWidgetOffset().x,
-                            position.y },
-                        duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                            setVisible(false);
-                            setPosition(position);
-                            onAnimationFinished.emit(this, type, false);
-                        }));
-            }
-            else
-            {
-                TGUI_PRINT_WARNING("hideWithEffect(SlideToRight) does not work "
-                                   "before widget has a parent.");
-            }
+                const float endOpacity = getInheritedOpacity(); // Value to reset to after widget is hidden
 
-            break;
-        }
-        case ShowAnimationType::SlideToLeft:
-        {
-            m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(
-                shared_from_this(), position,
-                Vector2f { -getFullSize().x, position.y }, duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    setVisible(false);
-                    setPosition(position);
-                    onAnimationFinished.emit(this, type, false);
-                }));
-            break;
-        }
-        case ShowAnimationType::SlideToBottom:
-        {
-            if (getParent())
-            {
-                m_showAnimations.push_back(
-                    std::make_shared<priv::MoveAnimation>(
-                        shared_from_this(), position,
-                        Vector2f { position.x,
-                            getParent()->getSize().y + getWidgetOffset().y },
-                        duration, TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                            setVisible(false);
-                            setPosition(position);
-                            onAnimationFinished.emit(this, type, false);
-                        }));
-            }
-            else
-            {
-                TGUI_PRINT_WARNING("hideWithEffect(SlideToBottom) does not "
-                                   "work before widget has a parent.");
-            }
+                // If fading was already in progress then adapt the duration to finish the animation sooner
+                if (startOpacity != endOpacity)
+                    duration *= (startOpacity / endOpacity);
 
-            break;
-        }
-        case ShowAnimationType::SlideToTop:
-        {
-            m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(
-                shared_from_this(), position,
-                Vector2f { position.x, -getFullSize().y }, duration,
-                TGUI_LAMBDA_CAPTURE_EQ_THIS {
-                    setVisible(false);
-                    setPosition(position);
-                    onAnimationFinished.emit(this, type, false);
-                }));
-            break;
-        }
+                m_showAnimations.push_back(std::make_shared<priv::FadeAnimation>(shared_from_this(), startOpacity, 0.f, duration,
+                    TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setInheritedOpacity(endOpacity); onAnimationFinished.emit(this, type, false); }));
+                break;
+            }
+            case ShowAnimationType::Scale:
+            {
+                const auto size = getSize();
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), position, position + (size / 2.f), duration));
+                m_showAnimations.push_back(std::make_shared<priv::ResizeAnimation>(shared_from_this(), size, Vector2f{0, 0}, duration,
+                    TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setPosition(position); setSize(size); onAnimationFinished.emit(this, type, false); }));
+                break;
+            }
+            case ShowAnimationType::SlideToRight:
+            {
+                if (getParent())
+                {
+                    m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), position, Vector2f{getParent()->getSize().x + getWidgetOffset().x, position.y}, duration,
+                        TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setPosition(position); onAnimationFinished.emit(this, type, false); }));
+                }
+                else
+                {
+                    TGUI_PRINT_WARNING("hideWithEffect(SlideToRight) does not work before widget has a parent.");
+                }
+
+                break;
+            }
+            case ShowAnimationType::SlideToLeft:
+            {
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), position, Vector2f{-getFullSize().x, position.y}, duration,
+                    TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setPosition(position); onAnimationFinished.emit(this, type, false); }));
+                break;
+            }
+            case ShowAnimationType::SlideToBottom:
+            {
+                if (getParent())
+                {
+                    m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), position, Vector2f{position.x, getParent()->getSize().y + getWidgetOffset().y}, duration,
+                        TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setPosition(position); onAnimationFinished.emit(this, type, false); }));
+                }
+                else
+                {
+                    TGUI_PRINT_WARNING("hideWithEffect(SlideToBottom) does not work before widget has a parent.");
+                }
+
+                break;
+            }
+            case ShowAnimationType::SlideToTop:
+            {
+                m_showAnimations.push_back(std::make_shared<priv::MoveAnimation>(shared_from_this(), position, Vector2f{position.x, -getFullSize().y}, duration,
+                    TGUI_LAMBDA_CAPTURE_EQ_THIS{ setVisible(false); setPosition(position); onAnimationFinished.emit(this, type, false); }));
+                break;
+            }
         }
     }
 
@@ -785,8 +656,7 @@ namespace tgui
             setFocused(false);
         }
 
-        // Refresh widget opacity if there is a different value set for enabled
-        // and disabled widgets
+        // Refresh widget opacity if there is a different value set for enabled and disabled widgets
         if (getSharedRenderer()->getOpacityDisabled() != -1)
             rendererChanged("opacitydisabled");
     }
@@ -822,6 +692,13 @@ namespace tgui
     const std::string& Widget::getWidgetType() const
     {
         return m_type;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    bool Widget::isAnimationPlaying() const
+    {
+        return !m_showAnimations.empty();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -919,14 +796,10 @@ namespace tgui
         m_parent = parent;
 
         // Give the layouts another chance to find widgets to which it refers
-        m_position.x.connectWidget(
-            this, true, [this] { setPosition(getPositionLayout()); });
-        m_position.y.connectWidget(
-            this, false, [this] { setPosition(getPositionLayout()); });
-        m_size.x.connectWidget(
-            this, true, [this] { setSize(getSizeLayout()); });
-        m_size.y.connectWidget(
-            this, false, [this] { setSize(getSizeLayout()); });
+        m_position.x.connectWidget(this, true, [this]{ setPosition(getPositionLayout()); });
+        m_position.y.connectWidget(this, false, [this]{ setPosition(getPositionLayout()); });
+        m_size.x.connectWidget(this, true, [this]{ setSize(getSizeLayout()); });
+        m_size.y.connectWidget(this, false, [this]{ setSize(getSizeLayout()); });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1102,8 +975,7 @@ namespace tgui
         else if (signalName == toLower(onAnimationFinished.getName()))
             return onAnimationFinished;
 
-        throw Exception { "No signal exists with name '" + std::move(signalName)
-            + "'." };
+        throw Exception{"No signal exists with name '" + std::move(signalName) + "'."};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1113,11 +985,9 @@ namespace tgui
         if ((property == "opacity") || (property == "opacitydisabled"))
         {
             if (!m_enabled && (getSharedRenderer()->getOpacityDisabled() != -1))
-                m_opacityCached = getSharedRenderer()->getOpacityDisabled()
-                    * m_inheritedOpacity;
+                m_opacityCached = getSharedRenderer()->getOpacityDisabled() * m_inheritedOpacity;
             else
-                m_opacityCached
-                    = getSharedRenderer()->getOpacity() * m_inheritedOpacity;
+                m_opacityCached = getSharedRenderer()->getOpacity() * m_inheritedOpacity;
         }
         else if (property == "font")
         {
@@ -1130,29 +1000,15 @@ namespace tgui
         }
         else if (property == "transparenttexture")
         {
-            m_transparentTextureCached
-                = getSharedRenderer()->getTransparentTexture();
+            m_transparentTextureCached = getSharedRenderer()->getTransparentTexture();
         }
         else
-            throw Exception { "Could not set property '" + property
-                + "', widget of type '" + getWidgetType()
-                + "' does not has this property." };
+            throw Exception{"Could not set property '" + property + "', widget of type '" + getWidgetType() + "' does not has this property."};
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bool Widget::isVisible() const
-    { 
-        return m_visible;
-    }
-
-    Vector2f Widget::getSize() const
-    {
-        return m_size.getValue();
-    }
-
-    std::unique_ptr<DataIO::Node> Widget::save(
-        SavingRenderersMap& renderers) const
+    std::unique_ptr<DataIO::Node> Widget::save(SavingRenderersMap& renderers) const
     {
         sf::String widgetName;
         if (getParent())
@@ -1162,21 +1018,16 @@ namespace tgui
         if (widgetName.isEmpty())
             node->name = getWidgetType();
         else
-            node->name
-                = getWidgetType() + "." + Serializer::serialize(widgetName);
+            node->name = getWidgetType() + "." + Serializer::serialize(widgetName);
 
         if (!isVisible())
-            node->propertyValuePairs["Visible"]
-                = std::make_unique<DataIO::ValueNode>("false");
+            node->propertyValuePairs["Visible"] = std::make_unique<DataIO::ValueNode>("false");
         if (!isEnabled())
-            node->propertyValuePairs["Enabled"]
-                = std::make_unique<DataIO::ValueNode>("false");
-        if (getPosition() != Vector2f {})
-            node->propertyValuePairs["Position"]
-                = std::make_unique<DataIO::ValueNode>(m_position.toString());
-        if (getSize() != Vector2f {})
-            node->propertyValuePairs["Size"]
-                = std::make_unique<DataIO::ValueNode>(m_size.toString());
+            node->propertyValuePairs["Enabled"] = std::make_unique<DataIO::ValueNode>("false");
+        if (getPosition() != Vector2f{})
+            node->propertyValuePairs["Position"] = std::make_unique<DataIO::ValueNode>(m_position.toString());
+        if (getSize() != Vector2f{})
+            node->propertyValuePairs["Size"] = std::make_unique<DataIO::ValueNode>(m_size.toString());
 
         if (getToolTip() != nullptr)
         {
@@ -1186,13 +1037,8 @@ namespace tgui
             toolTipNode->name = "ToolTip";
             toolTipNode->children.emplace_back(std::move(toolTipWidgetNode));
 
-            toolTipNode->propertyValuePairs["InitialDelay"]
-                = std::make_unique<DataIO::ValueNode>(
-                    to_string(ToolTip::getInitialDelay().asSeconds()));
-            toolTipNode->propertyValuePairs["DistanceToMouse"]
-                = std::make_unique<DataIO::ValueNode>("("
-                    + to_string(ToolTip::getDistanceToMouse().x) + ","
-                    + to_string(ToolTip::getDistanceToMouse().y) + ")");
+            toolTipNode->propertyValuePairs["InitialDelay"] = std::make_unique<DataIO::ValueNode>(to_string(ToolTip::getInitialDelay().asSeconds()));
+            toolTipNode->propertyValuePairs["DistanceToMouse"] = std::make_unique<DataIO::ValueNode>("(" + to_string(ToolTip::getDistanceToMouse().x) + "," + to_string(ToolTip::getDistanceToMouse().y) + ")");
 
             node->children.emplace_back(std::move(toolTipNode));
         }
@@ -1200,46 +1046,33 @@ namespace tgui
         if (renderers.at(this).first)
             node->children.emplace_back(std::move(renderers.at(this).first));
         else
-            node->propertyValuePairs["renderer"]
-                = std::make_unique<DataIO::ValueNode>(
-                    "&" + renderers.at(this).second);
+            node->propertyValuePairs["renderer"] = std::make_unique<DataIO::ValueNode>("&" + renderers.at(this).second);
 
         return node;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void Widget::load(const std::unique_ptr<DataIO::Node>& node,
-        const LoadingRenderersMap& renderers)
+    void Widget::load(const std::unique_ptr<DataIO::Node>& node, const LoadingRenderersMap& renderers)
     {
         if (node->propertyValuePairs["visible"])
-            setVisible(Deserializer::deserialize(ObjectConverter::Type::Bool,
-                node->propertyValuePairs["visible"]->value)
-                           .getBool());
+            setVisible(Deserializer::deserialize(ObjectConverter::Type::Bool, node->propertyValuePairs["visible"]->value).getBool());
         if (node->propertyValuePairs["enabled"])
-            setEnabled(Deserializer::deserialize(ObjectConverter::Type::Bool,
-                node->propertyValuePairs["enabled"]->value)
-                           .getBool());
+            setEnabled(Deserializer::deserialize(ObjectConverter::Type::Bool, node->propertyValuePairs["enabled"]->value).getBool());
         if (node->propertyValuePairs["position"])
-            setPosition(
-                parseLayout(node->propertyValuePairs["position"]->value));
+            setPosition(parseLayout(node->propertyValuePairs["position"]->value));
         if (node->propertyValuePairs["size"])
             setSize(parseLayout(node->propertyValuePairs["size"]->value));
 
         if (node->propertyValuePairs["renderer"])
         {
-            const sf::String value
-                = node->propertyValuePairs["renderer"]->value;
+            const sf::String value = node->propertyValuePairs["renderer"]->value;
             if (value.isEmpty() || (value[0] != '&'))
-                throw Exception {
-                    "Expected reference to renderer, did not find '&' character"
-                };
+                throw Exception{"Expected reference to renderer, did not find '&' character"};
 
             const auto it = renderers.find(toLower(value.substring(1)));
             if (it == renderers.end())
-                throw Exception { "Widget refers to renderer with name '"
-                    + value.substring(1)
-                    + "', but no such renderer was found" };
+                throw Exception{"Widget refers to renderer with name '" + value.substring(1) + "', but no such renderer was found"};
 
             setRenderer(it->second);
         }
@@ -1251,30 +1084,23 @@ namespace tgui
                 for (const auto& pair : childNode->propertyValuePairs)
                 {
                     if (pair.first == "initialdelay")
-                        ToolTip::setInitialDelay(
-                            sf::seconds(strToFloat(pair.second->value)));
+                        ToolTip::setInitialDelay(sf::seconds(strToFloat(pair.second->value)));
 #ifndef TGUI_REMOVE_DEPRECATED_CODE
                     else if (pair.first == "timetodisplay")
-                        ToolTip::setInitialDelay(
-                            sf::seconds(strToFloat(pair.second->value)));
+                        ToolTip::setInitialDelay(sf::seconds(strToFloat(pair.second->value)));
 #endif
                     else if (pair.first == "distancetomouse")
-                        ToolTip::setDistanceToMouse(
-                            Vector2f { pair.second->value });
+                        ToolTip::setDistanceToMouse(Vector2f{pair.second->value});
                 }
 
                 if (!childNode->children.empty())
                 {
                     // There can only be one child in the tool tip section
                     if (childNode->children.size() > 1)
-                        throw Exception {
-                            "ToolTip section contained multiple children."
-                        };
+                        throw Exception{"ToolTip section contained multiple children."};
 
                     const auto& toolTipWidgetNode = childNode->children[0];
-                    const auto& constructor
-                        = WidgetFactory::getConstructFunction(
-                            toolTipWidgetNode->name);
+                    const auto& constructor = WidgetFactory::getConstructFunction(toolTipWidgetNode->name);
                     if (constructor)
                     {
                         Widget::Ptr toolTip = constructor();
@@ -1282,25 +1108,17 @@ namespace tgui
                         setToolTip(toolTip);
                     }
                     else
-                        throw Exception {
-                            "No construct function exists for widget type '"
-                            + toolTipWidgetNode->name + "'."
-                        };
+                        throw Exception{"No construct function exists for widget type '" + toolTipWidgetNode->name + "'."};
                 }
             }
             else if (toLower(childNode->name) == "renderer")
-                setRenderer(
-                    RendererData::createFromDataIONode(childNode.get()));
+                setRenderer(RendererData::createFromDataIONode(childNode.get()));
 
             /// TODO: Signals?
         }
-        node->children.erase(
-            std::remove_if(node->children.begin(), node->children.end(),
-                [](const std::unique_ptr<DataIO::Node>& child) {
-                    return (toLower(child->name) == "tooltip")
-                        || (toLower(child->name) == "renderer");
-                }),
-            node->children.end());
+        node->children.erase(std::remove_if(node->children.begin(), node->children.end(), [](const std::unique_ptr<DataIO::Node>& child){
+                return (toLower(child->name) == "tooltip") || (toLower(child->name) == "renderer");
+            }), node->children.end());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1329,9 +1147,11 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Widget::drawRectangleShape(sf::RenderTarget& target,
-        const sf::RenderStates& states, Vector2f size, Color color) const
+                                    const sf::RenderStates& states,
+                                    Vector2f size,
+                                    Color color) const
     {
-        sf::RectangleShape shape { size };
+        sf::RectangleShape shape{size};
 
         if (m_opacityCached < 1)
             shape.setFillColor(Color::calcColorOpacity(color, m_opacityCached));
@@ -1344,19 +1164,19 @@ namespace tgui
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void Widget::drawBorders(sf::RenderTarget& target,
-        const sf::RenderStates& states, const Borders& borders, Vector2f size,
-        Color borderColor) const
+                             const sf::RenderStates& states,
+                             const Borders& borders,
+                             Vector2f size,
+                             Color borderColor) const
     {
-        const Color color
-            = Color::calcColorOpacity(borderColor, m_opacityCached);
+        const Color color = Color::calcColorOpacity(borderColor, m_opacityCached);
 
         // If size is too small then draw entire size as border
-        if ((size.x <= borders.getLeft() + borders.getRight())
-            || (size.y <= borders.getTop() + borders.getBottom()))
+        if ((size.x <= borders.getLeft() + borders.getRight()) || (size.y <= borders.getTop() + borders.getBottom()))
         {
             sf::RectangleShape border;
             border.setFillColor(color);
-            border.setSize({ size.x, size.y });
+            border.setSize({size.x, size.y});
             target.draw(border, states);
         }
         else // Draw borders in the normal way
@@ -1371,19 +1191,20 @@ namespace tgui
             // |              | //
             // 2--------------4 //
             //////////////////////
-            const std::vector<sf::Vertex> vertices = { { { 0, 0 }, color },
-                { { borders.getLeft(), 0 }, color }, { { 0, size.y }, color },
-                { { borders.getLeft(), size.y - borders.getBottom() }, color },
-                { { size.x, size.y }, color },
-                { { size.x - borders.getRight(), size.y - borders.getBottom() },
-                    color },
-                { { size.x, 0 }, color },
-                { { size.x - borders.getRight(), borders.getTop() }, color },
-                { { borders.getLeft(), 0 }, color },
-                { { borders.getLeft(), borders.getTop() }, color } };
+            const std::vector<sf::Vertex> vertices = {
+                {{0, 0}, color},
+                {{borders.getLeft(), 0}, color},
+                {{0, size.y}, color},
+                {{borders.getLeft(), size.y - borders.getBottom()}, color},
+                {{size.x, size.y}, color},
+                {{size.x - borders.getRight(), size.y - borders.getBottom()}, color},
+                {{size.x, 0}, color},
+                {{size.x - borders.getRight(), borders.getTop()}, color},
+                {{borders.getLeft(), 0}, color},
+                {{borders.getLeft(), borders.getTop()}, color}
+            };
 
-            target.draw(vertices.data(), vertices.size(),
-                sf::PrimitiveType::TrianglesStrip, states);
+            target.draw(vertices.data(), vertices.size(), sf::PrimitiveType::TrianglesStrip, states);
         }
     }
 

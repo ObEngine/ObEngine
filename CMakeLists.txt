@@ -62,7 +62,7 @@ if (NOT DEFINED BUILD_DEV)
 endif()
 
 if (BUILD_DEV)
-    add_subdirectory(extlibs/TGUI)
+    add_subdirectory(extlibs/tgui)
     add_subdirectory(src/Dev)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()

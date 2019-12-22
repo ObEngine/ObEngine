@@ -60,7 +60,7 @@
 // Define that specifies the mininmum c++ support in both the TGUI code and user code.
 // This constant can be lower than the actual c++ standard version used to compile with,
 // as long as this constant is the same when compiling TGUI and when using the TGUI libs.
-#define TGUI_COMPILED_WITH_CPP_VER 17
+#define TGUI_COMPILED_WITH_CPP_VER 14
 
 // The signal system detects whether it can provide unbound parameters by checking the arguments of the function at runtime.
 // This comparion is made by checking the typeid of the parameters with the typeid of the value which the widget can transmit.

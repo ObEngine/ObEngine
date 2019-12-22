@@ -114,11 +114,6 @@ namespace tgui
             return {getSize().x + (getSize().x * m_textDistanceRatioCached) + m_text.getSize().x, std::max(getSize().y, m_text.getSize().y)};
     }
 
-    bool RadioButton::isChecked() const
-    {
-        return m_checked;
-    }
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Vector2f RadioButton::getWidgetOffset() const
