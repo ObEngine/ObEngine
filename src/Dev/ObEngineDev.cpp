@@ -29,6 +29,7 @@
 
 #include <soloud/soloud.h>
 #include <soloud/soloud_wav.h>
+#include <soloud/soloud_speech.h>
 
 void LoadErrors()
 {
@@ -45,6 +46,8 @@ void testSoloud()
 
     // Initialize SoLoud (automatic back-end selection)
     soloud.init();
+
+
 
     sample.load("test.wav"); // Load a wave file
     soloud.play(sample);     // Play it

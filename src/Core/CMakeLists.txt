@@ -2,8 +2,8 @@ project(ObEngineCore)
 
 include(group_files)
 
-file(GLOB_RECURSE OBE_HEADERS 
-    ${ObEngine_SOURCE_DIR}/include/Core/*.hpp 
+file(GLOB_RECURSE OBE_HEADERS
+    ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
 file(GLOB_RECURSE OBE_SOURCES ${ObEngine_SOURCE_DIR}/src/Core/*.cpp)
 
@@ -27,7 +27,8 @@ target_link_libraries(ObEngineCore dynamicLinker)
 target_link_libraries(ObEngineCore spdlog)
 target_link_libraries(ObEngineCore fmt)
 target_link_libraries(ObEngineCore kaguya)
-target_link_libraries(ObEngineCore sfml-graphics sfml-audio sfml-system sfml-network)
+target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
+target_link_libraries(ObEngineCore Soloud)
 
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
