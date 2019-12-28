@@ -248,6 +248,8 @@ namespace obe::Script
             if (animatorPath != "")
             {
                 m_objectAnimator->setPath(animatorPath);
+                if (m_hasLevelSprite)
+                    m_objectAnimator->setTarget(*m_objectLevelSprite);
                 m_objectAnimator->loadAnimator();
             }
             if (obj.at("Animator")

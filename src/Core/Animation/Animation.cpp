@@ -117,7 +117,7 @@ namespace obe::Animation
                 "<Animation> Loading Texture {0} in Animation {1}", textureName,
                 m_animationName);
             m_animationTextures.push_back(Graphics::ResourceManager::GetTexture(
-                path.add(textureName).toString()));
+                path.add(textureName).toString(), m_antiAliasing));
         }
         // Groups
         vili::ComplexNode& groups = animFile.at("Groups");
@@ -262,6 +262,16 @@ namespace obe::Animation
                 }
             }
         }
+    }
+
+    void Animation::setAntiAliasing(bool antiAliasing)
+    {
+        m_antiAliasing = antiAliasing;
+    }
+
+    bool Animation::getAntiAliasing()
+    {
+        return m_antiAliasing;
     }
 
     void Animation::reset()

@@ -85,6 +85,7 @@ namespace obe::Animation
         int m_loopAmount = 0;
         Transform::UnitVector m_offset;
         int m_priority = 0;
+        bool m_antiAliasing = false;
 
     public:
         /**
@@ -199,5 +200,8 @@ namespace obe::Animation
          * executes the AnimationCode)
          */
         void update();
+
+        void setAntiAliasing(bool antiAliasing);
+        bool getAntiAliasing();
     };
 } // namespace obe::Animation
