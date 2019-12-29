@@ -64,9 +64,9 @@ namespace obe::Script
     private:
         unsigned int m_envIndex;
         bool m_permanent = false;
-        std::unique_ptr<Animation::Animator> m_objectAnimator;
-        Graphics::LevelSprite* m_objectLevelSprite;
-        Collision::PolygonalCollider* m_objectCollider;
+        std::unique_ptr<Animation::Animator> m_animator;
+        Graphics::LevelSprite* m_sprite = nullptr;
+        Collision::PolygonalCollider* m_collider = nullptr;
         Triggers::TriggerGroupPtr m_localTriggers;
         Scene::SceneNode m_objectNode;
 
@@ -78,9 +78,6 @@ namespace obe::Script
         std::string m_type;
         std::string m_privateKey;
 
-        bool m_hasAnimator = false;
-        bool m_hasCollider = false;
-        bool m_hasLevelSprite = false;
         bool m_hasScriptEngine = false;
         bool m_active = false;
         bool m_canUpdate = true;

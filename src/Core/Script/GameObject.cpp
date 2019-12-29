@@ -240,50 +240,47 @@ namespace obe::Script
                 }
             }
         }
+        // LevelSprite
+        if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
+        {
+            m_sprite = world.createLevelSprite(m_id, false);
+            m_objectNode.addChild(m_sprite);
+            m_sprite->load(obj.at("LevelSprite"));
+            if (m_hasScriptEngine)
+                GAMEOBJECTENV["Object"]["LevelSprite"] = m_sprite;
+            world.reorganizeLayers();
+        }
         if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
         {
-            m_objectAnimator = std::make_unique<Animation::Animator>();
+            m_animator = std::make_unique<Animation::Animator>();
             const std::string animatorPath
                 = obj.at("Animator").getDataNode("path").get<std::string>();
+            if (m_sprite)
+                m_animator->setTarget(*m_sprite);
             if (animatorPath != "")
             {
-                m_objectAnimator->setPath(animatorPath);
-                if (m_hasLevelSprite)
-                    m_objectAnimator->setTarget(*m_objectLevelSprite);
-                m_objectAnimator->loadAnimator();
+                m_animator->setPath(animatorPath);
+                m_animator->loadAnimator();
             }
             if (obj.at("Animator")
                     .contains(vili::NodeType::DataNode, "default"))
             {
-                m_objectAnimator->setKey(obj.at("Animator")
-                                             .getDataNode("default")
-                                             .get<std::string>());
+                m_animator->setKey(obj.at("Animator")
+                                       .getDataNode("default")
+                                       .get<std::string>());
             }
             if (m_hasScriptEngine)
-                GAMEOBJECTENV["Object"]["Animation"] = m_objectAnimator.get();
-            m_hasAnimator = true;
+                GAMEOBJECTENV["Object"]["Animation"] = m_animator.get();
         }
         // Collider
         if (obj.contains(vili::NodeType::ComplexNode, "Collider"))
         {
-            m_objectCollider = world.createCollider(m_id, false);
-            m_objectNode.addChild(m_objectCollider);
-            m_objectCollider->load(obj.at("Collider"));
+            m_collider = world.createCollider(m_id, false);
+            m_objectNode.addChild(m_collider);
+            m_collider->load(obj.at("Collider"));
 
             if (m_hasScriptEngine)
-                GAMEOBJECTENV["Object"]["Collider"] = m_objectCollider;
-            m_hasCollider = true;
-        }
-        // LevelSprite
-        if (obj.contains(vili::NodeType::ComplexNode, "LevelSprite"))
-        {
-            m_objectLevelSprite = world.createLevelSprite(m_id, false);
-            m_objectNode.addChild(m_objectLevelSprite);
-            m_objectLevelSprite->load(obj.at("LevelSprite"));
-            if (m_hasScriptEngine)
-                GAMEOBJECTENV["Object"]["LevelSprite"] = m_objectLevelSprite;
-            m_hasLevelSprite = true;
-            world.reorganizeLayers();
+                GAMEOBJECTENV["Object"]["Collider"] = m_collider;
         }
     }
 
@@ -293,14 +290,13 @@ namespace obe::Script
         {
             if (m_active)
             {
-                if (m_hasAnimator)
+                if (m_animator)
                 {
-                    if (m_objectAnimator->getKey() != "")
-                        m_objectAnimator->update();
-                    if (m_hasLevelSprite)
+                    if (m_animator->getKey() != "")
+                        m_animator->update();
+                    if (m_sprite)
                     {
-                        m_objectLevelSprite->setTexture(
-                            m_objectAnimator->getTexture());
+                        m_sprite->setTexture(m_animator->getTexture());
                     }
                 }
             }
@@ -318,17 +314,17 @@ namespace obe::Script
 
     bool GameObject::doesHaveAnimator() const
     {
-        return m_hasAnimator;
+        return static_cast<bool>(m_animator);
     }
 
     bool GameObject::doesHaveCollider() const
     {
-        return m_hasCollider;
+        return static_cast<bool>(m_collider);
     }
 
     bool GameObject::doesHaveLevelSprite() const
     {
-        return m_hasLevelSprite;
+        return static_cast<bool>(m_sprite);
     }
 
     bool GameObject::doesHaveScriptEngine() const
@@ -348,8 +344,8 @@ namespace obe::Script
 
     Graphics::LevelSprite* GameObject::getLevelSprite()
     {
-        if (m_hasLevelSprite)
-            return m_objectLevelSprite;
+        if (m_sprite)
+            return m_sprite;
         throw aube::ErrorHandler::Raise(
             "ObEngine.Script.GameObject.NoLevelSprite", { { "id", m_id } });
     }
@@ -361,16 +357,16 @@ namespace obe::Script
 
     Collision::PolygonalCollider* GameObject::getCollider()
     {
-        if (m_hasCollider)
-            return m_objectCollider;
+        if (m_collider)
+            return m_collider;
         throw aube::ErrorHandler::Raise(
             "ObEngine.Script.GameObject.NoCollider", { { "id", m_id } });
     }
 
     Animation::Animator* GameObject::getAnimator()
     {
-        if (m_hasAnimator)
-            return m_objectAnimator.get();
+        if (m_animator)
+            return m_animator.get();
         throw aube::ErrorHandler::Raise(
             "ObEngine.Script.GameObject.NoAnimator", { { "id", m_id } });
     }

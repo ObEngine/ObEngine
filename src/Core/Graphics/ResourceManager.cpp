@@ -1,32 +1,26 @@
 #include <Graphics/ResourceManager.hpp>
+#include <System/Config.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Triggers/TriggerDatabase.hpp>
 
-
 namespace obe::Graphics
 {
-    /*std::unordered_map<std::pair<std::string, bool>, std::unique_ptr<sf::Texture>>
-        ResourceManager::m_textureDatabase;*/
-    std::unordered_map<std::string, pairTexture>
-        ResourceManager::m_textureDatabase;
-    std::unordered_map<std::string, std::unique_ptr<sf::Font>>
-        ResourceManager::m_fontDatabase;
-    sf::Texture ResourceManager::NullTexture;
+    std::unique_ptr<ResourceManager> ResourceManager::m_instance;
 
-    sf::Texture* ResourceManager::GetTexture(const std::string& path,
-                                             bool antiAliasing)
+    sf::Texture* ResourceManager::getTexture(
+        const std::string& path, bool antiAliasing)
     {
         if (m_textureDatabase.find(path) == m_textureDatabase.end()
             || (!m_textureDatabase[path].first && !antiAliasing)
             || (!m_textureDatabase[path].second && antiAliasing))
         {
-            std::unique_ptr<sf::Texture> tempTexture =
-                std::make_unique<sf::Texture>();
-            System::LoaderResult loadResult = System::Path(path).load(System::Loaders::textureLoader,
-                                    *tempTexture.get());
-            Debug::Log->debug(
-                "[ResourceManager] Loading <Texture> {} from {}", path, loadResult.path());
+            std::unique_ptr<sf::Texture> tempTexture
+                = std::make_unique<sf::Texture>();
+            System::LoaderResult loadResult = System::Path(path).load(
+                System::Loaders::textureLoader, *tempTexture.get());
+            Debug::Log->debug("[ResourceManager] Loading <Texture> {} from {}",
+                path, loadResult.path());
 
             if (tempTexture != nullptr)
             {
@@ -45,7 +39,7 @@ namespace obe::Graphics
             else
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Animation.RessourceManager.LoadTexture",
-                    {{"file", path}});
+                    { { "file", path } });
         }
         else
         {
@@ -58,42 +52,63 @@ namespace obe::Graphics
                 return m_textureDatabase[path].first.get();
             }
         }
-        
     }
 
-    void ResourceManager::Init()
+    sf::Texture* ResourceManager::getTexture(const std::string& path)
     {
+        return getTexture(path, defaultAntiAliasing);
+    }
+
+    ResourceManager::ResourceManager()
+    {
+        vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
+        if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
+        {
+            defaultAntiAliasing
+                = gameConfig.getDataNode("antiAliasing").get<bool>();
+            Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
+                defaultAntiAliasing);
+        }
         sf::Image nullImage;
         nullImage.create(100, 100, sf::Color::Transparent);
         for (unsigned int i = 0; i < nullImage.getSize().x; i++)
         {
             for (unsigned int j = 0; j < nullImage.getSize().y; j++)
             {
-                if (i == 0 || j == 0 || i == nullImage.getSize().x - 1 ||
-                    j == nullImage.getSize().y - 1 || i == j ||
-                    i == ((nullImage.getSize().x - 1) - j))
+                if (i == 0 || j == 0 || i == nullImage.getSize().x - 1
+                    || j == nullImage.getSize().y - 1 || i == j
+                    || i == ((nullImage.getSize().x - 1) - j))
                     nullImage.setPixel(i, j, sf::Color::Red);
             }
         }
         NullTexture.loadFromImage(nullImage);
     }
 
-    sf::Font* ResourceManager::GetFont(const std::string& path)
+    ResourceManager& ResourceManager::GetInstance()
+    {
+        if (!m_instance)
+        {
+            m_instance = std::make_unique<ResourceManager>();
+        }
+        return *m_instance.get();
+    }
+
+    sf::Font* ResourceManager::getFont(const std::string& path)
     {
         if (m_fontDatabase.find(path) == m_fontDatabase.end())
         {
             std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
             System::LoaderResult loadResult = System::Path(path).load(
                 System::Loaders::fontLoader, *tempFont.get());
-            Debug::Log->debug(
-                "[ResourceManager] Loading <Font> {} from {}", path, loadResult.path());
+            Debug::Log->debug("[ResourceManager] Loading <Font> {} from {}",
+                path, loadResult.path());
 
             if (tempFont != nullptr)
                 m_fontDatabase[path] = move(tempFont);
             else
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Animation.RessourceManager.LoadFont",
-                    {{"file", path}});
+                    { { "file", path } });
         }
         return m_fontDatabase[path].get();
     }

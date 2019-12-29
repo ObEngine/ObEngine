@@ -12,8 +12,8 @@ namespace obe::Graphics
     LevelSprite::LevelSprite(const std::string& id)
         : Selectable(false), Component(id)
     {
-
-        m_texture = &ResourceManager::NullTexture;
+        m_antiAliasing = ResourceManager::GetInstance().defaultAntiAliasing;
+        m_texture = &ResourceManager::GetInstance().NullTexture;
         m_sprite.setTexture(*m_texture);
 
         for (Transform::Referential& ref : Transform::Referential::Referentials)
@@ -79,7 +79,7 @@ namespace obe::Graphics
         {
             m_path = path;
             const std::string fPath = System::Path(path).find();
-            m_texture = ResourceManager::GetTexture(fPath, m_antiAliasing);
+            m_texture = ResourceManager::GetInstance().getTexture(fPath, m_antiAliasing);
 
             m_sprite.setTexture(*m_texture);
             m_sprite.setTextureRect(sf::IntRect(0, 0, m_texture->getSize().x,
@@ -508,7 +508,7 @@ namespace obe::Graphics
         
         const bool antiAliasing = data.contains(vili::NodeType::DataNode, "antiAliasing")
                                ? data.getDataNode("antiAliasing").get<bool>()
-                               : true;
+                               : ResourceManager::GetInstance().defaultAntiAliasing;
 
         if (data.contains(vili::NodeType::DataNode, "xTransform"))
             spriteXTransformer =

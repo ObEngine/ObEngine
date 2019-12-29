@@ -36,7 +36,6 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Graphics::ResourceManager::Init();
     Utils::Exec::RunArgsParser runParser(argc, argv);
     const std::string startMode = runParser.getArgumentValue("-mode");
     std::cout << "Running ObEngine using mode : " << startMode << std::endl;
@@ -44,27 +43,30 @@ int main(int argc, char** argv)
     vili::ViliParser::StoreInCache("Obe.vili");
 
     Debug::Log->info("Running ObEngine Dev (Version : {} ({}:{}))",
-                     OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
+        OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
-                                sf::VideoMode::getDesktopMode().height);
+        sf::VideoMode::getDesktopMode().height);
     Debug::Log->debug("<ObEngine> Initialising Position Transformers");
     Graphics::InitPositionTransformer();
     Debug::Log->debug("<ObEngine> Initialising Input Handling");
     Input::InitKeyList();
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
-                     Transform::UnitVector::Screen.w,
-                     Transform::UnitVector::Screen.h);
+        Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
     Debug::Log->debug("<ObEngine> Initialising Errors Handling");
     LoadErrors();
     Debug::Log->debug("<ObEngine> Mounting paths");
     System::MountPaths();
+    Debug::Log->debug("<ObEngine> Loading Configuration");
     System::InitConfiguration();
     Debug::InitLoggerLevel();
     System::IndexPlugins();
+
+    Debug::Log->debug("<ObEngine> Loading ResourceManager");
+    Graphics::ResourceManager::GetInstance();
 
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
@@ -105,7 +107,7 @@ int main(int argc, char** argv)
     {
         Debug::Log->warn("<ObEngine> Unknown mode '{0}', starting ObEngine Dev "
                          "Menu by default",
-                         startMode);
+            startMode);
         Modes::startDevMenu();
     }
 

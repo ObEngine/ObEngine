@@ -19,16 +19,18 @@ namespace obe::Graphics
     class ResourceManager
     {
     private:
-        static std::unordered_map<std::string, std::unique_ptr<sf::Font>>
+        std::unordered_map<std::string, std::unique_ptr<sf::Font>>
             m_fontDatabase;
-        static Triggers::TriggerGroupPtr m_resourceManagerTriggers;
-        static std::unordered_map<std::string, pairTexture>
+        Triggers::TriggerGroupPtr m_resourceManagerTriggers;
+        std::unordered_map<std::string, pairTexture>
             m_textureDatabase;
-
+        static std::unique_ptr<ResourceManager> m_instance;
     public:
-        static sf::Texture NullTexture;
-        static void Init();
-        static sf::Font* GetFont(const std::string& path);
+        bool defaultAntiAliasing;
+        ResourceManager();
+        sf::Texture NullTexture;
+        static ResourceManager& GetInstance();
+        sf::Font* getFont(const std::string& path);
         /**
          * \brief Get the texture at the given path.\n
          *        If it's already in cache it returns the cached version.\n
@@ -38,8 +40,8 @@ namespace obe::Graphics
          * Anti-Aliasing for the texture when first loading it \return A pointer
          * to the texture stored in the cache
          */
-        static sf::Texture* GetTexture(const std::string& path,
-                                       bool antiAliasing = true);
+        sf::Texture* getTexture(const std::string& path, bool antiAliasing);
+        sf::Texture* getTexture(const std::string& path);
     };
 } // namespace obe::Graphics
 

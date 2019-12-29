@@ -38,8 +38,8 @@ namespace obe::Animation
      * std::string containing the AnimationPlayMode in string form \return The
      * converted value which is an AnimationPlayMode enum value
      */
-    AnimationPlayMode
-    stringToAnimationPlayMode(const std::string& animationPlayMode);
+    AnimationPlayMode stringToAnimationPlayMode(
+        const std::string& animationPlayMode);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should

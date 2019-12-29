@@ -25,7 +25,6 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Graphics::ResourceManager::Init();
     Debug::InitLogger();
     Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
     vili::ViliParser::StoreInCache("Obe.vili");
@@ -49,6 +48,9 @@ int main(int argc, char** argv)
     System::InitConfiguration();
     Debug::InitLoggerLevel();
     System::IndexPlugins();
+
+    Debug::Log->debug("<ObEngine> Loading ResourceManager");
+    Graphics::ResourceManager::GetInstance();
 
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();

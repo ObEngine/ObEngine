@@ -116,7 +116,7 @@ namespace obe::Animation
             Debug::Log->trace(
                 "<Animation> Loading Texture {0} in Animation {1}", textureName,
                 m_animationName);
-            m_animationTextures.push_back(Graphics::ResourceManager::GetTexture(
+            m_animationTextures.push_back(Graphics::ResourceManager::GetInstance().getTexture(
                 path.add(textureName).toString(), m_antiAliasing));
         }
         // Groups
