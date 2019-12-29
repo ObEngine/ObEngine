@@ -97,8 +97,6 @@ namespace obe::Bindings::GraphicsBindings
     {
         (*lua)["obe"]["ResourceManager"].setClass(
             kaguya::UserdataMetatable<Graphics::ResourceManager>()
-                //.addStaticFunction("GetInstance",
-                //&Graphics::ResourceManager::GetInstance)
                 .addOverloadedFunctions("getTexture",
                     static_cast<sf::Texture* (
                         Graphics::ResourceManager::*)(const std::string&)>(
@@ -107,21 +105,6 @@ namespace obe::Bindings::GraphicsBindings
                         Graphics::ResourceManager::*)(const std::string&,
                         bool)>(&Graphics::ResourceManager::getTexture))
                 .addFunction("getFont", &Graphics::ResourceManager::getFont));
-        (*lua)["obe"]["ResourceManager"]["Instance"] = kaguya::function([]() 
-        {
-            return &Graphics::ResourceManager::GetInstance();
-        });
-        (*lua)["obe"]["ResourceManager"]["Font"] = kaguya::function(
-            [](const std::string& path) { return Graphics::ResourceManager::GetInstance().getFont(path); });
-        (*lua)["obe"]["ResourceManager"]["Texture"] = kaguya::overload(
-            [](const std::string& path) {
-                return Graphics::ResourceManager::GetInstance().getTexture(
-                    path);
-            },
-            [](const std::string& path, bool antiAliasing) {
-                return Graphics::ResourceManager::GetInstance().getTexture(
-                    path, antiAliasing);
-            });
     }
 
     void LoadCanvas(kaguya::State* lua)

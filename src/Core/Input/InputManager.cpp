@@ -26,7 +26,7 @@ namespace obe::Input
         : Registrable("InputManager")
         , Togglable(true)
         , m_actionTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                   "Global", "Actions"),
               Triggers::TriggerGroupPtrRemover)
     {

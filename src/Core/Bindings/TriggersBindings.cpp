@@ -16,37 +16,34 @@ namespace obe::Bindings::TriggersBindings
                 .addFunction("getName", &Triggers::Trigger::getName)
                 .addFunction("getNamespace", &Triggers::Trigger::getNamespace)
                 .addFunction("getState", &Triggers::Trigger::getState)
-                .addFunction("registerState",
-                             &Triggers::Trigger::registerEnvironment));
+                .addFunction(
+                    "registerState", &Triggers::Trigger::registerEnvironment));
     }
 
     void LoadTriggerDatabase(kaguya::State* lua)
     {
         (*lua)["obe"]["TriggerDatabase"].setClass(
             kaguya::UserdataMetatable<Triggers::TriggerDatabase>()
-                .addStaticFunction("GetInstance",
-                                   &Triggers::TriggerDatabase::GetInstance)
                 .addFunction("clear", &Triggers::TriggerDatabase::clear)
                 .addFunction("createNamespace",
-                             &Triggers::TriggerDatabase::createNamespace)
+                    &Triggers::TriggerDatabase::createNamespace)
                 .addFunction("createTriggerGroup",
-                             &Triggers::TriggerDatabase::createTriggerGroup)
+                    &Triggers::TriggerDatabase::createTriggerGroup)
                 .addFunction("doesTriggerGroupExists",
-                             &Triggers::TriggerDatabase::doesTriggerGroupExists)
+                    &Triggers::TriggerDatabase::doesTriggerGroupExists)
                 .addFunction("getAllTriggersNameFromTriggerGroup",
-                             &Triggers::TriggerDatabase::
-                                 getAllTriggersNameFromTriggerGroup)
-                .addFunction(
-                    "getAllTriggersGroupNames",
+                    &Triggers::TriggerDatabase::
+                        getAllTriggersNameFromTriggerGroup)
+                .addFunction("getAllTriggersGroupNames",
                     &Triggers::TriggerDatabase::getAllTriggersGroupNames)
-                .addFunction("getTrigger",
-                             &Triggers::TriggerDatabase::getTrigger)
+                .addFunction(
+                    "getTrigger", &Triggers::TriggerDatabase::getTrigger)
                 .addFunction("joinTriggerGroup",
-                             &Triggers::TriggerDatabase::joinTriggerGroup)
+                    &Triggers::TriggerDatabase::joinTriggerGroup)
                 .addFunction("removeNamespace",
-                             &Triggers::TriggerDatabase::removeNamespace)
+                    &Triggers::TriggerDatabase::removeNamespace)
                 .addFunction("removeTriggerGroup",
-                             &Triggers::TriggerDatabase::removeTriggerGroup)
+                    &Triggers::TriggerDatabase::removeTriggerGroup)
                 .addFunction("update", &Triggers::TriggerDatabase::update));
     }
 
@@ -62,17 +59,16 @@ namespace obe::Bindings::TriggersBindings
             kaguya::UserdataMetatable<Triggers::TriggerGroup>()
                 .addFunction("addTrigger", &Triggers::TriggerGroup::addTrigger)
                 .addFunction("delayTriggerState",
-                             &Triggers::TriggerGroup::delayTriggerState)
-                .addFunction("getAllTriggers",
-                             &Triggers::TriggerGroup::getAllTriggers)
+                    &Triggers::TriggerGroup::delayTriggerState)
+                .addFunction(
+                    "getAllTriggers", &Triggers::TriggerGroup::getAllTriggers)
                 .addFunction("getAllTriggersName",
-                             &Triggers::TriggerGroup::getAllTriggersName)
+                    &Triggers::TriggerGroup::getAllTriggersName)
                 .addFunction("getName", &Triggers::TriggerGroup::getName)
-                .addFunction("getNamespace",
-                             &Triggers::TriggerGroup::getNamespace)
+                .addFunction(
+                    "getNamespace", &Triggers::TriggerGroup::getNamespace)
                 .addFunction("isJoinable", &Triggers::TriggerGroup::isJoinable)
-                .addOverloadedFunctions(
-                    "pushParameter",
+                .addOverloadedFunctions("pushParameter",
                     &Triggers::TriggerGroup::pushParameter<int>,
                     &Triggers::TriggerGroup::pushParameter<std::string>,
                     &Triggers::TriggerGroup::pushParameter<double>,
@@ -111,13 +107,12 @@ namespace obe::Bindings::TriggersBindings
                         std::map<bool, double>>,
                     &Triggers::TriggerGroup::pushParameter<
                         std::map<bool, bool>>)
-                .addFunction("setJoinable",
-                             &Triggers::TriggerGroup::setJoinable)
+                .addFunction(
+                    "setJoinable", &Triggers::TriggerGroup::setJoinable)
                 .addFunction("trigger", &Triggers::TriggerGroup::trigger));
         (*lua)["obe"]["TriggerGroup"]["getTrigger"] = kaguya::function(
             [](Triggers::TriggerGroup* self, const std::string& triggerName) {
                 return self->getTrigger(triggerName).lock().get();
-            }
-        );
+            });
     }
 } // namespace obe::Bindings::TriggersBindings

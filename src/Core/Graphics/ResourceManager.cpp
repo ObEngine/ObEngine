@@ -6,8 +6,6 @@
 
 namespace obe::Graphics
 {
-    std::unique_ptr<ResourceManager> ResourceManager::m_instance;
-
     sf::Texture* ResourceManager::getTexture(
         const std::string& path, bool antiAliasing)
     {
@@ -60,6 +58,7 @@ namespace obe::Graphics
     }
 
     ResourceManager::ResourceManager()
+        : Registrable("ResourceManager")
     {
         vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
         if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
@@ -82,15 +81,6 @@ namespace obe::Graphics
             }
         }
         NullTexture.loadFromImage(nullImage);
-    }
-
-    ResourceManager& ResourceManager::GetInstance()
-    {
-        if (!m_instance)
-        {
-            m_instance = std::make_unique<ResourceManager>();
-        }
-        return *m_instance.get();
     }
 
     sf::Font* ResourceManager::getFont(const std::string& path)

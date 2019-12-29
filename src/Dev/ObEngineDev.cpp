@@ -65,9 +65,6 @@ int main(int argc, char** argv)
     Debug::InitLoggerLevel();
     System::IndexPlugins();
 
-    Debug::Log->debug("<ObEngine> Loading ResourceManager");
-    Graphics::ResourceManager::GetInstance();
-
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
@@ -75,6 +72,9 @@ int main(int argc, char** argv)
     Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
     Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
     Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
+
+    Debug::Log->debug("<ObEngine> Loading ResourceManager");
+    Graphics::ResourceManager::GetInstance();
 
     Input::InputButtonMonitor::InitKeyTriggerGroup();
 

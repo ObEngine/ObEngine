@@ -36,7 +36,7 @@ end
 function LuaCore.MakeTriggerGroupHook(This, namespace)
     local hook_mt = {
         __index = function(table, key)
-            for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames(namespace)) do
+            for _, v in pairs(TriggerDatabase:getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });

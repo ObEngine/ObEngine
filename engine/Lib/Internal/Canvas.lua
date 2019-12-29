@@ -634,7 +634,7 @@ obe.Canvas.Bases.Text = {
         end,
         font = function(self, font)
             self.fontPath = font;
-            self.shape:setFont(obe.ResourceManager.Font(font));
+            self.shape:setFont(ResourceManager:getFont(font));
         end,
         color = function(self, color)
             self.shape:clear();

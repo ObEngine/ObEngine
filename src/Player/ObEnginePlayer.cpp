@@ -31,15 +31,14 @@ int main(int argc, char** argv)
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
     Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
-                                sf::VideoMode::getDesktopMode().height);
+        sf::VideoMode::getDesktopMode().height);
     Debug::Log->debug("<ObEngine> Initialising Position Transformers");
     Graphics::InitPositionTransformer();
     Debug::Log->debug("<ObEngine> Initialising Input Handling");
     Input::InitKeyList();
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
-                     Transform::UnitVector::Screen.w,
-                     Transform::UnitVector::Screen.h);
+        Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
     Debug::Log->debug("<ObEngine> Initialising Errors Handling");
     LoadErrors();
@@ -49,9 +48,6 @@ int main(int argc, char** argv)
     Debug::InitLoggerLevel();
     System::IndexPlugins();
 
-    Debug::Log->debug("<ObEngine> Loading ResourceManager");
-    Graphics::ResourceManager::GetInstance();
-
     Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
     Bindings::IndexBindings();
     Debug::Log->debug("<ObEngine> Initialising Lua State");
@@ -59,6 +55,9 @@ int main(int argc, char** argv)
     Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
     Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
     Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
+
+    Debug::Log->debug("<ObEngine> Loading ResourceManager");
+    Graphics::ResourceManager::GetInstance();
 
     Input::InputButtonMonitor::InitKeyTriggerGroup();
 

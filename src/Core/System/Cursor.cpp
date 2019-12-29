@@ -31,7 +31,7 @@ namespace obe::System
     Cursor::Cursor()
         : Registrable("Cursor"),
           m_cursorTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                   "Global", "Cursor"),
               Triggers::TriggerGroupPtrRemover)
     {

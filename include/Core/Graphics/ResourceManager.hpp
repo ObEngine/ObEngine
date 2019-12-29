@@ -7,29 +7,30 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
+#include <Types/Singleton.hpp>
 
 namespace obe::Graphics
 {
-    using pairTexture = std::pair<std::unique_ptr<sf::Texture>,
-                                 std::unique_ptr<sf::Texture>>;
+    using pairTexture
+        = std::pair<std::unique_ptr<sf::Texture>, std::unique_ptr<sf::Texture>>;
     /**
      * \brief Singleton Class that manages and caches textures
      * @Bind
      */
-    class ResourceManager
+    class ResourceManager : Types::Registrable<ResourceManager>,
+                            public Types::Singleton<ResourceManager>
     {
     private:
         std::unordered_map<std::string, std::unique_ptr<sf::Font>>
             m_fontDatabase;
         Triggers::TriggerGroupPtr m_resourceManagerTriggers;
-        std::unordered_map<std::string, pairTexture>
-            m_textureDatabase;
-        static std::unique_ptr<ResourceManager> m_instance;
+        std::unordered_map<std::string, pairTexture> m_textureDatabase;
+
     public:
         bool defaultAntiAliasing;
         ResourceManager();
         sf::Texture NullTexture;
-        static ResourceManager& GetInstance();
         sf::Font* getFont(const std::string& path);
         /**
          * \brief Get the texture at the given path.\n
@@ -44,4 +45,3 @@ namespace obe::Graphics
         sf::Texture* getTexture(const std::string& path);
     };
 } // namespace obe::Graphics
-

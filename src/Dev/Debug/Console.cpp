@@ -14,7 +14,7 @@ namespace obe::Debug
     Console::Console()
         : Registrable("Console"),
           m_consoleTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                   "Global", "Console"),
               Triggers::TriggerGroupPtrRemover)
     {

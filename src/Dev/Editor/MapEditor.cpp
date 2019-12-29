@@ -34,7 +34,7 @@ namespace obe::Editor
 
         // Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                 "Global", "Editor"),
             Triggers::TriggerGroupPtrRemover);
 
@@ -75,7 +75,7 @@ namespace obe::Editor
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                 "Global", "Game"),
             Triggers::TriggerGroupPtrRemover);
         gameTriggers->addTrigger("Start")
@@ -586,7 +586,7 @@ namespace obe::Editor
 
             // Events
             scene.update();
-            Triggers::TriggerDatabase::GetInstance()->update();
+            Triggers::TriggerDatabase::GetInstance().update();
             inputManager.update();
             if (Input::Monitors::RequireRefresh)
                 Input::Monitors::UpdateMonitors();
@@ -656,7 +656,7 @@ namespace obe::Editor
             }
         }
         gameTriggers->trigger("End");
-        Triggers::TriggerDatabase::GetInstance()->update();
+        Triggers::TriggerDatabase::GetInstance().update();
         scene.update();
         scene.clear();
         System::MainWindow.close();

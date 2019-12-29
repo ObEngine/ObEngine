@@ -14,14 +14,14 @@ namespace obe::Scene
     Scene::Scene()
         : Registrable("Scene")
         , m_sceneTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                   "Global", "Scene"),
               Triggers::TriggerGroupPtrRemover)
 
     {
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
+        Triggers::TriggerDatabase::GetInstance().createNamespace("Map");
         m_showElements["CollisionLines"] = false;
         m_showElements["CollisionPoints"] = false;
         m_showElements["CollisionMasterPoint"] = false;
@@ -33,7 +33,7 @@ namespace obe::Scene
 
     Scene::~Scene()
     {
-        Triggers::TriggerDatabase::GetInstance()->removeNamespace("Map");
+        Triggers::TriggerDatabase::GetInstance().removeNamespace("Map");
     }
 
     Graphics::LevelSprite* Scene::createLevelSprite(

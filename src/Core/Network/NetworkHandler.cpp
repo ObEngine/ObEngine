@@ -7,7 +7,7 @@ namespace obe::Network
 {
     NetworkHandler::NetworkHandler()
         : m_socketTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                   "Global", "Network"),
               Triggers::TriggerGroupPtrRemover)
     {

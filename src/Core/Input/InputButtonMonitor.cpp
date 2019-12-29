@@ -15,7 +15,7 @@ namespace obe::Input
     void InputButtonMonitor::InitKeyTriggerGroup()
     {
         InputButtonMonitor::KeyTriggers = Triggers::TriggerGroupPtr(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                 "Global", "Keys"),
             Triggers::TriggerGroupPtrRemover);
         for (auto const& [key, val] : AllKeys)

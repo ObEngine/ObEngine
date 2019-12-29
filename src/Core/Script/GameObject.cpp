@@ -150,7 +150,7 @@ namespace obe::Script
         if (m_hasScriptEngine)
         {
             m_localTriggers.reset();
-            Triggers::TriggerDatabase::GetInstance()->removeNamespace(
+            Triggers::TriggerDatabase::GetInstance().removeNamespace(
                 m_privateKey);
         }
     }
@@ -186,10 +186,10 @@ namespace obe::Script
                 = Utils::String::getRandomKey(Utils::String::Alphabet, 1)
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
-            Triggers::TriggerDatabase::GetInstance()->createNamespace(
+            Triggers::TriggerDatabase::GetInstance().createNamespace(
                 m_privateKey);
             m_localTriggers.reset(
-                Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+                Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                     m_privateKey, "Local"),
                 Triggers::TriggerGroupPtrRemover);
 
@@ -379,7 +379,7 @@ namespace obe::Script
         {
             std::vector<std::string> allTrg
                 = Triggers::TriggerDatabase::GetInstance()
-                      ->getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
+                      .getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
             for (const std::string& triggerName : allTrg)
             {
                 this->useTrigger(trNsp, trGrp, triggerName,
@@ -396,7 +396,7 @@ namespace obe::Script
             {
                 if (triggerPair.first.lock()
                     == Triggers::TriggerDatabase::GetInstance()
-                           ->getTrigger(trNsp, trGrp, trName)
+                           .getTrigger(trNsp, trGrp, trName)
                            .lock())
                 {
                     triggerNotFound = false;
@@ -408,11 +408,11 @@ namespace obe::Script
                     ? trNsp + "." + trGrp + "." + trName
                     : callAlias;
                 this->registerTrigger(
-                    Triggers::TriggerDatabase::GetInstance()->getTrigger(
+                    Triggers::TriggerDatabase::GetInstance().getTrigger(
                         trNsp, trGrp, trName),
                     callbackName);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
@@ -422,11 +422,11 @@ namespace obe::Script
                     ? trNsp + "." + trGrp + "." + trName
                     : callAlias;
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->unregisterEnvironment(m_envIndex);
                 Triggers::TriggerDatabase::GetInstance()
-                    ->getTrigger(trNsp, trGrp, trName)
+                    .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
             }
@@ -437,7 +437,7 @@ namespace obe::Script
         const std::string& trGrp, const std::string& trName) const
     {
         Triggers::TriggerDatabase::GetInstance()
-            ->getTrigger(trNsp, trGrp, trName)
+            .getTrigger(trNsp, trGrp, trName)
             .lock()
             ->unregisterEnvironment(m_envIndex);
     }

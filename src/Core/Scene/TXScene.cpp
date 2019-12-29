@@ -12,7 +12,7 @@ namespace obe::Scene
 {
     TXScene TXScene::CreateRootScene()
     {
-        Triggers::TriggerDatabase::GetInstance()->createNamespace("Map");
+        Triggers::TriggerDatabase::GetInstance().createNamespace("Map");
 
         return TXScene("Root");
     }
@@ -223,10 +223,10 @@ namespace obe::Scene
     {
         m_triggerNamespace = Utils::String::getRandomKey(
             Utils::String::Alphabet + Utils::String::Numbers, 12);
-        Triggers::TriggerDatabase::GetInstance()->createNamespace(
+        Triggers::TriggerDatabase::GetInstance().createNamespace(
             m_triggerNamespace);
         m_localTriggers.reset(
-            Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                 m_triggerNamespace, "Local"),
             Triggers::TriggerGroupPtrRemover);
 

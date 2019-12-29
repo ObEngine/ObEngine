@@ -123,6 +123,6 @@ namespace obe::Triggers
 
     void TriggerGroupPtrRemover(TriggerGroup* ptr)
     {
-        TriggerDatabase::GetInstance()->removeTriggerGroup(ptr);
+        TriggerDatabase::GetInstance().removeTriggerGroup(ptr);
     }
 } // namespace obe::Triggers
