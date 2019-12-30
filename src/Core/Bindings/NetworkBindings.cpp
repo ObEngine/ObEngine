@@ -13,10 +13,8 @@ namespace obe::Bindings::NetworkBindings
         (*lua)["obe"]["Network"]["TcpServer"].setClass(
             kaguya::UserdataMetatable<obe::Network::TcpServer>()
                 .setConstructors<Network::TcpServer(int),
-                                 Network::TcpServer(int, std::string,
-                                                    std::string)>()
-                .addFunction("setBufferSize",
-                             &Network::TcpServer::setBufferSize)
+                    Network::TcpServer(int, std::string, std::string)>()
+                .addFunction("setBufferSize", &Network::TcpServer::setBufferSize)
                 .addFunction("update", &Network::TcpServer::update));
         /*(*lua)["obe"]["Network"]["TcpServer"]["getClients"] =
         kaguya::function([](Network::TcpServer* self) {

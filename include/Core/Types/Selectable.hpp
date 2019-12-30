@@ -16,7 +16,7 @@ namespace obe::Types
          * \brief Constructor of Selectable Class
          * \param selected Default state of m_selected
          */
-        explicit Selectable(bool selected);
+        explicit Selectable(bool selected = false);
         /**
          * \brief Set the state of the Selectable
          * \param selected A boolean to set the state of the Selectable (true /

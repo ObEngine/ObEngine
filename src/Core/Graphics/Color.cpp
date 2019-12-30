@@ -5,8 +5,8 @@
 
 namespace obe::Graphics
 {
-    Color::Color(const uint_fast8_t r, const uint_fast8_t g,
-                 const uint_fast8_t b, const uint_fast8_t a)
+    Color::Color(
+        const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b, const uint_fast8_t a)
     {
         this->fromRgb(r, g, b, a);
     }
@@ -16,8 +16,8 @@ namespace obe::Graphics
         this->fromHex(hexCode);
     }
 
-    void Color::fromRgb(const uint_fast8_t r, const uint_fast8_t g,
-                        const uint_fast8_t b, const uint_fast8_t a)
+    void Color::fromRgb(
+        const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b, const uint_fast8_t a)
     {
         this->r = r;
         this->g = g;

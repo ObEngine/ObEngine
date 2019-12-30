@@ -191,8 +191,8 @@ namespace obe::System::Loaders
     }
 
     template <class Resource>
-    inline bool Loader<Resource>::load(Resource& resource,
-                                       const std::string& path) const
+    inline bool Loader<Resource>::load(
+        Resource& resource, const std::string& path) const
     {
         return m_function(resource, path);
     }

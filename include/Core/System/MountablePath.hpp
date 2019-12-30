@@ -37,7 +37,7 @@ namespace obe::System
          * \param priority Priority of the mounted path
          */
         MountablePath(MountablePathType pathType, const std::string& basePath,
-                      unsigned int priority = 0);
+            unsigned int priority = 0);
         /**
          * \brief Type of the mounted path
          */

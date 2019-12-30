@@ -71,16 +71,14 @@ namespace obe::System
         std::string toString() const;
 
         template <template <class ResourceType> class LoaderType,
-                  class ResourceType>
+            class ResourceType>
         LoaderResult load(const LoaderType<ResourceType>& loader,
-                          ResourceType& resource,
-                          bool allowFailure = false) const;
+            ResourceType& resource, bool allowFailure = false) const;
 
         template <template <class ResourceType> class LoaderType,
-                  class ResourceType>
+            class ResourceType>
         LoaderMultipleResult loadAll(const LoaderType<ResourceType>& loader,
-                                     ResourceType& resource,
-                                     bool allowFailure = false) const;
+            ResourceType& resource, bool allowFailure = false) const;
 
         /**
          * \brief Add a Path to Mounted Paths
@@ -99,18 +97,16 @@ namespace obe::System
     };
 
     template <template <class ResourceType> class LoaderType,
-              class ResourceType>
+        class ResourceType>
     inline LoaderResult Path::load(const LoaderType<ResourceType>& loader,
-                                   ResourceType& resource,
-                                   bool allowFailure) const
+        ResourceType& resource, bool allowFailure) const
     {
         for (MountablePath& mountedPath : MountedPaths)
         {
-            std::string loadPath = mountedPath.basePath +
-                                   ((mountedPath.basePath != "") ? "/" : "") +
-                                   this->m_path;
-            if (Utils::File::fileExists(loadPath) ||
-                Utils::File::directoryExists(loadPath))
+            std::string loadPath = mountedPath.basePath
+                + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+            if (Utils::File::fileExists(loadPath)
+                || Utils::File::directoryExists(loadPath))
             {
                 Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
                 if (loader.load(resource, loadPath))
@@ -123,23 +119,23 @@ namespace obe::System
             return LoaderResult();
         else
             throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource", {{"path", m_path}});
+                "ObEngine.System.Path.CantFindResource",
+                { { "path", m_path } });
     }
 
     template <template <class ResourceType> class LoaderType,
-              class ResourceType>
-    inline LoaderMultipleResult
-    Path::loadAll(const LoaderType<ResourceType>& loader,
-                  ResourceType& resource, bool allowFailure) const
+        class ResourceType>
+    inline LoaderMultipleResult Path::loadAll(
+        const LoaderType<ResourceType>& loader, ResourceType& resource,
+        bool allowFailure) const
     {
         std::vector<std::string> paths;
         for (MountablePath& mountedPath : MountedPaths)
         {
-            std::string loadPath = mountedPath.basePath +
-                                   ((mountedPath.basePath != "") ? "/" : "") +
-                                   this->m_path;
-            if (Utils::File::fileExists(loadPath) ||
-                Utils::File::directoryExists(loadPath))
+            std::string loadPath = mountedPath.basePath
+                + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+            if (Utils::File::fileExists(loadPath)
+                || Utils::File::directoryExists(loadPath))
             {
                 Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
                 if (loader.load(resource, loadPath))
@@ -150,7 +146,8 @@ namespace obe::System
         }
         if (!allowFailure && paths.empty())
             throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource", {{"path", m_path}});
+                "ObEngine.System.Path.CantFindResource",
+                { { "path", m_path } });
         else
             return LoaderMultipleResult(paths);
     }

@@ -26,10 +26,10 @@ namespace obe::System
         void close();
         void display();
         void draw(const sf::Drawable& drawable,
-                  const sf::RenderStates& states = sf::RenderStates::Default);
+            const sf::RenderStates& states = sf::RenderStates::Default);
         void draw(const sf::Vertex* vertices, std::size_t vertexCount,
-                  sf::PrimitiveType type,
-                  const sf::RenderStates& states = sf::RenderStates::Default);
+            sf::PrimitiveType type,
+            const sf::RenderStates& states = sf::RenderStates::Default);
         sf::Vector2u getSize() const;
         bool isOpen() const;
         bool pollEvent(sf::Event& event);

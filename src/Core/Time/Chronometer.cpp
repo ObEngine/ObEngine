@@ -21,7 +21,7 @@ namespace obe::Time
         if (m_started)
             m_chronoCurrent = std::chrono::high_resolution_clock::now();
         return std::chrono::duration_cast<std::chrono::milliseconds>(
-                   m_chronoCurrent - m_chronoStart)
+            m_chronoCurrent - m_chronoStart)
             .count();
     }
 

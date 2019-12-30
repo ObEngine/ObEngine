@@ -38,8 +38,8 @@ namespace obe::Animation
      * std::string containing the AnimationPlayMode in string form \return The
      * converted value which is an AnimationPlayMode enum value
      */
-    AnimationPlayMode
-    stringToAnimationPlayMode(const std::string& animationPlayMode);
+    AnimationPlayMode stringToAnimationPlayMode(
+        const std::string& animationPlayMode);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
@@ -85,6 +85,7 @@ namespace obe::Animation
         int m_loopAmount = 0;
         Transform::UnitVector m_offset;
         int m_priority = 0;
+        bool m_antiAliasing = false;
 
     public:
         /**
@@ -199,5 +200,8 @@ namespace obe::Animation
          * executes the AnimationCode)
          */
         void update();
+
+        void setAntiAliasing(bool antiAliasing);
+        bool getAntiAliasing();
     };
 } // namespace obe::Animation

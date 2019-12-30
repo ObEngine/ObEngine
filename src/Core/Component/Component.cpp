@@ -13,8 +13,7 @@ namespace obe::Component
             if (comp->getId() == component->getId())
             {
                 throw aube::ErrorHandler::Raise(
-                    "obe.Component.ComponentBase.IdAlreadyExists",
-                    {{"id", comp->getId()}});
+                    "obe.Component.ComponentBase.IdAlreadyExists", { { "id", comp->getId() } });
             }
         }
         Components.push_back(component);
@@ -23,11 +22,11 @@ namespace obe::Component
     void ComponentBase::RemoveComponent(ComponentBase* component)
     {
         Components.erase(
-            std::remove(Components.begin(), Components.end(), component),
-            Components.end());
+            std::remove(Components.begin(), Components.end(), component), Components.end());
     }
 
-    ComponentBase::ComponentBase(const std::string& id) : Identifiable(id)
+    ComponentBase::ComponentBase(const std::string& id)
+        : Identifiable(id)
     {
     }
 } // namespace obe::Component

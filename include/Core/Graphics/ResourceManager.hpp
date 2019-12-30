@@ -7,26 +7,31 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
+#include <Types/Registrable.hpp>
+#include <Types/Singleton.hpp>
 
 namespace obe::Graphics
 {
+    using pairTexture
+        = std::pair<std::unique_ptr<sf::Texture>, std::unique_ptr<sf::Texture>>;
     /**
      * \brief Singleton Class that manages and caches textures
      * @Bind
      */
-    class ResourceManager
+    class ResourceManager : public Types::Registrable<ResourceManager>,
+                            public Types::Singleton<ResourceManager>
     {
     private:
-        static std::unordered_map<std::string, std::unique_ptr<sf::Font>>
+        std::unordered_map<std::string, std::unique_ptr<sf::Font>>
             m_fontDatabase;
-        static Triggers::TriggerGroupPtr m_resourceManagerTriggers;
-        static std::unordered_map<std::string, std::unique_ptr<sf::Texture>>
-            m_textureDatabase;
+        Triggers::TriggerGroupPtr m_resourceManagerTriggers;
+        std::unordered_map<std::string, pairTexture> m_textureDatabase;
 
     public:
-        static sf::Texture NullTexture;
-        static void Init();
-        static sf::Font* GetFont(const std::string& path);
+        bool defaultAntiAliasing;
+        ResourceManager();
+        sf::Texture NullTexture;
+        sf::Font* getFont(const std::string& path);
         /**
          * \brief Get the texture at the given path.\n
          *        If it's already in cache it returns the cached version.\n
@@ -36,7 +41,7 @@ namespace obe::Graphics
          * Anti-Aliasing for the texture when first loading it \return A pointer
          * to the texture stored in the cache
          */
-        static sf::Texture* GetTexture(const std::string& path,
-                                       bool antiAliasing = false);
+        sf::Texture* getTexture(const std::string& path, bool antiAliasing);
+        sf::Texture* getTexture(const std::string& path);
     };
 } // namespace obe::Graphics

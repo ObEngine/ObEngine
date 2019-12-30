@@ -32,13 +32,14 @@ function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
         local ncolor = SFML.Color();
         base = base or { r = 0, g = 0, b = 0, a = 255 };
-        ncolor.r = color.r or base.r;
-        ncolor.g = color.g or base.g;
-        ncolor.b = color.b or base.b;
-        ncolor.a = color.a or base.a;
+        ncolor.r = math.floor(color.r or base.r);
+        ncolor.g = math.floor(color.g or base.g);
+        ncolor.b = math.floor(color.b or base.b);
+        ncolor.a = math.floor(color.a or base.a);
         return ncolor;
     elseif type(color) == "number" then
         local dalpha = base.a;
+        color = math.floor(color);
         return SFML.Color(color, color, color, dalpha);
     elseif type(color) == "string" then
         color = color:gsub("#","");
@@ -55,6 +56,7 @@ function obe.Canvas.ConvertHAlign(align)
         if align == "Left" then return obe.Canvas.Alignment.Horizontal.Left;
         elseif align == "Center" then return obe.Canvas.Alignment.Horizontal.Center;
         elseif align == "Right" then return obe.Canvas.Alignment.Horizontal.Right;
+        else error("Horizontal Alignment", align, "does not exists, use one of those [Left, Center, Right]")
         end
     else
         if align == obe.Canvas.Alignment.Horizontal.Left then return "Left";
@@ -69,6 +71,7 @@ function obe.Canvas.ConvertVAlign(align)
         if align == "Top" then return obe.Canvas.Alignment.Vertical.Top;
         elseif align == "Center" then return obe.Canvas.Alignment.Vertical.Center;
         elseif align == "Bottom" then return obe.Canvas.Alignment.Vertical.Bottom;
+        else error("Vertical Alignment", align, "does not exists, use one of those [Top, Center, Botton]")
         end
     else
         if align == obe.Canvas.Alignment.Vertical.Top then return "Top";
@@ -81,30 +84,18 @@ end
 obe.Canvas.Bases = {};
 
 function obe.Canvas.ApplyCache(element)
-    --print("Applying cache on", inspect(element));
-    local applyCacheValue = function(mt, k, v)
-        if type(k) == "number" and not mt.__setters[k] and mt.__setters.__number then
-            mt.__setters.__number(mt.__ref, k, v);
-        else
-            if mt.__setters[k] then
-                mt.__setters[k](mt.__ref, v);
-            else
-                error("Can't find obe.Canvas.Canvas attribute : " .. tostring(k));
-            end
-        end
-    end
     local mt = getmetatable(element);
     --print("Cache :", inspect(mt.__cache));
     if #mt.__priority > 0 then
         for k, v in pairs(mt.__priority) do
             if mt.__cache[v] then
-                applyCacheValue(mt, v, mt.__cache[v]);
+                obe.Canvas.__set(element, v, mt.__cache[v]);
                 mt.__cache[v] = nil;
             end
         end
     end
     for k, v in pairs(mt.__cache) do
-        applyCacheValue(mt, k, v);
+        obe.Canvas.__set(element, k, v);
     end
     for k, v in pairs(mt.__getters) do
         if type(v) == "table" then
@@ -143,7 +134,7 @@ end
 function obe.Canvas.__set(tbl, key, value)
     local k = getmetatable(tbl);
     if type(key) == "number" and not k.__setters[key] and k.__setters.__number then
-        k.__setters.__number(k.__ref, value);
+        k.__setters.__number(k.__ref, key, value);
     else
         if k.__setters[key] then
             k.__setters[key](k.__ref, value);
@@ -164,10 +155,25 @@ function obe.Canvas.__get(tbl, key)
     end
 end
 
-function obe.Canvas.__call(tbl, values)
+function obe.Canvas.__call(tbl, values, usecache)
     values = values or {};
-    for k, v in pairs(values) do
-        tbl[k] = v;
+    local mt = getmetatable(tbl);
+    if usecache then
+        for k, v in pairs(values) do
+            mt.__cache[k] = v;
+        end
+    else
+        if #mt.__priority > 0 then
+            for k, v in pairs(mt.__priority) do
+                if values[v] then
+                    obe.Canvas.__set(tbl, v, values[v]);
+                    values[v] = nil;
+                end
+            end
+        end
+        for k, v in pairs(values) do
+            obe.Canvas.__set(tbl, k, v);
+        end
     end
     return tbl;
 end
@@ -214,7 +220,7 @@ function obe.Canvas.MakeMT(bases, usecache)
         __priority = priority,
         __index = getfunc,
         __newindex = setfunc,
-        __call = obe.Canvas.__call,
+        __call = function(t, v) return obe.Canvas.__call(t, v, usecache) end,
         __cache = {},
         __rcache = {}
     };
@@ -450,22 +456,22 @@ obe.Canvas.Bases.Shape = {
             setters = {
                 r = function(self, r)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.r = r or 0;
+                    colorBuffer.r = math.floor(r) or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 g = function(self, g)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.g = g or 0;
+                    colorBuffer.g = math.floor(g) or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 b = function(self, b)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.b = b or 0;
+                    colorBuffer.b = math.floor(b) or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 a = function(self, a)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.a = a or 255;
+                    colorBuffer.a = math.floor(a) or 255;
                     self.shape:setFillColor(colorBuffer);
                 end
             }
@@ -628,7 +634,7 @@ obe.Canvas.Bases.Text = {
         end,
         font = function(self, font)
             self.fontPath = font;
-            self.shape:setFont(obe.ResourceManager.GetFont(font));
+            self.shape:setFont(ResourceManager:getFont(font));
         end,
         color = function(self, color)
             self.shape:clear();
@@ -710,7 +716,6 @@ function obe.Canvas.Canvas:Text(id)
     id = self:GenerateId(id);
     self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
     self.elements[id].font = "Data/Fonts/arial.ttf";
-    --print(inspect(self.elements[id]));
     return self.elements[id];
 end
 

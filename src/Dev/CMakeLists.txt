@@ -1,6 +1,7 @@
 project(ObEngineDev)
 
 include(group_files)
+include(setup_environment)
 
 file(GLOB_RECURSE OBEDEV_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Dev/*.hpp)
@@ -10,8 +11,6 @@ file(GLOB_RECURSE OBEPLAYER_GAME_SOURCE
     ${ObEngine_SOURCE_DIR}/src/Player/Modes/Game.cpp)
 
 add_executable(ObEngineDev ${OBEDEV_HEADERS} ${OBEDEV_SOURCES} ${OBEPLAYER_GAME_SOURCE} ${OBENGINE_ICON})
-
-compile_obengine_git_definitions()
 
 target_include_directories(ObEngineDev
     PRIVATE
@@ -35,3 +34,7 @@ group_files(
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
+
+set_property(TARGET ObEngineDev PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/engine")
+
+copy_required_dlls(ObEngineDev)

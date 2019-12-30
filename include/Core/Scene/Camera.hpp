@@ -27,7 +27,7 @@ namespace obe::Scene
     {
     private:
         double m_angle = 0;
-        Transform::ViewStruct* m_camera{};
+        Transform::ViewStruct* m_camera {};
         sf::View m_view;
 
         void apply() const;
@@ -39,9 +39,8 @@ namespace obe::Scene
          * \param ref Referential used to get the Position of the Camera
          * \return The Position of the Camera
          */
-        Transform::UnitVector
-        getPosition(Transform::Referential ref =
-                        Transform::Referential::TopLeft) const override;
+        Transform::UnitVector getPosition(Transform::Referential ref
+            = Transform::Referential::TopLeft) const override;
         /**
          * \brief Gets an UnitVector containing the size of the Camera (Width
          * and Height) \return An UnitVector containing the size of the Camera
@@ -60,7 +59,7 @@ namespace obe::Scene
          * \param ref Referential used to resize the Camera
          */
         void scale(double pScale,
-                   Transform::Referential ref = Transform::Referential::Center);
+            Transform::Referential ref = Transform::Referential::Center);
         // void setAngle(double angle);
         /**
          * \brief Sets the Position of the Camera
@@ -68,16 +67,15 @@ namespace obe::Scene
          * \param ref Referential used to position the Camera
          */
         void setPosition(const Transform::UnitVector& position,
-                         Transform::Referential ref =
-                             Transform::Referential::TopLeft) override;
+            Transform::Referential ref
+            = Transform::Referential::TopLeft) override;
         /**
          * \brief Sets the size of the Camera
          * \param pSize Size of the Camera (1 = Normal Size meaning Screen
          * Height = 2 SceneUnits) \param ref Referential used to resize the
          * Camera
          */
-        void
-        setSize(double pSize,
-                Transform::Referential ref = Transform::Referential::Center);
+        void setSize(double pSize,
+            Transform::Referential ref = Transform::Referential::Center);
     };
 } // namespace obe::Scene

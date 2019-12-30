@@ -1,0 +1,10 @@
+#pragma once
+
+#include <string_view>
+
+namespace obe::Config
+{
+    constexpr std::string_view OBENGINE_GIT_BRANCH = "@OBENGINE_GIT_BRANCH@";
+    constexpr std::string_view OBENGINE_GIT_HASH = "@OBENGINE_GIT_COMMIT_HASH@";
+    constexpr std::string_view OBENGINE_VERSION = "@OBENGINE_VERSION@";
+}

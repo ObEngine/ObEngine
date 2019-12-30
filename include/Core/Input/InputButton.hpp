@@ -27,7 +27,7 @@ namespace obe::Input
     {
     private:
         std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int,
-                     sf::Joystick::Axis>
+            sf::Joystick::Axis>
             m_button;
         std::pair<AxisCompareType, float> m_detectAxis;
         unsigned int m_gamepadIndex;
@@ -45,7 +45,7 @@ namespace obe::Input
          * Functions, Others)
          */
         InputButton(sf::Keyboard::Key key, const std::string& name,
-                    const std::string& returnChar, InputType type);
+            const std::string& returnChar, InputType type);
         /**
          * \brief Creates a new InputButton representing a Mouse Button
          * \param key SFML Mouse Button
@@ -59,7 +59,7 @@ namespace obe::Input
          * \param name Name of the Gameepad Button
          */
         InputButton(unsigned int gamepadIndex, unsigned int buttonIndex,
-                    const std::string& name);
+            const std::string& name);
         /**
          * \brief Creates a new InputButton representing a Gamepad Axis
          * \param gamepadIndex Index of the gamepad
@@ -69,8 +69,7 @@ namespace obe::Input
          * Gamepad Axis
          */
         InputButton(unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
-                    std::pair<AxisCompareType, float> detect,
-                    const std::string& name);
+            std::pair<AxisCompareType, float> detect, const std::string& name);
         /*
          * \brief Get Axis Position value if InputButton is an axis (throws
          * error otherwise) \return Return value of GetAxisPosition

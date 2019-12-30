@@ -36,8 +36,8 @@ namespace obe::Time
         if (m_canUpdateFPS)
         {
             m_canUpdateFPS = false;
-            m_text.setString(std::to_string(m_saveFPS) + " FPS / " +
-                             std::to_string(m_saveUPD) + " UPS");
+            m_text.setString(
+                std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
         }
         System::MainWindow.draw(m_text);
     }

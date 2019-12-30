@@ -30,13 +30,13 @@ namespace obe::Transform
         };
         explicit PolygonPoint(Polygon* parent, unsigned int index);
         explicit PolygonPoint(Polygon* parent, unsigned int index,
-                              const Transform::UnitVector& position);
+            const Transform::UnitVector& position);
         const point_index_t& index = rw_index;
         void remove() const;
         double distance(const Transform::UnitVector& position) const;
         UnitVector getRelativePosition(RelativePositionFrom from) const;
-        void setRelativePosition(RelativePositionFrom from,
-                                 const Transform::UnitVector& position);
+        void setRelativePosition(
+            RelativePositionFrom from, const Transform::UnitVector& position);
         void move(const Transform::UnitVector& position);
     };
 
@@ -74,16 +74,16 @@ namespace obe::Transform
          * \param pointIndex Index where to insert the new Point, Use pointIndex
          * = -1 <DefaultArg> to insert at the end (between last and first Point)
          */
-        void addPoint(const Transform::UnitVector& position,
-                      int pointIndex = -1);
+        void addPoint(
+            const Transform::UnitVector& position, int pointIndex = -1);
         /**
          * \brief Finds the closest Line from the given Position
          * \param position Position used to get the closest Line
          * \return The index of the line that is the closest one of the given
          * Position (Line between point 0 and point 1 is index 0)
          */
-        PolygonSegment
-        findClosestSegment(const Transform::UnitVector& position);
+        PolygonSegment findClosestSegment(
+            const Transform::UnitVector& position);
         /**
          * \brief Find the closest Point from the given Position(x, y)
          * \param position Coordinate of the Position used to get the closest
@@ -93,10 +93,9 @@ namespace obe::Transform
          * check step) \return The index of the Point (or one of its neighboor)
          * that is the closest one of the given Position
          */
-        PolygonPoint&
-        findClosestPoint(const Transform::UnitVector& position,
-                         bool neighbor = false,
-                         const std::vector<point_index_t>& excludedPoints = {});
+        PolygonPoint& findClosestPoint(const Transform::UnitVector& position,
+            bool neighbor = false,
+            const std::vector<point_index_t>& excludedPoints = {});
         /**
          * \brief Get all the Points of the Polygon
          * \return A Path containing all the Points of the Polygon
@@ -138,9 +137,9 @@ namespace obe::Transform
          * tolerance \return An unsigned int containing the index of the side
          * containing the position or -1 if not found
          */
-        std::optional<PolygonSegment>
-        getSegmentContainingPoint(const Transform::UnitVector& position,
-                                  double tolerance = DefaultTolerance);
+        std::optional<PolygonSegment> getSegmentContainingPoint(
+            const Transform::UnitVector& position,
+            double tolerance = DefaultTolerance);
         /**
          * \brief Check if the MasterPoint of the Polygon is on Position (x -
          * tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y +
@@ -149,9 +148,8 @@ namespace obe::Transform
          * \return true if the MasterPoint is on the given Positon, false
          * otherwise
          */
-        bool
-        isCentroidAroundPosition(const Transform::UnitVector& position,
-                                 const Transform::UnitVector& tolerance) const;
+        bool isCentroidAroundPosition(const Transform::UnitVector& position,
+            const Transform::UnitVector& tolerance) const;
         /**
          * \brief Check if a point of the Polygon is on Position (x - tolerance
          * <= x <= x + tolerance, y - tolerance <= tolerance <= y + tolerance)
@@ -160,9 +158,9 @@ namespace obe::Transform
          * \return An unsigned int containing the index of the point containing
          * the position or -1 if not found
          */
-        std::optional<PolygonPoint*>
-        getPointAroundPosition(const Transform::UnitVector& position,
-                               const Transform::UnitVector& tolerance);
+        std::optional<PolygonPoint*> getPointAroundPosition(
+            const Transform::UnitVector& position,
+            const Transform::UnitVector& tolerance);
         /**
          * \brief Moves the Polygon (relative to the current position)
          * \param position UnitVector containing the offset to move the Polygon

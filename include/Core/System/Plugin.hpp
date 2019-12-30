@@ -13,12 +13,12 @@ namespace obe::System
     void IndexPlugins();
 
     template <class T>
-    using PluginFunction =
-        std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
+    using PluginFunction
+        = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
     template <class T>
-    PluginFunction<T>
-    getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl,
-                      const std::string& fnName);
+    PluginFunction<T> getPluginFunction(
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl,
+        const std::string& fnName);
 
     class Plugin : public Types::Identifiable
     {
@@ -51,9 +51,9 @@ namespace obe::System
     extern std::vector<std::unique_ptr<Plugin>> Plugins;
 
     template <class T>
-    PluginFunction<T>
-    getPluginFunction(std::shared_ptr<dynamicLinker::dynamicLinker> dl,
-                      const std::string& fnName)
+    PluginFunction<T> getPluginFunction(
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl,
+        const std::string& fnName)
     {
         return std::move(
             std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(

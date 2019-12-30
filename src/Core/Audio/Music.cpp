@@ -110,8 +110,7 @@ namespace obe::Sound
         case sf::SoundSource::Playing:
             return "Playing";
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Sound.MusicWrapper.IncorrectStatus");
+        throw aube::ErrorHandler::Raise("ObEngine.Sound.MusicWrapper.IncorrectStatus");
     }
 
     void MusicWrapper::pause()

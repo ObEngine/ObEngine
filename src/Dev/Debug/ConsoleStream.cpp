@@ -4,7 +4,8 @@
 namespace obe::Debug
 {
     ConsoleStream::ConsoleStream(const std::string& id, Console* consoleParent)
-        : Identifiable(id), Togglable(true)
+        : Identifiable(id)
+        , Togglable(true)
     {
         m_consoleParent = consoleParent;
         m_color = sf::Color(255, 255, 255);

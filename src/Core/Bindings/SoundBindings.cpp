@@ -10,19 +10,14 @@ namespace obe::Bindings::SoundBindings
     {
         (*lua)["obe"]["Music"].setClass(
             kaguya::UserdataMetatable<Sound::MusicWrapper>()
-                .setConstructors<Sound::MusicWrapper(),
-                                 Sound::MusicWrapper(const std::string&)>()
-                .addFunction("doesUsesSoundPosition",
-                             &Sound::MusicWrapper::doesUsesSoundPosition)
+                .setConstructors<Sound::MusicWrapper(), Sound::MusicWrapper(const std::string&)>()
+                .addFunction("doesUsesSoundPosition", &Sound::MusicWrapper::doesUsesSoundPosition)
                 .addFunction("getDuration", &Sound::MusicWrapper::getDuration)
-                .addFunction("getMinimumDistance",
-                             &Sound::MusicWrapper::getMinimumDistance)
+                .addFunction("getMinimumDistance", &Sound::MusicWrapper::getMinimumDistance)
                 .addFunction("getPitch", &Sound::MusicWrapper::getPitch)
-                .addFunction("getPlayingOffset",
-                             &Sound::MusicWrapper::getPlayingOffset)
+                .addFunction("getPlayingOffset", &Sound::MusicWrapper::getPlayingOffset)
                 .addFunction("getPosition", &Sound::MusicWrapper::getPosition)
-                .addFunction("getSpatialAttenuation",
-                             &Sound::MusicWrapper::getSpatialAttenuation)
+                .addFunction("getSpatialAttenuation", &Sound::MusicWrapper::getSpatialAttenuation)
                 .addFunction("getStatus", &Sound::MusicWrapper::getStatus)
                 .addFunction("getVolume", &Sound::MusicWrapper::getVolume)
                 .addFunction("isLooping", &Sound::MusicWrapper::isLooping)
@@ -30,36 +25,27 @@ namespace obe::Bindings::SoundBindings
                 .addFunction("pause", &Sound::MusicWrapper::pause)
                 .addFunction("play", &Sound::MusicWrapper::play)
                 .addFunction("setLooping", &Sound::MusicWrapper::setLooping)
-                .addFunction("setMinimumDistance",
-                             &Sound::MusicWrapper::setMinimumDistance)
+                .addFunction("setMinimumDistance", &Sound::MusicWrapper::setMinimumDistance)
                 .addFunction("setPitch", &Sound::MusicWrapper::setPitch)
-                .addFunction("setPlayingOffset",
-                             &Sound::MusicWrapper::setPlayingOffset)
+                .addFunction("setPlayingOffset", &Sound::MusicWrapper::setPlayingOffset)
                 .addFunction("setPosition", &Sound::MusicWrapper::setPosition)
-                .addFunction("setSpatialAttenuation",
-                             &Sound::MusicWrapper::setSpatialAttenuation)
+                .addFunction("setSpatialAttenuation", &Sound::MusicWrapper::setSpatialAttenuation)
                 .addFunction("setVolume", &Sound::MusicWrapper::setVolume)
                 .addFunction("stop", &Sound::MusicWrapper::stop)
-                .addFunction("useSoundPosition",
-                             &Sound::MusicWrapper::useSoundPosition));
+                .addFunction("useSoundPosition", &Sound::MusicWrapper::useSoundPosition));
     }
 
     void LoadSound(kaguya::State* lua)
     {
         (*lua)["obe"]["Sound"].setClass(
             kaguya::UserdataMetatable<Sound::SoundWrapper>()
-                .setConstructors<Sound::SoundWrapper(),
-                                 Sound::SoundWrapper(const std::string&)>()
-                .addFunction("doesUsesSoundPosition",
-                             &Sound::SoundWrapper::doesUsesSoundPosition)
-                .addFunction("getMinimumDistance",
-                             &Sound::SoundWrapper::getMinimumDistance)
+                .setConstructors<Sound::SoundWrapper(), Sound::SoundWrapper(const std::string&)>()
+                .addFunction("doesUsesSoundPosition", &Sound::SoundWrapper::doesUsesSoundPosition)
+                .addFunction("getMinimumDistance", &Sound::SoundWrapper::getMinimumDistance)
                 .addFunction("getPitch", &Sound::SoundWrapper::getPitch)
-                .addFunction("getPlayingOffset",
-                             &Sound::SoundWrapper::getPlayingOffset)
+                .addFunction("getPlayingOffset", &Sound::SoundWrapper::getPlayingOffset)
                 .addFunction("getPosition", &Sound::SoundWrapper::getPosition)
-                .addFunction("getSpatialAttenuation",
-                             &Sound::SoundWrapper::getSpatialAttenuation)
+                .addFunction("getSpatialAttenuation", &Sound::SoundWrapper::getSpatialAttenuation)
                 .addFunction("getStatus", &Sound::SoundWrapper::getStatus)
                 .addFunction("getVolume", &Sound::SoundWrapper::getVolume)
                 .addFunction("isLooping", &Sound::SoundWrapper::isLooping)
@@ -67,17 +53,13 @@ namespace obe::Bindings::SoundBindings
                 .addFunction("pause", &Sound::SoundWrapper::pause)
                 .addFunction("play", &Sound::SoundWrapper::play)
                 .addFunction("setLooping", &Sound::SoundWrapper::setLooping)
-                .addFunction("setMinimumDistance",
-                             &Sound::SoundWrapper::setMinimumDistance)
+                .addFunction("setMinimumDistance", &Sound::SoundWrapper::setMinimumDistance)
                 .addFunction("setPitch", &Sound::SoundWrapper::setPitch)
-                .addFunction("setPlayingOffset",
-                             &Sound::SoundWrapper::setPlayingOffset)
+                .addFunction("setPlayingOffset", &Sound::SoundWrapper::setPlayingOffset)
                 .addFunction("setPosition", &Sound::SoundWrapper::setPosition)
-                .addFunction("setSpatialAttenuation",
-                             &Sound::SoundWrapper::setSpatialAttenuation)
+                .addFunction("setSpatialAttenuation", &Sound::SoundWrapper::setSpatialAttenuation)
                 .addFunction("setVolume", &Sound::SoundWrapper::setVolume)
                 .addFunction("stop", &Sound::SoundWrapper::stop)
-                .addFunction("useSoundPosition",
-                             &Sound::SoundWrapper::useSoundPosition));
+                .addFunction("useSoundPosition", &Sound::SoundWrapper::useSoundPosition));
     }
 } // namespace obe::Bindings::SoundBindings

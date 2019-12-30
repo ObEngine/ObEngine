@@ -4,9 +4,10 @@
 
 namespace obe::Input
 {
-    InputAction::InputAction(Triggers::TriggerGroup* triggerPtr,
-                             const std::string& id)
-        : Identifiable(id), m_interval(0), m_repeat(0)
+    InputAction::InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id)
+        : Identifiable(id)
+        , m_interval(0)
+        , m_repeat(0)
     {
         m_actionTrigger = triggerPtr;
         triggerPtr->addTrigger(id);

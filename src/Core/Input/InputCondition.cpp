@@ -26,8 +26,7 @@ namespace obe::Input
             for (std::string element : elements)
             {
                 Utils::String::replaceInPlace(element, " ", "");
-                std::vector<std::string> stateAndButton =
-                    Utils::String::split(element, ":");
+                std::vector<std::string> stateAndButton = Utils::String::split(element, ":");
                 if (stateAndButton.size() == 1 || stateAndButton.size() == 2)
                 {
                     if (stateAndButton.size() == 1)
@@ -36,54 +35,46 @@ namespace obe::Input
                         stateAndButton[0] = "Pressed";
                     }
 
-                    if (Utils::Vector::contains(
-                            stateAndButton[0],
-                            {"Idle", "Hold", "Pressed", "Released"}))
+                    std::vector<std::string> stateList
+                        = Utils::String::split(stateAndButton[0], ",");
+                    Types::FlagSet<InputButtonState> buttonStates;
+                    for (std::string& buttonState : stateList)
                     {
-                        std::vector<std::string> stateList =
-                            Utils::String::split(stateAndButton[0], ",");
-                        std::vector<InputButtonState> buttonStates;
-                        for (std::string& buttonState : stateList)
+                        if (Utils::Vector::contains(
+                                buttonState, { "Idle", "Hold", "Pressed", "Released" }))
                         {
-                            buttonStates.push_back(
-                                stringToInputButtonState(buttonState));
-                        }
-                        const std::string keyId = stateAndButton[1];
-                        if (AllKeys.find(keyId) != AllKeys.end())
-                        {
-                            InputButton* button = GetKey(keyId);
-                            InputButtonMonitorPtr monitor =
-                                Monitors::Monitor(button);
-
-                            if (!isKeyAlreadyInCombination(button))
-                            {
-                                m_enabled = true;
-                                m_triggerConditions.emplace_back(monitor,
-                                                                 buttonStates);
-                            }
-                            else
-                            {
-                                throw aube::ErrorHandler::Raise(
-                                    "ObEngine.Input.InputCondition."
-                                    "ButtonAlreadyInCombination",
-                                    {{"button", button->getName()}});
-                            }
+                            buttonStates |= stringToInputButtonState(buttonState);
                         }
                         else
                         {
-                            Debug::Log->warn("<InputCondition> Button not "
-                                             "found : '{0}' in code '{1}'",
-                                             keyId, code);
-                            // throw
-                            // aube::ErrorHandler::Raise("ObEngine.Input.InputCondition.ButtonNotFound",
-                            // { { "button", keyId } });
+                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition."
+                                                            "UnknownState",
+                                { { "state", buttonState } });
+                        }
+                    }
+                    const std::string keyId = stateAndButton[1];
+                    if (AllKeys.find(keyId) != AllKeys.end())
+                    {
+                        InputButton* button = GetKey(keyId);
+                        InputButtonMonitorPtr monitor = Monitors::Monitor(button);
+
+                        if (!isKeyAlreadyInCombination(button))
+                        {
+                            m_enabled = true;
+                            m_triggerConditions.emplace_back(monitor, buttonStates);
+                        }
+                        else
+                        {
+                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition."
+                                                            "ButtonAlreadyInCombination",
+                                { { "button", button->getName() } });
                         }
                     }
                     else
                     {
-                        throw aube::ErrorHandler::Raise(
-                            "ObEngine.Input.InputCondition.UnknownState",
-                            {{"state", stateAndButton[0]}});
+                        Debug::Log->warn("<InputCondition> Button not "
+                                         "found : '{0}' in code '{1}'",
+                            keyId, code);
                     }
                 }
             }
@@ -95,8 +86,7 @@ namespace obe::Input
         return m_triggerConditions;
     }
 
-    void InputCondition::addCombinationElement(
-        const InputCombinationElement combinationElement)
+    void InputCondition::addCombinationElement(const InputCombinationElement combinationElement)
     {
         m_triggerConditions.push_back(combinationElement);
     }
@@ -113,8 +103,7 @@ namespace obe::Input
         bool conditionOk = true;
         for (const InputCombinationElement& element : m_triggerConditions)
         {
-            if (!Utils::Vector::contains(element.first->getState(),
-                                         element.second))
+            if (!(element.second & element.first->getState()))
             {
                 conditionOk = false;
                 break;

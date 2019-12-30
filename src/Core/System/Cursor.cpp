@@ -10,10 +10,8 @@ namespace obe::System
 {
     namespace Constraints
     {
-        std::function<std::pair<int, int>(Cursor*)> Default =
-            [](Cursor* cursor) {
-                return std::pair<int, int>(cursor->getX(), cursor->getY());
-            };
+        std::function<std::pair<int, int>(Cursor*)> Default
+            = [](Cursor* cursor) { return std::pair<int, int>(cursor->getX(), cursor->getY()); };
     }
 
     std::string MouseButtonToString(const sf::Mouse::Button button)
@@ -24,26 +22,24 @@ namespace obe::System
             return "middle";
         if (button == sf::Mouse::Button::Right)
             return "right";
-        throw aube::ErrorHandler::Raise(
-            "obe.System.Cursor.InvalidButtonEnumValue");
+        throw aube::ErrorHandler::Raise("obe.System.Cursor.InvalidButtonEnumValue");
     }
 
     Cursor::Cursor()
-        : Registrable("Cursor"),
-          m_cursorTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
-                  "Global", "Cursor"),
+        : Registrable("Cursor")
+        , m_cursorTriggers(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Cursor"),
               Triggers::TriggerGroupPtrRemover)
     {
         m_constraint = Constraints::Default;
         m_constraintCondition = []() { return true; };
 
-        m_buttonState[sf::Mouse::Button::Left] =
-            sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-        m_buttonState[sf::Mouse::Button::Middle] =
-            sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle);
-        m_buttonState[sf::Mouse::Button::Right] =
-            sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
+        m_buttonState[sf::Mouse::Button::Left]
+            = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+        m_buttonState[sf::Mouse::Button::Middle]
+            = sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle);
+        m_buttonState[sf::Mouse::Button::Right]
+            = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
         m_cursorTriggers->addTrigger("Move");
         m_cursorTriggers->addTrigger("Press");
@@ -76,23 +72,20 @@ namespace obe::System
     void Cursor::setX(const unsigned int newx)
     {
         m_x = newx;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y),
-                               System::MainWindow.getWindow());
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::setY(const unsigned int newy)
     {
         m_y = newy;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y),
-                               System::MainWindow.getWindow());
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::setPosition(const unsigned int newx, const unsigned int newy)
     {
         m_x = newx;
         m_y = newy;
-        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y),
-                               System::MainWindow.getWindow());
+        sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), System::MainWindow.getWindow());
     }
 
     void Cursor::show()
@@ -120,14 +113,12 @@ namespace obe::System
 
     Transform::UnitVector Cursor::getPosition() const
     {
-        return Transform::UnitVector(m_constrainedX, m_constrainedY,
-                                     Transform::Units::ScenePixels);
+        return Transform::UnitVector(m_constrainedX, m_constrainedY, Transform::Units::ScenePixels);
     }
 
     void Cursor::update()
     {
-        const sf::Vector2i mousePos =
-            sf::Mouse::getPosition(MainWindow.getWindow());
+        const sf::Vector2i mousePos = sf::Mouse::getPosition(MainWindow.getWindow());
         m_x = mousePos.x;
         m_y = mousePos.y;
         if (mousePos != m_saveOldPos)
@@ -155,16 +146,14 @@ namespace obe::System
         {
             if (sf::Mouse::isButtonPressed(state.first) && state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Hold", MouseButtonToString(state.first), true);
+                m_cursorTriggers->pushParameter("Hold", MouseButtonToString(state.first), true);
                 m_cursorTriggers->pushParameter("Hold", "x", m_x);
                 m_cursorTriggers->pushParameter("Hold", "y", m_y);
                 hold = true;
             }
             if (sf::Mouse::isButtonPressed(state.first) && !state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Press", MouseButtonToString(state.first), true);
+                m_cursorTriggers->pushParameter("Press", MouseButtonToString(state.first), true);
                 m_cursorTriggers->pushParameter("Press", "x", m_x);
                 m_cursorTriggers->pushParameter("Press", "y", m_y);
                 state.second = true;
@@ -172,15 +161,13 @@ namespace obe::System
             }
             if (!sf::Mouse::isButtonPressed(state.first) && state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Release", MouseButtonToString(state.first), true);
+                m_cursorTriggers->pushParameter("Release", MouseButtonToString(state.first), true);
                 m_cursorTriggers->pushParameter("Release", "x", m_x);
                 m_cursorTriggers->pushParameter("Release", "y", m_y);
                 state.second = false;
                 release = true;
             }
-            m_buttonState[state.first] =
-                sf::Mouse::isButtonPressed(state.first);
+            m_buttonState[state.first] = sf::Mouse::isButtonPressed(state.first);
         }
 
         if (hold)
@@ -191,8 +178,7 @@ namespace obe::System
             m_cursorTriggers->trigger("Release");
     }
 
-    void Cursor::setConstraint(
-        const std::function<std::pair<int, int>(Cursor*)> constraint,
+    void Cursor::setConstraint(const std::function<std::pair<int, int>(Cursor*)> constraint,
         std::function<bool()> condition)
     {
         m_constraint = constraint;

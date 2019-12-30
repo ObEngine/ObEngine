@@ -9,8 +9,8 @@
 
 namespace obe::Bindings
 {
-    std::function<void(kaguya::State*)>
-    InitTreeNodeAsTable(const std::string& nodeName);
+    std::function<void(kaguya::State*)> InitTreeNodeAsTable(
+        const std::string& nodeName);
 
     /**
      * \brief Holds and indexes all the CXX Bindings for Lua
@@ -18,7 +18,7 @@ namespace obe::Bindings
     class BindingTree : public Types::Identifiable
     {
     private:
-        std::vector<std::unique_ptr<BindingTree>> m_children{};
+        std::vector<std::unique_ptr<BindingTree>> m_children {};
         bool m_hasLib = false;
         std::function<void(kaguya::State*)> m_lib;
         BindingTree* m_parent;
@@ -33,7 +33,7 @@ namespace obe::Bindings
          * \param lib Lib of the BindingTree Node
          */
         BindingTree(BindingTree* parent, const std::string& id,
-                    std::function<void(kaguya::State*)> lib);
+            std::function<void(kaguya::State*)> lib);
         /**
          * \brief Builds a BindingTree Node
          * \param parent Parent of the BindingTree Node
@@ -51,8 +51,8 @@ namespace obe::Bindings
          * \param lib Library of the new Node
          * \return A reference to the original BindingTree node (to chain calls)
          */
-        BindingTree& add(const std::string& id,
-                         std::function<void(kaguya::State*)> lib);
+        BindingTree& add(
+            const std::string& id, std::function<void(kaguya::State*)> lib);
         /**
          * \brief Adds a child to the BindingTree node
          * \param id Id of the BindingTree Node to add

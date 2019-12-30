@@ -1,3 +1,5 @@
+#include <set>
+
 #include <Input/InputManager.hpp>
 #include <Input/KeyList.hpp>
 #include <Triggers/TriggerDatabase.hpp>
@@ -5,11 +7,26 @@
 
 namespace obe::Input
 {
+    bool InputManager::isActionCurrentlyInUse(const std::string& actionId)
+    {
+        for (const auto& actionPtr : m_currentActions)
+        {
+            if (const auto& action = actionPtr.lock())
+            {
+                if (action->getId() == actionId)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     InputManager::InputManager()
-        : Registrable("InputManager"),
-          m_actionTriggers(
-              Triggers::TriggerDatabase::GetInstance()->createTriggerGroup(
-                  "Global", "Actions"),
+        : Registrable("InputManager")
+        , Togglable(true)
+        , m_actionTriggers(
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Actions"),
               Triggers::TriggerGroupPtrRemover)
     {
     }
@@ -23,28 +40,24 @@ namespace obe::Input
                 return *action.get();
             }
         }
-        aube::ErrorHandler::Warn("ObEngine.Input.InputManager.UnknownAction",
-                                 {{"action", actionId}});
-        m_allActions.push_back(
-            std::make_unique<InputAction>(m_actionTriggers.get(), actionId));
+        aube::ErrorHandler::Warn(
+            "ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
+        m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), actionId));
         return *m_allActions.back().get();
-    }
-
-    void InputManager::setEnabled(const bool state)
-    {
-        m_binderEnabled = state;
     }
 
     void InputManager::update()
     {
-        if (m_binderEnabled)
+        if (m_enabled)
         {
-            const unsigned int actionsAmount = m_currentActions.size();
-            for (unsigned int i = 0; i < actionsAmount; i++)
+            auto actionBuffer = m_currentActions;
+            for (auto actionPtr : actionBuffer)
             {
-                if (i <
-                    m_currentActions.size()) // Performance issue ? <REVISION>
-                    m_currentActions[i]->update();
+                if (auto action = actionPtr.lock())
+                {
+                    Debug::Log->trace("Updating action {}", action->getId());
+                    action->update();
+                }
             }
         }
     }
@@ -78,35 +91,28 @@ namespace obe::Input
             {
                 if (!this->actionExists(action->getId()))
                 {
-                    m_allActions.push_back(std::make_unique<InputAction>(
-                        m_actionTriggers.get(), action->getId()));
+                    m_allActions.push_back(
+                        std::make_unique<InputAction>(m_actionTriggers.get(), action->getId()));
                 }
-                else if (!Utils::Vector::contains(action->getId(),
-                                                  alreadyInFile))
+                else if (!Utils::Vector::contains(action->getId(), alreadyInFile))
                 {
                     this->getAction(action->getId()).clearConditions();
                 }
-                auto inputCondition = [](InputManager* inputManager,
-                                         vili::Node* action,
-                                         vili::DataNode* condition) {
+                auto inputCondition = [](InputManager* inputManager, vili::Node* action,
+                                          vili::DataNode* condition) {
                     InputCondition actionCondition;
-                    actionCondition.setCombinationCode(
-                        condition->get<std::string>());
-                    Debug::Log->debug(
-                        "<InputManager> Associated Key '{0}' for Action '{1}'",
+                    actionCondition.setCombinationCode(condition->get<std::string>());
+                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'",
                         condition->get<std::string>(), action->getId());
-                    inputManager->getAction(action->getId())
-                        .addCondition(actionCondition);
+                    inputManager->getAction(action->getId()).addCondition(actionCondition);
                 };
                 if (action->getType() == vili::NodeType::DataNode)
                 {
-                    inputCondition(this, action,
-                                   static_cast<vili::DataNode*>(action));
+                    inputCondition(this, action, static_cast<vili::DataNode*>(action));
                 }
                 else if (action->getType() == vili::NodeType::ArrayNode)
                 {
-                    for (vili::DataNode* condition :
-                         *static_cast<vili::ArrayNode*>(action))
+                    for (vili::DataNode* condition : *static_cast<vili::ArrayNode*>(action))
                     {
                         inputCondition(this, action, condition);
                     }
@@ -128,13 +134,12 @@ namespace obe::Input
         Debug::Log->debug("<InputManager> Adding Context '{0}'", context);
         for (auto& action : m_allActions)
         {
-            if (Utils::Vector::contains(context, action->getContexts()) &&
-                !Utils::Vector::contains(action.get(), m_currentActions))
+            if (Utils::Vector::contains(context, action->getContexts())
+                && !isActionCurrentlyInUse(action->getId()))
             {
-                Debug::Log->debug(
-                    "<InputManager> Add Action '{0}' in Context '{1}'",
+                Debug::Log->debug("<InputManager> Add Action '{0}' in Context '{1}'",
                     action.get()->getId(), context);
-                m_currentActions.push_back(action.get());
+                m_currentActions.push_back(action);
             }
         }
         return *this;
@@ -143,15 +148,34 @@ namespace obe::Input
     InputManager& InputManager::removeContext(const std::string& context)
     {
         //<REVISION> Multiple context, keep which one, remove keys of wrong
-        //context
-        m_allActions.erase(
-            std::remove_if(
-                m_allActions.begin(), m_allActions.end(),
-                [&context](std::unique_ptr<InputAction>& inputAction) -> bool {
-                    return (inputAction->getId() == context);
+        // context
+        m_currentActions.erase(
+            std::remove_if(m_currentActions.begin(), m_currentActions.end(),
+                [&context](const auto& inputAction) -> bool {
+                    if (const auto& action = inputAction.lock())
+                    {
+                        const auto& contexts = action->getContexts();
+                        auto isActionInContext
+                            = std::find(contexts.begin(), contexts.end(), context)
+                            != contexts.end();
+                        if (isActionInContext)
+                        {
+                            Debug::Log->debug("<InputManager> Remove Action '{0}' "
+                                              "from Context '{1}'",
+                                action->getId(), context);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }),
-            m_allActions.end());
-
+            m_currentActions.end());
         return *this;
     }
 
@@ -163,17 +187,18 @@ namespace obe::Input
 
     std::vector<std::string> InputManager::getContexts()
     {
-        std::vector<std::string> allContexts;
-        for (const InputAction* action : m_currentActions)
+        std::set<std::string> allContexts;
+
+        for (const auto& actionPtr : m_currentActions)
         {
-            for (const std::string& context : action->getContexts())
+            if (auto action = actionPtr.lock())
             {
-                if (!Utils::Vector::contains(context, allContexts))
+                for (const auto& context : action->getContexts())
                 {
-                    allContexts.push_back(context);
+                    allContexts.emplace(context);
                 }
             }
         }
-        return allContexts;
+        return std::vector<std::string>(allContexts.begin(), allContexts.end());
     }
 } // namespace obe::Input

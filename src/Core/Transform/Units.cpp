@@ -16,8 +16,8 @@ namespace obe::Transform
             return Units::ScenePixels;
         if (unit == "SceneUnits")
             return Units::SceneUnits;
-        throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownStringUnit",
-                                        {{"unit", unit}});
+        throw aube::ErrorHandler::Raise(
+            "obe.Transform.Units.UnknownStringUnit", { { "unit", unit } });
     }
 
     std::string unitsToString(Units unit)

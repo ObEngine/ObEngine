@@ -33,17 +33,14 @@ namespace obe::Graphics::Canvas
 
     void Line::draw(sf::RenderTexture& target)
     {
-        const Transform::UnitVector p1px =
-            p1.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector p2px =
-            p2.to<Transform::Units::ScenePixels>();
-        sf::Vertex line[] = {sf::Vertex(sf::Vector2f(p1px.x, p1px.y), p1color),
-                             sf::Vertex(sf::Vector2f(p2px.x, p2px.y), p2color)};
+        const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
+        sf::Vertex line[] = { sf::Vertex(sf::Vector2f(p1px.x, p1px.y), p1color),
+            sf::Vertex(sf::Vector2f(p2px.x, p2px.y), p2color) };
         target.draw(line, 2, sf::Lines);
     }
 
-    CanvasPositionable::CanvasPositionable(Canvas* parent,
-                                           const std::string& id)
+    CanvasPositionable::CanvasPositionable(Canvas* parent, const std::string& id)
         : CanvasElement(parent, id)
     {
         // Default Canvas elements unit is ScenePixels
@@ -115,9 +112,7 @@ namespace obe::Graphics::Canvas
     void Canvas::sortElements()
     {
         std::sort(m_elements.begin(), m_elements.end(),
-                  [](const auto& elem1, const auto& elem2) {
-                      return elem1->layer > elem2->layer;
-                  });
+            [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
     }
 
     Canvas::Canvas(unsigned int width, unsigned int height)
@@ -168,9 +163,8 @@ namespace obe::Graphics::Canvas
 
     void Canvas::remove(const std::string& id)
     {
-        m_elements.erase(
-            std::remove_if(m_elements.begin(), m_elements.end(),
-                           [&id](auto& elem) { return elem->getId() == id; }),
+        m_elements.erase(std::remove_if(m_elements.begin(), m_elements.end(),
+                             [&id](auto& elem) { return elem->getId() == id; }),
             m_elements.end());
     }
 

@@ -42,12 +42,12 @@ namespace obe::Transform
          *               - From : Referential::TopLeft to ref
          *               - To : ref to Referential::TopLeft
          */
-        void transformRef(UnitVector& vec, Referential ref,
-                          ConversionType type) const;
+        void transformRef(
+            UnitVector& vec, Referential ref, ConversionType type) const;
 
         Rect();
         Rect(const Transform::UnitVector& position,
-             const Transform::UnitVector& size);
+            const Transform::UnitVector& size);
         /**
          * \brief Set the position of the Rect (Movable override) using an
          * UnitVector \param position Position to affect to the Rect (Movable
@@ -83,15 +83,15 @@ namespace obe::Transform
          * opposite Point won't move) \param position Position to affect to the
          * specific Referential \param ref Referential you want to move
          */
-        void setPointPosition(const UnitVector& position,
-                              Referential ref = Referential::TopLeft);
+        void setPointPosition(
+            const UnitVector& position, Referential ref = Referential::TopLeft);
         /**
          * \brief Move a specific Referential of the Rect (The opposite Point
          * won't move) \param position Position to add to the specific
          * Referential \param ref Referential you want to move
          */
-        void movePoint(const UnitVector& position,
-                       Referential ref = Referential::TopLeft);
+        void movePoint(
+            const UnitVector& position, Referential ref = Referential::TopLeft);
 
         /**
          * \brief Set the size of the Rect
@@ -99,16 +99,16 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          * won't move)
          */
-        void setSize(const UnitVector& size,
-                     Referential ref = Referential::TopLeft);
+        void setSize(
+            const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
          * \param ref Referential used to scale the Rect (Referential that won't
          * move)
          */
-        void scale(const UnitVector& size,
-                   Referential ref = Referential::TopLeft);
+        void scale(
+            const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Get the Size of the Rect
          * \return An UnitVector containing the size of the Rect (Default Unit

@@ -28,7 +28,7 @@ function LuaCore.MakeTriggerGroupSubTable(This, namespace)
             end
         end,
         __storage = {}
-    };    
+    };
 end
 
 
@@ -36,7 +36,7 @@ end
 function LuaCore.MakeTriggerGroupHook(This, namespace)
     local hook_mt = {
         __index = function(table, key)
-            for _, v in pairs(TriggerDatabase:GetInstance():getAllTriggersGroupNames(namespace)) do
+            for _, v in pairs(TriggerDatabase:getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });
@@ -66,8 +66,10 @@ function LuaCore.FuncInjector(env, funcToCall, triggerRegisterName)
         local Lua_Func_ArgList = env["__TRIGGERS"][triggerRegisterName].args;
         local Lua_Func_CallArgs = {};
         for _, i in pairs(Lua_Func_ArgList) do
-            if (LuaCore.TriggerArgTable[triggerRegisterName]) then
+            if (LuaCore.TriggerArgTable[triggerRegisterName][i]) then
                 table.insert(Lua_Func_CallArgs, LuaCore.TriggerArgTable[triggerRegisterName][i]);
+            else
+                table.insert(Lua_Func_CallArgs, __nil_table);
             end
         end
         funcToCall(ArgMirror.Unpack(Lua_Func_CallArgs));

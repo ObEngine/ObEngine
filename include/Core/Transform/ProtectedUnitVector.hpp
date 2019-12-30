@@ -26,6 +26,6 @@ namespace obe::Transform
          * \param unit Unit of the ProtectedUnitVector
          */
         ProtectedUnitVector(const double& x, const double& y,
-                            const Units& unit = Units::SceneUnits);
+            const Units& unit = Units::SceneUnits);
     };
 } // namespace obe::Transform

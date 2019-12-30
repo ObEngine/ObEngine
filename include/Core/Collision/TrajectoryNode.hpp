@@ -23,9 +23,8 @@ namespace obe::Collision
 
     public:
         TrajectoryNode(Scene::SceneNode* sceneNode);
-        Trajectory*
-        addTrajectory(const std::string& id,
-                      Transform::Units unit = Transform::Units::SceneUnits);
+        Trajectory* addTrajectory(const std::string& id,
+            Transform::Units unit = Transform::Units::SceneUnits);
         Scene::SceneNode* getSceneNode() const;
         Trajectory* getTrajectory(const std::string& id);
         void removeTrajectory(const std::string& id);

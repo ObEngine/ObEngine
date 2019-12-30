@@ -18,14 +18,14 @@ namespace obe::Scene
 
 namespace obe::Collision
 {
-    std::vector<Transform::UnitVector&>
-    convexHull(std::vector<Transform::UnitVector&> points);
+    std::vector<Transform::UnitVector&> convexHull(
+        std::vector<Transform::UnitVector&> points);
     double cross(const Transform::UnitVector& O, const Transform::UnitVector& A,
-                 const Transform::UnitVector& B);
+        const Transform::UnitVector& B);
     bool pointsCompare(const Transform::UnitVector& first,
-                       const Transform::UnitVector& second);
+        const Transform::UnitVector& second);
     double pointsDistance(const Transform::UnitVector& first,
-                          const Transform::UnitVector& second);
+        const Transform::UnitVector& second);
 
     /**
      * \brief Enum used when manipulating tags in the Collider
@@ -70,8 +70,8 @@ namespace obe::Collision
         std::vector<std::string> m_tags;
 
         void resetUnit(Transform::Units unit) override;
-        std::vector<std::string>
-        retrieveTagVector(ColliderTagType tagType) const;
+        std::vector<std::string> retrieveTagVector(
+            ColliderTagType tagType) const;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
 
     public:
@@ -118,7 +118,7 @@ namespace obe::Collision
          * \return true if the two polygons intersects, false otherwise
          */
         bool doesCollide(PolygonalCollider& collider,
-                         const Transform::UnitVector& offset) const;
+            const Transform::UnitVector& offset) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -127,7 +127,7 @@ namespace obe::Collision
          * false otherwise
          */
         bool doesHaveAnyTag(ColliderTagType tagType,
-                            const std::vector<std::string>& tags) const;
+            const std::vector<std::string>& tags) const;
         /**
          * \brief Checks if the Collider contains a Tag
          * \param tagType List from where you want to check the Tag existence
@@ -145,8 +145,8 @@ namespace obe::Collision
          * Polygon or not
          */
         void draw(Scene::Camera& camera, bool drawLines = true,
-                  bool drawPoints = false, bool drawMasterPoint = false,
-                  bool drawSkel = false);
+            bool drawPoints = false, bool drawMasterPoint = false,
+            bool drawSkel = false);
         /**
          * \brief Dumps the content of the PolygonalCollider to a ComplexNode
          * \param target ComplexNode where to serialize the PolygonalCollider

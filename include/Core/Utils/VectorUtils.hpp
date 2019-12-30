@@ -32,7 +32,7 @@ namespace obe::Utils::Vector
      * std::string which are all the elements of the std::vector joined
      */
     std::string join(std::vector<std::string>& vector, std::string sep = "",
-                     int start = 0, int end = 0);
+        int start = 0, int end = 0);
     /**
      * \brief Erases all occurences of a given element in the std::vector
      * \tparam V Type of the item you want to erase
@@ -50,8 +50,8 @@ namespace obe::Utils::Vector
      * std::vector
      */
     template <typename V>
-    std::vector<V> getSubVector(const std::vector<V>& vec, int start = 0,
-                                int end = 0);
+    std::vector<V> getSubVector(
+        const std::vector<V>& vec, int start = 0, int end = 0);
 
     template <typename V> bool contains(V item, const std::vector<V>& vec)
     {
@@ -87,8 +87,8 @@ namespace obe::Utils::Vector
     }
 
     template <typename V>
-    std::vector<V> getSubVector(const std::vector<V>& vec, const int start,
-                                const int end)
+    std::vector<V> getSubVector(
+        const std::vector<V>& vec, const int start, const int end)
     {
         auto first = vec.begin() + start;
         auto last = vec.end() - end;

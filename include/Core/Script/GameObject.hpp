@@ -34,22 +34,26 @@ namespace obe::Script
          * \param type Type of the GameObject to get the Requirements
          * \return A pointer to the Requires ComplexNode of the GameObject
          */
-        static vili::ComplexNode*
-        GetRequirementsForGameObject(const std::string& type);
+        static vili::ComplexNode* GetRequirementsForGameObject(
+            const std::string& type);
         /**
          * \brief Gets the ObjectDefintion ComplexNode of the GameObject
          * \param type Type of the GameObject to get the GODF
          * \return A pointer to the ObjectDefintion ComplexNode
          */
-        static vili::ComplexNode*
-        GetDefinitionForGameObject(const std::string& type);
+        static vili::ComplexNode* GetDefinitionForGameObject(
+            const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
          * ComplexNode \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(GameObject* obj,
-                                      vili::ComplexNode& requires);
+        static void ApplyRequirements(
+            GameObject* obj, vili::ComplexNode& requires);
+        /*
+         * \brief Clears the GameObjectDatabase (cache reload)
+         */
+        static void Clear();
     };
 
     /**
@@ -60,13 +64,13 @@ namespace obe::Script
     private:
         unsigned int m_envIndex;
         bool m_permanent = false;
-        std::unique_ptr<Animation::Animator> m_objectAnimator;
-        Graphics::LevelSprite* m_objectLevelSprite;
-        Collision::PolygonalCollider* m_objectCollider;
+        std::unique_ptr<Animation::Animator> m_animator;
+        Graphics::LevelSprite* m_sprite = nullptr;
+        Collision::PolygonalCollider* m_collider = nullptr;
         Triggers::TriggerGroupPtr m_localTriggers;
         Scene::SceneNode m_objectNode;
 
-        std::vector<std::pair<Triggers::Trigger*, std::string>>
+        std::vector<std::pair<std::weak_ptr<Triggers::Trigger>, std::string>>
             m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>>
             m_registeredAliases;
@@ -74,9 +78,6 @@ namespace obe::Script
         std::string m_type;
         std::string m_privateKey;
 
-        bool m_hasAnimator = false;
-        bool m_hasCollider = false;
-        bool m_hasLevelSprite = false;
         bool m_hasScriptEngine = false;
         bool m_active = false;
         bool m_canUpdate = true;
@@ -168,10 +169,9 @@ namespace obe::Script
          * Trigger
          */
         void useTrigger(const std::string& trNsp, const std::string& trGrp,
-                        const std::string& trName,
-                        const std::string& callAlias = "");
+            const std::string& trName, const std::string& callAlias = "");
         void removeTrigger(const std::string& trNsp, const std::string& trGrp,
-                           const std::string& trName) const;
+            const std::string& trName) const;
         /**
          * \brief Execute a Lua String in the Lua State of the GameObject
          * \param query String to execute
@@ -190,16 +190,16 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName,
-                                kaguya::LuaRef value) const;
+        void sendInitArgFromLua(
+            const std::string& argName, kaguya::LuaRef value) const;
         /**
          * \brief Register a Trigger in the GameObject
          * \param trg Pointer to the Trigger
          * \param callbackName Name of the callback to call when Trigger will be
          * enabled
          */
-        void registerTrigger(Triggers::Trigger* trg,
-                             const std::string& callbackName);
+        void registerTrigger(std::weak_ptr<Triggers::Trigger> trg,
+            const std::string& callbackName);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
@@ -251,6 +251,8 @@ namespace obe::Script
          * otherwise
          */
         bool isPermanent() const;
+
+        void setState(bool state);
     };
 
     template <typename U>

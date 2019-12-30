@@ -4,9 +4,9 @@ GameConfig:
     antiAliasing:True
     scrollSensibility:1
     framerateLimit:True
-    framerateTarget:144
+    framerateTarget:60
     vsync:True
-    
+
 KeyBinding:
     mapEditor:
         SpriteMode:"Pressed:1"
@@ -58,12 +58,17 @@ KeyBinding:
         ColliderRelease:"Pressed:LMB"
         ColliderRemove:"Hold:LMB + Pressed:Delete"
         ColliderCreate:"Pressed:RMB"
+    sceneNodeEditing:
+        SceneNodePick:"Pressed:LMB"
+        SceneNodeMove:"Hold:LMB"
+        SceneNodeRelease:"Released:LMB"
     gameConsole:
         ConsoleCursorLeft:"Pressed:Left"
         ConsoleCursorRight:"Pressed:Right"
         ConsoleUpHistory:"Pressed:Up"
         ConsoleDownHistory:"Pressed:Down"
         ConsoleToggle:"Pressed:F1"
-    
+        ExitEditor:"Pressed:Escape"
+
 Debug:
     logLevel:1

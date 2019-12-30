@@ -73,7 +73,7 @@ namespace obe::Graphics
          * \param camera Camera used to manipulate PositionTransformers
          */
         void moveTo(const Transform::UnitVector& position,
-                    const Transform::UnitVector& camera);
+            const Transform::UnitVector& camera);
     };
 
     /**
@@ -96,6 +96,7 @@ namespace obe::Graphics
         const sf::Texture* m_texture;
         bool m_visible = true;
         int m_zdepth = 0;
+        bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;
 
@@ -131,9 +132,8 @@ namespace obe::Graphics
          * the HandlePoint \return The adress of the HandlePoint if the position
          * is correct, nullptr otherwise
          */
-        LevelSpriteHandlePoint*
-        getHandlePoint(Transform::UnitVector& cameraPosition, int posX,
-                       int posY);
+        LevelSpriteHandlePoint* getHandlePoint(
+            Transform::UnitVector& cameraPosition, int posX, int posY);
         /**
          * \brief Get the layer of the Sprite
          * \return An int containing the Layer where the sprite is (Higher layer
@@ -203,6 +203,7 @@ namespace obe::Graphics
          * z-depth is behind lower ones)
          */
         int getZDepth() const;
+        bool getAntiAliasing() const;
         bool hasShader() const;
         /**
          * \brief Get the visibility of the LevelSprite
@@ -272,7 +273,7 @@ namespace obe::Graphics
          */
         void setTexture(const sf::Texture& texture);
         void setTextureRect(unsigned int x, unsigned int y, unsigned int width,
-                            unsigned int height);
+            unsigned int height);
         /**
          * \brief Set the translation origin of the LevelSprite
          * \param x x Coordinate of the new translation origin of the
@@ -292,6 +293,7 @@ namespace obe::Graphics
          * ones)
          */
         void setZDepth(int zdepth);
+        void setAntiAliasing(bool antiAliasing);
         /**
          * \brief Reset internal LevelSprite Rect using texture size
          */

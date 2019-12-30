@@ -22,7 +22,7 @@
 - [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
 
 ## What the hell is ÖbEngine ?
-ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time as a student, it might not be really stable right now but I'm working on it.
+ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time, it might not be really stable right now but I'm working on it.
 
 ## What do I need to build it ?
 You will need SFML :
@@ -30,17 +30,21 @@ You will need SFML :
 
 There are other libraries but they are included in the repository (extlibs/ folder) :
 
-- [11zip](https://github.com/Sygmei/11Zip)  (MIT License) (minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/))
-- [Kaguya](https://github.com/satoren/kaguya) (Boost Software License) (Lua Binding)
-- [Lua 5.3](http://lua-users.org/wiki/LuaBinaries) (zlib License) (Scripting language)
-- [zlib&minizip](http://www.zlib.net/) (zlib license) (zip archives)
-- [tgui](https://github.com/texus/TGUI) (zlib license) (GUI)
-- [Vili](https://github.com/Sygmei/ViliData) (MIT License) (Data language)
-- [Catch](https://github.com/catchorg/Catch2) (Boost Software License) (Test Framework)
-- [spdlog](https://github.com/gabime/spdlog) (MIT License) (Logging library)
-- [dynamicLinker](https://github.com/Marqin/dynamicLinker) (MIT License) (Dynamic Libs wrapper)
-- [RichText](https://github.com/Skyrpex/RichText) (MIT License) (sf::Text extension)
-- [fmt](https://github.com/fmtlib/fmt) (BSD 2-Clause "Simplified" License) (Formatting library)
+### Bundled dependencies
+
+|Library|Description|License|
+|-------|-----------|-------|
+|[11zip](https://github.com/Sygmei/11Zip)|minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/)|MIT License|
+|[Catch2](https://github.com/catchorg/Catch2)|Test Framework|Boost Software License|
+|[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
+|[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
+|[Kaguya](https://github.com/satoren/kaguya)|C++ binding library to Lua|Boost Software License|
+|[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
+|[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
+|[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
+|[tgui](https://github.com/texus/TGUI)|GUI library|zlib license|
+|[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
+|[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
 ## How do I build it ?
 Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
@@ -97,22 +101,15 @@ Here you go :
 - Tiled Map Editor support
 
 ## ObEngine's versions
+
+Each major release will have a name based on a translation of the word "Eggplant".
+
+ÖbEngine just follows [semver rules](https://semver.org/) which means any version will be tagged (X.Y.Z) with X: Major, Y: Minor and Z: Patch.
+
 ### Pre-alpha versions
 |Version number|Version name|Word origin|Release date|Description|
 |--------------|------------|-----------|------------|-----------|
-|0.1.0|Aubergine|French|April 2016|First usable version of ÖbEngine|
-|0.2.0|Berjinez|Breton|June 2016|Better scripting support|
-|0.3.0|Cà tím|Vietnamese|January 2017|Big engine rework|
-|0.4.0|Eggplant|English|February 2017|First released dev version of ÖbEngine|
-|0.5.0|Gaji|Korean|September 2017|First public released version (still unstable)|
-|0.6.0|Hkaramsee|Birman|November 2017|C++17 support|
-|0.7.0|Igba|Yoruba|March 2018|Cleaning the engine code, new build system|
-|0.8.0|Lilek|Czech|April 2018|Working on new Qt UI|
-|0.9.0|Mbilingani|Swahili|September 2018|Cleaning engine code again !|
-### Beta versions
-|Version number|Version name|Word origin|Release date|Description|
-|--------------|------------|-----------|------------|-----------|
-|1.0.0|Melanzana|Italian|?|First stable version of ÖbEngine !|
+|1.0.0|Melanzana|Italian|?|First production release of ÖbEngine|
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
@@ -183,19 +180,20 @@ Check the Wiki for more examples !
 
 ## Contributors / Thanks
 
-Main contributor : Sygmei
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/Sygmei"><img src="https://avatars1.githubusercontent.com/u/3835355?v=4" width="100px;" alt="Sygmei"/><br /><sub><b>Sygmei</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Sygmei" title="Creator / Code">✍️💻</a></td>
+    <td align="center"><a href="https://github.com/PierrickLP"><img src="https://avatars1.githubusercontent.com/u/19671805?v=4" width="100px;" alt="PierrickLP"/><br /><sub><b>PierrickLP</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=PierrickLP" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Skealz"><img src="https://avatars3.githubusercontent.com/u/11155537?v=4" width="100px;" alt="Skealz"/><br /><sub><b>Skealz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Skealz" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/TeddyTrqt"><img src="https://avatars3.githubusercontent.com/u/25806305?v=4" width="100px;" alt="TeddyTrqt"/><br /><sub><b>TeddyTrqt</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=TeddyTrqt" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Arthapz"><img src="https://avatars1.githubusercontent.com/u/27437334?v=4" width="100px;" alt="Arthapz"/><br /><sub><b>Arthapz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Arthapz" title="Help / Code">💡💻</a></td>
+    <td align="center"><a href="#"><img src="https://cdn.discordapp.com/avatars/182580990068129793/900bed68729180a0076fd1a22b548139.png?size=128" width="100px;" alt="LePatissier"/><br /><sub><b>LePatissier</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=LePatissier" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Tzupy"><img src="https://avatars0.githubusercontent.com/u/12645020?v=4" width="100px;" alt="Tzupy"/><br /><sub><b>Tzupy</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Tzupy" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/mjopenglsdl"><img src="https://avatars1.githubusercontent.com/u/3438296?s=460&v=4" width="100px;" alt="mjopenglsdl"/><br /><sub><b>mjopenglsdl</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=mjopenglsdl" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/julio-b"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="julio-b"/><br /><sub><b>julio-b</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=julio-b" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ZanyMonk"><img src="https://avatars2.githubusercontent.com/u/3920186?v=4" width="100px;" alt="ZanyMonk"/><br /><sub><b>ZanyMonk</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=ZanyMonk" title="Code">💻</a></td>
+  </tr>
+</table>
 
-### Contributors
-
-- [@PierrickLP](https://github.com/PierrickLP)
-- @LePatissier
-- [@Arthapz](https://github.com/Arthapz)
-- @ZanyMonk
-
-### Special thanks
-
-- [@eXpl0it3r](https://github.com/eXpl0it3r)
-- @WaWan
-- [@texus](https://github.com/texus)
-- [@MarioLiebisch](https://github.com/MarioLiebisch)
-- And many more !
