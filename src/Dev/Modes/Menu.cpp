@@ -2,11 +2,11 @@
 #include <vili/Vili.hpp>
 
 #include "System/Window.hpp"
+#include <Config/Config.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
-#include <Config/Config.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
@@ -17,19 +17,16 @@ namespace obe::Modes
     void scrollPanel(tgui::Panel::Ptr panel, tgui::Scrollbar::Ptr scrollbar)
     {
         static int previousScrolbarValue = 0;
-        const int distanceToMove =
-            previousScrolbarValue - scrollbar->getValue();
+        const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
 
         for (auto& widget : panel->getWidgets())
-            widget->setPosition(widget->getPosition().x,
-                                widget->getPosition().y + distanceToMove);
+            widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
 
         previousScrolbarValue = scrollbar->getValue();
     }
 
-    void chooseMapAddMaps(tgui::Panel::Ptr middlePanel,
-                          tgui::Scrollbar::Ptr scrollbar,
-                          tgui::Theme& baseTheme, std::string& currentMap)
+    void chooseMapAddMaps(tgui::Panel::Ptr middlePanel, tgui::Scrollbar::Ptr scrollbar,
+        tgui::Theme& baseTheme, std::string& currentMap)
     {
         int scrollBoxSize = 0;
 
@@ -39,8 +36,7 @@ namespace obe::Modes
         middlePanel->removeAllWidgets();
 
         std::vector<std::string> allMapsTemp;
-        System::Path("Data/Maps")
-            .loadAll(System::Loaders::filePathLoader, allMapsTemp);
+        System::Path("Data/Maps").loadAll(System::Loaders::filePathLoader, allMapsTemp);
         std::vector<std::string> allMaps;
         for (int i = 0; i < allMapsTemp.size(); i++)
         {
@@ -50,7 +46,7 @@ namespace obe::Modes
         for (int i = 0; i < allMaps.size(); i++)
         {
             vili::ViliParser mapInfoParser;
-            mapInfoParser.setQuickLookAttributes({"Meta"});
+            mapInfoParser.setQuickLookAttributes({ "Meta" });
             System::Path("Data/Maps")
                 .add(allMaps[i])
                 .load(System::Loaders::dataLoader, mapInfoParser);
@@ -59,25 +55,19 @@ namespace obe::Modes
 
             if (mapInfoParser->contains(vili::NodeType::ComplexNode, "Meta"))
             {
-                if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode,
-                                                      "name"))
-                    levelName = mapInfoParser.at("Meta")
-                                    .getDataNode("name")
-                                    .get<std::string>();
+                if (mapInfoParser.at("Meta").contains(vili::NodeType::DataNode, "name"))
+                    levelName = mapInfoParser.at("Meta").getDataNode("name").get<std::string>();
             }
 
             tgui::Button::Ptr selectMapButton = tgui::Button::create();
             middlePanel->add(selectMapButton);
             selectMapButton->setText(
-                levelName + " (" +
-                filename.substr(0, allMapsTemp[i].size() - 9) + ")");
-            selectMapButton->setRenderer(
-                baseTheme.getRenderer("MapSelectButton"));
+                levelName + " (" + filename.substr(0, allMapsTemp[i].size() - 9) + ")");
+            selectMapButton->setRenderer(baseTheme.getRenderer("MapSelectButton"));
             selectMapButton->setSize("100%", "20%");
             middlePanel->add(selectMapButton);
             selectMapButton->setPosition("0", i * selectMapButton->getSize().y);
-            selectMapButton->connect(
-                "pressed", [&currentMap, filename] { currentMap = filename; });
+            selectMapButton->connect("pressed", [&currentMap, filename] { currentMap = filename; });
             scrollBoxSize += selectMapButton->getSize().y - 1;
         }
         scrollbar->setLowValue(middlePanel->getSize().y);
@@ -94,9 +84,7 @@ namespace obe::Modes
                                              .getPath(0)
                                              .toString()))
             {
-                Debug::Log->info(
-                    "<Menu:createLevel> Creating new Map file : '{0}'",
-                    newLevelName);
+                Debug::Log->info("<Menu:createLevel> Creating new Map file : '{0}'", newLevelName);
                 vili::ViliParser newFileParser;
                 newFileParser.addFlag("Map");
                 newFileParser.addFlag("Lock");
@@ -105,33 +93,29 @@ namespace obe::Modes
                 newFileParser.at("Meta").createDataNode("name", newLevelName);
                 newFileParser->createComplexNode("View");
                 newFileParser.at("View").createComplexNode("pos");
-                newFileParser.at("View", "pos")
-                    .createDataNode("unit", "SceneUnits");
+                newFileParser.at("View", "pos").createDataNode("unit", "SceneUnits");
                 newFileParser.at("View", "pos").createDataNode("x", 0);
                 newFileParser.at("View", "pos").createDataNode("y", 0);
                 newFileParser.at("View", "pos")
-                    .useTemplate(
-                        newFileParser.getTemplate("Vector2<SceneUnits>"));
+                    .useTemplate(newFileParser.getTemplate("Vector2<SceneUnits>"));
                 newFileParser.at("View").createDataNode("size", 1);
-                newFileParser.writeFile(System::Path("Data/Maps")
-                                            .add(newLevelName + ".map.vili")
-                                            .getPath(0)
-                                            .toString(),
-                                        true);
+                newFileParser.writeFile(
+                    System::Path("Data/Maps").add(newLevelName + ".map.vili").getPath(0).toString(),
+                    true);
                 input->setText("");
             }
             else
                 Debug::Log->warn("<Menu:createLevel> Map file : '{0}' already "
                                  "exists, cancelling operation",
-                                 newLevelName);
+                    newLevelName);
         }
     }
 
     std::string chooseMapMenu()
     {
         unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
-        sf::RenderWindow window({windowSize, windowSize}, "ObEngine Map Selector",
-                                sf::Style::None);
+        sf::RenderWindow window(
+            { windowSize, windowSize }, "ObEngine Map Selector", sf::Style::None);
 
         tgui::Gui gui(window);
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -186,8 +170,7 @@ namespace obe::Modes
         createMapLabel->setTextSize(windowSize * 0.045);
         createMapLabel->setPosition("2.5%", "20%");
 
-        auto createMapLambda = [createMapInput, middlePanel, scrollbar,
-                                &baseTheme, &currentMap]() {
+        auto createMapLambda = [createMapInput, middlePanel, scrollbar, &baseTheme, &currentMap]() {
             createLevel(createMapInput);
             chooseMapAddMaps(middlePanel, scrollbar, baseTheme, currentMap);
         };
@@ -227,15 +210,12 @@ namespace obe::Modes
                     window.close();
                 else if (event.type == sf::Event::MouseButtonPressed)
                 {
-                    if (sf::Mouse::getPosition().y - window.getPosition().y <
-                            60 &&
-                        sf::Mouse::getPosition().x - window.getPosition().x <
-                            580)
+                    if (sf::Mouse::getPosition().y - window.getPosition().y < 60
+                        && sf::Mouse::getPosition().x - window.getPosition().x < 580)
                     {
                         if (event.mouseButton.button == sf::Mouse::Left)
                         {
-                            grabbedOffset =
-                                window.getPosition() - sf::Mouse::getPosition();
+                            grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
                             grabbedWindow = true;
                         }
                     }
@@ -253,8 +233,7 @@ namespace obe::Modes
                 else if (event.type == sf::Event::MouseMoved)
                 {
                     if (grabbedWindow)
-                        window.setPosition(sf::Mouse::getPosition() +
-                                           grabbedOffset);
+                        window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
                 }
                 gui.handleEvent(event);
             }
@@ -270,9 +249,8 @@ namespace obe::Modes
     void startDevMenu()
     {
         unsigned windowSize = sf::VideoMode::getDesktopMode().height / 1.5;
-        sf::RenderWindow window({ windowSize, windowSize },
-            "ObEngine Development Window",
-                                sf::Style::None);
+        sf::RenderWindow window(
+            { windowSize, windowSize }, "ObEngine Development Window", sf::Style::None);
 
         tgui::Gui gui(window);
         gui.setFont("Data/Fonts/weblysleekuil.ttf");
@@ -318,8 +296,7 @@ namespace obe::Modes
         };
 
         auto checkMapFolder = [editButton]() {
-            if (System::Path("Data/Maps").find(System::PathType::Directory) ==
-                "")
+            if (System::Path("Data/Maps").find(System::PathType::Directory) == "")
             {
                 editButton->disable();
             }
@@ -352,22 +329,19 @@ namespace obe::Modes
             checkMapFolder();
         });
 
-        toolkitButton->setRenderer(
-            baseTheme.getRenderer("ToolkitSquareButton"));
+        toolkitButton->setRenderer(baseTheme.getRenderer("ToolkitSquareButton"));
         toolkitButton->setSize("50%", "50%");
         toolkitButton->setPosition("0", tgui::bindBottom(playButton));
-        toolkitButton->connect("pressed",
-                               [&window, &checkBootFile, &checkMapFolder]() {
-                                   startToolkitMode();
-                                   checkBootFile();
-                                   checkMapFolder();
-                                   Config::InitConfiguration();
-                               });
+        toolkitButton->connect("pressed", [&window, &checkBootFile, &checkMapFolder]() {
+            startToolkitMode();
+            checkBootFile();
+            checkMapFolder();
+            Config::InitConfiguration();
+        });
 
         helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));
         helpButton->setSize("50%", "50%");
-        helpButton->setPosition(tgui::bindLeft(editButton),
-                                tgui::bindBottom(playButton));
+        helpButton->setPosition(tgui::bindLeft(editButton), tgui::bindBottom(playButton));
         // helpButton->connect("pressed", [&window]()
 
         gui.add(topPanel);
@@ -391,15 +365,12 @@ namespace obe::Modes
                     window.close();
                 else if (event.type == sf::Event::MouseButtonPressed)
                 {
-                    if (sf::Mouse::getPosition().y - window.getPosition().y <
-                            60 &&
-                        sf::Mouse::getPosition().x - window.getPosition().x <
-                            580)
+                    if (sf::Mouse::getPosition().y - window.getPosition().y < 60
+                        && sf::Mouse::getPosition().x - window.getPosition().x < 580)
                     {
                         if (event.mouseButton.button == sf::Mouse::Left)
                         {
-                            grabbedOffset =
-                                window.getPosition() - sf::Mouse::getPosition();
+                            grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
                             grabbedWindow = true;
                         }
                     }
@@ -413,8 +384,7 @@ namespace obe::Modes
                 {
                     if (grabbedWindow)
                     {
-                        window.setPosition(sf::Mouse::getPosition() +
-                                           grabbedOffset);
+                        window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
                     }
                 }
                 gui.handleEvent(event);

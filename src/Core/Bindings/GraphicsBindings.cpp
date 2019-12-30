@@ -16,12 +16,9 @@ namespace obe::Bindings::GraphicsBindings
     {
         (*lua)["obe"]["LevelSpriteHandlePoint"].setClass(
             kaguya::UserdataMetatable<Graphics::LevelSpriteHandlePoint>()
-                .addFunction(
-                    "getRect", &Graphics::LevelSpriteHandlePoint::getRect)
-                .addFunction("getReferential",
-                    &Graphics::LevelSpriteHandlePoint::getReferential)
-                .addFunction(
-                    "moveTo", &Graphics::LevelSpriteHandlePoint::moveTo));
+                .addFunction("getRect", &Graphics::LevelSpriteHandlePoint::getRect)
+                .addFunction("getReferential", &Graphics::LevelSpriteHandlePoint::getReferential)
+                .addFunction("moveTo", &Graphics::LevelSpriteHandlePoint::moveTo));
     }
 
     void LoadLevelSprite(kaguya::State* lua)
@@ -33,33 +30,26 @@ namespace obe::Bindings::GraphicsBindings
         Load(lua, "obe.Identifiable");
         (*lua)["obe"]["LevelSprite"].setClass(
             kaguya::UserdataMetatable<Graphics::LevelSprite,
-                kaguya::MultipleBase<Transform::UnitBasedObject,
-                    Types::Selectable, Transform::Rect, Types::Serializable,
-                    Types::Identifiable>>()
+                kaguya::MultipleBase<Transform::UnitBasedObject, Types::Selectable, Transform::Rect,
+                    Types::Serializable, Types::Identifiable>>()
                 .addFunction("drawHandle", &Graphics::LevelSprite::drawHandle)
                 .addFunction("getColor", &Graphics::LevelSprite::getColor)
-                .addFunction(
-                    "getHandlePoint", &Graphics::LevelSprite::getHandlePoint)
+                .addFunction("getHandlePoint", &Graphics::LevelSprite::getHandlePoint)
                 .addFunction("getLayer", &Graphics::LevelSprite::getLayer)
                 .addFunction("getParentId", &Graphics::LevelSprite::getParentId)
                 .addFunction("getPath", &Graphics::LevelSprite::getPath)
-                .addFunction("getPositionTransformer",
-                    &Graphics::LevelSprite::getPositionTransformer)
+                .addFunction(
+                    "getPositionTransformer", &Graphics::LevelSprite::getPositionTransformer)
                 .addFunction("getRect", &Graphics::LevelSprite::getRect)
                 .addFunction("getShader", &Graphics::LevelSprite::getShader)
                 .addFunction("getSprite", &Graphics::LevelSprite::getSprite)
-                .addFunction(
-                    "getSpriteHeight", &Graphics::LevelSprite::getSpriteHeight)
-                .addFunction(
-                    "getSpriteWidth", &Graphics::LevelSprite::getSpriteWidth)
+                .addFunction("getSpriteHeight", &Graphics::LevelSprite::getSpriteHeight)
+                .addFunction("getSpriteWidth", &Graphics::LevelSprite::getSpriteWidth)
                 //.addFunction("getTexture", &Graphics::LevelSprite::getTexture)
-                .addFunction(
-                    "getXScaleFactor", &Graphics::LevelSprite::getXScaleFactor)
-                .addFunction(
-                    "getYScaleFactor", &Graphics::LevelSprite::getYScaleFactor)
+                .addFunction("getXScaleFactor", &Graphics::LevelSprite::getXScaleFactor)
+                .addFunction("getYScaleFactor", &Graphics::LevelSprite::getYScaleFactor)
                 .addFunction("getZDepth", &Graphics::LevelSprite::getZDepth)
-                .addFunction(
-                    "getAntiAliasing", &Graphics::LevelSprite::getAntiAliasing)
+                .addFunction("getAntiAliasing", &Graphics::LevelSprite::getAntiAliasing)
                 .addFunction("hasShader", &Graphics::LevelSprite::hasShader)
                 .addFunction("isVisible", &Graphics::LevelSprite::isVisible)
                 .addFunction("loadTexture", &Graphics::LevelSprite::loadTexture)
@@ -67,30 +57,22 @@ namespace obe::Bindings::GraphicsBindings
                 .addFunction("setColor", &Graphics::LevelSprite::setColor)
                 .addFunction("setLayer", &Graphics::LevelSprite::setLayer)
                 .addFunction("setParentId", &Graphics::LevelSprite::setParentId)
-                .addFunction("setPositionTransformer",
-                    &Graphics::LevelSprite::setPositionTransformer)
+                .addFunction(
+                    "setPositionTransformer", &Graphics::LevelSprite::setPositionTransformer)
                 .addFunction("setRotation", &Graphics::LevelSprite::setRotation)
-                .addFunction("setRotationOrigin",
-                    &Graphics::LevelSprite::setRotationOrigin)
-                .addFunction("setScalingOrigin",
-                    &Graphics::LevelSprite::setScalingOrigin)
+                .addFunction("setRotationOrigin", &Graphics::LevelSprite::setRotationOrigin)
+                .addFunction("setScalingOrigin", &Graphics::LevelSprite::setScalingOrigin)
                 .addFunction("setShader", &Graphics::LevelSprite::setShader)
                 .addFunction("setTexture", &Graphics::LevelSprite::setTexture)
-                .addFunction(
-                    "setTextureRect", &Graphics::LevelSprite::setTextureRect)
-                .addFunction("setTranslationOrigin",
-                    &Graphics::LevelSprite::setTranslationOrigin)
+                .addFunction("setTextureRect", &Graphics::LevelSprite::setTextureRect)
+                .addFunction("setTranslationOrigin", &Graphics::LevelSprite::setTranslationOrigin)
                 .addFunction("setVisible", &Graphics::LevelSprite::setVisible)
                 .addFunction("setZDepth", &Graphics::LevelSprite::setZDepth)
-                .addFunction(
-                    "setAntiAliasing", &Graphics::LevelSprite::setAntiAliasing)
-                .addFunction(
-                    "useTextureSize", &Graphics::LevelSprite::useTextureSize));
+                .addFunction("setAntiAliasing", &Graphics::LevelSprite::setAntiAliasing)
+                .addFunction("useTextureSize", &Graphics::LevelSprite::useTextureSize));
 
         (*lua)["obe"]["LevelSprite"]["getTexture"]
-            = kaguya::function([](Graphics::LevelSprite* sprite) {
-                  return &sprite->getTexture();
-              });
+            = kaguya::function([](Graphics::LevelSprite* sprite) { return &sprite->getTexture(); });
     }
 
     void LoadResourceManager(kaguya::State* lua)
@@ -98,11 +80,9 @@ namespace obe::Bindings::GraphicsBindings
         (*lua)["obe"]["ResourceManager"].setClass(
             kaguya::UserdataMetatable<Graphics::ResourceManager>()
                 .addOverloadedFunctions("getTexture",
-                    static_cast<sf::Texture* (
-                        Graphics::ResourceManager::*)(const std::string&)>(
+                    static_cast<sf::Texture* (Graphics::ResourceManager::*)(const std::string&)>(
                         &Graphics::ResourceManager::getTexture),
-                    static_cast<sf::Texture* (
-                        Graphics::ResourceManager::*)(const std::string&,
+                    static_cast<sf::Texture* (Graphics::ResourceManager::*)(const std::string&,
                         bool)>(&Graphics::ResourceManager::getTexture))
                 .addFunction("getFont", &Graphics::ResourceManager::getFont));
     }
@@ -116,17 +96,13 @@ namespace obe::Bindings::GraphicsBindings
             kaguya::UserdataMetatable<Graphics::Canvas::CanvasElement,
                 Types::ProtectedIdentifiable>()
                 .addProperty("layer", &Graphics::Canvas::CanvasElement::layer)
-                .addProperty(
-                    "visible", &Graphics::Canvas::CanvasElement::visible)
-                .addFunction(
-                    "setLayer", &Graphics::Canvas::CanvasElement::setLayer));
+                .addProperty("visible", &Graphics::Canvas::CanvasElement::visible)
+                .addFunction("setLayer", &Graphics::Canvas::CanvasElement::setLayer));
         (*lua)["obe"]["Canvas"]["CanvasShape"].setClass(
-            kaguya::UserdataMetatable<Graphics::Canvas::CanvasPositionable>()
-                .addProperty("position",
-                    &Graphics::Canvas::CanvasPositionable::position));
+            kaguya::UserdataMetatable<Graphics::Canvas::CanvasPositionable>().addProperty(
+                "position", &Graphics::Canvas::CanvasPositionable::position));
         (*lua)["obe"]["Canvas"]["Line"].setClass(
-            kaguya::UserdataMetatable<Graphics::Canvas::Line,
-                Graphics::Canvas::CanvasElement>()
+            kaguya::UserdataMetatable<Graphics::Canvas::Line, Graphics::Canvas::CanvasElement>()
                 .addProperty("p1", &Graphics::Canvas::Line::p1)
                 .addProperty("p2", &Graphics::Canvas::Line::p2)
                 .addProperty("thickness", &Graphics::Canvas::Line::thickness)
@@ -160,18 +136,13 @@ namespace obe::Bindings::GraphicsBindings
                 .addProperty("sprite", &Graphics::Canvas::Sprite::sprite));
         (*lua)["obe"]["Canvas"]["InternalCanvas"].setClass(
             kaguya::UserdataMetatable<Graphics::Canvas::Canvas>()
-                .setConstructors<Graphics::Canvas::Canvas(
-                    unsigned int, unsigned int)>()
-                .addFunction("Line",
-                    &Graphics::Canvas::Canvas::add<Graphics::Canvas::Line>)
-                .addFunction("Rectangle",
-                    &Graphics::Canvas::Canvas::add<Graphics::Canvas::Rectangle>)
-                .addFunction("Text",
-                    &Graphics::Canvas::Canvas::add<Graphics::Canvas::Text>)
-                .addFunction("Circle",
-                    &Graphics::Canvas::Canvas::add<Graphics::Canvas::Circle>)
-                .addFunction("Sprite",
-                    &Graphics::Canvas::Canvas::add<Graphics::Canvas::Sprite>)
+                .setConstructors<Graphics::Canvas::Canvas(unsigned int, unsigned int)>()
+                .addFunction("Line", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Line>)
+                .addFunction(
+                    "Rectangle", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Rectangle>)
+                .addFunction("Text", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Text>)
+                .addFunction("Circle", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Circle>)
+                .addFunction("Sprite", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Sprite>)
                 .addFunction("render", &Graphics::Canvas::Canvas::render)
                 .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
                 .addFunction("clear", &Graphics::Canvas::Canvas::clear)
@@ -200,57 +171,52 @@ namespace obe::Bindings::GraphicsBindings
 
     void LoadGraphicsUtils(kaguya::State* lua)
     {
-        (*lua)["obe"]["SetClearColor"] = kaguya::function(
-            [](sf::Color newColor) { Graphics::Utils::ClearColor = newColor; });
+        (*lua)["obe"]["SetClearColor"]
+            = kaguya::function([](sf::Color newColor) { Graphics::Utils::ClearColor = newColor; });
     }
 
     void LoadShader(kaguya::State* lua)
     {
         (*lua)["obe"]["Shader"].setClass(
             kaguya::UserdataMetatable<Graphics::Shader>()
-                .setConstructors<Graphics::Shader(),
-                    Graphics::Shader(const std::string&)>()
+                .setConstructors<Graphics::Shader(), Graphics::Shader(const std::string&)>()
                 .addFunction("loadShader", &Graphics::Shader::loadShader)
                 .addOverloadedFunctions("setUniform",
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        float)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        int)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        bool)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Texture&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Vec2&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Vec3&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Vec4&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Ivec2&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Ivec3&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Ivec4&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Bvec2&)>(&Graphics::Shader::setUniform),
-                    static_cast<void (Graphics::Shader::*)(const std::string&,
-                        const sf::Glsl::Bvec3&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(const std::string&, float)>(
+                        &Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(const std::string&, int)>(
+                        &Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(const std::string&, bool)>(
+                        &Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(const std::string&, const sf::Texture&)>(
+                        &Graphics::Shader::setUniform),
                     static_cast<void (Graphics::Shader::*)(
-                        const std::string&, const sf::Glsl::Bvec4&)>(
-                        &Graphics::Shader::setUniform)));
+                        const std::string&, const sf::Glsl::Vec2&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Vec3&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Vec4&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Ivec2&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Ivec3&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Ivec4&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Bvec2&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(
+                        const std::string&, const sf::Glsl::Bvec3&)>(&Graphics::Shader::setUniform),
+                    static_cast<void (Graphics::Shader::*)(const std::string&,
+                        const sf::Glsl::Bvec4&)>(&Graphics::Shader::setUniform)));
     }
 
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS(
-        Color_fromRgb_wrapper, Graphics::Color, fromRgb, 3, 4);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Color_fromRgb_wrapper, Graphics::Color, fromRgb, 3, 4);
     void LoadColor(kaguya::State* lua)
     {
         (*lua)["obe"]["Color"].setClass(
             kaguya::UserdataMetatable<Graphics::Color, sf::Color>()
-                .setConstructors<Graphics::Color(
-                                     uint_fast8_t, uint_fast8_t, uint_fast8_t),
-                    Graphics::Color(
-                        uint_fast8_t, uint_fast8_t, uint_fast8_t, uint_fast8_t),
+                .setConstructors<Graphics::Color(uint_fast8_t, uint_fast8_t, uint_fast8_t),
+                    Graphics::Color(uint_fast8_t, uint_fast8_t, uint_fast8_t, uint_fast8_t),
                     Graphics::Color(std::string)>()
                 .addFunction("fromHex", &Graphics::Color::fromHex)
                 .addFunction("fromRgb", Color_fromRgb_wrapper()));

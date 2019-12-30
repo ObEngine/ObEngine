@@ -25,15 +25,15 @@ namespace obe::Utils::Type
 
     template <typename V> std::string getObjectType(V item)
     {
-        std::vector<std::string> splittedTypeName =
-            String::split(typeid(item).name(), " ");
+        std::vector<std::string> splittedTypeName
+            = String::split(typeid(item).name(), " ");
         return Vector::join(splittedTypeName, "", 1);
     }
 
     template <class T> std::string getClassType()
     {
-        std::vector<std::string> splittedTypeName =
-            String::split(typeid(T).name(), " ");
+        std::vector<std::string> splittedTypeName
+            = String::split(typeid(T).name(), " ");
         return Vector::join(splittedTypeName, "", 1);
     }
 } // namespace obe::Utils::Type

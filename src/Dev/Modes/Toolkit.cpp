@@ -24,16 +24,14 @@ namespace obe::Modes
         bool continueToolkit = true;
         std::vector<std::string> commandHistory;
         unsigned commandHistoryIndex = 0;
-        sf::RenderWindow window(
-            { windowSize, windowSize }, "ObEngine Toolkit", sf::Style::None);
+        sf::RenderWindow window({ windowSize, windowSize }, "ObEngine Toolkit", sf::Style::None);
         sf::Color inputColor(255, 255, 255);
 
         sf::Font toolkitFont;
         toolkitFont.loadFromFile("Data/Fonts/weblysleekuil.ttf");
 
         sf::Font font;
-        System::Path("Data/Fonts/weblysleekuil.ttf")
-            .load(System::Loaders::fontLoader, font);
+        System::Path("Data/Fonts/weblysleekuil.ttf").load(System::Loaders::fontLoader, font);
 
         tgui::Gui gui(window);
         gui.setFont(font);
@@ -43,8 +41,7 @@ namespace obe::Modes
 
         tgui::Panel::Ptr mainPanel = tgui::Panel::create();
         tgui::Panel::Ptr titlePanel = tgui::Panel::create();
-        tgui::ToolkitContentBox::Ptr content
-            = tgui::ToolkitContentBox::create();
+        tgui::ToolkitContentBox::Ptr content = tgui::ToolkitContentBox::create();
         tgui::Scrollbar::Ptr scrollbar = tgui::Scrollbar::create();
         tgui::Label::Ptr titleLabel = tgui::Label::create();
         tgui::Button::Ptr closeButton = tgui::Button::create();
@@ -86,8 +83,8 @@ namespace obe::Modes
 
         kaguya::State toolkitEngine;
         toolkitInput->connect("returnkeypressed",
-            [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine,
-                &commandHistory, &commandHistoryIndex, windowSize]() {
+            [&toolkitFont, &content, &toolkitInput, inputColor, &toolkitEngine, &commandHistory,
+                &commandHistoryIndex, windowSize]() {
                 sfe::RichText newtext(toolkitFont);
                 newtext.setCharacterSize(windowSize * 0.025);
                 std::string inputText = toolkitInput->getText().toAnsiString();
@@ -96,11 +93,10 @@ namespace obe::Modes
                 content->addLine(newtext);
                 toolkitEngine["evaluate"](inputText);
                 toolkitInput->setText("");
-                commandHistory.erase(
-                    std::remove_if(commandHistory.begin(), commandHistory.end(),
-                        [&inputText](const std::string& command) {
-                            return (command == inputText);
-                        }),
+                commandHistory.erase(std::remove_if(commandHistory.begin(), commandHistory.end(),
+                                         [&inputText](const std::string& command) {
+                                             return (command == inputText);
+                                         }),
                     commandHistory.end());
                 commandHistory.push_back(inputText);
                 commandHistoryIndex = commandHistory.size();
@@ -111,40 +107,36 @@ namespace obe::Modes
         toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
         Bindings::BindTree(&toolkitEngine);
 
-        toolkitEngine["_term_set_input_color"] = kaguya::function(
-            [&inputColor](unsigned int r, unsigned int g, unsigned b) {
-                inputColor.r = r;
-                inputColor.g = g;
-                inputColor.b = b;
+        toolkitEngine["_term_set_input_color"]
+            = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b) {
+                  inputColor.r = r;
+                  inputColor.g = g;
+                  inputColor.b = b;
+              });
+        toolkitEngine["_term_display"] = kaguya::function(
+            [&content, &toolkitFont, windowSize](
+                const std::vector<sf::String>& strings, const std::vector<sf::Color>& colors) {
+                sfe::RichText newtext(toolkitFont);
+                newtext.setCharacterSize(windowSize * 0.025);
+                for (int i = 0; i < strings.size(); i++)
+                {
+                    newtext.pushFillColor(colors.at(i));
+                    newtext.pushString(strings.at(i));
+                }
+                content->addLine(newtext);
             });
-        toolkitEngine["_term_display"]
-            = kaguya::function([&content, &toolkitFont, windowSize](
-                                   const std::vector<sf::String>& strings,
-                                   const std::vector<sf::Color>& colors) {
-                  sfe::RichText newtext(toolkitFont);
-                  newtext.setCharacterSize(windowSize * 0.025);
-                  for (int i = 0; i < strings.size(); i++)
-                  {
-                      newtext.pushFillColor(colors.at(i));
-                      newtext.pushString(strings.at(i));
-                  }
-                  content->addLine(newtext);
-              });
-        toolkitEngine["_term_clear"] = kaguya::function(
-            [&toolkitInput]() { toolkitInput->setText(""); });
-        toolkitEngine["_term_write"]
-            = kaguya::function([&toolkitInput](const std::string& string) {
-                  toolkitInput->setText(toolkitInput->getText() + string);
-              });
+        toolkitEngine["_term_clear"]
+            = kaguya::function([&toolkitInput]() { toolkitInput->setText(""); });
+        toolkitEngine["_term_write"] = kaguya::function([&toolkitInput](const std::string& string) {
+            toolkitInput->setText(toolkitInput->getText() + string);
+        });
         toolkitEngine["_term_last"] = kaguya::function([&toolkitInput]() {
             toolkitInput->setCaretPosition(toolkitInput->getText().getSize());
         });
-        toolkitEngine["_term_get"]
-            = kaguya::function([&toolkitInput]() -> std::string {
-                  return toolkitInput->getText().toAnsiString();
-              });
-        toolkitEngine["_term_close"] = kaguya::function(
-            [&continueToolkit]() { continueToolkit = false; });
+        toolkitEngine["_term_get"] = kaguya::function(
+            [&toolkitInput]() -> std::string { return toolkitInput->getText().toAnsiString(); });
+        toolkitEngine["_term_close"]
+            = kaguya::function([&continueToolkit]() { continueToolkit = false; });
         toolkitEngine.dofile("Lib/Toolkit/Toolkit.lua");
 
         sf::Vector2i grabbedOffset;
@@ -159,18 +151,14 @@ namespace obe::Modes
             {
                 if (event.type == sf::Event::Closed)
                     window.close();
-                else if (event.type == sf::Event::KeyPressed
-                    && event.key.code == sf::Keyboard::Tab)
-                    toolkitEngine["autocomplete"](
-                        toolkitInput->getText().toAnsiString());
-                else if (event.type == sf::Event::KeyPressed
-                    && event.key.code == sf::Keyboard::Up)
+                else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab)
+                    toolkitEngine["autocomplete"](toolkitInput->getText().toAnsiString());
+                else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
                 {
                     if (commandHistoryIndex > 0)
                     {
                         commandHistoryIndex--;
-                        toolkitInput->setText(
-                            commandHistory[commandHistoryIndex]);
+                        toolkitInput->setText(commandHistory[commandHistoryIndex]);
                     }
                 }
                 else if (event.type == sf::Event::KeyPressed
@@ -179,28 +167,24 @@ namespace obe::Modes
                     if (commandHistoryIndex < commandHistory.size() - 1)
                     {
                         commandHistoryIndex++;
-                        toolkitInput->setText(
-                            commandHistory[commandHistoryIndex]);
+                        toolkitInput->setText(commandHistory[commandHistoryIndex]);
                     }
                 }
                 else if (event.type == sf::Event::MouseButtonPressed)
                 {
                     if (sf::Mouse::getPosition().y - window.getPosition().y < 70
-                        && sf::Mouse::getPosition().x - window.getPosition().x
-                            < 580)
+                        && sf::Mouse::getPosition().x - window.getPosition().x < 580)
                     {
                         if (event.mouseButton.button == sf::Mouse::Left)
                         {
-                            grabbedOffset = window.getPosition()
-                                - sf::Mouse::getPosition();
+                            grabbedOffset = window.getPosition() - sf::Mouse::getPosition();
                             grabbedWindow = true;
                         }
                     }
                 }
                 else if (event.type == sf::Event::MouseWheelMoved)
                 {
-                    content->mouseWheelScrolled(
-                        event.mouseWheel.delta, sf::Vector2f(0, 0));
+                    content->mouseWheelScrolled(event.mouseWheel.delta, sf::Vector2f(0, 0));
                 }
                 else if (event.type == sf::Event::MouseButtonReleased)
                 {
@@ -210,17 +194,14 @@ namespace obe::Modes
                 else if (event.type == sf::Event::MouseMoved)
                 {
                     if (grabbedWindow)
-                        window.setPosition(
-                            sf::Mouse::getPosition() + grabbedOffset);
+                        window.setPosition(sf::Mouse::getPosition() + grabbedOffset);
                 }
                 gui.handleEvent(event);
-                if (event.type == sf::Event::TextEntered
-                    && event.text.unicode == 63)
+                if (event.type == sf::Event::TextEntered && event.text.unicode == 63)
                 {
-                    toolkitInput->setText(Utils::String::replace(
-                        toolkitInput->getText().toAnsiString(), "?", ""));
-                    toolkitEngine["printHelp"](
-                        toolkitInput->getText().toAnsiString());
+                    toolkitInput->setText(
+                        Utils::String::replace(toolkitInput->getText().toAnsiString(), "?", ""));
+                    toolkitEngine["printHelp"](toolkitInput->getText().toAnsiString());
                 }
             }
 

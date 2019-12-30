@@ -120,8 +120,8 @@ namespace obe::Animation
          * \param index Index of the Texture in the Animation
          * \return A pointer to the Texture
          */
-        const sf::Texture& getTextureAtKey(const std::string& key,
-                                           int index) const;
+        const sf::Texture& getTextureAtKey(
+            const std::string& key, int index) const;
         /**
          * \brief Load the Animator (Using the Animator root path).\n
          *        It will also load all the Animation contained in the Animator.
@@ -158,7 +158,7 @@ namespace obe::Animation
         void update();
 
         void setTarget(Graphics::LevelSprite& sprite,
-                       AnimatorTargetScaleMode targetScaleMode =
-                           AnimatorTargetScaleMode::Fit);
+            AnimatorTargetScaleMode targetScaleMode
+            = AnimatorTargetScaleMode::Fit);
     };
 } // namespace obe::Animation

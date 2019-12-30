@@ -16,9 +16,10 @@ namespace obe::Triggers
         std::string callbackName;
         bool* envActive = nullptr;
         TriggerEnv(unsigned int envIndex, const std::string& callbackName,
-                   bool* envActive)
-            : envIndex(envIndex), callbackName(callbackName),
-              envActive(envActive)
+            bool* envActive)
+            : envIndex(envIndex)
+            , callbackName(callbackName)
+            , envActive(envActive)
         {
         }
     };
@@ -56,8 +57,8 @@ namespace obe::Triggers
          * \param name Name of the Parameter to push
          * \param parameter Value of the parameter (LuaRef can be anything)
          */
-        void pushParameterFromLua(const std::string& name,
-                                  const kaguya::LuaRef& parameter) const;
+        void pushParameterFromLua(
+            const std::string& name, const kaguya::LuaRef& parameter) const;
         /**
          * \brief Gets the Lua Table path used to store Trigger Parameters
          * \return The path to the Lua Table used to store Trigger Parameters
@@ -73,7 +74,7 @@ namespace obe::Triggers
          * disabled)
          */
         explicit Trigger(TriggerGroup* parent, const std::string& name,
-                         bool startState = false);
+            bool startState = false);
         /**
          * \brief Get the State of the Trigger (enabled / disabled)
          * \return true if the Trigger is enabled, false otherwise
@@ -104,8 +105,7 @@ namespace obe::Triggers
          * environment is active or not
          */
         void registerEnvironment(unsigned int envIndex,
-                                 const std::string& callbackName,
-                                 bool* envActive);
+            const std::string& callbackName, bool* envActive);
         /**
          * \brief Removes an environment from Trigger Execution
          * \param envIndex Index of the Lua environment
@@ -122,9 +122,10 @@ namespace obe::Triggers
     template <typename P>
     void Trigger::pushParameter(const std::string& name, P parameter)
     {
-        Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1}",
-                          name, m_fullName);
+        Debug::Log->trace(
+            "<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
         Script::ScriptEngine["LuaCore"]["TriggerArgTable"]
-                            [this->getTriggerLuaTableName()][name] = parameter;
+                            [this->getTriggerLuaTableName()][name]
+            = parameter;
     }
 } // namespace obe::Triggers

@@ -16,8 +16,7 @@ namespace obe::Collision
         m_probe = probe;
     }
 
-    Trajectory* TrajectoryNode::addTrajectory(const std::string& id,
-                                              Transform::Units unit)
+    Trajectory* TrajectoryNode::addTrajectory(const std::string& id, Transform::Units unit)
     {
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
         return m_trajectories[id].get();
@@ -37,8 +36,7 @@ namespace obe::Collision
     {
         auto getOffset = [&dt](Trajectory& trajectory) {
             const double speed = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
-            const double radAngle =
-                (Utils::Math::pi / 180.0) * -trajectory.getAngle();
+            const double radAngle = (Utils::Math::pi / 180.0) * -trajectory.getAngle();
             const double addX = std::cos(radAngle) * (speed * dt);
             const double addY = std::sin(radAngle) * (speed * dt);
             return Transform::UnitVector(addX, addY, trajectory.getUnit());
@@ -50,8 +48,7 @@ namespace obe::Collision
             {
                 auto baseOffset = getOffset(*cTraj);
 
-                for (kaguya::LuaFunction& check :
-                     trajectory.second->getChecks())
+                for (kaguya::LuaFunction& check : trajectory.second->getChecks())
                 {
                     if (m_probe != nullptr)
                     {
@@ -64,24 +61,16 @@ namespace obe::Collision
                 }
                 if (!cTraj->getStatic())
                 {
-                    // Debug::Log->warn("Trajectory not static");
-                    cTraj->setSpeed(cTraj->m_speed +
-                                    cTraj->m_acceleration * dt); // Recalculated here since it could change during the check
+                    cTraj->setSpeed(cTraj->m_speed + cTraj->m_acceleration * dt);
                     baseOffset = getOffset(*cTraj);
                     Transform::UnitVector realOffset = baseOffset;
                     if (m_probe != nullptr)
                     {
-                        realOffset = m_probe->getMaximumDistanceBeforeCollision(
-                            realOffset);
-                        // Debug::Log->warn("Probe not nullptr");
+                        realOffset = m_probe->getMaximumDistanceBeforeCollision(realOffset);
                     }
-                    // Debug::Log->warn("State before ccheck : (offset diff :
-                    // {}) (callback : {})", (realOffset != cOffset),
-                    // (!trajectory.second->getOnCollideCallback().isNilref()));
-                    if (realOffset != baseOffset &&
-                        !trajectory.second->getOnCollideCallback().isNilref())
+                    if (realOffset != baseOffset
+                        && !trajectory.second->getOnCollideCallback().isNilref())
                     {
-                        // Debug::Log->warn("Calling callback !");
                         trajectory.second->getOnCollideCallback()(
                             trajectory.second.get(), baseOffset, realOffset);
                     }

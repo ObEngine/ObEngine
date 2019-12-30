@@ -132,8 +132,7 @@ namespace obe::Scene
 
     template <class T> T& TXScene::add(const std::string& id)
     {
-        static_assert(
-            std::is_base_of<Component::ComponentBase, T>::value,
+        static_assert(std::is_base_of<Component::ComponentBase, T>::value,
             "Scene.add<T>(id) requires T to have Component as base class");
 
         /*T* reference =
@@ -148,8 +147,7 @@ namespace obe::Scene
     }
     template <class T> inline T& TXScene::get(const std::string& id)
     {
-        static_assert(
-            std::is_base_of<Component::ComponentBase, T>::value,
+        static_assert(std::is_base_of<Component::ComponentBase, T>::value,
             "Scene.get<T>(id) requires T to have Component as base class");
         if (T* castedComponent = dynamic_cast<T*>(this->get(id));
             castedComponent != nullptr)
@@ -160,15 +158,14 @@ namespace obe::Scene
         {
             throw aube::ErrorHandler::Raise(
                 "obe.Scene.Scene.WrongComponentType",
-                {{"type", this->get(id).type()},
-                 {"expected", T::ComponentType}});
+                { { "type", this->get(id).type() },
+                    { "expected", T::ComponentType } });
         }
     }
 
     template <class T> std::vector<T&> TXScene::getAll()
     {
-        static_assert(
-            std::is_base_of<Component::ComponentBase, T>::value,
+        static_assert(std::is_base_of<Component::ComponentBase, T>::value,
             "Scene.getAll<T>() requires T to have Component as base class");
         std::vector<T&> componentsOfTypeT;
         for (Component::ComponentBase* component : m_components)

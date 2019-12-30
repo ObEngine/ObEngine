@@ -10,9 +10,8 @@
 
 namespace obe::System
 {
-    MountablePath::MountablePath(MountablePathType pathType,
-                                 const std::string& basePath,
-                                 unsigned int priority)
+    MountablePath::MountablePath(
+        MountablePathType pathType, const std::string& basePath, unsigned int priority)
     {
         this->pathType = pathType;
         this->basePath = basePath;
@@ -31,31 +30,23 @@ namespace obe::System
         {
             Debug::Log->critical("<MountablePath> Can't find 'Mount.vili' "
                                  "file, stopping ObEngine");
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.System.MountablePath.NoMountFile");
+            throw aube::ErrorHandler::Raise("ObEngine.System.MountablePath.NoMountFile");
         }
-        for (vili::ComplexNode* path :
-             mountedPaths.at("Mount").getAll<vili::ComplexNode>())
+        for (vili::ComplexNode* path : mountedPaths.at("Mount").getAll<vili::ComplexNode>())
         {
-            const std::string currentType =
-                path->at<vili::DataNode>("type").get<std::string>();
-            const std::string currentPath =
-                path->at<vili::DataNode>("path").get<std::string>();
-            int currentPriority =
-                path->at<vili::DataNode>("priority").get<int>();
+            const std::string currentType = path->at<vili::DataNode>("type").get<std::string>();
+            const std::string currentPath = path->at<vili::DataNode>("path").get<std::string>();
+            int currentPriority = path->at<vili::DataNode>("priority").get<int>();
             if (currentType == "Path")
             {
-                Path::Mount(MountablePath(MountablePathType::Path, currentPath,
-                                          currentPriority));
-                Debug::Log->info(
-                    "<MountablePath> Mounted Path : '{0}' with priority {1}",
+                Path::Mount(MountablePath(MountablePathType::Path, currentPath, currentPriority));
+                Debug::Log->info("<MountablePath> Mounted Path : '{0}' with priority {1}",
                     currentPath, currentPriority);
             }
             else if (currentType == "Package")
             {
                 Package::Load(currentPath, currentPriority);
-                Debug::Log->info(
-                    "<MountablePath> Mounted Package : '{0}' with priority {1}",
+                Debug::Log->info("<MountablePath> Mounted Package : '{0}' with priority {1}",
                     currentPath, currentPriority);
             }
             else if (currentType == "Workspace")
@@ -63,14 +54,13 @@ namespace obe::System
                 Workspace::Load(currentPath, currentPriority);
                 Debug::Log->info("<MountablePath> Mounted Workspace : '{0}' "
                                  "with priority {1}",
-                                 currentPath, currentPriority);
+                    currentPath, currentPriority);
             }
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (MountablePath& currentPath : Path::MountedPaths)
         {
-            Debug::Log->info("<MoutablePath> MountedPath : {0}",
-                             currentPath.basePath);
+            Debug::Log->info("<MoutablePath> MountedPath : {0}", currentPath.basePath);
         }
     }
 } // namespace obe::System

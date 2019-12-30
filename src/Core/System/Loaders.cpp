@@ -35,8 +35,7 @@ namespace obe::System
     {
         m_loadCount = 0;
     }
-    LoaderMultipleResult::LoaderMultipleResult(
-        const std::vector<std::string>& paths)
+    LoaderMultipleResult::LoaderMultipleResult(const std::vector<std::string>& paths)
     {
         m_loadCount = paths.size();
         m_paths = paths;
@@ -62,27 +61,20 @@ namespace obe::System
 namespace obe::System::Loaders
 {
     // Loaders
-    Loader<sf::Texture> textureLoader([](sf::Texture& obj,
-                                         const std::string& path) -> bool {
-        return obj.loadFromFile(path);
-    });
+    Loader<sf::Texture> textureLoader(
+        [](sf::Texture& obj, const std::string& path) -> bool { return obj.loadFromFile(path); });
 
-    Loader<vili::ViliParser> dataLoader([](vili::ViliParser& obj,
-                                           const std::string& path) -> bool {
-        return obj.parseFile(path);
-    });
+    Loader<vili::ViliParser> dataLoader(
+        [](vili::ViliParser& obj, const std::string& path) -> bool { return obj.parseFile(path); });
 
-    Loader<sf::Font> fontLoader([](sf::Font& obj,
-                                   const std::string& path) -> bool {
-        return obj.loadFromFile(path);
-    });
+    Loader<sf::Font> fontLoader(
+        [](sf::Font& obj, const std::string& path) -> bool { return obj.loadFromFile(path); });
 
     Loader<std::vector<std::string>> dirPathLoader(
         [](std::vector<std::string>& obj, const std::string& path) -> bool {
             if (Utils::File::directoryExists(path))
             {
-                std::vector<std::string> newPaths =
-                    Utils::File::getDirectoryList(path);
+                std::vector<std::string> newPaths = Utils::File::getDirectoryList(path);
                 obj.insert(obj.end(), newPaths.begin(), newPaths.end());
                 return true;
             }
@@ -92,33 +84,28 @@ namespace obe::System::Loaders
             }
         });
 
-    Loader<std::vector<std::string>>
-    filePathLoader([](std::vector<std::string>& obj,
-                      const std::string& path) -> bool {
-        if (Utils::File::directoryExists(path))
-        {
-            std::vector<std::string> newFiles = Utils::File::getFileList(path);
-            obj.insert(obj.end(), newFiles.begin(), newFiles.end());
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    });
+    Loader<std::vector<std::string>> filePathLoader(
+        [](std::vector<std::string>& obj, const std::string& path) -> bool {
+            if (Utils::File::directoryExists(path))
+            {
+                std::vector<std::string> newFiles = Utils::File::getFileList(path);
+                obj.insert(obj.end(), newFiles.begin(), newFiles.end());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        });
 
-    Loader<kaguya::State> luaLoader([](kaguya::State& obj,
-                                       const std::string& path) -> bool {
-        return obj.dofile(path);
-    });
+    Loader<kaguya::State> luaLoader(
+        [](kaguya::State& obj, const std::string& path) -> bool { return obj.dofile(path); });
 
-    Loader<sf::SoundBuffer> soundLoader([](sf::SoundBuffer& sound,
-                                           const std::string& path) -> bool {
-        return sound.loadFromFile(path);
-    });
+    Loader<sf::SoundBuffer> soundLoader(
+        [](sf::SoundBuffer& sound, const std::string& path) -> bool {
+            return sound.loadFromFile(path);
+        });
 
-    Loader<sf::Music> musicLoader([](sf::Music& music,
-                                     const std::string& path) -> bool {
-        return music.openFromFile(path);
-    });
+    Loader<sf::Music> musicLoader(
+        [](sf::Music& music, const std::string& path) -> bool { return music.openFromFile(path); });
 } // namespace obe::System::Loaders

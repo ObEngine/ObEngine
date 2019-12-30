@@ -17,8 +17,8 @@ namespace obe::Script::DataBridge
      * converted ComplexAttribute \param convert The Vili ComplexAttribute you
      * want to get the data from
      */
-    void complexNodeToLuaTable(kaguya::LuaTable& target,
-                               vili::ComplexNode* convert);
+    void complexNodeToLuaTable(
+        kaguya::LuaTable& target, vili::ComplexNode* convert);
     /**
      * \brief Add a Vili BaseAttribute in a Lua Table
      *        The key of the newly converted element in the table will be the
@@ -26,8 +26,8 @@ namespace obe::Script::DataBridge
      * element in \param convert The Vili BaseAttribute you want to add in the
      * Lua Table
      */
-    void dataNodeToLuaElement(kaguya::LuaTable& target,
-                              vili::DataNode* convert);
+    void dataNodeToLuaElement(
+        kaguya::LuaTable& target, vili::DataNode* convert);
     /**
      * \brief Adds a converted Vili ListAttribute to a Lua Table. \n
      *        Index of the List will start at 0 (unlike default Lua lists which
@@ -36,30 +36,30 @@ namespace obe::Script::DataBridge
      * converted ListAttribute \param convert The Vili ComplexAttribute you want
      * to get the data from
      */
-    void arrayNodeToLuaTable(kaguya::LuaTable& target,
-                             vili::ArrayNode* convert);
+    void arrayNodeToLuaTable(
+        kaguya::LuaTable& target, vili::ArrayNode* convert);
     /**
      * \brief Converts a Lua Table to a Vili ComplexAttribute
      * \param id Id of the newly created ComplexAttribute
      * \param convert The LuaTable you want to convert to a ComplexAttribute
      * \return The converted Lua Table in ComplexAttribute form
      */
-    vili::ComplexNode* luaTableToComplexNode(const std::string& id,
-                                             kaguya::LuaRef& convert);
+    vili::ComplexNode* luaTableToComplexNode(
+        const std::string& id, kaguya::LuaRef& convert);
     /**
      * \brief Converts a Lua Variable to a Vili BaseAttribute
      * \param id Id of the newly created BaseAttribute
      * \param convert The LuaVar you want to convert to a BaseAttribute
      * \return The converted Lua Element in BaseAttribute form
      */
-    vili::DataNode* luaElementToDataNode(const std::string& id,
-                                         kaguya::LuaRef& convert);
+    vili::DataNode* luaElementToDataNode(
+        const std::string& id, kaguya::LuaRef& convert);
     /**
      * \brief Converts a Lua Table to a Vili ListAttribute
      * \param id Id of the newly created ListAttribute
      * \param convert The Lua Table you want to convert to a ListAttribute
      * \return The converted Lua Table in ListAttribute form
      */
-    vili::ArrayNode* luaTableToArrayNode(const std::string& id,
-                                         kaguya::LuaTable& convert);
+    vili::ArrayNode* luaTableToArrayNode(
+        const std::string& id, kaguya::LuaTable& convert);
 } // namespace obe::Script::DataBridge

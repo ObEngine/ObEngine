@@ -32,8 +32,7 @@ namespace obe::Bindings::InputBindings
         (*lua)["obe"]["InputActionEvent"].setClass(
             kaguya::UserdataMetatable<Input::InputActionEvent>()
                 .addFunction("getAction", &Input::InputActionEvent::getAction)
-                .addFunction(
-                    "getCondition", &Input::InputActionEvent::getCondition));
+                .addFunction("getCondition", &Input::InputActionEvent::getCondition));
     }
 
     void LoadInputButton(kaguya::State* lua)
@@ -65,24 +64,17 @@ namespace obe::Bindings::InputBindings
     void LoadInputCondition(kaguya::State* lua)
     {
         (*lua)["obe"]["InputCombinationElement"].setClass(
-            kaguya::UserdataMetatable<Input::InputCombinationElement>()
-                .addFunction("second", &Input::InputCombinationElement::second)
-        );
-        (*lua)["obe"]["InputCombinationElement"]["first"]
-            = kaguya::function([](Input::InputCombinationElement* self) {
-                  return self->first.get();
-              });
+            kaguya::UserdataMetatable<Input::InputCombinationElement>().addFunction(
+                "second", &Input::InputCombinationElement::second));
+        (*lua)["obe"]["InputCombinationElement"]["first"] = kaguya::function(
+            [](Input::InputCombinationElement* self) { return self->first.get(); });
         (*lua)["obe"]["InputCondition"].setClass(
             kaguya::UserdataMetatable<Input::InputCondition>()
-                .addFunction("addCombinationElement",
-                    &Input::InputCondition::addCombinationElement)
+                .addFunction("addCombinationElement", &Input::InputCondition::addCombinationElement)
                 .addFunction("check", &Input::InputCondition::check)
-                .addFunction(
-                    "getCombination", &Input::InputCondition::getCombination)
-                .addFunction(
-                    "setCombination", &Input::InputCondition::setCombination)
-                .addFunction("setCombinationCode",
-                    &Input::InputCondition::setCombinationCode));
+                .addFunction("getCombination", &Input::InputCondition::getCombination)
+                .addFunction("setCombination", &Input::InputCondition::setCombination)
+                .addFunction("setCombinationCode", &Input::InputCondition::setCombinationCode));
     }
 
     void LoadInputManager(kaguya::State* lua)
@@ -92,22 +84,21 @@ namespace obe::Bindings::InputBindings
             kaguya::UserdataMetatable<Input::InputManager, Types::Togglable>()
                 .addFunction("actionExists", &Input::InputManager::actionExists)
                 .addFunction("clear", &Input::InputManager::clear)
-                .addFunction(
-                    "clearContexts", &Input::InputManager::clearContexts)
+                .addFunction("clearContexts", &Input::InputManager::clearContexts)
                 .addFunction("configure", &Input::InputManager::configure)
                 .addFunction("getAction", &Input::InputManager::getAction)
                 .addFunction("setContext", &Input::InputManager::setContext)
                 .addFunction("update", &Input::InputManager::update));
 
-        (*lua)["obe"]["InputManager"]["addContext"] = kaguya::function(
-            [](Input::InputManager& manager, const std::string& context) {
-                return &manager.addContext(context);
-            });
+        (*lua)["obe"]["InputManager"]["addContext"]
+            = kaguya::function([](Input::InputManager& manager, const std::string& context) {
+                  return &manager.addContext(context);
+              });
 
-        (*lua)["obe"]["InputManager"]["removeContext"] = kaguya::function(
-            [](Input::InputManager& manager, const std::string& context) {
-                return &manager.removeContext(context);
-            });
+        (*lua)["obe"]["InputManager"]["removeContext"]
+            = kaguya::function([](Input::InputManager& manager, const std::string& context) {
+                  return &manager.removeContext(context);
+              });
     }
 
     void LoadInputFunctions(kaguya::State* lua)
@@ -119,15 +110,13 @@ namespace obe::Bindings::InputBindings
         //(*lua)["obe"]["Input"]["Monitors"]["UpdateMonitorsAndRemoveIfNoReferences"]
         //=
         // xaguya::function(Input::Monitors::UpdateMonitorsAndRemoveIfNoReferences);
-        (*lua)["obe"]["Input"]["Monitors"]["Monitor"] = kaguya::overload(
-            static_cast<Input::InputButtonMonitorPtr (*)(const std::string&)>(
-                Input::Monitors::Monitor),
-            static_cast<Input::InputButtonMonitorPtr (*)(Input::InputButton*)>(
-                Input::Monitors::Monitor));
-        (*lua)["obe"]["Input"]["InitKeyList"]
-            = kaguya::function(Input::InitKeyList);
-        (*lua)["obe"]["Input"]["SetGamepadList"]
-            = kaguya::function(Input::SetGamepadList);
+        (*lua)["obe"]["Input"]["Monitors"]["Monitor"]
+            = kaguya::overload(static_cast<Input::InputButtonMonitorPtr (*)(const std::string&)>(
+                                   Input::Monitors::Monitor),
+                static_cast<Input::InputButtonMonitorPtr (*)(Input::InputButton*)>(
+                    Input::Monitors::Monitor));
+        (*lua)["obe"]["Input"]["InitKeyList"] = kaguya::function(Input::InitKeyList);
+        (*lua)["obe"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
         (*lua)["obe"]["Input"]["GetAllPressedButtons"]
             = kaguya::function(Input::GetAllPressedButtons);
         (*lua)["obe"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
@@ -138,10 +127,8 @@ namespace obe::Bindings::InputBindings
         (*lua)["obe"]["Input"]["State"] = kaguya::NewTable();
         (*lua)["obe"]["Input"]["State"]["Idle"] = Input::InputButtonState::Idle;
         (*lua)["obe"]["Input"]["State"]["Hold"] = Input::InputButtonState::Hold;
-        (*lua)["obe"]["Input"]["State"]["Pressed"]
-            = Input::InputButtonState::Pressed;
-        (*lua)["obe"]["Input"]["State"]["Released"]
-            = Input::InputButtonState::Released;
+        (*lua)["obe"]["Input"]["State"]["Pressed"] = Input::InputButtonState::Pressed;
+        (*lua)["obe"]["Input"]["State"]["Released"] = Input::InputButtonState::Released;
     }
 
     void LoadInputButtons(kaguya::State* lua)
@@ -154,19 +141,16 @@ namespace obe::Bindings::InputBindings
             auto& inputButton = inputButtonPair.second;
             if (inputButton->getType() == Input::InputType::Mouse)
             {
-                (*lua)["obe"]["Mouse"][inputButton->getName()]
-                    = inputButton.get();
+                (*lua)["obe"]["Mouse"][inputButton->getName()] = inputButton.get();
             }
             else if (inputButton->getType() == Input::InputType::GamepadAxis
                 || inputButton->getType() == Input::InputType::GamepadButton)
             {
-                (*lua)["obe"]["Gamepad"][inputButton->getName()]
-                    = inputButton.get();
+                (*lua)["obe"]["Gamepad"][inputButton->getName()] = inputButton.get();
             }
             else
             {
-                (*lua)["obe"]["Keyboard"][inputButton->getName()]
-                    = inputButton.get();
+                (*lua)["obe"]["Keyboard"][inputButton->getName()] = inputButton.get();
             }
         }
     }

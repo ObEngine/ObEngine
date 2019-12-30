@@ -1,10 +1,10 @@
 #include "Scene/TXScene.hpp"
+#include <Config/Config.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <Config/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -22,8 +22,7 @@ namespace obe::Modes
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
-                "Global", "Game"),
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Game"),
             Triggers::TriggerGroupPtrRemover);
 
         gameTriggers->addTrigger("Start")
@@ -42,10 +41,9 @@ namespace obe::Modes
         Scene::Scene scene;
         // Scene::TXScene scene = Scene::TXScene::CreateRootScene();
 
-        Script::ScriptEngine.setErrorHandler(
-            [](int statuscode, const char* message) {
-                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
-            });
+        Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message) {
+            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+        });
 
         // Keybinding
         Input::InputManager inputManager;
@@ -60,8 +58,7 @@ namespace obe::Modes
 
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        System::Path("boot.lua")
-            .load(System::Loaders::luaLoader, Script::ScriptEngine, true);
+        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
         Script::ScriptEngine.dostring("Game.Start()");
 
         // Game Starts
@@ -69,8 +66,7 @@ namespace obe::Modes
         {
             framerateManager.update();
 
-            gameTriggers->pushParameter("Update", "dt",
-                                        framerateManager.getGameSpeed());
+            gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
             gameTriggers->trigger("Update");
 
             if (framerateManager.doRender())

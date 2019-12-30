@@ -7,8 +7,8 @@
 
 namespace obe::Graphics
 {
-    using CoordinateTransformer =
-        std::function<double(double position, double camera, int layer)>;
+    using CoordinateTransformer
+        = std::function<double(double position, double camera, int layer)>;
 
     void InitPositionTransformer();
 
@@ -40,8 +40,8 @@ namespace obe::Graphics
          * use \param yTransformer Name of the Transformer the y Coordinate
          * should use
          */
-        PositionTransformer(const std::string& xTransformer,
-                            const std::string& yTransformer);
+        PositionTransformer(
+            const std::string& xTransformer, const std::string& yTransformer);
         /**
          * \brief Gets the CoordinateTransformer of x Coordinate
          * \return The CoordinateTransformer of x Coordinate
@@ -71,7 +71,6 @@ namespace obe::Graphics
          * \return The new transformer position
          */
         Transform::UnitVector operator()(const Transform::UnitVector& position,
-                                         const Transform::UnitVector& camera,
-                                         int layer) const;
+            const Transform::UnitVector& camera, int layer) const;
     };
 } // namespace obe::Graphics

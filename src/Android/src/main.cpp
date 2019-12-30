@@ -8,7 +8,9 @@
 //#include <Transform/UnitVector.hpp>
 
 #ifdef ANDROID_FROMX86
-struct android_app {};
+struct android_app
+{
+};
 #endif
 
 void android_main(struct android_app* state)
@@ -22,7 +24,6 @@ void android_main(struct android_app* state)
     obe::Debug::Log->error("Testing error");
     obe::Transform::UnitVector uv(33, 55);
     obe::Debug::Log->info("Test UnitVector Coordinates : {}, {}", uv.x, uv.y);*/
-
 }
 
 #ifdef ANDROID_FROMX86

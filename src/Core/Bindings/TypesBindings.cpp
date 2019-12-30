@@ -26,8 +26,7 @@ namespace obe::Bindings::TypesBindings
                 .addFunction("isSelected", &Types::Selectable::isSelected)
                 .addFunction("select", &Types::Selectable::select)
                 .addFunction("setSelected", &Types::Selectable::setSelected)
-                .addFunction("toggleSelected",
-                             &Types::Selectable::toggleSelected)
+                .addFunction("toggleSelected", &Types::Selectable::toggleSelected)
                 .addFunction("unselect", &Types::Selectable::unselect));
     }
 

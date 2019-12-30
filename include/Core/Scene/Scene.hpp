@@ -66,8 +66,8 @@ namespace obe::Scene
          * System::Loaders) \param callback Lua Function called when new map has
          * been loaded
          */
-        void setFutureLoadFromFile(const std::string& filename,
-                                   kaguya::LuaFunction callback);
+        void setFutureLoadFromFile(
+            const std::string& filename, kaguya::LuaFunction callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -108,8 +108,8 @@ namespace obe::Scene
          * \param id Id of the new GameObject (If empty the id will be randomly
          * generated) \return A pointer to the newly created GameObject
          */
-        Script::GameObject* createGameObject(const std::string& obj,
-                                             const std::string& id = "");
+        Script::GameObject* createGameObject(
+            const std::string& obj, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return An unsigned int containing how many GameObjects are present
@@ -157,8 +157,8 @@ namespace obe::Scene
          * \param addToSceneRoot Add the LevelSprite to the root Scene Node if
          * true \return A pointer to the newly created LevelSprite
          */
-        Graphics::LevelSprite* createLevelSprite(const std::string& id = "",
-                                                 bool addToSceneRoot = true);
+        Graphics::LevelSprite* createLevelSprite(
+            const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many LevelSprites are present in the Scene
          * \return An unsigned int containing how many LevelSprites are present
@@ -182,10 +182,9 @@ namespace obe::Scene
          * camera Camera position \param layer Layer where to check \return The
          * pointer to a LevelSprite if found, nullptr otherwise
          */
-        Graphics::LevelSprite*
-        getLevelSpriteByPosition(const Transform::UnitVector& position,
-                                 const Transform::UnitVector& camera,
-                                 int layer);
+        Graphics::LevelSprite* getLevelSpriteByPosition(
+            const Transform::UnitVector& position,
+            const Transform::UnitVector& camera, int layer);
         /**
          * \brief Get a LevelSprite by Id (Raises an exception if not found)
          * \param id Id of the LevelSprite to get
@@ -211,8 +210,8 @@ namespace obe::Scene
          * \param addToSceneRoot Add the Collider to the root Scene Node if true
          * \return A pointer to the newly created Collider
          */
-        Collision::PolygonalCollider*
-        createCollider(const std::string& id = "", bool addToSceneRoot = true);
+        Collision::PolygonalCollider* createCollider(
+            const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Colliders are present in the Scene
          * \return The amount of Colliders present in the Scene
@@ -237,8 +236,8 @@ namespace obe::Scene
          * \param position Position to check
          * \return A Pointer to the Collider if found, nullptr otherwise
          */
-        Collision::PolygonalCollider*
-        getColliderByCentroidPosition(const Transform::UnitVector& position);
+        Collision::PolygonalCollider* getColliderByCentroidPosition(
+            const Transform::UnitVector& position);
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
          * found) \param id Id of the Collider to retrieve \return A pointer to
@@ -288,10 +287,10 @@ namespace obe::Scene
          * \param drawSkel Draw the Skeleton of the Colliders
          */
         void enableShowCollision(bool drawLines = false,
-                                 bool drawPoints = false,
-                                 bool drawMasterPoint = false,
-                                 bool drawSkel = false);
+            bool drawPoints = false, bool drawMasterPoint = false,
+            bool drawSkel = false);
         void enableShowSceneNodes(bool showNodes);
-        SceneNode* getSceneNodeByPosition(const Transform::UnitVector& position) const;
+        SceneNode* getSceneNodeByPosition(
+            const Transform::UnitVector& position) const;
     };
 } // namespace obe::Scene

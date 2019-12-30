@@ -2,8 +2,7 @@
 
 namespace obe::Input
 {
-    InputActionEvent::InputActionEvent(InputAction* action,
-                                       InputCondition* condition)
+    InputActionEvent::InputActionEvent(InputAction* action, InputCondition* condition)
     {
         m_action = action;
         m_condition = condition;

@@ -24,8 +24,8 @@ namespace obe::Utils::String
      * \param delimiters Delimiter used to split the string
      * \return The splitted string in a std::vector of std::string
      */
-    std::vector<std::string> split(const std::string& str,
-                                   const std::string& delimiters = " ");
+    std::vector<std::string> split(
+        const std::string& str, const std::string& delimiters = " ");
     /**
      * \brief Count of the occurences of occur in string str
      * \param str String you want to count the occurences in
@@ -72,7 +72,7 @@ namespace obe::Utils::String
      * that will replace search occurences
      */
     void replaceInPlace(std::string& subject, const std::string& search,
-                        const std::string& replace);
+        const std::string& replace);
     /**
      * \brief Replace all the occurences of search to replace in the string
      * subject \param subject The string you want to modify \param search The
@@ -80,7 +80,7 @@ namespace obe::Utils::String
      * occurences \return A std::string containing the modified string
      */
     std::string replace(std::string subject, const std::string& search,
-                        const std::string& replace);
+        const std::string& replace);
     /**
      * \brief Check if the string is surrounded by the given string
      * \param string String you want to check

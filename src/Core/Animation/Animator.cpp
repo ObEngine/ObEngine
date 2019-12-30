@@ -29,8 +29,7 @@ namespace obe::Animation
 
     void Animator::clear(bool clearMemory)
     {
-        Debug::Log->trace(
-            "<Animator> Clearing Animator at {0}", m_animatorPath.toString());
+        Debug::Log->trace("<Animator> Clearing Animator at {0}", m_animatorPath.toString());
         m_animationSet.clear();
         m_currentAnimation = nullptr;
         m_currentAnimationName = "NONE";
@@ -41,8 +40,7 @@ namespace obe::Animation
     {
         if (m_animationSet.find(animationName) != m_animationSet.end())
             return m_animationSet.at(animationName).get();
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Animation.Animator.AnimationNotFound",
+        throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
             { { "function", "getAnimation" }, { "animation", animationName },
                 { "%animator", m_animatorPath.toString() } });
     }
@@ -62,14 +60,11 @@ namespace obe::Animation
 
     void Animator::setKey(const std::string& key)
     {
-        Debug::Log->trace(
-            "<Animator> Set Animation Key {0} for Animator at {1} {2}", key,
+        Debug::Log->trace("<Animator> Set Animation Key {0} for Animator at {1} {2}", key,
             m_animatorPath.toString(), m_animationSet.size());
-        if (!m_animationSet.empty()
-            && m_animationSet.find(key) == m_animationSet.end())
+        if (!m_animationSet.empty() && m_animationSet.find(key) == m_animationSet.end())
         {
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.Animation.Animator.AnimationNotFound",
+            throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
                 { { "function", "setKey" }, { "animation", key },
                     { "%animator", m_animatorPath.toString() } });
         }
@@ -80,8 +75,7 @@ namespace obe::Animation
             {
                 if (m_currentAnimation->isAnimationOver())
                     changeAnim = true;
-                else if (m_animationSet[key]->getPriority()
-                    >= m_currentAnimation->getPriority())
+                else if (m_animationSet[key]->getPriority() >= m_currentAnimation->getPriority())
                     changeAnim = true;
             }
             else
@@ -91,8 +85,7 @@ namespace obe::Animation
                 if (m_currentAnimationName != "NONE")
                     m_animationSet[m_currentAnimationName]->reset();
                 m_currentAnimationName = key;
-                m_currentAnimation
-                    = m_animationSet[m_currentAnimationName].get();
+                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
             }
         }
     }
@@ -104,8 +97,7 @@ namespace obe::Animation
 
     void Animator::loadAnimator()
     {
-        Debug::Log->debug(
-            "<Animator> Loading Animator at {0}", m_animatorPath.toString());
+        Debug::Log->debug("<Animator> Loading Animator at {0}", m_animatorPath.toString());
         std::vector<std::string> listDir;
         m_animatorPath.loadAll(System::Loaders::dirPathLoader, listDir);
         std::vector<std::string> allFiles;
@@ -129,18 +121,15 @@ namespace obe::Animation
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
             tempAnim->loadAnimation(m_animatorPath.add(listDir[i]));
-            if (animationParameters.find(listDir[i])
-                    != animationParameters.end()
+            if (animationParameters.find(listDir[i]) != animationParameters.end()
                 && animationParameters.find("all") != animationParameters.end())
             {
                 tempAnim->applyParameters(*animationParameters["all"]);
                 tempAnim->applyParameters(*animationParameters[listDir[i]]);
             }
-            else if (animationParameters.find(listDir[i])
-                != animationParameters.end())
+            else if (animationParameters.find(listDir[i]) != animationParameters.end())
                 tempAnim->applyParameters(*animationParameters[listDir[i]]);
-            else if (animationParameters.find("all")
-                != animationParameters.end())
+            else if (animationParameters.find("all") != animationParameters.end())
                 tempAnim->applyParameters(*animationParameters["all"]);
             m_animationSet[tempAnim->getAnimationName()] = move(tempAnim);
         }
@@ -150,23 +139,17 @@ namespace obe::Animation
     {
         if (!m_paused)
         {
-            Debug::Log->trace("<Animator> Updating Animator at {0}",
-                m_animatorPath.toString());
+            Debug::Log->trace("<Animator> Updating Animator at {0}", m_animatorPath.toString());
             if (m_currentAnimation == nullptr)
-                throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animator.Animator.UpdateNullAnimation",
+                throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation",
                     { { "animator", m_animatorPath.toString() } });
-            if (m_currentAnimation->getAnimationStatus()
-                == AnimationStatus::Call)
+            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
-                m_currentAnimationName
-                    = m_currentAnimation->getCalledAnimation();
-                m_currentAnimation
-                    = m_animationSet[m_currentAnimationName].get();
+                m_currentAnimationName = m_currentAnimation->getCalledAnimation();
+                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
             }
-            if (m_currentAnimation->getAnimationStatus()
-                == AnimationStatus::Play)
+            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
                 m_currentAnimation->update();
 
             if (m_target)
@@ -178,46 +161,36 @@ namespace obe::Animation
                 {
                     if (m_target->getSize().x >= m_target->getSize().y)
                     {
-                        m_target->setSize(
-                            Transform::UnitVector(m_target->getSize().x,
-                                float(texture.getSize().y)
-                                    / float(texture.getSize().x)
-                                    * m_target->getSize().x));
+                        m_target->setSize(Transform::UnitVector(m_target->getSize().x,
+                            float(texture.getSize().y) / float(texture.getSize().x)
+                                * m_target->getSize().x));
                     }
                     else
                     {
-                        m_target->setSize(
-                            Transform::UnitVector(float(texture.getSize().x)
-                                    / float(texture.getSize().y)
-                                    * m_target->getSize().y,
-                                m_target->getSize().y));
+                        m_target->setSize(Transform::UnitVector(float(texture.getSize().x)
+                                / float(texture.getSize().y) * m_target->getSize().y,
+                            m_target->getSize().y));
                     }
                 }
-                else if (m_targetScaleMode
-                    == AnimatorTargetScaleMode::FixedWidth)
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
                 {
-                    m_target->setSize(Transform::UnitVector(
-                        m_target->getSize().x,
+                    m_target->setSize(Transform::UnitVector(m_target->getSize().x,
                         float(texture.getSize().y) / float(texture.getSize().x)
                             * m_target->getSize().x));
                 }
-                else if (m_targetScaleMode
-                    == AnimatorTargetScaleMode::FixedHeight)
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedHeight)
                 {
-                    m_target->setSize(Transform::UnitVector(
-                        float(texture.getSize().x) / float(texture.getSize().y)
-                            * m_target->getSize().y,
+                    m_target->setSize(Transform::UnitVector(float(texture.getSize().x)
+                            / float(texture.getSize().y) * m_target->getSize().y,
                         m_target->getSize().y));
                 }
-                else if (m_targetScaleMode
-                    == AnimatorTargetScaleMode::TextureSize)
+                else if (m_targetScaleMode == AnimatorTargetScaleMode::TextureSize)
                     m_target->useTextureSize();
             }
         }
     }
 
-    void Animator::setTarget(
-        Graphics::LevelSprite& sprite, AnimatorTargetScaleMode targetScaleMode)
+    void Animator::setTarget(Graphics::LevelSprite& sprite, AnimatorTargetScaleMode targetScaleMode)
     {
         m_target = &sprite;
         m_targetScaleMode = targetScaleMode;
@@ -228,8 +201,7 @@ namespace obe::Animation
         return m_currentAnimation->getTexture();
     }
 
-    const sf::Texture& Animator::getTextureAtKey(
-        const std::string& key, int index) const
+    const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
     {
         return this->getAnimation(key)->getTextureAtIndex(index);
     }

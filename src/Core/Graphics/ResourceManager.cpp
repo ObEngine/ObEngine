@@ -6,19 +6,17 @@
 
 namespace obe::Graphics
 {
-    sf::Texture* ResourceManager::getTexture(
-        const std::string& path, bool antiAliasing)
+    sf::Texture* ResourceManager::getTexture(const std::string& path, bool antiAliasing)
     {
         if (m_textureDatabase.find(path) == m_textureDatabase.end()
             || (!m_textureDatabase[path].first && !antiAliasing)
             || (!m_textureDatabase[path].second && antiAliasing))
         {
-            std::unique_ptr<sf::Texture> tempTexture
-                = std::make_unique<sf::Texture>();
-            System::LoaderResult loadResult = System::Path(path).load(
-                System::Loaders::textureLoader, *tempTexture.get());
-            Debug::Log->debug("[ResourceManager] Loading <Texture> {} from {}",
-                path, loadResult.path());
+            std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
+            System::LoaderResult loadResult
+                = System::Path(path).load(System::Loaders::textureLoader, *tempTexture.get());
+            Debug::Log->debug(
+                "[ResourceManager] Loading <Texture> {} from {}", path, loadResult.path());
 
             if (tempTexture != nullptr)
             {
@@ -36,8 +34,7 @@ namespace obe::Graphics
             }
             else
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.RessourceManager.LoadTexture",
-                    { { "file", path } });
+                    "ObEngine.Animation.RessourceManager.LoadTexture", { { "file", path } });
         }
         else
         {
@@ -63,10 +60,8 @@ namespace obe::Graphics
         vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
         if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
         {
-            defaultAntiAliasing
-                = gameConfig.getDataNode("antiAliasing").get<bool>();
-            Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
-                defaultAntiAliasing);
+            defaultAntiAliasing = gameConfig.getDataNode("antiAliasing").get<bool>();
+            Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}", defaultAntiAliasing);
         }
         sf::Image nullImage;
         nullImage.create(100, 100, sf::Color::Transparent);
@@ -88,17 +83,16 @@ namespace obe::Graphics
         if (m_fontDatabase.find(path) == m_fontDatabase.end())
         {
             std::unique_ptr<sf::Font> tempFont = std::make_unique<sf::Font>();
-            System::LoaderResult loadResult = System::Path(path).load(
-                System::Loaders::fontLoader, *tempFont.get());
-            Debug::Log->debug("[ResourceManager] Loading <Font> {} from {}",
-                path, loadResult.path());
+            System::LoaderResult loadResult
+                = System::Path(path).load(System::Loaders::fontLoader, *tempFont.get());
+            Debug::Log->debug(
+                "[ResourceManager] Loading <Font> {} from {}", path, loadResult.path());
 
             if (tempFont != nullptr)
                 m_fontDatabase[path] = move(tempFont);
             else
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.RessourceManager.LoadFont",
-                    { { "file", path } });
+                    "ObEngine.Animation.RessourceManager.LoadFont", { { "file", path } });
         }
         return m_fontDatabase[path].get();
     }

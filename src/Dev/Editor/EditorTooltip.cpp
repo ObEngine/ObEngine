@@ -11,8 +11,7 @@ namespace obe::Editor
     {
         m_background.setFillColor(sf::Color(0, 0, 0, 200));
 
-        m_text.setFont(
-            *Graphics::ResourceManager::GetInstance().getFont("Data/Fonts/arial.ttf"));
+        m_text.setFont(*Graphics::ResourceManager::GetInstance().getFont("Data/Fonts/arial.ttf"));
         m_text.setCharacterSize(16);
         m_text.setFillColor(sf::Color::White);
     }

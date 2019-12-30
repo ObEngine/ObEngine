@@ -7,11 +7,9 @@
 
 namespace tgui
 {
-    static std::map<std::string, ObjectConverter> defaultRendererValues = {
-        {"borders", Borders{2}},
-        {"padding", Padding{2, 0, 0, 0}},
-        {"bordercolor", sf::Color::Black},
-        {"backgroundcolor", Color{245, 245, 245}}};
+    static std::map<std::string, ObjectConverter> defaultRendererValues
+        = { { "borders", Borders{ 2 } }, { "padding", Padding{ 2, 0, 0, 0 } },
+              { "bordercolor", sf::Color::Black }, { "backgroundcolor", Color{ 245, 245, 245 } } };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +21,7 @@ namespace tgui
         m_renderer = aurora::makeCopied<ChatBoxRenderer>();
         setRenderer(RendererData::create(defaultRendererValues));
 
-        setSize({200, 126});
+        setSize({ 200, 126 });
         setTextSize(m_textSize);
     }
 
@@ -39,8 +37,7 @@ namespace tgui
     ToolkitContentBox::Ptr ToolkitContentBox::copy(ConstPtr chatBox)
     {
         if (chatBox)
-            return std::static_pointer_cast<ToolkitContentBox>(
-                chatBox->clone());
+            return std::static_pointer_cast<ToolkitContentBox>(chatBox->clone());
         return nullptr;
     }
 
@@ -50,9 +47,8 @@ namespace tgui
     {
         Widget::setPosition(position);
 
-        m_scroll.setPosition(
-            getSize().x - m_bordersCached.getRight() -
-                m_paddingCached.getRight() - m_scroll.getSize().x,
+        m_scroll.setPosition(getSize().x - m_bordersCached.getRight() - m_paddingCached.getRight()
+                - m_scroll.getSize().x,
             m_bordersCached.getTop() + m_paddingCached.getTop());
     }
 
@@ -128,8 +124,7 @@ namespace tgui
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<sf::Font>
-    ToolkitContentBox::getLineFont(size_t lineIndex) const
+    std::shared_ptr<sf::Font> ToolkitContentBox::getLineFont(size_t lineIndex) const
     {
         if (lineIndex < m_lines.size())
         {
@@ -180,8 +175,7 @@ namespace tgui
         if ((m_maxLines > 0) && (m_maxLines < m_lines.size()))
         {
             if (m_newLinesBelowOthers)
-                m_lines.erase(m_lines.begin(),
-                              m_lines.begin() + m_lines.size() - m_maxLines);
+                m_lines.erase(m_lines.begin(), m_lines.begin() + m_lines.size() - m_maxLines);
             else
                 m_lines.erase(m_lines.begin() + m_maxLines, m_lines.end());
 
@@ -264,7 +258,7 @@ namespace tgui
 
     bool ToolkitContentBox::mouseOnWidget(sf::Vector2f pos) const
     {
-        return sf::FloatRect{0, 0, getSize().x, getSize().y}.contains(pos);
+        return sf::FloatRect{ 0, 0, getSize().x, getSize().y }.contains(pos);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,8 +290,8 @@ namespace tgui
 
         // Pass the event to the scrollbar when the mouse is on top of it or
         // when we are dragging its thumb
-        if (((m_scroll.isMouseDown()) && (m_scroll.isMouseDownOnThumb())) ||
-            m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
+        if (((m_scroll.isMouseDown()) && (m_scroll.isMouseDownOnThumb()))
+            || m_scroll.mouseOnWidget(pos - m_scroll.getPosition()))
             m_scroll.mouseMoved(pos - m_scroll.getPosition());
         else
             m_scroll.mouseNoLongerOnWidget();
@@ -333,8 +327,8 @@ namespace tgui
     {
 
         // Find the maximum width of one line
-        float maxWidth = getInnerSize().x - m_scroll.getSize().x -
-                         m_paddingCached.getLeft() - m_paddingCached.getRight();
+        float maxWidth = getInnerSize().x - m_scroll.getSize().x - m_paddingCached.getLeft()
+            - m_paddingCached.getRight();
         if (maxWidth < 0)
             return;
     }
@@ -365,14 +359,12 @@ namespace tgui
         // the bottom
         if (m_newLinesBelowOthers)
         {
-            if (((oldMaximum >= m_scroll.getLowValue()) &&
-                 (m_scroll.getValue() ==
-                  oldMaximum - m_scroll.getLowValue())) ||
-                ((oldMaximum <= m_scroll.getLowValue()) &&
-                 (m_scroll.getMaximum() > m_scroll.getLowValue())))
+            if (((oldMaximum >= m_scroll.getLowValue())
+                    && (m_scroll.getValue() == oldMaximum - m_scroll.getLowValue()))
+                || ((oldMaximum <= m_scroll.getLowValue())
+                       && (m_scroll.getMaximum() > m_scroll.getLowValue())))
             {
-                m_scroll.setValue(m_scroll.getMaximum() -
-                                  m_scroll.getLowValue());
+                m_scroll.setValue(m_scroll.getMaximum() - m_scroll.getLowValue());
             }
         }
     }
@@ -381,12 +373,10 @@ namespace tgui
 
     void ToolkitContentBox::updateRendering()
     {
-        m_scroll.setSize(
-            {m_scroll.getSize().x, getInnerSize().y - m_paddingCached.getTop() -
-                                       m_paddingCached.getBottom()});
+        m_scroll.setSize({ m_scroll.getSize().x,
+            getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom() });
         m_scroll.setLowValue(static_cast<unsigned int>(
-            getInnerSize().y - m_paddingCached.getTop() -
-            m_paddingCached.getBottom()));
+            getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()));
 
         recalculateAllLines();
     }
@@ -407,8 +397,7 @@ namespace tgui
         }
         else if (property == "texturebackground")
         {
-            m_spriteBackground.setTexture(
-                getRenderer()->getTextureBackground());
+            m_spriteBackground.setTexture(getRenderer()->getTextureBackground());
         }
         else if (property == "scrollbar")
         {
@@ -464,64 +453,52 @@ namespace tgui
 
     sf::Vector2f ToolkitContentBox::getInnerSize() const
     {
-        return {getSize().x - m_bordersCached.getLeft() -
-                    m_bordersCached.getRight(),
-                getSize().y - m_bordersCached.getTop() -
-                    m_bordersCached.getBottom()};
+        return { getSize().x - m_bordersCached.getLeft() - m_bordersCached.getRight(),
+            getSize().y - m_bordersCached.getTop() - m_bordersCached.getBottom() };
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void ToolkitContentBox::draw(sf::RenderTarget& target,
-                                 sf::RenderStates states) const
+    void ToolkitContentBox::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform.translate(getPosition());
 
         sf::RenderStates scrollbarStates = states;
 
         // Draw the borders
-        if (m_bordersCached != Borders{0})
+        if (m_bordersCached != Borders{ 0 })
         {
-            drawBorders(target, states, m_bordersCached, getSize(),
-                        m_borderColorCached);
-            states.transform.translate(
-                {m_bordersCached.getLeft(), m_bordersCached.getTop()});
+            drawBorders(target, states, m_bordersCached, getSize(), m_borderColorCached);
+            states.transform.translate({ m_bordersCached.getLeft(), m_bordersCached.getTop() });
         }
 
         // Draw the background
         if (m_spriteBackground.isSet())
             m_spriteBackground.draw(target, states);
         else
-            drawRectangleShape(target, states, getInnerSize(),
-                               m_backgroundColorCached);
+            drawRectangleShape(target, states, getInnerSize(), m_backgroundColorCached);
 
-        states.transform.translate(
-            {m_paddingCached.getLeft(), m_paddingCached.getTop()});
+        states.transform.translate({ m_paddingCached.getLeft(), m_paddingCached.getTop() });
 
         // Draw the scrollbar
         m_scroll.draw(target, scrollbarStates);
 
         // Set the clipping for all draw calls that happen until this clipping
         // object goes out of scope
-        Clipping clipping{target,
-                          states,
-                          {},
-                          {getInnerSize().x - m_paddingCached.getLeft() -
-                               m_paddingCached.getRight() -
-                               m_scroll.getSize().x,
-                           getInnerSize().y - m_paddingCached.getTop() -
-                               m_paddingCached.getBottom()}};
+        Clipping clipping{ target, states, {},
+            { getInnerSize().x - m_paddingCached.getLeft() - m_paddingCached.getRight()
+                    - m_scroll.getSize().x,
+                getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom() } };
 
-        states.transform.translate(
-            {0, -static_cast<float>(m_scroll.getValue())});
+        states.transform.translate({ 0, -static_cast<float>(m_scroll.getValue()) });
 
         // Put the lines at the bottom of the chat box if needed
-        if (!m_linesStartFromTop &&
-            (m_fullTextHeight < getInnerSize().y - m_paddingCached.getTop() -
-                                    m_paddingCached.getBottom()))
-            states.transform.translate(
-                0, getInnerSize().y - m_paddingCached.getTop() -
-                       m_paddingCached.getBottom() - m_fullTextHeight);
+        if (!m_linesStartFromTop
+            && (m_fullTextHeight
+                   < getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()))
+            states.transform.translate(0,
+                getInnerSize().y - m_paddingCached.getTop() - m_paddingCached.getBottom()
+                    - m_fullTextHeight);
 
         for (const auto& line : m_lines)
         {

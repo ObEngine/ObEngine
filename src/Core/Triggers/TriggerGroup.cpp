@@ -6,8 +6,8 @@
 
 namespace obe::Triggers
 {
-    TriggerGroup::TriggerGroup(const std::string& triggerGroupNamespace,
-                               const std::string& triggerGroupName)
+    TriggerGroup::TriggerGroup(
+        const std::string& triggerGroupNamespace, const std::string& triggerGroupName)
     {
         m_fromNsp = triggerGroupNamespace;
         m_name = triggerGroupName;
@@ -23,42 +23,33 @@ namespace obe::Triggers
         {
             return m_triggerMap[triggerName];
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Triggers.TriggerGroup.UnknownTrigger",
-            {{"function", "getTrigger"},
-             {"trigger", triggerName},
-             {"group", m_name}});
+        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger",
+            { { "function", "getTrigger" }, { "trigger", triggerName }, { "group", m_name } });
     }
 
     TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
     {
-        Debug::Log->debug(
-            "<TriggerGroup> Add Trigger {0} to TriggerGroup {1}.{2}",
-            triggerName, m_fromNsp, m_name);
-        m_triggerMap[triggerName] =
-            std::make_unique<Trigger>(this, triggerName);
+        Debug::Log->debug("<TriggerGroup> Add Trigger {0} to TriggerGroup {1}.{2}", triggerName,
+            m_fromNsp, m_name);
+        m_triggerMap[triggerName] = std::make_unique<Trigger>(this, triggerName);
         return this;
     }
 
     TriggerGroup* TriggerGroup::removeTrigger(const std::string& triggerName)
     {
-        Debug::Log->debug(
-            "<TriggerGroup> Remove Trigger {0} from TriggerGroup {1}.{2}",
+        Debug::Log->debug("<TriggerGroup> Remove Trigger {0} from TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
         if (m_triggerMap.find(triggerName) != m_triggerMap.end())
             m_triggerMap.erase(triggerName);
         else
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerGroup.UnknownTrigger",
-                {{"function", "removeTrigger"},
-                 {"trigger", triggerName},
-                 {"group", m_name}});
+            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger",
+                { { "function", "removeTrigger" }, { "trigger", triggerName },
+                    { "group", m_name } });
         return this;
     }
 
-    TriggerGroup*
-    TriggerGroup::delayTriggerState(const std::string& triggerName,
-                                    Time::TimeUnit delay)
+    TriggerGroup* TriggerGroup::delayTriggerState(
+        const std::string& triggerName, Time::TimeUnit delay)
     {
         m_delayedTriggers.push_back(
             std::make_unique<TriggerDelay>(m_triggerMap[triggerName].get(), delay));
@@ -68,8 +59,7 @@ namespace obe::Triggers
     TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
     {
         Debug::Log->trace(
-            "<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}", triggerName,
-            m_fromNsp, m_name);
+            "<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}", triggerName, m_fromNsp, m_name);
         m_triggerMap[triggerName]->execute();
         return this;
     }
@@ -84,9 +74,8 @@ namespace obe::Triggers
         return m_joinable;
     }
 
-    void TriggerGroup::pushParameterFromLua(const std::string& triggerName,
-                                            const std::string& parameterName,
-                                            kaguya::LuaRef parameter)
+    void TriggerGroup::pushParameterFromLua(
+        const std::string& triggerName, const std::string& parameterName, kaguya::LuaRef parameter)
     {
         m_triggerMap[triggerName]->pushParameterFromLua(parameterName, parameter);
     }

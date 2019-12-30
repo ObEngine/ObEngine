@@ -9,8 +9,8 @@
 
 namespace obe::Input
 {
-    using InputCombinationElement =
-        std::pair<InputButtonMonitorPtr, Types::FlagSet<InputButtonState>>;
+    using InputCombinationElement
+        = std::pair<InputButtonMonitorPtr, Types::FlagSet<InputButtonState>>;
     using InputCombination = std::vector<InputCombinationElement>;
 
     /**

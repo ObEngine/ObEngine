@@ -6,7 +6,7 @@
 namespace obe::Utils::Math
 {
     std::random_device rd;
-    std::mt19937 rng{rd()};
+    std::mt19937 rng{ rd() };
 
     int randint(const int& min, const int& max)
     {

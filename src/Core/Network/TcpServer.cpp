@@ -6,8 +6,8 @@
 
 namespace obe::Network
 {
-    TcpServer::TcpServer(unsigned short port, std::string triggerNamespace,
-                         std::string triggerGroup)
+    TcpServer::TcpServer(
+        unsigned short port, std::string triggerNamespace, std::string triggerGroup)
     {
         if (!triggerNamespace.empty())
         {
@@ -32,33 +32,27 @@ namespace obe::Network
         {
             if (m_socketTriggers)
             {
-                m_socketTriggers->pushParameter("Connected", "client",
-                                                m_clients.back().get());
+                m_socketTriggers->pushParameter("Connected", "client", m_clients.back().get());
                 m_socketTriggers->pushParameter(
-                    "Connected", "ip",
-                    m_clients.back()->getRemoteAddress().toString());
+                    "Connected", "ip", m_clients.back()->getRemoteAddress().toString());
                 m_socketTriggers->trigger("Connected");
             }
             Debug::Log->debug("<TcpServer> New client connected to server "
                               "listening at port {}",
-                              m_listener.getLocalPort());
+                m_listener.getLocalPort());
             m_clients.push_back(std::make_unique<sf::TcpSocket>());
         }
         for (auto& client : m_clients)
         {
             std::size_t receivedDataSize = 0;
-            m_status = client->receive(m_data.data(), m_maxBufferSize,
-                                       receivedDataSize);
+            m_status = client->receive(m_data.data(), m_maxBufferSize, receivedDataSize);
             if (m_status == sf::Socket::Done)
             {
                 if (m_socketTriggers)
                 {
-                    m_socketTriggers->pushParameter(
-                        "DataReceived", "content",
-                        std::string(m_data.begin(), m_data.end())
-                            .substr(0, receivedDataSize));
-                    m_socketTriggers->pushParameter("DataReceived", "client",
-                                                    client.get());
+                    m_socketTriggers->pushParameter("DataReceived", "content",
+                        std::string(m_data.begin(), m_data.end()).substr(0, receivedDataSize));
+                    m_socketTriggers->pushParameter("DataReceived", "client", client.get());
                     m_socketTriggers->trigger("DataReceived");
                 }
             }

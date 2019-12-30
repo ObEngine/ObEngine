@@ -27,7 +27,8 @@ namespace obe::Scene
         Script::ScriptEngine["Scenes"][id] = this;
     }
 
-    TXScene::TXScene(TXScene&& scene) : Identifiable(scene.getId())
+    TXScene::TXScene(TXScene&& scene)
+        : Identifiable(scene.getId())
     {
         m_permanent = scene.m_permanent;
         m_components = std::move(scene.m_components);
@@ -65,8 +66,7 @@ namespace obe::Scene
         }
 
         throw aube::ErrorHandler::Raise(
-            "obe.Scene.Scene.ComponentNotFound",
-            {{"sceneId", m_id}, {"componentId", id}});
+            "obe.Scene.Scene.ComponentNotFound", { { "sceneId", m_id }, { "componentId", id } });
     }
 
     void TXScene::clear()
@@ -93,8 +93,7 @@ namespace obe::Scene
             m_name = data.getDataNode("name").get<std::string>();
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoName",
-                                            {{"id", m_id}});
+            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoName", { { "id", m_id } });
 
         /*if (data.contains(vili::NodeType::ComplexNode, "View"))
         {
@@ -129,21 +128,16 @@ namespace obe::Scene
         {
             vili::ComplexNode& components = data.at("Components");
 
-            for (vili::ComplexNode* component :
-                 components.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* component : components.getAll<vili::ComplexNode>())
             {
-                const std::string componentType =
-                    component->getDataNode("type");
+                const std::string componentType = component->getDataNode("type");
                 if (componentType == "Sprite")
                 {
-                    this->add<Graphics::LevelSprite>(
-                            component->getDataNode("id"))
-                        .load(*component);
+                    this->add<Graphics::LevelSprite>(component->getDataNode("id")).load(*component);
                 }
                 else if (componentType == "Collider")
                 {
-                    this->add<Collision::PolygonalCollider>(
-                            component->getDataNode("id"))
+                    this->add<Collision::PolygonalCollider>(component->getDataNode("id"))
                         .load(*component);
                 }
                 else if (componentType == "Script")
@@ -221,13 +215,11 @@ namespace obe::Scene
     std::vector<unsigned int> LuaComponent::AllEnvs;
     LuaComponent::LuaComponent()
     {
-        m_triggerNamespace = Utils::String::getRandomKey(
-            Utils::String::Alphabet + Utils::String::Numbers, 12);
-        Triggers::TriggerDatabase::GetInstance().createNamespace(
-            m_triggerNamespace);
-        m_localTriggers.reset(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
-                m_triggerNamespace, "Local"),
+        m_triggerNamespace
+            = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
+        Triggers::TriggerDatabase::GetInstance().createNamespace(m_triggerNamespace);
+        m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+                                  m_triggerNamespace, "Local"),
             Triggers::TriggerGroupPtrRemover);
 
         m_envIndex = Script::CreateNewEnvironment();
@@ -247,8 +239,7 @@ namespace obe::Scene
         LUAENV["__OBJECT_INIT"] = false;
         LUAENV["Private"] = m_triggerNamespace;
 
-        Script::executeFile(m_envIndex,
-                            System::Path("Lib/Internal/ObjectInit.lua").find());
+        Script::executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
     }
 
     kaguya::LuaTable LuaComponent::access() const

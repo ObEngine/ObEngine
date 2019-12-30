@@ -9,8 +9,8 @@
 
 namespace obe::Transform
 {
-    UnitVector rotatePointAroundCenter(const UnitVector& center,
-                                       const UnitVector& Around, float angle)
+    UnitVector rotatePointAroundCenter(
+        const UnitVector& center, const UnitVector& Around, float angle)
     {
         double cY = std::cos(angle);
         double sY = std::sin(angle);
@@ -42,8 +42,7 @@ namespace obe::Transform
             m_angle = Utils::Math::normalise(m_angle, 0, 360);
     }
 
-    void Rect::transformRef(UnitVector& vec, Referential ref,
-                            ConversionType type) const
+    void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const
     {
         const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
@@ -53,16 +52,15 @@ namespace obe::Transform
 
         auto [dx, dy] = (ref.getOffset() * m_size).unpack();
 
-        vec.add(UnitVector((dx * cosAngle - dy * sinAngle) * factor,
-                           (dx * sinAngle + dy * cosAngle) * factor));
+        vec.add(UnitVector(
+            (dx * cosAngle - dy * sinAngle) * factor, (dx * sinAngle + dy * cosAngle) * factor));
     }
 
     Rect::Rect()
     {
     }
 
-    Rect::Rect(const Transform::UnitVector& position,
-               const Transform::UnitVector& size)
+    Rect::Rect(const Transform::UnitVector& position, const Transform::UnitVector& size)
     {
         m_position = position;
         m_size = size;
@@ -75,11 +73,9 @@ namespace obe::Transform
         std::vector<sf::Vector2i> drawPoints;
         UnitVector dPos(posX, posY, Transform::Units::ScenePixels);
 
-        const std::vector<Referential> fixDisplayOrder = {
-            Referential::TopLeft,     Referential::Top,
-            Referential::TopRight,    Referential::Right,
-            Referential::BottomRight, Referential::Bottom,
-            Referential::BottomLeft,  Referential::Left};
+        const std::vector<Referential> fixDisplayOrder = { Referential::TopLeft, Referential::Top,
+            Referential::TopRight, Referential::Right, Referential::BottomRight,
+            Referential::Bottom, Referential::BottomLeft, Referential::Left };
 
         for (uint8_t i = 0; i < 8; ++i)
         {
@@ -104,23 +100,17 @@ namespace obe::Transform
         result.y = (dy * cosAngle) * -1;
         vec += result;
         Graphics::Utils::drawPoint(vec.x - r, vec.y - r, r, sf::Color::White);
-        Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2,
-                                  sf::Color::White);
+        Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
         Graphics::Utils::drawPolygon(drawPoints,
-                                     {{"lines", true},
-                                      {"points", true},
-                                      {"radius", r},
-                                      {"point_color", sf::Color::White},
-                                      {"point_color_0", sf::Color::Red},
-                                      {"point_color_1", sf::Color(255, 128, 0)},
-                                      {"point_color_2", sf::Color::Yellow},
-                                      {"point_color_3", sf::Color(128, 255, 0)},
-                                      {"point_color_4", sf::Color::Green},
-                                      {"point_color_5", sf::Color(0, 255, 128)},
-                                      {"point_color_6", sf::Color::Magenta},
-                                      {"point_color_7", sf::Color(0, 128, 255)},
-                                      {"point_color_8", sf::Color::White}});
+            { { "lines", true }, { "points", true }, { "radius", r },
+                { "point_color", sf::Color::White }, { "point_color_0", sf::Color::Red },
+                { "point_color_1", sf::Color(255, 128, 0) }, { "point_color_2", sf::Color::Yellow },
+                { "point_color_3", sf::Color(128, 255, 0) }, { "point_color_4", sf::Color::Green },
+                { "point_color_5", sf::Color(0, 255, 128) },
+                { "point_color_6", sf::Color::Magenta },
+                { "point_color_7", sf::Color(0, 128, 255) },
+                { "point_color_8", sf::Color::White } });
     }
 
     void Rect::setPointPosition(const UnitVector& position, Referential ref)
@@ -128,8 +118,7 @@ namespace obe::Transform
         UnitVector refPosition = this->getPosition(ref);
         UnitVector oppositePointPosition = this->getPosition(ref.flip());
         double radAngle = Utils::Math::convertToRadian(-m_angle);
-        UnitVector movedPoint =
-            rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
+        UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
         this->setPosition(position, ref);
 
@@ -137,26 +126,22 @@ namespace obe::Transform
         {
             if (ref.isOnTopSide())
             {
-                this->setSize(
-                    {movedPoint.x - position.x, movedPoint.y - position.y},
-                    ref);
+                this->setSize({ movedPoint.x - position.x, movedPoint.y - position.y }, ref);
             }
             else
             {
-                this->setSize(
-                    {position.x - movedPoint.x, position.y - movedPoint.y},
-                    ref);
+                this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
             }
         }
         if (ref.isOnLeftSide() || ref.isOnRightSide())
         {
             if (ref.isOnLeftSide())
             {
-                this->setSize({movedPoint.x - position.x, m_size.y}, ref);
+                this->setSize({ movedPoint.x - position.x, m_size.y }, ref);
             }
             else
             {
-                this->setSize({position.x - movedPoint.x, m_size.y}, ref);
+                this->setSize({ position.x - movedPoint.x, m_size.y }, ref);
             }
         }
         else // we are on TopSide or BottomSide here, no need to specify the
@@ -164,11 +149,11 @@ namespace obe::Transform
         {
             if (ref.isOnTopSide())
             {
-                this->setSize({m_size.x, movedPoint.y - position.y}, ref);
+                this->setSize({ m_size.x, movedPoint.y - position.y }, ref);
             }
             else
             {
-                this->setSize({m_size.x, position.y - movedPoint.y}, ref);
+                this->setSize({ m_size.x, position.y - movedPoint.y }, ref);
             }
         }
     }
@@ -227,7 +212,6 @@ namespace obe::Transform
 
     UnitVector Rect::getScaleFactor() const
     {
-        return UnitVector(Utils::Math::sign(m_size.x),
-                          Utils::Math::sign(m_size.y));
+        return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
     }
 } // namespace obe::Transform

@@ -3,7 +3,8 @@
 
 namespace obe::Collision
 {
-    Trajectory::Trajectory(const Transform::Units unit) : Togglable(true)
+    Trajectory::Trajectory(const Transform::Units unit)
+        : Togglable(true)
     {
         m_unit = unit;
     }

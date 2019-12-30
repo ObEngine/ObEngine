@@ -15,13 +15,15 @@ namespace obe::Input
      * \brief Class used to manage KeyClass and KeyboardAction
      * @Bind
      */
-    class InputManager : public Types::Registrable<InputManager>, public Types::Togglable
+    class InputManager : public Types::Registrable<InputManager>,
+                         public Types::Togglable
     {
     private:
         Triggers::TriggerGroupPtr m_actionTriggers;
         std::vector<std::shared_ptr<InputAction>> m_allActions;
         std::vector<std::weak_ptr<InputAction>> m_currentActions;
         bool isActionCurrentlyInUse(const std::string& actionId);
+
     public:
         /**
          * \brief Creates a new KeyboardManager

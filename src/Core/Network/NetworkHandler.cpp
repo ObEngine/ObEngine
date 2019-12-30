@@ -7,8 +7,7 @@ namespace obe::Network
 {
     NetworkHandler::NetworkHandler()
         : m_socketTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
-                  "Global", "Network"),
+              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Network"),
               Triggers::TriggerGroupPtrRemover)
     {
         m_listener.setBlocking(false);
@@ -32,8 +31,7 @@ namespace obe::Network
         if (m_status == sf::Socket::Done)
         {
             m_socketTriggers->pushParameter(
-                "DataReceived", "Content",
-                std::string(m_data).substr(0, m_received));
+                "DataReceived", "Content", std::string(m_data).substr(0, m_received));
             m_socketTriggers->trigger("DataReceived");
         }
         else if (m_status == sf::Socket::Disconnected)
