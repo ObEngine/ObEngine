@@ -5,13 +5,14 @@
 #include <vili/Vili.hpp>
 
 #include <Bindings/Bindings.hpp>
+#include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>
-#include <System/Config.hpp>
+#include <ObEngineCore.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
@@ -25,43 +26,12 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Debug::InitLogger();
-    Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
-    vili::ViliParser::StoreInCache("Obe.vili");
-
-    Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
-    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
-        sf::VideoMode::getDesktopMode().height);
-    Debug::Log->debug("<ObEngine> Initialising Position Transformers");
-    Graphics::InitPositionTransformer();
-    Debug::Log->debug("<ObEngine> Initialising Input Handling");
-    Input::InitKeyList();
+    unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
+    unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
+    InitEngine(surfaceWidth, surfaceHeight);
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
-
-    Debug::Log->debug("<ObEngine> Initialising Errors Handling");
-    LoadErrors();
-    Debug::Log->debug("<ObEngine> Mounting paths");
-    System::MountPaths();
-    System::InitConfiguration();
-    Debug::InitLoggerLevel();
-    System::IndexPlugins();
-
-    Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
-    Bindings::IndexBindings();
-    Debug::Log->debug("<ObEngine> Initialising Lua State");
-    Script::InitScriptEngine();
-    Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
-    Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
-    Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
-
-    Debug::Log->debug("<ObEngine> Loading ResourceManager");
-    Graphics::ResourceManager::GetInstance();
-
-    Input::InputButtonMonitor::InitKeyTriggerGroup();
-
-    Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
 
     Modes::startGame();
     return 0;

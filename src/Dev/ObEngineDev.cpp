@@ -6,6 +6,8 @@
 #include <SFML/Window/VideoMode.hpp>
 
 #include <Bindings/Bindings.hpp>
+#include <Config/Config.hpp>
+#include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
 #include <Editor/MapEditor.hpp>
 #include <Graphics/LevelSprite.hpp>
@@ -15,17 +17,13 @@
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
+#include <ObEngineCore.hpp>
 #include <ObEngineDev.hpp>
 #include <Script/GlobalState.hpp>
-#include <System/Config.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
-
-#include "Collision/PolygonalCollider.hpp"
-#include "Utils/MathUtils.hpp"
-#include <Graphics/LevelSprite.hpp>
 
 void LoadErrors()
 {
@@ -36,49 +34,18 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    Utils::Exec::RunArgsParser runParser(argc, argv);
-    const std::string startMode = runParser.getArgumentValue("-mode");
-    std::cout << "Running ObEngine using mode : " << startMode << std::endl;
-    Debug::InitLogger();
-    vili::ViliParser::StoreInCache("Obe.vili");
-
-    Debug::Log->info("Running ObEngine Dev (Version : {} ({}:{}))",
-        OBENGINE_VERSION, OBENGINE_GIT_BRANCH, OBENGINE_GIT_HASH);
+    unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
+    unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
+    InitEngine(surfaceWidth, surfaceHeight);
 
     Debug::Log->debug("<ObEngine> Initialising UnitVector Screen Surface");
-    Transform::UnitVector::Init(sf::VideoMode::getDesktopMode().width,
-        sf::VideoMode::getDesktopMode().height);
-    Debug::Log->debug("<ObEngine> Initialising Position Transformers");
-    Graphics::InitPositionTransformer();
-    Debug::Log->debug("<ObEngine> Initialising Input Handling");
-    Input::InitKeyList();
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
-    Debug::Log->debug("<ObEngine> Initialising Errors Handling");
-    LoadErrors();
-    Debug::Log->debug("<ObEngine> Mounting paths");
-    System::MountPaths();
-    Debug::Log->debug("<ObEngine> Loading Configuration");
-    System::InitConfiguration();
-    Debug::InitLoggerLevel();
-    System::IndexPlugins();
-
-    Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
-    Bindings::IndexBindings();
-    Debug::Log->debug("<ObEngine> Initialising Lua State");
-    Script::InitScriptEngine();
-    Script::ScriptEngine["obe"]["version"] = OBENGINE_VERSION;
-    Script::ScriptEngine["obe"]["commit"] = OBENGINE_GIT_HASH;
-    Script::ScriptEngine["obe"]["branch"] = OBENGINE_GIT_BRANCH;
-
-    Debug::Log->debug("<ObEngine> Loading ResourceManager");
-    Graphics::ResourceManager::GetInstance();
-
-    Input::InputButtonMonitor::InitKeyTriggerGroup();
-
-    Debug::Log->info("<ObEngine> Initialisation over ! Starting ObEngine");
+    Utils::Exec::RunArgsParser runParser(argc, argv);
+    const std::string startMode = runParser.getArgumentValue("-mode");
+    Debug::Log->debug("Running ObEngine with mode {}", startMode);
 
     if (startMode == "edit")
     {

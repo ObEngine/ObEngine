@@ -6,7 +6,7 @@
 #include <Modes/Game.hpp>
 #include <Modes/Menu.hpp>
 #include <Modes/Toolkit.hpp>
-#include <System/Config.hpp>
+#include <Config/Config.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
@@ -361,7 +361,7 @@ namespace obe::Modes
                                    startToolkitMode();
                                    checkBootFile();
                                    checkMapFolder();
-                                   System::InitConfiguration();
+                                   Config::InitConfiguration();
                                });
 
         helpButton->setRenderer(baseTheme.getRenderer("HelpSquareButton"));

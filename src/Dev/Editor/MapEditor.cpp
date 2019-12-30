@@ -16,7 +16,7 @@
 #include <Network/NetworkHandler.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <System/Config.hpp>
+#include <Config/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
@@ -95,7 +95,7 @@ namespace obe::Editor
             .load(System::Loaders::fontLoader, font);
 
         // Config
-        vili::ComplexNode& gameConfig = System::Config->at("GameConfig");
+        vili::ComplexNode& gameConfig = Config::Config->at("GameConfig");
         const int scrollSensitive =
             gameConfig.at<vili::DataNode>("scrollSensibility");
 
@@ -121,7 +121,7 @@ namespace obe::Editor
 
         // Keybinding
         Input::InputManager inputManager;
-        inputManager.configure(System::Config.at("KeyBinding"));
+        inputManager.configure(Config::Config.at("KeyBinding"));
         inputManager.addContext("game")
             .addContext("mapEditor")
             .addContext("gameConsole");

@@ -12,8 +12,6 @@ else()
     add_executable(ObEnginePlayer ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES} ${OBENGINE_ICON})
 endif()
 
-compile_obengine_git_definitions()
-
 target_include_directories(ObEnginePlayer
     PRIVATE
         $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Player>

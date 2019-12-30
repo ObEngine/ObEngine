@@ -5,6 +5,7 @@
 #include <Bindings/AnimationBindings.hpp>
 #include <Bindings/CPPBindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
+#include <Bindings/ConfigBindings.hpp>
 #include <Bindings/DebugBindings.hpp>
 #include <Bindings/GraphicsBindings.hpp>
 #include <Bindings/InputBindings.hpp>
@@ -33,8 +34,8 @@ namespace obe::Bindings
 
     void Load(kaguya::State* lua, const std::string& lib)
     {
-        const std::vector<std::string> splitLibPath =
-            Utils::String::split(lib, ".");
+        const std::vector<std::string> splitLibPath
+            = Utils::String::split(lib, ".");
         BindTree.walkTo(splitLibPath)(lua);
     }
 
@@ -51,6 +52,8 @@ namespace obe::Bindings
             .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider)
             .add("Trajectory", &CollisionBindings::LoadTrajectory)
             .add("TrajectoryNode", &CollisionBindings::LoadTrajectoryNode)
+            // Config
+            .add("Git", &ConfigBindings::LoadGit)
             // Debug
             .add("Log", &DebugBindings::LoadLog)
             // Graphics
@@ -58,7 +61,7 @@ namespace obe::Bindings
             .add("Color", &GraphicsBindings::LoadColor)
             .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
             .add("LevelSpriteHandlePoint",
-                 &GraphicsBindings::LoadLevelSpriteHandlePoint)
+                &GraphicsBindings::LoadLevelSpriteHandlePoint)
             .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
             .add("Shader", &GraphicsBindings::LoadShader)
             .add("Utils", &GraphicsBindings::LoadGraphicsUtils)
@@ -100,7 +103,7 @@ namespace obe::Bindings
             .add("Movable", &TransformBindings::LoadMovable)
             .add("Polygon", &TransformBindings::LoadPolygon)
             .add("ProtectedUnitVector",
-                 &TransformBindings::LoadProtectedUnitVector)
+                &TransformBindings::LoadProtectedUnitVector)
             .add("Rect", &TransformBindings::LoadRect)
             .add("Referential", &TransformBindings::LoadReferential)
             .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)
@@ -148,7 +151,7 @@ namespace obe::Bindings
             .add("LinkNode", &ViliBindings::LoadViliLinkNode)
             .add("Node", &ViliBindings::LoadViliNode)
             .add("NodeConstraintManager",
-                 &ViliBindings::LoadViliNodeConstraintManager)
+                &ViliBindings::LoadViliNodeConstraintManager)
             .add("NodeIterator", &ViliBindings::LoadViliNodeIterator)
             .add("NodeTemplate", &ViliBindings::LoadViliNodeTemplate)
             .add("NodeType", &ViliBindings::LoadViliNodeType)
@@ -161,7 +164,7 @@ namespace obe::Bindings
         for (auto& plugin : System::Plugins)
         {
             Debug::Log->info("Indexing plugin bindings {} ({})",
-                              plugin->getId(), plugin->hasOnLoadBindings());
+                plugin->getId(), plugin->hasOnLoadBindings());
             if (plugin->hasOnLoadBindings())
                 BindTree.add(plugin->getId(), [&plugin](kaguya::State* lua) {
                     plugin->onLoadBindings(lua);

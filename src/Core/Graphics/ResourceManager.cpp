@@ -1,5 +1,5 @@
+#include <Config/Config.hpp>
 #include <Graphics/ResourceManager.hpp>
-#include <System/Config.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <Triggers/TriggerDatabase.hpp>
@@ -60,7 +60,7 @@ namespace obe::Graphics
     ResourceManager::ResourceManager()
         : Registrable("ResourceManager")
     {
-        vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
+        vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
         if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
         {
             defaultAntiAliasing

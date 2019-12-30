@@ -4,7 +4,7 @@
 #include <Modes/Game.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
-#include <System/Config.hpp>
+#include <Config/Config.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -33,7 +33,7 @@ namespace obe::Modes
             ->addTrigger("Render");
 
         // Config
-        vili::ComplexNode& gameConfig = System::Config.at("GameConfig");
+        vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
 
         // Cursor
         System::Cursor cursor;
@@ -50,7 +50,7 @@ namespace obe::Modes
         // Keybinding
         Input::InputManager inputManager;
 
-        inputManager.configure(System::Config.at("KeyBinding"));
+        inputManager.configure(Config::Config.at("KeyBinding"));
         inputManager.addContext("game");
 
         sf::Event event;

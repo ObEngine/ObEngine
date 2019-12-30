@@ -18,7 +18,7 @@ namespace obe::Graphics
      * \brief Singleton Class that manages and caches textures
      * @Bind
      */
-    class ResourceManager : Types::Registrable<ResourceManager>,
+    class ResourceManager : public Types::Registrable<ResourceManager>,
                             public Types::Singleton<ResourceManager>
     {
     private:
