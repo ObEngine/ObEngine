@@ -7,7 +7,7 @@ AccessModifierOffset: -4
 DerivePointerAlignment: false
 PointerAlignment: Left
 BreakBeforeBraces: Allman
-ColumnLimit: 100
+ColumnLimit: 90
 NamespaceIndentation: All
 SortIncludes: true
 SortUsingDeclarations: true
