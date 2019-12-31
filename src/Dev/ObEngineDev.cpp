@@ -5,7 +5,6 @@
 
 #include <SFML/Window/VideoMode.hpp>
 
-#include <Audio/AudioManager.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Config/Git.hpp>
@@ -25,8 +24,6 @@
 #include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
-
-#include <System/Path.hpp>
 
 void LoadErrors()
 {
