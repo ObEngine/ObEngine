@@ -8,4 +8,5 @@ namespace kaguya
 namespace obe::Bindings::AudioBindings
 {
     void LoadAudioManager(kaguya::State* lua);
+    void LoadSound(kaguya::State* lua);
 }

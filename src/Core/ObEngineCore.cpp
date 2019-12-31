@@ -1,5 +1,6 @@
 #include <ObEngineCore.hpp>
 
+#include <Audio/AudioManager.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Config/Git.hpp>
@@ -24,8 +25,9 @@ namespace obe
         Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
         vili::ViliParser::StoreInCache("Obe.vili");
 
-        Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", Config::OBENGINE_VERSION,
-            Config::OBENGINE_GIT_BRANCH, Config::OBENGINE_GIT_HASH);
+        Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))",
+            Config::OBENGINE_VERSION, Config::OBENGINE_GIT_BRANCH,
+            Config::OBENGINE_GIT_HASH);
 
         Transform::UnitVector::Init(surfaceWidth, surfaceHeight);
         Debug::Log->debug("<ObEngine> Initialising Position Transformers");
@@ -49,6 +51,9 @@ namespace obe
 
         Debug::Log->debug("<ObEngine> Loading ResourceManager");
         Graphics::ResourceManager::GetInstance();
+
+        Debug::Log->debug("<ObEngine> Loading Audio Engine");
+        Audio::AudioManager::GetInstance();
 
         Input::InputButtonMonitor::InitKeyTriggerGroup();
 
