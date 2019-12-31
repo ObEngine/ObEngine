@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <Types/Registrable.hpp>
 #include <Types/Singleton.hpp>
 
