@@ -5,6 +5,7 @@
 
 #include <SFML/Window/VideoMode.hpp>
 
+#include <Audio/AudioManager.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Config/Git.hpp>
@@ -25,31 +26,14 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ExecUtils.hpp>
 
+#include <System/Path.hpp>
+
 void LoadErrors()
 {
     aube::LoadErrors("Data/Errors.vili");
 }
 
 using namespace obe;
-
-void testSoloud()
-{
-    // Declare some variables
-    SoLoud::Soloud soloud; // Engine core
-    SoLoud::Wav sample;    // One sample
-
-    // Initialize SoLoud (automatic back-end selection)
-    soloud.init();
-
-
-
-    sample.load("test.wav"); // Load a wave file
-    soloud.play(sample);     // Play it
-    while (true)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-}
 
 int main(int argc, char** argv)
 {

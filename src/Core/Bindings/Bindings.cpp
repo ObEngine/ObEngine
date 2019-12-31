@@ -13,7 +13,6 @@
 #include <Bindings/SFMLBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>
-#include <Bindings/SoundBindings.hpp>
 #include <Bindings/SystemBindings.hpp>
 #include <Bindings/TimeBindings.hpp>
 #include <Bindings/TransformBindings.hpp>
@@ -80,9 +79,6 @@ namespace obe::Bindings
             .add("SceneNode", &SceneBindings::LoadSceneNode)
             // Script
             .add("Script", &ScriptBindings::LoadGameObject)
-            // Sound
-            .add("Music", &SoundBindings::LoadMusic)
-            .add("Sound", &SoundBindings::LoadSound)
             // System
             .add("Constants", &SystemBindings::LoadSystemConstants)
             .add("MountablePath", &SystemBindings::LoadMountablePath)

@@ -100,12 +100,4 @@ namespace obe::System::Loaders
 
     Loader<kaguya::State> luaLoader(
         [](kaguya::State& obj, const std::string& path) -> bool { return obj.dofile(path); });
-
-    Loader<sf::SoundBuffer> soundLoader(
-        [](sf::SoundBuffer& sound, const std::string& path) -> bool {
-            return sound.loadFromFile(path);
-        });
-
-    Loader<sf::Music> musicLoader(
-        [](sf::Music& music, const std::string& path) -> bool { return music.openFromFile(path); });
 } // namespace obe::System::Loaders

@@ -12,6 +12,7 @@
 #include <System/Path.hpp>
 #include <System/Plugin.hpp>
 
+#include <soloud/soloud.h>
 #include <vili/ErrorHandler.hpp>
 #include <vili/ViliParser.hpp>
 
