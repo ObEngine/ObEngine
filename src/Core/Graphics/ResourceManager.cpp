@@ -57,11 +57,14 @@ namespace obe::Graphics
     ResourceManager::ResourceManager()
         : Registrable("ResourceManager")
     {
-        vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
-        if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
+        if (Config::Config.root().contains(vili::NodeType::ComplexNode, "GameConfig"))
         {
-            defaultAntiAliasing = gameConfig.getDataNode("antiAliasing").get<bool>();
-            Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}", defaultAntiAliasing);
+            vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
+            if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
+            {
+                defaultAntiAliasing = gameConfig.getDataNode("antiAliasing").get<bool>();
+                Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}", defaultAntiAliasing);
+            }
         }
         sf::Image nullImage;
         nullImage.create(100, 100, sf::Color::Transparent);
