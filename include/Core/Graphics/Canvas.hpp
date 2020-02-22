@@ -13,6 +13,10 @@
 
 namespace obe::Graphics::Canvas
 {
+    /*
+     * \brief Type of the CanvasElement, used for identification
+     * \lua_bind{Canvas.Type}
+     */
     enum class CanvasElementType
     {
         CanvasElement,
@@ -27,6 +31,7 @@ namespace obe::Graphics::Canvas
     class Canvas;
     /**
      * \brief A Drawable Canvas Element
+     * \lua_bind{Canvas.Element}
      */
     class CanvasElement : public Types::ProtectedIdentifiable
     {
@@ -62,6 +67,7 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas Line
+     * \lua_bind{Canvas.Line}
      */
     class Line : public CanvasElement
     {
@@ -86,6 +92,10 @@ namespace obe::Graphics::Canvas
         void draw(sf::RenderTexture& target) override;
     };
 
+    /*
+     * \brief Base class for CanvasElement classes with a position attribute
+     * \lua_bind{Canvas.Positionable}
+     */
     class CanvasPositionable : public CanvasElement
     {
     public:
@@ -95,6 +105,7 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas Rectangle
+     * \lua_bind{Canvas.Rectangle}
      */
     class Rectangle : public CanvasPositionable
     {
@@ -116,6 +127,10 @@ namespace obe::Graphics::Canvas
         void draw(sf::RenderTexture& target) override;
     };
 
+    /*
+     * \brief Horizontal Alignment state of Text
+     * \lua_bind{Canvas.Text.Alignment.Horizontal}
+     */
     enum class TextHorizontalAlign
     {
         Left,
@@ -123,6 +138,10 @@ namespace obe::Graphics::Canvas
         Right
     };
 
+    /*
+     * \brief Vertical Aligment of Text
+     * \lua_bind{Canvas.Text.Alignment.Vertical}
+     */
     enum class TextVerticalAlign
     {
         Top,
@@ -132,6 +151,7 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas Text
+     * \lua_bind{Canvas.Text}
      */
     class Text : public CanvasPositionable
     {
@@ -157,6 +177,7 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas Circle
+     * \lua_bind{Canvas.Circle}
      */
     class Circle : public CanvasPositionable
     {
@@ -178,6 +199,10 @@ namespace obe::Graphics::Canvas
         void draw(sf::RenderTexture& target) override;
     };
 
+    /*
+     * \brief A Canvas Polygon
+     * \lua_bind{Canvas.Polygon}
+     */
     class Polygon : public CanvasPositionable
     {
         static const CanvasElementType Type = CanvasElementType::Polygon;
@@ -192,6 +217,7 @@ namespace obe::Graphics::Canvas
 
     /*
      * \brief A Canvas Sprite
+     * \lua_bind{Canvas.Sprite}
      */
     class Sprite : public CanvasPositionable
     {
@@ -210,6 +236,7 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas where you can draw CanvasElements on
+     * \lua_bind{Canvas.Canvas}
      */
     class Canvas
     {
@@ -277,15 +304,13 @@ namespace obe::Graphics::Canvas
         }
         else if (this->get(id)->type == T::Type)
         {
-            Debug::Log->warn(
-                "<Scene> CanvasElement '{0}' already exists !", id);
+            Debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
             return static_cast<T*>(this->get(id));
         }
         else
         {
-            throw aube::ErrorHandler::Raise(
-                "obe.Graphics.Canvas.Canvas."
-                "ElementAlreadyExistsWithDifferentType");
+            throw aube::ErrorHandler::Raise("obe.Graphics.Canvas.Canvas."
+                                            "ElementAlreadyExistsWithDifferentType");
         }
     }
 } // namespace obe::Graphics::Canvas

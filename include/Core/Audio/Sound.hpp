@@ -8,13 +8,24 @@ namespace obe::Audio
 {
     class AudioManager;
 
+    /*
+     * \brief Enum that defines the current status of a sound
+     */
     enum class SoundStatus
     {
+        // The sound is currently playing
         Playing,
+        // The sound is paused
         Paused,
+        // The sound is stopped
         Stopped
     };
 
+    /*
+     * \brief Class to handle sounds / musics
+     *        The music can be either streamed from disk or read from ram
+     * \lua_bind{Sound}
+     */
     class Sound
     {
     private:

@@ -6,42 +6,34 @@
 #include <Animation/Animation.hpp>
 #include <System/Path.hpp>
 
-namespace obe
+namespace obe::Graphics
 {
-    namespace Graphics
-    {
-        class LevelSprite;
-    }
+    class LevelSprite;
 } // namespace obe
 
 namespace obe::Animation
 {
+    /*
+     * \brief Sets the scaling bevaviour the Animator will apply on target
+     * \lua_bind{Animator.TargetScaleMode}
+     */
     enum class AnimatorTargetScaleMode
     {
+        // Fits the animation texture into the target's size, ignoring the ratio
         Fit,
-        FixedSize,
+        // Animation texture will have target's width, height will be ajusted with correct
+        // ratio
         FixedWidth,
+        // Animation texture will have target's height, width will be ajusted with correct
+        // ratio
         FixedHeight,
+        // Animation texture will keep its size, ignoring target's size
         TextureSize
     };
 
     /**
      * \brief A Class that will manage a set of Animation.\n
-     * @Bind
-     * Example :
-     * \code
-     * using obe::Animation::Animator;
-     * Animator animator;
-     * animator.setPath("Path/To/Animator");
-     * animator.loadAnimator();
-     * for (std::string& animationName : animator.getAllAnimationName())
-     *     std::cout << "Animator contains Animation : " << animationName <<
-     * std::endl; animator.setKey("Running"); while (True)
-     * {
-     *     animator.update();
-     *     window.draw(*animator.getSprite());
-     * }
-     * \endcode
+     * \lua_bind{Animator}
      *
      * The root folder of an Animator is just a simple folder with multiple
      * Animations folders inside. \n Example : \n "Path/To/Animator" : \n
@@ -58,8 +50,7 @@ namespace obe::Animation
     class Animator
     {
     private:
-        std::unordered_map<std::string, std::unique_ptr<Animation>>
-            m_animationSet;
+        std::unordered_map<std::string, std::unique_ptr<Animation>> m_animationSet;
         System::Path m_animatorPath;
         Animation* m_currentAnimation = nullptr;
         std::string m_currentAnimationName = "NONE";
@@ -120,8 +111,7 @@ namespace obe::Animation
          * \param index Index of the Texture in the Animation
          * \return A pointer to the Texture
          */
-        const sf::Texture& getTextureAtKey(
-            const std::string& key, int index) const;
+        const sf::Texture& getTextureAtKey(const std::string& key, int index) const;
         /**
          * \brief Load the Animator (Using the Animator root path).\n
          *        It will also load all the Animation contained in the Animator.
@@ -158,7 +148,6 @@ namespace obe::Animation
         void update();
 
         void setTarget(Graphics::LevelSprite& sprite,
-            AnimatorTargetScaleMode targetScaleMode
-            = AnimatorTargetScaleMode::Fit);
+            AnimatorTargetScaleMode targetScaleMode = AnimatorTargetScaleMode::Fit);
     };
 } // namespace obe::Animation

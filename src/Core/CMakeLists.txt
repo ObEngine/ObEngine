@@ -28,6 +28,7 @@ target_link_libraries(ObEngineCore dynamicLinker)
 target_link_libraries(ObEngineCore spdlog)
 target_link_libraries(ObEngineCore fmt)
 target_link_libraries(ObEngineCore kaguya)
+target_link_libraries(ObEngineCore sol3)
 target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
 target_link_libraries(ObEngineCore Soloud)
 

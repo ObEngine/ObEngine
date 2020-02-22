@@ -62,8 +62,7 @@ namespace obe::Debug
          * the newly created Message
          */
         ConsoleMessage* pushMessage(const std::string& headerName,
-                                    const std::string& message,
-                                    const sf::Color& color);
+            const std::string& message, const sf::Color& color);
         /**
          * \brief Add a new character to the input buffer
          * \param keyCode ASCII number of the character to add
@@ -130,4 +129,5 @@ namespace obe::Debug
          */
         void moveCursor(int position);
     };
+
 } // namespace obe::Debug

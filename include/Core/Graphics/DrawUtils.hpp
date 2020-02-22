@@ -28,8 +28,7 @@ namespace obe::Graphics::Utils
      * \param thickness Thickness of the line you want to draw (2 = Minimal
      * visible size) \param color Color of the line you want to draw
      */
-    void drawLine(
-        int x1, int y1, int x2, int y2, int thickness, sf::Color color);
+    void drawLine(int x1, int y1, int x2, int y2, int thickness, sf::Color color);
     using DrawPolygonOptions = std::unordered_map<std::string, std::any>;
     /**
      * \brief Draws a Polygon
@@ -47,8 +46,7 @@ namespace obe::Graphics::Utils
      * - <point_color_x> sf::Color : Color of a specific point of the Polygon
      * where x is the index of the point
      */
-    void drawPolygon(
-        std::vector<sf::Vector2i>& points, DrawPolygonOptions options);
+    void drawPolygon(std::vector<sf::Vector2i>& points, DrawPolygonOptions options);
 
     extern sf::Color ClearColor;
 } // namespace obe::Graphics::Utils

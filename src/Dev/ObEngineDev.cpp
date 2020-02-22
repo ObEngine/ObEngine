@@ -30,10 +30,11 @@ void LoadErrors()
     aube::LoadErrors("Data/Errors.vili");
 }
 
-using namespace obe;
-
+#include <Sol3Test.hpp>
 int main(int argc, char** argv)
 {
+    using namespace obe;
+    test_sol3();
     unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
     unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
     InitEngine(surfaceWidth, surfaceHeight);

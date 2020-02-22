@@ -18,39 +18,24 @@ namespace obe::Scene
 
 namespace obe::Collision
 {
-    std::vector<Transform::UnitVector&> convexHull(
-        std::vector<Transform::UnitVector&> points);
-    double cross(const Transform::UnitVector& O, const Transform::UnitVector& A,
-        const Transform::UnitVector& B);
-    bool pointsCompare(const Transform::UnitVector& first,
-        const Transform::UnitVector& second);
-    double pointsDistance(const Transform::UnitVector& first,
-        const Transform::UnitVector& second);
-
     /**
      * \brief Enum used when manipulating tags in the Collider
+     * \lua_bind{ColliderTagType}
      */
     enum class ColliderTagType
     {
-        /**
-         * \brief Tags of the Collider
-         */
+        // Tags of the Collider
         Tag,
-        /**
-         * \brief Tags the Collider should accept (Will reject when tag is not
-         * in accepted list)
-         */
+        // Tags the Collider should accept (Will reject when tag is not in accepted list)
         Accepted,
-        /**
-         * \brief Tags the Collider should reject
-         */
+        // Tags the Collider should reject
         Rejected
     };
 
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
-     * @Bind
+     * \lua_bind{PolygonalCollider}
      */
     class PolygonalCollider : public Transform::Polygon,
                               public Types::Selectable,
@@ -70,8 +55,7 @@ namespace obe::Collision
         std::vector<std::string> m_tags;
 
         void resetUnit(Transform::Units unit) override;
-        std::vector<std::string> retrieveTagVector(
-            ColliderTagType tagType) const;
+        std::vector<std::string> retrieveTagVector(ColliderTagType tagType) const;
         std::vector<std::string>& retrieveTagVector(ColliderTagType tagType);
 
     public:
@@ -117,8 +101,8 @@ namespace obe::Collision
          * \param offset The offset to apply to the source collider
          * \return true if the two polygons intersects, false otherwise
          */
-        bool doesCollide(PolygonalCollider& collider,
-            const Transform::UnitVector& offset) const;
+        bool doesCollide(
+            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -126,8 +110,8 @@ namespace obe::Collision
          * check the existence \return true if at least one Tag has been found,
          * false otherwise
          */
-        bool doesHaveAnyTag(ColliderTagType tagType,
-            const std::vector<std::string>& tags) const;
+        bool doesHaveAnyTag(
+            ColliderTagType tagType, const std::vector<std::string>& tags) const;
         /**
          * \brief Checks if the Collider contains a Tag
          * \param tagType List from where you want to check the Tag existence
@@ -144,9 +128,8 @@ namespace obe::Collision
          * \param drawSkel Draws the Skeleton (Lines to MasterPoint) of the
          * Polygon or not
          */
-        void draw(Scene::Camera& camera, bool drawLines = true,
-            bool drawPoints = false, bool drawMasterPoint = false,
-            bool drawSkel = false);
+        void draw(Scene::Camera& camera, bool drawLines = true, bool drawPoints = false,
+            bool drawMasterPoint = false, bool drawSkel = false);
         /**
          * \brief Dumps the content of the PolygonalCollider to a ComplexNode
          * \param target ComplexNode where to serialize the PolygonalCollider
@@ -174,8 +157,7 @@ namespace obe::Collision
          * \return The maximum distance the Collider can travel before colliding
          */
         Transform::UnitVector getMaximumDistanceBeforeCollision(
-            PolygonalCollider& collider,
-            const Transform::UnitVector& offset) const;
+            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
         /**
          * \brief Get the origin of the Collider
          * \return Adress of the Collider used as origin

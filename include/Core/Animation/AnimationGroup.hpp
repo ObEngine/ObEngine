@@ -8,7 +8,7 @@ namespace obe::Animation
 {
     /**
      * \brief A subpart of an Animation containing the Textures to display
-     * @Bind
+     * \lua_bind{AnimationGroup}
      */
     class AnimationGroup
     {

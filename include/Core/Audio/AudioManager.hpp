@@ -12,6 +12,10 @@ namespace obe::Audio
 {
     class Sound;
 
+    /*
+     * \brief Class to handle audio playback
+     * \lua_bind{AudioManager}
+     */
     class AudioManager : public Types::Registrable<AudioManager>,
                          public Types::Singleton<AudioManager>
     {

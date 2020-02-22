@@ -13,7 +13,8 @@
 
 namespace obe::Collision
 {
-    bool pointsCompare(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    bool pointsCompare(
+        const Transform::UnitVector& first, const Transform::UnitVector& second)
     {
         if (first.x < second.x)
             return true;
@@ -22,12 +23,21 @@ namespace obe::Collision
         return false;
     }
 
-    double pointsDistance(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    double pointsDistance(
+        const Transform::UnitVector& first, const Transform::UnitVector& second)
     {
-        return std::sqrt(std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
+        return std::sqrt(
+            std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
     }
 
-    std::vector<Transform::UnitVector> convexHull(std::vector<Transform::UnitVector> points)
+    double cross(const Transform::UnitVector& O, const Transform::UnitVector& A,
+        const Transform::UnitVector& B)
+    {
+        return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+    }
+
+    std::vector<Transform::UnitVector> convexHull(
+        std::vector<Transform::UnitVector> points)
     {
         sort(points.begin(), points.end(), pointsCompare);
         if (points.size() <= 1)
@@ -36,7 +46,8 @@ namespace obe::Collision
         for (Transform::UnitVector& point : points)
         {
             while (lowerHull.size() >= 2
-                && cross(lowerHull[lowerHull.size() - 2], lowerHull[lowerHull.size() - 1], point)
+                && cross(lowerHull[lowerHull.size() - 2], lowerHull[lowerHull.size() - 1],
+                       point)
                     <= 0)
                 lowerHull.pop_back();
             lowerHull.push_back(point);
@@ -46,7 +57,8 @@ namespace obe::Collision
         for (Transform::UnitVector& point : points)
         {
             while (upperHull.size() >= 2
-                && cross(upperHull[upperHull.size() - 2], upperHull[upperHull.size() - 1], point)
+                && cross(upperHull[upperHull.size() - 2], upperHull[upperHull.size() - 1],
+                       point)
                     <= 0)
                 upperHull.pop_back();
             upperHull.push_back(point);
@@ -56,12 +68,6 @@ namespace obe::Collision
         fullHull.insert(fullHull.end(), lowerHull.begin(), lowerHull.end() - 1);
         fullHull.insert(fullHull.end(), upperHull.begin(), upperHull.end() - 1);
         return fullHull;
-    }
-
-    double cross(const Transform::UnitVector& O, const Transform::UnitVector& A,
-        const Transform::UnitVector& B)
-    {
-        return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
     }
 
     std::map<std::string, sf::Color> PolygonalCollider::TagsColor;
@@ -86,7 +92,8 @@ namespace obe::Collision
     {
     }
 
-    std::vector<std::string> PolygonalCollider::retrieveTagVector(ColliderTagType tagType) const
+    std::vector<std::string> PolygonalCollider::retrieveTagVector(
+        ColliderTagType tagType) const
     {
         switch (tagType)
         {
@@ -101,7 +108,8 @@ namespace obe::Collision
             "ObEngine.Collision.PolygonalCollider.WrongColliderTagType");
     }
 
-    std::vector<std::string>& PolygonalCollider::retrieveTagVector(ColliderTagType tagType)
+    std::vector<std::string>& PolygonalCollider::retrieveTagVector(
+        ColliderTagType tagType)
     {
         switch (tagType)
         {
@@ -143,8 +151,8 @@ namespace obe::Collision
             std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
             for (Transform::UnitVector& distCoord : limitedMaxDists)
             {
-                double dist = std::sqrt(
-                    std::pow(distCoord.x - destPos.x, 2) + std::pow(distCoord.y - destPos.y, 2));
+                double dist = std::sqrt(std::pow(distCoord.x - destPos.x, 2)
+                    + std::pow(distCoord.y - destPos.y, 2));
                 if (minDist.first == -1 || minDist.first > dist)
                 {
                     minDist = std::pair<double, Transform::UnitVector>(dist, distCoord);
@@ -155,8 +163,8 @@ namespace obe::Collision
         return offset;
     }
 
-    void PolygonalCollider::draw(
-        Scene::Camera& camera, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel)
+    void PolygonalCollider::draw(Scene::Camera& camera, bool drawLines, bool drawPoints,
+        bool drawMasterPoint, bool drawSkel)
     {
         if (m_points.size() >= 3)
         {
@@ -196,9 +204,9 @@ namespace obe::Collision
             }*/
 
             int r = 6;
-            Graphics::Utils::DrawPolygonOptions drawOptions
-                = { { "lines", drawLines }, { "points", drawPoints }, { "radius", r },
-                      { "point_color", sf::Color::White }, { "line_color", getTagColor() } };
+            Graphics::Utils::DrawPolygonOptions drawOptions = { { "lines", drawLines },
+                { "points", drawPoints }, { "radius", r },
+                { "point_color", sf::Color::White }, { "line_color", getTagColor() } };
 
             std::vector<sf::Vector2i> lDrawPoints;
 
@@ -208,7 +216,8 @@ namespace obe::Collision
                     = this->get(i).to<Transform::Units::ScenePixels>();
 
                 if (Utils::Vector::contains(i, m_highlightedPoints) && m_selected)
-                    drawOptions["point_color_" + std::to_string(i)] = sf::Color(255, 0, 0);
+                    drawOptions["point_color_" + std::to_string(i)]
+                        = sf::Color(255, 0, 0);
                 if (Utils::Vector::contains(
                         (i != m_points.size() - 1) ? i + 1 : 0, m_highlightedLines)
                     && m_selected)
@@ -238,10 +247,12 @@ namespace obe::Collision
                     {
                         const Transform::UnitVector point
                             = this->get(i).to<Transform::Units::ScenePixels>();
-                        const sf::Color currentLineColor
-                            = m_selected ? sf::Color(0, 200, 255) : sf::Color(255, 200, 0);
+                        const sf::Color currentLineColor = m_selected
+                            ? sf::Color(0, 200, 255)
+                            : sf::Color(255, 200, 0);
                         Graphics::Utils::drawLine(point.x - offset.x, point.y - offset.y,
-                            pMaster.x - offset.x, pMaster.y - offset.y, 2, currentLineColor);
+                            pMaster.x - offset.x, pMaster.y - offset.y, 2,
+                            currentLineColor);
                     }
                 }
             }
@@ -457,9 +468,9 @@ namespace obe::Collision
         const Transform::UnitVector tOffset = offset.to(pxUnit);
         bool inFront = false;
         Transform::UnitVector minDep;
-        const auto calcMinDistanceDep
-            = [this](const Transform::PolygonPath& sol1, const Transform::PolygonPath& sol2,
-                  const Transform::UnitVector& tOffset)
+        const auto calcMinDistanceDep = [this](const Transform::PolygonPath& sol1,
+                                            const Transform::PolygonPath& sol2,
+                                            const Transform::UnitVector& tOffset)
             -> std::tuple<double, Transform::UnitVector, bool> {
             double minDistance = -1;
             bool inFront = false;
@@ -495,14 +506,15 @@ namespace obe::Collision
                         inFront = true;
                         ip = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
 
-                        distance = std::sqrt(
-                            std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
+                        distance = std::sqrt(std::pow((point0.x - ip.x), 2)
+                            + std::pow((point0.y - ip.y), 2));
                         if (distance < minDistance || minDistance == -1)
                         {
                             minDistance = distance;
                             double xComp = t * s1.x;
                             double yComp = t * s1.y;
-                            minDeplacement.set((xComp > 0) ? std::floor(xComp) : std::ceil(xComp),
+                            minDeplacement.set(
+                                (xComp > 0) ? std::floor(xComp) : std::ceil(xComp),
                                 (yComp > 0) ? std::floor(yComp) : std::ceil(yComp));
                         }
                     }
@@ -558,8 +570,8 @@ namespace obe::Collision
             {
                 if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y))
                     && (pTest.x < (poly[j].x - poly[i].x) * (pTest.y - poly[i].y)
-                                   / (poly[j].y - poly[i].y)
-                               + poly[i].x))
+                                / (poly[j].y - poly[i].y)
+                            + poly[i].x))
                     c = !c;
             }
             return c;
@@ -580,7 +592,8 @@ namespace obe::Collision
     void PolygonalCollider::dump(vili::ComplexNode& target) const
     {
         vili::ComplexNode& ser = target.createComplexNode(m_id);
-        ser.createComplexNode("unit").createDataNode("unit", Transform::unitsToString(m_unit));
+        ser.createComplexNode("unit").createDataNode(
+            "unit", Transform::unitsToString(m_unit));
         vili::ArrayNode& points = ser.createArrayNode("points");
         for (auto& point : m_points)
         {
@@ -592,7 +605,8 @@ namespace obe::Collision
 
     void PolygonalCollider::load(vili::ComplexNode& data)
     {
-        const std::string pointsUnit = data.at<vili::DataNode>("unit", "unit").get<std::string>();
+        const std::string pointsUnit
+            = data.at<vili::DataNode>("unit", "unit").get<std::string>();
         bool completePoint = true;
         double pointBuffer = 0;
         const Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
@@ -600,8 +614,8 @@ namespace obe::Collision
         {
             if ((completePoint = !completePoint))
             {
-                const Transform::UnitVector pVector2
-                    = Transform::UnitVector(pointBuffer, colliderPoint->get<double>(), pBaseUnit);
+                const Transform::UnitVector pVector2 = Transform::UnitVector(
+                    pointBuffer, colliderPoint->get<double>(), pBaseUnit);
                 this->addPoint(pVector2);
             }
             else
@@ -609,8 +623,8 @@ namespace obe::Collision
         }
         this->setWorkingUnit(pBaseUnit);
         if (data.contains(vili::NodeType::DataNode, "tag"))
-            this->addTag(
-                Collision::ColliderTagType::Tag, data.at<vili::DataNode>("tag").get<std::string>());
+            this->addTag(Collision::ColliderTagType::Tag,
+                data.at<vili::DataNode>("tag").get<std::string>());
         else if (data.contains(vili::NodeType::ArrayNode, "tags"))
         {
             for (vili::DataNode* cTag : data.at<vili::ArrayNode>("tags"))
@@ -622,7 +636,8 @@ namespace obe::Collision
         else if (data.contains(vili::NodeType::ArrayNode, "accept"))
         {
             for (vili::DataNode* aTag : data.at<vili::ArrayNode>("accept"))
-                this->addTag(Collision::ColliderTagType::Accepted, aTag->get<std::string>());
+                this->addTag(
+                    Collision::ColliderTagType::Accepted, aTag->get<std::string>());
         }
         if (data.contains(vili::NodeType::DataNode, "reject"))
             this->addTag(Collision::ColliderTagType::Rejected,
@@ -630,7 +645,8 @@ namespace obe::Collision
         else if (data.contains(vili::NodeType::ArrayNode, "reject"))
         {
             for (vili::DataNode* rTag : data.at<vili::ArrayNode>("reject"))
-                this->addTag(Collision::ColliderTagType::Rejected, rTag->get<std::string>());
+                this->addTag(
+                    Collision::ColliderTagType::Rejected, rTag->get<std::string>());
         }
     }
 
@@ -641,7 +657,7 @@ namespace obe::Collision
             return false;
         if (!m_acceptedTags.empty()
             && !this->doesHaveAnyTag(
-                   ColliderTagType::Accepted, collider.getAllTags(ColliderTagType::Tag)))
+                ColliderTagType::Accepted, collider.getAllTags(ColliderTagType::Tag)))
             return false;
         return true;
     }

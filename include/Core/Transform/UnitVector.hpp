@@ -240,8 +240,7 @@ namespace obe::Transform
          * \return The stream passed by reference (To chain calls)
          */
         friend std::ostream& operator<<(std::ostream& os, const UnitVector& m);
-        UnitVector rotate(
-            double angle, UnitVector zero = UnitVector(0, 0)) const;
+        UnitVector rotate(double angle, UnitVector zero = UnitVector(0, 0)) const;
         double distance(const UnitVector& vec) const;
     };
 
@@ -252,16 +251,15 @@ namespace obe::Transform
         case Units::ViewPercentage:
             return UnitVector(x, y, Units::ViewPercentage);
         case Units::ViewPixels:
-            return UnitVector(
-                x / Screen.w, y / Screen.h, Units::ViewPercentage);
+            return UnitVector(x / Screen.w, y / Screen.h, Units::ViewPercentage);
         case Units::ViewUnits:
             return UnitVector(x / View.w, y / View.h, Units::ViewPercentage);
         case Units::ScenePixels:
             return UnitVector(x / Screen.w - View.x / View.w,
                 y / Screen.h - View.y / View.h, Units::ViewPercentage);
         case Units::SceneUnits:
-            return UnitVector((x - View.x) / View.w, (y - View.y) / View.h,
-                Units::ViewPercentage);
+            return UnitVector(
+                (x - View.x) / View.w, (y - View.y) / View.h, Units::ViewPercentage);
         default:
             return UnitVector(0, 0);
         }
@@ -276,8 +274,8 @@ namespace obe::Transform
         case Units::ViewPixels:
             return UnitVector(x, y, Units::ViewPixels);
         case Units::ViewUnits:
-            return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h,
-                Units::ViewPixels);
+            return UnitVector(
+                x * Screen.w / View.w, y * Screen.h / View.h, Units::ViewPixels);
         case Units::ScenePixels:
             return UnitVector(x - (View.x * Screen.w / View.w),
                 y - (View.y * Screen.h / View.h), Units::ViewPixels);
@@ -326,8 +324,8 @@ namespace obe::Transform
         case Units::ScenePixels:
             return UnitVector(x, y, Units::ScenePixels);
         case Units::SceneUnits:
-            return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h,
-                Units::ScenePixels);
+            return UnitVector(
+                x / View.w * Screen.w, y / View.h * Screen.h, Units::ScenePixels);
         default:
             return UnitVector(0, 0);
         }
@@ -338,16 +336,16 @@ namespace obe::Transform
         switch (unit)
         {
         case Units::ViewPercentage:
-            return UnitVector((View.w * x) + View.x, (View.h * y) + View.y,
-                Units::SceneUnits);
+            return UnitVector(
+                (View.w * x) + View.x, (View.h * y) + View.y, Units::SceneUnits);
         case Units::ViewPixels:
             return UnitVector((View.w * (x / Screen.w)) + View.x,
                 (View.h * (y / Screen.h)) + View.y, Units::SceneUnits);
         case Units::ViewUnits:
             return UnitVector(View.x + x, View.y + y, Units::SceneUnits);
         case Units::ScenePixels:
-            return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h,
-                Units::SceneUnits);
+            return UnitVector(
+                x / Screen.w * View.w, y / Screen.h * View.h, Units::SceneUnits);
         case Units::SceneUnits:
             return UnitVector(x, y, Units::SceneUnits);
         default:

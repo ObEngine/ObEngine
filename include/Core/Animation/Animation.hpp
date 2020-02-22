@@ -14,6 +14,7 @@ namespace obe::Animation
      * \brief The Play Mode of an Animation.\n
      * It indicates whether an Animation can be interrupted or not and
      * what to do when the Animation is over
+     * \lua_bind{AnimationPlayMode}
      */
     enum class AnimationPlayMode
     {
@@ -37,13 +38,14 @@ namespace obe::Animation
      * form to an AnimationPlayMode enum value \param animationPlayMode The
      * std::string containing the AnimationPlayMode in string form \return The
      * converted value which is an AnimationPlayMode enum value
+     * \lua_bind{[mt]AnimationPlayMode.__call}
      */
-    AnimationPlayMode stringToAnimationPlayMode(
-        const std::string& animationPlayMode);
+    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
      * continue to play or call another one.
+     * \lua_bind{AnimationStatus}
      */
     enum class AnimationStatus
     {
@@ -62,7 +64,7 @@ namespace obe::Animation
 
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
-     * @Bind
+     * \lua_bind{Animation}
      */
     class Animation
     {

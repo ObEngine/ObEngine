@@ -14,6 +14,7 @@
 
 namespace obe::Bindings::SystemBindings
 {
+    // TODO: Move this out of Bindings
     std::string getOsName()
     {
 #ifdef _WIN32
@@ -68,8 +69,8 @@ namespace obe::Bindings::SystemBindings
         (*lua)["obe"]["MountPaths"] = kaguya::function(System::MountPaths);
     }
 
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(System_find_wrapper, System::Path, find, 0, 1,
-        std::string (System::Path::*)(System::PathType));
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(System_find_wrapper, System::Path,
+        find, 0, 1, std::string (System::Path::*)(System::PathType));
     void LoadPath(kaguya::State* lua)
     {
         (*lua)["obe"]["Path"].setClass(
@@ -82,27 +83,30 @@ namespace obe::Bindings::SystemBindings
                 .addFunction("getPath", &System::Path::getPath)
                 .addFunction("last", &System::Path::last)
                 .addFunction("toString", &System::Path::toString));
-        (*lua)["obe"]["Path"]["FileListLoader"] = kaguya::function([](const System::Path& path) {
-            std::vector<std::string> fileList;
-            path.loadAll(System::Loaders::filePathLoader, fileList);
-            return fileList;
-        });
+        (*lua)["obe"]["Path"]["FileListLoader"]
+            = kaguya::function([](const System::Path& path) {
+                  std::vector<std::string> fileList;
+                  path.loadAll(System::Loaders::filePathLoader, fileList);
+                  return fileList;
+              });
         (*lua)["obe"]["Path"]["DirectoryListLoader"]
             = kaguya::function([](const System::Path& path) {
                   std::vector<std::string> dirList;
                   path.loadAll(System::Loaders::dirPathLoader, dirList);
                   return dirList;
               });
-        (*lua)["obe"]["Path"]["DataLoader"] = kaguya::function([](const System::Path& path) {
-            vili::ViliParser parsedFile;
-            path.load(System::Loaders::dataLoader, parsedFile);
-            return parsedFile;
-        });
-        (*lua)["obe"]["Path"]["FontLoader"] = kaguya::function([](const System::Path& path) {
-            sf::Font loadedFont;
-            path.load(System::Loaders::fontLoader, loadedFont);
-            return loadedFont;
-        });
+        (*lua)["obe"]["Path"]["DataLoader"]
+            = kaguya::function([](const System::Path& path) {
+                  vili::ViliParser parsedFile;
+                  path.load(System::Loaders::dataLoader, parsedFile);
+                  return parsedFile;
+              });
+        (*lua)["obe"]["Path"]["FontLoader"]
+            = kaguya::function([](const System::Path& path) {
+                  sf::Font loadedFont;
+                  path.load(System::Loaders::fontLoader, loadedFont);
+                  return loadedFont;
+              });
         (*lua)["obe"]["Path"]["LuaLoader"]
             = kaguya::function([](const System::Path& path, kaguya::State* lua) {
                   path.load(System::Loaders::luaLoader, *lua);
@@ -138,11 +142,12 @@ namespace obe::Bindings::SystemBindings
 
     void LoadWindow(kaguya::State* lua)
     {
-        (*lua)["obe"]["Window"].setClass(kaguya::UserdataMetatable<System::Window>()
-                                             .setConstructors<System::Window()>()
-                                             .addFunction("init", &System::Window::init)
-                                             .addFunction("setSize", &System::Window::setSize)
-                                             .addFunction("setTitle", &System::Window::setTitle)
-                                             .addFunction("setView", &System::Window::setView));
+        (*lua)["obe"]["Window"].setClass(
+            kaguya::UserdataMetatable<System::Window>()
+                .setConstructors<System::Window()>()
+                .addFunction("init", &System::Window::init)
+                .addFunction("setSize", &System::Window::setSize)
+                .addFunction("setTitle", &System::Window::setTitle)
+                .addFunction("setView", &System::Window::setView));
     }
 } // namespace obe::Bindings::SystemBindings
