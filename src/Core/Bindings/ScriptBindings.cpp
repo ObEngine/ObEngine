@@ -14,7 +14,7 @@ namespace obe::Bindings::ScriptBindings
         Load(lua, "obe.Identifiable");
         (*lua)["obe"]["GameObject"].setClass(
             kaguya::UserdataMetatable<Script::GameObject, Types::Identifiable>()
-                .addFunction("LevelSprite", &Script::GameObject::getLevelSprite)
+                .addFunction("Sprite", &Script::GameObject::getSprite)
                 .addFunction("Collider", &Script::GameObject::getCollider)
                 .addFunction("Animator", &Script::GameObject::getAnimator)
                 .addFunction("delete", &Script::GameObject::deleteObject)

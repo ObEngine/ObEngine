@@ -33,7 +33,7 @@ namespace obe::Bindings::SceneBindings
 
     KAGUYA_FUNCTION_OVERLOADS(Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(
-        Scene_createLevelSprite_wrapper, Scene::Scene, createLevelSprite, 1, 2);
+        Scene_createSprite_wrapper, Scene::Scene, createSprite, 1, 2);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(
         Scene_createCollider_wrapper, Scene::Scene, createCollider, 1, 2);
     void LoadScene(kaguya::State* lua)
@@ -42,15 +42,15 @@ namespace obe::Bindings::SceneBindings
             kaguya::UserdataMetatable<Scene::Scene>()
                 .addFunction("clear", &Scene::Scene::clear)
                 .addFunction("createCollider", Scene_createCollider_wrapper())
-                .addFunction("createLevelSprite", Scene_createLevelSprite_wrapper())
+                .addFunction("createSprite", Scene_createSprite_wrapper())
                 .addFunction("doesColliderExists", &Scene::Scene::doesColliderExists)
                 .addFunction("doesGameObjectExists", &Scene::Scene::doesGameObjectExists)
-                .addFunction("doesLevelSpriteExists", &Scene::Scene::doesLevelSpriteExists)
+                .addFunction("doesSpriteExists", &Scene::Scene::doesSpriteExists)
                 .addFunction("dump", &Scene::Scene::dump)
                 .addFunction("enableShowCollision", &Scene::Scene::enableShowCollision)
                 .addFunction("getAllColliders", &Scene::Scene::getAllColliders)
                 .addFunction("getAllGameObjects", &Scene::Scene::getAllGameObjects)
-                .addFunction("getAllLevelSprites", &Scene::Scene::getAllLevelSprites)
+                .addFunction("getAllSprites", &Scene::Scene::getAllSprites)
                 .addFunction("getFilePath", &Scene::Scene::getFilePath)
                 .addFunction("getCamera", &Scene::Scene::getCamera)
                 .addFunction("getColliderAmount", &Scene::Scene::getColliderAmount)
@@ -62,10 +62,10 @@ namespace obe::Bindings::SceneBindings
                 .addFunction("getGameObjectAmount", &Scene::Scene::getGameObjectAmount)
                 .addFunction("getLevelFile", &Scene::Scene::getLevelFile)
                 .addFunction("getLevelName", &Scene::Scene::getLevelName)
-                .addFunction("getLevelSpriteAmount", &Scene::Scene::getLevelSpriteAmount)
-                .addFunction("getLevelSprite", &Scene::Scene::getLevelSprite)
-                .addFunction("getLevelSpriteByPosition", &Scene::Scene::getLevelSpriteByPosition)
-                .addFunction("getLevelSpritesByLayer", &Scene::Scene::getLevelSpritesByLayer)
+                .addFunction("getSpriteAmount", &Scene::Scene::getSpriteAmount)
+                .addFunction("getSprite", &Scene::Scene::getSprite)
+                .addFunction("getSpriteByPosition", &Scene::Scene::getSpriteByPosition)
+                .addFunction("getSpritesByLayer", &Scene::Scene::getSpritesByLayer)
                 .addOverloadedFunctions("loadFromFile",
                     static_cast<void (Scene::Scene::*)(const std::string&)>(
                         &Scene::Scene::setFutureLoadFromFile),
@@ -76,7 +76,7 @@ namespace obe::Bindings::SceneBindings
                     static_cast<void (Scene::Scene::*)(kaguya::LuaFunction)>(&Scene::Scene::reload))
                 .addFunction("removeCollider", &Scene::Scene::removeCollider)
                 .addFunction("removeGameObject", &Scene::Scene::removeGameObject)
-                .addFunction("removeLevelSprite", &Scene::Scene::removeLevelSprite)
+                .addFunction("removeSprite", &Scene::Scene::removeSprite)
                 .addFunction("reorganizeLayers", &Scene::Scene::reorganizeLayers)
                 .addFunction("setLevelName", &Scene::Scene::setLevelName)
                 .addFunction("setUpdateState", &Scene::Scene::setUpdateState)
@@ -107,7 +107,7 @@ namespace obe::Bindings::SceneBindings
             kaguya::UserdataMetatable<Scene::TXScene,
                 kaguya::MultipleBase<Types::Identifiable, Types::Serializable>>()
                 //.addFunction("addSprite",
-                //&Scene::TXScene::add<Graphics::LevelSprite>)
+                //&Scene::TXScene::add<Graphics::Sprite>)
                 //.addFunction("addCollider",
                 //&Scene::TXScene::add<Collision::PolygonalCollider>)
                 .addFunction("clear", &Scene::TXScene::clear)
@@ -115,12 +115,12 @@ namespace obe::Bindings::SceneBindings
                 //.addFunction("get",
                 // static_cast<Component::ComponentBase&(Scene::TXScene::*)(const
                 // std::string&)>(&Scene::TXScene::get))
-                //.addFunction("getLevelSprite",
-                //&Scene::TXScene::get<Graphics::LevelSprite>)
+                //.addFunction("getSprite",
+                //&Scene::TXScene::get<Graphics::Sprite>)
                 //.addFunction("getCollider",
                 //&Scene::TXScene::get<Collision::PolygonalCollider>)
                 //.addFunction("getAllSprites",
-                //&Scene::TXScene::getAll<Graphics::LevelSprite>)
+                //&Scene::TXScene::getAll<Graphics::Sprite>)
                 //.addFunction("getAllColliders",
                 //&Scene::TXScene::getAll<Collision::PolygonalCollider>)
                 .addFunction("getName", &Scene::TXScene::getName)

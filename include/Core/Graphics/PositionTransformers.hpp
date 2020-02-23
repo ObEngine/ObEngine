@@ -7,6 +7,8 @@
 
 namespace obe::Graphics
 {
+    // TODO: Make position transformer overload that take only a Sprite as argument (more
+    // flexible)
     using CoordinateTransformer
         = std::function<double(double position, double camera, int layer)>;
 
@@ -65,7 +67,7 @@ namespace obe::Graphics
          */
         std::string getYTransformerName() const;
         /**
-         * \brief Method used by the LevelSprite to get the Position once
+         * \brief Method used by the Sprite to get the Position once
          * transformed \param position Base Position of the element \param
          * camera Position of the Camera \param layer Layer of the element
          * \return The new transformer position

@@ -73,7 +73,7 @@ Functions.create = function(workspaceName)
         os.execute(("mkdir Workspace/" .. workspaceName .. "/Data/GameScripts"):gsub("/", obe.Filesystem.separator()));
         os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites"):gsub("/", obe.Filesystem.separator()));
         os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/GameObjects"):gsub("/", obe.Filesystem.separator()));
-        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/LevelSprites"):gsub("/", obe.Filesystem.separator()));
+        os.execute(("mkdir Workspace/" .. workspaceName .. "/Sprites/Scenes"):gsub("/", obe.Filesystem.separator()));
         parser:root():createComplexNode(workspaceName);
         parser:root():at(workspaceName):createDataNode("path", "Workspace/" .. workspaceName);
         parser:writeFile("Workspace/Workspaces.vili", true);

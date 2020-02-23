@@ -99,12 +99,12 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
 
-    Sprite::Sprite(Canvas* parent, const std::string& id)
+    Image::Image(Canvas* parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
     }
 
-    void Sprite::draw(sf::RenderTexture& target)
+    void Image::draw(sf::RenderTexture& target)
     {
         target.draw(sprite);
     }
@@ -112,7 +112,9 @@ namespace obe::Graphics::Canvas
     void Canvas::sortElements()
     {
         std::sort(m_elements.begin(), m_elements.end(),
-            [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
+            [](const auto& elem1, const auto& elem2) {
+                return elem1->layer > elem2->layer;
+            });
     }
 
     Canvas::Canvas(unsigned int width, unsigned int height)
@@ -132,7 +134,7 @@ namespace obe::Graphics::Canvas
         return nullptr;
     }
 
-    void Canvas::setTarget(LevelSprite* target)
+    void Canvas::setTarget(Sprite* target)
     {
         m_target = target;
     }

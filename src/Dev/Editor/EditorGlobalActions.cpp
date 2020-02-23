@@ -12,7 +12,8 @@ namespace obe::Editor
         inputManager.getAction("CamLeft").connect(
             [editorTriggers, &world, &cameraSpeed, &framerateManager](
                 const Input::InputActionEvent& event) {
-                Transform::UnitVector moveVec(-cameraSpeed * framerateManager.getGameSpeed(), 0,
+                Transform::UnitVector moveVec(
+                    -cameraSpeed * framerateManager.getGameSpeed(), 0,
                     Transform::Units::ScenePixels);
                 world.getCamera()->move(moveVec);
                 editorTriggers->pushParameter("CameraMoved", "direction", "Left");
@@ -23,7 +24,8 @@ namespace obe::Editor
         inputManager.getAction("CamRight")
             .connect([editorTriggers, &world, &cameraSpeed, &framerateManager](
                          const Input::InputActionEvent& event) {
-                Transform::UnitVector moveVec(cameraSpeed * framerateManager.getGameSpeed(), 0,
+                Transform::UnitVector moveVec(
+                    cameraSpeed * framerateManager.getGameSpeed(), 0,
                     Transform::Units::ScenePixels);
                 world.getCamera()->move(moveVec);
                 editorTriggers->pushParameter("CameraMoved", "direction", "Left");
@@ -34,7 +36,8 @@ namespace obe::Editor
         inputManager.getAction("CamUp").connect(
             [editorTriggers, &world, &cameraSpeed, &framerateManager](
                 const Input::InputActionEvent& event) {
-                Transform::UnitVector moveVec(0, -cameraSpeed * framerateManager.getGameSpeed(),
+                Transform::UnitVector moveVec(0,
+                    -cameraSpeed * framerateManager.getGameSpeed(),
                     Transform::Units::ScenePixels);
                 world.getCamera()->move(moveVec);
                 editorTriggers->pushParameter("CameraMoved", "direction", "Left");
@@ -45,7 +48,8 @@ namespace obe::Editor
         inputManager.getAction("CamDown").connect(
             [editorTriggers, &world, &cameraSpeed, &framerateManager](
                 const Input::InputActionEvent& event) {
-                Transform::UnitVector moveVec(0, cameraSpeed * framerateManager.getGameSpeed(),
+                Transform::UnitVector moveVec(0,
+                    cameraSpeed * framerateManager.getGameSpeed(),
                     Transform::Units::ScenePixels);
                 world.getCamera()->move(moveVec);
                 editorTriggers->pushParameter("CameraMoved", "direction", "Left");
@@ -62,8 +66,9 @@ namespace obe::Editor
                 cameraSpeed = Transform::UnitVector::Screen.h;
             });
         inputManager.getAction("ResetCameraSize")
-            .connect(
-                [&world](const Input::InputActionEvent& event) { world.getCamera()->setSize(1); });
+            .connect([&world](const Input::InputActionEvent& event) {
+                world.getCamera()->setSize(1);
+            });
     }
 
     void connectGridActions(Triggers::TriggerGroup* editorTriggers,
@@ -92,7 +97,8 @@ namespace obe::Editor
                 if (enableGridCheckbox->isChecked())
                 {
                     editorGrid.moveMagnet(cursor, 1, 0);
-                    editorTriggers->pushParameter("GridCursorMoved", "direction", "Right");
+                    editorTriggers->pushParameter(
+                        "GridCursorMoved", "direction", "Right");
                     editorTriggers->pushParameter("GridCursorMoved", "grid", editorGrid);
                     editorTriggers->pushParameter("GridCursorMoved", "cursor", &cursor);
                     editorTriggers->trigger("GridCursorMoved");
@@ -152,26 +158,27 @@ namespace obe::Editor
                                                 : enableGridCheckbox->check();
             });
         inputManager.getAction("ToggleGridSnap")
-            .connect([editorTriggers, snapGridCheckbox](const Input::InputActionEvent& event) {
-                if (snapGridCheckbox->isEnabled())
-                {
-                    editorTriggers->pushParameter(
-                        "GridSnapToggled", "state", snapGridCheckbox->isChecked());
-                    editorTriggers->trigger("GridSnapToggled");
-                    if (snapGridCheckbox->isChecked())
+            .connect(
+                [editorTriggers, snapGridCheckbox](const Input::InputActionEvent& event) {
+                    if (snapGridCheckbox->isEnabled())
                     {
-                        snapGridCheckbox->uncheck();
+                        editorTriggers->pushParameter(
+                            "GridSnapToggled", "state", snapGridCheckbox->isChecked());
+                        editorTriggers->trigger("GridSnapToggled");
+                        if (snapGridCheckbox->isChecked())
+                        {
+                            snapGridCheckbox->uncheck();
+                        }
+                        else
+                        {
+                            snapGridCheckbox->check();
+                        }
                     }
-                    else
-                    {
-                        snapGridCheckbox->check();
-                    }
-                }
-            });
+                });
     }
 
-    void connectMenuActions(Input::InputManager& inputManager, tgui::ComboBox::Ptr editMode,
-        tgui::Panel::Ptr editorPanel)
+    void connectMenuActions(Input::InputManager& inputManager,
+        tgui::ComboBox::Ptr editMode, tgui::Panel::Ptr editorPanel)
     {
         inputManager.getAction("SpriteMode")
             .connect([editMode](const Input::InputActionEvent& event) {
@@ -188,49 +195,52 @@ namespace obe::Editor
     }
 
     void connectSaveActions(Triggers::TriggerGroup* editorTriggers,
-        Input::InputManager& inputManager, const std::string& mapName, Scene::Scene& scene,
-        double& waitForMapSaving, tgui::Label::Ptr savedLabel,
+        Input::InputManager& inputManager, const std::string& mapName,
+        Scene::Scene& scene, double& waitForMapSaving, tgui::Label::Ptr savedLabel,
         tgui::CheckBox::Ptr saveCameraPositionCheckbox)
     {
         inputManager.getAction("Save").connect(
             [&mapName, &scene, &waitForMapSaving, savedLabel, saveCameraPositionCheckbox](
                 const Input::InputActionEvent& event) {
                 Debug::Log->info("<EditorGlobalActions> Saving Map '{0}'", mapName);
-                vili::ViliParser* sceneDump = scene.dump(saveCameraPositionCheckbox->isChecked());
+                vili::ViliParser* sceneDump
+                    = scene.dump(saveCameraPositionCheckbox->isChecked());
                 sceneDump->writeFile(scene.getFilePath(), true);
                 if (waitForMapSaving < 0)
                 {
-                    savedLabel->showWithEffect(
-                        tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
+                    savedLabel->showWithEffect(tgui::ShowAnimationType::SlideFromTop,
+                        sf::Time(sf::seconds(0.5)));
                     waitForMapSaving = 0;
                 }
             });
     }
 
     void connectCopyPasteActions(Triggers::TriggerGroup* editorTriggers,
-        Input::InputManager& inputManager, Scene::Scene& scene, vili::ComplexNode& sceneClipboard,
-        tgui::Label::Ptr savedLabel, Collision::PolygonalCollider*& selectedMasterCollider,
-        Graphics::LevelSprite*& selectedSprite)
+        Input::InputManager& inputManager, Scene::Scene& scene,
+        vili::ComplexNode& sceneClipboard, tgui::Label::Ptr savedLabel,
+        Collision::PolygonalCollider*& selectedMasterCollider,
+        Graphics::Sprite*& selectedSprite)
     {
-        inputManager.getAction("Copy").connect([&editorTriggers, &scene, &sceneClipboard,
-                                                   savedLabel, &selectedMasterCollider,
-                                                   &selectedSprite](
-                                                   const Input::InputActionEvent& event) {
-            Debug::Log->debug("<EditorGlobalActions> Copying Object");
-            if (selectedMasterCollider)
-            {
-                sceneClipboard.clear();
-                selectedMasterCollider->dump(sceneClipboard);
-                sceneClipboard.at(selectedMasterCollider->getId())
-                    .createDataNode("type", "Collider");
-            }
-            if (selectedSprite)
-            {
-                sceneClipboard.clear();
-                selectedSprite->dump(sceneClipboard);
-                sceneClipboard.at(selectedSprite->getId()).createDataNode("type", "LevelSprite");
-            }
-        });
+        inputManager.getAction("Copy").connect(
+            [&editorTriggers, &scene, &sceneClipboard, savedLabel,
+                &selectedMasterCollider,
+                &selectedSprite](const Input::InputActionEvent& event) {
+                Debug::Log->debug("<EditorGlobalActions> Copying Object");
+                if (selectedMasterCollider)
+                {
+                    sceneClipboard.clear();
+                    selectedMasterCollider->dump(sceneClipboard);
+                    sceneClipboard.at(selectedMasterCollider->getId())
+                        .createDataNode("type", "Collider");
+                }
+                if (selectedSprite)
+                {
+                    sceneClipboard.clear();
+                    selectedSprite->dump(sceneClipboard);
+                    sceneClipboard.at(selectedSprite->getId())
+                        .createDataNode("type", "Sprite");
+                }
+            });
 
         inputManager.getAction("Cut").connect([](const Input::InputActionEvent& event) {
             Debug::Log->debug("<EditorGlobalActions> Cutting Object");
@@ -246,31 +256,37 @@ namespace obe::Editor
                     {
                         scene.createCollider()->load(*item);
                     }
-                    else if (item->at<vili::DataNode>("type").get<std::string>() == "LevelSprite")
+                    else if (item->at<vili::DataNode>("type").get<std::string>()
+                        == "Sprite")
                     {
-                        scene.createLevelSprite()->load(*item);
+                        scene.createSprite()->load(*item);
                     }
                 }
             });
     }
 
-    void connectGameConsoleActions(Input::InputManager& inputManager, Debug::Console& gameConsole)
+    void connectGameConsoleActions(
+        Input::InputManager& inputManager, Debug::Console& gameConsole)
     {
         inputManager.getAction("ConsoleToggle")
             .connect([&gameConsole, &inputManager](const Input::InputActionEvent& event) {
                 gameConsole.setVisible(!gameConsole.isVisible());
             });
         inputManager.getAction("ConsoleCursorLeft")
-            .connect([&gameConsole](
-                         const Input::InputActionEvent& event) { gameConsole.moveCursor(-1); });
+            .connect([&gameConsole](const Input::InputActionEvent& event) {
+                gameConsole.moveCursor(-1);
+            });
         inputManager.getAction("ConsoleCursorRight")
-            .connect([&gameConsole](
-                         const Input::InputActionEvent& event) { gameConsole.moveCursor(1); });
+            .connect([&gameConsole](const Input::InputActionEvent& event) {
+                gameConsole.moveCursor(1);
+            });
         inputManager.getAction("ConsoleUpHistory")
-            .connect(
-                [&gameConsole](const Input::InputActionEvent& event) { gameConsole.upHistory(); });
+            .connect([&gameConsole](const Input::InputActionEvent& event) {
+                gameConsole.upHistory();
+            });
         inputManager.getAction("ConsoleDownHistory")
-            .connect([&gameConsole](
-                         const Input::InputActionEvent& event) { gameConsole.downHistory(); });
+            .connect([&gameConsole](const Input::InputActionEvent& event) {
+                gameConsole.downHistory();
+            });
     }
 } // namespace obe::Editor

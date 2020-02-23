@@ -5,7 +5,7 @@
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 
 // extlibs headers
 #include <kaguya/metatable.hpp>
@@ -97,10 +97,10 @@ namespace obe::Bindings::AnimationBindings
                 .addFunction("update", &Animation::Animator::update));
 
         (*lua)["obe"]["Animator"]["setTarget"] = kaguya::overload(
-            [](Animation::Animator* animator, Graphics::LevelSprite* sprite) {
+            [](Animation::Animator* animator, Graphics::Sprite* sprite) {
                 animator->setTarget(*sprite);
             },
-            [](Animation::Animator* animator, Graphics::LevelSprite* sprite,
+            [](Animation::Animator* animator, Graphics::Sprite* sprite,
                 Animation::AnimatorTargetScaleMode scaleMode) {
                 animator->setTarget(*sprite, scaleMode);
             });

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Collision/PolygonalCollider.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
@@ -24,9 +24,8 @@ namespace obe::Scene
         Transform::Referential m_cameraInitialReferential;
         bool m_updateState = true;
 
-        std::vector<std::unique_ptr<Graphics::LevelSprite>> m_spriteArray;
-        std::vector<std::unique_ptr<Collision::PolygonalCollider>>
-            m_colliderArray;
+        std::vector<std::unique_ptr<Graphics::Sprite>> m_spriteArray;
+        std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
         std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
         std::vector<std::string> m_scriptArray;
         SceneNode m_sceneRoot;
@@ -146,62 +145,61 @@ namespace obe::Scene
          */
         Camera* getCamera();
 
-        // LevelSprites
+        // Sprites
         /**
-         * \brief Reorganize all the LevelSprite (by Layer and z-depth)
+         * \brief Reorganize all the Sprite (by Layer and z-depth)
          */
         void reorganizeLayers();
         /**
-         * \brief Creates a new LevelSprite
-         * \param id Id of the new LevelSprite
-         * \param addToSceneRoot Add the LevelSprite to the root Scene Node if
-         * true \return A pointer to the newly created LevelSprite
+         * \brief Creates a new Sprite
+         * \param id Id of the new Sprite
+         * \param addToSceneRoot Add the Sprite to the root Scene Node if
+         * true \return A pointer to the newly created Sprite
          */
-        Graphics::LevelSprite* createLevelSprite(
+        Graphics::Sprite* createSprite(
             const std::string& id = "", bool addToSceneRoot = true);
         /**
-         * \brief Get how many LevelSprites are present in the Scene
-         * \return An unsigned int containing how many LevelSprites are present
+         * \brief Get how many Sprites are present in the Scene
+         * \return An unsigned int containing how many Sprites are present
          * in the Scene
          */
-        unsigned int getLevelSpriteAmount() const;
+        unsigned int getSpriteAmount() const;
         /**
-         * \brief Get all the LevelSprites present in the Scene
-         * \return A std::vector of LevelSprites pointer
+         * \brief Get all the Sprites present in the Scene
+         * \return A std::vector of Sprites pointer
          */
-        std::vector<Graphics::LevelSprite*> getAllLevelSprites();
+        std::vector<Graphics::Sprite*> getAllSprites();
         /**
-         * \brief Get all the LevelSprites present in the Scene in the given
-         * layer \param layer Layer to get all the LevelSprites from \return A
-         * std::vector of LevelSprites pointer
+         * \brief Get all the Sprites present in the Scene in the given
+         * layer \param layer Layer to get all the Sprites from \return A
+         * std::vector of Sprites pointer
          */
-        std::vector<Graphics::LevelSprite*> getLevelSpritesByLayer(int layer);
+        std::vector<Graphics::Sprite*> getSpritesByLayer(int layer);
         /**
-         * \brief Get the first found LevelSprite with the BoundingRect
+         * \brief Get the first found Sprite with the BoundingRect
          * including the given position \param position Position to check \param
          * camera Camera position \param layer Layer where to check \return The
-         * pointer to a LevelSprite if found, nullptr otherwise
+         * pointer to a Sprite if found, nullptr otherwise
          */
-        Graphics::LevelSprite* getLevelSpriteByPosition(
-            const Transform::UnitVector& position,
+        Graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position,
             const Transform::UnitVector& camera, int layer);
         /**
-         * \brief Get a LevelSprite by Id (Raises an exception if not found)
-         * \param id Id of the LevelSprite to get
-         * \return A pointer to the LevelSprite
+         * \brief Get a Sprite by Id (Raises an exception if not found)
+         * \param id Id of the Sprite to get
+         * \return A pointer to the Sprite
          */
-        Graphics::LevelSprite* getLevelSprite(const std::string& id);
+        Graphics::Sprite* getSprite(const std::string& id);
         /**
-         * \brief Check if a LevelSprite exists in the Scene
-         * \param id Id of the LevelSprite to check the existence
-         * \return true if the LevelSprite exists in the Scene, false otherwise
+         * \brief Check if a Sprite exists in the Scene
+         * \param id Id of the Sprite to check the existence
+         * \return true if the Sprite exists in the Scene, false otherwise
          */
-        bool doesLevelSpriteExists(const std::string& id);
+        bool doesSpriteExists(const std::string& id);
         /**
-         * \brief Removes the LevelSprite with the given Id
-         * \param id Id of the LevelSprite to remove
+         * \brief Removes the Sprite with the given Id
+         * \param id Id of the Sprite to remove
          */
-        void removeLevelSprite(const std::string& id);
+        void removeSprite(const std::string& id);
 
         // Colliders
         /**
@@ -229,8 +227,8 @@ namespace obe::Scene
          * \return A std::pair containing the pointer to the Collider with a
          * point at the given position and the index of the point
          */
-        std::pair<Collision::PolygonalCollider*, int>
-        getColliderPointByPosition(const Transform::UnitVector& position);
+        std::pair<Collision::PolygonalCollider*, int> getColliderPointByPosition(
+            const Transform::UnitVector& position);
         /**
          * \brief Get the Collider using the centroid Position
          * \param position Position to check
@@ -286,11 +284,9 @@ namespace obe::Scene
          * \param drawMasterPoint Draw the Centroid of the Colliders
          * \param drawSkel Draw the Skeleton of the Colliders
          */
-        void enableShowCollision(bool drawLines = false,
-            bool drawPoints = false, bool drawMasterPoint = false,
-            bool drawSkel = false);
+        void enableShowCollision(bool drawLines = false, bool drawPoints = false,
+            bool drawMasterPoint = false, bool drawSkel = false);
         void enableShowSceneNodes(bool showNodes);
-        SceneNode* getSceneNodeByPosition(
-            const Transform::UnitVector& position) const;
+        SceneNode* getSceneNodeByPosition(const Transform::UnitVector& position) const;
     };
 } // namespace obe::Scene

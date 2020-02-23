@@ -10,7 +10,7 @@
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
 #include <Editor/MapEditor.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>

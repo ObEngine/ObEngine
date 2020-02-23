@@ -15,24 +15,24 @@
 
 namespace obe::Graphics
 {
-    enum class LevelSpriteHandlePointType
+    enum class SpriteHandlePointType
     {
         ScaleHandle,
         RotateHandle
     };
 
-    class LevelSprite;
+    class Sprite;
 
     /**
-     * \brief A HandlePoint to manipulate a LevelSprite Size
+     * \brief A HandlePoint to manipulate a Sprite Size
      * @Bind
      */
-    class LevelSpriteHandlePoint
+    class SpriteHandlePoint
     {
     private:
-        LevelSprite* m_sprite;
+        Sprite* m_sprite;
         Transform::Referential m_referential;
-        LevelSpriteHandlePointType m_type;
+        SpriteHandlePointType m_type;
 
     public:
         Transform::UnitVector m_dp;
@@ -42,18 +42,18 @@ namespace obe::Graphics
         static unsigned int radius;
         /**
          * \brief Creates a Scale HandlePoint
-         * \param parent Rect of the parent LevelSprite
+         * \param parent Rect of the parent Sprite
          * \param ref Referential of the HandlePoint
          */
-        LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referential ref);
+        SpriteHandlePoint(Sprite* parent, Transform::Referential ref);
         /**
          * \brief Creates a Rotate HandlePoint
-         * \param parent Rect of the parent LevelSprite
+         * \param parent Rect of the parent Sprite
          */
-        LevelSpriteHandlePoint(LevelSprite* parent);
+        SpriteHandlePoint(Sprite* parent);
         /**
-         * \brief Get the rect of the parent LevelSprite
-         * \return The Rect of the parent LevelSprite
+         * \brief Get the rect of the parent Sprite
+         * \return The Rect of the parent Sprite
          */
         Transform::Rect& getRect() const;
         /**
@@ -62,31 +62,31 @@ namespace obe::Graphics
          */
         Transform::Referential getReferential() const;
         /**
-         * \brief Gets the type of the LevelSpriteHandlePoint (either Rotate or
-         * Scale) \return An enum value from LevelSpriteHandlePointType
+         * \brief Gets the type of the SpriteHandlePoint (either Rotate or
+         * Scale) \return An enum value from SpriteHandlePointType
          * representing the type of the Handle Point
          */
-        LevelSpriteHandlePointType getType() const;
+        SpriteHandlePointType getType() const;
         /**
          * \brief Move the HandlePoint to the given Position
          * \param position Position where the HandlePoint should move to
          * \param camera Camera used to manipulate PositionTransformers
          */
-        void moveTo(const Transform::UnitVector& position,
-            const Transform::UnitVector& camera);
+        void moveTo(
+            const Transform::UnitVector& position, const Transform::UnitVector& camera);
     };
 
     /**
      * \brief An element meant to be displayed in a Scene
      * @Bind
      */
-    class LevelSprite : public Transform::UnitBasedObject,
-                        public Types::Selectable,
-                        public Transform::Rect,
-                        public Component::Component<LevelSprite>
+    class Sprite : public Transform::UnitBasedObject,
+                   public Types::Selectable,
+                   public Transform::Rect,
+                   public Component::Component<Sprite>
     {
     private:
-        std::vector<LevelSpriteHandlePoint> m_handlePoints;
+        std::vector<SpriteHandlePoint> m_handlePoints;
         int m_layer = 1;
         std::string m_parentId = "";
         std::string m_path = "";
@@ -101,13 +101,13 @@ namespace obe::Graphics
         void resetUnit(Transform::Units unit) override;
 
     public:
-        static constexpr std::string_view ComponentType = "LevelSprite";
+        static constexpr std::string_view ComponentType = "Sprite";
         bool m_layerChanged = false;
         /**
-         * \brief Creates a new LevelSprite with the given Id
-         * \param id A std::string containing the Id of the LevelSprite
+         * \brief Creates a new Sprite with the given Id
+         * \param id A std::string containing the Id of the Sprite
          */
-        explicit LevelSprite(const std::string& id);
+        explicit Sprite(const std::string& id);
         /**
          * \brief Draws the handle used to scale the Sprite
          * \param spritePositionX x Coordinate of the Offset of the Handle
@@ -115,24 +115,24 @@ namespace obe::Graphics
          */
         void drawHandle(const Transform::UnitVector& camera) const;
         /**
-         * \brief Dumps the content of the LevelSprite to a ComplexNode
-         * \param target ComplexNode where to serialize the LevelSprite
+         * \brief Dumps the content of the Sprite to a ComplexNode
+         * \param target ComplexNode where to serialize the Sprite
          */
         void dump(vili::ComplexNode& target) const override;
         /**
-         * \brief Get the blend color of the LevelSprite
-         * \return A sf::Color containing the blend color of the LevelSprite
+         * \brief Get the blend color of the Sprite
+         * \return A sf::Color containing the blend color of the Sprite
          */
         sf::Color getColor() const;
         /**
-         * \brief Get the HandlePoint of the LevelSprite at the given
+         * \brief Get the HandlePoint of the Sprite at the given
          * Position(x, y) \param cameraPosition Position of the Scene Camera
          * \param posX x Coordinate of the Position you try to pick the
          * HandlePoint \param posY y Coordinate of the Position you try to pick
          * the HandlePoint \return The adress of the HandlePoint if the position
          * is correct, nullptr otherwise
          */
-        LevelSpriteHandlePoint* getHandlePoint(
+        SpriteHandlePoint* getHandlePoint(
             Transform::UnitVector& cameraPosition, int posX, int posY);
         /**
          * \brief Get the layer of the Sprite
@@ -152,8 +152,8 @@ namespace obe::Graphics
          */
         std::string getPath() const;
         /**
-         * \brief Gets the PositionTransformer used by the LevelSprite
-         * \return The PositionTransformer used by the LevelSprite
+         * \brief Gets the PositionTransformer used by the Sprite
+         * \return The PositionTransformer used by the Sprite
          */
         PositionTransformer getPositionTransformer() const;
         /**
@@ -164,36 +164,36 @@ namespace obe::Graphics
         sf::FloatRect getRect();
         Shader* getShader() const;
         /**
-         * \brief Get the internal Sprite of the LevelSprite
-         * \return A reference to the internal Sprite of the LevelSprite
+         * \brief Get the internal Sprite of the Sprite
+         * \return A reference to the internal Sprite of the Sprite
          */
         sfe::ComplexSprite& getSprite();
         /**
-         * \brief Get the height of the LevelSprite
+         * \brief Get the height of the Sprite
          * \return The height of the Sprite (Including transformations such as
          * rotations / scaling)
          */
         double getSpriteHeight() const;
         /**
-         * \brief Get the width of the LevelSprite
+         * \brief Get the width of the Sprite
          * \return The width of the Sprite (Including transformations such as
          * rotations / scaling)
          */
         double getSpriteWidth() const;
         /**
-         * \brief Gets a reference to the texture of the LevelSprite
-         * \return A reference to the current texture of the LevelSprite
+         * \brief Gets a reference to the texture of the Sprite
+         * \return A reference to the current texture of the Sprite
          */
         const sf::Texture& getTexture() const;
         /**
-         * \brief Get the x Coordinate of the scale factor of the LevelSprite
-         * \return -1 if the LevelSprite has been horizontally flipped, 1
+         * \brief Get the x Coordinate of the scale factor of the Sprite
+         * \return -1 if the Sprite has been horizontally flipped, 1
          * otherwise
          */
         int getXScaleFactor() const;
         /**
-         * \brief Get the y Coordinate of the scale factor of the LevelSprite
-         * \return -1 if the LevelSprite has been vertically flipped, 1
+         * \brief Get the y Coordinate of the scale factor of the Sprite
+         * \return -1 if the Sprite has been vertically flipped, 1
          * otherwise
          */
         int getYScaleFactor() const;
@@ -206,28 +206,28 @@ namespace obe::Graphics
         bool getAntiAliasing() const;
         bool hasShader() const;
         /**
-         * \brief Get the visibility of the LevelSprite
-         * \return true if the LevelSprite is visible, false otherwise
+         * \brief Get the visibility of the Sprite
+         * \return true if the Sprite is visible, false otherwise
          */
         bool isVisible() const;
         /**
-         * \brief Loads the LevelSprite from a ComplexNode
-         * \param data ComplexNode containing the data of the LevelSprite
+         * \brief Loads the Sprite from a ComplexNode
+         * \param data ComplexNode containing the data of the Sprite
          */
         void load(vili::ComplexNode& data) override;
         /**
-         * \brief The LevelSprite will load the sf::Texture at the given path
+         * \brief The Sprite will load the sf::Texture at the given path
          * \param path A std::string containing the path of the texture to load
          */
         void loadTexture(const std::string& path);
         /**
          * \brief Rotate the sprite
-         * \param addRotate The angle to add to the LevelSprite (0 -> 360 where
+         * \param addRotate The angle to add to the Sprite (0 -> 360 where
          * 0 / 360 is the top)
          */
         void rotate(double addRotate);
         /**
-         * \brief Apply a blend color to the LevelSprite
+         * \brief Apply a blend color to the Sprite
          * \param newColor A sf::Color containing the color to blend
          * (sf::Color::White is default normal color)
          */
@@ -240,50 +240,50 @@ namespace obe::Graphics
         void setLayer(int layer);
         /**
          * \brief Set a new parent id
-         * \param parent The id of the parent to apply to the LevelSprite
+         * \param parent The id of the parent to apply to the Sprite
          */
         void setParentId(const std::string& parent);
         /**
-         * \brief Sets the new Position Transform of the LevelSprite
-         * \param transformer New PositionTransformer of the LevelSprite
+         * \brief Sets the new Position Transform of the Sprite
+         * \param transformer New PositionTransformer of the Sprite
          */
         void setPositionTransformer(PositionTransformer transformer);
         /**
          * \brief Set the rotation of the sprite
-         * \param rotate The new angle of the LevelSprite (0 -> 360 where 0 /
+         * \param rotate The new angle of the Sprite (0 -> 360 where 0 /
          * 360 is the top)
          */
         void setRotation(double rotate);
         /**
-         * \brief Set the rotation origin of the LevelSprite
-         * \param x x Coordinate of the new rotation origin of the LevelSprite
-         * \param y y Coordinate of the new rotation origin of the LevelSprite
+         * \brief Set the rotation origin of the Sprite
+         * \param x x Coordinate of the new rotation origin of the Sprite
+         * \param y y Coordinate of the new rotation origin of the Sprite
          */
         void setRotationOrigin(int x, int y);
         /**
-         * \brief Set the scaling origin of the LevelSprite
-         * \param x x Coordinate of the new scaling origin of the LevelSprite
-         * \param y y Coordinate of the new scaling origin of the LevelSprite
+         * \brief Set the scaling origin of the Sprite
+         * \param x x Coordinate of the new scaling origin of the Sprite
+         * \param y y Coordinate of the new scaling origin of the Sprite
          */
         void setScalingOrigin(int x, int y);
         void setShader(Shader* shader);
         /**
-         * \brief Sets the Texture of the LevelSprite
+         * \brief Sets the Texture of the Sprite
          * \param texture Texture to set
          */
         void setTexture(const sf::Texture& texture);
-        void setTextureRect(unsigned int x, unsigned int y, unsigned int width,
-            unsigned int height);
+        void setTextureRect(
+            unsigned int x, unsigned int y, unsigned int width, unsigned int height);
         /**
-         * \brief Set the translation origin of the LevelSprite
-         * \param x x Coordinate of the new translation origin of the
-         * LevelSprite \param y y Coordinate of the new translation origin of
-         * the LevelSprite
+         * \brief Set the translation origin of the Sprite
+         * \param x x Coordinate of the new translation origin of the Sprite
+         * \param y y Coordinate of the new translation origin of
+         * the Sprite
          */
         void setTranslationOrigin(int x, int y);
         /**
-         * \brief Set the visibility of the LevelSprite
-         * \param visible If visible is equal to true, the LevelSprite will be
+         * \brief Set the visibility of the Sprite
+         * \param visible If visible is equal to true, the Sprite will be
          * visible, if visible is equal to false, it won't be visible
          */
         void setVisible(bool visible);
@@ -295,7 +295,7 @@ namespace obe::Graphics
         void setZDepth(int zdepth);
         void setAntiAliasing(bool antiAliasing);
         /**
-         * \brief Reset internal LevelSprite Rect using texture size
+         * \brief Reset internal Sprite Rect using texture size
          */
         void useTextureSize();
 

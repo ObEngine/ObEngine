@@ -61,8 +61,8 @@ namespace obe::Bindings
             // Graphics
             .add("Canvas", &GraphicsBindings::LoadCanvas)
             .add("Color", &GraphicsBindings::LoadColor)
-            .add("LevelSprite", &GraphicsBindings::LoadLevelSprite)
-            .add("LevelSpriteHandlePoint", &GraphicsBindings::LoadLevelSpriteHandlePoint)
+            .add("Sprite", &GraphicsBindings::LoadSprite)
+            .add("SpriteHandlePoint", &GraphicsBindings::LoadSpriteHandlePoint)
             .add("ResourceManager", &GraphicsBindings::LoadResourceManager)
             .add("Shader", &GraphicsBindings::LoadShader)
             .add("Utils", &GraphicsBindings::LoadGraphicsUtils)

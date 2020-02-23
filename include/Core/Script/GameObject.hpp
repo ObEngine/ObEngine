@@ -6,7 +6,7 @@
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Logger.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
@@ -34,22 +34,19 @@ namespace obe::Script
          * \param type Type of the GameObject to get the Requirements
          * \return A pointer to the Requires ComplexNode of the GameObject
          */
-        static vili::ComplexNode* GetRequirementsForGameObject(
-            const std::string& type);
+        static vili::ComplexNode* GetRequirementsForGameObject(const std::string& type);
         /**
          * \brief Gets the ObjectDefintion ComplexNode of the GameObject
          * \param type Type of the GameObject to get the GODF
          * \return A pointer to the ObjectDefintion ComplexNode
          */
-        static vili::ComplexNode* GetDefinitionForGameObject(
-            const std::string& type);
+        static vili::ComplexNode* GetDefinitionForGameObject(const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
          * ComplexNode \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(
-            GameObject* obj, vili::ComplexNode& requires);
+        static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
         /*
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -65,7 +62,7 @@ namespace obe::Script
         unsigned int m_envIndex;
         bool m_permanent = false;
         std::unique_ptr<Animation::Animator> m_animator;
-        Graphics::LevelSprite* m_sprite = nullptr;
+        Graphics::Sprite* m_sprite = nullptr;
         Collision::PolygonalCollider* m_collider = nullptr;
         Triggers::TriggerGroupPtr m_localTriggers;
         Scene::SceneNode m_objectNode;
@@ -114,11 +111,11 @@ namespace obe::Script
          */
         bool doesHaveCollider() const;
         /**
-         * \brief Checks if the GameObject has a LevelSprite Component
-         * \return true if the GameObject contains the LevelSprite Component,
+         * \brief Checks if the GameObject has a Sprite Component
+         * \return true if the GameObject contains the Sprite Component,
          * false otherwise
          */
-        bool doesHaveLevelSprite() const;
+        bool doesHaveSprite() const;
         /**
          * \brief Checks if the GameObject has a Script Component
          * \return true if the GameObject contains the Script Component, false
@@ -149,11 +146,11 @@ namespace obe::Script
          */
         Collision::PolygonalCollider* getCollider();
         /**
-         * \brief Gets the LevelSprite Component of the GameObject (Raises
-         * ObEngine.Script.GameObject.NoLevelSprite if no LevelSprite Component)
-         * \return A pointer to the LevelSprite Component of the GameObject
+         * \brief Gets the Sprite Component of the GameObject (Raises
+         * ObEngine.Script.GameObject.NoSprite if no Sprite Component)
+         * \return A pointer to the Sprite Component of the GameObject
          */
-        Graphics::LevelSprite* getLevelSprite();
+        Graphics::Sprite* getSprite();
         /**
          * \brief Gets the Scene Node of the GameObject (SceneNode that can
          * manipulate the position of all Scene Components) \return A reference
@@ -183,23 +180,21 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        template <typename U>
-        void sendInitArg(const std::string& argName, U value);
+        template <typename U> void sendInitArg(const std::string& argName, U value);
         /**
          * \brief Send a parameter to the Local.Init trigger from a Lua VM
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(
-            const std::string& argName, kaguya::LuaRef value) const;
+        void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const;
         /**
          * \brief Register a Trigger in the GameObject
          * \param trg Pointer to the Trigger
          * \param callbackName Name of the callback to call when Trigger will be
          * enabled
          */
-        void registerTrigger(std::weak_ptr<Triggers::Trigger> trg,
-            const std::string& callbackName);
+        void registerTrigger(
+            std::weak_ptr<Triggers::Trigger> trg, const std::string& callbackName);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
@@ -259,8 +254,8 @@ namespace obe::Script
     void GameObject::sendInitArg(const std::string& argName, U value)
     {
         Debug::Log->debug(
-            "<GameObject> Sending Local.Init argument {0} to GameObject {1}",
-            argName, m_id);
+            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName,
+            m_id);
         m_localTriggers->pushParameter("Init", argName, value);
     }
 } // namespace obe::Script

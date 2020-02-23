@@ -29,7 +29,7 @@ namespace obe::Editor
         if (m_instance->m_cache.find(path) != m_instance->m_cache.end())
             return m_instance->m_cache[path];
         sf::Texture sprTexture;
-        System::Path("Sprites/LevelSprites/" + path)
+        System::Path("Sprites/Sprites/" + path)
             .load(System::Loaders::textureLoader, sprTexture);
         sf::Sprite sprite;
         sprite.setTexture(sprTexture);
@@ -37,8 +37,9 @@ namespace obe::Editor
         const double texH = sprTexture.getSize().y;
         const double scale = (texW >= texH) ? m_size / texW : m_size / texH;
         sprite.setScale(scale, scale);
-        sprite.setPosition(sf::Vector2f((m_size / 2) - (sprite.getGlobalBounds().width / 2),
-            (m_size / 2) - (sprite.getGlobalBounds().height / 2)));
+        sprite.setPosition(
+            sf::Vector2f((m_size / 2) - (sprite.getGlobalBounds().width / 2),
+                (m_size / 2) - (sprite.getGlobalBounds().height / 2)));
         m_instance->m_renderer.clear(sf::Color(0, 0, 0, 0));
         sf::RectangleShape sprRec(sf::Vector2f(m_size, m_size));
         sprRec.setFillColor(sf::Color(100, 100, 100));
@@ -91,18 +92,20 @@ namespace obe::Editor
         tgui::Scrollbar::Ptr objectsScrollbar)
     {
         std::vector<std::string> allGameObjects;
-        System::Path("Data/GameObjects").loadAll(System::Loaders::dirPathLoader, allGameObjects);
+        System::Path("Data/GameObjects")
+            .loadAll(System::Loaders::dirPathLoader, allGameObjects);
         const unsigned int panelWidth = objectPanel->getSize().x;
         const int btnSize = float(panelWidth) * 0.115;
         const unsigned int btnOff = 10;
-        const unsigned int maxElementsPerRow = float(panelWidth) / (float(btnSize) + float(btnOff));
+        const unsigned int maxElementsPerRow
+            = float(panelWidth) / (float(btnSize) + float(btnOff));
         const unsigned int xOff = 15;
         const unsigned int yOff = 70;
         unsigned int xpos;
         unsigned int ypos = xpos = 0;
 
-        const auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff, &maxElementsPerRow](
-                                   unsigned int& index) {
+        const auto getBtnPos = [&btnSize, &btnOff, &xOff, &panelWidth, &yOff,
+                                   &maxElementsPerRow](unsigned int& index) {
             unsigned int ixPos = (index % maxElementsPerRow) * (btnSize + btnOff) + xOff;
             unsigned int iyPos = index / maxElementsPerRow * (btnSize + btnOff) + yOff;
             return std::pair<unsigned int, unsigned int>(ixPos, iyPos);
@@ -119,9 +122,11 @@ namespace obe::Editor
             currentObj->setPosition(xpos, ypos);
             currentObj->setSize(btnSize, btnSize);
             objectPanel->add(currentObj);
-            currentObj->connect("pressed", [&scene, &requiresPanel, &baseTheme, currentObjName]() {
-                buildRequiresObjectTab(scene, requiresPanel, baseTheme, currentObjName);
-            });
+            currentObj->connect(
+                "pressed", [&scene, &requiresPanel, &baseTheme, currentObjName]() {
+                    buildRequiresObjectTab(
+                        scene, requiresPanel, baseTheme, currentObjName);
+                });
         }
 
         objectsScrollbar->setMaximum(ypos + btnSize + yOff + 30);
@@ -132,8 +137,8 @@ namespace obe::Editor
     {
         vili::ComplexNode* requires
             = Script::GameObjectDatabase::GetRequirementsForGameObject(objName);
-        const std::string key
-            = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+        const std::string key = Utils::String::getRandomKey(
+            Utils::String::Alphabet + Utils::String::Numbers, 8);
         vili::ComplexNode* requireCopy = new vili::ComplexNode(key);
         if (requires != nullptr)
         {
@@ -156,7 +161,8 @@ namespace obe::Editor
             std::unordered_map<std::string, tgui::EditBox::Ptr> requireEditBoxes;
 
             int widgetVerticalPosition = 70;
-            for (vili::ComplexNode* complexRequire : requireInput.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* complexRequire :
+                requireInput.getAll<vili::ComplexNode>())
             {
                 const std::string requireItem = complexRequire->getId();
                 tgui::Label::Ptr currentRequirementLabel = tgui::Label::create();
@@ -166,10 +172,12 @@ namespace obe::Editor
                 currentRequirementLabel->setText(requireItem);
                 content->add(currentRequirementLabel, requireItem + "_label");
 
-                if (requireInput.at(requireItem).contains(vili::NodeType::DataNode, "type"))
+                if (requireInput.at(requireItem)
+                        .contains(vili::NodeType::DataNode, "type"))
                 {
                     tgui::EditBox::Ptr currentRequirementInput = tgui::EditBox::create();
-                    currentRequirementInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                    currentRequirementInput->setRenderer(
+                        baseTheme.getRenderer("TextBox"));
                     currentRequirementInput->setSize("33%", "32");
                     currentRequirementInput->setPosition(200, widgetVerticalPosition + 5);
                     content->add(currentRequirementInput, requireItem + "_input");
@@ -183,15 +191,18 @@ namespace obe::Editor
                     currentRequirementList->setPosition(200, widgetVerticalPosition);
                     currentRequirementList->setTextSize(20);
                     currentRequirementList->setItemsToDisplay(4);
-                    currentRequirementList->setRenderer(baseTheme.getRenderer("ComboBox"));
+                    currentRequirementList->setRenderer(
+                        baseTheme.getRenderer("ComboBox"));
                     content->add(currentRequirementList, requireItem + "_input");
-                    for (int reqI = 0;
-                         reqI < requireInput.at(requireItem).getArrayNode("choices").size(); reqI++)
+                    for (int reqI = 0; reqI
+                         < requireInput.at(requireItem).getArrayNode("choices").size();
+                         reqI++)
                         currentRequirementList->addItem(requireInput.at(requireItem)
                                                             .getArrayNode("choices")
                                                             .get(reqI)
                                                             .get<std::string>());
-                    currentRequirementList->setSelectedItem(currentRequirementList->getItems()[0]);
+                    currentRequirementList->setSelectedItem(
+                        currentRequirementList->getItems()[0]);
                     requireComboBoxes[requireItem] = currentRequirementList;
                 }
                 widgetVerticalPosition += 50;
@@ -234,8 +245,8 @@ namespace obe::Editor
     void buildObjectThroughRequire(
         Scene::Scene& scene, const std::string& objName, vili::ComplexNode* requires)
     {
-        const std::string key
-            = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 8);
+        const std::string key = Utils::String::getRandomKey(
+            Utils::String::Alphabet + Utils::String::Numbers, 8);
         Script::GameObject* newGameObject = scene.createGameObject(objName, key);
 
         requires->at("Output").walk([](vili::NodeIterator& node) {
@@ -247,7 +258,8 @@ namespace obe::Editor
             }
         });
 
-        Script::GameObjectDatabase::ApplyRequirements(newGameObject, requires->at("Output"));
+        Script::GameObjectDatabase::ApplyRequirements(
+            newGameObject, requires->at("Output"));
         newGameObject->exec("LuaCore.InjectInitInjectionTable()");
         newGameObject->initialize();
     }
@@ -261,9 +273,9 @@ namespace obe::Editor
 
         std::vector<std::string> fileList;
         std::vector<std::string> folderList;
-        System::Path("Sprites/LevelSprites" + path)
+        System::Path("Sprites/Sprites" + path)
             .loadAll(System::Loaders::dirPathLoader, folderList);
-        System::Path("Sprites/LevelSprites" + path)
+        System::Path("Sprites/Sprites" + path)
             .loadAll(System::Loaders::filePathLoader, fileList);
 
         const int sprSize = spritesPanel->getSize().x * 0.115;
@@ -272,7 +284,8 @@ namespace obe::Editor
         const int sprOff = 10;
         const int xOff = 15;
         const int yOff = 70;
-        unsigned int maxElementsPerRow = float(panelWidth) / (float(sprSize) + float(sprOff));
+        unsigned int maxElementsPerRow
+            = float(panelWidth) / (float(sprSize) + float(sprOff));
         unsigned int elemIndex = 0;
         const auto getSpritePos = [&sprSize, &sprOff, &xOff, &panelWidth, &yOff,
                                       &maxElementsPerRow](unsigned int& index) {
@@ -288,7 +301,8 @@ namespace obe::Editor
         tgui::Button::Ptr backButton = tgui::Button::create();
         spritesPanel->add(backButton, "LS_ELEM_BACK");
         sf::Texture sprback;
-        System::Path("Sprites/Others/back.png").load(System::Loaders::textureLoader, sprback);
+        System::Path("Sprites/Others/back.png")
+            .load(System::Loaders::textureLoader, sprback);
         sprback.setSmooth(true);
         backButton->getRenderer()->setTexture(sprback);
         backButton->setSize(sprSize, sprSize);
@@ -311,16 +325,17 @@ namespace obe::Editor
             currentFolder->getRenderer()->setTexture(
                 *Thumbnailer::GetFolderThumbnail(path + "/" + element));
             currentFolder->connect("pressed",
-                [spritesPanel, spritesCatLabel, path, element, spritesScrollbar, &scene]() {
-                    loadSpriteFolder(scene, spritesPanel, spritesCatLabel, path + "/" + element,
-                        spritesScrollbar);
+                [spritesPanel, spritesCatLabel, path, element, spritesScrollbar,
+                    &scene]() {
+                    loadSpriteFolder(scene, spritesPanel, spritesCatLabel,
+                        path + "/" + element, spritesScrollbar);
                 });
         }
 
         for (std::string element : fileList)
         {
             sf::Texture textureLoadChecker;
-            System::Path("Sprites/LevelSprites")
+            System::Path("Sprites/Sprites")
                 .add(path)
                 .add(element)
                 .load(System::Loaders::textureLoader, textureLoadChecker, true);
@@ -334,8 +349,9 @@ namespace obe::Editor
                 currentSprite->getRenderer()->setTexture(
                     *Thumbnailer::GetSpriteThumbnail(path + "/" + element));
                 currentSprite->setSize(sprSize, sprSize);
-                currentSprite->connect("pressed",
-                    [path, element, &scene] { addSpriteToScene(scene, path + "/" + element); });
+                currentSprite->connect("pressed", [path, element, &scene] {
+                    addSpriteToScene(scene, path + "/" + element);
+                });
             }
         }
 
@@ -345,15 +361,15 @@ namespace obe::Editor
     void addSpriteToScene(Scene::Scene& scene, const std::string& spritePath)
     {
         int i = 0;
-        std::string testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i);
-        while (scene.doesLevelSpriteExists(testId))
+        std::string testId = "sprite" + std::to_string(scene.getSpriteAmount() + i);
+        while (scene.doesSpriteExists(testId))
         {
-            testId = "sprite" + std::to_string(scene.getLevelSpriteAmount() + i++);
+            testId = "sprite" + std::to_string(scene.getSpriteAmount() + i++);
         }
-        Graphics::LevelSprite* sprToAdd = scene.createLevelSprite(testId);
+        Graphics::Sprite* sprToAdd = scene.createSprite(testId);
         const Transform::UnitVector pixelCamera
             = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
-        sprToAdd->loadTexture("Sprites/LevelSprites/" + spritePath);
+        sprToAdd->loadTexture("Sprites/Sprites/" + spritePath);
         sprToAdd->setPosition(pixelCamera);
 
         sprToAdd->setRotation(0);

@@ -8,7 +8,7 @@
 
 namespace obe::Graphics
 {
-    class LevelSprite;
+    class Sprite;
 } // namespace obe
 
 namespace obe::Animation
@@ -55,7 +55,7 @@ namespace obe::Animation
         Animation* m_currentAnimation = nullptr;
         std::string m_currentAnimationName = "NONE";
         bool m_paused = false;
-        Graphics::LevelSprite* m_target = nullptr;
+        Graphics::Sprite* m_target = nullptr;
         AnimatorTargetScaleMode m_targetScaleMode;
 
     public:
@@ -147,7 +147,7 @@ namespace obe::Animation
          */
         void update();
 
-        void setTarget(Graphics::LevelSprite& sprite,
+        void setTarget(Graphics::Sprite& sprite,
             AnimatorTargetScaleMode targetScaleMode = AnimatorTargetScaleMode::Fit);
     };
 } // namespace obe::Animation

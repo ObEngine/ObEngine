@@ -102,9 +102,9 @@ ObEngine:
             UnknownGameObject:
                 where:"getGameObjectById"
                 messsage:"Can't find GameObject %id% in Scene %map%"
-            UnknownLevelSprite:
-                where:"getLevelSpriteByID"
-                message:"Can't find LevelSprite %id% in Scene %map%"
+            UnknownSprite:
+                where:"getSpriteByID"
+                message:"Can't find Sprite %id% in Scene %map%"
             UnknownCollider:
                 where:"getColliderByID"
                 message:"Can't find Collider %id% in Scene %map%"
@@ -112,9 +112,9 @@ ObEngine:
         where:"Script"
         GameObject:
             where:"GameObject"
-            NoLevelSprite:
-                where:"getLevelSprite"
-                message:"GameObject %id% doesn't have a LevelSprite Component"
+            NoSprite:
+                where:"getSprite"
+                message:"GameObject %id% doesn't have a Sprite Component"
             NoCollider:
                 where:"getCollider"
                 message:"GameObject %id% doesn't have a Collider Component"

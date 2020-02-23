@@ -3,7 +3,7 @@
 namespace obe::Editor
 {
     void connectSpriteLayerActions(Triggers::TriggerGroup* editorTriggers,
-        Input::InputManager& inputManager, Graphics::LevelSprite*& selectedSprite,
+        Input::InputManager& inputManager, Graphics::Sprite*& selectedSprite,
         Scene::Scene& scene, int& currentLayer)
     {
         inputManager.getAction("SpriteZDepthInc")
@@ -65,9 +65,9 @@ namespace obe::Editor
     }
 
     void connectSpriteActions(Triggers::TriggerGroup* editorTriggers,
-        Input::InputManager& inputManager, Graphics::LevelSprite*& hoveredSprite,
-        Graphics::LevelSprite*& selectedSprite,
-        Graphics::LevelSpriteHandlePoint*& selectedHandlePoint, Scene::Scene& world,
+        Input::InputManager& inputManager, Graphics::Sprite*& hoveredSprite,
+        Graphics::Sprite*& selectedSprite,
+        Graphics::SpriteHandlePoint*& selectedHandlePoint, Scene::Scene& world,
         System::Cursor& cursor, Editor::EditorGrid& editorGrid, int& selectedSpriteOffsetX,
         int& selectedSpriteOffsetY, Editor::Tooltip& tooltip, Transform::Units& editorUnit)
     {
@@ -205,7 +205,7 @@ namespace obe::Editor
                 {
                     editorTriggers->pushParameter("SpriteRemoved", "id", selectedSprite->getId());
                     editorTriggers->trigger("SpriteRemoved");
-                    world.removeLevelSprite(selectedSprite->getId());
+                    world.removeSprite(selectedSprite->getId());
                     selectedSprite = nullptr;
                     tooltip.clear();
                     hoveredSprite = nullptr;

@@ -34,7 +34,8 @@ namespace obe::Editor
 
         // Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Editor"),
+            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+                "Global", "Editor"),
             Triggers::TriggerGroupPtrRemover);
 
         // Editor Collider Triggers
@@ -103,11 +104,12 @@ namespace obe::Editor
         vili::ComplexNode sceneClipboard("Clipboard");
         // scene.getCamera()->bindView(window);
         Script::ScriptEngine["stream"] = gameConsole.createStream("Scene", true);
-        Script::ScriptEngine.setErrorHandler([&gameConsole](int statuscode, const char* message) {
-            gameConsole.pushMessage(
-                "LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
-            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
-        });
+        Script::ScriptEngine.setErrorHandler(
+            [&gameConsole](int statuscode, const char* message) {
+                gameConsole.pushMessage(
+                    "LuaError", std::string("<Main> :: ") + message, sf::Color::Red);
+                Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+            });
 
         // Socket
         Network::NetworkHandler networkHandler;
@@ -143,8 +145,10 @@ namespace obe::Editor
         tgui::Panel::Ptr spritesPanel = gui.get<tgui::Panel>("spritesPanel");
         tgui::Panel::Ptr objectsPanel = gui.get<tgui::Panel>("objectsPanel");
         tgui::Panel::Ptr requiresPanel = gui.get<tgui::Panel>("requiresPanel");
-        tgui::Scrollbar::Ptr spritesScrollbar = gui.get<tgui::Scrollbar>("spritesScrollbar");
-        tgui::Scrollbar::Ptr objectsScrollbar = gui.get<tgui::Scrollbar>("objectsScrollbar");
+        tgui::Scrollbar::Ptr spritesScrollbar
+            = gui.get<tgui::Scrollbar>("spritesScrollbar");
+        tgui::Scrollbar::Ptr objectsScrollbar
+            = gui.get<tgui::Scrollbar>("objectsScrollbar");
 
         GUI::buildToolbar(mainPanel, editorPanel, scene);
 
@@ -156,11 +160,15 @@ namespace obe::Editor
         GUI::buildEditorObjectsMenu(objectsPanel, requiresPanel, objectsScrollbar, scene);
 
         tgui::EditBox::Ptr cameraSizeInput = gui.get<tgui::EditBox>("cameraSizeInput");
-        tgui::EditBox::Ptr cameraPositionXInput = gui.get<tgui::EditBox>("cameraPositionXInput");
-        tgui::EditBox::Ptr cameraPositionYInput = gui.get<tgui::EditBox>("cameraPositionYInput");
+        tgui::EditBox::Ptr cameraPositionXInput
+            = gui.get<tgui::EditBox>("cameraPositionXInput");
+        tgui::EditBox::Ptr cameraPositionYInput
+            = gui.get<tgui::EditBox>("cameraPositionYInput");
 
-        tgui::CheckBox::Ptr enableGridCheckbox = gui.get<tgui::CheckBox>("enableGridCheckbox");
-        tgui::CheckBox::Ptr snapGridCheckbox = gui.get<tgui::CheckBox>("snapGridCheckbox");
+        tgui::CheckBox::Ptr enableGridCheckbox
+            = gui.get<tgui::CheckBox>("enableGridCheckbox");
+        tgui::CheckBox::Ptr snapGridCheckbox
+            = gui.get<tgui::CheckBox>("snapGridCheckbox");
         tgui::EditBox::Ptr mapNameInput = gui.get<tgui::EditBox>("mapNameInput");
         tgui::Label::Ptr savedLabel = gui.get<tgui::Label>("savedLabel");
         tgui::Label::Ptr infoLabel = gui.get<tgui::Label>("infoLabel");
@@ -170,9 +178,9 @@ namespace obe::Editor
             = gui.get<tgui::CheckBox>("saveCameraPositionCheckbox");
 
         // Map Editor
-        Graphics::LevelSprite* hoveredSprite = nullptr;
-        Graphics::LevelSprite* selectedSprite = nullptr;
-        Graphics::LevelSpriteHandlePoint* selectedHandlePoint = nullptr;
+        Graphics::Sprite* hoveredSprite = nullptr;
+        Graphics::Sprite* selectedSprite = nullptr;
+        Graphics::SpriteHandlePoint* selectedHandlePoint = nullptr;
         Scene::SceneNode* sceneNodeGrabbed = nullptr;
         int selectedSpriteOffsetX = 0;
         int selectedSpriteOffsetY = 0;
@@ -198,18 +206,18 @@ namespace obe::Editor
         cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
 
         // Connect InputManager Actions
-        connectSaveActions(editorTriggers.get(), inputManager, mapName, scene, waitForMapSaving,
-            savedLabel, saveCameraPositionCheckbox);
+        connectSaveActions(editorTriggers.get(), inputManager, mapName, scene,
+            waitForMapSaving, savedLabel, saveCameraPositionCheckbox);
         connectCamMovementActions(
             editorTriggers.get(), inputManager, scene, cameraSpeed, framerateManager);
-        connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox, snapGridCheckbox,
-            cursor, editorGrid);
+        connectGridActions(editorTriggers.get(), inputManager, enableGridCheckbox,
+            snapGridCheckbox, cursor, editorGrid);
         connectMenuActions(inputManager, editMode, editorPanel);
         connectSpriteLayerActions(
             editorTriggers.get(), inputManager, selectedSprite, scene, currentLayer);
-        connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite, selectedSprite,
-            selectedHandlePoint, scene, cursor, editorGrid, selectedSpriteOffsetX,
-            selectedSpriteOffsetY, tooltip, editorUnit);
+        connectSpriteActions(editorTriggers.get(), inputManager, hoveredSprite,
+            selectedSprite, selectedHandlePoint, scene, cursor, editorGrid,
+            selectedSpriteOffsetX, selectedSpriteOffsetY, tooltip, editorUnit);
         connectCollidersActions(editorTriggers.get(), inputManager, scene, cursor,
             colliderPtGrabbed, selectedMasterCollider, masterColliderGrabbed);
         connectSceneNodeActions(
@@ -217,14 +225,15 @@ namespace obe::Editor
         connectGameConsoleActions(inputManager, gameConsole);
         connectCopyPasteActions(editorTriggers.get(), inputManager, scene, sceneClipboard,
             savedLabel, selectedMasterCollider, selectedSprite);
-        inputManager.getAction("ExitEditor").connect([](const Input::InputActionEvent& event) {
-            System::MainWindow.close();
-        });
+        inputManager.getAction("ExitEditor")
+            .connect(
+                [](const Input::InputActionEvent& event) { System::MainWindow.close(); });
 
         auto editModeCallback = [&editorTriggers, &inputManager, editMode]() {
-            editorTriggers->pushParameter("EditModeChanged", "mode", editMode->getSelectedItem());
+            editorTriggers->pushParameter(
+                "EditModeChanged", "mode", editMode->getSelectedItem());
             editorTriggers->trigger("EditModeChanged");
-            if (editMode->getSelectedItem() == "LevelSprites")
+            if (editMode->getSelectedItem() == "Sprites")
             {
                 inputManager.addContext("spriteEditing");
             }
@@ -257,7 +266,8 @@ namespace obe::Editor
 
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
+        System::Path("boot.lua")
+            .load(System::Loaders::luaLoader, Script::ScriptEngine, true);
         Script::ScriptEngine.dostring("Editor.Start()");
 
         // scene.setUpdateState(false);
@@ -278,8 +288,8 @@ namespace obe::Editor
                 waitForMapSaving += framerateManager.getDeltaTime();
                 if (waitForMapSaving > 1 && waitForMapSaving < 2)
                 {
-                    savedLabel->hideWithEffect(
-                        tgui::ShowAnimationType::SlideFromTop, sf::Time(sf::seconds(0.5)));
+                    savedLabel->hideWithEffect(tgui::ShowAnimationType::SlideFromTop,
+                        sf::Time(sf::seconds(0.5)));
                     waitForMapSaving = 2;
                 }
                 else if (waitForMapSaving > 3)
@@ -323,18 +333,18 @@ namespace obe::Editor
             }
 
             // Sprite Editing
-            if (editMode->getSelectedItem() == "LevelSprites")
+            if (editMode->getSelectedItem() == "Sprites")
             {
                 scene.enableShowSceneNodes(true);
                 scene.enableShowCollision(true, true, false, false);
 
                 if (hoveredSprite == nullptr)
                 {
-                    hoveredSprite = scene.getLevelSpriteByPosition(
+                    hoveredSprite = scene.getSpriteByPosition(
                         cursor.getPosition(), -pixelCamera, currentLayer);
                     if (hoveredSprite != nullptr && hoveredSprite != selectedSprite)
                     {
-                        hoveredSprite = scene.getLevelSpriteByPosition(
+                        hoveredSprite = scene.getSpriteByPosition(
                             cursor.getPosition(), -pixelCamera, currentLayer);
                         hoveredSprite->setColor(sf::Color(0, 255, 255));
 
@@ -349,8 +359,9 @@ namespace obe::Editor
                             hoveredSprite->getPosition().to(editorUnit).x,
                             hoveredSprite->getPosition().to(editorUnit).y,
                             hoveredSprite->getSize().to(editorUnit).x,
-                            hoveredSprite->getSize().to(editorUnit).y, hoveredSprite->getRotation(),
-                            hoveredSprite->getLayer(), hoveredSprite->getZDepth());
+                            hoveredSprite->getSize().to(editorUnit).y,
+                            hoveredSprite->getRotation(), hoveredSprite->getLayer(),
+                            hoveredSprite->getZDepth());
                     }
                     else
                         hoveredSprite = nullptr;
@@ -359,7 +370,7 @@ namespace obe::Editor
                 {
                     tooltip.setPosition(cursor.getX() + 40, cursor.getY());
                     bool outHover = false;
-                    Graphics::LevelSprite* testHoverSprite = scene.getLevelSpriteByPosition(
+                    Graphics::Sprite* testHoverSprite = scene.getSpriteByPosition(
                         cursor.getPosition(), -pixelCamera, currentLayer);
                     if (testHoverSprite != hoveredSprite)
                         outHover = true;
@@ -393,7 +404,8 @@ namespace obe::Editor
             // Collision Edition
             if (editMode->getSelectedItem() == "Collisions")
             {
-                const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x,
+                const Transform::UnitVector cursCoord(
+                    cursor.getConstrainedX() + pixelCamera.x,
                     cursor.getConstrainedY() + pixelCamera.y);
 
                 scene.enableShowSceneNodes(true);
@@ -402,10 +414,12 @@ namespace obe::Editor
                 {
                     selectedMasterCollider->clearHighlights();
                     selectedMasterCollider->highlightLine(
-                        selectedMasterCollider->findClosestSegment(cursCoord).first.index);
+                        selectedMasterCollider->findClosestSegment(cursCoord)
+                            .first.index);
                 }
                 if (Collision::PolygonalCollider* col
-                    = scene.getColliderByCentroidPosition(cursor.getPosition() + pixelCamera);
+                    = scene.getColliderByCentroidPosition(
+                        cursor.getPosition() + pixelCamera);
                     col != nullptr)
                 {
                     tooltip.setText("Hovered Collider : \n"
@@ -419,7 +433,8 @@ namespace obe::Editor
 
             if (editMode->getSelectedItem() == "SceneNodes")
             {
-                const Transform::UnitVector cursCoord(cursor.getConstrainedX() + pixelCamera.x,
+                const Transform::UnitVector cursCoord(
+                    cursor.getConstrainedX() + pixelCamera.x,
                     cursor.getConstrainedY() + pixelCamera.y);
 
                 scene.enableShowCollision(true, true, false, false);
@@ -452,13 +467,13 @@ namespace obe::Editor
                                          ->getPosition(Transform::Referential::TopLeft)
                                          .to<Transform::Units::ScenePixels>()
                                          .x)
-                      + int(cursor.getX()))
+                    + int(cursor.getX()))
                 + ", "
                 + std::to_string(int(scene.getCamera()
                                          ->getPosition(Transform::Referential::TopLeft)
                                          .to<Transform::Units::ScenePixels>()
                                          .y)
-                      + int(cursor.getY()))
+                    + int(cursor.getY()))
                 + ")" + std::string("   Layer : ") + std::to_string(currentLayer));
 
             while (System::MainWindow.pollEvent(event))
@@ -471,9 +486,10 @@ namespace obe::Editor
                 case sf::Event::Resized:
                     Transform::UnitVector::Screen.w = event.size.width;
                     Transform::UnitVector::Screen.h = event.size.height;
-                    System::MainWindow.setView(
-                        sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                    gui.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                    System::MainWindow.setView(sf::View(
+                        sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                    gui.setView(sf::View(
+                        sf::FloatRect(0, 0, event.size.width, event.size.height)));
                     GUI::calculateFontSize();
                     GUI::applyFontSize(mainPanel);
                     GUI::applyScrollbarMaxValue(mainPanel);
@@ -498,20 +514,23 @@ namespace obe::Editor
                     if (event.mouseWheel.delta >= scrollSensitive)
                     {
                         scene.getCamera()->scale(0.9,
-                            Transform::Referential(
-                                double(cursor.getX()) / double(System::MainWindow.getSize().x),
-                                double(cursor.getY()) / double(System::MainWindow.getSize().y)));
+                            Transform::Referential(double(cursor.getX())
+                                    / double(System::MainWindow.getSize().x),
+                                double(cursor.getY())
+                                    / double(System::MainWindow.getSize().y)));
                         gameConsole.scroll(-1);
                     }
                     else if (event.mouseWheel.delta <= -scrollSensitive)
                     {
                         scene.getCamera()->scale(1.1,
-                            Transform::Referential(
-                                double(cursor.getX()) / double(System::MainWindow.getSize().x),
-                                double(cursor.getY()) / double(System::MainWindow.getSize().y)));
+                            Transform::Referential(double(cursor.getX())
+                                    / double(System::MainWindow.getSize().x),
+                                double(cursor.getY())
+                                    / double(System::MainWindow.getSize().y)));
                         gameConsole.scroll(1);
                     }
-                    cameraSizeInput->setText(std::to_string(scene.getCamera()->getSize().y / 2));
+                    cameraSizeInput->setText(
+                        std::to_string(scene.getCamera()->getSize().y / 2));
                     break;
                 case sf::Event::MouseButtonPressed:
                 case sf::Event::MouseButtonReleased:
@@ -545,12 +564,21 @@ namespace obe::Editor
             // Draw Everything Here
             if (framerateManager.doRender())
             {
-                if (saveCamPosX != scene.getCamera()->getPosition(Transform::Referential::TopLeft).x
+                if (saveCamPosX
+                        != scene.getCamera()
+                               ->getPosition(Transform::Referential::TopLeft)
+                               .x
                     || saveCamPosY
-                        != scene.getCamera()->getPosition(Transform::Referential::TopLeft).y)
+                        != scene.getCamera()
+                               ->getPosition(Transform::Referential::TopLeft)
+                               .y)
                 {
-                    saveCamPosX = scene.getCamera()->getPosition(Transform::Referential::TopLeft).x;
-                    saveCamPosY = scene.getCamera()->getPosition(Transform::Referential::TopLeft).y;
+                    saveCamPosX = scene.getCamera()
+                                      ->getPosition(Transform::Referential::TopLeft)
+                                      .x;
+                    saveCamPosY = scene.getCamera()
+                                      ->getPosition(Transform::Referential::TopLeft)
+                                      .y;
                     cameraPositionXInput->setText(std::to_string(saveCamPosX));
                     cameraPositionYInput->setText(std::to_string(saveCamPosY));
                 }

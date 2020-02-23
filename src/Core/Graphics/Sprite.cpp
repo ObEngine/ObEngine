@@ -1,5 +1,5 @@
 #include <Graphics/DrawUtils.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -9,7 +9,7 @@
 
 namespace obe::Graphics
 {
-    LevelSprite::LevelSprite(const std::string& id)
+    Sprite::Sprite(const std::string& id)
         : Selectable(false)
         , Component(id)
     {
@@ -24,7 +24,7 @@ namespace obe::Graphics
         m_handlePoints.emplace_back(this);
     }
 
-    void LevelSprite::useTextureSize()
+    void Sprite::useTextureSize()
     {
         const sf::Vector2u textureSize = this->getTexture().getSize();
         const Transform::UnitVector initialSpriteSize(
@@ -32,11 +32,13 @@ namespace obe::Graphics
         this->setSize(initialSpriteSize);
     }
 
-    void LevelSprite::draw(const Transform::UnitVector& camera)
+    void Sprite::draw(const Transform::UnitVector& camera)
     {
-        const Transform::UnitVector position = m_positionTransformer(m_position, camera, m_layer);
-        const auto toVertex
-            = [](const Transform::UnitVector& uv) { return sf::Vertex(sf::Vector2f(uv.x, uv.y)); };
+        const Transform::UnitVector position
+            = m_positionTransformer(m_position, camera, m_layer);
+        const auto toVertex = [](const Transform::UnitVector& uv) {
+            return sf::Vertex(sf::Vector2f(uv.x, uv.y));
+        };
         std::array<sf::Vertex, 4> vertices;
         std::array<Transform::Referential, 4> referentials
             = { Transform::Referential::TopLeft, Transform::Referential::BottomLeft,
@@ -44,9 +46,9 @@ namespace obe::Graphics
         unsigned int vertexIndex = 0;
         for (Transform::Referential referential : referentials)
         {
-            vertices[vertexIndex++]
-                = toVertex(m_positionTransformer(Rect::getPosition(referential), camera, m_layer)
-                               .to<Transform::Units::ScenePixels>());
+            vertices[vertexIndex++] = toVertex(
+                m_positionTransformer(Rect::getPosition(referential), camera, m_layer)
+                    .to<Transform::Units::ScenePixels>());
         }
 
         m_sprite.setVertices(vertices);
@@ -62,12 +64,12 @@ namespace obe::Graphics
         }
     }
 
-    std::string_view LevelSprite::type() const
+    std::string_view Sprite::type() const
     {
         return ComponentType;
     }
 
-    void LevelSprite::loadTexture(const std::string& path)
+    void Sprite::loadTexture(const std::string& path)
     {
         if (path != "")
         {
@@ -81,41 +83,42 @@ namespace obe::Graphics
         }
     }
 
-    void LevelSprite::resetUnit(Transform::Units unit)
+    void Sprite::resetUnit(Transform::Units unit)
     {
     }
 
-    void LevelSprite::setTexture(const sf::Texture& texture)
+    void Sprite::setTexture(const sf::Texture& texture)
     {
         m_texture = &texture;
         m_sprite.setTexture(texture);
-        m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+        m_sprite.setTextureRect(
+            sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }
 
-    void LevelSprite::setTextureRect(
+    void Sprite::setTextureRect(
         unsigned int x, unsigned int y, unsigned int width, unsigned int height)
     {
         m_sprite.setTextureRect(sf::IntRect(x, y, width, height));
     }
 
-    const sf::Texture& LevelSprite::getTexture() const
+    const sf::Texture& Sprite::getTexture() const
     {
         return *m_texture;
     }
 
-    void LevelSprite::setLayer(int layer)
+    void Sprite::setLayer(int layer)
     {
         m_layer = layer;
         m_layerChanged = true;
     }
 
-    void LevelSprite::setZDepth(int zdepth)
+    void Sprite::setZDepth(int zdepth)
     {
         m_zdepth = zdepth;
         m_layerChanged = true;
     }
 
-    void LevelSprite::setAntiAliasing(bool antiAliasing)
+    void Sprite::setAntiAliasing(bool antiAliasing)
     {
         if (antiAliasing != m_antiAliasing && m_texture && !m_path.empty())
         {
@@ -128,29 +131,30 @@ namespace obe::Graphics
         }
     }
 
-    void LevelSprite::setRotation(double rotate)
+    void Sprite::setRotation(double rotate)
     {
         Rect::setRotation(rotate, this->getPosition(Transform::Referential::Center));
     }
 
-    void LevelSprite::rotate(double addRotate)
+    void Sprite::rotate(double addRotate)
     {
         Rect::rotate(addRotate, this->getPosition(Transform::Referential::Center));
     }
 
-    void LevelSprite::setScalingOrigin(int x, int y)
+    void Sprite::setScalingOrigin(int x, int y)
     {
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void LevelSprite::drawHandle(const Transform::UnitVector& camera) const
+    void Sprite::drawHandle(const Transform::UnitVector& camera) const
     {
-        const Transform::UnitVector position = m_positionTransformer(m_position, camera, m_layer)
-                                                   .to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector position
+            = m_positionTransformer(m_position, camera, m_layer)
+                  .to<Transform::Units::ScenePixels>();
         Rect::draw(position.x, position.y);
     }
 
-    LevelSpriteHandlePoint* LevelSprite::getHandlePoint(
+    SpriteHandlePoint* Sprite::getHandlePoint(
         Transform::UnitVector& cameraPosition, int posX, int posY)
     {
         const Transform::UnitVector pixelCamera
@@ -163,17 +167,17 @@ namespace obe::Graphics
         {
             const Transform::UnitVector refPoint
                 = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
-            int lowerXBound = std::min(refPoint.x - LevelSpriteHandlePoint::radius,
-                refPoint.x + LevelSpriteHandlePoint::radius);
-            int upperXBound = std::max(refPoint.x - LevelSpriteHandlePoint::radius,
-                refPoint.x + LevelSpriteHandlePoint::radius);
+            int lowerXBound = std::min(refPoint.x - SpriteHandlePoint::radius,
+                refPoint.x + SpriteHandlePoint::radius);
+            int upperXBound = std::max(refPoint.x - SpriteHandlePoint::radius,
+                refPoint.x + SpriteHandlePoint::radius);
             if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound)
                 && ref != Transform::Referential::Center)
             {
-                int lowerYBound = std::min(refPoint.y - LevelSpriteHandlePoint::radius,
-                    refPoint.y + LevelSpriteHandlePoint::radius);
-                int upperYBound = std::max(refPoint.y - LevelSpriteHandlePoint::radius,
-                    refPoint.y + LevelSpriteHandlePoint::radius);
+                int lowerYBound = std::min(refPoint.y - SpriteHandlePoint::radius,
+                    refPoint.y + SpriteHandlePoint::radius);
+                int upperYBound = std::max(refPoint.y - SpriteHandlePoint::radius,
+                    refPoint.y + SpriteHandlePoint::radius);
                 if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                     return &m_handlePoints[i];
             }
@@ -184,7 +188,8 @@ namespace obe::Graphics
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
         const Transform::UnitVector topPos
-            = this->getPosition(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
+            = this->getPosition(Transform::Referential::Top)
+                  .to<Transform::Units::ScenePixels>();
         Transform::UnitVector rotHandle = topPos;
         Transform::UnitVector result;
         const double dy = m_size.y / 4;
@@ -192,78 +197,78 @@ namespace obe::Graphics
         result.y = (dy * cosAngle) * -1;
         rotHandle.add(result);
 
-        const int lowerXBound = std::min(rotHandle.x - LevelSpriteHandlePoint::radius,
-            rotHandle.x + LevelSpriteHandlePoint::radius);
-        const int upperXBound = std::max(rotHandle.x - LevelSpriteHandlePoint::radius,
-            rotHandle.x + LevelSpriteHandlePoint::radius);
+        const int lowerXBound = std::min(rotHandle.x - SpriteHandlePoint::radius,
+            rotHandle.x + SpriteHandlePoint::radius);
+        const int upperXBound = std::max(rotHandle.x - SpriteHandlePoint::radius,
+            rotHandle.x + SpriteHandlePoint::radius);
         if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound))
         {
-            const int lowerYBound = std::min(rotHandle.y - LevelSpriteHandlePoint::radius,
-                rotHandle.y + LevelSpriteHandlePoint::radius);
-            const int upperYBound = std::max(rotHandle.y - LevelSpriteHandlePoint::radius,
-                rotHandle.y + LevelSpriteHandlePoint::radius);
+            const int lowerYBound = std::min(rotHandle.y - SpriteHandlePoint::radius,
+                rotHandle.y + SpriteHandlePoint::radius);
+            const int upperYBound = std::max(rotHandle.y - SpriteHandlePoint::radius,
+                rotHandle.y + SpriteHandlePoint::radius);
             if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                 return &m_handlePoints.back();
         }
         return nullptr;
     }
 
-    void LevelSprite::setTranslationOrigin(int x, int y)
+    void Sprite::setTranslationOrigin(int x, int y)
     {
         m_sprite.setTranslationOrigin(x, y);
     }
 
-    void LevelSprite::setRotationOrigin(int x, int y)
+    void Sprite::setRotationOrigin(int x, int y)
     {
         m_sprite.setRotationOrigin(x, y);
     }
 
-    void LevelSprite::setColor(sf::Color newColor)
+    void Sprite::setColor(sf::Color newColor)
     {
         m_sprite.setColor(newColor);
     }
 
-    sf::Color LevelSprite::getColor() const
+    sf::Color Sprite::getColor() const
     {
         return m_sprite.getColor();
     }
 
-    sfe::ComplexSprite& LevelSprite::getSprite()
+    sfe::ComplexSprite& Sprite::getSprite()
     {
         return m_sprite;
     }
 
-    double LevelSprite::getSpriteWidth() const
+    double Sprite::getSpriteWidth() const
     {
         return m_sprite.getGlobalBounds().width;
     }
 
-    double LevelSprite::getSpriteHeight() const
+    double Sprite::getSpriteHeight() const
     {
         return m_sprite.getGlobalBounds().height;
     }
 
-    int LevelSprite::getLayer() const
+    int Sprite::getLayer() const
     {
         return m_layer;
     }
 
-    int LevelSprite::getZDepth() const
+    int Sprite::getZDepth() const
     {
         return m_zdepth;
     }
 
-    bool LevelSprite::getAntiAliasing() const
+    bool Sprite::getAntiAliasing() const
     {
         return m_antiAliasing;
     }
 
-    std::string LevelSprite::getPath() const
+    std::string Sprite::getPath() const
     {
         return m_path;
     }
 
-    sf::FloatRect LevelSprite::getRect()
+    sf::FloatRect Sprite::getRect()
     {
         const Transform::UnitVector realPosition
             = Rect::m_position.to<Transform::Units::ScenePixels>();
@@ -276,75 +281,78 @@ namespace obe::Graphics
         return mrect;
     }
 
-    void LevelSprite::setVisible(bool visible)
+    void Sprite::setVisible(bool visible)
     {
         m_visible = visible;
     }
 
-    bool LevelSprite::isVisible() const
+    bool Sprite::isVisible() const
     {
         return m_visible;
     }
 
-    std::string LevelSprite::getParentId() const
+    std::string Sprite::getParentId() const
     {
         return m_parentId;
     }
 
-    void LevelSprite::setParentId(const std::string& parent)
+    void Sprite::setParentId(const std::string& parent)
     {
         m_parentId = parent;
     }
 
-    int LevelSprite::getXScaleFactor() const
+    int Sprite::getXScaleFactor() const
     {
         return obe::Utils::Math::sign(m_sprite.getScale().x);
     }
 
-    int LevelSprite::getYScaleFactor() const
+    int Sprite::getYScaleFactor() const
     {
         return obe::Utils::Math::sign(m_sprite.getScale().y);
     }
 
-    void LevelSprite::setPositionTransformer(
+    void Sprite::setPositionTransformer(
         const PositionTransformer transformer) // <REVISION> const ref ?
     {
         m_positionTransformer = transformer;
     }
 
-    PositionTransformer LevelSprite::getPositionTransformer() const
+    PositionTransformer Sprite::getPositionTransformer() const
     {
         return m_positionTransformer;
     }
 
-    unsigned int LevelSpriteHandlePoint::radius = 6;
-    LevelSpriteHandlePoint::LevelSpriteHandlePoint(LevelSprite* parent, Transform::Referential ref)
+    unsigned int SpriteHandlePoint::radius = 6;
+    SpriteHandlePoint::SpriteHandlePoint(
+        Sprite* parent, Transform::Referential ref)
         : m_referential(ref)
     {
         m_sprite = parent;
-        m_type = LevelSpriteHandlePointType::ScaleHandle;
+        m_type = SpriteHandlePointType::ScaleHandle;
     }
 
-    LevelSpriteHandlePoint::LevelSpriteHandlePoint(LevelSprite* parent)
+    SpriteHandlePoint::SpriteHandlePoint(Sprite* parent)
     {
         m_sprite = parent;
-        m_type = LevelSpriteHandlePointType::RotateHandle;
+        m_type = SpriteHandlePointType::RotateHandle;
     }
 
-    void LevelSpriteHandlePoint::moveTo(
+    void SpriteHandlePoint::moveTo(
         const Transform::UnitVector& position, const Transform::UnitVector& camera)
     {
-        m_dp = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
-        if (m_type == LevelSpriteHandlePointType::ScaleHandle)
+        m_dp
+            = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
+        if (m_type == SpriteHandlePointType::ScaleHandle)
         {
             // std::cout << "Was at : " <<
             // m_rect->getPosition(m_referential).to<Transform::Units::ScenePixels>()
             // << std::endl; std::cout << "Set : " << x << ", " << y <<
             // std::endl;
-            const Transform::UnitVector pos
-                = m_sprite->getPosition(m_referential).to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector pos = m_sprite->getPosition(m_referential)
+                                                  .to<Transform::Units::ScenePixels>();
             const Transform::UnitVector oppositePos
-                = m_sprite->getPosition(m_referential.flip()).to<Transform::Units::ScenePixels>();
+                = m_sprite->getPosition(m_referential.flip())
+                      .to<Transform::Units::ScenePixels>();
 
             if (m_referential.isOnCorner())
             {
@@ -353,8 +361,10 @@ namespace obe::Graphics
                 const double spriteAngle = m_sprite->getRotation();
                 const Transform::UnitVector oppositePosInRef
                     = oppositePos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector posInRef = pos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector cursorInRef = m_dp.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector posInRef
+                    = pos.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector cursorInRef
+                    = m_dp.rotate(spriteAngle, centerSpritePos);
                 Transform::UnitVector scaleVector
                     = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
@@ -362,7 +372,8 @@ namespace obe::Graphics
                     (posInRef - oppositePosInRef), scaleVector);
                 if ((cursorInRef - oppositePosInRef).x != 0
                     && (cursorInRef - oppositePosInRef).y != 0)
-                    m_sprite->scale(Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit),
+                    m_sprite->scale(
+                        Transform::UnitVector(vScale, vScale, m_sprite->getSize().unit),
                         m_referential.flip());
             }
             else
@@ -375,8 +386,8 @@ namespace obe::Graphics
 
                 /*m_dp.x = pos.x + (valDp * e1.x) / len;
                 m_dp.y = pos.y + (valDp * e1.y) / len;*/
-                const Transform::UnitVector npp(
-                    pos.x + (valDp * e1.x) / len, pos.y + (valDp * e1.y) / len, m_dp.unit);
+                const Transform::UnitVector npp(pos.x + (valDp * e1.x) / len,
+                    pos.y + (valDp * e1.y) / len, m_dp.unit);
                 m_sprite->setPointPosition(npp, m_referential);
             }
         }
@@ -386,28 +397,29 @@ namespace obe::Graphics
                 = m_sprite->getPosition(Transform::Referential::Center)
                       .to<Transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite->getScaleFactor().y < 0) ? 180 : 0))
-                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
+                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0
+                    / obe::Utils::Math::pi;
 
             m_sprite->setRotation(std::fmod(n, 360));
         }
     }
 
-    Transform::Referential LevelSpriteHandlePoint::getReferential() const
+    Transform::Referential SpriteHandlePoint::getReferential() const
     {
         return m_referential;
     }
 
-    LevelSpriteHandlePointType LevelSpriteHandlePoint::getType() const
+    SpriteHandlePointType SpriteHandlePoint::getType() const
     {
         return m_type;
     }
 
-    Transform::Rect& LevelSpriteHandlePoint::getRect() const
+    Transform::Rect& SpriteHandlePoint::getRect() const
     {
         return *m_sprite;
     }
 
-    void LevelSprite::dump(vili::ComplexNode& target) const
+    void Sprite::dump(vili::ComplexNode& target) const
     {
         vili::ComplexNode& ser = target.createComplexNode(m_id);
         ser.createDataNode("path", m_path);
@@ -427,7 +439,7 @@ namespace obe::Graphics
         ser.createDataNode("yTransform", m_positionTransformer.getYTransformerName());
     }
 
-    void LevelSprite::load(vili::ComplexNode& data)
+    void Sprite::load(vili::ComplexNode& data)
     {
         std::string spriteXTransformer;
         std::string spriteYTransformer;
@@ -482,24 +494,25 @@ namespace obe::Graphics
         this->setPosition(spritePos);
         this->setSize(spriteSize);
         this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
-        const PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
+        const PositionTransformer positionTransformer(
+            spriteXTransformer, spriteYTransformer);
         this->setPositionTransformer(positionTransformer);
         this->setLayer(layer);
         this->setZDepth(zdepth);
     }
 
-    void LevelSprite::setShader(Shader* shader)
+    void Sprite::setShader(Shader* shader)
     {
         m_shader = shader;
         m_shader->setUniform("texture", sf::Shader::CurrentTexture);
     }
 
-    Shader* LevelSprite::getShader() const
+    Shader* Sprite::getShader() const
     {
         return m_shader;
     }
 
-    bool LevelSprite::hasShader() const
+    bool Sprite::hasShader() const
     {
         return (m_shader != nullptr);
     }

@@ -65,8 +65,8 @@ namespace obe::Scene
             }
         }
 
-        throw aube::ErrorHandler::Raise(
-            "obe.Scene.Scene.ComponentNotFound", { { "sceneId", m_id }, { "componentId", id } });
+        throw aube::ErrorHandler::Raise("obe.Scene.Scene.ComponentNotFound",
+            { { "sceneId", m_id }, { "componentId", id } });
     }
 
     void TXScene::clear()
@@ -93,7 +93,8 @@ namespace obe::Scene
             m_name = data.getDataNode("name").get<std::string>();
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoName", { { "id", m_id } });
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Scene.Scene.NoName", { { "id", m_id } });
 
         /*if (data.contains(vili::NodeType::ComplexNode, "View"))
         {
@@ -133,7 +134,8 @@ namespace obe::Scene
                 const std::string componentType = component->getDataNode("type");
                 if (componentType == "Sprite")
                 {
-                    this->add<Graphics::LevelSprite>(component->getDataNode("id")).load(*component);
+                    this->add<Graphics::Sprite>(component->getDataNode("id"))
+                        .load(*component);
                 }
                 else if (componentType == "Collider")
                 {
@@ -215,8 +217,8 @@ namespace obe::Scene
     std::vector<unsigned int> LuaComponent::AllEnvs;
     LuaComponent::LuaComponent()
     {
-        m_triggerNamespace
-            = Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 12);
+        m_triggerNamespace = Utils::String::getRandomKey(
+            Utils::String::Alphabet + Utils::String::Numbers, 12);
         Triggers::TriggerDatabase::GetInstance().createNamespace(m_triggerNamespace);
         m_localTriggers.reset(Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
                                   m_triggerNamespace, "Local"),
@@ -239,7 +241,8 @@ namespace obe::Scene
         LUAENV["__OBJECT_INIT"] = false;
         LUAENV["Private"] = m_triggerNamespace;
 
-        Script::executeFile(m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
+        Script::executeFile(
+            m_envIndex, System::Path("Lib/Internal/ObjectInit.lua").find());
     }
 
     kaguya::LuaTable LuaComponent::access() const

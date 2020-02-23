@@ -10,8 +10,8 @@ namespace kaguya
  */
 namespace obe::Bindings::GraphicsBindings
 {
-    void LoadLevelSpriteHandlePoint(kaguya::State* lua);
-    void LoadLevelSprite(kaguya::State* lua);
+    void LoadSpriteHandlePoint(kaguya::State* lua);
+    void LoadSprite(kaguya::State* lua);
     void LoadResourceManager(kaguya::State* lua);
     void LoadCanvas(kaguya::State* lua);
     void LoadGraphicsUtils(kaguya::State* lua);

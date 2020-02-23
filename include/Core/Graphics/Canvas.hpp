@@ -7,7 +7,7 @@
 #include <sfe/RichText.hpp>
 
 #include <Debug/Logger.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Transform/Polygon.hpp>
 #include <Types/Identifiable.hpp>
 
@@ -216,17 +216,17 @@ namespace obe::Graphics::Canvas
     };
 
     /*
-     * \brief A Canvas Sprite
+     * \brief A Canvas Image
      * \lua_bind{Canvas.Sprite}
      */
-    class Sprite : public CanvasPositionable
+    class Image : public CanvasPositionable
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Sprite;
 
         std::string path;
         sfe::ComplexSprite sprite;
-        explicit Sprite(Canvas* parent, const std::string& id);
+        explicit Image(Canvas* parent, const std::string& id);
         /**
          * \brief Draw the Sprite
          * \param target Target where to draw the Sprite to
@@ -241,7 +241,7 @@ namespace obe::Graphics::Canvas
     class Canvas
     {
     private:
-        LevelSprite* m_target = nullptr;
+        Graphics::Sprite* m_target = nullptr;
         sf::RenderTexture m_canvas;
         std::vector<CanvasElement::Ptr> m_elements;
         bool m_sortRequired = true;
@@ -260,13 +260,13 @@ namespace obe::Graphics::Canvas
         CanvasElement* get(const std::string& id);
 
         /**
-         * \brief Set the LevelSprite where the Canvas should render
-         * \param target Pointer to the LevelSprite where the Canvas should
+         * \brief Sets the Sprite where the Canvas should render
+         * \param target Pointer to the Sprite where the Canvas should
          * render
          */
-        void setTarget(LevelSprite* target);
+        void setTarget(Sprite* target);
         /**
-         * \brief Render all the Canvas content to the LevelSprite target
+         * \brief Render all the Canvas content to the Sprite target
          */
         void render();
         /**

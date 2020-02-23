@@ -4,7 +4,7 @@
 
 #include <Collision/PolygonalCollider.hpp>
 #include <Component/Component.hpp>
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>

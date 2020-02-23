@@ -2,7 +2,7 @@
 #include <Animation/Animator.hpp>
 
 // ObEngineCore headers
-#include <Graphics/LevelSprite.hpp>
+#include <Graphics/Sprite.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -29,7 +29,8 @@ namespace obe::Animation
 
     void Animator::clear(bool clearMemory)
     {
-        Debug::Log->trace("<Animator> Clearing Animator at {0}", m_animatorPath.toString());
+        Debug::Log->trace(
+            "<Animator> Clearing Animator at {0}", m_animatorPath.toString());
         m_animationSet.clear();
         m_currentAnimation = nullptr;
         m_currentAnimationName = "NONE";
@@ -64,7 +65,8 @@ namespace obe::Animation
             m_animatorPath.toString(), m_animationSet.size());
         if (!m_animationSet.empty() && m_animationSet.find(key) == m_animationSet.end())
         {
-            throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Animation.Animator.AnimationNotFound",
                 { { "function", "setKey" }, { "animation", key },
                     { "%animator", m_animatorPath.toString() } });
         }
@@ -75,7 +77,8 @@ namespace obe::Animation
             {
                 if (m_currentAnimation->isAnimationOver())
                     changeAnim = true;
-                else if (m_animationSet[key]->getPriority() >= m_currentAnimation->getPriority())
+                else if (m_animationSet[key]->getPriority()
+                    >= m_currentAnimation->getPriority())
                     changeAnim = true;
             }
             else
@@ -97,7 +100,8 @@ namespace obe::Animation
 
     void Animator::loadAnimator()
     {
-        Debug::Log->debug("<Animator> Loading Animator at {0}", m_animatorPath.toString());
+        Debug::Log->debug(
+            "<Animator> Loading Animator at {0}", m_animatorPath.toString());
         std::vector<std::string> listDir;
         m_animatorPath.loadAll(System::Loaders::dirPathLoader, listDir);
         std::vector<std::string> allFiles;
@@ -139,9 +143,11 @@ namespace obe::Animation
     {
         if (!m_paused)
         {
-            Debug::Log->trace("<Animator> Updating Animator at {0}", m_animatorPath.toString());
+            Debug::Log->trace(
+                "<Animator> Updating Animator at {0}", m_animatorPath.toString());
             if (m_currentAnimation == nullptr)
-                throw aube::ErrorHandler::Raise("ObEngine.Animator.Animator.UpdateNullAnimation",
+                throw aube::ErrorHandler::Raise(
+                    "ObEngine.Animator.Animator.UpdateNullAnimation",
                     { { "animator", m_animatorPath.toString() } });
             if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
             {
@@ -190,7 +196,8 @@ namespace obe::Animation
         }
     }
 
-    void Animator::setTarget(Graphics::LevelSprite& sprite, AnimatorTargetScaleMode targetScaleMode)
+    void Animator::setTarget(
+        Graphics::Sprite& sprite, AnimatorTargetScaleMode targetScaleMode)
     {
         m_target = &sprite;
         m_targetScaleMode = targetScaleMode;

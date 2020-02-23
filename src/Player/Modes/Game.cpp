@@ -58,7 +58,8 @@ namespace obe::Modes
 
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        System::Path("boot.lua").load(System::Loaders::luaLoader, Script::ScriptEngine, true);
+        System::Path("boot.lua")
+            .load(System::Loaders::luaLoader, Script::ScriptEngine, true);
         Script::ScriptEngine.dostring("Game.Start()");
 
         // Game Starts
@@ -105,7 +106,7 @@ namespace obe::Modes
             {
                 System::MainWindow.clear(Graphics::Utils::ClearColor);
                 scene.draw();
-                for (auto& sprite : Graphics::LevelSprite::Pool)
+                for (auto& sprite : Graphics::Sprite::Pool)
                 {
                 }
 

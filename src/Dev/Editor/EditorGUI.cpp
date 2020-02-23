@@ -131,7 +131,7 @@ namespace obe::Editor::GUI
         infoLabel->setRenderer(baseTheme.getRenderer("Label"));
         infoLabel->setText("<>");
 
-        editMode->addItem("LevelSprites");
+        editMode->addItem("Sprites");
         editMode->addItem("Collisions");
         editMode->addItem("Play");
         editMode->addItem("SceneNodes");
@@ -450,7 +450,7 @@ namespace obe::Editor::GUI
             vili::ViliParser* sceneDump = scene.dump(false);
             int i = 0;
             for (vili::ComplexNode* spr :
-                sceneDump->root().at("LevelSprites").getAll<vili::ComplexNode>())
+                sceneDump->root().at("Sprites").getAll<vili::ComplexNode>())
             {
                 tgui::Panel::Ptr inspectorSprPanel = tgui::Panel::create();
                 inspectorLeftPanel->add(inspectorSprPanel);
@@ -697,7 +697,7 @@ namespace obe::Editor::GUI
         snapGridCheckbox->connect("checked", [&editorGrid, &cursor, editMode, &scene]() {
             cursor.setConstraint(
                 [editMode, &editorGrid, &scene](System::Cursor* cursor) {
-                    if (editMode->getSelectedItem() == "LevelSprites"
+                    if (editMode->getSelectedItem() == "Sprites"
                         || editMode->getSelectedItem() == "Collisions"
                         || editMode->getSelectedItem() == "SceneNodes")
                     {
