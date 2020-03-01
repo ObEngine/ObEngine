@@ -112,14 +112,6 @@ namespace obe::System::Loaders
      * \brief Load the Lua source from a file
      */
     extern Loader<kaguya::State> luaLoader;
-    /**
-     * \brief Load a sf::SoundBuffer from a file
-     */
-    extern Loader<sf::SoundBuffer> soundLoader;
-    /**
-     * \brief Load a sf::Music from a file
-     */
-    extern Loader<sf::Music> musicLoader;
 
     /*template <class LoaderType<class ResourceType>>
     inline

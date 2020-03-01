@@ -35,6 +35,7 @@ addons:
     - libgpgme11-dev
     - libsndfile1-dev
     - libudev-dev
+    - libasound2-dev
 
 before_script:
 - BUILD_PKG=${HOME}/build_pkgs

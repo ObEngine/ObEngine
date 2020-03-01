@@ -19,6 +19,9 @@ add_subdirectory(extlibs/spdlog)
 add_subdirectory(extlibs/lua)
 add_subdirectory(extlibs/kaguya)
 
+# Audio library
+add_subdirectory(extlibs/soloud)
+
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     add_subdirectory(extlibs/tinydir)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)

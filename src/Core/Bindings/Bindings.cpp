@@ -3,6 +3,7 @@
 
 // ObEngineCore headers
 #include <Bindings/AnimationBindings.hpp>
+#include <Bindings/AudioBindings.hpp>
 #include <Bindings/CPPBindings.hpp>
 #include <Bindings/CollisionBindings.hpp>
 #include <Bindings/ConfigBindings.hpp>
@@ -13,7 +14,6 @@
 #include <Bindings/SFMLBindings.hpp>
 #include <Bindings/SceneBindings.hpp>
 #include <Bindings/ScriptBindings.hpp>
-#include <Bindings/SoundBindings.hpp>
 #include <Bindings/SystemBindings.hpp>
 #include <Bindings/TimeBindings.hpp>
 #include <Bindings/TransformBindings.hpp>
@@ -47,6 +47,9 @@ namespace obe::Bindings
             .add("AnimationGroup", &AnimationBindings::LoadAnimationGroup)
             .add("Animation", &AnimationBindings::LoadAnimation)
             .add("Animator", &AnimationBindings::LoadAnimator)
+            // Audio
+            .add("AudioManager", &AudioBindings::LoadAudioManager)
+            .add("Sound", &AudioBindings::LoadSound)
             // Collision
             .add("PolygonalCollider", &CollisionBindings::LoadPolygonalCollider)
             .add("Trajectory", &CollisionBindings::LoadTrajectory)
@@ -80,9 +83,6 @@ namespace obe::Bindings
             .add("SceneNode", &SceneBindings::LoadSceneNode)
             // Script
             .add("Script", &ScriptBindings::LoadGameObject)
-            // Sound
-            .add("Music", &SoundBindings::LoadMusic)
-            .add("Sound", &SoundBindings::LoadSound)
             // System
             .add("Constants", &SystemBindings::LoadSystemConstants)
             .add("MountablePath", &SystemBindings::LoadMountablePath)
@@ -159,8 +159,8 @@ namespace obe::Bindings
         Debug::Log->info("Indexing Plugins...");
         for (auto& plugin : System::Plugins)
         {
-            Debug::Log->info(
-                "Indexing plugin bindings {} ({})", plugin->getId(), plugin->hasOnLoadBindings());
+            Debug::Log->info("Indexing plugin bindings {} ({})", plugin->getId(),
+                plugin->hasOnLoadBindings());
             if (plugin->hasOnLoadBindings())
                 BindTree.add(plugin->getId(),
                     [&plugin](kaguya::State* lua) { plugin->onLoadBindings(lua); });
