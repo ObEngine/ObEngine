@@ -87,7 +87,7 @@ namespace obe::Modes
                 case sf::Event::JoystickMoved:
                 case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
-                    Input::Monitors::RequireRefresh = true;
+                    Input::InputButtonMonitor::RequireRefresh = true;
                     if (event.key.code == sf::Keyboard::Escape)
                         System::MainWindow.close();
                     break;
@@ -98,8 +98,8 @@ namespace obe::Modes
             scene.update();
             Triggers::TriggerDatabase::GetInstance().update();
             inputManager.update();
-            if (Input::Monitors::RequireRefresh)
-                Input::Monitors::UpdateMonitors();
+            if (Input::InputButtonMonitor::RequireRefresh)
+                Input::InputButtonMonitor::Update();
             cursor.update();
 
             if (framerateManager.doRender())

@@ -9,13 +9,13 @@ namespace obe::Time
     /**
      * \brief Get the amount of milliseconds elapsed since Epoch
      * \return A TimeUnit containing the amount of milliseconds elapsed since
-     * Epoch
+     *         Epoch
      */
-    TimeUnit getTickSinceEpoch();
+    TimeUnit epochAsMilliseconds();
     /**
      * \brief Get the amount of microseconds elapsed since Epoch
      * \return A TimeUnit containing the amount of microseconds elapsed since
-     * Epoch
+     *         Epoch
      */
-    TimeUnit getTickSinceEpochMicro();
+    TimeUnit epochAsMicroseconds();
 } // namespace obe::Time

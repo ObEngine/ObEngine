@@ -18,7 +18,7 @@ namespace obe::System
     /**
      * \brief Class used to manipulate paths and dynamically load resources
      * (Based on multiple mounted paths)
-     * @Bind
+     * \bind{Path}
      */
     class Path
     {
@@ -59,7 +59,7 @@ namespace obe::System
          * based on the current path and the BasePath at index
          */
         Path getPath(unsigned int index);
-        /*
+        /**
          * \brief Finds the most priorized file corresponding to the Path
          * \return The full path to the most priorized file
          */
@@ -70,13 +70,11 @@ namespace obe::System
          */
         std::string toString() const;
 
-        template <template <class ResourceType> class LoaderType,
-            class ResourceType>
-        LoaderResult load(const LoaderType<ResourceType>& loader,
-            ResourceType& resource, bool allowFailure = false) const;
+        template <template <class ResourceType> class LoaderType, class ResourceType>
+        LoaderResult load(const LoaderType<ResourceType>& loader, ResourceType& resource,
+            bool allowFailure = false) const;
 
-        template <template <class ResourceType> class LoaderType,
-            class ResourceType>
+        template <template <class ResourceType> class LoaderType, class ResourceType>
         LoaderMultipleResult loadAll(const LoaderType<ResourceType>& loader,
             ResourceType& resource, bool allowFailure = false) const;
 
@@ -96,8 +94,7 @@ namespace obe::System
         static std::vector<MountablePath>& Paths();
     };
 
-    template <template <class ResourceType> class LoaderType,
-        class ResourceType>
+    template <template <class ResourceType> class LoaderType, class ResourceType>
     inline LoaderResult Path::load(const LoaderType<ResourceType>& loader,
         ResourceType& resource, bool allowFailure) const
     {
@@ -119,15 +116,12 @@ namespace obe::System
             return LoaderResult();
         else
             throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource",
-                { { "path", m_path } });
+                "ObEngine.System.Path.CantFindResource", { { "path", m_path } });
     }
 
-    template <template <class ResourceType> class LoaderType,
-        class ResourceType>
-    inline LoaderMultipleResult Path::loadAll(
-        const LoaderType<ResourceType>& loader, ResourceType& resource,
-        bool allowFailure) const
+    template <template <class ResourceType> class LoaderType, class ResourceType>
+    inline LoaderMultipleResult Path::loadAll(const LoaderType<ResourceType>& loader,
+        ResourceType& resource, bool allowFailure) const
     {
         std::vector<std::string> paths;
         for (MountablePath& mountedPath : MountedPaths)
@@ -146,8 +140,7 @@ namespace obe::System
         }
         if (!allowFailure && paths.empty())
             throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource",
-                { { "path", m_path } });
+                "ObEngine.System.Path.CantFindResource", { { "path", m_path } });
         else
             return LoaderMultipleResult(paths);
     }

@@ -70,11 +70,13 @@ namespace obe::Bindings::InputBindings
             [](Input::InputCombinationElement* self) { return self->first.get(); });
         (*lua)["obe"]["InputCondition"].setClass(
             kaguya::UserdataMetatable<Input::InputCondition>()
-                .addFunction("addCombinationElement", &Input::InputCondition::addCombinationElement)
+                .addFunction("addCombinationElement",
+                    &Input::InputCondition::addCombinationElement)
                 .addFunction("check", &Input::InputCondition::check)
                 .addFunction("getCombination", &Input::InputCondition::getCombination)
                 .addFunction("setCombination", &Input::InputCondition::setCombination)
-                .addFunction("setCombinationCode", &Input::InputCondition::setCombinationCode));
+                .addFunction(
+                    "setCombinationCode", &Input::InputCondition::setCombinationCode));
     }
 
     void LoadInputManager(kaguya::State* lua)
@@ -90,15 +92,15 @@ namespace obe::Bindings::InputBindings
                 .addFunction("setContext", &Input::InputManager::setContext)
                 .addFunction("update", &Input::InputManager::update));
 
-        (*lua)["obe"]["InputManager"]["addContext"]
-            = kaguya::function([](Input::InputManager& manager, const std::string& context) {
-                  return &manager.addContext(context);
-              });
+        (*lua)["obe"]["InputManager"]["addContext"] = kaguya::function(
+            [](Input::InputManager& manager, const std::string& context) {
+                return &manager.addContext(context);
+            });
 
-        (*lua)["obe"]["InputManager"]["removeContext"]
-            = kaguya::function([](Input::InputManager& manager, const std::string& context) {
-                  return &manager.removeContext(context);
-              });
+        (*lua)["obe"]["InputManager"]["removeContext"] = kaguya::function(
+            [](Input::InputManager& manager, const std::string& context) {
+                return &manager.removeContext(context);
+            });
     }
 
     void LoadInputFunctions(kaguya::State* lua)
@@ -106,20 +108,21 @@ namespace obe::Bindings::InputBindings
         (*lua)["obe"]["Input"] = kaguya::NewTable();
         (*lua)["obe"]["Input"]["Monitors"] = kaguya::NewTable();
         (*lua)["obe"]["Input"]["Monitors"]["UpdateMonitors"]
-            = kaguya::function(Input::Monitors::UpdateMonitors);
+            = kaguya::function(Input::InputButtonMonitor::Update);
         //(*lua)["obe"]["Input"]["Monitors"]["UpdateMonitorsAndRemoveIfNoReferences"]
         //=
         // xaguya::function(Input::Monitors::UpdateMonitorsAndRemoveIfNoReferences);
-        (*lua)["obe"]["Input"]["Monitors"]["Monitor"]
-            = kaguya::overload(static_cast<Input::InputButtonMonitorPtr (*)(const std::string&)>(
-                                   Input::Monitors::Monitor),
-                static_cast<Input::InputButtonMonitorPtr (*)(Input::InputButton*)>(
-                    Input::Monitors::Monitor));
+        (*lua)["obe"]["Input"]["Monitors"]["Monitor"] = kaguya::overload(
+            static_cast<Input::InputButtonMonitorPtr (*)(const std::string&)>(
+                Input::InputButtonMonitor::Monitor),
+            static_cast<Input::InputButtonMonitorPtr (*)(Input::InputButton&)>(
+                Input::InputButtonMonitor::Monitor));
         (*lua)["obe"]["Input"]["InitKeyList"] = kaguya::function(Input::InitKeyList);
-        (*lua)["obe"]["Input"]["SetGamepadList"] = kaguya::function(Input::SetGamepadList);
+        (*lua)["obe"]["Input"]["SetGamepadList"]
+            = kaguya::function(Input::SetGamepadList);
         (*lua)["obe"]["Input"]["GetAllPressedButtons"]
             = kaguya::function(Input::GetAllPressedButtons);
-        (*lua)["obe"]["Input"]["GetKey"] = kaguya::function(Input::GetKey);
+        (*lua)["obe"]["Input"]["GetInput"] = kaguya::function(Input::GetInput);
         (*lua)["obe"]["Input"]["InputStateToString"]
             = kaguya::function(Input::inputButtonStateToString);
         (*lua)["obe"]["Input"]["StringToInputState"]

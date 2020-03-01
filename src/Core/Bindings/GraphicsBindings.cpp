@@ -153,7 +153,6 @@ namespace obe::Bindings::GraphicsBindings
                 .addFunction(
                     "Image", &Graphics::Canvas::Canvas::add<Graphics::Canvas::Image>)
                 .addFunction("render", &Graphics::Canvas::Canvas::render)
-                .addFunction("setTarget", &Graphics::Canvas::Canvas::setTarget)
                 .addFunction("clear", &Graphics::Canvas::Canvas::clear)
                 .addFunction("remove", &Graphics::Canvas::Canvas::remove)
                 .addFunction("get", &Graphics::Canvas::Canvas::get));

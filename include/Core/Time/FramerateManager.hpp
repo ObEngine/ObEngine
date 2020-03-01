@@ -4,13 +4,14 @@
 #include <SFML/System/Clock.hpp>
 #include <vili/Vili.hpp>
 
+#include <Types/Registrable.hpp>
+
 namespace obe::Time
 {
     /**
      * \brief Class that handles Framerate, DeltaTime and stuff related to time
-     * @Bind
      */
-    class FramerateManager
+    class FramerateManager : public Types::Registrable<FramerateManager>
     {
     private:
         sf::Clock m_deltaClock;

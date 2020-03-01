@@ -93,14 +93,13 @@ namespace obe::Bindings
             .add("Window", &SystemBindings::LoadWindow)
             // Time
             .add("Chronometer", &TimeBindings::LoadChronometer)
-            .add("FPSCounter", &TimeBindings::LoadFPSCounter)
+            .add("FramerateCounter", &TimeBindings::LoadFPSCounter)
             .add("FramerateManager", &TimeBindings::LoadFramerateManager)
             .add("TimeCheck", &TimeBindings::LoadTimeCheck)
             .add("TimeUtils", &TimeBindings::LoadTimeUtils)
             // Transform
             .add("Movable", &TransformBindings::LoadMovable)
             .add("Polygon", &TransformBindings::LoadPolygon)
-            .add("ProtectedUnitVector", &TransformBindings::LoadProtectedUnitVector)
             .add("Rect", &TransformBindings::LoadRect)
             .add("Referential", &TransformBindings::LoadReferential)
             .add("UnitBasedObject", &TransformBindings::LoadUnitBasedObject)

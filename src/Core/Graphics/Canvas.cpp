@@ -7,10 +7,10 @@
 
 namespace obe::Graphics::Canvas
 {
-    CanvasElement::CanvasElement(Canvas* parent, const std::string& id)
+    CanvasElement::CanvasElement(Canvas& parent, const std::string& id)
         : ProtectedIdentifiable(id)
+        , parent(parent)
     {
-        this->parent = parent;
     }
 
     CanvasElement::~CanvasElement()
@@ -22,11 +22,11 @@ namespace obe::Graphics::Canvas
         if (this->layer != layer)
         {
             this->layer = layer;
-            parent->requiresSort();
+            parent.requiresSort();
         }
     }
 
-    Line::Line(Canvas* parent, const std::string& id)
+    Line::Line(Canvas& parent, const std::string& id)
         : CanvasElement(parent, id)
     {
     }
@@ -40,14 +40,14 @@ namespace obe::Graphics::Canvas
         target.draw(line, 2, sf::Lines);
     }
 
-    CanvasPositionable::CanvasPositionable(Canvas* parent, const std::string& id)
+    CanvasPositionable::CanvasPositionable(Canvas& parent, const std::string& id)
         : CanvasElement(parent, id)
     {
         // Default Canvas elements unit is ScenePixels
         position.unit = Transform::Units::ScenePixels;
     }
 
-    Rectangle::Rectangle(Canvas* parent, const std::string& id)
+    Rectangle::Rectangle(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
         this->size.unit = Transform::Units::ScenePixels;
@@ -58,7 +58,7 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
 
-    Text::Text(Canvas* parent, const std::string& id)
+    Text::Text(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
     }
@@ -79,7 +79,7 @@ namespace obe::Graphics::Canvas
         shape.move(-offset);
     }
 
-    Circle::Circle(Canvas* parent, const std::string& id)
+    Circle::Circle(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
     }
@@ -89,7 +89,7 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
 
-    Polygon::Polygon(Canvas* parent, const std::string& id)
+    Polygon::Polygon(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
     }
@@ -99,7 +99,7 @@ namespace obe::Graphics::Canvas
         target.draw(shape);
     }
 
-    Image::Image(Canvas* parent, const std::string& id)
+    Image::Image(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
     }
@@ -134,12 +134,7 @@ namespace obe::Graphics::Canvas
         return nullptr;
     }
 
-    void Canvas::setTarget(Sprite* target)
-    {
-        m_target = target;
-    }
-
-    void Canvas::render()
+    void Canvas::render(Sprite& target)
     {
         m_canvas.clear(sf::Color(0, 0, 0, 0));
 
@@ -155,7 +150,7 @@ namespace obe::Graphics::Canvas
                 element->draw(m_canvas);
         }
         m_canvas.display();
-        m_target->setTexture(m_canvas.getTexture());
+        target.setTexture(m_canvas.getTexture());
     }
 
     void Canvas::clear()

@@ -196,7 +196,7 @@ namespace obe::Editor
         Transform::Units editorUnit = Transform::Units::SceneUnits;
 
         // Framerate / DeltaTime
-        Time::FPSCounter fps;
+        Time::FramerateCounter fps;
         fps.loadFont(font);
         Time::FramerateManager framerateManager(gameConfig);
 
@@ -495,8 +495,6 @@ namespace obe::Editor
                     GUI::applyScrollbarMaxValue(mainPanel);
                     break;
                 case sf::Event::JoystickConnected:
-                    Input::SetGamepadList();
-                    break;
                 case sf::Event::JoystickDisconnected:
                     Input::SetGamepadList();
                     break;
@@ -539,7 +537,7 @@ namespace obe::Editor
                 case sf::Event::JoystickMoved:
                 case sf::Event::KeyReleased:
                 case sf::Event::KeyPressed:
-                    Input::Monitors::RequireRefresh = true;
+                    Input::InputButtonMonitor::RequireRefresh = true;
                     break;
                 default:;
                 }
@@ -550,8 +548,8 @@ namespace obe::Editor
             scene.update();
             Triggers::TriggerDatabase::GetInstance().update();
             inputManager.update();
-            if (Input::Monitors::RequireRefresh)
-                Input::Monitors::UpdateMonitors();
+            if (Input::InputButtonMonitor::RequireRefresh)
+                Input::InputButtonMonitor::Update();
             cursor.update();
             if (drawFPS)
                 fps.uTick();

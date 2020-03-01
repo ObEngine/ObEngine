@@ -4,7 +4,6 @@
 
 /**
  * \brief Various functions to manipulate Packages
- * @Bind
  */
 namespace obe::System::Package
 {

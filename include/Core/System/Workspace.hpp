@@ -4,7 +4,6 @@
 
 /**
  * \brief Various functions to work with Workspaces
- * @Bind
  */
 namespace obe::System::Workspace
 {

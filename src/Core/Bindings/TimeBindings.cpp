@@ -23,12 +23,12 @@ namespace obe::Bindings::TimeBindings
 
     void LoadFPSCounter(kaguya::State* lua)
     {
-        (*lua)["obe"]["FPSCounter"].setClass(
-            kaguya::UserdataMetatable<Time::FPSCounter>()
-                .addFunction("draw", &Time::FPSCounter::draw)
-                .addFunction("loadFont", &Time::FPSCounter::loadFont)
-                .addFunction("tick", &Time::FPSCounter::tick)
-                .addFunction("uTick", &Time::FPSCounter::uTick));
+        (*lua)["obe"]["FramerateCounter"].setClass(
+            kaguya::UserdataMetatable<Time::FramerateCounter>()
+                .addFunction("draw", &Time::FramerateCounter::draw)
+                .addFunction("loadFont", &Time::FramerateCounter::loadFont)
+                .addFunction("tick", &Time::FramerateCounter::tick)
+                .addFunction("uTick", &Time::FramerateCounter::uTick));
     }
 
     void LoadFramerateManager(kaguya::State* lua)
@@ -37,13 +37,16 @@ namespace obe::Bindings::TimeBindings
             kaguya::UserdataMetatable<Time::FramerateManager>()
                 .addFunction("doRender", &Time::FramerateManager::doRender)
                 .addFunction("getDeltaTime", &Time::FramerateManager::getDeltaTime)
-                .addFunction("getFramerateTarget", &Time::FramerateManager::getFramerateTarget)
+                .addFunction(
+                    "getFramerateTarget", &Time::FramerateManager::getFramerateTarget)
                 .addFunction("getGameSpeed", &Time::FramerateManager::getGameSpeed)
                 .addFunction("getSpeedCoeff", &Time::FramerateManager::getSpeedCoeff)
-                .addFunction("isFramerateLimited", &Time::FramerateManager::isFramerateLimited)
+                .addFunction(
+                    "isFramerateLimited", &Time::FramerateManager::isFramerateLimited)
                 .addFunction("isVSyncEnabled", &Time::FramerateManager::isVSyncEnabled)
                 .addFunction("limitFramerate", &Time::FramerateManager::limitFramerate)
-                .addFunction("setFramerateTarget", &Time::FramerateManager::setFramerateTarget)
+                .addFunction(
+                    "setFramerateTarget", &Time::FramerateManager::setFramerateTarget)
                 .addFunction("setSpeedCoeff", &Time::FramerateManager::setSpeedCoeff)
                 .addFunction("setVSyncEnabled", &Time::FramerateManager::setVSyncEnabled)
                 .addFunction("update", &Time::FramerateManager::update));
@@ -65,7 +68,8 @@ namespace obe::Bindings::TimeBindings
 
     void LoadTimeUtils(kaguya::State* lua)
     {
-        (*lua)["obe"]["TickSinceEpoch"] = kaguya::function(Time::getTickSinceEpoch);
-        (*lua)["obe"]["TickSinceEpochMicro"] = kaguya::function(Time::getTickSinceEpochMicro);
+        (*lua)["obe"]["TickSinceEpoch"] = kaguya::function(Time::epochAsMilliseconds);
+        (*lua)["obe"]["TickSinceEpochMicro"]
+            = kaguya::function(Time::epochAsMicroseconds);
     }
 } // namespace obe::Bindings::TimeBindings

@@ -11,14 +11,14 @@ namespace obe::Time
      * \brief Class to display the amount of Frame and Update per Seconds
      * @Bind
      */
-    class FPSCounter
+    class FramerateCounter
     {
     private:
-        TimeUnit m_lastTick = getTickSinceEpoch();
-        int m_fpsCounter = 0;
-        int m_updCounter = 0;
-        int m_saveFPS = 0;
-        int m_saveUPD = 0;
+        TimeUnit m_lastTick = epochAsMilliseconds();
+        int m_framerateCounter = 0;
+        int m_updatesCounter = 0;
+        int m_framerateBuffer = 0;
+        int m_updatesBuffer = 0;
         bool m_canUpdateFPS = false;
         sf::Text m_text;
         sf::Font m_font;

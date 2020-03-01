@@ -14,7 +14,6 @@ namespace obe::System
 {
     /**
      * \brief A Class to manipulate and display the Cursor in the Engine
-     * @Bind
      */
     class Cursor : public Types::Registrable<Cursor>
     {

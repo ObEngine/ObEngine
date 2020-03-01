@@ -6,7 +6,7 @@ namespace obe::Time
 {
     /**
      * \brief Class used to check if a certain time has been elapsed with a
-     * delay
+     *        delay
      */
     class TimeCheck
     {

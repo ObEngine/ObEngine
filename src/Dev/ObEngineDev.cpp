@@ -10,8 +10,8 @@
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
 #include <Editor/MapEditor.hpp>
-#include <Graphics/Sprite.hpp>
 #include <Graphics/ResourceManager.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>

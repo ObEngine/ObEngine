@@ -93,7 +93,7 @@ namespace obe::Editor
          * \param cursor Reference to the System::Cursor you want to magnetize
          */
         void magnetize(System::Cursor& cursor) const;
-        /*
+        /**
          * \brief Gets the closest grid intersection
          */
         std::pair<int, int> getClosestIntersection(int x, int y, int offsetX,

@@ -6,9 +6,9 @@
 
 namespace obe::Graphics
 {
-    /*
+    /**
      * \brief A class to handle colors
-     * \lua_bind{Color}
+     * \bind{Color}
      */
     class Color : public sf::Color
     {

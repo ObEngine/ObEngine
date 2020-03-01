@@ -15,15 +15,13 @@ namespace obe::Graphics
     using pairTexture
         = std::pair<std::unique_ptr<sf::Texture>, std::unique_ptr<sf::Texture>>;
     /**
-     * \brief Singleton Class that manages and caches textures
-     * @Bind
+     * \brief Singleton Class that manages and caches textures}
      */
     class ResourceManager : public Types::Registrable<ResourceManager>,
                             public Types::Singleton<ResourceManager>
     {
     private:
-        std::unordered_map<std::string, std::unique_ptr<sf::Font>>
-            m_fontDatabase;
+        std::unordered_map<std::string, std::unique_ptr<sf::Font>> m_fontDatabase;
         Triggers::TriggerGroupPtr m_resourceManagerTriggers;
         std::unordered_map<std::string, pairTexture> m_textureDatabase;
 

@@ -13,7 +13,7 @@ namespace obe::Collision
     /**
      * \brief A Node containing trajectories, a SceneNode to drive and a probe to check
      * for collisions
-     * \lua_bind{TrajectoryNode}
+     * \bind{TrajectoryNode}
      */
     class TrajectoryNode
     {

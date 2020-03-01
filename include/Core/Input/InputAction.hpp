@@ -18,7 +18,6 @@ namespace obe::Input
 
     /**
      * \brief Action triggered by one or more Keyboard key(s)
-     * @Bind
      */
     class InputAction : public Types::Identifiable
     {
@@ -37,8 +36,7 @@ namespace obe::Input
          * \param triggerPtr Pointer to the TriggerGroup
          * \param id Id of the InputAction
          */
-        explicit InputAction(
-            Triggers::TriggerGroup* triggerPtr, const std::string& id);
+        explicit InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id);
         /**
          * \brief Adds an InputCondition to the InputAction
          * \param condition An InputCondition to add to the InputAction

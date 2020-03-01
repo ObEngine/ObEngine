@@ -6,6 +6,7 @@ namespace obe::System
 {
     /**
      * \brief Defines the source of a mounted path
+     * \bind{MountablePathType}
      */
     enum class MountablePathType
     {
@@ -25,7 +26,6 @@ namespace obe::System
 
     /**
      * \brief Class used to encapsulate mounted Paths
-     * @Bind
      */
     class MountablePath
     {

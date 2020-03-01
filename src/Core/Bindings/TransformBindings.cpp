@@ -1,7 +1,6 @@
 #include <Bindings/Bindings.hpp>
 #include <Bindings/TransformBindings.hpp>
 #include <Transform/Polygon.hpp>
-#include <Transform/ProtectedUnitVector.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
@@ -18,13 +17,6 @@ namespace obe::Bindings::TransformBindings
                 .addFunction("getPosition", &Transform::Movable::getPosition)
                 .addFunction("move", &Transform::Movable::move)
                 .addFunction("setPosition", &Transform::Movable::setPosition));
-    }
-
-    void LoadProtectedUnitVector(kaguya::State* lua)
-    {
-        Load(lua, "obe.UnitVector");
-        (*lua)["obe"]["ProtectedUnitVector"].setClass(
-            kaguya::UserdataMetatable<Transform::ProtectedUnitVector, Transform::UnitVector>());
     }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS_WITH_SIGNATURE(Rect_getPosition_wrapper, Transform::Rect,

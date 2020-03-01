@@ -21,25 +21,21 @@ namespace obe::Bindings::AnimationBindings
                 .addFunction("applyParameters", &Animation::Animation::applyParameters)
                 .addFunction("getAllAnimationGroupName",
                     &Animation::Animation::getAllAnimationGroupName)
-                .addFunction(
-                    "getAnimationDelay", &Animation::Animation::getAnimationDelay)
+                .addFunction("getDelay", &Animation::Animation::getDelay)
                 .addFunction(
                     "getAnimationGroup", &Animation::Animation::getAnimationGroup)
-                .addFunction("getAnimationName", &Animation::Animation::getAnimationName)
-                .addFunction(
-                    "getAnimationPlayMode", &Animation::Animation::getAnimationPlayMode)
-                .addFunction(
-                    "getAnimationStatus", &Animation::Animation::getAnimationStatus)
+                .addFunction("getName", &Animation::Animation::getName)
+                .addFunction("getPlayMode", &Animation::Animation::getPlayMode)
+                .addFunction("getStatus", &Animation::Animation::getStatus)
                 .addFunction(
                     "getCalledAnimation", &Animation::Animation::getCalledAnimation)
                 .addFunction("getCurrentAnimationGroup",
                     &Animation::Animation::getCurrentAnimationGroup)
                 .addFunction("getPriority", &Animation::Animation::getPriority)
-                .addFunction("getSpriteOffset", &Animation::Animation::getSpriteOffset)
                 .addFunction("getTexture", &Animation::Animation::getTexture)
                 .addFunction(
                     "getTextureAtIndex", &Animation::Animation::getTextureAtIndex)
-                .addFunction("isAnimationOver", &Animation::Animation::isAnimationOver)
+                .addFunction("isOver", &Animation::Animation::isOver)
                 .addFunction("loadAnimation", &Animation::Animation::loadAnimation)
                 .addFunction("reset", &Animation::Animation::reset)
                 .addFunction("update", &Animation::Animation::update));
@@ -49,24 +45,20 @@ namespace obe::Bindings::AnimationBindings
     {
         (*lua)["obe"]["AnimationGroup"].setClass(
             kaguya::UserdataMetatable<Animation::AnimationGroup>()
-                .addFunction("build", &Animation::AnimationGroup::build)
-                .addFunction("forceNext", &Animation::AnimationGroup::forceNext)
-                .addFunction("forcePrevious", &Animation::AnimationGroup::forcePrevious)
-                .addFunction("getGroupDelay", &Animation::AnimationGroup::getGroupDelay)
-                .addFunction("getGroupIndex", &Animation::AnimationGroup::getGroupIndex)
-                .addFunction("getGroupName", &Animation::AnimationGroup::getGroupName)
-                .addFunction("getGroupSize", &Animation::AnimationGroup::getGroupSize)
+                .addFunction("getDelay", &Animation::AnimationGroup::getDelay)
+                .addFunction("getIndex", &Animation::AnimationGroup::getIndex)
+                .addFunction("getName", &Animation::AnimationGroup::getName)
+                .addFunction("getSize", &Animation::AnimationGroup::getSize)
                 .addFunction("getTexture", &Animation::AnimationGroup::getTexture)
-                .addFunction("isGroupOver", &Animation::AnimationGroup::isGroupOver)
+                .addFunction("isOver", &Animation::AnimationGroup::isOver)
                 .addFunction("next", &Animation::AnimationGroup::next)
                 .addFunction("previous", &Animation::AnimationGroup::previous)
                 .addFunction("pushTexture", &Animation::AnimationGroup::pushTexture)
                 .addFunction("removeTextureByIndex",
                     &Animation::AnimationGroup::removeTextureByIndex)
                 .addFunction("reset", &Animation::AnimationGroup::reset)
-                .addFunction("setGroupDelay", &Animation::AnimationGroup::setGroupDelay)
-                .addFunction("setGroupLoop", &Animation::AnimationGroup::setGroupLoop)
-                .addFunction("update", &Animation::AnimationGroup::update));
+                .addFunction("setDelay", &Animation::AnimationGroup::setDelay)
+                .addFunction("setLoops", &Animation::AnimationGroup::setLoops));
     }
 
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(
@@ -82,7 +74,6 @@ namespace obe::Bindings::AnimationBindings
                     "getAllAnimationName", &Animation::Animator::getAllAnimationName)
                 .addFunction("getAnimation", &Animation::Animator::getAnimation)
                 .addFunction("getKey", &Animation::Animator::getKey)
-                .addFunction("getSpriteOffset", &Animation::Animator::getSpriteOffset)
                 .addFunction("getTexture", &Animation::Animator::getTexture)
                 .addFunction("getTextureAtKey", &Animation::Animator::getTextureAtKey)
                 .addFunction("loadAnimator", &Animation::Animator::loadAnimator)

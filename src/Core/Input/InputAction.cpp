@@ -70,7 +70,7 @@ namespace obe::Input
                     if (m_repeat.resetIfOver()) // Reset repeat when combination
                                                 // is unchecked <REVISION>
                     {
-                        const InputActionEvent ev(this, &combination);
+                        const InputActionEvent ev(*this, combination);
                         m_callback(ev);
                         m_actionTrigger->pushParameter(m_id, "event", ev);
                         m_actionTrigger->trigger(m_id);
@@ -83,7 +83,7 @@ namespace obe::Input
                                                   // ? <REVISION>
                     {
                         m_state = true;
-                        m_callback(InputActionEvent(this, &combination));
+                        m_callback(InputActionEvent(*this, combination));
                     }
                 }
             }

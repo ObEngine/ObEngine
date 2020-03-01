@@ -9,7 +9,7 @@ namespace obe::Debug
         this->m_header = header;
         this->m_text = message;
         this->m_color = textColor;
-        this->m_timestamp = Time::getTickSinceEpoch();
+        this->m_timestamp = Time::epochAsMilliseconds();
     }
 
     std::string ConsoleMessage::getFormatedMessage() const

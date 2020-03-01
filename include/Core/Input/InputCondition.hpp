@@ -16,7 +16,6 @@ namespace obe::Input
     /**
      * \brief A class represented the required conditions to trigger an
      * InputAction
-     * @Bind
      */
     class InputCondition
     {

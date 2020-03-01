@@ -6,6 +6,7 @@ namespace obe::Input
 {
     /**
      * \brief The type of Input
+     * \bind{InputType}
      */
     enum class InputType
     {

@@ -8,9 +8,9 @@ namespace obe::Input
 {
     bool InputCondition::isKeyAlreadyInCombination(InputButton* button)
     {
-        for (InputCombinationElement& element : m_triggerConditions)
+        for (auto& [monitor, _] : m_triggerConditions)
         {
-            if (element.first->getButton() == button)
+            if (&monitor->getButton() == button)
             {
                 return true;
             }
@@ -26,7 +26,8 @@ namespace obe::Input
             for (std::string element : elements)
             {
                 Utils::String::replaceInPlace(element, " ", "");
-                std::vector<std::string> stateAndButton = Utils::String::split(element, ":");
+                std::vector<std::string> stateAndButton
+                    = Utils::String::split(element, ":");
                 if (stateAndButton.size() == 1 || stateAndButton.size() == 2)
                 {
                     if (stateAndButton.size() == 1)
@@ -47,16 +48,18 @@ namespace obe::Input
                         }
                         else
                         {
-                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition."
-                                                            "UnknownState",
+                            throw aube::ErrorHandler::Raise(
+                                "ObEngine.Input.InputCondition."
+                                "UnknownState",
                                 { { "state", buttonState } });
                         }
                     }
                     const std::string keyId = stateAndButton[1];
                     if (AllKeys.find(keyId) != AllKeys.end())
                     {
-                        InputButton* button = GetKey(keyId);
-                        InputButtonMonitorPtr monitor = Monitors::Monitor(button);
+                        InputButton* button = GetInput(keyId);
+                        InputButtonMonitorPtr monitor
+                            = InputButtonMonitor::Monitor(*button);
 
                         if (!isKeyAlreadyInCombination(button))
                         {
@@ -65,8 +68,9 @@ namespace obe::Input
                         }
                         else
                         {
-                            throw aube::ErrorHandler::Raise("ObEngine.Input.InputCondition."
-                                                            "ButtonAlreadyInCombination",
+                            throw aube::ErrorHandler::Raise(
+                                "ObEngine.Input.InputCondition."
+                                "ButtonAlreadyInCombination",
                                 { { "button", button->getName() } });
                         }
                     }
@@ -86,7 +90,8 @@ namespace obe::Input
         return m_triggerConditions;
     }
 
-    void InputCondition::addCombinationElement(const InputCombinationElement combinationElement)
+    void InputCondition::addCombinationElement(
+        const InputCombinationElement combinationElement)
     {
         m_triggerConditions.push_back(combinationElement);
     }

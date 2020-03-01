@@ -13,9 +13,9 @@ namespace obe::Graphics
 
 namespace obe::Animation
 {
-    /*
+    /**
      * \brief Sets the scaling bevaviour the Animator will apply on target
-     * \lua_bind{Animator.TargetScaleMode}
+     * \bind{Animator.TargetScaleMode}
      */
     enum class AnimatorTargetScaleMode
     {
@@ -32,31 +32,18 @@ namespace obe::Animation
     };
 
     /**
-     * \brief A Class that will manage a set of Animation.\n
-     * \lua_bind{Animator}
-     *
-     * The root folder of an Animator is just a simple folder with multiple
-     * Animations folders inside. \n Example : \n "Path/To/Animator" : \n
-     * - Walking/
-     *  - walking_01.png
-     *  - walking_02.png
-     *    - Walking.ani.vili
-     * - Running/
-     *  - running_01.png
-     *  - running_02.png
-     *  - running_03.png
-     *  - Running.ani.vili
+     * \brief A Class that will manage a set of Animation
+     * \bind{Animator}
      */
     class Animator
     {
     private:
-        std::unordered_map<std::string, std::unique_ptr<Animation>> m_animationSet;
-        System::Path m_animatorPath;
+        std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
+        System::Path m_path;
         Animation* m_currentAnimation = nullptr;
-        std::string m_currentAnimationName = "NONE";
         bool m_paused = false;
         Graphics::Sprite* m_target = nullptr;
-        AnimatorTargetScaleMode m_targetScaleMode;
+        AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
 
     public:
         /**
@@ -94,11 +81,6 @@ namespace obe::Animation
          * Animation
          */
         std::string getKey() const;
-        /**
-         * \brief Get the current offset of the current Sprite
-         * \return The current offset of the current Sprite (in pixels)
-         */
-        Transform::UnitVector getSpriteOffset() const;
         /**
          * \brief Get the current sf::Sprite of the current Animation
          * \return A pointer of the sf::Sprite currently played by the current

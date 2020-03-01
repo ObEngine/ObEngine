@@ -20,7 +20,7 @@ namespace obe::Script
     class GameObject;
 
     /**
-     * \brief Manages and caches GameObject GODF and Requirements
+     * \brief Manages and caches GameObject definition files and Requirements
      */
     class GameObjectDatabase
     {
@@ -47,7 +47,7 @@ namespace obe::Script
          * \param requires ComplexNode containing the Requirements
          */
         static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
-        /*
+        /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
         static void Clear();

@@ -50,8 +50,7 @@ namespace obe::Utils::Vector
      * std::vector
      */
     template <typename V>
-    std::vector<V> getSubVector(
-        const std::vector<V>& vec, int start = 0, int end = 0);
+    std::vector<V> getSubVector(const std::vector<V>& vec, int start = 0, int end = 0);
 
     template <typename V> bool contains(V item, const std::vector<V>& vec)
     {
@@ -87,8 +86,7 @@ namespace obe::Utils::Vector
     }
 
     template <typename V>
-    std::vector<V> getSubVector(
-        const std::vector<V>& vec, const int start, const int end)
+    std::vector<V> getSubVector(const std::vector<V>& vec, const int start, const int end)
     {
         auto first = vec.begin() + start;
         auto last = vec.end() - end;

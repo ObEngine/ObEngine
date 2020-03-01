@@ -7,7 +7,7 @@ namespace obe::Time
         m_waitFor = delay;
         if (initializeClock)
         {
-            m_clock = getTickSinceEpoch();
+            m_clock = epochAsMilliseconds();
         }
     }
 
@@ -23,12 +23,12 @@ namespace obe::Time
 
     void TimeCheck::reset()
     {
-        m_clock = getTickSinceEpoch();
+        m_clock = epochAsMilliseconds();
     }
 
     bool TimeCheck::over() const
     {
-        return (m_waitFor == 0 || getTickSinceEpoch() - m_clock >= m_waitFor);
+        return (m_waitFor == 0 || epochAsMilliseconds() - m_clock >= m_waitFor);
     }
 
     bool TimeCheck::resetIfOver()
@@ -48,7 +48,7 @@ namespace obe::Time
     {
         if (m_waitFor != 0)
         {
-            m_clock = getTickSinceEpoch() - m_waitFor;
+            m_clock = epochAsMilliseconds() - m_waitFor;
         }
     }
 } // namespace obe::Time

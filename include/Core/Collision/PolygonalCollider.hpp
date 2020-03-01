@@ -20,7 +20,7 @@ namespace obe::Collision
 {
     /**
      * \brief Enum used when manipulating tags in the Collider
-     * \lua_bind{ColliderTagType}
+     * \bind{ColliderTagType}
      */
     enum class ColliderTagType
     {
@@ -35,7 +35,7 @@ namespace obe::Collision
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
-     * \lua_bind{PolygonalCollider}
+     * \bind{PolygonalCollider}
      */
     class PolygonalCollider : public Transform::Polygon,
                               public Types::Selectable,

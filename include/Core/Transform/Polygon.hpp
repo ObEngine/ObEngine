@@ -19,7 +19,7 @@ namespace obe::Transform
     {
     private:
         friend class Polygon;
-        Polygon* m_parent;
+        Polygon& m_parent;
         point_index_t rw_index;
 
     public:
@@ -28,9 +28,9 @@ namespace obe::Transform
             Point0,
             Centroid
         };
-        explicit PolygonPoint(Polygon* parent, unsigned int index);
-        explicit PolygonPoint(Polygon* parent, unsigned int index,
-            const Transform::UnitVector& position);
+        explicit PolygonPoint(Polygon& parent, unsigned int index);
+        explicit PolygonPoint(
+            Polygon& parent, unsigned int index, const Transform::UnitVector& position);
         const point_index_t& index = rw_index;
         void remove() const;
         double distance(const Transform::UnitVector& position) const;
@@ -55,7 +55,7 @@ namespace obe::Transform
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
-     * @Bind
+     * \bind{Polygon}
      */
     class Polygon : public Transform::UnitBasedObject, public Transform::Movable
     {
@@ -74,16 +74,14 @@ namespace obe::Transform
          * \param pointIndex Index where to insert the new Point, Use pointIndex
          * = -1 <DefaultArg> to insert at the end (between last and first Point)
          */
-        void addPoint(
-            const Transform::UnitVector& position, int pointIndex = -1);
+        void addPoint(const Transform::UnitVector& position, int pointIndex = -1);
         /**
          * \brief Finds the closest Line from the given Position
          * \param position Position used to get the closest Line
          * \return The index of the line that is the closest one of the given
          * Position (Line between point 0 and point 1 is index 0)
          */
-        PolygonSegment findClosestSegment(
-            const Transform::UnitVector& position);
+        PolygonSegment findClosestSegment(const Transform::UnitVector& position);
         /**
          * \brief Find the closest Point from the given Position(x, y)
          * \param position Coordinate of the Position used to get the closest
@@ -94,8 +92,7 @@ namespace obe::Transform
          * that is the closest one of the given Position
          */
         PolygonPoint& findClosestPoint(const Transform::UnitVector& position,
-            bool neighbor = false,
-            const std::vector<point_index_t>& excludedPoints = {});
+            bool neighbor = false, const std::vector<point_index_t>& excludedPoints = {});
         /**
          * \brief Get all the Points of the Polygon
          * \return A Path containing all the Points of the Polygon
@@ -125,7 +122,7 @@ namespace obe::Transform
          * PolygonalCollider
          */
         float getRotation() const;
-        /*
+        /**
          * \brief Gets the segment of the Polygon at index segment
          * \param segment Index of the Segment to get
          * \return The segment of the Polygon at index segment
@@ -138,8 +135,7 @@ namespace obe::Transform
          * containing the position or -1 if not found
          */
         std::optional<PolygonSegment> getSegmentContainingPoint(
-            const Transform::UnitVector& position,
-            double tolerance = DefaultTolerance);
+            const Transform::UnitVector& position, double tolerance = DefaultTolerance);
         /**
          * \brief Check if the MasterPoint of the Polygon is on Position (x -
          * tolerance <= x <= x + tolerance, y - tolerance <= tolerance <= y +

@@ -15,9 +15,20 @@
 
 namespace obe::Graphics
 {
+    /**
+     * \brief Type of the handle point of a Sprite (either scale or rotate)
+     */
     enum class SpriteHandlePointType
     {
+        /**
+         * \brief Handle point used to scale the sprite (located on 8 points around the
+         *        sprite rect)
+         */
         ScaleHandle,
+        /**
+         * \brief Handle point used to rotate the sprite (single point located outside of
+         *        the sprite rect)
+         */
         RotateHandle
     };
 
@@ -25,7 +36,6 @@ namespace obe::Graphics
 
     /**
      * \brief A HandlePoint to manipulate a Sprite Size
-     * @Bind
      */
     class SpriteHandlePoint
     {
@@ -78,7 +88,7 @@ namespace obe::Graphics
 
     /**
      * \brief An element meant to be displayed in a Scene
-     * @Bind
+     * \bind{Sprite}
      */
     class Sprite : public Transform::UnitBasedObject,
                    public Types::Selectable,

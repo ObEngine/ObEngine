@@ -24,13 +24,14 @@ namespace obe::Editor::GUI
         const unsigned int screenWidth = sf::VideoMode::getDesktopMode().width;
 
         if (windowSize.x < screenWidth)
-            wCoeff
-                = (double(screenWidth - System::MainWindow.getSize().x) / double(screenWidth)) * 0.5
+            wCoeff = (double(screenWidth - System::MainWindow.getSize().x)
+                         / double(screenWidth))
+                    * 0.5
                 + 1.0;
         else
             wCoeff = 1
                 - (double(windowSize.x - sf::VideoMode::getDesktopMode().width)
-                      / double(System::MainWindow.getSize().x));
+                    / double(System::MainWindow.getSize().x));
         bigFontSize = double(windowSize.x) / double(64.0 / wCoeff);
         mediumFontSize = double(bigFontSize) / 1.3;
         smallFontSize = double(bigFontSize) / 2.0;
@@ -50,23 +51,33 @@ namespace obe::Editor::GUI
         mainPanel->get<tgui::Button>("objectsButton")->setTextSize(mediumFontSize);
         mainPanel->get<tgui::Label>("mapCatLabel")->setTextSize(bigFontSize);
         mainPanel->get<tgui::Label>("mapNameLabel")->setTextSize(mediumFontSize);
-        mainPanel->get<tgui::EditBox>("mapNameInput")->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("mapNameInput")
+            ->setSize("8.3%", mediumFontSize + 4);
         mainPanel->get<tgui::Label>("settingsCatLabel")->setTextSize(bigFontSize);
-        mainPanel->get<tgui::CheckBox>("displayFramerateCheckbox")->setTextSize(mediumFontSize);
+        mainPanel->get<tgui::CheckBox>("displayFramerateCheckbox")
+            ->setTextSize(mediumFontSize);
         mainPanel->get<tgui::CheckBox>("enableGridCheckbox")->setTextSize(mediumFontSize);
         mainPanel->get<tgui::Label>("gridDimensionLabel")->setTextSize(mediumFontSize);
-        mainPanel->get<tgui::EditBox>("gridDimensionXInput")->setSize("8.3%", mediumFontSize + 4);
-        mainPanel->get<tgui::EditBox>("gridDimensionYInput")->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("gridDimensionXInput")
+            ->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("gridDimensionYInput")
+            ->setSize("8.3%", mediumFontSize + 4);
         mainPanel->get<tgui::Label>("gridOffsetLabel")->setTextSize(mediumFontSize);
-        mainPanel->get<tgui::EditBox>("gridOffsetXInput")->setSize("8.3%", mediumFontSize + 4);
-        mainPanel->get<tgui::EditBox>("gridOffsetYInput")->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("gridOffsetXInput")
+            ->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("gridOffsetYInput")
+            ->setSize("8.3%", mediumFontSize + 4);
         mainPanel->get<tgui::CheckBox>("snapGridCheckbox")->setTextSize(mediumFontSize);
         mainPanel->get<tgui::Label>("cameraPositionLabel")->setTextSize(mediumFontSize);
-        mainPanel->get<tgui::EditBox>("cameraPositionXInput")->setSize("8.3%", mediumFontSize + 4);
-        mainPanel->get<tgui::EditBox>("cameraPositionYInput")->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("cameraPositionXInput")
+            ->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::EditBox>("cameraPositionYInput")
+            ->setSize("8.3%", mediumFontSize + 4);
         mainPanel->get<tgui::Label>("cameraSizeLabel")->setTextSize(mediumFontSize);
-        mainPanel->get<tgui::EditBox>("cameraSizeInput")->setSize("8.3%", mediumFontSize + 4);
-        mainPanel->get<tgui::CheckBox>("saveCameraPositionCheckbox")->setTextSize(mediumFontSize);
+        mainPanel->get<tgui::EditBox>("cameraSizeInput")
+            ->setSize("8.3%", mediumFontSize + 4);
+        mainPanel->get<tgui::CheckBox>("saveCameraPositionCheckbox")
+            ->setTextSize(mediumFontSize);
 
         tgui::Panel::Ptr keybindingPanel = mainPanel->get<tgui::Panel>("keybindingPanel");
         tgui::Scrollbar::Ptr keybindingScrollbar
@@ -91,7 +102,8 @@ namespace obe::Editor::GUI
         const int distanceToMove = previousScrolbarValue - scrollbar->getValue();
 
         for (auto& widget : panel->getWidgets())
-            widget->setPosition(widget->getPosition().x, widget->getPosition().y + distanceToMove);
+            widget->setPosition(
+                widget->getPosition().x, widget->getPosition().y + distanceToMove);
 
         previousScrolbarValue = scrollbar->getValue();
     }
@@ -138,7 +150,8 @@ namespace obe::Editor::GUI
         editMode->addItem("None");
         editMode->setSelectedItem("None");
         editMode->setSize("10.5%", "100% - 1");
-        editMode->setPosition(tgui::bindWidth(titlePanel) - tgui::bindWidth(editMode) - 1, 0);
+        editMode->setPosition(
+            tgui::bindWidth(titlePanel) - tgui::bindWidth(editMode) - 1, 0);
         editMode->setTextSize(mediumFontSize);
         editMode->setRenderer(baseTheme.getRenderer("ComboBox"));
         editMode->getRenderer()->getTextureArrowUp().setSmooth(true);
@@ -169,9 +182,11 @@ namespace obe::Editor::GUI
             editorPanel->isVisible() ? editorPanel->hide() : editorPanel->show();
         });
 
-        updateStateCheckbox->connect("checked", [&scene]() { scene.setUpdateState(true); });
+        updateStateCheckbox->connect(
+            "checked", [&scene]() { scene.setUpdateState(true); });
 
-        updateStateCheckbox->connect("unchecked", [&scene]() { scene.setUpdateState(false); });
+        updateStateCheckbox->connect(
+            "unchecked", [&scene]() { scene.setUpdateState(false); });
     }
 
     void buildEditorMenu(tgui::Panel::Ptr& mainPanel)
@@ -253,7 +268,8 @@ namespace obe::Editor::GUI
         keybindingPanel->setSize("100%", "100% - 30");
         keybindingPanel->setPosition(0, 30);
 
-        keybindingScrollbar->setPosition("&.width - width", tgui::bindBottom(objectsButton));
+        keybindingScrollbar->setPosition(
+            "&.width - width", tgui::bindBottom(objectsButton));
         keybindingScrollbar->setSize(
             "16", tgui::bindHeight(editorPanel) - tgui::bindHeight(objectsButton));
         keybindingScrollbar->connect(
@@ -266,7 +282,8 @@ namespace obe::Editor::GUI
 
         spritesScrollbar->setPosition("100% - 16", "30");
         spritesScrollbar->setSize("16", "100% - 30");
-        spritesScrollbar->connect("ValueChanged", scrollPanel, spritesPanel, spritesScrollbar);
+        spritesScrollbar->connect(
+            "ValueChanged", scrollPanel, spritesPanel, spritesScrollbar);
         spritesScrollbar->setLowValue(spritesPanel->getSize().y);
 
         objectsPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
@@ -276,7 +293,8 @@ namespace obe::Editor::GUI
         objectsScrollbar->setPosition("&.width - width", tgui::bindBottom(objectsButton));
         objectsScrollbar->setSize(
             "16", tgui::bindHeight(editorPanel) - tgui::bindHeight(objectsButton));
-        objectsScrollbar->connect("ValueChanged", scrollPanel, objectsPanel, objectsScrollbar);
+        objectsScrollbar->connect(
+            "ValueChanged", scrollPanel, objectsPanel, objectsScrollbar);
         objectsScrollbar->setLowValue(objectsPanel->getSize().y);
 
         mapButton->setRenderer(baseTheme.getRenderer("SelectedButton"));
@@ -285,8 +303,8 @@ namespace obe::Editor::GUI
         spritesPanel->hide();
         objectsPanel->hide();
 
-        mapButton->connect(
-            "pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
+        mapButton->connect("pressed",
+            [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
                 mainPanel->get<tgui::Panel>("mapPanel")->show();
                 mainPanel->get<tgui::Panel>("settingsPanel")->hide();
                 mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
@@ -307,8 +325,8 @@ namespace obe::Editor::GUI
                 keybindingScrollbar->hide();
             });
 
-        settingsButton->connect(
-            "pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
+        settingsButton->connect("pressed",
+            [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
                 mainPanel->get<tgui::Panel>("mapPanel")->hide();
                 mainPanel->get<tgui::Panel>("settingsPanel")->show();
                 mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
@@ -329,32 +347,35 @@ namespace obe::Editor::GUI
                 keybindingScrollbar->hide();
             });
 
-        keybindingButton->connect("pressed", [mainPanel, spritesScrollbar, objectsScrollbar]() {
-            tgui::Panel::Ptr keybindingPanel = mainPanel->get<tgui::Panel>("keybindingPanel");
-            tgui::Scrollbar::Ptr keybindingScrollbar
-                = mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
-            buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
-            mainPanel->get<tgui::Panel>("mapPanel")->hide();
-            mainPanel->get<tgui::Panel>("settingsPanel")->hide();
-            mainPanel->get<tgui::Panel>("keybindingPanel")->show();
-            mainPanel->get<tgui::Panel>("spritesPanel")->hide();
-            mainPanel->get<tgui::Panel>("objectsPanel")->hide();
-            mainPanel->get<tgui::Button>("mapButton")->setRenderer(baseTheme.getRenderer("Button"));
-            mainPanel->get<tgui::Button>("settingsButton")
-                ->setRenderer(baseTheme.getRenderer("Button"));
-            mainPanel->get<tgui::Button>("keybindingButton")
-                ->setRenderer(baseTheme.getRenderer("SelectedButton"));
-            mainPanel->get<tgui::Button>("spritesButton")
-                ->setRenderer(baseTheme.getRenderer("Button"));
-            mainPanel->get<tgui::Button>("objectsButton")
-                ->setRenderer(baseTheme.getRenderer("Button"));
-            spritesScrollbar->hide();
-            objectsScrollbar->hide();
-            keybindingScrollbar->show();
-        });
+        keybindingButton->connect(
+            "pressed", [mainPanel, spritesScrollbar, objectsScrollbar]() {
+                tgui::Panel::Ptr keybindingPanel
+                    = mainPanel->get<tgui::Panel>("keybindingPanel");
+                tgui::Scrollbar::Ptr keybindingScrollbar
+                    = mainPanel->get<tgui::Scrollbar>("keybindingScrollbar");
+                buildKeyBindingMenu(keybindingPanel, keybindingScrollbar);
+                mainPanel->get<tgui::Panel>("mapPanel")->hide();
+                mainPanel->get<tgui::Panel>("settingsPanel")->hide();
+                mainPanel->get<tgui::Panel>("keybindingPanel")->show();
+                mainPanel->get<tgui::Panel>("spritesPanel")->hide();
+                mainPanel->get<tgui::Panel>("objectsPanel")->hide();
+                mainPanel->get<tgui::Button>("mapButton")
+                    ->setRenderer(baseTheme.getRenderer("Button"));
+                mainPanel->get<tgui::Button>("settingsButton")
+                    ->setRenderer(baseTheme.getRenderer("Button"));
+                mainPanel->get<tgui::Button>("keybindingButton")
+                    ->setRenderer(baseTheme.getRenderer("SelectedButton"));
+                mainPanel->get<tgui::Button>("spritesButton")
+                    ->setRenderer(baseTheme.getRenderer("Button"));
+                mainPanel->get<tgui::Button>("objectsButton")
+                    ->setRenderer(baseTheme.getRenderer("Button"));
+                spritesScrollbar->hide();
+                objectsScrollbar->hide();
+                keybindingScrollbar->show();
+            });
 
-        spritesButton->connect(
-            "pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
+        spritesButton->connect("pressed",
+            [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
                 mainPanel->get<tgui::Panel>("mapPanel")->hide();
                 mainPanel->get<tgui::Panel>("settingsPanel")->hide();
                 mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
@@ -375,8 +396,8 @@ namespace obe::Editor::GUI
                 keybindingScrollbar->hide();
             });
 
-        objectsButton->connect(
-            "pressed", [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
+        objectsButton->connect("pressed",
+            [mainPanel, spritesScrollbar, objectsScrollbar, keybindingScrollbar]() {
                 mainPanel->get<tgui::Panel>("mapPanel")->hide();
                 mainPanel->get<tgui::Panel>("settingsPanel")->hide();
                 mainPanel->get<tgui::Panel>("keybindingPanel")->hide();
@@ -433,7 +454,8 @@ namespace obe::Editor::GUI
         mapNameLabel->setText("Map Name : ");
 
         auto changeMapNameLambda = [&scene, mapPanel]() {
-            tgui::EditBox::Ptr mapNameInput = mapPanel->get<tgui::EditBox>("mapNameInput");
+            tgui::EditBox::Ptr mapNameInput
+                = mapPanel->get<tgui::EditBox>("mapNameInput");
             if (mapNameInput->getText() != "")
             {
                 scene.setLevelName(mapNameInput->getText());
@@ -454,7 +476,8 @@ namespace obe::Editor::GUI
             {
                 tgui::Panel::Ptr inspectorSprPanel = tgui::Panel::create();
                 inspectorLeftPanel->add(inspectorSprPanel);
-                inspectorSprPanel->setRenderer(baseTheme.getRenderer("DarkTransparentPanel"));
+                inspectorSprPanel->setRenderer(
+                    baseTheme.getRenderer("DarkTransparentPanel"));
                 inspectorSprPanel->setSize("100%", "10%");
                 inspectorSprPanel->setPosition(0, i++ * 100);
                 tgui::Label::Ptr inspectorSprLabel = tgui::Label::create();
@@ -466,7 +489,8 @@ namespace obe::Editor::GUI
             }
         };
 
-        mapNameInput->setPosition(tgui::bindRight(mapNameLabel) + 20, tgui::bindTop(mapNameLabel));
+        mapNameInput->setPosition(
+            tgui::bindRight(mapNameLabel) + 20, tgui::bindTop(mapNameLabel));
         mapNameInput->setSize("8.3%", mediumFontSize + 4);
         mapNameInput->setRenderer(baseTheme.getRenderer("TextBox"));
         mapNameInput->connect("returnkeypressed", changeMapNameLambda);
@@ -560,13 +584,15 @@ namespace obe::Editor::GUI
         settingsCatLabel->setRenderer(baseTheme.getRenderer("Label"));
         settingsCatLabel->setText("[ Global Settings ]");
 
-        displayFramerateCheckbox->setPosition(60, tgui::bindBottom(settingsCatLabel) + 20);
+        displayFramerateCheckbox->setPosition(
+            60, tgui::bindBottom(settingsCatLabel) + 20);
         displayFramerateCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
         displayFramerateCheckbox->setSize(16, 16);
         displayFramerateCheckbox->setTextSize(mediumFontSize);
         displayFramerateCheckbox->setText("Display Framerate ?");
 
-        enableGridCheckbox->setPosition(60, tgui::bindBottom(displayFramerateCheckbox) + 20);
+        enableGridCheckbox->setPosition(
+            60, tgui::bindBottom(displayFramerateCheckbox) + 20);
         enableGridCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
         enableGridCheckbox->setSize(16, 16);
         enableGridCheckbox->setTextSize(mediumFontSize);
@@ -614,8 +640,10 @@ namespace obe::Editor::GUI
             "pressed", [gridDimensionXInput, gridDimensionYInput, &editorGrid]() {
                 gridDimensionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
                 gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                if (Utils::String::isStringInt(gridDimensionXInput->getText().toAnsiString())
-                    && Utils::String::isStringInt(gridDimensionYInput->getText().toAnsiString()))
+                if (Utils::String::isStringInt(
+                        gridDimensionXInput->getText().toAnsiString())
+                    && Utils::String::isStringInt(
+                        gridDimensionYInput->getText().toAnsiString()))
                 {
                     std::string xGridSize = gridDimensionXInput->getText().toAnsiString();
                     std::string yGridSize = gridDimensionYInput->getText().toAnsiString();
@@ -631,13 +659,17 @@ namespace obe::Editor::GUI
                     gridDimensionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
                     return;
                 }
-                if (!Utils::String::isStringInt(gridDimensionXInput->getText().toAnsiString()))
+                if (!Utils::String::isStringInt(
+                        gridDimensionXInput->getText().toAnsiString()))
                 {
-                    gridDimensionXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                    gridDimensionXInput->setRenderer(
+                        baseTheme.getRenderer("InvalidTextBox"));
                 }
-                if (!Utils::String::isStringInt(gridDimensionYInput->getText().toAnsiString()))
+                if (!Utils::String::isStringInt(
+                        gridDimensionYInput->getText().toAnsiString()))
                 {
-                    gridDimensionYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
+                    gridDimensionYInput->setRenderer(
+                        baseTheme.getRenderer("InvalidTextBox"));
                 }
             });
 
@@ -666,26 +698,32 @@ namespace obe::Editor::GUI
         gridOffsetButton->setRenderer(baseTheme.getRenderer("ApplyButton"));
         gridOffsetButton->setSize(16, 16);
 
-        gridOffsetButton->connect("pressed", [gridOffsetXInput, gridOffsetYInput, &editorGrid]() {
-            if (Utils::String::isStringInt(gridOffsetXInput->getText().toAnsiString())
-                && Utils::String::isStringInt(gridOffsetYInput->getText().toAnsiString()))
-            {
-                std::string xGridOffset = gridOffsetXInput->getText().toAnsiString();
-                std::string yGridOffset = gridOffsetYInput->getText().toAnsiString();
-                editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
-                gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
-                return;
-            }
-            if (!Utils::String::isStringInt(gridOffsetXInput->getText().toAnsiString()))
-            {
-                gridOffsetXInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-            }
-            if (!Utils::String::isStringInt(gridOffsetYInput->getText().toAnsiString()))
-            {
-                gridOffsetYInput->setRenderer(baseTheme.getRenderer("InvalidTextBox"));
-            }
-        });
+        gridOffsetButton->connect(
+            "pressed", [gridOffsetXInput, gridOffsetYInput, &editorGrid]() {
+                if (Utils::String::isStringInt(gridOffsetXInput->getText().toAnsiString())
+                    && Utils::String::isStringInt(
+                        gridOffsetYInput->getText().toAnsiString()))
+                {
+                    std::string xGridOffset = gridOffsetXInput->getText().toAnsiString();
+                    std::string yGridOffset = gridOffsetYInput->getText().toAnsiString();
+                    editorGrid.setOffset(stoi(xGridOffset), stoi(yGridOffset));
+                    gridOffsetXInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                    gridOffsetYInput->setRenderer(baseTheme.getRenderer("TextBox"));
+                    return;
+                }
+                if (!Utils::String::isStringInt(
+                        gridOffsetXInput->getText().toAnsiString()))
+                {
+                    gridOffsetXInput->setRenderer(
+                        baseTheme.getRenderer("InvalidTextBox"));
+                }
+                if (!Utils::String::isStringInt(
+                        gridOffsetYInput->getText().toAnsiString()))
+                {
+                    gridOffsetYInput->setRenderer(
+                        baseTheme.getRenderer("InvalidTextBox"));
+                }
+            });
 
         snapGridCheckbox->setPosition(60, tgui::bindBottom(gridOffsetLabel) + 20);
         snapGridCheckbox->setRenderer(baseTheme.getRenderer("DisabledCheckBox"));
@@ -702,7 +740,9 @@ namespace obe::Editor::GUI
                         || editMode->getSelectedItem() == "SceneNodes")
                     {
                         Transform::UnitVector pixelCamera
-                            = scene.getCamera()->getPosition().to<Transform::Units::ScenePixels>();
+                            = scene.getCamera()
+                                  ->getPosition()
+                                  .to<Transform::Units::ScenePixels>();
                         return editorGrid.getClosestIntersection(
                             cursor->getX(), cursor->getY(), pixelCamera.x, pixelCamera.y);
                     }
@@ -714,30 +754,31 @@ namespace obe::Editor::GUI
                 [&cursor]() { return cursor.isPressed(sf::Mouse::Button::Left); });
         });
 
-        snapGridCheckbox->connect(
-            "unchecked", [&cursor]() { cursor.setConstraint(System::Constraints::Default); });
+        snapGridCheckbox->connect("unchecked",
+            [&cursor]() { cursor.setConstraint(System::Constraints::Default); });
 
         cameraPositionLabel->setPosition(60, tgui::bindBottom(snapGridCheckbox) + 20);
         cameraPositionLabel->setTextSize(mediumFontSize);
         cameraPositionLabel->setRenderer(baseTheme.getRenderer("Label"));
         cameraPositionLabel->setText("Camera Position : ");
 
-        cameraPositionXInput->setPosition(
-            tgui::bindRight(cameraPositionLabel) + 20, tgui::bindTop(cameraPositionLabel));
+        cameraPositionXInput->setPosition(tgui::bindRight(cameraPositionLabel) + 20,
+            tgui::bindTop(cameraPositionLabel));
         cameraPositionXInput->setSize(80, mediumFontSize + 4);
         cameraPositionXInput->setRenderer(baseTheme.getRenderer("TextBox"));
         cameraPositionXInput->setText(std::to_string(scene.getCamera()->getPosition().x));
         cameraPositionXInput->setInputValidator(tgui::EditBox::Validator::Float);
 
-        cameraPositionYInput->setPosition(
-            tgui::bindRight(cameraPositionXInput) + 20, tgui::bindTop(cameraPositionLabel));
+        cameraPositionYInput->setPosition(tgui::bindRight(cameraPositionXInput) + 20,
+            tgui::bindTop(cameraPositionLabel));
         cameraPositionYInput->setSize(80, mediumFontSize + 4);
         cameraPositionYInput->setRenderer(baseTheme.getRenderer("TextBox"));
         cameraPositionYInput->setText(std::to_string(scene.getCamera()->getPosition().y));
         cameraPositionYInput->setInputValidator(tgui::EditBox::Validator::Float);
 
         cameraPositionBtn->setPosition(tgui::bindRight(cameraPositionYInput) + 20,
-            tgui::bindTop(cameraPositionYInput) + tgui::bindHeight(cameraPositionYInput) / 2
+            tgui::bindTop(cameraPositionYInput)
+                + tgui::bindHeight(cameraPositionYInput) / 2
                 - tgui::bindHeight(cameraPositionBtn) / 2);
         cameraPositionBtn->setRenderer(baseTheme.getRenderer("ApplyButton"));
         cameraPositionBtn->setSize(16, 16);
@@ -772,15 +813,16 @@ namespace obe::Editor::GUI
             scene.getCamera()->setSize(camSize);
         });
 
-        saveCameraPositionCheckbox->setPosition(60, tgui::bindBottom(cameraSizeInput) + 20);
+        saveCameraPositionCheckbox->setPosition(
+            60, tgui::bindBottom(cameraSizeInput) + 20);
         saveCameraPositionCheckbox->setRenderer(baseTheme.getRenderer("CheckBox"));
         saveCameraPositionCheckbox->setSize(16, 16);
         saveCameraPositionCheckbox->setTextSize(mediumFontSize);
         saveCameraPositionCheckbox->setText("Save Camera Position ?");
     }
 
-    void buildEditorSpritesMenu(
-        tgui::Panel::Ptr& spritesPanel, tgui::Scrollbar::Ptr& spritesScrollbar, Scene::Scene& scene)
+    void buildEditorSpritesMenu(tgui::Panel::Ptr& spritesPanel,
+        tgui::Scrollbar::Ptr& spritesScrollbar, Scene::Scene& scene)
     {
         tgui::Label::Ptr spritesCatLabel = tgui::Label::create();
 
@@ -794,8 +836,9 @@ namespace obe::Editor::GUI
         loadSpriteFolder(scene, spritesPanel, spritesCatLabel, "", spritesScrollbar);
     }
 
-    void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel, tgui::Panel::Ptr& requiresPanel,
-        tgui::Scrollbar::Ptr& objectsScrollbar, Scene::Scene& scene)
+    void buildEditorObjectsMenu(tgui::Panel::Ptr& objectsPanel,
+        tgui::Panel::Ptr& requiresPanel, tgui::Scrollbar::Ptr& objectsScrollbar,
+        Scene::Scene& scene)
     {
         tgui::Label::Ptr objectsCatLabel = tgui::Label::create();
 
@@ -827,7 +870,8 @@ namespace obe::Editor::GUI
         requiresCloseButton->setRenderer(baseTheme.getRenderer("CloseButton"));
         requiresCloseButton->setSize("32", "32");
         requiresCloseButton->setPosition("100% - 40", "8");
-        requiresCloseButton->connect("pressed", [requiresPanel]() { requiresPanel->hide(); });
+        requiresCloseButton->connect(
+            "pressed", [requiresPanel]() { requiresPanel->hide(); });
         requiresPanel->add(requiresCloseButton, "requiresCloseButton");
 
         requiresTitleLabel->setPosition(30, 15);
@@ -879,7 +923,8 @@ namespace obe::Editor::GUI
 
             yPos += 70;
 
-            for (vili::DataNode* action : keybinding.at(context->getId()).getAll<vili::DataNode>())
+            for (vili::DataNode* action :
+                keybinding.at(context->getId()).getAll<vili::DataNode>())
             {
                 tgui::Button::Ptr actionBtn = tgui::Button::create();
                 keybindingPanel->add(actionBtn);
@@ -895,9 +940,9 @@ namespace obe::Editor::GUI
                 unsigned int kIndex = 0;
                 for (auto& key : keyGen.getCombination())
                 {
-                    std::string keyName = key.first->getButton()->getName();
-                    const std::string stateName
-                        = Input::inputButtonStateToString(bitsetToInputStates(key.second)[0]);
+                    std::string keyName = key.first->getButton().getName();
+                    const std::string stateName = Input::inputButtonStateToString(
+                        bitsetToInputStates(key.second)[0]);
                     if (Utils::String::contains(keyName, "NumPad"))
                     {
                         System::Path numImgPath("Sprites/Keys/Keyboard/Key_Num.png");
@@ -921,8 +966,10 @@ namespace obe::Editor::GUI
                             xPos = xPos + 100;
                         }
                     }
-                    System::Path keyImgPath("Sprites/Keys/Keyboard/Key_" + keyName + ".png");
-                    System::Path stateImgPath("Sprites/Keys/Keyboard/" + stateName + ".png");
+                    System::Path keyImgPath(
+                        "Sprites/Keys/Keyboard/Key_" + keyName + ".png");
+                    System::Path stateImgPath(
+                        "Sprites/Keys/Keyboard/" + stateName + ".png");
                     if (kIndex > 0)
                     {
                         const tgui::Label::Ptr addSymbol = tgui::Label::create();

@@ -14,70 +14,71 @@ namespace obe::Animation
 
     Animator::Animator(const System::Path& path)
     {
-        m_animatorPath = path;
+        m_path = path;
     }
 
     void Animator::setPath(const System::Path& path)
     {
-        m_animatorPath = path;
+        m_path = path;
     }
 
     void Animator::setPath(const std::string& path)
     {
-        m_animatorPath = System::Path(path);
+        m_path = System::Path(path);
     }
 
     void Animator::clear(bool clearMemory)
     {
-        Debug::Log->trace(
-            "<Animator> Clearing Animator at {0}", m_animatorPath.toString());
-        m_animationSet.clear();
+        Debug::Log->trace("<Animator> Clearing Animator at {0}", m_path.toString());
+        m_animations.clear();
         m_currentAnimation = nullptr;
-        m_currentAnimationName = "NONE";
-        m_animatorPath = System::Path("");
+        m_path = System::Path("");
     }
 
     Animation* Animator::getAnimation(const std::string& animationName) const
     {
-        if (m_animationSet.find(animationName) != m_animationSet.end())
-            return m_animationSet.at(animationName).get();
+        if (m_animations.find(animationName) != m_animations.end())
+            return m_animations.at(animationName).get();
         throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
             { { "function", "getAnimation" }, { "animation", animationName },
-                { "%animator", m_animatorPath.toString() } });
+                { "%animator", m_path.toString() } });
     }
 
     std::vector<std::string> Animator::getAllAnimationName() const
     {
         std::vector<std::string> allAnimationsNames;
-        for (auto& animationPair : m_animationSet)
+        for (auto& animationPair : m_animations)
             allAnimationsNames.push_back(animationPair.first);
         return allAnimationsNames;
     }
 
     std::string Animator::getKey() const
     {
-        return m_currentAnimationName;
+        if (m_currentAnimation)
+            return m_currentAnimation->getName();
+        else
+            return "";
     }
 
     void Animator::setKey(const std::string& key)
     {
         Debug::Log->trace("<Animator> Set Animation Key {0} for Animator at {1} {2}", key,
-            m_animatorPath.toString(), m_animationSet.size());
-        if (!m_animationSet.empty() && m_animationSet.find(key) == m_animationSet.end())
+            m_path.toString(), m_animations.size());
+        if (!m_animations.empty() && m_animations.find(key) == m_animations.end())
         {
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Animation.Animator.AnimationNotFound",
                 { { "function", "setKey" }, { "animation", key },
-                    { "%animator", m_animatorPath.toString() } });
+                    { "%animator", m_path.toString() } });
         }
-        if (key != m_currentAnimationName)
+        if (key != this->getKey())
         {
             bool changeAnim = false;
             if (m_currentAnimation != nullptr)
             {
-                if (m_currentAnimation->isAnimationOver())
+                if (m_currentAnimation->isOver())
                     changeAnim = true;
-                else if (m_animationSet[key]->getPriority()
+                else if (m_animations[key]->getPriority()
                     >= m_currentAnimation->getPriority())
                     changeAnim = true;
             }
@@ -85,10 +86,9 @@ namespace obe::Animation
                 changeAnim = true;
             if (changeAnim)
             {
-                if (m_currentAnimationName != "NONE")
-                    m_animationSet[m_currentAnimationName]->reset();
-                m_currentAnimationName = key;
-                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
+                if (m_currentAnimation)
+                    m_currentAnimation->reset();
+                m_currentAnimation = m_animations[key].get();
             }
         }
     }
@@ -100,17 +100,16 @@ namespace obe::Animation
 
     void Animator::loadAnimator()
     {
-        Debug::Log->debug(
-            "<Animator> Loading Animator at {0}", m_animatorPath.toString());
+        Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
         std::vector<std::string> listDir;
-        m_animatorPath.loadAll(System::Loaders::dirPathLoader, listDir);
+        m_path.loadAll(System::Loaders::dirPathLoader, listDir);
         std::vector<std::string> allFiles;
-        m_animatorPath.loadAll(System::Loaders::filePathLoader, allFiles);
+        m_path.loadAll(System::Loaders::filePathLoader, allFiles);
         vili::ViliParser animatorCfgFile;
         std::unordered_map<std::string, vili::ComplexNode*> animationParameters;
         if (Utils::Vector::contains(std::string("animator.cfg.vili"), allFiles))
         {
-            System::Path(m_animatorPath.toString() + "/" + "animator.cfg.vili")
+            System::Path(m_path.toString() + "/" + "animator.cfg.vili")
                 .load(System::Loaders::dataLoader, animatorCfgFile);
             for (vili::ComplexNode* currentAnim :
                 animatorCfgFile.at("Animator").getAll<vili::ComplexNode>())
@@ -124,7 +123,7 @@ namespace obe::Animation
             {
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
-            tempAnim->loadAnimation(m_animatorPath.add(listDir[i]));
+            tempAnim->loadAnimation(m_path.add(listDir[i]));
             if (animationParameters.find(listDir[i]) != animationParameters.end()
                 && animationParameters.find("all") != animationParameters.end())
             {
@@ -135,7 +134,7 @@ namespace obe::Animation
                 tempAnim->applyParameters(*animationParameters[listDir[i]]);
             else if (animationParameters.find("all") != animationParameters.end())
                 tempAnim->applyParameters(*animationParameters["all"]);
-            m_animationSet[tempAnim->getAnimationName()] = move(tempAnim);
+            m_animations[tempAnim->getName()] = move(tempAnim);
         }
     }
 
@@ -143,19 +142,18 @@ namespace obe::Animation
     {
         if (!m_paused)
         {
-            Debug::Log->trace(
-                "<Animator> Updating Animator at {0}", m_animatorPath.toString());
+            Debug::Log->trace("<Animator> Updating Animator at {0}", m_path.toString());
             if (m_currentAnimation == nullptr)
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Animator.Animator.UpdateNullAnimation",
-                    { { "animator", m_animatorPath.toString() } });
-            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Call)
+                    { { "animator", m_path.toString() } });
+            if (m_currentAnimation->getStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
-                m_currentAnimationName = m_currentAnimation->getCalledAnimation();
-                m_currentAnimation = m_animationSet[m_currentAnimationName].get();
+                std::string nextAnimation = m_currentAnimation->getCalledAnimation();
+                m_currentAnimation = m_animations[nextAnimation].get();
             }
-            if (m_currentAnimation->getAnimationStatus() == AnimationStatus::Play)
+            if (m_currentAnimation->getStatus() == AnimationStatus::Play)
                 m_currentAnimation->update();
 
             if (m_target)
@@ -211,10 +209,5 @@ namespace obe::Animation
     const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
     {
         return this->getAnimation(key)->getTextureAtIndex(index);
-    }
-
-    Transform::UnitVector Animator::getSpriteOffset() const
-    {
-        return m_currentAnimation->getSpriteOffset();
     }
 } // namespace obe::Animation

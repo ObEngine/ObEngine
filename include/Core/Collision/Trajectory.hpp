@@ -12,7 +12,7 @@ namespace obe::Collision
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
-     * \lua_bind{Trajectory}
+     * \bind{Trajectory}
      */
     class Trajectory : public Types::Togglable
     {

@@ -7,8 +7,8 @@ namespace obe::Transform
 {
     /**
      * \brief A Class that does represent a Rectangle with various methods to
-     * manipulate it
-     * @Bind
+     *        manipulate it
+     * \bind{Rect}
      */
     class Rect : public Movable
     {
@@ -42,12 +42,10 @@ namespace obe::Transform
          *               - From : Referential::TopLeft to ref
          *               - To : ref to Referential::TopLeft
          */
-        void transformRef(
-            UnitVector& vec, Referential ref, ConversionType type) const;
+        void transformRef(UnitVector& vec, Referential ref, ConversionType type) const;
 
         Rect();
-        Rect(const Transform::UnitVector& position,
-            const Transform::UnitVector& size);
+        Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
         /**
          * \brief Set the position of the Rect (Movable override) using an
          * UnitVector \param position Position to affect to the Rect (Movable
@@ -99,16 +97,14 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          * won't move)
          */
-        void setSize(
-            const UnitVector& size, Referential ref = Referential::TopLeft);
+        void setSize(const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
          * \param ref Referential used to scale the Rect (Referential that won't
          * move)
          */
-        void scale(
-            const UnitVector& size, Referential ref = Referential::TopLeft);
+        void scale(const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Get the Size of the Rect
          * \return An UnitVector containing the size of the Rect (Default Unit

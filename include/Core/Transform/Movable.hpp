@@ -5,6 +5,9 @@
 
 namespace obe::Transform
 {
+    /**
+     * \brief A class which implements position and basic methods to manipulate it
+     */
     class Movable
     {
     protected:

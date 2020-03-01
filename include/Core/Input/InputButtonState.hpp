@@ -6,6 +6,7 @@ namespace obe::Input
 {
     /**
      * \brief Possible states of InputButton
+     * \bind{InputButtonState}
      */
     enum class InputButtonState
     {

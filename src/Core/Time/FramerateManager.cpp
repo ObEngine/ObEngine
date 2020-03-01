@@ -9,8 +9,9 @@
 namespace obe::Time
 {
     FramerateManager::FramerateManager(vili::ComplexNode& config)
+        : Registrable("FramerateManager")
     {
-        m_frameLimiterClock = getTickSinceEpoch();
+        m_frameLimiterClock = epochAsMilliseconds();
         m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit"))
             ? config.at<vili::DataNode>("framerateLimit")
             : true;
@@ -20,7 +21,8 @@ namespace obe::Time
         m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync"))
             ? config.at<vili::DataNode>("vsync")
             : true;
-        m_syncUpdateRender = (config.contains(vili::NodeType::DataNode, "syncUpdateToRender"))
+        m_syncUpdateRender
+            = (config.contains(vili::NodeType::DataNode, "syncUpdateToRender"))
             ? config.at<vili::DataNode>("syncUpdateToRender")
             : true;
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
@@ -42,13 +44,13 @@ namespace obe::Time
         m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
         if (m_limitFPS)
         {
-            if (getTickSinceEpoch() - m_frameLimiterClock > 1000)
+            if (epochAsMilliseconds() - m_frameLimiterClock > 1000)
             {
-                m_frameLimiterClock = getTickSinceEpoch();
+                m_frameLimiterClock = epochAsMilliseconds();
                 m_currentFrame = 0;
             }
-            m_frameProgression = round(
-                (getTickSinceEpoch() - m_frameLimiterClock) / (m_reqFramerateInterval * 1000));
+            m_frameProgression = round((epochAsMilliseconds() - m_frameLimiterClock)
+                / (m_reqFramerateInterval * 1000));
             m_needToRender = false;
             if (m_frameProgression > m_currentFrame)
             {
@@ -57,7 +59,8 @@ namespace obe::Time
             }
             else
             {
-                std::this_thread::sleep_for(std::chrono::duration<double>(m_reqFramerateInterval));
+                std::this_thread::sleep_for(
+                    std::chrono::duration<double>(m_reqFramerateInterval));
             }
         }
     }
