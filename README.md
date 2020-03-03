@@ -197,3 +197,26 @@ Check the Wiki for more examples !
   </tr>
 </table>
 
+## Sponsors
+
+A big special thanks to my sponsors who are allowing me to spend more time on this project !
+
+### Companies
+<table>
+  <tr>
+    <td align="center"><a href="https://www.jetbrains.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/JetBrains_Logo_2016.svg/1200px-JetBrains_Logo_2016.svg.png" width="100px;" alt="JetBrains"/><br /><sub><b>JetBrains</b></sub></a><br /><a href="https://www.jetbrains.com" title="Sponsor">:heart:🧠</a></td>
+    <td align="center"><a href="https://www.viva64.com/en/pvs-studio/"><img src="https://www.viva64.com/media/img/logo.png" alt="PVS-Studio"/><br /><sub><b>Viva64</b></sub></a><br /><a href="https://www.viva64.com/en/pvs-studio/" title="Sponsor">:heart:🦄</a></td>
+  </tr>
+</table>
+
+
+### Individuals
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/Mari0nv"><img src="https://avatars3.githubusercontent.com/u/23618241?s=400&v=4" width="100px;" alt="Mari0nV"/><br /><sub><b>Mari0nV</b></sub></a><br /><a href="https://github.com/Mari0nv" title="Sponsor">:heart::heart:</a></td>
+    <td align="center"><a href="https://github.com/GuillaumeCailhe"><img src="https://avatars0.githubusercontent.com/u/1500051?s=400&v=4" width="100px;" alt="GuillaumeCailhe"/><br /><sub><b>GuillaumeCailhe</b></sub></a><br /><a href="https://github.com/Sygmei/GuillaumeCailhe" title="Sponsor">:heart:🍆</a></td>
+    <td align="center"><a href="https://github.com/Uriopass"><img src="https://avatars3.githubusercontent.com/u/5420739?s=460&v=4" width="100px;" alt="Uriopass"/><br /><sub><b>Uriopass</b></sub></a><br /><a href="https://github.com/Uriopass" title="Sponsor">:heart:🚗</a></td>
+    <td align="center"><a href="https://github.com/Nowyce"><img src="https://avatars2.githubusercontent.com/u/1354475?s=460&v=4" width="100px;" alt="Nowyce"/><br /><sub><b>Nowyce</b></sub></a><br /><a href="https://github.com/Nowyce" title="Sponsor">:heart:🎃</a></td>
+  </tr>
+</table>
+
