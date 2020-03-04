@@ -577,7 +577,7 @@ end
 
 obe.Canvas.Bases.Text = {
     priority = {
-        "font", "size", "color", "outline"
+        "font", "size", "color", "outline", "align"
     },
     getters = {
         text = function(self)
