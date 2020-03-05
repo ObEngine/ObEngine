@@ -1,4 +1,3 @@
-#include <Bindings/Bindings.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/GlobalState.hpp>
@@ -7,7 +6,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Triggers/Trigger.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 
 #define GAMEOBJECTENV ScriptEngine["__ENVIRONMENTS"][m_envIndex]
@@ -148,7 +147,7 @@ namespace obe::Script
         if (m_hasScriptEngine)
         {
             m_localTriggers.reset();
-            Triggers::TriggerDatabase::GetInstance().removeNamespace(m_privateKey);
+            Triggers::TriggerManager::GetInstance().removeNamespace(m_privateKey);
         }
     }
 
@@ -181,9 +180,9 @@ namespace obe::Script
             m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet, 1)
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
-            Triggers::TriggerDatabase::GetInstance().createNamespace(m_privateKey);
+            Triggers::TriggerManager::GetInstance().createNamespace(m_privateKey);
             m_localTriggers.reset(
-                Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+                Triggers::TriggerManager::GetInstance().createTriggerGroup(
                     m_privateKey, "Local"),
                 Triggers::TriggerGroupPtrRemover);
 
@@ -364,7 +363,7 @@ namespace obe::Script
         if (trName == "*")
         {
             std::vector<std::string> allTrg
-                = Triggers::TriggerDatabase::GetInstance()
+                = Triggers::TriggerManager::GetInstance()
                       .getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
             for (const std::string& triggerName : allTrg)
             {
@@ -380,7 +379,7 @@ namespace obe::Script
             for (auto& triggerPair : m_registeredTriggers)
             {
                 if (triggerPair.first.lock()
-                    == Triggers::TriggerDatabase::GetInstance()
+                    == Triggers::TriggerManager::GetInstance()
                            .getTrigger(trNsp, trGrp, trName)
                            .lock())
                 {
@@ -392,10 +391,10 @@ namespace obe::Script
                 const std::string callbackName = (callAlias.empty())
                     ? trNsp + "." + trGrp + "." + trName
                     : callAlias;
-                this->registerTrigger(Triggers::TriggerDatabase::GetInstance().getTrigger(
+                this->registerTrigger(Triggers::TriggerManager::GetInstance().getTrigger(
                                           trNsp, trGrp, trName),
                     callbackName);
-                Triggers::TriggerDatabase::GetInstance()
+                Triggers::TriggerManager::GetInstance()
                     .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
@@ -405,11 +404,11 @@ namespace obe::Script
                 const std::string callbackName = (callAlias.empty())
                     ? trNsp + "." + trGrp + "." + trName
                     : callAlias;
-                Triggers::TriggerDatabase::GetInstance()
+                Triggers::TriggerManager::GetInstance()
                     .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->unregisterEnvironment(m_envIndex);
-                Triggers::TriggerDatabase::GetInstance()
+                Triggers::TriggerManager::GetInstance()
                     .getTrigger(trNsp, trGrp, trName)
                     .lock()
                     ->registerEnvironment(m_envIndex, callbackName, &m_active);
@@ -420,7 +419,7 @@ namespace obe::Script
     void GameObject::removeTrigger(const std::string& trNsp, const std::string& trGrp,
         const std::string& trName) const
     {
-        Triggers::TriggerDatabase::GetInstance()
+        Triggers::TriggerManager::GetInstance()
             .getTrigger(trNsp, trGrp, trName)
             .lock()
             ->unregisterEnvironment(m_envIndex);

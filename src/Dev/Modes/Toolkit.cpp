@@ -9,7 +9,6 @@
 #include <TGUI/Widgets/Panel.hpp>
 #include <kaguya/kaguya.hpp>
 
-#include <Bindings/Bindings.hpp>
 #include <Modes/Toolkit.hpp>
 #include <Modes/ToolkitContentBox.hpp>
 #include <System/Loaders.hpp>
@@ -105,7 +104,7 @@ namespace obe::Modes
         toolkitEngine["This"] = &toolkitEngine;
         toolkitEngine.dofile("Lib/Internal/LuaCore.lua");
         toolkitEngine.dofile("Lib/Internal/ScriptInit.lua");
-        Bindings::BindTree(&toolkitEngine);
+        // Bindings::BindTree(&toolkitEngine);
 
         toolkitEngine["_term_set_input_color"]
             = kaguya::function([&inputColor](unsigned int r, unsigned int g, unsigned b) {

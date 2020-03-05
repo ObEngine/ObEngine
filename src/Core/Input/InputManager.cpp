@@ -2,7 +2,7 @@
 
 #include <Input/InputManager.hpp>
 #include <Input/KeyList.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Input
@@ -25,8 +25,8 @@ namespace obe::Input
     InputManager::InputManager()
         : Registrable("InputManager")
         , Togglable(true)
-        , m_actionTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Actions"),
+        , m_actionTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
+                               "Global", "Actions"),
               Triggers::TriggerGroupPtrRemover)
     {
     }
@@ -42,7 +42,8 @@ namespace obe::Input
         }
         aube::ErrorHandler::Warn(
             "ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
-        m_allActions.push_back(std::make_unique<InputAction>(m_actionTriggers.get(), actionId));
+        m_allActions.push_back(
+            std::make_unique<InputAction>(m_actionTriggers.get(), actionId));
         return *m_allActions.back().get();
     }
 
@@ -91,8 +92,8 @@ namespace obe::Input
             {
                 if (!this->actionExists(action->getId()))
                 {
-                    m_allActions.push_back(
-                        std::make_unique<InputAction>(m_actionTriggers.get(), action->getId()));
+                    m_allActions.push_back(std::make_unique<InputAction>(
+                        m_actionTriggers.get(), action->getId()));
                 }
                 else if (!Utils::Vector::contains(action->getId(), alreadyInFile))
                 {
@@ -102,9 +103,11 @@ namespace obe::Input
                                           vili::DataNode* condition) {
                     InputCondition actionCondition;
                     actionCondition.setCombinationCode(condition->get<std::string>());
-                    Debug::Log->debug("<InputManager> Associated Key '{0}' for Action '{1}'",
+                    Debug::Log->debug(
+                        "<InputManager> Associated Key '{0}' for Action '{1}'",
                         condition->get<std::string>(), action->getId());
-                    inputManager->getAction(action->getId()).addCondition(actionCondition);
+                    inputManager->getAction(action->getId())
+                        .addCondition(actionCondition);
                 };
                 if (action->getType() == vili::NodeType::DataNode)
                 {
@@ -112,7 +115,8 @@ namespace obe::Input
                 }
                 else if (action->getType() == vili::NodeType::ArrayNode)
                 {
-                    for (vili::DataNode* condition : *static_cast<vili::ArrayNode*>(action))
+                    for (vili::DataNode* condition :
+                        *static_cast<vili::ArrayNode*>(action))
                     {
                         inputCondition(this, action, condition);
                     }

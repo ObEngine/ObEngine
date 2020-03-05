@@ -1,7 +1,6 @@
 #include <ObEngineCore.hpp>
 
 #include <Audio/AudioManager.hpp>
-#include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
@@ -44,8 +43,6 @@ namespace obe
         Debug::InitLoggerLevel();
         System::IndexPlugins();
 
-        Debug::Log->debug("<ObEngine> Indexing ObEngine Lua Bindings");
-        Bindings::IndexBindings();
         Debug::Log->debug("<ObEngine> Initialising Lua State");
         Script::InitScriptEngine();
 

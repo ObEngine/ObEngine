@@ -5,7 +5,7 @@
 #include <Debug/Logger.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/KeyList.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Input
 {
@@ -14,7 +14,7 @@ namespace obe::Input
     void InputButtonMonitor::InitKeyTriggerGroup()
     {
         InputButtonMonitor::KeyTriggers = Triggers::TriggerGroupPtr(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Keys"),
+            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Keys"),
             Triggers::TriggerGroupPtrRemover);
         for (auto const& [key, val] : AllKeys)
         {

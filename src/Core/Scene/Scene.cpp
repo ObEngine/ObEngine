@@ -1,11 +1,10 @@
-#include <Bindings/Bindings.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GlobalState.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
@@ -13,14 +12,14 @@ namespace obe::Scene
 {
     Scene::Scene()
         : Registrable("Scene")
-        , m_sceneTriggers(Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+        , m_sceneTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
                               "Global", "Scene"),
               Triggers::TriggerGroupPtrRemover)
 
     {
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        Triggers::TriggerDatabase::GetInstance().createNamespace("Map");
+        Triggers::TriggerManager::GetInstance().createNamespace("Map");
         m_showElements["SceneNodes"] = false;
 
         m_sceneTriggers->addTrigger("MapLoaded");
@@ -28,7 +27,7 @@ namespace obe::Scene
 
     Scene::~Scene()
     {
-        Triggers::TriggerDatabase::GetInstance().removeNamespace("Map");
+        Triggers::TriggerManager::GetInstance().removeNamespace("Map");
     }
 
     Graphics::Sprite* Scene::createSprite(const std::string& id, bool addToSceneRoot)

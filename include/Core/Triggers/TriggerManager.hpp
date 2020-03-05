@@ -14,11 +14,10 @@ namespace obe::Triggers
      * \brief A TriggerManager that handles all Trigger / TriggerGroup
      */
     class TriggerManager : public Types::Registrable<TriggerManager>,
-                            public Types::Singleton<TriggerManager>
+                           public Types::Singleton<TriggerManager>
     {
     private:
-        std::map<std::string,
-            std::map<std::string, std::unique_ptr<TriggerGroup>>>
+        std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>>
             m_allTriggers;
         Time::Chronometer m_databaseChrono;
         std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
@@ -33,8 +32,7 @@ namespace obe::Triggers
          * \return A pointer of the Trigger if found
          */
         std::weak_ptr<Trigger> getTrigger(const std::string& namespaceName,
-            const std::string& triggerGroupName,
-            const std::string& triggerName);
+            const std::string& triggerGroupName, const std::string& triggerName);
         /**
          * \brief Creates a new namespace (Throws an error if the namespace
          * already exists) \param namespaceName Name of the namespace to create
@@ -46,8 +44,8 @@ namespace obe::Triggers
          * create the TriggerGroup \param triggerGroupName Name of the new
          * TriggerGroup \return Pointer to the newly created TriggerGroup
          */
-        TriggerGroup* createTriggerGroup(const std::string& namespaceName,
-            const std::string& triggerGroupName);
+        TriggerGroup* createTriggerGroup(
+            const std::string& namespaceName, const std::string& triggerGroupName);
         /**
          * \brief Join an existing TriggerGroup (Throws an error if the
          * TriggerGroup doesn't exists or isn't joinable) \param namespaceName
@@ -55,8 +53,8 @@ namespace obe::Triggers
          * of the TriggerGroup to join \return Pointer to the newly joined
          * TriggerGroup
          */
-        TriggerGroup* joinTriggerGroup(const std::string& namespaceName,
-            const std::string& triggerGroupName);
+        TriggerGroup* joinTriggerGroup(
+            const std::string& namespaceName, const std::string& triggerGroupName);
         /**
          * \brief Gets all the names of the Trigger containing the
          * groupNamespace.triggerGroupName \param namespaceName Name of the
@@ -65,8 +63,7 @@ namespace obe::Triggers
          * the names of the Trigger in the TriggerGroup
          */
         std::vector<std::string> getAllTriggersNameFromTriggerGroup(
-            const std::string& namespaceName,
-            const std::string& triggerGroupName);
+            const std::string& namespaceName, const std::string& triggerGroupName);
         /**
          * \brief Get all the names of the TriggerGroup in the given Namespace
          * \param namespaceName Namespace where to get all the TriggerGroup
@@ -91,8 +88,8 @@ namespace obe::Triggers
          * TriggerGroup exists \param triggerGroupName Name of the TriggerGroup
          * to search \return
          */
-        bool doesTriggerGroupExists(const std::string& groupNamespace,
-            const std::string& triggerGroupName);
+        bool doesTriggerGroupExists(
+            const std::string& groupNamespace, const std::string& triggerGroupName);
         /**
          * \brief Updates the TriggerManager (Already executed in the main
          * loops)

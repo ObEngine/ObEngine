@@ -4,7 +4,7 @@
 #include <System/Cursor.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::System
 {
@@ -28,7 +28,7 @@ namespace obe::System
     Cursor::Cursor()
         : Registrable("Cursor")
         , m_cursorTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Cursor"),
+              Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Cursor"),
               Triggers::TriggerGroupPtrRemover)
     {
         m_constraint = Constraints::Default;

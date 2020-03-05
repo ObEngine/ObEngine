@@ -15,7 +15,7 @@ namespace obe::Triggers
         std::map<std::string, std::shared_ptr<Trigger>> m_triggerMap;
         std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
         bool m_joinable = false;
-        friend class TriggerDatabase;
+        friend class TriggerManager;
 
     public:
         /**

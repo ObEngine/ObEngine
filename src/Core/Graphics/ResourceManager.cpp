@@ -2,7 +2,7 @@
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Graphics
 {
@@ -13,10 +13,10 @@ namespace obe::Graphics
             || (!m_textureDatabase[path].second && antiAliasing))
         {
             std::unique_ptr<sf::Texture> tempTexture = std::make_unique<sf::Texture>();
-            System::LoaderResult loadResult
-                = System::Path(path).load(System::Loaders::textureLoader, *tempTexture.get());
-            Debug::Log->debug(
-                "[ResourceManager] Loading <Texture> {} from {}", path, loadResult.path());
+            System::LoaderResult loadResult = System::Path(path).load(
+                System::Loaders::textureLoader, *tempTexture.get());
+            Debug::Log->debug("[ResourceManager] Loading <Texture> {} from {}", path,
+                loadResult.path());
 
             if (tempTexture != nullptr)
             {
@@ -34,7 +34,8 @@ namespace obe::Graphics
             }
             else
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.RessourceManager.LoadTexture", { { "file", path } });
+                    "ObEngine.Animation.RessourceManager.LoadTexture",
+                    { { "file", path } });
         }
         else
         {
@@ -63,7 +64,8 @@ namespace obe::Graphics
             if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
             {
                 defaultAntiAliasing = gameConfig.getDataNode("antiAliasing").get<bool>();
-                Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}", defaultAntiAliasing);
+                Debug::Log->debug(
+                    "<ResourceManager> AntiAliasing Default is {}", defaultAntiAliasing);
             }
         }
         sf::Image nullImage;

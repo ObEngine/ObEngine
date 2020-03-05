@@ -42,7 +42,7 @@ namespace obe::Scene
         Scene();
         /**
          * \brief Default destructor of Scene (Removes Map Namespace in
-         * TriggerDatabase)
+         * TriggerManager)
          */
         ~Scene();
 

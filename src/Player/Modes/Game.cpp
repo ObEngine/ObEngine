@@ -1,4 +1,3 @@
-#include "Scene/TXScene.hpp"
 #include <Config/Config.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
@@ -11,7 +10,7 @@
 #include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Modes
 {
@@ -22,7 +21,7 @@ namespace obe::Modes
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Game"),
+            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"),
             Triggers::TriggerGroupPtrRemover);
 
         gameTriggers->addTrigger("Start")
@@ -96,7 +95,7 @@ namespace obe::Modes
 
             // Events
             scene.update();
-            Triggers::TriggerDatabase::GetInstance().update();
+            Triggers::TriggerManager::GetInstance().update();
             inputManager.update();
             if (Input::InputButtonMonitor::RequireRefresh)
                 Input::InputButtonMonitor::Update();
@@ -114,7 +113,7 @@ namespace obe::Modes
             }
         }
         gameTriggers->trigger("End");
-        Triggers::TriggerDatabase::GetInstance().update();
+        Triggers::TriggerManager::GetInstance().update();
         scene.clear();
         scene.update();
         Script::GameObjectDatabase::Clear();

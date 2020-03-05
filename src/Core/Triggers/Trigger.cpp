@@ -1,7 +1,6 @@
 #include <Script/GameObject.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Utils/TypeUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Triggers
@@ -19,7 +18,8 @@ namespace obe::Triggers
         m_fullName = this->getNamespace() + "." + this->getGroup() + "." + m_name;
         Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
             = kaguya::NewTable();
-        Debug::Log->trace("<Trigger> Creating Trigger {0} @{1}", m_fullName, fmt::ptr(this));
+        Debug::Log->trace(
+            "<Trigger> Creating Trigger {0} @{1}", m_fullName, fmt::ptr(this));
     }
 
     bool Trigger::getState() const
@@ -58,15 +58,16 @@ namespace obe::Triggers
             = callbackName;
         if (m_onRegisterCallback)
         {
-            Debug::Log->trace("<Trigger> Calling onRegister callback of Trigger {0}", m_fullName);
+            Debug::Log->trace(
+                "<Trigger> Calling onRegister callback of Trigger {0}", m_fullName);
             m_onRegisterCallback(m_registeredEnvs.back());
         }
     }
 
     void Trigger::unregisterEnvironment(unsigned int envIndex)
     {
-        Debug::Log->trace(
-            "<Trigger> Unregistering Lua Environment {0} from Trigger {1}", envIndex, m_fullName);
+        Debug::Log->trace("<Trigger> Unregistering Lua Environment {0} from Trigger {1}",
+            envIndex, m_fullName);
         Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["__TRIGGERS"]
                             [this->getTriggerLuaTableName()]
             = kaguya::NilValue();
@@ -109,8 +110,9 @@ namespace obe::Triggers
                 Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on "
                                   "Lua Environment {1} from Trigger {2}",
                     rEnv.callbackName, rEnv.envIndex, m_fullName);
-                Script::ScriptEngine("LuaCore.EnvFuncInjector(" + std::to_string(rEnv.envIndex)
-                    + ", \"" + this->getTriggerLuaTableName() + "\")");
+                Script::ScriptEngine("LuaCore.EnvFuncInjector("
+                    + std::to_string(rEnv.envIndex) + ", \""
+                    + this->getTriggerLuaTableName() + "\")");
             }
         }
         Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
@@ -121,7 +123,8 @@ namespace obe::Triggers
             {
                 m_registeredEnvs.erase(
                     std::remove_if(m_registeredEnvs.begin(), m_registeredEnvs.end(),
-                        [&envToRemove](TriggerEnv& env) { return env.envIndex == envToRemove; }),
+                        [&envToRemove](
+                            TriggerEnv& env) { return env.envIndex == envToRemove; }),
                     m_registeredEnvs.end());
             }
         }
@@ -131,9 +134,10 @@ namespace obe::Triggers
     void Trigger::pushParameterFromLua(
         const std::string& name, const kaguya::LuaRef& parameter) const
     {
-        Debug::Log->trace(
-            "<Trigger> Pushing parameter {0} to Trigger {1} (From Lua)", name, m_fullName);
-        Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()][name]
+        Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1} (From Lua)",
+            name, m_fullName);
+        Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
+                            [name]
             = parameter;
     }
 
@@ -145,7 +149,8 @@ namespace obe::Triggers
 
     void Trigger::onUnregister(std::function<void(const TriggerEnv&)> callback)
     {
-        Debug::Log->trace("<Trigger> Add onUnregister callback to Trigger {0}", m_fullName);
+        Debug::Log->trace(
+            "<Trigger> Add onUnregister callback to Trigger {0}", m_fullName);
         m_onUnregisterCallback = callback;
     }
 } // namespace obe::Triggers

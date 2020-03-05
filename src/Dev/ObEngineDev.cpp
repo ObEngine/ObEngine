@@ -5,7 +5,6 @@
 
 #include <SFML/Window/VideoMode.hpp>
 
-#include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>

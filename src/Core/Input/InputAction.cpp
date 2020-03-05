@@ -1,5 +1,5 @@
 #include <Input/InputAction.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Input

@@ -4,7 +4,6 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <vili/Vili.hpp>
 
-#include <Bindings/Bindings.hpp>
 #include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>

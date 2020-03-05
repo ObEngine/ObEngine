@@ -1,40 +1,43 @@
 #include <vili/ErrorHandler.hpp>
 
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Triggers
 {
-    TriggerDatabase::TriggerDatabase()
-        : Registrable("TriggerDatabase")
+    TriggerManager::TriggerManager()
+        : Registrable("TriggerManager")
     {
-        Debug::Log->debug("<TriggerDatabase> Initialising TriggerDatabase");
+        Debug::Log->debug("<TriggerManager> Initialising TriggerManager");
         this->createNamespace("Global");
         m_databaseChrono.start();
     }
 
-    std::weak_ptr<Trigger> TriggerDatabase::getTrigger(const std::string& groupNamespace,
+    std::weak_ptr<Trigger> TriggerManager::getTrigger(const std::string& groupNamespace,
         const std::string& triggerGroupName, const std::string& triggerName)
     {
         if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
         {
             if (m_allTriggers[groupNamespace].find(triggerGroupName)
                 != m_allTriggers[groupNamespace].end())
-                return m_allTriggers[groupNamespace][triggerGroupName]->getTrigger(triggerName);
+                return m_allTriggers[groupNamespace][triggerGroupName]->getTrigger(
+                    triggerName);
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup",
+                "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getTrigger" }, { "group", triggerGroupName },
                     { "nsp", groupNamespace } });
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Trigger.TriggerDatabase.UnknownNamespace",
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Trigger.TriggerManager.UnknownNamespace",
             { { "function", "getTrigger" }, { "nsp", groupNamespace } });
     }
 
-    void TriggerDatabase::createNamespace(const std::string& groupNamespace)
+    void TriggerManager::createNamespace(const std::string& groupNamespace)
     {
         Debug::Log->debug(
-            "<TriggerDatabase> Creating Namespace {0} in TriggerDatabase", groupNamespace);
+            "<TriggerManager> Creating Namespace {0} in TriggerManager", groupNamespace);
         if (m_allTriggers.size() == 0)
-            m_allTriggers[groupNamespace] = std::map<std::string, std::unique_ptr<TriggerGroup>>();
+            m_allTriggers[groupNamespace]
+                = std::map<std::string, std::unique_ptr<TriggerGroup>>();
         else
         {
             if (m_allTriggers.find(groupNamespace) == m_allTriggers.end())
@@ -42,15 +45,15 @@ namespace obe::Triggers
                     = std::map<std::string, std::unique_ptr<TriggerGroup>>();
             else
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Triggers.TriggerDatabase.NamespaceAlreadyExists",
+                    "ObEngine.Triggers.TriggerManager.NamespaceAlreadyExists",
                     { { "nsp", groupNamespace } });
         }
     }
 
-    TriggerGroup* TriggerDatabase::createTriggerGroup(
+    TriggerGroup* TriggerManager::createTriggerGroup(
         const std::string& groupNamespace, const std::string& triggerGroupName)
     {
-        Debug::Log->debug("<TriggerDatabase> Creating TriggerGroup {0} in Namespace {1}",
+        Debug::Log->debug("<TriggerManager> Creating TriggerGroup {0} in Namespace {1}",
             triggerGroupName, groupNamespace);
         if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
         {
@@ -62,17 +65,18 @@ namespace obe::Triggers
                 return m_allTriggers[groupNamespace][triggerGroupName].get();
             }
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerDatabase.TriggerGroupAlreadyExists",
+                "ObEngine.Triggers.TriggerManager.TriggerGroupAlreadyExists",
                 { { "group", triggerGroupName }, { "nsp", groupNamespace } });
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Triggers.TriggerManager.UnknownNamespace",
             { { "function", "createTriggerGroup" }, { "nsp", groupNamespace } });
     }
 
-    TriggerGroup* TriggerDatabase::joinTriggerGroup(
+    TriggerGroup* TriggerManager::joinTriggerGroup(
         const std::string& groupNamespace, const std::string& triggerGroupName)
     {
-        Debug::Log->debug("<TriggerDatabase> Joining TriggerGroup {0} in Namespace {1}",
+        Debug::Log->debug("<TriggerManager> Joining TriggerGroup {0} in Namespace {1}",
             triggerGroupName, groupNamespace);
         if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
         {
@@ -84,50 +88,56 @@ namespace obe::Triggers
                 != m_allTriggers[groupNamespace].end())
             {
                 throw aube::ErrorHandler::Raise(
-                    "ObEngine.Triggers.TriggerDatabase.TriggerGroupNotJoinable",
+                    "ObEngine.Triggers.TriggerManager.TriggerGroupNotJoinable",
                     { { "group", triggerGroupName }, { "nsp", groupNamespace } });
             }
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup",
+                "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "joinTriggerGroup" }, { "group", triggerGroupName },
                     { "nsp", groupNamespace } });
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Triggers.TriggerManager.UnknownNamespace",
             { { "function", "joinTriggerGroup" }, { "nsp", groupNamespace } });
     }
 
-    void TriggerDatabase::removeNamespace(const std::string& namespaceId)
+    void TriggerManager::removeNamespace(const std::string& namespaceId)
     {
-        Debug::Log->debug("<TriggerDatabase> Removing Trigger Namespace {0}", namespaceId);
+        Debug::Log->debug("<TriggerManager> Removing Trigger Namespace {0}", namespaceId);
         if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
         {
             Debug::Log->trace(
-                "<TriggerDatabase> Found Trigger Namespace {0}, removing it...", namespaceId);
+                "<TriggerManager> Found Trigger Namespace {0}, removing it...",
+                namespaceId);
             m_allTriggers.erase(m_allTriggers.find(namespaceId));
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Triggers.TriggerManager.UnknownNamespace",
                 { { "function", "removeNamespace" }, { "nsp", namespaceId } });
     }
 
-    std::vector<std::string> TriggerDatabase::getAllTriggersNameFromTriggerGroup(
+    std::vector<std::string> TriggerManager::getAllTriggersNameFromTriggerGroup(
         const std::string& groupNamespace, const std::string& triggerGroupName)
     {
         if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
         {
             if (m_allTriggers[groupNamespace].find(triggerGroupName)
                 != m_allTriggers[groupNamespace].end())
-                return m_allTriggers[groupNamespace][triggerGroupName]->getAllTriggersName();
+                return m_allTriggers[groupNamespace][triggerGroupName]
+                    ->getAllTriggersName();
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerDatabase.UnknownCustomTriggerGroup",
+                "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getAllTriggersNameFromTriggerGroup" },
                     { "group", triggerGroupName }, { "nsp", groupNamespace } });
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
-            { { "function", "getAllTriggersNameFromTriggerGroup" }, { "nsp", groupNamespace } });
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Triggers.TriggerManager.UnknownNamespace",
+            { { "function", "getAllTriggersNameFromTriggerGroup" },
+                { "nsp", groupNamespace } });
     }
 
-    std::vector<std::string> TriggerDatabase::getAllTriggersGroupNames(
+    std::vector<std::string> TriggerManager::getAllTriggersGroupNames(
         const std::string& namespaceName)
     {
         if (m_allTriggers.find(namespaceName) != m_allTriggers.end())
@@ -140,18 +150,19 @@ namespace obe::Triggers
             return allNames;
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Triggers.TriggerManager.UnknownNamespace",
                 { { "function", "getAllTriggersGroupNames" }, { "nsp", namespaceName } });
     }
 
-    void TriggerDatabase::removeTriggerGroup(TriggerGroup* trgGroup)
+    void TriggerManager::removeTriggerGroup(TriggerGroup* trgGroup)
     {
-        Debug::Log->debug("<TriggerDatabase> Removing TriggerGroup {0} from Namespace {1}",
+        Debug::Log->debug("<TriggerManager> Removing TriggerGroup {0} from Namespace {1}",
             trgGroup->getName(), trgGroup->getNamespace());
         m_allTriggers[trgGroup->getNamespace()].erase(trgGroup->getName());
     }
 
-    bool TriggerDatabase::doesTriggerGroupExists(
+    bool TriggerManager::doesTriggerGroupExists(
         const std::string& groupNamespace, const std::string& triggerGroupName)
     {
         if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
@@ -161,13 +172,14 @@ namespace obe::Triggers
                 return false;
             return true;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerDatabase.UnknownNamespace",
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Triggers.TriggerManager.UnknownNamespace",
             { { "function", "doesTriggerGroupExists" }, { "nsp", groupNamespace } });
     }
 
-    void TriggerDatabase::update()
+    void TriggerManager::update()
     {
-        Debug::Log->trace("<TriggerDatabase> Updating TriggerDatabase");
+        Debug::Log->trace("<TriggerManager> Updating TriggerManager");
         for (auto it = m_allTriggers.begin(); it != m_allTriggers.end(); ++it)
         {
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -179,7 +191,8 @@ namespace obe::Triggers
                         it2->second->m_delayedTriggers[i]->m_delaytarget
                             = m_databaseChrono.getTime()
                             + it2->second->m_delayedTriggers[i]->m_delay;
-                        m_delayedTriggers.push_back(move(it2->second->m_delayedTriggers[i]));
+                        m_delayedTriggers.push_back(
+                            move(it2->second->m_delayedTriggers[i]));
                     }
                     it2->second->m_delayedTriggers.clear();
                 }
@@ -196,13 +209,14 @@ namespace obe::Triggers
         }
         for (int i = 0; i < triggeredDelayedTriggers.size(); i++)
         {
-            m_delayedTriggers.erase(m_delayedTriggers.begin() + triggeredDelayedTriggers[i]);
+            m_delayedTriggers.erase(
+                m_delayedTriggers.begin() + triggeredDelayedTriggers[i]);
         }
     }
 
-    void TriggerDatabase::clear()
+    void TriggerManager::clear()
     {
-        Debug::Log->debug("<TriggerDatabase> Clearing TriggerDatabase");
+        Debug::Log->debug("<TriggerManager> Clearing TriggerManager");
         m_delayedTriggers.clear();
         m_databaseChrono.stop();
         m_allTriggers.clear();

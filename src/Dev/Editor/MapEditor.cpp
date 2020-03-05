@@ -24,7 +24,7 @@
 #include <Time/FramerateCounter.hpp>
 #include <Time/FramerateManager.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Editor
 {
@@ -35,7 +35,7 @@ namespace obe::Editor
 
         // Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+            Triggers::TriggerManager::GetInstance().createTriggerGroup(
                 "Global", "Editor"),
             Triggers::TriggerGroupPtrRemover);
 
@@ -76,7 +76,7 @@ namespace obe::Editor
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Game"),
+            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"),
             Triggers::TriggerGroupPtrRemover);
         gameTriggers->addTrigger("Start")
             ->trigger("Start")
@@ -551,7 +551,7 @@ namespace obe::Editor
 
             // Events
             scene.update();
-            Triggers::TriggerDatabase::GetInstance().update();
+            Triggers::TriggerManager::GetInstance().update();
             inputManager.update();
             if (Input::InputButtonMonitor::RequireRefresh)
                 Input::InputButtonMonitor::Update();
@@ -618,7 +618,7 @@ namespace obe::Editor
             }
         }
         gameTriggers->trigger("End");
-        Triggers::TriggerDatabase::GetInstance().update();
+        Triggers::TriggerManager::GetInstance().update();
         scene.update();
         scene.clear();
         System::MainWindow.close();

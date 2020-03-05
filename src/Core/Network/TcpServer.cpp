@@ -1,6 +1,6 @@
 #include <Debug/Logger.hpp>
 #include <Network/TcpServer.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 #include <iostream>
 
@@ -12,7 +12,7 @@ namespace obe::Network
         if (!triggerNamespace.empty())
         {
             m_socketTriggers = std::shared_ptr<Triggers::TriggerGroup>(
-                Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
+                Triggers::TriggerManager::GetInstance().createTriggerGroup(
                     triggerNamespace, triggerGroup),
                 Triggers::TriggerGroupPtrRemover);
             m_socketTriggers->addTrigger("DataReceived")

@@ -1,4 +1,3 @@
-#include <Bindings/Bindings.hpp>
 #include <Script/GlobalState.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -12,7 +11,6 @@ namespace obe::Script
         System::Path("Lib/Internal/Environment.lua").load(System::Loaders::luaLoader, ScriptEngine);
         System::Path("Lib/Internal/ScriptInit.lua").load(System::Loaders::luaLoader, ScriptEngine);
         System::Path("Lib/Internal/Triggers.lua").load(System::Loaders::luaLoader, ScriptEngine);
-        Bindings::BindTree(&ScriptEngine);
         ScriptEngine["Hook"] = kaguya::NewTable();
         ScriptEngine.dofile("Lib/Internal/Canvas.lua");
     }

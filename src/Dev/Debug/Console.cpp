@@ -6,15 +6,15 @@
 #include <Script/GlobalState.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Debug
 {
     Console::Console()
         : Registrable("Console")
-        , m_consoleTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Console"),
+        , m_consoleTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
+                                "Global", "Console"),
               Triggers::TriggerGroupPtrRemover)
     {
         m_font.loadFromFile("Data/Fonts/arial.ttf");
@@ -99,7 +99,8 @@ namespace obe::Debug
         ConsoleMessage* forgeMessage = nullptr;
         if (Utils::String::occurencesInString(message, "\n") > 0 && !m_consoleMuted)
         {
-            std::vector<std::string> splittedMessage = Utils::String::split(message, "\n");
+            std::vector<std::string> splittedMessage
+                = Utils::String::split(message, "\n");
             for (const std::string& messagePart : splittedMessage)
                 this->pushMessage(headerName, messagePart, color);
         }
@@ -124,7 +125,8 @@ namespace obe::Debug
     void Console::handleCommand(const std::string& text)
     {
         this->pushMessage("UserInput", text, sf::Color::Cyan);
-        if (m_consoleHistory.size() == 0 || text != m_consoleHistory[m_consoleHistory.size() - 1])
+        if (m_consoleHistory.size() == 0
+            || text != m_consoleHistory[m_consoleHistory.size() - 1])
             m_consoleHistory.push_back(text);
         m_consoleHistoryIndex = m_consoleHistory.size();
         Script::ScriptEngine(text);
@@ -160,7 +162,8 @@ namespace obe::Debug
 
     void Console::moveCursor(int position)
     {
-        if (m_virtualCursor + position <= m_inputBuffer.size() && m_virtualCursor + position >= 0)
+        if (m_virtualCursor + position <= m_inputBuffer.size()
+            && m_virtualCursor + position >= 0)
             m_virtualCursor += position;
     }
 
@@ -239,8 +242,8 @@ namespace obe::Debug
         }
 
         // FRAME
-        sf::RectangleShape rectangleFrame = sf::RectangleShape(
-            sf::Vector2f(Transform::UnitVector::Screen.w - 4, Transform::UnitVector::Screen.h - 4));
+        sf::RectangleShape rectangleFrame = sf::RectangleShape(sf::Vector2f(
+            Transform::UnitVector::Screen.w - 4, Transform::UnitVector::Screen.h - 4));
         rectangleFrame.setFillColor(sf::Color(0, 0, 0, 0));
         rectangleFrame.setOutlineColor(sf::Color(255, 255, 255, 255));
         rectangleFrame.setOutlineThickness(2);
@@ -260,7 +263,8 @@ namespace obe::Debug
         estimate.setCharacterSize(26);
         estimate.setString(m_inputBuffer.substr(0, m_virtualCursor));
         const int consoleCurPos = estimate.getGlobalBounds().width;
-        rectangleCursor.setPosition(consoleCurPos + 2, Transform::UnitVector::Screen.h - 35);
+        rectangleCursor.setPosition(
+            consoleCurPos + 2, Transform::UnitVector::Screen.h - 35);
         rectangleCursor.setFillColor(sf::Color(200, 200, 200));
         System::MainWindow.draw(rectangleCursor);
         // TEXT

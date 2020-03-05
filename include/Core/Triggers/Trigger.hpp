@@ -40,7 +40,7 @@ namespace obe::Triggers
         std::function<void(const TriggerEnv&)> m_onRegisterCallback;
         std::function<void(const TriggerEnv&)> m_onUnregisterCallback;
         friend class TriggerGroup;
-        friend class TriggerDatabase;
+        friend class TriggerManager;
 
     protected:
         /**

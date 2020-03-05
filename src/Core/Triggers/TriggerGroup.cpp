@@ -1,7 +1,7 @@
 #include <vili/ErrorHandler.hpp>
 
 #include <Debug/Logger.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
 namespace obe::Triggers
@@ -112,6 +112,6 @@ namespace obe::Triggers
 
     void TriggerGroupPtrRemover(TriggerGroup* ptr)
     {
-        TriggerDatabase::GetInstance().removeTriggerGroup(ptr);
+        TriggerManager::GetInstance().removeTriggerGroup(ptr);
     }
 } // namespace obe::Triggers

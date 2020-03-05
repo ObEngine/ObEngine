@@ -1,5 +1,5 @@
 #include <Network/NetworkHandler.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 #include <iostream>
 
@@ -7,7 +7,7 @@ namespace obe::Network
 {
     NetworkHandler::NetworkHandler()
         : m_socketTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Network"),
+              Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Network"),
               Triggers::TriggerGroupPtrRemover)
     {
         m_listener.setBlocking(false);
