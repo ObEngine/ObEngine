@@ -273,10 +273,9 @@ namespace obe::Editor
 
         std::vector<std::string> fileList;
         std::vector<std::string> folderList;
-        System::Path("Sprites/Sprites" + path)
+        System::Path("Sprites" + path)
             .loadAll(System::Loaders::dirPathLoader, folderList);
-        System::Path("Sprites/Sprites" + path)
-            .loadAll(System::Loaders::filePathLoader, fileList);
+        System::Path("Sprites" + path).loadAll(System::Loaders::filePathLoader, fileList);
 
         const int sprSize = spritesPanel->getSize().x * 0.115;
         const int panelWidth = spritesPanel->getSize().x;

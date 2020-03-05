@@ -12,9 +12,8 @@ namespace obe::Bindings::AudioBindings
     void LoadAudioManager(kaguya::State* lua)
     {
         (*lua)["obe"]["AudioManager"].setClass(
-            kaguya::UserdataMetatable<Audio::AudioManager>()
-                .addFunction("cache", &Audio::AudioManager::cache)
-                .addFunction("load", AudioManager_load_wrapper()));
+            kaguya::UserdataMetatable<Audio::AudioManager>().addFunction(
+                "load", AudioManager_load_wrapper()));
     }
     void LoadSound(kaguya::State* lua)
     {

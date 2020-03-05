@@ -39,9 +39,9 @@ namespace obe::Animation
     {
     private:
         std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
-        System::Path m_path;
         Animation* m_currentAnimation = nullptr;
         bool m_paused = false;
+        System::Path m_path;
         Graphics::Sprite* m_target = nullptr;
         AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
 
@@ -70,11 +70,11 @@ namespace obe::Animation
         /**
          * \brief Get the contained Animation pointer by Animation name
          * \param animationName Name of the Animation to get
-         * \return A pointer to the wanted Animation.\n
+         * \return A pointer to the wanted Animation.
          *         Throws a ObEngine.Animation.Animator.AnimationNotFound if the
          * Animation is not found
          */
-        Animation* getAnimation(const std::string& animationName) const;
+        Animation& getAnimation(const std::string& animationName) const;
         /**
          * \brief Get the name of the currently played Animation
          * \return A std::string containing the name of the currently played
@@ -95,11 +95,11 @@ namespace obe::Animation
          */
         const sf::Texture& getTextureAtKey(const std::string& key, int index) const;
         /**
-         * \brief Load the Animator (Using the Animator root path).\n
+         * \brief Loads the Animator
          *        It will also load all the Animation contained in the Animator.
          *        If an Animator configuration file is found it will load it.
          */
-        void loadAnimator();
+        void load(System::Path path);
         /**
          * \brief Set the Animation to play by name
          * \param key A std::string containing the name of the Animation to
@@ -107,17 +107,6 @@ namespace obe::Animation
          * exception if the Animation key is not found.
          */
         void setKey(const std::string& key);
-        /**
-         * \brief Set the path of the Animator root
-         * \param path System::Path pointing to the Animator root
-         */
-        void setPath(const System::Path& path);
-        /**
-         * \brief Set the path of the Animator root
-         * \param path std::string pointing to the Animator root (later
-         * converted to System::Path)
-         */
-        void setPath(const std::string& path);
         /**
          * \brief Start or Pause the Animator (won't do anything even if
          * updated) \param pause true if the Animator should pause, false

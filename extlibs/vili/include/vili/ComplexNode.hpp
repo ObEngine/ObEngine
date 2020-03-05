@@ -18,7 +18,6 @@ namespace vili
 
     /**
      * \brief A ComplexNode can contains every other Nodes (including itself) hence allowing a tree-like structure
-     * @Bind
      */
     class ComplexNode : public ContainerNode
     {

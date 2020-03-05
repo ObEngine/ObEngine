@@ -8,10 +8,8 @@ namespace obe::Editor
 {
     /**
      * \brief A grid for precise edition in the map editor
-     * @Bind
      */
-    class EditorGrid : public Types::Togglable,
-                       public Types::Registrable<EditorGrid>
+    class EditorGrid : public Types::Togglable, public Types::Registrable<EditorGrid>
     {
     private:
         unsigned int m_gridSizeX;
@@ -26,12 +24,11 @@ namespace obe::Editor
          * \brief Constructor of the EditorGrid
          * \param cellWidth Width of a cell (in Pixels)
          * \param cellHeight Height of a cell (in Pixels)
-         * \param offsetX Horizontal offset of the first displayed Cell
-         * (TopLeft) \param offsetY Vertical offset of the first displayed Cell
-         * (TopRight)
+         * \param offsetX Horizontal offset of the first displayed Cell (TopLeft)
+         * \param offsetY Vertical offset of the first displayed Cell (TopRight)
          */
         explicit EditorGrid(unsigned int cellWidth, unsigned int cellHeight,
-                            int offsetX = 0, int offsetY = 0);
+            int offsetX = 0, int offsetY = 0);
         /**
          * \brief Set the Width of a Cell
          * \param cellWidth Width of a cell (in Pixels)
@@ -49,9 +46,8 @@ namespace obe::Editor
          */
         void setSize(unsigned int cellWidth, unsigned int cellHeight);
         /**
-         * \brief Set the horizontal offset of the first displayed Cell
-         * (TopLeft) \param offsetX Horizontal offset of the first displayed
-         * Cell (TopLeft)
+         * \brief Set the horizontal offset of the first displayed Cell (TopLeft)
+         * \param offsetX Horizontal offset of the first displayed Cell (TopLeft)
          */
         void setOffsetX(int offsetX);
         /**
@@ -77,15 +73,13 @@ namespace obe::Editor
          */
         unsigned int getCellHeight() const;
         /**
-         * \brief Get the horizontal offset of the first displayed Cell
-         * (TopLeft) \return Horizontal offset of the first displayed Cell
-         * (TopLeft) (in Pixels)
+         * \brief Get the horizontal offset of the first displayed Cell (TopLeft)
+         * \return Horizontal offset of the first displayed Cell (TopLeft) (in Pixels)
          */
         int getOffsetX() const;
         /**
          * \brief Get the vertical offset of the first displayed Cell (TopLeft)
-         * \return Vertical offset of the first displayed Cell (TopLeft) (in
-         * Pixels)
+         * \return Vertical offset of the first displayed Cell (TopLeft) (in Pixels)
          */
         int getOffsetY() const;
         /**
@@ -96,14 +90,17 @@ namespace obe::Editor
         /**
          * \brief Gets the closest grid intersection
          */
-        std::pair<int, int> getClosestIntersection(int x, int y, int offsetX,
-                                                   int offsetY) const;
+        std::pair<int, int> getClosestIntersection(
+            int x, int y, int offsetX, int offsetY) const;
         /**
          * \brief Move the virtual magnet on the grid (Used to magnetize the
-         * System::Cursor) \param cursor Reference to the System::Cursor you
-         * want to magnetize \param x x Coordinate of the index of the
-         * intersection you want to be magnetized to \param y y Coordinate of
-         * the index of the intersection you want to be magnetized to
+         *        System::Cursor)
+         * \param cursor Reference to the System::Cursor you
+         *        want to magnetize
+         * \param x x Coordinate of the index of the
+         *        intersection you want to be magnetized to
+         * \param y y Coordinate of the index of the
+         *        intersection you want to be magnetized to
          */
         void moveMagnet(System::Cursor& cursor, int x, int y);
         /**

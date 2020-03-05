@@ -21,10 +21,6 @@ namespace obe::Scene
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
         Triggers::TriggerDatabase::GetInstance().createNamespace("Map");
-        m_showElements["CollisionLines"] = false;
-        m_showElements["CollisionPoints"] = false;
-        m_showElements["CollisionMasterPoint"] = false;
-        m_showElements["CollisionSkeleton"] = false;
         m_showElements["SceneNodes"] = false;
 
         m_sceneTriggers->addTrigger("MapLoaded");
@@ -179,8 +175,7 @@ namespace obe::Scene
         {
             vili::ComplexNode& Sprites = m_levelFile.at("Sprites");
 
-            for (vili::ComplexNode* currentSprite :
-                Sprites.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* currentSprite : Sprites.getAll<vili::ComplexNode>())
             {
                 this->createSprite(currentSprite->getId())->load(*currentSprite);
             }
@@ -467,18 +462,6 @@ namespace obe::Scene
             }
         }
 
-        if (m_showElements["CollisionLines"] || m_showElements["CollisionPoints"]
-            || m_showElements["CollisionMasterPoint"]
-            || m_showElements["CollisionSkeleton"])
-        {
-            for (unsigned int i = 0; i < m_colliderArray.size(); i++)
-            {
-                m_colliderArray[i]->draw(m_camera, m_showElements["CollisionLines"],
-                    m_showElements["CollisionPoints"],
-                    m_showElements["CollisionMasterPoint"],
-                    m_showElements["CollisionSkeleton"]);
-            }
-        }
         if (m_showElements["SceneNodes"])
         {
             for (auto& gameObject : m_gameObjectArray)
@@ -661,9 +644,8 @@ namespace obe::Scene
         return returnLayer;
     }
 
-    Graphics::Sprite* Scene::getSpriteByPosition(
-        const Transform::UnitVector& position, const Transform::UnitVector& camera,
-        const int layer)
+    Graphics::Sprite* Scene::getSpriteByPosition(const Transform::UnitVector& position,
+        const Transform::UnitVector& camera, const int layer)
     {
         Graphics::Sprite* returnSpr = nullptr;
         std::vector<Transform::Referential> rectPts = { Transform::Referential::TopLeft,
@@ -719,15 +701,6 @@ namespace obe::Scene
                                     return (Sprite->getId() == id);
                                 }),
             m_spriteArray.end());
-    }
-
-    void Scene::enableShowCollision(const bool drawLines, const bool drawPoints,
-        const bool drawMasterPoint, const bool drawSkel)
-    {
-        m_showElements["CollisionLines"] = drawLines;
-        m_showElements["CollisionPoints"] = drawPoints;
-        m_showElements["CollisionMasterPoint"] = drawMasterPoint;
-        m_showElements["CollisionSkeleton"] = drawSkel;
     }
 
     void Scene::enableShowSceneNodes(bool showNodes)

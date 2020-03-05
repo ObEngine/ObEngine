@@ -26,7 +26,6 @@ namespace obe::Triggers
 
     /**
      * \brief A Class that does represents a triggerable event
-     * @Bind
      */
     class Trigger
     {

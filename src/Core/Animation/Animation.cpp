@@ -3,7 +3,6 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <System/Loaders.hpp>
-#include <Utils/MapUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Animation
@@ -36,10 +35,10 @@ namespace obe::Animation
         return m_delay;
     }
 
-    AnimationGroup* Animation::getAnimationGroup(const std::string& groupName)
+    AnimationGroup& Animation::getAnimationGroup(const std::string& groupName)
     {
-        if (m_groups.find(groupName) != m_groups.end())
-            return m_groups[groupName].get();
+        if (auto& group = m_groups.find(groupName); group != m_groups.end())
+            return *group->second.get();
         throw aube::ErrorHandler::Raise(
             "ObEngine.Animation.Animation.AnimationGroupNotFound",
             { { "animation", m_name }, { "group", groupName } });
@@ -52,7 +51,11 @@ namespace obe::Animation
 
     std::vector<std::string> Animation::getAllAnimationGroupName() const
     {
-        return Utils::Map::getKeys(m_groups);
+        std::vector<std::string> animationGroupKeys;
+        animationGroupKeys.reserve(m_groups.size());
+        std::transform(m_groups.cbegin(), m_groups.cend(), animationGroupKeys.begin(),
+            [](const auto& pair) { return pair.first; });
+        return animationGroupKeys;
     }
 
     AnimationPlayMode Animation::getPlayMode() const
@@ -247,7 +250,7 @@ namespace obe::Animation
     void Animation::reset()
     {
         Debug::Log->trace("<Animation> Resetting Animation {0}", m_name);
-        for (auto it = m_groups.begin(); it != m_groups.end(); ++it)
+        for (auto& it = m_groups.cbegin(); it != m_groups.cend(); ++it)
             it->second->reset();
         m_status = AnimationStatus::Play;
         m_codeIndex = 0;

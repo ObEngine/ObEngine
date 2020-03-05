@@ -2,7 +2,6 @@
 
 /**
  * \brief Various functions related to functions manipulation
- * @Bind
  */
 namespace obe::Utils::Func
 {

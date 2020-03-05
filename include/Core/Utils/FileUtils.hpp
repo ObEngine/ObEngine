@@ -5,7 +5,6 @@
 
 /**
  * \brief Various functions related to filesystem manipulation
- * @Bind
  */
 namespace obe::Utils::File
 {
@@ -13,14 +12,14 @@ namespace obe::Utils::File
      * \brief Get a list of directories
      * \param path Path where you want to check the directories
      * \return A std::vector of std::string containing the name of all
-     * directories at the given path
+     *         directories at the given path
      */
     std::vector<std::string> getDirectoryList(const std::string& path);
     /**
      * \brief Get a list of files
      * \param path Path where you want to check the files
      * \return A std::vector of std::string containing the name of all files at
-     * the given path
+     *         the given path
      */
     std::vector<std::string> getFileList(const std::string& path);
     /**
@@ -62,7 +61,7 @@ namespace obe::Utils::File
      * \brief Deletes an empty directory
      * \param path Path of of the directory you want to delete
      * \return true if the directory has been successfully deleted, false
-     * otherwise
+     *         otherwise
      */
     bool deleteDirectory(const std::string& path);
 
@@ -74,7 +73,7 @@ namespace obe::Utils::File
     /**
      * \brief Returns the path separator of the current OS
      * \return A std::string containing the Path separator used by the Operating
-     * System
+     *         System
      */
     std::string separator();
 } // namespace obe::Utils::File

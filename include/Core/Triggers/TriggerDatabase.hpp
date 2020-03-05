@@ -12,7 +12,6 @@ namespace obe::Triggers
 {
     /**
      * \brief A TriggerDatabase that handles all Trigger / TriggerGroup
-     * @Bind
      */
     class TriggerDatabase : public Types::Registrable<TriggerDatabase>,
                             public Types::Singleton<TriggerDatabase>

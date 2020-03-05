@@ -10,7 +10,6 @@
 #include <Script/GameObject.hpp>
 #include <Types/Registrable.hpp>
 #include <Types/Serializable.hpp>
-#include <Utils/TypeUtils.hpp>
 
 namespace obe::Scene
 {
@@ -35,8 +34,7 @@ namespace obe::Scene
         Triggers::TriggerGroupPtr m_localTriggers;
         std::vector<std::tuple<ExecuteType, std::string>> m_sources;
 
-        std::vector<std::pair<Triggers::Trigger*, std::string>>
-            m_registeredTriggers;
+        std::vector<std::pair<Triggers::Trigger*, std::string>> m_registeredTriggers;
         std::vector<std::tuple<std::string, std::string, std::string>>
             m_registeredAliases;
         std::string m_triggerNamespace;
@@ -156,10 +154,8 @@ namespace obe::Scene
         }
         else
         {
-            throw aube::ErrorHandler::Raise(
-                "obe.Scene.Scene.WrongComponentType",
-                { { "type", this->get(id).type() },
-                    { "expected", T::ComponentType } });
+            throw aube::ErrorHandler::Raise("obe.Scene.Scene.WrongComponentType",
+                { { "type", this->get(id).type() }, { "expected", T::ComponentType } });
         }
     }
 

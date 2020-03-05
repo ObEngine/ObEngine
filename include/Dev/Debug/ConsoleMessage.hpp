@@ -10,7 +10,6 @@ namespace obe::Debug
 {
     /**
      * \brief A Message (line) displayed in the Console
-     * @Bind
      */
     class ConsoleMessage
     {

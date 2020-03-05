@@ -96,7 +96,7 @@ namespace obe::Bindings
         {
             if (path.size() > 1)
             {
-                const std::vector<std::string> subPath = Utils::Vector::getSubVector(path, 1, 0);
+                const std::vector<std::string> subPath(path.begin() + 1, path.end());
                 return this->operator[](path[0]).walkTo(subPath);
             }
             if (path.size() == 1)

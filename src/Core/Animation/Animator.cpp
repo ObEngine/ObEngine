@@ -14,17 +14,7 @@ namespace obe::Animation
 
     Animator::Animator(const System::Path& path)
     {
-        m_path = path;
-    }
-
-    void Animator::setPath(const System::Path& path)
-    {
-        m_path = path;
-    }
-
-    void Animator::setPath(const std::string& path)
-    {
-        m_path = System::Path(path);
+        this->load(path);
     }
 
     void Animator::clear(bool clearMemory)
@@ -35,10 +25,10 @@ namespace obe::Animation
         m_path = System::Path("");
     }
 
-    Animation* Animator::getAnimation(const std::string& animationName) const
+    Animation& Animator::getAnimation(const std::string& animationName) const
     {
         if (m_animations.find(animationName) != m_animations.end())
-            return m_animations.at(animationName).get();
+            return *m_animations.at(animationName).get();
         throw aube::ErrorHandler::Raise("ObEngine.Animation.Animator.AnimationNotFound",
             { { "function", "getAnimation" }, { "animation", animationName },
                 { "%animator", m_path.toString() } });
@@ -98,8 +88,9 @@ namespace obe::Animation
         m_paused = pause;
     }
 
-    void Animator::loadAnimator()
+    void Animator::load(System::Path path)
     {
+        m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
         std::vector<std::string> listDir;
         m_path.loadAll(System::Loaders::dirPathLoader, listDir);
@@ -208,6 +199,6 @@ namespace obe::Animation
 
     const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
     {
-        return this->getAnimation(key)->getTextureAtIndex(index);
+        return this->getAnimation(key).getTextureAtIndex(index);
     }
 } // namespace obe::Animation

@@ -10,7 +10,7 @@ namespace obe::Transform
     /**
      * \brief Class widely used in the Engine to scale and position elements in
      * a Scene
-     * @Bind
+     * \bind{Vector2}
      */
     class UnitVector
     {

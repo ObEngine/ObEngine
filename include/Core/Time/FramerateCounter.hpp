@@ -9,7 +9,6 @@ namespace obe::Time
 {
     /**
      * \brief Class to display the amount of Frame and Update per Seconds
-     * @Bind
      */
     class FramerateCounter
     {

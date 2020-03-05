@@ -6,7 +6,6 @@ namespace obe::Types
 {
     /**
      * \brief A Base Class that represents a vili serializable object
-     * @Bind
      */
     class Serializable
     {

@@ -5,7 +5,6 @@
 
 /**
  * \brief Functions to work with Strings
- * @Bind
  */
 namespace obe::Utils::String
 {

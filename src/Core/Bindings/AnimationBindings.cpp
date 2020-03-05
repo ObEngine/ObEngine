@@ -72,17 +72,12 @@ namespace obe::Bindings::AnimationBindings
                 .addFunction("clear", &Animation::Animator::clear)
                 .addFunction(
                     "getAllAnimationName", &Animation::Animator::getAllAnimationName)
-                .addFunction("getAnimation", &Animation::Animator::getAnimation)
+                // .addFunction("getAnimation", &Animation::Animator::getAnimation)
                 .addFunction("getKey", &Animation::Animator::getKey)
                 .addFunction("getTexture", &Animation::Animator::getTexture)
                 .addFunction("getTextureAtKey", &Animation::Animator::getTextureAtKey)
-                .addFunction("loadAnimator", &Animation::Animator::loadAnimator)
+                .addFunction("load", &Animation::Animator::load)
                 .addFunction("setKey", &Animation::Animator::setKey)
-                .addOverloadedFunctions("setPath",
-                    static_cast<void (Animation::Animator::*)(const System::Path&)>(
-                        &Animation::Animator::setPath),
-                    static_cast<void (Animation::Animator::*)(const std::string&)>(
-                        &Animation::Animator::setPath))
                 .addFunction("setPaused", &Animation::Animator::setPaused)
                 .addFunction("setTarget", Animator_setTarget_wrapper())
                 .addFunction("update", &Animation::Animator::update));

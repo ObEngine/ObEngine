@@ -5,14 +5,12 @@
 
 /**
  * \brief Some functions to handle maps
- * @Bind
  */
 namespace obe::Utils::Map
 {
     /**
      * \brief Check if the given value is found in the std::map
-     * \tparam T Type of the std::map values
-     * \tparam U Type of the std::map keys
+     * \tparam MapType type of the std::map you want to search a value from
      * \param item Value to search in the map
      * \param map Reference to the map you want to search the value in
      * \return true if the value has been found, false otherwise
@@ -21,8 +19,7 @@ namespace obe::Utils::Map
     bool valueInMap(typename MapType::value_type item, MapType&& map);
     /**
      * \brief Check if the given key is found in the std::map
-     * \tparam T Type of the std::map values
-     * \tparam U Type of the std::map keys
+     * \tparam MapType type of the std::map you want to search a key from
      * \param item key to search in the map
      * \param map Reference to the map you want to search the key in
      * \return true if the key has been found, false otherwise

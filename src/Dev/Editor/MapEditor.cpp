@@ -3,6 +3,7 @@
 #include <Collision/PolygonalCollider.hpp>
 #include <Config/Config.hpp>
 #include <Debug/Console.hpp>
+#include <Editor/ColliderPainter.hpp>
 #include <Editor/CollidersEditActions.hpp>
 #include <Editor/EditorGUI.hpp>
 #include <Editor/EditorGlobalActions.hpp>
@@ -272,6 +273,10 @@ namespace obe::Editor
 
         // scene.setUpdateState(false);
 
+        // Collider Painter
+        ColliderPainter colliderPainter;
+        ColliderDrawOptions colliderDrawOptions;
+
         // Game Starts
         while (System::MainWindow.isOpen())
         {
@@ -336,7 +341,7 @@ namespace obe::Editor
             if (editMode->getSelectedItem() == "Sprites")
             {
                 scene.enableShowSceneNodes(true);
-                scene.enableShowCollision(true, true, false, false);
+                colliderDrawOptions.configure(true, true, false, false);
 
                 if (hoveredSprite == nullptr)
                 {
@@ -409,11 +414,11 @@ namespace obe::Editor
                     cursor.getConstrainedY() + pixelCamera.y);
 
                 scene.enableShowSceneNodes(true);
-                scene.enableShowCollision(true, true, true, true);
+                colliderDrawOptions.configure(true, true, true, true);
                 if (selectedMasterCollider != nullptr)
                 {
-                    selectedMasterCollider->clearHighlights();
-                    selectedMasterCollider->highlightLine(
+                    colliderPainter.clearHighlights(selectedMasterCollider);
+                    colliderPainter.highlightLine(selectedMasterCollider,
                         selectedMasterCollider->findClosestSegment(cursCoord)
                             .first.index);
                 }
@@ -437,7 +442,7 @@ namespace obe::Editor
                     cursor.getConstrainedX() + pixelCamera.x,
                     cursor.getConstrainedY() + pixelCamera.y);
 
-                scene.enableShowCollision(true, true, false, false);
+                colliderDrawOptions.configure(true, true, false, false);
                 scene.enableShowSceneNodes(true);
                 if (auto sceneNode
                     = scene.getSceneNodeByPosition(cursor.getPosition() + pixelCamera))
@@ -583,6 +588,7 @@ namespace obe::Editor
 
                 System::MainWindow.clear(Graphics::Utils::ClearColor);
                 scene.draw();
+                colliderPainter.draw(scene, colliderDrawOptions);
                 if (selectedHandlePoint != nullptr)
                     Graphics::Utils::drawPoint(selectedHandlePoint->m_dp.x,
                         selectedHandlePoint->m_dp.y, 3, sf::Color::Magenta);

@@ -10,7 +10,6 @@ namespace vili
 
     /**
      * \brief Base Class for every Node in the Tree
-     * @Bind
      */
     class Node
     {

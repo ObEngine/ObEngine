@@ -276,15 +276,6 @@ namespace obe::Scene
          * with loadFromFile method
          */
         std::string getLevelFile() const;
-        /**
-         * \brief Draws some elements of the Colliders
-         * \param drawLines Draw the lines of the Colliders
-         * \param drawPoints Draw the points of the Colliders
-         * \param drawMasterPoint Draw the Centroid of the Colliders
-         * \param drawSkel Draw the Skeleton of the Colliders
-         */
-        void enableShowCollision(bool drawLines = false, bool drawPoints = false,
-            bool drawMasterPoint = false, bool drawSkel = false);
         void enableShowSceneNodes(bool showNodes);
         SceneNode* getSceneNodeByPosition(const Transform::UnitVector& position) const;
     };

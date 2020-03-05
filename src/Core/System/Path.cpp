@@ -15,14 +15,15 @@ namespace obe::System
         this->m_path = path.toString();
     }
 
-    Path::Path(const std::string& path)
+    Path::Path(std::string path)
     {
-        m_path = path;
+        m_path = std::move(path);
     }
 
     Path Path::add(const std::string& path) const
     {
-        return Path(m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
+        return Path(
+            m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
     }
 
     std::string Path::last() const
@@ -45,14 +46,14 @@ namespace obe::System
         {
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(mountedPath.basePath
-                       + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
             {
                 return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
                     + this->m_path;
             }
             else if ((pathType == PathType::All || pathType == PathType::Directory)
                 && Utils::File::directoryExists(mountedPath.basePath
-                       + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
             {
                 return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
                     + this->m_path;

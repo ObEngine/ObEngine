@@ -18,19 +18,16 @@ namespace obe::Audio
     {
         m_engine.deinit();
     }
-    void AudioManager::cache(const std::string& path)
+
+    Sound AudioManager::load(const System::Path& path, LoadPolicy loadPolicy)
     {
-        if (m_cache.find(path) == m_cache.end())
+        std::string filePath = path.find(System::PathType::File);
+        if (loadPolicy == LoadPolicy::Cache && m_cache.find(filePath) == m_cache.end())
         {
-            std::string filePath = System::Path(path).find(System::PathType::File);
             std::shared_ptr<SoLoud::Wav> sample = std::make_shared<SoLoud::Wav>();
             sample->load(filePath.c_str());
             m_cache[filePath] = sample;
         }
-    }
-    Sound AudioManager::load(const std::string& path, bool stream)
-    {
-        std::string filePath = System::Path(path).find(System::PathType::File);
         std::shared_ptr<SoLoud::AudioSource> sample;
         if (m_cache.find(filePath) != m_cache.end())
         {
@@ -38,7 +35,7 @@ namespace obe::Audio
         }
         else
         {
-            if (stream)
+            if (loadPolicy == LoadPolicy::Stream)
             {
                 sample = std::make_shared<SoLoud::WavStream>();
                 static_cast<SoLoud::WavStream*>(sample.get())->load(filePath.c_str());

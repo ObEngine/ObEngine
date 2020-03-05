@@ -6,7 +6,6 @@ namespace obe::Triggers
 {
     /**
      * \brief Class used to manage multiple Trigger
-     * @Bind
      */
     class TriggerGroup
     {

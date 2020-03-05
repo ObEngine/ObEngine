@@ -6,7 +6,7 @@ namespace obe::Transform
 {
     /**
      * \brief Classes that works with Units should herit from this Class
-     * @Bind
+     * \todo Refactor classes that herits from this so it really use the working unit
      */
     class UnitBasedObject
     {

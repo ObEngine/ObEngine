@@ -4,13 +4,11 @@
 
 /**
  * \brief Some Classes and Functions to manipulate Engine Execution
- * @Bind
  */
 namespace obe::Utils::Exec
 {
     /**
      * \brief Parses the execution arguments
-     * @Bind
      */
     class RunArgsParser
     {

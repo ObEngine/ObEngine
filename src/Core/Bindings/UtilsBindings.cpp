@@ -88,9 +88,6 @@ namespace obe::Bindings::UtilsBindings
     {
         (*lua)["obe"]["Array"] = kaguya::NewTable();
         UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "contains", Utils::Vector::contains);
-        UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "index", Utils::Vector::indexOfElement);
-        UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "eraseAll", Utils::Vector::eraseAll);
-        UTILS_BINDING_EXPOSE_TEMPLATE_MONOTYPE("Array", "sub", Utils::Vector::getSubVector);
         (*lua)["obe"]["Array"]["join"] = kaguya::function(Utils::Vector::join);
     }
 } // namespace obe::Bindings::UtilsBindings

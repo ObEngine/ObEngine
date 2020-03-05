@@ -13,7 +13,6 @@ namespace vili
 
     /**
      * \brief A Node that is linked to another one in the Tree
-     * @Bind
      */
     class LinkNode : public Node
     {

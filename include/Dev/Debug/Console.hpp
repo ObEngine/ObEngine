@@ -14,7 +14,6 @@ namespace obe::Debug
 {
     /**
      * \brief An in-editor Console used to Debug
-     * @Bind
      */
     class Console : public Types::Registrable<Console>
     {

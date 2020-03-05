@@ -24,7 +24,7 @@ namespace obe::Animation
         OneTime,
         /**
          * \brief The Animation will play on a loop and can be interrupted any
-         * time
+         *        time
          */
         Loop,
         /**
@@ -41,7 +41,7 @@ namespace obe::Animation
      * \return The converted value which is an AnimationPlayMode enum value
      * \bind{[mt]AnimationPlayMode.__call}
      */
-    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
+    AnimationPlayMode stringToAnimationPlayMode(std::string_view animationPlayMode);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
@@ -132,7 +132,7 @@ namespace obe::Animation
          *        AnimationGroup to return
          * \return A pointer to the AnimationGroup
          */
-        AnimationGroup* getAnimationGroup(const std::string& groupName);
+        AnimationGroup& getAnimationGroup(const std::string& groupName);
         /**
          * \brief Get the Animation name
          * \return A std::string containing the name of the Animation

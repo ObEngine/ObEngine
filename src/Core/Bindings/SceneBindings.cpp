@@ -11,8 +11,10 @@
 
 namespace obe::Bindings::SceneBindings
 {
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Camera_getPosition_wrapper, Scene::Camera, getPosition, 0, 1);
-    KAGUYA_MEMBER_FUNCTION_OVERLOADS(Camera_setPosition_wrapper, Scene::Camera, setPosition, 1, 2);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(
+        Camera_getPosition_wrapper, Scene::Camera, getPosition, 0, 1);
+    KAGUYA_MEMBER_FUNCTION_OVERLOADS(
+        Camera_setPosition_wrapper, Scene::Camera, setPosition, 1, 2);
     void LoadCamera(kaguya::State* lua)
     {
         (*lua)["obe"]["Camera"].setClass(
@@ -25,13 +27,14 @@ namespace obe::Bindings::SceneBindings
                 .addFunction("setSize", &Scene::Camera::setSize));
     }
 
-    kaguya::LuaFunction SceneGameObjectWrapperFunction(
-        Scene::Scene* scene, const std::string& objectType, const std::string& objectId = "")
+    kaguya::LuaFunction SceneGameObjectWrapperFunction(Scene::Scene* scene,
+        const std::string& objectType, const std::string& objectId = "")
     {
         return scene->createGameObject(objectType, objectId)->getConstructor();
     }
 
-    KAGUYA_FUNCTION_OVERLOADS(Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);
+    KAGUYA_FUNCTION_OVERLOADS(
+        Scene_createGameObject_wrapper, SceneGameObjectWrapperFunction, 2, 3);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(
         Scene_createSprite_wrapper, Scene::Scene, createSprite, 1, 2);
     KAGUYA_MEMBER_FUNCTION_OVERLOADS(
@@ -47,18 +50,17 @@ namespace obe::Bindings::SceneBindings
                 .addFunction("doesGameObjectExists", &Scene::Scene::doesGameObjectExists)
                 .addFunction("doesSpriteExists", &Scene::Scene::doesSpriteExists)
                 .addFunction("dump", &Scene::Scene::dump)
-                .addFunction("enableShowCollision", &Scene::Scene::enableShowCollision)
                 .addFunction("getAllColliders", &Scene::Scene::getAllColliders)
                 .addFunction("getAllGameObjects", &Scene::Scene::getAllGameObjects)
                 .addFunction("getAllSprites", &Scene::Scene::getAllSprites)
                 .addFunction("getFilePath", &Scene::Scene::getFilePath)
                 .addFunction("getCamera", &Scene::Scene::getCamera)
                 .addFunction("getColliderAmount", &Scene::Scene::getColliderAmount)
-                .addFunction(
-                    "getColliderByCentroidPosition", &Scene::Scene::getColliderByCentroidPosition)
+                .addFunction("getColliderByCentroidPosition",
+                    &Scene::Scene::getColliderByCentroidPosition)
                 .addFunction("getCollider", &Scene::Scene::getCollider)
-                .addFunction(
-                    "getColliderPointByPosition", &Scene::Scene::getColliderPointByPosition)
+                .addFunction("getColliderPointByPosition",
+                    &Scene::Scene::getColliderPointByPosition)
                 .addFunction("getGameObjectAmount", &Scene::Scene::getGameObjectAmount)
                 .addFunction("getLevelFile", &Scene::Scene::getLevelFile)
                 .addFunction("getLevelName", &Scene::Scene::getLevelName)
@@ -69,11 +71,12 @@ namespace obe::Bindings::SceneBindings
                 .addOverloadedFunctions("loadFromFile",
                     static_cast<void (Scene::Scene::*)(const std::string&)>(
                         &Scene::Scene::setFutureLoadFromFile),
-                    static_cast<void (Scene::Scene::*)(const std::string&, kaguya::LuaFunction)>(
-                        &Scene::Scene::setFutureLoadFromFile))
+                    static_cast<void (Scene::Scene::*)(const std::string&,
+                        kaguya::LuaFunction)>(&Scene::Scene::setFutureLoadFromFile))
                 .addOverloadedFunctions("reload",
                     static_cast<void (Scene::Scene::*)()>(&Scene::Scene::reload),
-                    static_cast<void (Scene::Scene::*)(kaguya::LuaFunction)>(&Scene::Scene::reload))
+                    static_cast<void (Scene::Scene::*)(kaguya::LuaFunction)>(
+                        &Scene::Scene::reload))
                 .addFunction("removeCollider", &Scene::Scene::removeCollider)
                 .addFunction("removeGameObject", &Scene::Scene::removeGameObject)
                 .addFunction("removeSprite", &Scene::Scene::removeSprite)

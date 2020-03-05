@@ -2,7 +2,6 @@
 
 /**
  * \brief Functions to work with maths
- * @Bind
  */
 namespace obe::Utils::Math
 {

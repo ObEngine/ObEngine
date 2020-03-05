@@ -12,7 +12,6 @@ namespace obe::Debug
 
     /**
      * \brief A Stream is a bridge to push Message to the Console
-     * @Bind
      */
     class ConsoleStream : public Types::Identifiable, public Types::Togglable
     {

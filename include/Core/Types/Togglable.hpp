@@ -4,7 +4,6 @@ namespace obe::Types
 {
     /**
      * \brief A Base Class that you can enable or disable
-     * @Bind
      */
     class Togglable
     {

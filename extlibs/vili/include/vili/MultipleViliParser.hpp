@@ -7,7 +7,6 @@ namespace vili
 {
     /**
      * \brief A Class that can parse multiple .vili files and create a Node Tree
-     * @Bind
      */
     class MultipleViliParser
     {
@@ -26,7 +25,7 @@ namespace vili
         template <class... files>
         MultipleViliParser(std::string currentFile, files... filepack);
         MultipleViliParser(std::vector<std::string> files);
-        
+
         void writeFiles(bool verbose = false);
     };
 }

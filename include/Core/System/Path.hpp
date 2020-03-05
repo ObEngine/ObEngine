@@ -40,12 +40,13 @@ namespace obe::System
          * \brief Build a path from a std::string
          * \param path Path in std::string form
          */
-        Path(const std::string& path);
+        Path(std::string path);
         /**
          * \brief Returns a new Path which is the current one concatened with
-         * the given string \param path String containing the path part to add
+         *        the given string
+         * \param path String containing the path part to add
          * \return The new path which is the result of the base concatened with
-         * the path parameter
+         *         the path parameter
          */
         Path add(const std::string& path) const;
         /**
