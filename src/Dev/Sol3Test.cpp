@@ -244,6 +244,20 @@ void test_string_split(sol::state_view state)
                  "print(k, v) end");
 }
 
+void std_func_test(sol::state_view state, std::function<bool(int)> func)
+{
+    state["is_odd"] = func;
+}
+
+void test_expose_std_function(sol::state_view state)
+{
+    state["expose"]
+        = [state](std::function<bool(int)> func) { std_func_test(state, func); };
+    state.script(
+        "expose(function(a) print('is_odd_result', a, a%2); return (a % 2) == 0; end)");
+    state.script("print('IS ODD', is_odd(3), is_odd(4));");
+}
+
 void test_sol3()
 {
     std::cout << "Starting test sol3" << std::endl;
@@ -251,6 +265,8 @@ void test_sol3()
     std::cout << "State object created" << std::endl;
     state.open_libraries(sol::lib::base, sol::lib::io, sol::lib::string, sol::lib::table);
     std::cout << "Libraries opened" << std::endl;
+    std::cout << "Test std::function binding" << std::endl;
+    test_expose_std_function(state);
     // sol::table table = state["obe"].get_or_create<sol::table>();
 
     /*test_inheritance(state);

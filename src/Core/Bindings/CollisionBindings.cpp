@@ -36,7 +36,7 @@ namespace obe::Bindings::CollisionBindings
     {
         (*lua)["obe"]["TrajectoryNode"].setClass(
             kaguya::UserdataMetatable<Collision::TrajectoryNode>()
-                .setConstructors<Collision::TrajectoryNode(Scene::SceneNode*)>()
+                .setConstructors<Collision::TrajectoryNode(Scene::SceneNode&)>()
                 .addFunction("addTrajectory", TrajectoryNode_addTrajectory_wrapper())
                 .addFunction("getSceneNode", &Collision::TrajectoryNode::getSceneNode)
                 .addFunction("getTrajectory", &Collision::TrajectoryNode::getTrajectory)

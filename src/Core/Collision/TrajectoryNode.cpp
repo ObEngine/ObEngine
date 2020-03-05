@@ -6,9 +6,9 @@
 
 namespace obe::Collision
 {
-    TrajectoryNode::TrajectoryNode(Scene::SceneNode* sceneNode)
+    TrajectoryNode::TrajectoryNode(Scene::SceneNode& sceneNode)
+        : m_sceneNode(sceneNode)
     {
-        m_sceneNode = sceneNode;
     }
 
     void TrajectoryNode::setProbe(PolygonalCollider* probe)
@@ -16,15 +16,16 @@ namespace obe::Collision
         m_probe = probe;
     }
 
-    Trajectory* TrajectoryNode::addTrajectory(const std::string& id, Transform::Units unit)
+    Trajectory& TrajectoryNode::addTrajectory(
+        const std::string& id, Transform::Units unit)
     {
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
-        return m_trajectories[id].get();
+        return *m_trajectories[id].get();
     }
 
-    Trajectory* TrajectoryNode::getTrajectory(const std::string& id)
+    Trajectory& TrajectoryNode::getTrajectory(const std::string& id)
     {
-        return m_trajectories[id].get();
+        return *m_trajectories[id].get();
     }
 
     void TrajectoryNode::removeTrajectory(const std::string& id)
@@ -35,7 +36,8 @@ namespace obe::Collision
     void TrajectoryNode::update(const double dt)
     {
         auto getOffset = [&dt](Trajectory& trajectory) {
-            const double speed = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
+            const double speed
+                = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
             const double radAngle = (Utils::Math::pi / 180.0) * -trajectory.getAngle();
             const double addX = std::cos(radAngle) * (speed * dt);
             const double addY = std::sin(radAngle) * (speed * dt);
@@ -48,16 +50,9 @@ namespace obe::Collision
             {
                 auto baseOffset = getOffset(*cTraj);
 
-                for (kaguya::LuaFunction& check : trajectory.second->getChecks())
+                for (TrajectoryCheckFunction& check : trajectory.second->getChecks())
                 {
-                    if (m_probe != nullptr)
-                    {
-                        check(cTraj, &baseOffset, m_probe);
-                    }
-                    else
-                    {
-                        check(cTraj, &baseOffset);
-                    }
+                    check(*cTraj, baseOffset, m_probe);
                 }
                 if (!cTraj->getStatic())
                 {
@@ -66,21 +61,22 @@ namespace obe::Collision
                     Transform::UnitVector realOffset = baseOffset;
                     if (m_probe != nullptr)
                     {
-                        realOffset = m_probe->getMaximumDistanceBeforeCollision(realOffset);
+                        realOffset
+                            = m_probe->getMaximumDistanceBeforeCollision(realOffset);
                     }
-                    if (realOffset != baseOffset
-                        && !trajectory.second->getOnCollideCallback().isNilref())
+                    auto onCollideCallback = trajectory.second->getOnCollideCallback();
+                    if (realOffset != baseOffset && onCollideCallback)
                     {
-                        trajectory.second->getOnCollideCallback()(
-                            trajectory.second.get(), baseOffset, realOffset);
+                        onCollideCallback(
+                            *trajectory.second.get(), baseOffset, realOffset);
                     }
-                    m_sceneNode->move(realOffset);
+                    m_sceneNode.move(realOffset);
                 }
             }
         }
     }
 
-    Scene::SceneNode* TrajectoryNode::getSceneNode() const
+    Scene::SceneNode& TrajectoryNode::getSceneNode() const
     {
         return m_sceneNode;
     }

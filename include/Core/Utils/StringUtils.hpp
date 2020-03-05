@@ -9,11 +9,11 @@
 namespace obe::Utils::String
 {
     /**
-     * \brief A std::string containing all the letters of the Alphabet
+     * \brief A string containing all the letters of the Alphabet
      */
     const std::string Alphabet = "abcdefghijklmnopqrstuvwxyz";
     /**
-     * \brief A std::string containing all the numbers from 0 to 9
+     * \brief A string containing all the numbers from 0 to 9
      */
     const std::string Numbers = "0123456789";
 
@@ -70,16 +70,16 @@ namespace obe::Utils::String
      * modify \param search The string to replace \param replace The content
      * that will replace search occurences
      */
-    void replaceInPlace(std::string& subject, const std::string& search,
-        const std::string& replace);
+    void replaceInPlace(
+        std::string& subject, const std::string& search, const std::string& replace);
     /**
      * \brief Replace all the occurences of search to replace in the string
      * subject \param subject The string you want to modify \param search The
      * string to replace \param replace The content that will replace search
      * occurences \return A std::string containing the modified string
      */
-    std::string replace(std::string subject, const std::string& search,
-        const std::string& replace);
+    std::string replace(
+        std::string subject, const std::string& search, const std::string& replace);
     /**
      * \brief Check if the string is surrounded by the given string
      * \param string String you want to check
