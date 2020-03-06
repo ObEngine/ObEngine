@@ -1,4 +1,5 @@
 #include <Config/Config.hpp>
+#include <Engine/Engine.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
@@ -16,13 +17,17 @@ namespace obe::Modes
 {
     void startGame()
     {
-        // Creating Window
+        Engine::Engine engine;
+        engine.run();
+    }
+    void oldStartGame()
+    {
+        /*// Creating Window
         System::MainWindow.init(System::WindowContext::GameWindow);
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"),
-            Triggers::TriggerGroupPtrRemover);
+            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"));
 
         gameTriggers->addTrigger("Start")
             ->trigger("Start")
@@ -31,29 +36,25 @@ namespace obe::Modes
             ->addTrigger("Render");
 
         // Config
-        vili::ComplexNode& gameConfig = Config::Config.at("GameConfig");
+        vili::ComplexNode& gameConfig = Config::Config.get().at("GameConfig");
 
         // Cursor
-        System::Cursor cursor;
+        System::Cursor cursor(System::MainWindow);
 
         // Scene Creation / Loading
         Scene::Scene scene;
-        // Scene::TXScene scene = Scene::TXScene::CreateRootScene();
-
-        Script::ScriptEngine.setErrorHandler([](int statuscode, const char* message) {
-            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
-        });
 
         // Keybinding
         Input::InputManager inputManager;
 
-        inputManager.configure(Config::Config.at("KeyBinding"));
+        inputManager.configure(Config::Config.get().at("KeyBinding"));
         inputManager.addContext("game");
 
         sf::Event event;
 
         // Framerate / DeltaTime
-        Time::FramerateManager framerateManager(gameConfig);
+        Time::FramerateManager framerateManager;
+        framerateManager.configure(gameConfig);
 
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
@@ -103,8 +104,8 @@ namespace obe::Modes
 
             if (framerateManager.doRender())
             {
-                System::MainWindow.clear(Graphics::Utils::ClearColor);
-                scene.draw();
+                System::MainWindow.clear();
+                scene.draw(System::MainWindow.getTarget());
                 for (auto& sprite : Graphics::Sprite::Pool)
                 {
                 }
@@ -117,6 +118,6 @@ namespace obe::Modes
         scene.clear();
         scene.update();
         Script::GameObjectDatabase::Clear();
-        System::MainWindow.close();
+        System::MainWindow.close();*/
     }
 } // namespace obe::Modes

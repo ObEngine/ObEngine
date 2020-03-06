@@ -4,12 +4,14 @@
 
 namespace obe::Config
 {
-    /**
-     * \brief Data Object containing the engine configuration
-     */
-    extern vili::ViliParser Config;
-    /**
-     * \brief Function to read the configuration from all config files
-     */
-    void InitConfiguration();
+    class ConfigurationManager
+    {
+    private:
+        vili::ViliParser m_config;
+
+    public:
+        ConfigurationManager();
+        void load();
+        vili::ComplexNode& get();
+    };
 } // namespace obe::System

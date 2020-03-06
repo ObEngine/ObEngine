@@ -103,14 +103,15 @@ namespace obe::Animation
         /**
          * \brief Set the Animation to play by name
          * \param key A std::string containing the name of the Animation to
-         * play.\n Throws a ObEngine.Animation.Animator.AnimationNotFound
-         * exception if the Animation key is not found.
+         *        play. Throws a ObEngine.Animation.Animator.AnimationNotFound
+         *        exception if the Animation key is not found.
          */
         void setKey(const std::string& key);
         /**
          * \brief Start or Pause the Animator (won't do anything even if
-         * updated) \param pause true if the Animator should pause, false
-         * otherwise
+         *        updated)
+         * \param pause true if the Animator should pause, false
+         *        otherwise
          */
         void setPaused(bool pause);
         /**

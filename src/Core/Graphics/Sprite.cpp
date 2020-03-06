@@ -1,6 +1,6 @@
 #include <Graphics/DrawUtils.hpp>
-#include <Graphics/Sprite.hpp>
 #include <Graphics/ResourceManager.hpp>
+#include <Graphics/Sprite.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -32,7 +32,7 @@ namespace obe::Graphics
         this->setSize(initialSpriteSize);
     }
 
-    void Sprite::draw(const Transform::UnitVector& camera)
+    void Sprite::draw(sf::RenderTarget& surface, const Transform::UnitVector& camera)
     {
         const Transform::UnitVector position
             = m_positionTransformer(m_position, camera, m_layer);
@@ -54,13 +54,13 @@ namespace obe::Graphics
         m_sprite.setVertices(vertices);
 
         if (m_shader)
-            System::MainWindow.draw(m_sprite, m_shader);
+            surface.draw(m_sprite, m_shader);
         else
-            System::MainWindow.draw(m_sprite);
+            surface.draw(m_sprite);
 
         if (m_selected)
         {
-            this->drawHandle(camera);
+            this->drawHandle(surface, camera);
         }
     }
 
@@ -146,12 +146,13 @@ namespace obe::Graphics
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void Sprite::drawHandle(const Transform::UnitVector& camera) const
+    void Sprite::drawHandle(
+        sf::RenderTarget& surface, const Transform::UnitVector& camera) const
     {
         const Transform::UnitVector position
             = m_positionTransformer(m_position, camera, m_layer)
                   .to<Transform::Units::ScenePixels>();
-        Rect::draw(position.x, position.y);
+        Rect::draw(surface, position.x, position.y);
     }
 
     SpriteHandlePoint* Sprite::getHandlePoint(
@@ -323,8 +324,7 @@ namespace obe::Graphics
     }
 
     unsigned int SpriteHandlePoint::radius = 6;
-    SpriteHandlePoint::SpriteHandlePoint(
-        Sprite* parent, Transform::Referential ref)
+    SpriteHandlePoint::SpriteHandlePoint(Sprite* parent, Transform::Referential ref)
         : m_referential(ref)
     {
         m_sprite = parent;

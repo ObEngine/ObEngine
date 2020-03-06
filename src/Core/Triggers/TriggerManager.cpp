@@ -12,147 +12,145 @@ namespace obe::Triggers
         m_databaseChrono.start();
     }
 
-    std::weak_ptr<Trigger> TriggerManager::getTrigger(const std::string& groupNamespace,
-        const std::string& triggerGroupName, const std::string& triggerName)
+    std::weak_ptr<Trigger> TriggerManager::getTrigger(
+        const std::string& space, const std::string& group, const std::string& trigger)
     {
-        if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                != m_allTriggers[groupNamespace].end())
-                return m_allTriggers[groupNamespace][triggerGroupName]->getTrigger(
-                    triggerName);
+            if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
+                return m_allTriggers[space][group]->getTrigger(trigger);
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
-                { { "function", "getTrigger" }, { "group", triggerGroupName },
-                    { "nsp", groupNamespace } });
+                { { "function", "getTrigger" }, { "group", group },
+                    { "namespace", space } });
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Trigger.TriggerManager.UnknownNamespace",
-            { { "function", "getTrigger" }, { "nsp", groupNamespace } });
+            { { "function", "getTrigger" }, { "namespace", space } });
     }
 
-    void TriggerManager::createNamespace(const std::string& groupNamespace)
+    void TriggerManager::createNamespace(const std::string& space)
     {
         Debug::Log->debug(
-            "<TriggerManager> Creating Namespace {0} in TriggerManager", groupNamespace);
+            "<TriggerManager> Creating Namespace {0} in TriggerManager", space);
         if (m_allTriggers.size() == 0)
-            m_allTriggers[groupNamespace]
-                = std::map<std::string, std::unique_ptr<TriggerGroup>>();
+            m_allTriggers[space] = std::map<std::string, std::unique_ptr<TriggerGroup>>();
         else
         {
-            if (m_allTriggers.find(groupNamespace) == m_allTriggers.end())
-                m_allTriggers[groupNamespace]
+            if (m_allTriggers.find(space) == m_allTriggers.end())
+                m_allTriggers[space]
                     = std::map<std::string, std::unique_ptr<TriggerGroup>>();
             else
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Triggers.TriggerManager.NamespaceAlreadyExists",
-                    { { "nsp", groupNamespace } });
+                    { { "namespace", space } });
         }
     }
 
-    TriggerGroup* TriggerManager::createTriggerGroup(
-        const std::string& groupNamespace, const std::string& triggerGroupName)
+    TriggerGroupPtr TriggerManager::createTriggerGroup(
+        const std::string& space, const std::string& group)
     {
-        Debug::Log->debug("<TriggerManager> Creating TriggerGroup {0} in Namespace {1}",
-            triggerGroupName, groupNamespace);
-        if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+        Debug::Log->debug(
+            "<TriggerManager> Creating TriggerGroup {0} in Namespace {1}", group, space);
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                == m_allTriggers[groupNamespace].end())
+            if (m_allTriggers[space].find(group) == m_allTriggers[space].end())
             {
-                m_allTriggers[groupNamespace][triggerGroupName]
-                    = std::make_unique<TriggerGroup>(groupNamespace, triggerGroupName);
-                return m_allTriggers[groupNamespace][triggerGroupName].get();
+                m_allTriggers[space][group]
+                    = std::make_unique<TriggerGroup>(space, group);
+                return TriggerGroupPtr(
+                    m_allTriggers[space][group].get(), [this](TriggerGroup* ptr) {
+                        this->removeTriggerGroup(ptr);
+                    });
+                ;
             }
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.TriggerGroupAlreadyExists",
-                { { "group", triggerGroupName }, { "nsp", groupNamespace } });
+                { { "group", group }, { "namespace", space } });
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Triggers.TriggerManager.UnknownNamespace",
-            { { "function", "createTriggerGroup" }, { "nsp", groupNamespace } });
+            { { "function", "createTriggerGroup" }, { "namespace", space } });
     }
 
-    TriggerGroup* TriggerManager::joinTriggerGroup(
-        const std::string& groupNamespace, const std::string& triggerGroupName)
+    TriggerGroupPtr TriggerManager::joinTriggerGroup(
+        const std::string& space, const std::string& group)
     {
-        Debug::Log->debug("<TriggerManager> Joining TriggerGroup {0} in Namespace {1}",
-            triggerGroupName, groupNamespace);
-        if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+        Debug::Log->debug(
+            "<TriggerManager> Joining TriggerGroup {0} in Namespace {1}", group, space);
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                    != m_allTriggers[groupNamespace].end()
-                && m_allTriggers[groupNamespace][triggerGroupName]->isJoinable())
-                return m_allTriggers[groupNamespace][triggerGroupName].get();
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                != m_allTriggers[groupNamespace].end())
+            if (m_allTriggers[space].find(group) != m_allTriggers[space].end()
+                && m_allTriggers[space][group]->isJoinable())
+                return TriggerGroupPtr(
+                    m_allTriggers[space][group].get(), [this](TriggerGroup* ptr) {
+                        this->removeTriggerGroup(ptr);
+                    });
+            if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
             {
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Triggers.TriggerManager.TriggerGroupNotJoinable",
-                    { { "group", triggerGroupName }, { "nsp", groupNamespace } });
+                    { { "group", group }, { "namespace", space } });
             }
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
-                { { "function", "joinTriggerGroup" }, { "group", triggerGroupName },
-                    { "nsp", groupNamespace } });
+                { { "function", "joinTriggerGroup" }, { "group", group },
+                    { "namespace", space } });
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Triggers.TriggerManager.UnknownNamespace",
-            { { "function", "joinTriggerGroup" }, { "nsp", groupNamespace } });
+            { { "function", "joinTriggerGroup" }, { "namespace", space } });
     }
 
-    void TriggerManager::removeNamespace(const std::string& namespaceId)
+    void TriggerManager::removeNamespace(const std::string& space)
     {
-        Debug::Log->debug("<TriggerManager> Removing Trigger Namespace {0}", namespaceId);
-        if (m_allTriggers.find(namespaceId) != m_allTriggers.end())
+        Debug::Log->debug("<TriggerManager> Removing Trigger Namespace {0}", space);
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             Debug::Log->trace(
-                "<TriggerManager> Found Trigger Namespace {0}, removing it...",
-                namespaceId);
-            m_allTriggers.erase(m_allTriggers.find(namespaceId));
+                "<TriggerManager> Found Trigger Namespace {0}, removing it...", space);
+            m_allTriggers.erase(m_allTriggers.find(space));
         }
         else
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownNamespace",
-                { { "function", "removeNamespace" }, { "nsp", namespaceId } });
+                { { "function", "removeNamespace" }, { "namespace", space } });
     }
 
     std::vector<std::string> TriggerManager::getAllTriggersNameFromTriggerGroup(
-        const std::string& groupNamespace, const std::string& triggerGroupName)
+        const std::string& space, const std::string& group)
     {
-        if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                != m_allTriggers[groupNamespace].end())
-                return m_allTriggers[groupNamespace][triggerGroupName]
-                    ->getAllTriggersName();
+            if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
+                return m_allTriggers[space][group]->getAllTriggersName();
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getAllTriggersNameFromTriggerGroup" },
-                    { "group", triggerGroupName }, { "nsp", groupNamespace } });
+                    { "group", group }, { "namespace", space } });
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Triggers.TriggerManager.UnknownNamespace",
             { { "function", "getAllTriggersNameFromTriggerGroup" },
-                { "nsp", groupNamespace } });
+                { "namespace", space } });
     }
 
     std::vector<std::string> TriggerManager::getAllTriggersGroupNames(
-        const std::string& namespaceName)
+        const std::string& space)
     {
-        if (m_allTriggers.find(namespaceName) != m_allTriggers.end())
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             std::vector<std::string> allNames;
-            for (auto& nsp : m_allTriggers[namespaceName])
+            for (auto& space : m_allTriggers[space])
             {
-                allNames.push_back(nsp.first);
+                allNames.push_back(space.first);
             }
             return allNames;
         }
         else
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownNamespace",
-                { { "function", "getAllTriggersGroupNames" }, { "nsp", namespaceName } });
+                { { "function", "getAllTriggersGroupNames" }, { "namespace", space } });
     }
 
     void TriggerManager::removeTriggerGroup(TriggerGroup* trgGroup)
@@ -163,18 +161,17 @@ namespace obe::Triggers
     }
 
     bool TriggerManager::doesTriggerGroupExists(
-        const std::string& groupNamespace, const std::string& triggerGroupName)
+        const std::string& space, const std::string& group)
     {
-        if (m_allTriggers.find(groupNamespace) != m_allTriggers.end())
+        if (m_allTriggers.find(space) != m_allTriggers.end())
         {
-            if (m_allTriggers[groupNamespace].find(triggerGroupName)
-                == m_allTriggers[groupNamespace].end())
+            if (m_allTriggers[space].find(group) == m_allTriggers[space].end())
                 return false;
             return true;
         }
         throw aube::ErrorHandler::Raise(
             "ObEngine.Triggers.TriggerManager.UnknownNamespace",
-            { { "function", "doesTriggerGroupExists" }, { "nsp", groupNamespace } });
+            { { "function", "doesTriggerGroupExists" }, { "namespace", space } });
     }
 
     void TriggerManager::update()

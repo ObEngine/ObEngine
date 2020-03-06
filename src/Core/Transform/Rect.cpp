@@ -52,8 +52,8 @@ namespace obe::Transform
 
         auto [dx, dy] = (ref.getOffset() * m_size).unpack();
 
-        vec.add(UnitVector(
-            (dx * cosAngle - dy * sinAngle) * factor, (dx * sinAngle + dy * cosAngle) * factor));
+        vec.add(UnitVector((dx * cosAngle - dy * sinAngle) * factor,
+            (dx * sinAngle + dy * cosAngle) * factor));
     }
 
     Rect::Rect()
@@ -66,16 +66,17 @@ namespace obe::Transform
         m_size = size;
     }
 
-    void Rect::draw(int posX, int posY) const
+    void Rect::draw(sf::RenderTarget& surface, int x, int y) const
     {
         int r = 6;
 
         std::vector<sf::Vector2i> drawPoints;
-        UnitVector dPos(posX, posY, Transform::Units::ScenePixels);
+        UnitVector dPos(x, y, Transform::Units::ScenePixels);
 
-        const std::vector<Referential> fixDisplayOrder = { Referential::TopLeft, Referential::Top,
-            Referential::TopRight, Referential::Right, Referential::BottomRight,
-            Referential::Bottom, Referential::BottomLeft, Referential::Left };
+        const std::vector<Referential> fixDisplayOrder
+            = { Referential::TopLeft, Referential::Top, Referential::TopRight,
+                  Referential::Right, Referential::BottomRight, Referential::Bottom,
+                  Referential::BottomLeft, Referential::Left };
 
         for (uint8_t i = 0; i < 8; ++i)
         {
@@ -99,14 +100,17 @@ namespace obe::Transform
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(vec.x - r, vec.y - r, r, sf::Color::White);
-        Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
+        Graphics::Utils::drawPoint(surface, vec.x - r, vec.y - r, r, sf::Color::White);
+        Graphics::Utils::drawLine(
+            surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
-        Graphics::Utils::drawPolygon(drawPoints,
+        Graphics::Utils::drawPolygon(surface, drawPoints,
             { { "lines", true }, { "points", true }, { "radius", r },
                 { "point_color", sf::Color::White }, { "point_color_0", sf::Color::Red },
-                { "point_color_1", sf::Color(255, 128, 0) }, { "point_color_2", sf::Color::Yellow },
-                { "point_color_3", sf::Color(128, 255, 0) }, { "point_color_4", sf::Color::Green },
+                { "point_color_1", sf::Color(255, 128, 0) },
+                { "point_color_2", sf::Color::Yellow },
+                { "point_color_3", sf::Color(128, 255, 0) },
+                { "point_color_4", sf::Color::Green },
                 { "point_color_5", sf::Color(0, 255, 128) },
                 { "point_color_6", sf::Color::Magenta },
                 { "point_color_7", sf::Color(0, 128, 255) },
@@ -118,7 +122,8 @@ namespace obe::Transform
         UnitVector refPosition = this->getPosition(ref);
         UnitVector oppositePointPosition = this->getPosition(ref.flip());
         double radAngle = Utils::Math::convertToRadian(-m_angle);
-        UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
+        UnitVector movedPoint
+            = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
         this->setPosition(position, ref);
 
@@ -126,11 +131,13 @@ namespace obe::Transform
         {
             if (ref.isOnTopSide())
             {
-                this->setSize({ movedPoint.x - position.x, movedPoint.y - position.y }, ref);
+                this->setSize(
+                    { movedPoint.x - position.x, movedPoint.y - position.y }, ref);
             }
             else
             {
-                this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
+                this->setSize(
+                    { position.x - movedPoint.x, position.y - movedPoint.y }, ref);
             }
         }
         if (ref.isOnLeftSide() || ref.isOnRightSide())
@@ -145,7 +152,7 @@ namespace obe::Transform
             }
         }
         else // we are on TopSide or BottomSide here, no need to specify the
-             // condition
+            // condition
         {
             if (ref.isOnTopSide())
             {

@@ -13,8 +13,7 @@ namespace obe::Scene
     Scene::Scene()
         : Registrable("Scene")
         , m_sceneTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                              "Global", "Scene"),
-              Triggers::TriggerGroupPtrRemover)
+              "Global", "Scene"))
 
     {
         System::Path("Lib/Internal/GameInit.lua")
@@ -436,7 +435,7 @@ namespace obe::Scene
         }
     }
 
-    void Scene::draw()
+    void Scene::draw(sf::RenderTarget& surface)
     {
         for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
         {
@@ -457,7 +456,7 @@ namespace obe::Scene
         {
             if (m_spriteArray[i]->isVisible())
             {
-                m_spriteArray[i]->draw(pixelCamera);
+                m_spriteArray[i]->draw(surface, pixelCamera);
             }
         }
 
@@ -478,7 +477,7 @@ namespace obe::Scene
                 sceneNodeRepr.setOutlineColor(sf::Color::Black);
                 sceneNodeRepr.setOutlineThickness(2);
                 sceneNodeRepr.setRadius(6);
-                System::MainWindow.draw(sceneNodeRepr);
+                surface.draw(sceneNodeRepr);
             }
         }
     }

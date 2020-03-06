@@ -86,3 +86,13 @@ namespace obe::System
             });
     }
 } // namespace obe::System
+
+obe::System::Path operator"" _path(const char* str, std::size_t len)
+{
+    return obe::System::Path(std::string(str, len));
+}
+
+std::string operator""_fs(const char* str, std::size_t len)
+{
+    return obe::System::Path(std::string(str, len)).find();
+}

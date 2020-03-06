@@ -910,7 +910,7 @@ namespace obe::Editor::GUI
         keybindingCatLabel->setRenderer(baseTheme.getRenderer("Label"));
         keybindingCatLabel->setText("[ Keybinding Settings ]");
 
-        vili::ComplexNode& keybinding = Config::Config.at("KeyBinding");
+        vili::ComplexNode& keybinding = Config::Config.get().at("KeyBinding");
         unsigned int yPos = 80;
         for (vili::ComplexNode* context : keybinding.getAll<vili::ComplexNode>())
         {

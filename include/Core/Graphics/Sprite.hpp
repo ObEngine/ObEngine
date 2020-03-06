@@ -123,7 +123,8 @@ namespace obe::Graphics
          * \param spritePositionX x Coordinate of the Offset of the Handle
          * \param spritePositionY y Coordinate of the Offset of the Handle
          */
-        void drawHandle(const Transform::UnitVector& camera) const;
+        void drawHandle(
+            sf::RenderTarget& surface, const Transform::UnitVector& camera) const;
         /**
          * \brief Dumps the content of the Sprite to a ComplexNode
          * \param target ComplexNode where to serialize the Sprite
@@ -309,7 +310,7 @@ namespace obe::Graphics
          */
         void useTextureSize();
 
-        void draw(const Transform::UnitVector& camera);
+        void draw(sf::RenderTarget& surface, const Transform::UnitVector& camera);
         std::string_view type() const override;
     };
 } // namespace obe::Graphics

@@ -3,6 +3,8 @@
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
 
+#include <SFML/Graphics/RenderTarget.hpp>
+
 namespace obe::Transform
 {
     /**
@@ -125,6 +127,6 @@ namespace obe::Transform
         /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
-        void draw(int posX, int posY) const;
+        void draw(sf::RenderTarget& surface, int x, int y) const;
     };
 } // namespace obe::Transform

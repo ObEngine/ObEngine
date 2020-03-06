@@ -14,8 +14,7 @@ namespace obe::Debug
     Console::Console()
         : Registrable("Console")
         , m_consoleTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                                "Global", "Console"),
-              Triggers::TriggerGroupPtrRemover)
+              "Global", "Console"))
     {
         m_font.loadFromFile("Data/Fonts/arial.ttf");
 
@@ -206,7 +205,7 @@ namespace obe::Debug
     void Console::draw()
     {
         // OUTPUT
-        System::MainWindow.clear(sf::Color(0, 0, 0, 200));
+        System::MainWindow.clear();
         sf::Text textOutput;
         textOutput.setFont(m_font);
         textOutput.setFillColor(sf::Color(255, 255, 255));

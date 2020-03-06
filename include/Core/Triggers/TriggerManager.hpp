@@ -26,73 +26,76 @@ namespace obe::Triggers
         TriggerManager();
         /**
          * \brief Get a Trigger contained in the TriggerManager
-         * \param namespaceName Namespace of the Trigger
-         * \param triggerGroupName TriggerGroup of the Trigger
-         * \param triggerName Name of the Trigger
+         * \param space Namespace of the Trigger
+         * \param group TriggerGroup of the Trigger
+         * \param trigger Name of the Trigger
          * \return A pointer of the Trigger if found
          */
-        std::weak_ptr<Trigger> getTrigger(const std::string& namespaceName,
-            const std::string& triggerGroupName, const std::string& triggerName);
+        std::weak_ptr<Trigger> getTrigger(const std::string& space,
+            const std::string& group, const std::string& trigger);
+        /**
+         * \brief Get a list of all names of Trigger instances inside a TriggerGroup
+         * \param namespace Name of the namespace where the TriggerGroup is located
+         * \param group Name of the TriggerGroup you want the names of the Trigger
+         *        instances from
+         * \return A list of names of the Triggers inside the TriggerGroup
+         */
+        std::vector<std::string> TriggerManager::getAllTriggersNameFromTriggerGroup(
+            const std::string& space, const std::string& group);
         /**
          * \brief Creates a new namespace (Throws an error if the namespace
-         * already exists) \param namespaceName Name of the namespace to create
+         *        already exists)
+         * \param space Name of the namespace to create
          */
-        void createNamespace(const std::string& namespaceName);
+        void createNamespace(const std::string& space);
         /**
          * \brief Creates a new TriggerGroup (Throws an error if the
-         * TriggerGroup already exists) \param namespaceName Namespace where to
-         * create the TriggerGroup \param triggerGroupName Name of the new
-         * TriggerGroup \return Pointer to the newly created TriggerGroup
+         *        TriggerGroup already exists)
+         * \param space Namespace where to
+         *        create the TriggerGroup
+         * \param group Name of the new TriggerGroup
+         * \return Pointer to the newly created TriggerGroup
          */
-        TriggerGroup* createTriggerGroup(
-            const std::string& namespaceName, const std::string& triggerGroupName);
+        TriggerGroupPtr createTriggerGroup(
+            const std::string& space, const std::string& group);
         /**
          * \brief Join an existing TriggerGroup (Throws an error if the
-         * TriggerGroup doesn't exists or isn't joinable) \param namespaceName
-         * Namespace of the existing TriggerGroup \param triggerGroupName Name
-         * of the TriggerGroup to join \return Pointer to the newly joined
-         * TriggerGroup
+         *        TriggerGroup doesn't exists or isn't joinable)
+         * \param space Namespace of the existing TriggerGroup
+         * \param group Name of the TriggerGroup to join
+         * \return Pointer to the newly joined TriggerGroup
          */
-        TriggerGroup* joinTriggerGroup(
-            const std::string& namespaceName, const std::string& triggerGroupName);
-        /**
-         * \brief Gets all the names of the Trigger containing the
-         * groupNamespace.triggerGroupName \param namespaceName Name of the
-         * Namespace \param triggerGroupName Name of the TriggerGroup to get all
-         * the Trigger names \return A std::vector of std::string containing all
-         * the names of the Trigger in the TriggerGroup
-         */
-        std::vector<std::string> getAllTriggersNameFromTriggerGroup(
-            const std::string& namespaceName, const std::string& triggerGroupName);
+        TriggerGroupPtr joinTriggerGroup(
+            const std::string& space, const std::string& group);
         /**
          * \brief Get all the names of the TriggerGroup in the given Namespace
-         * \param namespaceName Namespace where to get all the TriggerGroup
-         * names \return A std::vector of std::string containing the names of
-         * all contained TriggerGroup
+         * \param space Namespace where to get all the TriggerGroup
+         *        names
+         * \return A std::vector of std::string containing the names of
+         *         all contained TriggerGroup
          */
-        std::vector<std::string> getAllTriggersGroupNames(
-            const std::string& namespaceName);
+        std::vector<std::string> getAllTriggersGroupNames(const std::string& space);
         /**
          * \brief Removes an existing namespace
-         * \param namespaceName Name of the namespace to delete
+         * \param space Name of the namespace to delete
          */
-        void removeNamespace(const std::string& namespaceName);
+        void removeNamespace(const std::string& space);
         /**
          * \brief Removes an existing TriggerGroup
-         * \param trgGroup Pointer to the TriggerGroup to delete
+         * \param group Pointer to the TriggerGroup to delete
          */
-        void removeTriggerGroup(TriggerGroup* trgGroup);
+        void removeTriggerGroup(TriggerGroup* group);
         /**
          * \brief Check if a TriggerGroup exists in the TriggerManager
-         * \param groupNamespace Name of the Namespace where to search if the
-         * TriggerGroup exists \param triggerGroupName Name of the TriggerGroup
-         * to search \return
+         * \param space Name of the Namespace where to search if the
+         *        TriggerGroup exists
+         * \param group Name of the TriggerGroup
+         *        to search
+         * \return true if the TriggerGroup exists, false otherwise
          */
-        bool doesTriggerGroupExists(
-            const std::string& groupNamespace, const std::string& triggerGroupName);
+        bool doesTriggerGroupExists(const std::string& space, const std::string& group);
         /**
-         * \brief Updates the TriggerManager (Already executed in the main
-         * loops)
+         * \brief Updates the TriggerManager
          */
         void update();
         /**

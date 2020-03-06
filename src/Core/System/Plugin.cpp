@@ -10,27 +10,6 @@
 
 namespace obe::System
 {
-    std::vector<std::unique_ptr<Plugin>> Plugins;
-
-    void IndexPlugins()
-    {
-        for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
-        {
-            Debug::Log->info(
-                "<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
-            System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
-            if (Utils::File::directoryExists(cPluginPath.toString()))
-            {
-                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
-                {
-                    const std::string pluginPath = cPluginPath.add(filename).toString();
-                    const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    Plugins.emplace_back(std::make_unique<Plugin>(pluginName, pluginPath));
-                }
-            }
-        }
-    }
-
     Plugin::Plugin(const std::string& id, const std::string& path)
         : Types::Identifiable(id)
     {

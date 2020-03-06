@@ -146,3 +146,6 @@ namespace obe::System
             return LoaderMultipleResult(paths);
     }
 } // namespace obe::System
+
+obe::System::Path operator"" _path(const char* str, std::size_t len);
+std::string operator"" _fs(const char* str, std::size_t len);

@@ -181,10 +181,8 @@ namespace obe::Script
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
             Triggers::TriggerManager::GetInstance().createNamespace(m_privateKey);
-            m_localTriggers.reset(
-                Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                    m_privateKey, "Local"),
-                Triggers::TriggerGroupPtrRemover);
+            m_localTriggers = Triggers::TriggerManager::GetInstance().createTriggerGroup(
+                m_privateKey, "Local");
 
             m_envIndex = CreateNewEnvironment();
             Debug::Log->trace("<GameObject> GameObject '{}' received Environment ID {}",

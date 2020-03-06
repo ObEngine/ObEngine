@@ -9,7 +9,6 @@
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/ResourceManager.hpp>
 #include <Input/InputButtonMonitor.hpp>
-#include <Input/KeyList.hpp>
 #include <Modes/Game.hpp>
 #include <ObEngineCore.hpp>
 #include <System/MountablePath.hpp>

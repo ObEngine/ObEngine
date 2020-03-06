@@ -10,8 +10,6 @@
 
 namespace obe::System
 {
-    void IndexPlugins();
-
     template <class T>
     using PluginFunction
         = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
@@ -47,8 +45,6 @@ namespace obe::System
         bool hasOnRender() const;
         bool hasOnExit() const;
     };
-
-    extern std::vector<std::unique_ptr<Plugin>> Plugins;
 
     template <class T>
     PluginFunction<T> getPluginFunction(

@@ -112,11 +112,10 @@ namespace obe::Triggers
     };
 
     using TriggerGroupPtr = std::shared_ptr<TriggerGroup>;
-    void TriggerGroupPtrRemover(TriggerGroup* ptr);
 
     template <typename P>
-    void TriggerGroup::pushParameter(const std::string& triggerName,
-        const std::string& parameterName, P parameter)
+    void TriggerGroup::pushParameter(
+        const std::string& triggerName, const std::string& parameterName, P parameter)
     {
         m_triggerMap[triggerName]->pushParameter(parameterName, parameter);
     }

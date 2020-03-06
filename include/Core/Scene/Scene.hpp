@@ -7,6 +7,14 @@
 #include <Script/GameObject.hpp>
 #include <Types/Registrable.hpp>
 
+namespace obe
+{
+    namespace System
+    {
+        class Window;
+    }
+}
+
 namespace obe::Scene
 {
     /**
@@ -82,7 +90,7 @@ namespace obe::Scene
         /**
          * \brief Draws all elements of the Scene on the screen
          */
-        void draw();
+        void draw(sf::RenderTarget& surface);
         /**
          * \brief Get the name of the level
          * \return A std::string containing the name of the level

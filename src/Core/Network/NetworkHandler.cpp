@@ -7,8 +7,7 @@ namespace obe::Network
 {
     NetworkHandler::NetworkHandler()
         : m_socketTriggers(
-              Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Network"),
-              Triggers::TriggerGroupPtrRemover)
+              Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Network"))
     {
         m_listener.setBlocking(false);
         m_listener.listen(53000);

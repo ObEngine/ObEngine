@@ -6,6 +6,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <Animation/Animator.hpp>
+#include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Registrable.hpp>
@@ -24,6 +25,7 @@ namespace obe::System
         int m_constrainedX = 0;
         int m_constrainedY = 0;
         bool m_visible = true;
+        System::Window& m_window;
         Triggers::TriggerGroupPtr m_cursorTriggers;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
@@ -33,7 +35,7 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor();
+        explicit Cursor(System::Window& window);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position

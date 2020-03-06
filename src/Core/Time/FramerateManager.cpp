@@ -8,10 +8,17 @@
 
 namespace obe::Time
 {
-    FramerateManager::FramerateManager(vili::ComplexNode& config)
+    FramerateManager::FramerateManager()
         : Registrable("FramerateManager")
     {
         m_frameLimiterClock = epochAsMilliseconds();
+        m_currentFrame = 0;
+        m_frameProgression = 0;
+        m_needToRender = false;
+    }
+
+    void FramerateManager::configure(vili::ComplexNode& config)
+    {
         m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit"))
             ? config.at<vili::DataNode>("framerateLimit")
             : true;
@@ -26,10 +33,6 @@ namespace obe::Time
             ? config.at<vili::DataNode>("syncUpdateToRender")
             : true;
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
-        m_currentFrame = 0;
-        m_frameProgression = 0;
-        m_needToRender = false;
-
         Debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
             m_framerateTarget, (m_limitFPS) ? "capped" : "uncapped",
             (m_vsyncEnabled) ? "enabled" : "disabled",

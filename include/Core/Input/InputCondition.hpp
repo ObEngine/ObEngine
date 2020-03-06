@@ -15,7 +15,7 @@ namespace obe::Input
 
     /**
      * \brief A class represented the required conditions to trigger an
-     * InputAction
+     *        InputAction
      */
     class InputCondition
     {
@@ -51,11 +51,5 @@ namespace obe::Input
          * InputCondition \param combination The new InputCombination
          */
         void setCombination(const InputCombination& combination);
-        /**
-         * \brief Uses a parsable string to define the InputCombination
-         * <DOCUMENT> \param code The string that contains the new
-         * InputCombination
-         */
-        void setCombinationCode(const std::string& code);
     };
 } // namespace obe::Input

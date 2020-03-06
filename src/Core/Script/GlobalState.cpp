@@ -7,12 +7,19 @@ namespace obe::Script
     kaguya::State ScriptEngine;
     void InitScriptEngine()
     {
-        System::Path("Lib/Internal/LuaCore.lua").load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/Environment.lua").load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/ScriptInit.lua").load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/Triggers.lua").load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/LuaCore.lua")
+            .load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/Environment.lua")
+            .load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/ScriptInit.lua")
+            .load(System::Loaders::luaLoader, ScriptEngine);
+        System::Path("Lib/Internal/Triggers.lua")
+            .load(System::Loaders::luaLoader, ScriptEngine);
         ScriptEngine["Hook"] = kaguya::NewTable();
         ScriptEngine.dofile("Lib/Internal/Canvas.lua");
+        ScriptEngine.setErrorHandler([](int statuscode, const char* message) {
+            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+        });
     }
 
     unsigned int CreateNewEnvironment()

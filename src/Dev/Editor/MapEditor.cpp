@@ -36,8 +36,7 @@ namespace obe::Editor
         // Editor Triggers
         Triggers::TriggerGroupPtr editorTriggers(
             Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                "Global", "Editor"),
-            Triggers::TriggerGroupPtrRemover);
+                "Global", "Editor"));
 
         // Editor Collider Triggers
         editorTriggers->addTrigger("ColliderCreated")
@@ -76,8 +75,7 @@ namespace obe::Editor
 
         // Game Triggers
         Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"),
-            Triggers::TriggerGroupPtrRemover);
+            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"));
         gameTriggers->addTrigger("Start")
             ->trigger("Start")
             ->addTrigger("End")
@@ -94,7 +92,7 @@ namespace obe::Editor
         System::Path("Data/Fonts/arial.ttf").load(System::Loaders::fontLoader, font);
 
         // Config
-        vili::ComplexNode& gameConfig = Config::Config->at("GameConfig");
+        vili::ComplexNode& gameConfig = Config::Config.get().at("GameConfig");
         const int scrollSensitive = gameConfig.at<vili::DataNode>("scrollSensibility");
 
         // Cursor
@@ -117,7 +115,7 @@ namespace obe::Editor
 
         // Keybinding
         Input::InputManager inputManager;
-        inputManager.configure(Config::Config.at("KeyBinding"));
+        inputManager.configure(Config::Config.get().at("KeyBinding"));
         inputManager.addContext("game").addContext("mapEditor").addContext("gameConsole");
 
         // Editor Grid
@@ -199,7 +197,8 @@ namespace obe::Editor
         // Framerate / DeltaTime
         Time::FramerateCounter fps;
         fps.loadFont(font);
-        Time::FramerateManager framerateManager(gameConfig);
+        Time::FramerateManager framerateManager;
+        framerateManager.configure(gameConfig);
 
         scene.loadFromFile(mapName);
 
@@ -586,7 +585,7 @@ namespace obe::Editor
                     cameraPositionYInput->setText(std::to_string(saveCamPosY));
                 }
 
-                System::MainWindow.clear(Graphics::Utils::ClearColor);
+                System::MainWindow.clear();
                 scene.draw();
                 colliderPainter.draw(scene, colliderDrawOptions);
                 if (selectedHandlePoint != nullptr)
@@ -595,9 +594,9 @@ namespace obe::Editor
                 pixelCamera = scene.getCamera()
                                   ->getPosition()
                                   .to<Transform::Units::ScenePixels>(); // Do it once
-                                                                        // (Grid Draw
-                                                                        // Offset)
-                                                                        // <REVISION>
+                    // (Grid Draw
+                    // Offset)
+                    // <REVISION>
 
                 if (editorGrid.isEnabled())
                     editorGrid.draw(cursor, pixelCamera.x, pixelCamera.y);

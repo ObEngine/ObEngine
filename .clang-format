@@ -16,4 +16,4 @@ Standard: Cpp11
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortFunctionsOnASingleLine: false
 BinPackParameters: true
-ReflowComments: true
+ReflowComments: false

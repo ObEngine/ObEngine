@@ -15,7 +15,7 @@
 
 namespace obe::Debug
 {
-    std::shared_ptr<spd::logger> Log;
+    std::shared_ptr<spdlog::logger> Log;
     void InitLogger()
     {
         Utils::File::deleteFile("debug.log");
@@ -35,27 +35,8 @@ namespace obe::Debug
         dist_sink->add_sink(sink2);
         Log = std::make_shared<spdlog::logger>("Log", dist_sink);
         Log->set_pattern("[%H:%M:%S.%e]<%l> : %v");
-        Log->set_level(spd::level::info);
-        Log->flush_on(spd::level::trace);
+        Log->set_level(spdlog::level::info);
+        Log->flush_on(spdlog::level::trace);
         Log->info("Logger initialised");
-    }
-
-    void InitLoggerLevel()
-    {
-        const unsigned int logLevel
-            = Config::Config.at("Debug").getDataNode("logLevel").get<int>();
-        const spdlog::level::level_enum lvle
-            = static_cast<spdlog::level::level_enum>(logLevel);
-        if (Config::Config->contains("Debug")
-            && Config::Config.at("Debug").contains("logLevel"))
-            Log->set_level(lvle);
-        Log->info("Log Level {}", logLevel);
-    }
-
-    void SetLoggerLevel(const spdlog::level::level_enum level)
-    {
-        Config::Config.at("Debug").getDataNode("logLevel").set(static_cast<int>(level));
-        // System::Config.writeFile(); Waiting for MultipleViliParser
-        InitLoggerLevel();
     }
 } // namespace obe::Debug

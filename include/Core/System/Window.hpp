@@ -5,6 +5,8 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <Graphics/Color.hpp>
+
 namespace obe::System
 {
     enum class WindowContext
@@ -16,13 +18,17 @@ namespace obe::System
     class Window
     {
     private:
+        unsigned int m_width = 1280;
+        unsigned int m_height = 720;
+        int m_style;
+        std::string m_title;
         sf::RenderWindow m_window;
-        sf::RenderTexture m_surface;
-        bool m_docked = false;
+        Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
         void init(const WindowContext context);
-        void clear(const sf::Color& color = sf::Color(0, 0, 0, 255));
+        void create();
+        void clear();
         void close();
         void display();
         void draw(const sf::Drawable& drawable,
@@ -40,7 +46,9 @@ namespace obe::System
 
         sf::RenderTarget& getTarget();
         sf::RenderWindow& getWindow();
-        sf::RenderTexture& getTexture();
+
+        Graphics::Color getClearColor() const;
+        void setClearColor(Graphics::Color color);
     };
 
     inline Window MainWindow;

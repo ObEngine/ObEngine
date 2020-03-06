@@ -11,10 +11,8 @@ namespace obe::Network
     {
         if (!triggerNamespace.empty())
         {
-            m_socketTriggers = std::shared_ptr<Triggers::TriggerGroup>(
-                Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                    triggerNamespace, triggerGroup),
-                Triggers::TriggerGroupPtrRemover);
+            m_socketTriggers = Triggers::TriggerManager::GetInstance().createTriggerGroup(
+                triggerNamespace, triggerGroup);
             m_socketTriggers->addTrigger("DataReceived")
                 ->addTrigger("Connected")
                 ->addTrigger("Disconnected");
@@ -32,7 +30,8 @@ namespace obe::Network
         {
             if (m_socketTriggers)
             {
-                m_socketTriggers->pushParameter("Connected", "client", m_clients.back().get());
+                m_socketTriggers->pushParameter(
+                    "Connected", "client", m_clients.back().get());
                 m_socketTriggers->pushParameter(
                     "Connected", "ip", m_clients.back()->getRemoteAddress().toString());
                 m_socketTriggers->trigger("Connected");
@@ -51,8 +50,10 @@ namespace obe::Network
                 if (m_socketTriggers)
                 {
                     m_socketTriggers->pushParameter("DataReceived", "content",
-                        std::string(m_data.begin(), m_data.end()).substr(0, receivedDataSize));
-                    m_socketTriggers->pushParameter("DataReceived", "client", client.get());
+                        std::string(m_data.begin(), m_data.end())
+                            .substr(0, receivedDataSize));
+                    m_socketTriggers->pushParameter(
+                        "DataReceived", "client", client.get());
                     m_socketTriggers->trigger("DataReceived");
                 }
             }

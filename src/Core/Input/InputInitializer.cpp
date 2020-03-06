@@ -1,228 +1,227 @@
 #include <vili/ErrorHandler.hpp>
 
-#include <Input/KeyList.hpp>
+#include <Input/InputManager.hpp>
 #include <SFML/Window/Joystick.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Input
 {
-    std::unordered_map<std::string, std::unique_ptr<InputButton>> AllKeys;
-
-    void InitKeyList()
+    void InputManager::createInputMap()
     {
-        AllKeys["A"]
+        m_inputs["A"]
             = std::make_unique<InputButton>(sf::Keyboard::A, "A", "A", InputType::Alpha);
-        AllKeys["Z"]
+        m_inputs["Z"]
             = std::make_unique<InputButton>(sf::Keyboard::Z, "Z", "Z", InputType::Alpha);
-        AllKeys["E"]
+        m_inputs["E"]
             = std::make_unique<InputButton>(sf::Keyboard::E, "E", "E", InputType::Alpha);
-        AllKeys["R"]
+        m_inputs["R"]
             = std::make_unique<InputButton>(sf::Keyboard::R, "R", "E", InputType::Alpha);
-        AllKeys["T"]
+        m_inputs["T"]
             = std::make_unique<InputButton>(sf::Keyboard::T, "T", "T", InputType::Alpha);
-        AllKeys["Y"]
+        m_inputs["Y"]
             = std::make_unique<InputButton>(sf::Keyboard::Y, "Y", "Y", InputType::Alpha);
-        AllKeys["U"]
+        m_inputs["U"]
             = std::make_unique<InputButton>(sf::Keyboard::U, "U", "U", InputType::Alpha);
-        AllKeys["I"]
+        m_inputs["I"]
             = std::make_unique<InputButton>(sf::Keyboard::I, "I", "I", InputType::Alpha);
-        AllKeys["O"]
+        m_inputs["O"]
             = std::make_unique<InputButton>(sf::Keyboard::O, "O", "O", InputType::Alpha);
-        AllKeys["P"]
+        m_inputs["P"]
             = std::make_unique<InputButton>(sf::Keyboard::P, "P", "P", InputType::Alpha);
-        AllKeys["Q"]
+        m_inputs["Q"]
             = std::make_unique<InputButton>(sf::Keyboard::Q, "Q", "Q", InputType::Alpha);
-        AllKeys["S"]
+        m_inputs["S"]
             = std::make_unique<InputButton>(sf::Keyboard::S, "S", "S", InputType::Alpha);
-        AllKeys["D"]
+        m_inputs["D"]
             = std::make_unique<InputButton>(sf::Keyboard::D, "D", "D", InputType::Alpha);
-        AllKeys["F"]
+        m_inputs["F"]
             = std::make_unique<InputButton>(sf::Keyboard::F, "F", "F", InputType::Alpha);
-        AllKeys["G"]
+        m_inputs["G"]
             = std::make_unique<InputButton>(sf::Keyboard::G, "G", "G", InputType::Alpha);
-        AllKeys["H"]
+        m_inputs["H"]
             = std::make_unique<InputButton>(sf::Keyboard::H, "H", "H", InputType::Alpha);
-        AllKeys["J"]
+        m_inputs["J"]
             = std::make_unique<InputButton>(sf::Keyboard::J, "J", "J", InputType::Alpha);
-        AllKeys["K"]
+        m_inputs["K"]
             = std::make_unique<InputButton>(sf::Keyboard::K, "K", "K", InputType::Alpha);
-        AllKeys["L"]
+        m_inputs["L"]
             = std::make_unique<InputButton>(sf::Keyboard::L, "L", "L", InputType::Alpha);
-        AllKeys["M"]
+        m_inputs["M"]
             = std::make_unique<InputButton>(sf::Keyboard::M, "M", "M", InputType::Alpha);
-        AllKeys["W"]
+        m_inputs["W"]
             = std::make_unique<InputButton>(sf::Keyboard::W, "W", "W", InputType::Alpha);
-        AllKeys["X"]
+        m_inputs["X"]
             = std::make_unique<InputButton>(sf::Keyboard::X, "X", "W", InputType::Alpha);
-        AllKeys["C"]
+        m_inputs["C"]
             = std::make_unique<InputButton>(sf::Keyboard::C, "C", "C", InputType::Alpha);
-        AllKeys["V"]
+        m_inputs["V"]
             = std::make_unique<InputButton>(sf::Keyboard::V, "V", "V", InputType::Alpha);
-        AllKeys["B"]
+        m_inputs["B"]
             = std::make_unique<InputButton>(sf::Keyboard::B, "B", "B", InputType::Alpha);
-        AllKeys["N"]
+        m_inputs["N"]
             = std::make_unique<InputButton>(sf::Keyboard::N, "N", "N", InputType::Alpha);
         // Numeric
-        AllKeys["0"] = std::make_unique<InputButton>(
+        m_inputs["0"] = std::make_unique<InputButton>(
             sf::Keyboard::Num0, "0", "0", InputType::Numeric);
-        AllKeys["1"] = std::make_unique<InputButton>(
+        m_inputs["1"] = std::make_unique<InputButton>(
             sf::Keyboard::Num1, "1", "1", InputType::Numeric);
-        AllKeys["2"] = std::make_unique<InputButton>(
+        m_inputs["2"] = std::make_unique<InputButton>(
             sf::Keyboard::Num2, "2", "2", InputType::Numeric);
-        AllKeys["3"] = std::make_unique<InputButton>(
+        m_inputs["3"] = std::make_unique<InputButton>(
             sf::Keyboard::Num3, "3", "3", InputType::Numeric);
-        AllKeys["4"] = std::make_unique<InputButton>(
+        m_inputs["4"] = std::make_unique<InputButton>(
             sf::Keyboard::Num4, "4", "4", InputType::Numeric);
-        AllKeys["5"] = std::make_unique<InputButton>(
+        m_inputs["5"] = std::make_unique<InputButton>(
             sf::Keyboard::Num5, "5", "5", InputType::Numeric);
-        AllKeys["6"] = std::make_unique<InputButton>(
+        m_inputs["6"] = std::make_unique<InputButton>(
             sf::Keyboard::Num6, "6", "6", InputType::Numeric);
-        AllKeys["7"] = std::make_unique<InputButton>(
+        m_inputs["7"] = std::make_unique<InputButton>(
             sf::Keyboard::Num7, "7", "7", InputType::Numeric);
-        AllKeys["8"] = std::make_unique<InputButton>(
+        m_inputs["8"] = std::make_unique<InputButton>(
             sf::Keyboard::Num8, "8", "8", InputType::Numeric);
-        AllKeys["9"] = std::make_unique<InputButton>(
+        m_inputs["9"] = std::make_unique<InputButton>(
             sf::Keyboard::Num9, "9", "9", InputType::Numeric);
         // Numpad
-        AllKeys["NumPad0"] = std::make_unique<InputButton>(
+        m_inputs["NumPad0"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad0, "NumPad0", "0", InputType::NumericNP);
-        AllKeys["NumPad1"] = std::make_unique<InputButton>(
+        m_inputs["NumPad1"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad1, "NumPad1", "1", InputType::NumericNP);
-        AllKeys["NumPad2"] = std::make_unique<InputButton>(
+        m_inputs["NumPad2"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad2, "NumPad2", "2", InputType::NumericNP);
-        AllKeys["NumPad3"] = std::make_unique<InputButton>(
+        m_inputs["NumPad3"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad3, "NumPad3", "3", InputType::NumericNP);
-        AllKeys["NumPad4"] = std::make_unique<InputButton>(
+        m_inputs["NumPad4"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad4, "NumPad4", "4", InputType::NumericNP);
-        AllKeys["NumPad5"] = std::make_unique<InputButton>(
+        m_inputs["NumPad5"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad5, "NumPad5", "5", InputType::NumericNP);
-        AllKeys["NumPad6"] = std::make_unique<InputButton>(
+        m_inputs["NumPad6"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad6, "NumPad6", "6", InputType::NumericNP);
-        AllKeys["NumPad7"] = std::make_unique<InputButton>(
+        m_inputs["NumPad7"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad7, "NumPad7", "7", InputType::NumericNP);
-        AllKeys["NumPad8"] = std::make_unique<InputButton>(
+        m_inputs["NumPad8"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad8, "NumPad8", "8", InputType::NumericNP);
-        AllKeys["NumPad9"] = std::make_unique<InputButton>(
+        m_inputs["NumPad9"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad9, "NumPad9", "9", InputType::NumericNP);
         // Arrows
-        AllKeys["Left"] = std::make_unique<InputButton>(
+        m_inputs["Left"] = std::make_unique<InputButton>(
             sf::Keyboard::Left, "Left", "", InputType::Arrows);
-        AllKeys["Right"] = std::make_unique<InputButton>(
+        m_inputs["Right"] = std::make_unique<InputButton>(
             sf::Keyboard::Right, "Right", "", InputType::Arrows);
-        AllKeys["Up"] = std::make_unique<InputButton>(
+        m_inputs["Up"] = std::make_unique<InputButton>(
             sf::Keyboard::Up, "Up", "", InputType::Arrows);
-        AllKeys["Down"] = std::make_unique<InputButton>(
+        m_inputs["Down"] = std::make_unique<InputButton>(
             sf::Keyboard::Down, "Down", "", InputType::Arrows);
         // Functions
-        AllKeys["F1"] = std::make_unique<InputButton>(
+        m_inputs["F1"] = std::make_unique<InputButton>(
             sf::Keyboard::F1, "F1", "", InputType::Functions);
-        AllKeys["F2"] = std::make_unique<InputButton>(
+        m_inputs["F2"] = std::make_unique<InputButton>(
             sf::Keyboard::F2, "F2", "", InputType::Functions);
-        AllKeys["F3"] = std::make_unique<InputButton>(
+        m_inputs["F3"] = std::make_unique<InputButton>(
             sf::Keyboard::F3, "F3", "", InputType::Functions);
-        AllKeys["F4"] = std::make_unique<InputButton>(
+        m_inputs["F4"] = std::make_unique<InputButton>(
             sf::Keyboard::F4, "F4", "", InputType::Functions);
-        AllKeys["F5"] = std::make_unique<InputButton>(
+        m_inputs["F5"] = std::make_unique<InputButton>(
             sf::Keyboard::F5, "F5", "", InputType::Functions);
-        AllKeys["F6"] = std::make_unique<InputButton>(
+        m_inputs["F6"] = std::make_unique<InputButton>(
             sf::Keyboard::F6, "F6", "", InputType::Functions);
-        AllKeys["F7"] = std::make_unique<InputButton>(
+        m_inputs["F7"] = std::make_unique<InputButton>(
             sf::Keyboard::F7, "F7", "", InputType::Functions);
-        AllKeys["F8"] = std::make_unique<InputButton>(
+        m_inputs["F8"] = std::make_unique<InputButton>(
             sf::Keyboard::F8, "F8", "", InputType::Functions);
-        AllKeys["F9"] = std::make_unique<InputButton>(
+        m_inputs["F9"] = std::make_unique<InputButton>(
             sf::Keyboard::F9, "F9", "", InputType::Functions);
-        AllKeys["F10"] = std::make_unique<InputButton>(
+        m_inputs["F10"] = std::make_unique<InputButton>(
             sf::Keyboard::F10, "F10", "", InputType::Functions);
-        AllKeys["F11"] = std::make_unique<InputButton>(
+        m_inputs["F11"] = std::make_unique<InputButton>(
             sf::Keyboard::F11, "F11", "", InputType::Functions);
-        AllKeys["F12"] = std::make_unique<InputButton>(
+        m_inputs["F12"] = std::make_unique<InputButton>(
             sf::Keyboard::F12, "F12", "", InputType::Functions);
         // Gamepad
-        SetGamepadList();
+        this->createGamepadMap();
         // Mouse
-        AllKeys["LMB"] = std::make_unique<InputButton>(sf::Mouse::Left, "LMB");
-        AllKeys["RMB"] = std::make_unique<InputButton>(sf::Mouse::Right, "RMB");
-        AllKeys["MMB"] = std::make_unique<InputButton>(sf::Mouse::Middle, "MMB");
+        m_inputs["LMB"] = std::make_unique<InputButton>(sf::Mouse::Left, "LMB");
+        m_inputs["RMB"] = std::make_unique<InputButton>(sf::Mouse::Right, "RMB");
+        m_inputs["MMB"] = std::make_unique<InputButton>(sf::Mouse::Middle, "MMB");
         // Others
-        AllKeys["Add"] = std::make_unique<InputButton>(
+        m_inputs["Add"] = std::make_unique<InputButton>(
             sf::Keyboard::Add, "Add", "+", InputType::Others);
-        AllKeys["Backslash"] = std::make_unique<InputButton>(
+        m_inputs["Backslash"] = std::make_unique<InputButton>(
             sf::Keyboard::BackSlash, "Backslash", "\\", InputType::Others);
-        AllKeys["Backspace"] = std::make_unique<InputButton>(
+        m_inputs["Backspace"] = std::make_unique<InputButton>(
             sf::Keyboard::BackSpace, "Backspace", "", InputType::Others);
-        AllKeys["Comma"] = std::make_unique<InputButton>(
+        m_inputs["Comma"] = std::make_unique<InputButton>(
             sf::Keyboard::Comma, "Comma", ",", InputType::Others);
-        AllKeys["Dash"] = std::make_unique<InputButton>(
+        m_inputs["Dash"] = std::make_unique<InputButton>(
             sf::Keyboard::Dash, "Dash", "-", InputType::Others);
-        AllKeys["Delete"] = std::make_unique<InputButton>(
+        m_inputs["Delete"] = std::make_unique<InputButton>(
             sf::Keyboard::Delete, "Delete", "", InputType::Others);
-        AllKeys["Divide"] = std::make_unique<InputButton>(
+        m_inputs["Divide"] = std::make_unique<InputButton>(
             sf::Keyboard::Divide, "Divide", "/", InputType::Others);
-        AllKeys["End"] = std::make_unique<InputButton>(
+        m_inputs["End"] = std::make_unique<InputButton>(
             sf::Keyboard::End, "End", "", InputType::Others);
-        AllKeys["Equal"] = std::make_unique<InputButton>(
+        m_inputs["Equal"] = std::make_unique<InputButton>(
             sf::Keyboard::Equal, "Equal", "=", InputType::Others);
-        AllKeys["Escape"] = std::make_unique<InputButton>(
+        m_inputs["Escape"] = std::make_unique<InputButton>(
             sf::Keyboard::Escape, "Escape", "", InputType::Others);
-        AllKeys["Home"] = std::make_unique<InputButton>(
+        m_inputs["Home"] = std::make_unique<InputButton>(
             sf::Keyboard::Home, "Home", "", InputType::Others);
-        AllKeys["Insert"] = std::make_unique<InputButton>(
+        m_inputs["Insert"] = std::make_unique<InputButton>(
             sf::Keyboard::Insert, "Insert", "", InputType::Others);
-        AllKeys["LAlt"] = std::make_unique<InputButton>(
+        m_inputs["LAlt"] = std::make_unique<InputButton>(
             sf::Keyboard::LAlt, "LAlt", "", InputType::Others);
-        AllKeys["LBracket"] = std::make_unique<InputButton>(
+        m_inputs["LBracket"] = std::make_unique<InputButton>(
             sf::Keyboard::LBracket, "LBracket", "[", InputType::Others);
-        AllKeys["LControl"] = std::make_unique<InputButton>(
+        m_inputs["LControl"] = std::make_unique<InputButton>(
             sf::Keyboard::LControl, "LControl", "", InputType::Others);
-        AllKeys["LShift"] = std::make_unique<InputButton>(
+        m_inputs["LShift"] = std::make_unique<InputButton>(
             sf::Keyboard::LShift, "LShift", "", InputType::Others);
-        AllKeys["Menu"] = std::make_unique<InputButton>(
+        m_inputs["Menu"] = std::make_unique<InputButton>(
             sf::Keyboard::Menu, "Menu", "", InputType::Others);
-        AllKeys["Multiply"] = std::make_unique<InputButton>(
+        m_inputs["Multiply"] = std::make_unique<InputButton>(
             sf::Keyboard::Multiply, "Multiply", "*", InputType::Others);
-        AllKeys["PageDown"] = std::make_unique<InputButton>(
+        m_inputs["PageDown"] = std::make_unique<InputButton>(
             sf::Keyboard::PageDown, "PageDown", "", InputType::Others);
-        AllKeys["PageUp"] = std::make_unique<InputButton>(
+        m_inputs["PageUp"] = std::make_unique<InputButton>(
             sf::Keyboard::PageUp, "PageUp", "", InputType::Others);
-        AllKeys["Pause"] = std::make_unique<InputButton>(
+        m_inputs["Pause"] = std::make_unique<InputButton>(
             sf::Keyboard::Pause, "Pause", "", InputType::Others);
-        AllKeys["Period"] = std::make_unique<InputButton>(
+        m_inputs["Period"] = std::make_unique<InputButton>(
             sf::Keyboard::Period, "Period", ".", InputType::Others);
-        AllKeys["Quote"] = std::make_unique<InputButton>(
+        m_inputs["Quote"] = std::make_unique<InputButton>(
             sf::Keyboard::Quote, "Quote", "\"", InputType::Others);
-        AllKeys["RAlt"] = std::make_unique<InputButton>(
+        m_inputs["RAlt"] = std::make_unique<InputButton>(
             sf::Keyboard::RAlt, "RAlt", "", InputType::Others);
-        AllKeys["RBracket"] = std::make_unique<InputButton>(
+        m_inputs["RBracket"] = std::make_unique<InputButton>(
             sf::Keyboard::RBracket, "RBracket", "]", InputType::Others);
-        AllKeys["RControl"] = std::make_unique<InputButton>(
+        m_inputs["RControl"] = std::make_unique<InputButton>(
             sf::Keyboard::RControl, "RControl", "", InputType::Others);
-        AllKeys["Return"] = std::make_unique<InputButton>(
+        m_inputs["Return"] = std::make_unique<InputButton>(
             sf::Keyboard::Return, "Return", "", InputType::Others);
-        AllKeys["RShift"] = std::make_unique<InputButton>(
+        m_inputs["RShift"] = std::make_unique<InputButton>(
             sf::Keyboard::RShift, "RShift", "", InputType::Others);
-        AllKeys["RSystem"] = std::make_unique<InputButton>(
+        m_inputs["RSystem"] = std::make_unique<InputButton>(
             sf::Keyboard::RSystem, "RSystem", "", InputType::Others);
-        AllKeys["Semicolon"] = std::make_unique<InputButton>(
+        m_inputs["Semicolon"] = std::make_unique<InputButton>(
             sf::Keyboard::SemiColon, "Semicolon", ";", InputType::Others);
-        AllKeys["Slash"] = std::make_unique<InputButton>(
+        m_inputs["Slash"] = std::make_unique<InputButton>(
             sf::Keyboard::Slash, "Slash", "/", InputType::Others);
-        AllKeys["Space"] = std::make_unique<InputButton>(
+        m_inputs["Space"] = std::make_unique<InputButton>(
             sf::Keyboard::Space, "Space", " ", InputType::Others);
-        AllKeys["Substract"] = std::make_unique<InputButton>(
-            sf::Keyboard::Subtract, "Substract", "-", InputType::Others);
-        AllKeys["Tab"] = std::make_unique<InputButton>(
+        m_inputs["Subtract"] = std::make_unique<InputButton>(
+            sf::Keyboard::Subtract, "Subtract", "-", InputType::Others);
+        m_inputs["Tab"] = std::make_unique<InputButton>(
             sf::Keyboard::Tab, "Tab", "    ", InputType::Others);
-        AllKeys["Tilde"] = std::make_unique<InputButton>(
+        m_inputs["Tilde"] = std::make_unique<InputButton>(
             sf::Keyboard::Tilde, "Tilde", "~", InputType::Others);
     }
 
-    void SetGamepadList()
+    void InputManager::createGamepadMap()
     {
-        auto cKey = AllKeys.begin();
-        while (cKey != AllKeys.end())
+        auto cKey = m_inputs.begin();
+        while (cKey != m_inputs.end())
         {
             if (cKey->first.rfind("GP_", 0) == 0)
-                cKey = AllKeys.erase(cKey);
+                cKey = m_inputs.erase(cKey);
             else
                 ++cKey;
         }
@@ -234,10 +233,10 @@ namespace obe::Input
             {
                 std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex)
                     + "_BTN_" + std::to_string(buttonIndex);
-                AllKeys[gamepadButtonName] = std::make_unique<InputButton>(
+                m_inputs[gamepadButtonName] = std::make_unique<InputButton>(
                     gamepadIndex, buttonIndex, gamepadButtonName);
             }
-            auto addHorizontalAxis = [&gamepadIndex](sf::Joystick::Axis axis,
+            auto addHorizontalAxis = [&gamepadIndex, this](sf::Joystick::Axis axis,
                                          const std::string& axisName) {
                 if (sf::Joystick::hasAxis(gamepadIndex, axis))
                 {
@@ -247,13 +246,13 @@ namespace obe::Input
                         AxisThresholdDirection::Less, -80);
                     std::pair<AxisThresholdDirection, float> rightX(
                         AxisThresholdDirection::More, 80);
-                    AllKeys[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(
+                    m_inputs[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(
                         gamepadIndex, axis, leftX, gamepadAxisName + "_LEFT");
-                    AllKeys[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(
+                    m_inputs[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(
                         gamepadIndex, axis, rightX, gamepadAxisName + "_RIGHT");
                 }
             };
-            auto addVerticalAxis = [&gamepadIndex](sf::Joystick::Axis axis,
+            auto addVerticalAxis = [&gamepadIndex, this](sf::Joystick::Axis axis,
                                        const std::string& axisName) {
                 if (sf::Joystick::hasAxis(gamepadIndex, axis))
                 {
@@ -263,9 +262,9 @@ namespace obe::Input
                         AxisThresholdDirection::Less, -80);
                     std::pair<AxisThresholdDirection, float> downY(
                         AxisThresholdDirection::More, 80);
-                    AllKeys[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(
+                    m_inputs[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(
                         gamepadIndex, axis, upY, gamepadAxisName + "_UP");
-                    AllKeys[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(
+                    m_inputs[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(
                         gamepadIndex, axis, downY, gamepadAxisName + "_DOWN");
                 }
             };
@@ -283,34 +282,42 @@ namespace obe::Input
                     AxisThresholdDirection::More, 80);
                 std::pair<AxisThresholdDirection, float> rightT(
                     AxisThresholdDirection::Less, -80);
-                AllKeys[gamepadAxisName + "_LEFT"]
+                m_inputs[gamepadAxisName + "_LEFT"]
                     = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z,
                         leftT, gamepadAxisName + "_LEFT");
-                AllKeys[gamepadAxisName + "_RIGHT"]
+                m_inputs[gamepadAxisName + "_RIGHT"]
                     = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z,
                         rightT, gamepadAxisName + "_RIGHT");
             }
         }
     }
 
-    InputButton* GetInput(const std::string& keyId)
+    void InputManager::createTriggerGroups(Triggers::TriggerManager& triggers)
     {
-        if (AllKeys.find(keyId) != AllKeys.end())
-            return AllKeys[keyId].get();
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Input.KeyList.UnknownButton", { { "button", keyId } });
-    }
-
-    std::vector<InputButton*> GetAllPressedButtons()
-    {
-        std::vector<InputButton*> allPressedButtons;
-        for (auto& keyIterator : AllKeys)
+        t_inputs = triggers.createTriggerGroup("Global", "Keys");
+        for (auto const& [key, val] : m_inputs)
         {
-            if (keyIterator.second->isPressed())
-            {
-                allPressedButtons.push_back(keyIterator.second.get());
-            }
+            Input::InputButton* button = val.get();
+            t_inputs->addTrigger(button->getName());
+            t_inputs->getTrigger(button->getName())
+                .lock()
+                ->onRegister([button, this](const Triggers::TriggerEnv& env) {
+                    for (auto& monitor : m_monitors)
+                    {
+                        if (&monitor->getButton() == button)
+                            return;
+                    }
+                    m_monitors.push_back(this->monitor(*button));
+                });
+            t_inputs->getTrigger(button->getName())
+                .lock()
+                ->onUnregister([button, this](const Triggers::TriggerEnv& env) {
+                    m_monitors.erase(std::remove_if(m_monitors.begin(), m_monitors.end(),
+                                         [button](const auto& monitor) {
+                                             return &monitor->getButton() == button;
+                                         }),
+                        m_monitors.end());
+                });
         }
-        return allPressedButtons;
     }
 } // namespace obe::Input

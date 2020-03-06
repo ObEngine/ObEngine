@@ -6,36 +6,41 @@
 namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
 {
     template <typename T>
-    T findOptionOrDefault(const DrawPolygonOptions& options, const char* key, T defaultValue)
+    T findOptionOrDefault(
+        const DrawPolygonOptions& options, const char* key, T defaultValue)
     {
         if (options.find(key) == options.end())
             return defaultValue;
         return std::any_cast<T>(options.at(key));
     }
 
-    void drawPoint(int x, int y, unsigned int radius, sf::Color color)
+    void drawPoint(sf::RenderTarget& surface, int x, int y, float radius, sf::Color color)
     {
         sf::CircleShape drawPt;
         drawPt.setRadius(radius);
         drawPt.setPosition(sf::Vector2f(x, y));
         drawPt.setFillColor(color);
-        System::MainWindow.draw(drawPt);
+        surface.draw(drawPt);
     }
 
-    void drawLine(int x1, int y1, int x2, int y2, int thickness, sf::Color color)
+    void drawLine(sf::RenderTarget& surface, int x1, int y1, int x2, int y2,
+        int thickness, sf::Color color)
     {
-        sf::Vertex line[]
-            = { sf::Vertex(sf::Vector2f(x1, y1), color), sf::Vertex(sf::Vector2f(x2, y2), color) };
-        System::MainWindow.draw(line, thickness, sf::Lines);
+        sf::Vertex line[] = { sf::Vertex(sf::Vector2f(x1, y1), color),
+            sf::Vertex(sf::Vector2f(x2, y2), color) };
+        surface.draw(line, thickness, sf::Lines);
     }
 
-    void drawPolygon(std::vector<sf::Vector2i>& points, DrawPolygonOptions options)
+    void drawPolygon(sf::RenderTarget& surface, std::vector<sf::Vector2i>& points,
+        const DrawPolygonOptions& options)
     {
         const bool drawLines = findOptionOrDefault(options, "lines", true);
         const bool drawPoints = findOptionOrDefault(options, "points", true);
-        const int pointRadius = findOptionOrDefault(options, "radius", 6);
-        const sf::Color lineColor = findOptionOrDefault(options, "line_color", sf::Color::White);
-        const sf::Color pointColor = findOptionOrDefault(options, "point_color", sf::Color::White);
+        const float pointRadius = findOptionOrDefault(options, "radius", 6.f);
+        const sf::Color lineColor
+            = findOptionOrDefault(options, "line_color", sf::Color::White);
+        const sf::Color pointColor
+            = findOptionOrDefault(options, "point_color", sf::Color::White);
         sf::CircleShape polyPt;
         polyPt.setRadius(pointRadius);
         polyPt.setPointCount(100);
@@ -48,7 +53,8 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
             {
                 const sf::Color currentLineColor = findOptionOrDefault(
                     options, ("line_color_" + std::to_string(i)).c_str(), lineColor);
-                drawLine(point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
+                drawLine(
+                    surface, point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
             }
         }
         for (unsigned int i = 0; i < points.size(); i++)
@@ -60,10 +66,8 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
                     options, ("point_color_" + std::to_string(i)).c_str(), pointColor);
                 polyPt.setFillColor(currentPointColor);
                 polyPt.setPosition(point1.x - pointRadius, point1.y - pointRadius);
-                System::MainWindow.draw(polyPt);
+                surface.draw(polyPt);
             }
         }
     }
-
-    sf::Color ClearColor = sf::Color::Black; // <REVISION> Move to Window.hpp ?
 } // namespace obe::Graphics::Utils

@@ -30,9 +30,13 @@ namespace obe::Time
     public:
         /**
          * \brief Creates a new FramerateManager
-         * \param config Initial configuration of the FramerateManager
          */
-        FramerateManager(vili::ComplexNode& config);
+        FramerateManager();
+        /**
+         * \brief Configures the FramerateManager
+         * \param config Configuration of the FramerateManager
+         */
+        void configure(vili::ComplexNode& config);
         /**
          * \brief Updates the FramerateManager (done everytime in the main loop)
          */
