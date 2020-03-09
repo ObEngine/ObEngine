@@ -243,7 +243,7 @@ namespace obe::Graphics
         /**
          * \brief Apply a blend color to the Sprite
          * \param newColor A sf::Color containing the color to blend
-         * (sf::Color::White is default normal color)
+         *        (sf::Color::White is default normal color)
          */
         void setColor(sf::Color newColor);
         /**
@@ -265,7 +265,7 @@ namespace obe::Graphics
         /**
          * \brief Set the rotation of the sprite
          * \param rotate The new angle of the Sprite (0 -> 360 where 0 /
-         * 360 is the top)
+         *        360 is the top)
          */
         void setRotation(double rotate);
         /**

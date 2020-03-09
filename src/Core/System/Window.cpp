@@ -14,45 +14,45 @@ namespace obe::System
         Path("Data/window.cfg.vili").loadAll(System::Loaders::dataLoader, windowConfig);
         std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
 
-        vili::ComplexNode* wconf;
+        vili::ComplexNode* conf;
         if (context == WindowContext::GameWindow)
         {
             if (windowConfig->contains("Game"))
-                wconf = &windowConfig.at("Game");
+                conf = &windowConfig.at("Game");
             else
-                wconf = &windowConfig.root();
+                conf = &windowConfig.root();
         }
         else if (context == WindowContext::EditorWindow)
         {
             if (windowConfig->contains("Editor"))
-                wconf = &windowConfig.at("Editor");
+                conf = &windowConfig.at("Editor");
             else
-                wconf = &windowConfig.root();
+                conf = &windowConfig.root();
         }
         else
         {
             throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
         }
 
-        if (wconf->contains("width"))
+        if (conf->contains("width"))
         {
-            if (wconf->getDataNode("width").getDataType() == vili::DataType::Int)
-                m_width = wconf->getDataNode("width").get<int>();
-            else if (wconf->getDataNode("width").getDataType() == vili::DataType::String)
+            if (conf->getDataNode("width").getDataType() == vili::DataType::Int)
+                m_width = conf->getDataNode("width").get<int>();
+            else if (conf->getDataNode("width").getDataType() == vili::DataType::String)
             {
-                if (wconf->getDataNode("width").get<std::string>() == "Fill")
+                if (conf->getDataNode("width").get<std::string>() == "Fill")
                     m_width = Transform::UnitVector::Screen.w;
             }
         }
         else
             m_width = Transform::UnitVector::Screen.w;
-        if (wconf->contains("height"))
+        if (conf->contains("height"))
         {
-            if (wconf->getDataNode("height").getDataType() == vili::DataType::Int)
-                m_height = wconf->getDataNode("height").get<int>();
-            else if (wconf->getDataNode("height").getDataType() == vili::DataType::String)
+            if (conf->getDataNode("height").getDataType() == vili::DataType::Int)
+                m_height = conf->getDataNode("height").get<int>();
+            else if (conf->getDataNode("height").getDataType() == vili::DataType::String)
             {
-                if (wconf->getDataNode("height").get<std::string>() == "Fill")
+                if (conf->getDataNode("height").get<std::string>() == "Fill")
                 {
                     m_height = Transform::UnitVector::Screen.h;
                 }
@@ -66,14 +66,14 @@ namespace obe::System
         bool resizeable = true;
         bool titlebar = true;
 
-        if (wconf->contains("fullscreen"))
-            fullscreen = wconf->getDataNode("fullscreen").get<bool>();
-        if (wconf->contains("closeable"))
-            closeable = wconf->getDataNode("closeable").get<bool>();
-        if (wconf->contains("resizeable"))
-            resizeable = wconf->getDataNode("resizeable").get<bool>();
-        if (wconf->contains("titlebar"))
-            titlebar = wconf->getDataNode("titlebar").get<bool>();
+        if (conf->contains("fullscreen"))
+            fullscreen = conf->getDataNode("fullscreen").get<bool>();
+        if (conf->contains("closeable"))
+            closeable = conf->getDataNode("closeable").get<bool>();
+        if (conf->contains("resizeable"))
+            resizeable = conf->getDataNode("resizeable").get<bool>();
+        if (conf->contains("titlebar"))
+            titlebar = conf->getDataNode("titlebar").get<bool>();
 
         if (fullscreen)
             m_style = sf::Style::Fullscreen;
@@ -88,8 +88,8 @@ namespace obe::System
         }
 
         std::string title = "ObEngine";
-        if (wconf->contains("title"))
-            m_title = wconf->getDataNode("title").get<std::string>();
+        if (conf->contains("title"))
+            m_title = conf->getDataNode("title").get<std::string>();
     }
 
     void Window::create()

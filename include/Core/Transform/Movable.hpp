@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Transform/UnitVector.hpp>
-#include <Types/Identifiable.hpp>
 
 namespace obe::Transform
 {
@@ -29,7 +28,7 @@ namespace obe::Transform
          * \brief Get the Position of the Movable
          * \return The Position of the given Referential of the Movable
          */
-        virtual UnitVector getPosition() const;
+        [[nodiscard]] virtual UnitVector getPosition() const;
         /**
          * \brief Gets the type of the Movable object
          * \return An enum value from MovableType

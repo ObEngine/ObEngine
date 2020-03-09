@@ -17,8 +17,8 @@ namespace obe::Script
             .load(System::Loaders::luaLoader, ScriptEngine);
         ScriptEngine["Hook"] = kaguya::NewTable();
         ScriptEngine.dofile("Lib/Internal/Canvas.lua");
-        ScriptEngine.setErrorHandler([](int statuscode, const char* message) {
-            Debug::Log->error("<LuaError>({0}) : {1}", statuscode, message);
+        ScriptEngine.setErrorHandler([](int statusCode, const char* message) {
+            Debug::Log->error("<LuaError>({0}) : {1}", statusCode, message);
         });
     }
 

@@ -84,7 +84,8 @@ namespace obe::Input
             std::pair<AxisThresholdDirection, float> detect, const std::string& name);
         /**
          * \brief Get Axis Position value if InputButton is an axis (throws
-         * error otherwise) \return Return value of GetAxisPosition
+         *        error otherwise)
+         * \return Return value of GetAxisPosition
          */
         float getAxisPosition();
         /**

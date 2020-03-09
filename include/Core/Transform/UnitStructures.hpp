@@ -4,7 +4,7 @@ namespace obe::Transform
 {
     /**
      * \brief Struct representing the View used for internal UnitVector
-     * conversions
+     *        conversions
      */
     struct ViewStruct
     {
@@ -16,7 +16,7 @@ namespace obe::Transform
 
     /**
      * \brief Struct representing the Screen used for internal UnitVector
-     * conversions
+     *        conversions
      */
     struct ScreenStruct
     {

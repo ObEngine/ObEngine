@@ -27,8 +27,8 @@ namespace obe::System
     }
 
     Cursor::Cursor(System::Window& window)
-        : m_window(window)
-        , Registrable("Cursor")
+        : Registrable("Cursor")
+        , m_window(window)
         , m_cursorTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
               "Global", "Cursor"))
     {
@@ -70,19 +70,19 @@ namespace obe::System
         return m_y;
     }
 
-    void Cursor::setX(const unsigned int x)
+    void Cursor::setX(const int x)
     {
         m_x = x;
         sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), m_window.getWindow());
     }
 
-    void Cursor::setY(const unsigned int y)
+    void Cursor::setY(const int y)
     {
         m_y = y;
         sf::Mouse::setPosition(sf::Vector2i(m_x, m_y), m_window.getWindow());
     }
 
-    void Cursor::setPosition(const unsigned int x, const unsigned int y)
+    void Cursor::setPosition(const int x, const int y)
     {
         m_x = x;
         m_y = y;

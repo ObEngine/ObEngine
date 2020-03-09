@@ -495,11 +495,11 @@ namespace obe::Scene
         m_levelName = newName;
     }
 
-    std::vector<Collision::PolygonalCollider&> Scene::getAllColliders() const
+    std::vector<Collision::PolygonalCollider*> Scene::getAllColliders() const
     {
-        std::vector<Collision::PolygonalCollider&> allColliders;
+        std::vector<Collision::PolygonalCollider*> allColliders;
         for (auto& collider : m_colliderArray)
-            allColliders.emplace_back(*collider.get());
+            allColliders.push_back(collider.get());
         return allColliders;
     }
 
@@ -624,22 +624,22 @@ namespace obe::Scene
         return m_spriteArray.size();
     }
 
-    std::vector<Graphics::Sprite&> Scene::getAllSprites()
+    std::vector<Graphics::Sprite*> Scene::getAllSprites()
     {
-        std::vector<Graphics::Sprite&> allSprites;
+        std::vector<Graphics::Sprite*> allSprites;
         for (int i = 0; i < m_spriteArray.size(); i++)
-            allSprites.emplace_back(*m_spriteArray[i].get());
+            allSprites.push_back(m_spriteArray[i].get());
         return allSprites;
     }
 
-    std::vector<Graphics::Sprite&> Scene::getSpritesByLayer(const int layer)
+    std::vector<Graphics::Sprite*> Scene::getSpritesByLayer(const int layer)
     {
-        std::vector<Graphics::Sprite&> returnLayer;
+        std::vector<Graphics::Sprite*> returnLayer;
 
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
             if (m_spriteArray[i]->getLayer() == layer)
-                returnLayer.emplace_back(*m_spriteArray[i].get());
+                returnLayer.push_back(m_spriteArray[i].get());
         }
 
         return returnLayer;
@@ -653,20 +653,20 @@ namespace obe::Scene
             Transform::Referential::BottomLeft };
         const Transform::UnitVector zeroOffset(0, 0);
 
-        std::vector<Graphics::Sprite&> getSpriteVec = this->getSpritesByLayer(layer);
+        std::vector<Graphics::Sprite*> getSpriteVec = this->getSpritesByLayer(layer);
         for (unsigned int i = 0; i < getSpriteVec.size(); i++)
         {
             Collision::PolygonalCollider positionCollider("positionCollider");
             positionCollider.addPoint(
-                getSpriteVec[i].getPositionTransformer()(position, camera, layer));
+                getSpriteVec[i]->getPositionTransformer()(position, camera, layer));
             Collision::PolygonalCollider sprCollider("sprCollider");
             for (Transform::Referential& ref : rectPts)
             {
-                sprCollider.addPoint(getSpriteVec[i].getPosition(ref));
+                sprCollider.addPoint(getSpriteVec[i]->getPosition(ref));
             }
             if (sprCollider.doesCollide(positionCollider, zeroOffset))
             {
-                return &getSpriteVec[i];
+                return getSpriteVec[i];
             }
         }
         return nullptr;

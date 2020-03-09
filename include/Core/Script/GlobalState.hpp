@@ -14,7 +14,8 @@ namespace obe::Script
     void InitScriptEngine();
     /**
      * \brief Creates a new Lua environment and return the index (id) of the new
-     * environment \return The index (id) of the new environment
+     *        environment
+     * \return The index (id) of the new environment
      */
     unsigned int CreateNewEnvironment();
     /**

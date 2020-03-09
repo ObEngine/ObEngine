@@ -2,9 +2,9 @@
 
 namespace obe::Triggers
 {
-    TriggerDelay::TriggerDelay(Trigger* trigger, Time::TimeUnit delay)
+    TriggerDelay::TriggerDelay(Trigger& trigger, Time::TimeUnit delay)
+        : m_trigger(trigger)
     {
-        m_trigger = trigger;
         m_delay = delay;
     }
 } // namespace obe::Triggers

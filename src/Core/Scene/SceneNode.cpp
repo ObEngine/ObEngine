@@ -2,9 +2,9 @@
 
 namespace obe::Scene
 {
-    void SceneNode::addChild(Movable* child)
+    void SceneNode::addChild(Movable& child)
     {
-        m_children.push_back(child);
+        m_children.push_back(&child);
     }
 
     void SceneNode::setPosition(const Transform::UnitVector& position)

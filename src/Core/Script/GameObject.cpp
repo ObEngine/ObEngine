@@ -3,8 +3,6 @@
 #include <Script/GlobalState.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
-#include <Transform/UnitVector.hpp>
-#include <Transform/Units.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
@@ -13,11 +11,6 @@
 
 namespace obe::Script
 {
-    /*kaguya::LuaTable GameObject::access(kaguya::State* lua) const
-    {
-        return (*m_objectScript)["Object"];
-    }*/
-
     unsigned GameObject::getEnvIndex() const
     {
         return m_envIndex;
@@ -121,7 +114,7 @@ namespace obe::Script
         if (!m_active)
         {
             Debug::Log->debug(
-                "<GameObject> Initialising GameObject '{0}' ({1}) [Env={2}]", m_id,
+                "<GameObject> Initializing GameObject '{0}' ({1}) [Env={2}]", m_id,
                 m_type, m_envIndex);
             m_active = true;
             if (m_hasScriptEngine)
@@ -132,7 +125,7 @@ namespace obe::Script
         }
         else
             Debug::Log->warn("<GameObject> GameObject '{0}' ({1}) has already "
-                             "been initialised",
+                             "been initialized",
                 m_id, m_type);
     }
 
@@ -152,7 +145,7 @@ namespace obe::Script
     }
 
     void GameObject::sendInitArgFromLua(
-        const std::string& argName, kaguya::LuaRef value) const
+        const std::string& argName, const kaguya::LuaRef& value) const
     {
         Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
@@ -167,7 +160,7 @@ namespace obe::Script
     }
 
     void GameObject::loadGameObject(
-        Scene::Scene& world, vili::ComplexNode& obj, Engine::ResourceManager* resources)
+        Scene::Scene& scene, vili::ComplexNode& obj, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
         // Script
@@ -217,9 +210,9 @@ namespace obe::Script
             }
             else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
             {
-                const int scriptListSize
+                const unsigned int scriptListSize
                     = obj.at("Script").getArrayNode("sources").size();
-                for (int i = 0; i < scriptListSize; i++)
+                for (unsigned int i = 0; i < scriptListSize; i++)
                 {
                     loadSource(obj.at("Script")
                                    .getArrayNode("sources")
@@ -231,12 +224,12 @@ namespace obe::Script
         // Sprite
         if (obj.contains(vili::NodeType::ComplexNode, "Sprite"))
         {
-            m_sprite = world.createSprite(m_id, false);
-            m_objectNode.addChild(m_sprite);
+            m_sprite = &scene.createSprite(m_id, false);
+            m_objectNode.addChild(*m_sprite);
             m_sprite->load(obj.at("Sprite"));
             if (m_hasScriptEngine)
                 GAMEOBJECTENV["Object"]["Sprite"] = m_sprite;
-            world.reorganizeLayers();
+            scene.reorganizeLayers();
         }
         if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
         {
@@ -260,8 +253,8 @@ namespace obe::Script
         // Collider
         if (obj.contains(vili::NodeType::ComplexNode, "Collider"))
         {
-            m_collider = world.createCollider(m_id, false);
-            m_objectNode.addChild(m_collider);
+            m_collider = &scene.createCollider(m_id, false);
+            m_objectNode.addChild(*m_collider);
             m_collider->load(obj.at("Collider"));
 
             if (m_hasScriptEngine)
@@ -443,7 +436,6 @@ namespace obe::Script
                 trigger->unregisterEnvironment(m_envIndex);
             }
         }
-        // GAMEOBJECTENV = nullptr;
     }
 
     void GameObject::setPermanent(bool permanent)

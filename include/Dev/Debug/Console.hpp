@@ -56,9 +56,10 @@ namespace obe::Debug
         /**
          * \brief Push a new Message to the Console
          * \param headerName Name of the Category of the Message you want to
-         * display \param message Text of the Message you want to display \param
-         * color Color of the Message you want to display \return A pointer to
-         * the newly created Message
+         *        display
+         * \param message Text of the Message you want to display
+         * \param color Color of the Message you want to display
+         * \return A pointer to the newly created Message
          */
         ConsoleMessage* pushMessage(const std::string& headerName,
             const std::string& message, const sf::Color& color);
@@ -119,7 +120,7 @@ namespace obe::Debug
         /**
          * \brief Set if the Console is visible or not
          * \param enabled Boolean containing if the Console should be displayed
-         * or not
+         *        or not
          */
         void setVisible(bool enabled);
         /**

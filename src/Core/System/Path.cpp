@@ -15,7 +15,7 @@ namespace obe::System
         this->m_path = path.toString();
     }
 
-    Path::Path(std::string path)
+    Path::Path(const std::string& path)
     {
         m_path = std::move(path);
     }
@@ -28,8 +28,8 @@ namespace obe::System
 
     std::string Path::last() const
     {
-        std::vector<std::string> splittedPath = Utils::String::split(m_path, "/");
-        return splittedPath.back();
+        std::vector<std::string> splitPath = Utils::String::split(m_path, "/");
+        return splitPath.back();
     }
 
     Path Path::getPath(const unsigned int index)

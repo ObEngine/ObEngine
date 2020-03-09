@@ -11,12 +11,10 @@
 namespace obe::System
 {
     template <class T>
-    using PluginFunction
-        = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
+    using PluginFunction = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
     template <class T>
     PluginFunction<T> getPluginFunction(
-        std::shared_ptr<dynamicLinker::dynamicLinker> dl,
-        const std::string& fnName);
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName);
 
     class Plugin : public Types::Identifiable
     {
@@ -39,20 +37,18 @@ namespace obe::System
         void onUpdate(double dt) const;
         void onRender() const;
         void onExit() const;
-        bool hasOnInit() const;
-        bool hasOnLoadBindings() const;
-        bool hasOnUpdate() const;
-        bool hasOnRender() const;
-        bool hasOnExit() const;
+        [[nodiscard]] bool hasOnInit() const;
+        [[nodiscard]] bool hasOnLoadBindings() const;
+        [[nodiscard]] bool hasOnUpdate() const;
+        [[nodiscard]] bool hasOnRender() const;
+        [[nodiscard]] bool hasOnExit() const;
     };
 
     template <class T>
     PluginFunction<T> getPluginFunction(
-        std::shared_ptr<dynamicLinker::dynamicLinker> dl,
-        const std::string& fnName)
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName)
     {
-        return std::move(
-            std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(
-                dl->getFunction<T>(fnName)));
+        return std::move(std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(
+            dl->getFunction<T>(fnName)));
     }
 } // namespace obe::System

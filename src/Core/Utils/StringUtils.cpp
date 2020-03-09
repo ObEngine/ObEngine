@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cctype>
-#include <clocale>
 
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
@@ -85,7 +84,8 @@ namespace obe::Utils::String
         return (isStringFloat(str) || isStringInt(str));
     }
 
-    void replaceInPlace(std::string& subject, const std::string& search, const std::string& replace)
+    void replaceInPlace(
+        std::string& subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -95,7 +95,8 @@ namespace obe::Utils::String
         }
     }
 
-    std::string replace(std::string subject, const std::string& search, const std::string& replace)
+    std::string replace(
+        std::string subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -129,7 +130,8 @@ namespace obe::Utils::String
     {
         if (string.size() < search.size())
             return false;
-        return (std::mismatch(search.begin(), search.end(), string.begin()).first == search.end());
+        return (std::mismatch(search.begin(), search.end(), string.begin()).first
+            == search.end());
     }
 
     bool endsWith(const std::string& string, const std::string& search)
@@ -138,7 +140,7 @@ namespace obe::Utils::String
         {
             return false;
         }
-        return (
-            std::mismatch(search.rbegin(), search.rend(), string.rbegin()).first == search.rend());
+        return (std::mismatch(search.rbegin(), search.rend(), string.rbegin()).first
+            == search.rend());
     }
 } // namespace obe::Utils::String

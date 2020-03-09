@@ -19,7 +19,7 @@ namespace obe::Transform
          * \brief Size of the Rect
          */
         UnitVector m_size;
-        float m_angle = 0;
+        double m_angle = 0;
 
     public:
         /**
@@ -38,28 +38,30 @@ namespace obe::Transform
         };
         /**
          * \brief Transform the UnitVector passed by reference using the given
-         * Referential \param vec The UnitVector you want to transform \param
-         * ref The chosen Rect::Referential \param type The way you want to
-         * transform your UnitVector
-         *               - From : Referential::TopLeft to ref
-         *               - To : ref to Referential::TopLeft
+         * Referential
+         * \param vec The UnitVector you want to transform
+         * \param ref The chosen Rect::Referential
+         * \param type The way you want to transform your UnitVector
+         *          - From : Referential::TopLeft to ref
+         *          - To : ref to Referential::TopLeft
          */
         void transformRef(UnitVector& vec, Referential ref, ConversionType type) const;
 
-        Rect();
+        Rect() = default;
         Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
         /**
          * \brief Set the position of the Rect (Movable override) using an
-         * UnitVector \param position Position to affect to the Rect (Movable
-         * override)
+         *        UnitVector
+         * \param position Position to affect to the Rect (Movable
+         *        override)
          */
         void setPosition(const UnitVector& position) override;
         /**
          * \brief Get the Position of the Rect (Movable Override)
          * \return The Position of the given Referential of the Rect (Movable
-         * Override)
+         *         Override)
          */
-        UnitVector getPosition() const override;
+        [[nodiscard]] UnitVector getPosition() const override;
         /**
          * \brief Set the position of the Rect using an UnitVector
          * \param position Position to affect to the Rect
@@ -68,27 +70,31 @@ namespace obe::Transform
         virtual void setPosition(const UnitVector& position, Referential ref);
         /**
          * \brief Moves the Rectangle (Adds the given position to the current
-         * one) \param position Position to add to the current Position
+         *        one)
+         * \param position Position to add to the current Position
          */
         void move(const UnitVector& position) override;
         /**
          * \brief Get the Position of the Rect
          * \param ref Referential of the Rect you want to use to get the
-         * Position \return The Position of the given Referential of the Rect
+         *        Position
+         * \return The Position of the given Referential of the Rect
          */
-        virtual UnitVector getPosition(Referential ref) const;
+        [[nodiscard]] virtual UnitVector getPosition(Referential ref) const;
 
         /**
          * \brief Set the Position of a specific Referential of the Rect (The
-         * opposite Point won't move) \param position Position to affect to the
-         * specific Referential \param ref Referential you want to move
+         *        opposite Point won't move)
+         * \param position Position to affect to the specific Referential
+         * \param ref Referential you want to move
          */
         void setPointPosition(
             const UnitVector& position, Referential ref = Referential::TopLeft);
         /**
-         * \brief Move a specific Referential of the Rect (The opposite Point
-         * won't move) \param position Position to add to the specific
-         * Referential \param ref Referential you want to move
+         * \brief Move a specific Referential of the Rect (The opposite Point won't move)
+         * \param position Position to add to the specific
+         *        Referential
+         * \param ref Referential you want to move
          */
         void movePoint(
             const UnitVector& position, Referential ref = Referential::TopLeft);
@@ -97,33 +103,34 @@ namespace obe::Transform
          * \brief Set the size of the Rect
          * \param size New size of the Rect
          * \param ref Referential used to resize the Rect (Referential that
-         * won't move)
+         *        won't move)
          */
         void setSize(const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
          * \param ref Referential used to scale the Rect (Referential that won't
-         * move)
+         *        move)
          */
         void scale(const UnitVector& size, Referential ref = Referential::TopLeft);
         /**
          * \brief Get the Size of the Rect
          * \return An UnitVector containing the size of the Rect (Default Unit
-         * is SceneUnits)
+         *         is SceneUnits)
          */
-        virtual UnitVector getSize() const;
+        [[nodiscard]] virtual UnitVector getSize() const;
         /**
          * \brief Get the Scale Factor of the Rect
-         * \return An UnitVector containing the Scale Factors of the Rect. \n
-         *         x attribute will be equal to -1 if the Rect is flipped
-         * horizontally, 1 otherwise. \n y attribute will be equal to -1 if the
-         * Rect is flipped vertically, 1 otherwise.
+         * \return An UnitVector containing the Scale Factors of the Rect.
+         *          - x attribute will be equal to -1 if the Rect is flipped
+         *            horizontally, 1 otherwise.
+         *          - y attribute will be equal to -1 if the
+         *            Rect is flipped vertically, 1 otherwise.
          */
-        UnitVector getScaleFactor() const;
-        float getRotation() const;
-        void setRotation(float angle, Transform::UnitVector origin);
-        void rotate(float angle, Transform::UnitVector origin);
+        [[nodiscard]] UnitVector getScaleFactor() const;
+        [[nodiscard]] double getRotation() const;
+        void setRotation(double angle, Transform::UnitVector origin);
+        void rotate(double angle, Transform::UnitVector origin);
         /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */

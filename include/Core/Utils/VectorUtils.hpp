@@ -17,10 +17,12 @@ namespace obe::Utils::Vector
     template <typename V> bool contains(V item, const std::vector<V>& vec);
     /**
      * \brief Join all elements of a std::string into a std::string using a
-     * separator \param vector Vector you want to join \param sep Separator you
-     * want to use \param start From which index of the std::vector \param end
-     * From which index (starting at the end) of the std::vector \return A
-     * std::string which are all the elements of the std::vector joined
+     *        separator
+     * \param vector Vector you want to join
+     * \param sep Separator you want to use
+     * \param start From which index of the std::vector
+     * \param end From which index (starting at the end) of the std::vector
+     * \return A string which are all the elements of the std::vector joined
      */
     std::string join(std::vector<std::string>& vector, std::string sep = "",
         int start = 0, int end = 0);

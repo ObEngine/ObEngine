@@ -13,10 +13,6 @@ namespace obe::Triggers
         m_name = triggerGroupName;
     }
 
-    TriggerGroup::~TriggerGroup()
-    {
-    }
-
     std::weak_ptr<Trigger> TriggerGroup::getTrigger(const std::string& triggerName)
     {
         if (m_triggerMap.find(triggerName) != m_triggerMap.end())
@@ -28,15 +24,15 @@ namespace obe::Triggers
                 { "group", m_name } });
     }
 
-    TriggerGroup* TriggerGroup::addTrigger(const std::string& triggerName)
+    TriggerGroup& TriggerGroup::addTrigger(const std::string& triggerName)
     {
         Debug::Log->debug("<TriggerGroup> Add Trigger {0} to TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
         m_triggerMap[triggerName] = std::make_unique<Trigger>(this, triggerName);
-        return this;
+        return *this;
     }
 
-    TriggerGroup* TriggerGroup::removeTrigger(const std::string& triggerName)
+    TriggerGroup& TriggerGroup::removeTrigger(const std::string& triggerName)
     {
         Debug::Log->debug("<TriggerGroup> Remove Trigger {0} from TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
@@ -47,23 +43,23 @@ namespace obe::Triggers
                 "ObEngine.Triggers.TriggerGroup.UnknownTrigger",
                 { { "function", "removeTrigger" }, { "trigger", triggerName },
                     { "group", m_name } });
-        return this;
+        return *this;
     }
 
-    TriggerGroup* TriggerGroup::delayTriggerState(
+    TriggerGroup& TriggerGroup::delayTriggerState(
         const std::string& triggerName, Time::TimeUnit delay)
     {
         m_delayedTriggers.push_back(
-            std::make_unique<TriggerDelay>(m_triggerMap[triggerName].get(), delay));
-        return this;
+            std::make_unique<TriggerDelay>(*m_triggerMap[triggerName].get(), delay));
+        return *this;
     }
 
-    TriggerGroup* TriggerGroup::trigger(const std::string& triggerName)
+    TriggerGroup& TriggerGroup::trigger(const std::string& triggerName)
     {
         Debug::Log->trace("<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
         m_triggerMap[triggerName]->execute();
-        return this;
+        return *this;
     }
 
     void TriggerGroup::setJoinable(bool joinable)
@@ -77,7 +73,7 @@ namespace obe::Triggers
     }
 
     void TriggerGroup::pushParameterFromLua(const std::string& triggerName,
-        const std::string& parameterName, kaguya::LuaRef parameter)
+        const std::string& parameterName, const kaguya::LuaRef& parameter)
     {
         m_triggerMap[triggerName]->pushParameterFromLua(parameterName, parameter);
     }

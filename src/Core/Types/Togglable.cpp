@@ -3,8 +3,8 @@
 namespace obe::Types
 {
     Togglable::Togglable(bool enabled)
+        : m_enabled(enabled)
     {
-        m_enabled = enabled;
     }
 
     void Togglable::setEnabled(bool state)

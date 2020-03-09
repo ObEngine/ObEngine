@@ -35,7 +35,7 @@ namespace obe::Triggers
             const std::string& group, const std::string& trigger);
         /**
          * \brief Get a list of all names of Trigger instances inside a TriggerGroup
-         * \param namespace Name of the namespace where the TriggerGroup is located
+         * \param space Name of the namespace where the TriggerGroup is located
          * \param group Name of the TriggerGroup you want the names of the Trigger
          *        instances from
          * \return A list of names of the Triggers inside the TriggerGroup
@@ -60,7 +60,7 @@ namespace obe::Triggers
             const std::string& space, const std::string& group);
         /**
          * \brief Join an existing TriggerGroup (Throws an error if the
-         *        TriggerGroup doesn't exists or isn't joinable)
+         *        TriggerGroup does not exists or isn't joinable)
          * \param space Namespace of the existing TriggerGroup
          * \param group Name of the TriggerGroup to join
          * \return Pointer to the newly joined TriggerGroup

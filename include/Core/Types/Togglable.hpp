@@ -38,6 +38,6 @@ namespace obe::Types
          * \brief Get if the Togglable is enabled or not
          * \return true if enabled, false otherwise
          */
-        bool isEnabled() const;
+        [[nodiscard]] bool isEnabled() const;
     };
 } // namespace obe::Types

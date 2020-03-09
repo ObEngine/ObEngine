@@ -16,19 +16,19 @@ namespace obe::Triggers
          * \param trigger Pointer to the Trigger to delay
          * \param delay Delay until the Trigger activation (in ms)
          */
-        TriggerDelay(Trigger* trigger, Time::TimeUnit delay);
+        TriggerDelay(Trigger& trigger, Time::TimeUnit delay);
         /**
          * \brief Trigger to enable /disable after the delay
          */
-        Trigger* m_trigger;
+        Trigger& m_trigger;
         /**
          * \brief Delay the Trigger should be enabled / disabled (in
-         * milliseconds)
+         *        milliseconds)
          */
         Time::TimeUnit m_delay = 0;
         /**
          * \brief Internal use only
          */
-        Time::TimeUnit m_delaytarget = 0;
+        Time::TimeUnit m_delayTarget = 0;
     };
 } // namespace obe::Triggers

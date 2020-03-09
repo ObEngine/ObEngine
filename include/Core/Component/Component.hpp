@@ -45,6 +45,8 @@ namespace obe::Component
         void load(vili::ComplexNode& data) override = 0;
 
         [[nodiscard]] std::string_view type() const override;
+        using Ref = std::reference_wrapper<T>;
+        using Ptr = T*;
     };
 
     template <class T>

@@ -48,7 +48,7 @@ namespace obe::System
         std::string basePath;
         /**
          * \brief Priority of the mounted path (Higher priority means overriding
-         * lower priority Paths)
+         *        lower priority Paths)
          */
         unsigned int priority;
     };

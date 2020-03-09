@@ -37,8 +37,11 @@ namespace obe::Utils::Math
     template <typename N> N getMax(const N& max1, const N& max2);
     /**
      * \brief Check if the given value is between the lower bound and the upper
-     * bound \tparam N Type of the value to check \tparam N1 Type of the lower
-     * bound \tparam N2 Type of the upper bound \param target Value to check
+     *        bound
+     * \tparam N Type of the value to check
+     * \tparam N1 Type of the lower bound
+     * \tparam N2 Type of the upper bound
+     * \param target Value to check
      * \param lowerBound Lower bound
      * \param upperBound Upper bound
      * \return true if the value is between the given bound, false otherwise
@@ -78,7 +81,7 @@ namespace obe::Utils::Math
      * \param end Higher bound
      * \return Normalized value
      */
-    double normalise(double value, double start, double end);
+    double normalize(double value, double start, double end);
 
     template <typename N> N getMin(const N& min1, const N& min2)
     {

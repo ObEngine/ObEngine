@@ -8,13 +8,13 @@ namespace obe::Time
 {
     /**
      * \brief A Chronometer class to measure time
-     * \bind{Chronomer}
+     * \bind{Chronometer}
      */
     class Chronometer
     {
     private:
-        std::chrono::high_resolution_clock::time_point m_chronoStart;
-        std::chrono::high_resolution_clock::time_point m_chronoCurrent;
+        std::chrono::high_resolution_clock::time_point m_start;
+        std::chrono::high_resolution_clock::time_point m_current;
         bool m_started = false;
         unsigned long long int m_limit = 0;
 

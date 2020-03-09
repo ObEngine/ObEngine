@@ -21,23 +21,22 @@ namespace obe::Triggers
         /**
          * \brief Creates a new TriggerGroup
          * \param triggerGroupNamespace Name of the Namespace the TriggerGroup
-         * is in \param triggerGroupName Name of the TriggerGroup
+         *        is in
+         * \param triggerGroupName Name of the TriggerGroup
          */
         explicit TriggerGroup(const std::string& triggerGroupNamespace,
             const std::string& triggerGroupName);
-
-        ~TriggerGroup();
         /**
          * \brief Sets if the TriggerGroup is joinable or not
          * \param joinable true if the TriggerGroup should be joinable, false
-         * otherwise
+         *        otherwise
          */
         void setJoinable(bool joinable);
         /**
          * \brief Get if the TriggerGroup is joinable or not
          * \return true if the TriggerGroup is joinable, false otherwise
          */
-        bool isJoinable() const;
+        [[nodiscard]] bool isJoinable() const;
         /**
          * \brief Get a Trigger contained in the TriggerGroup
          * \param triggerName Name of the Trigger to get
@@ -49,27 +48,27 @@ namespace obe::Triggers
          * \param triggerName Name of the Trigger to create
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup* addTrigger(const std::string& triggerName);
+        TriggerGroup& addTrigger(const std::string& triggerName);
         /**
          * \brief Removes a Trigger from the TriggerGroup
          * \param triggerName Name of the Trigger to remove
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup* removeTrigger(const std::string& triggerName);
+        TriggerGroup& removeTrigger(const std::string& triggerName);
         /**
          * \brief Delays activation of a Trigger
          * \param triggerName Name of the Trigger to delay
          * \param delay Time in ms used to delay the Trigger
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup* delayTriggerState(
+        TriggerGroup& delayTriggerState(
             const std::string& triggerName, Time::TimeUnit delay);
         /**
          * \brief Enables a Trigger
          * \param triggerName Name of the Trigger to enable
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup* trigger(const std::string& triggerName);
+        TriggerGroup& trigger(const std::string& triggerName);
         /**
          * \brief Pushes a Parameter to a Trigger
          * \tparam P Type of the Parameter
@@ -87,7 +86,7 @@ namespace obe::Triggers
          * \param parameter Lua Value of the Parameter
          */
         void pushParameterFromLua(const std::string& triggerName,
-            const std::string& parameterName, kaguya::LuaRef parameter);
+            const std::string& parameterName, const kaguya::LuaRef& parameter);
         /**
          * \brief Get the name of all Trigger contained in the TriggerGroup
          * \return A std::vector of std::string containing the name of all
@@ -103,12 +102,12 @@ namespace obe::Triggers
          * \brief Get the name of the namespace the Trigger is in
          * \return A std::string containing the name of the namespace
          */
-        std::string getNamespace() const;
+        [[nodiscard]] std::string getNamespace() const;
         /**
          * \brief Get the name of the TriggerGroup
          * \return A std::string containing the name of the TriggerGroup
          */
-        std::string getName() const;
+        [[nodiscard]] std::string getName() const;
     };
 
     using TriggerGroupPtr = std::shared_ptr<TriggerGroup>;

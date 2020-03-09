@@ -1,11 +1,9 @@
 #pragma once
 
 #include <functional>
-#include <optional>
 #include <string>
 
 #include <SFML/Audio/Music.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <kaguya/kaguya.hpp>
@@ -23,8 +21,8 @@ namespace obe::System
     public:
         LoaderResult();
         LoaderResult(const std::string& path);
-        std::string path() const;
-        bool success() const;
+        [[nodiscard]] std::string path() const;
+        [[nodiscard]] bool success() const;
         operator bool() const;
     };
 
@@ -37,9 +35,9 @@ namespace obe::System
     public:
         LoaderMultipleResult();
         LoaderMultipleResult(const std::vector<std::string>& paths);
-        std::vector<std::string> paths() const;
-        unsigned int loadCount() const;
-        bool success() const;
+        [[nodiscard]] std::vector<std::string> paths() const;
+        [[nodiscard]] unsigned int loadCount() const;
+        [[nodiscard]] bool success() const;
         operator bool() const;
     };
 } // namespace obe::System
@@ -68,7 +66,6 @@ namespace obe::System::Loaders
      * \brief Load a vili::DataParser from a file
      */
     extern Loader<vili::ViliParser> dataLoader;
-    // extern Loader<vili::ViliParser> dataLoader;
     /**
      * \brief Load a sf::Font from a file
      */

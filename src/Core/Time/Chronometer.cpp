@@ -6,8 +6,8 @@ namespace obe::Time
 {
     void Chronometer::start()
     {
-        m_chronoStart = std::chrono::high_resolution_clock::now();
-        m_chronoCurrent = std::chrono::high_resolution_clock::now();
+        m_start = std::chrono::high_resolution_clock::now();
+        m_current = std::chrono::high_resolution_clock::now();
         m_started = true;
     }
 
@@ -19,9 +19,8 @@ namespace obe::Time
     TimeUnit Chronometer::getTime()
     {
         if (m_started)
-            m_chronoCurrent = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            m_chronoCurrent - m_chronoStart)
+            m_current = std::chrono::high_resolution_clock::now();
+        return std::chrono::duration_cast<std::chrono::milliseconds>(m_current - m_start)
             .count();
     }
 

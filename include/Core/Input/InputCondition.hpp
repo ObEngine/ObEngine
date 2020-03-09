@@ -27,7 +27,7 @@ namespace obe::Input
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
          * \param combinationElement The InputCombinationElement to add to the
-         * InputCondition
+         *        InputCondition
          */
         void addCombinationElement(InputCombinationElement combinationElement);
         /**
@@ -46,7 +46,8 @@ namespace obe::Input
         [[nodiscard]] InputCombination getCombination() const;
         /**
          * \brief Sets the new required InputCombination to trigger the
-         * InputCondition \param combination The new InputCombination
+         *        InputCondition
+         * \param combination The new InputCombination
          */
         void setCombination(const InputCombination& combination);
     };

@@ -17,7 +17,7 @@ namespace obe::System
     };
     /**
      * \brief Class used to manipulate paths and dynamically load resources
-     * (Based on multiple mounted paths)
+     *        (Based on multiple mounted paths)
      * \bind{Path}
      */
     class Path
@@ -40,36 +40,37 @@ namespace obe::System
          * \brief Build a path from a std::string
          * \param path Path in std::string form
          */
-        Path(std::string path);
+        Path(const std::string& path);
         /**
-         * \brief Returns a new Path which is the current one concatened with
+         * \brief Returns a new Path which is the current one concatenated with
          *        the given string
          * \param path String containing the path part to add
-         * \return The new path which is the result of the base concatened with
+         * \return The new path which is the result of the base concatenated with
          *         the path parameter
          */
-        Path add(const std::string& path) const;
+        [[nodiscard]] Path add(const std::string& path) const;
         /**
          * \brief Get the last part of a Path
          * \return The last part of the Path (terminal directory)
          */
-        std::string last() const;
+        [[nodiscard]] std::string last() const;
         /**
          * \brief Build a path using the current path and the BasePath at given
-         * index \param index Index of the BasePath to use \return The full path
-         * based on the current path and the BasePath at index
+         *        index
+         * \param index Index of the BasePath to use \return The full path
+         *        based on the current path and the BasePath at index
          */
         Path getPath(unsigned int index);
         /**
-         * \brief Finds the most priorized file corresponding to the Path
-         * \return The full path to the most priorized file
+         * \brief Finds the most prioritized file corresponding to the Path
+         * \return The full path to the most prioritized file
          */
-        std::string find(PathType pathType = PathType::All) const;
+        [[nodiscard]] std::string find(PathType pathType = PathType::All) const;
         /**
          * \brief Get the current path in string form
          * \return The Path in std::string form
          */
-        std::string toString() const;
+        [[nodiscard]] std::string toString() const;
 
         template <template <class ResourceType> class LoaderType, class ResourceType>
         LoaderResult load(const LoaderType<ResourceType>& loader, ResourceType& resource,

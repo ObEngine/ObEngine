@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Graphics/Color.hpp>
@@ -26,7 +25,7 @@ namespace obe::System
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
-        void init(const WindowContext context);
+        void init(WindowContext context);
         void create();
         void clear();
         void close();
@@ -36,8 +35,8 @@ namespace obe::System
         void draw(const sf::Vertex* vertices, std::size_t vertexCount,
             sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default);
-        sf::Vector2u getSize() const;
-        bool isOpen() const;
+        [[nodiscard]] sf::Vector2u getSize() const;
+        [[nodiscard]] bool isOpen() const;
         bool pollEvent(sf::Event& event);
         void setSize(unsigned int width, unsigned int height);
         void setTitle(const std::string& title);
@@ -47,7 +46,7 @@ namespace obe::System
         sf::RenderTarget& getTarget();
         sf::RenderWindow& getWindow();
 
-        Graphics::Color getClearColor() const;
+        [[nodiscard]] Graphics::Color getClearColor() const;
         void setClearColor(Graphics::Color color);
     };
 

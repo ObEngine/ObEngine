@@ -36,14 +36,15 @@ namespace obe::Script
          */
         static vili::ComplexNode* GetRequirementsForGameObject(const std::string& type);
         /**
-         * \brief Gets the ObjectDefintion ComplexNode of the GameObject
-         * \param type Type of the GameObject to get the GODF
-         * \return A pointer to the ObjectDefintion ComplexNode
+         * \brief Gets the ObjectDefinition ComplexNode of the GameObject
+         * \param type Type of the GameObject to get the GameObject Definition File
+         * \return A pointer to the ObjectDefinition ComplexNode
          */
         static vili::ComplexNode* GetDefinitionForGameObject(const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
-         * ComplexNode \param obj GameObject to applies the requirements to
+         *        ComplexNode
+         * \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
         static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
@@ -56,10 +57,10 @@ namespace obe::Script
     /**
      * \brief A GameObject is a set of Components used in the Scene
      */
-    class GameObject : public Types::Identifiable
+    class GameObject final : public Types::Identifiable
     {
     private:
-        unsigned int m_envIndex;
+        unsigned int m_envIndex = 0;
         bool m_permanent = false;
         std::unique_ptr<Animation::Animator> m_animator;
         Graphics::Sprite* m_sprite = nullptr;
@@ -97,36 +98,36 @@ namespace obe::Script
          * \brief Get the Type of the GameObject
          * \return A std::string containing the type of the GameObject
          */
-        std::string getType() const;
+        [[nodiscard]] std::string getType() const;
         /**
          * \brief Checks if the GameObject has an Animator Component
          * \return true if the GameObject contains an Animator Component, false
          * otherwise
          */
-        bool doesHaveAnimator() const;
+        [[nodiscard]] bool doesHaveAnimator() const;
         /**
          * \brief Checks if the GameObject has a Collider Component
-         * \return true if the GameObejct contains the Collider Component, false
+         * \return true if the GameObject contains the Collider Component, false
          * otherwise
          */
-        bool doesHaveCollider() const;
+        [[nodiscard]] bool doesHaveCollider() const;
         /**
          * \brief Checks if the GameObject has a Sprite Component
          * \return true if the GameObject contains the Sprite Component,
          * false otherwise
          */
-        bool doesHaveSprite() const;
+        [[nodiscard]] bool doesHaveSprite() const;
         /**
          * \brief Checks if the GameObject has a Script Component
          * \return true if the GameObject contains the Script Component, false
          * otherwise
          */
-        bool doesHaveScriptEngine() const;
+        [[nodiscard]] bool doesHaveScriptEngine() const;
         /**
          * \brief Is the GameObject updated
          * \return true if the GameObject is updated, false otherwise
          */
-        bool getUpdateState() const;
+        [[nodiscard]] bool getUpdateState() const;
         /**
          * \brief Sets if the GameObject should be otherwise or not
          * \param state Should be equal to true if the GameObject must updates,
@@ -163,7 +164,7 @@ namespace obe::Script
          * \param trGrp TriggerGroup where the Trigger to register is
          * \param trName Name of the Trigger to register
          * \param callAlias Alias (name of the callback) associated with the
-         * Trigger
+         *        Trigger
          */
         void useTrigger(const std::string& trNsp, const std::string& trGrp,
             const std::string& trName, const std::string& callAlias = "");
@@ -186,12 +187,13 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName, kaguya::LuaRef value) const;
+        void sendInitArgFromLua(
+            const std::string& argName, const kaguya::LuaRef& value) const;
         /**
          * \brief Register a Trigger in the GameObject
          * \param trg Pointer to the Trigger
          * \param callbackName Name of the callback to call when Trigger will be
-         * enabled
+         *        enabled
          */
         void registerTrigger(
             std::weak_ptr<Triggers::Trigger> trg, const std::string& callbackName);
@@ -199,6 +201,7 @@ namespace obe::Script
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
          * \param obj Vili ComplexNode containing the GameObject components
+         * \param resources pointer to the ResourceManager
          */
         void loadGameObject(Scene::Scene& scene, vili::ComplexNode& obj,
             Engine::ResourceManager* resources = nullptr);
@@ -218,19 +221,19 @@ namespace obe::Script
          * \brief Access the exposition table of the GameObject
          * \return A reference to the exposition table of the GameObject
          */
-        kaguya::LuaTable access() const;
+        [[nodiscard]] kaguya::LuaTable access() const;
         /**
          * \brief Gets a reference to the Lua function used to build the
-         * GameObject (Local.Init proxy) \return A reference to the Lua function
-         * used to build the GameObject
+         *        GameObject (Local.Init proxy)
+         * \return A reference to the Lua function used to build the GameObject
          */
-        kaguya::LuaFunction getConstructor() const;
+        [[nodiscard]] kaguya::LuaFunction getConstructor() const;
         /**
-         * \brief Gets the id (index) of the GameObject Lua environement
+         * \brief Gets the id (index) of the GameObject Lua environment
          * \return An unsigned int representing the id (index) of the GameObject
-         * Lua environement
+         *         Lua environment
          */
-        unsigned int getEnvIndex() const;
+        [[nodiscard]] unsigned int getEnvIndex() const;
         /**
          * \brief Triggers the GameObject's Local.Init
          */
@@ -246,7 +249,7 @@ namespace obe::Script
          * another map) \return true if the GameObject is permanent, false
          * otherwise
          */
-        bool isPermanent() const;
+        [[nodiscard]] bool isPermanent() const;
 
         void setState(bool state);
     };

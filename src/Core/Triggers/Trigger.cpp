@@ -1,7 +1,6 @@
 #include <Script/GameObject.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe::Triggers
 {

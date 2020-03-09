@@ -54,8 +54,9 @@ namespace obe::Graphics
         /**
          * \brief Non-Default PositionTransformer constructor
          * \param xTransformer Name of the Transformer the x Coordinate should
-         * use \param yTransformer Name of the Transformer the y Coordinate
-         * should use
+         *        use
+         * \param yTransformer Name of the Transformer the y Coordinate
+         *        should use
          */
         PositionTransformer(
             const std::string& xTransformer, const std::string& yTransformer);

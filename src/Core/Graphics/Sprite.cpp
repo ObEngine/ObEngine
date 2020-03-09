@@ -392,8 +392,6 @@ namespace obe::Graphics
                 const Transform::UnitVector scaleVector
                     = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
-                Debug::Log->debug("{} / {} = {}", (cursorInRef - oppositePosInRef),
-                    (posInRef - oppositePosInRef), scaleVector);
                 if ((cursorInRef - oppositePosInRef).x != 0
                     && (cursorInRef - oppositePosInRef).y != 0)
                     m_sprite->scale(

@@ -21,7 +21,7 @@ namespace obe::Utils::String
      * \brief Splits a std::string using a delimited
      * \param str String you want to split
      * \param delimiters Delimiter used to split the string
-     * \return The splitted string in a std::vector of std::string
+     * \return The split string in a std::vector of std::string
      */
     std::vector<std::string> split(
         const std::string& str, const std::string& delimiters = " ");
@@ -30,7 +30,7 @@ namespace obe::Utils::String
      * \param str String you want to count the occurences in
      * \param occur String you want to search
      * \return The amount of times the occurence of occur has been found in the
-     * string str
+     *         string str
      */
     int occurencesInString(const std::string& str, const std::string& occur);
     /**
@@ -43,7 +43,7 @@ namespace obe::Utils::String
      * \brief Get if the string only contains letters and numbers
      * \param str String you want to check
      * \return true if the string only contains letters and numbers, false
-     * otherwise
+     *         otherwise
      */
     bool isStringAlphaNumeric(const std::string& str);
     /**
@@ -66,17 +66,20 @@ namespace obe::Utils::String
     bool isStringFloat(const std::string& str);
     /**
      * \brief Replace all the occurences of search to replace in the string
-     * subject in place \param subject The reference of the string you want to
-     * modify \param search The string to replace \param replace The content
-     * that will replace search occurences
+     *        subject in place
+     * \param subject The reference of the string you want to modify
+     * \param search The string to replace
+     * \param replace The content that will replace search occurences
      */
     void replaceInPlace(
         std::string& subject, const std::string& search, const std::string& replace);
     /**
      * \brief Replace all the occurences of search to replace in the string
-     * subject \param subject The string you want to modify \param search The
-     * string to replace \param replace The content that will replace search
-     * occurences \return A std::string containing the modified string
+     *        subject
+     * \param subject The string you want to modify
+     * \param search The string to replace
+     * \param replace The content that will replace search occurences
+     * \return A std::string containing the modified string
      */
     std::string replace(
         std::string subject, const std::string& search, const std::string& replace);

@@ -119,7 +119,7 @@ namespace obe::Animation
         void applyParameters(vili::ComplexNode& parameters);
         /**
          * \brief Get the name of all contained AnimationGroup of the Animation
-         * \return A std::vector of std::string with all the names of the
+         * \return An array of strings with all the names of the
          *         AnimationGroup
          */
         [[nodiscard]] std::vector<std::string> getAllAnimationGroupName() const;
@@ -131,7 +131,7 @@ namespace obe::Animation
          */
         [[nodiscard]] unsigned int getDelay() const;
         /**
-         * \brief Get AnimationGroup pointer by groupName.\n
+         * \brief Get AnimationGroup pointer by groupName.
          *        It will throws a
          *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
          *        AnimationGroup is not found.
@@ -142,7 +142,7 @@ namespace obe::Animation
         AnimationGroup& getAnimationGroup(const std::string& groupName);
         /**
          * \brief Get the Animation name
-         * \return A std::string containing the name of the Animation
+         * \return A string containing the name of the Animation
          */
         [[nodiscard]] std::string getName() const;
 
@@ -183,8 +183,7 @@ namespace obe::Animation
          */
         [[nodiscard]] int getPriority() const;
         /**
-         * \brief Get the sf::Texture containing the current texture in the
-         *        Animation
+         * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
         const sf::Texture& getTexture();

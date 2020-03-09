@@ -7,7 +7,7 @@ namespace obe::Triggers
     TriggerManager::TriggerManager()
         : Registrable("TriggerManager")
     {
-        Debug::Log->debug("<TriggerManager> Initialising TriggerManager");
+        Debug::Log->debug("<TriggerManager> Initializing TriggerManager");
         this->createNamespace("Global");
         m_databaseChrono.start();
     }
@@ -58,10 +58,8 @@ namespace obe::Triggers
             {
                 m_allTriggers[space][group]
                     = std::make_unique<TriggerGroup>(space, group);
-                return TriggerGroupPtr(
-                    m_allTriggers[space][group].get(), [this](TriggerGroup* ptr) {
-                        this->removeTriggerGroup(ptr);
-                    });
+                return TriggerGroupPtr(m_allTriggers[space][group].get(),
+                    [this](TriggerGroup* ptr) { this->removeTriggerGroup(ptr); });
                 ;
             }
             throw aube::ErrorHandler::Raise(
@@ -82,10 +80,8 @@ namespace obe::Triggers
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end()
                 && m_allTriggers[space][group]->isJoinable())
-                return TriggerGroupPtr(
-                    m_allTriggers[space][group].get(), [this](TriggerGroup* ptr) {
-                        this->removeTriggerGroup(ptr);
-                    });
+                return TriggerGroupPtr(m_allTriggers[space][group].get(),
+                    [this](TriggerGroup* ptr) { this->removeTriggerGroup(ptr); });
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
             {
                 throw aube::ErrorHandler::Raise(
@@ -141,9 +137,9 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             std::vector<std::string> allNames;
-            for (auto& space : m_allTriggers[space])
+            for (auto& spaceIt : m_allTriggers[space])
             {
-                allNames.push_back(space.first);
+                allNames.push_back(spaceIt.first);
             }
             return allNames;
         }
@@ -185,7 +181,7 @@ namespace obe::Triggers
                 {
                     for (int i = 0; i < it2->second->m_delayedTriggers.size(); i++)
                     {
-                        it2->second->m_delayedTriggers[i]->m_delaytarget
+                        it2->second->m_delayedTriggers[i]->m_delayTarget
                             = m_databaseChrono.getTime()
                             + it2->second->m_delayedTriggers[i]->m_delay;
                         m_delayedTriggers.push_back(
@@ -198,9 +194,9 @@ namespace obe::Triggers
         std::vector<int> triggeredDelayedTriggers;
         for (int i = 0; i < m_delayedTriggers.size(); i++)
         {
-            if (m_delayedTriggers[i]->m_delaytarget <= m_databaseChrono.getTime())
+            if (m_delayedTriggers[i]->m_delayTarget <= m_databaseChrono.getTime())
             {
-                m_delayedTriggers[i]->m_trigger->m_enabled = true;
+                m_delayedTriggers[i]->m_trigger.m_enabled = true;
                 triggeredDelayedTriggers.push_back(i);
             }
         }

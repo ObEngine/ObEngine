@@ -162,7 +162,7 @@ namespace obe::Transform
                 return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
             }
 
-            double t
+            const double t
                 = ((point.x - lineP1.x) * lineDiff.x + (point.y - lineP1.y) * lineDiff.y)
                 / (lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
 
@@ -223,13 +223,13 @@ namespace obe::Transform
         return m_points;
     }
 
-    Transform::UnitVector Polygon::getCentroid() const
+    UnitVector Polygon::getCentroid() const
     {
         Transform::UnitVector centroid = { 0, 0 };
         double signedArea = 0.0;
         double x0, y0, x1, y1, a;
 
-        int i;
+        unsigned int i;
         for (i = 0; i < m_points.size() - 1; ++i)
         {
             x0 = m_points[i]->x;
@@ -298,7 +298,7 @@ namespace obe::Transform
 
     PolygonSegment Polygon::getSegment(const point_index_t segment)
     {
-        int p2 = segment + 1;
+        unsigned int p2 = segment + 1;
         if (segment == m_points.size() - 1)
             p2 = 0;
         return PolygonSegment(this->get(segment), this->get(p2));
@@ -351,9 +351,9 @@ namespace obe::Transform
             const Transform::UnitVector addPosition = pVec - *m_points[0];
 
             m_points[0]->set(pVec);
-            for (int i = 1; i < m_points.size(); i++)
+            for (auto& point : m_points)
             {
-                *m_points[i] += addPosition;
+                *point += addPosition;
             }
         }
     }

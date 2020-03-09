@@ -43,7 +43,7 @@ namespace obe::Time
 
     void FramerateManager::update()
     {
-        sf::Time timeBuffer = m_deltaClock.restart();
+        const sf::Time timeBuffer = m_deltaClock.restart();
         m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
         if (m_limitFPS)
         {
@@ -75,12 +75,12 @@ namespace obe::Time
 
     double FramerateManager::getGameSpeed() const
     {
-        return m_deltaTime * m_speedCoeff;
+        return m_deltaTime * m_speedCoefficient;
     }
 
-    double FramerateManager::getSpeedCoeff() const
+    double FramerateManager::getSpeedCoefficient() const
     {
-        return m_speedCoeff;
+        return m_speedCoefficient;
     }
 
     bool FramerateManager::isFramerateLimited() const
@@ -98,9 +98,9 @@ namespace obe::Time
         return m_vsyncEnabled;
     }
 
-    void FramerateManager::setSpeedCoeff(const double speed)
+    void FramerateManager::setSpeedCoefficient(const double speed)
     {
-        m_speedCoeff = speed;
+        m_speedCoefficient = speed;
     }
 
     void FramerateManager::limitFramerate(const bool state)

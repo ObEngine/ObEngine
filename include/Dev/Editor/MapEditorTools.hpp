@@ -56,9 +56,11 @@ namespace obe::Editor
                         tgui::Scrollbar::Ptr objectsScrollbar);
     /**
      * \brief Builds the RequiresPanel that will transmit Init parameters to the
-     * GameObject \param scene Reference to the Scene \param requiresPanel TGUI
-     * Panel used to transmit Init parameters \param baseTheme TGUI Theme \param
-     * objName Type of GameObject to build
+     *        GameObject
+     * \param scene Reference to the Scene
+     * \param requiresPanel TGUI Panel used to transmit Init parameters
+     * \param baseTheme TGUI Theme
+     * \param objName Type of GameObject to build
      */
     void buildRequiresObjectTab(Scene::Scene& scene,
                                 tgui::Panel::Ptr& requiresPanel,
@@ -77,8 +79,10 @@ namespace obe::Editor
      * \brief Loads the Sprite Folder
      * \param scene Reference to the Scene
      * \param spritesPanel TGUI Panel that will contains all Sprite Creation
-     * Buttons \param spritesCatLabel Name of the folder \param path Path where
-     * are the Sprite located \param spritesScrollbar Scrollbar of spritesPanel
+     *        Buttons
+     * \param spritesCatLabel Name of the folder
+     * \param path Path where are the Sprite located
+     * \param spritesScrollbar Scrollbar of spritesPanel
      */
     void loadSpriteFolder(Scene::Scene& scene, tgui::Panel::Ptr spritesPanel,
                           tgui::Label::Ptr spritesCatLabel,

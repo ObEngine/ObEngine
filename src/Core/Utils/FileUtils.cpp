@@ -39,7 +39,8 @@ namespace obe::Utils::File
         {
             tinydir_file file;
             tinydir_readfile(&dir, &file);
-            if (file.is_dir && std::string(file.name) != "." && std::string(file.name) != "..")
+            if (file.is_dir && std::string(file.name) != "."
+                && std::string(file.name) != "..")
             {
                 folderList.push_back(std::string(file.name));
             }
@@ -148,7 +149,7 @@ namespace obe::Utils::File
         Debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
 
         // std::filesystem::copy(source, target); (Doesn't work for now)
-        std::ifstream src(source, std::ios::binary);
+        const std::ifstream src(source, std::ios::binary);
         std::ofstream dst(target, std::ios::binary);
 
         dst << src.rdbuf();

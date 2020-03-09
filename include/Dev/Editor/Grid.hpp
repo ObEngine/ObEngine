@@ -58,8 +58,9 @@ namespace obe::Editor
         /**
          * \brief Set the offset of the first displayed Cell (TopLeft)
          * \param offsetX Horizontal offset of the first displayed Cell
-         * (TopLeft) \param offsetY Vertical offset of the first displayed Cell
-         * (TopLeft)
+         *        (TopLeft)
+         * \param offsetY Vertical offset of the first displayed Cell
+         *        (TopLeft)
          */
         void setOffset(int offsetX, int offsetY);
         /**

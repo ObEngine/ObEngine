@@ -60,20 +60,23 @@ namespace obe::Scene
         /**
          * \brief Loads the Scene from a .map.vili file
          * \param filename Name of the file located in Data/Maps (using
-         * System::Loaders)
+         *        System::Loaders)
          */
         void loadFromFile(const std::string& filename);
         /**
          * \brief Same that loadFromFile excepts the map will load at the next
-         * update \param filename Name of the file located in Data/Maps (using
-         * System::Loaders)
+         *        update
+         * \param filename Name of the file located in Data/Maps (using
+         *        System::Loaders)
          */
         void setFutureLoadFromFile(const std::string& filename);
         /**
          * \brief Same that loadFromFile excepts the map will load at the next
-         * update \param filename Name of the file located in Data/Maps (using
-         * System::Loaders) \param callback Lua Function called when new map has
-         * been loaded
+         * update
+         * \param filename Name of the file located in Data/Maps (using
+         *        System::Loaders)
+         * \param callback Lua Function called when new map has
+         *        been loaded
          */
         void setFutureLoadFromFile(
             const std::string& filename, const OnSceneLoadCallback& callback);
@@ -164,7 +167,8 @@ namespace obe::Scene
          * \brief Creates a new Sprite
          * \param id Id of the new Sprite
          * \param addToSceneRoot Add the Sprite to the root Scene Node if
-         * true \return A pointer to the newly created Sprite
+         *        true
+         * \return A pointer to the newly created Sprite
          */
         Graphics::Sprite& createSprite(
             const std::string& id = "", bool addToSceneRoot = true);
@@ -178,13 +182,14 @@ namespace obe::Scene
          * \brief Get all the Sprites present in the Scene
          * \return A std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite&> getAllSprites();
+        std::vector<Graphics::Sprite*> getAllSprites();
         /**
          * \brief Get all the Sprites present in the Scene in the given
-         * layer \param layer Layer to get all the Sprites from \return A
-         * std::vector of Sprites pointer
+         *        layer
+         * \param layer Layer to get all the Sprites from \return A
+         *        std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite&> getSpritesByLayer(int layer);
+        std::vector<Graphics::Sprite*> getSpritesByLayer(int layer);
         /**
          * TODO: Check if passing the camera as a parameter is useful
          * \brief Get the first found Sprite with the BoundingRect
@@ -233,7 +238,7 @@ namespace obe::Scene
          * \return A std::vector containing all the pointers of the Colliders
          * present in the Scene
          */
-        [[nodiscard]] std::vector<Collision::PolygonalCollider&> getAllColliders() const;
+        [[nodiscard]] std::vector<Collision::PolygonalCollider*> getAllColliders() const;
         /**
          * \brief Get the first Collider found with a point on the given
          *        position

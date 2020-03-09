@@ -15,7 +15,7 @@ namespace obe::Editor
      * \param colliderPtGrabbed Index of the Collider point grabbed
      * \param selectedMasterCollider Pointer to the selected Collider
      * \param masterColliderGrabbed Reference to a boolean that indicates
-     * whether a Collider is grabbed or not
+     *        whether a Collider is grabbed or not
      */
     void connectCollidersActions(
         Triggers::TriggerGroup* editorTriggers,

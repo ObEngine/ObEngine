@@ -59,7 +59,7 @@ namespace obe::Input
         /**
          * \brief Adds a new Callback
          * \param callback A function that will be called when the Action is
-         * triggered
+         *        triggered
          */
         void connect(ActionCallback callback);
         /**
@@ -81,7 +81,7 @@ namespace obe::Input
         /**
          * \brief Sets the delay required between two InputAction triggerings
          * \param delay Delay required between two InputAction triggerings
-         * (in ms)
+         *        (in ms)
          */
         void setInterval(Time::TimeUnit delay);
         /**
