@@ -296,8 +296,8 @@ namespace obe::Types
      * member into a FlagSet.
      */
     template <typename T>
-    typename std::enable_if<is_scoped_enum<T>::value, FlagSet<T>>::type
-    operator|(const T& lhs, const T& rhs)
+    typename std::enable_if<is_scoped_enum<T>::value, FlagSet<T>>::type operator|(
+        const T& lhs, const T& rhs)
     {
         FlagSet<T> bs;
         bs |= lhs;

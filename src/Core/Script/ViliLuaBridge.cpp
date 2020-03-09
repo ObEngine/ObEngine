@@ -39,7 +39,8 @@ namespace obe::Script::DataBridge
             }
             else if (node->getType() == vili::NodeType::ComplexNode)
             {
-                complexNodeToLuaTable(injectTable, &convert->getComplexNode(node->getId()));
+                complexNodeToLuaTable(
+                    injectTable, &convert->getComplexNode(node->getId()));
             }
             else if (node->getType() == vili::NodeType::ArrayNode)
             {
@@ -78,7 +79,8 @@ namespace obe::Script::DataBridge
         }
     }
 
-    vili::ComplexNode* luaTableToComplexNode(const std::string& id, kaguya::LuaRef& convert)
+    vili::ComplexNode* luaTableToComplexNode(
+        const std::string& id, kaguya::LuaRef& convert)
     {
         if (convert.type() == 0 || convert.type() == 5)
         {
@@ -90,13 +92,15 @@ namespace obe::Script::DataBridge
                 if (convert[tableKey].type() == 5)
                 {
                     kaguya::LuaRef tempTableRef = convert[tableKey];
-                    returnElement->pushComplexNode(luaTableToComplexNode(tableKey, tempTableRef));
+                    returnElement->pushComplexNode(
+                        luaTableToComplexNode(tableKey, tempTableRef));
                 }
                 else if (Utils::Vector::contains(
                              convert[tableKey].type(), std::vector<int>({ 1, 3, 4 })))
                 {
                     kaguya::LuaRef tempElemRef = convert[tableKey];
-                    returnElement->pushDataNode(luaElementToDataNode(tableKey, tempElemRef));
+                    returnElement->pushDataNode(
+                        luaElementToDataNode(tableKey, tempElemRef));
                 }
             }
 

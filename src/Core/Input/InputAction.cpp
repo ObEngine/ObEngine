@@ -68,7 +68,7 @@ namespace obe::Input
                 if (m_state)
                 {
                     if (m_repeat.resetIfOver()) // Reset repeat when combination
-                                                // is unchecked <REVISION>
+                        // is unchecked <REVISION>
                     {
                         const InputActionEvent ev(*this, combination);
                         m_callback(ev);
@@ -79,8 +79,8 @@ namespace obe::Input
                 else
                 {
                     if (m_interval.resetIfOver()) // What is this for, when does
-                                                  // m_state goes back to false
-                                                  // ? <REVISION>
+                        // m_state goes back to false
+                        // ? <REVISION>
                     {
                         m_state = true;
                         m_callback(InputActionEvent(*this, combination));

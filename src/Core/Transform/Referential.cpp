@@ -17,9 +17,10 @@ namespace obe::Transform
     Referential Referential::BottomLeft = Referential(0, 1);
     Referential Referential::Bottom = Referential(0.5, 1);
     Referential Referential::BottomRight = Referential(1, 1);
-    std::array<Referential, 9> Referential::Referentials = { Referential::TopLeft, Referential::Top,
-        Referential::TopRight, Referential::Left, Referential::Center, Referential::Right,
-        Referential::BottomLeft, Referential::Bottom, Referential::BottomRight };
+    std::array<Referential, 9> Referential::Referentials
+        = { Referential::TopLeft, Referential::Top, Referential::TopRight,
+              Referential::Left, Referential::Center, Referential::Right,
+              Referential::BottomLeft, Referential::Bottom, Referential::BottomRight };
 
     Referential::Referential()
         : m_refX(0)
@@ -115,7 +116,8 @@ namespace obe::Transform
         if (m_refX == 1 && m_refY == 1)
             return fmt::format(format, "BottomRight");
         else
-            return fmt::format(format, fmt::format("{}, {}", m_refX, m_refY), m_refX, m_refY);
+            return fmt::format(
+                format, fmt::format("{}, {}", m_refX, m_refY), m_refX, m_refY);
     }
 
     Referential Referential::FromString(const std::string& ref)
@@ -147,7 +149,8 @@ namespace obe::Transform
             return Referential(std::stod(regMatch[1]), std::stod(regMatch[3]));
         }
         throw aube::ErrorHandler::Raise(
-            "ObEngine.Transform.Referential.UnknownReferential", { { "referential", ref } });
+            "ObEngine.Transform.Referential.UnknownReferential",
+            { { "referential", ref } });
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)

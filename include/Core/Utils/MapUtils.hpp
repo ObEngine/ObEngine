@@ -28,8 +28,7 @@ namespace obe::Utils::Map
     bool keyInMap(typename MapType::key_type item, MapType&& map);
 
     template <class MapType>
-    std::vector<typename std::decay_t<MapType>::key_type> getKeys(
-        MapType&& map);
+    std::vector<typename std::decay_t<MapType>::key_type> getKeys(MapType&& map);
 
     template <class MapType>
     bool valueInMap(typename MapType::value_type item, MapType&& map)
@@ -42,8 +41,7 @@ namespace obe::Utils::Map
         return false;
     }
 
-    template <class MapType>
-    bool keyInMap(typename MapType::key_type item, MapType&& map)
+    template <class MapType> bool keyInMap(typename MapType::key_type item, MapType&& map)
     {
         for (const auto& [key, value] : map)
         {
