@@ -35,7 +35,7 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor(System::Window& window);
+        explicit Cursor(System::Window& window, Triggers::TriggerManager& triggers);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position

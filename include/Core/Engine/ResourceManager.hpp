@@ -8,7 +8,6 @@
 
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Registrable.hpp>
-#include <Types/Singleton.hpp>
 
 namespace obe::Engine
 {
@@ -16,10 +15,9 @@ namespace obe::Engine
     using TexturePair
         = std::pair<std::shared_ptr<sf::Texture>, std::shared_ptr<sf::Texture>>;
     /**
-     * \brief Singleton Class that manages and caches textures}
+     * \brief Class that manages and caches textures}
      */
-    class ResourceManager : public Types::Registrable<ResourceManager>,
-                            public Types::Singleton<ResourceManager>
+    class ResourceManager : public Types::Registrable<ResourceManager>
     {
     private:
         Triggers::TriggerGroupPtr t_resources;

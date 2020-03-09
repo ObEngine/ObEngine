@@ -5,7 +5,7 @@
 
 #include <Input/InputActionEvent.hpp>
 #include <Input/InputCondition.hpp>
-#include <Time/TimeCheck.hpp>
+#include <Time/Chronometer.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Identifiable.hpp>
 
@@ -26,8 +26,8 @@ namespace obe::Input
         ActionCallback m_callback = [](const InputActionEvent& event) {};
         std::vector<InputCondition> m_combinations;
         std::vector<std::string> m_contexts;
-        Time::TimeCheck m_interval;
-        Time::TimeCheck m_repeat;
+        Time::Chronometer m_interval;
+        Time::Chronometer m_repeat;
         bool m_state = true;
 
     public:

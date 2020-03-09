@@ -7,7 +7,7 @@
 
 namespace obe::System
 {
-    void Window::init(const WindowContext context)
+    Window::Window(const WindowContext context)
     {
         vili::ViliParser windowConfig;
         std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());

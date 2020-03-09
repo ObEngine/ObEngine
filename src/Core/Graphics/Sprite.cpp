@@ -497,7 +497,7 @@ namespace obe::Graphics
 
         const bool antiAliasing = data.contains(vili::NodeType::DataNode, "antiAliasing")
             ? data.getDataNode("antiAliasing").get<bool>()
-            : Engine::ResourceManager::GetInstance().defaultAntiAliasing;
+            : m_antiAliasing;
 
         if (data.contains(vili::NodeType::DataNode, "xTransform"))
             spriteXTransformer = data.at<vili::DataNode>("xTransform").get<std::string>();

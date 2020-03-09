@@ -19,16 +19,16 @@ namespace obe::Engine
     protected:
         sol::state m_lua;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
-        Scene::Scene m_scene {};
-        System::Cursor m_cursor;
-        System::Window m_window {};
+        std::unique_ptr<Scene::Scene> m_scene;
+        std::unique_ptr<System::Cursor> m_cursor;
+        std::unique_ptr<System::Window> m_window;
 
         // Managers
         Audio::AudioManager m_audio {};
         Config::ConfigurationManager m_config {};
         ResourceManager m_resources {};
         Input::InputManager m_input {};
-        Time::FramerateManager m_framerate {};
+        std::unique_ptr<Time::FramerateManager> m_framerate;
         Triggers::TriggerManager m_triggers {};
 
         // TriggerGroups
@@ -43,13 +43,15 @@ namespace obe::Engine
         void initScript();
         void initResources();
         void initWindow();
+        void initCursor();
         void initPlugins();
+        void initScene();
 
         // Main loop
         void clean();
         void handleWindowEvents();
         void update();
-        void render();
+        void render() const;
 
     public:
         Engine();

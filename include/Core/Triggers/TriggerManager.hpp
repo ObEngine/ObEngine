@@ -6,15 +6,13 @@
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Types/Registrable.hpp>
-#include <Types/Singleton.hpp>
 
 namespace obe::Triggers
 {
     /**
      * \brief A TriggerManager that handles all Trigger / TriggerGroup
      */
-    class TriggerManager : public Types::Registrable<TriggerManager>,
-                           public Types::Singleton<TriggerManager>
+    class TriggerManager : public Types::Registrable<TriggerManager>
     {
     private:
         std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>>

@@ -8,7 +8,6 @@ namespace obe::Triggers
         : Registrable("TriggerManager")
     {
         Debug::Log->debug("<TriggerManager> Initializing TriggerManager");
-        this->createNamespace("Global");
         m_databaseChrono.start();
     }
 

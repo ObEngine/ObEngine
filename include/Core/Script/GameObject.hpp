@@ -60,12 +60,13 @@ namespace obe::Script
     class GameObject final : public Types::Identifiable
     {
     private:
+        Triggers::TriggerManager& m_triggers;
         unsigned int m_envIndex = 0;
         bool m_permanent = false;
         std::unique_ptr<Animation::Animator> m_animator;
         Graphics::Sprite* m_sprite = nullptr;
         Collision::PolygonalCollider* m_collider = nullptr;
-        Triggers::TriggerGroupPtr m_localTriggers;
+        Triggers::TriggerGroupPtr t_local;
         Scene::SceneNode m_objectNode;
 
         std::vector<std::pair<std::weak_ptr<Triggers::Trigger>, std::string>>
@@ -89,7 +90,8 @@ namespace obe::Script
          * \param type Type of the GameObject
          * \param id Id of the GameObject you want to create
          */
-        explicit GameObject(const std::string& type, const std::string& id);
+        explicit GameObject(Triggers::TriggerManager& triggers, const std::string& type,
+            const std::string& id);
         /**
          * \brief Destructor of the GameObject
          */
@@ -102,25 +104,25 @@ namespace obe::Script
         /**
          * \brief Checks if the GameObject has an Animator Component
          * \return true if the GameObject contains an Animator Component, false
-         * otherwise
+         *         otherwise
          */
         [[nodiscard]] bool doesHaveAnimator() const;
         /**
          * \brief Checks if the GameObject has a Collider Component
          * \return true if the GameObject contains the Collider Component, false
-         * otherwise
+         *         otherwise
          */
         [[nodiscard]] bool doesHaveCollider() const;
         /**
          * \brief Checks if the GameObject has a Sprite Component
          * \return true if the GameObject contains the Sprite Component,
-         * false otherwise
+         *         false otherwise
          */
         [[nodiscard]] bool doesHaveSprite() const;
         /**
          * \brief Checks if the GameObject has a Script Component
          * \return true if the GameObject contains the Script Component, false
-         * otherwise
+         *         otherwise
          */
         [[nodiscard]] bool doesHaveScriptEngine() const;
         /**
@@ -131,33 +133,33 @@ namespace obe::Script
         /**
          * \brief Sets if the GameObject should be otherwise or not
          * \param state Should be equal to true if the GameObject must updates,
-         * false otherwise
+         *        false otherwise
          */
         void setUpdateState(bool state);
         /**
          * \brief Gets the Animator Component of the GameObject (Raises
-         * ObEngine.Script.GameObject.NoAnimator if no Animator Component)
+         *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
          * \return A pointer to the Animator Component of the GameObject
          */
-        Animation::Animator* getAnimator();
+        Animation::Animator& getAnimator();
         /**
          * \brief Gets the Collider Component of the GameObject (Raises
-         * ObEngine.Script.GameObject.NoCollider if no Collider Component)
+         *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
-        Collision::PolygonalCollider* getCollider();
+        Collision::PolygonalCollider& getCollider();
         /**
          * \brief Gets the Sprite Component of the GameObject (Raises
-         * ObEngine.Script.GameObject.NoSprite if no Sprite Component)
+         *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
          * \return A pointer to the Sprite Component of the GameObject
          */
-        Graphics::Sprite* getSprite();
+        Graphics::Sprite& getSprite();
         /**
          * \brief Gets the Scene Node of the GameObject (SceneNode that can
-         * manipulate the position of all Scene Components) \return A reference
+         *        manipulate the position of all Scene Components) \return A reference
          * to the GameObject's Scene Node
          */
-        Scene::SceneNode* getSceneNode();
+        Scene::SceneNode& getSceneNode();
         /**
          * \brief Register a non-local Trigger for the GameObject
          * \param trNsp Namespace where the Trigger to register is
@@ -241,13 +243,13 @@ namespace obe::Script
         /**
          * \brief Configures the permanent parameter of the GameObject
          * \param permanent Should be true if the GameObject should be
-         * permanent, false otherwise
+         *        permanent, false otherwise
          */
         void setPermanent(bool permanent);
         /**
          * \brief Gets if the GameObject is permanent (Will stay after loading
-         * another map) \return true if the GameObject is permanent, false
-         * otherwise
+         *        another map)
+         * \return true if the GameObject is permanent, false otherwise
          */
         [[nodiscard]] bool isPermanent() const;
 

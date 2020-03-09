@@ -11,13 +11,14 @@ namespace obe::Engine
 
     void Engine::initTriggers()
     {
+        m_triggers.createNamespace("Global");
         t_game = m_triggers.createTriggerGroup("Global", "Game");
 
         t_game->addTrigger("Start")
-            ->trigger("Start")
-            ->addTrigger("End")
-            ->addTrigger("Update")
-            ->addTrigger("Render");
+            .trigger("Start")
+            .addTrigger("End")
+            .addTrigger("Update")
+            .addTrigger("Render");
     }
     void Engine::initInput()
     {
@@ -28,7 +29,8 @@ namespace obe::Engine
 
     void Engine::initFramerate()
     {
-        m_framerate.configure(m_config.get().at("GameConfig"));
+        m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
+        m_framerate->configure(m_config.get().at("GameConfig"));
     }
 
     void Engine::initScript()
@@ -38,7 +40,8 @@ namespace obe::Engine
         m_lua.script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua.script_file("boot.lua"_fs);
 
-        m_lua["loadScene"] = [&](const std::string& path) { m_scene.loadFromFile(path); };
+        m_lua["loadScene"]
+            = [&](const std::string& path) { m_scene->loadFromFile(path); };
     }
 
     void Engine::initResources()
@@ -58,7 +61,12 @@ namespace obe::Engine
 
     void Engine::initWindow()
     {
-        m_window.init(System::WindowContext::GameWindow);
+        m_window = std::make_unique<System::Window>(System::WindowContext::GameWindow);
+    }
+
+    void Engine::initCursor()
+    {
+        m_cursor = std::make_unique<System::Cursor>(*m_window, m_triggers);
     }
 
     void Engine::initPlugins()
@@ -82,6 +90,12 @@ namespace obe::Engine
         }
     }
 
+    void Engine::initScene()
+    {
+        m_scene = std::make_unique<Scene::Scene>(m_triggers);
+        m_scene->attachResourceManager(m_resources);
+    }
+
     void Engine::initLogger() const
     {
         const unsigned int logLevel
@@ -97,21 +111,21 @@ namespace obe::Engine
     {
         t_game->trigger("End");
         m_triggers.update();
-        m_scene.clear();
-        m_scene.update();
+        m_scene->clear();
+        m_scene->update();
         Script::GameObjectDatabase::Clear();
-        m_window.close();
+        m_window->close();
     }
 
     void Engine::handleWindowEvents()
     {
         sf::Event event;
-        while (m_window.pollEvent(event))
+        while (m_window->pollEvent(event))
         {
             switch (event.type)
             {
             case sf::Event::Closed:
-                m_window.close();
+                m_window->close();
                 break;
             case sf::Event::MouseButtonPressed:
             case sf::Event::MouseButtonReleased:
@@ -122,7 +136,7 @@ namespace obe::Engine
             case sf::Event::KeyPressed:
                 m_input.requireRefresh();
                 if (event.key.code == sf::Keyboard::Escape)
-                    m_window.close();
+                    m_window->close();
                 break;
             default:
                 break;
@@ -131,31 +145,33 @@ namespace obe::Engine
     }
 
     Engine::Engine()
-        : m_cursor(m_window)
     {
         this->initConfig();
         this->initLogger();
         this->initTriggers();
-        this->initFramerate();
         this->initInput();
         this->initScript();
         this->initWindow();
+        this->initCursor();
+        this->initFramerate();
         this->initPlugins();
+        this->initResources();
+        this->initScene();
     }
 
     void Engine::run()
     {
-        m_window.create();
+        m_window->create();
         m_lua["Game"]["Start"]();
 
-        while (m_window.isOpen())
+        while (m_window->isOpen())
         {
-            m_framerate.update();
+            m_framerate->update();
 
-            t_game->pushParameter("Update", "dt", m_framerate.getGameSpeed());
+            t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
             t_game->trigger("Update");
 
-            if (m_framerate.doRender())
+            if (m_framerate->doRender())
                 t_game->trigger("Render");
 
             this->update();
@@ -168,20 +184,20 @@ namespace obe::Engine
     {
         // Events
         this->handleWindowEvents();
-        m_scene.update();
+        m_scene->update();
         m_triggers.update();
         m_input.update();
-        m_cursor.update();
+        m_cursor->update();
     }
 
-    void Engine::render()
+    void Engine::render() const
     {
-        if (m_framerate.doRender())
+        if (m_framerate->doRender())
         {
-            m_window.clear();
-            m_scene.draw(m_window.getTarget());
+            m_window->clear();
+            m_scene->draw(m_window->getTarget());
 
-            m_window.display();
+            m_window->display();
         }
     }
 }

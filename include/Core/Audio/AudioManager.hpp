@@ -4,7 +4,6 @@
 
 #include <System/Path.hpp>
 #include <Types/Registrable.hpp>
-#include <Types/Singleton.hpp>
 
 #include <soloud/soloud.h>
 #include <soloud/soloud_wav.h>
@@ -36,8 +35,7 @@ namespace obe::Audio
      * \brief Class to handle audio playback
      * \bind{AudioManager}
      */
-    class AudioManager : public Types::Registrable<AudioManager>,
-                         public Types::Singleton<AudioManager>
+    class AudioManager : public Types::Registrable<AudioManager>
     {
     private:
         SoLoud::Soloud m_engine;

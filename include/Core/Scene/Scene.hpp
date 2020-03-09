@@ -43,18 +43,14 @@ namespace obe::Scene
         std::string m_levelFileName;
         std::map<std::string, bool> m_showElements;
         OnSceneLoadCallback m_onLoadCallback;
-        Triggers::TriggerGroupPtr m_sceneTriggers;
+        Triggers::TriggerManager& m_triggers;
+        Triggers::TriggerGroupPtr t_scene;
 
     public:
         /**
          * \brief Creates a new Scene
          */
-        Scene();
-        /**
-         * \brief Default destructor of Scene (Removes Map Namespace in
-         * TriggerManager)
-         */
-        ~Scene();
+        Scene(Triggers::TriggerManager& triggers);
 
         void attachResourceManager(Engine::ResourceManager& resources);
         /**

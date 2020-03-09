@@ -8,8 +8,9 @@
 
 namespace obe::Time
 {
-    FramerateManager::FramerateManager()
+    FramerateManager::FramerateManager(System::Window& window)
         : Registrable("FramerateManager")
+        , m_window(window)
     {
         m_frameLimiterClock = epochAsMilliseconds();
         m_currentFrame = 0;
@@ -38,7 +39,7 @@ namespace obe::Time
             (m_vsyncEnabled) ? "enabled" : "disabled",
             (m_syncUpdateRender) ? "enabled" : "disabled");
 
-        System::MainWindow.setVerticalSyncEnabled(m_vsyncEnabled);
+        m_window.setVerticalSyncEnabled(m_vsyncEnabled);
     }
 
     void FramerateManager::update()
@@ -116,7 +117,7 @@ namespace obe::Time
     void FramerateManager::setVSyncEnabled(const bool vsync)
     {
         m_vsyncEnabled = vsync;
-        System::MainWindow.setVerticalSyncEnabled(vsync);
+        m_window.setVerticalSyncEnabled(vsync);
     }
 
     bool FramerateManager::doRender() const

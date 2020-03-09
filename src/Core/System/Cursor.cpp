@@ -26,11 +26,10 @@ namespace obe::System
         throw aube::ErrorHandler::Raise("obe.System.Cursor.InvalidButtonEnumValue");
     }
 
-    Cursor::Cursor(System::Window& window)
+    Cursor::Cursor(System::Window& window, Triggers::TriggerManager& triggers)
         : Registrable("Cursor")
         , m_window(window)
-        , m_cursorTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
-              "Global", "Cursor"))
+        , m_cursorTriggers(triggers.createTriggerGroup("Global", "Cursor"))
     {
         m_constraint = Constraints::Default;
         m_constraintCondition = []() { return true; };
@@ -120,7 +119,7 @@ namespace obe::System
 
     void Cursor::update()
     {
-        const sf::Vector2i mousePos = sf::Mouse::getPosition(MainWindow.getWindow());
+        const sf::Vector2i mousePos = sf::Mouse::getPosition(m_window.getWindow());
         m_x = mousePos.x;
         m_y = mousePos.y;
         if (mousePos != m_saveOldPos)

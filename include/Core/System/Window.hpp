@@ -25,7 +25,7 @@ namespace obe::System
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
-        void init(WindowContext context);
+        Window(WindowContext context);
         void create();
         void clear();
         void close();
@@ -49,6 +49,4 @@ namespace obe::System
         [[nodiscard]] Graphics::Color getClearColor() const;
         void setClearColor(Graphics::Color color);
     };
-
-    inline Window MainWindow;
 } // namespace obe::System

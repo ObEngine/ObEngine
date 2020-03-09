@@ -39,7 +39,7 @@ namespace obe::Transform
         m_position = rotatePointAroundCenter(origin, m_position, radAngle);
         m_angle += angle;
         if (m_angle < 0 || m_angle > 360)
-            m_angle = Utils::Math::normalise(m_angle, 0, 360);
+            m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
     void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const

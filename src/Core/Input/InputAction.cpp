@@ -6,8 +6,6 @@ namespace obe::Input
 {
     InputAction::InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id)
         : Identifiable(id)
-        , m_interval(0)
-        , m_repeat(0)
     {
         m_actionTrigger = triggerPtr;
         triggerPtr->addTrigger(id);
@@ -41,22 +39,22 @@ namespace obe::Input
 
     void InputAction::setInterval(Time::TimeUnit delay)
     {
-        m_interval.setDelay(delay);
+        m_interval.setLimit(delay);
     }
 
     Time::TimeUnit InputAction::getInterval() const
     {
-        return m_interval.getDelay();
+        return m_interval.getLimit();
     }
 
     void InputAction::setRepeat(Time::TimeUnit delay)
     {
-        m_repeat.setDelay(delay);
+        m_repeat.setLimit(delay);
     }
 
     Time::TimeUnit InputAction::getRepeat() const
     {
-        return m_repeat.getDelay();
+        return m_repeat.getLimit();
     }
 
     void InputAction::update()
@@ -67,9 +65,10 @@ namespace obe::Input
             {
                 if (m_state)
                 {
-                    if (m_repeat.resetIfOver()) // Reset repeat when combination
+                    if (m_repeat.over()) // Reset repeat when combination
                         // is unchecked <REVISION>
                     {
+                        m_repeat.reset();
                         const InputActionEvent ev(*this, combination);
                         m_callback(ev);
                         m_actionTrigger->pushParameter(m_id, "event", ev);
@@ -78,10 +77,11 @@ namespace obe::Input
                 }
                 else
                 {
-                    if (m_interval.resetIfOver()) // What is this for, when does
+                    if (m_interval.over()) // What is this for, when does
                         // m_state goes back to false
                         // ? <REVISION>
                     {
+                        m_interval.reset();
                         m_state = true;
                         m_callback(InputActionEvent(*this, combination));
                     }
@@ -89,7 +89,7 @@ namespace obe::Input
             }
             else
             {
-                m_repeat.goToOver();
+                m_repeat.stop();
             }
         }
     }

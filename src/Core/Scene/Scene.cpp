@@ -9,23 +9,18 @@
 
 namespace obe::Scene
 {
-    Scene::Scene()
+    Scene::Scene(Triggers::TriggerManager& triggers)
         : Registrable("Scene")
-        , m_sceneTriggers(Triggers::TriggerManager::GetInstance().createTriggerGroup(
-              "Global", "Scene"))
+        , m_triggers(triggers)
+        , t_scene(triggers.createTriggerGroup("Global", "Scene"))
 
     {
         System::Path("Lib/Internal/GameInit.lua")
             .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        Triggers::TriggerManager::GetInstance().createNamespace("Map");
+        triggers.createNamespace("Map"); // TODO: Add namespace handle
         m_showElements["SceneNodes"] = false;
 
-        m_sceneTriggers->addTrigger("MapLoaded");
-    }
-
-    Scene::~Scene()
-    {
-        Triggers::TriggerManager::GetInstance().removeNamespace("Map");
+        t_scene->addTrigger("Loaded");
     }
 
     void Scene::attachResourceManager(Engine::ResourceManager& resources)
@@ -50,12 +45,14 @@ namespace obe::Scene
         {
             std::unique_ptr<Graphics::Sprite> newSprite
                 = std::make_unique<Graphics::Sprite>(createId);
+            if (m_resources)
+                newSprite->attachResourceManager(*m_resources);
 
             Graphics::Sprite* returnSprite = newSprite.get();
             m_spriteArray.push_back(move(newSprite));
 
             if (addToSceneRoot)
-                m_sceneRoot.addChild(returnSprite);
+                m_sceneRoot.addChild(*returnSprite);
 
             this->reorganizeLayers();
             return *returnSprite;
@@ -87,7 +84,7 @@ namespace obe::Scene
             m_colliderArray.push_back(
                 std::make_unique<Collision::PolygonalCollider>(createId));
             if (addToSceneRoot)
-                m_sceneRoot.addChild(m_colliderArray.back().get());
+                m_sceneRoot.addChild(*m_colliderArray.back());
             return *m_colliderArray.back().get();
         }
         else
@@ -247,8 +244,8 @@ namespace obe::Scene
                 }
             }
         }
-        m_sceneTriggers->pushParameter("MapLoaded", "name", filename);
-        m_sceneTriggers->trigger("MapLoaded");
+        t_scene->pushParameter("Loaded", "name", filename);
+        t_scene->trigger("Loaded");
     }
 
     void Scene::setFutureLoadFromFile(const std::string& filename)
@@ -405,7 +402,7 @@ namespace obe::Scene
     {
         if (m_futureLoad != "")
         {
-            std::string futureLoadBuffer = std::move(m_futureLoad);
+            const std::string futureLoadBuffer = std::move(m_futureLoad);
             this->loadFromFile(futureLoadBuffer);
             if (m_onLoadCallback)
                 m_onLoadCallback(futureLoadBuffer);
@@ -427,9 +424,9 @@ namespace obe::Scene
                             Debug::Log->debug(
                                 "<Scene> Removing GameObject {}", ptr->getId());
                             if (ptr->m_sprite)
-                                this->removeSprite(ptr->getSprite()->getId());
+                                this->removeSprite(ptr->getSprite().getId());
                             if (ptr->m_collider)
-                                this->removeCollider(ptr->getCollider()->getId());
+                                this->removeCollider(ptr->getCollider().getId());
                             return true;
                         }
                         return false;
@@ -468,12 +465,12 @@ namespace obe::Scene
             for (auto& gameObject : m_gameObjectArray)
             {
                 sf::CircleShape sceneNodeCircle;
-                SceneNode* sceneNode = gameObject->getSceneNode();
+                SceneNode& sceneNode = gameObject->getSceneNode();
                 const Transform::UnitVector sceneNodePosition
-                    = sceneNode->getPosition().to<Transform::Units::ViewPixels>();
+                    = sceneNode.getPosition().to<Transform::Units::ViewPixels>();
                 sceneNodeCircle.setPosition(
                     sceneNodePosition.x - 3, sceneNodePosition.y - 3);
-                if (sceneNode->isSelected())
+                if (sceneNode.isSelected())
                     sceneNodeCircle.setFillColor(sf::Color::Green);
                 else
                     sceneNodeCircle.setFillColor(sf::Color::Red);
@@ -577,7 +574,7 @@ namespace obe::Scene
         }
 
         std::unique_ptr<Script::GameObject> newGameObject
-            = std::make_unique<Script::GameObject>(obj, useId);
+            = std::make_unique<Script::GameObject>(m_triggers, obj, useId);
         vili::ComplexNode& gameObjectData
             = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
         newGameObject->loadGameObject(*this, gameObjectData, m_resources);
@@ -585,13 +582,13 @@ namespace obe::Scene
         if (newGameObject->doesHaveSprite())
         {
             const Transform::UnitVector zero(0, 0);
-            newGameObject->getSprite()->setPosition(zero);
-            newGameObject->getSprite()->setParentId(useId);
+            newGameObject->getSprite().setPosition(zero);
+            newGameObject->getSprite().setParentId(useId);
         }
 
         if (newGameObject->doesHaveCollider())
         {
-            newGameObject->getCollider()->setParentId(useId);
+            newGameObject->getCollider().setParentId(useId);
         }
 
         m_gameObjectArray.push_back(move(newGameObject));
@@ -713,7 +710,7 @@ namespace obe::Scene
         for (auto& gameObject : m_gameObjectArray)
         {
             const Transform::UnitVector sceneNodePosition
-                = gameObject->getSceneNode()->getPosition();
+                = gameObject->getSceneNode().getPosition();
             const Transform::UnitVector pVec
                 = position.to<Transform::Units::SceneUnits>();
             const Transform::UnitVector pTolerance
@@ -725,7 +722,7 @@ namespace obe::Scene
             {
                 if (Utils::Math::isBetween(pVec.y, sceneNodePosition.y - pTolerance.x,
                         sceneNodePosition.y + pTolerance.y))
-                    return gameObject->getSceneNode();
+                    return &gameObject->getSceneNode();
             }
         }
         return nullptr;

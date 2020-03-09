@@ -14,6 +14,7 @@ namespace obe::Time
     class FramerateManager : public Types::Registrable<FramerateManager>
     {
     private:
+        System::Window& m_window;
         sf::Clock m_deltaClock;
         double m_deltaTime = 0.0;
         double m_speedCoefficient = 1.0;
@@ -31,7 +32,7 @@ namespace obe::Time
         /**
          * \brief Creates a new FramerateManager
          */
-        FramerateManager();
+        FramerateManager(System::Window& window);
         /**
          * \brief Configures the FramerateManager
          * \param config Configuration of the FramerateManager

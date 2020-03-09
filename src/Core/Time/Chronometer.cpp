@@ -7,7 +7,6 @@ namespace obe::Time
     void Chronometer::start()
     {
         m_start = std::chrono::high_resolution_clock::now();
-        m_current = std::chrono::high_resolution_clock::now();
         m_started = true;
     }
 
@@ -16,12 +15,18 @@ namespace obe::Time
         m_started = false;
     }
 
-    TimeUnit Chronometer::getTime()
+    void Chronometer::reset()
+    {
+        m_start = std::chrono::high_resolution_clock::now();
+    }
+
+    TimeUnit Chronometer::getTime() const
     {
         if (m_started)
-            m_current = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(m_current - m_start)
-            .count();
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::high_resolution_clock::now() - m_start)
+                .count();
+        return 0;
     }
 
     void Chronometer::setLimit(const TimeUnit limit)
@@ -29,7 +34,12 @@ namespace obe::Time
         m_limit = limit;
     }
 
-    bool Chronometer::limitExceeded()
+    TimeUnit Chronometer::getLimit() const
+    {
+        return m_limit;
+    }
+
+    bool Chronometer::over() const
     {
         return (m_started && this->getTime() > m_limit);
     }

@@ -39,6 +39,6 @@ namespace obe::Time
             m_text.setString(std::to_string(m_framerateCounter) + " FPS / "
                 + std::to_string(m_updatesCounter) + " UPS");
         }
-        System::MainWindow.draw(m_text);
+        // System::MainWindow.draw(m_text);
     }
 } // namespace obe::Time

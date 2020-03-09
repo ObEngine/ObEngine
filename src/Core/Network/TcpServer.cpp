@@ -4,16 +4,16 @@
 
 namespace obe::Network
 {
-    TcpServer::TcpServer(
-        unsigned short port, std::string triggerNamespace, std::string triggerGroup)
+    TcpServer::TcpServer(Triggers::TriggerManager& triggers, unsigned short port,
+        std::string triggerNamespace, std::string triggerGroup)
     {
         if (!triggerNamespace.empty())
         {
-            m_socketTriggers = Triggers::TriggerManager::GetInstance().createTriggerGroup(
-                triggerNamespace, triggerGroup);
+            m_socketTriggers
+                = triggers.createTriggerGroup(triggerNamespace, triggerGroup);
             m_socketTriggers->addTrigger("DataReceived")
-                ->addTrigger("Connected")
-                ->addTrigger("Disconnected");
+                .addTrigger("Connected")
+                .addTrigger("Disconnected");
         }
         m_listener.setBlocking(false);
         m_listener.listen(port);
