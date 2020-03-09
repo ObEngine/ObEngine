@@ -82,15 +82,14 @@ namespace obe::Engine
         }
     }
 
-    void Engine::initLogger()
+    void Engine::initLogger() const
     {
         const unsigned int logLevel
             = m_config.get().at("Debug").getDataNode("logLevel").get<int>();
-        const spdlog::level::level_enum lvle
-            = static_cast<spdlog::level::level_enum>(logLevel);
+        const auto level = static_cast<spdlog::level::level_enum>(logLevel);
         if (m_config.get().contains("Debug")
             && m_config.get().at("Debug").contains("logLevel"))
-            Debug::Log->set_level(lvle);
+            Debug::Log->set_level(level);
         Debug::Log->info("Log Level {}", logLevel);
     }
 
@@ -124,6 +123,8 @@ namespace obe::Engine
                 m_input.requireRefresh();
                 if (event.key.code == sf::Keyboard::Escape)
                     m_window.close();
+                break;
+            default:
                 break;
             }
         }

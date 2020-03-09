@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
@@ -24,7 +23,7 @@ namespace obe::Input
 
     public:
         /**
-         * \brief Constuctor of InputButtonMonition
+         * \brief Constructor of InputButtonMonition
          * \param button Pointer to the InputButton to monitor
          */
         InputButtonMonitor(InputButton& button);
@@ -33,16 +32,16 @@ namespace obe::Input
          * \brief Gets a pointer to the monitored InputButton
          * \return A pointer to the monitored InputButton
          */
-        InputButton& getButton() const;
+        [[nodiscard]] InputButton& getButton() const;
         /**
          * \brief Gets the state of the InputButton (InputButtonState)
          * \return The enum of value from InputButtonState corresponding to the
-         * state of the monitored InputButton
+         *         state of the monitored InputButton
          */
-        InputButtonState getState() const;
+        [[nodiscard]] InputButtonState getState() const;
         /**
          * \brief Updates the InputButtonMonitor (needed to modify the linked
-         * InputButtonState)
+         *        InputButtonState)
          */
         void update(Triggers::TriggerGroupPtr triggers);
     };

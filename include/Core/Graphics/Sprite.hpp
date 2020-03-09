@@ -3,18 +3,17 @@
 #include <sfe/ComplexSprite.hpp>
 
 #include <Component/Component.hpp>
+#include <Engine/ResourceManager.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/Shader.hpp>
-#include <Script/GlobalState.hpp>
-#include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referential.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Types/Selectable.hpp>
-#include <Types/Serializable.hpp>
 
 namespace obe::Graphics
 {
+    void MakeNullTexture();
     /**
      * \brief Type of the handle point of a Sprite (either scale or rotate)
      */
@@ -65,18 +64,18 @@ namespace obe::Graphics
          * \brief Get the rect of the parent Sprite
          * \return The Rect of the parent Sprite
          */
-        Transform::Rect& getRect() const;
+        [[nodiscard]] Transform::Rect& getRect() const;
         /**
          * \brief Get the Referential of the HandlePoint
          * \return The Referential value
          */
-        Transform::Referential getReferential() const;
+        [[nodiscard]] Transform::Referential getReferential() const;
         /**
          * \brief Gets the type of the SpriteHandlePoint (either Rotate or
          * Scale) \return An enum value from SpriteHandlePointType
          * representing the type of the Handle Point
          */
-        SpriteHandlePointType getType() const;
+        [[nodiscard]] SpriteHandlePointType getType() const;
         /**
          * \brief Move the HandlePoint to the given Position
          * \param position Position where the HandlePoint should move to
@@ -93,17 +92,18 @@ namespace obe::Graphics
     class Sprite : public Transform::UnitBasedObject,
                    public Types::Selectable,
                    public Transform::Rect,
-                   public Component::Component<Sprite>
+                   public Component::Component<Sprite>,
+                   public Engine::ResourceManagedObject
     {
     private:
-        std::vector<SpriteHandlePoint> m_handlePoints;
+        std::vector<SpriteHandlePoint> m_handlePoints {};
         int m_layer = 1;
         std::string m_parentId = "";
         std::string m_path = "";
         PositionTransformer m_positionTransformer;
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;
-        const sf::Texture* m_texture;
+        std::shared_ptr<sf::Texture> m_texture;
         bool m_visible = true;
         int m_zdepth = 0;
         bool m_antiAliasing = true;
@@ -120,8 +120,8 @@ namespace obe::Graphics
         explicit Sprite(const std::string& id);
         /**
          * \brief Draws the handle used to scale the Sprite
-         * \param spritePositionX x Coordinate of the Offset of the Handle
-         * \param spritePositionY y Coordinate of the Offset of the Handle
+         * \param surface RenderSurface where to render the handle
+         * \param camera contains the offset for drawing the handle
          */
         void drawHandle(
             sf::RenderTarget& surface, const Transform::UnitVector& camera) const;
@@ -134,46 +134,49 @@ namespace obe::Graphics
          * \brief Get the blend color of the Sprite
          * \return A sf::Color containing the blend color of the Sprite
          */
-        sf::Color getColor() const;
+        [[nodiscard]] sf::Color getColor() const;
         /**
          * \brief Get the HandlePoint of the Sprite at the given
-         * Position(x, y) \param cameraPosition Position of the Scene Camera
+         *        Position(x, y)
+         * \param cameraPosition Position of the Scene Camera
          * \param posX x Coordinate of the Position you try to pick the
-         * HandlePoint \param posY y Coordinate of the Position you try to pick
-         * the HandlePoint \return The adress of the HandlePoint if the position
-         * is correct, nullptr otherwise
+         *        HandlePoint
+         * \param posY y Coordinate of the Position you try to pick
+         *        the HandlePoint
+         * \return The address of the HandlePoint if the position
+         *         is correct, nullptr otherwise
          */
         SpriteHandlePoint* getHandlePoint(
             Transform::UnitVector& cameraPosition, int posX, int posY);
         /**
          * \brief Get the layer of the Sprite
          * \return An int containing the Layer where the sprite is (Higher layer
-         * is behind lower ones)
+         *         is behind lower ones)
          */
-        int getLayer() const;
+        [[nodiscard]] int getLayer() const;
         /**
          * \brief Get the Id of the parent
          * \return A std::string containing the id of the parent
          */
-        std::string getParentId() const;
+        [[nodiscard]] std::string getParentId() const;
         /**
          * \brief Get the path of the sf::Texture loaded by the Sprite
          * \return A std::string containing the path of the sf::Texture loaded
-         * by the Sprite (if any)
+         *         by the Sprite (if any)
          */
-        std::string getPath() const;
+        [[nodiscard]] std::string getPath() const;
         /**
          * \brief Gets the PositionTransformer used by the Sprite
          * \return The PositionTransformer used by the Sprite
          */
-        PositionTransformer getPositionTransformer() const;
+        [[nodiscard]] PositionTransformer getPositionTransformer() const;
         /**
          * \brief Get the Bounding Rect of the internal Sprite
          * \return A sf::FloatRect representing the bounding rectangle of the
-         * internal Sprite
+         *         internal Sprite
          */
         sf::FloatRect getRect();
-        Shader* getShader() const;
+        [[nodiscard]] Shader& getShader() const;
         /**
          * \brief Get the internal Sprite of the Sprite
          * \return A reference to the internal Sprite of the Sprite
@@ -182,45 +185,45 @@ namespace obe::Graphics
         /**
          * \brief Get the height of the Sprite
          * \return The height of the Sprite (Including transformations such as
-         * rotations / scaling)
+         *         rotations / scaling)
          */
-        double getSpriteHeight() const;
+        [[nodiscard]] double getSpriteHeight() const;
         /**
          * \brief Get the width of the Sprite
          * \return The width of the Sprite (Including transformations such as
-         * rotations / scaling)
+         *         rotations / scaling)
          */
-        double getSpriteWidth() const;
+        [[nodiscard]] double getSpriteWidth() const;
         /**
          * \brief Gets a reference to the texture of the Sprite
          * \return A reference to the current texture of the Sprite
          */
-        const sf::Texture& getTexture() const;
+        [[nodiscard]] const sf::Texture& getTexture() const;
         /**
          * \brief Get the x Coordinate of the scale factor of the Sprite
          * \return -1 if the Sprite has been horizontally flipped, 1
-         * otherwise
+         *         otherwise
          */
-        int getXScaleFactor() const;
+        [[nodiscard]] int getXScaleFactor() const;
         /**
          * \brief Get the y Coordinate of the scale factor of the Sprite
          * \return -1 if the Sprite has been vertically flipped, 1
-         * otherwise
+         *         otherwise
          */
-        int getYScaleFactor() const;
+        [[nodiscard]] int getYScaleFactor() const;
         /**
          * \brief Get the Z-depth of the Sprite
          * \return An int containing the z-depth where the sprite is (Higher
-         * z-depth is behind lower ones)
+         *         z-depth is behind lower ones)
          */
-        int getZDepth() const;
-        bool getAntiAliasing() const;
-        bool hasShader() const;
+        [[nodiscard]] int getZDepth() const;
+        [[nodiscard]] bool getAntiAliasing() const;
+        [[nodiscard]] bool hasShader() const;
         /**
          * \brief Get the visibility of the Sprite
          * \return true if the Sprite is visible, false otherwise
          */
-        bool isVisible() const;
+        [[nodiscard]] bool isVisible() const;
         /**
          * \brief Loads the Sprite from a ComplexNode
          * \param data ComplexNode containing the data of the Sprite
@@ -234,7 +237,7 @@ namespace obe::Graphics
         /**
          * \brief Rotate the sprite
          * \param addRotate The angle to add to the Sprite (0 -> 360 where
-         * 0 / 360 is the top)
+         *        0 / 360 is the top)
          */
         void rotate(double addRotate);
         /**
@@ -258,7 +261,7 @@ namespace obe::Graphics
          * \brief Sets the new Position Transform of the Sprite
          * \param transformer New PositionTransformer of the Sprite
          */
-        void setPositionTransformer(PositionTransformer transformer);
+        void setPositionTransformer(const PositionTransformer& transformer);
         /**
          * \brief Set the rotation of the sprite
          * \param rotate The new angle of the Sprite (0 -> 360 where 0 /
@@ -289,19 +292,19 @@ namespace obe::Graphics
          * \brief Set the translation origin of the Sprite
          * \param x x Coordinate of the new translation origin of the Sprite
          * \param y y Coordinate of the new translation origin of
-         * the Sprite
+         *        the Sprite
          */
         void setTranslationOrigin(int x, int y);
         /**
          * \brief Set the visibility of the Sprite
          * \param visible If visible is equal to true, the Sprite will be
-         * visible, if visible is equal to false, it won't be visible
+         *        visible, if visible is equal to false, it won't be visible
          */
         void setVisible(bool visible);
         /**
          * \brief Set the Z-Depth of the Sprite (SubLayers)
          * \param zdepth z-depth of the Sprite (Higher z-depth is behind lower
-         * ones)
+         *        ones)
          */
         void setZDepth(int zdepth);
         void setAntiAliasing(bool antiAliasing);
@@ -311,6 +314,7 @@ namespace obe::Graphics
         void useTextureSize();
 
         void draw(sf::RenderTarget& surface, const Transform::UnitVector& camera);
-        std::string_view type() const override;
+        void attachResourceManager(Engine::ResourceManager& resources) override;
+        [[nodiscard]] std::string_view type() const override;
     };
 } // namespace obe::Graphics

@@ -51,7 +51,7 @@ namespace obe::Input
          * \brief Check if the InputAction is enabled
          * \return true if the InputAction is enabled, false otherwise
          */
-        bool check() const;
+        [[nodiscard]] bool check() const;
         /**
          * \brief Clears all the InputCondition of the InputAction
          */
@@ -66,18 +66,18 @@ namespace obe::Input
          * \brief Get all the contexts the InputAction is in
          * \return A std::vector of std::string containing all the contexts
          */
-        std::vector<std::string> getContexts() const;
+        [[nodiscard]] std::vector<std::string> getContexts() const;
         /**
          * \brief Gets the delay required between two InputAction triggerings
          * \return The delay required between two InputAction triggerings (in
          * ms)
          */
-        Time::TimeUnit getInterval() const;
+        [[nodiscard]] Time::TimeUnit getInterval() const;
         /**
          * \brief Gets the delay between two 'Hold' callbacks activations
          * \return The delay required between two 'Hold' callbacks activations
          */
-        Time::TimeUnit getRepeat() const;
+        [[nodiscard]] Time::TimeUnit getRepeat() const;
         /**
          * \brief Sets the delay required between two InputAction triggerings
          * \param delay Delay required between two InputAction triggerings

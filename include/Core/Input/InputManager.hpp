@@ -19,13 +19,13 @@ namespace obe::Input
     {
     private:
         bool m_refresh = true;
-        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs;
-        std::vector<std::shared_ptr<InputButtonMonitor>> m_monitors;
-        std::vector<std::weak_ptr<InputButtonMonitor>> m_monitorsRefCounter;
+        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs {};
+        std::vector<std::shared_ptr<InputButtonMonitor>> m_monitors {};
+        std::vector<std::weak_ptr<InputButtonMonitor>> m_monitorsRefCounter {};
         Triggers::TriggerGroupPtr t_actions;
         Triggers::TriggerGroupPtr t_inputs;
-        std::vector<std::shared_ptr<InputAction>> m_allActions;
-        std::vector<std::weak_ptr<InputAction>> m_currentActions;
+        std::vector<std::shared_ptr<InputAction>> m_allActions {};
+        std::vector<std::weak_ptr<InputAction>> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
         void createInputMap();
         void createGamepadMap();
@@ -39,9 +39,9 @@ namespace obe::Input
         void init(Triggers::TriggerManager& triggers);
         /**
          * \brief Get if a KeyboardAction exists
-         * \param actionId Id of the KeyboardAction to check the existance
+         * \param actionId Id of the KeyboardAction to check the existence
          * \return true if the KeyboardAction is found in the KeyboardManager,
-         * false otherwise
+         *         false otherwise
          */
         bool actionExists(const std::string& actionId);
         /**
@@ -59,7 +59,7 @@ namespace obe::Input
         /**
          * \brief Gets all the contexts currently used by the InputManager
          * \return A std::vector of std::string containing all the contexts used
-         * by the InputManager
+         *         by the InputManager
          */
         std::vector<std::string> getContexts();
         /**
@@ -73,7 +73,7 @@ namespace obe::Input
         /**
          * \brief Configure KeyboardAction from a vili configuration file
          * \param config Reference to the vili ComplexAttribute used to
-         * configure the KeyboardManager
+         *        configure the KeyboardManager
          */
         void configure(vili::ComplexNode& config);
         /**

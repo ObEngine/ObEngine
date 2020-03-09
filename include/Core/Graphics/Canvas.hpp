@@ -53,7 +53,7 @@ namespace obe::Graphics::Canvas
          * \param target Target where to render the result
          */
         virtual void draw(sf::RenderTexture& target) = 0;
-        virtual ~CanvasElement();
+        virtual ~CanvasElement() = default;
 
         /**
          * \brief Change layer or object and will ask the Canvas to reorder
@@ -124,7 +124,7 @@ namespace obe::Graphics::Canvas
     };
 
     /**
-     * \brief Horizontal Alignment state of Text
+     * \brief Horizontal alignment state of Text
      * \lua_bind{Canvas.TextAlignment.Horizontal}
      */
     enum class TextHorizontalAlign
@@ -135,7 +135,7 @@ namespace obe::Graphics::Canvas
     };
 
     /**
-     * \brief Vertical Aligment of Text
+     * \brief Vertical alignment of Text
      * \lua_bind{Canvas.TextAlignment.Vertical}
      */
     enum class TextVerticalAlign
@@ -234,7 +234,7 @@ namespace obe::Graphics::Canvas
     {
     private:
         sf::RenderTexture m_canvas;
-        std::vector<CanvasElement::Ptr> m_elements;
+        std::vector<CanvasElement::Ptr> m_elements {};
         bool m_sortRequired = true;
         void sortElements();
 
@@ -297,7 +297,7 @@ namespace obe::Graphics::Canvas
 
     template <class T> inline T& Canvas::add(const std::string& id)
     {
-        if (this->get(id) == nullptr) // TOFIX: Bad practice
+        if (this->get(id) == nullptr) // FIX: Bad practice
         {
             m_sortRequired = true;
             std::unique_ptr<T> newElement = std::make_unique<T>(*this, id);

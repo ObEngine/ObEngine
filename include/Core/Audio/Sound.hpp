@@ -31,7 +31,7 @@ namespace obe::Audio
         SoLoud::Soloud& m_manager;
         std::shared_ptr<SoLoud::AudioSource> m_source;
         SoLoud::handle m_handle;
-        unsigned int m_baseSamplerate;
+        float m_baseSamplerate;
         float m_pitch = 1.f;
         bool m_looping = false;
         float m_volume = 1.f;
@@ -39,23 +39,23 @@ namespace obe::Audio
 
     public:
         Sound(SoLoud::Soloud& manager, std::shared_ptr<SoLoud::AudioSource> source);
-        double getDuration() const;
+        [[nodiscard]] double getDuration() const;
         void play();
-        void pause();
-        void stop();
+        void pause() const;
+        void stop() const;
 
         void setPitch(float pitch);
-        float getPitch() const;
+        [[nodiscard]] float getPitch() const;
 
-        SoundStatus getStatus() const;
+        [[nodiscard]] SoundStatus getStatus() const;
 
-        double getOffset() const;
-        void setOffset(double offset);
+        [[nodiscard]] double getOffset() const;
+        void setOffset(double offset) const;
 
-        float getVolume() const;
+        [[nodiscard]] float getVolume() const;
         void setVolume(float volume);
 
         void setLooping(bool looping);
-        bool getLooping() const;
+        [[nodiscard]] bool getLooping() const;
     };
 }

@@ -27,7 +27,7 @@ namespace obe::Collision
     private:
         double m_acceleration = 0;
         double m_angle = 0;
-        std::vector<TrajectoryCheckFunction> m_checks;
+        std::vector<TrajectoryCheckFunction> m_checks {};
         OnCollideCallback m_onCollideCallback;
         double m_speed = 0;
         bool m_static = false;
@@ -40,13 +40,13 @@ namespace obe::Collision
         Trajectory& addAngle(double angle);
         void addCheck(const TrajectoryCheckFunction& check);
         Trajectory& addSpeed(double speed);
-        double getAcceleration() const;
-        double getAngle() const;
+        [[nodiscard]] double getAcceleration() const;
+        [[nodiscard]] double getAngle() const;
         std::vector<TrajectoryCheckFunction>& getChecks();
         OnCollideCallback& getOnCollideCallback();
-        double getSpeed() const;
-        bool getStatic() const;
-        Transform::Units getUnit() const;
+        [[nodiscard]] double getSpeed() const;
+        [[nodiscard]] bool getStatic() const;
+        [[nodiscard]] Transform::Units getUnit() const;
         void onCollide(const OnCollideCallback& callback);
         Trajectory& setAcceleration(double acceleration);
         Trajectory& setAngle(double angle);

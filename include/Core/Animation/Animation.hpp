@@ -6,7 +6,14 @@
 
 #include <Animation/AnimationGroup.hpp>
 #include <System/Path.hpp>
-#include <Transform/UnitVector.hpp>
+
+namespace obe
+{
+    namespace Engine
+    {
+        class ResourceManager;
+    }
+}
 
 namespace obe::Animation
 {
@@ -80,7 +87,7 @@ namespace obe::Animation
         unsigned int m_codeIndex = 0;
         bool m_feedInstructions = true;
 
-        std::vector<sf::Texture*> m_textures;
+        std::vector<std::shared_ptr<sf::Texture>> m_textures;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
         std::string m_currentGroupName = "NONE";
         std::string m_nextAnimation = "";
@@ -100,7 +107,7 @@ namespace obe::Animation
          * \todo Make Animation a serializable type instead of this "applyParameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)
          * \param parameters A vili::ComplexAttribute that contains the
-         *        following facultative parameters :
+         *        following optional parameters :
          *        - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in
          *                          pixels.
          *        - spriteOffsetY : y Coordinate of the Sprite Offset in the Animation in
@@ -115,14 +122,14 @@ namespace obe::Animation
          * \return A std::vector of std::string with all the names of the
          *         AnimationGroup
          */
-        std::vector<std::string> getAllAnimationGroupName() const;
+        [[nodiscard]] std::vector<std::string> getAllAnimationGroupName() const;
         /**
          * \brief Get the default delay of the Animation.
-         *        The delay will be transfered to AnimationGroup children if not
+         *        The delay will be transferred to AnimationGroup children if not
          *        specified.
          * \return The default delay of the Animation in milliseconds.
          */
-        unsigned int getDelay() const;
+        [[nodiscard]] unsigned int getDelay() const;
         /**
          * \brief Get AnimationGroup pointer by groupName.\n
          *        It will throws a
@@ -137,7 +144,7 @@ namespace obe::Animation
          * \brief Get the Animation name
          * \return A std::string containing the name of the Animation
          */
-        std::string getName() const;
+        [[nodiscard]] std::string getName() const;
 
         /**
          * \brief Get the Animation Play Mode
@@ -147,7 +154,7 @@ namespace obe::Animation
          *         - AnimationPlayMode::Loop
          *         - AnimationPlayMode::Force
          */
-        AnimationPlayMode getPlayMode() const;
+        [[nodiscard]] AnimationPlayMode getPlayMode() const;
         /**
          * \brief Get the Animation Status
          * \return An enum value containing the AnimationStatus, it can be one
@@ -155,26 +162,26 @@ namespace obe::Animation
          *         - AnimationStatus::Play
          *         - AnimationStatus::Call
          */
-        AnimationStatus getStatus() const;
+        [[nodiscard]] AnimationStatus getStatus() const;
         /**
          * \brief Get the name of the Animation to call when the AnimationStatus
          *        of the Animation is equal to AnimationStatus::Call
          * \return A std::string containing the name of the Animation that will be called.
          */
-        std::string getCalledAnimation() const;
+        [[nodiscard]] std::string getCalledAnimation() const;
         /**
          * \brief Get the name of the current AnimationGroup
          * \return A std::string containing the name of the current
          *         AnimationGroup
          */
-        std::string getCurrentAnimationGroup() const;
+        [[nodiscard]] std::string getCurrentAnimationGroup() const;
         /**
          * \brief Return the Animation priority
          * \return An int containing the priority of the Animation.
          *         Higher value is higher priority = Can't be interrupted by
          *         lower priority.
          */
-        int getPriority() const;
+        [[nodiscard]] int getPriority() const;
         /**
          * \brief Get the sf::Texture containing the current texture in the
          *        Animation
@@ -191,14 +198,17 @@ namespace obe::Animation
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
          */
-        bool isOver() const;
+        [[nodiscard]] bool isOver() const;
         /**
          * \brief Configure an Animation using the Animation configuration file
          *        (Vili file)
          * \param path System::Path to the Animation config file
          *        (.ani.vili file extension)
+         * \param resources pointer to the ResourceManager
+         *        that will load the textures for the Animation
          */
-        void loadAnimation(const System::Path& path);
+        void loadAnimation(
+            const System::Path& path, Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
@@ -217,6 +227,6 @@ namespace obe::Animation
         /**
          * \brief Gets the anti-aliasing status for the Animation
          */
-        bool getAntiAliasing();
+        [[nodiscard]] bool getAntiAliasing() const;
     };
 } // namespace obe::Animation

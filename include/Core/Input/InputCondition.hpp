@@ -23,8 +23,6 @@ namespace obe::Input
         bool m_enabled = false;
         InputCombination m_triggerConditions;
 
-        bool isKeyAlreadyInCombination(InputButton* button);
-
     public:
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
@@ -36,7 +34,7 @@ namespace obe::Input
          * \brief Checks if the condition is fulfilled
          * \return true if the InputCondition is fulfilled, false otherwise
          */
-        bool check() const;
+        [[nodiscard]] bool check() const;
         /**
          * \brief Clears the InputCondition
          */
@@ -45,7 +43,7 @@ namespace obe::Input
          * \brief Gets the InputCombination used by the InputCondition
          * \return The InputCombination used by the InputCondition
          */
-        InputCombination getCombination() const;
+        [[nodiscard]] InputCombination getCombination() const;
         /**
          * \brief Sets the new required InputCombination to trigger the
          * InputCondition \param combination The new InputCombination

@@ -1,8 +1,5 @@
 #include <Graphics/Canvas.hpp>
-#include <Graphics/ResourceManager.hpp>
-#include <Script/GlobalState.hpp>
 #include <System/Loaders.hpp>
-#include <System/Path.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Graphics::Canvas
@@ -10,10 +7,6 @@ namespace obe::Graphics::Canvas
     CanvasElement::CanvasElement(Canvas& parent, const std::string& id)
         : ProtectedIdentifiable(id)
         , parent(parent)
-    {
-    }
-
-    CanvasElement::~CanvasElement()
     {
     }
 
@@ -60,6 +53,8 @@ namespace obe::Graphics::Canvas
 
     Text::Text(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
+        , h_align()
+        , v_align()
     {
     }
 

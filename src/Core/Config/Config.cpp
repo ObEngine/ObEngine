@@ -14,7 +14,7 @@ namespace obe::Config
         // TODO: Do not modify MountedPaths directly
         std::reverse(
             System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
-        System::LoaderMultipleResult loadResult
+        const System::LoaderMultipleResult loadResult
             = System::Path("Data/config.cfg.vili")
                   .loadAll(System::Loaders::dataLoader, m_config);
         for (const std::string path : loadResult.paths())
@@ -24,7 +24,7 @@ namespace obe::Config
         std::reverse(
             System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
     }
-    vili::ComplexNode& ConfigurationManager::get()
+    vili::ComplexNode& ConfigurationManager::get() const
     {
         return m_config.root();
     }

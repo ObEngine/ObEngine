@@ -1,6 +1,4 @@
-#include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
-#include <System/Loaders.hpp>
 #include <Utils/FileUtils.hpp>
 
 #include <spdlog/sinks/basic_file_sink.h>
@@ -37,6 +35,6 @@ namespace obe::Debug
         Log->set_pattern("[%H:%M:%S.%e]<%l> : %v");
         Log->set_level(spdlog::level::info);
         Log->flush_on(spdlog::level::trace);
-        Log->info("Logger initialised");
+        Log->info("Logger initialized");
     }
 } // namespace obe::Debug

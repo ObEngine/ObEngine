@@ -29,7 +29,7 @@ namespace obe::Graphics
     extern CoordinateTransformer Camera;
     /**
      * \brief CoordinateTransformer which only uses the base position (no transformation)
-     * \bind{PositionTransfomer.Position}
+     * \bind{PositionTransformer.Position}
      */
     extern CoordinateTransformer Position;
 
@@ -69,7 +69,7 @@ namespace obe::Graphics
          * \return The name of the CoordinateTransformer of x Coordinate in a
          * std::string
          */
-        std::string getXTransformerName() const;
+        [[nodiscard]] std::string getXTransformerName() const;
         /**
          * \brief Gets the CoordinateTransformer of y Coordinate
          * \return The CoordinateTransformer of y Coordinate
@@ -77,14 +77,15 @@ namespace obe::Graphics
         CoordinateTransformer& getYTransformer();
         /**
          * \brief Gets the name of the CoordinateTransformer of y Coordinate
-         * \return The name of the CoordinateTransformer of y Coordinate in a
-         * std::string
+         * \return The name of the CoordinateTransformer of y Coordinate
          */
-        std::string getYTransformerName() const;
+        [[nodiscard]] std::string getYTransformerName() const;
         /**
          * \brief Method used by the Sprite to get the Position once
-         * transformed \param position Base Position of the element \param
-         * camera Position of the Camera \param layer Layer of the element
+         *        transformed
+         * \param position Base Position of the element
+         * \param camera Position of the Camera
+         * \param layer Layer of the element
          * \return The new transformer position
          */
         Transform::UnitVector operator()(const Transform::UnitVector& position,

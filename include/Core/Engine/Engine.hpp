@@ -2,7 +2,7 @@
 
 #include <Audio/AudioManager.hpp>
 #include <Config/Config.hpp>
-#include <Graphics/ResourceManager.hpp>
+#include <Engine/ResourceManager.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
@@ -11,8 +11,6 @@
 #include <Time/FramerateManager.hpp>
 #include <Triggers/TriggerManager.hpp>
 #include <sol/sol.hpp>
-#include <spdlog/logger.h>
-#include <vili/ViliParser.hpp>
 
 namespace obe::Engine
 {
@@ -21,24 +19,24 @@ namespace obe::Engine
     protected:
         sol::state m_lua;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
-        Scene::Scene m_scene;
+        Scene::Scene m_scene {};
         System::Cursor m_cursor;
-        System::Window m_window;
+        System::Window m_window {};
 
         // Managers
-        Audio::AudioManager m_audio;
-        Config::ConfigurationManager m_config;
-        Graphics::ResourceManager m_resources;
-        Input::InputManager m_input;
-        Time::FramerateManager m_framerate;
-        Triggers::TriggerManager m_triggers;
+        Audio::AudioManager m_audio {};
+        Config::ConfigurationManager m_config {};
+        ResourceManager m_resources {};
+        Input::InputManager m_input {};
+        Time::FramerateManager m_framerate {};
+        Triggers::TriggerManager m_triggers {};
 
         // TriggerGroups
-        Triggers::TriggerGroupPtr t_game;
+        Triggers::TriggerGroupPtr t_game {};
 
-        // Initialisation
+        // Initialization
         void initConfig();
-        void initLogger();
+        void initLogger() const;
         void initTriggers();
         void initInput();
         void initFramerate();

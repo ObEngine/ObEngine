@@ -5,7 +5,7 @@
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>
-#include <Graphics/ResourceManager.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Script/GlobalState.hpp>
 #include <System/Path.hpp>
@@ -39,11 +39,8 @@ namespace obe
         Debug::Log->debug("<ObEngine> Initialising Lua State");
         Script::InitScriptEngine();
 
-        Debug::Log->debug("<ObEngine> Loading ResourceManager");
-        Graphics::ResourceManager::GetInstance();
-
-        Debug::Log->debug("<ObEngine> Loading Audio Engine");
-        Audio::AudioManager::GetInstance();
+        Debug::Log->debug("<ObEngine> Initialising NullTexture");
+        Graphics::MakeNullTexture();
 
         Debug::Log->info("<ObEngine> Initialisation over !");
     }

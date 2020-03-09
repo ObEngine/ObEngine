@@ -27,9 +27,9 @@ namespace obe::Graphics
 
     void Color::fromHsv(int H, double S, double V)
     {
-        double C = S * V;
-        double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
-        double m = V - C;
+        const double C = S * V;
+        const double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
+        const double m = V - C;
         double Rs, Gs, Bs;
 
         if (H >= 0 && H < 60)

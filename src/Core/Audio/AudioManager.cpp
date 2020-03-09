@@ -21,7 +21,7 @@ namespace obe::Audio
 
     Sound AudioManager::load(const System::Path& path, LoadPolicy loadPolicy)
     {
-        std::string filePath = path.find(System::PathType::File);
+        const std::string filePath = path.find(System::PathType::File);
         if (loadPolicy == LoadPolicy::Cache && m_cache.find(filePath) == m_cache.end())
         {
             std::shared_ptr<SoLoud::Wav> sample = std::make_shared<SoLoud::Wav>();

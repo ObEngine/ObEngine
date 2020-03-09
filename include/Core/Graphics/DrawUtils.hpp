@@ -13,6 +13,7 @@ namespace obe::Graphics::Utils
 {
     /**
      * \brief Draws a Point
+     * \param surface RenderSurface where to render the point
      * \param x x Coordinate of the position of the Point
      * \param y y Coordinate of the position of the Point
      * \param radius Radius of the Point to draw
@@ -22,6 +23,7 @@ namespace obe::Graphics::Utils
         sf::RenderTarget& surface, int x, int y, float radius, sf::Color color);
     /**
      * \brief Draws a Line
+     * \param surface RenderSurface where to render the line
      * \param x1 x Coordinate of the first point of the line
      * \param y1 y Coordinate of the first point of the line
      * \param x2 x Coordinate of the second point of the line
@@ -34,6 +36,7 @@ namespace obe::Graphics::Utils
     using DrawPolygonOptions = std::unordered_map<std::string, std::any>;
     /**
      * \brief Draws a Polygon
+     * \param surface RenderSurface where to render the polygon
      * \param points List of all the Polygon points positions
      * \param options Drawing options :\n
      * - <lines> bool : Are the lines of the Polygon visible ? (true =

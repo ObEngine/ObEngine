@@ -1,5 +1,3 @@
-#include <vili/ErrorHandler.hpp>
-
 #include <Input/InputManager.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <Triggers/TriggerManager.hpp>
@@ -81,7 +79,7 @@ namespace obe::Input
             sf::Keyboard::Num8, "8", "8", InputType::Numeric);
         m_inputs["9"] = std::make_unique<InputButton>(
             sf::Keyboard::Num9, "9", "9", InputType::Numeric);
-        // Numpad
+        // Numeric pad
         m_inputs["NumPad0"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad0, "NumPad0", "0", InputType::NumericNP);
         m_inputs["NumPad1"] = std::make_unique<InputButton>(
@@ -240,7 +238,7 @@ namespace obe::Input
                                          const std::string& axisName) {
                 if (sf::Joystick::hasAxis(gamepadIndex, axis))
                 {
-                    std::string gamepadAxisName
+                    const std::string gamepadAxisName
                         = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
                     std::pair<AxisThresholdDirection, float> leftX(
                         AxisThresholdDirection::Less, -80);
@@ -256,7 +254,7 @@ namespace obe::Input
                                        const std::string& axisName) {
                 if (sf::Joystick::hasAxis(gamepadIndex, axis))
                 {
-                    std::string gamepadAxisName
+                    const std::string gamepadAxisName
                         = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
                     std::pair<AxisThresholdDirection, float> upY(
                         AxisThresholdDirection::Less, -80);

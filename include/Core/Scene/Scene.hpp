@@ -17,6 +17,7 @@ namespace obe
 
 namespace obe::Scene
 {
+    using OnSceneLoadCallback = std::function<void(const std::string&)>;
     /**
      * \brief The Scene class is a container of all the game elements
      */
@@ -31,6 +32,7 @@ namespace obe::Scene
         Transform::Referential m_cameraInitialReferential;
         bool m_updateState = true;
 
+        Engine::ResourceManager* m_resources = nullptr;
         std::vector<std::unique_ptr<Graphics::Sprite>> m_spriteArray;
         std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
         std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
@@ -40,7 +42,7 @@ namespace obe::Scene
         vili::ViliParser m_levelFile;
         std::string m_levelFileName;
         std::map<std::string, bool> m_showElements;
-        kaguya::LuaFunction m_onLoadCallback;
+        OnSceneLoadCallback m_onLoadCallback;
         Triggers::TriggerGroupPtr m_sceneTriggers;
 
     public:
@@ -54,6 +56,7 @@ namespace obe::Scene
          */
         ~Scene();
 
+        void attachResourceManager(Engine::ResourceManager& resources);
         /**
          * \brief Loads the Scene from a .map.vili file
          * \param filename Name of the file located in Data/Maps (using
@@ -73,7 +76,7 @@ namespace obe::Scene
          * been loaded
          */
         void setFutureLoadFromFile(
-            const std::string& filename, kaguya::LuaFunction callback);
+            const std::string& filename, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -82,7 +85,7 @@ namespace obe::Scene
          * \brief Dumps all elements of the Scene in a vili tree
          * \return
          */
-        vili::ViliParser* dump(bool saveCameraPosition);
+        vili::ViliParser dump(bool saveCameraPosition);
         /**
          * \brief Updates all elements in the Scene
          */
@@ -95,7 +98,7 @@ namespace obe::Scene
          * \brief Get the name of the level
          * \return A std::string containing the name of the level
          */
-        std::string getLevelName() const;
+        [[nodiscard]] std::string getLevelName() const;
         /**
          * \brief Sets the name of the level
          * \param newName A std::string containing the new name of the level
@@ -112,16 +115,16 @@ namespace obe::Scene
          * \brief Creates a new GameObject
          * \param obj Type of the GameObject
          * \param id Id of the new GameObject (If empty the id will be randomly
-         * generated) \return A pointer to the newly created GameObject
+         *        generated) \return A pointer to the newly created GameObject
          */
-        Script::GameObject* createGameObject(
+        Script::GameObject& createGameObject(
             const std::string& obj, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return An unsigned int containing how many GameObjects are present
          * in the Scene
          */
-        unsigned int getGameObjectAmount() const;
+        [[nodiscard]] unsigned int getGameObjectAmount() const;
         /**
          * \brief Get all the GameObjects present in the Scene
          * \return
@@ -132,7 +135,7 @@ namespace obe::Scene
          * \param id Id of the GameObject to retrieve
          * \return A pointer to the GameObject
          */
-        Script::GameObject* getGameObject(const std::string& id);
+        Script::GameObject& getGameObject(const std::string& id);
         /**
          * \brief Check if a GameObject exists in the Scene
          * \param id Id of the GameObject to check the existence
@@ -150,7 +153,7 @@ namespace obe::Scene
          * \brief Gets the Scene Camera
          * \return A pointer to the Scene Camera
          */
-        Camera* getCamera();
+        Camera& getCamera();
 
         // Sprites
         /**
@@ -163,30 +166,33 @@ namespace obe::Scene
          * \param addToSceneRoot Add the Sprite to the root Scene Node if
          * true \return A pointer to the newly created Sprite
          */
-        Graphics::Sprite* createSprite(
+        Graphics::Sprite& createSprite(
             const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Sprites are present in the Scene
          * \return An unsigned int containing how many Sprites are present
          * in the Scene
          */
-        unsigned int getSpriteAmount() const;
+        [[nodiscard]] unsigned int getSpriteAmount() const;
         /**
          * \brief Get all the Sprites present in the Scene
          * \return A std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite*> getAllSprites();
+        std::vector<Graphics::Sprite&> getAllSprites();
         /**
          * \brief Get all the Sprites present in the Scene in the given
          * layer \param layer Layer to get all the Sprites from \return A
          * std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite*> getSpritesByLayer(int layer);
+        std::vector<Graphics::Sprite&> getSpritesByLayer(int layer);
         /**
+         * TODO: Check if passing the camera as a parameter is useful
          * \brief Get the first found Sprite with the BoundingRect
-         * including the given position \param position Position to check \param
-         * camera Camera position \param layer Layer where to check \return The
-         * pointer to a Sprite if found, nullptr otherwise
+         * including the given position
+         * \param position Position to check
+         * \param camera Camera position
+         * \param layer Layer where to check
+         * \return The pointer to a Sprite if found, nullptr otherwise
          */
         Graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position,
             const Transform::UnitVector& camera, int layer);
@@ -195,7 +201,7 @@ namespace obe::Scene
          * \param id Id of the Sprite to get
          * \return A pointer to the Sprite
          */
-        Graphics::Sprite* getSprite(const std::string& id);
+        Graphics::Sprite& getSprite(const std::string& id);
         /**
          * \brief Check if a Sprite exists in the Scene
          * \param id Id of the Sprite to check the existence
@@ -215,24 +221,25 @@ namespace obe::Scene
          * \param addToSceneRoot Add the Collider to the root Scene Node if true
          * \return A pointer to the newly created Collider
          */
-        Collision::PolygonalCollider* createCollider(
+        Collision::PolygonalCollider& createCollider(
             const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Colliders are present in the Scene
          * \return The amount of Colliders present in the Scene
          */
-        unsigned int getColliderAmount() const;
+        [[nodiscard]] unsigned int getColliderAmount() const;
         /**
          * \brief Get all the pointers of the Colliders in the Scene
          * \return A std::vector containing all the pointers of the Colliders
          * present in the Scene
          */
-        std::vector<Collision::PolygonalCollider*> getAllColliders() const;
+        [[nodiscard]] std::vector<Collision::PolygonalCollider&> getAllColliders() const;
         /**
          * \brief Get the first Collider found with a point on the given
-         * position \param position Position to get the Point of a Collider
+         *        position
+         * \param position Position to get the Point of a Collider
          * \return A std::pair containing the pointer to the Collider with a
-         * point at the given position and the index of the point
+         *         point at the given position and the index of the point
          */
         std::pair<Collision::PolygonalCollider*, int> getColliderPointByPosition(
             const Transform::UnitVector& position);
@@ -245,10 +252,11 @@ namespace obe::Scene
             const Transform::UnitVector& position);
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
-         * found) \param id Id of the Collider to retrieve \return A pointer to
-         * the Collider
+         *        found)
+         * \param id Id of the Collider to retrieve
+         * \return A pointer to the Collider
          */
-        Collision::PolygonalCollider* getCollider(const std::string& id);
+        Collision::PolygonalCollider& getCollider(const std::string& id);
         /**
          * \brief Check the existence of the Collider with given Id in the Scene
          * \param id Id of the Collider to check the existence
@@ -268,7 +276,7 @@ namespace obe::Scene
          * \return A std::string containing the folder where was loaded the map
          * file
          */
-        std::string getFilePath() const;
+        [[nodiscard]] std::string getFilePath() const;
         /**
          * \brief Reloads the Scene from the level file
          */
@@ -277,14 +285,15 @@ namespace obe::Scene
          * \brief Reloads the Scene from the level file
          * \param callback Lua Function called when the map has been reloaded
          */
-        void reload(kaguya::LuaFunction callback);
+        void reload(const OnSceneLoadCallback& callback);
         /**
          * \brief Name of the last loaded map file with loadFromFile method
          * \return A std::string containing the name of the last loaded map file
          * with loadFromFile method
          */
-        std::string getLevelFile() const;
+        [[nodiscard]] std::string getLevelFile() const;
         void enableShowSceneNodes(bool showNodes);
-        SceneNode* getSceneNodeByPosition(const Transform::UnitVector& position) const;
+        [[nodiscard]] SceneNode* getSceneNodeByPosition(
+            const Transform::UnitVector& position) const;
     };
 } // namespace obe::Scene

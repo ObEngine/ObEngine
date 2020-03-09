@@ -140,7 +140,7 @@ namespace obe::Input
                 auto inputCondition = [this](InputManager* inputManager,
                                           vili::Node* action, vili::DataNode* condition) {
                     InputCondition actionCondition;
-                    InputCombination combination
+                    const InputCombination combination
                         = this->makeCombination(condition->get<std::string>());
                     actionCondition.setCombination(combination);
                     Debug::Log->debug(
@@ -235,7 +235,7 @@ namespace obe::Input
 
         for (const auto& actionPtr : m_currentActions)
         {
-            if (auto action = actionPtr.lock())
+            if (const auto action = actionPtr.lock())
             {
                 for (const auto& context : action->getContexts())
                 {

@@ -7,7 +7,6 @@
 #include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>
-#include <Graphics/ResourceManager.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Modes/Game.hpp>
 #include <ObEngineCore.hpp>

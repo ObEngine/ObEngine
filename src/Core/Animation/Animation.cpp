@@ -1,7 +1,7 @@
 #include <Animation/Animation.hpp>
 
 #include <Debug/Logger.hpp>
-#include <Graphics/ResourceManager.hpp>
+#include <Engine/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
 
@@ -17,7 +17,7 @@ namespace obe::Animation
             return AnimationPlayMode::Force;
         throw aube::ErrorHandler::Raise(
             "ObEngine.Animation.AnimationPlayMode.UnknownPlayMode",
-            { { "playmode", animationPlayMode } });
+            { { "mode", animationPlayMode } });
     }
 
     std::string Animation::getCalledAnimation() const
@@ -37,7 +37,7 @@ namespace obe::Animation
 
     AnimationGroup& Animation::getAnimationGroup(const std::string& groupName)
     {
-        if (auto& group = m_groups.find(groupName); group != m_groups.end())
+        if (const auto group = m_groups.find(groupName); group != m_groups.end())
             return *group->second.get();
         throw aube::ErrorHandler::Raise(
             "ObEngine.Animation.Animation.AnimationGroupNotFound",
@@ -73,7 +73,8 @@ namespace obe::Animation
         return m_over;
     }
 
-    void Animation::loadAnimation(const System::Path& path)
+    void Animation::loadAnimation(
+        const System::Path& path, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
         vili::ViliParser animFile;
@@ -107,8 +108,19 @@ namespace obe::Animation
                 textureName = imageList.get(i).get<std::string>();
             Debug::Log->trace(
                 "<Animation> Loading Texture {0} in Animation {1}", textureName, m_name);
-            m_textures.push_back(Graphics::ResourceManager::GetInstance().getTexture(
-                path.add(textureName).toString(), m_antiAliasing));
+            std::string pathToTexture = path.add(textureName).toString();
+            if (resources)
+            {
+                m_textures.push_back(resources->getTexture(
+                    path.add(textureName).toString(), m_antiAliasing));
+            }
+            else
+            {
+                std::shared_ptr<sf::Texture> newTexture = std::make_shared<sf::Texture>();
+                newTexture->loadFromFile(path.add(textureName).find());
+                // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
+                m_textures.push_back(newTexture);
+            }
         }
         // Groups
         vili::ComplexNode& groups = animFile.at("Groups");
@@ -118,7 +130,7 @@ namespace obe::Animation
                 complex->getId(), std::make_unique<AnimationGroup>(complex->getId()));
             for (vili::DataNode* currentTexture : complex->at<vili::ArrayNode>("content"))
                 m_groups[complex->getId()]->pushTexture(
-                    m_textures[currentTexture->get<int>()]);
+                    m_textures[currentTexture->get<int>()].get());
             if (complex->contains(vili::NodeType::DataNode, "clock"))
                 m_groups[complex->getId()]->setDelay(
                     complex->at<vili::DataNode>("clock"));
@@ -160,7 +172,7 @@ namespace obe::Animation
             m_currentGroupName = currentCommand[1];
             if (currentCommand.size() == 3)
             {
-                int loops = stoi(currentCommand[2]);
+                const int loops = stoi(currentCommand[2]);
                 m_groups[m_currentGroupName]->setLoops(loops);
             }
             else
@@ -206,7 +218,7 @@ namespace obe::Animation
 
     void Animation::applyParameters(vili::ComplexNode& parameters)
     {
-        // TODO: Reimplement texture offset in a better way
+        // TODO: Re-implement texture offset in a better way
         if (parameters.contains(vili::NodeType::DataNode, "priority"))
             m_priority = parameters.at<vili::DataNode>("priority").get<int>();
     }
@@ -218,7 +230,7 @@ namespace obe::Animation
             if (m_codeIndex > m_code.size() - 1
                 && m_playMode != AnimationPlayMode::OneTime)
                 m_codeIndex = 0;
-            unsigned int delay = (m_sleep) ? m_sleep : m_delay;
+            const unsigned int delay = (m_sleep) ? m_sleep : m_delay;
             if (Time::epochAsMilliseconds() - m_clock > delay)
             {
                 m_clock = Time::epochAsMilliseconds();
@@ -242,7 +254,7 @@ namespace obe::Animation
         m_antiAliasing = antiAliasing;
     }
 
-    bool Animation::getAntiAliasing()
+    bool Animation::getAntiAliasing() const
     {
         return m_antiAliasing;
     }
@@ -250,7 +262,7 @@ namespace obe::Animation
     void Animation::reset()
     {
         Debug::Log->trace("<Animation> Resetting Animation {0}", m_name);
-        for (auto& it = m_groups.cbegin(); it != m_groups.cend(); ++it)
+        for (auto it = m_groups.cbegin(); it != m_groups.cend(); ++it)
             it->second->reset();
         m_status = AnimationStatus::Play;
         m_codeIndex = 0;

@@ -12,6 +12,6 @@ namespace obe::Config
     public:
         ConfigurationManager();
         void load();
-        vili::ComplexNode& get();
+        vili::ComplexNode& get() const;
     };
 } // namespace obe::System

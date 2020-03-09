@@ -1,14 +1,9 @@
 #include <cmath>
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <vili/ErrorHandler.hpp>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
-#include <System/Window.hpp>
-#include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Collision
@@ -88,7 +83,7 @@ namespace obe::Collision
     Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(
         const Transform::UnitVector& offset) const
     {
-        std::vector<Transform::UnitVector> limitedMaxDists;
+        std::vector<Transform::UnitVector> limitedMaxDistances;
         for (auto& collider : Pool)
         {
             if (checkTags(*collider))
@@ -100,23 +95,24 @@ namespace obe::Collision
                 // maxDist.x, maxDist.y);
                 if (maxDist != offset && collider != this)
                 {
-                    limitedMaxDists.push_back(maxDist);
+                    limitedMaxDistances.push_back(maxDist);
                 }
             }
         }
 
         const Transform::UnitVector destPos
             = (this->getCentroid() + offset).to<Transform::Units::ScenePixels>();
-        if (!limitedMaxDists.empty())
+        if (!limitedMaxDistances.empty())
         {
             std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
-            for (Transform::UnitVector& distCoord : limitedMaxDists)
+            for (Transform::UnitVector& distCoordinates : limitedMaxDistances)
             {
-                double dist = std::sqrt(std::pow(distCoord.x - destPos.x, 2)
-                    + std::pow(distCoord.y - destPos.y, 2));
+                double dist = std::sqrt(std::pow(distCoordinates.x - destPos.x, 2)
+                    + std::pow(distCoordinates.y - destPos.y, 2));
                 if (minDist.first == -1 || minDist.first > dist)
                 {
-                    minDist = std::pair<double, Transform::UnitVector>(dist, distCoord);
+                    minDist
+                        = std::pair<double, Transform::UnitVector>(dist, distCoordinates);
                 }
             }
             return minDist.second;
@@ -151,7 +147,6 @@ namespace obe::Collision
 
     bool PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
     {
-        bool collided = false;
         for (auto& collider : Pool)
         {
             if (checkTags(*collider))
@@ -209,15 +204,12 @@ namespace obe::Collision
             double minDistance = -1;
             bool inFront = false;
 
-            Transform::Units pxUnit = Transform::Units::ScenePixels;
-            Transform::UnitVector minDeplacement(pxUnit);
+            const Transform::Units pxUnit = Transform::Units::ScenePixels;
+            Transform::UnitVector minDisplacement(pxUnit);
             Transform::UnitVector point1(pxUnit);
             Transform::UnitVector point2(pxUnit);
             Transform::UnitVector point3(pxUnit);
             Transform::UnitVector s1(pxUnit);
-            Transform::UnitVector s2(pxUnit);
-            Transform::UnitVector ip(pxUnit);
-            double s, t, distance;
             for (auto& currentPoint : sol1)
             {
                 const Transform::UnitVector point0 = currentPoint->to(pxUnit);
@@ -228,33 +220,36 @@ namespace obe::Collision
                     point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1]->to(pxUnit);
 
                     s1 = point1 - point0;
-                    s2 = point3 - point2;
+                    const Transform::UnitVector s2 = point3 - point2;
 
-                    s = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y))
+                    const double s
+                        = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y))
                         / (-s2.x * s1.y + s1.x * s2.y);
-                    t = (s2.x * (point0.y - point2.y) - s2.y * (point0.x - point2.x))
+                    const double t
+                        = (s2.x * (point0.y - point2.y) - s2.y * (point0.x - point2.x))
                         / (-s2.x * s1.y + s1.x * s2.y);
 
                     if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                     {
                         inFront = true;
-                        ip = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
+                        const Transform::UnitVector ip
+                            = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
 
-                        distance = std::sqrt(std::pow((point0.x - ip.x), 2)
+                        const double distance = std::sqrt(std::pow((point0.x - ip.x), 2)
                             + std::pow((point0.y - ip.y), 2));
                         if (distance < minDistance || minDistance == -1)
                         {
                             minDistance = distance;
-                            double xComp = t * s1.x;
-                            double yComp = t * s1.y;
-                            minDeplacement.set(
+                            const double xComp = t * s1.x;
+                            const double yComp = t * s1.y;
+                            minDisplacement.set(
                                 (xComp > 0) ? std::floor(xComp) : std::ceil(xComp),
                                 (yComp > 0) ? std::floor(yComp) : std::ceil(yComp));
                         }
                     }
                 }
             }
-            return std::make_tuple(minDistance, minDeplacement, inFront);
+            return std::make_tuple(minDistance, minDisplacement, inFront);
         };
         const Transform::PolygonPath& fPath = m_points;
         const Transform::PolygonPath& sPath = collider.getAllPoints();
@@ -299,7 +294,7 @@ namespace obe::Collision
         const auto pointInPolygon = [](const std::vector<Transform::UnitVector>& poly,
                                         Transform::UnitVector& pTest) -> bool {
             int i, j, c = 0;
-            unsigned int nPt = poly.size();
+            const int nPt = poly.size();
             for (i = 0, j = nPt - 1; i < nPt; j = i++)
             {
                 if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y))

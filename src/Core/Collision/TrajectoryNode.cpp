@@ -45,19 +45,20 @@ namespace obe::Collision
         };
         for (auto& trajectory : m_trajectories)
         {
-            Trajectory* cTraj = trajectory.second.get();
-            if (cTraj->isEnabled())
+            Trajectory* currentTrajectory = trajectory.second.get();
+            if (currentTrajectory->isEnabled())
             {
-                auto baseOffset = getOffset(*cTraj);
+                auto baseOffset = getOffset(*currentTrajectory);
 
                 for (TrajectoryCheckFunction& check : trajectory.second->getChecks())
                 {
-                    check(*cTraj, baseOffset, m_probe);
+                    check(*currentTrajectory, baseOffset, m_probe);
                 }
-                if (!cTraj->getStatic())
+                if (!currentTrajectory->getStatic())
                 {
-                    cTraj->setSpeed(cTraj->m_speed + cTraj->m_acceleration * dt);
-                    baseOffset = getOffset(*cTraj);
+                    currentTrajectory->setSpeed(currentTrajectory->m_speed
+                        + currentTrajectory->m_acceleration * dt);
+                    baseOffset = getOffset(*currentTrajectory);
                     Transform::UnitVector realOffset = baseOffset;
                     if (m_probe != nullptr)
                     {

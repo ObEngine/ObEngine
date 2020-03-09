@@ -14,7 +14,6 @@ namespace obe::Scene
     class Camera : public Transform::Rect
     {
     private:
-        double m_angle = 0;
         Transform::ViewStruct* m_camera {};
         sf::View m_view;
 
@@ -31,8 +30,8 @@ namespace obe::Scene
             Transform::Referential ref = Transform::Referential::TopLeft) const override;
         /**
          * \brief Gets an UnitVector containing the size of the Camera (Width
-         * and Height) \return An UnitVector containing the size of the Camera
-         * (Width and Height)
+         *        and Height)
+         * \return An UnitVector containing the size of the Camera (Width and Height)
          */
         Transform::UnitVector getSize() const override;
         /**
@@ -59,8 +58,8 @@ namespace obe::Scene
         /**
          * \brief Sets the size of the Camera
          * \param pSize Size of the Camera (1 = Normal Size meaning Screen
-         * Height = 2 SceneUnits) \param ref Referential used to resize the
-         * Camera
+         *        Height = 2 SceneUnits)
+         * \param ref Referential used to resize the Camera
          */
         void setSize(
             double pSize, Transform::Referential ref = Transform::Referential::Center);

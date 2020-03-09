@@ -166,7 +166,8 @@ namespace obe::Script
         m_registeredTriggers.emplace_back(trg, callbackName);
     }
 
-    void GameObject::loadGameObject(Scene::Scene& world, vili::ComplexNode& obj)
+    void GameObject::loadGameObject(
+        Scene::Scene& world, vili::ComplexNode& obj, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
         // Script
@@ -246,7 +247,7 @@ namespace obe::Script
                 m_animator->setTarget(*m_sprite);
             if (animatorPath != "")
             {
-                m_animator->load(animatorPath);
+                m_animator->load(animatorPath, resources);
             }
             if (obj.at("Animator").contains(vili::NodeType::DataNode, "default"))
             {

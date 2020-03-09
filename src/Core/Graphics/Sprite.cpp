@@ -1,21 +1,36 @@
+#include <Engine/ResourceManager.hpp>
 #include <Graphics/DrawUtils.hpp>
-#include <Graphics/ResourceManager.hpp>
 #include <Graphics/Sprite.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
 #include <Utils/MathUtils.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe::Graphics
 {
+    sf::Texture NullTexture;
+    void MakeNullTexture()
+    {
+        sf::Image nullImage;
+        nullImage.create(100, 100, sf::Color::Transparent);
+        for (unsigned int i = 0; i < nullImage.getSize().x; i++)
+        {
+            for (unsigned int j = 0; j < nullImage.getSize().y; j++)
+            {
+                if (i == 0 || j == 0 || i == nullImage.getSize().x - 1
+                    || j == nullImage.getSize().y - 1 || i == j
+                    || i == ((nullImage.getSize().x - 1) - j))
+                    nullImage.setPixel(i, j, sf::Color::Red);
+            }
+        }
+        NullTexture.loadFromImage(nullImage);
+    }
+
     Sprite::Sprite(const std::string& id)
         : Selectable(false)
         , Component(id)
     {
-        m_antiAliasing = ResourceManager::GetInstance().defaultAntiAliasing;
-        m_texture = &ResourceManager::GetInstance().NullTexture;
-        m_sprite.setTexture(*m_texture);
+        this->setTexture(NullTexture);
 
         for (Transform::Referential& ref : Transform::Referential::Referentials)
         {
@@ -34,8 +49,6 @@ namespace obe::Graphics
 
     void Sprite::draw(sf::RenderTarget& surface, const Transform::UnitVector& camera)
     {
-        const Transform::UnitVector position
-            = m_positionTransformer(m_position, camera, m_layer);
         const auto toVertex = [](const Transform::UnitVector& uv) {
             return sf::Vertex(sf::Vector2f(uv.x, uv.y));
         };
@@ -44,7 +57,7 @@ namespace obe::Graphics
             = { Transform::Referential::TopLeft, Transform::Referential::BottomLeft,
                   Transform::Referential::TopRight, Transform::Referential::BottomRight };
         unsigned int vertexIndex = 0;
-        for (Transform::Referential referential : referentials)
+        for (const Transform::Referential referential : referentials)
         {
             vertices[vertexIndex++] = toVertex(
                 m_positionTransformer(Rect::getPosition(referential), camera, m_layer)
@@ -64,6 +77,12 @@ namespace obe::Graphics
         }
     }
 
+    void Sprite::attachResourceManager(Engine::ResourceManager& resources)
+    {
+        this->setAntiAliasing(resources.defaultAntiAliasing);
+        ResourceManagedObject::attachResourceManager(resources);
+    }
+
     std::string_view Sprite::type() const
     {
         return ComponentType;
@@ -74,8 +93,16 @@ namespace obe::Graphics
         if (path != "")
         {
             m_path = path;
-            const std::string fPath = System::Path(path).find();
-            m_texture = ResourceManager::GetInstance().getTexture(fPath, m_antiAliasing);
+            if (m_resources)
+            {
+                m_texture = m_resources->getTexture(path, m_antiAliasing);
+            }
+            else
+            {
+                m_texture = std::make_shared<sf::Texture>();
+                m_texture->loadFromFile(System::Path(path).find());
+                m_texture->setSmooth(m_antiAliasing);
+            }
 
             m_sprite.setTexture(*m_texture);
             m_sprite.setTextureRect(
@@ -89,7 +116,9 @@ namespace obe::Graphics
 
     void Sprite::setTexture(const sf::Texture& texture)
     {
-        m_texture = &texture;
+        // TODO: Fix this evil stuff, we remove the constness by casting it :(
+        m_texture = std::shared_ptr<sf::Texture>(
+            std::shared_ptr<sf::Texture>(), &const_cast<sf::Texture&>(texture));
         m_sprite.setTexture(texture);
         m_sprite.setTextureRect(
             sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
@@ -275,11 +304,11 @@ namespace obe::Graphics
             = Rect::m_position.to<Transform::Units::ScenePixels>();
 
         m_sprite.setPosition(realPosition.x, realPosition.y);
-        sf::FloatRect mrect = sf::FloatRect(realPosition.x, realPosition.y,
+        sf::FloatRect rect = sf::FloatRect(realPosition.x, realPosition.y,
             m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
-        mrect.left = m_sprite.getGlobalBounds().left;
-        mrect.top = m_sprite.getGlobalBounds().top;
-        return mrect;
+        rect.left = m_sprite.getGlobalBounds().left;
+        rect.top = m_sprite.getGlobalBounds().top;
+        return rect;
     }
 
     void Sprite::setVisible(bool visible)
@@ -312,8 +341,7 @@ namespace obe::Graphics
         return obe::Utils::Math::sign(m_sprite.getScale().y);
     }
 
-    void Sprite::setPositionTransformer(
-        const PositionTransformer transformer) // <REVISION> const ref ?
+    void Sprite::setPositionTransformer(const PositionTransformer& transformer)
     {
         m_positionTransformer = transformer;
     }
@@ -344,10 +372,6 @@ namespace obe::Graphics
             = m_sprite->getPositionTransformer()(position, -camera, m_sprite->getLayer());
         if (m_type == SpriteHandlePointType::ScaleHandle)
         {
-            // std::cout << "Was at : " <<
-            // m_rect->getPosition(m_referential).to<Transform::Units::ScenePixels>()
-            // << std::endl; std::cout << "Set : " << x << ", " << y <<
-            // std::endl;
             const Transform::UnitVector pos = m_sprite->getPosition(m_referential)
                                                   .to<Transform::Units::ScenePixels>();
             const Transform::UnitVector oppositePos
@@ -365,7 +389,7 @@ namespace obe::Graphics
                     = pos.rotate(spriteAngle, centerSpritePos);
                 const Transform::UnitVector cursorInRef
                     = m_dp.rotate(spriteAngle, centerSpritePos);
-                Transform::UnitVector scaleVector
+                const Transform::UnitVector scaleVector
                     = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
                 Debug::Log->debug("{} / {} = {}", (cursorInRef - oppositePosInRef),
@@ -475,7 +499,7 @@ namespace obe::Graphics
 
         const bool antiAliasing = data.contains(vili::NodeType::DataNode, "antiAliasing")
             ? data.getDataNode("antiAliasing").get<bool>()
-            : ResourceManager::GetInstance().defaultAntiAliasing;
+            : Engine::ResourceManager::GetInstance().defaultAntiAliasing;
 
         if (data.contains(vili::NodeType::DataNode, "xTransform"))
             spriteXTransformer = data.at<vili::DataNode>("xTransform").get<std::string>();
@@ -507,9 +531,9 @@ namespace obe::Graphics
         m_shader->setUniform("texture", sf::Shader::CurrentTexture);
     }
 
-    Shader* Sprite::getShader() const
+    Shader& Sprite::getShader() const
     {
-        return m_shader;
+        return *m_shader;
     }
 
     bool Sprite::hasShader() const

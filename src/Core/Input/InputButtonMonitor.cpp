@@ -1,7 +1,3 @@
-#include <algorithm>
-
-#include <SFML/Window/Keyboard.hpp>
-
 #include <Debug/Logger.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Triggers/TriggerManager.hpp>

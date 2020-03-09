@@ -30,9 +30,10 @@ namespace obe::Scene
 
     void Camera::setSize(const double pSize, const Transform::Referential ref)
     {
-        Rect::setSize(Transform::UnitVector(pSize * 2
-                              * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h),
-                          pSize * 2, m_size.unit),
+        Rect::setSize(
+            Transform::UnitVector(pSize * 2
+                    * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h),
+                pSize * 2, m_size.unit),
             ref);
         this->apply();
     }

@@ -1,15 +1,11 @@
 #pragma once
 
 #include <Component/Component.hpp>
-#include <Scene/Camera.hpp>
-#include <Script/GlobalState.hpp>
 #include <Transform/Polygon.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Types/Selectable.hpp>
 #include <Types/Serializable.hpp>
-
-#include <SFML/Graphics/Color.hpp>
 
 namespace obe::Scene
 {
@@ -44,10 +40,10 @@ namespace obe::Collision
     private:
         std::string m_parentId = "";
 
-        std::unordered_map<ColliderTagType, std::vector<std::string>> m_tags;
+        std::unordered_map<ColliderTagType, std::vector<std::string>> m_tags {};
 
         void resetUnit(Transform::Units unit) override;
-        bool checkTags(const PolygonalCollider& collider) const;
+        [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;
 
     public:
         static constexpr std::string_view ComponentType = "PolygonalCollider";
@@ -71,7 +67,7 @@ namespace obe::Collision
          * \param tagType List you want to clear (Tag / Accepted /Rejected)
          */
         void clearTags(ColliderTagType tagType);
-        bool doesCollide(const Transform::UnitVector& offset) const;
+        [[nodiscard]] bool doesCollide(const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test
@@ -89,7 +85,7 @@ namespace obe::Collision
          * \return true if at least one Tag has been found,
          *         false otherwise
          */
-        bool doesHaveAnyTag(
+        [[nodiscard]] bool doesHaveAnyTag(
             ColliderTagType tagType, const std::vector<std::string>& tags) const;
         /**
          * \brief Checks if the Collider contains a Tag
@@ -112,7 +108,7 @@ namespace obe::Collision
          * \return A std::vector containing all the Tags of
          *         the chosen List
          */
-        std::vector<std::string> getAllTags(ColliderTagType tagType) const;
+        [[nodiscard]] std::vector<std::string> getAllTags(ColliderTagType tagType) const;
         /**
          * \brief Gets the Maximum distance before Collision in all the
          *        Colliders of the Scene
@@ -121,13 +117,13 @@ namespace obe::Collision
          * \return The maximum distance the
          *         Collider can travel before colliding
          */
-        Transform::UnitVector getMaximumDistanceBeforeCollision(
+        [[nodiscard]] Transform::UnitVector getMaximumDistanceBeforeCollision(
             const Transform::UnitVector& offset) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific
          *        Collider
-         * \param collider Collider to check the Collsion with \param
-         *        offset Distance the Collider should move to (if nothing collides)
+         * \param collider Collider to check the Collision with
+         * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
         Transform::UnitVector getMaximumDistanceBeforeCollision(
@@ -137,7 +133,7 @@ namespace obe::Collision
          *        GameObject) \return A std::string containing the Id of the parent of
          *        the Collider
          */
-        std::string getParentId() const;
+        [[nodiscard]] std::string getParentId() const;
         /**
          * \brief Loads the PolygonalCollider from a ComplexNode
          * \param data ComplexNode containing the data of the PolygonalCollider
@@ -156,6 +152,6 @@ namespace obe::Collision
          *        parent of the Collider
          */
         void setParentId(const std::string& parent);
-        std::string_view type() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 } // namespace obe::Collision

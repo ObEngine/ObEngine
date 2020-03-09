@@ -200,7 +200,8 @@ namespace obe::Script
          * \param scene Scene reference to create components
          * \param obj Vili ComplexNode containing the GameObject components
          */
-        void loadGameObject(Scene::Scene& scene, vili::ComplexNode& obj);
+        void loadGameObject(Scene::Scene& scene, vili::ComplexNode& obj,
+            Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Updates the GameObject
          */

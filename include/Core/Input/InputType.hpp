@@ -19,7 +19,7 @@ namespace obe::Input
          */
         Numeric,
         /**
-         * \brief All numbers from 0 to 9 on Numpad
+         * \brief All numbers from 0 to 9 on Numeric pad
          */
         NumericNP,
         /**
@@ -31,7 +31,7 @@ namespace obe::Input
          */
         Functions,
         /**
-         * \brief All Mouse buttons (Left / Right clic)
+         * \brief All Mouse buttons (Left / Right click)
          */
         Mouse,
         /**

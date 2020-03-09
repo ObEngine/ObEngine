@@ -7,7 +7,7 @@
 namespace obe::Animation
 {
     /**
-     * \brief A subpart of an Animation containing the Textures to display
+     * \brief A sub-part of an Animation containing the Textures to display
      */
     class AnimationGroup
     {
@@ -58,35 +58,35 @@ namespace obe::Animation
          * \brief Get the delay between each frame of the AnimationGroup
          * \return The delay between each frame in milliseconds
          */
-        unsigned int getDelay() const;
+        [[nodiscard]] unsigned int getDelay() const;
         /**
          * \brief Get the current index of AnimationGroup
          * \return The index of the texture in the AnimationGroup currently
          *         displayed
          */
-        unsigned int getIndex() const;
+        [[nodiscard]] unsigned int getIndex() const;
         /**
          * \brief Get the name of the AnimationGroup
          * \return A std::string containing the AnimationGroup's name
          */
-        std::string getName() const;
+        [[nodiscard]] std::string getName() const;
         /**
          * \brief Get the AnimationGroup size
          * \return The number of textures in the AnimationGroup
          */
-        unsigned int getSize() const;
+        [[nodiscard]] unsigned int getSize() const;
         /**
          * \brief Get the current Sprite of the AnimationGroup
          * \return A reference to the sf::Texture currently played by the
          *         AnimationGroup
          */
-        const sf::Texture& getTexture() const;
+        [[nodiscard]] const sf::Texture& getTexture() const;
         /**
          * \brief Get if the AnimationGroup is done playing
          * \return A boolean which is true if the AnimationGroup's Animation is
          *         over
          */
-        bool isOver() const;
+        [[nodiscard]] bool isOver() const;
         /**
          * \brief Increment index of the current texture to be displayed.
          *        - If max index is reached and no more loops, the AnimationGroup

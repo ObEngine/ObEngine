@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <vector>
 
 #include <Animation/Animation.hpp>
@@ -14,17 +13,17 @@ namespace obe::Graphics
 namespace obe::Animation
 {
     /**
-     * \brief Sets the scaling bevaviour the Animator will apply on target
+     * \brief Sets the scaling behaviour the Animator will apply on target
      * \bind{Animator.TargetScaleMode}
      */
     enum class AnimatorTargetScaleMode
     {
         // Fits the animation texture into the target's size, ignoring the ratio
         Fit,
-        // Animation texture will have target's width, height will be ajusted with correct
+        // Animation texture will have target's width, height will be adjusted with correct
         // ratio
         FixedWidth,
-        // Animation texture will have target's height, width will be ajusted with correct
+        // Animation texture will have target's height, width will be adjusted with correct
         // ratio
         FixedHeight,
         // Animation texture will keep its size, ignoring target's size
@@ -47,16 +46,6 @@ namespace obe::Animation
 
     public:
         /**
-         * \brief Animator Class default constructor
-         */
-        Animator();
-        /**
-         * \brief Animator Class Path constructor (Equivalent to default
-         * constructor + Animation::setPath()) \param path Path to the Animator
-         * root
-         */
-        explicit Animator(const System::Path& path);
-        /**
          * \brief Clear the Animator of all Animation
          * \param clearMemory Delete the contained Animation in memory
          */
@@ -64,42 +53,43 @@ namespace obe::Animation
         /**
          * \brief Get the name of all contained Animation
          * \return A std::vector of std::string containing the name of all
-         * contained Animation
+         *         contained Animation
          */
-        std::vector<std::string> getAllAnimationName() const;
+        [[nodiscard]] std::vector<std::string> getAllAnimationName() const;
         /**
          * \brief Get the contained Animation pointer by Animation name
          * \param animationName Name of the Animation to get
          * \return A pointer to the wanted Animation.
          *         Throws a ObEngine.Animation.Animator.AnimationNotFound if the
-         * Animation is not found
+         *         Animation is not found
          */
-        Animation& getAnimation(const std::string& animationName) const;
+        [[nodiscard]] Animation& getAnimation(const std::string& animationName) const;
         /**
          * \brief Get the name of the currently played Animation
          * \return A std::string containing the name of the currently played
-         * Animation
+         *         Animation
          */
-        std::string getKey() const;
+        [[nodiscard]] std::string getKey() const;
         /**
          * \brief Get the current sf::Sprite of the current Animation
          * \return A pointer of the sf::Sprite currently played by the current
-         * Animation
+         *         Animation
          */
-        const sf::Texture& getTexture() const;
+        [[nodiscard]] const sf::Texture& getTexture() const;
         /**
          * \brief Call Animation::getTextureAtIndex
          * \param key Name of the Animation where the Texture is located
          * \param index Index of the Texture in the Animation
          * \return A pointer to the Texture
          */
-        const sf::Texture& getTextureAtKey(const std::string& key, int index) const;
+        [[nodiscard]] const sf::Texture& getTextureAtKey(
+            const std::string& key, int index) const;
         /**
          * \brief Loads the Animator
          *        It will also load all the Animation contained in the Animator.
          *        If an Animator configuration file is found it will load it.
          */
-        void load(System::Path path);
+        void load(System::Path path, Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Set the Animation to play by name
          * \param key A std::string containing the name of the Animation to

@@ -1,4 +1,3 @@
-// Corresponding header
 #include <Animation/AnimationGroup.hpp>
 
 namespace obe::Animation
@@ -34,7 +33,7 @@ namespace obe::Animation
 
     void AnimationGroup::removeTextureByIndex(unsigned int index)
     {
-        if (m_groupList.size() > 0)
+        if (!m_groupList.empty())
             m_groupList.erase(m_groupList.begin() + index);
     }
 

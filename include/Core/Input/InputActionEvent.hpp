@@ -27,7 +27,7 @@ namespace obe::Input
          * \return A pointer to the KeyboardAction linked to the
          * KeyboardActionEvent
          */
-        InputAction& getAction() const;
+        [[nodiscard]] InputAction& getAction() const;
         /**
          * \brief Get the InputCondition that triggered the KeyboardAction
          * \return A pointer to the KeyClass that represents the key that

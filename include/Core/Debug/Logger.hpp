@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
 namespace obe::Debug

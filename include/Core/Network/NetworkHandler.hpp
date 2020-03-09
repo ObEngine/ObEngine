@@ -17,10 +17,10 @@ namespace obe::Network
         size_t m_received;
         sf::Socket::Status m_status;
         char m_data[4096];
-        Triggers::TriggerGroupPtr m_socketTriggers;
+        Triggers::TriggerGroupPtr t_socket;
 
     public:
-        NetworkHandler();
+        NetworkHandler(Triggers::TriggerManager& triggers);
         void handleTriggers();
     };
 } // namespace obe::Network

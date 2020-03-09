@@ -2,8 +2,6 @@
 #include <Network/TcpServer.hpp>
 #include <Triggers/TriggerManager.hpp>
 
-#include <iostream>
-
 namespace obe::Network
 {
     TcpServer::TcpServer(

@@ -2,9 +2,9 @@
 
 #include <Input/InputType.hpp>
 
-#define OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(TYPE)                                                  \
-    case InputType::TYPE:                                                                          \
-        return #TYPE;                                                                              \
+#define OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(TYPE)                                       \
+    case InputType::TYPE:                                                                \
+        return #TYPE;                                                                    \
         break;
 
 namespace obe::Input
@@ -13,15 +13,15 @@ namespace obe::Input
     {
         switch (type)
         {
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Alpha)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Numeric)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(NumericNP)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Arrows)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Functions)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Mouse)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(Others)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(GamepadAxis)
-            OBE_INPUT_WRITE_INPUTTYPE_TO_STRING(GamepadButton)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Alpha)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Numeric)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(NumericNP)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Arrows)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Functions)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Mouse)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(Others)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(GamepadAxis)
+            OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(GamepadButton)
         }
         throw aube::ErrorHandler::Raise("obe.Input.InputType.WrongEnumValue");
     }

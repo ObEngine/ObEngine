@@ -1,22 +1,11 @@
-// Corresponding header
 #include <Animation/Animator.hpp>
 
-// ObEngineCore headers
 #include <Graphics/Sprite.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Animation
 {
-    Animator::Animator()
-    {
-    }
-
-    Animator::Animator(const System::Path& path)
-    {
-        this->load(path);
-    }
-
     void Animator::clear(bool clearMemory)
     {
         Debug::Log->trace("<Animator> Clearing Animator at {0}", m_path.toString());
@@ -88,7 +77,7 @@ namespace obe::Animation
         m_paused = pause;
     }
 
-    void Animator::load(System::Path path)
+    void Animator::load(System::Path path, Engine::ResourceManager* resources)
     {
         m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
@@ -114,7 +103,7 @@ namespace obe::Animation
             {
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
-            tempAnim->loadAnimation(m_path.add(listDir[i]));
+            tempAnim->loadAnimation(m_path.add(listDir[i]), resources);
             if (animationParameters.find(listDir[i]) != animationParameters.end()
                 && animationParameters.find("all") != animationParameters.end())
             {
@@ -141,7 +130,8 @@ namespace obe::Animation
             if (m_currentAnimation->getStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
-                std::string nextAnimation = m_currentAnimation->getCalledAnimation();
+                const std::string nextAnimation
+                    = m_currentAnimation->getCalledAnimation();
                 m_currentAnimation = m_animations[nextAnimation].get();
             }
             if (m_currentAnimation->getStatus() == AnimationStatus::Play)
