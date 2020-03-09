@@ -9,6 +9,7 @@
 #include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Scene
 {
@@ -262,6 +263,6 @@ namespace obe::Script
         Debug::Log->debug(
             "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName,
             m_id);
-        m_localTriggers->pushParameter("Init", argName, value);
+        t_local->pushParameter("Init", argName, value);
     }
 } // namespace obe::Script

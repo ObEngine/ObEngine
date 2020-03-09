@@ -6,6 +6,7 @@
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Types/Registrable.hpp>
 #include <Types/Togglable.hpp>
 

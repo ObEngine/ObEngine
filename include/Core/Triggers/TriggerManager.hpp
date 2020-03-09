@@ -38,7 +38,7 @@ namespace obe::Triggers
          *        instances from
          * \return A list of names of the Triggers inside the TriggerGroup
          */
-        std::vector<std::string> TriggerManager::getAllTriggersNameFromTriggerGroup(
+        std::vector<std::string> getAllTriggersNameFromTriggerGroup(
             const std::string& space, const std::string& group);
         /**
          * \brief Creates a new namespace (Throws an error if the namespace

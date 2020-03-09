@@ -1,6 +1,7 @@
 #include <Graphics/Color.hpp>
 
 #include <array>
+#include <cmath>
 #include <sstream>
 
 namespace obe::Graphics
