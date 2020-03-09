@@ -65,12 +65,6 @@ if (NOT DEFINED BUILD_DEV)
     set(BUILD_DEV ON CACHE BOOL "Build ObEngine Dev ?")
 endif()
 
-if (BUILD_DEV)
-    add_subdirectory(extlibs/TGUI)
-    add_subdirectory(src/Dev)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
-endif()
-
 if (NOT DEFINED BUILD_TESTS)
     set(BUILD_TESTS OFF CACHE BOOL "Build ObEngine Tests ?")
 endif()

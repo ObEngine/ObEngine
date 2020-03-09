@@ -8,10 +8,7 @@
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
-#include <System/Window.hpp>
-#include <Time/FramerateCounter.hpp>
-#include <Time/FramerateManager.hpp>
-#include <Triggers/TriggerManager.hpp>
+#include <Engine/Engine.hpp>
 
 namespace obe::Modes
 {
@@ -19,105 +16,5 @@ namespace obe::Modes
     {
         Engine::Engine engine;
         engine.run();
-    }
-    void oldStartGame()
-    {
-        /*// Creating Window
-        System::MainWindow.init(System::WindowContext::GameWindow);
-
-        // Game Triggers
-        Triggers::TriggerGroupPtr gameTriggers(
-            Triggers::TriggerManager::GetInstance().createTriggerGroup("Global", "Game"));
-
-        gameTriggers->addTrigger("Start")
-            ->trigger("Start")
-            ->addTrigger("End")
-            ->addTrigger("Update")
-            ->addTrigger("Render");
-
-        // Config
-        vili::ComplexNode& gameConfig = Config::Config.get().at("GameConfig");
-
-        // Cursor
-        System::Cursor cursor(System::MainWindow);
-
-        // Scene Creation / Loading
-        Scene::Scene scene;
-
-        // Keybinding
-        Input::InputManager inputManager;
-
-        inputManager.configure(Config::Config.get().at("KeyBinding"));
-        inputManager.addContext("game");
-
-        sf::Event event;
-
-        // Framerate / DeltaTime
-        Time::FramerateManager framerateManager;
-        framerateManager.configure(gameConfig);
-
-        System::Path("Lib/Internal/GameInit.lua")
-            .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        System::Path("boot.lua")
-            .load(System::Loaders::luaLoader, Script::ScriptEngine, true);
-        Script::ScriptEngine.dostring("Game.Start()");
-
-        // Game Starts
-        while (System::MainWindow.isOpen())
-        {
-            framerateManager.update();
-
-            gameTriggers->pushParameter("Update", "dt", framerateManager.getGameSpeed());
-            gameTriggers->trigger("Update");
-
-            if (framerateManager.doRender())
-                gameTriggers->trigger("Render");
-
-            while (System::MainWindow.pollEvent(event))
-            {
-                switch (event.type)
-                {
-                case sf::Event::Closed:
-                    System::MainWindow.close();
-                    break;
-                case sf::Event::MouseButtonPressed:
-                case sf::Event::MouseButtonReleased:
-                case sf::Event::JoystickButtonPressed:
-                case sf::Event::JoystickButtonReleased:
-                case sf::Event::JoystickMoved:
-                case sf::Event::KeyReleased:
-                case sf::Event::KeyPressed:
-                    Input::InputButtonMonitor::RequireRefresh = true;
-                    if (event.key.code == sf::Keyboard::Escape)
-                        System::MainWindow.close();
-                    break;
-                }
-            }
-
-            // Events
-            scene.update();
-            Triggers::TriggerManager::GetInstance().update();
-            inputManager.update();
-            if (Input::InputButtonMonitor::RequireRefresh)
-                Input::InputButtonMonitor::Update();
-            cursor.update();
-
-            if (framerateManager.doRender())
-            {
-                System::MainWindow.clear();
-                scene.draw(System::MainWindow.getTarget());
-                for (auto& sprite : Graphics::Sprite::Pool)
-                {
-                }
-
-                System::MainWindow.display();
-            }
-        }
-        gameTriggers->trigger("End");
-        Triggers::TriggerManager::GetInstance().update();
-        scene.clear();
-        scene.update();
-        Script::GameObjectDatabase::Clear();
-        System::MainWindow.close();*/
     }
 } // namespace obe::Modes
