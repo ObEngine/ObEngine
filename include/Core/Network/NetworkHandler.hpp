@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Network
 {
