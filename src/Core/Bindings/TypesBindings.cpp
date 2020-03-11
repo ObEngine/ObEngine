@@ -16,7 +16,8 @@ namespace obe::Bindings::TypesBindings
                 .addFunction("setId", &Types::Identifiable::setId));
 
         (*lua)["obe"]["ProtectedIdentifiable"].setClass(
-            kaguya::UserdataMetatable<Types::ProtectedIdentifiable>());
+            kaguya::UserdataMetatable<Types::ProtectedIdentifiable, Types::Identifiable>()
+        );
     }
 
     void LoadSelectable(kaguya::State* lua)

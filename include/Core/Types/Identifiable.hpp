@@ -37,12 +37,11 @@ namespace obe::Types
      * \brief Exactly like Identifiable class except you can't change the Id
      * after creation
      */
-    class ProtectedIdentifiable : protected Identifiable
+    class ProtectedIdentifiable : public Identifiable
     {
-    protected:
-        using Identifiable::Identifiable;
-
+    private:
+        using Identifiable::setId;
     public:
-        using Identifiable::getId;
+        using Identifiable::Identifiable;
     };
 } // namespace obe::Types
