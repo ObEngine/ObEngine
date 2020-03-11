@@ -35,8 +35,16 @@ namespace obe::Engine
 
     void Engine::initScript()
     {
-        m_lua.open_libraries(
-            sol::lib::base, sol::lib::io, sol::lib::string, sol::lib::table);
+        m_lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,
+            sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
+            sol::lib::count, sol::lib::debug, sol::lib::io);
+
+        m_lua.script_file("Lib/Internal/LuaCore.lua"_fs);
+        m_lua.script_file("Lib/Internal/Environment.lua"_fs);
+        m_lua.script_file("Lib/Internal/ScriptInit.lua"_fs);
+        m_lua.script_file("Lib/Internal/Triggers.lua"_fs);
+
+        Bindings::IndexAllBindings(m_lua);
         m_lua.script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua.script_file("boot.lua"_fs);
 

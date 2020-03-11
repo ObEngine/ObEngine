@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
+#include <System/Window.hpp>
 #include <vili/Vili.hpp>
 
 #include <Types/Registrable.hpp>

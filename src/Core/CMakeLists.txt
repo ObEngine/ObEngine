@@ -52,7 +52,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
 
 if (MSVC)
     if (NOT (MSVC_VERSION LESS 1910))
-        target_compile_options(ObEngineCore PRIVATE /permissive-)
+        target_compile_options(ObEngineCore PRIVATE /permissive- /bigobj)
     endif()
 endif()
 

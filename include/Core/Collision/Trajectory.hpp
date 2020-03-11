@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kaguya/kaguya.hpp>
+#include <functional>
 
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>

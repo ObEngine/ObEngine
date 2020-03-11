@@ -8,6 +8,7 @@ target_link_libraries(sol3 INTERFACE lua)
 
 target_include_directories(sol3
     INTERFACE
+        $<BUILD_INTERFACE:${lua_SOURCE_DIR}/include/lua>
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )

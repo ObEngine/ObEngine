@@ -12,6 +12,11 @@
 #include <Triggers/TriggerManager.hpp>
 #include <sol/sol.hpp>
 
+namespace obe::Bindings
+{
+    void IndexAllBindings(sol::state_view state);
+}
+
 namespace obe::Engine
 {
     class Engine

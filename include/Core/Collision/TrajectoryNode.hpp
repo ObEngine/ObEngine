@@ -2,8 +2,6 @@
 
 #include <unordered_map>
 
-#include <kaguya/kaguya.hpp>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Collision/Trajectory.hpp>
 #include <Scene/SceneNode.hpp>

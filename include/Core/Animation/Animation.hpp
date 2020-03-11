@@ -48,7 +48,7 @@ namespace obe::Animation
      * \return The converted value which is an AnimationPlayMode enum value
      * \bind{[mt]AnimationPlayMode.__call}
      */
-    AnimationPlayMode stringToAnimationPlayMode(std::string_view animationPlayMode);
+    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
