@@ -5,14 +5,13 @@
 #include <Time/Chronometer.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Registrable.hpp>
 
 namespace obe::Triggers
 {
     /**
      * \brief A TriggerManager that handles all Trigger / TriggerGroup
      */
-    class TriggerManager : public Types::Registrable<TriggerManager>
+    class TriggerManager
     {
     private:
         std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>>

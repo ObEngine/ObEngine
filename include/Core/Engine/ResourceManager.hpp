@@ -7,7 +7,6 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Registrable.hpp>
 
 namespace obe::Engine
 {
@@ -17,7 +16,7 @@ namespace obe::Engine
     /**
      * \brief Class that manages and caches textures}
      */
-    class ResourceManager : public Types::Registrable<ResourceManager>
+    class ResourceManager
     {
     private:
         Triggers::TriggerGroupPtr t_resources;

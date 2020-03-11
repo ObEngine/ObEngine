@@ -5,7 +5,6 @@
 namespace obe::Triggers
 {
     TriggerManager::TriggerManager()
-        : Registrable("TriggerManager")
     {
         Debug::Log->debug("<TriggerManager> Initializing TriggerManager");
         m_databaseChrono.start();

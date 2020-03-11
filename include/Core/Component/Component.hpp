@@ -73,8 +73,8 @@ namespace obe::Component
 
     template <class T> void Component<T>::inject(unsigned int envIndex)
     {
-        Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id]
-            = static_cast<T*>(this);
+        /*Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id]
+            = static_cast<T*>(this);*/
     }
 
     template <class T> std::string_view Component<T>::type() const

@@ -30,7 +30,7 @@ namespace obe::Triggers
     class Trigger
     {
     private:
-        TriggerGroup* m_parent;
+        TriggerGroup& m_parent;
         std::string m_name;
         std::string m_fullName;
         std::vector<TriggerEnv> m_registeredEnvs;
@@ -72,7 +72,7 @@ namespace obe::Triggers
          *        disabled)
          */
         explicit Trigger(
-            TriggerGroup* parent, const std::string& name, bool startState = false);
+            TriggerGroup& parent, const std::string& name, bool startState = false);
         /**
          * \brief Get the State of the Trigger (enabled / disabled)
          * \return true if the Trigger is enabled, false otherwise
@@ -122,8 +122,8 @@ namespace obe::Triggers
     {
         Debug::Log->trace(
             "<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
-        Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
+        /*Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
                             [name]
-            = parameter;
+            = parameter;*/
     }
 } // namespace obe::Triggers

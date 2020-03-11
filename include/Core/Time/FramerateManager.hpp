@@ -5,14 +5,12 @@
 #include <System/Window.hpp>
 #include <vili/Vili.hpp>
 
-#include <Types/Registrable.hpp>
-
 namespace obe::Time
 {
     /**
      * \brief Class that handles Framerate, DeltaTime and stuff related to time
      */
-    class FramerateManager : public Types::Registrable<FramerateManager>
+    class FramerateManager
     {
     private:
         System::Window& m_window;

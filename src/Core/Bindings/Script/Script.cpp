@@ -74,9 +74,4 @@ namespace obe::Script::Bindings
         sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
         ScriptNamespace.set_function("executeString", obe::Script::executeString);
     }
-    void LoadGlobalScriptEngine(sol::state_view state)
-    {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        // ScriptNamespace["ScriptEngine"] = obe::Script::ScriptEngine;
-    }
 };

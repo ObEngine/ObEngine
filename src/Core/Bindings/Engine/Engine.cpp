@@ -13,7 +13,17 @@ namespace obe::Engine::Bindings
         sol::usertype<obe::Engine::Engine> bindEngine
             = EngineNamespace.new_usertype<obe::Engine::Engine>("Engine",
                 sol::call_constructor, sol::constructors<obe::Engine::Engine()>());
-        bindEngine["run"] = &obe::Engine::Engine::run;
+        bindEngine["Window"] = sol::property(&obe::Engine::Engine::getWindow);
+        bindEngine["Framerate"]
+            = sol::property(&obe::Engine::Engine::getFramerateManager);
+        bindEngine["Audio"] = sol::property(&obe::Engine::Engine::getAudioManager);
+        bindEngine["Scene"] = sol::property(&obe::Engine::Engine::getScene);
+        bindEngine["Configuration"]
+            = sol::property(&obe::Engine::Engine::getConfigurationManager);
+        bindEngine["Input"] = sol::property(&obe::Engine::Engine::getInputManager);
+        bindEngine["Resources"] = sol::property(&obe::Engine::Engine::getResourceManager);
+        bindEngine["Triggers"] = sol::property(&obe::Engine::Engine::getTriggerManager);
+        bindEngine["Cursor"] = sol::property(&obe::Engine::Engine::getCursor);
     }
     void LoadClassResourceManagedObject(sol::state_view state)
     {

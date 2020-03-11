@@ -7,7 +7,6 @@
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Triggers/TriggerManager.hpp>
-#include <Types/Registrable.hpp>
 #include <Types/Togglable.hpp>
 
 namespace obe::Input
@@ -16,7 +15,7 @@ namespace obe::Input
      * \brief Class used to manage KeyClass and KeyboardAction
      * \bind{InputManager}
      */
-    class InputManager : public Types::Registrable<InputManager>, public Types::Togglable
+    class InputManager : public Types::Togglable
     {
     private:
         bool m_refresh = true;

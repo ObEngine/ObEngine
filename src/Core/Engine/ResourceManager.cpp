@@ -56,8 +56,7 @@ namespace obe::Engine
     }
 
     ResourceManager::ResourceManager()
-        : Registrable("ResourceManager")
-        , defaultAntiAliasing(false)
+        : defaultAntiAliasing(false)
     {
     }
 

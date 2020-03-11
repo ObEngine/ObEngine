@@ -12,5 +12,4 @@ namespace obe::Script::Bindings
     void LoadFunctionCreateNewEnvironment(sol::state_view state);
     void LoadFunctionExecuteFile(sol::state_view state);
     void LoadFunctionExecuteString(sol::state_view state);
-    void LoadGlobalScriptEngine(sol::state_view state);
 };

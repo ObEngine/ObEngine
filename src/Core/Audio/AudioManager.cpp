@@ -10,7 +10,6 @@
 namespace obe::Audio
 {
     AudioManager::AudioManager()
-        : Registrable("Audio")
     {
         m_engine.init();
     }

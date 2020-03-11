@@ -4,25 +4,7 @@
 
 namespace obe::Script
 {
-    kaguya::State ScriptEngine;
-    void InitScriptEngine()
-    {
-        System::Path("Lib/Internal/LuaCore.lua")
-            .load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/Environment.lua")
-            .load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/ScriptInit.lua")
-            .load(System::Loaders::luaLoader, ScriptEngine);
-        System::Path("Lib/Internal/Triggers.lua")
-            .load(System::Loaders::luaLoader, ScriptEngine);
-        ScriptEngine["Hook"] = kaguya::NewTable();
-        ScriptEngine.dofile("Lib/Internal/Canvas.lua");
-        ScriptEngine.setErrorHandler([](int statusCode, const char* message) {
-            Debug::Log->error("<LuaError>({0}) : {1}", statusCode, message);
-        });
-    }
-
-    unsigned int CreateNewEnvironment()
+    /*unsigned int CreateNewEnvironment()
     {
         return ScriptEngine["LuaCore"]["CreateNewEnv"]();
     }
@@ -35,5 +17,5 @@ namespace obe::Script
     void executeString(unsigned int envIndex, const std::string& string)
     {
         ScriptEngine["LuaCore"]["ExecuteStringOnEnv"](string, envIndex);
-    }
+    }*/
 } // namespace obe::Script

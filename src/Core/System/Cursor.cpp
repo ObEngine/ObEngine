@@ -27,8 +27,7 @@ namespace obe::System
     }
 
     Cursor::Cursor(System::Window& window, Triggers::TriggerManager& triggers)
-        : Registrable("Cursor")
-        , m_window(window)
+        : m_window(window)
         , m_cursorTriggers(triggers.createTriggerGroup("Global", "Cursor"))
     {
         m_constraint = Constraints::Default;

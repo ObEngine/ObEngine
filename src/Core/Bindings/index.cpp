@@ -171,8 +171,7 @@ namespace obe::Bindings
                 &obe::Script::Bindings::LoadFunctionCreateNewEnvironment)
             .add("FunctionExecuteFile", &obe::Script::Bindings::LoadFunctionExecuteFile)
             .add("FunctionExecuteString",
-                &obe::Script::Bindings::LoadFunctionExecuteString)
-            .add("GlobalScriptEngine", &obe::Script::Bindings::LoadGlobalScriptEngine);
+                &obe::Script::Bindings::LoadFunctionExecuteString);
 
         BindTree["obe"].add("System", InitTreeNodeAsTable("obe.System"));
         BindTree["obe"]["System"]

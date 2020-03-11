@@ -27,7 +27,8 @@ namespace obe::Scene::Bindings
         sol::usertype<obe::Scene::Scene> bindScene
             = SceneNamespace.new_usertype<obe::Scene::Scene>("Scene",
                 sol::call_constructor,
-                sol::constructors<obe::Scene::Scene(obe::Triggers::TriggerManager&)>());
+                sol::constructors<obe::Scene::Scene(
+                    obe::Triggers::TriggerManager&, sol::state_view)>());
         bindScene["attachResourceManager"] = &obe::Scene::Scene::attachResourceManager;
         bindScene["loadFromFile"] = &obe::Scene::Scene::loadFromFile;
         bindScene["setFutureLoadFromFile"]

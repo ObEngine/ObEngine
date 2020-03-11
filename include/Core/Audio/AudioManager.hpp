@@ -3,7 +3,6 @@
 #include <unordered_map>
 
 #include <System/Path.hpp>
-#include <Types/Registrable.hpp>
 
 #include <soloud/soloud.h>
 #include <soloud/soloud_wav.h>
@@ -35,7 +34,7 @@ namespace obe::Audio
      * \brief Class to handle audio playback
      * \bind{AudioManager}
      */
-    class AudioManager : public Types::Registrable<AudioManager>
+    class AudioManager
     {
     private:
         SoLoud::Soloud m_engine;

@@ -9,8 +9,7 @@
 namespace obe::Time
 {
     FramerateManager::FramerateManager(System::Window& window)
-        : Registrable("FramerateManager")
-        , m_window(window)
+        : m_window(window)
     {
         m_frameLimiterClock = epochAsMilliseconds();
         m_currentFrame = 0;

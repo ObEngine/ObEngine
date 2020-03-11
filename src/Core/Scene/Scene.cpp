@@ -9,14 +9,12 @@
 
 namespace obe::Scene
 {
-    Scene::Scene(Triggers::TriggerManager& triggers)
-        : Registrable("Scene")
+    Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
+        : m_lua(lua)
         , m_triggers(triggers)
         , t_scene(triggers.createTriggerGroup("Global", "Scene"))
 
     {
-        System::Path("Lib/Internal/GameInit.lua")
-            .load(System::Loaders::luaLoader, Script::ScriptEngine);
         triggers.createNamespace("Map"); // TODO: Add namespace handle
         m_showElements["SceneNodes"] = false;
 
@@ -230,16 +228,15 @@ namespace obe::Scene
             vili::ComplexNode& script = m_levelFile.at("Script");
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
-                System::Path(script.at<vili::DataNode>("source"))
-                    .load(System::Loaders::luaLoader, Script::ScriptEngine);
+                m_lua.script_file(
+                    System::Path(script.at<vili::DataNode>("source")).find());
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
             else if (script.contains(vili::NodeType::ArrayNode, "sources"))
             {
                 for (vili::DataNode* scriptName : script.getArrayNode("sources"))
                 {
-                    System::Path(*scriptName)
-                        .load(System::Loaders::luaLoader, Script::ScriptEngine);
+                    m_lua.script_file(System::Path(*scriptName).find());
                     m_scriptArray.push_back(*scriptName);
                 }
             }

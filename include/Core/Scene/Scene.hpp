@@ -5,7 +5,8 @@
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
-#include <Types/Registrable.hpp>
+
+#include <sol/sol.hpp>
 
 namespace obe
 {
@@ -21,7 +22,7 @@ namespace obe::Scene
     /**
      * \brief The Scene class is a container of all the game elements
      */
-    class Scene : public Types::Registrable<Scene>
+    class Scene
     {
     private:
         std::string m_levelName = "";
@@ -45,12 +46,13 @@ namespace obe::Scene
         OnSceneLoadCallback m_onLoadCallback;
         Triggers::TriggerManager& m_triggers;
         Triggers::TriggerGroupPtr t_scene;
+        sol::state_view m_lua;
 
     public:
         /**
          * \brief Creates a new Scene
          */
-        Scene(Triggers::TriggerManager& triggers);
+        Scene(Triggers::TriggerManager& triggers, sol::state_view lua);
 
         void attachResourceManager(Engine::ResourceManager& resources);
         /**

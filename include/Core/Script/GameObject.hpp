@@ -11,6 +11,8 @@
 #include <Triggers/TriggerGroup.hpp>
 #include <Triggers/TriggerManager.hpp>
 
+#include <sol/sol.hpp>
+
 namespace obe::Scene
 {
     class Scene;
@@ -48,7 +50,8 @@ namespace obe::Script
          * \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(GameObject* obj, vili::ComplexNode& requires);
+        static void ApplyRequirements(
+            sol::environment environment, vili::ComplexNode& requires);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -62,13 +65,14 @@ namespace obe::Script
     {
     private:
         Triggers::TriggerManager& m_triggers;
-        unsigned int m_envIndex = 0;
         bool m_permanent = false;
         std::unique_ptr<Animation::Animator> m_animator;
         Graphics::Sprite* m_sprite = nullptr;
         Collision::PolygonalCollider* m_collider = nullptr;
         Triggers::TriggerGroupPtr t_local;
         Scene::SceneNode m_objectNode;
+        sol::state_view m_lua;
+        sol::environment m_environment;
 
         std::vector<std::pair<std::weak_ptr<Triggers::Trigger>, std::string>>
             m_registeredTriggers;
@@ -91,8 +95,8 @@ namespace obe::Script
          * \param type Type of the GameObject
          * \param id Id of the GameObject you want to create
          */
-        explicit GameObject(Triggers::TriggerManager& triggers, const std::string& type,
-            const std::string& id);
+        explicit GameObject(Triggers::TriggerManager& triggers, sol::state_view lua,
+            const std::string& type, const std::string& id);
         /**
          * \brief Destructor of the GameObject
          */
@@ -177,7 +181,7 @@ namespace obe::Script
          * \brief Execute a Lua String in the Lua State of the GameObject
          * \param query String to execute
          */
-        void exec(const std::string& query) const;
+        void exec(const std::string& query);
         /**
          * \brief Send a parameter to the Local.Init trigger
          * \tparam U Template Type of the Parameter
@@ -190,8 +194,7 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(
-            const std::string& argName, const kaguya::LuaRef& value) const;
+        void sendInitArgFromLua(const std::string& argName, sol::reference value) const;
         /**
          * \brief Register a Trigger in the GameObject
          * \param trg Pointer to the Trigger
@@ -224,19 +227,13 @@ namespace obe::Script
          * \brief Access the exposition table of the GameObject
          * \return A reference to the exposition table of the GameObject
          */
-        [[nodiscard]] kaguya::LuaTable access() const;
+        [[nodiscard]] sol::table access() const;
         /**
          * \brief Gets a reference to the Lua function used to build the
          *        GameObject (Local.Init proxy)
          * \return A reference to the Lua function used to build the GameObject
          */
-        [[nodiscard]] kaguya::LuaFunction getConstructor() const;
-        /**
-         * \brief Gets the id (index) of the GameObject Lua environment
-         * \return An unsigned int representing the id (index) of the GameObject
-         *         Lua environment
-         */
-        [[nodiscard]] unsigned int getEnvIndex() const;
+        [[nodiscard]] sol::function getConstructor() const;
         /**
          * \brief Triggers the GameObject's Local.Init
          */
@@ -254,6 +251,7 @@ namespace obe::Script
          */
         [[nodiscard]] bool isPermanent() const;
 
+        sol::environment getEnvironment() const;
         void setState(bool state);
     };
 

@@ -9,14 +9,13 @@
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Registrable.hpp>
 
 namespace obe::System
 {
     /**
      * \brief A Class to manipulate and display the Cursor in the Engine
      */
-    class Cursor : public Types::Registrable<Cursor>
+    class Cursor
     {
     private:
         sf::Vector2i m_saveOldPos;

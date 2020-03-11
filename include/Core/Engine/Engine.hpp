@@ -61,5 +61,16 @@ namespace obe::Engine
     public:
         Engine();
         void run();
+
+        Audio::AudioManager& getAudioManager();
+        Config::ConfigurationManager& getConfigurationManager();
+        ResourceManager& getResourceManager();
+        Input::InputManager& getInputManager();
+        Time::FramerateManager& getFramerateManager();
+        Triggers::TriggerManager& getTriggerManager();
+
+        Scene::Scene& getScene();
+        System::Cursor& getCursor();
+        System::Window& getWindow();
     };
 }

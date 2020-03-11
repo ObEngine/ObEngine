@@ -38,8 +38,7 @@ namespace obe::Input
     }
 
     InputManager::InputManager()
-        : Registrable("InputManager")
-        , Togglable(true)
+        : Togglable(true)
     {
     }
 

@@ -69,17 +69,17 @@ namespace obe::Triggers::Bindings
                     const std::string&, const std::string&)>());
         bindTriggerGroup["setJoinable"] = &obe::Triggers::TriggerGroup::setJoinable;
         bindTriggerGroup["isJoinable"] = &obe::Triggers::TriggerGroup::isJoinable;
-        bindTriggerGroup["getTrigger"] = &obe::Triggers::TriggerGroup::getTrigger;
-        bindTriggerGroup["addTrigger"] = &obe::Triggers::TriggerGroup::addTrigger;
-        bindTriggerGroup["removeTrigger"] = &obe::Triggers::TriggerGroup::removeTrigger;
-        bindTriggerGroup["delayTriggerState"]
-            = &obe::Triggers::TriggerGroup::delayTriggerState;
+        bindTriggerGroup["get"] = &obe::Triggers::TriggerGroup::get;
+        bindTriggerGroup["add"] = &obe::Triggers::TriggerGroup::add;
+        bindTriggerGroup["remove"] = &obe::Triggers::TriggerGroup::remove;
+        bindTriggerGroup["delay"]
+            = &obe::Triggers::TriggerGroup::delay;
         bindTriggerGroup["trigger"] = &obe::Triggers::TriggerGroup::trigger;
         bindTriggerGroup["pushParameterFromLua"]
             = &obe::Triggers::TriggerGroup::pushParameterFromLua;
-        bindTriggerGroup["getAllTriggersName"]
-            = &obe::Triggers::TriggerGroup::getAllTriggersName;
-        bindTriggerGroup["getAllTriggers"] = &obe::Triggers::TriggerGroup::getAllTriggers;
+        bindTriggerGroup["getTriggersNames"]
+            = &obe::Triggers::TriggerGroup::getTriggersNames;
+        bindTriggerGroup["getTriggers"] = &obe::Triggers::TriggerGroup::getTriggers;
         bindTriggerGroup["getNamespace"] = &obe::Triggers::TriggerGroup::getNamespace;
         bindTriggerGroup["getName"] = &obe::Triggers::TriggerGroup::getName;
     }
@@ -90,7 +90,7 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerManager>(
                 "TriggerManager", sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerManager()>());
-        bindTriggerManager["getTrigger"] = &obe::Triggers::TriggerManager::getTrigger;
+        bindTriggerManager["get"] = &obe::Triggers::TriggerManager::getTrigger;
         bindTriggerManager["getAllTriggersNameFromTriggerGroup"]
             = &obe::Triggers::TriggerManager::getAllTriggersNameFromTriggerGroup;
         bindTriggerManager["createNamespace"]

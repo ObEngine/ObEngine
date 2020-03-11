@@ -2,6 +2,21 @@
 
 #include <Utils/StringUtils.hpp>
 
+int lua_exception_handler(lua_State* L,
+    sol::optional<const std::exception&> maybe_exception, sol::string_view description)
+{
+    if (maybe_exception)
+    {
+        const std::exception& ex = *maybe_exception;
+        obe::Debug::Log->error("<LuaError>[Exception] : {}", ex.what());
+    }
+    else
+    {
+        obe::Debug::Log->error("<LuaError>[Error] : {}", description);
+    }
+    return sol::stack::push(L, description);
+}
+
 namespace obe::Engine
 {
     void Engine::initConfig()
@@ -14,11 +29,7 @@ namespace obe::Engine
         m_triggers.createNamespace("Global");
         t_game = m_triggers.createTriggerGroup("Global", "Game");
 
-        t_game->addTrigger("Start")
-            .trigger("Start")
-            .addTrigger("End")
-            .addTrigger("Update")
-            .addTrigger("Render");
+        t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
     }
     void Engine::initInput()
     {
@@ -47,6 +58,9 @@ namespace obe::Engine
         Bindings::IndexAllBindings(m_lua);
         m_lua.script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua.script_file("boot.lua"_fs);
+        m_lua.set_exception_handler(lua_exception_handler);
+
+        m_lua["Engine"] = this;
 
         m_lua["loadScene"]
             = [&](const std::string& path) { m_scene->loadFromFile(path); };
@@ -100,7 +114,7 @@ namespace obe::Engine
 
     void Engine::initScene()
     {
-        m_scene = std::make_unique<Scene::Scene>(m_triggers);
+        m_scene = std::make_unique<Scene::Scene>(m_triggers, m_lua);
         m_scene->attachResourceManager(m_resources);
     }
 
@@ -186,6 +200,51 @@ namespace obe::Engine
             this->render();
         }
         this->clean();
+    }
+
+    Audio::AudioManager& Engine::getAudioManager()
+    {
+        return m_audio;
+    }
+
+    Config::ConfigurationManager& Engine::getConfigurationManager()
+    {
+        return m_config;
+    }
+
+    ResourceManager& Engine::getResourceManager()
+    {
+        return m_resources;
+    }
+
+    Input::InputManager& Engine::getInputManager()
+    {
+        return m_input;
+    }
+
+    Time::FramerateManager& Engine::getFramerateManager()
+    {
+        return *m_framerate;
+    }
+
+    Triggers::TriggerManager& Engine::getTriggerManager()
+    {
+        return m_triggers;
+    }
+
+    Scene::Scene& Engine::getScene()
+    {
+        return *m_scene;
+    }
+
+    System::Cursor& Engine::getCursor()
+    {
+        return *m_cursor;
+    }
+
+    System::Window& Engine::getWindow()
+    {
+        return *m_window;
     }
 
     void Engine::update()

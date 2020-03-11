@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Triggers/TriggerDelay.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::Triggers
 {
@@ -15,6 +16,7 @@ namespace obe::Triggers
         std::map<std::string, std::shared_ptr<Trigger>> m_triggerMap;
         std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
         bool m_joinable = false;
+        sol::state_view m_lua;
         friend class TriggerManager;
 
     public:
@@ -24,7 +26,8 @@ namespace obe::Triggers
          *        is in
          * \param triggerGroupName Name of the TriggerGroup
          */
-        explicit TriggerGroup(const std::string& triggerGroupNamespace,
+        explicit TriggerGroup(sol::state_view lua,
+            const std::string& triggerGroupNamespace,
             const std::string& triggerGroupName);
         /**
          * \brief Sets if the TriggerGroup is joinable or not
@@ -42,27 +45,26 @@ namespace obe::Triggers
          * \param triggerName Name of the Trigger to get
          * \return A pointer to the Trigger if found (throws an error otherwise)
          */
-        std::weak_ptr<Trigger> getTrigger(const std::string& triggerName);
+        std::weak_ptr<Trigger> get(const std::string& triggerName);
         /**
          * \brief Creates a new Trigger in the TriggerGroup
          * \param triggerName Name of the Trigger to create
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup& addTrigger(const std::string& triggerName);
+        TriggerGroup& add(const std::string& triggerName);
         /**
          * \brief Removes a Trigger from the TriggerGroup
          * \param triggerName Name of the Trigger to remove
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup& removeTrigger(const std::string& triggerName);
+        TriggerGroup& remove(const std::string& triggerName);
         /**
          * \brief Delays activation of a Trigger
          * \param triggerName Name of the Trigger to delay
          * \param delay Time in ms used to delay the Trigger
          * \return Pointer to the TriggerGroup to chain calls
          */
-        TriggerGroup& delayTriggerState(
-            const std::string& triggerName, Time::TimeUnit delay);
+        TriggerGroup& delay(const std::string& triggerName, Time::TimeUnit delay);
         /**
          * \brief Enables a Trigger
          * \param triggerName Name of the Trigger to enable
@@ -92,12 +94,12 @@ namespace obe::Triggers
          * \return A std::vector of std::string containing the name of all
          * Trigger contained in the TriggerGroup
          */
-        std::vector<std::string> getAllTriggersName();
+        std::vector<std::string> getTriggersNames();
         /**
          * \brief Get all the Trigger contained in the TriggerGroup
          * \return A std::vector of Trigger pointers
          */
-        std::vector<Trigger*> getAllTriggers();
+        std::vector<Trigger*> getTriggers();
         /**
          * \brief Get the name of the namespace the Trigger is in
          * \return A std::string containing the name of the namespace
