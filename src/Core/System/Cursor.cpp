@@ -40,10 +40,10 @@ namespace obe::System
         m_buttonState[sf::Mouse::Button::Right]
             = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
-        m_cursorTriggers->addTrigger("Move");
-        m_cursorTriggers->addTrigger("Press");
-        m_cursorTriggers->addTrigger("Release");
-        m_cursorTriggers->addTrigger("Hold");
+        m_cursorTriggers->add("Move");
+        m_cursorTriggers->add("Press");
+        m_cursorTriggers->add("Release");
+        m_cursorTriggers->add("Hold");
 
         m_saveOldPos = sf::Mouse::getPosition();
     }

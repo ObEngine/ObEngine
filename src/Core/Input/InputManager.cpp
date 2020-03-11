@@ -116,7 +116,7 @@ namespace obe::Input
     {
         m_currentActions.clear();
         for (auto& action : m_allActions)
-            t_actions->removeTrigger(action->getId());
+            t_actions->remove(action->getId());
         m_allActions.clear();
     }
 

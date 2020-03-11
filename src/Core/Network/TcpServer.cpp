@@ -11,9 +11,7 @@ namespace obe::Network
         {
             m_socketTriggers
                 = triggers.createTriggerGroup(triggerNamespace, triggerGroup);
-            m_socketTriggers->addTrigger("DataReceived")
-                .addTrigger("Connected")
-                .addTrigger("Disconnected");
+            m_socketTriggers->add("DataReceived").add("Connected").add("Disconnected");
         }
         m_listener.setBlocking(false);
         m_listener.listen(port);

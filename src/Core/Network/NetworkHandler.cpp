@@ -14,9 +14,7 @@ namespace obe::Network
         m_listener.setBlocking(false);
         m_listener.listen(53000);
         m_client.setBlocking(false);
-        t_socket->addTrigger("DataReceived")
-            .addTrigger("Connected")
-            .addTrigger("Disconnected");
+        t_socket->add("DataReceived").add("Connected").add("Disconnected");
     }
 
     void NetworkHandler::handleTriggers()

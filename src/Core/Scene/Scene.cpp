@@ -18,7 +18,7 @@ namespace obe::Scene
         triggers.createNamespace("Map"); // TODO: Add namespace handle
         m_showElements["SceneNodes"] = false;
 
-        t_scene->addTrigger("Loaded");
+        t_scene->add("Loaded");
     }
 
     void Scene::attachResourceManager(Engine::ResourceManager& resources)
