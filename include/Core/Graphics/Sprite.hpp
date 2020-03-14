@@ -4,6 +4,7 @@
 
 #include <Component/Component.hpp>
 #include <Engine/ResourceManager.hpp>
+#include <Graphics/Color.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/Shader.hpp>
 #include <Transform/Rect.hpp>
@@ -39,7 +40,7 @@ namespace obe::Graphics
     class SpriteHandlePoint
     {
     private:
-        Sprite* m_sprite;
+        Sprite& m_sprite;
         Transform::Referential m_referential;
         SpriteHandlePointType m_type;
 
@@ -54,12 +55,12 @@ namespace obe::Graphics
          * \param parent Rect of the parent Sprite
          * \param ref Referential of the HandlePoint
          */
-        SpriteHandlePoint(Sprite* parent, Transform::Referential ref);
+        SpriteHandlePoint(Sprite& parent, Transform::Referential ref);
         /**
          * \brief Creates a Rotate HandlePoint
          * \param parent Rect of the parent Sprite
          */
-        SpriteHandlePoint(Sprite* parent);
+        SpriteHandlePoint(Sprite& parent);
         /**
          * \brief Get the rect of the parent Sprite
          * \return The Rect of the parent Sprite
@@ -103,7 +104,7 @@ namespace obe::Graphics
         PositionTransformer m_positionTransformer;
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;
-        std::shared_ptr<sf::Texture> m_texture;
+        std::shared_ptr<Graphics::Texture> m_texture;
         bool m_visible = true;
         int m_zdepth = 0;
         bool m_antiAliasing = true;
@@ -132,9 +133,9 @@ namespace obe::Graphics
         void dump(vili::ComplexNode& target) const override;
         /**
          * \brief Get the blend color of the Sprite
-         * \return A sf::Color containing the blend color of the Sprite
+         * \return A Color containing the blend color of the Sprite
          */
-        [[nodiscard]] sf::Color getColor() const;
+        [[nodiscard]] Color getColor() const;
         /**
          * \brief Get the HandlePoint of the Sprite at the given
          *        Position(x, y)
@@ -160,8 +161,8 @@ namespace obe::Graphics
          */
         [[nodiscard]] std::string getParentId() const;
         /**
-         * \brief Get the path of the sf::Texture loaded by the Sprite
-         * \return A std::string containing the path of the sf::Texture loaded
+         * \brief Get the path of the Texture loaded by the Sprite
+         * \return A std::string containing the path of the Texture loaded
          *         by the Sprite (if any)
          */
         [[nodiscard]] std::string getPath() const;
@@ -198,7 +199,7 @@ namespace obe::Graphics
          * \brief Gets a reference to the texture of the Sprite
          * \return A reference to the current texture of the Sprite
          */
-        [[nodiscard]] const sf::Texture& getTexture() const;
+        [[nodiscard]] const Graphics::Texture& getTexture() const;
         /**
          * \brief Get the x Coordinate of the scale factor of the Sprite
          * \return -1 if the Sprite has been horizontally flipped, 1
@@ -230,7 +231,7 @@ namespace obe::Graphics
          */
         void load(vili::ComplexNode& data) override;
         /**
-         * \brief The Sprite will load the sf::Texture at the given path
+         * \brief The Sprite will load the Texture at the given path
          * \param path A std::string containing the path of the texture to load
          */
         void loadTexture(const std::string& path);
@@ -242,10 +243,10 @@ namespace obe::Graphics
         void rotate(double addRotate);
         /**
          * \brief Apply a blend color to the Sprite
-         * \param newColor A sf::Color containing the color to blend
-         *        (sf::Color::White is default normal color)
+         * \param color A Color containing the color to blend
+         *        (Color::White is default normal color)
          */
-        void setColor(sf::Color newColor);
+        void setColor(const Color& color);
         /**
          * \brief Set the layer of the Sprite
          * \param layer Layer where to put the sprite (Higher layer is behind
@@ -285,7 +286,7 @@ namespace obe::Graphics
          * \brief Sets the Texture of the Sprite
          * \param texture Texture to set
          */
-        void setTexture(const sf::Texture& texture);
+        void setTexture(const Texture& texture);
         void setTextureRect(
             unsigned int x, unsigned int y, unsigned int width, unsigned int height);
         /**

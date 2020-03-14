@@ -15,7 +15,7 @@ namespace obe::Script::Bindings
             = ScriptNamespace.new_usertype<obe::Script::GameObject>("GameObject",
                 sol::call_constructor,
                 sol::constructors<obe::Script::GameObject(obe::Triggers::TriggerManager&,
-                    const std::string&, const std::string&)>());
+                    sol::state_view, const std::string&, const std::string&)>());
         bindGameObject["getType"] = &obe::Script::GameObject::getType;
         bindGameObject["doesHaveAnimator"] = &obe::Script::GameObject::doesHaveAnimator;
         bindGameObject["doesHaveCollider"] = &obe::Script::GameObject::doesHaveCollider;
@@ -39,7 +39,6 @@ namespace obe::Script::Bindings
         bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
         bindGameObject["access"] = &obe::Script::GameObject::access;
         bindGameObject["getConstructor"] = &obe::Script::GameObject::getConstructor;
-        bindGameObject["getEnvIndex"] = &obe::Script::GameObject::getEnvIndex;
         bindGameObject["initialize"] = &obe::Script::GameObject::initialize;
         bindGameObject["setPermanent"] = &obe::Script::GameObject::setPermanent;
         bindGameObject["isPermanent"] = &obe::Script::GameObject::isPermanent;
@@ -52,26 +51,5 @@ namespace obe::Script::Bindings
         sol::usertype<obe::Script::GameObjectDatabase> bindGameObjectDatabase
             = ScriptNamespace.new_usertype<obe::Script::GameObjectDatabase>(
                 "GameObjectDatabase", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadFunctionInitScriptEngine(sol::state_view state)
-    {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        ScriptNamespace.set_function("InitScriptEngine", obe::Script::InitScriptEngine);
-    }
-    void LoadFunctionCreateNewEnvironment(sol::state_view state)
-    {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        ScriptNamespace.set_function(
-            "CreateNewEnvironment", obe::Script::CreateNewEnvironment);
-    }
-    void LoadFunctionExecuteFile(sol::state_view state)
-    {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        ScriptNamespace.set_function("executeFile", obe::Script::executeFile);
-    }
-    void LoadFunctionExecuteString(sol::state_view state)
-    {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        ScriptNamespace.set_function("executeString", obe::Script::executeString);
     }
 };

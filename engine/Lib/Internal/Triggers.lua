@@ -4,19 +4,19 @@ function LuaCore.DefaultTriggerAlias(namespace, group, id)
     return namespace .. "." .. group .. "." .. id;
 end
 
-function LuaCore.MakeTriggerGroupSubTable(This, namespace)
+function LuaCore.MakeTriggerGroupSubTable(GameObject, namespace)
     return {
         __alias_function = LuaCore.DefaultTriggerAlias,
         __newindex = function(object, index, value)
             if type(value) == "function" then
                 local mt = getmetatable(object);
                 local alias = mt.__alias_function(namespace, object.triggerGroupId, index);
-                This:useTrigger(namespace, object.triggerGroupId, index, alias);
+                GameObject:useTrigger(namespace, object.triggerGroupId, index, alias);
                 mt.__storage[index] = value;
             elseif type(value) == "nil" then
                 local mt = getmetatable(object);
                 mt.__storage[index] = nil;
-                This:removeTrigger(namespace, object.triggerGroupId, index);
+                GameObject:removeTrigger(namespace, object.triggerGroupId, index);
             end
         end,
         __index = function(object, index)
@@ -33,14 +33,14 @@ end
 
 
 
-function LuaCore.MakeTriggerGroupHook(This, namespace)
+function LuaCore.MakeTriggerGroupHook(GameObject, namespace)
     local hook_mt = {
         __index = function(table, key)
-            for _, v in pairs(TriggerDatabase:getAllTriggersGroupNames(namespace)) do
+            for _, v in pairs(Engine.Triggers:getAllTriggersGroupNames(namespace)) do
                 if v == key then
                     if rawget(table, key) == nil then
                         rawset(table, key, { triggerGroupId = key });
-                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(This, namespace));
+                        setmetatable(rawget(table, key), LuaCore.MakeTriggerGroupSubTable(GameObject, namespace));
                     end
                     return rawget(table, key);
                 end

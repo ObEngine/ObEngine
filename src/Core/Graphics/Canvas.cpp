@@ -1,3 +1,5 @@
+#include <SFML/Graphics/Vertex.hpp>
+
 #include <Graphics/Canvas.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
@@ -28,8 +30,9 @@ namespace obe::Graphics::Canvas
     {
         const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
         const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
-        sf::Vertex line[] = { sf::Vertex(sf::Vector2f(p1px.x, p1px.y), p1color),
-            sf::Vertex(sf::Vector2f(p2px.x, p2px.y), p2color) };
+        const sf::Vertex firstVertex(sf::Vector2f(p1px.x, p1px.y), p1color);
+        const sf::Vertex secondVertex(sf::Vector2f(p2px.x, p2px.y), p2color);
+        const sf::Vertex line[] = { firstVertex, secondVertex };
         target.draw(line, 2, sf::Lines);
     }
 
@@ -160,7 +163,7 @@ namespace obe::Graphics::Canvas
             m_elements.end());
     }
 
-    const sf::Texture& Canvas::getTexture() const
+    const Graphics::Texture& Canvas::getTexture() const
     {
         return m_canvas.getTexture();
     }

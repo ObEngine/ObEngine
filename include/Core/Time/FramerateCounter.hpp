@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include <Graphics/Font.hpp>
 #include <Time/TimeUtils.hpp>
 
 namespace obe::Time
@@ -20,7 +21,7 @@ namespace obe::Time
         int m_updatesBuffer = 0;
         bool m_canUpdateFPS = false;
         sf::Text m_text;
-        sf::Font m_font;
+        Graphics::Font m_font;
 
     public:
         /**
@@ -35,7 +36,7 @@ namespace obe::Time
          * \brief Load a new font to use when drawing the stats
          * \param font Font to use to draw the amount of fps / ups
          */
-        void loadFont(sf::Font& font);
+        void loadFont(Graphics::Font& font);
         /**
          * \brief Draws the calculated stats on the screen
          */

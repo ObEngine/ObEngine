@@ -14,7 +14,8 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         return std::any_cast<T>(options.at(key));
     }
 
-    void drawPoint(sf::RenderTarget& surface, int x, int y, float radius, sf::Color color)
+    void drawPoint(
+        sf::RenderTarget& surface, int x, int y, float radius, const Color& color)
     {
         sf::CircleShape drawPt;
         drawPt.setRadius(radius);
@@ -24,7 +25,7 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
     }
 
     void drawLine(sf::RenderTarget& surface, int x1, int y1, int x2, int y2,
-        int thickness, sf::Color color)
+        int thickness, const Color& color)
     {
         sf::Vertex line[] = { sf::Vertex(sf::Vector2f(x1, y1), color),
             sf::Vertex(sf::Vector2f(x2, y2), color) };

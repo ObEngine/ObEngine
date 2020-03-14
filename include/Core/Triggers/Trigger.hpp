@@ -4,6 +4,7 @@
 
 #include <Debug/Logger.hpp>
 #include <Script/GlobalState.hpp>
+#include <sol/sol.hpp>
 #include <utility>
 
 namespace obe::Triggers
@@ -13,13 +14,13 @@ namespace obe::Triggers
     class TriggerEnv
     {
     public:
-        unsigned int envIndex;
-        std::string callbackName;
-        bool* envActive = nullptr;
-        TriggerEnv(unsigned int envIndex, std::string callbackName, bool* envActive)
-            : envIndex(envIndex)
-            , callbackName(std::move(callbackName))
-            , envActive(envActive)
+        sol::environment environment;
+        std::string callback;
+        bool* active = nullptr;
+        TriggerEnv(sol::environment environment, std::string callback, bool* active)
+            : environment(environment)
+            , callback(std::move(callback))
+            , active(active)
         {
         }
     };
@@ -34,11 +35,12 @@ namespace obe::Triggers
         std::string m_name;
         std::string m_fullName;
         std::vector<TriggerEnv> m_registeredEnvs;
-        std::vector<unsigned int> m_envsToRemove;
+        std::vector<sol::environment> m_envsToRemove;
         bool m_currentlyTriggered = false;
         bool m_enabled = false;
         std::function<void(const TriggerEnv&)> m_onRegisterCallback;
         std::function<void(const TriggerEnv&)> m_onUnregisterCallback;
+        sol::state_view m_lua;
         friend class TriggerGroup;
         friend class TriggerManager;
 
@@ -56,7 +58,7 @@ namespace obe::Triggers
          * \param parameter Value of the parameter (LuaRef can be anything)
          */
         void pushParameterFromLua(
-            const std::string& name, const kaguya::LuaRef& parameter) const;
+            const std::string& name, sol::reference parameter) const;
         /**
          * \brief Gets the Lua Table path used to store Trigger Parameters
          * \return The path to the Lua Table used to store Trigger Parameters
@@ -97,18 +99,18 @@ namespace obe::Triggers
         [[nodiscard]] std::string getNamespace() const;
         /**
          * \brief Registers a Lua State that will be triggered
-         * \param envIndex Index of the Lua Env to register
-         * \param callbackName Name of the callback to register
-         * \param envActive Pointer to the boolean that indicate if an
-         * environment is active or not
+         * \param environment Lua Environment to register
+         * \param callback Name of the callback to register
+         * \param active Pointer to the boolean that indicate if an
+         *        environment is active or not
          */
         void registerEnvironment(
-            unsigned int envIndex, const std::string& callbackName, bool* envActive);
+            sol::environment environment, const std::string& callback, bool* active);
         /**
          * \brief Removes an environment from Trigger Execution
-         * \param envIndex Index of the Lua environment
+         * \param environemnt Lua Environment to unregister
          */
-        void unregisterEnvironment(unsigned int envIndex);
+        void unregisterEnvironment(sol::environment environment);
         /**
          * \brief Triggers callbacks
          */
@@ -122,6 +124,7 @@ namespace obe::Triggers
     {
         Debug::Log->trace(
             "<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
+        m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"][name] = parameter;
         /*Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
                             [name]
             = parameter;*/

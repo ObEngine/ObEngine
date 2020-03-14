@@ -45,10 +45,12 @@ namespace obe::Engine::Bindings
                 sol::constructors<obe::Engine::ResourceManager()>());
         bindResourceManager["getFont"] = &obe::Engine::ResourceManager::getFont;
         bindResourceManager["getTexture"] = sol::overload(
-            static_cast<std::shared_ptr<sf::Texture> (obe::Engine::ResourceManager::*)(
-                const std::string&, bool)>(&obe::Engine::ResourceManager::getTexture),
-            static_cast<std::shared_ptr<sf::Texture> (obe::Engine::ResourceManager::*)(
-                const std::string&)>(&obe::Engine::ResourceManager::getTexture));
+            static_cast<std::shared_ptr<Graphics::Texture> (
+                obe::Engine::ResourceManager::*)(const std::string&, bool)>(
+                &obe::Engine::ResourceManager::getTexture),
+            static_cast<std::shared_ptr<Graphics::Texture> (
+                obe::Engine::ResourceManager::*)(const std::string&)>(
+                &obe::Engine::ResourceManager::getTexture));
         bindResourceManager["defaultAntiAliasing"]
             = sol::readonly(&obe::Engine::ResourceManager::defaultAntiAliasing);
     }

@@ -3,6 +3,8 @@
 #include <any>
 #include <unordered_map>
 
+#include <Graphics/Color.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -20,7 +22,7 @@ namespace obe::Graphics::Utils
      * \param color Color of the new Point
      */
     void drawPoint(
-        sf::RenderTarget& surface, int x, int y, float radius, sf::Color color);
+        sf::RenderTarget& surface, int x, int y, float radius, const Color& color);
     /**
      * \brief Draws a Line
      * \param surface RenderSurface where to render the line
@@ -33,7 +35,7 @@ namespace obe::Graphics::Utils
      * \param color Color of the line you want to draw
      */
     void drawLine(sf::RenderTarget& surface, int x1, int y1, int x2, int y2,
-        int thickness, sf::Color color);
+        int thickness, const Color& color);
     using DrawPolygonOptions = std::unordered_map<std::string, std::any>;
     /**
      * \brief Draws a Polygon
@@ -45,11 +47,11 @@ namespace obe::Graphics::Utils
      *        - <points> bool : Are the points of the Polygon visible ? (true =
      *          visible, false = not visible)
      *        - <radius> unsigned int : The radius of the points of the Polygon.
-     *        - <line_color> sf::Color : Default color of the lines of the Polygon.
-     *        - <line_color_x> sf::Color : Color of a specific line of the Polygon
+     *        - <line_color> Color : Default color of the lines of the Polygon.
+     *        - <line_color_x> Color : Color of a specific line of the Polygon
      *          where x is the index of the line
-     *        - <point_color> sf::Color : Default color of the points of the Polygon
-     *        - <point_color_x> sf::Color : Color of a specific point of the Polygon
+     *        - <point_color> Color : Default color of the points of the Polygon
+     *        - <point_color_x> Color : Color of a specific point of the Polygon
      *          where x is the index of the point
      */
     void drawPolygon(sf::RenderTarget& surface, std::vector<sf::Vector2i>& points,

@@ -124,9 +124,9 @@ namespace obe::Graphics::Bindings
         sol::usertype<obe::Graphics::SpriteHandlePoint> bindSpriteHandlePoint
             = GraphicsNamespace.new_usertype<obe::Graphics::SpriteHandlePoint>(
                 "SpriteHandlePoint", sol::call_constructor,
-                sol::constructors<obe::Graphics::SpriteHandlePoint(obe::Graphics::Sprite*,
+                sol::constructors<obe::Graphics::SpriteHandlePoint(obe::Graphics::Sprite&,
                                       obe::Transform::Referential),
-                    obe::Graphics::SpriteHandlePoint(obe::Graphics::Sprite*)>());
+                    obe::Graphics::SpriteHandlePoint(obe::Graphics::Sprite&)>());
         bindSpriteHandlePoint["getRect"] = &obe::Graphics::SpriteHandlePoint::getRect;
         bindSpriteHandlePoint["getReferential"]
             = &obe::Graphics::SpriteHandlePoint::getReferential;

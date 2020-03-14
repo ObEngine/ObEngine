@@ -208,7 +208,7 @@ namespace obe::Scene
                             = currentObject->at("Requires");
                         currentObject->removeOwnership(&objectRequirements);
                         Script::GameObjectDatabase::ApplyRequirements(
-                            &newObject, objectRequirements);
+                            newObject.getEnvironment(), objectRequirements);
                         objectRequirements.setParent(currentObject);
                     }
                     newObject.exec("LuaCore.InjectInitInjectionTable()");
@@ -571,7 +571,7 @@ namespace obe::Scene
         }
 
         std::unique_ptr<Script::GameObject> newGameObject
-            = std::make_unique<Script::GameObject>(m_triggers, obj, useId);
+            = std::make_unique<Script::GameObject>(m_triggers, m_lua, obj, useId);
         vili::ComplexNode& gameObjectData
             = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
         newGameObject->loadGameObject(*this, gameObjectData, m_resources);

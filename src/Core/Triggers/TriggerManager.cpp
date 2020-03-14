@@ -4,7 +4,8 @@
 
 namespace obe::Triggers
 {
-    TriggerManager::TriggerManager()
+    TriggerManager::TriggerManager(sol::state_view lua)
+        : m_lua(lua)
     {
         Debug::Log->debug("<TriggerManager> Initializing TriggerManager");
         m_databaseChrono.start();
@@ -16,7 +17,7 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
-                return m_allTriggers[space][group]->getTrigger(trigger);
+                return m_allTriggers[space][group]->get(trigger);
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getTrigger" }, { "group", group },
@@ -55,7 +56,7 @@ namespace obe::Triggers
             if (m_allTriggers[space].find(group) == m_allTriggers[space].end())
             {
                 m_allTriggers[space][group]
-                    = std::make_unique<TriggerGroup>(space, group);
+                    = std::make_unique<TriggerGroup>(m_lua, space, group);
                 return TriggerGroupPtr(m_allTriggers[space][group].get(),
                     [this](TriggerGroup* ptr) { this->removeTriggerGroup(ptr); });
                 ;
@@ -117,7 +118,7 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
-                return m_allTriggers[space][group]->getAllTriggersName();
+                return m_allTriggers[space][group]->getTriggersNames();
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getAllTriggersNameFromTriggerGroup" },
@@ -171,44 +172,11 @@ namespace obe::Triggers
     void TriggerManager::update()
     {
         Debug::Log->trace("<TriggerManager> Updating TriggerManager");
-        for (auto it = m_allTriggers.begin(); it != m_allTriggers.end(); ++it)
-        {
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
-                if (it2->second->m_delayedTriggers.size() != 0)
-                {
-                    for (int i = 0; i < it2->second->m_delayedTriggers.size(); i++)
-                    {
-                        it2->second->m_delayedTriggers[i]->m_delayTarget
-                            = m_databaseChrono.getTime()
-                            + it2->second->m_delayedTriggers[i]->m_delay;
-                        m_delayedTriggers.push_back(
-                            move(it2->second->m_delayedTriggers[i]));
-                    }
-                    it2->second->m_delayedTriggers.clear();
-                }
-            }
-        }
-        std::vector<int> triggeredDelayedTriggers;
-        for (int i = 0; i < m_delayedTriggers.size(); i++)
-        {
-            if (m_delayedTriggers[i]->m_delayTarget <= m_databaseChrono.getTime())
-            {
-                m_delayedTriggers[i]->m_trigger.m_enabled = true;
-                triggeredDelayedTriggers.push_back(i);
-            }
-        }
-        for (int i = 0; i < triggeredDelayedTriggers.size(); i++)
-        {
-            m_delayedTriggers.erase(
-                m_delayedTriggers.begin() + triggeredDelayedTriggers[i]);
-        }
     }
 
     void TriggerManager::clear()
     {
         Debug::Log->debug("<TriggerManager> Clearing TriggerManager");
-        m_delayedTriggers.clear();
         m_databaseChrono.stop();
         m_allTriggers.clear();
         m_databaseChrono.start();

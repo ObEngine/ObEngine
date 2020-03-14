@@ -26,7 +26,7 @@ namespace obe::Animation
         m_loopAmount = loops;
     }
 
-    void AnimationGroup::pushTexture(sf::Texture* texture)
+    void AnimationGroup::pushTexture(Graphics::Texture* texture)
     {
         m_groupList.push_back(texture);
     }
@@ -37,7 +37,7 @@ namespace obe::Animation
             m_groupList.erase(m_groupList.begin() + index);
     }
 
-    const sf::Texture& AnimationGroup::getTexture() const
+    const Graphics::Texture& AnimationGroup::getTexture() const
     {
         return *m_groupList[m_index];
     }

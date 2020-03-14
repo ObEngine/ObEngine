@@ -83,7 +83,7 @@ namespace obe::Script
         {
             sol::table requireTable
                 = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
-            DataBridge::dataToLua(requireTable, currentRequirement);
+            //DataBridge::dataToLua(requireTable, currentRequirement);
         }
     }
 
@@ -163,7 +163,7 @@ namespace obe::Script
         if (obj.contains(vili::NodeType::ComplexNode, "Script"))
         {
             m_hasScriptEngine = true;
-            m_environment = sol::environment(m_lua, sol::create);
+            m_environment = sol::environment(m_lua, sol::create, m_lua.globals());
             m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet, 1)
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
@@ -371,7 +371,7 @@ namespace obe::Script
                     m_triggers.getTrigger(trNsp, trGrp, trName), callbackName);
                 m_triggers.getTrigger(trNsp, trGrp, trName)
                     .lock()
-                    ->registerEnvironment(m_envIndex, callbackName, &m_active);
+                    ->registerEnvironment(m_environment, callbackName, &m_active);
             }
             else
             {
@@ -380,10 +380,10 @@ namespace obe::Script
                     : callAlias;
                 m_triggers.getTrigger(trNsp, trGrp, trName)
                     .lock()
-                    ->unregisterEnvironment(m_envIndex);
+                    ->unregisterEnvironment(m_environment);
                 m_triggers.getTrigger(trNsp, trGrp, trName)
                     .lock()
-                    ->registerEnvironment(m_envIndex, callbackName, &m_active);
+                    ->registerEnvironment(m_environment, callbackName, &m_active);
             }
         }
     }
@@ -393,7 +393,7 @@ namespace obe::Script
     {
         m_triggers.getTrigger(trNsp, trGrp, trName)
             .lock()
-            ->unregisterEnvironment(m_envIndex);
+            ->unregisterEnvironment(m_environment);
     }
 
     void GameObject::exec(const std::string& query)

@@ -139,7 +139,7 @@ namespace obe::Animation
 
             if (m_target)
             {
-                const sf::Texture& texture = this->getTexture();
+                const Graphics::Texture& texture = this->getTexture();
                 m_target->setTexture(texture);
 
                 if (m_targetScaleMode == AnimatorTargetScaleMode::Fit)
@@ -182,12 +182,13 @@ namespace obe::Animation
         m_targetScaleMode = targetScaleMode;
     }
 
-    const sf::Texture& Animator::getTexture() const
+    const Graphics::Texture& Animator::getTexture() const
     {
         return m_currentAnimation->getTexture();
     }
 
-    const sf::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
+    const Graphics::Texture& Animator::getTextureAtKey(
+        const std::string& key, int index) const
     {
         return this->getAnimation(key).getTextureAtIndex(index);
     }

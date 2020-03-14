@@ -116,7 +116,8 @@ namespace obe::Animation
             }
             else
             {
-                std::shared_ptr<sf::Texture> newTexture = std::make_shared<sf::Texture>();
+                std::shared_ptr<Graphics::Texture> newTexture
+                    = std::make_shared<Graphics::Texture>();
                 newTexture->loadFromFile(path.add(textureName).find());
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
                 m_textures.push_back(newTexture);
@@ -270,12 +271,12 @@ namespace obe::Animation
         m_over = false;
     }
 
-    const sf::Texture& Animation::getTextureAtIndex(int index)
+    const Graphics::Texture& Animation::getTextureAtIndex(int index)
     {
         return *m_textures[index];
     }
 
-    const sf::Texture& Animation::getTexture()
+    const Graphics::Texture& Animation::getTexture()
     {
         return m_groups[m_currentGroupName]->getTexture();
     }

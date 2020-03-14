@@ -1,8 +1,17 @@
 #pragma once
+#include <filesystem>
+#include <sol/sol.hpp>
+#include <type_traits>
 
 namespace sol
 {
     class state_view;
+    template <> struct is_container<std::filesystem::path> : std::false_type
+    {
+    };
+    template <> struct is_automagical<std::filesystem::path> : std::false_type
+    {
+    };
 };
 namespace obe::System::Bindings
 {

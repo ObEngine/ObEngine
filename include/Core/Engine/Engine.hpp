@@ -34,7 +34,7 @@ namespace obe::Engine
         ResourceManager m_resources {};
         Input::InputManager m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
-        Triggers::TriggerManager m_triggers {};
+        std::unique_ptr<Triggers::TriggerManager> m_triggers;
 
         // TriggerGroups
         Triggers::TriggerGroupPtr t_game {};
@@ -42,10 +42,10 @@ namespace obe::Engine
         // Initialization
         void initConfig();
         void initLogger() const;
+        void initScript();
         void initTriggers();
         void initInput();
         void initFramerate();
-        void initScript();
         void initResources();
         void initWindow();
         void initCursor();

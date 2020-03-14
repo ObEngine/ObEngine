@@ -1,6 +1,8 @@
 #pragma once
 
-#include <Triggers/TriggerDelay.hpp>
+#include <Triggers/Trigger.hpp>
+#include <map>
+#include <memory>
 #include <sol/sol.hpp>
 
 namespace obe::Triggers
@@ -14,9 +16,9 @@ namespace obe::Triggers
         std::string m_name;
         std::string m_fromNsp;
         std::map<std::string, std::shared_ptr<Trigger>> m_triggerMap;
-        std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
         bool m_joinable = false;
         sol::state_view m_lua;
+        friend class Trigger;
         friend class TriggerManager;
 
     public:
@@ -59,13 +61,6 @@ namespace obe::Triggers
          */
         TriggerGroup& remove(const std::string& triggerName);
         /**
-         * \brief Delays activation of a Trigger
-         * \param triggerName Name of the Trigger to delay
-         * \param delay Time in ms used to delay the Trigger
-         * \return Pointer to the TriggerGroup to chain calls
-         */
-        TriggerGroup& delay(const std::string& triggerName, Time::TimeUnit delay);
-        /**
          * \brief Enables a Trigger
          * \param triggerName Name of the Trigger to enable
          * \return Pointer to the TriggerGroup to chain calls
@@ -88,7 +83,7 @@ namespace obe::Triggers
          * \param parameter Lua Value of the Parameter
          */
         void pushParameterFromLua(const std::string& triggerName,
-            const std::string& parameterName, const kaguya::LuaRef& parameter);
+            const std::string& parameterName, sol::reference parameter);
         /**
          * \brief Get the name of all Trigger contained in the TriggerGroup
          * \return A std::vector of std::string containing the name of all

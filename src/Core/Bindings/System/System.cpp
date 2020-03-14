@@ -8,6 +8,9 @@
 #include <System/Window.hpp>
 #include <Triggers/TriggerManager.hpp>
 
+#include <filesystem>
+#include <string>
+
 #include <sol/sol.hpp>
 
 namespace obe::System::Bindings
@@ -137,8 +140,13 @@ namespace obe::System::Bindings
         bindPlugin["hasOnRender"] = &obe::System::Plugin::hasOnRender;
         bindPlugin["hasOnExit"] = &obe::System::Plugin::hasOnExit;
     }
+
     void LoadClassWindow(sol::state_view state)
     {
+        sol::table SFMLNamespace = state["SFML"].get_or_create<sol::table>();
+        SFMLNamespace.new_usertype<sf::Vector2u>("Vector2u", sol::call_constructor,
+            sol::constructors<sf::Vector2u(unsigned, unsigned)>(), "x", &sf::Vector2u::x,
+            "y", &sf::Vector2u::y);
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
         sol::usertype<obe::System::Window> bindWindow
             = SystemNamespace.new_usertype<obe::System::Window>("Window",

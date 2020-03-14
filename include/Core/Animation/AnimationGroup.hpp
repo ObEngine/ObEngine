@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
+#include <Graphics/Texture.hpp>
 #include <Time/TimeUtils.hpp>
 
 namespace obe::Animation
@@ -28,7 +29,7 @@ namespace obe::Animation
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup
          */
-        std::vector<sf::Texture*> m_groupList;
+        std::vector<Graphics::Texture*> m_groupList;
         /**
          * \brief The name of the AnimationGroup
          */
@@ -77,10 +78,10 @@ namespace obe::Animation
         [[nodiscard]] unsigned int getSize() const;
         /**
          * \brief Get the current Sprite of the AnimationGroup
-         * \return A reference to the sf::Texture currently played by the
+         * \return A reference to the Texture currently played by the
          *         AnimationGroup
          */
-        [[nodiscard]] const sf::Texture& getTexture() const;
+        [[nodiscard]] const Graphics::Texture& getTexture() const;
         /**
          * \brief Get if the AnimationGroup is done playing
          * \return A boolean which is true if the AnimationGroup's Animation is
@@ -110,10 +111,10 @@ namespace obe::Animation
         /**
          * \todo Add a way to specify the index of the texture
          * \brief Add a new texture to the AnimationGroup
-         * \param texture A pointer of a sf::Texture to add to the
+         * \param texture A pointer of a Texture to add to the
          *        AnimationGroup
          */
-        void pushTexture(sf::Texture* texture);
+        void pushTexture(Graphics::Texture* texture);
         /**
          * \brief Remove the texture at the given index in the AnimationGroup
          * \param index Removes the texture at index

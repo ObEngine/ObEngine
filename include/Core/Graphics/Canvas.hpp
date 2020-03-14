@@ -73,8 +73,8 @@ namespace obe::Graphics::Canvas
         Transform::UnitVector p1;
         Transform::UnitVector p2;
         unsigned int thickness = 1;
-        sf::Color p1color;
-        sf::Color p2color;
+        Color p1color;
+        Color p2color;
         static const CanvasElementType Type = CanvasElementType::Line;
 
         /**
@@ -288,7 +288,7 @@ namespace obe::Graphics::Canvas
          * \brief Get the current Texture of the Canvas
          * \return A reference to the current Texture of the Canvas
          */
-        const sf::Texture& getTexture() const;
+        const Graphics::Texture& getTexture() const;
         /**
          * \brief Ask the Canvas to sort elements for the next rendering
          */

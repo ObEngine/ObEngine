@@ -1,6 +1,8 @@
 local Class = require("Lib/StdLib/Class");
 local contains = require("Lib/StdLib/Contains");
 
+obe.Canvas = {};
+
 function deepcopy(orig)
     local orig_type = type(orig)
     local copy
@@ -17,7 +19,7 @@ function deepcopy(orig)
 end
 
 obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
-    self.internal = obe.Canvas.InternalCanvas(width, height);
+    self.internal = obe.Graphics.Canvas.Canvas(width, height);
     self.elements = {};
     self.useCache = usecache or false;
     self.BMT = {

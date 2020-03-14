@@ -26,14 +26,16 @@ namespace obe::Engine
 
     void Engine::initTriggers()
     {
-        m_triggers.createNamespace("Global");
-        t_game = m_triggers.createTriggerGroup("Global", "Game");
+        m_lua["__TRIGGERS"].get_or_create<sol::table>();
+        m_triggers = std::make_unique<Triggers::TriggerManager>(m_lua);
+        m_triggers->createNamespace("Global");
+        t_game = m_triggers->createTriggerGroup("Global", "Game");
 
         t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
     }
     void Engine::initInput()
     {
-        m_input.init(m_triggers);
+        m_input.init(*m_triggers);
         m_input.configure(m_config.get().at("KeyBinding"));
         m_input.addContext("game");
     }
@@ -57,13 +59,9 @@ namespace obe::Engine
 
         Bindings::IndexAllBindings(m_lua);
         m_lua.script_file("Lib/Internal/GameInit.lua"_fs);
-        m_lua.script_file("boot.lua"_fs);
         m_lua.set_exception_handler(lua_exception_handler);
 
         m_lua["Engine"] = this;
-
-        m_lua["loadScene"]
-            = [&](const std::string& path) { m_scene->loadFromFile(path); };
     }
 
     void Engine::initResources()
@@ -88,7 +86,7 @@ namespace obe::Engine
 
     void Engine::initCursor()
     {
-        m_cursor = std::make_unique<System::Cursor>(*m_window, m_triggers);
+        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_triggers);
     }
 
     void Engine::initPlugins()
@@ -114,7 +112,7 @@ namespace obe::Engine
 
     void Engine::initScene()
     {
-        m_scene = std::make_unique<Scene::Scene>(m_triggers, m_lua);
+        m_scene = std::make_unique<Scene::Scene>(*m_triggers, m_lua);
         m_scene->attachResourceManager(m_resources);
     }
 
@@ -132,7 +130,7 @@ namespace obe::Engine
     void Engine::clean()
     {
         t_game->trigger("End");
-        m_triggers.update();
+        m_triggers->update();
         m_scene->clear();
         m_scene->update();
         Script::GameObjectDatabase::Clear();
@@ -170,9 +168,9 @@ namespace obe::Engine
     {
         this->initConfig();
         this->initLogger();
+        this->initScript();
         this->initTriggers();
         this->initInput();
-        this->initScript();
         this->initWindow();
         this->initCursor();
         this->initFramerate();
@@ -183,6 +181,7 @@ namespace obe::Engine
 
     void Engine::run()
     {
+        m_lua.script_file("boot.lua"_fs);
         m_window->create();
         m_lua["Game"]["Start"]();
 
@@ -229,7 +228,7 @@ namespace obe::Engine
 
     Triggers::TriggerManager& Engine::getTriggerManager()
     {
-        return m_triggers;
+        return *m_triggers;
     }
 
     Scene::Scene& Engine::getScene()
@@ -252,7 +251,7 @@ namespace obe::Engine
         // Events
         this->handleWindowEvents();
         m_scene->update();
-        m_triggers.update();
+        m_triggers->update();
         m_input.update();
         m_cursor->update();
     }

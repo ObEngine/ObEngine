@@ -17,10 +17,10 @@ namespace obe::Triggers
         std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>>
             m_allTriggers;
         Time::Chronometer m_databaseChrono;
-        std::vector<std::unique_ptr<TriggerDelay>> m_delayedTriggers;
+        sol::state_view m_lua;
 
     public:
-        TriggerManager();
+        TriggerManager(sol::state_view lua);
         /**
          * \brief Get a Trigger contained in the TriggerManager
          * \param space Namespace of the Trigger

@@ -87,7 +87,7 @@ namespace obe::Animation
         unsigned int m_codeIndex = 0;
         bool m_feedInstructions = true;
 
-        std::vector<std::shared_ptr<sf::Texture>> m_textures;
+        std::vector<std::shared_ptr<Graphics::Texture>> m_textures;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
         std::string m_currentGroupName = "NONE";
         std::string m_nextAnimation = "";
@@ -186,13 +186,13 @@ namespace obe::Animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const sf::Texture& getTexture();
+        const Graphics::Texture& getTexture();
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.
-         * \return A reference to the sf::Texture at the given index
+         * \return A reference to the Texture at the given index
          */
-        const sf::Texture& getTextureAtIndex(int index);
+        const Graphics::Texture& getTextureAtIndex(int index);
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise

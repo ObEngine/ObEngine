@@ -5,14 +5,15 @@
 
 namespace obe::Engine
 {
-    std::shared_ptr<sf::Texture> ResourceManager::getTexture(
+    std::shared_ptr<Graphics::Texture> ResourceManager::getTexture(
         const std::string& path, bool antiAliasing)
     {
         if (m_textures.find(path) == m_textures.end()
             || (!m_textures[path].first && !antiAliasing)
             || (!m_textures[path].second && antiAliasing))
         {
-            std::shared_ptr<sf::Texture> tempTexture = std::make_shared<sf::Texture>();
+            std::shared_ptr<Graphics::Texture> tempTexture
+                = std::make_shared<Graphics::Texture>();
             const System::LoaderResult loadResult = System::Path(path).load(
                 System::Loaders::textureLoader, *tempTexture.get());
             Debug::Log->debug("[ResourceManager] Loading <Texture> {} from {}", path,
@@ -20,7 +21,7 @@ namespace obe::Engine
 
             if (loadResult.success())
             {
-                tempTexture->setSmooth(antiAliasing);
+                tempTexture->setAntiAliasing(antiAliasing);
                 if (!antiAliasing)
                 {
                     m_textures[path].first = move(tempTexture);
@@ -50,7 +51,8 @@ namespace obe::Engine
         }
     }
 
-    std::shared_ptr<sf::Texture> ResourceManager::getTexture(const std::string& path)
+    std::shared_ptr<Graphics::Texture> ResourceManager::getTexture(
+        const std::string& path)
     {
         return getTexture(path, defaultAntiAliasing);
     }
@@ -60,13 +62,13 @@ namespace obe::Engine
     {
     }
 
-    std::shared_ptr<sf::Font> ResourceManager::getFont(const std::string& path)
+    std::shared_ptr<Graphics::Font> ResourceManager::getFont(const std::string& path)
     {
         if (m_fonts.find(path) == m_fonts.end())
         {
-            std::shared_ptr<sf::Font> tempFont = std::make_shared<sf::Font>();
+            std::shared_ptr<Graphics::Font> tempFont = std::make_shared<Graphics::Font>();
             const System::LoaderResult loadResult
-                = System::Path(path).load(System::Loaders::fontLoader, *tempFont.get());
+                = System::Path(path).load(System::Loaders::fontLoader, *tempFont);
             Debug::Log->debug(
                 "[ResourceManager] Loading <Font> {} from {}", path, loadResult.path());
 

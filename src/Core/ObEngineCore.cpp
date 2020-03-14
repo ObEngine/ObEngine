@@ -36,9 +36,6 @@ namespace obe
         Debug::Log->debug("<ObEngine> Mounting paths");
         System::MountPaths();
 
-        Debug::Log->debug("<ObEngine> Initialising Lua State");
-        Script::InitScriptEngine();
-
         Debug::Log->debug("<ObEngine> Initialising NullTexture");
         Graphics::MakeNullTexture();
 

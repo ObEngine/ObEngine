@@ -164,14 +164,7 @@ namespace obe::Bindings
         BindTree["obe"]["Script"]
             .add("ClassGameObject", &obe::Script::Bindings::LoadClassGameObject)
             .add("ClassGameObjectDatabase",
-                &obe::Script::Bindings::LoadClassGameObjectDatabase)
-            .add("FunctionInitScriptEngine",
-                &obe::Script::Bindings::LoadFunctionInitScriptEngine)
-            .add("FunctionCreateNewEnvironment",
-                &obe::Script::Bindings::LoadFunctionCreateNewEnvironment)
-            .add("FunctionExecuteFile", &obe::Script::Bindings::LoadFunctionExecuteFile)
-            .add("FunctionExecuteString",
-                &obe::Script::Bindings::LoadFunctionExecuteString);
+                &obe::Script::Bindings::LoadClassGameObjectDatabase);
 
         BindTree["obe"].add("System", InitTreeNodeAsTable("obe.System"));
         BindTree["obe"]["System"]
@@ -221,7 +214,6 @@ namespace obe::Bindings
         BindTree["obe"].add("Triggers", InitTreeNodeAsTable("obe.Triggers"));
         BindTree["obe"]["Triggers"]
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)
-            .add("ClassTriggerDelay", &obe::Triggers::Bindings::LoadClassTriggerDelay)
             .add("ClassTriggerEnv", &obe::Triggers::Bindings::LoadClassTriggerEnv)
             .add("ClassTriggerGroup", &obe::Triggers::Bindings::LoadClassTriggerGroup)
             .add(

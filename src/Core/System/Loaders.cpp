@@ -61,7 +61,7 @@ namespace obe::System
 namespace obe::System::Loaders
 {
     // Loaders
-    Loader<sf::Texture> textureLoader(
+    Loader<Graphics::Texture> textureLoader(
         [](sf::Texture& obj, const std::string& path) -> bool {
             return obj.loadFromFile(path);
         });
@@ -71,9 +71,10 @@ namespace obe::System::Loaders
             return obj.parseFile(path);
         });
 
-    Loader<sf::Font> fontLoader([](sf::Font& obj, const std::string& path) -> bool {
-        return obj.loadFromFile(path);
-    });
+    Loader<Graphics::Font> fontLoader(
+        [](Graphics::Font& obj, const std::string& path) -> bool {
+            return obj.loadFromFile(path);
+        });
 
     Loader<std::vector<std::string>> dirPathLoader(
         [](std::vector<std::string>& obj, const std::string& path) -> bool {

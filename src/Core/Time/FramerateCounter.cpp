@@ -24,7 +24,7 @@ namespace obe::Time
         }
     }
 
-    void FramerateCounter::loadFont(sf::Font& font)
+    void FramerateCounter::loadFont(Graphics::Font& font)
     {
         m_text.setFont(font);
         m_text.setCharacterSize(12);

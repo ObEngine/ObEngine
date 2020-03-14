@@ -1,7 +1,6 @@
 #include <Bindings/Triggers/Triggers.hpp>
 
 #include <Triggers/Trigger.hpp>
-#include <Triggers/TriggerDelay.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Triggers/TriggerManager.hpp>
 
@@ -16,9 +15,9 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::Trigger>("Trigger",
                 sol::call_constructor,
                 sol::constructors<obe::Triggers::Trigger(
-                                      obe::Triggers::TriggerGroup*, const std::string&),
+                                      obe::Triggers::TriggerGroup&, const std::string&),
                     obe::Triggers::Trigger(
-                        obe::Triggers::TriggerGroup*, const std::string&, bool)>());
+                        obe::Triggers::TriggerGroup&, const std::string&, bool)>());
         bindTrigger["getState"] = &obe::Triggers::Trigger::getState;
         bindTrigger["getGroup"] = &obe::Triggers::Trigger::getGroup;
         bindTrigger["getName"] = &obe::Triggers::Trigger::getName;
@@ -30,21 +29,7 @@ namespace obe::Triggers::Bindings
         bindTrigger["onRegister"] = &obe::Triggers::Trigger::onRegister;
         bindTrigger["onUnregister"] = &obe::Triggers::Trigger::onUnregister;
     }
-    void LoadClassTriggerDelay(sol::state_view state)
-    {
-        sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
-        sol::usertype<obe::Triggers::TriggerDelay> bindTriggerDelay
-            = TriggersNamespace.new_usertype<obe::Triggers::TriggerDelay>("TriggerDelay",
-                sol::call_constructor,
-                sol::constructors<obe::Triggers::TriggerDelay(
-                    obe::Triggers::Trigger&, obe::Time::TimeUnit)>());
-        bindTriggerDelay["m_trigger"] = sol::property(
-            [](obe::Triggers::TriggerDelay* self) { return self->m_trigger; });
-        bindTriggerDelay["m_delay"]
-            = sol::readonly(&obe::Triggers::TriggerDelay::m_delay);
-        bindTriggerDelay["m_delayTarget"]
-            = sol::readonly(&obe::Triggers::TriggerDelay::m_delayTarget);
-    }
+
     void LoadClassTriggerEnv(sol::state_view state)
     {
         sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
@@ -52,12 +37,11 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerEnv>("TriggerEnv",
                 sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerEnv(
-                    unsigned int, std::string, bool*)>());
-        bindTriggerEnv["envIndex"] = sol::readonly(&obe::Triggers::TriggerEnv::envIndex);
-        bindTriggerEnv["callbackName"]
-            = sol::readonly(&obe::Triggers::TriggerEnv::callbackName);
-        bindTriggerEnv["envActive"]
-            = sol::readonly(&obe::Triggers::TriggerEnv::envActive);
+                    sol::environment, std::string, bool*)>());
+        bindTriggerEnv["environment"]
+            = sol::readonly(&obe::Triggers::TriggerEnv::environment);
+        bindTriggerEnv["callback"] = sol::readonly(&obe::Triggers::TriggerEnv::callback);
+        bindTriggerEnv["active"] = sol::readonly(&obe::Triggers::TriggerEnv::active);
     }
     void LoadClassTriggerGroup(sol::state_view state)
     {
@@ -66,14 +50,12 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerGroup>("TriggerGroup",
                 sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerGroup(
-                    const std::string&, const std::string&)>());
+                    sol::state_view, const std::string&, const std::string&)>());
         bindTriggerGroup["setJoinable"] = &obe::Triggers::TriggerGroup::setJoinable;
         bindTriggerGroup["isJoinable"] = &obe::Triggers::TriggerGroup::isJoinable;
         bindTriggerGroup["get"] = &obe::Triggers::TriggerGroup::get;
         bindTriggerGroup["add"] = &obe::Triggers::TriggerGroup::add;
         bindTriggerGroup["remove"] = &obe::Triggers::TriggerGroup::remove;
-        bindTriggerGroup["delay"]
-            = &obe::Triggers::TriggerGroup::delay;
         bindTriggerGroup["trigger"] = &obe::Triggers::TriggerGroup::trigger;
         bindTriggerGroup["pushParameterFromLua"]
             = &obe::Triggers::TriggerGroup::pushParameterFromLua;
@@ -89,7 +71,7 @@ namespace obe::Triggers::Bindings
         sol::usertype<obe::Triggers::TriggerManager> bindTriggerManager
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerManager>(
                 "TriggerManager", sol::call_constructor,
-                sol::constructors<obe::Triggers::TriggerManager()>());
+                sol::constructors<obe::Triggers::TriggerManager(sol::state_view)>());
         bindTriggerManager["get"] = &obe::Triggers::TriggerManager::getTrigger;
         bindTriggerManager["getAllTriggersNameFromTriggerGroup"]
             = &obe::Triggers::TriggerManager::getAllTriggersNameFromTriggerGroup;

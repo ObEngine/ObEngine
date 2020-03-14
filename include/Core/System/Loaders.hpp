@@ -3,6 +3,8 @@
 #include <functional>
 #include <string>
 
+#include <Graphics/Font.hpp>
+#include <Graphics/Texture.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -59,17 +61,17 @@ namespace obe::System::Loaders
     };
 
     /**
-     * \brief Load a sf::Texture from a file
+     * \brief Load a Texture from a file
      */
-    extern Loader<sf::Texture> textureLoader;
+    extern Loader<Graphics::Texture> textureLoader;
     /**
      * \brief Load a vili::DataParser from a file
      */
     extern Loader<vili::ViliParser> dataLoader;
     /**
-     * \brief Load a sf::Font from a file
+     * \brief Load a Font from a file
      */
-    extern Loader<sf::Font> fontLoader;
+    extern Loader<Graphics::Font> fontLoader;
     /**
      * \brief List all folders in the specified path
      */

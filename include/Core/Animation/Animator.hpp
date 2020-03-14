@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <Animation/Animation.hpp>
+#include <Graphics/Texture.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Graphics
@@ -71,18 +72,18 @@ namespace obe::Animation
          */
         [[nodiscard]] std::string getKey() const;
         /**
-         * \brief Get the current sf::Sprite of the current Animation
-         * \return A pointer of the sf::Sprite currently played by the current
+         * \brief Get the current Sprite of the current Animation
+         * \return A pointer of the Sprite currently played by the current
          *         Animation
          */
-        [[nodiscard]] const sf::Texture& getTexture() const;
+        [[nodiscard]] const Graphics::Texture& getTexture() const;
         /**
          * \brief Call Animation::getTextureAtIndex
          * \param key Name of the Animation where the Texture is located
          * \param index Index of the Texture in the Animation
          * \return A pointer to the Texture
          */
-        [[nodiscard]] const sf::Texture& getTextureAtKey(
+        [[nodiscard]] const Graphics::Texture& getTextureAtKey(
             const std::string& key, int index) const;
         /**
          * \brief Loads the Animator

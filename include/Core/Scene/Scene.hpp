@@ -116,14 +116,15 @@ namespace obe::Scene
          * \brief Creates a new GameObject
          * \param obj Type of the GameObject
          * \param id Id of the new GameObject (If empty the id will be randomly
-         *        generated) \return A pointer to the newly created GameObject
+         *        generated)
+         * \return A pointer to the newly created GameObject
          */
         Script::GameObject& createGameObject(
             const std::string& obj, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return An unsigned int containing how many GameObjects are present
-         * in the Scene
+         *         in the Scene
          */
         [[nodiscard]] unsigned int getGameObjectAmount() const;
         /**
@@ -173,7 +174,7 @@ namespace obe::Scene
         /**
          * \brief Get how many Sprites are present in the Scene
          * \return An unsigned int containing how many Sprites are present
-         * in the Scene
+         *         in the Scene
          */
         [[nodiscard]] unsigned int getSpriteAmount() const;
         /**
@@ -191,7 +192,7 @@ namespace obe::Scene
         /**
          * TODO: Check if passing the camera as a parameter is useful
          * \brief Get the first found Sprite with the BoundingRect
-         * including the given position
+         *        including the given position
          * \param position Position to check
          * \param camera Camera position
          * \param layer Layer where to check
@@ -234,7 +235,7 @@ namespace obe::Scene
         /**
          * \brief Get all the pointers of the Colliders in the Scene
          * \return A std::vector containing all the pointers of the Colliders
-         * present in the Scene
+         *         present in the Scene
          */
         [[nodiscard]] std::vector<Collision::PolygonalCollider*> getAllColliders() const;
         /**
@@ -277,7 +278,7 @@ namespace obe::Scene
         /**
          * \brief Folder where was the map loaded with loadFromFile method
          * \return A std::string containing the folder where was loaded the map
-         * file
+         *         file
          */
         [[nodiscard]] std::string getFilePath() const;
         /**
@@ -292,7 +293,7 @@ namespace obe::Scene
         /**
          * \brief Name of the last loaded map file with loadFromFile method
          * \return A std::string containing the name of the last loaded map file
-         * with loadFromFile method
+         *         with loadFromFile method
          */
         [[nodiscard]] std::string getLevelFile() const;
         void enableShowSceneNodes(bool showNodes);

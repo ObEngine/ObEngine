@@ -46,14 +46,6 @@ namespace obe::Triggers
         return *this;
     }
 
-    TriggerGroup& TriggerGroup::delay(
-        const std::string& triggerName, Time::TimeUnit delay)
-    {
-        m_delayedTriggers.push_back(
-            std::make_unique<TriggerDelay>(*m_triggerMap[triggerName].get(), delay));
-        return *this;
-    }
-
     TriggerGroup& TriggerGroup::trigger(const std::string& triggerName)
     {
         Debug::Log->trace("<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}",
@@ -73,7 +65,7 @@ namespace obe::Triggers
     }
 
     void TriggerGroup::pushParameterFromLua(const std::string& triggerName,
-        const std::string& parameterName, const kaguya::LuaRef& parameter)
+        const std::string& parameterName, sol::reference parameter)
     {
         m_triggerMap[triggerName]->pushParameterFromLua(parameterName, parameter);
     }

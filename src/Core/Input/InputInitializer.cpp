@@ -296,8 +296,8 @@ namespace obe::Input
         for (auto const& [key, val] : m_inputs)
         {
             Input::InputButton* button = val.get();
-            t_inputs->addTrigger(button->getName());
-            t_inputs->getTrigger(button->getName())
+            t_inputs->add(button->getName());
+            t_inputs->get(button->getName())
                 .lock()
                 ->onRegister([button, this](const Triggers::TriggerEnv& env) {
                     for (auto& monitor : m_monitors)
@@ -307,7 +307,7 @@ namespace obe::Input
                     }
                     m_monitors.push_back(this->monitor(*button));
                 });
-            t_inputs->getTrigger(button->getName())
+            t_inputs->get(button->getName())
                 .lock()
                 ->onUnregister([button, this](const Triggers::TriggerEnv& env) {
                     m_monitors.erase(std::remove_if(m_monitors.begin(), m_monitors.end(),
