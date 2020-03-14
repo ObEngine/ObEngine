@@ -14,8 +14,7 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         return std::any_cast<T>(options.at(key));
     }
 
-    void drawPoint(
-        sf::RenderTarget& surface, int x, int y, float radius, const Color& color)
+    void drawPoint(RenderTarget surface, int x, int y, float radius, const Color& color)
     {
         sf::CircleShape drawPt;
         drawPt.setRadius(radius);
@@ -24,15 +23,15 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         surface.draw(drawPt);
     }
 
-    void drawLine(sf::RenderTarget& surface, int x1, int y1, int x2, int y2,
-        int thickness, const Color& color)
+    void drawLine(RenderTarget surface, int x1, int y1, int x2, int y2, int thickness,
+        const Color& color)
     {
         sf::Vertex line[] = { sf::Vertex(sf::Vector2f(x1, y1), color),
             sf::Vertex(sf::Vector2f(x2, y2), color) };
         surface.draw(line, thickness, sf::Lines);
     }
 
-    void drawPolygon(sf::RenderTarget& surface, std::vector<sf::Vector2i>& points,
+    void drawPolygon(RenderTarget surface, std::vector<Transform::UnitVector>& points,
         const DrawPolygonOptions& options)
     {
         const bool drawLines = findOptionOrDefault(options, "lines", true);
@@ -48,8 +47,11 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         polyPt.setFillColor(pointColor);
         for (unsigned int i = 0; i < points.size(); i++)
         {
-            const sf::Vector2i& point1 = points[i];
-            const sf::Vector2i& point2 = points[(i == points.size() - 1) ? 0 : i + 1];
+            const Transform::UnitVector& point1
+                = points[i].to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector& point2
+                = points[(i == points.size() - 1) ? 0 : i + 1]
+                      .to<Transform::Units::ScenePixels>();
             if (drawLines)
             {
                 const sf::Color currentLineColor = findOptionOrDefault(
@@ -60,7 +62,8 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         }
         for (unsigned int i = 0; i < points.size(); i++)
         {
-            const sf::Vector2i& point1 = points[i];
+            const Transform::UnitVector& point1
+                = points[i].to<Transform::Units::ScenePixels>();
             if (drawPoints)
             {
                 const sf::Color currentPointColor = findOptionOrDefault(

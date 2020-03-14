@@ -155,7 +155,7 @@ namespace obe::System
         m_window.setView(view);
     }
 
-    sf::RenderTarget& Window::getTarget()
+    Graphics::RenderTarget Window::getTarget()
     {
         return m_window;
     }

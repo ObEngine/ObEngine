@@ -26,7 +26,7 @@ namespace obe::Graphics::Canvas
     {
     }
 
-    void Line::draw(sf::RenderTexture& target)
+    void Line::draw(RenderTarget target)
     {
         const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
         const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
@@ -49,7 +49,7 @@ namespace obe::Graphics::Canvas
         this->size.unit = Transform::Units::ScenePixels;
     }
 
-    void Rectangle::draw(sf::RenderTexture& target)
+    void Rectangle::draw(RenderTarget target)
     {
         target.draw(shape);
     }
@@ -61,17 +61,17 @@ namespace obe::Graphics::Canvas
     {
     }
 
-    void Text::draw(sf::RenderTexture& target)
+    void Text::draw(RenderTarget target)
     {
         sf::Vector2f offset;
         if (h_align == TextHorizontalAlign::Center)
-            offset.x -= shape.getGlobalBounds().width / 2;
+            offset.x -= shape.getGlobalBounds().getSize().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
-            offset.x -= shape.getGlobalBounds().width;
+            offset.x -= shape.getGlobalBounds().getSize().x;
         if (v_align == TextVerticalAlign::Center)
-            offset.y -= shape.getGlobalBounds().height / 2;
+            offset.y -= shape.getGlobalBounds().getSize().y / 2;
         else if (v_align == TextVerticalAlign::Bottom)
-            offset.y -= shape.getGlobalBounds().height;
+            offset.y -= shape.getGlobalBounds().getSize().y;
         shape.move(offset);
         target.draw(shape);
         shape.move(-offset);
@@ -82,7 +82,7 @@ namespace obe::Graphics::Canvas
     {
     }
 
-    void Circle::draw(sf::RenderTexture& target)
+    void Circle::draw(RenderTarget target)
     {
         target.draw(shape);
     }
@@ -92,7 +92,7 @@ namespace obe::Graphics::Canvas
     {
     }
 
-    void Polygon::draw(sf::RenderTexture& target)
+    void Polygon::draw(RenderTarget target)
     {
         target.draw(shape);
     }
@@ -102,7 +102,7 @@ namespace obe::Graphics::Canvas
     {
     }
 
-    void Image::draw(sf::RenderTexture& target)
+    void Image::draw(RenderTarget target)
     {
         target.draw(sprite);
     }

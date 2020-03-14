@@ -4,6 +4,8 @@
 #include <unordered_map>
 
 #include <Graphics/Color.hpp>
+#include <Graphics/RenderTarget.hpp>
+#include <Transform/UnitVector.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -21,8 +23,7 @@ namespace obe::Graphics::Utils
      * \param radius Radius of the Point to draw
      * \param color Color of the new Point
      */
-    void drawPoint(
-        sf::RenderTarget& surface, int x, int y, float radius, const Color& color);
+    void drawPoint(RenderTarget surface, int x, int y, float radius, const Color& color);
     /**
      * \brief Draws a Line
      * \param surface RenderSurface where to render the line
@@ -34,8 +35,8 @@ namespace obe::Graphics::Utils
      *        visible size)
      * \param color Color of the line you want to draw
      */
-    void drawLine(sf::RenderTarget& surface, int x1, int y1, int x2, int y2,
-        int thickness, const Color& color);
+    void drawLine(RenderTarget surface, int x1, int y1, int x2, int y2, int thickness,
+        const Color& color);
     using DrawPolygonOptions = std::unordered_map<std::string, std::any>;
     /**
      * \brief Draws a Polygon
@@ -54,6 +55,6 @@ namespace obe::Graphics::Utils
      *        - <point_color_x> Color : Color of a specific point of the Polygon
      *          where x is the index of the point
      */
-    void drawPolygon(sf::RenderTarget& surface, std::vector<sf::Vector2i>& points,
+    void drawPolygon(RenderTarget surface, std::vector<Transform::UnitVector>& points,
         const DrawPolygonOptions& options);
 } // namespace obe::Graphics::Utils

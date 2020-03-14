@@ -47,7 +47,7 @@ namespace obe::Graphics
         this->setSize(initialSpriteSize);
     }
 
-    void Sprite::draw(sf::RenderTarget& surface, const Transform::UnitVector& camera)
+    void Sprite::draw(RenderTarget surface, const Transform::UnitVector& camera)
     {
         const auto toVertex = [](const Transform::UnitVector& uv) {
             return sf::Vertex(sf::Vector2f(uv.x, uv.y));
@@ -176,7 +176,7 @@ namespace obe::Graphics
     }
 
     void Sprite::drawHandle(
-        sf::RenderTarget& surface, const Transform::UnitVector& camera) const
+        RenderTarget surface, const Transform::UnitVector& camera) const
     {
         const Transform::UnitVector position
             = m_positionTransformer(m_position, camera, m_layer)
@@ -298,16 +298,17 @@ namespace obe::Graphics
         return m_path;
     }
 
-    sf::FloatRect Sprite::getRect()
+    Transform::Rect Sprite::getRect()
     {
-        const Transform::UnitVector realPosition
+        const Transform::UnitVector pxPosition
             = Rect::m_position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pxSize(m_sprite.getGlobalBounds().width,
+            m_sprite.getGlobalBounds().height, Transform::Units::ScenePixels);
 
-        m_sprite.setPosition(realPosition.x, realPosition.y);
-        sf::FloatRect rect = sf::FloatRect(realPosition.x, realPosition.y,
-            m_sprite.getGlobalBounds().width, m_sprite.getGlobalBounds().height);
-        rect.left = m_sprite.getGlobalBounds().left;
-        rect.top = m_sprite.getGlobalBounds().top;
+        m_sprite.setPosition(pxPosition.x, pxPosition.y);
+        Transform::Rect rect = Transform::Rect(pxPosition, pxSize);
+        rect.setPosition(Transform::UnitVector(m_sprite.getGlobalBounds().left,
+            m_sprite.getGlobalBounds().top, Transform::Units::ScenePixels));
         return rect;
     }
 

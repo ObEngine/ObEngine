@@ -61,11 +61,11 @@ namespace obe::Transform
         m_size = size;
     }
 
-    void Rect::draw(sf::RenderTarget& surface, int x, int y) const
+    void Rect::draw(Graphics::RenderTarget surface, int x, int y) const
     {
         int r = 6;
 
-        std::vector<sf::Vector2i> drawPoints;
+        std::vector<Transform::UnitVector> drawPoints;
         const UnitVector dPos(x, y, Transform::Units::ScenePixels);
 
         const std::vector<Referential> fixDisplayOrder
@@ -79,7 +79,7 @@ namespace obe::Transform
             this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
 
             UnitVector world = (pt + dPos).to<Units::ScenePixels>();
-            drawPoints.emplace_back(world.x, world.y);
+            drawPoints.push_back(world);
         }
 
         const double radAngle = Utils::Math::convertToRadian(-m_angle);

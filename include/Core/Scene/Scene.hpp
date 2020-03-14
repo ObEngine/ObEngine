@@ -94,7 +94,7 @@ namespace obe::Scene
         /**
          * \brief Draws all elements of the Scene on the screen
          */
-        void draw(sf::RenderTarget& surface);
+        void draw(Graphics::RenderTarget surface);
         /**
          * \brief Get the name of the level
          * \return A std::string containing the name of the level

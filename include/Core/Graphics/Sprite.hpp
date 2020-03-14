@@ -124,8 +124,7 @@ namespace obe::Graphics
          * \param surface RenderSurface where to render the handle
          * \param camera contains the offset for drawing the handle
          */
-        void drawHandle(
-            sf::RenderTarget& surface, const Transform::UnitVector& camera) const;
+        void drawHandle(RenderTarget surface, const Transform::UnitVector& camera) const;
         /**
          * \brief Dumps the content of the Sprite to a ComplexNode
          * \param target ComplexNode where to serialize the Sprite
@@ -173,10 +172,10 @@ namespace obe::Graphics
         [[nodiscard]] PositionTransformer getPositionTransformer() const;
         /**
          * \brief Get the Bounding Rect of the internal Sprite
-         * \return A sf::FloatRect representing the bounding rectangle of the
+         * \return A Rect representing the bounding rectangle of the
          *         internal Sprite
          */
-        sf::FloatRect getRect();
+        Transform::Rect getRect();
         [[nodiscard]] Shader& getShader() const;
         /**
          * \brief Get the internal Sprite of the Sprite
@@ -314,7 +313,7 @@ namespace obe::Graphics
          */
         void useTextureSize();
 
-        void draw(sf::RenderTarget& surface, const Transform::UnitVector& camera);
+        void draw(RenderTarget surface, const Transform::UnitVector& camera);
         void attachResourceManager(Engine::ResourceManager& resources) override;
         [[nodiscard]] std::string_view type() const override;
     };

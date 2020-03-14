@@ -366,7 +366,7 @@ namespace obe::Scene
             dataStore.at("GameObjects", gameObject->getId())
                 .createDataNode("type", gameObject->getType());
 
-            if (auto dumpFunction = gameObject->access()["Dump"])
+            if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction)
             {
                 kaguya::LuaRef saveTableRef = dumpFunction();
                 vili::ComplexNode* saveRequirements
@@ -432,7 +432,7 @@ namespace obe::Scene
         }
     }
 
-    void Scene::draw(sf::RenderTarget& surface)
+    void Scene::draw(Graphics::RenderTarget surface)
     {
         for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
         {

@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Graphics/Color.hpp>
+#include <Graphics/RenderTarget.hpp>
 
 namespace obe::System
 {
@@ -43,7 +44,7 @@ namespace obe::System
         void setVerticalSyncEnabled(bool enabled);
         void setView(const sf::View& view);
 
-        sf::RenderTarget& getTarget();
+        Graphics::RenderTarget getTarget();
         sf::RenderWindow& getWindow();
 
         [[nodiscard]] Graphics::Color getClearColor() const;

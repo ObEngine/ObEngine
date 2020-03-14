@@ -7,7 +7,9 @@
 #include <sfe/RichText.hpp>
 
 #include <Debug/Logger.hpp>
+#include <Graphics/Shapes.hpp>
 #include <Graphics/Sprite.hpp>
+#include <Graphics/Text.hpp>
 #include <Transform/Polygon.hpp>
 #include <Types/Identifiable.hpp>
 
@@ -52,7 +54,7 @@ namespace obe::Graphics::Canvas
          * \brief Abstract draw method
          * \param target Target where to render the result
          */
-        virtual void draw(sf::RenderTexture& target) = 0;
+        virtual void draw(RenderTarget target) = 0;
         virtual ~CanvasElement() = default;
 
         /**
@@ -87,7 +89,7 @@ namespace obe::Graphics::Canvas
          * \brief Draw the Line
          * \param target Target where to draw the Line to
          */
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
@@ -108,7 +110,7 @@ namespace obe::Graphics::Canvas
     public:
         static const CanvasElementType Type = CanvasElementType::Rectangle;
 
-        sf::RectangleShape shape;
+        Shapes::Rectangle shape;
         Transform::UnitVector size;
         /**
          * \brief Create a new Rectangle
@@ -120,7 +122,7 @@ namespace obe::Graphics::Canvas
          * \brief Draw the Rectangle
          * \param target Target where to draw the Rectangle to
          */
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
@@ -154,7 +156,7 @@ namespace obe::Graphics::Canvas
         static const CanvasElementType Type = CanvasElementType::Text;
 
         std::string fontPath;
-        sfe::RichText shape;
+        RichText shape;
         TextHorizontalAlign h_align;
         TextVerticalAlign v_align;
         /**
@@ -167,7 +169,7 @@ namespace obe::Graphics::Canvas
          * \brief Draw the Text
          * \param target Target where to draw the Text to
          */
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
@@ -178,7 +180,7 @@ namespace obe::Graphics::Canvas
     public:
         static const CanvasElementType Type = CanvasElementType::Circle;
 
-        sf::CircleShape shape;
+        Shapes::Circle shape;
         float radius = 1;
         /**
          * \brief Create a new Circle
@@ -190,7 +192,7 @@ namespace obe::Graphics::Canvas
          * \brief Draw the Circle
          * \param target Target where to draw the Circle to
          */
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
@@ -200,12 +202,12 @@ namespace obe::Graphics::Canvas
     {
         static const CanvasElementType Type = CanvasElementType::Polygon;
 
-        sf::ConvexShape shape;
+        Shapes::Polygon shape;
         Transform::Polygon polygon;
 
         explicit Polygon(Canvas& parent, const std::string& id);
 
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
@@ -223,7 +225,7 @@ namespace obe::Graphics::Canvas
          * \brief Draw the Sprite
          * \param target Target where to draw the Sprite to
          */
-        void draw(sf::RenderTexture& target) override;
+        void draw(RenderTarget target) override;
     };
 
     /**
