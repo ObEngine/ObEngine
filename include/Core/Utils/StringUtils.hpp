@@ -65,6 +65,7 @@ namespace obe::Utils::String
      */
     bool isStringFloat(const std::string& str);
     /**
+     * \nobind
      * \brief Replace all the occurences of search to replace in the string
      *        subject in place
      * \param subject The reference of the string you want to modify

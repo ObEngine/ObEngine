@@ -13,6 +13,9 @@ namespace obe::Utils::Vector
      * \param item Item you want to search in the std::vector
      * \param vec Reference of the std::vector you want to search the item in
      * \return true if the item is found in the std::vector, false otherwise
+     * \thints
+     * \thint{contains, V=$primitives}
+     * \endthints
      */
     template <typename V> bool contains(V item, const std::vector<V>& vec);
     /**

@@ -23,7 +23,10 @@ namespace obe::Collision::Bindings
             = CollisionNamespace.new_usertype<obe::Collision::PolygonalCollider>(
                 "PolygonalCollider", sol::call_constructor,
                 sol::constructors<obe::Collision::PolygonalCollider(
-                    const std::string&)>());
+                    const std::string&)>(),
+                sol::base_classes,
+                sol::bases<obe::Transform::Polygon, obe::Types::Selectable,
+                    obe::Component::Component<PolygonalCollider>>());
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"]
             = &obe::Collision::PolygonalCollider::clearTags;
@@ -65,7 +68,8 @@ namespace obe::Collision::Bindings
             = CollisionNamespace.new_usertype<obe::Collision::Trajectory>("Trajectory",
                 sol::call_constructor,
                 sol::constructors<obe::Collision::Trajectory(),
-                    obe::Collision::Trajectory(obe::Transform::Units)>());
+                    obe::Collision::Trajectory(obe::Transform::Units)>(),
+                sol::base_classes, sol::bases<obe::Types::Togglable>());
         bindTrajectory["addAcceleration"] = &obe::Collision::Trajectory::addAcceleration;
         bindTrajectory["addAngle"] = &obe::Collision::Trajectory::addAngle;
         bindTrajectory["addCheck"] = &obe::Collision::Trajectory::addCheck;

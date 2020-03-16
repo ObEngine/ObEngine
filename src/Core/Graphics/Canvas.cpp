@@ -59,6 +59,7 @@ namespace obe::Graphics::Canvas
         , h_align()
         , v_align()
     {
+        texts.emplace_back();
     }
 
     void Text::draw(RenderTarget target)

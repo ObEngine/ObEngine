@@ -25,6 +25,9 @@ namespace obe::Utils::Math
      * \param min1 First value to check
      * \param min2 Second value to check
      * \return The lowest value
+     * \thints
+     * \thint{getMin, N=$numerics}
+     * \endthints
      */
     template <typename N> N getMin(const N& min1, const N& min2);
     /**
@@ -33,6 +36,9 @@ namespace obe::Utils::Math
      * \param max1 First value to check
      * \param max2 Second value to check
      * \return The highest value
+     * \thints
+     * \thint{getMax, N=$numerics}
+     * \endthints
      */
     template <typename N> N getMax(const N& max1, const N& max2);
     /**
@@ -45,6 +51,9 @@ namespace obe::Utils::Math
      * \param lowerBound Lower bound
      * \param upperBound Upper bound
      * \return true if the value is between the given bound, false otherwise
+     * \thints
+     * \thint{isBetween, N=$numerics;N1=$numerics;N2=$numerics}
+     * \endthints
      */
     template <typename N, typename N1, typename N2>
     bool isBetween(const N& target, const N1& lowerBound, const N2& upperBound);
@@ -59,6 +68,9 @@ namespace obe::Utils::Math
      * \tparam T Type of the value to check
      * \param val Value to check the sign
      * \return -1 if negative, 0 if equal to 0, 1 if positive
+     * \thints
+     * \thint{sign, T=$numerics}
+     * \endthints
      */
     template <typename T> int sign(T val);
 

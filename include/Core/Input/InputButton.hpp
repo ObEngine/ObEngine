@@ -29,6 +29,9 @@ namespace obe::Input
         More
     };
 
+    /**
+     * \nobind
+     */
     std::ostream& operator<<(std::ostream& os, const AxisThresholdDirection& m);
 
     /**

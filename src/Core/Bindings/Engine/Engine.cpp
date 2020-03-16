@@ -13,17 +13,18 @@ namespace obe::Engine::Bindings
         sol::usertype<obe::Engine::Engine> bindEngine
             = EngineNamespace.new_usertype<obe::Engine::Engine>("Engine",
                 sol::call_constructor, sol::constructors<obe::Engine::Engine()>());
-        bindEngine["Window"] = sol::property(&obe::Engine::Engine::getWindow);
-        bindEngine["Framerate"]
-            = sol::property(&obe::Engine::Engine::getFramerateManager);
+        bindEngine["run"] = &obe::Engine::Engine::run;
         bindEngine["Audio"] = sol::property(&obe::Engine::Engine::getAudioManager);
-        bindEngine["Scene"] = sol::property(&obe::Engine::Engine::getScene);
         bindEngine["Configuration"]
             = sol::property(&obe::Engine::Engine::getConfigurationManager);
-        bindEngine["Input"] = sol::property(&obe::Engine::Engine::getInputManager);
         bindEngine["Resources"] = sol::property(&obe::Engine::Engine::getResourceManager);
+        bindEngine["Input"] = sol::property(&obe::Engine::Engine::getInputManager);
+        bindEngine["Framerate"]
+            = sol::property(&obe::Engine::Engine::getFramerateManager);
         bindEngine["Triggers"] = sol::property(&obe::Engine::Engine::getTriggerManager);
+        bindEngine["Scene"] = sol::property(&obe::Engine::Engine::getScene);
         bindEngine["Cursor"] = sol::property(&obe::Engine::Engine::getCursor);
+        bindEngine["Window"] = sol::property(&obe::Engine::Engine::getWindow);
     }
     void LoadClassResourceManagedObject(sol::state_view state)
     {
@@ -45,13 +46,13 @@ namespace obe::Engine::Bindings
                 sol::constructors<obe::Engine::ResourceManager()>());
         bindResourceManager["getFont"] = &obe::Engine::ResourceManager::getFont;
         bindResourceManager["getTexture"] = sol::overload(
-            static_cast<std::shared_ptr<Graphics::Texture> (
+            static_cast<std::shared_ptr<obe::Graphics::Texture> (
                 obe::Engine::ResourceManager::*)(const std::string&, bool)>(
                 &obe::Engine::ResourceManager::getTexture),
-            static_cast<std::shared_ptr<Graphics::Texture> (
+            static_cast<std::shared_ptr<obe::Graphics::Texture> (
                 obe::Engine::ResourceManager::*)(const std::string&)>(
                 &obe::Engine::ResourceManager::getTexture));
         bindResourceManager["defaultAntiAliasing"]
-            = sol::readonly(&obe::Engine::ResourceManager::defaultAntiAliasing);
+            = &obe::Engine::ResourceManager::defaultAntiAliasing;
     }
 };

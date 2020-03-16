@@ -46,8 +46,9 @@ namespace obe::Transform::Bindings
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
         sol::usertype<obe::Transform::Polygon> bindPolygon
-            = TransformNamespace.new_usertype<obe::Transform::Polygon>(
-                "Polygon", sol::call_constructor, sol::default_constructor);
+            = TransformNamespace.new_usertype<obe::Transform::Polygon>("Polygon",
+                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::bases<obe::Transform::UnitBasedObject, obe::Transform::Movable>());
         bindPolygon["addPoint"] = &obe::Transform::Polygon::addPoint;
         bindPolygon["findClosestSegment"] = &obe::Transform::Polygon::findClosestSegment;
         bindPolygon["findClosestPoint"] = &obe::Transform::Polygon::findClosestPoint;
@@ -82,7 +83,8 @@ namespace obe::Transform::Bindings
                 sol::constructors<obe::Transform::PolygonPoint(
                                       obe::Transform::Polygon&, unsigned int),
                     obe::Transform::PolygonPoint(obe::Transform::Polygon&, unsigned int,
-                        const obe::Transform::UnitVector&)>());
+                        const obe::Transform::UnitVector&)>(),
+                sol::base_classes, sol::bases<obe::Transform::UnitVector>());
         bindPolygonPoint["remove"] = &obe::Transform::PolygonPoint::remove;
         bindPolygonPoint["distance"] = &obe::Transform::PolygonPoint::distance;
         bindPolygonPoint["getRelativePosition"]
@@ -91,7 +93,9 @@ namespace obe::Transform::Bindings
             = &obe::Transform::PolygonPoint::setRelativePosition;
         bindPolygonPoint["move"] = &obe::Transform::PolygonPoint::move;
         bindPolygonPoint["index"] = sol::property(
-            [](obe::Transform::PolygonPoint* self) { return self->index; });
+            [](obe::Transform::PolygonPoint* self) -> const point_index_t& {
+                return self->index;
+            });
     }
     void LoadClassPolygonSegment(sol::state_view state)
     {
@@ -105,9 +109,13 @@ namespace obe::Transform::Bindings
         bindPolygonSegment["getAngle"] = &obe::Transform::PolygonSegment::getAngle;
         bindPolygonSegment["getLength"] = &obe::Transform::PolygonSegment::getLength;
         bindPolygonSegment["first"] = sol::property(
-            [](obe::Transform::PolygonSegment* self) { return self->first; });
+            [](obe::Transform::PolygonSegment* self) -> const PolygonPoint& {
+                return self->first;
+            });
         bindPolygonSegment["second"] = sol::property(
-            [](obe::Transform::PolygonSegment* self) { return self->second; });
+            [](obe::Transform::PolygonSegment* self) -> const PolygonPoint& {
+                return self->second;
+            });
     }
     void LoadClassRect(sol::state_view state)
     {
@@ -117,7 +125,8 @@ namespace obe::Transform::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Transform::Rect(),
                     obe::Transform::Rect(const obe::Transform::UnitVector&,
-                        const obe::Transform::UnitVector&)>());
+                        const obe::Transform::UnitVector&)>(),
+                sol::base_classes, sol::bases<obe::Transform::Movable>());
         bindRect["transformRef"] = &obe::Transform::Rect::transformRef;
         bindRect["setPosition"] = sol::overload(
             static_cast<void (obe::Transform::Rect::*)(
@@ -151,16 +160,7 @@ namespace obe::Transform::Bindings
                     obe::Transform::Referential(double, double)>());
         bindReferential[sol::meta_function::equal_to]
             = &obe::Transform::Referential::operator==;
-        bindReferential["flip"] = &obe::Transform::Referential::flip;
-        bindReferential["isOnLeftSide"] = &obe::Transform::Referential::isOnLeftSide;
-        bindReferential["isOnRightSide"] = &obe::Transform::Referential::isOnRightSide;
-        bindReferential["isOnTopSide"] = &obe::Transform::Referential::isOnTopSide;
-        bindReferential["isOnBottomSide"] = &obe::Transform::Referential::isOnBottomSide;
-        bindReferential["isOnCorner"] = &obe::Transform::Referential::isOnCorner;
-        bindReferential["isOnSide"] = &obe::Transform::Referential::isOnSide;
-        bindReferential["isKnown"] = &obe::Transform::Referential::isKnown;
-        bindReferential["getOffset"] = &obe::Transform::Referential::getOffset;
-        bindReferential["toString"] = &obe::Transform::Referential::toString;
+        bindReferential["FromString"] = &obe::Transform::Referential::FromString;
     }
     void LoadClassUnitBasedObject(sol::state_view state)
     {
@@ -199,36 +199,9 @@ namespace obe::Transform::Bindings
                 &obe::Transform::UnitVector::operator+),
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double)
                     const>(&obe::Transform::UnitVector::operator+));
-        bindUnitVector[sol::meta_function::subtraction] = sol::overload(
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
-                const obe::Transform::UnitVector&) const>(
-                &obe::Transform::UnitVector::operator-),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double)
-                    const>(&obe::Transform::UnitVector::operator-),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)()
-                    const>(&obe::Transform::UnitVector::operator-));
-        bindUnitVector[sol::meta_function::multiplication] = sol::overload(
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
-                const obe::Transform::UnitVector&) const>(
-                &obe::Transform::UnitVector::operator*),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double)
-                    const>(&obe::Transform::UnitVector::operator*));
-        bindUnitVector[sol::meta_function::division] = sol::overload(
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
-                const obe::Transform::UnitVector&) const>(
-                &obe::Transform::UnitVector::operator/),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double)
-                    const>(&obe::Transform::UnitVector::operator/));
-        bindUnitVector[sol::meta_function::equal_to]
-            = &obe::Transform::UnitVector::operator==;
-        // bindUnitVector["to"] = &obe::Transform::UnitVector::to;
-        bindUnitVector["unpack"] = &obe::Transform::UnitVector::unpack;
-        bindUnitVector["rotate"] = &obe::Transform::UnitVector::rotate;
-        bindUnitVector["distance"] = &obe::Transform::UnitVector::distance;
-        // bindUnitVector["Init"] = sol::overload(static_cast<void (*)(obe::Transform::ViewStruct *&) >(&obe::Transform::UnitVector::Init), static_cast<void (*)(int, int) >(&obe::Transform::UnitVector::Init));
-        bindUnitVector["x"] = sol::readonly(&obe::Transform::UnitVector::x);
-        bindUnitVector["y"] = sol::readonly(&obe::Transform::UnitVector::y);
-        bindUnitVector["unit"] = sol::readonly(&obe::Transform::UnitVector::unit);
+        bindUnitVector["x"] = &obe::Transform::UnitVector::x;
+        bindUnitVector["y"] = &obe::Transform::UnitVector::y;
+        bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
     }
     void LoadFunctionStringToUnits(sol::state_view state)
     {

@@ -29,12 +29,16 @@ namespace obe::Graphics
         sf::Text::Style style;
         std::string string;
 
+        Text();
         Text(const std::string& string);
     };
 
     class RichText : public sf::Drawable, public sf::Transformable
     {
-    public:
+    private:
+        /**
+         * \nobind
+         */
         class Line : public Transformable, public Drawable
         {
         public:
@@ -51,16 +55,17 @@ namespace obe::Graphics
         private:
             void updateGeometry() const;
             void updateTextAndGeometry(sf::Text& text) const;
-            mutable std::vector<sf::Text> m_texts; ///< List of texts
-            mutable sf::FloatRect m_bounds; ///< Local bounds
+            mutable std::vector<sf::Text> m_texts;
+            mutable sf::FloatRect m_bounds;
         };
 
+    public:
         RichText();
         RichText(const Font& font);
 
         void clear();
 
-        RichText& append(Text text);
+        RichText& append(const Text& text);
 
         const Font& getFont() const;
         void setFont(const Font& font);

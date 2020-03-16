@@ -2,7 +2,6 @@
 
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
-#include <Script/GlobalState.hpp>
 
 #include <sol/sol.hpp>
 
@@ -15,7 +14,8 @@ namespace obe::Script::Bindings
             = ScriptNamespace.new_usertype<obe::Script::GameObject>("GameObject",
                 sol::call_constructor,
                 sol::constructors<obe::Script::GameObject(obe::Triggers::TriggerManager&,
-                    sol::state_view, const std::string&, const std::string&)>());
+                    sol::state_view, const std::string&, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::Types::Identifiable>());
         bindGameObject["getType"] = &obe::Script::GameObject::getType;
         bindGameObject["doesHaveAnimator"] = &obe::Script::GameObject::doesHaveAnimator;
         bindGameObject["doesHaveCollider"] = &obe::Script::GameObject::doesHaveCollider;
@@ -42,8 +42,9 @@ namespace obe::Script::Bindings
         bindGameObject["initialize"] = &obe::Script::GameObject::initialize;
         bindGameObject["setPermanent"] = &obe::Script::GameObject::setPermanent;
         bindGameObject["isPermanent"] = &obe::Script::GameObject::isPermanent;
+        bindGameObject["getEnvironment"] = &obe::Script::GameObject::getEnvironment;
         bindGameObject["setState"] = &obe::Script::GameObject::setState;
-        bindGameObject["deletable"] = sol::readonly(&obe::Script::GameObject::deletable);
+        bindGameObject["deletable"] = &obe::Script::GameObject::deletable;
     }
     void LoadClassGameObjectDatabase(sol::state_view state)
     {
@@ -51,5 +52,12 @@ namespace obe::Script::Bindings
         sol::usertype<obe::Script::GameObjectDatabase> bindGameObjectDatabase
             = ScriptNamespace.new_usertype<obe::Script::GameObjectDatabase>(
                 "GameObjectDatabase", sol::call_constructor, sol::default_constructor);
+        bindGameObjectDatabase["GetRequirementsForGameObject"]
+            = &obe::Script::GameObjectDatabase::GetRequirementsForGameObject;
+        bindGameObjectDatabase["GetDefinitionForGameObject"]
+            = &obe::Script::GameObjectDatabase::GetDefinitionForGameObject;
+        bindGameObjectDatabase["ApplyRequirements"]
+            = &obe::Script::GameObjectDatabase::ApplyRequirements;
+        bindGameObjectDatabase["Clear"] = &obe::Script::GameObjectDatabase::Clear;
     }
 };

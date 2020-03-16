@@ -32,7 +32,7 @@ end);
 
 function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
-        local ncolor = SFML.Color();
+        local ncolor = obe.Graphics.Color();
         base = base or { r = 0, g = 0, b = 0, a = 255 };
         ncolor.r = math.floor(color.r or base.r);
         ncolor.g = math.floor(color.g or base.g);
@@ -42,13 +42,13 @@ function obe.Canvas.NormalizeColor(color, base)
     elseif type(color) == "number" then
         local dalpha = base.a;
         color = math.floor(color);
-        return SFML.Color(color, color, color, dalpha);
+        return obe.Graphics.Color(color, color, color, dalpha);
     elseif type(color) == "string" then
         color = color:gsub("#","");
         if string.len(color) == 3 then
-            return SFML.Color(tonumber("0x"..color:sub(1,1)) * 17, tonumber("0x"..color:sub(2,2)) * 17, tonumber("0x"..color:sub(3,3)) * 17);
+            return obe.Graphics.Color(tonumber("0x"..color:sub(1,1)) * 17, tonumber("0x"..color:sub(2,2)) * 17, tonumber("0x"..color:sub(3,3)) * 17);
         elseif string.len(color) == 6 then
-            return SFML.Color(tonumber("0x"..color:sub(1,2)), tonumber("0x"..color:sub(3,4)), tonumber("0x"..color:sub(5,6)));
+            return obe.Graphics.Color(tonumber("0x"..color:sub(1,2)), tonumber("0x"..color:sub(3,4)), tonumber("0x"..color:sub(5,6)));
         end
     end
 end
@@ -636,12 +636,14 @@ obe.Canvas.Bases.Text = {
         end,
         font = function(self, font)
             self.fontPath = font;
-            self.shape:setFont(ResourceManager:getFont(font));
+            self.shape:setFont(Engine.Resources:getFont(font));
         end,
         color = function(self, color)
             self.shape:clear();
-            self.shape:pushFillColor(obe.Canvas.NormalizeColor(color));
-            self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+            self.texts[#self.texts].color = obe.Graphics.Color(color);
+            if self.texts[#self.texts].string ~= "" then
+                -- self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+            end
         end,
         outline = function(self, outline)
             if type(outline) == "table" then

@@ -49,5 +49,8 @@ namespace obe::Input
     };
 
     std::string inputTypeToString(InputType type);
+    /**
+     * \nobind
+     */
     std::ostream& operator<<(std::ostream& os, InputType m);
 } // namespace obe::Input

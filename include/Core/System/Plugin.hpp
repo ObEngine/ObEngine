@@ -12,6 +12,9 @@ namespace obe::System
 {
     template <class T>
     using PluginFunction = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
+    /**
+     * \nobind
+     */
     template <class T>
     PluginFunction<T> getPluginFunction(
         std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName);

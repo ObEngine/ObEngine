@@ -3,9 +3,11 @@
 #include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
 #include <Graphics/Color.hpp>
 #include <Graphics/RenderTarget.hpp>
+#include <Transform/UnitVector.hpp>
 
 namespace obe::System
 {
@@ -31,12 +33,18 @@ namespace obe::System
         void clear();
         void close();
         void display();
+        /**
+         * \nobind
+         */
         void draw(const sf::Drawable& drawable,
             const sf::RenderStates& states = sf::RenderStates::Default);
+        /**
+         * \nobind
+         */
         void draw(const sf::Vertex* vertices, std::size_t vertexCount,
             sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default);
-        [[nodiscard]] sf::Vector2u getSize() const;
+        [[nodiscard]] Transform::UnitVector getSize() const;
         [[nodiscard]] bool isOpen() const;
         bool pollEvent(sf::Event& event);
         void setSize(unsigned int width, unsigned int height);

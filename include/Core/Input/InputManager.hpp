@@ -117,6 +117,10 @@ namespace obe::Input
         InputButtonMonitorPtr monitor(const std::string& name);
         InputButtonMonitorPtr monitor(InputButton& input);
         void requireRefresh();
+        /**
+         * TODO: Fix this nobind
+         * \nobind
+         */
         InputCombination makeCombination(const std::string& code);
     };
 } // namespace obe::Input

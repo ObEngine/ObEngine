@@ -16,11 +16,13 @@ namespace obe::Transform
     {
     public:
         /**
+         * \nobind
          * \brief Initialize the conversion module (Step 1) by passing the
          *        pointer to the ViewStruct
          */
         static void Init(ViewStruct*&);
         /**
+         * \nobind
          * \brief Initialize the conversion module (Step 2) by passing the
          *        values of the ScreenSize
          * \param width Width of the screen
@@ -226,6 +228,7 @@ namespace obe::Transform
         bool operator!=(const UnitVector& vec) const;
 
         /**
+         * \nobind
          * \brief Return an UnitVector with the converted values (x, y) to the
          *        Unit you want
          * \tparam E enum value from Transform::Units

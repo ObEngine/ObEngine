@@ -33,6 +33,7 @@ namespace obe::Types
     };
 
     /**
+     * \forceabstract
      * \brief Exactly like Identifiable class except you can't change the Id
      *        after creation
      */
@@ -42,6 +43,9 @@ namespace obe::Types
         using Identifiable::Identifiable;
 
     public:
+        /**
+         * \nobind
+         */
         using Identifiable::getId;
     };
 } // namespace obe::Types

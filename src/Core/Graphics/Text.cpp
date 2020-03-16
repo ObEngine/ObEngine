@@ -8,6 +8,10 @@
 
 namespace obe::Graphics
 {
+    Text::Text()
+    {
+    }
+
     Text::Text(const std::string& string)
     {
         this->string = string;
@@ -80,7 +84,7 @@ namespace obe::Graphics
         text.setPosition(m_bounds.width, 0.f);
 
         // Update bounds
-        int lineSpacing = text.getFont()->getLineSpacing(text.getCharacterSize());
+        const int lineSpacing = text.getFont()->getLineSpacing(text.getCharacterSize());
         m_bounds.height = std::max(m_bounds.height, static_cast<float>(lineSpacing));
         m_bounds.width += text.getGlobalBounds().width;
     }
@@ -171,7 +175,7 @@ namespace obe::Graphics
         m_bounds = sf::FloatRect();
     }
 
-    RichText& RichText::append(Text text)
+    RichText& RichText::append(const Text& text)
     {
         // Maybe skip
         if (text.string.empty())
@@ -208,11 +212,12 @@ namespace obe::Graphics
             line.setPosition(0.f, m_bounds.height);
             line.appendText(
                 createText(*it, text.color, text.outline, text.thickness, text.style));
-            m_lines.push_back(std::move(line));
 
             // Update bounds
             m_bounds.height += line.getGlobalBounds().height;
             m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
+
+            m_lines.push_back(std::move(line));
         }
 
         // Return

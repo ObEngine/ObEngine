@@ -6,10 +6,6 @@
 #include <System/Path.hpp>
 #include <System/Plugin.hpp>
 #include <System/Window.hpp>
-#include <Triggers/TriggerManager.hpp>
-
-#include <filesystem>
-#include <string>
 
 #include <sol/sol.hpp>
 
@@ -100,12 +96,9 @@ namespace obe::System::Bindings
                                       obe::System::MountablePathType, const std::string&),
                     obe::System::MountablePath(obe::System::MountablePathType,
                         const std::string&, unsigned int)>());
-        bindMountablePath["pathType"]
-            = sol::readonly(&obe::System::MountablePath::pathType);
-        bindMountablePath["basePath"]
-            = sol::readonly(&obe::System::MountablePath::basePath);
-        bindMountablePath["priority"]
-            = sol::readonly(&obe::System::MountablePath::priority);
+        bindMountablePath["pathType"] = &obe::System::MountablePath::pathType;
+        bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;
+        bindMountablePath["priority"] = &obe::System::MountablePath::priority;
     }
     void LoadClassPath(sol::state_view state)
     {
@@ -121,6 +114,8 @@ namespace obe::System::Bindings
         bindPath["getPath"] = &obe::System::Path::getPath;
         bindPath["find"] = &obe::System::Path::find;
         bindPath["toString"] = &obe::System::Path::toString;
+        bindPath["Mount"] = &obe::System::Path::Mount;
+        bindPath["Paths"] = &obe::System::Path::Paths;
     }
     void LoadClassPlugin(sol::state_view state)
     {
@@ -129,7 +124,8 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Plugin>("Plugin",
                 sol::call_constructor,
                 sol::constructors<obe::System::Plugin(
-                    const std::string&, const std::string&)>());
+                    const std::string&, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::Types::Identifiable>());
         bindPlugin["onLoadBindings"] = &obe::System::Plugin::onLoadBindings;
         bindPlugin["onUpdate"] = &obe::System::Plugin::onUpdate;
         bindPlugin["onRender"] = &obe::System::Plugin::onRender;
@@ -140,13 +136,8 @@ namespace obe::System::Bindings
         bindPlugin["hasOnRender"] = &obe::System::Plugin::hasOnRender;
         bindPlugin["hasOnExit"] = &obe::System::Plugin::hasOnExit;
     }
-
     void LoadClassWindow(sol::state_view state)
     {
-        sol::table SFMLNamespace = state["SFML"].get_or_create<sol::table>();
-        SFMLNamespace.new_usertype<sf::Vector2u>("Vector2u", sol::call_constructor,
-            sol::constructors<sf::Vector2u(unsigned, unsigned)>(), "x", &sf::Vector2u::x,
-            "y", &sf::Vector2u::y);
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
         sol::usertype<obe::System::Window> bindWindow
             = SystemNamespace.new_usertype<obe::System::Window>("Window",
@@ -156,14 +147,9 @@ namespace obe::System::Bindings
         bindWindow["clear"] = &obe::System::Window::clear;
         bindWindow["close"] = &obe::System::Window::close;
         bindWindow["display"] = &obe::System::Window::display;
-        /*bindWindow["draw"] = sol::overload(
-            static_cast<void (obe::System::Window::*)(const sf::Drawable&,
-                const sf::RenderStates&)>(&obe::System::Window::draw),
-            static_cast<void (obe::System::Window::*)(const sf::Vertex*, std::size_t,
-                sf::PrimitiveType, const sf::RenderStates&)>(&obe::System::Window::draw));*/
         bindWindow["getSize"] = &obe::System::Window::getSize;
         bindWindow["isOpen"] = &obe::System::Window::isOpen;
-        // bindWindow["pollEvent"] = &obe::System::Window::pollEvent;
+        bindWindow["pollEvent"] = &obe::System::Window::pollEvent;
         bindWindow["setSize"] = &obe::System::Window::setSize;
         bindWindow["setTitle"] = &obe::System::Window::setTitle;
         bindWindow["setVerticalSyncEnabled"]

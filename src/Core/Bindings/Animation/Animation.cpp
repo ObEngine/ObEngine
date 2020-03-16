@@ -37,8 +37,7 @@ namespace obe::Animation::Bindings
     }
     void LoadClassAnimation(sol::state_view state)
     {
-        sol::table AnimationNamespace
-            = state["obe"]["Animation"].get_or_create<sol::table>();
+        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         sol::usertype<obe::Animation::Animation> bindAnimation
             = AnimationNamespace.new_usertype<obe::Animation::Animation>(
                 "Animation", sol::call_constructor, sol::default_constructor);
@@ -105,7 +104,7 @@ namespace obe::Animation::Bindings
         bindAnimator["setKey"] = &obe::Animation::Animator::setKey;
         bindAnimator["setPaused"] = &obe::Animation::Animator::setPaused;
         bindAnimator["update"] = &obe::Animation::Animator::update;
-        // bindAnimator["setTarget"] = &obe::Animation::Animator::setTarget;
+        bindAnimator["setTarget"] = &obe::Animation::Animator::setTarget;
     }
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {

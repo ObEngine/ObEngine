@@ -13,7 +13,8 @@ namespace obe::Scene::Bindings
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         sol::usertype<obe::Scene::Camera> bindCamera
             = SceneNamespace.new_usertype<obe::Scene::Camera>("Camera",
-                sol::call_constructor, sol::constructors<obe::Scene::Camera()>());
+                sol::call_constructor, sol::constructors<obe::Scene::Camera()>(),
+                sol::base_classes, sol::bases<obe::Transform::Rect>());
         bindCamera["getPosition"] = &obe::Scene::Camera::getPosition;
         bindCamera["getSize"] = &obe::Scene::Camera::getSize;
         bindCamera["move"] = &obe::Scene::Camera::move;
@@ -84,8 +85,9 @@ namespace obe::Scene::Bindings
     {
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         sol::usertype<obe::Scene::SceneNode> bindSceneNode
-            = SceneNamespace.new_usertype<obe::Scene::SceneNode>(
-                "SceneNode", sol::call_constructor, sol::default_constructor);
+            = SceneNamespace.new_usertype<obe::Scene::SceneNode>("SceneNode",
+                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::bases<obe::Transform::Movable, obe::Types::Selectable>());
         bindSceneNode["addChild"] = &obe::Scene::SceneNode::addChild;
         bindSceneNode["setPosition"] = &obe::Scene::SceneNode::setPosition;
         bindSceneNode["move"] = &obe::Scene::SceneNode::move;

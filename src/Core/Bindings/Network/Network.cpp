@@ -45,7 +45,8 @@ namespace obe::Network::Bindings
     {
         sol::table NetworkNamespace = state["obe"]["Network"].get<sol::table>();
         sol::usertype<obe::Network::TcpSocket> bindTcpSocket
-            = NetworkNamespace.new_usertype<obe::Network::TcpSocket>(
-                "TcpSocket", sol::call_constructor, sol::default_constructor);
+            = NetworkNamespace.new_usertype<obe::Network::TcpSocket>("TcpSocket",
+                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::bases<sf::TcpSocket>());
     }
 };

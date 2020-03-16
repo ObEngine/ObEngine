@@ -40,11 +40,14 @@ namespace obe::Input
          */
         void clear();
         /**
+         * \nobind
          * \brief Gets the InputCombination used by the InputCondition
          * \return The InputCombination used by the InputCondition
          */
         [[nodiscard]] InputCombination getCombination() const;
         /**
+         * TODO: Fix this nobind
+         * \nobind
          * \brief Sets the new required InputCombination to trigger the
          *        InputCondition
          * \param combination The new InputCombination

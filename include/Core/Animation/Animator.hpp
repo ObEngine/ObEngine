@@ -3,13 +3,9 @@
 #include <vector>
 
 #include <Animation/Animation.hpp>
+#include <Graphics/Sprite.hpp>
 #include <Graphics/Texture.hpp>
 #include <System/Path.hpp>
-
-namespace obe::Graphics
-{
-    class Sprite;
-} // namespace obe
 
 namespace obe::Animation
 {

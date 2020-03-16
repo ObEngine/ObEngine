@@ -18,6 +18,9 @@ namespace obe::Scene
     class Scene;
 }
 
+/**
+ * \additionalinclude{Scene/Scene.hpp}
+ */
 namespace obe::Script
 {
     class GameObject;

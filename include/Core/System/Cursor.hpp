@@ -9,6 +9,7 @@
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::System
 {

@@ -13,7 +13,6 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionIsStringNumeric(sol::state_view state);
     void LoadFunctionIsStringInt(sol::state_view state);
     void LoadFunctionIsStringFloat(sol::state_view state);
-    void LoadFunctionReplaceInPlace(sol::state_view state);
     void LoadFunctionReplace(sol::state_view state);
     void LoadFunctionIsSurroundedBy(sol::state_view state);
     void LoadFunctionGetRandomKey(sol::state_view state);

@@ -35,6 +35,9 @@ namespace obe::Input
      * \return A std::string containing the name of the given InputButtonState
      */
     std::string inputButtonStateToString(InputButtonState state);
+    /**
+     * \nobind
+     */
     std::ostream& operator<<(std::ostream& os, InputButtonState m);
     /**
      * \brief Converts a string to the corresponding InputButtonState

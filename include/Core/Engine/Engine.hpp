@@ -62,15 +62,51 @@ namespace obe::Engine
         Engine();
         void run();
 
+        /**
+         * \bind{Audio}
+         * \asproperty
+         */
         Audio::AudioManager& getAudioManager();
+        /**
+         * \bind{Configuration}
+         * \asproperty
+         */
         Config::ConfigurationManager& getConfigurationManager();
+        /**
+         * \bind{Resources}
+         * \asproperty
+         */
         ResourceManager& getResourceManager();
+        /**
+         * \bind{Input}
+         * \asproperty
+         */
         Input::InputManager& getInputManager();
+        /**
+         * \bind{Framerate}
+         * \asproperty
+         */
         Time::FramerateManager& getFramerateManager();
+        /**
+         * \bind{Triggers}
+         * \asproperty
+         */
         Triggers::TriggerManager& getTriggerManager();
 
+        /**
+         * \bind{Scene}
+         * \asproperty
+         */
         Scene::Scene& getScene();
+        /**
+         * \bind{Cursor}
+         * \asproperty
+         */
         System::Cursor& getCursor();
+        /**
+         * \bind{Window}
+         * \asproperty
+         */
         System::Window& getWindow();
     };
 }

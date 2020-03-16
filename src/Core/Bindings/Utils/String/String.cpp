@@ -44,11 +44,6 @@ namespace obe::Utils::String::Bindings
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
         StringNamespace.set_function("isStringFloat", obe::Utils::String::isStringFloat);
     }
-    void LoadFunctionReplaceInPlace(sol::state_view state)
-    {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        // StringNamespace.set_function("replaceInPlace", obe::Utils::String::replaceInPlace);
-    }
     void LoadFunctionReplace(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();

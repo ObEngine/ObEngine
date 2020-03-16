@@ -1,6 +1,7 @@
 #include <Bindings/Animation/Animation.hpp>
 #include <Bindings/Audio/Audio.hpp>
 #include <Bindings/BindingTree.hpp>
+#include <Bindings/Bindings/Bindings.hpp>
 #include <Bindings/Collision/Collision.hpp>
 #include <Bindings/Component/Component.hpp>
 #include <Bindings/Config/Config.hpp>
@@ -8,6 +9,7 @@
 #include <Bindings/Engine/Engine.hpp>
 #include <Bindings/Graphics/Canvas/Canvas.hpp>
 #include <Bindings/Graphics/Graphics.hpp>
+#include <Bindings/Graphics/Shapes/Shapes.hpp>
 #include <Bindings/Graphics/Utils/Utils.hpp>
 #include <Bindings/Input/Input.hpp>
 #include <Bindings/Modes/Modes.hpp>
@@ -29,6 +31,7 @@
 #include <Bindings/Utils/File/File.hpp>
 #include <Bindings/Utils/Math/Math.hpp>
 #include <Bindings/Utils/String/String.hpp>
+#include <Bindings/Utils/Utils.hpp>
 #include <Bindings/Utils/Vector/Vector.hpp>
 #include <sol/sol.hpp>
 namespace obe::Bindings
@@ -37,7 +40,48 @@ namespace obe::Bindings
     {
         BindingTree BindTree("ObEngine");
         BindTree.add("obe", InitTreeNodeAsTable("obe"));
+        BindTree.add("obe", InitTreeNodeAsTable("obe"));
         BindTree["obe"].add("Animation", InitTreeNodeAsTable("obe.Animation"));
+        BindTree["obe"].add("Audio", InitTreeNodeAsTable("obe.Audio"));
+        BindTree["obe"].add("Collision", InitTreeNodeAsTable("obe.Collision"));
+        BindTree["obe"].add("Component", InitTreeNodeAsTable("obe.Component"));
+        BindTree["obe"].add("Config", InitTreeNodeAsTable("obe.Config"));
+        BindTree["obe"].add("Engine", InitTreeNodeAsTable("obe.Engine"));
+        BindTree["obe"].add("Graphics", InitTreeNodeAsTable("obe.Graphics"));
+        BindTree["obe"].add("Input", InitTreeNodeAsTable("obe.Input"));
+        BindTree["obe"].add("Network", InitTreeNodeAsTable("obe.Network"));
+        BindTree["obe"].add("Scene", InitTreeNodeAsTable("obe.Scene"));
+        BindTree["obe"].add("Script", InitTreeNodeAsTable("obe.Script"));
+        BindTree["obe"].add("System", InitTreeNodeAsTable("obe.System"));
+        BindTree["obe"].add("Time", InitTreeNodeAsTable("obe.Time"));
+        BindTree["obe"].add("Transform", InitTreeNodeAsTable("obe.Transform"));
+        BindTree["obe"].add("Triggers", InitTreeNodeAsTable("obe.Triggers"));
+        BindTree["obe"].add("Types", InitTreeNodeAsTable("obe.Types"));
+        BindTree["obe"].add("Bindings", InitTreeNodeAsTable("obe.Bindings"));
+        BindTree["obe"].add("Debug", InitTreeNodeAsTable("obe.Debug"));
+        BindTree["obe"].add("Modes", InitTreeNodeAsTable("obe.Modes"));
+        BindTree["obe"].add("Utils", InitTreeNodeAsTable("obe.Utils"));
+        BindTree["obe"]["Graphics"].add(
+            "Canvas", InitTreeNodeAsTable("obe.Graphics.Canvas"));
+        BindTree["obe"]["Graphics"].add(
+            "Shapes", InitTreeNodeAsTable("obe.Graphics.Shapes"));
+        BindTree["obe"]["Utils"].add("Exec", InitTreeNodeAsTable("obe.Utils.Exec"));
+        BindTree["obe"]["Graphics"].add(
+            "Utils", InitTreeNodeAsTable("obe.Graphics.Utils"));
+        BindTree["obe"]["Script"].add(
+            "DataBridge", InitTreeNodeAsTable("obe.Script.DataBridge"));
+        BindTree["obe"]["System"].add(
+            "Package", InitTreeNodeAsTable("obe.System.Package"));
+        BindTree["obe"]["System"].add(
+            "Workspace", InitTreeNodeAsTable("obe.System.Workspace"));
+        BindTree["obe"]["Utils"].add("File", InitTreeNodeAsTable("obe.Utils.File"));
+        BindTree["obe"]["Utils"].add("Math", InitTreeNodeAsTable("obe.Utils.Math"));
+        BindTree["obe"]["Utils"].add("String", InitTreeNodeAsTable("obe.Utils.String"));
+        BindTree["obe"]["Utils"].add("Vector", InitTreeNodeAsTable("obe.Utils.Vector"));
+        BindTree["obe"]["System"].add(
+            "Constraints", InitTreeNodeAsTable("obe.System.Constraints"));
+        BindTree["obe"]["System"].add(
+            "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
         BindTree["obe"]["Animation"]
             .add("ClassAnimation", &obe::Animation::Bindings::LoadClassAnimation)
             .add(
@@ -52,14 +96,12 @@ namespace obe::Bindings
             .add("FunctionStringToAnimationPlayMode",
                 &obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode);
 
-        BindTree["obe"].add("Audio", InitTreeNodeAsTable("obe.Audio"));
         BindTree["obe"]["Audio"]
             .add("ClassAudioManager", &obe::Audio::Bindings::LoadClassAudioManager)
             .add("ClassSound", &obe::Audio::Bindings::LoadClassSound)
             .add("EnumLoadPolicy", &obe::Audio::Bindings::LoadEnumLoadPolicy)
             .add("EnumSoundStatus", &obe::Audio::Bindings::LoadEnumSoundStatus);
 
-        BindTree["obe"].add("Collision", InitTreeNodeAsTable("obe.Collision"));
         BindTree["obe"]["Collision"]
             .add("ClassPolygonalCollider",
                 &obe::Collision::Bindings::LoadClassPolygonalCollider)
@@ -69,15 +111,12 @@ namespace obe::Bindings
             .add("EnumColliderTagType",
                 &obe::Collision::Bindings::LoadEnumColliderTagType);
 
-        BindTree["obe"].add("Component", InitTreeNodeAsTable("obe.Component"));
         BindTree["obe"]["Component"].add(
             "ClassComponentBase", &obe::Component::Bindings::LoadClassComponentBase);
 
-        BindTree["obe"].add("Config", InitTreeNodeAsTable("obe.Config"));
         BindTree["obe"]["Config"].add("ClassConfigurationManager",
             &obe::Config::Bindings::LoadClassConfigurationManager);
 
-        BindTree["obe"].add("Engine", InitTreeNodeAsTable("obe.Engine"));
         BindTree["obe"]["Engine"]
             .add("ClassEngine", &obe::Engine::Bindings::LoadClassEngine)
             .add("ClassResourceManagedObject",
@@ -85,9 +124,6 @@ namespace obe::Bindings
             .add(
                 "ClassResourceManager", &obe::Engine::Bindings::LoadClassResourceManager);
 
-        BindTree["obe"].add("Graphics", InitTreeNodeAsTable("obe.Graphics"));
-        BindTree["obe"]["Graphics"].add(
-            "Canvas", InitTreeNodeAsTable("obe.Graphics.Canvas"));
         BindTree["obe"]["Graphics"]["Canvas"]
             .add("ClassCanvas", &obe::Graphics::Canvas::Bindings::LoadClassCanvas)
             .add("ClassCanvasElement",
@@ -109,12 +145,17 @@ namespace obe::Bindings
 
         BindTree["obe"]["Graphics"]
             .add("ClassColor", &obe::Graphics::Bindings::LoadClassColor)
+            .add("ClassFont", &obe::Graphics::Bindings::LoadClassFont)
             .add("ClassPositionTransformer",
                 &obe::Graphics::Bindings::LoadClassPositionTransformer)
+            .add("ClassRenderTarget", &obe::Graphics::Bindings::LoadClassRenderTarget)
+            .add("ClassRichText", &obe::Graphics::Bindings::LoadClassRichText)
             .add("ClassShader", &obe::Graphics::Bindings::LoadClassShader)
             .add("ClassSprite", &obe::Graphics::Bindings::LoadClassSprite)
             .add("ClassSpriteHandlePoint",
                 &obe::Graphics::Bindings::LoadClassSpriteHandlePoint)
+            .add("ClassText", &obe::Graphics::Bindings::LoadClassText)
+            .add("ClassTexture", &obe::Graphics::Bindings::LoadClassTexture)
             .add("EnumSpriteHandlePointType",
                 &obe::Graphics::Bindings::LoadEnumSpriteHandlePointType)
             .add("FunctionInitPositionTransformer",
@@ -126,7 +167,11 @@ namespace obe::Bindings
             .add("GlobalCamera", &obe::Graphics::Bindings::LoadGlobalCamera)
             .add("GlobalPosition", &obe::Graphics::Bindings::LoadGlobalPosition);
 
-        BindTree["obe"].add("Input", InitTreeNodeAsTable("obe.Input"));
+        BindTree["obe"]["Graphics"]["Shapes"]
+            .add("ClassCircle", &obe::Graphics::Shapes::Bindings::LoadClassCircle)
+            .add("ClassPolygon", &obe::Graphics::Shapes::Bindings::LoadClassPolygon)
+            .add("ClassRectangle", &obe::Graphics::Shapes::Bindings::LoadClassRectangle);
+
         BindTree["obe"]["Input"]
             .add("ClassInputAction", &obe::Input::Bindings::LoadClassInputAction)
             .add(
@@ -147,26 +192,22 @@ namespace obe::Bindings
             .add("FunctionInputTypeToString",
                 &obe::Input::Bindings::LoadFunctionInputTypeToString);
 
-        BindTree["obe"].add("Network", InitTreeNodeAsTable("obe.Network"));
         BindTree["obe"]["Network"]
             .add("ClassLuaPacket", &obe::Network::Bindings::LoadClassLuaPacket)
             .add("ClassNetworkHandler", &obe::Network::Bindings::LoadClassNetworkHandler)
             .add("ClassTcpServer", &obe::Network::Bindings::LoadClassTcpServer)
             .add("ClassTcpSocket", &obe::Network::Bindings::LoadClassTcpSocket);
 
-        BindTree["obe"].add("Scene", InitTreeNodeAsTable("obe.Scene"));
         BindTree["obe"]["Scene"]
             .add("ClassCamera", &obe::Scene::Bindings::LoadClassCamera)
             .add("ClassScene", &obe::Scene::Bindings::LoadClassScene)
             .add("ClassSceneNode", &obe::Scene::Bindings::LoadClassSceneNode);
 
-        BindTree["obe"].add("Script", InitTreeNodeAsTable("obe.Script"));
         BindTree["obe"]["Script"]
             .add("ClassGameObject", &obe::Script::Bindings::LoadClassGameObject)
             .add("ClassGameObjectDatabase",
                 &obe::Script::Bindings::LoadClassGameObjectDatabase);
 
-        BindTree["obe"].add("System", InitTreeNodeAsTable("obe.System"));
         BindTree["obe"]["System"]
             .add("ClassCursor", &obe::System::Bindings::LoadClassCursor)
             .add("ClassLoaderMultipleResult",
@@ -182,7 +223,6 @@ namespace obe::Bindings
             .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext)
             .add("FunctionMountPaths", &obe::System::Bindings::LoadFunctionMountPaths);
 
-        BindTree["obe"].add("Time", InitTreeNodeAsTable("obe.Time"));
         BindTree["obe"]["Time"]
             .add("ClassChronometer", &obe::Time::Bindings::LoadClassChronometer)
             .add("ClassFramerateCounter", &obe::Time::Bindings::LoadClassFramerateCounter)
@@ -192,7 +232,6 @@ namespace obe::Bindings
             .add("FunctionEpochAsMicroseconds",
                 &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds);
 
-        BindTree["obe"].add("Transform", InitTreeNodeAsTable("obe.Transform"));
         BindTree["obe"]["Transform"]
             .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
             .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
@@ -211,7 +250,6 @@ namespace obe::Bindings
             .add("FunctionUnitsToString",
                 &obe::Transform::Bindings::LoadFunctionUnitsToString);
 
-        BindTree["obe"].add("Triggers", InitTreeNodeAsTable("obe.Triggers"));
         BindTree["obe"]["Triggers"]
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)
             .add("ClassTriggerEnv", &obe::Triggers::Bindings::LoadClassTriggerEnv)
@@ -219,7 +257,6 @@ namespace obe::Bindings
             .add(
                 "ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager);
 
-        BindTree["obe"].add("Types", InitTreeNodeAsTable("obe.Types"));
         BindTree["obe"]["Types"]
             .add("ClassIdentifiable", &obe::Types::Bindings::LoadClassIdentifiable)
             .add("ClassProtectedIdentifiable",
@@ -228,21 +265,18 @@ namespace obe::Bindings
             .add("ClassSerializable", &obe::Types::Bindings::LoadClassSerializable)
             .add("ClassTogglable", &obe::Types::Bindings::LoadClassTogglable);
 
-        BindTree["obe"].add("Utils", InitTreeNodeAsTable("obe.Utils"));
-        BindTree["obe"]["Utils"].add("Exec", InitTreeNodeAsTable("obe.Utils.Exec"));
         BindTree["obe"]["Utils"]["Exec"].add(
             "ClassRunArgsParser", &obe::Utils::Exec::Bindings::LoadClassRunArgsParser);
 
-        BindTree.add("obe", InitTreeNodeAsTable("obe"));
         BindTree["obe"].add("FunctionInitEngine", &obe::Bindings::LoadFunctionInitEngine);
 
-        BindTree["obe"].add("Debug", InitTreeNodeAsTable("obe.Debug"));
+        BindTree["obe"]["Bindings"].add("FunctionIndexAllBindings",
+            &obe::Bindings::Bindings::LoadFunctionIndexAllBindings);
+
         BindTree["obe"]["Debug"]
             .add("FunctionInitLogger", &obe::Debug::Bindings::LoadFunctionInitLogger)
             .add("GlobalLog", &obe::Debug::Bindings::LoadGlobalLog);
 
-        BindTree["obe"]["Graphics"].add(
-            "Utils", InitTreeNodeAsTable("obe.Graphics.Utils"));
         BindTree["obe"]["Graphics"]["Utils"]
             .add("FunctionDrawPoint",
                 &obe::Graphics::Utils::Bindings::LoadFunctionDrawPoint)
@@ -251,12 +285,9 @@ namespace obe::Bindings
             .add("FunctionDrawPolygon",
                 &obe::Graphics::Utils::Bindings::LoadFunctionDrawPolygon);
 
-        BindTree["obe"].add("Modes", InitTreeNodeAsTable("obe.Modes"));
         BindTree["obe"]["Modes"].add(
             "FunctionStartGame", &obe::Modes::Bindings::LoadFunctionStartGame);
 
-        BindTree["obe"]["Script"].add(
-            "DataBridge", InitTreeNodeAsTable("obe.Script.DataBridge"));
         BindTree["obe"]["Script"]["DataBridge"]
             .add("FunctionDataToLua",
                 &obe::Script::DataBridge::Bindings::LoadFunctionDataToLua)
@@ -275,8 +306,6 @@ namespace obe::Bindings
             .add("FunctionLuaTableToArrayNode",
                 &obe::Script::DataBridge::Bindings::LoadFunctionLuaTableToArrayNode);
 
-        BindTree["obe"]["System"].add(
-            "Package", InitTreeNodeAsTable("obe.System.Package"));
         BindTree["obe"]["System"]["Package"]
             .add("FunctionGetPackageLocation",
                 &obe::System::Package::Bindings::LoadFunctionGetPackageLocation)
@@ -285,8 +314,6 @@ namespace obe::Bindings
             .add("FunctionInstall", &obe::System::Package::Bindings::LoadFunctionInstall)
             .add("FunctionLoad", &obe::System::Package::Bindings::LoadFunctionLoad);
 
-        BindTree["obe"]["System"].add(
-            "Workspace", InitTreeNodeAsTable("obe.System.Workspace"));
         BindTree["obe"]["System"]["Workspace"]
             .add("FunctionGetWorkspaceLocation",
                 &obe::System::Workspace::Bindings::LoadFunctionGetWorkspaceLocation)
@@ -294,7 +321,6 @@ namespace obe::Bindings
                 &obe::System::Workspace::Bindings::LoadFunctionWorkspaceExists)
             .add("FunctionLoad", &obe::System::Workspace::Bindings::LoadFunctionLoad);
 
-        BindTree["obe"]["Utils"].add("File", InitTreeNodeAsTable("obe.Utils.File"));
         BindTree["obe"]["Utils"]["File"]
             .add("FunctionGetDirectoryList",
                 &obe::Utils::File::Bindings::LoadFunctionGetDirectoryList)
@@ -317,12 +343,15 @@ namespace obe::Bindings
                 &obe::Utils::File::Bindings::LoadFunctionGetCurrentDirectory)
             .add("FunctionSeparator", &obe::Utils::File::Bindings::LoadFunctionSeparator);
 
-        BindTree["obe"]["Utils"].add("Math", InitTreeNodeAsTable("obe.Utils.Math"));
         BindTree["obe"]["Utils"]["Math"]
             .add("FunctionRandint", &obe::Utils::Math::Bindings::LoadFunctionRandint)
             .add("FunctionRandfloat", &obe::Utils::Math::Bindings::LoadFunctionRandfloat)
+            .add("FunctionGetMin", &obe::Utils::Math::Bindings::LoadFunctionGetMin)
+            .add("FunctionGetMax", &obe::Utils::Math::Bindings::LoadFunctionGetMax)
+            .add("FunctionIsBetween", &obe::Utils::Math::Bindings::LoadFunctionIsBetween)
             .add("FunctionIsDoubleInt",
                 &obe::Utils::Math::Bindings::LoadFunctionIsDoubleInt)
+            .add("FunctionSign", &obe::Utils::Math::Bindings::LoadFunctionSign)
             .add("FunctionConvertToRadian",
                 &obe::Utils::Math::Bindings::LoadFunctionConvertToRadian)
             .add("FunctionConvertToDegree",
@@ -330,7 +359,6 @@ namespace obe::Bindings
             .add("FunctionNormalize", &obe::Utils::Math::Bindings::LoadFunctionNormalize)
             .add("GlobalPi", &obe::Utils::Math::Bindings::LoadGlobalPi);
 
-        BindTree["obe"]["Utils"].add("String", InitTreeNodeAsTable("obe.Utils.String"));
         BindTree["obe"]["Utils"]["String"]
             .add("FunctionSplit", &obe::Utils::String::Bindings::LoadFunctionSplit)
             .add("FunctionOccurencesInString",
@@ -345,8 +373,6 @@ namespace obe::Bindings
                 &obe::Utils::String::Bindings::LoadFunctionIsStringInt)
             .add("FunctionIsStringFloat",
                 &obe::Utils::String::Bindings::LoadFunctionIsStringFloat)
-            .add("FunctionReplaceInPlace",
-                &obe::Utils::String::Bindings::LoadFunctionReplaceInPlace)
             .add("FunctionReplace", &obe::Utils::String::Bindings::LoadFunctionReplace)
             .add("FunctionIsSurroundedBy",
                 &obe::Utils::String::Bindings::LoadFunctionIsSurroundedBy)
@@ -359,17 +385,13 @@ namespace obe::Bindings
             .add("GlobalAlphabet", &obe::Utils::String::Bindings::LoadGlobalAlphabet)
             .add("GlobalNumbers", &obe::Utils::String::Bindings::LoadGlobalNumbers);
 
-        BindTree["obe"]["Utils"].add("Vector", InitTreeNodeAsTable("obe.Utils.Vector"));
-        BindTree["obe"]["Utils"]["Vector"].add(
-            "FunctionJoin", &obe::Utils::Vector::Bindings::LoadFunctionJoin);
+        BindTree["obe"]["Utils"]["Vector"]
+            .add("FunctionContains", &obe::Utils::Vector::Bindings::LoadFunctionContains)
+            .add("FunctionJoin", &obe::Utils::Vector::Bindings::LoadFunctionJoin);
 
-        BindTree["obe"]["System"].add(
-            "Constraints", InitTreeNodeAsTable("obe.System.Constraints"));
         BindTree["obe"]["System"]["Constraints"].add(
             "GlobalDefault", &obe::System::Constraints::Bindings::LoadGlobalDefault);
 
-        BindTree["obe"]["System"].add(
-            "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
         BindTree["obe"]["System"]["Loaders"]
             .add("GlobalTextureLoader",
                 &obe::System::Loaders::Bindings::LoadGlobalTextureLoader)

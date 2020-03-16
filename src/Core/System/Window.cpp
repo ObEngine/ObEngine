@@ -124,9 +124,11 @@ namespace obe::System
         m_window.draw(vertices, vertexCount, type, states);
     }
 
-    sf::Vector2u Window::getSize() const
+    Transform::UnitVector Window::getSize() const
     {
-        return m_window.getSize();
+        const sf::Vector2u windowSize = m_window.getSize();
+        return Transform::UnitVector(
+            windowSize.x, windowSize.y, Transform::Units::ScenePixels);
     }
 
     bool Window::isOpen() const

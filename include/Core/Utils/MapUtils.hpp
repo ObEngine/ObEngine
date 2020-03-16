@@ -9,6 +9,7 @@
 namespace obe::Utils::Map
 {
     /**
+     * \nobind
      * \brief Check if the given value is found in the std::map
      * \tparam MapType type of the std::map you want to search a value from
      * \param item Value to search in the map
@@ -18,6 +19,7 @@ namespace obe::Utils::Map
     template <class MapType>
     bool valueInMap(typename MapType::value_type item, MapType&& map);
     /**
+     * \nobind
      * \brief Check if the given key is found in the std::map
      * \tparam MapType type of the std::map you want to search a key from
      * \param item key to search in the map
@@ -27,6 +29,9 @@ namespace obe::Utils::Map
     template <class MapType>
     bool keyInMap(typename MapType::key_type item, MapType&& map);
 
+    /**
+     * \nobind
+     */
     template <class MapType>
     std::vector<typename std::decay_t<MapType>::key_type> getKeys(MapType&& map);
 

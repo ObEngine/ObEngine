@@ -292,6 +292,7 @@ namespace obe::Types
         std::is_enum<E>::value && !std::is_convertible<E, int>::value>;
 
     /**
+     * \nobind
      * Provide a free operator allowing to combine two enumeration
      * member into a FlagSet.
      */

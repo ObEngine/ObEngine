@@ -39,6 +39,9 @@ namespace obe::Graphics::Canvas
     public:
         static const CanvasElementType Type = CanvasElementType::CanvasElement;
 
+        /**
+         * \nobind
+         */
         Canvas& parent;
         unsigned int layer = 1;
         bool visible = true;
@@ -93,6 +96,7 @@ namespace obe::Graphics::Canvas
     };
 
     /**
+     * \forceabstract
      * \brief Base class for CanvasElement classes with a position attribute
      */
     class CanvasPositionable : public CanvasElement
@@ -159,6 +163,7 @@ namespace obe::Graphics::Canvas
         RichText shape;
         TextHorizontalAlign h_align;
         TextVerticalAlign v_align;
+        std::vector<Graphics::Text> texts;
         /**
          * \brief Create a new Text
          * \param parent Reference to the Canvas
@@ -200,10 +205,11 @@ namespace obe::Graphics::Canvas
      */
     class Polygon : public CanvasPositionable
     {
+    public:
         static const CanvasElementType Type = CanvasElementType::Polygon;
 
         Shapes::Polygon shape;
-        Transform::Polygon polygon;
+        // Transform::Polygon polygon;
 
         explicit Polygon(Canvas& parent, const std::string& id);
 
@@ -231,6 +237,7 @@ namespace obe::Graphics::Canvas
     /**
      * \brief A Canvas where you can draw CanvasElements
      * \bind{Canvas}
+     * \helper{Lib/Internal/Canvas.lua}
      */
     class Canvas
     {
@@ -255,12 +262,12 @@ namespace obe::Graphics::Canvas
          * \return a pointer to the newly created CanvasElement
          *
          * \thints
-         * \thint{T, obe::Graphics::Canvas::Line}
-         * \thint{T, obe::Graphics::Canvas::Rectangle}
-         * \thint{T, obe::Graphics::Canvas::Text}
-         * \thint{T, obe::Graphics::Canvas::Circle}
-         * \thint{T, obe::Graphics::Canvas::Polygon}
-         * \thint{T, obe::Graphics::Canvas::Image}
+         * \thint{Line, T=obe::Graphics::Canvas::Line}
+         * \thint{Rectangle, T=obe::Graphics::Canvas::Rectangle}
+         * \thint{Text, T=obe::Graphics::Canvas::Text}
+         * \thint{Circle, T=obe::Graphics::Canvas::Circle}
+         * \thint{Polygon, T=obe::Graphics::Canvas::Polygon}
+         * \thint{Image, T=obe::Graphics::Canvas::Image}
          * \endthints
          *
          */

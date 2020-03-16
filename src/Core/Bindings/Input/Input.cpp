@@ -52,7 +52,8 @@ namespace obe::Input::Bindings
             = InputNamespace.new_usertype<obe::Input::InputAction>("InputAction",
                 sol::call_constructor,
                 sol::constructors<obe::Input::InputAction(
-                    obe::Triggers::TriggerGroup*, const std::string&)>());
+                    obe::Triggers::TriggerGroup*, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::Types::Identifiable>());
         bindInputAction["addCondition"] = &obe::Input::InputAction::addCondition;
         bindInputAction["addContext"] = &obe::Input::InputAction::addContext;
         bindInputAction["check"] = &obe::Input::InputAction::check;
@@ -122,16 +123,14 @@ namespace obe::Input::Bindings
             = &obe::Input::InputCondition::addCombinationElement;
         bindInputCondition["check"] = &obe::Input::InputCondition::check;
         bindInputCondition["clear"] = &obe::Input::InputCondition::clear;
-        // bindInputCondition["getCombination"] = &obe::Input::InputCondition::getCombination;
-        bindInputCondition["setCombination"]
-            = &obe::Input::InputCondition::setCombination;
     }
     void LoadClassInputManager(sol::state_view state)
     {
         sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
         sol::usertype<obe::Input::InputManager> bindInputManager
             = InputNamespace.new_usertype<obe::Input::InputManager>("InputManager",
-                sol::call_constructor, sol::constructors<obe::Input::InputManager()>());
+                sol::call_constructor, sol::constructors<obe::Input::InputManager()>(),
+                sol::base_classes, sol::bases<obe::Types::Togglable>());
         bindInputManager["init"] = &obe::Input::InputManager::init;
         bindInputManager["actionExists"] = &obe::Input::InputManager::actionExists;
         bindInputManager["addContext"] = &obe::Input::InputManager::addContext;
@@ -158,19 +157,6 @@ namespace obe::Input::Bindings
             static_cast<obe::Input::InputButtonMonitorPtr (obe::Input::InputManager::*)(
                 obe::Input::InputButton&)>(&obe::Input::InputManager::monitor));
         bindInputManager["requireRefresh"] = &obe::Input::InputManager::requireRefresh;
-        // bindInputManager["makeCombination"] = &obe::Input::InputManager::makeCombination;
-    }
-    void LoadFunctionOstreamLeftShiftAxisThresholdDirection(sol::state_view state)
-    {
-        sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
-        InputNamespace.set_function("operator<<",
-            sol::overload(
-                static_cast<std::ostream& (*)(std::ostream&,
-                    const obe::Input::AxisThresholdDirection&)>(obe::Input::operator<<),
-                static_cast<std::ostream& (*)(std::ostream&,
-                    obe::Input::InputButtonState)>(obe::Input::operator<<),
-                static_cast<std::ostream& (*)(std::ostream&, obe::Input::InputType)>(
-                    obe::Input::operator<<)));
     }
     void LoadFunctionInputButtonStateToString(sol::state_view state)
     {

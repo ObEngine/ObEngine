@@ -29,7 +29,6 @@ namespace obe::Triggers::Bindings
         bindTrigger["onRegister"] = &obe::Triggers::Trigger::onRegister;
         bindTrigger["onUnregister"] = &obe::Triggers::Trigger::onUnregister;
     }
-
     void LoadClassTriggerEnv(sol::state_view state)
     {
         sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
@@ -38,10 +37,9 @@ namespace obe::Triggers::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerEnv(
                     sol::environment, std::string, bool*)>());
-        bindTriggerEnv["environment"]
-            = sol::readonly(&obe::Triggers::TriggerEnv::environment);
-        bindTriggerEnv["callback"] = sol::readonly(&obe::Triggers::TriggerEnv::callback);
-        bindTriggerEnv["active"] = sol::readonly(&obe::Triggers::TriggerEnv::active);
+        bindTriggerEnv["environment"] = &obe::Triggers::TriggerEnv::environment;
+        bindTriggerEnv["callback"] = &obe::Triggers::TriggerEnv::callback;
+        bindTriggerEnv["active"] = &obe::Triggers::TriggerEnv::active;
     }
     void LoadClassTriggerGroup(sol::state_view state)
     {
@@ -72,7 +70,7 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerManager>(
                 "TriggerManager", sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerManager(sol::state_view)>());
-        bindTriggerManager["get"] = &obe::Triggers::TriggerManager::getTrigger;
+        bindTriggerManager["getTrigger"] = &obe::Triggers::TriggerManager::getTrigger;
         bindTriggerManager["getAllTriggersNameFromTriggerGroup"]
             = &obe::Triggers::TriggerManager::getAllTriggersNameFromTriggerGroup;
         bindTriggerManager["createNamespace"]
