@@ -14,7 +14,7 @@ namespace obe::Triggers
     class TriggerManager
     {
     private:
-        std::map<std::string, std::map<std::string, std::unique_ptr<TriggerGroup>>>
+        std::map<std::string, std::map<std::string, std::weak_ptr<TriggerGroup>>>
             m_allTriggers;
         Time::Chronometer m_databaseChrono;
         sol::state_view m_lua;

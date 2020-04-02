@@ -1,10 +1,11 @@
 #include <Script/ViliLuaBridge.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::Script::DataBridge
 {
-    void dataToLua(kaguya::LuaTable& target, vili::Node* convert)
+    void dataToLua(sol::table target, vili::Node* convert)
     {
         if (convert->getType() == vili::NodeType::ArrayNode)
         {
@@ -20,17 +21,15 @@ namespace obe::Script::DataBridge
         }
     }
 
-    vili::Node* luaToData(kaguya::LuaRef& convert)
+    vili::Node* luaToData(sol::reference convert)
     {
         // return Attribute();
         return nullptr;
     }
 
-    void complexNodeToLuaTable(kaguya::LuaTable& target, vili::ComplexNode* convert)
+    void complexNodeToLuaTable(sol::table target, vili::ComplexNode* convert)
     {
-        target[convert->getId()] = kaguya::NewTable();
-        kaguya::LuaTable injectTable = target[convert->getId()];
-        kaguya::State olol;
+        sol::table injectTable = target[convert->getId()].get_or_create<sol::table>();
         for (vili::Node* node : convert->getAll())
         {
             if (node->getType() == vili::NodeType::DataNode)
@@ -50,7 +49,7 @@ namespace obe::Script::DataBridge
         target[convert->getId()] = injectTable;
     }
 
-    void dataNodeToLuaElement(kaguya::LuaTable& target, vili::DataNode* convert)
+    void dataNodeToLuaElement(sol::table target, vili::DataNode* convert)
     {
         if (convert->getDataType() == vili::DataType::Int)
             target[convert->getId()] = convert->get<int>();
@@ -62,10 +61,9 @@ namespace obe::Script::DataBridge
             target[convert->getId()] = convert->get<double>();
     }
 
-    void arrayNodeToLuaTable(kaguya::LuaTable& target, vili::ArrayNode* convert)
+    void arrayNodeToLuaTable(sol::table target, vili::ArrayNode* convert)
     {
-        target[convert->getId()] = kaguya::NewTable();
-        kaguya::LuaTable mTable = target[convert->getId()];
+        sol::table mTable = target[convert->getId()].get_or_create<sol::table>();
         for (int i = 0; i < convert->size(); i++)
         {
             if (convert->get(i).getDataType() == vili::DataType::Int)
@@ -79,14 +77,14 @@ namespace obe::Script::DataBridge
         }
     }
 
-    vili::ComplexNode* luaTableToComplexNode(
-        const std::string& id, kaguya::LuaRef& convert)
+    vili::ComplexNode* luaTableToComplexNode(const std::string& id, sol::object convert)
     {
-        if (convert.type() == 0 || convert.type() == 5)
+        /*if (convert.get_type() == sol::type:: || convert.type() == 5)
         {
             vili::ComplexNode* returnElement = new vili::ComplexNode(id);
-            std::map<std::string, kaguya::LuaRef> tableMap = convert;
-            for (const std::pair<std::string, kaguya::LuaRef> tableItem : tableMap)
+            std::map<std::string, sol::object> tableMap
+                = convert.as<std::map<std::string, sol::object>>();
+            for (const std::pair<std::string, sol::object> tableItem : tableMap)
             {
                 const std::string tableKey = tableItem.first;
                 if (convert[tableKey].type() == 5)
@@ -107,38 +105,38 @@ namespace obe::Script::DataBridge
             return returnElement;
         }
         throw aube::ErrorHandler::Raise(
-            "ObEngine.Script.ViliLuaBridge.NotATable", { { "id", id } });
+            "ObEngine.Script.ViliLuaBridge.NotATable", { { "id", id } });*/
+        return nullptr;
     }
 
-    vili::DataNode* luaElementToDataNode(const std::string& id, kaguya::LuaRef& convert)
+    vili::DataNode* luaElementToDataNode(const std::string& id, sol::object convert)
     {
         vili::DataNode* returnAttribute = nullptr;
-        if (convert.type() == 3 && Utils::String::isStringInt(convert))
+        if (convert.is<int>())
         {
             returnAttribute = new vili::DataNode(id, vili::DataType::Int);
-            returnAttribute->set(int(convert));
+            returnAttribute->set(convert.as<int>());
         }
-        else if (convert.type() == 3 && Utils::String::isStringFloat(convert))
+        else if (convert.is<double>())
         {
             returnAttribute = new vili::DataNode(id, vili::DataType::Float);
-            returnAttribute->set(double(convert));
+            returnAttribute->set(convert.as<double>());
         }
-        else if (convert.type() == 1)
+        else if (convert.is<bool>())
         {
             returnAttribute = new vili::DataNode(id, vili::DataType::Bool);
-            returnAttribute->set(bool(convert));
+            returnAttribute->set(convert.as<bool>());
         }
-        else if (convert.type() == 4)
+        else if (convert.is<std::string>())
         {
             returnAttribute = new vili::DataNode(id, vili::DataType::String);
-            const char* convertChar = convert;
-            returnAttribute->set(convertChar);
+            returnAttribute->set(convert.as<std::string>());
         }
 
         return returnAttribute;
     }
 
-    vili::ArrayNode* luaTableToArrayNode(const std::string& id, kaguya::LuaTable& convert)
+    vili::ArrayNode* luaTableToArrayNode(const std::string& id, sol::table convert)
     {
         /*ListAttribute* returnElement = new ListAttribute(id, dataType);
         std::cout << "Table Type : " << convert.type() << std::endl;

@@ -9,7 +9,7 @@ namespace obe::Network
         : m_received(0)
         , m_status()
         , m_data {}
-        , t_socket(triggers.createTriggerGroup("Global", "Network"))
+        , t_socket(triggers.createTriggerGroup("Event", "Network"))
     {
         m_listener.setBlocking(false);
         m_listener.listen(53000);

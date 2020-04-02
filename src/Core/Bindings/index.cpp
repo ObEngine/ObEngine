@@ -143,6 +143,24 @@ namespace obe::Bindings
             .add("EnumTextVerticalAlign",
                 &obe::Graphics::Canvas::Bindings::LoadEnumTextVerticalAlign);
 
+        BindTree["obe"]["Transform"]
+            .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
+            .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
+            .add("ClassPolygon", &obe::Transform::Bindings::LoadClassPolygon)
+            .add("ClassPolygonPoint", &obe::Transform::Bindings::LoadClassPolygonPoint)
+            .add(
+                "ClassPolygonSegment", &obe::Transform::Bindings::LoadClassPolygonSegment)
+            .add("ClassRect", &obe::Transform::Bindings::LoadClassRect)
+            .add("ClassReferential", &obe::Transform::Bindings::LoadClassReferential)
+            .add("ClassUnitBasedObject",
+                &obe::Transform::Bindings::LoadClassUnitBasedObject)
+            .add("ClassUnitVector", &obe::Transform::Bindings::LoadClassUnitVector)
+            .add("EnumUnits", &obe::Transform::Bindings::LoadEnumUnits)
+            .add("FunctionStringToUnits",
+                &obe::Transform::Bindings::LoadFunctionStringToUnits)
+            .add("FunctionUnitsToString",
+                &obe::Transform::Bindings::LoadFunctionUnitsToString);
+
         BindTree["obe"]["Graphics"]
             .add("ClassColor", &obe::Graphics::Bindings::LoadClassColor)
             .add("ClassFont", &obe::Graphics::Bindings::LoadClassFont)
@@ -231,24 +249,6 @@ namespace obe::Bindings
                 &obe::Time::Bindings::LoadFunctionEpochAsMilliseconds)
             .add("FunctionEpochAsMicroseconds",
                 &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds);
-
-        BindTree["obe"]["Transform"]
-            .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
-            .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
-            .add("ClassPolygon", &obe::Transform::Bindings::LoadClassPolygon)
-            .add("ClassPolygonPoint", &obe::Transform::Bindings::LoadClassPolygonPoint)
-            .add(
-                "ClassPolygonSegment", &obe::Transform::Bindings::LoadClassPolygonSegment)
-            .add("ClassRect", &obe::Transform::Bindings::LoadClassRect)
-            .add("ClassReferential", &obe::Transform::Bindings::LoadClassReferential)
-            .add("ClassUnitBasedObject",
-                &obe::Transform::Bindings::LoadClassUnitBasedObject)
-            .add("ClassUnitVector", &obe::Transform::Bindings::LoadClassUnitVector)
-            .add("EnumUnits", &obe::Transform::Bindings::LoadEnumUnits)
-            .add("FunctionStringToUnits",
-                &obe::Transform::Bindings::LoadFunctionStringToUnits)
-            .add("FunctionUnitsToString",
-                &obe::Transform::Bindings::LoadFunctionUnitsToString);
 
         BindTree["obe"]["Triggers"]
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)

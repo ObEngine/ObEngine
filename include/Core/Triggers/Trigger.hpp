@@ -17,6 +17,7 @@ namespace obe::Triggers
         sol::environment environment;
         std::string callback;
         bool* active = nullptr;
+        sol::protected_function call;
         TriggerEnv(sol::environment environment, std::string callback, bool* active)
             : environment(environment)
             , callback(std::move(callback))
@@ -57,13 +58,13 @@ namespace obe::Triggers
          * \param name Name of the Parameter to push
          * \param parameter Value of the parameter (LuaRef can be anything)
          */
-        void pushParameterFromLua(
-            const std::string& name, sol::reference parameter) const;
+        void pushParameterFromLua(const std::string& name, sol::object parameter);
         /**
-         * \brief Gets the Lua Table path used to store Trigger Parameters
-         * \return The path to the Lua Table used to store Trigger Parameters
+         * \brief Triggers callbacks
          */
-        [[nodiscard]] std::string getTriggerLuaTableName() const;
+        void execute();
+        void onRegister(std::function<void(const TriggerEnv&)> callback);
+        void onUnregister(std::function<void(const TriggerEnv&)> callback);
 
     public:
         /**
@@ -108,15 +109,14 @@ namespace obe::Triggers
             sol::environment environment, const std::string& callback, bool* active);
         /**
          * \brief Removes an environment from Trigger Execution
-         * \param environemnt Lua Environment to unregister
+         * \param environment Lua Environment to unregister
          */
         void unregisterEnvironment(sol::environment environment);
         /**
-         * \brief Triggers callbacks
+         * \brief Gets the Lua Table path used to store Trigger Parameters
+         * \return The path to the Lua Table used to store Trigger Parameters
          */
-        void execute();
-        void onRegister(std::function<void(const TriggerEnv&)> callback);
-        void onUnregister(std::function<void(const TriggerEnv&)> callback);
+        [[nodiscard]] std::string getTriggerLuaTableName() const;
     };
 
     template <typename P>

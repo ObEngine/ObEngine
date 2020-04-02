@@ -49,6 +49,7 @@ namespace obe::Animation
      * \bind{[mt]AnimationPlayMode.__call}
      */
     AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
+    std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m);
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should

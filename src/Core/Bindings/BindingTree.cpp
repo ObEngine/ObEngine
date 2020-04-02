@@ -12,7 +12,7 @@ namespace obe::Bindings
 {
     std::function<void(sol::state_view)> InitTreeNodeAsTable(const std::string& nodeName)
     {
-        return [nodeName](sol::state_view lua) { lua.script(nodeName + " = {};"); };
+        return [nodeName](sol::state_view lua) { lua.safe_script(nodeName + " = {};"); };
     }
 
     bool checkIfLuaElementExists(sol::state_view lua, const std::string& path)
@@ -147,9 +147,9 @@ namespace obe::Bindings
             = checkIfLuaElementExists(lua, this->getNodePath());
         if (!elementAlreadyExists && m_hasLib)
         {
-            Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
+            Debug::Log->debug("<BindingTree> Loading Lua Binding : {0}", this->getNodePath());
             Debug::Log->flush();
-            lua.script("table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
+            lua.safe_script("table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
             m_lib(lua);
         }
         if (spreads)

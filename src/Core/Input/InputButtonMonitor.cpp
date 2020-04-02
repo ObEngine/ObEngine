@@ -27,6 +27,7 @@ namespace obe::Input
 
     void InputButtonMonitor::update(Triggers::TriggerGroupPtr triggers)
     {
+        Debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
         const bool keyPressed = m_button.isPressed();
         const InputButtonState oldState = m_buttonState;
         if (keyPressed

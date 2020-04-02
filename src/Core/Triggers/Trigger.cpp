@@ -4,6 +4,30 @@
 
 namespace obe::Triggers
 {
+    sol::protected_function makeCallback(
+        sol::state_view lua, const std::string& triggerTableName, TriggerEnv& env)
+    {
+        const sol::protected_function MakeCallback
+            = lua["LuaCore"]["MakeCallback"].get<sol::protected_function>();
+        env.environment.set_on(MakeCallback);
+        sol::protected_function callback
+            = lua.safe_script("return " + env.callback, env.environment)
+                  .get<sol::protected_function>();
+        const sol::protected_function_result makeCallbackResult
+            = MakeCallback.call(triggerTableName, callback, env.callback);
+        if (!makeCallbackResult.valid())
+        {
+            const auto errObj = makeCallbackResult.get<sol::error>();
+            const auto errMsg = errObj.what();
+            Debug::Log->error("<Trigger> MakeCallback Error : {}", errMsg);
+            throw aube::ErrorHandler::Raise("MakeCallback Error");
+        }
+        sol::protected_function callbackWithArgs
+            = makeCallbackResult.get<sol::protected_function>();
+        env.environment.set_on(callbackWithArgs);
+        return callbackWithArgs;
+    }
+
     std::string Trigger::getTriggerLuaTableName() const
     {
         return this->getNamespace() + "__" + this->getGroup() + "__" + m_name;
@@ -67,7 +91,6 @@ namespace obe::Triggers
     {
         Debug::Log->trace("<Trigger> Unregistering Lua Environment {0} from Trigger {1}",
             environment.pointer(), m_fullName);
-        environment["__TRIGGERS"][this->getTriggerLuaTableName()] = sol::nil;
         for (const TriggerEnv& triggerEnv : m_registeredEnvs)
         {
             if (triggerEnv.environment == environment)
@@ -108,7 +131,21 @@ namespace obe::Triggers
                 Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on "
                                   "Lua Environment {1} from Trigger {2}",
                     rEnv.callback, rEnv.environment.pointer(), m_fullName);
-                m_lua.script(rEnv.callback + "()", rEnv.environment);
+                //sol::function callback = m_lua.get<sol::function>(rEnv.callback);
+
+                if (!rEnv.call)
+                {
+                    rEnv.call = makeCallback(m_lua, this->getTriggerLuaTableName(), rEnv);
+                }
+
+                sol::protected_function_result result = rEnv.call();
+                if (!result.valid())
+                {
+                    const auto errObj = result.get<sol::error>();
+                    const auto errMsg = errObj.what();
+                    Debug::Log->error("LuaError : {}", errMsg);
+                }
+                // m_lua.script(rEnv.callback + "()", rEnv.environment);
                 /*Script::ScriptEngine("LuaCore.EnvFuncInjector("
                     + std::to_string(rEnv.envIndex) + ", \""
                     + this->getTriggerLuaTableName() + "\")");*/
@@ -132,15 +169,12 @@ namespace obe::Triggers
         m_currentlyTriggered = false;
     }
 
-    void Trigger::pushParameterFromLua(
-        const std::string& name, sol::reference parameter) const
+    void Trigger::pushParameterFromLua(const std::string& name, sol::object parameter)
     {
-        Debug::Log->trace("<Trigger> Pushing parameter {0} to Trigger {1} (From Lua)",
-            name, m_fullName);
-        // m_lua["__TRIGGERS"]["ArgTable"][this->getTriggerLuaTableName()][name] = parameter;
-        /*Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
-                            [name]
-            = parameter;*/
+        Debug::Log->trace(
+            "<Trigger> Pushing parameter {0} (type: {1}) to Trigger {2} (From Lua)", name,
+            static_cast<int>(parameter.get_type()), m_fullName);
+        m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"][name] = parameter;
     }
 
     void Trigger::onRegister(std::function<void(const TriggerEnv&)> callback)

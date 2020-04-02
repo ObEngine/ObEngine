@@ -193,11 +193,12 @@ namespace obe::Script
          */
         template <typename U> void sendInitArg(const std::string& argName, U value);
         /**
+         * \bind{sendInitArg}
          * \brief Send a parameter to the Local.Init trigger from a Lua VM
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName, sol::reference value) const;
+        void sendInitArgFromLua(const std::string& argName, sol::object value) const;
         /**
          * \brief Register a Trigger in the GameObject
          * \param trg Pointer to the Trigger

@@ -8,24 +8,24 @@ LuaCore.ObjectInitInjectionTable = {}; -- Used when Object is built from Editor 
 function ObjectInit(argtable)
     local argt = argtable or {};
     for k, v in pairs(argt) do
-        GameObject:sendInitArg(k, v);
+        This:sendInitArg(k, v);
     end
-    GameObject:initialize();
+    This:initialize();
     return Object;
 end
 
-__PRIVATE_TRIGGERS = LuaCore.MakeTriggerGroupHook(GameObject, Private);
+__PRIVATE_TRIGGERS = LuaCore.MakeTriggerGroupHook(This, Private);
 Local = __PRIVATE_TRIGGERS["Local"];
 getmetatable(Local).__alias_function = function(namespace, group, id)
     return "Local." .. id;
 end
 
 -- Global Triggers
-Global = LuaCore.MakeTriggerGroupHook(GameObject, "Global");
+Event = LuaCore.MakeTriggerGroupHook(This, "Event");
 
 function LuaCore.InjectInitInjectionTable()
     for k, v in pairs(LuaCore.ObjectInitInjectionTable) do
-        GameObject:sendInitArg(k, v);
+        This:sendInitArg(k, v);
     end
 end
 

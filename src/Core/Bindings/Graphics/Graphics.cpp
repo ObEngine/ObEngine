@@ -35,7 +35,11 @@ namespace obe::Graphics::Bindings
                     obe::Graphics::Color(const obe::Graphics::Color&),
                     obe::Graphics::Color(const sf::Color&)>());
         bindColor["fromHex"] = &obe::Graphics::Color::fromHex;
-        bindColor["fromRgb"] = &obe::Graphics::Color::fromRgb;
+        bindColor["fromRgb"] = sol::overload(
+            [](obe::Graphics::Color* self, uint_fast8_t r, uint_fast8_t g,
+                uint_fast8_t b) -> void { return self->fromRgb(r, g, b); },
+            [](obe::Graphics::Color* self, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b,
+                uint_fast8_t p3) -> void { return self->fromRgb(r, g, b, p3); });
         bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
@@ -153,6 +157,7 @@ namespace obe::Graphics::Bindings
             = &obe::Graphics::Sprite::getPositionTransformer;
         bindSprite["getRect"] = &obe::Graphics::Sprite::getRect;
         bindSprite["getShader"] = &obe::Graphics::Sprite::getShader;
+        bindSprite["getSize"] = &obe::Graphics::Sprite::getSize;
         bindSprite["getSprite"] = &obe::Graphics::Sprite::getSprite;
         bindSprite["getSpriteHeight"] = &obe::Graphics::Sprite::getSpriteHeight;
         bindSprite["getSpriteWidth"] = &obe::Graphics::Sprite::getSpriteWidth;

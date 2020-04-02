@@ -12,7 +12,7 @@ namespace obe::Scene
     Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
         : m_lua(lua)
         , m_triggers(triggers)
-        , t_scene(triggers.createTriggerGroup("Global", "Scene"))
+        , t_scene(triggers.createTriggerGroup("Event", "Scene"))
 
     {
         triggers.createNamespace("Map"); // TODO: Add namespace handle
@@ -228,7 +228,7 @@ namespace obe::Scene
             vili::ComplexNode& script = m_levelFile.at("Script");
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
-                m_lua.script_file(
+                m_lua.safe_script_file(
                     System::Path(script.at<vili::DataNode>("source")).find());
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
@@ -236,7 +236,7 @@ namespace obe::Scene
             {
                 for (vili::DataNode* scriptName : script.getArrayNode("sources"))
                 {
-                    m_lua.script_file(System::Path(*scriptName).find());
+                    m_lua.safe_script_file(System::Path(*scriptName).find());
                     m_scriptArray.push_back(*scriptName);
                 }
             }
@@ -542,12 +542,14 @@ namespace obe::Scene
             m_gameObjectArray.end());
     }
 
-    std::vector<Script::GameObject*> Scene::getAllGameObjects()
+    std::vector<Script::GameObject*> Scene::getAllGameObjects(
+        const std::string& objectType)
     {
         std::vector<Script::GameObject*> returnVec;
         for (auto& gameObject : m_gameObjectArray)
         {
-            returnVec.push_back(gameObject.get());
+            if (objectType.empty() || objectType == gameObject->getType())
+                returnVec.push_back(gameObject.get());
         }
         return returnVec;
     }

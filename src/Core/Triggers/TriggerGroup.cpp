@@ -50,7 +50,7 @@ namespace obe::Triggers
     {
         Debug::Log->trace("<TriggerGroup> Trigger {0} from TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
-        m_triggerMap[triggerName]->execute();
+        this->get(triggerName).lock()->execute();
         return *this;
     }
 
@@ -65,9 +65,9 @@ namespace obe::Triggers
     }
 
     void TriggerGroup::pushParameterFromLua(const std::string& triggerName,
-        const std::string& parameterName, sol::reference parameter)
+        const std::string& parameterName, sol::object parameter)
     {
-        m_triggerMap[triggerName]->pushParameterFromLua(parameterName, parameter);
+        this->get(triggerName).lock()->pushParameterFromLua(parameterName, parameter);
     }
 
     std::vector<std::string> TriggerGroup::getTriggersNames()
@@ -98,5 +98,17 @@ namespace obe::Triggers
     std::string TriggerGroup::getName() const
     {
         return m_name;
+    }
+
+    void TriggerGroup::onRegister(
+        const std::string& triggerName, std::function<void(const TriggerEnv&)> callback)
+    {
+        this->get(triggerName).lock()->onRegister(callback);
+    }
+
+    void TriggerGroup::onUnregister(
+        const std::string& triggerName, std::function<void(const TriggerEnv&)> callback)
+    {
+        this->get(triggerName).lock()->onUnregister(callback);
     }
 } // namespace obe::Triggers

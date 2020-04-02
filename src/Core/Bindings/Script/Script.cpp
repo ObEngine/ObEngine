@@ -24,17 +24,33 @@ namespace obe::Script::Bindings
             = &obe::Script::GameObject::doesHaveScriptEngine;
         bindGameObject["getUpdateState"] = &obe::Script::GameObject::getUpdateState;
         bindGameObject["setUpdateState"] = &obe::Script::GameObject::setUpdateState;
-        bindGameObject["getAnimator"] = &obe::Script::GameObject::getAnimator;
-        bindGameObject["getCollider"] = &obe::Script::GameObject::getCollider;
-        bindGameObject["getSprite"] = &obe::Script::GameObject::getSprite;
-        bindGameObject["getSceneNode"] = &obe::Script::GameObject::getSceneNode;
-        bindGameObject["useTrigger"] = &obe::Script::GameObject::useTrigger;
+        bindGameObject["Animator"] = &obe::Script::GameObject::getAnimator;
+        bindGameObject["Collider"] = &obe::Script::GameObject::getCollider;
+        bindGameObject["Sprite"] = &obe::Script::GameObject::getSprite;
+        bindGameObject["SceneNode"] = &obe::Script::GameObject::getSceneNode;
+        bindGameObject["useTrigger"] = sol::overload(
+            [](obe::Script::GameObject* self, const std::string& trNsp,
+                const std::string& trGrp, const std::string& trName) -> void {
+                return self->useTrigger(trNsp, trGrp, trName);
+            },
+            [](obe::Script::GameObject* self, const std::string& trNsp,
+                const std::string& trGrp, const std::string& trName,
+                const std::string& callAlias) -> void {
+                return self->useTrigger(trNsp, trGrp, trName, callAlias);
+            });
         bindGameObject["removeTrigger"] = &obe::Script::GameObject::removeTrigger;
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
-        bindGameObject["sendInitArgFromLua"]
-            = &obe::Script::GameObject::sendInitArgFromLua;
+        bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["registerTrigger"] = &obe::Script::GameObject::registerTrigger;
-        bindGameObject["loadGameObject"] = &obe::Script::GameObject::loadGameObject;
+        bindGameObject["loadGameObject"] = sol::overload(
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
+                vili::ComplexNode& obj) -> void {
+                return self->loadGameObject(scene, obj);
+            },
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
+                vili::ComplexNode& obj, obe::Engine::ResourceManager* resources) -> void {
+                return self->loadGameObject(scene, obj, resources);
+            });
         bindGameObject["update"] = &obe::Script::GameObject::update;
         bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
         bindGameObject["access"] = &obe::Script::GameObject::access;

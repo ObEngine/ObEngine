@@ -32,7 +32,7 @@ namespace obe::Engine
         Audio::AudioManager m_audio {};
         Config::ConfigurationManager m_config {};
         ResourceManager m_resources {};
-        Input::InputManager m_input {};
+        std::unique_ptr<Input::InputManager> m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
         std::unique_ptr<Triggers::TriggerManager> m_triggers;
 

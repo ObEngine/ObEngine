@@ -292,14 +292,13 @@ namespace obe::Input
 
     void InputManager::createTriggerGroups(Triggers::TriggerManager& triggers)
     {
-        t_inputs = triggers.createTriggerGroup("Global", "Keys");
+        t_inputs = triggers.createTriggerGroup("Event", "Keys");
         for (auto const& [key, val] : m_inputs)
         {
             Input::InputButton* button = val.get();
             t_inputs->add(button->getName());
-            t_inputs->get(button->getName())
-                .lock()
-                ->onRegister([button, this](const Triggers::TriggerEnv& env) {
+            t_inputs->onRegister(
+                button->getName(), [button, this](const Triggers::TriggerEnv& env) {
                     for (auto& monitor : m_monitors)
                     {
                         if (&monitor->getButton() == button)
@@ -307,9 +306,8 @@ namespace obe::Input
                     }
                     m_monitors.push_back(this->monitor(*button));
                 });
-            t_inputs->get(button->getName())
-                .lock()
-                ->onUnregister([button, this](const Triggers::TriggerEnv& env) {
+            t_inputs->onUnregister(
+                button->getName(), [button, this](const Triggers::TriggerEnv& env) {
                     m_monitors.erase(std::remove_if(m_monitors.begin(), m_monitors.end(),
                                          [button](const auto& monitor) {
                                              return &monitor->getButton() == button;

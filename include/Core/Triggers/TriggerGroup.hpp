@@ -83,7 +83,7 @@ namespace obe::Triggers
          * \param parameter Lua Value of the Parameter
          */
         void pushParameterFromLua(const std::string& triggerName,
-            const std::string& parameterName, sol::reference parameter);
+            const std::string& parameterName, sol::object parameter);
         /**
          * \brief Get the name of all Trigger contained in the TriggerGroup
          * \return A std::vector of std::string containing the name of all
@@ -105,6 +105,17 @@ namespace obe::Triggers
          * \return A std::string containing the name of the TriggerGroup
          */
         [[nodiscard]] std::string getName() const;
+
+        /**
+         * \brief Register a callback for when something calls Trigger::register
+         */
+        void onRegister(const std::string& triggerName,
+            std::function<void(const TriggerEnv&)> callback);
+        /**
+         * \brief Register a callback for when something calls Trigger::unRegister
+         */
+        void onUnregister(const std::string& triggerName,
+            std::function<void(const TriggerEnv&)> callback);
     };
 
     using TriggerGroupPtr = std::shared_ptr<TriggerGroup>;

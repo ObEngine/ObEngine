@@ -250,7 +250,7 @@ function obe.Canvas.InjectInternalMT(tbl, ref)
 end
 
 local UV2V2f = function(uv)
-    local uvpx = uv:to(obe.Units.ScenePixels);
+    local uvpx = uv:to(obe.Transform.Units.ScenePixels);
     return SFML.Vector2f(uvpx.x, uvpx.y);
 end
 
@@ -295,7 +295,7 @@ obe.Canvas.Bases.Line = {
                 x = function(self, x) self.p1.x = x or 0; end,
                 y = function(self, y) self.p1.y = y or 0; end,
                 unit = function(self, unit)
-                    self.p1.unit = unit or obe.Units.ScenePixels;
+                    self.p1.unit = unit or obe.Transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p1color = obe.Canvas.NormalizeColor(color, self.p1color);
@@ -329,7 +329,7 @@ obe.Canvas.Bases.Line = {
                 x = function(self, x) self.p2.x = x or 0; end,
                 y = function(self, y) self.p2.y = y or 0; end,
                 unit = function(self, unit)
-                    self.p2.unit = unit or obe.Units.ScenePixels;
+                    self.p2.unit = unit or obe.Transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p2color = obe.Canvas.NormalizeColor(color, self.p2color);
@@ -355,8 +355,8 @@ obe.Canvas.Bases.Line = {
     },
     setters = {
         unit = function(self, unit)
-            self.p1.unit = unit or obe.Units.ScenePixels;
-            self.p2.unit = unit or obe.Units.ScenePixels;
+            self.p1.unit = unit or obe.Transform.Units.ScenePixels;
+            self.p2.unit = unit or obe.Transform.Units.ScenePixels;
         end,
         thickness = function(self, thickness) self.thickness = thickness or 1; end,
         color = function(self, color)
@@ -368,7 +368,7 @@ obe.Canvas.Bases.Line = {
                 if type(p1.x) == "number" then self.p1.x = p1.x; end
                 if type(p1.y) == "number" then self.p1.y = p1.y; end
                 if p1.color then self.p1color = obe.Canvas.NormalizeColor(p1.color, self.p1color); end
-                if p1.unit then self.p1.unit = p1.unit or obe.Units.ScenePixels; end
+                if p1.unit then self.p1.unit = p1.unit or obe.Transform.Units.ScenePixels; end
             end
         end,
         p2 = function(self, p2)
@@ -376,7 +376,7 @@ obe.Canvas.Bases.Line = {
                 if type(p2.x) == "number" then self.p2.x = p2.x; end
                 if type(p2.y) == "number" then self.p2.y = p2.y; end
                 if p2.color then self.p2color = obe.Canvas.NormalizeColor(p2.color, self.p2color); end
-                if p2.unit then self.p2.unit = p2.unit or obe.Units.ScenePixels; end
+                if p2.unit then self.p2.unit = p2.unit or obe.Transform.Units.ScenePixels; end
             end
         end
     }
@@ -502,7 +502,7 @@ obe.Canvas.Bases.Shape = {
             self.shape:setPosition(UV2V2f(self.position));
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Units.ScenePixels;
+            self.position.unit = unit or obe.Transform.Units.ScenePixels;
         end,
         angle = function(self, angle)
             self.shape:setRotation(angle or 0);
@@ -535,8 +535,8 @@ obe.Canvas.Bases.Rectangle = {
             self.shape:setSize(UV2V2f(self.size));
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Units.ScenePixels;
-            self.size.unit = unit or obe.Units.ScenePixels;
+            self.position.unit = unit or obe.Transform.Units.ScenePixels;
+            self.size.unit = unit or obe.Transform.Units.ScenePixels;
         end,
     }
 }
@@ -650,20 +650,20 @@ obe.Canvas.Bases.Text = {
                 if outline.color then
                     self.shape:clear();
                     self.shape:pushOutlineColor(obe.Canvas.NormalizeColor(outline.color));
-                    self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+                    -- self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
                 end
                 if type(outline.thickness) == "number" then
                     self.shape:clear();
                     self.shape:pushOutlineThickness(outline.thickness);
-                    self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
+                    -- self.shape:pushString(SFML.String(GetRichTextString(self.shape)));
                 end
             end
         end,
         __number = function(self, index, part)
             self.shape:pushOutlineThickness(0);
-            self.shape:pushOutlineColor(SFML.Color(255, 255, 255));
-            self.shape:pushFillColor(SFML.Color(255, 255, 255));
-            self.shape:pushStyle(SFML.Style.Regular);
+            self.shape:pushOutlineColor(obe.Graphics.Color(255, 255, 255));
+            self.shape:pushFillColor(obe.Graphics.Color(255, 255, 255));
+            -- self.shape:pushStyle(SFML.Style.Regular);
             if part.color then
                 self.shape:pushFillColor(obe.Canvas.NormalizeColor(part.color));
             end
@@ -679,7 +679,7 @@ obe.Canvas.Bases.Text = {
                 end
             end
             if part.text then
-                self.shape:pushString(SFML.String(part.text));
+                -- self.shape:pushString(SFML.String(part.text));
             end
         end,
         align = function(self, al)

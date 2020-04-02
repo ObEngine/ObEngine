@@ -83,7 +83,7 @@ namespace obe::Script
         {
             sol::table requireTable
                 = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
-            //DataBridge::dataToLua(requireTable, currentRequirement);
+            DataBridge::dataToLua(requireTable, currentRequirement);
         }
     }
 
@@ -127,7 +127,6 @@ namespace obe::Script
     GameObject::~GameObject()
     {
         Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
-        this->deleteObject();
         if (m_hasScriptEngine)
         {
 
@@ -137,7 +136,7 @@ namespace obe::Script
     }
 
     void GameObject::sendInitArgFromLua(
-        const std::string& argName, sol::reference value) const
+        const std::string& argName, sol::object value) const
     {
         Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
@@ -170,7 +169,7 @@ namespace obe::Script
             m_triggers.createNamespace(m_privateKey);
             t_local = m_triggers.createTriggerGroup(m_privateKey, "Local");
 
-            m_environment["GameObject"] = this;
+            m_environment["This"] = this;
 
             t_local->add("Init").add("Delete");
 
@@ -179,7 +178,7 @@ namespace obe::Script
             m_environment["__OBJECT_INIT"] = false;
             m_environment["Private"] = m_privateKey;
 
-            m_lua.script_file("Lib/Internal/ObjectInit.lua"_fs, m_environment);
+            m_lua.safe_script_file("Lib/Internal/ObjectInit.lua"_fs, m_environment);
 
             auto loadSource = [&](const std::string& path) {
                 const std::string fullPath = System::Path(path).find();
@@ -189,7 +188,7 @@ namespace obe::Script
                         "obe.Script.GameObject.ScriptFileNotFound",
                         { { "source", path } });
                 }
-                m_lua.script_file(fullPath, m_environment);
+                m_lua.safe_script_file(fullPath, m_environment);
             };
             if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
             {
@@ -398,7 +397,7 @@ namespace obe::Script
 
     void GameObject::exec(const std::string& query)
     {
-        m_lua.script(query, m_environment);
+        m_lua.safe_script(query, m_environment);
     }
 
     void GameObject::deleteObject()
@@ -412,8 +411,12 @@ namespace obe::Script
         {
             if (auto trigger = triggerRef.first.lock())
             {
-                // trigger->unregisterEnvironment(m_envIndex);
+                trigger->unregisterEnvironment(m_environment);
             }
+        }
+        for (const auto& trigger : t_local->getTriggers())
+        {
+            m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()] = sol::nil;
         }
     }
 

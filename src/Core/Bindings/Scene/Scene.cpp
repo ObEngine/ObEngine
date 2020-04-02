@@ -15,12 +15,35 @@ namespace obe::Scene::Bindings
             = SceneNamespace.new_usertype<obe::Scene::Camera>("Camera",
                 sol::call_constructor, sol::constructors<obe::Scene::Camera()>(),
                 sol::base_classes, sol::bases<obe::Transform::Rect>());
-        bindCamera["getPosition"] = &obe::Scene::Camera::getPosition;
+        bindCamera["getPosition"] = sol::overload(
+            [](obe::Scene::Camera* self) -> obe::Transform::UnitVector {
+                return self->getPosition();
+            },
+            [](obe::Scene::Camera* self, obe::Transform::Referential ref)
+                -> obe::Transform::UnitVector { return self->getPosition(ref); });
         bindCamera["getSize"] = &obe::Scene::Camera::getSize;
         bindCamera["move"] = &obe::Scene::Camera::move;
-        bindCamera["scale"] = &obe::Scene::Camera::scale;
-        bindCamera["setPosition"] = &obe::Scene::Camera::setPosition;
-        bindCamera["setSize"] = &obe::Scene::Camera::setSize;
+        bindCamera["scale"]
+            = sol::overload([](obe::Scene::Camera* self,
+                                double pScale) -> void { return self->scale(pScale); },
+                [](obe::Scene::Camera* self, double pScale,
+                    obe::Transform::Referential ref) -> void {
+                    return self->scale(pScale, ref);
+                });
+        bindCamera["setPosition"] = sol::overload(
+            [](obe::Scene::Camera* self, const obe::Transform::UnitVector& position)
+                -> void { return self->setPosition(position); },
+            [](obe::Scene::Camera* self, const obe::Transform::UnitVector& position,
+                obe::Transform::Referential ref) -> void {
+                return self->setPosition(position, ref);
+            });
+        bindCamera["setSize"]
+            = sol::overload([](obe::Scene::Camera* self,
+                                double pSize) -> void { return self->setSize(pSize); },
+                [](obe::Scene::Camera* self, double pSize,
+                    obe::Transform::Referential ref) -> void {
+                    return self->setSize(pSize, ref);
+                });
     }
     void LoadClassScene(sol::state_view state)
     {
@@ -31,8 +54,7 @@ namespace obe::Scene::Bindings
                 sol::constructors<obe::Scene::Scene(
                     obe::Triggers::TriggerManager&, sol::state_view)>());
         bindScene["attachResourceManager"] = &obe::Scene::Scene::attachResourceManager;
-        bindScene["loadFromFile"] = &obe::Scene::Scene::loadFromFile;
-        bindScene["setFutureLoadFromFile"]
+        bindScene["loadFromFile"]
             = sol::overload(static_cast<void (obe::Scene::Scene::*)(const std::string&)>(
                                 &obe::Scene::Scene::setFutureLoadFromFile),
                 static_cast<void (obe::Scene::Scene::*)(
@@ -45,15 +67,35 @@ namespace obe::Scene::Bindings
         bindScene["getLevelName"] = &obe::Scene::Scene::getLevelName;
         bindScene["setLevelName"] = &obe::Scene::Scene::setLevelName;
         bindScene["setUpdateState"] = &obe::Scene::Scene::setUpdateState;
-        bindScene["createGameObject"] = &obe::Scene::Scene::createGameObject;
+        bindScene["createGameObject"] = sol::overload(
+            [](obe::Scene::Scene* self, const std::string& obj) -> sol::function {
+                return self->createGameObject(obj).getConstructor();
+            },
+            [](obe::Scene::Scene* self, const std::string& obj,
+                const std::string& id) -> sol::function {
+                return self->createGameObject(obj, id).getConstructor();
+            });
         bindScene["getGameObjectAmount"] = &obe::Scene::Scene::getGameObjectAmount;
         bindScene["getAllGameObjects"] = &obe::Scene::Scene::getAllGameObjects;
-        bindScene["getGameObject"] = &obe::Scene::Scene::getGameObject;
+        // bindScene["getGameObject"] = &obe::Scene::Scene::getGameObject;
+        bindScene["getGameObject"] = [](obe::Scene::Scene* self, const std::string& id) {
+            return self->getGameObject(id).access();
+        };
         bindScene["doesGameObjectExists"] = &obe::Scene::Scene::doesGameObjectExists;
         bindScene["removeGameObject"] = &obe::Scene::Scene::removeGameObject;
         bindScene["getCamera"] = &obe::Scene::Scene::getCamera;
         bindScene["reorganizeLayers"] = &obe::Scene::Scene::reorganizeLayers;
-        bindScene["createSprite"] = &obe::Scene::Scene::createSprite;
+        bindScene["createSprite"] = sol::overload(
+            [](obe::Scene::Scene* self) -> obe::Graphics::Sprite& {
+                return self->createSprite();
+            },
+            [](obe::Scene::Scene* self, const std::string& id) -> obe::Graphics::Sprite& {
+                return self->createSprite(id);
+            },
+            [](obe::Scene::Scene* self, const std::string& id,
+                bool addToSceneRoot) -> obe::Graphics::Sprite& {
+                return self->createSprite(id, addToSceneRoot);
+            });
         bindScene["getSpriteAmount"] = &obe::Scene::Scene::getSpriteAmount;
         bindScene["getAllSprites"] = &obe::Scene::Scene::getAllSprites;
         bindScene["getSpritesByLayer"] = &obe::Scene::Scene::getSpritesByLayer;
@@ -61,7 +103,18 @@ namespace obe::Scene::Bindings
         bindScene["getSprite"] = &obe::Scene::Scene::getSprite;
         bindScene["doesSpriteExists"] = &obe::Scene::Scene::doesSpriteExists;
         bindScene["removeSprite"] = &obe::Scene::Scene::removeSprite;
-        bindScene["createCollider"] = &obe::Scene::Scene::createCollider;
+        bindScene["createCollider"] = sol::overload(
+            [](obe::Scene::Scene* self) -> obe::Collision::PolygonalCollider& {
+                return self->createCollider();
+            },
+            [](obe::Scene::Scene* self,
+                const std::string& id) -> obe::Collision::PolygonalCollider& {
+                return self->createCollider(id);
+            },
+            [](obe::Scene::Scene* self, const std::string& id,
+                bool addToSceneRoot) -> obe::Collision::PolygonalCollider& {
+                return self->createCollider(id, addToSceneRoot);
+            });
         bindScene["getColliderAmount"] = &obe::Scene::Scene::getColliderAmount;
         bindScene["getAllColliders"] = &obe::Scene::Scene::getAllColliders;
         bindScene["getColliderPointByPosition"]

@@ -14,6 +14,7 @@ int lua_exception_handler(lua_State* L,
     {
         obe::Debug::Log->error("<LuaError>[Error] : {}", description);
     }
+    luaL_dostring(L, "dbg()");
     return sol::stack::push(L, description);
 }
 
@@ -28,16 +29,17 @@ namespace obe::Engine
     {
         m_lua["__TRIGGERS"].get_or_create<sol::table>();
         m_triggers = std::make_unique<Triggers::TriggerManager>(m_lua);
-        m_triggers->createNamespace("Global");
-        t_game = m_triggers->createTriggerGroup("Global", "Game");
+        m_triggers->createNamespace("Event");
+        t_game = m_triggers->createTriggerGroup("Event", "Game");
 
         t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
     }
     void Engine::initInput()
     {
-        m_input.init(*m_triggers);
-        m_input.configure(m_config.get().at("KeyBinding"));
-        m_input.addContext("game");
+        m_input = std::make_unique<Input::InputManager>();
+        m_input->init(*m_triggers);
+        m_input->configure(m_config.get().at("KeyBinding"));
+        m_input->addContext("game");
     }
 
     void Engine::initFramerate()
@@ -50,15 +52,15 @@ namespace obe::Engine
     {
         m_lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,
             sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
-            sol::lib::count, sol::lib::debug, sol::lib::io);
+            sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
-        m_lua.script_file("Lib/Internal/LuaCore.lua"_fs);
-        m_lua.script_file("Lib/Internal/Environment.lua"_fs);
-        m_lua.script_file("Lib/Internal/ScriptInit.lua"_fs);
-        m_lua.script_file("Lib/Internal/Triggers.lua"_fs);
+        m_lua.safe_script_file("Lib/Internal/LuaCore.lua"_fs);
+        m_lua.safe_script_file("Lib/Internal/Environment.lua"_fs);
+        m_lua.safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
+        m_lua.safe_script_file("Lib/Internal/Triggers.lua"_fs);
 
         Bindings::IndexAllBindings(m_lua);
-        m_lua.script_file("Lib/Internal/GameInit.lua"_fs);
+        m_lua.safe_script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua.set_exception_handler(lua_exception_handler);
 
         m_lua["Engine"] = this;
@@ -135,6 +137,14 @@ namespace obe::Engine
         m_scene->update();
         Script::GameObjectDatabase::Clear();
         m_window->close();
+
+        m_window.reset();
+        m_cursor.reset();
+        m_framerate.reset();
+        m_input.reset();
+        m_scene.reset();
+
+        t_game.reset();
     }
 
     void Engine::handleWindowEvents()
@@ -154,7 +164,7 @@ namespace obe::Engine
             case sf::Event::JoystickMoved:
             case sf::Event::KeyReleased:
             case sf::Event::KeyPressed:
-                m_input.requireRefresh();
+                m_input->requireRefresh();
                 if (event.key.code == sf::Keyboard::Escape)
                     m_window->close();
                 break;
@@ -181,7 +191,7 @@ namespace obe::Engine
 
     void Engine::run()
     {
-        m_lua.script_file("boot.lua"_fs);
+        m_lua.safe_script_file("boot.lua"_fs);
         m_window->create();
         m_lua["Game"]["Start"]();
 
@@ -218,7 +228,7 @@ namespace obe::Engine
 
     Input::InputManager& Engine::getInputManager()
     {
-        return m_input;
+        return *m_input;
     }
 
     Time::FramerateManager& Engine::getFramerateManager()
@@ -252,7 +262,7 @@ namespace obe::Engine
         this->handleWindowEvents();
         m_scene->update();
         m_triggers->update();
-        m_input.update();
+        m_input->update();
         m_cursor->update();
     }
 

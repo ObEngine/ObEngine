@@ -20,6 +20,24 @@ namespace obe::Animation
             { { "mode", animationPlayMode } });
     }
 
+    std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m)
+    {
+        os << "AnimationPlayMode::";
+        switch (m)
+        {
+        case AnimationPlayMode::Force:
+            os << "Force";
+            break;
+        case AnimationPlayMode::Loop:
+            os << "Loop";
+            break;
+        case AnimationPlayMode::OneTime:
+            os << "OneTime";
+            break;
+        }
+        return os;
+    }
+
     std::string Animation::getCalledAnimation() const
     {
         return m_nextAnimation;
@@ -79,43 +97,74 @@ namespace obe::Animation
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
         vili::ViliParser animFile;
         path.add(path.last() + ".ani.vili").load(System::Loaders::dataLoader, animFile);
+
         // Meta
+        Debug::Log->trace("  <Animation> Loading Meta block");
         vili::ComplexNode& meta = animFile.at("Meta");
         m_name = meta.at<vili::DataNode>("name").get<std::string>();
+        Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
         if (meta.contains(vili::NodeType::DataNode, "clock"))
+        {
             m_delay = meta.at<vili::DataNode>("clock").get<int>();
+            Debug::Log->trace("    <Animation> Animation clock = {}", m_delay);
+        }
         if (meta.contains(vili::NodeType::DataNode, "play-mode"))
+        {
             m_playMode = stringToAnimationPlayMode(
                 meta.at<vili::DataNode>("play-mode").get<std::string>());
+            Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
+        }
+
         // Images
+        Debug::Log->trace("  <Animation> Loading Images block");
         vili::ArrayNode& imageList = animFile.at<vili::ArrayNode>("Images", "ImageList");
         std::string model;
         if (animFile.at("Images").contains(vili::NodeType::DataNode, "model"))
         {
             model = animFile.at("Images").getDataNode("model").get<std::string>();
+            Debug::Log->trace(
+                "    <Animation> Using following template to load images : {}", model);
         }
         for (unsigned int i = 0; i < imageList.size(); i++)
         {
             std::string textureName;
             if (imageList.get(i).getDataType() == vili::DataType::Int && model != "")
+            {
                 textureName = Utils::String::replace(
                     model, "%s", std::to_string(imageList.get(i).get<int>()));
+                Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
+                                  "with template[int])",
+                    textureName);
+            }
             else if (imageList.get(i).getDataType() == vili::DataType::String
                 && model != "")
+            {
                 textureName = Utils::String::replace(
                     model, "%s", imageList.get(i).get<std::string>());
+                Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
+                                  "with template[str])",
+                    textureName);
+            }
             else if (imageList.get(i).getDataType() == vili::DataType::String)
+            {
                 textureName = imageList.get(i).get<std::string>();
-            Debug::Log->trace(
-                "<Animation> Loading Texture {0} in Animation {1}", textureName, m_name);
+                Debug::Log->trace("    <Animation> Loading image '{}'", textureName);
+            }
+
             std::string pathToTexture = path.add(textureName).toString();
+            Debug::Log->trace(
+                "    <Animation> Found Texture Path at '{}'", pathToTexture);
             if (resources)
             {
+                Debug::Log->trace(
+                    "    <Animation> Loading Texture {0} (using ResourceManager)",
+                    textureName);
                 m_textures.push_back(resources->getTexture(
                     path.add(textureName).toString(), m_antiAliasing));
             }
             else
             {
+                Debug::Log->trace("    <Animation> Loading Texture {0}", textureName);
                 std::shared_ptr<Graphics::Texture> newTexture
                     = std::make_shared<Graphics::Texture>();
                 newTexture->loadFromFile(path.add(textureName).find());
@@ -124,29 +173,49 @@ namespace obe::Animation
             }
         }
         // Groups
+        Debug::Log->trace("  <Animation> Loading Groups block");
         vili::ComplexNode& groups = animFile.at("Groups");
-        for (vili::ComplexNode* complex : groups.getAll<vili::ComplexNode>())
+        for (vili::ComplexNode* group : groups.getAll<vili::ComplexNode>())
         {
+            Debug::Log->trace(
+                "    <Animation> Loading AnimationGroup '{}'", group->getId());
             m_groups.emplace(
-                complex->getId(), std::make_unique<AnimationGroup>(complex->getId()));
-            for (vili::DataNode* currentTexture : complex->at<vili::ArrayNode>("content"))
-                m_groups[complex->getId()]->pushTexture(
+                group->getId(), std::make_unique<AnimationGroup>(group->getId()));
+            for (vili::DataNode* currentTexture : group->at<vili::ArrayNode>("content"))
+            {
+                Debug::Log->trace("      <Animation> Pushing Texture {} into group",
+                    currentTexture->get<int>());
+                m_groups[group->getId()]->pushTexture(
                     m_textures[currentTexture->get<int>()].get());
-            if (complex->contains(vili::NodeType::DataNode, "clock"))
-                m_groups[complex->getId()]->setDelay(
-                    complex->at<vili::DataNode>("clock"));
+            }
+
+            if (group->contains(vili::NodeType::DataNode, "clock"))
+            {
+                const unsigned int delay = group->at<vili::DataNode>("clock");
+                Debug::Log->trace("      <Animation> Setting group delay to {}", delay);
+                m_groups[group->getId()]->setDelay(delay);
+            }
             else
-                m_groups[complex->getId()]->setDelay(m_delay);
+            {
+                Debug::Log->trace(
+                    "      <Animation> No delay specified, using parent delay : {}",
+                    m_delay);
+                m_groups[group->getId()]->setDelay(m_delay);
+            }
         }
         // Animation Code
+        Debug::Log->trace("  <Animation> Loading Animation block");
         vili::ComplexNode& animation = animFile.at("Animation");
         for (vili::DataNode* command : animation.at<vili::ArrayNode>("AnimationCode"))
         {
-            std::string curCom = command->get<std::string>();
-            Utils::String::replaceInPlace(curCom, " ", "");
-            Utils::String::replaceInPlace(curCom, ")", "");
-            Utils::String::replaceInPlace(curCom, "(", ",");
-            const std::vector<std::string> vecCurCom = Utils::String::split(curCom, ",");
+            std::string currentCommand = command->get<std::string>();
+            Debug::Log->trace(
+                "    <Animation> Parsing Animation command '{}'", currentCommand);
+            Utils::String::replaceInPlace(currentCommand, " ", "");
+            Utils::String::replaceInPlace(currentCommand, ")", "");
+            Utils::String::replaceInPlace(currentCommand, "(", ",");
+            const std::vector<std::string> vecCurCom
+                = Utils::String::split(currentCommand, ",");
             m_code.push_back(vecCurCom);
         }
     }

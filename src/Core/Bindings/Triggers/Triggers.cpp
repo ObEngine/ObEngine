@@ -25,9 +25,6 @@ namespace obe::Triggers::Bindings
         bindTrigger["registerEnvironment"] = &obe::Triggers::Trigger::registerEnvironment;
         bindTrigger["unregisterEnvironment"]
             = &obe::Triggers::Trigger::unregisterEnvironment;
-        bindTrigger["execute"] = &obe::Triggers::Trigger::execute;
-        bindTrigger["onRegister"] = &obe::Triggers::Trigger::onRegister;
-        bindTrigger["onUnregister"] = &obe::Triggers::Trigger::onUnregister;
     }
     void LoadClassTriggerEnv(sol::state_view state)
     {
@@ -55,7 +52,7 @@ namespace obe::Triggers::Bindings
         bindTriggerGroup["add"] = &obe::Triggers::TriggerGroup::add;
         bindTriggerGroup["remove"] = &obe::Triggers::TriggerGroup::remove;
         bindTriggerGroup["trigger"] = &obe::Triggers::TriggerGroup::trigger;
-        bindTriggerGroup["pushParameterFromLua"]
+        bindTriggerGroup["pushParameter"]
             = &obe::Triggers::TriggerGroup::pushParameterFromLua;
         bindTriggerGroup["getTriggersNames"]
             = &obe::Triggers::TriggerGroup::getTriggersNames;

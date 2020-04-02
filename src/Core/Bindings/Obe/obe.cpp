@@ -6,9 +6,8 @@
 
 namespace obe::Bindings
 {
-    void LoadFunctionInitEngine(sol::state_view state)
-    {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace.set_function("InitEngine", obe::InitEngine);
-    }
+void LoadFunctionInitEngine(sol::state_view state)
+{
+sol::table obeNamespace = state["obe"].get<sol::table>();
+obeNamespace.set_function("InitEngine", obe::InitEngine);}
 };

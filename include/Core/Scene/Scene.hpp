@@ -131,7 +131,8 @@ namespace obe::Scene
          * \brief Get all the GameObjects present in the Scene
          * \return
          */
-        std::vector<Script::GameObject*> getAllGameObjects();
+        std::vector<Script::GameObject*> getAllGameObjects(
+            const std::string& objectType = "");
         /**
          * \brief Get a GameObject by Id (Raises an exception if not found)
          * \param id Id of the GameObject to retrieve

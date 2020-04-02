@@ -14,11 +14,13 @@ namespace obe::Input
         const InputCombinationElement combinationElement)
     {
         m_triggerConditions.push_back(combinationElement);
+        m_enabled = true;
     }
 
     void InputCondition::setCombination(const InputCombination& combination)
     {
         m_triggerConditions = combination;
+        m_enabled = true;
     }
 
     bool InputCondition::check() const

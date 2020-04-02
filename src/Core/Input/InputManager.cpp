@@ -44,7 +44,7 @@ namespace obe::Input
 
     void InputManager::init(Triggers::TriggerManager& triggers)
     {
-        t_actions = triggers.createTriggerGroup("Global", "Actions");
+        t_actions = triggers.createTriggerGroup("Event", "Actions");
         this->createInputMap();
         this->createTriggerGroups(triggers);
     }
@@ -73,7 +73,6 @@ namespace obe::Input
             {
                 if (auto action = actionPtr.lock())
                 {
-                    Debug::Log->trace("Updating action {}", action->getId());
                     action->update();
                 }
             }
@@ -312,7 +311,7 @@ namespace obe::Input
 
     void InputManager::requireRefresh()
     {
-        m_refresh = false;
+        m_refresh = true;
     }
 
     bool isKeyAlreadyInCombination(InputCombination& combination, InputButton* button)

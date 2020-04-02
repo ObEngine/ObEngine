@@ -28,7 +28,7 @@ namespace obe::System
 
     Cursor::Cursor(System::Window& window, Triggers::TriggerManager& triggers)
         : m_window(window)
-        , m_cursorTriggers(triggers.createTriggerGroup("Global", "Cursor"))
+        , m_cursorTriggers(triggers.createTriggerGroup("Event", "Cursor"))
     {
         m_constraint = Constraints::Default;
         m_constraintCondition = []() { return true; };

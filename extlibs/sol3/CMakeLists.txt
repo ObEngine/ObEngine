@@ -12,3 +12,4 @@ target_include_directories(sol3
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+target_compile_definitions(sol3 INTERFACE SOL_ALL_SAFETIES_ON)

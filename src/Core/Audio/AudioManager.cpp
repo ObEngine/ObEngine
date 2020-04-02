@@ -11,16 +11,21 @@ namespace obe::Audio
 {
     AudioManager::AudioManager()
     {
+        Debug::Log->debug("<AudioManager> Initializing AudioManager");
         m_engine.init();
+        Debug::Log->debug("<AudioManager> Initialization complete");
     }
     AudioManager::~AudioManager()
     {
+        Debug::Log->debug("<AudioManager> Cleaning AudioManager");
         m_engine.deinit();
+        Debug::Log->debug("<AudioManager> Cleaning complete");
     }
 
     Sound AudioManager::load(const System::Path& path, LoadPolicy loadPolicy)
     {
         const std::string filePath = path.find(System::PathType::File);
+        Debug::Log->debug("<AudioManager> Loading Audio at '{}'", filePath);
         if (loadPolicy == LoadPolicy::Cache && m_cache.find(filePath) == m_cache.end())
         {
             std::shared_ptr<SoLoud::Wav> sample = std::make_shared<SoLoud::Wav>();

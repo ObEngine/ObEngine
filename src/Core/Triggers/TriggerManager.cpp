@@ -17,7 +17,7 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
-                return m_allTriggers[space][group]->get(trigger);
+                return m_allTriggers[space][group].lock()->get(trigger);
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getTrigger" }, { "group", group },
@@ -33,12 +33,12 @@ namespace obe::Triggers
         Debug::Log->debug(
             "<TriggerManager> Creating Namespace {0} in TriggerManager", space);
         if (m_allTriggers.size() == 0)
-            m_allTriggers[space] = std::map<std::string, std::unique_ptr<TriggerGroup>>();
+            m_allTriggers[space] = std::map<std::string, std::weak_ptr<TriggerGroup>>();
         else
         {
             if (m_allTriggers.find(space) == m_allTriggers.end())
                 m_allTriggers[space]
-                    = std::map<std::string, std::unique_ptr<TriggerGroup>>();
+                    = std::map<std::string, std::weak_ptr<TriggerGroup>>();
             else
                 throw aube::ErrorHandler::Raise(
                     "ObEngine.Triggers.TriggerManager.NamespaceAlreadyExists",
@@ -55,11 +55,10 @@ namespace obe::Triggers
         {
             if (m_allTriggers[space].find(group) == m_allTriggers[space].end())
             {
-                m_allTriggers[space][group]
-                    = std::make_unique<TriggerGroup>(m_lua, space, group);
-                return TriggerGroupPtr(m_allTriggers[space][group].get(),
+                TriggerGroupPtr newGroup(new TriggerGroup(m_lua, space, group),
                     [this](TriggerGroup* ptr) { this->removeTriggerGroup(ptr); });
-                ;
+                m_allTriggers[space][group] = newGroup;
+                return newGroup;
             }
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.TriggerGroupAlreadyExists",
@@ -78,9 +77,8 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end()
-                && m_allTriggers[space][group]->isJoinable())
-                return TriggerGroupPtr(m_allTriggers[space][group].get(),
-                    [this](TriggerGroup* ptr) { this->removeTriggerGroup(ptr); });
+                && m_allTriggers[space][group].lock()->isJoinable())
+                return TriggerGroupPtr(m_allTriggers[space][group].lock());
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
             {
                 throw aube::ErrorHandler::Raise(
@@ -118,7 +116,7 @@ namespace obe::Triggers
         if (m_allTriggers.find(space) != m_allTriggers.end())
         {
             if (m_allTriggers[space].find(group) != m_allTriggers[space].end())
-                return m_allTriggers[space][group]->getTriggersNames();
+                return m_allTriggers[space][group].lock()->getTriggersNames();
             throw aube::ErrorHandler::Raise(
                 "ObEngine.Triggers.TriggerManager.UnknownCustomTriggerGroup",
                 { { "function", "getAllTriggersNameFromTriggerGroup" },
