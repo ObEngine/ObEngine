@@ -16,17 +16,17 @@ jobs:
     - name: Create build directory
       run: mkdir -p build
     - name: Aptitude update
-      run: apt-get update
+      run: sudo apt-get update
     - name: Install CMake
-      run: apt-get install -y cmake
+      run: sudo apt-get install -y cmake
     - name: Install G++ and build-essential
-      run: apt-get install -y build-essential g++
+      run: sudo apt-get install -y build-essential g++
     - name: Install git
-      run: apt-get install -y git
+      run: sudo apt-get install -y git
     - name: Install ALSA
-      run: apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
+      run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
     - name: Install SFML
-      run: apt-get install -y libsfml-dev
+      run: sudo apt-get install -y libsfml-dev
     - name: CMake
       run: cmake .
     - name: make
