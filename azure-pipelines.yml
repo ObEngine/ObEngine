@@ -37,3 +37,12 @@ jobs:
   - task: VSBuild@1
     inputs:
       solution: '**\*.sln'
+  - task: GitHubRelease@1
+    inputs:
+      githubConnection: Sygmei
+      repositoryName: '$(Build.Repository.Name)'
+      action: 'create'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'gitTag'
+      changeLogCompareToRelease: 'lastFullRelease'
+      changeLogType: 'commitBased'
