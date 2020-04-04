@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Release GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Clean previous execution
+      run: rm -rf build; rm -rf SFML
+    - name: Create build directory
+      run: mkdir build
+    - name: Aptitude update
+      run: sudo apt-get update
+    - name: Install CMake
+      run: sudo apt-get install -y cmake
+    - name: Install G++ and build-essential
+      run: sudo apt-get install -y build-essential g++
+    - name: Install git
+      run: sudo apt-get install -y git
+    - name: Install ALSA
+      run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
+    - name: Install SFML dependencies
+      run: sudo apt install libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
+    - name: Retrieve SFML 2.5.1
+      run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
+    - name: Compile and install SFML
+      run: cd SFML; cmake .; make -j8; sudo make install
+    - name: Compile ObENgine
+      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+    - name: Run tests
+      run: ./build/tests/ObEngineTests
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/; tar -czvf obengine-dev.tar.gz release/
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: New ObEngine Release
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./obengine-dev.tar.gz
+        asset_name: obengine-dev.linux64.tar.gz
+        asset_content_type: application/zip
