@@ -13,8 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Clean previous execution
+      run: rm -rf build; rm -rf SFML
     - name: Create build directory
-      run: mkdir -p build
+      run: mkdir build
     - name: Aptitude update
       run: sudo apt-get update
     - name: Install CMake
@@ -25,9 +27,13 @@ jobs:
       run: sudo apt-get install -y git
     - name: Install ALSA
       run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
-    - name: Install SFML
-      run: sudo apt-get install -y libsfml-dev
-    - name: CMake
-      run: cmake .
-    - name: make
-      run: make
+    - name: Install SFML dependencies
+      run: sudo apt install libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
+    - name: Retrieve SFML 2.5.1
+      run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
+    - name: Compile and install SFML
+      run: cd SFML; cmake .; make -j8; sudo make install
+    - name: Compile ObENgine
+      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+    - name: Run tests
+      run: ./build/tests/ObEngineTests
