@@ -8,9 +8,8 @@ on:
 
 jobs:
   build_linux:
-
+    name: Build ObEngine on Linux
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Clean previous execution
@@ -40,6 +39,7 @@ jobs:
 
 
   build_windows:
+    name: Build ObEngine on Windows
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -60,3 +60,20 @@ jobs:
       run: cmake --build build --config Release -- /m:8
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
+
+
+  build_macos:
+    name: Build ObEngine on MacOS
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install SFML
+      run: brew install sfml
+    - name: Create build directory
+      run: mkdir build
+    - name: Run CMake on ObEngine
+      run: cd build && cmake -DBUILD_TESTS=ON ..
+    - name: Compile ObEngine
+      run: cd build && make -j8
+    - name: Run tests
+      run: cd build && ./tests/ObEngineTests
