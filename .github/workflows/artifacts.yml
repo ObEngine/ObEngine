@@ -1,0 +1,86 @@
+name: artifacts
+
+on:
+  release:
+    types: [created]
+
+  release_linux:
+    name: Release ObEngine Linux package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Clean previous execution
+      run: rm -rf build; rm -rf SFML
+    - name: Create build directory
+      run: mkdir build
+    - name: Aptitude update
+      run: sudo apt-get update
+    - name: Install CMake
+      run: sudo apt-get install -y cmake
+    - name: Install G++ and build-essential
+      run: sudo apt-get install -y build-essential g++
+    - name: Install git
+      run: sudo apt-get install -y git
+    - name: Install ALSA
+      run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
+    - name: Install SFML dependencies
+      run: sudo apt install libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
+    - name: Retrieve SFML 2.5.1
+      run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
+    - name: Compile and install SFML
+      run: cd SFML; cmake .; make -j8; sudo make install
+    - name: Compile ObENgine
+      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+    - name: Run tests
+      run: ./build/tests/ObEngineTests
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/; tar -czvf obengine-dev.tar.gz release/
+    - name: Upload Release Asset
+      id: upload-release-asset-linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./obengine-dev.tar.gz
+        asset_name: obengine-dev.linux64.tar.gz
+        asset_content_type: application/zip
+
+
+  release_windows:
+    name: Release ObEngine Windows package
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create deps directory
+      run: mkdir deps
+    - name: Download pre-built SFML
+      run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
+      shell: pwsh
+    - name: Extract SFML
+      run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
+      shell: pwsh
+    - name: Create build directory
+      run: mkdir build
+    - name: Run CMake on ObEngine
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      shell: pwsh
+    - name: Compile ObEngine
+      run: cmake --build build --config Release -- /m:8
+    - name: Run tests
+      run: ./build/tests/Release/ObEngineTests.exe
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Dev/Release/* ./release/; cp ./build/src/Player/Release/ObEnginePlayer.exe ./release/
+      shell: pwsh
+    - name: Package to archive
+      run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
+    - name: Upload Release Asset
+      id: upload-release-asset-win
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./obengine-dev.zip
+        asset_name: obengine-dev.win64.zip
+        asset_content_type: application/zip
