@@ -52,6 +52,7 @@ jobs:
       run: Expand-Archive -LiteralPath SFML-2.5.1.zip -DestinationPath build
       shell: pwsh
     - name: Display tree
+      run: tree
       shell: pwsh
     - name: Run CMake on ObEngine
       run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=./SFML-2.5.1/lib/cmake/SFML -DBUILD_TESTS=ON ..
