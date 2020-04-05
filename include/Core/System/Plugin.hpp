@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <dynamicLinker/dynamicLinker.hpp>
-#include <kaguya/kaguya.hpp>
+#include <sol/sol.hpp>
 
 #include <Types/Identifiable.hpp>
 
@@ -26,7 +26,7 @@ namespace obe::System
         bool m_hasOnInitFn;
         PluginFunction<void()> m_onInitFn;
         bool m_hasOnLoadBindingsFn;
-        PluginFunction<void(kaguya::State*)> m_onLoadBindingsFn;
+        PluginFunction<void(sol::state_view)> m_onLoadBindingsFn;
         bool m_hasOnUpdateFn;
         PluginFunction<void(double)> m_onUpdateFn;
         bool m_hasOnRenderFn;
@@ -36,7 +36,7 @@ namespace obe::System
 
     public:
         Plugin(const std::string& id, const std::string& path);
-        void onLoadBindings(kaguya::State* lua) const;
+        void onLoadBindings(sol::state_view lua) const;
         void onUpdate(double dt) const;
         void onRender() const;
         void onExit() const;

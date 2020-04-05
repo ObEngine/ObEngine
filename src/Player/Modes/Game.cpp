@@ -4,7 +4,6 @@
 #include <Input/InputManager.hpp>
 #include <Modes/Game.hpp>
 #include <Scene/Scene.hpp>
-#include <Script/GlobalState.hpp>
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>

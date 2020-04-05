@@ -1,7 +1,6 @@
 local Mirror = {};
 
 function Mirror.GetArgs(fun)
-    print("Mirror.GetArgs on", fun);
     local args = {}
     local hook = debug.gethook()
 
@@ -12,7 +11,6 @@ function Mirror.GetArgs(fun)
         for i = 1, math.huge do
             local name, value = debug.getlocal(2, i)
             if '(*temporary)' == name then
-                print("ArgMirror hook", hook);
                 debug.sethook(hook)
                 error('')
                 return

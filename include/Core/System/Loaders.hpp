@@ -8,7 +8,6 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <kaguya/kaguya.hpp>
 #include <vili/Vili.hpp>
 
 namespace obe::System
@@ -80,10 +79,6 @@ namespace obe::System::Loaders
      * \brief List all files in the specified path
      */
     extern Loader<std::vector<std::string>> filePathLoader;
-    /**
-     * \brief Load the Lua source from a file
-     */
-    extern Loader<kaguya::State> luaLoader;
 
     template <class Resource>
     inline Loader<Resource>::Loader(

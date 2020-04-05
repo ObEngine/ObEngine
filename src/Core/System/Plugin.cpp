@@ -1,7 +1,7 @@
 #include <Debug/Logger.hpp>
 #include <System/Plugin.hpp>
 
-#include <kaguya/kaguya.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::System
 {
@@ -39,7 +39,7 @@ namespace obe::System
         try
         {
             m_onLoadBindingsFn
-                = getPluginFunction<void(kaguya::State*)>(m_dl, "OnLoadBindings");
+                = getPluginFunction<void(sol::state_view)>(m_dl, "OnLoadBindings");
             m_onLoadBindingsFn->init();
             m_hasOnLoadBindingsFn = true;
             Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found "
@@ -86,7 +86,7 @@ namespace obe::System
         Debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
     }
 
-    void Plugin::onLoadBindings(kaguya::State* lua) const
+    void Plugin::onLoadBindings(sol::state_view lua) const
     {
         m_onLoadBindingsFn->operator()(lua);
     }

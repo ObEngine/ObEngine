@@ -402,8 +402,7 @@ namespace obe::Bindings
             .add("GlobalDirPathLoader",
                 &obe::System::Loaders::Bindings::LoadGlobalDirPathLoader)
             .add("GlobalFilePathLoader",
-                &obe::System::Loaders::Bindings::LoadGlobalFilePathLoader)
-            .add("GlobalLuaLoader", &obe::System::Loaders::Bindings::LoadGlobalLuaLoader);
+                &obe::System::Loaders::Bindings::LoadGlobalFilePathLoader);
 
         BindTree(state);
     }

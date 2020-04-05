@@ -31,9 +31,4 @@ namespace obe::System::Loaders::Bindings
         sol::table LoadersNamespace = state["obe"]["System"]["Loaders"].get<sol::table>();
         LoadersNamespace["filePathLoader"] = obe::System::Loaders::filePathLoader;
     }
-    void LoadGlobalLuaLoader(sol::state_view state)
-    {
-        sol::table LoadersNamespace = state["obe"]["System"]["Loaders"].get<sol::table>();
-        LoadersNamespace["luaLoader"] = obe::System::Loaders::luaLoader;
-    }
 };

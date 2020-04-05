@@ -15,9 +15,8 @@ add_subdirectory(extlibs/fswrapper)
 add_subdirectory(extlibs/fmt)
 add_subdirectory(extlibs/spdlog)
 
-# lua is required by kaguya
+# lua is required by sol
 add_subdirectory(extlibs/lua)
-add_subdirectory(extlibs/kaguya)
 add_subdirectory(extlibs/sol3)
 
 # Audio library

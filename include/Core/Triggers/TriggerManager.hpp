@@ -3,11 +3,13 @@
 #include <map>
 
 #include <Time/Chronometer.hpp>
+#include <Triggers/CallbackHandle.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
 namespace obe::Triggers
 {
+    using Callback = std::function<void()>;
     /**
      * \brief A TriggerManager that handles all Trigger / TriggerGroup
      */
@@ -99,5 +101,6 @@ namespace obe::Triggers
          * \brief Clears the TriggerManager
          */
         void clear();
+        CallbackHandle run();
     };
 } // namespace obe::Triggers

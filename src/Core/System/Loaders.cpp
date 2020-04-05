@@ -103,9 +103,4 @@ namespace obe::System::Loaders
                 return false;
             }
         });
-
-    Loader<kaguya::State> luaLoader(
-        [](kaguya::State& obj, const std::string& path) -> bool {
-            return obj.dofile(path);
-        });
 } // namespace obe::System::Loaders

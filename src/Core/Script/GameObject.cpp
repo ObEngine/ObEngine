@@ -1,6 +1,5 @@
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
-#include <Script/GlobalState.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <Triggers/Trigger.hpp>

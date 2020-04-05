@@ -1,9 +1,6 @@
 #pragma once
 
-#include <kaguya/kaguya.hpp>
-
 #include <Debug/Logger.hpp>
-#include <Script/GlobalState.hpp>
 #include <sol/sol.hpp>
 #include <utility>
 
@@ -19,7 +16,7 @@ namespace obe::Triggers
         bool* active = nullptr;
         sol::protected_function call;
         TriggerEnv(sol::environment environment, std::string callback, bool* active)
-            : environment(environment)
+            : environment(std::move(environment))
             , callback(std::move(callback))
             , active(active)
         {

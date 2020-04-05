@@ -1,8 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
-#include <Script/GlobalState.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 

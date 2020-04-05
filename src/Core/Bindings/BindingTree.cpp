@@ -1,12 +1,7 @@
-// Corresponding header
 #include <Bindings/BindingTree.hpp>
 
-// ObEngineCore headers
 #include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
-
-// extlibs headers
-#include <kaguya/state.hpp>
 
 namespace obe::Bindings
 {

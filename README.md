@@ -38,7 +38,7 @@ There are other libraries but they are included in the repository (extlibs/ fold
 |[Catch2](https://github.com/catchorg/Catch2)|Test Framework|Boost Software License|
 |[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
 |[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
-|[Kaguya](https://github.com/satoren/kaguya)|C++ binding library to Lua|Boost Software License|
+|[Sol](https://github.com/ThePhD/sol)|C++ binding library to Lua|MIT License|
 |[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|

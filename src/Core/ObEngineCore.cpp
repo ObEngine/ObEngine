@@ -7,7 +7,6 @@
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Input/InputButtonMonitor.hpp>
-#include <Script/GlobalState.hpp>
 #include <System/Path.hpp>
 #include <System/Plugin.hpp>
 

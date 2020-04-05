@@ -1,5 +1,4 @@
 #include <Scene/Scene.hpp>
-#include <Script/GlobalState.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
@@ -365,9 +364,9 @@ namespace obe::Scene
             dataStore.at("GameObjects", gameObject->getId())
                 .createDataNode("type", gameObject->getType());
 
-            if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction)
+            if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction.valid())
             {
-                kaguya::LuaRef saveTableRef = dumpFunction();
+                sol::table saveTableRef = dumpFunction();
                 vili::ComplexNode* saveRequirements
                     = Script::DataBridge::luaTableToComplexNode("Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)

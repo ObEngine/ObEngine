@@ -1,6 +1,5 @@
 #pragma once
 
-#include <kaguya/kaguya.hpp>
 #include <vili/Vili.hpp>
 
 #include <Animation/Animator.hpp>

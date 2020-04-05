@@ -11,5 +11,4 @@ namespace obe::System::Loaders::Bindings
     void LoadGlobalFontLoader(sol::state_view state);
     void LoadGlobalDirPathLoader(sol::state_view state);
     void LoadGlobalFilePathLoader(sol::state_view state);
-    void LoadGlobalLuaLoader(sol::state_view state);
 };

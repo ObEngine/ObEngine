@@ -153,8 +153,6 @@ namespace obe::Triggers
         }
         m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"].set(
             sol::new_table());
-        /*Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
-            = kaguya::NewTable();*/
         if (!m_envsToRemove.empty())
         {
             for (sol::environment envToRemove : m_envsToRemove)
