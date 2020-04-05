@@ -57,6 +57,6 @@ jobs:
       run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
       shell: pwsh
     - name: Compile ObEngine
-      run: cmake --build build
+      run: cmake --build build --config Release -- /m:8
     - name: Run tests
-      run: ./build/tests/ObEngineTests
+      run: ./build/tests/Release/ObEngineTests.exe
