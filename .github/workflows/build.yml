@@ -51,18 +51,12 @@ jobs:
     - name: Extract SFML
       run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
       shell: pwsh
-    - name: Display tree
-      run: tree
-      shell: pwsh
-    - name: Display SFML_DIR variable
-      run: echo $SFML_DIR
-      shell: pwsh
     - name: Create build directory
       run: mkdir build
-    - name: Debug step
-      run: echo "${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML"
     - name: Run CMake on ObEngine
       run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
       shell: pwsh
     - name: Compile ObEngine
       run: cmake --build build
+    - name: Run tests
+      run: ./build/tests/ObEngineTests
