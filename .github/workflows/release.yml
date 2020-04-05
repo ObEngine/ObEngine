@@ -6,8 +6,23 @@ on:
       - 'v*'
 
 jobs:
-  release:
-    name: Release GitHub Actions
+  create_release:
+    steps:
+      - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: New ObEngine Release
+        draft: false
+        prerelease: false
+
+
+  release_linux:
+    name: Release ObEngine Linux package
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -37,24 +52,52 @@ jobs:
       run: ./build/tests/ObEngineTests
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/; tar -czvf obengine-dev.tar.gz release/
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: New ObEngine Release
-        draft: false
-        prerelease: false
     - name: Upload Release Asset
-      id: upload-release-asset 
+      id: upload-release-asset-linux
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./obengine-dev.tar.gz
         asset_name: obengine-dev.linux64.tar.gz
+        asset_content_type: application/zip
+
+
+  release_windows:
+    name: Release ObEngine Windows package
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create deps directory
+      run: mkdir deps
+    - name: Download pre-built SFML
+      run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
+      shell: pwsh
+    - name: Extract SFML
+      run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
+      shell: pwsh
+    - name: Create build directory
+      run: mkdir build
+    - name: Run CMake on ObEngine
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      shell: pwsh
+    - name: Compile ObEngine
+      run: cmake --build build --config Release -- /m:8
+    - name: Run tests
+      run: ./build/tests/Release/ObEngineTests.exe
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Dev/Release/* ./release/; cp ./build/src/Player/Release/ObEnginePlayer.exe ./release/
+      shell: pwsh
+    - name: Package to archive
+      run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
+    - name: Upload Release Asset
+      id: upload-release-asset-win
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./obengine-dev.zip
+        asset_name: obengine-dev.win64.zip
         asset_content_type: application/zip
