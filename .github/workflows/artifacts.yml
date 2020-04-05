@@ -35,7 +35,9 @@ jobs:
     - name: Run tests
       run: ./build/tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/; tar -czvf obengine-dev.tar.gz release/
+      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/
+    - name: Package to archive
+      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: Upload Release Asset
       id: upload-release-asset-linux
       uses: actions/upload-release-asset@v1
