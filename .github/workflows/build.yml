@@ -46,10 +46,10 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Download pre-built SFML
-      run: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
+      run: Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
       shell: pwsh
     - name: Extract SFML
-      run: Expand-Archive -LiteralPath SFML-2.5.1-windows-vc15-64-bit.zip -DestinationPath build
+      run: Expand-Archive -LiteralPath SFML-2.5.1.zip -DestinationPath build
       shell: pwsh
     - name: Run CMake on ObEngine
       run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=./SFML-2.5.1 -DBUILD_TESTS=ON ..
