@@ -65,14 +65,14 @@ jobs:
   build_macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install SFML
-        run: brew install sfml
-      - name: Create build directory
-        run: mkdir build
-      - name: Run CMake on ObEngine
-        run: cd build && cmake -DBUILD_TESTS=ON ..
-      - name: Compile ObEngine
-        run: cd build && make -j8
-      - name: Run tests
-        run: cd build && ./tests/ObEngineTests
+    - uses: actions/checkout@v2
+    - name: Install SFML
+      run: brew install sfml
+    - name: Create build directory
+      run: mkdir build
+    - name: Run CMake on ObEngine
+      run: cd build && cmake -DBUILD_TESTS=ON ..
+    - name: Compile ObEngine
+      run: cd build && make -j8
+    - name: Run tests
+      run: cd build && ./tests/ObEngineTests
