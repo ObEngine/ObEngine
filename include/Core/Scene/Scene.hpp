@@ -19,6 +19,7 @@ namespace obe
 namespace obe::Scene
 {
     using OnSceneLoadCallback = std::function<void(const std::string&)>;
+
     /**
      * \brief The Scene class is a container of all the game elements
      */
@@ -57,27 +58,24 @@ namespace obe::Scene
         void attachResourceManager(Engine::ResourceManager& resources);
         /**
          * \brief Loads the Scene from a .map.vili file
-         * \param filename Name of the file located in Data/Maps (using
-         *        System::Loaders)
+         * \param path Path to the Scene file
          */
-        void loadFromFile(const std::string& filename);
+        void loadFromFile(const std::string& path);
         /**
          * \brief Same that loadFromFile excepts the map will load at the next
          *        update
-         * \param filename Name of the file located in Data/Maps (using
-         *        System::Loaders)
+         * \param path Path to the Scene file
          */
-        void setFutureLoadFromFile(const std::string& filename);
+        void setFutureLoadFromFile(const std::string& path);
         /**
          * \brief Same that loadFromFile excepts the map will load at the next
          * update
-         * \param filename Name of the file located in Data/Maps (using
-         *        System::Loaders)
+         * \param path Path to the Scene file
          * \param callback Lua Function called when new map has
          *        been loaded
          */
         void setFutureLoadFromFile(
-            const std::string& filename, const OnSceneLoadCallback& callback);
+            const std::string& path, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -191,16 +189,14 @@ namespace obe::Scene
          */
         std::vector<Graphics::Sprite*> getSpritesByLayer(int layer);
         /**
-         * TODO: Check if passing the camera as a parameter is useful
          * \brief Get the first found Sprite with the BoundingRect
          *        including the given position
          * \param position Position to check
-         * \param camera Camera position
          * \param layer Layer where to check
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
-        Graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position,
-            const Transform::UnitVector& camera, int layer);
+        Graphics::Sprite* getSpriteByPosition(
+            const Transform::UnitVector& position, int layer);
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get

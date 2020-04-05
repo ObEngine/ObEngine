@@ -1,44 +1,40 @@
 #include <catch/catch.hpp>
 
-#include <Utils/MathUtils.hpp>
 #include <Collision/PolygonalCollider.hpp>
+#include <Utils/MathUtils.hpp>
 
 using namespace obe::Utils::Math;
 
-TEST_CASE(
-    "A double should be truncated to an int without data loss"
-    " (including floating point precision)", 
-    "[obe.Utils.Math.isDoubleInt]"
-) 
+TEST_CASE("A double should be truncated to an int without data loss"
+          " (including floating point precision)",
+    "[obe.Utils.Math.isDoubleInt]")
 {
     SECTION("Correct Positive values")
     {
-        REQUIRE( isDoubleInt(0.0) == true );
-        REQUIRE( isDoubleInt(42.0) == true );
-        REQUIRE( isDoubleInt(7894561) == true );
-        REQUIRE( isDoubleInt(2147483647) == true );
+        REQUIRE(isDoubleInt(0.0) == true);
+        REQUIRE(isDoubleInt(42.0) == true);
+        REQUIRE(isDoubleInt(7894561) == true);
+        REQUIRE(isDoubleInt(2147483647) == true);
     }
     SECTION("Correct Negative values")
     {
-        REQUIRE( isDoubleInt(-123456) == true );
-        REQUIRE( isDoubleInt(-2147483647) == true );
+        REQUIRE(isDoubleInt(-123456) == true);
+        REQUIRE(isDoubleInt(-2147483647) == true);
     }
     SECTION("Overflow values")
     {
-        REQUIRE( isDoubleInt(2147483648) == false );
-        REQUIRE( isDoubleInt(-9000000000) == false );
+        REQUIRE(isDoubleInt(2147483648) == false);
+        REQUIRE(isDoubleInt(-9000000000) == false);
     }
     SECTION("Floating point precision loss")
     {
-        REQUIRE( isDoubleInt(4.5) == false );
-        REQUIRE( isDoubleInt(-1.1) == false );
+        REQUIRE(isDoubleInt(4.5) == false);
+        REQUIRE(isDoubleInt(-1.1) == false);
     }
 }
 
-TEST_CASE(
-    "A value should be converted from degrees to radians", 
-    "[obe.Utils.Math.convertToRadian]"
-) 
+TEST_CASE("A value should be converted from degrees to radians",
+    "[obe.Utils.Math.convertToRadian]")
 {
     SECTION("Positive Known Angles")
     {
@@ -63,10 +59,8 @@ TEST_CASE(
     }
 }
 
-TEST_CASE(
-    "A value should be converted from radians to degrees", 
-    "[obe.Utils.Math.convertToDegree]"
-)
+TEST_CASE("A value should be converted from radians to degrees",
+    "[obe.Utils.Math.convertToDegree]")
 {
     SECTION("Positive Known Angles")
     {
@@ -91,26 +85,21 @@ TEST_CASE(
     }
 }
 
-TEST_CASE(
-    "A value should be normalised from start to end", 
-    "[obe.Utils.Math.normalise]"
-)
+TEST_CASE("A value should be normalised from start to end", "[obe.Utils.Math.normalise]")
 {
     SECTION("Angle normalisation")
     {
-        REQUIRE(normalise(0, 0, 360) == 0);
-        REQUIRE(normalise(360, 0, 360) == 0);
-        REQUIRE(normalise(361, 0, 360) == 1);
-        REQUIRE(normalise(720, 0, 360) == 0);
-        REQUIRE(normalise(1000, 0, 360) == 280);
-        REQUIRE(normalise(-650, 0, 360) == 70);
+        REQUIRE(normalize(0, 0, 360) == 0);
+        REQUIRE(normalize(360, 0, 360) == 0);
+        REQUIRE(normalize(361, 0, 360) == 1);
+        REQUIRE(normalize(720, 0, 360) == 0);
+        REQUIRE(normalize(1000, 0, 360) == 280);
+        REQUIRE(normalize(-650, 0, 360) == 70);
     }
 }
 
 TEST_CASE(
-    "A random number should be between min and max value",
-    "[obe.Utils.Math.randint]"
-)
+    "A random number should be between min and max value", "[obe.Utils.Math.randint]")
 {
     SECTION("Positive bounds")
     {
@@ -119,10 +108,7 @@ TEST_CASE(
     }
 }
 
-TEST_CASE(
-    "A random number should be between 0 and 1",
-    "[obe.Utils.Math.randfloat]"
-)
+TEST_CASE("A random number should be between 0 and 1", "[obe.Utils.Math.randfloat]")
 {
     SECTION("100 random float")
     {

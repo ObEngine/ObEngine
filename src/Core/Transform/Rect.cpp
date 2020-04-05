@@ -49,10 +49,10 @@ namespace obe::Transform
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
 
-        auto [dx, dy] = (ref.getOffset() * m_size).unpack();
+        const auto delta = (ref.getOffset() * m_size);
 
-        vec.add(UnitVector((dx * cosAngle - dy * sinAngle) * factor,
-            (dx * sinAngle + dy * cosAngle) * factor));
+        vec.add(UnitVector((delta.x * cosAngle - delta.y * sinAngle) * factor,
+            (delta.x * sinAngle + delta.y * cosAngle) * factor));
     }
 
     Rect::Rect(const Transform::UnitVector& position, const Transform::UnitVector& size)

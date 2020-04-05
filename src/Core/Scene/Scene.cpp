@@ -115,20 +115,19 @@ namespace obe::Scene
         m_onLoadCallback = callback;
     }
 
-    void Scene::loadFromFile(const std::string& filename)
+    void Scene::loadFromFile(const std::string& path)
     {
-        Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", filename);
+        Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
         this->clear();
         Debug::Log->debug("<Scene> Cleared Scene");
-        if (filename != m_levelFileName)
+        if (path != m_levelFileName)
         {
             m_levelFile = vili::ViliParser();
-            m_baseFolder = System::Path("Data/Maps")
-                               .add(filename)
+            m_baseFolder = System::Path(path)
                                .load(System::Loaders::dataLoader, m_levelFile)
                                .path();
             Debug::Log->debug("Scene File base folder : {}", m_baseFolder);
-            m_levelFileName = filename;
+            m_levelFileName = path;
         }
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "Meta"))
@@ -138,7 +137,7 @@ namespace obe::Scene
         }
         else
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Scene.Scene.NoMeta", { { "map", filename } });
+                "ObEngine.Scene.Scene.NoMeta", { { "map", path } });
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "View"))
         {
@@ -166,7 +165,7 @@ namespace obe::Scene
         }
         else
             throw aube::ErrorHandler::Raise(
-                "ObEngine.Scene.Scene.NoView", { { "map", filename } });
+                "ObEngine.Scene.Scene.NoView", { { "map", path } });
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "Sprites"))
         {
@@ -241,19 +240,19 @@ namespace obe::Scene
                 }
             }
         }
-        t_scene->pushParameter("Loaded", "name", filename);
+        t_scene->pushParameter("Loaded", "name", path);
         t_scene->trigger("Loaded");
     }
 
-    void Scene::setFutureLoadFromFile(const std::string& filename)
+    void Scene::setFutureLoadFromFile(const std::string& path)
     {
-        m_futureLoad = filename;
+        m_futureLoad = path;
     }
 
     void Scene::setFutureLoadFromFile(
-        const std::string& filename, const OnSceneLoadCallback& callback)
+        const std::string& path, const OnSceneLoadCallback& callback)
     {
-        m_futureLoad = filename;
+        m_futureLoad = path;
         m_onLoadCallback = callback;
     }
 
@@ -641,8 +640,8 @@ namespace obe::Scene
         return returnLayer;
     }
 
-    Graphics::Sprite* Scene::getSpriteByPosition(const Transform::UnitVector& position,
-        const Transform::UnitVector& camera, const int layer)
+    Graphics::Sprite* Scene::getSpriteByPosition(
+        const Transform::UnitVector& position, const int layer)
     {
         std::vector<Transform::Referential> rectPts = { Transform::Referential::TopLeft,
             Transform::Referential::TopRight, Transform::Referential::BottomRight,
@@ -650,6 +649,8 @@ namespace obe::Scene
         const Transform::UnitVector zeroOffset(0, 0);
 
         std::vector<Graphics::Sprite*> getSpriteVec = this->getSpritesByLayer(layer);
+        Transform::UnitVector camera
+            = -(m_camera.getPosition().to<Transform::Units::ScenePixels>());
         for (unsigned int i = 0; i < getSpriteVec.size(); i++)
         {
             Collision::PolygonalCollider positionCollider("positionCollider");

@@ -6,9 +6,10 @@
 
 namespace obe::System::Constraints::Bindings
 {
-void LoadGlobalDefault(sol::state_view state)
-{
-sol::table ConstraintsNamespace = state["obe"]["System"]["Constraints"].get<sol::table>();
-ConstraintsNamespace["Default"] = obe::System::Constraints::Default;
-}
+    void LoadGlobalDefault(sol::state_view state)
+    {
+        sol::table ConstraintsNamespace
+            = state["obe"]["System"]["Constraints"].get<sol::table>();
+        ConstraintsNamespace["Default"] = obe::System::Constraints::Default;
+    }
 };

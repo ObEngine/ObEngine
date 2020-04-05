@@ -147,9 +147,11 @@ namespace obe::Bindings
             = checkIfLuaElementExists(lua, this->getNodePath());
         if (!elementAlreadyExists && m_hasLib)
         {
-            Debug::Log->debug("<BindingTree> Loading Lua Binding : {0}", this->getNodePath());
+            Debug::Log->debug(
+                "<BindingTree> Loading Lua Binding : {0}", this->getNodePath());
             Debug::Log->flush();
-            lua.safe_script("table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
+            lua.safe_script(
+                "table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
             m_lib(lua);
         }
         if (spreads)

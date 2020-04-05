@@ -26,6 +26,11 @@ namespace obe::Graphics
         NullTexture.loadFromImage(nullImage);
     }
 
+    sf::Vertex toSfVertex(const Transform::UnitVector& uv)
+    {
+        return sf::Vertex(sf::Vector2f(uv.x, uv.y));
+    }
+
     Sprite::Sprite(const std::string& id)
         : Selectable(false)
         , Component(id)
@@ -49,20 +54,20 @@ namespace obe::Graphics
 
     void Sprite::draw(RenderTarget surface, const Transform::UnitVector& camera)
     {
-        const auto toVertex = [](const Transform::UnitVector& uv) {
-            return sf::Vertex(sf::Vector2f(uv.x, uv.y));
-        };
         std::array<sf::Vertex, 4> vertices;
-        std::array<Transform::Referential, 4> referentials
-            = { Transform::Referential::TopLeft, Transform::Referential::BottomLeft,
-                  Transform::Referential::TopRight, Transform::Referential::BottomRight };
-        unsigned int vertexIndex = 0;
-        for (const Transform::Referential referential : referentials)
-        {
-            vertices[vertexIndex++] = toVertex(
-                m_positionTransformer(Rect::getPosition(referential), camera, m_layer)
-                    .to<Transform::Units::ScenePixels>());
-        }
+
+        vertices[0] = toSfVertex(m_positionTransformer(
+            Rect::getPosition(Transform::Referential::TopLeft), camera, m_layer)
+                                     .to<Transform::Units::ScenePixels>());
+        vertices[1] = toSfVertex(m_positionTransformer(
+            Rect::getPosition(Transform::Referential::BottomLeft), camera, m_layer)
+                                     .to<Transform::Units::ScenePixels>());
+        vertices[2] = toSfVertex(m_positionTransformer(
+            Rect::getPosition(Transform::Referential::TopRight), camera, m_layer)
+                                     .to<Transform::Units::ScenePixels>());
+        vertices[3] = toSfVertex(m_positionTransformer(
+            Rect::getPosition(Transform::Referential::BottomRight), camera, m_layer)
+                                     .to<Transform::Units::ScenePixels>());
 
         m_sprite.setVertices(vertices);
 
