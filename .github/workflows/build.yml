@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches: '*'
   pull_request:
     branches: [ master ]
 
@@ -43,15 +43,20 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Create build directory
-      run: mkdir build
+    - name: Create deps directory
+      run: mkdir deps
     - name: Download pre-built SFML
-      run: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
+      run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
       shell: pwsh
     - name: Extract SFML
-      run: Expand-Archive -LiteralPath SFML-2.5.1-windows-vc15-64-bit.zip -DestinationPath build
+      run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
       shell: pwsh
+    - name: Create build directory
+      run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=./SFML-2.5.1 -DBUILD_TESTS=ON ..
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      shell: pwsh
     - name: Compile ObEngine
-      run: cmake --build build
+      run: cmake --build build --config Release -- /m:8
+    - name: Run tests
+      run: ./build/tests/Release/ObEngineTests.exe
