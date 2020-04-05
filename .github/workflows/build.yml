@@ -8,9 +8,8 @@ on:
 
 jobs:
   build_linux:
-
+    name: Build ObEngine on Linux
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Clean previous execution
@@ -40,6 +39,7 @@ jobs:
 
 
   build_windows:
+    name: Build ObEngine on Windows
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -63,6 +63,7 @@ jobs:
 
 
   build_macos:
+    name: Build ObEngine on MacOS
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
