@@ -57,6 +57,9 @@ jobs:
     - name: Display tree
       run: tree
       shell: pwsh
+    - name: Display SFML_DIR variable
+      run: echo $SFML_DIR
+      shell: pwsh
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
