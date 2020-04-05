@@ -60,9 +60,9 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Debug step
-      run: echo "$GITHUB_WORKSPACE/deps/SFML-2.5.1/lib/cmake/SFML"
+      run: echo "${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML"
     - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="$GITHUB_WORKSPACE/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
       shell: pwsh
     - name: Compile ObEngine
       run: cmake --build build
