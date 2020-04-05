@@ -49,7 +49,7 @@ jobs:
       run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
       shell: pwsh
     - name: Extract SFML
-      run: Expand-Archive -LiteralPath SFML-2.5.1.zip -DestinationPath deps
+      run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
       shell: pwsh
     - name: Retrieve SFML absolute path
       run: cd ./deps/SFML-2.5.1/lib/cmake/SFML; $SFML_DIR=$pwd.Path;
