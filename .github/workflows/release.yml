@@ -8,6 +8,7 @@ on:
 jobs:
   create_release:
     name: Create GitHub release
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         id: create_release
