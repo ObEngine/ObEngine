@@ -4,6 +4,7 @@ on:
   release:
     types: [created]
 
+jobs:
   release_linux:
     name: Release ObEngine Linux package
     runs-on: ubuntu-latest
