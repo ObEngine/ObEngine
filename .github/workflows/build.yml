@@ -60,3 +60,18 @@ jobs:
       run: cmake --build build --config Release -- /m:8
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
+
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Install SFML
+        run: brew install sfml
+      - name: Create build directory
+        run: mkdir build
+      - name: Run CMake on ObEngine
+        run: cd build && cmake -DBUILD_TESTS=ON ..
+      - name: Compile ObEngine
+        run: cd build && make -j8
+      - name: Run tests
+        run: cd build && ./tests/ObEngineTests
