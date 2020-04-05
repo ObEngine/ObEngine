@@ -65,6 +65,7 @@ jobs:
   build_macos:
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Install SFML
         run: brew install sfml
       - name: Create build directory
