@@ -248,14 +248,16 @@ namespace obe::Bindings
             .add("FunctionEpochAsMilliseconds",
                 &obe::Time::Bindings::LoadFunctionEpochAsMilliseconds)
             .add("FunctionEpochAsMicroseconds",
-                &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds);
+                &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds)
+            .add("TimeUnits", &obe::Time::Bindings::LoadTimeUnits);
 
         BindTree["obe"]["Triggers"]
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)
             .add("ClassTriggerEnv", &obe::Triggers::Bindings::LoadClassTriggerEnv)
             .add("ClassTriggerGroup", &obe::Triggers::Bindings::LoadClassTriggerGroup)
-            .add(
-                "ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager);
+            .add("ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager)
+            .add("CallbackScheduler",
+                &obe::Triggers::Bindings::LoadClassCallbackScheduler);
 
         BindTree["obe"]["Types"]
             .add("ClassIdentifiable", &obe::Types::Bindings::LoadClassIdentifiable)

@@ -170,6 +170,18 @@ namespace obe::Triggers
     void TriggerManager::update()
     {
         Debug::Log->trace("<TriggerManager> Updating TriggerManager");
+        for (auto& scheduler : m_schedulers)
+        {
+            if (scheduler->m_ready)
+            {
+                Time::TimeUnit elapsed = Time::epochAsMicroseconds() - scheduler->m_start;
+                if ((scheduler->m_wait && elapsed >= scheduler->m_after)
+                    || (scheduler->m_repeat && elapsed >= scheduler->m_every))
+                {
+                    scheduler->execute();
+                }
+            }
+        }
     }
 
     void TriggerManager::clear()
@@ -179,5 +191,11 @@ namespace obe::Triggers
         m_allTriggers.clear();
         m_databaseChrono.start();
         // Need to delete Map-only stuff !!
+    }
+
+    CallbackScheduler& TriggerManager::schedule()
+    {
+        m_schedulers.push_back(std::make_unique<CallbackScheduler>(*this));
+        return *m_schedulers.back().get();
     }
 } // namespace obe::Triggers

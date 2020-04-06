@@ -11,4 +11,5 @@ namespace obe::Time::Bindings
     void LoadClassFramerateManager(sol::state_view state);
     void LoadFunctionEpochAsMilliseconds(sol::state_view state);
     void LoadFunctionEpochAsMicroseconds(sol::state_view state);
+    void LoadTimeUnits(sol::state_view state);
 };

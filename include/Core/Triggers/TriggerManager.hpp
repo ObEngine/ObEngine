@@ -3,13 +3,12 @@
 #include <map>
 
 #include <Time/Chronometer.hpp>
-#include <Triggers/CallbackHandle.hpp>
+#include <Triggers/CallbackScheduler.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
 
 namespace obe::Triggers
 {
-    using Callback = std::function<void()>;
     /**
      * \brief A TriggerManager that handles all Trigger / TriggerGroup
      */
@@ -18,6 +17,7 @@ namespace obe::Triggers
     private:
         std::map<std::string, std::map<std::string, std::weak_ptr<TriggerGroup>>>
             m_allTriggers;
+        std::vector<std::unique_ptr<CallbackScheduler>> m_schedulers;
         Time::Chronometer m_databaseChrono;
         sol::state_view m_lua;
 
@@ -101,6 +101,7 @@ namespace obe::Triggers
          * \brief Clears the TriggerManager
          */
         void clear();
-        CallbackHandle run();
+
+        CallbackScheduler& schedule();
     };
 } // namespace obe::Triggers

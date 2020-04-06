@@ -86,5 +86,18 @@ namespace obe::Triggers::Bindings
             = &obe::Triggers::TriggerManager::doesTriggerGroupExists;
         bindTriggerManager["update"] = &obe::Triggers::TriggerManager::update;
         bindTriggerManager["clear"] = &obe::Triggers::TriggerManager::clear;
+        bindTriggerManager["schedule"] = &obe::Triggers::TriggerManager::schedule;
     }
-};
+    void LoadClassCallbackScheduler(sol::state_view state)
+    {
+        sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
+        sol::usertype<obe::Triggers::CallbackScheduler> bindCallbackScheduler
+            = TriggersNamespace.new_usertype<obe::Triggers::CallbackScheduler>(
+                "CallbackScheduler", sol::call_constructor,
+                sol::constructors<obe::Triggers::CallbackScheduler(
+                    obe::Triggers::TriggerManager&)>());
+        bindCallbackScheduler["after"] = &obe::Triggers::CallbackScheduler::after;
+        bindCallbackScheduler["every"] = &obe::Triggers::CallbackScheduler::every;
+        bindCallbackScheduler["run"] = &obe::Triggers::CallbackScheduler::run;
+    }
+}

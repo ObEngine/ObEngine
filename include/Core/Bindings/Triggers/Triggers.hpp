@@ -10,4 +10,5 @@ namespace obe::Triggers::Bindings
     void LoadClassTriggerEnv(sol::state_view state);
     void LoadClassTriggerGroup(sol::state_view state);
     void LoadClassTriggerManager(sol::state_view state);
+    void LoadClassCallbackScheduler(sol::state_view state);
 };

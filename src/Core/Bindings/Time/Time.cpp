@@ -73,4 +73,16 @@ namespace obe::Time::Bindings
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace.set_function("epochAsMicroseconds", obe::Time::epochAsMicroseconds);
     }
+
+    void LoadTimeUnits(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
+        TimeNamespace["microseconds"] = obe::Time::microseconds;
+        TimeNamespace["milliseconds"] = obe::Time::milliseconds;
+        TimeNamespace["seconds"] = obe::Time::seconds;
+        TimeNamespace["minutes"] = obe::Time::minutes;
+        TimeNamespace["hours"] = obe::Time::hours;
+        TimeNamespace["days"] = obe::Time::days;
+        TimeNamespace["weeks"] = obe::Time::weeks;
+    }
 };
