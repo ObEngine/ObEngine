@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
