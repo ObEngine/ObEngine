@@ -2,6 +2,8 @@
 
 #include <Utils/StringUtils.hpp>
 
+#include "Graphics/Shapes.hpp"
+
 int lua_exception_handler(lua_State* L,
     sol::optional<const std::exception&> maybe_exception, sol::string_view description)
 {
@@ -14,7 +16,6 @@ int lua_exception_handler(lua_State* L,
     {
         obe::Debug::Log->error("<LuaError>[Error] : {}", description);
     }
-    luaL_dostring(L, "dbg()");
     return sol::stack::push(L, description);
 }
 
@@ -191,9 +192,13 @@ namespace obe::Engine
 
     void Engine::run()
     {
+
         m_lua.safe_script_file("boot.lua"_fs);
         m_window->create();
         m_lua["Game"]["Start"]();
+        Graphics::Shapes::Rectangle rect;
+        rect.setPosition(Transform::UnitVector(2, 1));
+        rect.dbg();
 
         while (m_window->isOpen())
         {

@@ -254,6 +254,9 @@ namespace obe::Transform::Bindings
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;
         bindUnitVector["y"] = &obe::Transform::UnitVector::y;
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
+        bindUnitVector["to"]
+            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
+                obe::Transform::Units) const>(&obe::Transform::UnitVector::to);
     }
     void LoadFunctionStringToUnits(sol::state_view state)
     {
