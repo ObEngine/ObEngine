@@ -24,10 +24,11 @@ namespace obe::Script::Bindings
             = &obe::Script::GameObject::doesHaveScriptEngine;
         bindGameObject["getUpdateState"] = &obe::Script::GameObject::getUpdateState;
         bindGameObject["setUpdateState"] = &obe::Script::GameObject::setUpdateState;
-        bindGameObject["Animator"] = &obe::Script::GameObject::getAnimator;
-        bindGameObject["Collider"] = &obe::Script::GameObject::getCollider;
-        bindGameObject["Sprite"] = &obe::Script::GameObject::getSprite;
-        bindGameObject["SceneNode"] = &obe::Script::GameObject::getSceneNode;
+        bindGameObject["Animator"] = sol::property(&obe::Script::GameObject::getAnimator);
+        bindGameObject["Collider"] = sol::property(&obe::Script::GameObject::getCollider);
+        bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
+        bindGameObject["SceneNode"]
+            = sol::property(&obe::Script::GameObject::getSceneNode);
         bindGameObject["useTrigger"] = sol::overload(
             [](obe::Script::GameObject* self, const std::string& trNsp,
                 const std::string& trGrp, const std::string& trName) -> void {

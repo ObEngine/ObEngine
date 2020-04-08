@@ -121,10 +121,8 @@ namespace obe::Graphics
 
     void Sprite::setTexture(const Graphics::Texture& texture)
     {
-        // TODO: Fix this evil stuff, we remove the constness by casting it :(
-        m_texture = std::shared_ptr<Graphics::Texture>(
-            std::shared_ptr<sf::Texture>(), &const_cast<Graphics::Texture&>(texture));
-        m_sprite.setTexture(texture);
+        m_texture = std::make_shared<Graphics::Texture>(texture);
+        m_sprite.setTexture(*m_texture);
         m_sprite.setTextureRect(
             sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }

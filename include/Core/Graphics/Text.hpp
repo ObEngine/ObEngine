@@ -26,7 +26,7 @@ namespace obe::Graphics
         Color color = Color::White;
         Color outline = Color::White;
         unsigned int thickness = 0;
-        sf::Text::Style style;
+        sf::Text::Style style = sf::Text::Style::Regular;
         std::string string;
 
         Text();
@@ -75,8 +75,8 @@ namespace obe::Graphics
         unsigned int getCharacterSize() const;
         void setCharacterSize(unsigned int size);
 
-        Transform::Rect getLocalBounds() const;
-        Transform::Rect getGlobalBounds() const;
+        sf::FloatRect getLocalBounds() const;
+        sf::FloatRect getGlobalBounds() const;
 
     protected:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

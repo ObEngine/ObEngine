@@ -188,7 +188,8 @@ namespace obe::Bindings
         BindTree["obe"]["Graphics"]["Shapes"]
             .add("ClassCircle", &obe::Graphics::Shapes::Bindings::LoadClassCircle)
             .add("ClassPolygon", &obe::Graphics::Shapes::Bindings::LoadClassPolygon)
-            .add("ClassRectangle", &obe::Graphics::Shapes::Bindings::LoadClassRectangle);
+            .add("ClassRectangle", &obe::Graphics::Shapes::Bindings::LoadClassRectangle)
+            .add("ClassText", &obe::Graphics::Shapes::Bindings::LoadClassText);
 
         BindTree["obe"]["Input"]
             .add("ClassInputAction", &obe::Input::Bindings::LoadClassInputAction)

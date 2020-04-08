@@ -187,5 +187,7 @@ namespace obe::Graphics::Canvas::Bindings
         bindText["h_align"] = &obe::Graphics::Canvas::Text::h_align;
         bindText["v_align"] = &obe::Graphics::Canvas::Text::v_align;
         bindText["texts"] = &obe::Graphics::Canvas::Text::texts;
+        bindText["refresh"] = &obe::Graphics::Canvas::Text::refresh;
+        bindText["text"] = sol::property(&obe::Graphics::Canvas::Text::currentText);
     }
 };

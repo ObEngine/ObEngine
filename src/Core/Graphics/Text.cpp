@@ -243,26 +243,15 @@ namespace obe::Graphics
     }
 
     ////////////////////////////////////////////////////////////
-    Transform::Rect RichText::getLocalBounds() const
+    sf::FloatRect RichText::getLocalBounds() const
     {
-        const Transform::UnitVector position(
-            m_bounds.left, m_bounds.top, Transform::Units::ScenePixels);
-        const Transform::UnitVector size(
-            m_bounds.width, m_bounds.height, Transform::Units::ScenePixels);
-        Transform::Rect bounds(position, size);
-        return bounds;
+        return m_bounds;
     }
 
     ////////////////////////////////////////////////////////////
-    Transform::Rect RichText::getGlobalBounds() const
+    sf::FloatRect RichText::getGlobalBounds() const
     {
-        const sf::FloatRect transformedRect = getTransform().transformRect(m_bounds);
-        const Transform::UnitVector position(
-            transformedRect.left, transformedRect.top, Transform::Units::ScenePixels);
-        const Transform::UnitVector size(
-            transformedRect.width, transformedRect.height, Transform::Units::ScenePixels);
-        Transform::Rect bounds(position, size);
-        return bounds;
+        return getTransform().transformRect(m_bounds);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

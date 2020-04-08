@@ -34,6 +34,8 @@ namespace obe::Graphics::Bindings
                     obe::Graphics::Color(const std::string&),
                     obe::Graphics::Color(const obe::Graphics::Color&),
                     obe::Graphics::Color(const sf::Color&)>());
+        bindColor["fromName"] = &obe::Graphics::Color::fromName;
+        bindColor["fromString"] = &obe::Graphics::Color::fromString;
         bindColor["fromHex"] = &obe::Graphics::Color::fromHex;
         bindColor["fromRgb"] = sol::overload(
             [](obe::Graphics::Color* self, uint_fast8_t r, uint_fast8_t g,

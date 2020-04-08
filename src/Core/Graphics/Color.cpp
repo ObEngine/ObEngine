@@ -231,10 +231,6 @@ namespace obe::Graphics
         { "YellowGreen", Color::YellowGreen } };
 
     Color::Color()
-        : r(0)
-        , g(0)
-        , b(0)
-        , a(0)
     {
     }
 
@@ -246,17 +242,7 @@ namespace obe::Graphics
 
     Color::Color(const std::string& nameOrHex)
     {
-        if (const auto& color = ColorNames.find(nameOrHex); color != ColorNames.end())
-        {
-            this->r = color->second.r;
-            this->g = color->second.g;
-            this->b = color->second.b;
-            this->a = color->second.a;
-        }
-        else
-        {
-            this->fromHex(nameOrHex);
-        }
+        this->fromString(nameOrHex);
     }
 
     Color::Color(const Color& color)
@@ -273,6 +259,29 @@ namespace obe::Graphics
         this->g = color.g;
         this->b = color.b;
         this->a = color.a;
+    }
+
+    void Color::fromString(std::string string)
+    {
+        if (const auto& color = ColorNames.find(string); color != ColorNames.end())
+        {
+            this->fromName(string);
+        }
+        else
+        {
+            this->fromHex(string);
+        }
+    }
+
+    void Color::fromName(std::string name)
+    {
+        if (const auto& color = ColorNames.find(name); color != ColorNames.end())
+        {
+            this->r = color->second.r;
+            this->g = color->second.g;
+            this->b = color->second.b;
+            this->a = color->second.a;
+        }
     }
 
     void Color::fromRgb(const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b,
@@ -340,7 +349,7 @@ namespace obe::Graphics
 
     void Color::fromHex(std::string hexCode)
     {
-        std::array<unsigned char, 3> rgb {};
+        std::array<unsigned short, 3> rgb {};
         std::stringstream ss;
         std::string str;
 
@@ -486,5 +495,12 @@ namespace obe::Graphics
     Color::operator sf::Color() const
     {
         return sf::Color(r, g, b, a);
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Color& color)
+    {
+        os << "Color(" << int(color.r) << ", " << int(color.g) << ", " << int(color.b)
+           << ", " << int(color.a) << ")";
+        return os;
     }
 } // namespace obe::Graphics

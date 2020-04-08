@@ -144,24 +144,32 @@ namespace obe::Script
          */
         void setUpdateState(bool state);
         /**
+         * \bind{Animator}
+         * \asproperty
          * \brief Gets the Animator Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
          * \return A pointer to the Animator Component of the GameObject
          */
         Animation::Animator& getAnimator();
         /**
+         * \bind{Collider}
+         * \asproperty
          * \brief Gets the Collider Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
         Collision::PolygonalCollider& getCollider();
         /**
+         * \bind{Sprite}
+         * \asproperty
          * \brief Gets the Sprite Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
          * \return A pointer to the Sprite Component of the GameObject
          */
         Graphics::Sprite& getSprite();
         /**
+         * \bind{SceneNode}
+         * \asproperty
          * \brief Gets the Scene Node of the GameObject (SceneNode that can
          *        manipulate the position of all Scene Components) \return A reference
          * to the GameObject's Scene Node

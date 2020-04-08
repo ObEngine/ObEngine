@@ -13,10 +13,10 @@ namespace obe::Graphics
     class Color
     {
     public:
-        uint_fast8_t r;
-        uint_fast8_t g;
-        uint_fast8_t b;
-        uint_fast8_t a;
+        uint_fast8_t r = 0;
+        uint_fast8_t g = 0;
+        uint_fast8_t b = 0;
+        uint_fast8_t a = 255;
 
         Color();
         Color(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a = 255);
@@ -24,6 +24,8 @@ namespace obe::Graphics
         Color(const Color& color);
         Color(const sf::Color& color);
 
+        void fromString(std::string string);
+        void fromName(std::string name);
         void fromHex(std::string hexCode);
         void fromRgb(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t = 255);
         void fromHsv(int H, double S, double V);
@@ -188,4 +190,6 @@ namespace obe::Graphics
         static Color Yellow;
         static Color YellowGreen;
     };
+
+    std::ostream& operator<<(std::ostream& os, const Color& color);
 } // namespace obe::Graphics

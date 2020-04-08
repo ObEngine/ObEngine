@@ -160,7 +160,7 @@ namespace obe::Graphics::Canvas
         static const CanvasElementType Type = CanvasElementType::Text;
 
         std::string fontPath;
-        RichText shape;
+        Shapes::Text shape;
         TextHorizontalAlign h_align;
         TextVerticalAlign v_align;
         std::vector<Graphics::Text> texts;
@@ -175,6 +175,13 @@ namespace obe::Graphics::Canvas
          * \param target Target where to draw the Text to
          */
         void draw(RenderTarget target) override;
+        void refresh();
+        /**
+         * \bind{text}
+         * \asproperty
+         * \brief Returns the current Text part
+         */
+        Graphics::Text& currentText();
     };
 
     /**

@@ -198,7 +198,6 @@ namespace obe::Engine
         m_lua["Game"]["Start"]();
         Graphics::Shapes::Rectangle rect;
         rect.setPosition(Transform::UnitVector(2, 1));
-        rect.dbg();
 
         while (m_window->isOpen())
         {

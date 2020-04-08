@@ -64,7 +64,7 @@ namespace obe::Graphics::Canvas
 
     void Text::draw(RenderTarget target)
     {
-        sf::Vector2f offset;
+        Transform::UnitVector offset(Transform::Units::ScenePixels);
         if (h_align == TextHorizontalAlign::Center)
             offset.x -= shape.getGlobalBounds().getSize().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
@@ -76,6 +76,23 @@ namespace obe::Graphics::Canvas
         shape.move(offset);
         target.draw(shape);
         shape.move(-offset);
+    }
+
+    void Text::refresh()
+    {
+        shape.clear();
+        for (auto text : texts)
+        {
+            if (!text.string.empty())
+            {
+                shape.append(text);
+            }
+        }
+    }
+
+    Graphics::Text& Text::currentText()
+    {
+        return texts.back();
     }
 
     Circle::Circle(Canvas& parent, const std::string& id)
