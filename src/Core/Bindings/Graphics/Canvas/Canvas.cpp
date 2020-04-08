@@ -109,7 +109,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Circle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Graphics::Canvas::CanvasPositionable>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
         bindCircle["radius"] = &obe::Graphics::Canvas::Circle::radius;
@@ -123,7 +124,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Image(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Graphics::Canvas::CanvasPositionable>());
         bindImage["draw"] = &obe::Graphics::Canvas::Image::draw;
         bindImage["path"] = &obe::Graphics::Canvas::Image::path;
         bindImage["sprite"] = &obe::Graphics::Canvas::Image::sprite;
@@ -153,7 +155,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Polygon(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Graphics::Canvas::CanvasPositionable>());
         bindPolygon["draw"] = &obe::Graphics::Canvas::Polygon::draw;
         bindPolygon["shape"] = &obe::Graphics::Canvas::Polygon::shape;
     }
@@ -166,7 +169,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Rectangle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Graphics::Canvas::CanvasPositionable>());
         bindRectangle["draw"] = &obe::Graphics::Canvas::Rectangle::draw;
         bindRectangle["shape"] = &obe::Graphics::Canvas::Rectangle::shape;
         bindRectangle["size"] = &obe::Graphics::Canvas::Rectangle::size;
@@ -180,7 +184,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Text(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Graphics::Canvas::CanvasPositionable>());
         bindText["draw"] = &obe::Graphics::Canvas::Text::draw;
         bindText["fontPath"] = &obe::Graphics::Canvas::Text::fontPath;
         bindText["shape"] = &obe::Graphics::Canvas::Text::shape;

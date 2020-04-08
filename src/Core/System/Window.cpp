@@ -75,6 +75,7 @@ namespace obe::System
         if (conf->contains("titlebar"))
             titlebar = conf->getDataNode("titlebar").get<bool>();
 
+        m_style = sf::Style::Default;
         if (fullscreen)
             m_style = sf::Style::Fullscreen;
         else
@@ -94,6 +95,7 @@ namespace obe::System
 
     void Window::create()
     {
+        Transform::UnitVector::Init(m_width, m_height);
         m_window.create(sf::VideoMode(m_width, m_height), m_title, m_style);
         m_window.setKeyRepeatEnabled(false);
     }

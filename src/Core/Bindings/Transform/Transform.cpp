@@ -210,9 +210,35 @@ namespace obe::Transform::Bindings
         bindReferential[sol::meta_function::equal_to]
             = &obe::Transform::Referential::operator==;
         bindReferential["FromString"] = &obe::Transform::Referential::FromString;
+        bindReferential["TopLeft"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::TopLeft;
+        });
+        bindReferential["Top"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::Top;
+        });
+        bindReferential["TopRight"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::TopRight;
+        });
+        bindReferential["Left"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::Left;
+        });
         bindReferential["Center"] = sol::property([]() -> obe::Transform::Referential {
             return obe::Transform::Referential::Center;
         });
+        bindReferential["Right"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::Right;
+        });
+        bindReferential["BottomLeft"]
+            = sol::property([]() -> obe::Transform::Referential {
+                  return obe::Transform::Referential::BottomLeft;
+              });
+        bindReferential["Bottom"] = sol::property([]() -> obe::Transform::Referential {
+            return obe::Transform::Referential::Bottom;
+        });
+        bindReferential["BottomRight"]
+            = sol::property([]() -> obe::Transform::Referential {
+                  return obe::Transform::Referential::BottomRight;
+              });
     }
     void LoadClassUnitBasedObject(sol::state_view state)
     {

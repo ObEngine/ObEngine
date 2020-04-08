@@ -52,30 +52,30 @@ end
 
 function obe.Canvas.ConvertHAlign(align)
     if type(align) == "string" then
-        if align == "Left" then return obe.Canvas.Alignment.Horizontal.Left;
-        elseif align == "Center" then return obe.Canvas.Alignment.Horizontal.Center;
-        elseif align == "Right" then return obe.Canvas.Alignment.Horizontal.Right;
+        if align == "Left" then return obe.Graphics.Canvas.TextHorizontalAlign.Left;
+        elseif align == "Center" then return obe.Graphics.Canvas.TextHorizontalAlign.Center;
+        elseif align == "Right" then return obe.Graphics.Canvas.TextHorizontalAlign.Right;
         else error("Horizontal Alignment", align, "does not exists, use one of those [Left, Center, Right]")
         end
     else
-        if align == obe.Canvas.Alignment.Horizontal.Left then return "Left";
-        elseif align == obe.Canvas.Alignment.Horizontal.Center then return "Center";
-        elseif align == obe.Canvas.Alignment.Horizontal.Right then return "Right";
+        if align == obe.Graphics.Canvas.TextHorizontalAlign.Left then return "Left";
+        elseif align == obe.Graphics.Canvas.TextHorizontalAlign.Center then return "Center";
+        elseif align == obe.Graphics.Canvas.TextHorizontalAlign.Right then return "Right";
         end
     end
 end
 
 function obe.Canvas.ConvertVAlign(align)
     if type(align) == "string" then
-        if align == "Top" then return obe.Canvas.Alignment.Vertical.Top;
-        elseif align == "Center" then return obe.Canvas.Alignment.Vertical.Center;
-        elseif align == "Bottom" then return obe.Canvas.Alignment.Vertical.Bottom;
+        if align == "Top" then return obe.Graphics.Canvas.TextVerticalAlign.Top;
+        elseif align == "Center" then return obe.Graphics.Canvas.TextVerticalAlign.Center;
+        elseif align == "Bottom" then return obe.Graphics.Canvas.TextVerticalAlign.Bottom;
         else error("Vertical Alignment", align, "does not exists, use one of those [Top, Center, Botton]")
         end
     else
-        if align == obe.Canvas.Alignment.Vertical.Top then return "Top";
-        elseif align == obe.Canvas.Alignment.Vertical.Center then return "Center";
-        elseif align == obe.Canvas.Alignment.Vertical.Bottom then return "Bottom";
+        if align == obe.Graphics.Canvas.TextVerticalAlign.Top then return "Top";
+        elseif align == obe.Graphics.Canvas.TextVerticalAlign.Center then return "Center";
+        elseif align == obe.Graphics.Canvas.TextVerticalAlign.Bottom then return "Bottom";
         end
     end
 end
