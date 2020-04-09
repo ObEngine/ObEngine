@@ -11,12 +11,15 @@ namespace obe::Triggers
     class TriggerEnv
     {
     public:
+        std::string id;
         sol::environment environment;
         std::string callback;
         bool* active = nullptr;
         sol::protected_function call;
-        TriggerEnv(sol::environment environment, std::string callback, bool* active)
-            : environment(std::move(environment))
+        TriggerEnv(std::string id, sol::environment environment, std::string callback,
+            bool* active)
+            : id(std::move(id))
+            , environment(std::move(environment))
             , callback(std::move(callback))
             , active(active)
         {
@@ -102,8 +105,8 @@ namespace obe::Triggers
          * \param active Pointer to the boolean that indicate if an
          *        environment is active or not
          */
-        void registerEnvironment(
-            sol::environment environment, const std::string& callback, bool* active);
+        void registerEnvironment(const std::string& id, sol::environment environment,
+            const std::string& callback, bool* active);
         /**
          * \brief Removes an environment from Trigger Execution
          * \param environment Lua Environment to unregister

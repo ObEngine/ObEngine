@@ -46,6 +46,7 @@ namespace obe::Animation
      * \param animationPlayMode The std::string containing the AnimationPlayMode in string
      *        form
      * \return The converted value which is an AnimationPlayMode enum value
+     * \throw UnknownAnimationPlayMode if the string does not represent one of the enum values
      * \bind{[mt]AnimationPlayMode.__call}
      */
     AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
@@ -90,8 +91,8 @@ namespace obe::Animation
 
         std::vector<std::shared_ptr<Graphics::Texture>> m_textures;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
-        std::string m_currentGroupName = "NONE";
-        std::string m_nextAnimation = "";
+        std::string m_currentGroupName;
+        std::string m_nextAnimation;
 
         AnimationPlayMode m_playMode = AnimationPlayMode::OneTime;
         AnimationStatus m_status = AnimationStatus::Play;
@@ -102,6 +103,7 @@ namespace obe::Animation
 
         void executeInstruction();
         void updateCurrentGroup();
+        void setActiveAnimationGroup(const std::string& groupName);
 
     public:
         /**
@@ -130,7 +132,7 @@ namespace obe::Animation
          *        specified.
          * \return The default delay of the Animation in milliseconds.
          */
-        [[nodiscard]] unsigned int getDelay() const;
+        [[nodiscard]] unsigned int getDelay() const noexcept;
         /**
          * \brief Get AnimationGroup pointer by groupName.
          *        It will throws a
@@ -139,13 +141,14 @@ namespace obe::Animation
          * \param groupName The name of the
          *        AnimationGroup to return
          * \return A pointer to the AnimationGroup
+         * \throw UnknownAnimationGroup if the group does not exists
          */
         AnimationGroup& getAnimationGroup(const std::string& groupName);
         /**
          * \brief Get the Animation name
          * \return A string containing the name of the Animation
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string getName() const noexcept;
 
         /**
          * \brief Get the Animation Play Mode
@@ -155,7 +158,7 @@ namespace obe::Animation
          *         - AnimationPlayMode::Loop
          *         - AnimationPlayMode::Force
          */
-        [[nodiscard]] AnimationPlayMode getPlayMode() const;
+        [[nodiscard]] AnimationPlayMode getPlayMode() const noexcept;
         /**
          * \brief Get the Animation Status
          * \return An enum value containing the AnimationStatus, it can be one
@@ -163,31 +166,31 @@ namespace obe::Animation
          *         - AnimationStatus::Play
          *         - AnimationStatus::Call
          */
-        [[nodiscard]] AnimationStatus getStatus() const;
+        [[nodiscard]] AnimationStatus getStatus() const noexcept;
         /**
          * \brief Get the name of the Animation to call when the AnimationStatus
          *        of the Animation is equal to AnimationStatus::Call
          * \return A std::string containing the name of the Animation that will be called.
          */
-        [[nodiscard]] std::string getCalledAnimation() const;
+        [[nodiscard]] std::string getCalledAnimation() const noexcept;
         /**
          * \brief Get the name of the current AnimationGroup
          * \return A std::string containing the name of the current
          *         AnimationGroup
          */
-        [[nodiscard]] std::string getCurrentAnimationGroup() const;
+        [[nodiscard]] std::string getCurrentAnimationGroup() const noexcept;
         /**
          * \brief Return the Animation priority
          * \return An int containing the priority of the Animation.
          *         Higher value is higher priority = Can't be interrupted by
          *         lower priority.
          */
-        [[nodiscard]] int getPriority() const;
+        [[nodiscard]] int getPriority() const noexcept;
         /**
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture();
+        const Graphics::Texture& getTexture() noexcept;
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.

@@ -33,7 +33,7 @@ namespace obe::Triggers::Bindings
             = TriggersNamespace.new_usertype<obe::Triggers::TriggerEnv>("TriggerEnv",
                 sol::call_constructor,
                 sol::constructors<obe::Triggers::TriggerEnv(
-                    sol::environment, std::string, bool*)>());
+                    std::string, sol::environment, std::string, bool*)>());
         bindTriggerEnv["environment"] = &obe::Triggers::TriggerEnv::environment;
         bindTriggerEnv["callback"] = &obe::Triggers::TriggerEnv::callback;
         bindTriggerEnv["active"] = &obe::Triggers::TriggerEnv::active;

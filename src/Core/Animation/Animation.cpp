@@ -1,4 +1,5 @@
 #include <Animation/Animation.hpp>
+#include <Animation/Exceptions.hpp>
 
 #include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
@@ -15,9 +16,7 @@ namespace obe::Animation
             return AnimationPlayMode::Loop;
         if (animationPlayMode == "Force")
             return AnimationPlayMode::Force;
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Animation.AnimationPlayMode.UnknownPlayMode",
-            { { "mode", animationPlayMode } });
+        throw Exceptions::UnknownAnimationPlayMode(animationPlayMode);
     }
 
     std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m)
@@ -38,17 +37,17 @@ namespace obe::Animation
         return os;
     }
 
-    std::string Animation::getCalledAnimation() const
+    std::string Animation::getCalledAnimation() const noexcept
     {
         return m_nextAnimation;
     }
 
-    std::string Animation::getName() const
+    std::string Animation::getName() const noexcept
     {
         return m_name;
     }
 
-    unsigned int Animation::getDelay() const
+    unsigned int Animation::getDelay() const noexcept
     {
         return m_delay;
     }
@@ -56,13 +55,12 @@ namespace obe::Animation
     AnimationGroup& Animation::getAnimationGroup(const std::string& groupName)
     {
         if (const auto group = m_groups.find(groupName); group != m_groups.end())
-            return *group->second.get();
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Animation.Animation.AnimationGroupNotFound",
-            { { "animation", m_name }, { "group", groupName } });
+            return *group->second;
+        throw Exceptions::UnknownAnimationGroup(
+            m_name, groupName, this->getAllAnimationGroupName());
     }
 
-    std::string Animation::getCurrentAnimationGroup() const
+    std::string Animation::getCurrentAnimationGroup() const noexcept
     {
         return m_currentGroupName;
     }
@@ -76,17 +74,17 @@ namespace obe::Animation
         return animationGroupKeys;
     }
 
-    AnimationPlayMode Animation::getPlayMode() const
+    AnimationPlayMode Animation::getPlayMode() const noexcept
     {
         return m_playMode;
     }
 
-    AnimationStatus Animation::getStatus() const
+    AnimationStatus Animation::getStatus() const noexcept
     {
         return m_status;
     }
 
-    bool Animation::isOver() const
+    bool Animation::isOver() const noexcept
     {
         return m_over;
     }
@@ -128,7 +126,7 @@ namespace obe::Animation
         for (unsigned int i = 0; i < imageList.size(); i++)
         {
             std::string textureName;
-            if (imageList.get(i).getDataType() == vili::DataType::Int && model != "")
+            if (imageList.get(i).getDataType() == vili::DataType::Int && !model.empty())
             {
                 textureName = Utils::String::replace(
                     model, "%s", std::to_string(imageList.get(i).get<int>()));
@@ -137,7 +135,7 @@ namespace obe::Animation
                     textureName);
             }
             else if (imageList.get(i).getDataType() == vili::DataType::String
-                && model != "")
+                && !model.empty())
             {
                 textureName = Utils::String::replace(
                     model, "%s", imageList.get(i).get<std::string>());
@@ -236,7 +234,7 @@ namespace obe::Animation
         }
         else if (currentCommand[0] == "PLAY_GROUP")
         {
-            if (m_currentGroupName != "NONE")
+            if (!m_currentGroupName.empty())
                 m_groups[m_currentGroupName]->reset();
             m_feedInstructions = false;
             m_currentGroupName = currentCommand[1];
@@ -286,6 +284,16 @@ namespace obe::Animation
         }
     }
 
+    void Animation::setActiveAnimationGroup(const std::string& groupName)
+    {
+        if (m_groups.find(groupName) != m_groups.end())
+        {
+            m_currentGroupName = groupName;
+        }
+        throw Exceptions::UnknownAnimationGroup(
+            m_name, groupName, this->getAllAnimationGroupName());
+    }
+
     void Animation::applyParameters(vili::ComplexNode& parameters)
     {
         // TODO: Re-implement texture offset in a better way
@@ -311,7 +319,7 @@ namespace obe::Animation
                 {
                     this->executeInstruction();
                 }
-                if (m_currentGroupName != "NONE")
+                if (!m_currentGroupName.empty())
                 {
                     this->updateCurrentGroup();
                 }
@@ -319,12 +327,12 @@ namespace obe::Animation
         }
     }
 
-    void Animation::setAntiAliasing(bool antiAliasing)
+    void Animation::setAntiAliasing(bool antiAliasing) noexcept
     {
         m_antiAliasing = antiAliasing;
     }
 
-    bool Animation::getAntiAliasing() const
+    bool Animation::getAntiAliasing() const noexcept
     {
         return m_antiAliasing;
     }
@@ -342,15 +350,19 @@ namespace obe::Animation
 
     const Graphics::Texture& Animation::getTextureAtIndex(int index)
     {
-        return *m_textures[index];
+        if (index < m_textures.size())
+            return *m_textures[index];
+        throw Exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size());
     }
 
     const Graphics::Texture& Animation::getTexture()
     {
-        return m_groups[m_currentGroupName]->getTexture();
+        if (!m_currentGroupName.empty())
+            return m_groups[m_currentGroupName]->getTexture();
+        throw Exceptions::NoSelectedAnimationGroup(m_name);
     }
 
-    int Animation::getPriority() const
+    int Animation::getPriority() const noexcept
     {
         return m_priority;
     }

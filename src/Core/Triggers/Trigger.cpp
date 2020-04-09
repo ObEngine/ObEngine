@@ -1,6 +1,7 @@
 #include <Script/GameObject.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe::Triggers
 {
@@ -68,13 +69,13 @@ namespace obe::Triggers
         return m_parent.getNamespace();
     }
 
-    void Trigger::registerEnvironment(
-        sol::environment environment, const std::string& callback, bool* active)
+    void Trigger::registerEnvironment(const std::string& id, sol::environment environment,
+        const std::string& callback, bool* active)
     {
         Debug::Log->trace("<Trigger> Registering Lua Environment {0} in "
                           "Trigger {1} associated to callback {2}",
             environment.pointer(), m_name, callback);
-        m_registeredEnvs.emplace_back(environment, callback, active);
+        m_registeredEnvs.emplace_back(id, environment, callback, active);
 
         sol::table triggerRef = environment["__TRIGGERS"][this->getTriggerLuaTableName()]
                                     .get_or_create<sol::table>();
@@ -142,8 +143,16 @@ namespace obe::Triggers
                 if (!result.valid())
                 {
                     const auto errObj = result.get<sol::error>();
-                    const auto errMsg = errObj.what();
-                    Debug::Log->error("LuaError : {}", errMsg);
+                    const std::string errMsg = errObj.what();
+                    throw aube::ErrorHandler::Raise("obe.Triggers.ExecutionError",
+                        { { "trigger",
+                              this->getNamespace() + "." + this->getGroup() + "."
+                                  + this->getName() },
+                            { "callback", rEnv.callback }, { "environment", rEnv.id },
+                            { "error",
+                                "\n        \""
+                                    + Utils::String::replace(errMsg, "\n", "\n        ")
+                                    + "\"" } });
                 }
                 // m_lua.script(rEnv.callback + "()", rEnv.environment);
                 /*Script::ScriptEngine("LuaCore.EnvFuncInjector("

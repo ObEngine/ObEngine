@@ -387,7 +387,7 @@ namespace obe::Script
                     m_triggers.getTrigger(trNsp, trGrp, trName), callbackName);
                 m_triggers.getTrigger(trNsp, trGrp, trName)
                     .lock()
-                    ->registerEnvironment(m_environment, callbackName, &m_active);
+                    ->registerEnvironment(m_id, m_environment, callbackName, &m_active);
             }
             else
             {
@@ -399,7 +399,7 @@ namespace obe::Script
                     ->unregisterEnvironment(m_environment);
                 m_triggers.getTrigger(trNsp, trGrp, trName)
                     .lock()
-                    ->registerEnvironment(m_environment, callbackName, &m_active);
+                    ->registerEnvironment(m_id, m_environment, callbackName, &m_active);
             }
         }
     }
