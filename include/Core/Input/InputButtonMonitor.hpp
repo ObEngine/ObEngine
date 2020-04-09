@@ -26,7 +26,7 @@ namespace obe::Input
          * \brief Constructor of InputButtonMonition
          * \param button Pointer to the InputButton to monitor
          */
-        InputButtonMonitor(InputButton& button);
+        explicit InputButtonMonitor(InputButton& button);
         ~InputButtonMonitor();
         /**
          * \brief Gets a pointer to the monitored InputButton

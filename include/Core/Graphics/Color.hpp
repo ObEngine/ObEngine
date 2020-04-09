@@ -20,7 +20,7 @@ namespace obe::Graphics
 
         Color();
         Color(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a = 255);
-        Color(const std::string& nameOrHex);
+        explicit Color(const std::string& nameOrHex);
         Color(const Color& color);
         Color(const sf::Color& color);
 

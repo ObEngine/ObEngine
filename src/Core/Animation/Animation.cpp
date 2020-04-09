@@ -269,7 +269,7 @@ namespace obe::Animation
                 m_groups[m_currentGroupName]->reset();
                 m_codeIndex++;
             }
-            else if (m_playMode == AnimationPlayMode::OneTime)
+            else
             {
                 if (m_codeIndex < m_code.size() - 1)
                 {

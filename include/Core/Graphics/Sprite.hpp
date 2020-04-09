@@ -60,7 +60,7 @@ namespace obe::Graphics
          * \brief Creates a Rotate HandlePoint
          * \param parent Rect of the parent Sprite
          */
-        SpriteHandlePoint(Sprite& parent);
+        explicit SpriteHandlePoint(Sprite& parent);
         /**
          * \brief Get the rect of the parent Sprite
          * \return The Rect of the parent Sprite

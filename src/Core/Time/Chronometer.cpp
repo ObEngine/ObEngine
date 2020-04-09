@@ -41,6 +41,6 @@ namespace obe::Time
 
     bool Chronometer::over() const
     {
-        return (!m_started xor this->getTime() > m_limit);
+        return (!m_started xor (this->getTime() > m_limit));
     }
 } // namespace obe::Time

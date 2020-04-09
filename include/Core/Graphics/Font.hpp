@@ -10,7 +10,7 @@ namespace obe::Graphics
         sf::Font m_font;
 
     public:
-        Font();
+        Font() = default;
         Font(const Font& font);
         Font(const sf::Font& font);
 
@@ -22,18 +22,14 @@ namespace obe::Graphics
         operator bool() const;
     };
 
-    inline Font::Font()
-    {
-    }
-
     inline Font::Font(const Font& font)
+        : m_font(font.m_font)
     {
-        m_font = font.m_font;
     }
 
     inline Font::Font(const sf::Font& font)
+        : m_font(font)
     {
-        m_font = font;
     }
 
     inline bool Font::loadFromFile(const std::string& filename)

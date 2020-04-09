@@ -61,7 +61,7 @@ namespace obe::Graphics
 
     public:
         RichText();
-        RichText(const Font& font);
+        explicit RichText(const Font& font);
 
         void clear();
 

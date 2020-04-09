@@ -21,7 +21,7 @@ namespace obe::Collision
         std::unordered_map<std::string, std::unique_ptr<Trajectory>> m_trajectories {};
 
     public:
-        TrajectoryNode(Scene::SceneNode& sceneNode);
+        explicit TrajectoryNode(Scene::SceneNode& sceneNode);
         Trajectory& addTrajectory(
             const std::string& id, Transform::Units unit = Transform::Units::SceneUnits);
         [[nodiscard]] Scene::SceneNode& getSceneNode() const;

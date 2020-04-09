@@ -22,7 +22,7 @@ namespace obe::Triggers
         sol::state_view m_lua;
 
     public:
-        TriggerManager(sol::state_view lua);
+        explicit TriggerManager(sol::state_view lua);
         /**
          * \brief Get a Trigger contained in the TriggerManager
          * \param space Namespace of the Trigger

@@ -55,7 +55,8 @@ namespace obe::System::Loaders
         std::function<bool(Resource&, const std::string&)> m_function;
 
     public:
-        Loader(const std::function<bool(Resource&, const std::string&)>& function);
+        explicit Loader(
+            const std::function<bool(Resource&, const std::string&)>& function);
         bool load(Resource& resource, const std::string& path) const;
     };
 

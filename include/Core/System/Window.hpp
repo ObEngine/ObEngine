@@ -28,7 +28,7 @@ namespace obe::System
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
-        Window(WindowContext context);
+        explicit Window(WindowContext context);
         void create();
         void clear();
         void close();
