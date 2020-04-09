@@ -226,8 +226,21 @@ namespace obe::Scene
             vili::ComplexNode& script = m_levelFile.at("Script");
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
-                m_lua.safe_script_file(
-                    System::Path(script.at<vili::DataNode>("source")).find());
+                std::string source
+                    = System::Path(script.at<vili::DataNode>("source")).find();
+                const sol::protected_function_result result
+                    = m_lua.safe_script_file(source, &sol::script_pass_on_error);
+                if (!result.valid())
+                {
+                    const auto errObj = result.get<sol::error>();
+                    const std::string errMsg = errObj.what();
+                    throw aube::ErrorHandler::Raise("obe.Scene.InvalidSceneScript",
+                        { { "scene", path }, { "script", source },
+                            { "error",
+                                "\n        \""
+                                    + Utils::String::replace(errMsg, "\n", "\n        ")
+                                    + "\"" } });
+                }
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
             else if (script.contains(vili::NodeType::ArrayNode, "sources"))
@@ -769,8 +782,9 @@ namespace obe::Scene
                 return *m_colliderArray[i].get();
             }
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider",
+        auto exc = aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider",
             { { "id", id }, { "scene", m_levelName } });
+        throw exc;
     }
 
     bool Scene::doesColliderExists(const std::string& id)
