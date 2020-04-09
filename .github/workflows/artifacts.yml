@@ -35,7 +35,7 @@ jobs:
     - name: Run tests
       run: ./build/tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: Upload Release Asset
@@ -73,7 +73,7 @@ jobs:
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Dev/Release/* ./release/; cp ./build/src/Player/Release/ObEnginePlayer.exe ./release/
+      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/
       shell: pwsh
     - name: Package to archive
       run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
@@ -90,6 +90,7 @@ jobs:
 
 
   release_macos:
+    name: Release ObEngine MacOS package
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -104,7 +105,7 @@ jobs:
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Dev/ObEngineDev release/; cp ./build/src/Player/ObEnginePlayer release/
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: Upload Release Asset

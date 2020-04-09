@@ -16,7 +16,7 @@ This repository basically contains the code from the latest v0.2.0 commit of Öb
 This means that you can use the ÖbEngine patched editor to edit Scenes (mostly to edit Sprites and Colliders), export the Scene and use it in the v0.3.0 ÖbEnginePlayer.
 
 One of the other biggest changes is that ÖbEngine now uses [sol3](https://github.com/ThePhD/sol3) instead of [kaguya](https://github.com/satoren/kaguya) for binding Lua.
-Kaguya was pretty awesome but unfortunately isn't updated anymore by his author, ÖbEngine will be updated to use Lua 5.4 as soon as it is available and I wanted a binding library able to use the new features. Also sol3 should bring some performance improvements.
+Kaguya was pretty awesome but unfortunately isn't updated anymore by its author, ÖbEngine will be updated to use Lua 5.4 as soon as it is available and I wanted a binding library able to use the new features. Also sol3 should bring some performance improvements.
 With this library change comes another huge change : All bindings are now automatically generated.
 Writing Lua bindings is a long, boring and tedious task, you have to handle all corner-cases.
 I decided to extend the possibilities of my existing ongoing project [Obidog](https://github.com/Sygmei/Obidog) to not only generate Lua documentation (coming soon !) but also to generate all the Lua bindings and that only from the XML output of Doxygen.
