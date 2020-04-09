@@ -189,20 +189,40 @@ namespace obe::Script
                 }
                 m_lua.safe_script_file(fullPath, m_environment);
             };
-            if (obj.at("Script").contains(vili::NodeType::DataNode, "source"))
+            if (obj.at("Script").contains("source"))
             {
-                loadSource(obj.at("Script").getDataNode("source").get<std::string>());
-            }
-            else if (obj.at("Script").contains(vili::NodeType::ArrayNode, "sources"))
-            {
-                const unsigned int scriptListSize
-                    = obj.at("Script").getArrayNode("sources").size();
-                for (unsigned int i = 0; i < scriptListSize; i++)
+                if (obj.at("Script", "source").getType() == vili::NodeType::DataNode)
                 {
-                    loadSource(obj.at("Script")
-                                   .getArrayNode("sources")
-                                   .get(i)
-                                   .get<std::string>());
+                    loadSource(obj.at("Script").getDataNode("source").get<std::string>());
+                }
+                else
+                {
+                    throw aube::ErrorHandler::Raise(
+                        "obe.Script.GameObject.WrongSourceAttributeType",
+                        { { "details", "source should be a string" },
+                            { "object", m_type } });
+                }
+            }
+            else if (obj.at("Script").contains("sources"))
+            {
+                if (obj.at("Script", "sources").getType() == vili::NodeType::ArrayNode)
+                {
+                    const unsigned int scriptListSize
+                        = obj.at("Script").getArrayNode("sources").size();
+                    for (unsigned int i = 0; i < scriptListSize; i++)
+                    {
+                        loadSource(obj.at("Script")
+                                    .getArrayNode("sources")
+                                    .get(i)
+                                    .get<std::string>());
+                    }
+                }
+                else
+                {
+                    throw aube::ErrorHandler::Raise(
+                        "obe.Script.GameObject.WrongSourceAttributeType",
+                        { { "details", "sources should be an array" },
+                            { "object", m_type } });
                 }
             }
         }

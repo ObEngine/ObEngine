@@ -250,7 +250,7 @@ obe.Canvas.Bases.Drawable = {
   getters = {
       layer = function(self) return self.layer; end,
       visible = function(self) return self.visible; end,
-      id = function(self) return self.id; end
+      id = function(self) return self:getId(); end
   },
   setters = {
       layer = function(self, layer) self:setLayer(layer or 1); end,
@@ -571,7 +571,7 @@ end
 
 obe.Canvas.Bases.Text = {
     priority = {
-        "font", "size", "color", "outline"
+        "font", "size", "color", "outline", "align"
     },
     getters = {
         text = function(self)
