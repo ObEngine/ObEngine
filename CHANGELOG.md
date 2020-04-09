@@ -1,5 +1,74 @@
 # Changelog
 
+## 0.3.0
+
+### Notes
+
+v0.3.0 is a big release, and for multiple reasons.
+
+First of all, a lot of cleaning was involved, mostly on the API (see minor changes), some elements were renamed or moved so expect quite a lot of breaking changes on your v0.2.0 projects (easy to fix with search-replace though).
+
+The second biggest change is the deletion of the ObEngineDev executable : all the UI part was poorly architectured and too much rework would have been required to port it to v0.3.0. I decided to remove it entirely.
+
+This means that the Map Editor and the Toolkit are not part of ÖbEngine anymore (until v0.6.0 probably), to compensate for this, I decided to included an executable for each GitHub release (separate download) which is the build result of this repository "[ÖbEngine patched editor](https://github.com/Sygmei/ObEnginePatchedEditor)".
+
+This repository basically contains the code from the latest v0.2.0 commit of ÖbEngine with some changes to make it v0.3.0 compatible.
+This means that you can use the ÖbEngine patched editor to edit Scenes (mostly to edit Sprites and Colliders), export the Scene and use it in the v0.3.0 ÖbEnginePlayer.
+
+One of the other biggest changes is that ÖbEngine now uses [sol3](https://github.com/ThePhD/sol3) instead of [kaguya](https://github.com/satoren/kaguya) for binding Lua.
+Kaguya was pretty awesome but unfortunately isn't updated anymore by his author, ÖbEngine will be updated to use Lua 5.4 as soon as it is available and I wanted a binding library able to use the new features. Also sol3 should bring some performance improvements.
+With this library change comes another huge change : All bindings are now automatically generated.
+Writing Lua bindings is a long, boring and tedious task, you have to handle all corner-cases.
+I decided to extend the possibilities of my existing ongoing project [Obidog](https://github.com/Sygmei/Obidog) to not only generate Lua documentation (coming soon !) but also to generate all the Lua bindings and that only from the XML output of Doxygen.
+
+Vili is now deprecated and its Lua bindings are not part of ÖbEngine anymore, this means, don't use Vili for serializing your data, prefer using Lua as v0.4.0 will entierely remove Vili to replace it with Lua. SFML bindings also disappeared and were replaced by similar ÖbEngine classes.
+
+The v0.3.0 version also brings more freedom when it comes to folder architecture of your project. Scenes aren't expected to be in   `Data/Maps` anymore and Sprites aren't expected to be located in `Sprites/Levelsprites`. GameObjects will probably receive the same treatment for a future update.
+
+This update brings many more changes, please read the Major / Minor changes section to learn more about it !
+
+### Major changes
+- Renamed / moved some important components of the engine
+	- `LevelSprite` is now called `Sprite`
+	- Event table is now named `Event` instead of `Global` (`Event.Cursor.Move` for example)
+	- All `Registrable` classes (`Window`, `Cursor`, `Script`, `ResourceManager`, `InputManager`, `TriggerManager`) are now part of the central `Engine` class and must be used as `Engine.Component` in Lua
+- [kaguya](https://github.com/satoren/kaguya) (Lua binding library) has been replaced by [sol3](https://github.com/ThePhD/sol3)
+- ObEngineDev has been removed (see notes)
+- ObEngine now includes a CLI [debugger](https://github.com/slembcke/debugger.lua)
+- Vili and SFML do not have Lua bindings anymore
+- New Color class with more functionalities (Hex, HSV, color names support)
+- More freedom for project folder architecture, Scenes / Sprites can be placed anywhere in the project folder
+- Added a CallbackScheduler inside TriggerManager (allow things like JS `setTimeout` and `setInterval`)
+
+### Minor changes
+- `Canvas.Text` can't have multiple colors anymore (this feature will be back with a better API)
+- `AudioManager` now accepts a LoadPolicy argument to choose whether you want to Load, Cache or Stream your audio
+- Removed all display methods from `PolygonalCollider`
+- Removed all child / parent methods from `PolygonalCollider` (superseded by SceneNodes)
+- Merged `TimeCheck` and `Chronometer` into a single Chronometer class
+- `InputButtonMonitor` instances are now handled by InputManager
+- Most [PenLight](https://github.com/Tieske/Penlight) libs are no longer included by default
+- [TGUI](https://github.com/texus/TGUI) is no longer a dependency
+- No more missing attributes / methods lua bindings
+- Most [SFML](https://github.com/SFML/SFML) classes have been replaced by ÖbEngine classes internally
+- Huge API clean-up
+	- No more raw-pointers unless necessary
+	- Flagging [[nodiscard]] when needed
+	- Some types have been modified for better / easier usage
+	- Removed useless files / attributes / methods / functions
+	- No more global values / singletons
+	- Renamed functions / methods for simplification
+	- Lua binding lib types replaced with STL types (LuaFunction to std::function for example) to allow C++ usage
+	- Updated documentation where needed
+	- Fixed typos in names / documentation
+- Added string litterals for easy filesystem usage
+- Added time units (milliseconds, secondes, hours etc..)
+
+### Bugfixes
+- No more crashes when quitting the engine, the memory is correctly deallocated
+- Non-fullscreen apps are now correctly scaled
+
+
 ## 0.2.0
 
 ### Notes
