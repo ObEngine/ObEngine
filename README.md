@@ -42,7 +42,6 @@ There are other libraries but they are included in the repository (extlibs/ fold
 |[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
-|[tgui](https://github.com/texus/TGUI)|GUI library|zlib license|
 |[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
 |[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
