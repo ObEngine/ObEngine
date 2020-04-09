@@ -41,10 +41,12 @@ namespace obe::Types
     {
     private:
         using Identifiable::setId;
+
     public:
         /**
          * \nobind
          */
         using Identifiable::getId;
+        using Identifiable::Identifiable;
     };
 } // namespace obe::Types

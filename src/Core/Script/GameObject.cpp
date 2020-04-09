@@ -6,8 +6,6 @@
 #include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 
-#define GAMEOBJECTENV ScriptEngine["__ENVIRONMENTS"][m_envIndex]
-
 namespace obe::Script
 {
     sol::table GameObject::access() const
@@ -212,9 +210,9 @@ namespace obe::Script
                     for (unsigned int i = 0; i < scriptListSize; i++)
                     {
                         loadSource(obj.at("Script")
-                                    .getArrayNode("sources")
-                                    .get(i)
-                                    .get<std::string>());
+                                       .getArrayNode("sources")
+                                       .get(i)
+                                       .get<std::string>());
                     }
                 }
                 else
@@ -435,7 +433,7 @@ namespace obe::Script
         }
         for (const auto& trigger : t_local->getTriggers())
         {
-            m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()] = sol::nil;
+            m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()] = sol::lua_nil;
         }
     }
 
