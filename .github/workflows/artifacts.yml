@@ -30,7 +30,7 @@ jobs:
       run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
     - name: Compile and install SFML
       run: cd SFML; cmake .; make -j8; sudo make install
-    - name: Compile ObENgine
+    - name: Compile ObEngine
       run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
     - name: Run tests
       run: ./build/tests/ObEngineTests
