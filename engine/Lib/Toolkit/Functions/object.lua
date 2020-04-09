@@ -8,7 +8,7 @@ function Functions.create(objectName, components)
     components = components:upper();
     local currentWs = obe.Path.Paths()[1].basePath;
     local haveAnimator = false;
-    local haveLevelSprite = false;
+    local haveSprite = false;
     local haveCollider = false;
     local haveScript = false;
     Color.print({
@@ -52,18 +52,18 @@ function Functions.create(objectName, components)
             }, 2);
         end
         if (string.find(components, "L") ~= nil) then
-            haveLevelSprite = true;
+            haveSprite = true;
             os.execute(("mkdir " .. currentWs .. "/Sprites/GameObjects/" .. objectName):gsub("/", obe.Filesystem.separator()));
             Color.print({
                 { text = "+ Using component ", color = Style.Success},
                 { text = "(L)evelSprite", color = Style.Object}
             }, 2);
-            objSaveFile:root():at(objectName):createComplexNode("LevelSprite");
-            local objLevelSprite = objSaveFile:root():at(objectName .. "/" .. "LevelSprite");
-            objLevelSprite:createDataNode("xTransform", "Camera");
-            objLevelSprite:createDataNode("yTransform", "Camera");
-            objLevelSprite:createDataNode("layer", 1);
-            objLevelSprite:createDataNode("z-depth", 0);
+            objSaveFile:root():at(objectName):createComplexNode("Sprite");
+            local objSprite = objSaveFile:root():at(objectName .. "/" .. "Sprite");
+            objSprite:createDataNode("xTransform", "Camera");
+            objSprite:createDataNode("yTransform", "Camera");
+            objSprite:createDataNode("layer", 1);
+            objSprite:createDataNode("z-depth", 0);
         end
         if (string.find(components, "S") ~= nil) then
             haveScript = true;

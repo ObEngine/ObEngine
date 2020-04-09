@@ -5,14 +5,14 @@
 
 namespace obe::Transform
 {
-    PolygonPoint::PolygonPoint(Polygon* parent, unsigned index)
+    PolygonPoint::PolygonPoint(Polygon& parent, unsigned index)
         : m_parent(parent)
         , rw_index(index)
     {
     }
 
     PolygonPoint::PolygonPoint(
-        Polygon* parent, unsigned index, const Transform::UnitVector& position)
+        Polygon& parent, unsigned index, const Transform::UnitVector& position)
         : PolygonPoint(parent, index)
     {
         this->x = position.x;
@@ -22,14 +22,14 @@ namespace obe::Transform
     void PolygonPoint::remove() const
     {
         std::unique_ptr<PolygonPoint> tmpContainer;
-        for (auto& point : m_parent->m_points)
+        for (auto& point : m_parent.m_points)
         {
             if (point.get() == this)
                 point.swap(tmpContainer);
         }
-        m_parent->m_points.erase(m_parent->m_points.begin() + index);
-        for (point_index_t i = index; i < m_parent->m_points.size(); i++)
-            m_parent->m_points[i]->rw_index = i;
+        m_parent.m_points.erase(m_parent.m_points.begin() + index);
+        for (point_index_t i = index; i < m_parent.m_points.size(); i++)
+            m_parent.m_points[i]->rw_index = i;
     }
 
     double PolygonPoint::distance(const Transform::UnitVector& position) const
@@ -41,19 +41,19 @@ namespace obe::Transform
     UnitVector PolygonPoint::getRelativePosition(RelativePositionFrom from) const
     {
         if (from == RelativePositionFrom::Point0)
-            return (*this - m_parent->get(0));
+            return (*this - m_parent.get(0));
         else
-            return (*this - m_parent->getCentroid());
+            return (*this - m_parent.getCentroid());
     }
 
     void PolygonPoint::setRelativePosition(
         RelativePositionFrom from, const Transform::UnitVector& position)
     {
         if (from == RelativePositionFrom::Point0)
-            this->set(position.to<Transform::Units::SceneUnits>() + m_parent->get(0));
+            this->set(position.to<Transform::Units::SceneUnits>() + m_parent.get(0));
         else if (from == RelativePositionFrom::Centroid)
         {
-            const Transform::UnitVector centroid = m_parent->getCentroid();
+            const Transform::UnitVector centroid = m_parent.getCentroid();
             this->set(position.to<Transform::Units::SceneUnits>() + centroid);
         }
     }
@@ -94,22 +94,24 @@ namespace obe::Transform
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
         if (pointIndex == -1 || pointIndex == m_points.size())
-            m_points.push_back(std::make_unique<PolygonPoint>(this, m_points.size(), pVec));
+            m_points.push_back(
+                std::make_unique<PolygonPoint>(*this, m_points.size(), pVec));
         else if (pointIndex >= 0 && pointIndex < m_points.size())
         {
             m_points.insert(m_points.begin() + pointIndex,
-                std::make_unique<PolygonPoint>(this, pointIndex, pVec));
+                std::make_unique<PolygonPoint>(*this, pointIndex, pVec));
             for (point_index_t i = pointIndex; i < m_points.size(); i++)
                 m_points[i]->rw_index = i;
         }
     }
 
-    PolygonPoint& Polygon::findClosestPoint(const Transform::UnitVector& position, bool neighbor,
-        const std::vector<point_index_t>& excludedPoints)
+    PolygonPoint& Polygon::findClosestPoint(const Transform::UnitVector& position,
+        bool neighbor, const std::vector<point_index_t>& excludedPoints)
     {
         if (!m_points.empty())
         {
-            const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
+            const Transform::UnitVector pVec
+                = position.to<Transform::Units::SceneUnits>();
             int closestPoint = 0;
             double tiniestDist = -1;
             for (unsigned int i = 0; i < m_points.size(); i++)
@@ -141,51 +143,56 @@ namespace obe::Transform
             }
             return *m_points[closestPoint];
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Collision.PolygonalCollider.NotEnoughPoints",
-            { { "points", std::to_string(m_points.size()) }, { "function", "findClosestPoint" } });
+        throw aube::ErrorHandler::Raise(
+            "ObEngine.Collision.PolygonalCollider.NotEnoughPoints",
+            { { "points", std::to_string(m_points.size()) },
+                { "function", "findClosestPoint" } });
     }
 
     PolygonSegment Polygon::findClosestSegment(const Transform::UnitVector& position)
     {
         const Transform::UnitVector p3 = position.to<Transform::Units::SceneUnits>();
-        const auto distanceLineFromPoint
-            = [](const Transform::UnitVector& point, const Transform::UnitVector& lineP1,
-                  const Transform::UnitVector& lineP2) {
-                  Transform::UnitVector lineDiff = lineP2 - lineP1;
-                  if (lineDiff.x == 0 && lineDiff.y == 0)
-                  {
-                      lineDiff = point - lineP1;
-                      return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
-                  }
+        const auto distanceLineFromPoint = [](const Transform::UnitVector& point,
+                                               const Transform::UnitVector& lineP1,
+                                               const Transform::UnitVector& lineP2) {
+            Transform::UnitVector lineDiff = lineP2 - lineP1;
+            if (lineDiff.x == 0 && lineDiff.y == 0)
+            {
+                lineDiff = point - lineP1;
+                return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+            }
 
-                  double t = ((point.x - lineP1.x) * lineDiff.x + (point.y - lineP1.y) * lineDiff.y)
-                      / (lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+            const double t
+                = ((point.x - lineP1.x) * lineDiff.x + (point.y - lineP1.y) * lineDiff.y)
+                / (lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
 
-                  if (t < 0)
-                  {
-                      // point is nearest to the first point i.e x1 and y1
-                      lineDiff = point - lineP1;
-                  }
-                  else if (t > 1)
-                  {
-                      // point is nearest to the end point i.e x2 and y2
-                      lineDiff = point - lineP2;
-                  }
-                  else
-                  {
-                      // if perpendicular line intersect the line segment.
-                      lineDiff.x = point.x - (lineP1.x + t * lineDiff.x);
-                      lineDiff.y = point.y - (lineP1.y + t * lineDiff.y);
-                  }
+            if (t < 0)
+            {
+                // point is nearest to the first point i.e x1 and y1
+                lineDiff = point - lineP1;
+            }
+            else if (t > 1)
+            {
+                // point is nearest to the end point i.e x2 and y2
+                lineDiff = point - lineP2;
+            }
+            else
+            {
+                // if perpendicular line intersect the line segment.
+                lineDiff.x = point.x - (lineP1.x + t * lineDiff.x);
+                lineDiff.y = point.y - (lineP1.y + t * lineDiff.y);
+            }
 
-                  // returning shortest distance
-                  return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
-              };
+            // returning shortest distance
+            return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
+        };
         double shortestDistance = -1;
         unsigned int shortestIndex = 0;
-        for (unsigned int i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size(); j = i++)
+        for (unsigned int i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size();
+             j = i++)
         {
-            const double currentDistance = distanceLineFromPoint(p3, this->get(i), this->get(j));
+            const double currentDistance
+                = distanceLineFromPoint(p3, this->get(i), this->get(j));
             if (shortestDistance == -1 || currentDistance < shortestDistance)
             {
                 shortestDistance = currentDistance;
@@ -216,13 +223,13 @@ namespace obe::Transform
         return m_points;
     }
 
-    Transform::UnitVector Polygon::getCentroid() const
+    UnitVector Polygon::getCentroid() const
     {
         Transform::UnitVector centroid = { 0, 0 };
         double signedArea = 0.0;
         double x0, y0, x1, y1, a;
 
-        int i;
+        unsigned int i;
         for (i = 0; i < m_points.size() - 1; ++i)
         {
             x0 = m_points[i]->x;
@@ -255,7 +262,8 @@ namespace obe::Transform
         const Transform::UnitVector& position, const Transform::UnitVector& tolerance)
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
-        const Transform::UnitVector pTolerance = tolerance.to<Transform::Units::SceneUnits>();
+        const Transform::UnitVector pTolerance
+            = tolerance.to<Transform::Units::SceneUnits>();
         point_index_t i = 0;
         for (auto& m_point : m_points)
         {
@@ -271,13 +279,15 @@ namespace obe::Transform
         return std::nullopt;
     }
 
-    bool Polygon::isCentroidAroundPosition(
-        const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const
+    bool Polygon::isCentroidAroundPosition(const Transform::UnitVector& position,
+        const Transform::UnitVector& tolerance) const
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
-        const Transform::UnitVector pTolerance = tolerance.to<Transform::Units::SceneUnits>();
+        const Transform::UnitVector pTolerance
+            = tolerance.to<Transform::Units::SceneUnits>();
         const Transform::UnitVector centroid = this->getCentroid();
-        if (Utils::Math::isBetween(pVec.x, centroid.x - pTolerance.x, centroid.x + pTolerance.x))
+        if (Utils::Math::isBetween(
+                pVec.x, centroid.x - pTolerance.x, centroid.x + pTolerance.x))
         {
             if (Utils::Math::isBetween(
                     pVec.y, centroid.y - pTolerance.x, centroid.y + pTolerance.y))
@@ -288,7 +298,7 @@ namespace obe::Transform
 
     PolygonSegment Polygon::getSegment(const point_index_t segment)
     {
-        int p2 = segment + 1;
+        unsigned int p2 = segment + 1;
         if (segment == m_points.size() - 1)
             p2 = 0;
         return PolygonSegment(this->get(segment), this->get(p2));
@@ -336,13 +346,14 @@ namespace obe::Transform
     {
         if (!m_points.empty())
         {
-            const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
+            const Transform::UnitVector pVec
+                = position.to<Transform::Units::SceneUnits>();
             const Transform::UnitVector addPosition = pVec - *m_points[0];
 
             m_points[0]->set(pVec);
-            for (int i = 1; i < m_points.size(); i++)
+            for (auto& point : m_points)
             {
-                *m_points[i] += addPosition;
+                *point += addPosition;
             }
         }
     }
@@ -351,7 +362,8 @@ namespace obe::Transform
     {
         if (!m_points.empty())
         {
-            const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
+            const Transform::UnitVector pVec
+                = position.to<Transform::Units::SceneUnits>();
             const Transform::UnitVector centroid = this->getCentroid();
             const Transform::UnitVector addPosition = pVec - centroid;
 

@@ -4,7 +4,6 @@
 
 /**
  * \brief Various functions to manipulate Packages
- * @Bind
  */
 namespace obe::System::Package
 {
@@ -23,8 +22,9 @@ namespace obe::System::Package
     /**
      * \brief Installs a Package
      * \param packageName Is the name of the .opaque file located in Package/
-     * folder (without the .opaque extension) \return true if the Package has
-     * been successfully installed, false otherwise
+     *        folder (without the .opaque extension)
+     * \return true if the Package has
+     *         been successfully installed, false otherwise
      */
     bool Install(const std::string& packageName);
     /**
@@ -32,7 +32,7 @@ namespace obe::System::Package
      * \param packageName Name of the Package to load.
      * \param priority Priority of the path that will be mounted.
      * \return true if the Package has been successfully loaded, false
-     * otherwise.
+     *         otherwise.
      */
     bool Load(const std::string& packageName, unsigned int priority = 1);
 } // namespace obe::System::Package

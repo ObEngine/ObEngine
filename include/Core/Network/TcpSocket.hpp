@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Network/TcpSocket.hpp>
+#include <string>
 
 namespace obe::Network
 {

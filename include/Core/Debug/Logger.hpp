@@ -5,10 +5,11 @@
 
 namespace obe::Debug
 {
-    namespace spd = spdlog;
-    extern std::shared_ptr<spd::logger> Log;
+    extern std::shared_ptr<spdlog::logger> Log;
 
+    // TODO: Create a Logger class wrapper instead of separate function with a global
+    /**
+     * \brief Initialize the Logger
+     */
     void InitLogger();
-    void InitLoggerLevel();
-    void SetLoggerLevel(const spdlog::level::level_enum);
 } // namespace obe::Debug

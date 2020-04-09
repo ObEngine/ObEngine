@@ -9,7 +9,7 @@ namespace obe::Graphics
 {
     /**
      * \brief Shader class to use GLSL
-     * @Bind
+     * \bind{Shader}
      */
     class Shader : public sf::Shader, public Types::Serializable
     {

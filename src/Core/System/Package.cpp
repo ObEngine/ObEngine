@@ -16,7 +16,7 @@ namespace obe::System::Package
                         ->at<vili::DataNode>(packageName, "path")
                         .get<std::string>());
         }
-        throw aube::ErrorHandler::Raise("ObEngine.System.Package.InexistantPackage",
+        throw aube::ErrorHandler::Raise("ObEngine.System.Package.UnknownPackage",
             { { "function", "GetPackageLocation" }, { "package", packageName } });
     }
 
@@ -29,26 +29,29 @@ namespace obe::System::Package
     bool Install(const std::string& packageName)
     {
         Debug::Log->info("<Package> Installing Package '{0}'", packageName);
-        if (!Utils::Vector::contains(packageName + ".opaque", Utils::File::getFileList("Package")))
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Package.CantFindPackage", { { "package", packageName } });
+        if (!Utils::Vector::contains(
+                packageName + ".opaque", Utils::File::getFileList("Package")))
+            throw aube::ErrorHandler::Raise("ObEngine.System.Package.CantFindPackage",
+                { { "package", packageName } });
         if (!PackageExists(packageName))
         {
-            elz::extractFile(
-                "Package/" + packageName + ".opaque", "Opaque.vili", "Package/Opaque.vili");
+            elz::extractFile("Package/" + packageName + ".opaque", "Opaque.vili",
+                "Package/Opaque.vili");
             vili::ViliParser cPackage("Package/Opaque.vili");
             const std::string realPackageName
                 = cPackage.at<vili::DataNode>("Meta", "name").get<std::string>();
             const std::string packageVersion
                 = cPackage.at<vili::DataNode>("Meta", "version").get<std::string>();
-            elz::extractZip("Package/" + packageName + ".opaque", "Package/" + realPackageName);
+            elz::extractZip(
+                "Package/" + packageName + ".opaque", "Package/" + realPackageName);
             Debug::Log->info(
                 "<Package> Package '{0}' has been successfully installed", packageName);
 
             vili::ViliParser packages("Package/Packages.vili");
             packages->createComplexNode(realPackageName);
             packages.at(realPackageName).createDataNode("version", packageVersion);
-            packages.at(realPackageName).createDataNode("path", "Package/" + realPackageName);
+            packages.at(realPackageName)
+                .createDataNode("path", "Package/" + realPackageName);
             packages.writeFile("Package/Packages.vili");
             return true;
         }
@@ -58,14 +61,15 @@ namespace obe::System::Package
 
     bool Load(const std::string& packageName, const unsigned int priority)
     {
-        Debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
+        Debug::Log->info(
+            "<Package> Loading Package '{0}' with priority", packageName, priority);
         if (PackageExists(packageName))
         {
             Path::Mount(MountablePath(
                 MountablePathType::Package, GetPackageLocation(packageName), priority));
             return true;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.System.Package.InexistantPackage",
+        throw aube::ErrorHandler::Raise("ObEngine.System.Package.UnknownPackage",
             { { "function", "Load" }, { "package", packageName } });
     }
 } // namespace obe::System::Package

@@ -4,7 +4,6 @@ namespace obe::Types
 {
     /**
      * \brief A Base Class that you can select or unselect
-     * @Bind
      */
     class Selectable
     {
@@ -19,13 +18,11 @@ namespace obe::Types
         explicit Selectable(bool selected = false);
         /**
          * \brief Set the state of the Selectable
-         * \param selected A boolean to set the state of the Selectable (true /
-         * false)
+         * \param selected A boolean to set the state of the Selectable (true / false)
          */
         void setSelected(bool selected);
         /**
-         * \brief Selectable unselects if it was selected and selects if it
-         * wasn't
+         * \brief Selectable becomes unselected if it was selected and selected if it was not
          */
         void toggleSelected();
         /**
@@ -40,6 +37,6 @@ namespace obe::Types
          * \brief Get if the Selectable is selected or not
          * \return true if selected, false otherwise
          */
-        bool isSelected() const;
+        [[nodiscard]] bool isSelected() const;
     };
 } // namespace obe::Types

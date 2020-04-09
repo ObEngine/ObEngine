@@ -1,9 +1,8 @@
 #pragma once
 
-#include <kaguya/kaguya.hpp>
-
 #include <Debug/Logger.hpp>
-#include <Script/GlobalState.hpp>
+#include <sol/sol.hpp>
+#include <utility>
 
 namespace obe::Triggers
 {
@@ -12,36 +11,36 @@ namespace obe::Triggers
     class TriggerEnv
     {
     public:
-        unsigned int envIndex;
-        std::string callbackName;
-        bool* envActive = nullptr;
-        TriggerEnv(unsigned int envIndex, const std::string& callbackName,
-            bool* envActive)
-            : envIndex(envIndex)
-            , callbackName(callbackName)
-            , envActive(envActive)
+        sol::environment environment;
+        std::string callback;
+        bool* active = nullptr;
+        sol::protected_function call;
+        TriggerEnv(sol::environment environment, std::string callback, bool* active)
+            : environment(std::move(environment))
+            , callback(std::move(callback))
+            , active(active)
         {
         }
     };
 
     /**
      * \brief A Class that does represents a triggerable event
-     * @Bind
      */
     class Trigger
     {
     private:
-        TriggerGroup* m_parent;
+        TriggerGroup& m_parent;
         std::string m_name;
         std::string m_fullName;
         std::vector<TriggerEnv> m_registeredEnvs;
-        std::vector<unsigned int> m_envsToRemove;
+        std::vector<sol::environment> m_envsToRemove;
         bool m_currentlyTriggered = false;
         bool m_enabled = false;
         std::function<void(const TriggerEnv&)> m_onRegisterCallback;
         std::function<void(const TriggerEnv&)> m_onUnregisterCallback;
+        sol::state_view m_lua;
         friend class TriggerGroup;
-        friend class TriggerDatabase;
+        friend class TriggerManager;
 
     protected:
         /**
@@ -50,20 +49,19 @@ namespace obe::Triggers
          * \param name Name of the Parameter
          * \param parameter Value of the Parameter
          */
-        template <typename P>
-        void pushParameter(const std::string& name, P parameter);
+        template <typename P> void pushParameter(const std::string& name, P parameter);
         /**
          * \brief Pushes a parameter on the Trigger from a Lua VM
          * \param name Name of the Parameter to push
          * \param parameter Value of the parameter (LuaRef can be anything)
          */
-        void pushParameterFromLua(
-            const std::string& name, const kaguya::LuaRef& parameter) const;
+        void pushParameterFromLua(const std::string& name, sol::object parameter);
         /**
-         * \brief Gets the Lua Table path used to store Trigger Parameters
-         * \return The path to the Lua Table used to store Trigger Parameters
+         * \brief Triggers callbacks
          */
-        std::string getTriggerLuaTableName() const;
+        void execute();
+        void onRegister(std::function<void(const TriggerEnv&)> callback);
+        void onUnregister(std::function<void(const TriggerEnv&)> callback);
 
     public:
         /**
@@ -71,10 +69,10 @@ namespace obe::Triggers
          * \param parent Pointer to the parent TriggerGroup
          * \param name Name of the Trigger
          * \param startState State of the Trigger when created (enabled /
-         * disabled)
+         *        disabled)
          */
-        explicit Trigger(TriggerGroup* parent, const std::string& name,
-            bool startState = false);
+        explicit Trigger(
+            TriggerGroup& parent, const std::string& name, bool startState = false);
         /**
          * \brief Get the State of the Trigger (enabled / disabled)
          * \return true if the Trigger is enabled, false otherwise
@@ -85,38 +83,37 @@ namespace obe::Triggers
          * Trigger \return A std::string containing the name of the TriggerGroup
          * which is the parent of the Trigger
          */
-        std::string getGroup() const;
+        [[nodiscard]] std::string getGroup() const;
         /**
          * \brief Get the name of the Trigger
          * \return A std::string containing the name of the Trigger
          */
-        std::string getName() const;
+        [[nodiscard]] std::string getName() const;
         /**
          * \brief Get the name of the namespace of the parent (TriggerGroup) of
          * the Trigger \return A std::string containing the name of the
          * namespace of the parent (TriggerGroup) of the Trigger
          */
-        std::string getNamespace() const;
+        [[nodiscard]] std::string getNamespace() const;
         /**
          * \brief Registers a Lua State that will be triggered
-         * \param envIndex Index of the Lua Env to register
-         * \param callbackName Name of the callback to register
-         * \param envActive Pointer to the boolean that indicate if an
-         * environment is active or not
+         * \param environment Lua Environment to register
+         * \param callback Name of the callback to register
+         * \param active Pointer to the boolean that indicate if an
+         *        environment is active or not
          */
-        void registerEnvironment(unsigned int envIndex,
-            const std::string& callbackName, bool* envActive);
+        void registerEnvironment(
+            sol::environment environment, const std::string& callback, bool* active);
         /**
          * \brief Removes an environment from Trigger Execution
-         * \param envIndex Index of the Lua environment
+         * \param environment Lua Environment to unregister
          */
-        void unregisterEnvironment(unsigned int envIndex);
+        void unregisterEnvironment(sol::environment environment);
         /**
-         * \brief Triggers callbacks
+         * \brief Gets the Lua Table path used to store Trigger Parameters
+         * \return The path to the Lua Table used to store Trigger Parameters
          */
-        void execute();
-        void onRegister(std::function<void(const TriggerEnv&)> callback);
-        void onUnregister(std::function<void(const TriggerEnv&)> callback);
+        [[nodiscard]] std::string getTriggerLuaTableName() const;
     };
 
     template <typename P>
@@ -124,8 +121,9 @@ namespace obe::Triggers
     {
         Debug::Log->trace(
             "<Trigger> Pushing parameter {0} to Trigger {1}", name, m_fullName);
-        Script::ScriptEngine["LuaCore"]["TriggerArgTable"]
-                            [this->getTriggerLuaTableName()][name]
-            = parameter;
+        m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"][name] = parameter;
+        /*Script::ScriptEngine["LuaCore"]["TriggerArgTable"][this->getTriggerLuaTableName()]
+                            [name]
+            = parameter;*/
     }
 } // namespace obe::Triggers

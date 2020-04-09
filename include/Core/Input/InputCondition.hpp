@@ -15,8 +15,7 @@ namespace obe::Input
 
     /**
      * \brief A class represented the required conditions to trigger an
-     * InputAction
-     * @Bind
+     *        InputAction
      */
     class InputCondition
     {
@@ -24,39 +23,35 @@ namespace obe::Input
         bool m_enabled = false;
         InputCombination m_triggerConditions;
 
-        bool isKeyAlreadyInCombination(InputButton* button);
-
     public:
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
          * \param combinationElement The InputCombinationElement to add to the
-         * InputCondition
+         *        InputCondition
          */
         void addCombinationElement(InputCombinationElement combinationElement);
         /**
          * \brief Checks if the condition is fulfilled
          * \return true if the InputCondition is fulfilled, false otherwise
          */
-        bool check() const;
+        [[nodiscard]] bool check() const;
         /**
          * \brief Clears the InputCondition
          */
         void clear();
         /**
+         * \nobind
          * \brief Gets the InputCombination used by the InputCondition
          * \return The InputCombination used by the InputCondition
          */
-        InputCombination getCombination() const;
+        [[nodiscard]] InputCombination getCombination() const;
         /**
+         * TODO: Fix this nobind
+         * \nobind
          * \brief Sets the new required InputCombination to trigger the
-         * InputCondition \param combination The new InputCombination
+         *        InputCondition
+         * \param combination The new InputCombination
          */
         void setCombination(const InputCombination& combination);
-        /**
-         * \brief Uses a parsable string to define the InputCombination
-         * <DOCUMENT> \param code The string that contains the new
-         * InputCombination
-         */
-        void setCombinationCode(const std::string& code);
     };
 } // namespace obe::Input

@@ -3,14 +3,13 @@
 #include <functional>
 #include <vector>
 
-#include <kaguya/kaguya.hpp>
-
 #include <Types/Identifiable.hpp>
+
+#include <sol/sol.hpp>
 
 namespace obe::Bindings
 {
-    std::function<void(kaguya::State*)> InitTreeNodeAsTable(
-        const std::string& nodeName);
+    std::function<void(sol::state_view)> InitTreeNodeAsTable(const std::string& nodeName);
 
     /**
      * \brief Holds and indexes all the CXX Bindings for Lua
@@ -20,10 +19,10 @@ namespace obe::Bindings
     private:
         std::vector<std::unique_ptr<BindingTree>> m_children {};
         bool m_hasLib = false;
-        std::function<void(kaguya::State*)> m_lib;
+        std::function<void(sol::state_view)> m_lib;
         BindingTree* m_parent;
 
-        std::string getNodePath() const;
+        [[nodiscard]] std::string getNodePath() const;
 
     public:
         /**
@@ -33,7 +32,7 @@ namespace obe::Bindings
          * \param lib Lib of the BindingTree Node
          */
         BindingTree(BindingTree* parent, const std::string& id,
-            std::function<void(kaguya::State*)> lib);
+            std::function<void(sol::state_view)> lib);
         /**
          * \brief Builds a BindingTree Node
          * \param parent Parent of the BindingTree Node
@@ -51,8 +50,7 @@ namespace obe::Bindings
          * \param lib Library of the new Node
          * \return A reference to the original BindingTree node (to chain calls)
          */
-        BindingTree& add(
-            const std::string& id, std::function<void(kaguya::State*)> lib);
+        BindingTree& add(const std::string& id, std::function<void(sol::state_view)> lib);
         /**
          * \brief Adds a child to the BindingTree node
          * \param id Id of the BindingTree Node to add
@@ -71,7 +69,7 @@ namespace obe::Bindings
          * \param spreads Should be equal to true if the Node will call
          * operator() on all its children, false otherwise
          */
-        void operator()(kaguya::State* lua, bool spreads = true);
+        void operator()(sol::state_view lua, bool spreads = true);
         /**
          * \brief Accesses a direct child of the BindingTree Node
          * \param id Id of the child to access

@@ -6,7 +6,7 @@
 namespace obe::Utils::Math
 {
     std::random_device rd;
-    std::mt19937 rng{ rd() };
+    std::mt19937 rng { rd() };
 
     int randint(const int& min, const int& max)
     {
@@ -35,7 +35,7 @@ namespace obe::Utils::Math
         return (180.0 / Utils::Math::pi) * value;
     }
 
-    double normalise(const double value, const double start, const double end)
+    double normalize(const double value, const double start, const double end)
     {
         const double width = end - start;
         const double offsetValue = value - start;

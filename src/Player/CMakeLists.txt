@@ -30,6 +30,12 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
 
+if (MSVC)
+    if (NOT (MSVC_VERSION LESS 1910))
+        target_compile_options(ObEnginePlayer PRIVATE /permissive-)
+    endif()
+endif()
+
 set_property(TARGET ObEnginePlayer PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/engine")
 
 copy_required_dlls(ObEnginePlayer)

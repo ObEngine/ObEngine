@@ -1,10 +1,10 @@
 #include "vili/ErrorHandler.hpp"
 #include <Input/InputButtonState.hpp>
 
-#define OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(TYPE)                                           \
-    if (state == InputButtonState::TYPE)                                                           \
-    {                                                                                              \
-        return #TYPE;                                                                              \
+#define OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(TYPE)                               \
+    if (state == InputButtonState::TYPE)                                                 \
+    {                                                                                    \
+        return #TYPE;                                                                    \
     }
 
 namespace obe::Input
@@ -31,10 +31,10 @@ namespace obe::Input
 
     std::string inputButtonStateToString(InputButtonState state)
     {
-        OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(Idle)
-        OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(Hold)
-        OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(Pressed)
-        OBE_INPUT_WRITE_INPUTBUTTONSTATE_TO_STRING(Released)
+        OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(Idle)
+        OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(Hold)
+        OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(Pressed)
+        OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(Released)
         throw aube::ErrorHandler::Raise("ObEngine.Input.InputButtonState.WrongEnumState");
     }
 } // namespace obe::Input

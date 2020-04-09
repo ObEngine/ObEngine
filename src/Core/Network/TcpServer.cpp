@@ -1,23 +1,17 @@
 #include <Debug/Logger.hpp>
 #include <Network/TcpServer.hpp>
-#include <Triggers/TriggerDatabase.hpp>
-
-#include <iostream>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Network
 {
-    TcpServer::TcpServer(
-        unsigned short port, std::string triggerNamespace, std::string triggerGroup)
+    TcpServer::TcpServer(Triggers::TriggerManager& triggers, unsigned short port,
+        std::string triggerNamespace, std::string triggerGroup)
     {
         if (!triggerNamespace.empty())
         {
-            m_socketTriggers = std::shared_ptr<Triggers::TriggerGroup>(
-                Triggers::TriggerDatabase::GetInstance().createTriggerGroup(
-                    triggerNamespace, triggerGroup),
-                Triggers::TriggerGroupPtrRemover);
-            m_socketTriggers->addTrigger("DataReceived")
-                ->addTrigger("Connected")
-                ->addTrigger("Disconnected");
+            m_socketTriggers
+                = triggers.createTriggerGroup(triggerNamespace, triggerGroup);
+            m_socketTriggers->add("DataReceived").add("Connected").add("Disconnected");
         }
         m_listener.setBlocking(false);
         m_listener.listen(port);
@@ -32,7 +26,8 @@ namespace obe::Network
         {
             if (m_socketTriggers)
             {
-                m_socketTriggers->pushParameter("Connected", "client", m_clients.back().get());
+                m_socketTriggers->pushParameter(
+                    "Connected", "client", m_clients.back().get());
                 m_socketTriggers->pushParameter(
                     "Connected", "ip", m_clients.back()->getRemoteAddress().toString());
                 m_socketTriggers->trigger("Connected");
@@ -51,8 +46,10 @@ namespace obe::Network
                 if (m_socketTriggers)
                 {
                     m_socketTriggers->pushParameter("DataReceived", "content",
-                        std::string(m_data.begin(), m_data.end()).substr(0, receivedDataSize));
-                    m_socketTriggers->pushParameter("DataReceived", "client", client.get());
+                        std::string(m_data.begin(), m_data.end())
+                            .substr(0, receivedDataSize));
+                    m_socketTriggers->pushParameter(
+                        "DataReceived", "client", client.get());
                     m_socketTriggers->trigger("DataReceived");
                 }
             }

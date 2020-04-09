@@ -10,7 +10,6 @@ namespace aube
 {
     /**
      * \brief An ErrorMessage Class
-     * @Bind
      */
     class ErrorMessage
     {
@@ -45,7 +44,6 @@ namespace aube
 
     /**
      * \brief Handles Errors in Vili
-     * @Bind
      */
     class ErrorHandler
     {

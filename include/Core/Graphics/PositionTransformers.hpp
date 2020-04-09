@@ -7,19 +7,36 @@
 
 namespace obe::Graphics
 {
+    // TODO: Make position transformer overload that take only a Sprite as argument (more
+    // flexible)
+
     using CoordinateTransformer
         = std::function<double(double position, double camera, int layer)>;
 
     void InitPositionTransformer();
 
     extern std::map<std::string, CoordinateTransformer> Transformers;
+    /**
+     * \brief CoordinateTransformer which uses the layer and camera position to give a
+     * parallax effect
+     * \bind{PositionTransformer.Parallax}
+     */
     extern CoordinateTransformer Parallax;
+    /**
+     * \brief CoordinateTransformer which uses the camera position
+     * \bind{PositionTransformer.Camera}
+     */
     extern CoordinateTransformer Camera;
+    /**
+     * \brief CoordinateTransformer which only uses the base position (no transformation)
+     * \bind{PositionTransformer.Position}
+     */
     extern CoordinateTransformer Position;
 
     /**
      * \brief A PositionTransformer tells how a Coordinate should be transformed
      * depending of multiple parameters
+     * \bind{PositionTransformer}
      */
     class PositionTransformer
     {
@@ -37,8 +54,9 @@ namespace obe::Graphics
         /**
          * \brief Non-Default PositionTransformer constructor
          * \param xTransformer Name of the Transformer the x Coordinate should
-         * use \param yTransformer Name of the Transformer the y Coordinate
-         * should use
+         *        use
+         * \param yTransformer Name of the Transformer the y Coordinate
+         *        should use
          */
         PositionTransformer(
             const std::string& xTransformer, const std::string& yTransformer);
@@ -52,7 +70,7 @@ namespace obe::Graphics
          * \return The name of the CoordinateTransformer of x Coordinate in a
          * std::string
          */
-        std::string getXTransformerName() const;
+        [[nodiscard]] std::string getXTransformerName() const;
         /**
          * \brief Gets the CoordinateTransformer of y Coordinate
          * \return The CoordinateTransformer of y Coordinate
@@ -60,14 +78,15 @@ namespace obe::Graphics
         CoordinateTransformer& getYTransformer();
         /**
          * \brief Gets the name of the CoordinateTransformer of y Coordinate
-         * \return The name of the CoordinateTransformer of y Coordinate in a
-         * std::string
+         * \return The name of the CoordinateTransformer of y Coordinate
          */
-        std::string getYTransformerName() const;
+        [[nodiscard]] std::string getYTransformerName() const;
         /**
-         * \brief Method used by the LevelSprite to get the Position once
-         * transformed \param position Base Position of the element \param
-         * camera Position of the Camera \param layer Layer of the element
+         * \brief Method used by the Sprite to get the Position once
+         *        transformed
+         * \param position Base Position of the element
+         * \param camera Position of the Camera
+         * \param layer Layer of the element
          * \return The new transformer position
          */
         Transform::UnitVector operator()(const Transform::UnitVector& position,

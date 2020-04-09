@@ -292,12 +292,13 @@ namespace obe::Types
         std::is_enum<E>::value && !std::is_convertible<E, int>::value>;
 
     /**
+     * \nobind
      * Provide a free operator allowing to combine two enumeration
      * member into a FlagSet.
      */
     template <typename T>
-    typename std::enable_if<is_scoped_enum<T>::value, FlagSet<T>>::type
-    operator|(const T& lhs, const T& rhs)
+    typename std::enable_if<is_scoped_enum<T>::value, FlagSet<T>>::type operator|(
+        const T& lhs, const T& rhs)
     {
         FlagSet<T> bs;
         bs |= lhs;

@@ -17,17 +17,17 @@ namespace obe::Audio
     {
         m_source = std::move(source);
         m_baseSamplerate = m_source->mBaseSamplerate;
-        m_handle = m_manager.play(*m_source.get(), m_source->mVolume, 0, true);
+        m_handle = m_manager.play(*m_source, m_source->mVolume, 0, true);
     }
     double Sound::getDuration() const
     {
         if (dynamic_cast<SoLoud::WavStream*>(m_source.get()))
         {
-            return static_cast<SoLoud::WavStream*>(m_source.get())->getLength();
+            return dynamic_cast<SoLoud::WavStream*>(m_source.get())->getLength();
         }
         else
         {
-            return static_cast<SoLoud::Wav*>(m_source.get())->getLength();
+            return dynamic_cast<SoLoud::Wav*>(m_source.get())->getLength();
         }
     }
     void Sound::play()
@@ -38,15 +38,15 @@ namespace obe::Audio
         }
         else
         {
-            m_handle = m_manager.play(*m_source.get(), m_source->mVolume, 0);
+            m_handle = m_manager.play(*m_source, m_source->mVolume, 0);
             this->applyChanges();
         }
     }
-    void Sound::pause()
+    void Sound::pause() const
     {
         m_manager.setPause(m_handle, true);
     }
-    void Sound::stop()
+    void Sound::stop() const
     {
         m_manager.stop(m_handle);
     }
@@ -74,7 +74,7 @@ namespace obe::Audio
             return SoundStatus::Playing;
         }
     }
-    void Sound::setOffset(double offset)
+    void Sound::setOffset(double offset) const
     {
         m_manager.seek(m_handle, offset);
     }

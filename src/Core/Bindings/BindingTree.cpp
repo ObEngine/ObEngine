@@ -1,28 +1,23 @@
-// Corresponding header
 #include <Bindings/BindingTree.hpp>
 
-// ObEngineCore headers
 #include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
 
-// extlibs headers
-#include <kaguya/state.hpp>
-
 namespace obe::Bindings
 {
-    std::function<void(kaguya::State*)> InitTreeNodeAsTable(const std::string& nodeName)
+    std::function<void(sol::state_view)> InitTreeNodeAsTable(const std::string& nodeName)
     {
-        return [nodeName](kaguya::State* lua) { (*lua)(nodeName + " = {};"); };
+        return [nodeName](sol::state_view lua) { lua.safe_script(nodeName + " = {};"); };
     }
 
-    bool checkIfLuaElementExists(kaguya::State* lua, const std::string& path)
+    bool checkIfLuaElementExists(sol::state_view lua, const std::string& path)
     {
-        const bool exists = (*lua)["LuaCore"]["IsLibLoaded"](path);
+        const bool exists = lua["LuaCore"]["IsLibLoaded"](path);
         return exists;
     }
 
-    BindingTree::BindingTree(
-        BindingTree* parent, const std::string& id, std::function<void(kaguya::State*)> lib)
+    BindingTree::BindingTree(BindingTree* parent, const std::string& id,
+        std::function<void(sol::state_view)> lib)
         : Identifiable(id)
     {
         m_parent = parent;
@@ -78,7 +73,8 @@ namespace obe::Bindings
             { { "id", getNodePath() }, { "child", id }, { "function", "operator[]" } });
     }
 
-    BindingTree& BindingTree::add(const std::string& id, std::function<void(kaguya::State*)> lib)
+    BindingTree& BindingTree::add(
+        const std::string& id, std::function<void(sol::state_view)> lib)
     {
         m_children.push_back(std::make_unique<BindingTree>(this, id, lib));
         return *this;
@@ -96,7 +92,8 @@ namespace obe::Bindings
         {
             if (path.size() > 1)
             {
-                const std::vector<std::string> subPath = Utils::Vector::getSubVector(path, 1, 0);
+
+                const std::vector<std::string> subPath(path.begin() + 1, path.end());
                 return this->operator[](path[0]).walkTo(subPath);
             }
             if (path.size() == 1)
@@ -107,7 +104,8 @@ namespace obe::Bindings
         else
         {
             throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound",
-                { { "id", this->getNodePath() }, { "child", path[0] }, { "function", "walkTo" } });
+                { { "id", this->getNodePath() }, { "child", path[0] },
+                    { "function", "walkTo" } });
         }
         return *this;
     }
@@ -122,7 +120,7 @@ namespace obe::Bindings
         return false;
     }
 
-    void BindingTree::operator()(kaguya::State* lua, bool spreads)
+    void BindingTree::operator()(sol::state_view lua, bool spreads)
     {
         std::vector<BindingTree*> createNodePath;
         BindingTree* currentParent = m_parent;
@@ -140,12 +138,15 @@ namespace obe::Bindings
                 (*parentNode)(lua, false);
             }
         }
-        const bool elementAlreadyExists = checkIfLuaElementExists(lua, this->getNodePath());
+        const bool elementAlreadyExists
+            = checkIfLuaElementExists(lua, this->getNodePath());
         if (!elementAlreadyExists && m_hasLib)
         {
-            Debug::Log->debug("<BindingTree> Loading Lua Lib : {0}", this->getNodePath());
+            Debug::Log->debug(
+                "<BindingTree> Loading Lua Binding : {0}", this->getNodePath());
             Debug::Log->flush();
-            (*lua)("table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
+            lua.safe_script(
+                "table.insert(LuaCore.libList, '" + this->getNodePath() + "');");
             m_lib(lua);
         }
         if (spreads)

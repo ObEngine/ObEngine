@@ -9,46 +9,46 @@ namespace obe::Collision
         m_unit = unit;
     }
 
-    Trajectory* Trajectory::setAngle(const double angle)
+    Trajectory& Trajectory::setAngle(const double angle)
     {
         m_angle = angle;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::setSpeed(const double speed)
+    Trajectory& Trajectory::setSpeed(const double speed)
     {
         m_speed = speed;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::setAcceleration(const double acceleration)
+    Trajectory& Trajectory::setAcceleration(const double acceleration)
     {
         m_acceleration = acceleration;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::addAngle(const double angle)
+    Trajectory& Trajectory::addAngle(const double angle)
     {
         m_angle += angle;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::addSpeed(const double speed)
+    Trajectory& Trajectory::addSpeed(const double speed)
     {
         m_speed += speed;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::addAcceleration(const double acceleration)
+    Trajectory& Trajectory::addAcceleration(const double acceleration)
     {
         m_acceleration = acceleration;
-        return this;
+        return *this;
     }
 
-    Trajectory* Trajectory::setStatic(const bool tStatic)
+    Trajectory& Trajectory::setStatic(const bool tStatic)
     {
         m_static = tStatic;
-        return this;
+        return *this;
     }
 
     double Trajectory::getAngle() const
@@ -76,22 +76,22 @@ namespace obe::Collision
         return m_unit;
     }
 
-    void Trajectory::addCheck(const kaguya::LuaFunction& check)
+    void Trajectory::addCheck(const TrajectoryCheckFunction& check)
     {
         m_checks.push_back(check);
     }
 
-    std::vector<kaguya::LuaFunction>& Trajectory::getChecks()
+    std::vector<TrajectoryCheckFunction>& Trajectory::getChecks()
     {
         return m_checks;
     }
 
-    void Trajectory::onCollide(const kaguya::LuaFunction& callback)
+    void Trajectory::onCollide(const OnCollideCallback& callback)
     {
         m_onCollideCallback = callback;
     }
 
-    kaguya::LuaFunction& Trajectory::getOnCollideCallback()
+    OnCollideCallback& Trajectory::getOnCollideCallback()
     {
         return m_onCollideCallback;
     }

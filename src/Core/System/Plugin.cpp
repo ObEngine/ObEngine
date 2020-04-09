@@ -1,36 +1,10 @@
 #include <Debug/Logger.hpp>
-#include <Script/GlobalState.hpp>
-#include <System/MountablePath.hpp>
-#include <System/Path.hpp>
 #include <System/Plugin.hpp>
-#include <Utils/FileUtils.hpp>
-#include <Utils/StringUtils.hpp>
 
-#include <kaguya/kaguya.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::System
 {
-    std::vector<std::unique_ptr<Plugin>> Plugins;
-
-    void IndexPlugins()
-    {
-        for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
-        {
-            Debug::Log->info(
-                "<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath.basePath);
-            System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
-            if (Utils::File::directoryExists(cPluginPath.toString()))
-            {
-                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
-                {
-                    const std::string pluginPath = cPluginPath.add(filename).toString();
-                    const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    Plugins.emplace_back(std::make_unique<Plugin>(pluginName, pluginPath));
-                }
-            }
-        }
-    }
-
     Plugin::Plugin(const std::string& id, const std::string& path)
         : Types::Identifiable(id)
     {
@@ -54,7 +28,8 @@ namespace obe::System
         {
             m_onInitFn = getPluginFunction<void()>(m_dl, "OnInit");
             m_onInitFn->init();
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
+            Debug::Log->debug(
+                "<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
             m_hasOnInitFn = true;
             m_onInitFn->operator()();
         }
@@ -63,7 +38,8 @@ namespace obe::System
         }
         try
         {
-            m_onLoadBindingsFn = getPluginFunction<void(kaguya::State*)>(m_dl, "OnLoadBindings");
+            m_onLoadBindingsFn
+                = getPluginFunction<void(sol::state_view)>(m_dl, "OnLoadBindings");
             m_onLoadBindingsFn->init();
             m_hasOnLoadBindingsFn = true;
             Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found "
@@ -78,7 +54,8 @@ namespace obe::System
             m_onUpdateFn = getPluginFunction<void(double)>(m_dl, "OnUpdate");
             m_onUpdateFn->init();
             m_hasOnUpdateFn = true;
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
+            Debug::Log->debug(
+                "<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -88,7 +65,8 @@ namespace obe::System
             m_onRenderFn = getPluginFunction<void()>(m_dl, "OnRender");
             m_onRenderFn->init();
             m_hasOnRenderFn = true;
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
+            Debug::Log->debug(
+                "<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -98,7 +76,8 @@ namespace obe::System
             m_onExitFn = getPluginFunction<void()>(m_dl, "OnExit");
             m_onExitFn->init();
             m_hasOnExitFn = true;
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
+            Debug::Log->debug(
+                "<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -107,7 +86,7 @@ namespace obe::System
         Debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
     }
 
-    void Plugin::onLoadBindings(kaguya::State* lua) const
+    void Plugin::onLoadBindings(sol::state_view lua) const
     {
         m_onLoadBindingsFn->operator()(lua);
     }

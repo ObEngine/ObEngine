@@ -15,9 +15,9 @@ add_subdirectory(extlibs/fswrapper)
 add_subdirectory(extlibs/fmt)
 add_subdirectory(extlibs/spdlog)
 
-# lua is required by kaguya
+# lua is required by sol
 add_subdirectory(extlibs/lua)
-add_subdirectory(extlibs/kaguya)
+add_subdirectory(extlibs/sol3)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
@@ -62,12 +62,6 @@ endif()
 
 if (NOT DEFINED BUILD_DEV)
     set(BUILD_DEV ON CACHE BOOL "Build ObEngine Dev ?")
-endif()
-
-if (BUILD_DEV)
-    add_subdirectory(extlibs/TGUI)
-    add_subdirectory(src/Dev)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()
 
 if (NOT DEFINED BUILD_TESTS)

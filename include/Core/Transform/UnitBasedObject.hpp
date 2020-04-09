@@ -5,8 +5,8 @@
 namespace obe::Transform
 {
     /**
-     * \brief Classes that works with Units should herit from this Class
-     * @Bind
+     * \brief Classes that works with Units should inherit from this Class
+     * \todo Refactor classes that inherits from this so it really use the working unit
      */
     class UnitBasedObject
     {
@@ -28,6 +28,6 @@ namespace obe::Transform
          * \brief Get the unit the Object works with
          * \return The unit the Object works with
          */
-        Units getWorkingUnit() const;
+        [[nodiscard]] Units getWorkingUnit() const;
     };
 } // namespace obe::Transform

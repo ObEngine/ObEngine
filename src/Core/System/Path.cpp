@@ -17,18 +17,19 @@ namespace obe::System
 
     Path::Path(const std::string& path)
     {
-        m_path = path;
+        m_path = std::move(path);
     }
 
     Path Path::add(const std::string& path) const
     {
-        return Path(m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
+        return Path(
+            m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
     }
 
     std::string Path::last() const
     {
-        std::vector<std::string> splittedPath = Utils::String::split(m_path, "/");
-        return splittedPath.back();
+        std::vector<std::string> splitPath = Utils::String::split(m_path, "/");
+        return splitPath.back();
     }
 
     Path Path::getPath(const unsigned int index)
@@ -45,14 +46,14 @@ namespace obe::System
         {
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(mountedPath.basePath
-                       + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
             {
                 return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
                     + this->m_path;
             }
             else if ((pathType == PathType::All || pathType == PathType::Directory)
                 && Utils::File::directoryExists(mountedPath.basePath
-                       + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
             {
                 return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
                     + this->m_path;
@@ -85,3 +86,13 @@ namespace obe::System
             });
     }
 } // namespace obe::System
+
+obe::System::Path operator"" _path(const char* str, std::size_t len)
+{
+    return obe::System::Path(std::string(str, len));
+}
+
+std::string operator""_fs(const char* str, std::size_t len)
+{
+    return obe::System::Path(std::string(str, len)).find();
+}

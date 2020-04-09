@@ -23,9 +23,9 @@ Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project
 - Coordinates : All the coordinates operations in there
 - FramerateManager : Handles time / deltatime / framerate
 - Game : Plays the game
-- GameObject : An Object that can contains those components : Animator, LevelSprite, PolygonalCollider, Script
+- GameObject : An Object that can contains those components : Animator, Sprite, PolygonalCollider, Script
 - KeyBind : Associates keys with actions
-- LevelSprite : Primitive drawable element
+- Sprite : Primitive drawable element
 - ObEngine : main function inside
 - Package & Workspace : Pretty much the same thing, works with the PathResolver
 - PathResolver : Really important class that "mounts" (see wiki) folders

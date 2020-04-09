@@ -6,6 +6,7 @@ namespace obe::Input
 {
     /**
      * \brief The type of Input
+     * \bind{InputType}
      */
     enum class InputType
     {
@@ -18,7 +19,7 @@ namespace obe::Input
          */
         Numeric,
         /**
-         * \brief All numbers from 0 to 9 on Numpad
+         * \brief All numbers from 0 to 9 on Numeric pad
          */
         NumericNP,
         /**
@@ -30,7 +31,7 @@ namespace obe::Input
          */
         Functions,
         /**
-         * \brief All Mouse buttons (Left / Right clic)
+         * \brief All Mouse buttons (Left / Right click)
          */
         Mouse,
         /**
@@ -48,5 +49,8 @@ namespace obe::Input
     };
 
     std::string inputTypeToString(InputType type);
+    /**
+     * \nobind
+     */
     std::ostream& operator<<(std::ostream& os, InputType m);
 } // namespace obe::Input

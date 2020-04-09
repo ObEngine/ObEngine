@@ -38,11 +38,10 @@ There are other libraries but they are included in the repository (extlibs/ fold
 |[Catch2](https://github.com/catchorg/Catch2)|Test Framework|Boost Software License|
 |[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
 |[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
-|[Kaguya](https://github.com/satoren/kaguya)|C++ binding library to Lua|Boost Software License|
+|[Sol](https://github.com/ThePhD/sol)|C++ binding library to Lua|MIT License|
 |[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
-|[tgui](https://github.com/texus/TGUI)|GUI library|zlib license|
 |[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
 |[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
@@ -121,8 +120,8 @@ function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
-### Examples with LevelSprites
-Every GameObject can have a LevelSprite associated (it's cooler when your object appears in the game right ?).
+### Examples with Sprites
+Every GameObject can have a Sprite associated (it's cooler when your object appears in the game right ?).
 #### Rotating goat
 Let's imagine you want to create a rotating goat in your game, no problem :
 ```lua
@@ -132,7 +131,7 @@ function Local.Init()
 end
 
 function Local.Update(dt) -- Local.Update is a function called every loop and dt is the DeltaTime
-  This:LevelSprite():rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
+  This:Sprite():rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
 end
 ```
 
@@ -142,7 +141,7 @@ The engine includes a `Canvas` lib to draw stuff in real time and using it is re
 ```lua
 function Local.Init()
   canvas = obe.Canvas.Canvas(400, 400); -- Creating a 400x400 canvas
-  
+
   canvas:Rectangle("background")({ -- Dark grey background
       layer = 2, x = 0, y = 0, width = 250, height = 100,
       color = { r = 50, g = 50, b = 50},
@@ -170,8 +169,8 @@ function Local.Init()
       color = "F00", -- Red color
       radius = 7, x = 234, y = 5
   });
-  
-  canvas:setTarget(This:LevelSprite()); -- Canvas result will render in object's LevelSprite
+
+  canvas:setTarget(This:Sprite()); -- Canvas result will render in object's Sprite
   canvas:render(); -- Drawing all the stuff !
 end
 ```

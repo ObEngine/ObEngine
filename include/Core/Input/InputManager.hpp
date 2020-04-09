@@ -6,34 +6,42 @@
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Registrable.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Types/Togglable.hpp>
 
 namespace obe::Input
 {
     /**
      * \brief Class used to manage KeyClass and KeyboardAction
-     * @Bind
+     * \bind{InputManager}
      */
-    class InputManager : public Types::Registrable<InputManager>,
-                         public Types::Togglable
+    class InputManager : public Types::Togglable
     {
     private:
-        Triggers::TriggerGroupPtr m_actionTriggers;
-        std::vector<std::shared_ptr<InputAction>> m_allActions;
-        std::vector<std::weak_ptr<InputAction>> m_currentActions;
+        bool m_refresh = true;
+        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs {};
+        std::vector<std::shared_ptr<InputButtonMonitor>> m_monitors {};
+        std::vector<std::weak_ptr<InputButtonMonitor>> m_monitorsRefCounter {};
+        Triggers::TriggerGroupPtr t_actions;
+        Triggers::TriggerGroupPtr t_inputs;
+        std::vector<std::shared_ptr<InputAction>> m_allActions {};
+        std::vector<std::weak_ptr<InputAction>> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
+        void createInputMap();
+        void createGamepadMap();
+        void createTriggerGroups(Triggers::TriggerManager& triggers);
 
     public:
         /**
          * \brief Creates a new KeyboardManager
          */
         InputManager();
+        void init(Triggers::TriggerManager& triggers);
         /**
          * \brief Get if a KeyboardAction exists
-         * \param actionId Id of the KeyboardAction to check the existance
+         * \param actionId Id of the KeyboardAction to check the existence
          * \return true if the KeyboardAction is found in the KeyboardManager,
-         * false otherwise
+         *         false otherwise
          */
         bool actionExists(const std::string& actionId);
         /**
@@ -51,7 +59,7 @@ namespace obe::Input
         /**
          * \brief Gets all the contexts currently used by the InputManager
          * \return A std::vector of std::string containing all the contexts used
-         * by the InputManager
+         *         by the InputManager
          */
         std::vector<std::string> getContexts();
         /**
@@ -65,7 +73,7 @@ namespace obe::Input
         /**
          * \brief Configure KeyboardAction from a vili configuration file
          * \param config Reference to the vili ComplexAttribute used to
-         * configure the KeyboardManager
+         *        configure the KeyboardManager
          */
         void configure(vili::ComplexNode& config);
         /**
@@ -83,5 +91,36 @@ namespace obe::Input
          * \brief Updates the KeyboardManager
          */
         void update();
+        /**
+         * \brief Get an InputButton from the given key
+         * \param key Name of the InputButton you want to get
+         * \return A reference to the InputButton with the given name
+         */
+        InputButton& getInput(const std::string& key);
+        /**
+         * \brief Get a list of all InputButtons
+         * \return A list of pointers to all InputButtons
+         */
+        std::vector<InputButton*> getInputs();
+        /**
+         * \brief Get a list of all InputButtons with a given type
+         * \param filter Type the InputButtons you want to get
+         * \return A list of pointers to all InputButtons with given type
+         */
+        std::vector<InputButton*> getInputs(InputType filter);
+        /**
+         * \brief Get a list of all InputButtons which are pressed
+         * \return A list of pointers to all InputButtons which are pressed
+         */
+        std::vector<InputButton*> getPressedInputs();
+
+        InputButtonMonitorPtr monitor(const std::string& name);
+        InputButtonMonitorPtr monitor(InputButton& input);
+        void requireRefresh();
+        /**
+         * TODO: Fix this nobind
+         * \nobind
+         */
+        InputCombination makeCombination(const std::string& code);
     };
 } // namespace obe::Input

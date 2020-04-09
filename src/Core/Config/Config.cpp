@@ -5,18 +5,27 @@
 
 namespace obe::Config
 {
-    vili::ViliParser Config;
-
-    void InitConfiguration()
+    ConfigurationManager Config;
+    ConfigurationManager::ConfigurationManager()
     {
-        Config = vili::ViliParser();
-        std::reverse(System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
-        System::LoaderMultipleResult loadResult
-            = System::Path("Data/config.cfg.vili").loadAll(System::Loaders::dataLoader, Config);
+    }
+    void ConfigurationManager::load()
+    {
+        // TODO: Do not modify MountedPaths directly
+        std::reverse(
+            System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
+        const System::LoaderMultipleResult loadResult
+            = System::Path("Data/config.cfg.vili")
+                  .loadAll(System::Loaders::dataLoader, m_config);
         for (const std::string path : loadResult.paths())
         {
             Debug::Log->info("Loaded config file from {}", path);
         }
-        std::reverse(System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
+        std::reverse(
+            System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
+    }
+    vili::ComplexNode& ConfigurationManager::get() const
+    {
+        return m_config.root();
     }
 } // namespace obe::System

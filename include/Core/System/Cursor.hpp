@@ -6,17 +6,17 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <Animation/Animator.hpp>
+#include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Triggers/TriggerGroup.hpp>
-#include <Types/Registrable.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::System
 {
     /**
      * \brief A Class to manipulate and display the Cursor in the Engine
-     * @Bind
      */
-    class Cursor : public Types::Registrable<Cursor>
+    class Cursor
     {
     private:
         sf::Vector2i m_saveOldPos;
@@ -25,6 +25,7 @@ namespace obe::System
         int m_constrainedX = 0;
         int m_constrainedY = 0;
         bool m_visible = true;
+        System::Window& m_window;
         Triggers::TriggerGroupPtr m_cursorTriggers;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
@@ -34,55 +35,58 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor();
+        explicit Cursor(System::Window& window, Triggers::TriggerManager& triggers);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position
          */
-        int getConstrainedX() const;
+        [[nodiscard]] int getConstrainedX() const;
         /**
          * \brief Gets the y Coordinate of the Cursor Position (Constrained)
          * \return An int containing the y Coordinate of the Cursor Position
          */
-        int getConstrainedY() const;
+        [[nodiscard]] int getConstrainedY() const;
         /**
          * \brief Gets the x Coordinate of the raw (System) position of the
-         * Cursor (Unconstrained) \return An int containing the x Coordinate of
-         * the Cursor Position
+         *        Cursor (Unconstrained)
+         * \return An int containing the x Coordinate of
+         *         the Cursor Position
          */
-        int getX() const;
+        [[nodiscard]] int getX() const;
         /**
          * \brief Gets the y Coordinate of the raw (System) position of the
-         * Cursor (Unconstrained) \return An int containing the y Coordinate of
-         * the Cursor Position
+         *        Cursor (Unconstrained)
+         * \return An int containing the y Coordinate of
+         *         the Cursor Position
          */
-        int getY() const;
+        [[nodiscard]] int getY() const;
         /**
          * \brief Sets the x Coordinate of the Cursor Position
-         * \param newx An int containing the x Coordinate of the new Cursor
-         * Position
+         * \param x An int containing the x Coordinate of the new Cursor
+         *        Position
          */
-        void setX(unsigned int newx);
+        void setX(int x);
         /**
          * \brief Sets the y Coordinate of the Cursor Position
-         * \param newy An int containing the y Coordinate of the new Cursor
-         * Position
+         * \param y An int containing the y Coordinate of the new Cursor
+         *        Position
          */
-        void setY(unsigned int newy);
+        void setY(int y);
         /**
          * \brief Sets the Position of the Cursor
-         * \param newx An int containing the x Coordinate of the new Cursor
-         * Position \param newy An int containing the y Coordinate of the new
-         * Cursor Position
+         * \param x An int containing the x Coordinate of the new Cursor
+         *        Position
+         * \param y An int containing the y Coordinate of the new
+         *        Cursor Position
          */
-        void setPosition(unsigned int newx, unsigned int newy);
+        void setPosition(int x, int y);
 
         void show();
         void hide();
         void setVisible(bool visible);
-        bool isVisible() const;
+        [[nodiscard]] bool isVisible() const;
 
-        Transform::UnitVector getPosition() const;
+        [[nodiscard]] Transform::UnitVector getPosition() const;
         /**
          * \brief Updates the Cursor
          */
@@ -90,8 +94,9 @@ namespace obe::System
         /**
          * \brief Sets the Cursor's constraint
          * \param constraint A function returning the constrained Position of
-         * the Cursor (a std::pair<int, int>) and taking the Cursor pointer in
-         * parameter
+         *        the Cursor (a std::pair<int, int>) and taking the Cursor pointer in
+         *        parameter
+         * \param condition condition for the constraint to apply
          */
         void setConstraint(
             std::function<std::pair<int, int>(Cursor*)> constraint,

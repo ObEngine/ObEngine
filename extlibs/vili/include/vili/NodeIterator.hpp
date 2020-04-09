@@ -8,7 +8,6 @@ namespace vili
 
     /**
      * \brief A class that can be used in argument in the ComplexNode::walk function to walk through the whole tree
-     * @Bind
      */
     class NodeIterator
     {

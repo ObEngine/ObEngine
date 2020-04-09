@@ -10,7 +10,6 @@ namespace vili
 {
     /**
      * \brief An ArrayNode is a Node that can contains multiple DataNodes with an index
-     * @Bind
      */
     class ArrayNode : public ContainerNode
     {

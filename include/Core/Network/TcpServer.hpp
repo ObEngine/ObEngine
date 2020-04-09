@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 
 #include <Triggers/TriggerGroup.hpp>
+#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Network
 {
@@ -17,8 +18,8 @@ namespace obe::Network
         std::vector<char> m_data;
 
     public:
-        TcpServer(unsigned short port, std::string triggerNamespace = "",
-            std::string triggerGroup = "");
+        TcpServer(Triggers::TriggerManager& triggers, unsigned short port,
+            std::string triggerNamespace = "", std::string triggerGroup = "");
         void update();
         void setBufferSize(unsigned int maxBufferSize);
         // std::vector<sf::TcpSocket&> getClients();

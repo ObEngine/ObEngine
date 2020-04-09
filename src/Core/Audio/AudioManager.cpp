@@ -10,27 +10,28 @@
 namespace obe::Audio
 {
     AudioManager::AudioManager()
-        : Registrable("Audio")
     {
+        Debug::Log->debug("<AudioManager> Initializing AudioManager");
         m_engine.init();
+        Debug::Log->debug("<AudioManager> Initialization complete");
     }
     AudioManager::~AudioManager()
     {
+        Debug::Log->debug("<AudioManager> Cleaning AudioManager");
         m_engine.deinit();
+        Debug::Log->debug("<AudioManager> Cleaning complete");
     }
-    void AudioManager::cache(const std::string& path)
+
+    Sound AudioManager::load(const System::Path& path, LoadPolicy loadPolicy)
     {
-        if (m_cache.find(path) == m_cache.end())
+        const std::string filePath = path.find(System::PathType::File);
+        Debug::Log->debug("<AudioManager> Loading Audio at '{}'", filePath);
+        if (loadPolicy == LoadPolicy::Cache && m_cache.find(filePath) == m_cache.end())
         {
-            std::string filePath = System::Path(path).find(System::PathType::File);
             std::shared_ptr<SoLoud::Wav> sample = std::make_shared<SoLoud::Wav>();
             sample->load(filePath.c_str());
             m_cache[filePath] = sample;
         }
-    }
-    Sound AudioManager::load(const std::string& path, bool stream)
-    {
-        std::string filePath = System::Path(path).find(System::PathType::File);
         std::shared_ptr<SoLoud::AudioSource> sample;
         if (m_cache.find(filePath) != m_cache.end())
         {
@@ -38,7 +39,7 @@ namespace obe::Audio
         }
         else
         {
-            if (stream)
+            if (loadPolicy == LoadPolicy::Stream)
             {
                 sample = std::make_shared<SoLoud::WavStream>();
                 static_cast<SoLoud::WavStream*>(sample.get())->load(filePath.c_str());

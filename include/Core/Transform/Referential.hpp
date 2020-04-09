@@ -32,60 +32,63 @@ namespace obe::Transform
         /**
          * \brief Get the opposite Referential in a Rect
          * \return The opposite of the given Referential (BottomRight => TopLeft
-         * for example)
+         *         for example)
          */
-        Referential flip(Axis axis = Axis::Both) const;
+        [[nodiscard]] Referential flip(Axis axis = Axis::Both) const;
         /**
          * \brief Get if the Referential is on the left side of a normalized
-         * Rect \return true if Referential is on left side, false otherwise
+         *        Rect
+         * \return true if Referential is on left side, false otherwise
          */
-        bool isOnLeftSide() const;
+        [[nodiscard]] bool isOnLeftSide() const;
         /**
          * \brief Get if the Referential is on the right side of a normalized
-         * Rect \return true if Referential is on right side, false otherwise
+         *        Rect
+         * \return true if Referential is on right side, false otherwise
          */
-        bool isOnRightSide() const;
+        [[nodiscard]] bool isOnRightSide() const;
         /**
          * \brief Get if the Referential is on the top side of a normalized Rect
          * \return true if Referential is on top side, false otherwise
          */
-        bool isOnTopSide() const;
+        [[nodiscard]] bool isOnTopSide() const;
         /**
          * \brief Get if the Referential is on the bottom side of a normalized
-         * Rect \return true if Referential is on bottom side, false otherwise
+         *        Rect
+         * \return true if Referential is on bottom side, false otherwise
          */
-        bool isOnBottomSide() const;
+        [[nodiscard]] bool isOnBottomSide() const;
         /**
          * \brief Get if the Referential is on a corner of a normalized Rect
-         * \param ref Referential you want to check
          * \return true if Referential is on a corner, false otherwise
          */
-        bool isOnCorner() const;
+        [[nodiscard]] bool isOnCorner() const;
         /**
          * \brief Get if the Referential is on a side of a normalized Rect
          * \return true if Referential is on a side, false otherwise
          */
-        bool isOnSide() const;
+        [[nodiscard]] bool isOnSide() const;
         /**
          * \brief Get if the Referential is one of the 9 known referentials
-         * (TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom,
-         * BottomRight) \return true is the Referential is one of the 9 known
-         * referentials, false otherwise
+         *        (TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom,
+         *        BottomRight)
+         * \return true is the Referential is one of the 9 known
+         *         referentials, false otherwise
          */
-        bool isKnown() const;
+        [[nodiscard]] bool isKnown() const;
         /**
          * \brief Get the normalized position of a Referential in a Rect
-         * (-1 : Left / Top, 0 = Center, 1 = Right / Bottom)
+         *        (-1 : Left / Top, 0 = Center, 1 = Right / Bottom)
          * \return The normalized position of a Referential in a Rect
          */
-        UnitVector getOffset() const;
+        [[nodiscard]] UnitVector getOffset() const;
 
         /**
          * \brief Get the name of a Referential in std::string form
          * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
-        std::string toString(
+        [[nodiscard]] std::string toString(
             const std::string& format = "Referential<{}>") const;
         /**
          * \brief Gets a Referential based on its name

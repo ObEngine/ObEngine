@@ -3,42 +3,42 @@
 
 namespace obe::Time
 {
-    void FPSCounter::tick()
+    void FramerateCounter::tick()
     {
-        if (getTickSinceEpoch() - m_lastTick <= 1000)
-            m_fpsCounter++;
+        if (epochAsMilliseconds() - m_lastTick <= 1000)
+            m_framerateBuffer++;
     }
 
-    void FPSCounter::uTick()
+    void FramerateCounter::uTick()
     {
-        if (getTickSinceEpoch() - m_lastTick <= 1000)
-            m_updCounter++;
+        if (epochAsMilliseconds() - m_lastTick <= 1000)
+            m_updatesBuffer++;
         else
         {
-            m_saveUPD = m_updCounter;
-            m_updCounter = 0;
-            m_lastTick = getTickSinceEpoch();
+            m_updatesCounter = m_updatesBuffer;
+            m_updatesBuffer = 0;
+            m_lastTick = epochAsMilliseconds();
             m_canUpdateFPS = true;
-            m_saveFPS = m_fpsCounter;
-            m_fpsCounter = 0;
+            m_framerateCounter = m_framerateBuffer;
+            m_framerateBuffer = 0;
         }
     }
 
-    void FPSCounter::loadFont(sf::Font& font)
+    void FramerateCounter::loadFont(Graphics::Font& font)
     {
         m_text.setFont(font);
         m_text.setCharacterSize(12);
         m_text.setFillColor(sf::Color::White);
     }
 
-    void FPSCounter::draw()
+    void FramerateCounter::draw()
     {
         if (m_canUpdateFPS)
         {
             m_canUpdateFPS = false;
-            m_text.setString(
-                std::to_string(m_saveFPS) + " FPS / " + std::to_string(m_saveUPD) + " UPS");
+            m_text.setString(std::to_string(m_framerateCounter) + " FPS / "
+                + std::to_string(m_updatesCounter) + " UPS");
         }
-        System::MainWindow.draw(m_text);
+        // System::MainWindow.draw(m_text);
     }
 } // namespace obe::Time

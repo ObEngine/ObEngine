@@ -5,41 +5,41 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Rect.hpp>
 #include <Utils/MathUtils.hpp>
-#include <iostream>
 
 namespace obe::Transform
 {
     UnitVector rotatePointAroundCenter(
-        const UnitVector& center, const UnitVector& Around, float angle)
+        const UnitVector& center, const UnitVector& Around, double angle)
     {
-        double cY = std::cos(angle);
-        double sY = std::sin(angle);
+        const double cY = std::cos(angle);
+        const double sY = std::sin(angle);
 
-        UnitVector moved, delta = Around - center;
+        UnitVector moved;
+        const UnitVector delta = Around - center;
         moved.x = (delta.x * cY - delta.y * sY) + center.x;
         moved.y = (delta.x * sY + delta.y * cY) + center.y;
 
         return moved;
     };
 
-    float Rect::getRotation() const
+    double Rect::getRotation() const
     {
         return m_angle;
     }
 
-    void Rect::setRotation(float angle, Transform::UnitVector origin)
+    void Rect::setRotation(double angle, Transform::UnitVector origin)
     {
         this->rotate(angle - m_angle, origin);
     }
 
-    void Rect::rotate(float angle, Transform::UnitVector origin)
+    void Rect::rotate(double angle, Transform::UnitVector origin)
     {
         const double radAngle = Utils::Math::convertToRadian(-angle);
 
         m_position = rotatePointAroundCenter(origin, m_position, radAngle);
         m_angle += angle;
         if (m_angle < 0 || m_angle > 360)
-            m_angle = Utils::Math::normalise(m_angle, 0, 360);
+            m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
     void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const
@@ -48,16 +48,11 @@ namespace obe::Transform
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
-        UnitVector result;
 
-        auto [dx, dy] = (ref.getOffset() * m_size).unpack();
+        const auto delta = (ref.getOffset() * m_size);
 
-        vec.add(UnitVector(
-            (dx * cosAngle - dy * sinAngle) * factor, (dx * sinAngle + dy * cosAngle) * factor));
-    }
-
-    Rect::Rect()
-    {
+        vec.add(UnitVector((delta.x * cosAngle - delta.y * sinAngle) * factor,
+            (delta.x * sinAngle + delta.y * cosAngle) * factor));
     }
 
     Rect::Rect(const Transform::UnitVector& position, const Transform::UnitVector& size)
@@ -66,16 +61,17 @@ namespace obe::Transform
         m_size = size;
     }
 
-    void Rect::draw(int posX, int posY) const
+    void Rect::draw(Graphics::RenderTarget surface, int x, int y) const
     {
         int r = 6;
 
-        std::vector<sf::Vector2i> drawPoints;
-        UnitVector dPos(posX, posY, Transform::Units::ScenePixels);
+        std::vector<Transform::UnitVector> drawPoints;
+        const UnitVector dPos(x, y, Transform::Units::ScenePixels);
 
-        const std::vector<Referential> fixDisplayOrder = { Referential::TopLeft, Referential::Top,
-            Referential::TopRight, Referential::Right, Referential::BottomRight,
-            Referential::Bottom, Referential::BottomLeft, Referential::Left };
+        const std::vector<Referential> fixDisplayOrder
+            = { Referential::TopLeft, Referential::Top, Referential::TopRight,
+                  Referential::Right, Referential::BottomRight, Referential::Bottom,
+                  Referential::BottomLeft, Referential::Left };
 
         for (uint8_t i = 0; i < 8; ++i)
         {
@@ -83,7 +79,7 @@ namespace obe::Transform
             this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
 
             UnitVector world = (pt + dPos).to<Units::ScenePixels>();
-            drawPoints.emplace_back(world.x, world.y);
+            drawPoints.push_back(world);
         }
 
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
@@ -95,18 +91,21 @@ namespace obe::Transform
         topPos += dPos;
         UnitVector vec = topPos;
         UnitVector result;
-        double dy = m_size.y / 4;
+        const double dy = m_size.y / 4;
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(vec.x - r, vec.y - r, r, sf::Color::White);
-        Graphics::Utils::drawLine(vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
+        Graphics::Utils::drawPoint(surface, vec.x - r, vec.y - r, r, sf::Color::White);
+        Graphics::Utils::drawLine(
+            surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
-        Graphics::Utils::drawPolygon(drawPoints,
+        Graphics::Utils::drawPolygon(surface, drawPoints,
             { { "lines", true }, { "points", true }, { "radius", r },
                 { "point_color", sf::Color::White }, { "point_color_0", sf::Color::Red },
-                { "point_color_1", sf::Color(255, 128, 0) }, { "point_color_2", sf::Color::Yellow },
-                { "point_color_3", sf::Color(128, 255, 0) }, { "point_color_4", sf::Color::Green },
+                { "point_color_1", sf::Color(255, 128, 0) },
+                { "point_color_2", sf::Color::Yellow },
+                { "point_color_3", sf::Color(128, 255, 0) },
+                { "point_color_4", sf::Color::Green },
                 { "point_color_5", sf::Color(0, 255, 128) },
                 { "point_color_6", sf::Color::Magenta },
                 { "point_color_7", sf::Color(0, 128, 255) },
@@ -115,10 +114,10 @@ namespace obe::Transform
 
     void Rect::setPointPosition(const UnitVector& position, Referential ref)
     {
-        UnitVector refPosition = this->getPosition(ref);
-        UnitVector oppositePointPosition = this->getPosition(ref.flip());
-        double radAngle = Utils::Math::convertToRadian(-m_angle);
-        UnitVector movedPoint = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
+        const UnitVector oppositePointPosition = this->getPosition(ref.flip());
+        const double radAngle = Utils::Math::convertToRadian(-m_angle);
+        const UnitVector movedPoint
+            = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
         this->setPosition(position, ref);
 
@@ -126,11 +125,13 @@ namespace obe::Transform
         {
             if (ref.isOnTopSide())
             {
-                this->setSize({ movedPoint.x - position.x, movedPoint.y - position.y }, ref);
+                this->setSize(
+                    { movedPoint.x - position.x, movedPoint.y - position.y }, ref);
             }
             else
             {
-                this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
+                this->setSize(
+                    { position.x - movedPoint.x, position.y - movedPoint.y }, ref);
             }
         }
         if (ref.isOnLeftSide() || ref.isOnRightSide())
@@ -145,7 +146,7 @@ namespace obe::Transform
             }
         }
         else // we are on TopSide or BottomSide here, no need to specify the
-             // condition
+            // condition
         {
             if (ref.isOnTopSide())
             {

@@ -4,13 +4,12 @@
 
 /**
  * \brief Some Classes and Functions to manipulate Engine Execution
- * @Bind
  */
 namespace obe::Utils::Exec
 {
     /**
+     * TODO: Replace RunArgsParser with a real argument parsing library
      * \brief Parses the execution arguments
-     * @Bind
      */
     class RunArgsParser
     {
@@ -30,12 +29,12 @@ namespace obe::Utils::Exec
          * \param arg Name of the argument you want to check existence
          * \return true if the argument exists, false otherwise
          */
-        bool argumentExists(const std::string& arg) const;
+        [[nodiscard]] bool argumentExists(const std::string& arg) const;
         /**
          * \brief Get the given argument's value
          * \param arg Name of the argument you want to retrieve the value
          * \return The value of the argument
          */
-        std::string getArgumentValue(const std::string& arg) const;
+        [[nodiscard]] std::string getArgumentValue(const std::string& arg) const;
     };
 } // namespace obe::Utils::Exec

@@ -6,11 +6,11 @@ namespace obe::Types
 {
     /**
      * \brief A Base Class that represents a vili serializable object
-     * @Bind
      */
     class Serializable
     {
     public:
+        virtual ~Serializable() = default;
         /**
          * \brief Dumps the content of the Serializable object to a ComplexNode
          * \param target ComplexNode where to serialize the object

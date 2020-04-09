@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
+#include <algorithm>
 #include <vector>
 
-#include <Script/GlobalState.hpp>
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 
@@ -26,7 +25,7 @@ namespace obe::Component
         void dump(vili::ComplexNode& target) const override = 0;
         void load(vili::ComplexNode& data) override = 0;
 
-        virtual std::string_view type() const = 0;
+        [[nodiscard]] virtual std::string_view type() const = 0;
     };
 
     template <class T> class Component : public ComponentBase
@@ -45,7 +44,9 @@ namespace obe::Component
         void dump(vili::ComplexNode& target) const override = 0;
         void load(vili::ComplexNode& data) override = 0;
 
-        std::string_view type() const override;
+        [[nodiscard]] std::string_view type() const override;
+        using Ref = std::reference_wrapper<T>;
+        using Ptr = T*;
     };
 
     template <class T>
@@ -72,8 +73,8 @@ namespace obe::Component
 
     template <class T> void Component<T>::inject(unsigned int envIndex)
     {
-        Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id]
-            = static_cast<T*>(this);
+        /*Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id]
+            = static_cast<T*>(this);*/
     }
 
     template <class T> std::string_view Component<T>::type() const

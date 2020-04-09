@@ -1,128 +1,110 @@
-// Corresponding header
 #include <Animation/AnimationGroup.hpp>
 
 namespace obe::Animation
 {
-    AnimationGroup::AnimationGroup(const std::string& groupName)
+    bool AnimationGroup::checkDelay()
     {
-        m_groupName = groupName;
+        if (Time::epochAsMilliseconds() - m_groupClock > m_delay)
+        {
+            m_groupClock = Time::epochAsMilliseconds();
+            return true;
+        }
+        return false;
+    }
+    AnimationGroup::AnimationGroup(std::string name)
+        : m_name(std::move(name))
+    {
     }
 
-    void AnimationGroup::build()
+    void AnimationGroup::setDelay(unsigned int clock)
     {
-        m_texture = *m_groupList[0];
+        m_delay = clock;
     }
 
-    void AnimationGroup::setGroupDelay(unsigned int clock)
-    {
-        m_groupDelay = clock;
-    }
-
-    void AnimationGroup::setGroupLoop(int loops)
+    void AnimationGroup::setLoops(int loops)
     {
         m_loopAmount = loops;
     }
 
-    void AnimationGroup::pushTexture(sf::Texture* texture)
+    void AnimationGroup::pushTexture(Graphics::Texture* texture)
     {
         m_groupList.push_back(texture);
     }
 
     void AnimationGroup::removeTextureByIndex(unsigned int index)
     {
-        if (m_groupList.size() > 0)
+        if (!m_groupList.empty())
             m_groupList.erase(m_groupList.begin() + index);
     }
 
-    const sf::Texture& AnimationGroup::getTexture() const
+    const Graphics::Texture& AnimationGroup::getTexture() const
     {
-        return m_texture;
-    }
-
-    void AnimationGroup::update()
-    {
-        m_texture = *m_groupList[m_groupIndex];
+        return *m_groupList[m_index];
     }
 
     void AnimationGroup::reset()
     {
-        m_groupIndex = 0;
-        m_groupOver = false;
+        m_index = 0;
+        m_over = false;
         m_loopIndex = 0;
     }
 
-    void AnimationGroup::next()
+    void AnimationGroup::next(bool force)
     {
-        if (Time::getTickSinceEpoch() - m_groupClock > m_groupDelay)
+        if (checkDelay() | force)
         {
-            m_groupClock = Time::getTickSinceEpoch();
-            m_groupIndex++;
-            if (m_groupIndex > m_groupList.size() - 1)
+            m_index++;
+            if (m_index > m_groupList.size() - 1)
             {
                 if (m_loopIndex != m_loopAmount - 1)
                 {
-                    m_groupIndex = 0;
+                    m_index = 0;
                     m_loopIndex++;
-                    this->update();
                 }
                 else
                 {
-                    m_groupOver = true;
+                    m_over = true;
                 }
             }
         }
     }
 
-    void AnimationGroup::previous()
+    void AnimationGroup::previous(bool force)
     {
-        if (Time::getTickSinceEpoch() - m_groupClock > m_groupDelay)
+        if (checkDelay() || force)
         {
-            m_groupClock = Time::getTickSinceEpoch();
-            if (m_groupIndex == 0)
+            if (m_index == 0)
             {
                 if (m_loopIndex != 0)
-                    m_groupIndex = m_groupList.size() - 1;
-                else
-                    m_loopIndex = 0;
+                    m_index = m_groupList.size() - 1;
             }
             else
-                m_groupIndex--;
+                m_index--;
         }
-        this->update();
     }
 
-    void AnimationGroup::forcePrevious()
+    bool AnimationGroup::isOver() const
     {
-        m_groupIndex--;
+        return m_over;
     }
 
-    void AnimationGroup::forceNext()
+    unsigned int AnimationGroup::getIndex() const
     {
-        m_groupIndex++;
+        return m_index;
     }
 
-    bool AnimationGroup::isGroupOver() const
-    {
-        return m_groupOver;
-    }
-
-    unsigned int AnimationGroup::getGroupIndex() const
-    {
-        return m_groupIndex;
-    }
-
-    unsigned int AnimationGroup::getGroupSize() const
+    unsigned int AnimationGroup::getSize() const
     {
         return m_groupList.size();
     }
 
-    std::string AnimationGroup::getGroupName() const
+    std::string AnimationGroup::getName() const
     {
-        return m_groupName;
+        return m_name;
     }
 
-    unsigned int AnimationGroup::getGroupDelay() const
+    unsigned int AnimationGroup::getDelay() const
     {
-        return m_groupDelay;
+        return m_delay;
     }
 } // namespace obe::Animation

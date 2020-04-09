@@ -1,81 +1,75 @@
-#include <Bindings/Bindings.hpp>
-#include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
-#include <Script/GlobalState.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
-#include <Triggers/TriggerDatabase.hpp>
+#include <Triggers/TriggerManager.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Scene
 {
-    Scene::Scene()
-        : Registrable("Scene")
-        , m_sceneTriggers(
-              Triggers::TriggerDatabase::GetInstance().createTriggerGroup("Global", "Scene"),
-              Triggers::TriggerGroupPtrRemover)
+    Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
+        : m_lua(lua)
+        , m_triggers(triggers)
+        , t_scene(triggers.createTriggerGroup("Event", "Scene"))
 
     {
-        System::Path("Lib/Internal/GameInit.lua")
-            .load(System::Loaders::luaLoader, Script::ScriptEngine);
-        Triggers::TriggerDatabase::GetInstance().createNamespace("Map");
-        m_showElements["CollisionLines"] = false;
-        m_showElements["CollisionPoints"] = false;
-        m_showElements["CollisionMasterPoint"] = false;
-        m_showElements["CollisionSkeleton"] = false;
+        triggers.createNamespace("Map"); // TODO: Add namespace handle
         m_showElements["SceneNodes"] = false;
 
-        m_sceneTriggers->addTrigger("MapLoaded");
+        t_scene->add("Loaded");
     }
 
-    Scene::~Scene()
+    void Scene::attachResourceManager(Engine::ResourceManager& resources)
     {
-        Triggers::TriggerDatabase::GetInstance().removeNamespace("Map");
+        m_resources = &resources;
     }
 
-    Graphics::LevelSprite* Scene::createLevelSprite(const std::string& id, bool addToSceneRoot)
+    Graphics::Sprite& Scene::createSprite(const std::string& id, bool addToSceneRoot)
     {
         std::string createId = id;
         if (createId.empty())
         {
             int i = 0;
             std::string testId = "sprite" + std::to_string(this->getColliderAmount() + i);
-            while (this->doesLevelSpriteExists(testId))
+            while (this->doesSpriteExists(testId))
             {
-                testId = "sprite" + std::to_string(this->getLevelSpriteAmount() + i++);
+                testId = "sprite" + std::to_string(this->getSpriteAmount() + i++);
             }
             createId = testId;
         }
-        if (!this->doesLevelSpriteExists(createId))
+        if (!this->doesSpriteExists(createId))
         {
-            std::unique_ptr<Graphics::LevelSprite> newLevelSprite
-                = std::make_unique<Graphics::LevelSprite>(createId);
+            std::unique_ptr<Graphics::Sprite> newSprite
+                = std::make_unique<Graphics::Sprite>(createId);
+            if (m_resources)
+                newSprite->attachResourceManager(*m_resources);
 
-            Graphics::LevelSprite* returnLevelSprite = newLevelSprite.get();
-            m_spriteArray.push_back(move(newLevelSprite));
+            Graphics::Sprite* returnSprite = newSprite.get();
+            m_spriteArray.push_back(move(newSprite));
 
             if (addToSceneRoot)
-                m_sceneRoot.addChild(returnLevelSprite);
+                m_sceneRoot.addChild(*returnSprite);
 
             this->reorganizeLayers();
-            return returnLevelSprite;
+            return *returnSprite;
         }
         else
         {
             Debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
-            return this->getLevelSprite(createId);
+            return this->getSprite(createId);
         }
     }
 
-    Collision::PolygonalCollider* Scene::createCollider(const std::string& id, bool addToSceneRoot)
+    Collision::PolygonalCollider& Scene::createCollider(
+        const std::string& id, bool addToSceneRoot)
     {
         std::string createId = id;
         if (createId.empty())
         {
             int i = 0;
-            std::string testId = "collider" + std::to_string(this->getColliderAmount() + i);
+            std::string testId
+                = "collider" + std::to_string(this->getColliderAmount() + i);
             while (this->doesColliderExists(testId))
             {
                 testId = "collider" + std::to_string(this->getColliderAmount() + i++);
@@ -84,10 +78,11 @@ namespace obe::Scene
         }
         if (!this->doesColliderExists(createId))
         {
-            m_colliderArray.push_back(std::make_unique<Collision::PolygonalCollider>(createId));
+            m_colliderArray.push_back(
+                std::make_unique<Collision::PolygonalCollider>(createId));
             if (addToSceneRoot)
-                m_sceneRoot.addChild(m_colliderArray.back().get());
-            return m_colliderArray.back().get();
+                m_sceneRoot.addChild(*m_colliderArray.back());
+            return *m_colliderArray.back().get();
         }
         else
         {
@@ -112,27 +107,26 @@ namespace obe::Scene
         m_futureLoad = m_levelFileName;
     }
 
-    void Scene::reload(kaguya::LuaFunction callback)
+    void Scene::reload(const OnSceneLoadCallback& callback)
     {
         Debug::Log->debug("<Scene> Reloading Scene");
         m_futureLoad = m_levelFileName;
         m_onLoadCallback = callback;
     }
 
-    void Scene::loadFromFile(const std::string& filename)
+    void Scene::loadFromFile(const std::string& path)
     {
-        Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", filename);
+        Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
         this->clear();
         Debug::Log->debug("<Scene> Cleared Scene");
-        if (filename != m_levelFileName)
+        if (path != m_levelFileName)
         {
             m_levelFile = vili::ViliParser();
-            m_baseFolder = System::Path("Data/Maps")
-                               .add(filename)
+            m_baseFolder = System::Path(path)
                                .load(System::Loaders::dataLoader, m_levelFile)
                                .path();
             Debug::Log->debug("Scene File base folder : {}", m_baseFolder);
-            m_levelFileName = filename;
+            m_levelFileName = path;
         }
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "Meta"))
@@ -141,7 +135,8 @@ namespace obe::Scene
             m_levelName = meta.getDataNode("name").get<std::string>();
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoMeta", { { "map", filename } });
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Scene.Scene.NoMeta", { { "map", path } });
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "View"))
         {
@@ -153,12 +148,13 @@ namespace obe::Scene
                     Transform::stringToUnits(
                         view.at<vili::DataNode>("pos", "unit").get<std::string>()));
             m_cameraInitialReferential = Transform::Referential::TopLeft;
-            if (m_levelFile->at("View").contains(vili::NodeType::ComplexNode, "referential"))
+            if (m_levelFile->at("View").contains(
+                    vili::NodeType::ComplexNode, "referential"))
             {
-                m_cameraInitialReferential
-                    = Transform::Referential::FromString(m_levelFile->at("View", "referential")
-                                                             .getDataNode("referential")
-                                                             .get<std::string>());
+                m_cameraInitialReferential = Transform::Referential::FromString(
+                    m_levelFile->at("View", "referential")
+                        .getDataNode("referential")
+                        .get<std::string>());
             }
             Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
                               "Referential {2}",
@@ -167,15 +163,16 @@ namespace obe::Scene
             m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
         }
         else
-            throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.NoView", { { "map", filename } });
+            throw aube::ErrorHandler::Raise(
+                "ObEngine.Scene.Scene.NoView", { { "map", path } });
 
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "LevelSprites"))
+        if (m_levelFile->contains(vili::NodeType::ComplexNode, "Sprites"))
         {
-            vili::ComplexNode& levelSprites = m_levelFile.at("LevelSprites");
+            vili::ComplexNode& Sprites = m_levelFile.at("Sprites");
 
-            for (vili::ComplexNode* currentSprite : levelSprites.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* currentSprite : Sprites.getAll<vili::ComplexNode>())
             {
-                this->createLevelSprite(currentSprite->getId())->load(*currentSprite);
+                this->createSprite(currentSprite->getId()).load(*currentSprite);
             }
         }
 
@@ -184,37 +181,42 @@ namespace obe::Scene
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "Collisions"))
         {
             vili::ComplexNode& collisions = m_levelFile.at("Collisions");
-            for (vili::ComplexNode* currentCollision : collisions.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* currentCollision :
+                collisions.getAll<vili::ComplexNode>())
             {
-                this->createCollider(currentCollision->getId())->load(*currentCollision);
+                this->createCollider(currentCollision->getId()).load(*currentCollision);
             }
         }
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "GameObjects"))
         {
             vili::ComplexNode& gameObjects = m_levelFile.at("GameObjects");
-            for (vili::ComplexNode* currentObject : gameObjects.getAll<vili::ComplexNode>())
+            for (vili::ComplexNode* currentObject :
+                gameObjects.getAll<vili::ComplexNode>())
             {
                 if (!this->doesGameObjectExists(currentObject->getId()))
                 {
                     const std::string gameObjectType
                         = currentObject->getDataNode("type").get<std::string>();
-                    Script::GameObject* newObject
+                    Script::GameObject& newObject
                         = this->createGameObject(gameObjectType, currentObject->getId());
                     if (currentObject->contains(vili::NodeType::ComplexNode, "Requires"))
                     {
-                        vili::ComplexNode& objectRequirements = currentObject->at("Requires");
+                        vili::ComplexNode& objectRequirements
+                            = currentObject->at("Requires");
                         currentObject->removeOwnership(&objectRequirements);
                         Script::GameObjectDatabase::ApplyRequirements(
-                            newObject, objectRequirements);
+                            newObject.getEnvironment(), objectRequirements);
                         objectRequirements.setParent(currentObject);
                     }
-                    newObject->exec("LuaCore.InjectInitInjectionTable()");
+                    newObject.exec("LuaCore.InjectInitInjectionTable()");
                 }
-                else if (!this->getGameObject(currentObject->getId())->isPermanent())
+                else if (!this->getGameObject(currentObject->getId()).isPermanent())
                 {
-                    aube::ErrorHandler::Warn("ObEngine.Scene.Scene.GameObjectAlreadyInScene",
-                        { { "object", currentObject->getId() }, { "mapfile", m_levelName } });
+                    aube::ErrorHandler::Warn(
+                        "ObEngine.Scene.Scene.GameObjectAlreadyInScene",
+                        { { "object", currentObject->getId() },
+                            { "scene_file", m_levelName } });
                 }
             }
         }
@@ -224,32 +226,32 @@ namespace obe::Scene
             vili::ComplexNode& script = m_levelFile.at("Script");
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
-                System::Path(script.at<vili::DataNode>("source"))
-                    .load(System::Loaders::luaLoader, Script::ScriptEngine);
+                m_lua.safe_script_file(
+                    System::Path(script.at<vili::DataNode>("source")).find());
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
             else if (script.contains(vili::NodeType::ArrayNode, "sources"))
             {
                 for (vili::DataNode* scriptName : script.getArrayNode("sources"))
                 {
-                    System::Path(*scriptName)
-                        .load(System::Loaders::luaLoader, Script::ScriptEngine);
+                    m_lua.safe_script_file(System::Path(*scriptName).find());
                     m_scriptArray.push_back(*scriptName);
                 }
             }
         }
-        m_sceneTriggers->pushParameter("MapLoaded", "name", filename);
-        m_sceneTriggers->trigger("MapLoaded");
+        t_scene->pushParameter("Loaded", "name", path);
+        t_scene->trigger("Loaded");
     }
 
-    void Scene::setFutureLoadFromFile(const std::string& filename)
+    void Scene::setFutureLoadFromFile(const std::string& path)
     {
-        m_futureLoad = filename;
+        m_futureLoad = path;
     }
 
-    void Scene::setFutureLoadFromFile(const std::string& filename, kaguya::LuaFunction callback)
+    void Scene::setFutureLoadFromFile(
+        const std::string& path, const OnSceneLoadCallback& callback)
     {
-        m_futureLoad = filename;
+        m_futureLoad = path;
         m_onLoadCallback = callback;
     }
 
@@ -264,104 +266,107 @@ namespace obe::Scene
             }
         }
         Debug::Log->debug("<Scene> Cleaning GameObject Array");
-        m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
-                                    [](const std::unique_ptr<Script::GameObject>& ptr) {
-                                        return (!ptr->isPermanent());
-                                    }),
+        m_gameObjectArray.erase(
+            std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
+                [](const std::unique_ptr<Script::GameObject>& ptr) {
+                    return (!ptr->isPermanent());
+                }),
             m_gameObjectArray.end());
-        Debug::Log->debug("<Scene> Cleaning LevelSprite Array");
+        Debug::Log->debug("<Scene> Cleaning Sprite Array");
         m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [this](const std::unique_ptr<Graphics::LevelSprite>& ptr) {
+                                [this](const std::unique_ptr<Graphics::Sprite>& ptr) {
                                     if (!ptr->getParentId().empty()
                                         && this->doesGameObjectExists(ptr->getParentId()))
                                         return false;
                                     return true;
                                 }),
             m_spriteArray.end());
-        Debug::Log->debug("<Scene> Cleaning LevelSprite Array");
-        m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [this](const std::unique_ptr<Collision::PolygonalCollider>& ptr) {
-                                      if (!ptr->getParentId().empty()
-                                          && this->doesGameObjectExists(ptr->getParentId()))
-                                          return false;
-                                      return true;
-                                  }),
+        Debug::Log->debug("<Scene> Cleaning Sprite Array");
+        m_colliderArray.erase(
+            std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
+                [this](const std::unique_ptr<Collision::PolygonalCollider>& ptr) {
+                    if (!ptr->getParentId().empty()
+                        && this->doesGameObjectExists(ptr->getParentId()))
+                        return false;
+                    return true;
+                }),
             m_colliderArray.end());
         Debug::Log->debug("<Scene> Clearing MapScript Array");
         m_scriptArray.clear();
         Debug::Log->debug("<Scene> Scene Cleared !");
     }
 
-    vili::ViliParser* Scene::dump(bool saveCameraPosition)
+    vili::ViliParser Scene::dump(bool saveCameraPosition)
     {
-        vili::ViliParser* dataStore = new vili::ViliParser;
-        dataStore->addFlag("Map");
-        dataStore->addFlag("Lock");
-        dataStore->includeFile("Obe");
+        vili::ViliParser dataStore;
+        dataStore.addFlag("Map");
+        dataStore.addFlag("Lock");
+        dataStore.includeFile("Obe");
 
         // Meta
-        (*dataStore)->createComplexNode("Meta");
-        dataStore->at("Meta").createDataNode("name", m_levelName);
+        dataStore->createComplexNode("Meta");
+        dataStore.at("Meta").createDataNode("name", m_levelName);
 
         // View
-        (*dataStore)->createComplexNode("View");
-        dataStore->at("View").createDataNode("size", m_camera.getSize().y / 2);
-        dataStore->at("View").createComplexNode("pos");
-        dataStore->at("View", "pos")
+        dataStore->createComplexNode("View");
+        dataStore.at("View").createDataNode("size", m_camera.getSize().y / 2);
+        dataStore.at("View").createComplexNode("pos");
+        dataStore.at("View", "pos")
             .createDataNode("unit", unitsToString(m_cameraInitialPosition.unit));
         if (!saveCameraPosition)
         {
-            dataStore->at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
-            dataStore->at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
+            dataStore.at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
+            dataStore.at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
         }
         else
         {
-            dataStore->at("View", "pos").createDataNode("x", m_camera.getPosition().x);
-            dataStore->at("View", "pos").createDataNode("y", m_camera.getPosition().y);
+            dataStore.at("View", "pos").createDataNode("x", m_camera.getPosition().x);
+            dataStore.at("View", "pos").createDataNode("y", m_camera.getPosition().y);
         }
         dataStore->at("View", "pos")
-            .useTemplate(dataStore->getTemplate(
-                "Vector2<" + Transform::unitsToString(m_cameraInitialPosition.unit) + ">"));
-        dataStore->at("View").createComplexNode("referential");
-        dataStore->at("View", "referential")
+            .useTemplate(dataStore.getTemplate("Vector2<"
+                + Transform::unitsToString(m_cameraInitialPosition.unit) + ">"));
+        dataStore.at("View").createComplexNode("referential");
+        dataStore.at("View", "referential")
             .createDataNode("referential", m_cameraInitialReferential.toString("{}"));
         if (m_cameraInitialReferential.isKnown())
-            dataStore->at("View", "referential")
-                .useTemplate(dataStore->getTemplate(m_cameraInitialReferential.toString()));
+            dataStore.at("View", "referential")
+                .useTemplate(
+                    dataStore.getTemplate(m_cameraInitialReferential.toString()));
 
-        // LevelSprites
+        // Sprites
         if (m_spriteArray.size() > 0)
-            (*dataStore)->createComplexNode("LevelSprites");
+            dataStore->createComplexNode("Sprites");
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
             if (m_spriteArray[i]->getParentId() == "")
             {
-                m_spriteArray[i]->dump(dataStore->at("LevelSprites"));
-                dataStore->at("LevelSprites", m_spriteArray[i]->getId(), "rect")
-                    .useTemplate(dataStore->getTemplate(
-                        "Rect<" + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">"));
+                m_spriteArray[i]->dump(dataStore.at("Sprites"));
+                dataStore.at("Sprites", m_spriteArray[i]->getId(), "rect")
+                    .useTemplate(dataStore.getTemplate("Rect<"
+                        + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">"));
             }
         }
         if (m_colliderArray.size() > 0)
-            (*dataStore)->createComplexNode("Collisions");
+            dataStore->createComplexNode("Collisions");
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
             if (m_colliderArray[i]->getParentId() == "")
             {
-                m_colliderArray[i]->dump(dataStore->at("Collisions"));
+                m_colliderArray[i]->dump(dataStore.at("Collisions"));
             }
         }
         if (m_gameObjectArray.size() > 0)
-            (*dataStore)->createComplexNode("GameObjects");
+            dataStore->createComplexNode("GameObjects");
         for (auto& gameObject : m_gameObjectArray)
         {
-            dataStore->at("GameObjects").createComplexNode(gameObject->getId());
-            dataStore->at("GameObjects", gameObject->getId())
+            dataStore.at("GameObjects").createComplexNode(gameObject->getId());
+            dataStore.at("GameObjects", gameObject->getId())
                 .createDataNode("type", gameObject->getType());
 
-            if (auto dumpFunction = gameObject->access()["Dump"])
+            if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction.valid())
             {
-                kaguya::LuaRef saveTableRef = dumpFunction();
+                sol::table saveTableRef = dumpFunction();
                 vili::ComplexNode* saveRequirements
                     = Script::DataBridge::luaTableToComplexNode("Requires", saveTableRef);
                 if (saveRequirements->getAll().size() > 0)
@@ -371,17 +376,17 @@ namespace obe::Scene
         }
         if (m_scriptArray.size() > 0)
         {
-            (*dataStore)->createComplexNode("Script");
+            dataStore->createComplexNode("Script");
             if (m_scriptArray.size() == 1)
             {
-                dataStore->at("Script").createDataNode("source", m_scriptArray[0]);
+                dataStore.at("Script").createDataNode("source", m_scriptArray[0]);
             }
             else
             {
-                dataStore->at("Script").createArrayNode("sources");
+                dataStore.at("Script").createArrayNode("sources");
                 for (int i = 0; i < m_scriptArray.size(); i++)
                 {
-                    dataStore->at("Script").getArrayNode("sources").push(m_scriptArray[i]);
+                    dataStore.at("Script").getArrayNode("sources").push(m_scriptArray[i]);
                 }
             }
         }
@@ -392,14 +397,14 @@ namespace obe::Scene
     {
         if (m_futureLoad != "")
         {
-            std::string futureLoadBuffer = std::move(m_futureLoad);
+            const std::string futureLoadBuffer = std::move(m_futureLoad);
             this->loadFromFile(futureLoadBuffer);
-            if (!m_onLoadCallback.isNilref())
+            if (m_onLoadCallback)
                 m_onLoadCallback(futureLoadBuffer);
         }
         if (m_updateState)
         {
-            size_t arraySize = m_gameObjectArray.size();
+            const size_t arraySize = m_gameObjectArray.size();
             for (size_t i = 0; i < arraySize; i++)
             {
                 Script::GameObject& gameObject = *m_gameObjectArray[i];
@@ -411,11 +416,12 @@ namespace obe::Scene
                     [this](const std::unique_ptr<Script::GameObject>& ptr) {
                         if (ptr->deletable)
                         {
-                            Debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
+                            Debug::Log->debug(
+                                "<Scene> Removing GameObject {}", ptr->getId());
                             if (ptr->m_sprite)
-                                this->removeLevelSprite(ptr->getLevelSprite()->getId());
+                                this->removeSprite(ptr->getSprite().getId());
                             if (ptr->m_collider)
-                                this->removeCollider(ptr->getCollider()->getId());
+                                this->removeCollider(ptr->getCollider().getId());
                             return true;
                         }
                         return false;
@@ -424,7 +430,7 @@ namespace obe::Scene
         }
     }
 
-    void Scene::draw()
+    void Scene::draw(Graphics::RenderTarget surface)
     {
         for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
         {
@@ -439,43 +445,34 @@ namespace obe::Scene
             }
         }
 
-        Transform::UnitVector pixelCamera
+        const Transform::UnitVector pixelCamera
             = m_camera.getPosition().to<Transform::Units::ScenePixels>();
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
             if (m_spriteArray[i]->isVisible())
             {
-                m_spriteArray[i]->draw(pixelCamera);
+                m_spriteArray[i]->draw(surface, pixelCamera);
             }
         }
 
-        if (m_showElements["CollisionLines"] || m_showElements["CollisionPoints"]
-            || m_showElements["CollisionMasterPoint"] || m_showElements["CollisionSkeleton"])
-        {
-            for (unsigned int i = 0; i < m_colliderArray.size(); i++)
-            {
-                m_colliderArray[i]->draw(m_camera, m_showElements["CollisionLines"],
-                    m_showElements["CollisionPoints"], m_showElements["CollisionMasterPoint"],
-                    m_showElements["CollisionSkeleton"]);
-            }
-        }
         if (m_showElements["SceneNodes"])
         {
             for (auto& gameObject : m_gameObjectArray)
             {
-                sf::CircleShape sceneNodeRepr;
-                SceneNode* sceneNode = gameObject->getSceneNode();
-                Transform::UnitVector sceneNodePosition
-                    = sceneNode->getPosition().to<Transform::Units::ViewPixels>();
-                sceneNodeRepr.setPosition(sceneNodePosition.x - 3, sceneNodePosition.y - 3);
-                if (sceneNode->isSelected())
-                    sceneNodeRepr.setFillColor(sf::Color::Green);
+                sf::CircleShape sceneNodeCircle;
+                SceneNode& sceneNode = gameObject->getSceneNode();
+                const Transform::UnitVector sceneNodePosition
+                    = sceneNode.getPosition().to<Transform::Units::ViewPixels>();
+                sceneNodeCircle.setPosition(
+                    sceneNodePosition.x - 3, sceneNodePosition.y - 3);
+                if (sceneNode.isSelected())
+                    sceneNodeCircle.setFillColor(sf::Color::Green);
                 else
-                    sceneNodeRepr.setFillColor(sf::Color::Red);
-                sceneNodeRepr.setOutlineColor(sf::Color::Black);
-                sceneNodeRepr.setOutlineThickness(2);
-                sceneNodeRepr.setRadius(6);
-                System::MainWindow.draw(sceneNodeRepr);
+                    sceneNodeCircle.setFillColor(sf::Color::Red);
+                sceneNodeCircle.setOutlineColor(sf::Color::Black);
+                sceneNodeCircle.setOutlineThickness(2);
+                sceneNodeCircle.setRadius(6);
+                surface.draw(sceneNodeCircle);
             }
         }
     }
@@ -498,9 +495,9 @@ namespace obe::Scene
         return allColliders;
     }
 
-    Camera* Scene::getCamera()
+    Camera& Scene::getCamera()
     {
-        return &m_camera;
+        return m_camera;
     }
 
     void Scene::setUpdateState(bool state)
@@ -512,15 +509,15 @@ namespace obe::Scene
         }
     }
 
-    Script::GameObject* Scene::getGameObject(const std::string& id)
+    Script::GameObject& Scene::getGameObject(const std::string& id)
     {
         for (auto& gameObject : m_gameObjectArray)
         {
             if (gameObject->getId() == id)
-                return gameObject.get();
+                return *gameObject.get();
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Scene.Scene.UnknownGameObject", { { "id", id }, { "map", m_levelName } });
+        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownGameObject",
+            { { "id", id }, { "map", m_levelName } });
     }
 
     bool Scene::doesGameObjectExists(const std::string& id)
@@ -535,24 +532,28 @@ namespace obe::Scene
 
     void Scene::removeGameObject(const std::string& id)
     {
-        m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
-                                    [&id](const std::unique_ptr<Script::GameObject>& ptr) {
-                                        return (ptr->getId() == id);
-                                    }),
+        m_gameObjectArray.erase(
+            std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
+                [&id](const std::unique_ptr<Script::GameObject>& ptr) {
+                    return (ptr->getId() == id);
+                }),
             m_gameObjectArray.end());
     }
 
-    std::vector<Script::GameObject*> Scene::getAllGameObjects()
+    std::vector<Script::GameObject*> Scene::getAllGameObjects(
+        const std::string& objectType)
     {
         std::vector<Script::GameObject*> returnVec;
         for (auto& gameObject : m_gameObjectArray)
         {
-            returnVec.push_back(gameObject.get());
+            if (objectType.empty() || objectType == gameObject->getType())
+                returnVec.push_back(gameObject.get());
         }
         return returnVec;
     }
 
-    Script::GameObject* Scene::createGameObject(const std::string& obj, const std::string& id)
+    Script::GameObject& Scene::createGameObject(
+        const std::string& obj, const std::string& id)
     {
         std::string useId = id;
         if (useId.empty())
@@ -565,31 +566,31 @@ namespace obe::Scene
         }
         else if (this->doesGameObjectExists(useId))
         {
-            aube::ErrorHandler::Warn("ObEngine.Scene.Scene.OverridedObject",
-                { { "id", id }, { "mapfile", m_levelName } });
+            aube::ErrorHandler::Warn("ObEngine.Scene.Scene.OverridenObject",
+                { { "id", id }, { "scene_file", m_levelName } });
         }
 
         std::unique_ptr<Script::GameObject> newGameObject
-            = std::make_unique<Script::GameObject>(obj, useId);
+            = std::make_unique<Script::GameObject>(m_triggers, m_lua, obj, useId);
         vili::ComplexNode& gameObjectData
             = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
-        newGameObject->loadGameObject(*this, gameObjectData);
+        newGameObject->loadGameObject(*this, gameObjectData, m_resources);
 
-        if (newGameObject->doesHaveLevelSprite())
+        if (newGameObject->doesHaveSprite())
         {
             const Transform::UnitVector zero(0, 0);
-            newGameObject->getLevelSprite()->setPosition(zero);
-            newGameObject->getLevelSprite()->setParentId(useId);
+            newGameObject->getSprite().setPosition(zero);
+            newGameObject->getSprite().setParentId(useId);
         }
 
         if (newGameObject->doesHaveCollider())
         {
-            newGameObject->getCollider()->setParentId(useId);
+            newGameObject->getCollider().setParentId(useId);
         }
 
         m_gameObjectArray.push_back(move(newGameObject));
 
-        return m_gameObjectArray.back().get();
+        return *m_gameObjectArray.back().get();
     }
 
     unsigned Scene::getGameObjectAmount() const
@@ -599,34 +600,35 @@ namespace obe::Scene
 
     void Scene::reorganizeLayers()
     {
-        std::sort(m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2) {
-            if (sprite1->getLayer() == sprite2->getLayer())
-            {
-                return sprite1->getZDepth() > sprite2->getZDepth();
-            }
-            else
-            {
-                return sprite1->getLayer() > sprite2->getLayer();
-            }
-        });
+        std::sort(
+            m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2) {
+                if (sprite1->getLayer() == sprite2->getLayer())
+                {
+                    return sprite1->getZDepth() > sprite2->getZDepth();
+                }
+                else
+                {
+                    return sprite1->getLayer() > sprite2->getLayer();
+                }
+            });
     }
 
-    unsigned int Scene::getLevelSpriteAmount() const
+    unsigned int Scene::getSpriteAmount() const
     {
         return m_spriteArray.size();
     }
 
-    std::vector<Graphics::LevelSprite*> Scene::getAllLevelSprites()
+    std::vector<Graphics::Sprite*> Scene::getAllSprites()
     {
-        std::vector<Graphics::LevelSprite*> allSprites;
+        std::vector<Graphics::Sprite*> allSprites;
         for (int i = 0; i < m_spriteArray.size(); i++)
             allSprites.push_back(m_spriteArray[i].get());
         return allSprites;
     }
 
-    std::vector<Graphics::LevelSprite*> Scene::getLevelSpritesByLayer(const int layer)
+    std::vector<Graphics::Sprite*> Scene::getSpritesByLayer(const int layer)
     {
-        std::vector<Graphics::LevelSprite*> returnLayer;
+        std::vector<Graphics::Sprite*> returnLayer;
 
         for (unsigned int i = 0; i < m_spriteArray.size(); i++)
         {
@@ -637,16 +639,17 @@ namespace obe::Scene
         return returnLayer;
     }
 
-    Graphics::LevelSprite* Scene::getLevelSpriteByPosition(
-        const Transform::UnitVector& position, const Transform::UnitVector& camera, const int layer)
+    Graphics::Sprite* Scene::getSpriteByPosition(
+        const Transform::UnitVector& position, const int layer)
     {
-        Graphics::LevelSprite* returnSpr = nullptr;
-        std::vector<Transform::Referential> rectPts
-            = { Transform::Referential::TopLeft, Transform::Referential::TopRight,
-                  Transform::Referential::BottomRight, Transform::Referential::BottomLeft };
+        std::vector<Transform::Referential> rectPts = { Transform::Referential::TopLeft,
+            Transform::Referential::TopRight, Transform::Referential::BottomRight,
+            Transform::Referential::BottomLeft };
         const Transform::UnitVector zeroOffset(0, 0);
 
-        std::vector<Graphics::LevelSprite*> getSpriteVec = this->getLevelSpritesByLayer(layer);
+        std::vector<Graphics::Sprite*> getSpriteVec = this->getSpritesByLayer(layer);
+        Transform::UnitVector camera
+            = -(m_camera.getPosition().to<Transform::Units::ScenePixels>());
         for (unsigned int i = 0; i < getSpriteVec.size(); i++)
         {
             Collision::PolygonalCollider positionCollider("positionCollider");
@@ -659,24 +662,24 @@ namespace obe::Scene
             }
             if (sprCollider.doesCollide(positionCollider, zeroOffset))
             {
-                returnSpr = getSpriteVec[i];
+                return getSpriteVec[i];
             }
         }
-        return returnSpr;
+        return nullptr;
     }
 
-    Graphics::LevelSprite* Scene::getLevelSprite(const std::string& id)
+    Graphics::Sprite& Scene::getSprite(const std::string& id)
     {
         for (int i = 0; i < m_spriteArray.size(); i++)
         {
             if (m_spriteArray[i].get()->getId() == id)
-                return m_spriteArray[i].get();
+                return *m_spriteArray[i].get();
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Scene.Scene.UnknownLevelSprite", { { "id", id }, { "map", m_levelName } });
+        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownSprite",
+            { { "id", id }, { "map", m_levelName } });
     }
 
-    bool Scene::doesLevelSpriteExists(const std::string& id)
+    bool Scene::doesSpriteExists(const std::string& id)
     {
         for (int i = 0; i < m_spriteArray.size(); i++)
         {
@@ -686,23 +689,14 @@ namespace obe::Scene
         return false;
     }
 
-    void Scene::removeLevelSprite(const std::string& id)
+    void Scene::removeSprite(const std::string& id)
     {
-        Debug::Log->debug("<Scene> Removing LevelSprite {0}", id);
+        Debug::Log->debug("<Scene> Removing Sprite {0}", id);
         m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [&id](std::unique_ptr<Graphics::LevelSprite>& levelSprite) {
-                                    return (levelSprite->getId() == id);
+                                [&id](std::unique_ptr<Graphics::Sprite>& Sprite) {
+                                    return (Sprite->getId() == id);
                                 }),
             m_spriteArray.end());
-    }
-
-    void Scene::enableShowCollision(const bool drawLines, const bool drawPoints,
-        const bool drawMasterPoint, const bool drawSkel)
-    {
-        m_showElements["CollisionLines"] = drawLines;
-        m_showElements["CollisionPoints"] = drawPoints;
-        m_showElements["CollisionMasterPoint"] = drawMasterPoint;
-        m_showElements["CollisionSkeleton"] = drawSkel;
     }
 
     void Scene::enableShowSceneNodes(bool showNodes)
@@ -715,18 +709,19 @@ namespace obe::Scene
         for (auto& gameObject : m_gameObjectArray)
         {
             const Transform::UnitVector sceneNodePosition
-                = gameObject->getSceneNode()->getPosition();
-            const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
+                = gameObject->getSceneNode().getPosition();
+            const Transform::UnitVector pVec
+                = position.to<Transform::Units::SceneUnits>();
             const Transform::UnitVector pTolerance
                 = Transform::UnitVector(6, 6, Transform::Units::ScenePixels)
                       .to<Transform::Units::SceneUnits>();
 
-            if (Utils::Math::isBetween(
-                    pVec.x, sceneNodePosition.x - pTolerance.x, sceneNodePosition.x + pTolerance.x))
+            if (Utils::Math::isBetween(pVec.x, sceneNodePosition.x - pTolerance.x,
+                    sceneNodePosition.x + pTolerance.x))
             {
                 if (Utils::Math::isBetween(pVec.y, sceneNodePosition.y - pTolerance.x,
                         sceneNodePosition.y + pTolerance.y))
-                    return gameObject->getSceneNode();
+                    return &gameObject->getSceneNode();
             }
         }
         return nullptr;
@@ -765,17 +760,17 @@ namespace obe::Scene
         return nullptr;
     }
 
-    Collision::PolygonalCollider* Scene::getCollider(const std::string& id)
+    Collision::PolygonalCollider& Scene::getCollider(const std::string& id)
     {
         for (unsigned int i = 0; i < m_colliderArray.size(); i++)
         {
             if (id == m_colliderArray[i]->getId())
             {
-                return m_colliderArray[i].get();
+                return *m_colliderArray[i].get();
             }
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Scene.Scene.UnknownCollider", { { "id", id }, { "scene", m_levelName } });
+        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider",
+            { { "id", id }, { "scene", m_levelName } });
     }
 
     bool Scene::doesColliderExists(const std::string& id)
@@ -792,10 +787,11 @@ namespace obe::Scene
 
     void Scene::removeCollider(const std::string& id)
     {
-        m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [&id](std::unique_ptr<Collision::PolygonalCollider>& collider) {
-                                      return (collider->getId() == id);
-                                  }),
+        m_colliderArray.erase(
+            std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
+                [&id](std::unique_ptr<Collision::PolygonalCollider>& collider) {
+                    return (collider->getId() == id);
+                }),
             m_colliderArray.end());
     }
 
