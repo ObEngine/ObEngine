@@ -61,6 +61,7 @@ namespace obe::Engine
 
     public:
         Engine();
+        ~Engine();
         void run();
 
         /**

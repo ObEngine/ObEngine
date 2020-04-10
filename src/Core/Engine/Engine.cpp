@@ -197,6 +197,11 @@ namespace obe::Engine
         }
     }
 
+    Engine::~Engine()
+    {
+        this->clean();
+    }
+
     void Engine::run()
     {
         try
@@ -205,7 +210,7 @@ namespace obe::Engine
         }
         catch (const std::exception& e)
         {
-            Debug::Log->error(e.what());
+            Debug::Log->error("HIHIHIHIHI {}", e.what());
         }
     }
 
@@ -296,6 +301,5 @@ namespace obe::Engine
             this->update();
             this->render();
         }
-        this->clean();
     }
 }
