@@ -59,23 +59,23 @@ namespace obe::Animation
          * \brief Get the delay between each frame of the AnimationGroup
          * \return The delay between each frame in milliseconds
          */
-        [[nodiscard]] unsigned int getDelay() const;
+        [[nodiscard]] unsigned int getDelay() const noexcept;
         /**
          * \brief Get the current index of AnimationGroup
          * \return The index of the texture in the AnimationGroup currently
          *         displayed
          */
-        [[nodiscard]] unsigned int getIndex() const;
+        [[nodiscard]] unsigned int getIndex() const noexcept;
         /**
          * \brief Get the name of the AnimationGroup
          * \return A std::string containing the AnimationGroup's name
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string getName() const noexcept;
         /**
          * \brief Get the AnimationGroup size
          * \return The number of textures in the AnimationGroup
          */
-        [[nodiscard]] unsigned int getSize() const;
+        [[nodiscard]] unsigned int getSize() const noexcept;
         /**
          * \brief Get the current Sprite of the AnimationGroup
          * \return A reference to the Texture currently played by the
@@ -87,7 +87,7 @@ namespace obe::Animation
          * \return A boolean which is true if the AnimationGroup's Animation is
          *         over
          */
-        [[nodiscard]] bool isOver() const;
+        [[nodiscard]] bool isOver() const noexcept;
         /**
          * \brief Increment index of the current texture to be displayed.
          *        - If max index is reached and no more loops, the AnimationGroup
@@ -123,17 +123,17 @@ namespace obe::Animation
         /**
          * \brief Reset the AnimationGroup (Index to 0, Loops to 0, Delay to 0)
          */
-        void reset();
+        void reset() noexcept;
         /**
          * \brief Set the delay between each frame of the AnimationGroup
          * \param delay Delay in milliseconds
          */
-        void setDelay(unsigned int delay);
+        void setDelay(unsigned int delay) noexcept;
         /**
          * \brief Set how many times the AnimationGroup should be replayed
          *        before end
          * \param loops Amount of loops to do
          */
-        void setLoops(int loops);
+        void setLoops(int loops) noexcept;
     };
 } // namespace obe::Animation

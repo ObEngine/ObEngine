@@ -21,10 +21,11 @@ void LoadErrors()
 
 using namespace obe;
 
+#include <Animation/AnimationGroup.hpp>
 int main(int argc, char** argv)
 {
-    unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
-    unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
+    const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
+    const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
     InitEngine(surfaceWidth, surfaceHeight);
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",

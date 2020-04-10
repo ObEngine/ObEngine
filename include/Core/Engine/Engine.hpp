@@ -54,9 +54,10 @@ namespace obe::Engine
 
         // Main loop
         void clean();
-        void handleWindowEvents();
-        void update();
+        void handleWindowEvents() const;
+        void update() const;
         void render() const;
+        void _run();
 
     public:
         Engine();
@@ -81,32 +82,32 @@ namespace obe::Engine
          * \bind{Input}
          * \asproperty
          */
-        Input::InputManager& getInputManager();
+        Input::InputManager& getInputManager() const;
         /**
          * \bind{Framerate}
          * \asproperty
          */
-        Time::FramerateManager& getFramerateManager();
+        Time::FramerateManager& getFramerateManager() const;
         /**
          * \bind{Triggers}
          * \asproperty
          */
-        Triggers::TriggerManager& getTriggerManager();
+        Triggers::TriggerManager& getTriggerManager() const;
 
         /**
          * \bind{Scene}
          * \asproperty
          */
-        Scene::Scene& getScene();
+        Scene::Scene& getScene() const;
         /**
          * \bind{Cursor}
          * \asproperty
          */
-        System::Cursor& getCursor();
+        System::Cursor& getCursor() const;
         /**
          * \bind{Window}
          * \asproperty
          */
-        System::Window& getWindow();
+        System::Window& getWindow() const;
     };
 }

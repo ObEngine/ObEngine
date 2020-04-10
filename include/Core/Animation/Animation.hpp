@@ -105,6 +105,12 @@ namespace obe::Animation
         void updateCurrentGroup();
         void setActiveAnimationGroup(const std::string& groupName);
 
+        void loadMeta(vili::ComplexNode& meta);
+        void loadImages(vili::ComplexNode& images, const System::Path& path,
+            Engine::ResourceManager* resources);
+        void loadGroups(vili::ComplexNode& groups);
+        void loadCode(vili::ComplexNode& code);
+
     public:
         /**
          * \todo Make Animation a serializable type instead of this "applyParameters"
@@ -190,7 +196,7 @@ namespace obe::Animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture() noexcept;
+        const Graphics::Texture& getTexture();
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.
@@ -201,7 +207,7 @@ namespace obe::Animation
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
          */
-        [[nodiscard]] bool isOver() const;
+        [[nodiscard]] bool isOver() const noexcept;
         /**
          * \brief Configure an Animation using the Animation configuration file
          *        (Vili file)
@@ -216,7 +222,7 @@ namespace obe::Animation
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
          */
-        void reset();
+        void reset() noexcept;
         /**
          * \brief Update the Animation (Updates the current AnimationGroup,
          *        executes the AnimationCode)
@@ -226,10 +232,10 @@ namespace obe::Animation
          * \brief Enables or disables anti-aliasing for textures of this animation
          * \param antiAliasing should be true to enable antiAliasing, false otherwise
          */
-        void setAntiAliasing(bool antiAliasing);
+        void setAntiAliasing(bool antiAliasing) noexcept;
         /**
          * \brief Gets the anti-aliasing status for the Animation
          */
-        [[nodiscard]] bool getAntiAliasing() const;
+        [[nodiscard]] bool getAntiAliasing() const noexcept;
     };
 } // namespace obe::Animation

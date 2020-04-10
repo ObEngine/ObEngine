@@ -7,7 +7,6 @@
 #include <System/Cursor.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
-#include <Engine/Engine.hpp>
 
 namespace obe::Modes
 {

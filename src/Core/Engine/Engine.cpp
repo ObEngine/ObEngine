@@ -148,7 +148,7 @@ namespace obe::Engine
         t_game.reset();
     }
 
-    void Engine::handleWindowEvents()
+    void Engine::handleWindowEvents() const
     {
         sf::Event event;
         while (m_window->pollEvent(event))
@@ -177,22 +177,106 @@ namespace obe::Engine
 
     Engine::Engine()
     {
-        this->initConfig();
-        this->initLogger();
-        this->initScript();
-        this->initTriggers();
-        this->initInput();
-        this->initWindow();
-        this->initCursor();
-        this->initFramerate();
-        this->initPlugins();
-        this->initResources();
-        this->initScene();
+        try
+        {
+            this->initConfig();
+            this->initLogger();
+            this->initScript();
+            this->initTriggers();
+            this->initInput();
+            this->initWindow();
+            this->initCursor();
+            this->initFramerate();
+            this->initPlugins();
+            this->initResources();
+            this->initScene();
+        }
+        catch (const std::exception& e)
+        {
+            Debug::Log->error(e.what());
+        }
     }
 
     void Engine::run()
     {
+        try
+        {
+            this->_run();
+        }
+        catch (const std::exception& e)
+        {
+            Debug::Log->error(e.what());
+        }
+    }
 
+    Audio::AudioManager& Engine::getAudioManager()
+    {
+        return m_audio;
+    }
+
+    Config::ConfigurationManager& Engine::getConfigurationManager()
+    {
+        return m_config;
+    }
+
+    ResourceManager& Engine::getResourceManager()
+    {
+        return m_resources;
+    }
+
+    Input::InputManager& Engine::getInputManager() const
+    {
+        return *m_input;
+    }
+
+    Time::FramerateManager& Engine::getFramerateManager() const
+    {
+        return *m_framerate;
+    }
+
+    Triggers::TriggerManager& Engine::getTriggerManager() const
+    {
+        return *m_triggers;
+    }
+
+    Scene::Scene& Engine::getScene() const
+    {
+        return *m_scene;
+    }
+
+    System::Cursor& Engine::getCursor() const
+    {
+        return *m_cursor;
+    }
+
+    System::Window& Engine::getWindow() const
+    {
+        return *m_window;
+    }
+
+    void Engine::update() const
+    {
+        // Events
+        this->handleWindowEvents();
+        m_scene->update();
+        m_triggers->update();
+        m_input->update();
+        m_cursor->update();
+    }
+
+    void Engine::render() const
+    {
+        if (m_framerate->doRender())
+        {
+            m_window->clear();
+            m_scene->draw(m_window->getTarget());
+
+            m_window->display();
+        }
+    }
+
+    void Engine::_run()
+    {
         m_lua.safe_script_file("boot.lua"_fs);
         m_window->create();
         m_lua["Game"]["Start"]();
@@ -213,71 +297,5 @@ namespace obe::Engine
             this->render();
         }
         this->clean();
-    }
-
-    Audio::AudioManager& Engine::getAudioManager()
-    {
-        return m_audio;
-    }
-
-    Config::ConfigurationManager& Engine::getConfigurationManager()
-    {
-        return m_config;
-    }
-
-    ResourceManager& Engine::getResourceManager()
-    {
-        return m_resources;
-    }
-
-    Input::InputManager& Engine::getInputManager()
-    {
-        return *m_input;
-    }
-
-    Time::FramerateManager& Engine::getFramerateManager()
-    {
-        return *m_framerate;
-    }
-
-    Triggers::TriggerManager& Engine::getTriggerManager()
-    {
-        return *m_triggers;
-    }
-
-    Scene::Scene& Engine::getScene()
-    {
-        return *m_scene;
-    }
-
-    System::Cursor& Engine::getCursor()
-    {
-        return *m_cursor;
-    }
-
-    System::Window& Engine::getWindow()
-    {
-        return *m_window;
-    }
-
-    void Engine::update()
-    {
-        // Events
-        this->handleWindowEvents();
-        m_scene->update();
-        m_triggers->update();
-        m_input->update();
-        m_cursor->update();
-    }
-
-    void Engine::render() const
-    {
-        if (m_framerate->doRender())
-        {
-            m_window->clear();
-            m_scene->draw(m_window->getTarget());
-
-            m_window->display();
-        }
     }
 }
