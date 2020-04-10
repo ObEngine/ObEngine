@@ -16,7 +16,7 @@ namespace obe::Animation
             return AnimationPlayMode::Loop;
         if (animationPlayMode == "Force")
             return AnimationPlayMode::Force;
-        throw Exceptions::UnknownAnimationPlayMode(animationPlayMode);
+        throw Exceptions::UnknownAnimationPlayMode(animationPlayMode, EXC_INFO);
     }
 
     std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m)
@@ -57,7 +57,7 @@ namespace obe::Animation
         if (const auto group = m_groups.find(groupName); group != m_groups.end())
             return *group->second;
         throw Exceptions::UnknownAnimationGroup(
-            m_name, groupName, this->getAllAnimationGroupName());
+            m_name, groupName, this->getAllAnimationGroupName(), EXC_INFO);
     }
 
     std::string Animation::getCurrentAnimationGroup() const noexcept
@@ -99,6 +99,107 @@ namespace obe::Animation
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");
         vili::ComplexNode& meta = animFile.at("Meta");
+        this->loadMeta(meta);
+
+        // Images
+        Debug::Log->trace("  <Animation> Loading Images block");
+        vili::ComplexNode& images = animFile.at("Images");
+        this->loadImages(images, path, resources);
+
+        // Groups
+        Debug::Log->trace("  <Animation> Loading Groups block");
+        vili::ComplexNode& groups = animFile.at("Groups");
+        this->loadGroups(groups);
+
+        // Animation Code
+        Debug::Log->trace("  <Animation> Loading Animation block");
+        vili::ComplexNode& code = animFile.at("Animation");
+        this->loadCode(code);
+    }
+
+    void Animation::executeInstruction()
+    {
+        std::vector<std::string> currentCommand = m_code[m_codeIndex];
+        if (currentCommand[0] == "DELAY")
+        {
+            m_feedInstructions = true;
+            m_sleep = stoi(currentCommand[1]);
+
+            if (m_playMode != AnimationPlayMode::OneTime
+                && !(m_codeIndex >= m_code.size() - 1))
+                m_codeIndex++;
+            else
+                m_over = true;
+        }
+        else if (currentCommand[0] == "PLAY_GROUP")
+        {
+            if (!m_currentGroupName.empty())
+                m_groups[m_currentGroupName]->reset();
+            m_feedInstructions = false;
+            m_currentGroupName = currentCommand[1];
+            if (currentCommand.size() == 3)
+            {
+                const int loops = stoi(currentCommand[2]);
+                m_groups[m_currentGroupName]->setLoops(loops);
+            }
+            else
+                m_groups[m_currentGroupName]->setLoops(1);
+        }
+        else if (currentCommand[0] == "CALL")
+        {
+            m_feedInstructions = false;
+            std::string callAnimation = currentCommand[1];
+            Utils::String::replaceInPlace(callAnimation, "'", "");
+            m_status = AnimationStatus::Call;
+            m_nextAnimation = callAnimation;
+        }
+        else
+        {
+            throw Exceptions::UnknownAnimationCommand(
+                m_name, currentCommand[0], EXC_INFO);
+        }
+    }
+
+    void Animation::updateCurrentGroup()
+    {
+        m_groups[m_currentGroupName]->next();
+        if (m_groups[m_currentGroupName]->isOver())
+        {
+            if (m_playMode != AnimationPlayMode::OneTime)
+            {
+                m_feedInstructions = true;
+                m_groups[m_currentGroupName]->reset();
+                m_codeIndex++;
+            }
+            else
+            {
+                if (m_codeIndex < m_code.size() - 1)
+                {
+                    m_feedInstructions = true;
+                    m_groups[m_currentGroupName]->reset();
+                    m_codeIndex++;
+                }
+                else
+                {
+                    m_groups[m_currentGroupName]->previous(true);
+                    m_over = true;
+                }
+            }
+        }
+    }
+
+    void Animation::setActiveAnimationGroup(const std::string& groupName)
+    {
+        if (m_groups.find(groupName) != m_groups.end())
+        {
+            m_currentGroupName = groupName;
+        }
+        throw Exceptions::UnknownAnimationGroup(
+            m_name, groupName, this->getAllAnimationGroupName(), EXC_INFO);
+    }
+
+    void Animation::loadMeta(vili::ComplexNode& meta)
+    {
         m_name = meta.at<vili::DataNode>("name").get<std::string>();
         Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
         if (meta.contains(vili::NodeType::DataNode, "clock"))
@@ -112,14 +213,16 @@ namespace obe::Animation
                 meta.at<vili::DataNode>("play-mode").get<std::string>());
             Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
         }
+    }
 
-        // Images
-        Debug::Log->trace("  <Animation> Loading Images block");
-        vili::ArrayNode& imageList = animFile.at<vili::ArrayNode>("Images", "ImageList");
+    void Animation::loadImages(vili::ComplexNode& images, const System::Path& path,
+        Engine::ResourceManager* resources)
+    {
+        vili::ArrayNode& imageList = images.at<vili::ArrayNode>("ImageList");
         std::string model;
-        if (animFile.at("Images").contains(vili::NodeType::DataNode, "model"))
+        if (images.contains(vili::NodeType::DataNode, "model"))
         {
-            model = animFile.at("Images").getDataNode("model").get<std::string>();
+            model = images.getDataNode("model").get<std::string>();
             Debug::Log->trace(
                 "    <Animation> Using following template to load images : {}", model);
         }
@@ -170,9 +273,10 @@ namespace obe::Animation
                 m_textures.push_back(newTexture);
             }
         }
-        // Groups
-        Debug::Log->trace("  <Animation> Loading Groups block");
-        vili::ComplexNode& groups = animFile.at("Groups");
+    }
+
+    void Animation::loadGroups(vili::ComplexNode& groups)
+    {
         for (vili::ComplexNode* group : groups.getAll<vili::ComplexNode>())
         {
             Debug::Log->trace(
@@ -201,10 +305,11 @@ namespace obe::Animation
                 m_groups[group->getId()]->setDelay(m_delay);
             }
         }
-        // Animation Code
-        Debug::Log->trace("  <Animation> Loading Animation block");
-        vili::ComplexNode& animation = animFile.at("Animation");
-        for (vili::DataNode* command : animation.at<vili::ArrayNode>("AnimationCode"))
+    }
+
+    void Animation::loadCode(vili::ComplexNode& code)
+    {
+        for (vili::DataNode* command : code.at<vili::ArrayNode>("AnimationCode"))
         {
             std::string currentCommand = command->get<std::string>();
             Debug::Log->trace(
@@ -216,82 +321,6 @@ namespace obe::Animation
                 = Utils::String::split(currentCommand, ",");
             m_code.push_back(vecCurCom);
         }
-    }
-
-    void Animation::executeInstruction()
-    {
-        std::vector<std::string> currentCommand = m_code[m_codeIndex];
-        if (currentCommand[0] == "DELAY")
-        {
-            m_feedInstructions = true;
-            m_sleep = stoi(currentCommand[1]);
-
-            if (m_playMode != AnimationPlayMode::OneTime
-                && !(m_codeIndex >= m_code.size() - 1))
-                m_codeIndex++;
-            else
-                m_over = true;
-        }
-        else if (currentCommand[0] == "PLAY_GROUP")
-        {
-            if (!m_currentGroupName.empty())
-                m_groups[m_currentGroupName]->reset();
-            m_feedInstructions = false;
-            m_currentGroupName = currentCommand[1];
-            if (currentCommand.size() == 3)
-            {
-                const int loops = stoi(currentCommand[2]);
-                m_groups[m_currentGroupName]->setLoops(loops);
-            }
-            else
-                m_groups[m_currentGroupName]->setLoops(1);
-        }
-        else if (currentCommand[0] == "CALL")
-        {
-            m_feedInstructions = false;
-            std::string callAnimation = currentCommand[1];
-            Utils::String::replaceInPlace(callAnimation, "'", "");
-            m_status = AnimationStatus::Call;
-            m_nextAnimation = callAnimation;
-        }
-    }
-
-    void Animation::updateCurrentGroup()
-    {
-        m_groups[m_currentGroupName]->next();
-        if (m_groups[m_currentGroupName]->isOver())
-        {
-            if (m_playMode != AnimationPlayMode::OneTime)
-            {
-                m_feedInstructions = true;
-                m_groups[m_currentGroupName]->reset();
-                m_codeIndex++;
-            }
-            else
-            {
-                if (m_codeIndex < m_code.size() - 1)
-                {
-                    m_feedInstructions = true;
-                    m_groups[m_currentGroupName]->reset();
-                    m_codeIndex++;
-                }
-                else
-                {
-                    m_groups[m_currentGroupName]->previous(true);
-                    m_over = true;
-                }
-            }
-        }
-    }
-
-    void Animation::setActiveAnimationGroup(const std::string& groupName)
-    {
-        if (m_groups.find(groupName) != m_groups.end())
-        {
-            m_currentGroupName = groupName;
-        }
-        throw Exceptions::UnknownAnimationGroup(
-            m_name, groupName, this->getAllAnimationGroupName());
     }
 
     void Animation::applyParameters(vili::ComplexNode& parameters)
@@ -337,9 +366,9 @@ namespace obe::Animation
         return m_antiAliasing;
     }
 
-    void Animation::reset()
+    void Animation::reset() noexcept
     {
-        Debug::Log->trace("<Animation> Resetting Animation {0}", m_name);
+        Debug::Log->trace("<Animation> Resetting Animation '{}'", m_name);
         for (auto it = m_groups.cbegin(); it != m_groups.cend(); ++it)
             it->second->reset();
         m_status = AnimationStatus::Play;
@@ -352,14 +381,15 @@ namespace obe::Animation
     {
         if (index < m_textures.size())
             return *m_textures[index];
-        throw Exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size());
+        throw Exceptions::AnimationTextureIndexOverflow(
+            m_name, index, m_textures.size(), EXC_INFO);
     }
 
     const Graphics::Texture& Animation::getTexture()
     {
         if (!m_currentGroupName.empty())
             return m_groups[m_currentGroupName]->getTexture();
-        throw Exceptions::NoSelectedAnimationGroup(m_name);
+        throw Exceptions::NoSelectedAnimationGroup(m_name, EXC_INFO);
     }
 
     int Animation::getPriority() const noexcept

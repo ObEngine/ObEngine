@@ -6,34 +6,49 @@
 
 namespace obe
 {
-    class Exception : std::exception
+    class DebugInfo
+    {
+    public:
+        std::string_view file;
+        int line;
+        std::string_view function;
+        DebugInfo(std::string_view file, int line, std::string_view function)
+            : file(file)
+            , line(line)
+            , function(function)
+        {
+        }
+    };
+#define EXC_INFO_WRAPPER() DebugInfo(__FILE__, __LINE__, __func__)
+#define EXC_INFO EXC_INFO_WRAPPER()
+
+    class Exception : public std::exception
     {
     private:
-        std::string m_id;
-        std::string m_error;
-        std::optional<std::string> m_hint;
+        std::string m_message;
 
     public:
-        Exception(std::string id)
-            : m_id(std::move(id))
+        Exception(std::string id, DebugInfo info)
         {
+            m_message = fmt::format("Exception [{}] occured\n", id);
+            m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
+            m_message += fmt::format("  In function: '{}'\n", info.function);
         }
         template <class... Args> void error(Args&&... args)
         {
-            m_error = fmt::format(std::forward<Args>(args)...);
+            const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
+            m_message += fmt::format("  Error: '{}'\n", errorMsg);
         }
         template <class... Args> void hint(Args&&... args)
         {
-            m_hint = fmt::format(std::forward<Args>(args)...);
+            const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
+            m_message += fmt::format("  Hint: '{}'\n", hintMsg);
         }
         const char* what() const override;
     };
 
     inline const char* Exception::what() const
     {
-        std::string message = fmt::format("[{}] {}", m_id, m_error);
-        if (m_hint)
-            message += ("\n" + m_hint.value());
-        return message.c_str();
+        return m_message.c_str();
     }
 }

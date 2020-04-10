@@ -1,4 +1,5 @@
 #include <Animation/AnimationGroup.hpp>
+#include <Animation/Exceptions.hpp>
 
 namespace obe::Animation
 {
@@ -16,12 +17,12 @@ namespace obe::Animation
     {
     }
 
-    void AnimationGroup::setDelay(unsigned int clock)
+    void AnimationGroup::setDelay(unsigned int delay) noexcept
     {
-        m_delay = clock;
+        m_delay = delay;
     }
 
-    void AnimationGroup::setLoops(int loops)
+    void AnimationGroup::setLoops(int loops) noexcept
     {
         m_loopAmount = loops;
     }
@@ -33,8 +34,11 @@ namespace obe::Animation
 
     void AnimationGroup::removeTextureByIndex(unsigned int index)
     {
-        if (!m_groupList.empty())
+        if (index < m_groupList.size())
             m_groupList.erase(m_groupList.begin() + index);
+        throw Exceptions::AnimationGroupTextureIndexOverflow(m_name, index,
+            m_groupList.size(),
+            EXC_INFO); // TODO: Improve this exception
     }
 
     const Graphics::Texture& AnimationGroup::getTexture() const
@@ -42,7 +46,7 @@ namespace obe::Animation
         return *m_groupList[m_index];
     }
 
-    void AnimationGroup::reset()
+    void AnimationGroup::reset() noexcept
     {
         m_index = 0;
         m_over = false;
@@ -83,27 +87,27 @@ namespace obe::Animation
         }
     }
 
-    bool AnimationGroup::isOver() const
+    bool AnimationGroup::isOver() const noexcept
     {
         return m_over;
     }
 
-    unsigned int AnimationGroup::getIndex() const
+    unsigned int AnimationGroup::getIndex() const noexcept
     {
         return m_index;
     }
 
-    unsigned int AnimationGroup::getSize() const
+    unsigned int AnimationGroup::getSize() const noexcept
     {
         return m_groupList.size();
     }
 
-    std::string AnimationGroup::getName() const
+    std::string AnimationGroup::getName() const noexcept
     {
         return m_name;
     }
 
-    unsigned int AnimationGroup::getDelay() const
+    unsigned int AnimationGroup::getDelay() const noexcept
     {
         return m_delay;
     }

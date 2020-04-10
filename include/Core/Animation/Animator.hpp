@@ -40,13 +40,13 @@ namespace obe::Animation
         System::Path m_path;
         Graphics::Sprite* m_target = nullptr;
         AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
+        void applyTexture() const;
 
     public:
         /**
          * \brief Clear the Animator of all Animation
-         * \param clearMemory Delete the contained Animation in memory
          */
-        void clear(bool clearMemory = true);
+        void clear() noexcept;
         /**
          * \brief Get the name of all contained Animation
          * \return A std::vector of std::string containing the name of all
@@ -66,7 +66,7 @@ namespace obe::Animation
          * \return A std::string containing the name of the currently played
          *         Animation
          */
-        [[nodiscard]] std::string getKey() const;
+        [[nodiscard]] std::string getKey() const noexcept;
         /**
          * \brief Get the current Sprite of the current Animation
          * \return A pointer of the Sprite currently played by the current

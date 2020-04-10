@@ -108,11 +108,7 @@ namespace obe::Animation::Bindings
         sol::usertype<obe::Animation::Animator> bindAnimator
             = AnimationNamespace.new_usertype<obe::Animation::Animator>(
                 "Animator", sol::call_constructor, sol::default_constructor);
-        bindAnimator["clear"] = sol::overload(
-            [](obe::Animation::Animator* self) -> void { return self->clear(); },
-            [](obe::Animation::Animator* self, bool clearMemory) -> void {
-                return self->clear(clearMemory);
-            });
+        bindAnimator["clear"] = &obe::Animation::Animator::clear;
         bindAnimator["getAllAnimationName"]
             = &obe::Animation::Animator::getAllAnimationName;
         bindAnimator["getAnimation"] = &obe::Animation::Animator::getAnimation;
