@@ -146,8 +146,9 @@ namespace obe::Graphics::Bindings
                 sol::constructors<obe::Graphics::Sprite(const std::string&)>(),
                 sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
-                    obe::Transform::Rect, obe::Component::Component<Sprite>,
-                    obe::Engine::ResourceManagedObject, obe::Types::Identifiable>());
+                    obe::Transform::Movable, obe::Transform::Rect,
+                    obe::Component::Component<Sprite>, obe::Engine::ResourceManagedObject,
+                    obe::Types::Identifiable>());
         bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
         bindSprite["dump"] = &obe::Graphics::Sprite::dump;
         bindSprite["getColor"] = &obe::Graphics::Sprite::getColor;
