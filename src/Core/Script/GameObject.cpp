@@ -1,4 +1,5 @@
 #include <Scene/Scene.hpp>
+#include <Script/Exceptions.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
@@ -10,12 +11,16 @@ namespace obe::Script
 {
     sol::table GameObject::access() const
     {
-        return m_environment["Object"].get<sol::table>(); // GAMEOBJECTENV["Object"];
+        if (m_hasScriptEngine)
+            return m_environment["Object"].get<sol::table>(); // GAMEOBJECTENV["Object"];
+        throw Exceptions::NoScriptComponent(m_type, m_id, EXC_INFO);
     }
 
     sol::function GameObject::getConstructor() const
     {
-        return m_environment["ObjectInit"].get<sol::function>();
+        if (m_hasScriptEngine)
+            return m_environment["ObjectInit"].get<sol::function>();
+        throw Exceptions::NoScriptComponent(m_type, m_id, EXC_INFO);
     }
 
     vili::ViliParser GameObjectDatabase::allDefinitions;
@@ -421,19 +426,24 @@ namespace obe::Script
     {
         Debug::Log->debug(
             "GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
-        t_local->trigger("Delete");
+        if (m_hasScriptEngine)
+            t_local->trigger("Delete");
         this->deletable = true;
         m_active = false;
-        for (auto& triggerRef : m_registeredTriggers)
+        if (m_hasScriptEngine)
         {
-            if (auto trigger = triggerRef.first.lock())
+            for (auto& triggerRef : m_registeredTriggers)
             {
-                trigger->unregisterEnvironment(m_environment);
+                if (auto trigger = triggerRef.first.lock())
+                {
+                    trigger->unregisterEnvironment(m_environment);
+                }
             }
-        }
-        for (const auto& trigger : t_local->getTriggers())
-        {
-            m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()] = sol::lua_nil;
+            for (const auto& trigger : t_local->getTriggers())
+            {
+                m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
+                    = sol::lua_nil;
+            }
         }
     }
 
