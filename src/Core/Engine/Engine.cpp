@@ -210,7 +210,7 @@ namespace obe::Engine
         }
         catch (const std::exception& e)
         {
-            Debug::Log->error("HIHIHIHIHI {}", e.what());
+            Debug::Log->error(e.what());
         }
     }
 

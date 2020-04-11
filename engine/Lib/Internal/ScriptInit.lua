@@ -29,3 +29,7 @@ function LuaCore.IsLibLoaded(lib)
     end
     return false;
 end
+
+function import(path)
+    return require(obe.System.Path(path):find():gsub("%.lua", ""));
+end
