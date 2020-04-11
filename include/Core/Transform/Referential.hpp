@@ -25,6 +25,7 @@ namespace obe::Transform
 
         Referential();
         Referential(double refX, double refY);
+        Referential(const Referential& ref);
 
         bool operator==(const Referential& ref) const;
         bool operator!=(const Referential& ref) const;

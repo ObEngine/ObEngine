@@ -42,7 +42,7 @@ namespace obe::Transform
             m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
-    void Rect::transformRef(UnitVector& vec, Referential ref, ConversionType type) const
+    void Rect::transformRef(UnitVector& vec, const Referential& ref, ConversionType type) const
     {
         const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
@@ -112,7 +112,7 @@ namespace obe::Transform
                 { "point_color_8", sf::Color::White } });
     }
 
-    void Rect::setPointPosition(const UnitVector& position, Referential ref)
+    void Rect::setPointPosition(const UnitVector& position, const Referential& ref)
     {
         const UnitVector oppositePointPosition = this->getPosition(ref.flip());
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
@@ -159,21 +159,21 @@ namespace obe::Transform
         }
     }
 
-    UnitVector Rect::getPosition(Referential ref) const
+    UnitVector Rect::getPosition(const Referential& ref) const
     {
         UnitVector getPosVec = m_position;
         this->transformRef(getPosVec, ref, ConversionType::From);
         return getPosVec;
     }
 
-    void Rect::setPosition(const UnitVector& position, Referential ref)
+    void Rect::setPosition(const UnitVector& position, const Referential& ref)
     {
         UnitVector pVec = position.to<Units::SceneUnits>();
         this->transformRef(pVec, ref, ConversionType::To);
         m_position.set(pVec);
     }
 
-    void Rect::setSize(const UnitVector& size, Referential ref)
+    void Rect::setSize(const UnitVector& size, const Referential& ref)
     {
         const UnitVector savePosition = this->getPosition(ref);
         m_size.set(size);
@@ -195,7 +195,7 @@ namespace obe::Transform
         m_position += position;
     }
 
-    void Rect::scale(const UnitVector& size, Referential ref)
+    void Rect::scale(const UnitVector& size, const Referential& ref)
     {
         const UnitVector savePosition = this->getPosition(ref);
         m_size *= size;
@@ -207,7 +207,7 @@ namespace obe::Transform
         return m_size;
     }
 
-    void Rect::movePoint(const UnitVector& position, Referential ref)
+    void Rect::movePoint(const UnitVector& position, const Referential& ref)
     {
     }
 

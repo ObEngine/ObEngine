@@ -16,7 +16,7 @@ namespace obe::Scene
     }
 
     void Camera::setPosition(
-        const Transform::UnitVector& position, const Transform::Referential ref)
+        const Transform::UnitVector& position, const Transform::Referential& ref)
     {
         Rect::setPosition(position, ref);
         this->apply();
@@ -28,7 +28,7 @@ namespace obe::Scene
         this->apply();
     }
 
-    void Camera::setSize(const double pSize, const Transform::Referential ref)
+    void Camera::setSize(const double pSize, const Transform::Referential& ref)
     {
         Rect::setSize(
             Transform::UnitVector(pSize * 2
@@ -38,7 +38,7 @@ namespace obe::Scene
         this->apply();
     }
 
-    void Camera::scale(const double pScale, const Transform::Referential ref)
+    void Camera::scale(const double pScale, const Transform::Referential& ref)
     {
         this->setSize((m_size.y / 2) * pScale, ref);
         this->apply();
@@ -54,7 +54,7 @@ namespace obe::Scene
         if (!m_locked) m_angle += angle;
     }*/
 
-    Transform::UnitVector Camera::getPosition(const Transform::Referential ref) const
+    Transform::UnitVector Camera::getPosition(const Transform::Referential& ref) const
     {
         return Rect::getPosition(ref);
     }

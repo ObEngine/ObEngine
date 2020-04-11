@@ -44,7 +44,8 @@ namespace obe::Transform
          *          - From : Referential::TopLeft to ref
          *          - To : ref to Referential::TopLeft
          */
-        void transformRef(UnitVector& vec, Referential ref, ConversionType type) const;
+        void transformRef(
+            UnitVector& vec, const Referential& ref, ConversionType type) const;
 
         Rect() = default;
         Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
@@ -66,7 +67,7 @@ namespace obe::Transform
          * \param position Position to affect to the Rect
          * \param ref Referential used to set the Position
          */
-        virtual void setPosition(const UnitVector& position, Referential ref);
+        virtual void setPosition(const UnitVector& position, const Referential& ref);
         /**
          * \brief Moves the Rectangle (Adds the given position to the current
          *        one)
@@ -79,7 +80,7 @@ namespace obe::Transform
          *        Position
          * \return The Position of the given Referential of the Rect
          */
-        [[nodiscard]] virtual UnitVector getPosition(Referential ref) const;
+        [[nodiscard]] virtual UnitVector getPosition(const Referential& ref) const;
 
         /**
          * \brief Set the Position of a specific Referential of the Rect (The
@@ -88,7 +89,7 @@ namespace obe::Transform
          * \param ref Referential you want to move
          */
         void setPointPosition(
-            const UnitVector& position, Referential ref = Referential::TopLeft);
+            const UnitVector& position, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Move a specific Referential of the Rect (The opposite Point won't move)
          * \param position Position to add to the specific
@@ -96,7 +97,7 @@ namespace obe::Transform
          * \param ref Referential you want to move
          */
         void movePoint(
-            const UnitVector& position, Referential ref = Referential::TopLeft);
+            const UnitVector& position, const Referential& ref = Referential::TopLeft);
 
         /**
          * \brief Set the size of the Rect
@@ -104,14 +105,15 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          *        won't move)
          */
-        void setSize(const UnitVector& size, Referential ref = Referential::TopLeft);
+        void setSize(
+            const UnitVector& size, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
          * \param ref Referential used to scale the Rect (Referential that won't
          *        move)
          */
-        void scale(const UnitVector& size, Referential ref = Referential::TopLeft);
+        void scale(const UnitVector& size, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Get the Size of the Rect
          * \return An UnitVector containing the size of the Rect (Default Unit
