@@ -157,39 +157,45 @@ namespace obe::Transform::Bindings
             static_cast<void (obe::Transform::Rect::*)(
                 const obe::Transform::UnitVector&)>(&obe::Transform::Rect::setPosition),
             static_cast<void (obe::Transform::Rect::*)(const obe::Transform::UnitVector&,
-                obe::Transform::Referential)>(&obe::Transform::Rect::setPosition));
+                const obe::Transform::Referential&)>(&obe::Transform::Rect::setPosition));
+        bindRect["setPosition"] = sol::overload(
+            static_cast<void (obe::Transform::Rect::*)(
+                const obe::Transform::UnitVector&)>(&obe::Transform::Rect::setPosition),
+            static_cast<void (obe::Transform::Rect::*)(const obe::Transform::UnitVector&,
+                const obe::Transform::Referential&)>(&obe::Transform::Rect::setPosition));
         bindRect["getPosition"] = sol::overload(
             static_cast<obe::Transform::UnitVector (obe::Transform::Rect::*)() const>(
                 &obe::Transform::Rect::getPosition),
             static_cast<obe::Transform::UnitVector (obe::Transform::Rect::*)(
-                obe::Transform::Referential) const>(&obe::Transform::Rect::getPosition));
+                const obe::Transform::Referential&) const>(
+                &obe::Transform::Rect::getPosition));
         bindRect["move"] = &obe::Transform::Rect::move;
         bindRect["setPointPosition"] = sol::overload(
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position)
                 -> void { return self->setPointPosition(position); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position,
-                obe::Transform::Referential ref) -> void {
+                const obe::Transform::Referential& ref) -> void {
                 return self->setPointPosition(position, ref);
             });
         bindRect["movePoint"] = sol::overload(
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position)
                 -> void { return self->movePoint(position); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position,
-                obe::Transform::Referential ref) -> void {
+                const obe::Transform::Referential& ref) -> void {
                 return self->movePoint(position, ref);
             });
         bindRect["setSize"] = sol::overload(
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size)
                 -> void { return self->setSize(size); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size,
-                obe::Transform::Referential ref) -> void {
+                const obe::Transform::Referential& ref) -> void {
                 return self->setSize(size, ref);
             });
         bindRect["scale"] = sol::overload(
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size)
                 -> void { return self->scale(size); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size,
-                obe::Transform::Referential ref) -> void {
+                const obe::Transform::Referential& ref) -> void {
                 return self->scale(size, ref);
             });
         bindRect["getSize"] = &obe::Transform::Rect::getSize;
