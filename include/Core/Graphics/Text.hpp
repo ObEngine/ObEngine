@@ -27,7 +27,7 @@ namespace obe::Graphics
         Color outline = Color::White;
         unsigned int thickness = 0;
         sf::Text::Style style = sf::Text::Style::Regular;
-        std::string string;
+        std::wstring string;
 
         Text();
         Text(const std::string& string);

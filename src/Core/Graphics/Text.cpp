@@ -1,4 +1,5 @@
 #include <Graphics/Text.hpp>
+#include <codecvt>
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -14,7 +15,8 @@ namespace obe::Graphics
 
     Text::Text(const std::string& string)
     {
-        this->string = string;
+        this->string
+            = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
     }
 
     void RichText::Line::setCharacterSize(unsigned int size) const
