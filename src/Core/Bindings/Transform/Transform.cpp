@@ -204,6 +204,14 @@ namespace obe::Transform::Bindings
         bindRect["setRotation"] = &obe::Transform::Rect::setRotation;
         bindRect["rotate"] = &obe::Transform::Rect::rotate;
         bindRect["draw"] = &obe::Transform::Rect::draw;
+        bindRect["x"] = sol::property(
+            [](obe::Transform::Rect& self) { return self.getPosition().x; });
+        bindRect["y"] = sol::property(
+            [](obe::Transform::Rect& self) { return self.getPosition().y; });
+        bindRect["width"]
+            = sol::property([](obe::Transform::Rect& self) { return self.getSize().x; });
+        bindRect["height"]
+            = sol::property([](obe::Transform::Rect& self) { return self.getSize().y; });
     }
     void LoadClassReferential(sol::state_view state)
     {

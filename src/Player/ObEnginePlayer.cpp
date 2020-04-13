@@ -21,7 +21,6 @@ void LoadErrors()
 
 using namespace obe;
 
-#include <Animation/AnimationGroup.hpp>
 int main(int argc, char** argv)
 {
     const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
