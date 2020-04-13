@@ -348,28 +348,28 @@ namespace obe::Scene
                     dataStore.getTemplate(m_cameraInitialReferential.toString()));
 
         // Sprites
-        if (m_spriteArray.size() > 0)
+        if (!m_spriteArray.empty())
             dataStore->createComplexNode("Sprites");
-        for (unsigned int i = 0; i < m_spriteArray.size(); i++)
+        for (auto& sprite : m_spriteArray)
         {
-            if (m_spriteArray[i]->getParentId() == "")
+            if (sprite->getParentId().empty())
             {
-                m_spriteArray[i]->dump(dataStore.at("Sprites"));
-                dataStore.at("Sprites", m_spriteArray[i]->getId(), "rect")
-                    .useTemplate(dataStore.getTemplate("Rect<"
-                        + unitsToString(m_spriteArray[i]->getWorkingUnit()) + ">"));
+                sprite->dump(dataStore.at("Sprites"));
+                dataStore.at("Sprites", sprite->getId(), "rect")
+                    .useTemplate(dataStore.getTemplate(
+                        "Rect<" + unitsToString(sprite->getWorkingUnit()) + ">"));
             }
         }
-        if (m_colliderArray.size() > 0)
+        if (!m_colliderArray.empty())
             dataStore->createComplexNode("Collisions");
-        for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+        for (auto& collider : m_colliderArray)
         {
-            if (m_colliderArray[i]->getParentId() == "")
+            if (collider->getParentId().empty())
             {
-                m_colliderArray[i]->dump(dataStore.at("Collisions"));
+                collider->dump(dataStore.at("Collisions"));
             }
         }
-        if (m_gameObjectArray.size() > 0)
+        if (!m_gameObjectArray.empty())
             dataStore->createComplexNode("GameObjects");
         for (auto& gameObject : m_gameObjectArray)
         {
@@ -379,15 +379,15 @@ namespace obe::Scene
 
             if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction.valid())
             {
-                sol::table saveTableRef = dumpFunction();
+                const sol::table saveTableRef = dumpFunction();
                 vili::ComplexNode* saveRequirements
                     = Script::DataBridge::luaTableToComplexNode("Requires", saveTableRef);
-                if (saveRequirements->getAll().size() > 0)
+                if (!saveRequirements->getAll().empty())
                     dataStore->at("GameObjects", gameObject->getId())
                         .pushComplexNode(saveRequirements);
             }
         }
-        if (m_scriptArray.size() > 0)
+        if (!m_scriptArray.empty())
         {
             dataStore->createComplexNode("Script");
             if (m_scriptArray.size() == 1)
@@ -397,9 +397,9 @@ namespace obe::Scene
             else
             {
                 dataStore.at("Script").createArrayNode("sources");
-                for (int i = 0; i < m_scriptArray.size(); i++)
+                for (const auto& script : m_scriptArray)
                 {
-                    dataStore.at("Script").getArrayNode("sources").push(m_scriptArray[i]);
+                    dataStore.at("Script").getArrayNode("sources").push(script);
                 }
             }
         }
@@ -408,7 +408,7 @@ namespace obe::Scene
 
     void Scene::update()
     {
-        if (m_futureLoad != "")
+        if (!m_futureLoad.empty())
         {
             const std::string futureLoadBuffer = std::move(m_futureLoad);
             this->loadFromFile(futureLoadBuffer);
@@ -460,11 +460,11 @@ namespace obe::Scene
 
         const Transform::UnitVector pixelCamera
             = m_camera.getPosition().to<Transform::Units::ScenePixels>();
-        for (unsigned int i = 0; i < m_spriteArray.size(); i++)
+        for (auto& sprite : m_spriteArray)
         {
-            if (m_spriteArray[i]->isVisible())
+            if (sprite->isVisible())
             {
-                m_spriteArray[i]->draw(surface, pixelCamera);
+                sprite->draw(surface, pixelCamera);
             }
         }
 
@@ -527,7 +527,7 @@ namespace obe::Scene
         for (auto& gameObject : m_gameObjectArray)
         {
             if (gameObject->getId() == id)
-                return *gameObject.get();
+                return *gameObject;
         }
         throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownGameObject",
             { { "id", id }, { "map", m_levelName } });
@@ -603,7 +603,7 @@ namespace obe::Scene
 
         m_gameObjectArray.push_back(move(newGameObject));
 
-        return *m_gameObjectArray.back().get();
+        return *m_gameObjectArray.back();
     }
 
     unsigned Scene::getGameObjectAmount() const
@@ -634,8 +634,9 @@ namespace obe::Scene
     std::vector<Graphics::Sprite*> Scene::getAllSprites()
     {
         std::vector<Graphics::Sprite*> allSprites;
-        for (int i = 0; i < m_spriteArray.size(); i++)
-            allSprites.push_back(m_spriteArray[i].get());
+        allSprites.reserve(m_spriteArray.size());
+        for (auto& sprite : m_spriteArray)
+            allSprites.push_back(sprite.get());
         return allSprites;
     }
 
@@ -685,8 +686,8 @@ namespace obe::Scene
     {
         for (int i = 0; i < m_spriteArray.size(); i++)
         {
-            if (m_spriteArray[i].get()->getId() == id)
-                return *m_spriteArray[i].get();
+            if (m_spriteArray[i]->getId() == id)
+                return *m_spriteArray[i];
         }
         throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownSprite",
             { { "id", id }, { "map", m_levelName } });
@@ -696,7 +697,7 @@ namespace obe::Scene
     {
         for (int i = 0; i < m_spriteArray.size(); i++)
         {
-            if (m_spriteArray[i].get()->getId() == id)
+            if (m_spriteArray[i]->getId() == id)
                 return true;
         }
         return false;
@@ -779,7 +780,7 @@ namespace obe::Scene
         {
             if (id == m_colliderArray[i]->getId())
             {
-                return *m_colliderArray[i].get();
+                return *m_colliderArray[i];
             }
         }
         auto exc = aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider",

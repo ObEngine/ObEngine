@@ -3,6 +3,7 @@
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
+#include <Animation/Tweening.hpp>
 
 #include <sol/sol.hpp>
 
@@ -135,6 +136,19 @@ namespace obe::Animation::Bindings
                 return self->setTarget(sprite, targetScaleMode);
             });
     }
+
+    void LoadClassValueTweening(sol::state_view state)
+    {
+        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
+        sol::usertype<obe::Animation::ValueTweening> bindValueTweening
+            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening>(
+                "ValueTweening", sol::call_constructor,
+                sol::constructors<obe::Animation::ValueTweening(
+                    double, double, Time::TimeUnit)>());
+        bindValueTweening["ease"] = &obe::Animation::ValueTweening::ease;
+        bindValueTweening["step"] = &obe::Animation::ValueTweening::step;
+    }
+
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();

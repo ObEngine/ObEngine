@@ -20,8 +20,8 @@ namespace obe::System
     class Window
     {
     private:
-        unsigned int m_width = 1280;
-        unsigned int m_height = 720;
+        unsigned int m_width = 1920;
+        unsigned int m_height = 1080;
         int m_style;
         std::string m_title;
         sf::RenderWindow m_window;

@@ -44,10 +44,10 @@ namespace obe
             const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
             m_message += fmt::format("  Hint: '{}'\n", hintMsg);
         }
-        const char* what() const override;
+        const char* what() const noexcept override;
     };
 
-    inline const char* Exception::what() const
+    inline const char* Exception::what() const noexcept
     {
         return m_message.c_str();
     }

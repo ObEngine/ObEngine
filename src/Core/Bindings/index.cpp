@@ -1,12 +1,15 @@
 #include <Bindings/Animation/Animation.hpp>
+#include <Bindings/Animation/Easing/Easing.hpp>
 #include <Bindings/Audio/Audio.hpp>
 #include <Bindings/BindingTree.hpp>
+#include <Bindings/Bindings.hpp>
 #include <Bindings/Bindings/Bindings.hpp>
 #include <Bindings/Collision/Collision.hpp>
 #include <Bindings/Component/Component.hpp>
 #include <Bindings/Config/Config.hpp>
 #include <Bindings/Debug/Debug.hpp>
 #include <Bindings/Engine/Engine.hpp>
+#include <Bindings/Exceptions.hpp>
 #include <Bindings/Graphics/Canvas/Canvas.hpp>
 #include <Bindings/Graphics/Graphics.hpp>
 #include <Bindings/Graphics/Shapes/Shapes.hpp>
@@ -61,11 +64,19 @@ namespace obe::Bindings
         BindTree["obe"].add("Debug", InitTreeNodeAsTable("obe.Debug"));
         BindTree["obe"].add("Modes", InitTreeNodeAsTable("obe.Modes"));
         BindTree["obe"].add("Utils", InitTreeNodeAsTable("obe.Utils"));
+        BindTree["obe"]["Animation"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Animation.Exceptions"));
         BindTree["obe"]["Graphics"].add(
             "Canvas", InitTreeNodeAsTable("obe.Graphics.Canvas"));
         BindTree["obe"]["Graphics"].add(
             "Shapes", InitTreeNodeAsTable("obe.Graphics.Shapes"));
+        BindTree["obe"]["Script"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Script.Exceptions"));
+        BindTree["obe"]["System"].add(
+            "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
         BindTree["obe"]["Utils"].add("Exec", InitTreeNodeAsTable("obe.Utils.Exec"));
+        BindTree["obe"]["Animation"].add(
+            "Easing", InitTreeNodeAsTable("obe.Animation.Easing"));
         BindTree["obe"]["Graphics"].add(
             "Utils", InitTreeNodeAsTable("obe.Graphics.Utils"));
         BindTree["obe"]["Script"].add(
@@ -80,13 +91,12 @@ namespace obe::Bindings
         BindTree["obe"]["Utils"].add("Vector", InitTreeNodeAsTable("obe.Utils.Vector"));
         BindTree["obe"]["System"].add(
             "Constraints", InitTreeNodeAsTable("obe.System.Constraints"));
-        BindTree["obe"]["System"].add(
-            "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
         BindTree["obe"]["Animation"]
             .add("ClassAnimation", &obe::Animation::Bindings::LoadClassAnimation)
             .add(
                 "ClassAnimationGroup", &obe::Animation::Bindings::LoadClassAnimationGroup)
             .add("ClassAnimator", &obe::Animation::Bindings::LoadClassAnimator)
+            .add("ClassValueTweening", &obe::Animation::Bindings::LoadClassValueTweening)
             .add("EnumAnimationPlayMode",
                 &obe::Animation::Bindings::LoadEnumAnimationPlayMode)
             .add(
@@ -117,6 +127,8 @@ namespace obe::Bindings
         BindTree["obe"]["Config"].add("ClassConfigurationManager",
             &obe::Config::Bindings::LoadClassConfigurationManager);
 
+        BindTree["obe"].add("FunctionInitEngine", &obe::Bindings::LoadFunctionInitEngine);
+
         BindTree["obe"]["Engine"]
             .add("ClassEngine", &obe::Engine::Bindings::LoadClassEngine)
             .add("ClassResourceManagedObject",
@@ -142,24 +154,6 @@ namespace obe::Bindings
                 &obe::Graphics::Canvas::Bindings::LoadEnumTextHorizontalAlign)
             .add("EnumTextVerticalAlign",
                 &obe::Graphics::Canvas::Bindings::LoadEnumTextVerticalAlign);
-
-        BindTree["obe"]["Transform"]
-            .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
-            .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
-            .add("ClassPolygon", &obe::Transform::Bindings::LoadClassPolygon)
-            .add("ClassPolygonPoint", &obe::Transform::Bindings::LoadClassPolygonPoint)
-            .add(
-                "ClassPolygonSegment", &obe::Transform::Bindings::LoadClassPolygonSegment)
-            .add("ClassRect", &obe::Transform::Bindings::LoadClassRect)
-            .add("ClassReferential", &obe::Transform::Bindings::LoadClassReferential)
-            .add("ClassUnitBasedObject",
-                &obe::Transform::Bindings::LoadClassUnitBasedObject)
-            .add("ClassUnitVector", &obe::Transform::Bindings::LoadClassUnitVector)
-            .add("EnumUnits", &obe::Transform::Bindings::LoadEnumUnits)
-            .add("FunctionStringToUnits",
-                &obe::Transform::Bindings::LoadFunctionStringToUnits)
-            .add("FunctionUnitsToString",
-                &obe::Transform::Bindings::LoadFunctionUnitsToString);
 
         BindTree["obe"]["Graphics"]
             .add("ClassColor", &obe::Graphics::Bindings::LoadClassColor)
@@ -242,6 +236,18 @@ namespace obe::Bindings
             .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext)
             .add("FunctionMountPaths", &obe::System::Bindings::LoadFunctionMountPaths);
 
+        BindTree["obe"]["System"]["Loaders"]
+            .add("GlobalTextureLoader",
+                &obe::System::Loaders::Bindings::LoadGlobalTextureLoader)
+            .add(
+                "GlobalDataLoader", &obe::System::Loaders::Bindings::LoadGlobalDataLoader)
+            .add(
+                "GlobalFontLoader", &obe::System::Loaders::Bindings::LoadGlobalFontLoader)
+            .add("GlobalDirPathLoader",
+                &obe::System::Loaders::Bindings::LoadGlobalDirPathLoader)
+            .add("GlobalFilePathLoader",
+                &obe::System::Loaders::Bindings::LoadGlobalFilePathLoader);
+
         BindTree["obe"]["Time"]
             .add("ClassChronometer", &obe::Time::Bindings::LoadClassChronometer)
             .add("ClassFramerateCounter", &obe::Time::Bindings::LoadClassFramerateCounter)
@@ -250,15 +256,34 @@ namespace obe::Bindings
                 &obe::Time::Bindings::LoadFunctionEpochAsMilliseconds)
             .add("FunctionEpochAsMicroseconds",
                 &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds)
-            .add("TimeUnits", &obe::Time::Bindings::LoadTimeUnits);
+            .add("LoadTimeUnits", &obe::Time::Bindings::LoadTimeUnits);
+
+        BindTree["obe"]["Transform"]
+            .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
+            .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
+            .add("ClassPolygon", &obe::Transform::Bindings::LoadClassPolygon)
+            .add("ClassPolygonPoint", &obe::Transform::Bindings::LoadClassPolygonPoint)
+            .add(
+                "ClassPolygonSegment", &obe::Transform::Bindings::LoadClassPolygonSegment)
+            .add("ClassRect", &obe::Transform::Bindings::LoadClassRect)
+            .add("ClassReferential", &obe::Transform::Bindings::LoadClassReferential)
+            .add("ClassUnitBasedObject",
+                &obe::Transform::Bindings::LoadClassUnitBasedObject)
+            .add("ClassUnitVector", &obe::Transform::Bindings::LoadClassUnitVector)
+            .add("EnumUnits", &obe::Transform::Bindings::LoadEnumUnits)
+            .add("FunctionStringToUnits",
+                &obe::Transform::Bindings::LoadFunctionStringToUnits)
+            .add("FunctionUnitsToString",
+                &obe::Transform::Bindings::LoadFunctionUnitsToString);
 
         BindTree["obe"]["Triggers"]
+            .add("ClassCallbackScheduler",
+                &obe::Triggers::Bindings::LoadClassCallbackScheduler)
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)
             .add("ClassTriggerEnv", &obe::Triggers::Bindings::LoadClassTriggerEnv)
             .add("ClassTriggerGroup", &obe::Triggers::Bindings::LoadClassTriggerGroup)
-            .add("ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager)
-            .add("CallbackScheduler",
-                &obe::Triggers::Bindings::LoadClassCallbackScheduler);
+            .add(
+                "ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager);
 
         BindTree["obe"]["Types"]
             .add("ClassIdentifiable", &obe::Types::Bindings::LoadClassIdentifiable)
@@ -271,7 +296,64 @@ namespace obe::Bindings
         BindTree["obe"]["Utils"]["Exec"].add(
             "ClassRunArgsParser", &obe::Utils::Exec::Bindings::LoadClassRunArgsParser);
 
-        BindTree["obe"].add("FunctionInitEngine", &obe::Bindings::LoadFunctionInitEngine);
+        BindTree["obe"]["Animation"]["Easing"]
+            .add("EnumEasingType", &obe::Animation::Easing::Bindings::LoadEnumEasingType)
+            .add("FunctionInSine", &obe::Animation::Easing::Bindings::LoadFunctionInSine)
+            .add(
+                "FunctionOutSine", &obe::Animation::Easing::Bindings::LoadFunctionOutSine)
+            .add("FunctionInOutSine",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutSine)
+            .add("FunctionInQuad", &obe::Animation::Easing::Bindings::LoadFunctionInQuad)
+            .add(
+                "FunctionOutQuad", &obe::Animation::Easing::Bindings::LoadFunctionOutQuad)
+            .add("FunctionInOutQuad",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutQuad)
+            .add(
+                "FunctionInCubic", &obe::Animation::Easing::Bindings::LoadFunctionInCubic)
+            .add("FunctionOutCubic",
+                &obe::Animation::Easing::Bindings::LoadFunctionOutCubic)
+            .add("FunctionInOutCubic",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutCubic)
+            .add(
+                "FunctionInQuart", &obe::Animation::Easing::Bindings::LoadFunctionInQuart)
+            .add("FunctionOutQuart",
+                &obe::Animation::Easing::Bindings::LoadFunctionOutQuart)
+            .add("FunctionInOutQuart",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutQuart)
+            .add(
+                "FunctionInQuint", &obe::Animation::Easing::Bindings::LoadFunctionInQuint)
+            .add("FunctionOutQuint",
+                &obe::Animation::Easing::Bindings::LoadFunctionOutQuint)
+            .add("FunctionInOutQuint",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutQuint)
+            .add("FunctionInExpo", &obe::Animation::Easing::Bindings::LoadFunctionInExpo)
+            .add(
+                "FunctionOutExpo", &obe::Animation::Easing::Bindings::LoadFunctionOutExpo)
+            .add("FunctionInOutExpo",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutExpo)
+            .add("FunctionInCirc", &obe::Animation::Easing::Bindings::LoadFunctionInCirc)
+            .add(
+                "FunctionOutCirc", &obe::Animation::Easing::Bindings::LoadFunctionOutCirc)
+            .add("FunctionInOutCirc",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutCirc)
+            .add("FunctionInBack", &obe::Animation::Easing::Bindings::LoadFunctionInBack)
+            .add(
+                "FunctionOutBack", &obe::Animation::Easing::Bindings::LoadFunctionOutBack)
+            .add("FunctionInOutBack",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutBack)
+            .add("FunctionInElastic",
+                &obe::Animation::Easing::Bindings::LoadFunctionInElastic)
+            .add("FunctionOutElastic",
+                &obe::Animation::Easing::Bindings::LoadFunctionOutElastic)
+            .add("FunctionInOutElastic",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutElastic)
+            .add("FunctionInBounce",
+                &obe::Animation::Easing::Bindings::LoadFunctionInBounce)
+            .add("FunctionOutBounce",
+                &obe::Animation::Easing::Bindings::LoadFunctionOutBounce)
+            .add("FunctionInOutBounce",
+                &obe::Animation::Easing::Bindings::LoadFunctionInOutBounce)
+            .add("FunctionGet", &obe::Animation::Easing::Bindings::LoadFunctionGet);
 
         BindTree["obe"]["Bindings"].add("FunctionIndexAllBindings",
             &obe::Bindings::Bindings::LoadFunctionIndexAllBindings);
@@ -394,18 +476,6 @@ namespace obe::Bindings
 
         BindTree["obe"]["System"]["Constraints"].add(
             "GlobalDefault", &obe::System::Constraints::Bindings::LoadGlobalDefault);
-
-        BindTree["obe"]["System"]["Loaders"]
-            .add("GlobalTextureLoader",
-                &obe::System::Loaders::Bindings::LoadGlobalTextureLoader)
-            .add(
-                "GlobalDataLoader", &obe::System::Loaders::Bindings::LoadGlobalDataLoader)
-            .add(
-                "GlobalFontLoader", &obe::System::Loaders::Bindings::LoadGlobalFontLoader)
-            .add("GlobalDirPathLoader",
-                &obe::System::Loaders::Bindings::LoadGlobalDirPathLoader)
-            .add("GlobalFilePathLoader",
-                &obe::System::Loaders::Bindings::LoadGlobalFilePathLoader);
 
         BindTree(state);
     }

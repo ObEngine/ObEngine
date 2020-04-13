@@ -107,4 +107,27 @@ namespace obe::Animation::Exceptions
                 "The Animator '{}' does not have any Animation selected", animator);
         }
     };
+
+    class UnknownEasingFromEnum : public Exception
+    {
+    public:
+        UnknownEasingFromEnum(int enumValue, DebugInfo info)
+            : Exception("UnknownEasingFromEnum", info)
+        {
+            this->error("Enum with value {} could not be converted to an easing function",
+                enumValue);
+        }
+    };
+
+    class UnknownEasingFromString : public Exception
+    {
+    public:
+        UnknownEasingFromString(std::string_view easingName, DebugInfo info)
+            : Exception("UnknownEasingFromString", info)
+        {
+            this->error("Impossible to retrieve an Easing function with the following "
+                        "name : '{}'",
+                easingName);
+        }
+    };
 }

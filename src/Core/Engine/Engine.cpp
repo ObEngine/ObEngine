@@ -177,24 +177,17 @@ namespace obe::Engine
 
     Engine::Engine()
     {
-        try
-        {
-            this->initConfig();
-            this->initLogger();
-            this->initScript();
-            this->initTriggers();
-            this->initInput();
-            this->initWindow();
-            this->initCursor();
-            this->initFramerate();
-            this->initPlugins();
-            this->initResources();
-            this->initScene();
-        }
-        catch (const std::exception& e)
-        {
-            Debug::Log->error(e.what());
-        }
+        this->initConfig();
+        this->initLogger();
+        this->initScript();
+        this->initTriggers();
+        this->initInput();
+        this->initWindow();
+        this->initCursor();
+        this->initFramerate();
+        this->initPlugins();
+        this->initResources();
+        this->initScene();
     }
 
     Engine::~Engine()
