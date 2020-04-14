@@ -23,6 +23,11 @@ namespace obe::Scene
          */
         void addChild(Movable& child);
         /**
+         * \brief Removes a child from the SceneNode
+         * \param child Reference to the SceneNode child to remove
+         */
+        void removeChild(Movable& child);
+        /**
          * \brief Set the position of the SceneNode and all of its children
          *        using an UnitVector
          * \param position Position to affect to the
