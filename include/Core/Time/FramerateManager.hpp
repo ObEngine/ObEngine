@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <System/Window.hpp>
+#include <Time/TimeUtils.hpp>
 #include <vili/Vili.hpp>
 
 namespace obe::Time
@@ -50,7 +51,7 @@ namespace obe::Time
          * \brief Get the DeltaTime
          * \return A double containing the DeltaTime
          */
-        [[nodiscard]] double getDeltaTime() const;
+        [[nodiscard]] TimeUnit getDeltaTime() const;
         /**
          * \brief Get the GameSpeed (DeltaTime * SpeedCoefficient)
          * \return A double containing the GameSpeed

@@ -252,10 +252,7 @@ namespace obe::Bindings
             .add("ClassChronometer", &obe::Time::Bindings::LoadClassChronometer)
             .add("ClassFramerateCounter", &obe::Time::Bindings::LoadClassFramerateCounter)
             .add("ClassFramerateManager", &obe::Time::Bindings::LoadClassFramerateManager)
-            .add("FunctionEpochAsMilliseconds",
-                &obe::Time::Bindings::LoadFunctionEpochAsMilliseconds)
-            .add("FunctionEpochAsMicroseconds",
-                &obe::Time::Bindings::LoadFunctionEpochAsMicroseconds)
+            .add("FunctionEpoch", &obe::Time::Bindings::LoadFunctionEpoch)
             .add("LoadTimeUnits", &obe::Time::Bindings::LoadTimeUnits);
 
         BindTree["obe"]["Transform"]

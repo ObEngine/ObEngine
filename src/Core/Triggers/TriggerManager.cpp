@@ -174,7 +174,7 @@ namespace obe::Triggers
         {
             if (scheduler->m_ready)
             {
-                Time::TimeUnit elapsed = Time::epochAsMicroseconds() - scheduler->m_start;
+                const Time::TimeUnit elapsed = Time::epoch() - scheduler->m_start;
                 if ((scheduler->m_wait && elapsed >= scheduler->m_after)
                     || (scheduler->m_repeat && elapsed >= scheduler->m_every))
                 {

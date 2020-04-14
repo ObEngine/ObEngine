@@ -5,9 +5,9 @@ namespace obe::Animation
 {
     bool AnimationGroup::checkDelay()
     {
-        if (Time::epochAsMilliseconds() - m_groupClock > m_delay)
+        if (Time::epoch() - m_groupClock > m_delay)
         {
-            m_groupClock = Time::epochAsMilliseconds();
+            m_groupClock = Time::epoch();
             return true;
         }
         return false;

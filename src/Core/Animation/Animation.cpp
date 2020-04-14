@@ -338,9 +338,9 @@ namespace obe::Animation
                 && m_playMode != AnimationPlayMode::OneTime)
                 m_codeIndex = 0;
             const unsigned int delay = (m_sleep) ? m_sleep : m_delay;
-            if (Time::epochAsMilliseconds() - m_clock > delay)
+            if (Time::epoch() - m_clock > delay)
             {
-                m_clock = Time::epochAsMilliseconds();
+                m_clock = Time::epoch();
                 m_sleep = 0;
                 Debug::Log->trace("<Animation> Updating Animation {0}", m_name);
 

@@ -5,19 +5,19 @@ namespace obe::Time
 {
     void FramerateCounter::tick()
     {
-        if (epochAsMilliseconds() - m_lastTick <= 1000)
+        if (epoch() - m_lastTick <= 1000)
             m_framerateBuffer++;
     }
 
     void FramerateCounter::uTick()
     {
-        if (epochAsMilliseconds() - m_lastTick <= 1000)
+        if (epoch() - m_lastTick <= 1000)
             m_updatesBuffer++;
         else
         {
             m_updatesCounter = m_updatesBuffer;
             m_updatesBuffer = 0;
-            m_lastTick = epochAsMilliseconds();
+            m_lastTick = epoch();
             m_canUpdateFPS = true;
             m_framerateCounter = m_framerateBuffer;
             m_framerateBuffer = 0;

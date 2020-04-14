@@ -3,28 +3,22 @@
 namespace obe::Time
 {
     /**
-     * \brief TimeUnit to store Epoch milli/micro seconds
+     * \brief A time unit to store time as seconds
      */
-    using TimeUnit = unsigned long long; // <REVISION> Change this
+    using TimeUnit = double;
 
-    constexpr TimeUnit microseconds = 1;
-    constexpr TimeUnit milliseconds = microseconds * 1000;
-    constexpr TimeUnit seconds = milliseconds * 1000;
-    constexpr TimeUnit minutes = seconds * 60;
-    constexpr TimeUnit hours = minutes * 60;
-    constexpr TimeUnit days = hours * 24;
-    constexpr TimeUnit weeks = days * 7;
+    constexpr TimeUnit seconds = 1.0;
+    constexpr TimeUnit milliseconds = seconds / 1000.0;
+    constexpr TimeUnit microseconds = milliseconds / 1000.0;
+    constexpr TimeUnit minutes = seconds * 60.0;
+    constexpr TimeUnit hours = minutes * 60.0;
+    constexpr TimeUnit days = hours * 24.0;
+    constexpr TimeUnit weeks = days * 7.0;
 
     /**
-     * \brief Get the amount of milliseconds elapsed since Epoch
-     * \return A TimeUnit containing the amount of milliseconds elapsed since
+     * \brief Get the amount of seconds elapsed since epoch
+     * \return A TimeUnit containing the amount of seconds elapsed since
      *         Epoch
      */
-    TimeUnit epochAsMilliseconds();
-    /**
-     * \brief Get the amount of microseconds elapsed since Epoch
-     * \return A TimeUnit containing the amount of microseconds elapsed since
-     *         Epoch
-     */
-    TimeUnit epochAsMicroseconds();
+    TimeUnit epoch();
 } // namespace obe::Time

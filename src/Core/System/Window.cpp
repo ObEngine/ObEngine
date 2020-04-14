@@ -179,6 +179,11 @@ namespace obe::System
         m_background = std::move(color);
     }
 
+    void Window::setMouseCursorVisible(bool visible)
+    {
+        m_window.setMouseCursorVisible(visible);
+    }
+
     void Window::setSize(const unsigned int width, const unsigned int height)
     {
         Transform::UnitVector::Screen.w = width;
