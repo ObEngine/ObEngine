@@ -10,7 +10,7 @@ namespace obe::Triggers
         }
         else
         {
-            m_start = Time::epochAsMicroseconds();
+            m_start = Time::epoch();
         }
         m_callback();
     }
@@ -38,7 +38,7 @@ namespace obe::Triggers
     {
         m_callback = callback;
         m_ready = true;
-        m_start = Time::epochAsMicroseconds();
+        m_start = Time::epoch();
     }
 
     void CallbackScheduler::stop()

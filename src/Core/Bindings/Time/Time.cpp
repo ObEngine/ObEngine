@@ -63,15 +63,10 @@ namespace obe::Time::Bindings
         bindFramerateManager["setVSyncEnabled"]
             = &obe::Time::FramerateManager::setVSyncEnabled;
     }
-    void LoadFunctionEpochAsMilliseconds(sol::state_view state)
+    void LoadFunctionEpoch(sol::state_view state)
     {
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
-        TimeNamespace.set_function("epochAsMilliseconds", obe::Time::epochAsMilliseconds);
-    }
-    void LoadFunctionEpochAsMicroseconds(sol::state_view state)
-    {
-        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
-        TimeNamespace.set_function("epochAsMicroseconds", obe::Time::epochAsMicroseconds);
+        TimeNamespace.set_function("epoch", obe::Time::epoch);
     }
 
     void LoadTimeUnits(sol::state_view state)

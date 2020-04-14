@@ -57,5 +57,6 @@ namespace obe::System
 
         [[nodiscard]] Graphics::Color getClearColor() const;
         void setClearColor(Graphics::Color color);
+        void setMouseCursorVisible(bool visible);
     };
 } // namespace obe::System

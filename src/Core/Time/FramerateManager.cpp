@@ -1,9 +1,8 @@
 #include <cmath>
 
-#include "Debug/Logger.hpp"
+#include <Debug/Logger.hpp>
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
-#include <Time/TimeUtils.hpp>
 #include <thread>
 
 namespace obe::Time
@@ -11,7 +10,7 @@ namespace obe::Time
     FramerateManager::FramerateManager(System::Window& window)
         : m_window(window)
     {
-        m_frameLimiterClock = epochAsMilliseconds();
+        m_frameLimiterClock = epoch();
         m_currentFrame = 0;
         m_frameProgression = 0;
         m_needToRender = false;
@@ -44,16 +43,16 @@ namespace obe::Time
     void FramerateManager::update()
     {
         const sf::Time timeBuffer = m_deltaClock.restart();
-        m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) / 1000000.0;
+        m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) * microseconds;
         if (m_limitFPS)
         {
-            if (epochAsMilliseconds() - m_frameLimiterClock > 1000)
+            if (epoch() - m_frameLimiterClock > 1)
             {
-                m_frameLimiterClock = epochAsMilliseconds();
+                m_frameLimiterClock = epoch();
                 m_currentFrame = 0;
             }
-            m_frameProgression = round((epochAsMilliseconds() - m_frameLimiterClock)
-                / (m_reqFramerateInterval * 1000));
+            m_frameProgression
+                = round((epoch() - m_frameLimiterClock) / (m_reqFramerateInterval));
             m_needToRender = false;
             if (m_frameProgression > m_currentFrame)
             {
@@ -68,7 +67,7 @@ namespace obe::Time
         }
     }
 
-    double FramerateManager::getDeltaTime() const
+    TimeUnit FramerateManager::getDeltaTime() const
     {
         return m_deltaTime;
     }

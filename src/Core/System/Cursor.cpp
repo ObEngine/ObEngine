@@ -90,19 +90,19 @@ namespace obe::System
     void Cursor::show()
     {
         m_visible = true;
-        // MainWindow.setMouseCursorVisible(true);
+        m_window.setMouseCursorVisible(true);
     }
 
     void Cursor::hide()
     {
         m_visible = false;
-        // MainWindow.setMouseCursorVisible(false);
+        m_window.setMouseCursorVisible(false);
     }
 
     void Cursor::setVisible(const bool visible)
     {
         m_visible = visible;
-        // MainWindow.setMouseCursorVisible(visible);
+        m_window.setMouseCursorVisible(visible);
     }
 
     bool Cursor::isVisible() const

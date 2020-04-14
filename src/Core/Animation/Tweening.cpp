@@ -4,14 +4,14 @@
 namespace obe::Animation
 {
     ValueTweening::ValueTweening(Time::TimeUnit duration)
-        : m_duration(double(duration) / Time::seconds)
+        : m_duration(duration)
     {
     }
 
     ValueTweening::ValueTweening(double from, double to, Time::TimeUnit duration)
         : m_from(from)
         , m_to(to - from)
-        , m_duration(double(duration) / Time::seconds)
+        , m_duration(duration)
     {
     }
 

@@ -14,7 +14,7 @@ namespace obe::Time
     class FramerateCounter
     {
     private:
-        TimeUnit m_lastTick = epochAsMilliseconds();
+        TimeUnit m_lastTick = epoch();
         int m_framerateCounter = 0;
         int m_updatesCounter = 0;
         int m_framerateBuffer = 0;
