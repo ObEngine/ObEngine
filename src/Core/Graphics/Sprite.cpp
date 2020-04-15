@@ -95,7 +95,7 @@ namespace obe::Graphics
 
     void Sprite::loadTexture(const std::string& path)
     {
-        if (path != "")
+        if (!path.empty() and path != m_path)
         {
             m_path = path;
             if (m_resources)
@@ -104,14 +104,14 @@ namespace obe::Graphics
             }
             else
             {
-                m_texture = std::make_shared<Graphics::Texture>();
-                m_texture->loadFromFile(System::Path(path).find());
-                m_texture->setAntiAliasing(m_antiAliasing);
+                m_texture.reset();
+                m_texture.loadFromFile(System::Path(path).find());
+                m_texture.setAntiAliasing(m_antiAliasing);
             }
 
-            m_sprite.setTexture(*m_texture);
+            m_sprite.setTexture(m_texture);
             m_sprite.setTextureRect(
-                sf::IntRect(0, 0, m_texture->getSize().x, m_texture->getSize().y));
+                sf::IntRect(0, 0, m_texture.getSize().x, m_texture.getSize().y));
         }
     }
 
@@ -119,10 +119,10 @@ namespace obe::Graphics
     {
     }
 
-    void Sprite::setTexture(const Graphics::Texture& texture)
+    void Sprite::setTexture(const Texture& texture)
     {
-        m_texture = std::make_shared<Graphics::Texture>(texture);
-        m_sprite.setTexture(*m_texture);
+        // m_texture = std::shared_ptr<Texture>(std::shared_ptr<Texture>(), texture);
+        m_sprite.setTexture(texture);
         m_sprite.setTextureRect(
             sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }
@@ -135,7 +135,7 @@ namespace obe::Graphics
 
     const Graphics::Texture& Sprite::getTexture() const
     {
-        return *m_texture;
+        return m_texture;
     }
 
     void Sprite::setLayer(int layer)
@@ -152,7 +152,7 @@ namespace obe::Graphics
 
     void Sprite::setAntiAliasing(bool antiAliasing)
     {
-        if (antiAliasing != m_antiAliasing && m_texture && !m_path.empty())
+        if (antiAliasing != m_antiAliasing && !m_path.empty())
         {
             m_antiAliasing = antiAliasing;
             this->loadTexture(m_path);

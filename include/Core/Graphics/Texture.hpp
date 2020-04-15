@@ -5,18 +5,22 @@
 #include <Transform/Rect.hpp>
 
 #include <SFML/Graphics/Texture.hpp>
+#include <variant>
 
 namespace obe::Graphics
 {
     class Texture
     {
     private:
-        sf::Texture m_texture;
+        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*>
+            m_texture;
 
     public:
         Texture();
+        Texture(std::shared_ptr<sf::Texture> texture);
         Texture(const sf::Texture& texture);
         Texture(const Texture& copy);
+        ~Texture();
 
         bool create(unsigned int width, unsigned int height);
         bool loadFromFile(const std::string& filename);
@@ -30,9 +34,16 @@ namespace obe::Graphics
 
         void setRepeated(bool repeated);
         [[nodiscard]] bool isRepeated() const;
-        Texture& operator=(const Texture& right);
+
+        void reset();
+
+        unsigned int useCount();
 
         operator sf::Texture&();
         operator const sf::Texture&() const;
+
+        Texture& operator=(const Texture& copy);
+        Texture& operator=(const sf::Texture& texture);
+        Texture& operator=(std::shared_ptr<sf::Texture> texture);
     };
 }

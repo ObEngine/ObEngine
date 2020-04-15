@@ -104,7 +104,7 @@ namespace obe::Graphics
         PositionTransformer m_positionTransformer;
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;
-        std::shared_ptr<Graphics::Texture> m_texture;
+        Graphics::Texture m_texture;
         bool m_visible = true;
         int m_zdepth = 0;
         bool m_antiAliasing = true;

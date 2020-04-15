@@ -12,8 +12,8 @@
 namespace obe::Engine
 {
     template <class T> using ResourceStore = std::unordered_map<std::string, T>;
-    using TexturePair = std::pair<std::shared_ptr<Graphics::Texture>,
-        std::shared_ptr<Graphics::Texture>>;
+    using TexturePair = std::pair<std::unique_ptr<Graphics::Texture>,
+        std::unique_ptr<Graphics::Texture>>;
     /**
      * \brief Class that manages and caches textures}
      */
@@ -37,9 +37,10 @@ namespace obe::Engine
          * \param antiAliasing Uses Anti-Aliasing for the texture when first loading it
          * \return A pointer to the texture stored in the cache
          */
-        std::shared_ptr<Graphics::Texture> getTexture(
-            const std::string& path, bool antiAliasing);
-        std::shared_ptr<Graphics::Texture> getTexture(const std::string& path);
+        const Graphics::Texture& getTexture(const std::string& path, bool antiAliasing);
+        const Graphics::Texture& getTexture(const std::string& path);
+
+        void clean();
     };
 
     class ResourceManagedObject

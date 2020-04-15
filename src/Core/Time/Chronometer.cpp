@@ -6,7 +6,7 @@ namespace obe::Time
 {
     void Chronometer::start()
     {
-        m_start = std::chrono::high_resolution_clock::now();
+        m_start = epoch();
         m_started = true;
     }
 
@@ -17,15 +17,13 @@ namespace obe::Time
 
     void Chronometer::reset()
     {
-        m_start = std::chrono::high_resolution_clock::now();
+        m_start = epoch();
     }
 
     TimeUnit Chronometer::getTime() const
     {
         if (m_started)
-            return std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::high_resolution_clock::now() - m_start)
-                .count();
+            return epoch() - m_start;
         return 0;
     }
 

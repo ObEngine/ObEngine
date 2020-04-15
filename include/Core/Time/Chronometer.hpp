@@ -13,9 +13,9 @@ namespace obe::Time
     class Chronometer
     {
     private:
-        std::chrono::high_resolution_clock::time_point m_start;
+        TimeUnit m_start;
+        TimeUnit m_limit = 0;
         bool m_started = false;
-        unsigned long long int m_limit = 0;
 
     public:
         /**

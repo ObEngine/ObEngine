@@ -247,11 +247,6 @@ namespace obe::Graphics::Bindings
         bindTexture["isAntiAliased"] = &obe::Graphics::Texture::isAntiAliased;
         bindTexture["setRepeated"] = &obe::Graphics::Texture::setRepeated;
         bindTexture["isRepeated"] = &obe::Graphics::Texture::isRepeated;
-        bindTexture["operator="] = &obe::Graphics::Texture::operator=;
-        bindTexture["operator sf::Texture &"]
-            = &obe::Graphics::Texture::operator sf::Texture&;
-        bindTexture["operator const sf::Texture &"]
-            = &obe::Graphics::Texture::operator const sf::Texture&;
     }
     void LoadFunctionInitPositionTransformer(sol::state_view state)
     {

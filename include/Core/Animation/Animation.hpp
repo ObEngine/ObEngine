@@ -89,7 +89,7 @@ namespace obe::Animation
         unsigned int m_codeIndex = 0;
         bool m_feedInstructions = true;
 
-        std::vector<std::shared_ptr<Graphics::Texture>> m_textures;
+        std::vector<Graphics::Texture> m_textures;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
         std::string m_currentGroupName;
         std::string m_nextAnimation;
