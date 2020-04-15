@@ -99,5 +99,7 @@ namespace obe::Triggers::Bindings
         bindCallbackScheduler["after"] = &obe::Triggers::CallbackScheduler::after;
         bindCallbackScheduler["every"] = &obe::Triggers::CallbackScheduler::every;
         bindCallbackScheduler["run"] = &obe::Triggers::CallbackScheduler::run;
+        bindCallbackScheduler["repeat"] = &obe::Triggers::CallbackScheduler::repeat;
+        bindCallbackScheduler["stop"] = &obe::Triggers::CallbackScheduler::stop;
     }
 }

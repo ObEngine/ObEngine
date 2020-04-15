@@ -6,11 +6,19 @@ namespace obe::Triggers
     {
         if (!m_repeat)
         {
-            m_ready = false;
+            m_state = CallbackSchedulerState::Done;
         }
         else
         {
-            m_start = Time::epoch();
+            if (m_times > 0 && m_times == (m_currentTimes - 1))
+            {
+                m_state = CallbackSchedulerState::Done;
+            }
+            else
+            {
+                m_start = Time::epoch();
+                m_currentTimes++;
+            }
         }
         m_callback();
     }
@@ -34,15 +42,21 @@ namespace obe::Triggers
         return *this;
     }
 
+    CallbackScheduler& CallbackScheduler::repeat(unsigned amount)
+    {
+        m_times = amount;
+        return *this;
+    }
+
     void CallbackScheduler::run(const Callback& callback)
     {
         m_callback = callback;
-        m_ready = true;
+        m_state = CallbackSchedulerState::Ready;
         m_start = Time::epoch();
     }
 
     void CallbackScheduler::stop()
     {
-        m_ready = false;
+        m_state = CallbackSchedulerState::Done;
     }
 }

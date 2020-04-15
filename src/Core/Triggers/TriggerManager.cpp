@@ -172,7 +172,7 @@ namespace obe::Triggers
         Debug::Log->trace("<TriggerManager> Updating TriggerManager");
         for (auto& scheduler : m_schedulers)
         {
-            if (scheduler->m_ready)
+            if (scheduler->m_state == CallbackSchedulerState::Ready)
             {
                 const Time::TimeUnit elapsed = Time::epoch() - scheduler->m_start;
                 if ((scheduler->m_wait && elapsed >= scheduler->m_after)
@@ -182,6 +182,12 @@ namespace obe::Triggers
                 }
             }
         }
+        m_schedulers.erase(std::remove_if(m_schedulers.begin(), m_schedulers.end(),
+                               [](auto& scheduler) {
+                                   return scheduler->m_state
+                                       == CallbackSchedulerState::Done;
+                               }),
+            m_schedulers.end());
     }
 
     void TriggerManager::clear()
