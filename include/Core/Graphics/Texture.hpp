@@ -1,11 +1,11 @@
 #pragma once
-#include <optional>
+#include <memory>
 #include <string>
+#include <variant>
 
 #include <Transform/Rect.hpp>
 
 #include <SFML/Graphics/Texture.hpp>
-#include <variant>
 
 namespace obe::Graphics
 {

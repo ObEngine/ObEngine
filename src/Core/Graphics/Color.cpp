@@ -1,4 +1,5 @@
 #include <Graphics/Color.hpp>
+#include <Graphics/Exceptions.hpp>
 
 #include <array>
 #include <cmath>
@@ -149,86 +150,86 @@ namespace obe::Graphics
     Color Color::Yellow(255, 255, 0);
     Color Color::YellowGreen(154, 205, 50);
 
-    std::unordered_map<std::string, Color> ColorNames = { { "AliceBlue",
+    std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
                                                               Color::AliceBlue },
-        { "AntiqueWhite", Color::AntiqueWhite }, { "Aqua", Color::Aqua },
-        { "Aquamarine", Color::Aquamarine }, { "Azure", Color::Azure },
-        { "Beige", Color::Beige }, { "Bisque", Color::Bisque }, { "Black", Color::Black },
-        { "BlanchedAlmond", Color::BlanchedAlmond }, { "Blue", Color::Blue },
-        { "BlueViolet", Color::BlueViolet }, { "Brown", Color::Brown },
-        { "BurlyWood", Color::BurlyWood }, { "CadetBlue", Color::CadetBlue },
-        { "Chartreuse", Color::Chartreuse }, { "Chocolate", Color::Chocolate },
-        { "Coral", Color::Coral }, { "CornflowerBlue", Color::CornflowerBlue },
-        { "Cornsilk", Color::Cornsilk }, { "Crimson", Color::Crimson },
-        { "Cyan", Color::Cyan }, { "DarkBlue", Color::DarkBlue },
-        { "DarkCyan", Color::DarkCyan }, { "DarkGoldenrod", Color::DarkGoldenrod },
-        { "DarkGray", Color::DarkGray }, { "DarkGreen", Color::DarkGreen },
-        { "DarkKhaki", Color::DarkKhaki }, { "DarkMagenta", Color::DarkMagenta },
-        { "DarkOliveGreen", Color::DarkOliveGreen }, { "DarkOrange", Color::DarkOrange },
-        { "DarkOrchid", Color::DarkOrchid }, { "DarkRed", Color::DarkRed },
-        { "DarkSalmon", Color::DarkSalmon }, { "DarkSeaGreen", Color::DarkSeaGreen },
-        { "DarkSlateBlue", Color::DarkSlateBlue },
-        { "DarkSlateGray", Color::DarkSlateGray },
-        { "DarkTurquoise", Color::DarkTurquoise }, { "DarkViolet", Color::DarkViolet },
-        { "DeepPink", Color::DeepPink }, { "DeepSkyBlue", Color::DeepSkyBlue },
-        { "DimGray", Color::DimGray }, { "DodgerBlue", Color::DodgerBlue },
-        { "FireBrick", Color::FireBrick }, { "FloralWhite", Color::FloralWhite },
-        { "ForestGreen", Color::ForestGreen }, { "Fuchsia", Color::Fuchsia },
-        { "Gainsboro", Color::Gainsboro }, { "GhostWhite", Color::GhostWhite },
-        { "Gold", Color::Gold }, { "Goldenrod", Color::Goldenrod },
-        { "Gray", Color::Gray }, { "Green", Color::Green },
-        { "GreenYellow", Color::GreenYellow }, { "HoneyDew", Color::HoneyDew },
-        { "HotPink", Color::HotPink }, { "IndianRed", Color::IndianRed },
-        { "Indigo", Color::Indigo }, { "Ivory", Color::Ivory }, { "Khaki", Color::Khaki },
-        { "Lavender", Color::Lavender }, { "LavenderBlush", Color::LavenderBlush },
-        { "LawnGreen", Color::LawnGreen }, { "LemonChiffon", Color::LemonChiffon },
-        { "LightBlue", Color::LightBlue }, { "LightCoral", Color::LightCoral },
-        { "LightCyan", Color::LightCyan },
-        { "LightGoldenrodYellow", Color::LightGoldenrodYellow },
-        { "LightGray", Color::LightGray }, { "LightGreen", Color::LightGreen },
-        { "LightPink", Color::LightPink }, { "LightSalmon", Color::LightSalmon },
-        { "LightSalmon", Color::LightSalmon }, { "LightSeaGreen", Color::LightSeaGreen },
-        { "LightSkyBlue", Color::LightSkyBlue },
-        { "LightSlateGray", Color::LightSlateGray },
-        { "LightSteelBlue", Color::LightSteelBlue },
-        { "LightYellow", Color::LightYellow }, { "Lime", Color::Lime },
-        { "LimeGreen", Color::LimeGreen }, { "Linen", Color::Linen },
-        { "Magenta", Color::Magenta }, { "Maroon", Color::Maroon },
-        { "MediumAquamarine", Color::MediumAquamarine },
-        { "MediumBlue", Color::MediumBlue }, { "MediumOrchid", Color::MediumOrchid },
-        { "MediumPurple", Color::MediumPurple },
-        { "MediumSeaGreen", Color::MediumSeaGreen },
-        { "MediumSlateBlue", Color::MediumSlateBlue },
-        { "MediumSlateBlue", Color::MediumSlateBlue },
-        { "MediumSpringGreen", Color::MediumSpringGreen },
-        { "MediumTurquoise", Color::MediumTurquoise },
-        { "MediumVioletRed", Color::MediumVioletRed },
-        { "MidnightBlue", Color::MidnightBlue }, { "MintCream", Color::MintCream },
-        { "MistyRose", Color::MistyRose }, { "Moccasin", Color::Moccasin },
-        { "NavajoWhite", Color::NavajoWhite }, { "Navy", Color::Navy },
-        { "OldLace", Color::OldLace }, { "Olive", Color::Olive },
-        { "OliveDrab", Color::OliveDrab }, { "Orange", Color::Orange },
-        { "OrangeRed", Color::OrangeRed }, { "Orchid", Color::Orchid },
-        { "PaleGoldenrod", Color::PaleGoldenrod }, { "PaleGreen", Color::PaleGreen },
-        { "PaleTurquoise", Color::PaleTurquoise },
-        { "PaleVioletRed", Color::PaleVioletRed }, { "PapayaWhip", Color::PapayaWhip },
-        { "PeachPuff", Color::PeachPuff }, { "Peru", Color::Peru },
-        { "Pink", Color::Pink }, { "Plum", Color::Plum },
-        { "PowderBlue", Color::PowderBlue }, { "Purple", Color::Purple },
-        { "RebeccaPurple", Color::RebeccaPurple }, { "Red", Color::Red },
-        { "RosyBrown", Color::RosyBrown }, { "RoyalBlue", Color::RoyalBlue },
-        { "SaddleBrown", Color::SaddleBrown }, { "Salmon", Color::Salmon },
-        { "SandyBrown", Color::SandyBrown }, { "SeaGreen", Color::SeaGreen },
-        { "SeaShell", Color::SeaShell }, { "Sienna", Color::Sienna },
-        { "Silver", Color::Silver }, { "SkyBlue", Color::SkyBlue },
-        { "SlateBlue", Color::SlateBlue }, { "SlateGray", Color::SlateGray },
-        { "Snow", Color::Snow }, { "SpringGreen", Color::SpringGreen },
-        { "SteelBlue", Color::SteelBlue }, { "Tan", Color::Tan }, { "Teal", Color::Teal },
-        { "Thistle", Color::Thistle }, { "Tomato", Color::Tomato },
-        { "Turquoise", Color::Turquoise }, { "Violet", Color::Violet },
-        { "Wheat", Color::Wheat }, { "White", Color::White },
-        { "WhiteSmoke", Color::WhiteSmoke }, { "Yellow", Color::Yellow },
-        { "YellowGreen", Color::YellowGreen } };
+        { "antiquewhite", Color::AntiqueWhite }, { "aqua", Color::Aqua },
+        { "aquamarine", Color::Aquamarine }, { "azure", Color::Azure },
+        { "beige", Color::Beige }, { "bisque", Color::Bisque }, { "black", Color::Black },
+        { "blanchedalmond", Color::BlanchedAlmond }, { "blue", Color::Blue },
+        { "blueviolet", Color::BlueViolet }, { "brown", Color::Brown },
+        { "burlywood", Color::BurlyWood }, { "cadetblue", Color::CadetBlue },
+        { "chartreuse", Color::Chartreuse }, { "chocolate", Color::Chocolate },
+        { "coral", Color::Coral }, { "cornflowerblue", Color::CornflowerBlue },
+        { "cornsilk", Color::Cornsilk }, { "crimson", Color::Crimson },
+        { "cyan", Color::Cyan }, { "darkblue", Color::DarkBlue },
+        { "darkcyan", Color::DarkCyan }, { "darkgoldenrod", Color::DarkGoldenrod },
+        { "darkgray", Color::DarkGray }, { "darkgreen", Color::DarkGreen },
+        { "darkkhaki", Color::DarkKhaki }, { "darkmagenta", Color::DarkMagenta },
+        { "darkolivegreen", Color::DarkOliveGreen }, { "darkorange", Color::DarkOrange },
+        { "darkorchid", Color::DarkOrchid }, { "darkred", Color::DarkRed },
+        { "darksalmon", Color::DarkSalmon }, { "darkseagreen", Color::DarkSeaGreen },
+        { "darkslateblue", Color::DarkSlateBlue },
+        { "darkslategray", Color::DarkSlateGray },
+        { "darkturquoise", Color::DarkTurquoise }, { "darkviolet", Color::DarkViolet },
+        { "deeppink", Color::DeepPink }, { "deepskyblue", Color::DeepSkyBlue },
+        { "dimgray", Color::DimGray }, { "dodgerblue", Color::DodgerBlue },
+        { "firebrick", Color::FireBrick }, { "floralwhite", Color::FloralWhite },
+        { "forestgreen", Color::ForestGreen }, { "fuchsia", Color::Fuchsia },
+        { "gainsboro", Color::Gainsboro }, { "ghostwhite", Color::GhostWhite },
+        { "gold", Color::Gold }, { "goldenrod", Color::Goldenrod },
+        { "gray", Color::Gray }, { "green", Color::Green },
+        { "greenyellow", Color::GreenYellow }, { "honeydew", Color::HoneyDew },
+        { "hotpink", Color::HotPink }, { "indianred", Color::IndianRed },
+        { "indigo", Color::Indigo }, { "ivory", Color::Ivory }, { "khaki", Color::Khaki },
+        { "lavender", Color::Lavender }, { "lavenderblush", Color::LavenderBlush },
+        { "lawngreen", Color::LawnGreen }, { "lemonchiffon", Color::LemonChiffon },
+        { "lightblue", Color::LightBlue }, { "lightcoral", Color::LightCoral },
+        { "lightcyan", Color::LightCyan },
+        { "lightgoldenrodyellow", Color::LightGoldenrodYellow },
+        { "lightgray", Color::LightGray }, { "lightgreen", Color::LightGreen },
+        { "lightpink", Color::LightPink }, { "lightsalmon", Color::LightSalmon },
+        { "lightsalmon", Color::LightSalmon }, { "lightseagreen", Color::LightSeaGreen },
+        { "lightskyblue", Color::LightSkyBlue },
+        { "lightslategray", Color::LightSlateGray },
+        { "lightsteelblue", Color::LightSteelBlue },
+        { "lightyellow", Color::LightYellow }, { "lime", Color::Lime },
+        { "limegreen", Color::LimeGreen }, { "linen", Color::Linen },
+        { "magenta", Color::Magenta }, { "maroon", Color::Maroon },
+        { "mediumaquamarine", Color::MediumAquamarine },
+        { "mediumblue", Color::MediumBlue }, { "mediumorchid", Color::MediumOrchid },
+        { "mediumpurple", Color::MediumPurple },
+        { "mediumseagreen", Color::MediumSeaGreen },
+        { "mediumslateblue", Color::MediumSlateBlue },
+        { "mediumslateblue", Color::MediumSlateBlue },
+        { "mediumspringgreen", Color::MediumSpringGreen },
+        { "mediumturquoise", Color::MediumTurquoise },
+        { "mediumvioletred", Color::MediumVioletRed },
+        { "midnightblue", Color::MidnightBlue }, { "mintcream", Color::MintCream },
+        { "mistyrose", Color::MistyRose }, { "moccasin", Color::Moccasin },
+        { "navajowhite", Color::NavajoWhite }, { "navy", Color::Navy },
+        { "oldlace", Color::OldLace }, { "olive", Color::Olive },
+        { "olivedrab", Color::OliveDrab }, { "orange", Color::Orange },
+        { "orangered", Color::OrangeRed }, { "orchid", Color::Orchid },
+        { "palegoldenrod", Color::PaleGoldenrod }, { "palegreen", Color::PaleGreen },
+        { "paleturquoise", Color::PaleTurquoise },
+        { "palevioletred", Color::PaleVioletRed }, { "papayawhip", Color::PapayaWhip },
+        { "peachpuff", Color::PeachPuff }, { "peru", Color::Peru },
+        { "pink", Color::Pink }, { "plum", Color::Plum },
+        { "powderblue", Color::PowderBlue }, { "purple", Color::Purple },
+        { "rebeccapurple", Color::RebeccaPurple }, { "red", Color::Red },
+        { "rosybrown", Color::RosyBrown }, { "royalblue", Color::RoyalBlue },
+        { "saddlebrown", Color::SaddleBrown }, { "salmon", Color::Salmon },
+        { "sandybrown", Color::SandyBrown }, { "seagreen", Color::SeaGreen },
+        { "seashell", Color::SeaShell }, { "sienna", Color::Sienna },
+        { "silver", Color::Silver }, { "skyblue", Color::SkyBlue },
+        { "slateblue", Color::SlateBlue }, { "slategray", Color::SlateGray },
+        { "snow", Color::Snow }, { "springgreen", Color::SpringGreen },
+        { "steelblue", Color::SteelBlue }, { "tan", Color::Tan }, { "teal", Color::Teal },
+        { "thistle", Color::Thistle }, { "tomato", Color::Tomato },
+        { "turquoise", Color::Turquoise }, { "violet", Color::Violet },
+        { "wheat", Color::Wheat }, { "white", Color::White },
+        { "whitesmoke", Color::WhiteSmoke }, { "yellow", Color::Yellow },
+        { "yellowgreen", Color::YellowGreen } };
 
     Color::Color()
     {
@@ -263,25 +264,26 @@ namespace obe::Graphics
 
     void Color::fromString(std::string string)
     {
-        if (const auto& color = ColorNames.find(string); color != ColorNames.end())
-        {
-            this->fromName(string);
-        }
-        else
+        if (!this->fromName(string, false))
         {
             this->fromHex(string);
         }
     }
 
-    void Color::fromName(std::string name)
+    bool Color::fromName(std::string name, bool strict)
     {
+        std::for_each(name.begin(), name.end(), [](char& c) { c = std::tolower(c); });
         if (const auto& color = ColorNames.find(name); color != ColorNames.end())
         {
             this->r = color->second.r;
             this->g = color->second.g;
             this->b = color->second.b;
             this->a = color->second.a;
+            return true;
         }
+        if (!strict)
+            return false;
+        throw Exceptions::InvalidColorName(name, EXC_INFO);
     }
 
     void Color::fromRgb(const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b,

@@ -15,4 +15,15 @@ namespace obe::Graphics::Exceptions
                 method);
         }
     };
+
+    class InvalidColorName : public Exception
+    {
+    public:
+        InvalidColorName(std::string_view color, DebugInfo info)
+            : Exception("InvalidColorName", info)
+        {
+            this->error(
+                "Impossible to find a color with the following name : '{}'", color);
+        }
+    };
 }
