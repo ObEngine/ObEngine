@@ -270,6 +270,10 @@ namespace obe::Scene
 
     void Scene::clear()
     {
+        if (m_resources)
+        {
+            m_resources->clean();
+        }
         for (auto& gameObject : m_gameObjectArray)
         {
             if (!gameObject->isPermanent())

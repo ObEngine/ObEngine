@@ -260,17 +260,16 @@ namespace obe::Animation
                 Debug::Log->trace(
                     "    <Animation> Loading Texture {0} (using ResourceManager)",
                     textureName);
-                m_textures.push_back(resources->getTexture(
+                m_textures.emplace_back(resources->getTexture(
                     path.add(textureName).toString(), m_antiAliasing));
             }
             else
             {
                 Debug::Log->trace("    <Animation> Loading Texture {0}", textureName);
-                std::shared_ptr<Graphics::Texture> newTexture
-                    = std::make_shared<Graphics::Texture>();
-                newTexture->loadFromFile(path.add(textureName).find());
+                Graphics::Texture newTexture;
+                newTexture.loadFromFile(path.add(textureName).find());
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
-                m_textures.push_back(newTexture);
+                m_textures.push_back(std::move(newTexture));
             }
         }
     }
@@ -288,7 +287,7 @@ namespace obe::Animation
                 Debug::Log->trace("      <Animation> Pushing Texture {} into group",
                     currentTexture->get<int>());
                 m_groups[group->getId()]->pushTexture(
-                    m_textures[currentTexture->get<int>()].get());
+                    m_textures[currentTexture->get<int>()]);
             }
 
             if (group->contains(vili::NodeType::DataNode, "clock"))
@@ -380,7 +379,7 @@ namespace obe::Animation
     const Graphics::Texture& Animation::getTextureAtIndex(int index)
     {
         if (index < m_textures.size())
-            return *m_textures[index];
+            return m_textures[index];
         throw Exceptions::AnimationTextureIndexOverflow(
             m_name, index, m_textures.size(), EXC_INFO);
     }

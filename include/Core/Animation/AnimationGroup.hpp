@@ -29,7 +29,7 @@ namespace obe::Animation
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup
          */
-        std::vector<Graphics::Texture*> m_groupList;
+        std::vector<Graphics::Texture> m_groupList;
         /**
          * \brief The name of the AnimationGroup
          */
@@ -114,7 +114,7 @@ namespace obe::Animation
          * \param texture A pointer of a Texture to add to the
          *        AnimationGroup
          */
-        void pushTexture(Graphics::Texture* texture);
+        void pushTexture(const Graphics::Texture& texture);
         /**
          * \brief Remove the texture at the given index in the AnimationGroup
          * \param index Removes the texture at index

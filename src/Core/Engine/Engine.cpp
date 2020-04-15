@@ -262,8 +262,9 @@ namespace obe::Engine
         m_cursor->update();
     }
 
-    void Engine::render() const
+    void Engine::render()
     {
+        m_lua.collect_garbage();
         if (m_framerate->doRender())
         {
             m_window->clear();

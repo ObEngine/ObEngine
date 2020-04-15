@@ -181,7 +181,7 @@ namespace obe::Graphics::Canvas
             m_elements.end());
     }
 
-    const Graphics::Texture& Canvas::getTexture() const
+    const Texture& Canvas::getTexture() const
     {
         return m_canvas.getTexture();
     }

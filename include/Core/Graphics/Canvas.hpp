@@ -304,7 +304,7 @@ namespace obe::Graphics::Canvas
          * \brief Get the current Texture of the Canvas
          * \return A reference to the current Texture of the Canvas
          */
-        const Graphics::Texture& getTexture() const;
+        const Texture& getTexture() const;
         /**
          * \brief Ask the Canvas to sort elements for the next rendering
          */

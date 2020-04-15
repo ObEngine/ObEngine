@@ -56,7 +56,7 @@ namespace obe::Engine
         void clean();
         void handleWindowEvents() const;
         void update() const;
-        void render() const;
+        void render();
         void _run();
 
     public:

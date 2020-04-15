@@ -5,32 +5,33 @@
 
 namespace obe::Engine
 {
-    std::shared_ptr<Graphics::Texture> ResourceManager::getTexture(
+    const Graphics::Texture& ResourceManager::getTexture(
         const std::string& path, bool antiAliasing)
     {
         if (m_textures.find(path) == m_textures.end()
             || (!m_textures[path].first && !antiAliasing)
             || (!m_textures[path].second && antiAliasing))
         {
-            std::shared_ptr<Graphics::Texture> tempTexture
-                = std::make_shared<Graphics::Texture>();
-            const System::LoaderResult loadResult = System::Path(path).load(
-                System::Loaders::textureLoader, *tempTexture.get());
-            Debug::Log->debug("[ResourceManager] Loading <Texture> {} from {}", path,
-                loadResult.path());
+            std::shared_ptr<sf::Texture> tempTexture = std::make_shared<sf::Texture>();
+            const std::string realPath = System::Path(path).find();
+            Debug::Log->debug(
+                "[ResourceManager] Loading <Texture> {} from {}", path, realPath);
+            const bool success = tempTexture->loadFromFile(realPath);
 
-            if (loadResult.success())
+            if (success)
             {
-                tempTexture->setAntiAliasing(antiAliasing);
+                tempTexture->setSmooth(antiAliasing);
                 if (!antiAliasing)
                 {
-                    m_textures[path].first = move(tempTexture);
-                    return m_textures[path].first;
+                    m_textures[path].first
+                        = std::make_unique<Graphics::Texture>(tempTexture);
+                    return *m_textures[path].first;
                 }
                 else
                 {
-                    m_textures[path].second = move(tempTexture);
-                    return m_textures[path].second;
+                    m_textures[path].second
+                        = std::make_unique<Graphics::Texture>(tempTexture);
+                    return *m_textures[path].second;
                 }
             }
             else
@@ -42,19 +43,33 @@ namespace obe::Engine
         {
             if (antiAliasing)
             {
-                return m_textures[path].second;
+                return *m_textures[path].second;
             }
             else
             {
-                return m_textures[path].first;
+                return *m_textures[path].first;
             }
         }
     }
 
-    std::shared_ptr<Graphics::Texture> ResourceManager::getTexture(
-        const std::string& path)
+    const Graphics::Texture& ResourceManager::getTexture(const std::string& path)
     {
         return getTexture(path, defaultAntiAliasing);
+    }
+
+    void ResourceManager::clean()
+    {
+        for (auto& texturePair : m_textures)
+        {
+            if (texturePair.second.first && texturePair.second.first->useCount() == 1)
+            {
+                texturePair.second.first.reset();
+            }
+            if (texturePair.second.second && texturePair.second.second->useCount() == 1)
+            {
+                texturePair.second.second.reset();
+            }
+        }
     }
 
     ResourceManager::ResourceManager()
