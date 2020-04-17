@@ -119,11 +119,27 @@ namespace obe::Graphics::Canvas
     Bezier::Bezier(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
-        ::Bezier::Bezier a({ { 10, 20 }, { 30, 40 }, { 80, 90 } });
     }
 
     void Bezier::draw(RenderTarget target)
     {
+        ::Bezier::Bezier bezier;
+        for (Transform::UnitVector& point : points)
+        {
+            Transform::UnitVector pixelPosition
+                = point.to<Transform::Units::ScenePixels>();
+            bezier.add(::Bezier::Point(pixelPosition.x, pixelPosition.y));
+        }
+        const double maximum = bezier.size() * precision;
+        std::vector<sf::Vertex> vertices;
+        vertices.reserve(maximum);
+
+        for (unsigned int i = 0; i < maximum; i++)
+        {
+            ::Bezier::Point p = bezier.valueAt(static_cast<double>(i) / maximum);
+            vertices.emplace_back(sf::Vector2f(p.x, p.y), sf::Color::Green);
+        }
+        target.draw(vertices.data(), maximum, sf::LineStrip);
     }
 
     Image::Image(Canvas& parent, const std::string& id)
@@ -192,7 +208,7 @@ namespace obe::Graphics::Canvas
             m_elements.end());
     }
 
-    const Texture& Canvas::getTexture() const
+    Texture Canvas::getTexture() const
     {
         return m_canvas.getTexture();
     }
