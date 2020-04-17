@@ -20,6 +20,7 @@ target_include_directories(ObEngineCore
         $<BUILD_INTERFACE:${ObEngine_BINARY_DIR}/include/Core>
 )
 
+target_link_libraries(ObEngineCore bezier)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
 target_link_libraries(ObEngineCore sfe)
