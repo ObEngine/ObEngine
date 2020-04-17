@@ -35,6 +35,11 @@ namespace obe::Graphics::Shapes
         return shape;
     }
 
+    void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(shape, states);
+    }
+
     Circle::Circle(const sf::CircleShape& shape)
     {
         this->shape = shape;
@@ -65,6 +70,11 @@ namespace obe::Graphics::Shapes
         return shape.getRadius();
     }
 
+    void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(shape, states);
+    }
+
     Polygon::Polygon(const sf::ConvexShape& shape)
     {
         this->shape = shape;
@@ -83,6 +93,29 @@ namespace obe::Graphics::Shapes
     Polygon::operator const sf::ConvexShape&() const
     {
         return shape;
+    }
+
+    void Polygon::setPointPosition(unsigned index, const Transform::UnitVector& position)
+    {
+        const Transform::UnitVector pixelPosition
+            = position.to<Transform::Units::ScenePixels>();
+        if (shape.getPointCount() <= index)
+        {
+            shape.setPointCount(index + 1);
+        }
+        shape.setPoint(index, sf::Vector2f(pixelPosition.x, pixelPosition.y));
+    }
+
+    Transform::UnitVector Polygon::getPointPosition(unsigned index) const
+    {
+        const sf::Vector2f pixelPosition = shape.getPoint(index);
+        return Transform::UnitVector(
+            pixelPosition.x, pixelPosition.y, Transform::Units::ScenePixels);
+    }
+
+    void Polygon::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(shape, states);
     }
 
     Text::Text(const RichText& shape)
@@ -133,5 +166,10 @@ namespace obe::Graphics::Shapes
     void Text::setCharacterSize(unsigned size)
     {
         shape.setCharacterSize(size);
+    }
+
+    void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(shape, states);
     }
 }

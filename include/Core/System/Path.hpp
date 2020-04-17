@@ -94,6 +94,8 @@ namespace obe::System
          * \return All the Mounted Paths
          */
         static std::vector<MountablePath>& Paths();
+
+        static std::vector<std::string> StringPaths();
     };
 
     template <template <class ResourceType> class LoaderType, class ResourceType>

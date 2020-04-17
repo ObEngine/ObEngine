@@ -78,6 +78,17 @@ namespace obe::System
         return MountedPaths;
     }
 
+    std::vector<std::string> Path::StringPaths()
+    {
+        std::vector<std::string> mountedPaths;
+        mountedPaths.reserve(MountedPaths.size());
+        for (auto& mountedPath : MountedPaths)
+        {
+            mountedPaths.push_back(mountedPath.basePath);
+        }
+        return mountedPaths;
+    }
+
     void Path::orderMountedPaths()
     {
         std::sort(MountedPaths.begin(), MountedPaths.end(),

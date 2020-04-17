@@ -21,9 +21,9 @@ namespace obe::Audio
     }
     double Sound::getDuration() const
     {
-        if (dynamic_cast<SoLoud::WavStream*>(m_source.get()))
+        if (auto source = dynamic_cast<SoLoud::WavStream*>(m_source.get()); source)
         {
-            return dynamic_cast<SoLoud::WavStream*>(m_source.get())->getLength();
+            return source->getLength();
         }
         else
         {

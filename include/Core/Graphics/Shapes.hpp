@@ -11,7 +11,7 @@
 
 namespace obe::Graphics::Shapes
 {
-    template <class T> class Shape
+    template <class T> class Shape : public sf::Drawable
     {
     public:
         void setPosition(Transform::UnitVector position);
@@ -35,6 +35,7 @@ namespace obe::Graphics::Shapes
         void move(const Transform::UnitVector& offset);
         void rotate(float angle);
         void scale(const Transform::UnitVector& factor);
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
     };
 
     template <class T> void Shape<T>::setPosition(Transform::UnitVector position)
@@ -186,6 +187,8 @@ namespace obe::Graphics::Shapes
 
         operator sf::RectangleShape&();
         operator const sf::RectangleShape&() const;
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
 
     /**
@@ -206,6 +209,8 @@ namespace obe::Graphics::Shapes
 
         void setRadius(float radius);
         float getRadius() const;
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
 
     /**
@@ -223,6 +228,11 @@ namespace obe::Graphics::Shapes
 
         operator sf::ConvexShape&();
         operator const sf::ConvexShape&() const;
+
+        void setPointPosition(unsigned int index, const Transform::UnitVector& position);
+        Transform::UnitVector getPointPosition(unsigned int index) const;
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
 
     /**
@@ -250,5 +260,7 @@ namespace obe::Graphics::Shapes
 
         unsigned int getCharacterSize() const;
         void setCharacterSize(unsigned int size);
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
 }

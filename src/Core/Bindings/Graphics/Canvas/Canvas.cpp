@@ -113,7 +113,6 @@ namespace obe::Graphics::Canvas::Bindings
                     obe::Graphics::Canvas::CanvasPositionable>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
-        bindCircle["radius"] = &obe::Graphics::Canvas::Circle::radius;
     }
     void LoadClassImage(sol::state_view state)
     {
