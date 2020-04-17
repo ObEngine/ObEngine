@@ -26,7 +26,8 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
         Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
         Rectangle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle}, self.useCache),
         Text = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text}, self.useCache),
-        Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle}, self.useCache)
+        Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle}, self.useCache),
+        Polygon = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon}, self.useCache)
     };
 end);
 
@@ -544,13 +545,35 @@ obe.Canvas.Bases.Circle = {
     }
 }
 
+function positionToUnitVector(position)
+    if type(position) == "table" then
+        local unit = position.unit or obe.Transform.Units.ScenePixels;
+        position = obe.Transform.UnitVector(position.x, position.y, unit);
+    end
+    return position;
+end
 obe.Canvas.Bases.Polygon = {
     getters = {
-
+        points = {
+            getters = {
+                __number = function(self, index)
+                    return self.shape:getPointPosition(index);
+                end
+            },
+            setters = {
+                __number = function(self, index, position)
+                    position = positionToUnitVector(position);
+                    self.shape:setPointPosition(index - 1, position);
+                end
+            }
+        }
     },
     setters = {
-        __number = function(self, index, vertex)
-            local i = index - 1;
+        points = function(self, points)
+            for k, v in pairs(points) do
+                local position = positionToUnitVector(v);
+                self.shape:setPointPosition(k - 1, position);
+            end
         end
     }
 }
@@ -605,6 +628,32 @@ obe.Canvas.Bases.Text = {
                 horizontal = function(self, h) self.h_align = obe.Canvas.ConvertHAlign(h); end,
                 v = function(self, v) self.v_align = obe.Canvas.ConvertVAlign(v); end,
                 vertical = function(self, v) self.v_align = obe.Canvas.ConvertVAlign(v); end
+            }
+        },
+        color = {
+            getters = {
+                r = function(self) return self.text.color.r; end,
+                g = function(self) return self.text.color.g; end,
+                b = function(self) return self.text.color.b; end,
+                a = function(self) return self.text.color.a; end
+            },
+            setters = {
+                r = function(self, r)
+                    self.text.color.r = r;
+                    self:refresh();
+                end,
+                g = function(self, g)
+                    self.text.color.g = g;
+                    self:refresh();
+                end,
+                b = function(self, b)
+                    self.text.color.b = b;
+                    self:refresh();
+                end,
+                a = function(self, a)
+                    self.text.color.a = a;
+                    self:refresh();
+                end
             }
         }
     },
@@ -683,6 +732,12 @@ end
 function obe.Canvas.Canvas:Circle(id)
     id = self:GenerateId(id);
     self.elements[id] = self:InstanciateMT("Circle", self.internal:Circle(id));
+    return self.elements[id];
+end
+
+function obe.Canvas.Canvas:Polygon(id)
+    id = self:GenerateId(id);
+    self.elements[id] = self:InstanciateMT("Polygon", self.internal:Polygon(id));
     return self.elements[id];
 end
 

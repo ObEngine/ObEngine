@@ -193,7 +193,6 @@ namespace obe::Graphics::Canvas
         static const CanvasElementType Type = CanvasElementType::Circle;
 
         Shapes::Circle shape;
-        float radius = 1;
         /**
          * \brief Create a new Circle
          * \param parent Reference to the Canvas

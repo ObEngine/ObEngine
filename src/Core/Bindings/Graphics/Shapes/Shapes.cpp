@@ -82,6 +82,10 @@ namespace obe::Graphics::Shapes::Bindings
         bindPolygon["move"] = &obe::Graphics::Shapes::Polygon::move;
         bindPolygon["rotate"] = &obe::Graphics::Shapes::Polygon::rotate;
         bindPolygon["scale"] = &obe::Graphics::Shapes::Polygon::scale;
+        bindPolygon["setPointPosition"]
+            = &obe::Graphics::Shapes::Polygon::setPointPosition;
+        bindPolygon["getPointPosition"]
+            = &obe::Graphics::Shapes::Polygon::getPointPosition;
         bindPolygon["operator sf::ConvexShape &"]
             = &obe::Graphics::Shapes::Polygon::operator sf::ConvexShape&;
         bindPolygon["operator const sf::ConvexShape &"]
