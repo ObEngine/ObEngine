@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Vertex.hpp>
+#include <bezier/bezier.h>
 
 #include <Graphics/Canvas.hpp>
 #include <System/Loaders.hpp>
@@ -113,6 +114,16 @@ namespace obe::Graphics::Canvas
     void Polygon::draw(RenderTarget target)
     {
         target.draw(shape);
+    }
+
+    Bezier::Bezier(Canvas& parent, const std::string& id)
+        : CanvasPositionable(parent, id)
+    {
+        ::Bezier::Bezier a({ { 10, 20 }, { 30, 40 }, { 80, 90 } });
+    }
+
+    void Bezier::draw(RenderTarget target)
+    {
     }
 
     Image::Image(Canvas& parent, const std::string& id)

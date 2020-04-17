@@ -27,7 +27,8 @@ namespace obe::Graphics::Canvas
         Text,
         Circle,
         Polygon,
-        Sprite
+        Sprite,
+        Bezier
     };
 
     class Canvas;
@@ -219,6 +220,22 @@ namespace obe::Graphics::Canvas
 
         explicit Polygon(Canvas& parent, const std::string& id);
 
+        void draw(RenderTarget target) override;
+    };
+
+    /**
+     * \brief A Canvas Bezier Curve
+     */
+    class Bezier : public CanvasPositionable
+    {
+    public:
+        static const CanvasElementType Type = CanvasElementType::Bezier;
+
+        explicit Bezier(Canvas& parent, const std::string& id);
+        /**
+         * \brief Draw the Bezier Curve
+         * \param target Target where to draw the Sprite to
+         */
         void draw(RenderTarget target) override;
     };
 
