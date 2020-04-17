@@ -230,6 +230,8 @@ namespace obe::Graphics::Canvas
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Bezier;
+        std::vector<Transform::UnitVector> points;
+        unsigned int precision = 10;
 
         explicit Bezier(Canvas& parent, const std::string& id);
         /**
@@ -320,7 +322,7 @@ namespace obe::Graphics::Canvas
          * \brief Get the current Texture of the Canvas
          * \return A reference to the current Texture of the Canvas
          */
-        const Texture& getTexture() const;
+        Texture getTexture() const;
         /**
          * \brief Ask the Canvas to sort elements for the next rendering
          */

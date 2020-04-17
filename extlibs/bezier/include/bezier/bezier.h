@@ -635,6 +635,12 @@ namespace Bezier
     class Bezier
     {
     public:
+        Bezier()
+            : binomialCoefficients(0)
+            , polynomialCoefficients(0)
+        {
+        }
+
         Bezier(size_t amount)
             : binomialCoefficients(amount)
             , polynomialCoefficients(amount)
@@ -659,6 +665,13 @@ namespace Bezier
         {
             for (size_t i = 0; i < other.size(); i++)
                 mControlPoints[i] = Point(other[i]);
+        }
+
+        Bezier& add(const Point& p)
+        {
+            mControlPoints.push_back(p);
+            binomialCoefficients = BinomialCoefficients(size());
+            polynomialCoefficients = PolynomialCoefficients(size());
         }
 
         // The order of the bezier curve.
