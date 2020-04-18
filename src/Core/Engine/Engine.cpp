@@ -92,7 +92,7 @@ namespace obe::Engine
 
     void Engine::initPlugins()
     {
-        for (const System::MountablePath& mountedPath : System::Path::MountedPaths)
+        for (const System::MountablePath& mountedPath : System::MountablePath::Paths())
         {
             Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
                 mountedPath.basePath);
@@ -276,7 +276,8 @@ namespace obe::Engine
     {
         std::string bootScript = "boot.lua"_fs;
         if (bootScript.empty())
-            throw Exceptions::BootScriptMissing(System::Path::StringPaths(), EXC_INFO);
+            throw Exceptions::BootScriptMissing(
+                System::MountablePath::StringPaths(), EXC_INFO);
         m_lua.safe_script_file(bootScript);
         m_window->create();
         m_lua["Game"]["Start"]();

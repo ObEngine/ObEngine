@@ -248,7 +248,7 @@ namespace obe::Script
                 m_animator->setTarget(*m_sprite);
             if (animatorPath != "")
             {
-                m_animator->load(animatorPath, resources);
+                m_animator->load(System::Path(animatorPath), resources);
             }
             if (obj.at("Animator").contains(vili::NodeType::DataNode, "default"))
             {

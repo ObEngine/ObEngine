@@ -7,6 +7,41 @@
 
 namespace obe::Graphics::Canvas
 {
+    std::string canvasElementTypeToString(CanvasElementType type)
+    {
+        switch (type)
+        {
+        case CanvasElementType::CanvasElement:
+            return "CanvasElement";
+            break;
+        case CanvasElementType::Line:
+            return "Line";
+            break;
+        case CanvasElementType::Rectangle:
+            return "Rectangle";
+            break;
+        case CanvasElementType::Text:
+            return "Text";
+            break;
+        case CanvasElementType::Circle:
+            return "Circle";
+            break;
+        case CanvasElementType::Polygon:
+            return "Polygon";
+            break;
+        case CanvasElementType::Bezier:
+            return "Bezier";
+            break;
+        default:;
+        }
+    }
+
+    std::ostream& operator<<(std::ostream& os, CanvasElementType type)
+    {
+        os << canvasElementTypeToString(type);
+        return os;
+    }
+
     CanvasElement::CanvasElement(Canvas& parent, const std::string& id)
         : ProtectedIdentifiable(id)
         , parent(parent)
@@ -159,16 +194,6 @@ namespace obe::Graphics::Canvas
             curveIndex += 3;
         }
         target.draw(vertices.data(), maximum, sf::LineStrip);
-    }
-
-    Image::Image(Canvas& parent, const std::string& id)
-        : CanvasPositionable(parent, id)
-    {
-    }
-
-    void Image::draw(RenderTarget target)
-    {
-        // sprite.draw(target, Transform::UnitVector(0, 0));
     }
 
     void Canvas::sortElements()

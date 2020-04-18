@@ -7,6 +7,7 @@
 #include <sfe/RichText.hpp>
 
 #include <Debug/Logger.hpp>
+#include <Graphics/Exceptions.hpp>
 #include <Graphics/Shapes.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Graphics/Text.hpp>
@@ -27,9 +28,11 @@ namespace obe::Graphics::Canvas
         Text,
         Circle,
         Polygon,
-        Sprite,
         Bezier
     };
+
+    std::string canvasElementTypeToString(CanvasElementType type);
+    std::ostream& operator<<(std::ostream& os, CanvasElementType type);
 
     class Canvas;
     /**
@@ -243,23 +246,6 @@ namespace obe::Graphics::Canvas
     };
 
     /**
-     * \brief A Canvas Image
-     */
-    class Image : public CanvasPositionable
-    {
-    public:
-        static const CanvasElementType Type = CanvasElementType::Sprite;
-
-        std::string path;
-        explicit Image(Canvas& parent, const std::string& id);
-        /**
-         * \brief Draw the Sprite
-         * \param target Target where to draw the Sprite to
-         */
-        void draw(RenderTarget target) override;
-    };
-
-    /**
      * \brief A Canvas where you can draw CanvasElements
      * \bind{Canvas}
      * \helper{Lib/Internal/Canvas.lua}
@@ -285,6 +271,8 @@ namespace obe::Graphics::Canvas
          * \tparam T Class of the CanvasElement to add to the canvas
          * \param id Id of the new element to add to the canvas
          * \return a pointer to the newly created CanvasElement
+         * \throw CanvasElementAlreadyExists if an element with
+         *        the given id already exists in the Canvas
          *
          * \thints
          * \thint{Line, T=obe::Graphics::Canvas::Line}
@@ -292,7 +280,6 @@ namespace obe::Graphics::Canvas
          * \thint{Text, T=obe::Graphics::Canvas::Text}
          * \thint{Circle, T=obe::Graphics::Canvas::Circle}
          * \thint{Polygon, T=obe::Graphics::Canvas::Polygon}
-         * \thint{Image, T=obe::Graphics::Canvas::Image}
          * \thint{Bezier, T=obe::Graphics::Canvas::Bezier}
          * \endthints
          *
@@ -332,7 +319,21 @@ namespace obe::Graphics::Canvas
 
     template <class T> inline T& Canvas::add(const std::string& id)
     {
-        if (this->get(id) == nullptr) // FIX: Bad practice
+        if (const auto existingElement = this->get(id); existingElement)
+        {
+            if (existingElement->type == T::Type)
+            {
+                Debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
+                return *static_cast<T*>(this->get(id));
+            }
+            else
+            {
+                throw Exceptions::CanvasElementAlreadyExists(id,
+                    canvasElementTypeToString(T::Type),
+                    canvasElementTypeToString(existingElement->type), EXC_INFO);
+            }
+        }
+        else
         {
             m_sortRequired = true;
             std::unique_ptr<T> newElement = std::make_unique<T>(*this, id);
@@ -342,16 +343,6 @@ namespace obe::Graphics::Canvas
                 });
             auto elem_it = m_elements.insert(insert_it, std::move(newElement));
             return *static_cast<T*>(elem_it->get());
-        }
-        else if (this->get(id)->type == T::Type)
-        {
-            Debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
-            return *static_cast<T*>(this->get(id));
-        }
-        else
-        {
-            throw aube::ErrorHandler::Raise("obe.Graphics.Canvas.Canvas."
-                                            "ElementAlreadyExistsWithDifferentType");
         }
     }
 } // namespace obe::Graphics::Canvas

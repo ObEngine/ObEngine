@@ -126,8 +126,6 @@ namespace obe::System::Bindings
                 return self->find(pathType);
             });
         bindPath["toString"] = &obe::System::Path::toString;
-        bindPath["Mount"] = &obe::System::Path::Mount;
-        bindPath["Paths"] = &obe::System::Path::Paths;
     }
     void LoadClassPlugin(sol::state_view state)
     {
@@ -171,10 +169,5 @@ namespace obe::System::Bindings
         bindWindow["getWindow"] = &obe::System::Window::getWindow;
         bindWindow["getClearColor"] = &obe::System::Window::getClearColor;
         bindWindow["setClearColor"] = &obe::System::Window::setClearColor;
-    }
-    void LoadFunctionMountPaths(sol::state_view state)
-    {
-        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-        SystemNamespace.set_function("MountPaths", obe::System::MountPaths);
     }
 };

@@ -19,27 +19,30 @@ namespace obe::Animation
             if (m_target->getSize().x >= m_target->getSize().y)
             {
                 m_target->setSize(Transform::UnitVector(m_target->getSize().x,
-                    float(texture.getSize().y) / float(texture.getSize().x)
+                    static_cast<float>(texture.getSize().y)
+                        / static_cast<float>(texture.getSize().x)
                         * m_target->getSize().x));
             }
             else
             {
-                m_target->setSize(Transform::UnitVector(float(texture.getSize().x)
-                        / float(texture.getSize().y) * m_target->getSize().y,
+                m_target->setSize(Transform::UnitVector(
+                    static_cast<float>(texture.getSize().x)
+                        / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
                     m_target->getSize().y));
             }
         }
         else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
         {
             m_target->setSize(Transform::UnitVector(m_target->getSize().x,
-                float(texture.getSize().y) / float(texture.getSize().x)
-                    * m_target->getSize().x));
+                static_cast<float>(texture.getSize().y)
+                    / static_cast<float>(texture.getSize().x) * m_target->getSize().x));
         }
         else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedHeight)
         {
-            m_target->setSize(Transform::UnitVector(float(texture.getSize().x)
-                    / float(texture.getSize().y) * m_target->getSize().y,
-                m_target->getSize().y));
+            m_target->setSize(
+                Transform::UnitVector(static_cast<float>(texture.getSize().x)
+                        / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
+                    m_target->getSize().y));
         }
         else if (m_targetScaleMode == AnimatorTargetScaleMode::TextureSize)
             m_target->useTextureSize();
@@ -50,7 +53,6 @@ namespace obe::Animation
         Debug::Log->trace("<Animator> Clearing Animator at '{0}'", m_path.toString());
         m_animations.clear();
         m_currentAnimation = nullptr;
-        m_path = System::Path("");
     }
 
     Animation& Animator::getAnimation(const std::string& animationName) const

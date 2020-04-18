@@ -148,7 +148,6 @@ namespace obe::Bindings
             .add("ClassCanvasPositionable",
                 &obe::Graphics::Canvas::Bindings::LoadClassCanvasPositionable)
             .add("ClassCircle", &obe::Graphics::Canvas::Bindings::LoadClassCircle)
-            .add("ClassImage", &obe::Graphics::Canvas::Bindings::LoadClassImage)
             .add("ClassLine", &obe::Graphics::Canvas::Bindings::LoadClassLine)
             .add("ClassPolygon", &obe::Graphics::Canvas::Bindings::LoadClassPolygon)
             .add("ClassRectangle", &obe::Graphics::Canvas::Bindings::LoadClassRectangle)
@@ -238,8 +237,7 @@ namespace obe::Bindings
             .add("EnumMountablePathType",
                 &obe::System::Bindings::LoadEnumMountablePathType)
             .add("EnumPathType", &obe::System::Bindings::LoadEnumPathType)
-            .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext)
-            .add("FunctionMountPaths", &obe::System::Bindings::LoadFunctionMountPaths);
+            .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext);
 
         BindTree["obe"]["System"]["Loaders"]
             .add("GlobalTextureLoader",

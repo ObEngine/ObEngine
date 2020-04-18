@@ -10,9 +10,11 @@ namespace obe::System
     Window::Window(const WindowContext context)
     {
         vili::ViliParser windowConfig;
-        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
-        Path("Data/window.cfg.vili").loadAll(System::Loaders::dataLoader, windowConfig);
-        std::reverse(Path::MountedPaths.begin(), Path::MountedPaths.end());
+        auto mountPoints = System::MountablePath::Paths();
+        std::reverse(mountPoints.begin(), mountPoints.end());
+        Path(mountPoints)
+            .set("Data/window.cfg.vili")
+            .loadAll(System::Loaders::dataLoader, windowConfig);
 
         vili::ComplexNode* conf;
         if (context == WindowContext::GameWindow)

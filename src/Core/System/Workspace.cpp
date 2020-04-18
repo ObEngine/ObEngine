@@ -29,7 +29,7 @@ namespace obe::System::Workspace
             workspaceName, priority);
         if (WorkspaceExists(workspaceName))
         {
-            Path::Mount(MountablePath(MountablePathType::Workspace,
+            MountablePath::Mount(MountablePath(MountablePathType::Workspace,
                 GetWorkspaceLocation(workspaceName), priority));
             return true;
         }
