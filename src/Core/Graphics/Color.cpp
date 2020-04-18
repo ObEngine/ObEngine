@@ -235,8 +235,7 @@ namespace obe::Graphics
     {
     }
 
-    Color::Color(const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b,
-        const uint_fast8_t a)
+    Color::Color(const double r, const double g, const double b, const double a)
     {
         this->fromRgb(r, g, b, a);
     }
@@ -286,8 +285,7 @@ namespace obe::Graphics
         throw Exceptions::InvalidColorName(name, EXC_INFO);
     }
 
-    void Color::fromRgb(const uint_fast8_t r, const uint_fast8_t g, const uint_fast8_t b,
-        const uint_fast8_t a)
+    void Color::fromRgb(const double r, const double g, const double b, const double a)
     {
         this->r = r;
         this->g = g;
@@ -346,7 +344,8 @@ namespace obe::Graphics
 
     uint32_t Color::toInteger() const
     {
-        return (r << 24) + (g << 16) + (b << 8) + (a);
+        return (static_cast<int>(r) << 24) + (static_cast<int>(g) << 16)
+            + (static_cast<int>(b) << 8) + (a);
     }
 
     void Color::fromHex(std::string hexCode)
@@ -425,8 +424,7 @@ namespace obe::Graphics
     Color Color::operator*(double value) const
     {
 
-        return Color(static_cast<double>(r) * value, static_cast<double>(g) * value,
-            static_cast<double>(b) * value, static_cast<double>(a) * value);
+        return Color(r * value, g * value, b * value, a * value);
     }
 
     void Color::operator*=(const Color& color)
@@ -441,10 +439,10 @@ namespace obe::Graphics
     void Color::operator*=(double value)
     {
 
-        r = static_cast<double>(r) * value;
-        g = static_cast<double>(g) * value;
-        b = static_cast<double>(b) * value;
-        a = static_cast<double>(a) * value;
+        r = r * value;
+        g = g * value;
+        b = b * value;
+        a = a * value;
     }
 
     Color Color::operator/(const Color& color) const
@@ -456,17 +454,16 @@ namespace obe::Graphics
     Color Color::operator/(double value) const
     {
 
-        return Color(static_cast<double>(r) / value, static_cast<double>(g) / value,
-            static_cast<double>(b) / value, static_cast<double>(a) / value);
+        return Color(r / value, g / value, b / value, a / value);
     }
 
     void Color::operator/=(const Color& color)
     {
 
-        r = static_cast<float>(r) / static_cast<float>(color.r);
-        g = static_cast<float>(g) / static_cast<float>(color.g);
-        b = static_cast<float>(b) / static_cast<float>(color.b);
-        a = static_cast<float>(a) / static_cast<float>(color.a);
+        r = r / color.r;
+        g = g / color.g;
+        b = b / color.b;
+        a = a / color.a;
     }
 
     void Color::operator/=(double value)
@@ -474,17 +471,17 @@ namespace obe::Graphics
 
         if (value != 0)
         {
-            r = static_cast<double>(r) / value;
-            g = static_cast<double>(g) / value;
-            b = static_cast<double>(b) / value;
-            a = static_cast<double>(a) / value;
+            r = r / value;
+            g = g / value;
+            b = b / value;
+            a = a / value;
         }
         else
         {
-            r = 1;
-            g = 1;
-            b = 1;
-            a = 1;
+            r = 255;
+            g = 255;
+            b = 255;
+            a = 255;
         }
     };
 

@@ -226,11 +226,12 @@ namespace obe::Graphics::Canvas
     /**
      * \brief A Canvas Bezier Curve
      */
-    class Bezier : public CanvasPositionable
+    class Bezier : public CanvasElement
     {
     public:
         static const CanvasElementType Type = CanvasElementType::Bezier;
         std::vector<Transform::UnitVector> points;
+        std::vector<Graphics::Color> colors;
         unsigned int precision = 10;
 
         explicit Bezier(Canvas& parent, const std::string& id);
@@ -250,7 +251,6 @@ namespace obe::Graphics::Canvas
         static const CanvasElementType Type = CanvasElementType::Sprite;
 
         std::string path;
-        sfe::ComplexSprite sprite;
         explicit Image(Canvas& parent, const std::string& id);
         /**
          * \brief Draw the Sprite
@@ -293,6 +293,7 @@ namespace obe::Graphics::Canvas
          * \thint{Circle, T=obe::Graphics::Canvas::Circle}
          * \thint{Polygon, T=obe::Graphics::Canvas::Polygon}
          * \thint{Image, T=obe::Graphics::Canvas::Image}
+         * \thint{Bezier, T=obe::Graphics::Canvas::Bezier}
          * \endthints
          *
          */

@@ -66,10 +66,16 @@ namespace obe::Bindings
         BindTree["obe"].add("Utils", InitTreeNodeAsTable("obe.Utils"));
         BindTree["obe"]["Animation"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Animation.Exceptions"));
+        BindTree["obe"]["Audio"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Audio.Exceptions"));
         BindTree["obe"]["Graphics"].add(
             "Canvas", InitTreeNodeAsTable("obe.Graphics.Canvas"));
         BindTree["obe"]["Graphics"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Graphics.Exceptions"));
+        BindTree["obe"]["Graphics"].add(
             "Shapes", InitTreeNodeAsTable("obe.Graphics.Shapes"));
+        BindTree["obe"]["Scene"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Scene.Exceptions"));
         BindTree["obe"]["Script"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Script.Exceptions"));
         BindTree["obe"]["System"].add(
@@ -127,8 +133,6 @@ namespace obe::Bindings
         BindTree["obe"]["Config"].add("ClassConfigurationManager",
             &obe::Config::Bindings::LoadClassConfigurationManager);
 
-        BindTree["obe"].add("FunctionInitEngine", &obe::Bindings::LoadFunctionInitEngine);
-
         BindTree["obe"]["Engine"]
             .add("ClassEngine", &obe::Engine::Bindings::LoadClassEngine)
             .add("ClassResourceManagedObject",
@@ -137,6 +141,7 @@ namespace obe::Bindings
                 "ClassResourceManager", &obe::Engine::Bindings::LoadClassResourceManager);
 
         BindTree["obe"]["Graphics"]["Canvas"]
+            .add("ClassBezier", &obe::Graphics::Canvas::Bindings::LoadClassBezier)
             .add("ClassCanvas", &obe::Graphics::Canvas::Bindings::LoadClassCanvas)
             .add("ClassCanvasElement",
                 &obe::Graphics::Canvas::Bindings::LoadClassCanvasElement)
@@ -253,7 +258,7 @@ namespace obe::Bindings
             .add("ClassFramerateCounter", &obe::Time::Bindings::LoadClassFramerateCounter)
             .add("ClassFramerateManager", &obe::Time::Bindings::LoadClassFramerateManager)
             .add("FunctionEpoch", &obe::Time::Bindings::LoadFunctionEpoch)
-            .add("LoadTimeUnits", &obe::Time::Bindings::LoadTimeUnits);
+            .add("TimeUnits", &obe::Time::Bindings::LoadTimeUnits);
 
         BindTree["obe"]["Transform"]
             .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)

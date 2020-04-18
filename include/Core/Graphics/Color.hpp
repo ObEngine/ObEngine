@@ -13,13 +13,13 @@ namespace obe::Graphics
     class Color
     {
     public:
-        uint_fast8_t r = 0;
-        uint_fast8_t g = 0;
-        uint_fast8_t b = 0;
-        uint_fast8_t a = 255;
+        double r = 0;
+        double g = 0;
+        double b = 0;
+        double a = 255;
 
         Color();
-        Color(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a = 255);
+        Color(double r, double g, double b, double a = 255);
         explicit Color(const std::string& nameOrHex);
         Color(const Color& color);
         Color(const sf::Color& color);
@@ -27,7 +27,7 @@ namespace obe::Graphics
         void fromString(std::string string);
         bool fromName(std::string name, bool strict = true);
         void fromHex(std::string hexCode);
-        void fromRgb(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t = 255);
+        void fromRgb(double r, double g, double b, double a = 255);
         void fromHsv(int H, double S, double V);
 
         [[nodiscard]] uint32_t toInteger() const;

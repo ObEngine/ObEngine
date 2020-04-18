@@ -27,7 +27,8 @@ obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
         Rectangle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle}, self.useCache),
         Text = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text}, self.useCache),
         Circle = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle}, self.useCache),
-        Polygon = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon}, self.useCache)
+        Polygon = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon}, self.useCache),
+        Bezier = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Bezier}, self.useCache)
     };
 end);
 
@@ -48,6 +49,8 @@ function obe.Canvas.NormalizeColor(color, base)
         local newColor = obe.Graphics.Color();
         newColor:fromString(color);
         return newColor;
+    elseif type(color) == "userdata" then
+        return color;
     end
 end
 
@@ -506,6 +509,9 @@ obe.Canvas.Bases.Shape = {
             elseif type(scale) == "table" then
                 self.shape:setScale(scale.x or 1, scale.y or 1);
             end
+        end,
+        texture = function(self, texture)
+            self.shape:setTexture(Engine.Resources:getTexture(texture));
         end
     }
 }
@@ -547,8 +553,10 @@ obe.Canvas.Bases.Circle = {
 
 function positionToUnitVector(position)
     if type(position) == "table" then
-        local unit = position.unit or obe.Transform.Units.ScenePixels;
-        position = obe.Transform.UnitVector(position.x, position.y, unit);
+        local x = position.x or position[1];
+        local y = position.x or position[2];
+        local unit = position.unit or position[3] or obe.Transform.Units.ScenePixels;
+        position = obe.Transform.UnitVector(x, y, unit);
     end
     return position;
 end
@@ -574,6 +582,40 @@ obe.Canvas.Bases.Polygon = {
                 local position = positionToUnitVector(v);
                 self.shape:setPointPosition(k - 1, position);
             end
+        end
+    }
+}
+
+obe.Canvas.Bases.Bezier = {
+    getters = {
+        points = {
+            getters = {
+                __number = function(self, index)
+                    return self.points[index];
+                end
+            },
+            setters = {
+                __number = function(self, index, position)
+                    self.points[index - 1] = positionToUnitVector(position);
+                end
+            }
+        },
+        precision = function(self)
+            return self.precision;
+        end
+    },
+    setters = {
+        points = function(self, points)
+            for k, v in pairs(points) do
+                local color = v.color or self.colors[k - 1] or obe.Graphics.Color(255, 255, 255);
+                color = obe.Canvas.NormalizeColor(color);
+                table.insert(self.points, positionToUnitVector(v));
+                table.insert(self.colors, color);
+                -- self.points[k - 1] = positionToUnitVector(v);
+            end
+        end,
+        precision = function(self, precision)
+            self.precision = precision;
         end
     }
 }
@@ -738,6 +780,12 @@ end
 function obe.Canvas.Canvas:Polygon(id)
     id = self:GenerateId(id);
     self.elements[id] = self:InstanciateMT("Polygon", self.internal:Polygon(id));
+    return self.elements[id];
+end
+
+function obe.Canvas.Canvas:Bezier(id)
+    id = self:GenerateId(id);
+    self.elements[id] = self:InstanciateMT("Bezier", self.internal:Bezier(id));
     return self.elements[id];
 end
 

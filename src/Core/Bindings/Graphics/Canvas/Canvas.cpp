@@ -19,7 +19,8 @@ namespace obe::Graphics::Canvas::Bindings
                 { "Text", obe::Graphics::Canvas::CanvasElementType::Text },
                 { "Circle", obe::Graphics::Canvas::CanvasElementType::Circle },
                 { "Polygon", obe::Graphics::Canvas::CanvasElementType::Polygon },
-                { "Sprite", obe::Graphics::Canvas::CanvasElementType::Sprite } });
+                { "Sprite", obe::Graphics::Canvas::CanvasElementType::Sprite },
+                { "Bezier", obe::Graphics::Canvas::CanvasElementType::Bezier } });
     }
     void LoadEnumTextHorizontalAlign(sol::state_view state)
     {
@@ -38,6 +39,20 @@ namespace obe::Graphics::Canvas::Bindings
             { { "Top", obe::Graphics::Canvas::TextVerticalAlign::Top },
                 { "Center", obe::Graphics::Canvas::TextVerticalAlign::Center },
                 { "Bottom", obe::Graphics::Canvas::TextVerticalAlign::Bottom } });
+    }
+    void LoadClassBezier(sol::state_view state)
+    {
+        sol::table CanvasNamespace = state["obe"]["Graphics"]["Canvas"].get<sol::table>();
+        sol::usertype<obe::Graphics::Canvas::Bezier> bindBezier
+            = CanvasNamespace.new_usertype<obe::Graphics::Canvas::Bezier>("Bezier",
+                sol::call_constructor,
+                sol::constructors<obe::Graphics::Canvas::Bezier(
+                    obe::Graphics::Canvas::Canvas&, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::Graphics::Canvas::CanvasElement>());
+        bindBezier["draw"] = &obe::Graphics::Canvas::Bezier::draw;
+        bindBezier["points"] = &obe::Graphics::Canvas::Bezier::points;
+        bindBezier["precision"] = &obe::Graphics::Canvas::Bezier::precision;
+        bindBezier["colors"] = &obe::Graphics::Canvas::Bezier::colors;
     }
     void LoadClassCanvas(sol::state_view state)
     {
@@ -65,13 +80,16 @@ namespace obe::Graphics::Canvas::Bindings
         bindCanvas["Image"] = static_cast<obe::Graphics::Canvas::Image& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        bindCanvas["Bezier"] = static_cast<obe::Graphics::Canvas::Bezier& (
+            obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
+            &obe::Graphics::Canvas::Canvas::add);
         bindCanvas["get"] = &obe::Graphics::Canvas::Canvas::get;
         bindCanvas["render"] = &obe::Graphics::Canvas::Canvas::render;
         bindCanvas["clear"] = &obe::Graphics::Canvas::Canvas::clear;
         bindCanvas["remove"] = &obe::Graphics::Canvas::Canvas::remove;
         bindCanvas["getTexture"] = &obe::Graphics::Canvas::Canvas::getTexture;
         bindCanvas["requiresSort"] = &obe::Graphics::Canvas::Canvas::requiresSort;
-        state.safe_script_file("Lib/Internal/Canvas.lua"_fs);
+        state.script_file("Lib/Internal/Canvas.lua"_fs);
     }
     void LoadClassCanvasElement(sol::state_view state)
     {
@@ -109,8 +127,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Circle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasElement,
-                    obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
     }
@@ -123,11 +141,10 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Image(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasElement,
-                    obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement>());
         bindImage["draw"] = &obe::Graphics::Canvas::Image::draw;
         bindImage["path"] = &obe::Graphics::Canvas::Image::path;
-        bindImage["sprite"] = &obe::Graphics::Canvas::Image::sprite;
     }
     void LoadClassLine(sol::state_view state)
     {
@@ -154,8 +171,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Polygon(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasElement,
-                    obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement>());
         bindPolygon["draw"] = &obe::Graphics::Canvas::Polygon::draw;
         bindPolygon["shape"] = &obe::Graphics::Canvas::Polygon::shape;
     }
@@ -168,8 +185,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Rectangle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasElement,
-                    obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement>());
         bindRectangle["draw"] = &obe::Graphics::Canvas::Rectangle::draw;
         bindRectangle["shape"] = &obe::Graphics::Canvas::Rectangle::shape;
         bindRectangle["size"] = &obe::Graphics::Canvas::Rectangle::size;
@@ -183,15 +200,15 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Text(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasElement,
-                    obe::Graphics::Canvas::CanvasPositionable>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement>());
         bindText["draw"] = &obe::Graphics::Canvas::Text::draw;
+        bindText["refresh"] = &obe::Graphics::Canvas::Text::refresh;
+        bindText["text"] = sol::property(&obe::Graphics::Canvas::Text::currentText);
         bindText["fontPath"] = &obe::Graphics::Canvas::Text::fontPath;
         bindText["shape"] = &obe::Graphics::Canvas::Text::shape;
         bindText["h_align"] = &obe::Graphics::Canvas::Text::h_align;
         bindText["v_align"] = &obe::Graphics::Canvas::Text::v_align;
         bindText["texts"] = &obe::Graphics::Canvas::Text::texts;
-        bindText["refresh"] = &obe::Graphics::Canvas::Text::refresh;
-        bindText["text"] = sol::property(&obe::Graphics::Canvas::Text::currentText);
     }
 };

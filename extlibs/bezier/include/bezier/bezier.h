@@ -64,32 +64,31 @@ namespace Bezier
         }
     }
 
-    class BinomialCoefficients
+    template <size_t N> class BinomialCoefficients
     {
     public:
-        BinomialCoefficients(size_t amount)
-            : mCoefficients(amount, 0)
+        BinomialCoefficients()
         {
-            size_t center = size() / 2;
+            size_t center = N / 2;
             size_t k = 0;
 
             while (k <= center)
             {
-                mCoefficients[k] = Math::binomial(size(), k);
+                mCoefficients[k] = Math::binomial(N, k);
                 k++;
             }
 
             // Utilize the symmetrical nature of the binomial coefficients.
-            while (k <= size())
+            while (k <= N)
             {
-                mCoefficients[k] = mCoefficients[size() - k];
+                mCoefficients[k] = mCoefficients[N - k];
                 k++;
             }
         }
 
-        size_t size() const
+        static constexpr size_t size()
         {
-            return mCoefficients.size();
+            return N + 1;
         }
 
         const size_t operator[](size_t idx) const
@@ -99,7 +98,7 @@ namespace Bezier
         }
 
     private:
-        std::vector<float> mCoefficients;
+        float mCoefficients[size()];
     };
 
     struct PolynomialPair
@@ -113,17 +112,16 @@ namespace Bezier
         }
     };
 
-    class PolynomialCoefficients
+    template <size_t N> class PolynomialCoefficients
     {
     public:
-        PolynomialCoefficients(size_t amount)
-            : mPolynomialPairs(amount, PolynomialPair())
+        PolynomialCoefficients()
         {
-            for (size_t i = 0; i <= size(); i++)
+            for (size_t i = 0; i <= N; i++)
             {
                 mPolynomialPairs[i].t = i;
-                mPolynomialPairs[i].one_minus_t = size() - i;
-                assert(mPolynomialPairs[i].t + mPolynomialPairs[i].one_minus_t == size());
+                mPolynomialPairs[i].one_minus_t = N - i;
+                assert(mPolynomialPairs[i].t + mPolynomialPairs[i].one_minus_t == N);
             }
         }
 
@@ -133,9 +131,9 @@ namespace Bezier
             return mPolynomialPairs[pos].valueAt(t);
         }
 
-        size_t size() const
+        static constexpr size_t size()
         {
-            return mPolynomialPairs.size();
+            return N + 1;
         }
 
         const PolynomialPair& operator[](size_t idx) const
@@ -145,7 +143,7 @@ namespace Bezier
         }
 
     private:
-        std::vector<PolynomialPair> mPolynomialPairs;
+        PolynomialPair mPolynomialPairs[size()];
     };
 
     class Vec2
@@ -329,9 +327,9 @@ namespace Bezier
         static constexpr size_t size = 2;
     };
 
-    using Point = Vec2;
-    using Normal = Vec2;
-    using Tangent = Vec2;
+    typedef Vec2 Point;
+    typedef Vec2 Normal;
+    typedef Vec2 Tangent;
 
     struct ExtremeValue
     {
@@ -632,26 +630,16 @@ namespace Bezier
 
     typedef TightBoundingBox TBB;
 
-    class Bezier
+    template <size_t N> class Bezier
     {
     public:
         Bezier()
-            : binomialCoefficients(0)
-            , polynomialCoefficients(0)
         {
-        }
-
-        Bezier(size_t amount)
-            : binomialCoefficients(amount)
-            , polynomialCoefficients(amount)
-        {
-            for (size_t i = 0; i < size(); i++)
+            for (size_t i = 0; i < N + 1; i++)
                 mControlPoints[i].set(0, 0);
         }
 
         Bezier(const std::vector<Point>& controlPoints)
-            : binomialCoefficients(controlPoints.size())
-            , polynomialCoefficients(controlPoints.size())
         {
             assert(controlPoints.size()
                 == size()); // The Bezier curve must be initialized with the expected number og points
@@ -659,44 +647,35 @@ namespace Bezier
                 mControlPoints[i] = Point(controlPoints[i]);
         }
 
-        Bezier(const Bezier& other)
-            : binomialCoefficients(other.size())
-            , polynomialCoefficients(other.size())
+        Bezier(const Bezier<N>& other)
         {
             for (size_t i = 0; i < other.size(); i++)
                 mControlPoints[i] = Point(other[i]);
         }
 
-        Bezier& add(const Point& p)
-        {
-            mControlPoints.push_back(p);
-            binomialCoefficients = BinomialCoefficients(size());
-            polynomialCoefficients = PolynomialCoefficients(size());
-        }
-
         // The order of the bezier curve.
         size_t order() const
         {
-            return mControlPoints.size() - 1;
+            return N;
         }
 
         // Number of control points.
         size_t size() const
         {
-            return mControlPoints.size();
+            return N + 1;
         }
 
-        Bezier derivative() const
+        Bezier<N - 1> derivative() const
         {
-            assert(size() != 0);
+            assert(N != 0);
 
             // Note: derivative weights/control points are not actual control points.
-            std::vector<Point> derivativeWeights(size());
-            for (size_t i = 0; i < size(); i++)
+            std::vector<Point> derivativeWeights(N);
+            for (size_t i = 0; i < N; i++)
                 derivativeWeights[i].set(
-                    Point((mControlPoints[i + 1] - mControlPoints[i]) * size()));
+                    Point((mControlPoints[i + 1] - mControlPoints[i]) * N));
 
-            return Bezier(derivativeWeights);
+            return Bezier<N - 1>(derivativeWeights);
         }
 
     public:
@@ -704,7 +683,7 @@ namespace Bezier
         {
             assert(axis < Vec2::size); // Currently only support 2D
             double sum = 0;
-            for (size_t n = 0; n < size(); n++)
+            for (size_t n = 0; n < N + 1; n++)
             {
                 sum += binomialCoefficients[n] * polynomialCoefficients[n].valueAt(t)
                     * mControlPoints[n][axis];
@@ -725,7 +704,7 @@ namespace Bezier
         Tangent tangentAt(float t, bool normalize = true) const
         {
             Point p;
-            auto derivative = this->derivative();
+            Bezier<N - 1> derivative = this->derivative();
             p.set(derivative.valueAt(t));
             if (normalize)
                 p.normalize();
@@ -740,25 +719,25 @@ namespace Bezier
 
         void translate(const Vec2& distance)
         {
-            for (Point& point : mControlPoints)
+            for (size_t i = 0; i < N + 1; i++)
             {
-                point.translate(distance);
+                mControlPoints[i].translate(distance);
             }
         }
 
         void translate(float dx, float dy)
         {
-            for (Point& point : mControlPoints)
+            for (size_t i = 0; i < N + 1; i++)
             {
-                point.translate(dx, dy);
+                mControlPoints[i].translate(dx, dy);
             }
         }
 
         void rotate(double angle, Vec2 pivot = Vec2(0, 0))
         {
-            for (Point& point : mControlPoints)
+            for (size_t i = 0; i < N + 1; i++)
             {
-                point.rotate(angle, pivot);
+                mControlPoints[i].rotate(angle, pivot);
             }
         }
 
@@ -766,7 +745,7 @@ namespace Bezier
             double epsilon = BEZIER_FUZZY_EPSILON,
             size_t maxIterations = BEZIER_DEFAULT_MAX_ITERATIONS) const
         {
-            switch (size())
+            switch (N)
             {
             case 1:
                 return derivativeZero1();
@@ -805,10 +784,10 @@ namespace Bezier
 
         TightBoundingBox tbb() const
         {
-            auto bezier = *this;
+            Bezier<N> bezier = *this;
 
             // Translate last control point (highest order) to origo.
-            Vec2 translation(-bezier[size()]);
+            Vec2 translation(-bezier[N]);
             bezier.translate(translation);
 
             // Rotate bezier to align the first control point (lowest order) with the x-axis
@@ -834,13 +813,13 @@ namespace Bezier
     private:
         ExtremeValues derivativeZero1() const
         {
-            assert(size() == 1);
+            assert(N == 1);
             return ExtremeValues();
         }
 
         ExtremeValues derivativeZero2() const
         {
-            assert(size() == 2);
+            assert(N == 2);
             ExtremeValues xVals;
             Point roots = (mControlPoints[0] - mControlPoints[1])
                 / (mControlPoints[0] - mControlPoints[1] * 2 + mControlPoints[2]);
@@ -853,8 +832,8 @@ namespace Bezier
 
         ExtremeValues derivativeZero3() const
         {
-            // Note: NOT IMPLEMENTED YET
-            assert(size() == 3);
+            // Note: NOT IMPLMENTED YET
+            assert(N == 3);
             return ExtremeValues();
         }
 
@@ -862,12 +841,12 @@ namespace Bezier
             double epsilon = BEZIER_FUZZY_EPSILON,
             size_t maxIterations = BEZIER_DEFAULT_MAX_ITERATIONS) const
         {
-            assert(size() >= 2);
+            assert(N >= 2);
             ExtremeValues xVals;
             const double dt = 1.0 / (double)intervals;
             const double absEpsilon = fabs(epsilon);
-            const auto db = derivative();
-            const auto ddb = db.derivative();
+            const Bezier<N - 1> db = derivative();
+            const Bezier<N - 2> ddb = db.derivative();
 
             for (size_t i = 0; i < Point::size; i++)
             {
@@ -905,10 +884,19 @@ namespace Bezier
         }
 
     public:
-        BinomialCoefficients binomialCoefficients;
-        PolynomialCoefficients polynomialCoefficients;
+        static const BinomialCoefficients<N> binomialCoefficients;
+        static const PolynomialCoefficients<N> polynomialCoefficients;
 
     private:
-        std::vector<Point> mControlPoints;
+        Point mControlPoints[N + 1];
     };
+
+    template <size_t N>
+    const BinomialCoefficients<N> Bezier<N>::binomialCoefficients
+        = BinomialCoefficients<N>();
+
+    template <size_t N>
+    const PolynomialCoefficients<N> Bezier<N>::polynomialCoefficients
+        = PolynomialCoefficients<N>();
+
 } // namespace Bezier

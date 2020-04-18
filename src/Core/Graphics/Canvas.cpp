@@ -117,27 +117,46 @@ namespace obe::Graphics::Canvas
     }
 
     Bezier::Bezier(Canvas& parent, const std::string& id)
-        : CanvasPositionable(parent, id)
+        : CanvasElement(parent, id)
     {
     }
 
     void Bezier::draw(RenderTarget target)
     {
-        ::Bezier::Bezier bezier;
+        std::vector<::Bezier::Point> controlPoints;
+        controlPoints.reserve(points.size());
         for (Transform::UnitVector& point : points)
         {
-            Transform::UnitVector pixelPosition
+            const Transform::UnitVector pixelPosition
                 = point.to<Transform::Units::ScenePixels>();
-            bezier.add(::Bezier::Point(pixelPosition.x, pixelPosition.y));
+            controlPoints.push_back(::Bezier::Point(pixelPosition.x, pixelPosition.y));
         }
-        const double maximum = bezier.size() * precision;
+        std::vector<::Bezier::Bezier<3>> bezierCurves;
+        bezierCurves.reserve((controlPoints.size() - 1) / 3);
+        for (unsigned int i = 3; i < controlPoints.size(); i += 3)
+        {
+            auto bezierPoints = std::vector<::Bezier::Point>(
+                controlPoints.begin() + (i - 3), controlPoints.begin() + (i + 1));
+            bezierCurves.push_back(bezierPoints);
+        }
+        const unsigned int maximum = bezierCurves.size() * precision;
         std::vector<sf::Vertex> vertices;
         vertices.reserve(maximum);
 
-        for (unsigned int i = 0; i < maximum; i++)
+        unsigned int curveIndex = 0;
+        for (::Bezier::Bezier<3>& bezier : bezierCurves)
         {
-            ::Bezier::Point p = bezier.valueAt(static_cast<double>(i) / maximum);
-            vertices.emplace_back(sf::Vector2f(p.x, p.y), sf::Color::Green);
+            for (unsigned int i = 0; i < (precision % 2 ? precision : precision + 1); i++)
+            {
+                double t = static_cast<double>(i) / precision;
+                double tc = fmod(t * 4, 4);
+                Color firstColor = colors[((t >= 1) ? 3 : floor(t * 4)) + curveIndex];
+                Color secondColor = colors[((t >= 0.75) ? 3 : ceil(t * 4)) + curveIndex];
+                Color color = (firstColor * (1 - tc)) + (secondColor * tc);
+                ::Bezier::Point p = bezier.valueAt(t);
+                vertices.emplace_back(sf::Vector2f(p.x, p.y), color);
+            }
+            curveIndex += 3;
         }
         target.draw(vertices.data(), maximum, sf::LineStrip);
     }
@@ -149,7 +168,7 @@ namespace obe::Graphics::Canvas
 
     void Image::draw(RenderTarget target)
     {
-        target.draw(sprite);
+        // sprite.draw(target, Transform::UnitVector(0, 0));
     }
 
     void Canvas::sortElements()

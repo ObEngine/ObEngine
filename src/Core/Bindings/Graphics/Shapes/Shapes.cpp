@@ -132,6 +132,7 @@ namespace obe::Graphics::Shapes::Bindings
         bindRectangle["scale"] = &obe::Graphics::Shapes::Rectangle::scale;
         bindRectangle["getSize"] = &obe::Graphics::Shapes::Rectangle::getSize;
         bindRectangle["setSize"] = &obe::Graphics::Shapes::Rectangle::setSize;
+        bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
         bindRectangle["operator sf::RectangleShape &"]
             = &obe::Graphics::Shapes::Rectangle::operator sf::RectangleShape&;
         bindRectangle["operator const sf::RectangleShape &"]
