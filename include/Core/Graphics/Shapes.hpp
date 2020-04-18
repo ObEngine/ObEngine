@@ -6,6 +6,7 @@
 
 #include <Graphics/Color.hpp>
 #include <Graphics/Text.hpp>
+#include <Graphics/Texture.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitVector.hpp>
 
@@ -14,6 +15,8 @@ namespace obe::Graphics::Shapes
     template <class T> class Shape : public sf::Drawable
     {
     public:
+        void setTexture(const Texture& texture);
+        void setTextureRect(const Transform::Rect& rect);
         void setPosition(Transform::UnitVector position);
         void setFillColor(const Color& color);
         void setOutlineColor(const Color& color);
@@ -37,6 +40,23 @@ namespace obe::Graphics::Shapes
         void scale(const Transform::UnitVector& factor);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
     };
+
+    template <class T> void Shape<T>::setTexture(const Texture& texture)
+    {
+        static_cast<T&>(*this).shape.setTexture(
+            &texture.operator const sf::Texture&(), true);
+    }
+
+    template <class T> void Shape<T>::setTextureRect(const Transform::Rect& rect)
+    {
+        const Transform::UnitVector pixelPosition
+            = rect.getPosition().to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pixelSize
+            = rect.getSize().to<Transform::Units::ScenePixels>();
+        const sf::IntRect rect(
+            pixelPosition.x, pixelPosition.y, pixelSize.x, pixelSize.y);
+        static_cast<T&>(*this).shape.setTextureRect(rect);
+    }
 
     template <class T> void Shape<T>::setPosition(Transform::UnitVector position)
     {

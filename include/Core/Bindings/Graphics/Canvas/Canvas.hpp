@@ -6,6 +6,7 @@ namespace sol
 };
 namespace obe::Graphics::Canvas::Bindings
 {
+    void LoadClassBezier(sol::state_view state);
     void LoadClassCanvas(sol::state_view state);
     void LoadClassCanvasElement(sol::state_view state);
     void LoadClassCanvasPositionable(sol::state_view state);
