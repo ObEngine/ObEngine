@@ -1,8 +1,6 @@
 #include <Engine/Engine.hpp>
-
+#include <Engine/Exceptions.hpp>
 #include <Utils/StringUtils.hpp>
-
-#include "Graphics/Shapes.hpp"
 
 int lua_exception_handler(lua_State* L,
     sol::optional<const std::exception&> maybe_exception, sol::string_view description)
@@ -276,11 +274,12 @@ namespace obe::Engine
 
     void Engine::_run()
     {
-        m_lua.safe_script_file("boot.lua"_fs);
+        std::string bootScript = "boot.lua"_fs;
+        if (bootScript.empty())
+            throw Exceptions::BootScriptMissing(System::Path::StringPaths(), EXC_INFO);
+        m_lua.safe_script_file(bootScript);
         m_window->create();
         m_lua["Game"]["Start"]();
-        Graphics::Shapes::Rectangle rect;
-        rect.setPosition(Transform::UnitVector(2, 1));
 
         while (m_window->isOpen())
         {
