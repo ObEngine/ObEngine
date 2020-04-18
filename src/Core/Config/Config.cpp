@@ -12,17 +12,16 @@ namespace obe::Config
     void ConfigurationManager::load()
     {
         // TODO: Do not modify MountedPaths directly
-        std::reverse(
-            System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
+        auto mountPoints = System::MountablePath::Paths();
+        std::reverse(mountPoints.begin(), mountPoints.end());
         const System::LoaderMultipleResult loadResult
-            = System::Path("Data/config.cfg.vili")
-                  .loadAll(System::Loaders::dataLoader, m_config);
+            = System::Path(mountPoints)
+                  .set("Data/config.cfg.vili")
+                  .loadAll(System::Loaders::dataLoader, m_config, false);
         for (const std::string path : loadResult.paths())
         {
             Debug::Log->info("Loaded config file from {}", path);
         }
-        std::reverse(
-            System::Path::MountedPaths.begin(), System::Path::MountedPaths.end());
     }
     vili::ComplexNode& ConfigurationManager::get() const
     {

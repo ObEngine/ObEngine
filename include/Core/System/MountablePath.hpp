@@ -29,6 +29,9 @@ namespace obe::System
      */
     class MountablePath
     {
+    private:
+        static std::vector<MountablePath> MountedPaths;
+
     public:
         /**
          * \brief Constructor of MountablePath
@@ -51,10 +54,35 @@ namespace obe::System
          *        lower priority Paths)
          */
         unsigned int priority;
-    };
 
-    /**
-     * \brief Function called to Mount all Paths using 'Mount.vili' file
-     */
-    void MountPaths();
+        bool operator==(const MountablePath& other) const;
+
+    public:
+        /**
+         * \brief Function called to Mount all Paths using 'Mount.vili' file
+         */
+        static void LoadMountFile();
+        /**
+         * \brief Add a Path to Mounted Paths
+         * \param path Path to mount
+         */
+        static void Mount(MountablePath path);
+        /**
+         * \brief Remove a Path from Mounted Paths
+         * \param path Path to unmount
+         */
+        static void Unmount(MountablePath path);
+        /**
+         * \brief All the Mounted Paths
+         */
+        static const std::vector<MountablePath>& Paths();
+        /**
+         * \brief All the Mounted Paths as strings
+         */
+        static std::vector<std::string> StringPaths();
+        /**
+         * \brief Sort the mounted paths based on their priorities
+         */
+        static void Sort();
+    };
 } // namespace obe::System

@@ -65,7 +65,7 @@ namespace obe::System::Package
             "<Package> Loading Package '{0}' with priority", packageName, priority);
         if (PackageExists(packageName))
         {
-            Path::Mount(MountablePath(
+            MountablePath::Mount(MountablePath(
                 MountablePathType::Package, GetPackageLocation(packageName), priority));
             return true;
         }

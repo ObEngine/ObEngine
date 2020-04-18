@@ -19,7 +19,6 @@ namespace obe::Graphics::Canvas::Bindings
                 { "Text", obe::Graphics::Canvas::CanvasElementType::Text },
                 { "Circle", obe::Graphics::Canvas::CanvasElementType::Circle },
                 { "Polygon", obe::Graphics::Canvas::CanvasElementType::Polygon },
-                { "Sprite", obe::Graphics::Canvas::CanvasElementType::Sprite },
                 { "Bezier", obe::Graphics::Canvas::CanvasElementType::Bezier } });
     }
     void LoadEnumTextHorizontalAlign(sol::state_view state)
@@ -77,9 +76,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindCanvas["Polygon"] = static_cast<obe::Graphics::Canvas::Polygon& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
-        bindCanvas["Image"] = static_cast<obe::Graphics::Canvas::Image& (
-            obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
-            &obe::Graphics::Canvas::Canvas::add);
         bindCanvas["Bezier"] = static_cast<obe::Graphics::Canvas::Bezier& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
@@ -131,20 +127,6 @@ namespace obe::Graphics::Canvas::Bindings
                     obe::Graphics::Canvas::CanvasElement>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
-    }
-    void LoadClassImage(sol::state_view state)
-    {
-        sol::table CanvasNamespace = state["obe"]["Graphics"]["Canvas"].get<sol::table>();
-        sol::usertype<obe::Graphics::Canvas::Image> bindImage
-            = CanvasNamespace.new_usertype<obe::Graphics::Canvas::Image>("Image",
-                sol::call_constructor,
-                sol::constructors<obe::Graphics::Canvas::Image(
-                    obe::Graphics::Canvas::Canvas&, const std::string&)>(),
-                sol::base_classes,
-                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
-                    obe::Graphics::Canvas::CanvasElement>());
-        bindImage["draw"] = &obe::Graphics::Canvas::Image::draw;
-        bindImage["path"] = &obe::Graphics::Canvas::Image::path;
     }
     void LoadClassLine(sol::state_view state)
     {

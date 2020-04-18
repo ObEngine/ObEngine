@@ -33,7 +33,7 @@ namespace obe
         Debug::Log->debug("<ObEngine> Initialising Errors Handling");
         aube::LoadErrors("Data/Errors.vili");
         Debug::Log->debug("<ObEngine> Mounting paths");
-        System::MountPaths();
+        System::MountablePath::LoadMountFile();
 
         Debug::Log->debug("<ObEngine> Initialising NullTexture");
         Graphics::MakeNullTexture();

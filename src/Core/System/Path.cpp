@@ -3,21 +3,32 @@
 
 namespace obe::System
 {
-    std::vector<MountablePath> Path::MountedPaths = std::vector<MountablePath>();
-
     Path::Path()
+        : m_mounts(MountablePath::Paths())
     {
-        this->m_path = "";
+    }
+
+    Path::Path(const std::vector<MountablePath>& mount)
+        : m_mounts(mount)
+    {
     }
 
     Path::Path(const Path& path)
+        : m_mounts(path.m_mounts)
     {
         this->m_path = path.toString();
     }
 
-    Path::Path(const std::string& path)
+    Path::Path(std::string_view path)
+        : m_mounts(MountablePath::Paths())
     {
-        m_path = std::move(path);
+        m_path = path;
+    }
+
+    Path& Path::set(const std::string& path)
+    {
+        m_path = path;
+        return *this;
     }
 
     Path Path::add(const std::string& path) const
@@ -34,15 +45,15 @@ namespace obe::System
 
     Path Path::getPath(const unsigned int index)
     {
-        if (index < MountedPaths.size())
-            return Path(MountedPaths[index].basePath).add(m_path);
+        if (index < m_mounts.size())
+            return Path(m_mounts[index].basePath).add(m_path);
         throw aube::ErrorHandler::Raise("ObEngine.System.Path.UnknownPathAtIndex",
             { { "index", std::to_string(index) }, { "path", m_path } });
     }
 
     std::string Path::find(PathType pathType) const
     {
-        for (MountablePath& mountedPath : MountedPaths)
+        for (const MountablePath& mountedPath : m_mounts)
         {
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(mountedPath.basePath
@@ -67,34 +78,9 @@ namespace obe::System
         return m_path;
     }
 
-    void Path::Mount(MountablePath path)
+    void Path::operator=(const Path& path)
     {
-        MountedPaths.push_back(path);
-        orderMountedPaths();
-    }
-
-    std::vector<MountablePath>& Path::Paths()
-    {
-        return MountedPaths;
-    }
-
-    std::vector<std::string> Path::StringPaths()
-    {
-        std::vector<std::string> mountedPaths;
-        mountedPaths.reserve(MountedPaths.size());
-        for (auto& mountedPath : MountedPaths)
-        {
-            mountedPaths.push_back(mountedPath.basePath);
-        }
-        return mountedPaths;
-    }
-
-    void Path::orderMountedPaths()
-    {
-        std::sort(MountedPaths.begin(), MountedPaths.end(),
-            [](const MountablePath& first, const MountablePath& second) {
-                return first.priority > second.priority;
-            });
+        m_path = path.m_path;
     }
 } // namespace obe::System
 

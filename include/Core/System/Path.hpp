@@ -24,13 +24,18 @@ namespace obe::System
     {
     private:
         std::string m_path;
-        static void orderMountedPaths();
+        const std::vector<MountablePath>& m_mounts;
 
     public:
         /**
          * \brief Default constructor of Path
          */
         Path();
+        /**
+         * \brief Build a path from an other path (Copy constructor)
+         * \param mount A reference containing the mount points the Path should be using
+         */
+        Path(const std::vector<MountablePath>& mount);
         /**
          * \brief Build a path from an other path (Copy constructor)
          * \param path The Path to build the new Path from
@@ -40,7 +45,8 @@ namespace obe::System
          * \brief Build a path from a std::string
          * \param path Path in std::string form
          */
-        Path(const std::string& path);
+        Path(std::string_view path);
+        Path& set(const std::string& path);
         /**
          * \brief Returns a new Path which is the current one concatenated with
          *        the given string
@@ -57,8 +63,8 @@ namespace obe::System
         /**
          * \brief Build a path using the current path and the BasePath at given
          *        index
-         * \param index Index of the BasePath to use \return The full path
-         *        based on the current path and the BasePath at index
+         * \param index Index of the BasePath to use
+         * \return The full path based on the current path and the BasePath at index
          */
         Path getPath(unsigned int index);
         /**
@@ -72,6 +78,8 @@ namespace obe::System
          */
         [[nodiscard]] std::string toString() const;
 
+        void operator=(const Path& path);
+
         template <template <class ResourceType> class LoaderType, class ResourceType>
         LoaderResult load(const LoaderType<ResourceType>& loader, ResourceType& resource,
             bool allowFailure = false) const;
@@ -79,30 +87,13 @@ namespace obe::System
         template <template <class ResourceType> class LoaderType, class ResourceType>
         LoaderMultipleResult loadAll(const LoaderType<ResourceType>& loader,
             ResourceType& resource, bool allowFailure = false) const;
-
-        /**
-         * \brief Add a Path to Mounted Paths
-         * \param path Path to mount
-         */
-        static void Mount(MountablePath path);
-        /**
-         * \brief All the Mounted Paths
-         */
-        static std::vector<MountablePath> MountedPaths;
-        /**
-         * \brief Access Mounted Paths
-         * \return All the Mounted Paths
-         */
-        static std::vector<MountablePath>& Paths();
-
-        static std::vector<std::string> StringPaths();
     };
 
     template <template <class ResourceType> class LoaderType, class ResourceType>
     inline LoaderResult Path::load(const LoaderType<ResourceType>& loader,
         ResourceType& resource, bool allowFailure) const
     {
-        for (MountablePath& mountedPath : MountedPaths)
+        for (const MountablePath& mountedPath : m_mounts)
         {
             std::string loadPath = mountedPath.basePath
                 + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
@@ -128,7 +119,7 @@ namespace obe::System
         ResourceType& resource, bool allowFailure) const
     {
         std::vector<std::string> paths;
-        for (MountablePath& mountedPath : MountedPaths)
+        for (const MountablePath& mountedPath : m_mounts)
         {
             std::string loadPath = mountedPath.basePath
                 + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;

@@ -227,7 +227,8 @@ namespace obe::Scene
             if (script.contains(vili::NodeType::DataNode, "source"))
             {
                 std::string source
-                    = System::Path(script.at<vili::DataNode>("source")).find();
+                    = System::Path(script.at<vili::DataNode>("source").get<std::string>())
+                          .find();
                 const sol::protected_function_result result
                     = m_lua.safe_script_file(source, &sol::script_pass_on_error);
                 if (!result.valid())
@@ -247,7 +248,8 @@ namespace obe::Scene
             {
                 for (vili::DataNode* scriptName : script.getArrayNode("sources"))
                 {
-                    m_lua.safe_script_file(System::Path(*scriptName).find());
+                    m_lua.safe_script_file(
+                        System::Path(scriptName->get<std::string>()).find());
                     m_scriptArray.push_back(*scriptName);
                 }
             }

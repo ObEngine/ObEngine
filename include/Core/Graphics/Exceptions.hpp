@@ -26,4 +26,16 @@ namespace obe::Graphics::Exceptions
                 "Impossible to find a color with the following name : '{}'", color);
         }
     };
+
+    class CanvasElementAlreadyExists : public Exception
+    {
+    public:
+        CanvasElementAlreadyExists(std::string_view id, std::string_view newElementType,
+            std::string_view existingElementType, DebugInfo info)
+            : Exception("CanvasElementAlreadyExists", info)
+        {
+            this->error("Impossible to create a Canvas::{} with id '{}' as there is "
+                        "already a Canvas::{} with the same id");
+        }
+    };
 }

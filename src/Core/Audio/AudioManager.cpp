@@ -28,7 +28,7 @@ namespace obe::Audio
         if (filePath.empty())
         {
             throw Exceptions::AudioFileNotFound(
-                path.toString(), System::Path::StringPaths(), EXC_INFO);
+                path.toString(), System::MountablePath::StringPaths(), EXC_INFO);
         }
 
         if (loadPolicy == LoadPolicy::Cache && m_cache.find(filePath) == m_cache.end())
