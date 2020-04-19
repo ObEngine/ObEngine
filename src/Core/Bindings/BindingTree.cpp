@@ -1,5 +1,6 @@
 #include <Bindings/BindingTree.hpp>
 
+#include <Bindings/Exceptions.hpp>
 #include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
 
@@ -69,8 +70,14 @@ namespace obe::Bindings
             if (tree->getId() == id)
                 return *tree.get();
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound",
-            { { "id", getNodePath() }, { "child", id }, { "function", "operator[]" } });
+        std::vector<std::string> childrenIds;
+        childrenIds.reserve(m_children.size());
+        for (const auto& child : m_children)
+        {
+            childrenIds.push_back(child->getId());
+        }
+        throw Exceptions::BindingTreeNodeNotFound(
+            this->getNodePath(), id, childrenIds, EXC_INFO);
     }
 
     BindingTree& BindingTree::add(
@@ -103,9 +110,14 @@ namespace obe::Bindings
         }
         else
         {
-            throw aube::ErrorHandler::Raise("ObEngine.Bindings.BindingTree.ChildNotFound",
-                { { "id", this->getNodePath() }, { "child", path[0] },
-                    { "function", "walkTo" } });
+            std::vector<std::string> childrenIds;
+            childrenIds.reserve(m_children.size());
+            for (const auto& child : m_children)
+            {
+                childrenIds.push_back(child->getId());
+            }
+            throw Exceptions::BindingTreeNodeNotFound(
+                this->getNodePath(), path[0], childrenIds, EXC_INFO);
         }
         return *this;
     }

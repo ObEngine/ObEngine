@@ -3,6 +3,7 @@
 #include <vili/ErrorHandler.hpp>
 
 #include <Debug/Logger.hpp>
+#include <System/Exceptions.hpp>
 #include <System/Loaders.hpp>
 #include <System/MountablePath.hpp>
 #include <Utils/FileUtils.hpp>
@@ -110,8 +111,8 @@ namespace obe::System
         if (allowFailure)
             return LoaderResult();
         else
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource", { { "path", m_path } });
+            throw Exceptions::ResourceNotFound(
+                m_path, MountablePath::StringPaths(), EXC_INFO);
     }
 
     template <template <class ResourceType> class LoaderType, class ResourceType>
@@ -134,8 +135,8 @@ namespace obe::System
             }
         }
         if (!allowFailure && paths.empty())
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.System.Path.CantFindResource", { { "path", m_path } });
+            throw Exceptions::ResourceNotFound(
+                m_path, MountablePath::StringPaths(), EXC_INFO);
         else
             return LoaderMultipleResult(paths);
     }

@@ -53,9 +53,9 @@ namespace obe::Graphics::Shapes
             = rect.getPosition().to<Transform::Units::ScenePixels>();
         const Transform::UnitVector pixelSize
             = rect.getSize().to<Transform::Units::ScenePixels>();
-        const sf::IntRect rect(
+        const sf::IntRect pixelRect(
             pixelPosition.x, pixelPosition.y, pixelSize.x, pixelSize.y);
-        static_cast<T&>(*this).shape.setTextureRect(rect);
+        static_cast<T&>(*this).shape.setTextureRect(pixelRect);
     }
 
     template <class T> void Shape<T>::setPosition(Transform::UnitVector position)
