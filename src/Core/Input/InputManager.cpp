@@ -1,10 +1,10 @@
 #include <set>
 
+#include <Input/Exceptions.hpp>
 #include <Input/InputManager.hpp>
 #include <Triggers/TriggerManager.hpp>
+#include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
-
-#include "Utils/StringUtils.hpp"
 
 namespace obe::Input
 {
@@ -58,10 +58,13 @@ namespace obe::Input
                 return *action.get();
             }
         }
-        aube::ErrorHandler::Warn(
-            "ObEngine.Input.InputManager.UnknownAction", { { "action", actionId } });
-        m_allActions.push_back(std::make_unique<InputAction>(t_actions.get(), actionId));
-        return *m_allActions.back().get();
+        std::vector<std::string> actionIds;
+        actionIds.reserve(m_allActions.size());
+        for (auto& action : m_allActions)
+        {
+            actionIds.push_back(action->getId());
+        }
+        throw Exceptions::UnknownInputAction(actionId, actionIds, EXC_INFO);
     }
 
     void InputManager::update()
@@ -248,8 +251,13 @@ namespace obe::Input
     {
         if (m_inputs.find(keyId) != m_inputs.end())
             return *m_inputs[keyId].get();
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Input.KeyList.UnknownButton", { { "button", keyId } });
+        std::vector<std::string> buttonsNames;
+        buttonsNames.reserve(m_inputs.size());
+        for (const auto& button : m_inputs)
+        {
+            buttonsNames.push_back(button.second->getName());
+        }
+        throw Exceptions::UnknownInputButton(keyId, buttonsNames, EXC_INFO);
     }
 
     std::vector<InputButton*> InputManager::getInputs()

@@ -119,4 +119,6 @@ namespace obe::Utils::String
      * \return true if search is a suffix of string, false otherwise
      */
     bool endsWith(const std::string& string, const std::string& search);
+
+    std::size_t distance(std::string_view source, std::string_view target);
 } // namespace obe::Utils::String

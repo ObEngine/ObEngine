@@ -30,8 +30,6 @@ namespace obe
         Debug::Log->debug("<ObEngine> Initialising Position Transformers");
         Graphics::InitPositionTransformer();
 
-        Debug::Log->debug("<ObEngine> Initialising Errors Handling");
-        aube::LoadErrors("Data/Errors.vili");
         Debug::Log->debug("<ObEngine> Mounting paths");
         System::MountablePath::LoadMountFile();
 

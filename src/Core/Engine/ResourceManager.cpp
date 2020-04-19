@@ -1,3 +1,4 @@
+#include <Engine/Exceptions.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
@@ -35,9 +36,8 @@ namespace obe::Engine
                 }
             }
             else
-                throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.ResourceManager.LoadTexture",
-                    { { "file", path } });
+                throw Exceptions::TextureNotFound(
+                    path, System::MountablePath::StringPaths(), EXC_INFO);
         }
         else
         {
@@ -90,8 +90,8 @@ namespace obe::Engine
             if (loadResult.success())
                 m_fonts[path] = move(tempFont);
             else
-                throw aube::ErrorHandler::Raise(
-                    "ObEngine.Animation.ResourceManager.LoadFont", { { "file", path } });
+                throw Exceptions::FontNotFound(
+                    path, System::MountablePath::StringPaths(), EXC_INFO);
         }
         return m_fonts[path];
     }

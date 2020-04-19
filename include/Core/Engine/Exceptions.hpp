@@ -18,4 +18,30 @@ namespace obe::Engine::Exceptions
                 fmt::join(mountedPaths, ", "));
         }
     };
+
+    class TextureNotFound : public Exception
+    {
+    public:
+        TextureNotFound(
+            std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+            : Exception("TextureNotFound", info)
+        {
+            this->error("Could not find Texture with path '{}'");
+            this->hint("The following paths were used to search for the Texture ({})",
+                fmt::join(mounts, ", "));
+        }
+    };
+
+    class FontNotFound : public Exception
+    {
+    public:
+        FontNotFound(
+            std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+            : Exception("FontNotFound", info)
+        {
+            this->error("Could not find Font with path '{}'", path);
+            this->hint("The following paths were used to search for the Font ({})",
+                fmt::join(mounts, ", "));
+        }
+    };
 }

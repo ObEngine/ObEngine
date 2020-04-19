@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include <Component/Component.hpp>
+#include <Component/Exceptions.hpp>
 
 namespace obe::Component
 {
@@ -12,9 +13,7 @@ namespace obe::Component
         {
             if (comp->getId() == component->getId())
             {
-                throw aube::ErrorHandler::Raise(
-                    "obe.Component.ComponentBase.IdAlreadyExists",
-                    { { "id", comp->getId() } });
+                throw Exceptions::ComponentIdAlreadyTaken(comp->getId(), EXC_INFO);
             }
         }
         Components.push_back(component);

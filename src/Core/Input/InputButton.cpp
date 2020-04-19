@@ -1,7 +1,8 @@
+#include <SFML/Window/Joystick.hpp>
 #include <vili/ErrorHandler.hpp>
 
+#include <Input/Exceptions.hpp>
 #include <Input/InputButton.hpp>
-#include <SFML/Window/Joystick.hpp>
 
 namespace obe::Input
 {
@@ -52,7 +53,10 @@ namespace obe::Input
 
     sf::Keyboard::Key InputButton::getKey() const
     {
-        return std::get<sf::Keyboard::Key>(m_button);
+        if (std::holds_alternative<sf::Keyboard::Key>(m_button))
+            return std::get<sf::Keyboard::Key>(m_button);
+        throw Exceptions::InputButtonInvalidOperation(
+            inputTypeToString(m_type), "GetKey", EXC_INFO);
     }
 
     std::string InputButton::getName() const
@@ -100,6 +104,7 @@ namespace obe::Input
             return sf::Joystick::getAxisPosition(
                 m_gamepadIndex, std::get<sf::Joystick::Axis>(m_button));
         else
-            throw aube::ErrorHandler::Raise("Obe.Input.InputButton.NotAnAxis");
+            throw Exceptions::InputButtonInvalidOperation(
+                inputTypeToString(m_type), "GetAxisPosition", EXC_INFO);
     }
 } // namespace obe::Input
