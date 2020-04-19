@@ -1,6 +1,7 @@
 #include <Transform/Referential.hpp>
 
 #include <array>
+#include <cassert>
 #include <regex>
 
 #include <fmt/format.h>
