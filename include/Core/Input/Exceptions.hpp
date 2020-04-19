@@ -40,8 +40,16 @@ namespace obe::Input::Exceptions
             : Exception("UnknownInputAction", info)
         {
             this->error("InputAction named '{}' does not exists", actionName);
-            this->hint("Try one of the following InputAction : ({})",
-                fmt::join(existingActions, ", "));
+            std::vector<std::string> sortedByDistance = existingActions;
+            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
+                [actionName](const std::string& s1, const std::string& s2) {
+                    return Utils::String::distance(s1, actionName)
+                        < Utils::String::distance(s2, actionName);
+                });
+            this->hint("Try one of the following InputAction : ({}...)",
+                fmt::join(
+                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    ", "));
         }
     };
 
@@ -53,29 +61,16 @@ namespace obe::Input::Exceptions
             : Exception("UnknownInputButton", info)
         {
             this->error("InputButton named '{}' does not exists", buttonName);
-            std::vector<std::string> suggestions;
             std::vector<std::string> sortedByDistance = existingButtons;
             std::sort(sortedByDistance.begin(), sortedByDistance.end(),
                 [buttonName](const std::string& s1, const std::string& s2) {
                     return Utils::String::distance(s1, buttonName)
                         < Utils::String::distance(s2, buttonName);
                 });
-            for (const std::string& button : sortedByDistance)
-            {
-
-                if (Utils::String::distance(buttonName, button) <= 3)
-                {
-                    suggestions.push_back(button);
-                }
-            }
-            if (suggestions.empty())
-                this->hint("Try one of the following InputButton : ({}...)",
-                    fmt::join(std::vector(
-                                  sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                        ", "));
-            else
-                this->hint("Try one of the following InputButton : ({})",
-                    fmt::join(suggestions, ", "));
+            this->hint("Try one of the following InputButton : ({}...)",
+                fmt::join(
+                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    ", "));
         }
     };
 }

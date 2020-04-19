@@ -17,7 +17,6 @@ namespace obe::Debug
     std::shared_ptr<spdlog::logger> Log;
     void InitLogger()
     {
-        spdlog::error("Oh no");
         Utils::File::deleteFile("debug.log");
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
 
@@ -32,6 +31,5 @@ namespace obe::Debug
         Log->set_level(spdlog::level::info);
         Log->flush_on(spdlog::level::warn);
         Log->info("Logger initialized");
-        Log->error("Test error");
     }
 } // namespace obe::Debug
