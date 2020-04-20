@@ -112,6 +112,9 @@ namespace obe::Graphics
         void resetUnit(Transform::Units unit) override;
 
     public:
+        /**
+         * \nobind
+         */
         static constexpr std::string_view ComponentType = "Sprite";
         bool m_layerChanged = false;
         /**

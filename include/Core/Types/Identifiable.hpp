@@ -47,6 +47,9 @@ namespace obe::Types
          * \nobind
          */
         using Identifiable::getId;
+        /**
+         * \nobind
+         */
         using Identifiable::Identifiable;
     };
 } // namespace obe::Types

@@ -76,10 +76,4 @@ namespace obe::Utils::File
      *         System
      */
     std::string separator();
-    /**
-     * \brief Normalize a path with / separator, removes useless parts of the path
-     * \param path The path to normalize
-     * \return A normalized version of the paths
-     */
-    std::string normalize(const std::string& path);
 } // namespace obe::Utils::File

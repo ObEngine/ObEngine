@@ -136,5 +136,22 @@ namespace obe::Transform
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
         void draw(Graphics::RenderTarget surface, int x, int y) const;
+
+        /**
+         * \asproperty
+         */
+        double x() const;
+        /**
+         * \asproperty
+         */
+        double y() const;
+        /**
+         * \asproperty
+         */
+        double width() const;
+        /**
+         * \asproperty
+         */
+        double height() const;
     };
 } // namespace obe::Transform

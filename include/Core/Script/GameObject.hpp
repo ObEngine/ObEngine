@@ -91,7 +91,6 @@ namespace obe::Script
         friend class Scene::Scene;
 
     public:
-        static std::vector<unsigned int> AllEnvs;
         /**
          * \brief Creates a new GameObject
          * \param type Type of the GameObject

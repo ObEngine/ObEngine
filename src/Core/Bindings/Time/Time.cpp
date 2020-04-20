@@ -68,16 +68,39 @@ namespace obe::Time::Bindings
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace.set_function("epoch", obe::Time::epoch);
     }
-
-    void LoadTimeUnits(sol::state_view state)
+    void LoadGlobalSeconds(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
+        TimeNamespace["seconds"] = obe::Time::seconds;
+    }
+    void LoadGlobalMilliseconds(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
+        TimeNamespace["milliseconds"] = obe::Time::milliseconds;
+    }
+    void LoadGlobalMicroseconds(sol::state_view state)
     {
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace["microseconds"] = obe::Time::microseconds;
-        TimeNamespace["milliseconds"] = obe::Time::milliseconds;
-        TimeNamespace["seconds"] = obe::Time::seconds;
+    }
+    void LoadGlobalMinutes(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace["minutes"] = obe::Time::minutes;
+    }
+    void LoadGlobalHours(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace["hours"] = obe::Time::hours;
+    }
+    void LoadGlobalDays(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace["days"] = obe::Time::days;
+    }
+    void LoadGlobalWeeks(sol::state_view state)
+    {
+        sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         TimeNamespace["weeks"] = obe::Time::weeks;
     }
 };

@@ -96,8 +96,6 @@ namespace obe::Script
     }
 
     // GameObject
-    std::vector<unsigned int> GameObject::AllEnvs;
-
     GameObject::GameObject(Triggers::TriggerManager& triggers, sol::state_view lua,
         const std::string& type, const std::string& id)
         : Identifiable(id)

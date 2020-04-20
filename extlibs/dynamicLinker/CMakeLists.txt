@@ -6,7 +6,7 @@ file(GLOB DYLINK_SOURCES src/*.cpp)
 add_library(dynamicLinker ${DYLINK_HEADERS} ${DYLINK_SOURCES})
 
 target_include_directories(dynamicLinker
-    PUBLIC 
+    PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
@@ -19,7 +19,7 @@ if (UNIX)
 endif()
 
 if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8.2)
-    message(FATAL_ERROR 
+    message(FATAL_ERROR
     "GCC with version less than 4.8.2 is known to cause a crash with dynamicLinker lib, please update your compiler")
 endif()
 

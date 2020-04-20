@@ -1,27 +1,36 @@
 #include <Bindings/Animation/Animation.hpp>
 #include <Bindings/Animation/Easing/Easing.hpp>
+#include <Bindings/Animation/Exceptions/Exceptions.hpp>
 #include <Bindings/Audio/Audio.hpp>
+#include <Bindings/Audio/Exceptions/Exceptions.hpp>
 #include <Bindings/BindingTree.hpp>
 #include <Bindings/Bindings.hpp>
 #include <Bindings/Bindings/Bindings.hpp>
 #include <Bindings/Collision/Collision.hpp>
 #include <Bindings/Component/Component.hpp>
+#include <Bindings/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/Config/Config.hpp>
 #include <Bindings/Debug/Debug.hpp>
 #include <Bindings/Engine/Engine.hpp>
+#include <Bindings/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/Exceptions.hpp>
 #include <Bindings/Graphics/Canvas/Canvas.hpp>
+#include <Bindings/Graphics/Exceptions/Exceptions.hpp>
 #include <Bindings/Graphics/Graphics.hpp>
 #include <Bindings/Graphics/Shapes/Shapes.hpp>
 #include <Bindings/Graphics/Utils/Utils.hpp>
+#include <Bindings/Input/Exceptions/Exceptions.hpp>
 #include <Bindings/Input/Input.hpp>
 #include <Bindings/Modes/Modes.hpp>
 #include <Bindings/Network/Network.hpp>
 #include <Bindings/Obe/obe.hpp>
+#include <Bindings/Scene/Exceptions/Exceptions.hpp>
 #include <Bindings/Scene/Scene.hpp>
 #include <Bindings/Script/DataBridge/DataBridge.hpp>
+#include <Bindings/Script/Exceptions/Exceptions.hpp>
 #include <Bindings/Script/Script.hpp>
 #include <Bindings/System/Constraints/Constraints.hpp>
+#include <Bindings/System/Exceptions/Exceptions.hpp>
 #include <Bindings/System/Loaders/Loaders.hpp>
 #include <Bindings/System/Package/Package.hpp>
 #include <Bindings/System/System.hpp>
@@ -68,16 +77,24 @@ namespace obe::Bindings
             "Exceptions", InitTreeNodeAsTable("obe.Animation.Exceptions"));
         BindTree["obe"]["Audio"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Audio.Exceptions"));
+        BindTree["obe"]["Component"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Component.Exceptions"));
+        BindTree["obe"]["Engine"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Engine.Exceptions"));
         BindTree["obe"]["Graphics"].add(
             "Canvas", InitTreeNodeAsTable("obe.Graphics.Canvas"));
         BindTree["obe"]["Graphics"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Graphics.Exceptions"));
         BindTree["obe"]["Graphics"].add(
             "Shapes", InitTreeNodeAsTable("obe.Graphics.Shapes"));
+        BindTree["obe"]["Input"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Input.Exceptions"));
         BindTree["obe"]["Scene"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Scene.Exceptions"));
         BindTree["obe"]["Script"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Script.Exceptions"));
+        BindTree["obe"]["System"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.System.Exceptions"));
         BindTree["obe"]["System"].add(
             "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
         BindTree["obe"]["Utils"].add("Exec", InitTreeNodeAsTable("obe.Utils.Exec"));
@@ -112,11 +129,38 @@ namespace obe::Bindings
             .add("FunctionStringToAnimationPlayMode",
                 &obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode);
 
+        BindTree["obe"]["Animation"]["Exceptions"]
+            .add("ClassAnimationGroupTextureIndexOverflow",
+                &obe::Animation::Exceptions::Bindings::
+                    LoadClassAnimationGroupTextureIndexOverflow)
+            .add("ClassAnimationTextureIndexOverflow",
+                &obe::Animation::Exceptions::Bindings::
+                    LoadClassAnimationTextureIndexOverflow)
+            .add("ClassNoSelectedAnimation",
+                &obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimation)
+            .add("ClassNoSelectedAnimationGroup",
+                &obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimationGroup)
+            .add("ClassUnknownAnimation",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimation)
+            .add("ClassUnknownAnimationCommand",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationCommand)
+            .add("ClassUnknownAnimationGroup",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationGroup)
+            .add("ClassUnknownAnimationPlayMode",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationPlayMode)
+            .add("ClassUnknownEasingFromEnum",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromEnum)
+            .add("ClassUnknownEasingFromString",
+                &obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromString);
+
         BindTree["obe"]["Audio"]
             .add("ClassAudioManager", &obe::Audio::Bindings::LoadClassAudioManager)
             .add("ClassSound", &obe::Audio::Bindings::LoadClassSound)
             .add("EnumLoadPolicy", &obe::Audio::Bindings::LoadEnumLoadPolicy)
             .add("EnumSoundStatus", &obe::Audio::Bindings::LoadEnumSoundStatus);
+
+        BindTree["obe"]["Audio"]["Exceptions"].add("ClassAudioFileNotFound",
+            &obe::Audio::Exceptions::Bindings::LoadClassAudioFileNotFound);
 
         BindTree["obe"]["Collision"]
             .add("ClassPolygonalCollider",
@@ -130,8 +174,16 @@ namespace obe::Bindings
         BindTree["obe"]["Component"].add(
             "ClassComponentBase", &obe::Component::Bindings::LoadClassComponentBase);
 
+        BindTree["obe"]["Component"]["Exceptions"].add("ClassComponentIdAlreadyTaken",
+            &obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken);
+
         BindTree["obe"]["Config"].add("ClassConfigurationManager",
             &obe::Config::Bindings::LoadClassConfigurationManager);
+
+        BindTree["obe"]
+            .add("ClassDebugInfo", &obe::Bindings::LoadClassDebugInfo)
+            .add("ClassException", &obe::Bindings::LoadClassException)
+            .add("FunctionInitEngine", &obe::Bindings::LoadFunctionInitEngine);
 
         BindTree["obe"]["Engine"]
             .add("ClassEngine", &obe::Engine::Bindings::LoadClassEngine)
@@ -139,6 +191,14 @@ namespace obe::Bindings
                 &obe::Engine::Bindings::LoadClassResourceManagedObject)
             .add(
                 "ClassResourceManager", &obe::Engine::Bindings::LoadClassResourceManager);
+
+        BindTree["obe"]["Engine"]["Exceptions"]
+            .add("ClassBootScriptMissing",
+                &obe::Engine::Exceptions::Bindings::LoadClassBootScriptMissing)
+            .add("ClassFontNotFound",
+                &obe::Engine::Exceptions::Bindings::LoadClassFontNotFound)
+            .add("ClassTextureNotFound",
+                &obe::Engine::Exceptions::Bindings::LoadClassTextureNotFound);
 
         BindTree["obe"]["Graphics"]["Canvas"]
             .add("ClassBezier", &obe::Graphics::Canvas::Bindings::LoadClassBezier)
@@ -157,7 +217,9 @@ namespace obe::Bindings
             .add("EnumTextHorizontalAlign",
                 &obe::Graphics::Canvas::Bindings::LoadEnumTextHorizontalAlign)
             .add("EnumTextVerticalAlign",
-                &obe::Graphics::Canvas::Bindings::LoadEnumTextVerticalAlign);
+                &obe::Graphics::Canvas::Bindings::LoadEnumTextVerticalAlign)
+            .add("FunctionCanvasElementTypeToString",
+                &obe::Graphics::Canvas::Bindings::LoadFunctionCanvasElementTypeToString);
 
         BindTree["obe"]["Graphics"]
             .add("ClassColor", &obe::Graphics::Bindings::LoadClassColor)
@@ -183,11 +245,29 @@ namespace obe::Bindings
             .add("GlobalCamera", &obe::Graphics::Bindings::LoadGlobalCamera)
             .add("GlobalPosition", &obe::Graphics::Bindings::LoadGlobalPosition);
 
+        BindTree["obe"]["Graphics"]["Exceptions"]
+            .add("ClassCanvasElementAlreadyExists",
+                &obe::Graphics::Exceptions::Bindings::LoadClassCanvasElementAlreadyExists)
+            .add("ClassInvalidColorName",
+                &obe::Graphics::Exceptions::Bindings::LoadClassInvalidColorName)
+            .add("ClassReadOnlyTexture",
+                &obe::Graphics::Exceptions::Bindings::LoadClassReadOnlyTexture);
+
         BindTree["obe"]["Graphics"]["Shapes"]
             .add("ClassCircle", &obe::Graphics::Shapes::Bindings::LoadClassCircle)
             .add("ClassPolygon", &obe::Graphics::Shapes::Bindings::LoadClassPolygon)
             .add("ClassRectangle", &obe::Graphics::Shapes::Bindings::LoadClassRectangle)
             .add("ClassText", &obe::Graphics::Shapes::Bindings::LoadClassText);
+
+        BindTree["obe"]["Input"]["Exceptions"]
+            .add("ClassInputButtonInvalidOperation",
+                &obe::Input::Exceptions::Bindings::LoadClassInputButtonInvalidOperation)
+            .add("ClassInvalidInputButtonState",
+                &obe::Input::Exceptions::Bindings::LoadClassInvalidInputButtonState)
+            .add("ClassUnknownInputAction",
+                &obe::Input::Exceptions::Bindings::LoadClassUnknownInputAction)
+            .add("ClassUnknownInputButton",
+                &obe::Input::Exceptions::Bindings::LoadClassUnknownInputButton);
 
         BindTree["obe"]["Input"]
             .add("ClassInputAction", &obe::Input::Bindings::LoadClassInputAction)
@@ -218,7 +298,17 @@ namespace obe::Bindings
         BindTree["obe"]["Scene"]
             .add("ClassCamera", &obe::Scene::Bindings::LoadClassCamera)
             .add("ClassScene", &obe::Scene::Bindings::LoadClassScene)
-            .add("ClassSceneNode", &obe::Scene::Bindings::LoadClassSceneNode);
+            .add("ClassSceneNode", &obe::Scene::Bindings::LoadClassSceneNode)
+            .add("FunctionSceneGetGameObjectProxy",
+                &obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy)
+            .add("FunctionSceneCreateGameObjectProxy",
+                &obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy);
+
+        BindTree["obe"]["Scene"]["Exceptions"].add("ClassChildNotInSceneNode",
+            &obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode);
+
+        BindTree["obe"]["Script"]["Exceptions"].add("ClassNoScriptComponent",
+            &obe::Script::Exceptions::Bindings::LoadClassNoScriptComponent);
 
         BindTree["obe"]["Script"]
             .add("ClassGameObject", &obe::Script::Bindings::LoadClassGameObject)
@@ -239,6 +329,9 @@ namespace obe::Bindings
             .add("EnumPathType", &obe::System::Bindings::LoadEnumPathType)
             .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext);
 
+        BindTree["obe"]["System"]["Exceptions"].add("ClassResourceNotFound",
+            &obe::System::Exceptions::Bindings::LoadClassResourceNotFound);
+
         BindTree["obe"]["System"]["Loaders"]
             .add("GlobalTextureLoader",
                 &obe::System::Loaders::Bindings::LoadGlobalTextureLoader)
@@ -256,7 +349,13 @@ namespace obe::Bindings
             .add("ClassFramerateCounter", &obe::Time::Bindings::LoadClassFramerateCounter)
             .add("ClassFramerateManager", &obe::Time::Bindings::LoadClassFramerateManager)
             .add("FunctionEpoch", &obe::Time::Bindings::LoadFunctionEpoch)
-            .add("TimeUnits", &obe::Time::Bindings::LoadTimeUnits);
+            .add("GlobalSeconds", &obe::Time::Bindings::LoadGlobalSeconds)
+            .add("GlobalMilliseconds", &obe::Time::Bindings::LoadGlobalMilliseconds)
+            .add("GlobalMicroseconds", &obe::Time::Bindings::LoadGlobalMicroseconds)
+            .add("GlobalMinutes", &obe::Time::Bindings::LoadGlobalMinutes)
+            .add("GlobalHours", &obe::Time::Bindings::LoadGlobalHours)
+            .add("GlobalDays", &obe::Time::Bindings::LoadGlobalDays)
+            .add("GlobalWeeks", &obe::Time::Bindings::LoadGlobalWeeks);
 
         BindTree["obe"]["Transform"]
             .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
@@ -282,8 +381,9 @@ namespace obe::Bindings
             .add("ClassTrigger", &obe::Triggers::Bindings::LoadClassTrigger)
             .add("ClassTriggerEnv", &obe::Triggers::Bindings::LoadClassTriggerEnv)
             .add("ClassTriggerGroup", &obe::Triggers::Bindings::LoadClassTriggerGroup)
-            .add(
-                "ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager);
+            .add("ClassTriggerManager", &obe::Triggers::Bindings::LoadClassTriggerManager)
+            .add("EnumCallbackSchedulerState",
+                &obe::Triggers::Bindings::LoadEnumCallbackSchedulerState);
 
         BindTree["obe"]["Types"]
             .add("ClassIdentifiable", &obe::Types::Bindings::LoadClassIdentifiable)
@@ -298,6 +398,7 @@ namespace obe::Bindings
 
         BindTree["obe"]["Animation"]["Easing"]
             .add("EnumEasingType", &obe::Animation::Easing::Bindings::LoadEnumEasingType)
+            .add("FunctionLinear", &obe::Animation::Easing::Bindings::LoadFunctionLinear)
             .add("FunctionInSine", &obe::Animation::Easing::Bindings::LoadFunctionInSine)
             .add(
                 "FunctionOutSine", &obe::Animation::Easing::Bindings::LoadFunctionOutSine)
@@ -467,6 +568,7 @@ namespace obe::Bindings
             .add("FunctionStartsWith",
                 &obe::Utils::String::Bindings::LoadFunctionStartsWith)
             .add("FunctionEndsWith", &obe::Utils::String::Bindings::LoadFunctionEndsWith)
+            .add("FunctionDistance", &obe::Utils::String::Bindings::LoadFunctionDistance)
             .add("GlobalAlphabet", &obe::Utils::String::Bindings::LoadGlobalAlphabet)
             .add("GlobalNumbers", &obe::Utils::String::Bindings::LoadGlobalNumbers);
 

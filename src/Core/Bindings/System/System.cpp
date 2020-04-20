@@ -104,6 +104,14 @@ namespace obe::System::Bindings
                                       obe::System::MountablePathType, const std::string&),
                     obe::System::MountablePath(obe::System::MountablePathType,
                         const std::string&, unsigned int)>());
+        bindMountablePath[sol::meta_function::equal_to]
+            = &obe::System::MountablePath::operator==;
+        bindMountablePath["LoadMountFile"] = &obe::System::MountablePath::LoadMountFile;
+        bindMountablePath["Mount"] = &obe::System::MountablePath::Mount;
+        bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
+        bindMountablePath["Paths"] = &obe::System::MountablePath::Paths;
+        bindMountablePath["StringPaths"] = &obe::System::MountablePath::StringPaths;
+        bindMountablePath["Sort"] = &obe::System::MountablePath::Sort;
         bindMountablePath["pathType"] = &obe::System::MountablePath::pathType;
         bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;
         bindMountablePath["priority"] = &obe::System::MountablePath::priority;
@@ -115,8 +123,10 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Path>("Path",
                 sol::call_constructor,
                 sol::constructors<obe::System::Path(),
+                    obe::System::Path(const std::vector<obe::System::MountablePath>&),
                     obe::System::Path(const obe::System::Path&),
-                    obe::System::Path(const std::string&)>());
+                    obe::System::Path(std::string_view)>());
+        bindPath["set"] = &obe::System::Path::set;
         bindPath["add"] = &obe::System::Path::add;
         bindPath["last"] = &obe::System::Path::last;
         bindPath["getPath"] = &obe::System::Path::getPath;
@@ -126,6 +136,7 @@ namespace obe::System::Bindings
                 return self->find(pathType);
             });
         bindPath["toString"] = &obe::System::Path::toString;
+        bindPath["operator="] = &obe::System::Path::operator=;
     }
     void LoadClassPlugin(sol::state_view state)
     {
@@ -169,5 +180,6 @@ namespace obe::System::Bindings
         bindWindow["getWindow"] = &obe::System::Window::getWindow;
         bindWindow["getClearColor"] = &obe::System::Window::getClearColor;
         bindWindow["setClearColor"] = &obe::System::Window::setClearColor;
+        bindWindow["setMouseCursorVisible"] = &obe::System::Window::setMouseCursorVisible;
     }
 };

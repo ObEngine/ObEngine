@@ -825,4 +825,16 @@ namespace obe::Scene
     {
         return m_levelFileName;
     }
+
+    // Proxy functions
+    sol::table sceneGetGameObjectProxy(Scene* self, const std::string& id)
+    {
+        return self->getGameObject(id).access();
+    }
+
+    sol::function sceneCreateGameObjectProxy(
+        Scene* self, const std::string& obj, const std::string& id)
+    {
+        return self->createGameObject(obj, id).getConstructor();
+    }
 } // namespace obe::Scene

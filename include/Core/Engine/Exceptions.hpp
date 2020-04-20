@@ -19,6 +19,30 @@ namespace obe::Engine::Exceptions
         }
     };
 
+    class BootScriptLoadingError : public Exception
+    {
+    public:
+        BootScriptLoadingError(std::string_view errorMessage, DebugInfo info)
+            : Exception("BootScriptLoadingError", info)
+        {
+            this->error(
+                "Lua error while loading 'boot.lua' script file :\n{}", errorMessage);
+        }
+    };
+
+    class BootScriptExecutionError : public Exception
+    {
+    public:
+        BootScriptExecutionError(
+            std::string_view functionName, std::string_view errorMessage, DebugInfo info)
+            : Exception("BootScriptExecutionError", info)
+        {
+            this->error(
+                "Lua error while executing a function named '{}' in 'boot.lua' :\n{}",
+                functionName, errorMessage);
+        }
+    };
+
     class TextureNotFound : public Exception
     {
     public:

@@ -11,7 +11,8 @@ namespace obe::Animation::Easing::Bindings
         sol::table EasingNamespace
             = state["obe"]["Animation"]["Easing"].get<sol::table>();
         EasingNamespace.new_enum<obe::Animation::Easing::EasingType>("EasingType",
-            { { "InSine", obe::Animation::Easing::EasingType::InSine },
+            { { "Linear", obe::Animation::Easing::EasingType::Linear },
+                { "InSine", obe::Animation::Easing::EasingType::InSine },
                 { "OutSine", obe::Animation::Easing::EasingType::OutSine },
                 { "InOutSine", obe::Animation::Easing::EasingType::InOutSine },
                 { "InQuad", obe::Animation::Easing::EasingType::InQuad },
@@ -41,6 +42,12 @@ namespace obe::Animation::Easing::Bindings
                 { "InBounce", obe::Animation::Easing::EasingType::InBounce },
                 { "OutBounce", obe::Animation::Easing::EasingType::OutBounce },
                 { "InOutBounce", obe::Animation::Easing::EasingType::InOutBounce } });
+    }
+    void LoadFunctionLinear(sol::state_view state)
+    {
+        sol::table EasingNamespace
+            = state["obe"]["Animation"]["Easing"].get<sol::table>();
+        EasingNamespace.set_function("Linear", obe::Animation::Easing::Linear);
     }
     void LoadFunctionInSine(sol::state_view state)
     {

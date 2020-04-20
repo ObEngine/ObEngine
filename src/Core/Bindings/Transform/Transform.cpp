@@ -48,7 +48,7 @@ namespace obe::Transform::Bindings
         sol::usertype<obe::Transform::Polygon> bindPolygon
             = TransformNamespace.new_usertype<obe::Transform::Polygon>("Polygon",
                 sol::call_constructor, sol::default_constructor, sol::base_classes,
-                sol::bases<obe::Transform::UnitBasedObject, obe::Transform::Movable>());
+                sol::bases<obe::Transform::Movable, obe::Transform::UnitBasedObject>());
         bindPolygon["addPoint"] = sol::overload(
             [](obe::Transform::Polygon* self, const obe::Transform::UnitVector& position)
                 -> void { return self->addPoint(position); },
@@ -98,6 +98,8 @@ namespace obe::Transform::Bindings
         bindPolygon["operator[]"] = &obe::Transform::Polygon::operator[];
         bindPolygon["get"] = &obe::Transform::Polygon::get;
         bindPolygon["getBoundingBox"] = &obe::Transform::Polygon::getBoundingBox;
+        bindPolygon["DefaultTolerance"]
+            = sol::var(obe::Transform::Polygon::DefaultTolerance);
     }
     void LoadClassPolygonPoint(sol::state_view state)
     {
@@ -158,11 +160,6 @@ namespace obe::Transform::Bindings
                 const obe::Transform::UnitVector&)>(&obe::Transform::Rect::setPosition),
             static_cast<void (obe::Transform::Rect::*)(const obe::Transform::UnitVector&,
                 const obe::Transform::Referential&)>(&obe::Transform::Rect::setPosition));
-        bindRect["setPosition"] = sol::overload(
-            static_cast<void (obe::Transform::Rect::*)(
-                const obe::Transform::UnitVector&)>(&obe::Transform::Rect::setPosition),
-            static_cast<void (obe::Transform::Rect::*)(const obe::Transform::UnitVector&,
-                const obe::Transform::Referential&)>(&obe::Transform::Rect::setPosition));
         bindRect["getPosition"] = sol::overload(
             static_cast<obe::Transform::UnitVector (obe::Transform::Rect::*)() const>(
                 &obe::Transform::Rect::getPosition),
@@ -204,14 +201,10 @@ namespace obe::Transform::Bindings
         bindRect["setRotation"] = &obe::Transform::Rect::setRotation;
         bindRect["rotate"] = &obe::Transform::Rect::rotate;
         bindRect["draw"] = &obe::Transform::Rect::draw;
-        bindRect["x"] = sol::property(
-            [](obe::Transform::Rect& self) { return self.getPosition().x; });
-        bindRect["y"] = sol::property(
-            [](obe::Transform::Rect& self) { return self.getPosition().y; });
-        bindRect["width"]
-            = sol::property([](obe::Transform::Rect& self) { return self.getSize().x; });
-        bindRect["height"]
-            = sol::property([](obe::Transform::Rect& self) { return self.getSize().y; });
+        bindRect["x"] = sol::property(&obe::Transform::Rect::x);
+        bindRect["y"] = sol::property(&obe::Transform::Rect::y);
+        bindRect["width"] = sol::property(&obe::Transform::Rect::width);
+        bindRect["height"] = sol::property(&obe::Transform::Rect::height);
     }
     void LoadClassReferential(sol::state_view state)
     {
@@ -220,39 +213,21 @@ namespace obe::Transform::Bindings
             = TransformNamespace.new_usertype<obe::Transform::Referential>("Referential",
                 sol::call_constructor,
                 sol::constructors<obe::Transform::Referential(),
-                    obe::Transform::Referential(double, double)>());
+                    obe::Transform::Referential(double, double),
+                    obe::Transform::Referential(const obe::Transform::Referential&)>());
         bindReferential[sol::meta_function::equal_to]
             = &obe::Transform::Referential::operator==;
         bindReferential["FromString"] = &obe::Transform::Referential::FromString;
-        bindReferential["TopLeft"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::TopLeft;
-        });
-        bindReferential["Top"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::Top;
-        });
-        bindReferential["TopRight"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::TopRight;
-        });
-        bindReferential["Left"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::Left;
-        });
-        bindReferential["Center"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::Center;
-        });
-        bindReferential["Right"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::Right;
-        });
-        bindReferential["BottomLeft"]
-            = sol::property([]() -> obe::Transform::Referential {
-                  return obe::Transform::Referential::BottomLeft;
-              });
-        bindReferential["Bottom"] = sol::property([]() -> obe::Transform::Referential {
-            return obe::Transform::Referential::Bottom;
-        });
+        bindReferential["TopLeft"] = sol::var(obe::Transform::Referential::TopLeft);
+        bindReferential["Top"] = sol::var(obe::Transform::Referential::Top);
+        bindReferential["TopRight"] = sol::var(obe::Transform::Referential::TopRight);
+        bindReferential["Left"] = sol::var(obe::Transform::Referential::Left);
+        bindReferential["Center"] = sol::var(obe::Transform::Referential::Center);
+        bindReferential["Right"] = sol::var(obe::Transform::Referential::Right);
+        bindReferential["BottomLeft"] = sol::var(obe::Transform::Referential::BottomLeft);
+        bindReferential["Bottom"] = sol::var(obe::Transform::Referential::Bottom);
         bindReferential["BottomRight"]
-            = sol::property([]() -> obe::Transform::Referential {
-                  return obe::Transform::Referential::BottomRight;
-              });
+            = sol::var(obe::Transform::Referential::BottomRight);
     }
     void LoadClassUnitBasedObject(sol::state_view state)
     {
@@ -294,6 +269,8 @@ namespace obe::Transform::Bindings
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;
         bindUnitVector["y"] = &obe::Transform::UnitVector::y;
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
+        bindUnitVector["View"] = sol::var(obe::Transform::UnitVector::View);
+        bindUnitVector["Screen"] = sol::var(obe::Transform::UnitVector::Screen);
         bindUnitVector["to"]
             = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 obe::Transform::Units) const>(&obe::Transform::UnitVector::to);

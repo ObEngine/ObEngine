@@ -42,7 +42,8 @@ namespace obe::Transform
             m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
-    void Rect::transformRef(UnitVector& vec, const Referential& ref, ConversionType type) const
+    void Rect::transformRef(
+        UnitVector& vec, const Referential& ref, ConversionType type) const
     {
         const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
@@ -110,6 +111,26 @@ namespace obe::Transform
                 { "point_color_6", sf::Color::Magenta },
                 { "point_color_7", sf::Color(0, 128, 255) },
                 { "point_color_8", sf::Color::White } });
+    }
+
+    double Rect::x() const
+    {
+        return m_position.x;
+    }
+
+    double Rect::y() const
+    {
+        return m_position.y;
+    }
+
+    double Rect::width() const
+    {
+        return m_size.x;
+    }
+
+    double Rect::height() const
+    {
+        return m_size.y;
     }
 
     void Rect::setPointPosition(const UnitVector& position, const Referential& ref)
