@@ -25,9 +25,11 @@ namespace obe::Collision::Bindings
                 sol::constructors<obe::Collision::PolygonalCollider(
                     const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Transform::Polygon, obe::Types::Selectable,
-                    obe::Transform::Movable, obe::Component::Component<PolygonalCollider>,
-                    obe::Types::Identifiable>());
+                sol::bases<obe::Transform::UnitBasedObject, obe::Transform::Polygon,
+                    obe::Component::ComponentBase, obe::Types::Selectable,
+                    obe::Types::Identifiable,
+                    obe::Component::Component<PolygonalCollider>,
+                    obe::Types::Serializable, obe::Transform::Movable>());
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"]
             = &obe::Collision::PolygonalCollider::clearTags;

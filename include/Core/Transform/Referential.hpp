@@ -221,6 +221,9 @@ namespace obe::Transform
          * \endcode
          */
         static Referential BottomRight;
+        /**
+         * \nobind
+         */
         static std::array<Referential, 9> Referentials;
     };
 } // namespace obe::Transform

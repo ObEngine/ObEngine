@@ -31,6 +31,9 @@ namespace obe::Component
     template <class T> class Component : public ComponentBase
     {
     public:
+        /**
+         * \nobind
+         */
         static constexpr std::string_view ComponentType = "Component";
         explicit Component(const std::string& id);
         ~Component() override;

@@ -278,9 +278,25 @@ namespace obe::Engine
         if (bootScript.empty())
             throw Exceptions::BootScriptMissing(
                 System::MountablePath::StringPaths(), EXC_INFO);
-        m_lua.safe_script_file(bootScript);
+        const sol::protected_function_result loadResult
+            = m_lua.safe_script_file(bootScript);
+
+        if (!loadResult.valid())
+        {
+            const auto errObj = loadResult.get<sol::error>();
+            throw Exceptions::BootScriptLoadingError(errObj.what(), EXC_INFO);
+        }
         m_window->create();
-        m_lua["Game"]["Start"]();
+        sol::protected_function bootFunction
+            = m_lua["Game"]["Start"].get<sol::protected_function>();
+
+        const sol::protected_function_result bootResult = bootFunction.call();
+        if (!bootResult.valid())
+        {
+            const auto errObj = bootResult.get<sol::error>();
+            throw Exceptions::BootScriptExecutionError(
+                "Game.Start", errObj.what(), EXC_INFO);
+        }
 
         while (m_window->isOpen())
         {

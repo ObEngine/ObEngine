@@ -17,6 +17,8 @@ namespace obe::Graphics::Shapes::Bindings
                     obe::Graphics::Shapes::Circle(
                         const obe::Graphics::Shapes::Circle&)>(),
                 sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Circle>>());
+        bindCircle["setTexture"] = &obe::Graphics::Shapes::Circle::setTexture;
+        bindCircle["setTextureRect"] = &obe::Graphics::Shapes::Circle::setTextureRect;
         bindCircle["setPosition"] = &obe::Graphics::Shapes::Circle::setPosition;
         bindCircle["setFillColor"] = &obe::Graphics::Shapes::Circle::setFillColor;
         bindCircle["setOutlineColor"] = &obe::Graphics::Shapes::Circle::setOutlineColor;
@@ -40,6 +42,7 @@ namespace obe::Graphics::Shapes::Bindings
         bindCircle["move"] = &obe::Graphics::Shapes::Circle::move;
         bindCircle["rotate"] = &obe::Graphics::Shapes::Circle::rotate;
         bindCircle["scale"] = &obe::Graphics::Shapes::Circle::scale;
+        bindCircle["draw"] = &obe::Graphics::Shapes::Circle::draw;
         bindCircle["operator sf::CircleShape &"]
             = &obe::Graphics::Shapes::Circle::operator sf::CircleShape&;
         bindCircle["operator const sf::CircleShape &"]
@@ -59,6 +62,8 @@ namespace obe::Graphics::Shapes::Bindings
                     obe::Graphics::Shapes::Polygon(
                         const obe::Graphics::Shapes::Polygon&)>(),
                 sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Polygon>>());
+        bindPolygon["setTexture"] = &obe::Graphics::Shapes::Polygon::setTexture;
+        bindPolygon["setTextureRect"] = &obe::Graphics::Shapes::Polygon::setTextureRect;
         bindPolygon["setPosition"] = &obe::Graphics::Shapes::Polygon::setPosition;
         bindPolygon["setFillColor"] = &obe::Graphics::Shapes::Polygon::setFillColor;
         bindPolygon["setOutlineColor"] = &obe::Graphics::Shapes::Polygon::setOutlineColor;
@@ -82,14 +87,15 @@ namespace obe::Graphics::Shapes::Bindings
         bindPolygon["move"] = &obe::Graphics::Shapes::Polygon::move;
         bindPolygon["rotate"] = &obe::Graphics::Shapes::Polygon::rotate;
         bindPolygon["scale"] = &obe::Graphics::Shapes::Polygon::scale;
-        bindPolygon["setPointPosition"]
-            = &obe::Graphics::Shapes::Polygon::setPointPosition;
-        bindPolygon["getPointPosition"]
-            = &obe::Graphics::Shapes::Polygon::getPointPosition;
+        bindPolygon["draw"] = &obe::Graphics::Shapes::Polygon::draw;
         bindPolygon["operator sf::ConvexShape &"]
             = &obe::Graphics::Shapes::Polygon::operator sf::ConvexShape&;
         bindPolygon["operator const sf::ConvexShape &"]
             = &obe::Graphics::Shapes::Polygon::operator const sf::ConvexShape&;
+        bindPolygon["setPointPosition"]
+            = &obe::Graphics::Shapes::Polygon::setPointPosition;
+        bindPolygon["getPointPosition"]
+            = &obe::Graphics::Shapes::Polygon::getPointPosition;
         bindPolygon["shape"] = &obe::Graphics::Shapes::Polygon::shape;
     }
     void LoadClassRectangle(sol::state_view state)
@@ -103,6 +109,9 @@ namespace obe::Graphics::Shapes::Bindings
                     obe::Graphics::Shapes::Rectangle(
                         const obe::Graphics::Shapes::Rectangle&)>(),
                 sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Rectangle>>());
+        bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
+        bindRectangle["setTextureRect"]
+            = &obe::Graphics::Shapes::Rectangle::setTextureRect;
         bindRectangle["setPosition"] = &obe::Graphics::Shapes::Rectangle::setPosition;
         bindRectangle["setFillColor"] = &obe::Graphics::Shapes::Rectangle::setFillColor;
         bindRectangle["setOutlineColor"]
@@ -130,9 +139,9 @@ namespace obe::Graphics::Shapes::Bindings
         bindRectangle["move"] = &obe::Graphics::Shapes::Rectangle::move;
         bindRectangle["rotate"] = &obe::Graphics::Shapes::Rectangle::rotate;
         bindRectangle["scale"] = &obe::Graphics::Shapes::Rectangle::scale;
+        bindRectangle["draw"] = &obe::Graphics::Shapes::Rectangle::draw;
         bindRectangle["getSize"] = &obe::Graphics::Shapes::Rectangle::getSize;
         bindRectangle["setSize"] = &obe::Graphics::Shapes::Rectangle::setSize;
-        bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
         bindRectangle["operator sf::RectangleShape &"]
             = &obe::Graphics::Shapes::Rectangle::operator sf::RectangleShape&;
         bindRectangle["operator const sf::RectangleShape &"]
@@ -144,7 +153,10 @@ namespace obe::Graphics::Shapes::Bindings
         sol::table ShapesNamespace = state["obe"]["Graphics"]["Shapes"].get<sol::table>();
         sol::usertype<obe::Graphics::Shapes::Text> bindText
             = ShapesNamespace.new_usertype<obe::Graphics::Shapes::Text>("Text",
-                sol::call_constructor, sol::constructors<obe::Graphics::Shapes::Text()>(),
+                sol::call_constructor,
+                sol::constructors<obe::Graphics::Shapes::Text(),
+                    obe::Graphics::Shapes::Text(const obe::Graphics::RichText&),
+                    obe::Graphics::Shapes::Text(const obe::Graphics::Shapes::Text&)>(),
                 sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Text>>());
         bindText["setPosition"] = &obe::Graphics::Shapes::Text::setPosition;
         bindText["getLocalBounds"] = &obe::Graphics::Shapes::Text::getLocalBounds;
@@ -159,6 +171,11 @@ namespace obe::Graphics::Shapes::Bindings
         bindText["move"] = &obe::Graphics::Shapes::Text::move;
         bindText["rotate"] = &obe::Graphics::Shapes::Text::rotate;
         bindText["scale"] = &obe::Graphics::Shapes::Text::scale;
+        bindText["draw"] = &obe::Graphics::Shapes::Text::draw;
+        bindText["operator RichText &"]
+            = &obe::Graphics::Shapes::Text::operator RichText&;
+        bindText["operator const RichText &"]
+            = &obe::Graphics::Shapes::Text::operator const RichText&;
         bindText["clear"] = &obe::Graphics::Shapes::Text::clear;
         bindText["append"] = &obe::Graphics::Shapes::Text::append;
         bindText["getFont"] = &obe::Graphics::Shapes::Text::getFont;

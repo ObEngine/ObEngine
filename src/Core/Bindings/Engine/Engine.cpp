@@ -52,6 +52,7 @@ namespace obe::Engine::Bindings
             static_cast<const obe::Graphics::Texture& (
                 obe::Engine::ResourceManager::*)(const std::string&)>(
                 &obe::Engine::ResourceManager::getTexture));
+        bindResourceManager["clean"] = &obe::Engine::ResourceManager::clean;
         bindResourceManager["defaultAntiAliasing"]
             = &obe::Engine::ResourceManager::defaultAntiAliasing;
     }

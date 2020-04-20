@@ -19,6 +19,7 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionContains(sol::state_view state);
     void LoadFunctionStartsWith(sol::state_view state);
     void LoadFunctionEndsWith(sol::state_view state);
+    void LoadFunctionDistance(sol::state_view state);
     void LoadGlobalAlphabet(sol::state_view state);
     void LoadGlobalNumbers(sol::state_view state);
 };

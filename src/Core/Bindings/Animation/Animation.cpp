@@ -136,19 +136,20 @@ namespace obe::Animation::Bindings
                 return self->setTarget(sprite, targetScaleMode);
             });
     }
-
     void LoadClassValueTweening(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         sol::usertype<obe::Animation::ValueTweening> bindValueTweening
             = AnimationNamespace.new_usertype<obe::Animation::ValueTweening>(
                 "ValueTweening", sol::call_constructor,
-                sol::constructors<obe::Animation::ValueTweening(
-                    double, double, Time::TimeUnit)>());
+                sol::constructors<obe::Animation::ValueTweening(obe::Time::TimeUnit),
+                    obe::Animation::ValueTweening(
+                        double, double, obe::Time::TimeUnit)>());
+        bindValueTweening["from"] = &obe::Animation::ValueTweening::from;
+        bindValueTweening["to"] = &obe::Animation::ValueTweening::to;
         bindValueTweening["ease"] = &obe::Animation::ValueTweening::ease;
         bindValueTweening["step"] = &obe::Animation::ValueTweening::step;
     }
-
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();

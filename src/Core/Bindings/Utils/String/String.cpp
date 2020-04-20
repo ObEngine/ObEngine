@@ -75,6 +75,11 @@ namespace obe::Utils::String::Bindings
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
         StringNamespace.set_function("endsWith", obe::Utils::String::endsWith);
     }
+    void LoadFunctionDistance(sol::state_view state)
+    {
+        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
+        StringNamespace.set_function("distance", obe::Utils::String::distance);
+    }
     void LoadGlobalAlphabet(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();

@@ -18,4 +18,5 @@ namespace obe::Graphics::Canvas::Bindings
     void LoadEnumCanvasElementType(sol::state_view state);
     void LoadEnumTextHorizontalAlign(sol::state_view state);
     void LoadEnumTextVerticalAlign(sol::state_view state);
+    void LoadFunctionCanvasElementTypeToString(sol::state_view state);
 };

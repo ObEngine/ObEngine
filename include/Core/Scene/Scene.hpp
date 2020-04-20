@@ -57,11 +57,13 @@ namespace obe::Scene
 
         void attachResourceManager(Engine::ResourceManager& resources);
         /**
+         * \nobind
          * \brief Loads the Scene from a .map.vili file
          * \param path Path to the Scene file
          */
         void loadFromFile(const std::string& path);
         /**
+         * \bind{loadFromFile}
          * \brief Same that loadFromFile excepts the map will load at the next
          *        update
          * \param path Path to the Scene file
@@ -297,4 +299,14 @@ namespace obe::Scene
         [[nodiscard]] SceneNode* getSceneNodeByPosition(
             const Transform::UnitVector& position) const;
     };
+
+    /**
+     * \proxy{obe::Scene::Scene::getGameObject}
+     */
+    sol::table sceneGetGameObjectProxy(Scene* self, const std::string& id);
+    /**
+     * \proxy{obe::Scene::Scene::createGameObject}
+     */
+    sol::function sceneCreateGameObjectProxy(
+        Scene* self, const std::string& obj, const std::string& id = "");
 } // namespace obe::Scene

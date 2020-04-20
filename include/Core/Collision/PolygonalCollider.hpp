@@ -48,6 +48,9 @@ namespace obe::Collision
         [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;
 
     public:
+        /**
+         * \nobind
+         */
         static constexpr std::string_view ComponentType = "PolygonalCollider";
         /**
          * \brief Constructs a PolygonalCollider
