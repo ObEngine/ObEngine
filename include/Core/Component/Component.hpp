@@ -16,6 +16,9 @@ namespace obe::Component
         static void RemoveComponent(ComponentBase* component);
 
     public:
+        /**
+         * \nobind
+         */
         static constexpr std::string_view ComponentType = "ComponentBase";
         ComponentBase(const std::string& id);
         ~ComponentBase() override = default;

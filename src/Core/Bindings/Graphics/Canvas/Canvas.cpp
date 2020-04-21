@@ -48,8 +48,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Bezier(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindBezier["draw"] = &obe::Graphics::Canvas::Bezier::draw;
         bindBezier["points"] = &obe::Graphics::Canvas::Bezier::points;
         bindBezier["colors"] = &obe::Graphics::Canvas::Bezier::colors;
@@ -96,14 +96,10 @@ namespace obe::Graphics::Canvas::Bindings
         sol::usertype<obe::Graphics::Canvas::CanvasElement> bindCanvasElement
             = CanvasNamespace.new_usertype<obe::Graphics::Canvas::CanvasElement>(
                 "CanvasElement", sol::base_classes,
-                sol::bases<obe::Types::Identifiable,
-                    obe::Types::ProtectedIdentifiable>());
+                sol::bases<obe::Types::ProtectedIdentifiable,
+                    obe::Types::Identifiable>());
         bindCanvasElement["draw"] = &obe::Graphics::Canvas::CanvasElement::draw;
         bindCanvasElement["setLayer"] = &obe::Graphics::Canvas::CanvasElement::setLayer;
-        bindCanvasElement["parent"]
-            = sol::property([](obe::Graphics::Canvas::CanvasElement* self) -> Canvas& {
-                  return self->parent;
-              });
         bindCanvasElement["layer"] = &obe::Graphics::Canvas::CanvasElement::layer;
         bindCanvasElement["visible"] = &obe::Graphics::Canvas::CanvasElement::visible;
         bindCanvasElement["type"] = &obe::Graphics::Canvas::CanvasElement::type;
@@ -115,8 +111,8 @@ namespace obe::Graphics::Canvas::Bindings
         sol::usertype<obe::Graphics::Canvas::CanvasPositionable> bindCanvasPositionable
             = CanvasNamespace.new_usertype<obe::Graphics::Canvas::CanvasPositionable>(
                 "CanvasPositionable", sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindCanvasPositionable["position"]
             = &obe::Graphics::Canvas::CanvasPositionable::position;
     }
@@ -129,9 +125,9 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Circle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasPositionable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
         bindCircle["Type"] = sol::var(obe::Graphics::Canvas::Circle::Type);
@@ -145,8 +141,8 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Line(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindLine["draw"] = &obe::Graphics::Canvas::Line::draw;
         bindLine["p1"] = &obe::Graphics::Canvas::Line::p1;
         bindLine["p2"] = &obe::Graphics::Canvas::Line::p2;
@@ -164,9 +160,9 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Polygon(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasPositionable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindPolygon["draw"] = &obe::Graphics::Canvas::Polygon::draw;
         bindPolygon["shape"] = &obe::Graphics::Canvas::Polygon::shape;
         bindPolygon["Type"] = sol::var(obe::Graphics::Canvas::Polygon::Type);
@@ -180,9 +176,9 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Rectangle(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasPositionable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindRectangle["draw"] = &obe::Graphics::Canvas::Rectangle::draw;
         bindRectangle["shape"] = &obe::Graphics::Canvas::Rectangle::shape;
         bindRectangle["size"] = &obe::Graphics::Canvas::Rectangle::size;
@@ -197,9 +193,9 @@ namespace obe::Graphics::Canvas::Bindings
                 sol::constructors<obe::Graphics::Canvas::Text(
                     obe::Graphics::Canvas::Canvas&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::ProtectedIdentifiable,
-                    obe::Graphics::Canvas::CanvasPositionable,
-                    obe::Graphics::Canvas::CanvasElement>());
+                sol::bases<obe::Graphics::Canvas::CanvasPositionable,
+                    obe::Graphics::Canvas::CanvasElement,
+                    obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindText["draw"] = &obe::Graphics::Canvas::Text::draw;
         bindText["refresh"] = &obe::Graphics::Canvas::Text::refresh;
         bindText["text"] = sol::property(&obe::Graphics::Canvas::Text::currentText);

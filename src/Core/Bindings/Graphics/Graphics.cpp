@@ -50,6 +50,22 @@ namespace obe::Graphics::Bindings
         bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
+        bindColor[sol::meta_function::subtraction] = sol::overload(
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
+                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator-),
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
+                &obe::Graphics::Color::operator-));
+        bindColor[sol::meta_function::multiplication] = sol::overload(
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
+                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator*),
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
+                &obe::Graphics::Color::operator*));
+        bindColor[sol::meta_function::division] = sol::overload(
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
+                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator/),
+            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
+                &obe::Graphics::Color::operator/));
+        bindColor["operator sf::Color"] = &obe::Graphics::Color::operator sf::Color;
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
@@ -292,11 +308,11 @@ namespace obe::Graphics::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::Sprite(const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Transform::UnitBasedObject, obe::Component::ComponentBase,
-                    obe::Engine::ResourceManagedObject, obe::Transform::Rect,
-                    obe::Types::Selectable, obe::Types::Identifiable,
-                    obe::Types::Serializable, obe::Transform::Movable,
-                    obe::Component::Component<Sprite>>());
+                sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
+                    obe::Transform::Rect, obe::Transform::Movable,
+                    obe::Component::Component<Sprite>, obe::Component::ComponentBase,
+                    obe::Types::Identifiable, obe::Types::Serializable,
+                    obe::Engine::ResourceManagedObject>());
         bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
         bindSprite["dump"] = &obe::Graphics::Sprite::dump;
         bindSprite["getColor"] = &obe::Graphics::Sprite::getColor;

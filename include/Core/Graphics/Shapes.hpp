@@ -12,6 +12,25 @@
 
 namespace obe::Graphics::Shapes
 {
+    template <class T> class BaseShape : public sf::Drawable
+    {
+    public:
+        void setPosition(Transform::UnitVector position);
+        [[nodiscard]] Transform::Rect getLocalBounds() const;
+        [[nodiscard]] Transform::Rect getGlobalBounds() const;
+        void setRotation(float angle);
+        void setScale(const Transform::UnitVector& factors);
+        void setOrigin(const Transform::UnitVector& origin);
+        [[nodiscard]] Transform::UnitVector getPosition() const;
+        [[nodiscard]] float getRotation() const;
+        [[nodiscard]] Transform::UnitVector getScale() const;
+        [[nodiscard]] Transform::UnitVector getOrigin() const;
+        void move(const Transform::UnitVector& offset);
+        void rotate(float angle);
+        void scale(const Transform::UnitVector& factor);
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
+    };
+
     template <class T> class Shape : public sf::Drawable
     {
     public:
@@ -41,6 +60,96 @@ namespace obe::Graphics::Shapes
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
     };
 
+    // BaseShape methods
+    template <class T> void BaseShape<T>::setPosition(Transform::UnitVector position)
+    {
+        const Transform::UnitVector pixelPosition
+            = position.to<Transform::Units::ScenePixels>();
+        static_cast<T&>(*this).shape.setPosition(
+            sf::Vector2f(pixelPosition.x, pixelPosition.y));
+    }
+
+    template <class T> Transform::Rect BaseShape<T>::getLocalBounds() const
+    {
+        const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getLocalBounds();
+        const auto position = Transform::UnitVector(
+            bounds.left, bounds.top, Transform::Units::ScenePixels);
+        const auto size = Transform::UnitVector(
+            bounds.width, bounds.height, Transform::Units::ScenePixels);
+        return Transform::Rect(position, size);
+    }
+
+    template <class T> Transform::Rect BaseShape<T>::getGlobalBounds() const
+    {
+        sf::FloatRect bounds = static_cast<const T&>(*this).shape.getGlobalBounds();
+        const auto position = Transform::UnitVector(
+            bounds.left, bounds.top, Transform::Units::ScenePixels);
+        const auto size = Transform::UnitVector(
+            bounds.width, bounds.height, Transform::Units::ScenePixels);
+        return Transform::Rect(position, size);
+    }
+
+    template <class T> void BaseShape<T>::setRotation(float angle)
+    {
+        static_cast<T&>(*this).shape.setRotation(angle);
+    }
+
+    template <class T> void BaseShape<T>::setScale(const Transform::UnitVector& factors)
+    {
+        const auto pixelScale = factors.to<Transform::Units::ScenePixels>();
+        static_cast<T&>(*this).shape.setScale(sf::Vector2f(pixelScale.x, pixelScale.y));
+    }
+
+    template <class T> void BaseShape<T>::setOrigin(const Transform::UnitVector& origin)
+    {
+        const Transform::UnitVector pixelOrigin
+            = origin.to<Transform::Units::ScenePixels>();
+        static_cast<T&>(*this).shape.setOrigin(
+            sf::Vector2f(pixelOrigin.x, pixelOrigin.y));
+    }
+
+    template <class T> Transform::UnitVector BaseShape<T>::getPosition() const
+    {
+        const sf::Vector2f position = static_cast<const T&>(*this).shape.getPosition();
+        return Transform::UnitVector(
+            position.x, position.y, Transform::Units::ScenePixels);
+    }
+
+    template <class T> float BaseShape<T>::getRotation() const
+    {
+        return static_cast<const T&>(*this).shape.getRotation();
+    }
+
+    template <class T> Transform::UnitVector BaseShape<T>::getScale() const
+    {
+        const sf::Vector2f scale = static_cast<const T&>(*this).shape.getScale();
+        return Transform::UnitVector(scale.x, scale.y, Transform::Units::ScenePixels);
+    }
+
+    template <class T> Transform::UnitVector BaseShape<T>::getOrigin() const
+    {
+        const sf::Vector2f origin = static_cast<const T&>(*this).shape.getOrigin();
+        return Transform::UnitVector(origin.x, origin.y, Transform::Units::ScenePixels);
+    }
+
+    template <class T> void BaseShape<T>::move(const Transform::UnitVector& offset)
+    {
+        const Transform::UnitVector pixelOffset
+            = offset.to<Transform::Units::ScenePixels>();
+        static_cast<T&>(*this).shape.move(sf::Vector2f(pixelOffset.x, pixelOffset.y));
+    }
+
+    template <class T> void BaseShape<T>::rotate(float angle)
+    {
+        static_cast<T&>(*this).shape.rotate(angle);
+    }
+
+    template <class T> void BaseShape<T>::scale(const Transform::UnitVector& factor)
+    {
+        static_cast<T&>(*this).shape.scale(sf::Vector2f(factor.x, factor.y));
+    }
+
+    // Shape methods
     template <class T> void Shape<T>::setTexture(const Texture& texture)
     {
         static_cast<T&>(*this).shape.setTexture(
@@ -259,7 +368,7 @@ namespace obe::Graphics::Shapes
      * \brief Text Shape
      * \copyparentitems
      */
-    class Text : public Shape<Text>
+    class Text : public BaseShape<Text>
     {
     public:
         obe::Graphics::RichText shape;

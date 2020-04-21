@@ -193,6 +193,10 @@ namespace obe::Bindings
                 "ClassResourceManager", &obe::Engine::Bindings::LoadClassResourceManager);
 
         BindTree["obe"]["Engine"]["Exceptions"]
+            .add("ClassBootScriptExecutionError",
+                &obe::Engine::Exceptions::Bindings::LoadClassBootScriptExecutionError)
+            .add("ClassBootScriptLoadingError",
+                &obe::Engine::Exceptions::Bindings::LoadClassBootScriptLoadingError)
             .add("ClassBootScriptMissing",
                 &obe::Engine::Exceptions::Bindings::LoadClassBootScriptMissing)
             .add("ClassFontNotFound",

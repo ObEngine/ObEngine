@@ -15,7 +15,7 @@ namespace obe::Scene::Bindings
             = SceneNamespace.new_usertype<obe::Scene::Camera>("Camera",
                 sol::call_constructor, sol::constructors<obe::Scene::Camera()>(),
                 sol::base_classes,
-                sol::bases<obe::Transform::Movable, obe::Transform::Rect>());
+                sol::bases<obe::Transform::Rect, obe::Transform::Movable>());
         bindCamera["getPosition"] = sol::overload(
             [](obe::Scene::Camera* self) -> obe::Transform::UnitVector {
                 return self->getPosition();
