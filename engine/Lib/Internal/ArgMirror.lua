@@ -10,7 +10,7 @@ function Mirror.GetArgs(fun)
 
         for i = 1, math.huge do
             local name, value = debug.getlocal(2, i)
-            if '(*temporary)' == name then
+            if '(temporary)' == name then
                 debug.sethook(hook)
                 error('')
                 return
@@ -18,7 +18,6 @@ function Mirror.GetArgs(fun)
             table.insert(args,name)
         end
     end
-
     debug.sethook(argHook, "c")
     pcall(fun)
 
