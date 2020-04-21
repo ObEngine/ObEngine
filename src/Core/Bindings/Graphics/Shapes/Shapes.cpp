@@ -157,7 +157,7 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Text(),
                     obe::Graphics::Shapes::Text(const obe::Graphics::RichText&),
                     obe::Graphics::Shapes::Text(const obe::Graphics::Shapes::Text&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Text>>());
+                sol::base_classes, sol::bases<obe::Graphics::Shapes::BaseShape<Text>>());
         bindText["setPosition"] = &obe::Graphics::Shapes::Text::setPosition;
         bindText["getLocalBounds"] = &obe::Graphics::Shapes::Text::getLocalBounds;
         bindText["getGlobalBounds"] = &obe::Graphics::Shapes::Text::getGlobalBounds;

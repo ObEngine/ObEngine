@@ -6,6 +6,32 @@
 
 namespace obe::Engine::Exceptions::Bindings
 {
+    void LoadClassBootScriptExecutionError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Engine"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Engine::Exceptions::BootScriptExecutionError>
+            bindBootScriptExecutionError
+            = ExceptionsNamespace
+                  .new_usertype<obe::Engine::Exceptions::BootScriptExecutionError>(
+                      "BootScriptExecutionError", sol::call_constructor,
+                      sol::constructors<obe::Engine::Exceptions::BootScriptExecutionError(
+                          std::string_view, std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
+    void LoadClassBootScriptLoadingError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Engine"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Engine::Exceptions::BootScriptLoadingError>
+            bindBootScriptLoadingError
+            = ExceptionsNamespace
+                  .new_usertype<obe::Engine::Exceptions::BootScriptLoadingError>(
+                      "BootScriptLoadingError", sol::call_constructor,
+                      sol::constructors<obe::Engine::Exceptions::BootScriptLoadingError(
+                          std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassBootScriptMissing(sol::state_view state)
     {
         sol::table ExceptionsNamespace
