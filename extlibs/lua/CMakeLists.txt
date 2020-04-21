@@ -12,4 +12,3 @@ target_include_directories(lua
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lua>
 )
-

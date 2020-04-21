@@ -19,7 +19,7 @@ function deepcopy(orig)
 end
 
 obe.Canvas.Canvas = Class("Canvas", function(self, width, height, usecache)
-    self.internal = obe.Graphics.Canvas.Canvas(width, height);
+    self.internal = obe.Graphics.Canvas.Canvas(math.floor(width), math.floor(height));
     self.elements = {};
     self.useCache = usecache or false;
     self.BMT = {
