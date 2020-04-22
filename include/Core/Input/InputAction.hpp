@@ -23,12 +23,13 @@ namespace obe::Input
     {
     private:
         Triggers::TriggerGroup* m_actionTrigger;
-        ActionCallback m_callback = [](const InputActionEvent& event) {};
-        std::vector<InputCondition> m_combinations;
+        ActionCallback m_callback;
+        std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
         Time::Chronometer m_interval;
         Time::Chronometer m_repeat;
         bool m_state = true;
+        bool m_enabled = false;
 
     public:
         /**
@@ -41,7 +42,7 @@ namespace obe::Input
          * \brief Adds an InputCondition to the InputAction
          * \param condition An InputCondition to add to the InputAction
          */
-        void addCondition(InputCondition condition);
+        void addCondition(const InputCondition& condition);
         /**
          * \brief Adds a context to the InputAction
          * \param context New context for the InputAction
@@ -93,5 +94,10 @@ namespace obe::Input
          * \brief Updates the InputAction
          */
         void update();
+        std::vector<InputButton*> getInvolvedButtons() const;
+
+        void enable(const std::vector<InputButtonMonitorPtr>& monitors);
+        void disable();
+        bool isEnabled() const;
     };
 } // namespace obe::Input

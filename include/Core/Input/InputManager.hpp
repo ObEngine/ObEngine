@@ -19,13 +19,13 @@ namespace obe::Input
     {
     private:
         bool m_refresh = true;
-        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs {};
-        std::vector<std::shared_ptr<InputButtonMonitor>> m_monitors {};
-        std::vector<std::weak_ptr<InputButtonMonitor>> m_monitorsRefCounter {};
+        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs;
+        std::vector<std::weak_ptr<InputButtonMonitor>> m_monitors;
+        std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
         Triggers::TriggerGroupPtr t_actions;
         Triggers::TriggerGroupPtr t_inputs;
         std::vector<std::shared_ptr<InputAction>> m_allActions {};
-        std::vector<std::weak_ptr<InputAction>> m_currentActions {};
+        std::vector<InputAction*> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
         void createInputMap();
         void createGamepadMap();

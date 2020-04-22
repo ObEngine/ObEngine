@@ -1,6 +1,7 @@
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerManager.hpp>
 #include <Utils/VectorUtils.hpp>
+#include <utility>
 
 namespace obe::Input
 {
@@ -11,19 +12,19 @@ namespace obe::Input
         triggerPtr->add(id);
     }
 
-    void InputAction::addCondition(InputCondition condition)
+    void InputAction::addCondition(const InputCondition& condition)
     {
-        m_combinations.push_back(condition);
+        m_conditions.push_back(condition);
     }
 
     void InputAction::clearConditions()
     {
-        m_combinations.clear();
+        m_conditions.clear();
     }
 
     void InputAction::connect(ActionCallback callback)
     {
-        m_callback = callback;
+        m_callback = std::move(callback);
     }
 
     std::vector<std::string> InputAction::getContexts() const
@@ -59,9 +60,11 @@ namespace obe::Input
 
     void InputAction::update()
     {
-        for (InputCondition& combination : m_combinations)
+        if (!m_enabled)
+            return;
+        for (InputCondition& condition : m_conditions)
         {
-            if (combination.check())
+            if (condition.check())
             {
                 if (m_state)
                 {
@@ -69,8 +72,9 @@ namespace obe::Input
                             .over()) // Reset repeat when combination is unchecked <REVISION>
                     {
                         m_repeat.reset();
-                        const InputActionEvent ev(*this, combination);
-                        m_callback(ev);
+                        const InputActionEvent ev(*this, condition);
+                        if (m_callback)
+                            m_callback(ev);
                         m_actionTrigger->pushParameter(m_id, "event", ev);
                         m_actionTrigger->trigger(m_id);
                     }
@@ -82,7 +86,8 @@ namespace obe::Input
                     {
                         m_interval.reset();
                         m_state = true;
-                        m_callback(InputActionEvent(*this, combination));
+                        if (m_callback)
+                            m_callback(InputActionEvent(*this, condition));
                     }
                 }
             }
@@ -93,9 +98,48 @@ namespace obe::Input
         }
     }
 
+    std::vector<InputButton*> InputAction::getInvolvedButtons() const
+    {
+        std::vector<InputButton*> involvedButtons;
+        for (const InputCondition& condition : m_conditions)
+        {
+            for (const InputCombinationElement& combinationElement :
+                condition.getCombination())
+            {
+                involvedButtons.push_back(combinationElement.first);
+            }
+        }
+        return involvedButtons;
+    }
+
+    void InputAction::enable(const std::vector<InputButtonMonitorPtr>& monitors)
+    {
+        m_enabled = true;
+        for (InputCondition& condition : m_conditions)
+        {
+            condition.enable(monitors);
+        }
+    }
+
+    void InputAction::disable()
+    {
+        m_enabled = false;
+        for (InputCondition& condition : m_conditions)
+        {
+            condition.disable();
+        }
+    }
+
+    bool InputAction::isEnabled() const
+    {
+        return m_enabled;
+    }
+
     bool InputAction::check() const
     {
-        for (const InputCondition& combination : m_combinations)
+        if (!m_enabled)
+            return false;
+        for (const InputCondition& combination : m_conditions)
         {
             if (combination.check())
             {

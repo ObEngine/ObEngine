@@ -7,8 +7,12 @@ namespace obe::Types
      */
     class Togglable
     {
+    private:
+        void changeState(bool state);
+
     protected:
         bool m_enabled;
+        virtual void onStateChange();
 
     public:
         /**
