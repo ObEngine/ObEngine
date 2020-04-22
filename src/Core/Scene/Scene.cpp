@@ -1,3 +1,4 @@
+#include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
@@ -135,8 +136,7 @@ namespace obe::Scene
             m_levelName = meta.getDataNode("name").get<std::string>();
         }
         else
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.Scene.Scene.NoMeta", { { "map", path } });
+            throw Exceptions::MissingSceneFileBlock(path, "Meta", EXC_INFO);
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "View"))
         {
@@ -163,8 +163,7 @@ namespace obe::Scene
             m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
         }
         else
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.Scene.Scene.NoView", { { "map", path } });
+            throw Exceptions::MissingSceneFileBlock(path, "View", EXC_INFO);
 
         if (m_levelFile->contains(vili::NodeType::ComplexNode, "Sprites"))
         {
@@ -213,10 +212,9 @@ namespace obe::Scene
                 }
                 else if (!this->getGameObject(currentObject->getId()).isPermanent())
                 {
-                    aube::ErrorHandler::Warn(
-                        "ObEngine.Scene.Scene.GameObjectAlreadyInScene",
-                        { { "object", currentObject->getId() },
-                            { "scene_file", m_levelName } });
+                    throw Exceptions::GameObjectAlreadyExists(path,
+                        this->getGameObject(currentObject->getId()).getType(),
+                        currentObject->getId(), EXC_INFO);
                 }
             }
         }
@@ -235,12 +233,8 @@ namespace obe::Scene
                 {
                     const auto errObj = result.get<sol::error>();
                     const std::string errMsg = errObj.what();
-                    throw aube::ErrorHandler::Raise("obe.Scene.InvalidSceneScript",
-                        { { "scene", path }, { "script", source },
-                            { "error",
-                                "\n        \""
-                                    + Utils::String::replace(errMsg, "\n", "\n        ")
-                                    + "\"" } });
+                    throw Exceptions::SceneScriptLoadingError(path, source,
+                        Utils::String::replace(errMsg, "\n", "\n        "), EXC_INFO);
                 }
                 m_scriptArray.push_back(script.at<vili::DataNode>("source"));
             }
@@ -385,7 +379,7 @@ namespace obe::Scene
 
             if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction.valid())
             {
-                const sol::table saveTableRef = dumpFunction();
+                const sol::table saveTableRef = dumpFunction().get<sol::table>();
                 vili::ComplexNode* saveRequirements
                     = Script::DataBridge::luaTableToComplexNode("Requires", saveTableRef);
                 if (!saveRequirements->getAll().empty())
@@ -535,8 +529,13 @@ namespace obe::Scene
             if (gameObject->getId() == id)
                 return *gameObject;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownGameObject",
-            { { "id", id }, { "map", m_levelName } });
+        std::vector<std::string> objectIds;
+        objectIds.reserve(m_gameObjectArray.size());
+        for (const auto& object : m_gameObjectArray)
+        {
+            objectIds.push_back(object->getId());
+        }
+        throw Exceptions::UnknownGameObject(m_levelFileName, id, objectIds, EXC_INFO);
     }
 
     bool Scene::doesGameObjectExists(const std::string& id)
@@ -585,8 +584,8 @@ namespace obe::Scene
         }
         else if (this->doesGameObjectExists(useId))
         {
-            aube::ErrorHandler::Warn("ObEngine.Scene.Scene.OverridenObject",
-                { { "id", id }, { "scene_file", m_levelName } });
+            throw Exceptions::GameObjectAlreadyExists(
+                m_levelFileName, this->getGameObject(useId).getId(), useId, EXC_INFO);
         }
 
         std::unique_ptr<Script::GameObject> newGameObject
@@ -695,8 +694,13 @@ namespace obe::Scene
             if (m_spriteArray[i]->getId() == id)
                 return *m_spriteArray[i];
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownSprite",
-            { { "id", id }, { "map", m_levelName } });
+        std::vector<std::string> spritesIds;
+        spritesIds.reserve(m_spriteArray.size());
+        for (const auto& sprite : m_spriteArray)
+        {
+            spritesIds.push_back(sprite->getId());
+        }
+        throw Exceptions::UnknownSprite(m_levelFileName, id, spritesIds, EXC_INFO);
     }
 
     bool Scene::doesSpriteExists(const std::string& id)
@@ -789,9 +793,13 @@ namespace obe::Scene
                 return *m_colliderArray[i];
             }
         }
-        auto exc = aube::ErrorHandler::Raise("ObEngine.Scene.Scene.UnknownCollider",
-            { { "id", id }, { "scene", m_levelName } });
-        throw exc;
+        std::vector<std::string> collidersIds;
+        collidersIds.reserve(m_colliderArray.size());
+        for (const auto& collider : m_colliderArray)
+        {
+            collidersIds.push_back(collider->getId());
+        }
+        throw Exceptions::UnknownCollider(m_levelFileName, id, collidersIds, EXC_INFO);
     }
 
     bool Scene::doesColliderExists(const std::string& id)
