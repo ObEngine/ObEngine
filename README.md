@@ -203,7 +203,9 @@ A big special thanks to my sponsors who are allowing me to spend more time on th
 ### Companies
 <table>
   <tr>
+    <td align="center"><a href="https://github.com/"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="100px;" alt="GitHub"/><br /><sub><b>GitHub</b></sub></a><br /><a href="https://github.com/" title="Sponsor">:heart::octocat:</a></td>
     <td align="center"><a href="https://www.jetbrains.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/JetBrains_Logo_2016.svg/1200px-JetBrains_Logo_2016.svg.png" width="100px;" alt="JetBrains"/><br /><sub><b>JetBrains</b></sub></a><br /><a href="https://www.jetbrains.com" title="Sponsor">:heart:🧠</a></td>
+    <td align="center"><a href="https://www.digitalocean.com/"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_vertical_blue.svg" width="100px;" alt="DigitalOcean"/><br /><sub><b>DigitalOcean</b></sub></a><br /><a href="https://www.digitalocean.com/" title="Sponsor">:heart::shark:</a></td>
     <td align="center"><a href="https://www.viva64.com/en/pvs-studio/"><img src="https://www.viva64.com/media/img/logo.png" alt="PVS-Studio"/><br /><sub><b>Viva64</b></sub></a><br /><a href="https://www.viva64.com/en/pvs-studio/" title="Sponsor">:heart:🦄</a></td>
   </tr>
 </table>
