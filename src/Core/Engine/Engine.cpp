@@ -130,12 +130,18 @@ namespace obe::Engine
 
     void Engine::clean()
     {
-        t_game->trigger("End");
-        m_triggers->update();
-        m_scene->clear();
-        m_scene->update();
+        if (t_game)
+            t_game->trigger("End");
+        if (m_triggers)
+            m_triggers->update();
+        if (m_scene)
+        {
+            m_scene->clear();
+            m_scene->update();
+        }
         Script::GameObjectDatabase::Clear();
-        m_window->close();
+        if (m_window)
+            m_window->close();
 
         m_window.reset();
         m_cursor.reset();
@@ -175,6 +181,10 @@ namespace obe::Engine
 
     Engine::Engine()
     {
+    }
+
+    void Engine::init()
+    {
         this->initConfig();
         this->initLogger();
         this->initScript();
@@ -186,6 +196,7 @@ namespace obe::Engine
         this->initPlugins();
         this->initResources();
         this->initScene();
+        m_initialized = true;
     }
 
     Engine::~Engine()
@@ -195,13 +206,45 @@ namespace obe::Engine
 
     void Engine::run()
     {
-        try
+        if (!m_initialized)
+            throw Exceptions::UnitializedEngine(EXC_INFO);
+
+        std::string bootScript = "boot.lua"_fs;
+        if (bootScript.empty())
+            throw Exceptions::BootScriptMissing(
+                System::MountablePath::StringPaths(), EXC_INFO);
+        const sol::protected_function_result loadResult
+            = m_lua.safe_script_file(bootScript);
+
+        if (!loadResult.valid())
         {
-            this->_run();
+            const auto errObj = loadResult.get<sol::error>();
+            throw Exceptions::BootScriptLoadingError(errObj.what(), EXC_INFO);
         }
-        catch (const std::exception& e)
+        m_window->create();
+        sol::protected_function bootFunction
+            = m_lua["Game"]["Start"].get<sol::protected_function>();
+
+        const sol::protected_function_result bootResult = bootFunction.call();
+        if (!bootResult.valid())
         {
-            Debug::Log->error(e.what());
+            const auto errObj = bootResult.get<sol::error>();
+            throw Exceptions::BootScriptExecutionError(
+                "Game.Start", errObj.what(), EXC_INFO);
+        }
+
+        while (m_window->isOpen())
+        {
+            m_framerate->update();
+
+            t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
+            t_game->trigger("Update");
+
+            if (m_framerate->doRender())
+                t_game->trigger("Render");
+
+            this->update();
+            this->render();
         }
     }
 
@@ -269,47 +312,6 @@ namespace obe::Engine
             m_scene->draw(m_window->getTarget());
 
             m_window->display();
-        }
-    }
-
-    void Engine::_run()
-    {
-        std::string bootScript = "boot.lua"_fs;
-        if (bootScript.empty())
-            throw Exceptions::BootScriptMissing(
-                System::MountablePath::StringPaths(), EXC_INFO);
-        const sol::protected_function_result loadResult
-            = m_lua.safe_script_file(bootScript);
-
-        if (!loadResult.valid())
-        {
-            const auto errObj = loadResult.get<sol::error>();
-            throw Exceptions::BootScriptLoadingError(errObj.what(), EXC_INFO);
-        }
-        m_window->create();
-        sol::protected_function bootFunction
-            = m_lua["Game"]["Start"].get<sol::protected_function>();
-
-        const sol::protected_function_result bootResult = bootFunction.call();
-        if (!bootResult.valid())
-        {
-            const auto errObj = bootResult.get<sol::error>();
-            throw Exceptions::BootScriptExecutionError(
-                "Game.Start", errObj.what(), EXC_INFO);
-        }
-
-        while (m_window->isOpen())
-        {
-            m_framerate->update();
-
-            t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
-            t_game->trigger("Update");
-
-            if (m_framerate->doRender())
-                t_game->trigger("Render");
-
-            this->update();
-            this->render();
         }
     }
 }

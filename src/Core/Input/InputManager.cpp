@@ -148,8 +148,19 @@ namespace obe::Input
                 auto inputCondition = [this](InputManager* inputManager,
                                           vili::Node* action, vili::DataNode* condition) {
                     InputCondition actionCondition;
-                    const InputCombination combination
-                        = this->makeCombination(condition->get<std::string>());
+                    InputCombination combination;
+                    try
+                    {
+                        combination
+                            = this->makeCombination(condition->get<std::string>());
+                    }
+                    catch (const Exception& e)
+                    {
+                        throw Exceptions::InvalidInputCombinationCode(
+                            action->getId(), condition->get<std::string>(), EXC_INFO)
+                            .nest(e);
+                    }
+
                     actionCondition.setCombination(combination);
                     Debug::Log->debug(
                         "<InputManager> Associated Key '{0}' for Action '{1}'",
@@ -260,13 +271,9 @@ namespace obe::Input
     {
         if (m_inputs.find(keyId) != m_inputs.end())
             return *m_inputs[keyId].get();
-        std::vector<std::string> buttonsNames;
-        buttonsNames.reserve(m_inputs.size());
-        for (const auto& button : m_inputs)
-        {
-            buttonsNames.push_back(button.second->getName());
-        }
-        throw Exceptions::UnknownInputButton(keyId, buttonsNames, EXC_INFO);
+
+        throw Exceptions::UnknownInputButton(
+            keyId, this->getAllInputButtonNames(), EXC_INFO);
     }
 
     std::vector<InputButton*> InputManager::getInputs()
@@ -373,10 +380,8 @@ namespace obe::Input
                         }
                         else
                         {
-                            throw aube::ErrorHandler::Raise(
-                                "ObEngine.Input.InputCondition."
-                                "UnknownState",
-                                { { "state", buttonState } });
+                            throw Exceptions::InvalidInputButtonState(
+                                buttonState, EXC_INFO);
                         }
                     }
                     const std::string keyId = stateAndButton[1];
@@ -390,17 +395,14 @@ namespace obe::Input
                         }
                         else
                         {
-                            throw aube::ErrorHandler::Raise(
-                                "ObEngine.Input.InputCondition."
-                                "ButtonAlreadyInCombination",
-                                { { "button", button.getName() } });
+                            throw Exceptions::InputButtonAlreadyInCombination(
+                                button.getName(), EXC_INFO);
                         }
                     }
                     else
                     {
-                        Debug::Log->warn("<InputCondition> Button not "
-                                         "found : '{0}' in code '{1}'",
-                            keyId, code);
+                        throw Exceptions::UnknownInputButton(
+                            keyId, this->getAllInputButtonNames(), EXC_INFO);
                     }
                 }
             }

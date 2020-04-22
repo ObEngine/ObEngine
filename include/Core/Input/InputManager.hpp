@@ -30,6 +30,7 @@ namespace obe::Input
         void createInputMap();
         void createGamepadMap();
         void createTriggerGroups(Triggers::TriggerManager& triggers);
+        std::vector<std::string> getAllInputButtonNames() const;
 
     public:
         /**

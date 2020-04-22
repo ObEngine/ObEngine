@@ -68,9 +68,36 @@ namespace obe::Input::Exceptions
                         < Utils::String::distance(s2, buttonName);
                 });
             this->hint("Try one of the following InputButton : ({}...)",
-                fmt::join(
-                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                fmt::join(std::vector<std::string_view>(
+                              sortedByDistance.begin(), sortedByDistance.begin() + 5),
                     ", "));
+        }
+    };
+
+    class InvalidInputCombinationCode : public Exception
+    {
+    public:
+        InvalidInputCombinationCode(
+            std::string_view action, std::string_view combinationCode, DebugInfo info)
+            : Exception("InvalidInputCombinationCode", info)
+        {
+            this->error(
+                "The following InputCombinationCode '{}' for InputAction '{}' is invalid",
+                combinationCode, action);
+        }
+    };
+
+    class InputButtonAlreadyInCombination : public Exception
+    {
+    public:
+        InputButtonAlreadyInCombination(std::string_view button, DebugInfo info)
+            : Exception("InputButtonAlreadyInCombination", info)
+        {
+            this->error("The same InputButton '{}' can't appear twice in the same "
+                        "InputCondition",
+                button);
+            this->hint("If you want to handle more that one state for the same "
+                       "InputButton, create a separate combination");
         }
     };
 }
