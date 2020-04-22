@@ -24,14 +24,11 @@ namespace obe::Input
 
     bool InputManager::isActionCurrentlyInUse(const std::string& actionId)
     {
-        for (const auto& actionPtr : m_currentActions)
+        for (const auto& action : m_currentActions)
         {
-            if (const auto& action = actionPtr.lock())
+            if (action->getId() == actionId)
             {
-                if (action->getId() == actionId)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
@@ -72,32 +69,42 @@ namespace obe::Input
         if (m_enabled)
         {
             auto actionBuffer = m_currentActions;
-            for (auto actionPtr : actionBuffer)
+            for (auto action : actionBuffer)
             {
-                if (auto action = actionPtr.lock())
-                {
-                    action->update();
-                }
+
+                action->update();
             }
             if (m_refresh)
             {
                 bool noRefresh = true;
                 for (auto& [_, input] : m_inputs)
                 {
+
                     if (input->isPressed())
                     {
+
                         noRefresh = false;
                         break;
                     }
                 }
+                for (const auto& monitorPtr : m_monitors)
+                {
+                    if (const auto& monitor = monitorPtr.lock())
+                    {
+                        if (monitor->getButton().isPressed())
+                        {
+                            noRefresh = false;
+                            break;
+                        }
+                    }
+                }
                 m_refresh = !noRefresh;
-                m_monitorsRefCounter.erase(
-                    std::remove_if(m_monitorsRefCounter.begin(),
-                        m_monitorsRefCounter.end(),
+                m_monitors.erase(
+                    std::remove_if(m_monitors.begin(), m_monitors.end(),
                         [this](const std::weak_ptr<InputButtonMonitor>& element) {
                             return updateOrCleanMonitor(t_inputs, element);
                         }),
-                    m_monitorsRefCounter.end());
+                    m_monitors.end());
             }
         }
     }
@@ -171,7 +178,12 @@ namespace obe::Input
 
     void InputManager::clearContexts()
     {
+        for (InputAction* action : m_currentActions)
+        {
+            action->disable();
+        }
         m_currentActions.clear();
+        // m_monitors.clear();
     }
 
     InputManager& InputManager::addContext(const std::string& context)
@@ -183,8 +195,14 @@ namespace obe::Input
                 && !isActionCurrentlyInUse(action->getId()))
             {
                 Debug::Log->debug("<InputManager> Add Action '{0}' in Context '{1}'",
-                    action.get()->getId(), context);
-                m_currentActions.push_back(action);
+                    action->getId(), context);
+                m_currentActions.push_back(action.get());
+                std::vector<InputButtonMonitorPtr> monitors;
+                for (InputButton* button : action->getInvolvedButtons())
+                {
+                    monitors.push_back(this->monitor(*button));
+                }
+                action->enable(monitors);
             }
         }
         return *this;
@@ -196,28 +214,22 @@ namespace obe::Input
         // context
         m_currentActions.erase(
             std::remove_if(m_currentActions.begin(), m_currentActions.end(),
-                [&context](const auto& inputAction) -> bool {
-                    if (const auto& action = inputAction.lock())
+                [&context](auto& action) -> bool {
+                    const auto& contexts = action->getContexts();
+                    auto isActionInContext
+                        = std::find(contexts.begin(), contexts.end(), context)
+                        != contexts.end();
+                    if (isActionInContext)
                     {
-                        const auto& contexts = action->getContexts();
-                        auto isActionInContext
-                            = std::find(contexts.begin(), contexts.end(), context)
-                            != contexts.end();
-                        if (isActionInContext)
-                        {
-                            Debug::Log->debug("<InputManager> Remove Action '{0}' "
-                                              "from Context '{1}'",
-                                action->getId(), context);
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        Debug::Log->debug("<InputManager> Remove Action '{0}' "
+                                          "from Context '{1}'",
+                            action->getId(), context);
+                        action->disable();
+                        return true;
                     }
                     else
                     {
-                        return true;
+                        return false;
                     }
                 }),
             m_currentActions.end());
@@ -234,14 +246,11 @@ namespace obe::Input
     {
         std::set<std::string> allContexts;
 
-        for (const auto& actionPtr : m_currentActions)
+        for (const auto& action : m_currentActions)
         {
-            if (const auto action = actionPtr.lock())
+            for (const auto& context : action->getContexts())
             {
-                for (const auto& context : action->getContexts())
-                {
-                    allContexts.emplace(context);
-                }
+                allContexts.emplace(context);
             }
         }
         return std::vector<std::string>(allContexts.begin(), allContexts.end());
@@ -304,7 +313,7 @@ namespace obe::Input
 
     InputButtonMonitorPtr InputManager::monitor(InputButton& input)
     {
-        for (auto& monitor : m_monitorsRefCounter)
+        for (auto& monitor : m_monitors)
         {
             if (const auto sharedMonitor = monitor.lock())
             {
@@ -313,7 +322,7 @@ namespace obe::Input
             }
         }
         InputButtonMonitorPtr monitor = std::make_shared<InputButtonMonitor>(input);
-        m_monitorsRefCounter.push_back(monitor);
+        m_monitors.push_back(monitor);
         return std::move(monitor);
     }
 
@@ -324,9 +333,9 @@ namespace obe::Input
 
     bool isKeyAlreadyInCombination(InputCombination& combination, InputButton* button)
     {
-        for (auto& [monitor, _] : combination)
+        for (auto& [monitoredButton, _] : combination)
         {
-            if (&monitor->getButton() == button)
+            if (monitoredButton == button)
             {
                 return true;
             }
@@ -374,11 +383,10 @@ namespace obe::Input
                     if (m_inputs.find(keyId) != m_inputs.end())
                     {
                         InputButton& button = this->getInput(keyId);
-                        InputButtonMonitorPtr monitor = this->monitor(button);
 
                         if (!isKeyAlreadyInCombination(combination, &button))
                         {
-                            combination.emplace_back(monitor, buttonStates);
+                            combination.emplace_back(&button, buttonStates);
                         }
                         else
                         {

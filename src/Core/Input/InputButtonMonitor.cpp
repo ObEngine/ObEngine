@@ -7,12 +7,12 @@ namespace obe::Input
     InputButtonMonitor::InputButtonMonitor(InputButton& button)
         : m_button(button)
     {
-        Debug::Log->trace("Started monitoring InputButton {}", m_button.getName());
+        Debug::Log->debug("Started monitoring InputButton '{}'", m_button.getName());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        Debug::Log->trace("Un-monitoring InputButton {}", m_button.getName());
+        Debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.getName());
     }
 
     InputButton& InputButtonMonitor::getButton() const

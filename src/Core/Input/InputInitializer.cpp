@@ -299,20 +299,16 @@ namespace obe::Input
             t_inputs->add(button->getName());
             t_inputs->onRegister(
                 button->getName(), [button, this](const Triggers::TriggerEnv& env) {
-                    for (auto& monitor : m_monitors)
-                    {
-                        if (&monitor->getButton() == button)
-                            return;
-                    }
-                    m_monitors.push_back(this->monitor(*button));
+                    m_key_monitors.push_back(this->monitor(*button));
                 });
             t_inputs->onUnregister(
                 button->getName(), [button, this](const Triggers::TriggerEnv& env) {
-                    m_monitors.erase(std::remove_if(m_monitors.begin(), m_monitors.end(),
-                                         [button](const auto& monitor) {
-                                             return &monitor->getButton() == button;
-                                         }),
-                        m_monitors.end());
+                    const auto position = std::find_if(m_key_monitors.begin(),
+                        m_key_monitors.end(), [button](const auto& monitor) {
+                            return &monitor->getButton() == button;
+                        });
+                    if (position != m_key_monitors.end())
+                        m_key_monitors.erase(position);
                 });
         }
     }

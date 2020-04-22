@@ -6,11 +6,12 @@
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/InputButtonState.hpp>
 #include <Types/FlagSet.hpp>
+#include <Types/Togglable.hpp>
 
 namespace obe::Input
 {
     using InputCombinationElement
-        = std::pair<InputButtonMonitorPtr, Types::FlagSet<InputButtonState>>;
+        = std::pair<InputButton*, Types::FlagSet<InputButtonState>>;
     using InputCombination = std::vector<InputCombinationElement>;
 
     /**
@@ -20,10 +21,15 @@ namespace obe::Input
     class InputCondition
     {
     private:
+        InputCombination m_combination;
+        std::vector<InputButtonMonitorPtr> m_monitors;
         bool m_enabled = false;
-        InputCombination m_triggerConditions;
+
+    protected:
+        InputButtonState getButtonState(InputButton* button) const;
 
     public:
+        InputCondition();
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
          * \param combinationElement The InputCombinationElement to add to the
@@ -53,5 +59,9 @@ namespace obe::Input
          * \param combination The new InputCombination
          */
         void setCombination(const InputCombination& combination);
+
+        void enable(const std::vector<InputButtonMonitorPtr>& monitors);
+        void disable();
+        bool isEnabled() const;
     };
 } // namespace obe::Input
