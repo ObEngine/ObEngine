@@ -68,4 +68,14 @@ namespace obe::Engine::Exceptions
                 fmt::join(mounts, ", "));
         }
     };
+
+    class UnitializedEngine : public Exception
+    {
+    public:
+        UnitializedEngine(DebugInfo info)
+            : Exception("UnitializedEngine", info)
+        {
+            this->error("Impossible to run Engine if not initialized beforehand");
+        }
+    };
 }

@@ -6,6 +6,8 @@
 
 #include <fmt/format.h>
 
+#include <Utils/StringUtils.hpp>
+
 namespace obe
 {
     class DebugInfo
@@ -34,19 +36,26 @@ namespace obe
         {
             m_message = fmt::format("Exception [{}] occured\n", id);
             m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
-            m_message += fmt::format("  In function: '{}'\n", info.function);
+            m_message += fmt::format("  In function: {}\n", info.function);
         }
         template <class... Args> void error(Args&&... args)
         {
             const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
-            m_message += fmt::format("  Error: '{}'\n", errorMsg);
+            m_message += fmt::format("  Error: {}\n", errorMsg);
         }
         template <class... Args> void hint(Args&&... args)
         {
             const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
-            m_message += fmt::format("  Hint: '{}'\n", hintMsg);
+            m_message += fmt::format("  Hint: {}\n", hintMsg);
         }
         const char* what() const noexcept override;
+        Exception& nest(const Exception& exception)
+        {
+            m_message += "  Cause:\n";
+            m_message
+                += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+            return *this;
+        }
     };
 
     inline const char* Exception::what() const noexcept

@@ -312,4 +312,15 @@ namespace obe::Input
                 });
         }
     }
+
+    std::vector<std::string> InputManager::getAllInputButtonNames() const
+    {
+        std::vector<std::string> buttonsNames;
+        buttonsNames.reserve(m_inputs.size());
+        for (const auto& button : m_inputs)
+        {
+            buttonsNames.push_back(button.second->getName());
+        }
+        return buttonsNames;
+    }
 } // namespace obe::Input

@@ -22,6 +22,7 @@ namespace obe::Engine
     class Engine
     {
     protected:
+        bool m_initialized = false;
         sol::state m_lua;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
         std::unique_ptr<Scene::Scene> m_scene;
@@ -53,15 +54,17 @@ namespace obe::Engine
         void initScene();
 
         // Main loop
-        void clean();
         void handleWindowEvents() const;
         void update() const;
         void render();
-        void _run();
+
+        // Cleaning
+        void clean();
 
     public:
         Engine();
         ~Engine();
+        void init();
         void run();
 
         /**
