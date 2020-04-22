@@ -100,4 +100,14 @@ namespace obe::Input::Exceptions
                        "InputButton, create a separate combination");
         }
     };
+
+    class InvalidInputTypeEnumValue : public Exception
+    {
+    public:
+        InvalidInputTypeEnumValue(int enumValue, DebugInfo info)
+            : Exception("InvalidInputTypeEnumValue", info)
+        {
+            this->error("Enum InputType can't have invalid value ({})", enumValue);
+        }
+    };
 }

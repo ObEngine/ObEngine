@@ -1,5 +1,6 @@
 #include <vili/ErrorHandler.hpp>
 
+#include <Input/Exceptions.hpp>
 #include <Input/InputType.hpp>
 
 #define OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(TYPE)                                       \
@@ -23,7 +24,8 @@ namespace obe::Input
             OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(GamepadAxis)
             OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(GamepadButton)
         }
-        throw aube::ErrorHandler::Raise("obe.Input.InputType.WrongEnumValue");
+        const int enumValue = static_cast<std::underlying_type_t<InputType>>(type);
+        throw Exceptions::InvalidInputTypeEnumValue(enumValue, EXC_INFO);
     }
 
     std::ostream& operator<<(std::ostream& os, InputType m)

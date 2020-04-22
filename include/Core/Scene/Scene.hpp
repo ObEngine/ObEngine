@@ -26,9 +26,9 @@ namespace obe::Scene
     class Scene
     {
     private:
-        std::string m_levelName = "";
-        std::string m_baseFolder = "";
-        std::string m_futureLoad = "";
+        std::string m_levelName;
+        std::string m_baseFolder;
+        std::string m_futureLoad;
         Camera m_camera;
         Transform::UnitVector m_cameraInitialPosition;
         Transform::Referential m_cameraInitialReferential;
