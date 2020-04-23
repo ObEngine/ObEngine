@@ -12,15 +12,15 @@ namespace obe::Script
     sol::table GameObject::access() const
     {
         if (m_hasScriptEngine)
-            return m_environment["Object"].get<sol::table>(); // GAMEOBJECTENV["Object"];
-        throw Exceptions::NoScriptComponent(m_type, m_id, EXC_INFO);
+            return m_environment["Object"].get<sol::table>();
+        throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
     sol::function GameObject::getConstructor() const
     {
         if (m_hasScriptEngine)
             return m_environment["ObjectInit"].get<sol::function>();
-        throw Exceptions::NoScriptComponent(m_type, m_id, EXC_INFO);
+        throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
     vili::ViliParser GameObjectDatabase::allDefinitions;
@@ -56,10 +56,12 @@ namespace obe::Script
         if (!allDefinitions.root().contains(type))
         {
             vili::ViliParser getGameObjectFile;
-            System::Path("Data/GameObjects/")
-                .add(type)
-                .add(type + ".obj.vili")
-                .load(System::Loaders::dataLoader, getGameObjectFile);
+            auto result = System::Path("Data/GameObjects/")
+                              .add(type)
+                              .add(type + ".obj.vili")
+                              .load(System::Loaders::dataLoader, getGameObjectFile);
+            if (!result)
+                throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
             if (getGameObjectFile->contains(type))
             {
                 vili::ComplexNode& definitionData
@@ -70,10 +72,7 @@ namespace obe::Script
                 allDefinitions->pushComplexNode(&definitionData);
                 return &definitionData;
             }
-            aube::ErrorHandler::Raise(
-                "ObEngine.Script.GameObjectDatabase.ObjectDefinitionNotFound",
-                { { "objectType", type } });
-            return nullptr;
+            throw Exceptions::ObjectDefinitionBlockNotFound(type, EXC_INFO);
         }
         return &allDefinitions.at(type);
     }
@@ -83,7 +82,7 @@ namespace obe::Script
     {
         for (vili::Node* currentRequirement : requires.getAll())
         {
-            sol::table requireTable
+            const sol::table requireTable
                 = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
             DataBridge::dataToLua(requireTable, currentRequirement);
         }
@@ -184,29 +183,34 @@ namespace obe::Script
                 const std::string fullPath = System::Path(path).find();
                 if (fullPath.empty())
                 {
-                    throw aube::ErrorHandler::Raise(
-                        "obe.Script.GameObject.ScriptFileNotFound",
-                        { { "source", path } });
+                    throw Exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
                 }
                 m_lua.safe_script_file(fullPath, m_environment);
             };
             if (obj.at("Script").contains("source"))
             {
-                if (obj.at("Script", "source").getType() == vili::NodeType::DataNode)
+                const vili::Node* sourceNode = obj.at("Script").get("source");
+                if (sourceNode->getType() == vili::NodeType::DataNode
+                    && obj.at("Script").getDataNode("source").getDataType() == vili::DataType::String)
                 {
                     loadSource(obj.at("Script").getDataNode("source").get<std::string>());
                 }
                 else
                 {
-                    throw aube::ErrorHandler::Raise(
-                        "obe.Script.GameObject.WrongSourceAttributeType",
-                        { { "details", "source should be a string" },
-                            { "object", m_type } });
+                    std::string nodeType
+                        = vili::Types::nodeTypeToString(sourceNode->getType());
+                    if (sourceNode->getType() == vili::NodeType::DataNode)
+                        nodeType += "::"
+                            + vili::Types::dataTypeToString(
+                                obj.at("Script").getDataNode("source").getDataType());
+                    throw Exceptions::WrongSourceAttributeType(
+                        m_type, "source", "DataNode::String", nodeType, EXC_INFO);
                 }
             }
             else if (obj.at("Script").contains("sources"))
             {
-                if (obj.at("Script", "sources").getType() == vili::NodeType::ArrayNode)
+                const vili::Node* sourceNode = obj.at("Script").get("sources");
+                if (sourceNode->getType() == vili::NodeType::ArrayNode)
                 {
                     const unsigned int scriptListSize
                         = obj.at("Script").getArrayNode("sources").size();
@@ -220,10 +224,10 @@ namespace obe::Script
                 }
                 else
                 {
-                    throw aube::ErrorHandler::Raise(
-                        "obe.Script.GameObject.WrongSourceAttributeType",
-                        { { "details", "sources should be an array" },
-                            { "object", m_type } });
+                    const std::string nodeType
+                        = vili::Types::nodeTypeToString(sourceNode->getType());
+                    throw Exceptions::WrongSourceAttributeType(
+                        m_type, "sources", "ArrayNode", nodeType, EXC_INFO);
                 }
             }
         }
@@ -326,12 +330,11 @@ namespace obe::Script
         m_canUpdate = state;
     }
 
-    Graphics::Sprite& GameObject::getSprite()
+    Graphics::Sprite& GameObject::getSprite() const
     {
         if (m_sprite)
             return *m_sprite;
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Script.GameObject.NoSprite", { { "id", m_id } });
+        throw Exceptions::NoSuchComponent("Sprite", m_type, m_id, EXC_INFO);
     }
 
     Scene::SceneNode& GameObject::getSceneNode()
@@ -339,20 +342,18 @@ namespace obe::Script
         return m_objectNode;
     }
 
-    Collision::PolygonalCollider& GameObject::getCollider()
+    Collision::PolygonalCollider& GameObject::getCollider() const
     {
         if (m_collider)
             return *m_collider;
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Script.GameObject.NoCollider", { { "id", m_id } });
+        throw Exceptions::NoSuchComponent("Collider", m_type, m_id, EXC_INFO);
     }
 
-    Animation::Animator& GameObject::getAnimator()
+    Animation::Animator& GameObject::getAnimator() const
     {
         if (m_animator)
             return *m_animator.get();
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Script.GameObject.NoAnimator", { { "id", m_id } });
+        throw Exceptions::NoSuchComponent("Animator", m_type, m_id, EXC_INFO);
     }
 
     void GameObject::useTrigger(const std::string& trNsp, const std::string& trGrp,

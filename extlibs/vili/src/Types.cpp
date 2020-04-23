@@ -9,22 +9,31 @@ namespace vili
         {
             switch (type)
             {
-            case DataType::String: return "\"\"";
-            case DataType::Int: return "0";
-            case DataType::Float: return "0.0";
-            case DataType::Bool: return "False";
-            case DataType::Range: return "0..1";
-            case DataType::Link: return "&()";
-            case DataType::Template: return "T()";
-            case DataType::Unknown: return "";
-            default: return "";
+            case DataType::String:
+                return "\"\"";
+            case DataType::Int:
+                return "0";
+            case DataType::Float:
+                return "0.0";
+            case DataType::Bool:
+                return "False";
+            case DataType::Range:
+                return "0..1";
+            case DataType::Link:
+                return "&()";
+            case DataType::Template:
+                return "T()";
+            case DataType::Unknown:
+                return "";
+            default:
+                return "";
             }
         }
 
         DataType getVarType(const std::string& var)
         {
             DataType attributeType;
-            std::vector<std::string> boolType = {"True", "False"};
+            std::vector<std::string> boolType = { "True", "False" };
             if (Functions::Vector::isInList(var, boolType))
                 attributeType = DataType::Bool;
             else if (Functions::String::occurencesInString(var, "..") == 1
@@ -35,7 +44,9 @@ namespace vili
             }
             else if (var.substr(0, 2) == "&(" && var.substr(var.size() - 1, 1) == ")")
                 attributeType = DataType::Link;
-            else if (isalpha(var[0]) && Functions::String::occurencesInString(var, "(") == 1 && var.substr(var.size() - 1, 1) == ")")
+            else if (isalpha(var[0])
+                && Functions::String::occurencesInString(var, "(") == 1
+                && var.substr(var.size() - 1, 1) == ")")
                 attributeType = DataType::Template;
             else if (var.substr(0, 1) == "\"" && var.substr(var.size() - 1, 1) == "\"")
                 attributeType = DataType::String;
@@ -67,24 +78,37 @@ namespace vili
 
         std::string dataTypeToString(DataType type)
         {
-            if (type == DataType::String) return "String";
-            if (type == DataType::Int) return "Int";
-            if (type == DataType::Float) return "Float";
-            if (type == DataType::Bool) return "Bool";
-            if (type == DataType::Range) return "Range";
-            if (type == DataType::Template) return "Template";
-            if (type == DataType::Unknown) return "Unknown";
+            if (type == DataType::String)
+                return "String";
+            if (type == DataType::Int)
+                return "Int";
+            if (type == DataType::Float)
+                return "Float";
+            if (type == DataType::Bool)
+                return "Bool";
+            if (type == DataType::Range)
+                return "Range";
+            if (type == DataType::Template)
+                return "Template";
+            if (type == DataType::Unknown)
+                return "Unknown";
             return "Error-Unknown";
         }
 
         std::string nodeTypeToString(NodeType type)
         {
-            if (type == NodeType::Node) return "Attribute";
-            if (type == NodeType::ContainerNode) return "ContainerAttribute";
-            if (type == NodeType::DataNode) return "BaseAttribute";
-            if (type == NodeType::ArrayNode) return "ListAttribute";
-            if (type == NodeType::ComplexNode) return "ComplexAttribute";
-            if (type == NodeType::LinkNode) return "LinkAttribute";
+            if (type == NodeType::Node)
+                return "Node";
+            if (type == NodeType::ContainerNode)
+                return "ContainerNode";
+            if (type == NodeType::DataNode)
+                return "DataNode";
+            if (type == NodeType::ArrayNode)
+                return "ArrayNode";
+            if (type == NodeType::ComplexNode)
+                return "ComplexNode";
+            if (type == NodeType::LinkNode)
+                return "LinkNode";
             return "Error-Unknown";
         }
     }

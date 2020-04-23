@@ -6,6 +6,7 @@
 
 #include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
+#include <Exception.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Modes/Game.hpp>
@@ -33,7 +34,7 @@ int main(int argc, char** argv)
     {
         Modes::startGame();
     }
-    catch (std::exception& e)
+    catch (Exception& e)
     {
         Debug::Log->error(e.what());
         Debug::Log->error("Error occured while running ObEngine");
