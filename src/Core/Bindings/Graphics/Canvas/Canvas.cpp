@@ -54,7 +54,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindBezier["points"] = &obe::Graphics::Canvas::Bezier::points;
         bindBezier["colors"] = &obe::Graphics::Canvas::Bezier::colors;
         bindBezier["precision"] = &obe::Graphics::Canvas::Bezier::precision;
-        bindBezier["Type"] = sol::var(obe::Graphics::Canvas::Bezier::Type);
     }
     void LoadClassCanvas(sol::state_view state)
     {
@@ -103,7 +102,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindCanvasElement["layer"] = &obe::Graphics::Canvas::CanvasElement::layer;
         bindCanvasElement["visible"] = &obe::Graphics::Canvas::CanvasElement::visible;
         bindCanvasElement["type"] = &obe::Graphics::Canvas::CanvasElement::type;
-        bindCanvasElement["Type"] = sol::var(obe::Graphics::Canvas::CanvasElement::Type);
     }
     void LoadClassCanvasPositionable(sol::state_view state)
     {
@@ -130,7 +128,6 @@ namespace obe::Graphics::Canvas::Bindings
                     obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindCircle["draw"] = &obe::Graphics::Canvas::Circle::draw;
         bindCircle["shape"] = &obe::Graphics::Canvas::Circle::shape;
-        bindCircle["Type"] = sol::var(obe::Graphics::Canvas::Circle::Type);
     }
     void LoadClassLine(sol::state_view state)
     {
@@ -149,7 +146,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindLine["thickness"] = &obe::Graphics::Canvas::Line::thickness;
         bindLine["p1color"] = &obe::Graphics::Canvas::Line::p1color;
         bindLine["p2color"] = &obe::Graphics::Canvas::Line::p2color;
-        bindLine["Type"] = sol::var(obe::Graphics::Canvas::Line::Type);
     }
     void LoadClassPolygon(sol::state_view state)
     {
@@ -165,7 +161,6 @@ namespace obe::Graphics::Canvas::Bindings
                     obe::Types::ProtectedIdentifiable, obe::Types::Identifiable>());
         bindPolygon["draw"] = &obe::Graphics::Canvas::Polygon::draw;
         bindPolygon["shape"] = &obe::Graphics::Canvas::Polygon::shape;
-        bindPolygon["Type"] = sol::var(obe::Graphics::Canvas::Polygon::Type);
     }
     void LoadClassRectangle(sol::state_view state)
     {
@@ -182,7 +177,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindRectangle["draw"] = &obe::Graphics::Canvas::Rectangle::draw;
         bindRectangle["shape"] = &obe::Graphics::Canvas::Rectangle::shape;
         bindRectangle["size"] = &obe::Graphics::Canvas::Rectangle::size;
-        bindRectangle["Type"] = sol::var(obe::Graphics::Canvas::Rectangle::Type);
     }
     void LoadClassText(sol::state_view state)
     {
@@ -204,7 +198,6 @@ namespace obe::Graphics::Canvas::Bindings
         bindText["h_align"] = &obe::Graphics::Canvas::Text::h_align;
         bindText["v_align"] = &obe::Graphics::Canvas::Text::v_align;
         bindText["texts"] = &obe::Graphics::Canvas::Text::texts;
-        bindText["Type"] = sol::var(obe::Graphics::Canvas::Text::Type);
     }
     void LoadFunctionCanvasElementTypeToString(sol::state_view state)
     {
