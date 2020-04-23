@@ -46,7 +46,7 @@ namespace obe::Scene::Exceptions
                 });
             this->hint("Try one of the GameObjects with id ({}...)",
                 fmt::join(
-                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
                     ", "));
         }
     };
@@ -82,7 +82,7 @@ namespace obe::Scene::Exceptions
                 });
             this->hint("Try one of the Sprites with id ({}...)",
                 fmt::join(
-                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
                     ", "));
         }
     };
@@ -104,7 +104,7 @@ namespace obe::Scene::Exceptions
                 });
             this->hint("Try one of the Colliders with id ({}...)",
                 fmt::join(
-                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
                     ", "));
         }
     };

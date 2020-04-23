@@ -48,7 +48,7 @@ namespace obe::Input::Exceptions
                 });
             this->hint("Try one of the following InputAction : ({}...)",
                 fmt::join(
-                    std::vector(sortedByDistance.begin(), sortedByDistance.begin() + 5),
+                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
                     ", "));
         }
     };
