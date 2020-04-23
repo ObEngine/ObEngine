@@ -149,7 +149,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
          * \return A pointer to the Animator Component of the GameObject
          */
-        Animation::Animator& getAnimator();
+        Animation::Animator& getAnimator() const;
         /**
          * \bind{Collider}
          * \asproperty
@@ -157,7 +157,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
-        Collision::PolygonalCollider& getCollider();
+        Collision::PolygonalCollider& getCollider() const;
         /**
          * \bind{Sprite}
          * \asproperty
@@ -165,7 +165,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
          * \return A pointer to the Sprite Component of the GameObject
          */
-        Graphics::Sprite& getSprite();
+        Graphics::Sprite& getSprite() const;
         /**
          * \bind{SceneNode}
          * \asproperty
