@@ -95,7 +95,8 @@ namespace obe::Graphics::Shapes
         return shape;
     }
 
-    void Polygon::setPointPosition(unsigned index, const Transform::UnitVector& position)
+    void Polygon::setPointPosition(
+        std::size_t index, const Transform::UnitVector& position)
     {
         const Transform::UnitVector pixelPosition
             = position.to<Transform::Units::ScenePixels>();
@@ -106,7 +107,7 @@ namespace obe::Graphics::Shapes
         shape.setPoint(index, sf::Vector2f(pixelPosition.x, pixelPosition.y));
     }
 
-    Transform::UnitVector Polygon::getPointPosition(unsigned index) const
+    Transform::UnitVector Polygon::getPointPosition(std::size_t index) const
     {
         const sf::Vector2f pixelPosition = shape.getPoint(index);
         return Transform::UnitVector(

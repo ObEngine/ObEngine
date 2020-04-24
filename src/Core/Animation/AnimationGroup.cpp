@@ -17,7 +17,7 @@ namespace obe::Animation
     {
     }
 
-    void AnimationGroup::setDelay(unsigned int delay) noexcept
+    void AnimationGroup::setDelay(Time::TimeUnit delay) noexcept
     {
         m_delay = delay;
     }
@@ -32,7 +32,7 @@ namespace obe::Animation
         m_groupList.push_back(texture);
     }
 
-    void AnimationGroup::removeTextureByIndex(unsigned int index)
+    void AnimationGroup::removeTextureByIndex(std::size_t index)
     {
         if (index < m_groupList.size())
             m_groupList.erase(m_groupList.begin() + index);
@@ -92,12 +92,12 @@ namespace obe::Animation
         return m_over;
     }
 
-    unsigned int AnimationGroup::getIndex() const noexcept
+    std::size_t AnimationGroup::getIndex() const noexcept
     {
         return m_index;
     }
 
-    unsigned int AnimationGroup::getSize() const noexcept
+    std::size_t AnimationGroup::getSize() const noexcept
     {
         return m_groupList.size();
     }
@@ -107,7 +107,7 @@ namespace obe::Animation
         return m_name;
     }
 
-    unsigned int AnimationGroup::getDelay() const noexcept
+    Time::TimeUnit AnimationGroup::getDelay() const noexcept
     {
         return m_delay;
     }

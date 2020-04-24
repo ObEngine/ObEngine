@@ -16,7 +16,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "AnimationGroupTextureIndexOverflow", sol::call_constructor,
                 sol::constructors<
                     obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow(
-                        std::string_view, unsigned int, unsigned int, obe::DebugInfo)>(),
+                        std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassAnimationTextureIndexOverflow(sol::state_view state)
@@ -29,7 +29,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "AnimationTextureIndexOverflow", sol::call_constructor,
                 sol::constructors<
                     obe::Animation::Exceptions::AnimationTextureIndexOverflow(
-                        std::string_view, unsigned int, unsigned int, obe::DebugInfo)>(),
+                        std::string_view, std::size_t,std::size_t, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassNoSelectedAnimation(sol::state_view state)

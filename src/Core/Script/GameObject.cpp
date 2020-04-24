@@ -212,9 +212,9 @@ namespace obe::Script
                 const vili::Node* sourceNode = obj.at("Script").get("sources");
                 if (sourceNode->getType() == vili::NodeType::ArrayNode)
                 {
-                    const unsigned int scriptListSize
+                    const std::size_t scriptListSize
                         = obj.at("Script").getArrayNode("sources").size();
-                    for (unsigned int i = 0; i < scriptListSize; i++)
+                    for (std::size_t i = 0; i < scriptListSize; i++)
                     {
                         loadSource(obj.at("Script")
                                        .getArrayNode("sources")

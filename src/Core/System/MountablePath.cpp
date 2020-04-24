@@ -38,7 +38,8 @@ namespace obe::System
         {
             Debug::Log->critical("<MountablePath> Can't find 'Mount.vili' "
                                  "file, stopping ObEngine");
-            throw aube::ErrorHandler::Raise("ObEngine.System.MountablePath.NoMountFile");
+            throw Exceptions::MountFileMissing(
+                Utils::File::getCurrentDirectory(), EXC_INFO);
         }
         for (vili::ComplexNode* path :
             mountedPaths.at("Mount").getAll<vili::ComplexNode>())

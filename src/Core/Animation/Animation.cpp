@@ -47,7 +47,7 @@ namespace obe::Animation
         return m_name;
     }
 
-    unsigned int Animation::getDelay() const noexcept
+    Time::TimeUnit Animation::getDelay() const noexcept
     {
         return m_delay;
     }
@@ -204,7 +204,7 @@ namespace obe::Animation
         Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
         if (meta.contains(vili::NodeType::DataNode, "clock"))
         {
-            m_delay = meta.at<vili::DataNode>("clock").get<int>();
+            m_delay = meta.at<vili::DataNode>("clock").get<double>();
             Debug::Log->trace("    <Animation> Animation clock = {}", m_delay);
         }
         if (meta.contains(vili::NodeType::DataNode, "play-mode"))
@@ -226,7 +226,7 @@ namespace obe::Animation
             Debug::Log->trace(
                 "    <Animation> Using following template to load images : {}", model);
         }
-        for (unsigned int i = 0; i < imageList.size(); i++)
+        for (std::size_t i = 0; i < imageList.size(); i++)
         {
             std::string textureName;
             if (imageList.get(i).getDataType() == vili::DataType::Int && !model.empty())
@@ -336,7 +336,7 @@ namespace obe::Animation
             if (m_codeIndex > m_code.size() - 1
                 && m_playMode != AnimationPlayMode::OneTime)
                 m_codeIndex = 0;
-            const unsigned int delay = (m_sleep) ? m_sleep : m_delay;
+            const Time::TimeUnit delay = (m_sleep) ? m_sleep : m_delay;
             if (Time::epoch() - m_clock > delay)
             {
                 m_clock = Time::epoch();

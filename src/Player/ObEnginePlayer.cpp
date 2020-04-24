@@ -1,3 +1,5 @@
+#include "System/Path.hpp"
+
 #include <fstream>
 #include <iostream>
 
@@ -26,7 +28,15 @@ int main(int argc, char** argv)
 {
     const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
     const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
-    InitEngine(surfaceWidth, surfaceHeight);
+    try
+    {
+        InitEngine(surfaceWidth, surfaceHeight);
+    }
+    catch (Exception& e)
+    {
+        Debug::Log->error(e.what());
+        Debug::Log->error("Error occured while initializing ObEngine");
+    }
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);

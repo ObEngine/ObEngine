@@ -20,11 +20,11 @@ namespace obe::Animation
         /**
          * \brief The delay between each frame of the AnimationGroup
          */
-        unsigned int m_delay = 0;
+        Time::TimeUnit m_delay = 0;
         /**
          * \brief The current frame index of the AnimationGroup
          */
-        unsigned int m_index = 0;
+        std::size_t m_index = 0;
         /**
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup
@@ -59,13 +59,13 @@ namespace obe::Animation
          * \brief Get the delay between each frame of the AnimationGroup
          * \return The delay between each frame in milliseconds
          */
-        [[nodiscard]] unsigned int getDelay() const noexcept;
+        [[nodiscard]] Time::TimeUnit getDelay() const noexcept;
         /**
          * \brief Get the current index of AnimationGroup
          * \return The index of the texture in the AnimationGroup currently
          *         displayed
          */
-        [[nodiscard]] unsigned int getIndex() const noexcept;
+        [[nodiscard]] std::size_t getIndex() const noexcept;
         /**
          * \brief Get the name of the AnimationGroup
          * \return A std::string containing the AnimationGroup's name
@@ -75,7 +75,7 @@ namespace obe::Animation
          * \brief Get the AnimationGroup size
          * \return The number of textures in the AnimationGroup
          */
-        [[nodiscard]] unsigned int getSize() const noexcept;
+        [[nodiscard]] std::size_t getSize() const noexcept;
         /**
          * \brief Get the current Sprite of the AnimationGroup
          * \return A reference to the Texture currently played by the
@@ -119,7 +119,7 @@ namespace obe::Animation
          * \brief Remove the texture at the given index in the AnimationGroup
          * \param index Removes the texture at index
          */
-        void removeTextureByIndex(unsigned int index);
+        void removeTextureByIndex(std::size_t index);
         /**
          * \brief Reset the AnimationGroup (Index to 0, Loops to 0, Delay to 0)
          */
@@ -128,7 +128,7 @@ namespace obe::Animation
          * \brief Set the delay between each frame of the AnimationGroup
          * \param delay Delay in milliseconds
          */
-        void setDelay(unsigned int delay) noexcept;
+        void setDelay(Time::TimeUnit delay) noexcept;
         /**
          * \brief Set how many times the AnimationGroup should be replayed
          *        before end

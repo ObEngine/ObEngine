@@ -92,7 +92,7 @@ namespace obe::Scene
         }
     }
 
-    unsigned Scene::getColliderAmount() const
+    std::size_t Scene::getColliderAmount() const
     {
         return m_colliderArray.size();
     }
@@ -611,7 +611,7 @@ namespace obe::Scene
         return *m_gameObjectArray.back();
     }
 
-    unsigned Scene::getGameObjectAmount() const
+    std::size_t Scene::getGameObjectAmount() const
     {
         return m_gameObjectArray.size();
     }
@@ -631,7 +631,7 @@ namespace obe::Scene
             });
     }
 
-    unsigned int Scene::getSpriteAmount() const
+    std::size_t Scene::getSpriteAmount() const
     {
         return m_spriteArray.size();
     }
@@ -649,10 +649,10 @@ namespace obe::Scene
     {
         std::vector<Graphics::Sprite*> returnLayer;
 
-        for (unsigned int i = 0; i < m_spriteArray.size(); i++)
+        for (const auto& sprite : m_spriteArray)
         {
-            if (m_spriteArray[i]->getLayer() == layer)
-                returnLayer.push_back(m_spriteArray[i].get());
+            if (sprite->getLayer() == layer)
+                returnLayer.push_back(sprite.get());
         }
 
         return returnLayer;
@@ -666,22 +666,22 @@ namespace obe::Scene
             Transform::Referential::BottomLeft };
         const Transform::UnitVector zeroOffset(0, 0);
 
-        std::vector<Graphics::Sprite*> getSpriteVec = this->getSpritesByLayer(layer);
+        std::vector<Graphics::Sprite*> spritesOnLayer = this->getSpritesByLayer(layer);
         Transform::UnitVector camera
             = -(m_camera.getPosition().to<Transform::Units::ScenePixels>());
-        for (unsigned int i = 0; i < getSpriteVec.size(); i++)
+        for (const auto& sprite : spritesOnLayer)
         {
             Collision::PolygonalCollider positionCollider("positionCollider");
             positionCollider.addPoint(
-                getSpriteVec[i]->getPositionTransformer()(position, camera, layer));
+                sprite->getPositionTransformer()(position, camera, layer));
             Collision::PolygonalCollider sprCollider("sprCollider");
             for (Transform::Referential& ref : rectPts)
             {
-                sprCollider.addPoint(getSpriteVec[i]->getPosition(ref));
+                sprCollider.addPoint(sprite->getPosition(ref));
             }
             if (sprCollider.doesCollide(positionCollider, zeroOffset))
             {
-                return getSpriteVec[i];
+                return sprite;
             }
         }
         return nullptr;
@@ -757,14 +757,13 @@ namespace obe::Scene
         const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
         const Transform::UnitVector pTolerance
             = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
-        for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+        for (const auto& collider : m_colliderArray)
         {
-            // Fix here
-            if (auto point = m_colliderArray[i]->getPointAroundPosition(pPos, pTolerance);
+            // TODO: Fix here
+            if (auto point = collider->getPointAroundPosition(pPos, pTolerance);
                 point.has_value())
             {
-                return std::pair<Collision::PolygonalCollider*, int>(
-                    m_colliderArray[i].get(), point.value()->index);
+                return std::make_pair(collider.get(), point.value()->index);
             }
         }
         return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
@@ -776,21 +775,21 @@ namespace obe::Scene
         const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
         const Transform::UnitVector pTolerance
             = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
-        for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+        for (const auto& collider : m_colliderArray)
         {
-            if (m_colliderArray[i]->isCentroidAroundPosition(pPos, pTolerance))
-                return m_colliderArray[i].get();
+            if (collider->isCentroidAroundPosition(pPos, pTolerance))
+                return collider.get();
         }
         return nullptr;
     }
 
     Collision::PolygonalCollider& Scene::getCollider(const std::string& id)
     {
-        for (unsigned int i = 0; i < m_colliderArray.size(); i++)
+        for (const auto& collider : m_colliderArray)
         {
-            if (id == m_colliderArray[i]->getId())
+            if (id == collider->getId())
             {
-                return *m_colliderArray[i];
+                return *collider;
             }
         }
         std::vector<std::string> collidersIds;

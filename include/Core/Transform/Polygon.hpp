@@ -13,7 +13,7 @@ namespace obe::Transform
 {
     class Polygon;
 
-    using point_index_t = unsigned int;
+    using point_index_t = std::size_t;
     class PolygonPoint : public UnitVector
     {
     private:
@@ -27,9 +27,9 @@ namespace obe::Transform
             Point0,
             Centroid
         };
-        explicit PolygonPoint(Polygon& parent, unsigned int index);
+        explicit PolygonPoint(Polygon& parent, point_index_t index);
         explicit PolygonPoint(
-            Polygon& parent, unsigned int index, const Transform::UnitVector& position);
+            Polygon& parent, point_index_t index, const Transform::UnitVector& position);
         const point_index_t& index = rw_index;
         void remove() const;
         [[nodiscard]] double distance(const Transform::UnitVector& position) const;
@@ -108,10 +108,9 @@ namespace obe::Transform
         [[nodiscard]] Transform::UnitVector getCentroid() const;
         /**
          * \brief Get the number of points in the Polygon
-         * \return An unsigned int containing the number of points of the
-         *         Polygon
+         * \return The amount of points in the Polygon
          */
-        [[nodiscard]] unsigned int getPointsAmount() const;
+        [[nodiscard]] std::size_t getPointsAmount() const;
         /**
          * \brief Get the Position of the first point (index 0) of the Polygon
          * \return An UnitVector containing the position of the first point of
@@ -135,8 +134,7 @@ namespace obe::Transform
          *        Polygon
          * \param position Coordinate of the Position to test
          * \param tolerance Amount of SceneUnits allowed around the position
-         * \return An unsigned int containing the index of the side
-         *         containing the position or -1 if not found
+         * \return An optional containing a PolygonSegment if found
          */
         std::optional<PolygonSegment> getSegmentContainingPoint(
             const Transform::UnitVector& position, double tolerance = DefaultTolerance);
@@ -157,8 +155,7 @@ namespace obe::Transform
          *        y - tolerance <= tolerance <= y + tolerance)
          * \param position Coordinate of the Position to test
          * \param tolerance Position tolerance, bigger number means less precise
-         * \return An unsigned int containing the index of the point containing
-         *         the position or -1 if not found
+         * \return An optional containing a PolygonPoint if found
          */
         std::optional<PolygonPoint*> getPointAroundPosition(
             const Transform::UnitVector& position,
