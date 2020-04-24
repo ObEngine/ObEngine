@@ -123,8 +123,7 @@ namespace obe::Triggers
     {
         m_currentlyTriggered = true;
         Debug::Log->trace("<Trigger> Executing Trigger {0}", m_fullName);
-        const unsigned int envAmount = m_registeredEnvs.size();
-        for (unsigned int i = 0; i < envAmount; i++)
+        for (std::size_t i = 0; i < m_registeredEnvs.size(); i++)
         {
             auto& rEnv = m_registeredEnvs[i];
             if (*rEnv.active)

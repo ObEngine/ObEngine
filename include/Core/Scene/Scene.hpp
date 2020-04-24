@@ -123,10 +123,9 @@ namespace obe::Scene
             const std::string& obj, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
-         * \return An unsigned int containing how many GameObjects are present
-         *         in the Scene
+         * \return The amount of GameObjects in the Scene
          */
-        [[nodiscard]] unsigned int getGameObjectAmount() const;
+        [[nodiscard]] std::size_t getGameObjectAmount() const;
         /**
          * \brief Get all the GameObjects present in the Scene
          * \return
@@ -174,10 +173,9 @@ namespace obe::Scene
             const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Sprites are present in the Scene
-         * \return An unsigned int containing how many Sprites are present
-         *         in the Scene
+         * \return The amount of Sprites in the Scene
          */
-        [[nodiscard]] unsigned int getSpriteAmount() const;
+        [[nodiscard]] std::size_t getSpriteAmount() const;
         /**
          * \brief Get all the Sprites present in the Scene
          * \return A std::vector of Sprites pointer
@@ -230,7 +228,7 @@ namespace obe::Scene
          * \brief Get how many Colliders are present in the Scene
          * \return The amount of Colliders present in the Scene
          */
-        [[nodiscard]] unsigned int getColliderAmount() const;
+        [[nodiscard]] std::size_t getColliderAmount() const;
         /**
          * \brief Get all the pointers of the Colliders in the Scene
          * \return A std::vector containing all the pointers of the Colliders

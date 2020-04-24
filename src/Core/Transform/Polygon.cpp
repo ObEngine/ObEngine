@@ -5,14 +5,14 @@
 
 namespace obe::Transform
 {
-    PolygonPoint::PolygonPoint(Polygon& parent, unsigned index)
+    PolygonPoint::PolygonPoint(Polygon& parent, std::size_t index)
         : m_parent(parent)
         , rw_index(index)
     {
     }
 
     PolygonPoint::PolygonPoint(
-        Polygon& parent, unsigned index, const Transform::UnitVector& position)
+        Polygon& parent, std::size_t index, const Transform::UnitVector& position)
         : PolygonPoint(parent, index)
     {
         this->x = position.x;
@@ -85,7 +85,7 @@ namespace obe::Transform
     {
     }
 
-    unsigned int Polygon::getPointsAmount() const
+    std::size_t Polygon::getPointsAmount() const
     {
         return m_points.size();
     }
@@ -114,7 +114,7 @@ namespace obe::Transform
                 = position.to<Transform::Units::SceneUnits>();
             int closestPoint = 0;
             double tiniestDist = -1;
-            for (unsigned int i = 0; i < m_points.size(); i++)
+            for (std::size_t i = 0; i < m_points.size(); i++)
             {
                 const double currentPointDist = m_points[i]->distance(pVec);
                 if ((tiniestDist == -1 || tiniestDist > currentPointDist)
@@ -187,8 +187,8 @@ namespace obe::Transform
             return sqrt(lineDiff.x * lineDiff.x + lineDiff.y * lineDiff.y);
         };
         double shortestDistance = -1;
-        unsigned int shortestIndex = 0;
-        for (unsigned int i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size();
+        std::size_t shortestIndex = 0;
+        for (std::size_t i = 0, j = getAllPoints().size() - 1; i < getAllPoints().size();
              j = i++)
         {
             const double currentDistance
@@ -229,7 +229,7 @@ namespace obe::Transform
         double signedArea = 0.0;
         double x0, y0, x1, y1, a;
 
-        unsigned int i;
+        std::size_t i;
         for (i = 0; i < m_points.size() - 1; ++i)
         {
             x0 = m_points[i]->x;
@@ -298,7 +298,7 @@ namespace obe::Transform
 
     PolygonSegment Polygon::getSegment(const point_index_t segment)
     {
-        unsigned int p2 = segment + 1;
+        point_index_t p2 = segment + 1;
         if (segment == m_points.size() - 1)
             p2 = 0;
         return PolygonSegment(this->get(segment), this->get(p2));

@@ -36,8 +36,8 @@ namespace obe::Animation::Exceptions
     class AnimationTextureIndexOverflow : public Exception
     {
     public:
-        AnimationTextureIndexOverflow(std::string_view animation, unsigned int index,
-            unsigned int maximum, DebugInfo info)
+        AnimationTextureIndexOverflow(std::string_view animation, std::size_t index,
+            std::size_t maximum, DebugInfo info)
             : Exception("AnimationTextureIndexOverflow", info)
         {
             this->error("Tried to access Texture of Animation '{}' at index {} when it "
@@ -50,7 +50,7 @@ namespace obe::Animation::Exceptions
     {
     public:
         AnimationGroupTextureIndexOverflow(std::string_view animationGroup,
-            unsigned int index, unsigned int maximum, DebugInfo info)
+            std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception("AnimationGroupTextureIndexOverflow", info)
         {
             this->error(

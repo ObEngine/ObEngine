@@ -168,20 +168,20 @@ namespace obe::Graphics::Canvas
         }
         std::vector<::Bezier::Bezier<3>> bezierCurves;
         bezierCurves.reserve((controlPoints.size() - 1) / 3);
-        for (unsigned int i = 3; i < controlPoints.size(); i += 3)
+        for (std::size_t i = 3; i < controlPoints.size(); i += 3)
         {
             auto bezierPoints = std::vector<::Bezier::Point>(
                 controlPoints.begin() + (i - 3), controlPoints.begin() + (i + 1));
             bezierCurves.push_back(bezierPoints);
         }
-        const unsigned int maximum = bezierCurves.size() * precision;
+        const std::size_t maximum = bezierCurves.size() * precision;
         std::vector<sf::Vertex> vertices;
         vertices.reserve(maximum);
 
-        unsigned int curveIndex = 0;
+        std::size_t curveIndex = 0;
         for (::Bezier::Bezier<3>& bezier : bezierCurves)
         {
-            for (unsigned int i = 0; i < (precision % 2 ? precision : precision + 1); i++)
+            for (std::size_t i = 0; i < (precision % 2 ? precision : precision + 1); i++)
             {
                 double t = static_cast<double>(i) / precision;
                 double tc = fmod(t * 4, 4);

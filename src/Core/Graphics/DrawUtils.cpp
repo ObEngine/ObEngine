@@ -45,7 +45,7 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
         polyPt.setRadius(pointRadius);
         polyPt.setPointCount(100);
         polyPt.setFillColor(pointColor);
-        for (unsigned int i = 0; i < points.size(); i++)
+        for (std::size_t i = 0; i < points.size(); i++)
         {
             const Transform::UnitVector& point1
                 = points[i].to<Transform::Units::ScenePixels>();
@@ -60,7 +60,7 @@ namespace obe::Graphics::Utils // <REVISION> Move to Utils/ ?
                     surface, point1.x, point1.y, point2.x, point2.y, 2, currentLineColor);
             }
         }
-        for (unsigned int i = 0; i < points.size(); i++)
+        for (std::size_t i = 0; i < points.size(); i++)
         {
             const Transform::UnitVector& point1
                 = points[i].to<Transform::Units::ScenePixels>();

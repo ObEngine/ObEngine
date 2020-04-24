@@ -43,12 +43,18 @@ namespace obe::System
         return splitPath.back();
     }
 
-    Path Path::getPath(const unsigned int index)
+    Path Path::getPath(const std::size_t index) const
     {
         if (index < m_mounts.size())
             return Path(m_mounts[index].basePath).add(m_path);
-        throw aube::ErrorHandler::Raise("ObEngine.System.Path.UnknownPathAtIndex",
-            { { "index", std::to_string(index) }, { "path", m_path } });
+        std::vector<std::string> mountNames;
+        mountNames.reserve(m_mounts.size());
+        for (const auto& mount : m_mounts)
+        {
+            mountNames.push_back(mount.basePath);
+        }
+        throw Exceptions::MountablePathIndexOverflow(
+            index, m_mounts.size(), mountNames, EXC_INFO);
     }
 
     std::string Path::find(PathType pathType) const

@@ -82,11 +82,11 @@ namespace obe::Animation
         std::string m_name;
 
         Time::TimeUnit m_clock = 0;
-        unsigned int m_delay = 0;
-        unsigned int m_sleep = 0;
+        Time::TimeUnit m_delay = 0;
+        Time::TimeUnit m_sleep = 0;
 
         std::vector<std::vector<std::string>> m_code;
-        unsigned int m_codeIndex = 0;
+        std::size_t m_codeIndex = 0;
         bool m_feedInstructions = true;
 
         std::vector<Graphics::Texture> m_textures;
@@ -136,9 +136,9 @@ namespace obe::Animation
          * \brief Get the default delay of the Animation.
          *        The delay will be transferred to AnimationGroup children if not
          *        specified.
-         * \return The default delay of the Animation in milliseconds.
+         * \return The default delay of the Animation in seconds.
          */
-        [[nodiscard]] unsigned int getDelay() const noexcept;
+        [[nodiscard]] Time::TimeUnit getDelay() const noexcept;
         /**
          * \brief Get AnimationGroup pointer by groupName.
          *        It will throws a

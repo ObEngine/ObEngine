@@ -358,8 +358,8 @@ namespace obe::Graphics::Shapes
         operator sf::ConvexShape&();
         operator const sf::ConvexShape&() const;
 
-        void setPointPosition(unsigned int index, const Transform::UnitVector& position);
-        Transform::UnitVector getPointPosition(unsigned int index) const;
+        void setPointPosition(std::size_t index, const Transform::UnitVector& position);
+        Transform::UnitVector getPointPosition(std::size_t index) const;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };

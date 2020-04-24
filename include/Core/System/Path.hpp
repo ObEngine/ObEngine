@@ -67,7 +67,7 @@ namespace obe::System
          * \param index Index of the BasePath to use
          * \return The full path based on the current path and the BasePath at index
          */
-        Path getPath(unsigned int index);
+        Path getPath(std::size_t index) const;
         /**
          * \brief Finds the most prioritized file corresponding to the Path
          * \return The full path to the most prioritized file
@@ -97,7 +97,7 @@ namespace obe::System
         for (const MountablePath& mountedPath : m_mounts)
         {
             std::string loadPath = mountedPath.basePath
-                + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+                + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path;
             if (Utils::File::fileExists(loadPath)
                 || Utils::File::directoryExists(loadPath))
             {
@@ -123,7 +123,7 @@ namespace obe::System
         for (const MountablePath& mountedPath : m_mounts)
         {
             std::string loadPath = mountedPath.basePath
-                + ((mountedPath.basePath != "") ? "/" : "") + this->m_path;
+                + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path;
             if (Utils::File::fileExists(loadPath)
                 || Utils::File::directoryExists(loadPath))
             {

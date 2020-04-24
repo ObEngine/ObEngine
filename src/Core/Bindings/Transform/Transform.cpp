@@ -108,8 +108,8 @@ namespace obe::Transform::Bindings
             = TransformNamespace.new_usertype<obe::Transform::PolygonPoint>(
                 "PolygonPoint", sol::call_constructor,
                 sol::constructors<obe::Transform::PolygonPoint(
-                                      obe::Transform::Polygon&, unsigned int),
-                    obe::Transform::PolygonPoint(obe::Transform::Polygon&, unsigned int,
+                                      obe::Transform::Polygon&, std::size_t),
+                    obe::Transform::PolygonPoint(obe::Transform::Polygon&, std::size_t,
                         const obe::Transform::UnitVector&)>(),
                 sol::base_classes, sol::bases<obe::Transform::UnitVector>());
         bindPolygonPoint["remove"] = &obe::Transform::PolygonPoint::remove;

@@ -23,7 +23,9 @@ namespace obe::System
             return "middle";
         if (button == sf::Mouse::Button::Right)
             return "right";
-        throw aube::ErrorHandler::Raise("obe.System.Cursor.InvalidButtonEnumValue");
+        const int enumValue
+            = static_cast<std::underlying_type_t<sf::Mouse::Button>>(button);
+        throw Exceptions::InvalidMouseButtonEnumValue(enumValue, EXC_INFO);
     }
 
     Cursor::Cursor(System::Window& window, Triggers::TriggerManager& triggers)
