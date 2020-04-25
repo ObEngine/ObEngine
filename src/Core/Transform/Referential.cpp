@@ -1,3 +1,4 @@
+#include <Transform/Exceptions.hpp>
 #include <Transform/Referential.hpp>
 
 #include <array>
@@ -5,7 +6,6 @@
 #include <regex>
 
 #include <fmt/format.h>
-#include <vili/ErrorHandler.hpp>
 
 namespace obe::Transform
 {
@@ -156,9 +156,7 @@ namespace obe::Transform
         {
             return Referential(std::stod(regMatch[1]), std::stod(regMatch[3]));
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Transform.Referential.UnknownReferential",
-            { { "referential", ref } });
+        throw Exceptions::UnknownReferential(ref, EXC_INFO);
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)

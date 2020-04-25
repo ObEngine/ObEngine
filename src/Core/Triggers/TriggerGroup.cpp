@@ -1,6 +1,5 @@
-#include <vili/ErrorHandler.hpp>
-
 #include <Debug/Logger.hpp>
+#include <Triggers/Exceptions.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Triggers/TriggerManager.hpp>
 
@@ -20,8 +19,8 @@ namespace obe::Triggers
         {
             return m_triggerMap[triggerName];
         }
-        throw aube::ErrorHandler::Raise("ObEngine.Triggers.TriggerGroup.UnknownTrigger",
-            { { "function", "get" }, { "trigger", triggerName }, { "group", m_name } });
+        throw Exceptions::UnknownTrigger(
+            m_fromNsp, m_name, triggerName, this->getTriggersNames(), EXC_INFO);
     }
 
     TriggerGroup& TriggerGroup::add(const std::string& triggerName)
@@ -39,10 +38,10 @@ namespace obe::Triggers
         if (m_triggerMap.find(triggerName) != m_triggerMap.end())
             m_triggerMap.erase(triggerName);
         else
-            throw aube::ErrorHandler::Raise(
-                "ObEngine.Triggers.TriggerGroup.UnknownTrigger",
-                { { "function", "remove" }, { "trigger", triggerName },
-                    { "group", m_name } });
+        {
+            throw Exceptions::UnknownTrigger(
+                m_fromNsp, m_name, triggerName, this->getTriggersNames(), EXC_INFO);
+        }
         return *this;
     }
 
@@ -72,11 +71,9 @@ namespace obe::Triggers
 
     std::vector<std::string> TriggerGroup::getTriggersNames()
     {
-        std::vector<std::string> returnVec;
-        for (auto it = m_triggerMap.begin(); it != m_triggerMap.end(); ++it)
-        {
-            returnVec.push_back(it->first);
-        }
+        std::vector<std::string> returnVec(m_triggerMap.size());
+        std::transform(m_triggerMap.begin(), m_triggerMap.end(), returnVec.begin(),
+            [](const auto& pair) { return pair.first; });
         return returnVec;
     }
 

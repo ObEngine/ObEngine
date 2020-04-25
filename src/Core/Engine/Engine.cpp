@@ -128,10 +128,12 @@ namespace obe::Engine
         Debug::Log->info("Log Level {}", logLevel);
     }
 
-    void Engine::clean()
+    void Engine::clean() const
     {
         if (t_game)
+        {
             t_game->trigger("End");
+        }
         if (m_triggers)
             m_triggers->update();
         if (m_scene)
@@ -142,13 +144,15 @@ namespace obe::Engine
         Script::GameObjectDatabase::Clear();
         if (m_window)
             m_window->close();
+    }
 
+    void Engine::purge() noexcept
+    {
         m_window.reset();
         m_cursor.reset();
         m_framerate.reset();
         m_input.reset();
         m_scene.reset();
-
         t_game.reset();
     }
 
@@ -183,6 +187,19 @@ namespace obe::Engine
     {
     }
 
+    Engine::~Engine()
+    {
+        try
+        {
+            this->clean();
+        }
+        catch (Exception& e)
+        {
+            Debug::Log->error("Failed to properly clean the engine :\n{}", e.what());
+        }
+        this->purge();
+    }
+
     void Engine::init()
     {
         this->initConfig();
@@ -197,11 +214,6 @@ namespace obe::Engine
         this->initResources();
         this->initScene();
         m_initialized = true;
-    }
-
-    Engine::~Engine()
-    {
-        this->clean();
     }
 
     void Engine::run()

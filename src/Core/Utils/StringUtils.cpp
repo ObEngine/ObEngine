@@ -183,4 +183,25 @@ namespace obe::Utils::String
 
         return lev_dist[min_size];
     }
+
+    std::vector<std::string> sortByDistance(const std::string& source,
+        const std::vector<std::string>& words, std::size_t limit)
+    {
+        std::vector<std::string> sortedByDistance = words;
+        std::sort(sortedByDistance.begin(), sortedByDistance.end(),
+            [source](const std::string& s1, const std::string& s2) {
+                return Utils::String::distance(s1, source)
+                    < Utils::String::distance(s2, source);
+            });
+        if (limit)
+            return std::vector<std::string>(
+                sortedByDistance.begin(), sortedByDistance.begin() + limit);
+        else
+            return sortedByDistance;
+    }
+
+    std::string quote(const std::string& source)
+    {
+        return "\"" + source + "\"";
+    }
 } // namespace obe::Utils::String

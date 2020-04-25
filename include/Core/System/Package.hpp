@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 /**
  * \brief Various functions to manipulate Packages
@@ -19,6 +20,7 @@ namespace obe::System::Package
      * \return true if the Package exists, false otherwise.
      */
     bool PackageExists(const std::string& packageName);
+    std::vector<std::string> ListPackages();
     /**
      * \brief Installs a Package
      * \param packageName Is the name of the .opaque file located in Package/

@@ -121,4 +121,9 @@ namespace obe::Utils::String
     bool endsWith(const std::string& string, const std::string& search);
 
     std::size_t distance(std::string_view source, std::string_view target);
+
+    std::vector<std::string> sortByDistance(const std::string& source,
+        const std::vector<std::string>& words, std::size_t limit = 0);
+
+    std::string quote(const std::string& source);
 } // namespace obe::Utils::String

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 /**
  * \brief Various functions to work with Workspaces
@@ -28,4 +29,5 @@ namespace obe::System::Workspace
      *         otherwise.
      */
     bool Load(const std::string& workspaceName, unsigned int priority = 1);
+    std::vector<std::string> ListWorkspaces();
 } // namespace obe::System::Workspace

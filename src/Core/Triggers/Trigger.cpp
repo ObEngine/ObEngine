@@ -1,4 +1,5 @@
 #include <Script/GameObject.hpp>
+#include <Triggers/Exceptions.hpp>
 #include <Triggers/Trigger.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Utils/StringUtils.hpp>
@@ -20,8 +21,8 @@ namespace obe::Triggers
         {
             const auto errObj = makeCallbackResult.get<sol::error>();
             const auto errMsg = errObj.what();
-            Debug::Log->error("<Trigger> MakeCallback Error : {}", errMsg);
-            throw aube::ErrorHandler::Raise("MakeCallback Error");
+            throw Exceptions::CallbackCreationError(
+                triggerTableName, env.id, env.callback, errMsg, EXC_INFO);
         }
         sol::protected_function callbackWithArgs
             = makeCallbackResult.get<sol::protected_function>();
@@ -143,20 +144,13 @@ namespace obe::Triggers
                 {
                     const auto errObj = result.get<sol::error>();
                     const std::string errMsg = errObj.what();
-                    throw aube::ErrorHandler::Raise("obe.Triggers.ExecutionError",
-                        { { "trigger",
-                              this->getNamespace() + "." + this->getGroup() + "."
-                                  + this->getName() },
-                            { "callback", rEnv.callback }, { "environment", rEnv.id },
-                            { "error",
-                                "\n        \""
-                                    + Utils::String::replace(errMsg, "\n", "\n        ")
-                                    + "\"" } });
+                    throw Exceptions::TriggerExecutionError(this->getNamespace() + "."
+                            + this->getGroup() + "." + this->getName(),
+                        rEnv.id, rEnv.callback,
+                        "\n        \""
+                            + Utils::String::replace(errMsg, "\n", "\n        ") + "\"",
+                        EXC_INFO);
                 }
-                // m_lua.script(rEnv.callback + "()", rEnv.environment);
-                /*Script::ScriptEngine("LuaCore.EnvFuncInjector("
-                    + std::to_string(rEnv.envIndex) + ", \""
-                    + this->getTriggerLuaTableName() + "\")");*/
             }
         }
         m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"].set(

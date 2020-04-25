@@ -38,16 +38,12 @@ namespace obe::Scene::Exceptions
         {
             this->error("GameObject with id '{}' does not exists inside Scene '{}'",
                 objectId, sceneFile);
-            std::vector<std::string> sortedByDistance = allObjectIds;
-            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-                [objectId](const std::string& s1, const std::string& s2) {
-                    return Utils::String::distance(s1, objectId)
-                        < Utils::String::distance(s2, objectId);
-                });
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(objectId.data(), allObjectIds, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
             this->hint("Try one of the GameObjects with id ({}...)",
-                fmt::join(
-                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                    ", "));
+                fmt::join(suggestions, ", "));
         }
     };
 
@@ -74,16 +70,12 @@ namespace obe::Scene::Exceptions
         {
             this->error("Sprite with id '{}' does not exists inside Scene '{}'", spriteId,
                 sceneFile);
-            std::vector<std::string> sortedByDistance = allSpritesIds;
-            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-                [spriteId](const std::string& s1, const std::string& s2) {
-                    return Utils::String::distance(s1, spriteId)
-                        < Utils::String::distance(s2, spriteId);
-                });
-            this->hint("Try one of the Sprites with id ({}...)",
-                fmt::join(
-                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                    ", "));
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(spriteId.data(), allSpritesIds, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
+            this->hint(
+                "Try one of the Sprites with id ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -96,16 +88,12 @@ namespace obe::Scene::Exceptions
         {
             this->error("Collider with id '{}' does not exists inside Scene '{}'",
                 colliderId, sceneFile);
-            std::vector<std::string> sortedByDistance = allCollidersIds;
-            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-                [colliderId](const std::string& s1, const std::string& s2) {
-                    return Utils::String::distance(s1, colliderId)
-                        < Utils::String::distance(s2, colliderId);
-                });
-            this->hint("Try one of the Colliders with id ({}...)",
-                fmt::join(
-                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                    ", "));
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(colliderId.data(), allCollidersIds, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
+            this->hint(
+                "Try one of the Colliders with id ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
