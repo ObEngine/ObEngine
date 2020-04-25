@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vili/ErrorHandler.hpp>
-
 #include <Debug/Logger.hpp>
 #include <System/Exceptions.hpp>
 #include <System/Loaders.hpp>

@@ -10,11 +10,12 @@ namespace obe::System::Workspace
     std::string GetWorkspaceLocation(const std::string& workspaceName)
     {
         if (WorkspaceExists(workspaceName))
+        {
             return (vili::ViliParser("Workspace/Workspaces.vili")
                         ->at<vili::DataNode>(workspaceName, "path")
                         .get<std::string>());
-        throw aube::ErrorHandler::Raise("ObEngine.Workspace.Workspace.UnknownWorkspace",
-            { { "workspace", workspaceName } });
+        }
+        throw Exceptions::UnknownWorkspace(workspaceName, ListWorkspaces(), EXC_INFO);
     }
 
     bool WorkspaceExists(const std::string& workspaceName)
@@ -33,7 +34,16 @@ namespace obe::System::Workspace
                 GetWorkspaceLocation(workspaceName), priority));
             return true;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.System.Workspace.UnknownWorkspace",
-            { { "workspace", workspaceName } });
+        throw Exceptions::UnknownWorkspace(workspaceName, ListWorkspaces(), EXC_INFO);
+    }
+
+    std::vector<std::string> ListWorkspaces()
+    {
+        const vili::ViliParser workspaces("Workspace/Workspaces.vili");
+        auto nodes = workspaces->getAll(vili::NodeType::ComplexNode);
+        std::vector<std::string> workspacesNames;
+        std::transform(nodes.begin(), nodes.end(), std::back_inserter(workspacesNames),
+            [](const vili::Node* node) { return node->getId(); });
+        return workspacesNames;
     }
 } // namespace obe::System::Workspace

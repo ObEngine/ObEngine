@@ -1,5 +1,4 @@
-#include <vili/ErrorHandler.hpp>
-
+#include <Transform/Exceptions.hpp>
 #include <Transform/Units.hpp>
 
 namespace obe::Transform
@@ -16,8 +15,7 @@ namespace obe::Transform
             return Units::ScenePixels;
         if (unit == "SceneUnits")
             return Units::SceneUnits;
-        throw aube::ErrorHandler::Raise(
-            "obe.Transform.Units.UnknownStringUnit", { { "unit", unit } });
+        throw Exceptions::UnknownUnit(unit, EXC_INFO);
     }
 
     std::string unitsToString(Units unit)
@@ -35,6 +33,7 @@ namespace obe::Transform
         case Units::SceneUnits:
             return "SceneUnits";
         }
-        throw aube::ErrorHandler::Raise("obe.Transform.Units.UnknownUnit");
+        const int enumValue = static_cast<std::underlying_type_t<Units>>(unit);
+        throw Exceptions::InvalidUnitsEnumValue(enumValue, EXC_INFO);
     }
 } // namespace obe::Transform

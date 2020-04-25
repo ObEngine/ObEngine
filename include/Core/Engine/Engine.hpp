@@ -59,11 +59,13 @@ namespace obe::Engine
         void render();
 
         // Cleaning
-        void clean();
+        void clean() const;
+        void purge() noexcept;
 
     public:
         Engine();
         ~Engine();
+
         void init();
         void run();
 

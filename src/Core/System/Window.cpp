@@ -31,10 +31,6 @@ namespace obe::System
             else
                 conf = &windowConfig.root();
         }
-        else
-        {
-            throw aube::ErrorHandler::Raise("obe.System.Window.WrongContext");
-        }
 
         if (conf->contains("width"))
         {

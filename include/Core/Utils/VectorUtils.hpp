@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vili/ErrorHandler.hpp>
-
 /**
  * \brief Functions to work with vectors (C++ Arrays)
  */

@@ -16,8 +16,7 @@ namespace obe::System::Package
                         ->at<vili::DataNode>(packageName, "path")
                         .get<std::string>());
         }
-        throw aube::ErrorHandler::Raise("ObEngine.System.Package.UnknownPackage",
-            { { "function", "GetPackageLocation" }, { "package", packageName } });
+        throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);
     }
 
     bool PackageExists(const std::string& packageName)
@@ -26,13 +25,26 @@ namespace obe::System::Package
                     ->contains(vili::NodeType::ComplexNode, packageName));
     }
 
+    std::vector<std::string> ListPackages()
+    {
+        const vili::ViliParser packages("Package/Packages.vili");
+        auto nodes = packages->getAll(vili::NodeType::ComplexNode);
+        std::vector<std::string> packageNames;
+        std::transform(nodes.begin(), nodes.end(), std::back_inserter(packageNames),
+            [](const vili::Node* node) { return node->getId(); });
+        return packageNames;
+    }
+
     bool Install(const std::string& packageName)
     {
         Debug::Log->info("<Package> Installing Package '{0}'", packageName);
         if (!Utils::Vector::contains(
                 packageName + ".opaque", Utils::File::getFileList("Package")))
-            throw aube::ErrorHandler::Raise("ObEngine.System.Package.CantFindPackage",
-                { { "package", packageName } });
+        {
+            throw Exceptions::PackageFileNotFound(
+                fmt::format("Package/{}.opaque", packageName), EXC_INFO);
+        }
+
         if (!PackageExists(packageName))
         {
             elz::extractFile("Package/" + packageName + ".opaque", "Opaque.vili",
@@ -55,8 +67,7 @@ namespace obe::System::Package
             packages.writeFile("Package/Packages.vili");
             return true;
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.System.Package.AlreadyInstalled", { { "package", packageName } });
+        throw Exceptions::PackageAlreadyInstalled(packageName, EXC_INFO);
     }
 
     bool Load(const std::string& packageName, const unsigned int priority)
@@ -69,7 +80,6 @@ namespace obe::System::Package
                 MountablePathType::Package, GetPackageLocation(packageName), priority));
             return true;
         }
-        throw aube::ErrorHandler::Raise("ObEngine.System.Package.UnknownPackage",
-            { { "function", "Load" }, { "package", packageName } });
+        throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);
     }
 } // namespace obe::System::Package

@@ -17,11 +17,6 @@
 #include <System/Plugin.hpp>
 #include <Transform/UnitVector.hpp>
 
-void LoadErrors()
-{
-    aube::LoadErrors("Data/Errors.vili");
-}
-
 using namespace obe;
 
 int main(int argc, char** argv)

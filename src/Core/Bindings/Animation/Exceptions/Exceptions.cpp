@@ -29,7 +29,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "AnimationTextureIndexOverflow", sol::call_constructor,
                 sol::constructors<
                     obe::Animation::Exceptions::AnimationTextureIndexOverflow(
-                        std::string_view, std::size_t,std::size_t, obe::DebugInfo)>(),
+                        std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassNoSelectedAnimation(sol::state_view state)

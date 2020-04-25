@@ -1,5 +1,3 @@
-#include <vili/ErrorHandler.hpp>
-
 #include <Input/Exceptions.hpp>
 #include <Input/InputType.hpp>
 

@@ -40,16 +40,12 @@ namespace obe::Input::Exceptions
             : Exception("UnknownInputAction", info)
         {
             this->error("InputAction named '{}' does not exists", actionName);
-            std::vector<std::string> sortedByDistance = existingActions;
-            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-                [actionName](const std::string& s1, const std::string& s2) {
-                    return Utils::String::distance(s1, actionName)
-                        < Utils::String::distance(s2, actionName);
-                });
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(actionName.data(), existingActions, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
             this->hint("Try one of the following InputAction : ({}...)",
-                fmt::join(
-                    std::vector<std::string>(sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                    ", "));
+                fmt::join(suggestions, ", "));
         }
     };
 
@@ -61,16 +57,12 @@ namespace obe::Input::Exceptions
             : Exception("UnknownInputButton", info)
         {
             this->error("InputButton named '{}' does not exists", buttonName);
-            std::vector<std::string> sortedByDistance = existingButtons;
-            std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-                [buttonName](const std::string& s1, const std::string& s2) {
-                    return Utils::String::distance(s1, buttonName)
-                        < Utils::String::distance(s2, buttonName);
-                });
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(buttonName.data(), existingButtons, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                &Utils::String::quote);
             this->hint("Try one of the following InputButton : ({}...)",
-                fmt::join(std::vector<std::string_view>(
-                              sortedByDistance.begin(), sortedByDistance.begin() + 5),
-                    ", "));
+                fmt::join(suggestions, ", "));
         }
     };
 

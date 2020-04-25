@@ -95,7 +95,8 @@ function LuaCore.MakeCallback(trigger, callback, callbackName)
     local funcCall = callbackName .. "(" .. table.concat(argStringList, ", ") ..
                          ")";
 
-    local func, err = load("return function() " .. funcCall .. " end", callbackName, "t", _ENV);
+    local func, err = load("return function() " .. funcCall .. " end",
+                           callbackName, "t", _ENV);
     if func then
         local ok, callbackGetter = pcall(func);
         if ok then

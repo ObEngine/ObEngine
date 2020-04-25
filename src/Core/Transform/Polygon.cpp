@@ -1,4 +1,5 @@
 #include <Debug/Logger.hpp>
+#include <Transform/Exceptions.hpp>
 #include <Transform/Polygon.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/VectorUtils.hpp>
@@ -143,10 +144,7 @@ namespace obe::Transform
             }
             return *m_points[closestPoint];
         }
-        throw aube::ErrorHandler::Raise(
-            "ObEngine.Collision.PolygonalCollider.NotEnoughPoints",
-            { { "points", std::to_string(m_points.size()) },
-                { "function", "findClosestPoint" } });
+        throw Exceptions::PolygonNotEnoughPoints(this, m_points.size(), EXC_INFO);
     }
 
     PolygonSegment Polygon::findClosestSegment(const Transform::UnitVector& position)
@@ -384,8 +382,8 @@ namespace obe::Transform
         if (i < m_points.size())
             return *m_points[i];
         else
-            throw aube::ErrorHandler::Raise("obe.Transform.Polygon.IndexOverflow",
-                { { "method", "operator[]" }, { "index", std::to_string(i) } });
+            throw Exceptions::PolygonPointIndexOverflow(
+                this, i, m_points.size(), EXC_INFO);
     }
 
     Rect Polygon::getBoundingBox() const
