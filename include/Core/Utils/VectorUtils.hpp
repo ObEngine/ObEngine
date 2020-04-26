@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 /**
  * \brief Functions to work with vectors (C++ Arrays)
  */

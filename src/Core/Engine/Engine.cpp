@@ -221,7 +221,7 @@ namespace obe::Engine
         if (!m_initialized)
             throw Exceptions::UnitializedEngine(EXC_INFO);
 
-        std::string bootScript = "boot.lua"_fs;
+        const std::string bootScript = "boot.lua"_fs;
         if (bootScript.empty())
             throw Exceptions::BootScriptMissing(
                 System::MountablePath::StringPaths(), EXC_INFO);
@@ -234,7 +234,7 @@ namespace obe::Engine
             throw Exceptions::BootScriptLoadingError(errObj.what(), EXC_INFO);
         }
         m_window->create();
-        sol::protected_function bootFunction
+        const sol::protected_function bootFunction
             = m_lua["Game"]["Start"].get<sol::protected_function>();
 
         const sol::protected_function_result bootResult = bootFunction.call();
