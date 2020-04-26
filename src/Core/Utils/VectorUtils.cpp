@@ -1,4 +1,5 @@
 #include <Utils/VectorUtils.hpp>
+#include <string>
 
 namespace obe::Utils::Vector
 {
