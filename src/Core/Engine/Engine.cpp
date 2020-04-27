@@ -167,11 +167,17 @@ namespace obe::Engine
                 m_window->close();
                 break;
             case sf::Event::MouseButtonPressed:
+                [[fallthrough]];
             case sf::Event::MouseButtonReleased:
+                [[fallthrough]];
             case sf::Event::JoystickButtonPressed:
+                [[fallthrough]];
             case sf::Event::JoystickButtonReleased:
+                [[fallthrough]];
             case sf::Event::JoystickMoved:
+                [[fallthrough]];
             case sf::Event::KeyReleased:
+                [[fallthrough]];
             case sf::Event::KeyPressed:
                 m_input->requireRefresh();
                 if (event.key.code == sf::Keyboard::Escape)
