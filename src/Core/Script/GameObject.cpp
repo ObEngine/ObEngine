@@ -23,10 +23,9 @@ namespace obe::Script
         throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
-    vili::ViliParser GameObjectDatabase::allDefinitions;
-    vili::ViliParser GameObjectDatabase::allRequires;
-    vili::ComplexNode* GameObjectDatabase::GetRequirementsForGameObject(
-        const std::string& type)
+    vili::node GameObjectDatabase::allDefinitions;
+    vili::node GameObjectDatabase::allRequires;
+    vili::node& GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
     {
         if (!allRequires.root().contains(type))
         {
@@ -191,7 +190,8 @@ namespace obe::Script
             {
                 const vili::Node* sourceNode = obj.at("Script").get("source");
                 if (sourceNode->getType() == vili::NodeType::DataNode
-                    && obj.at("Script").getDataNode("source").getDataType() == vili::DataType::String)
+                    && obj.at("Script").getDataNode("source").getDataType()
+                        == vili::DataType::String)
                 {
                     loadSource(obj.at("Script").getDataNode("source").get<std::string>());
                 }

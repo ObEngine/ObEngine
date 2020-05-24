@@ -16,24 +16,24 @@ namespace obe::Time
         m_needToRender = false;
     }
 
-    void FramerateManager::configure(vili::ComplexNode& config)
+    void FramerateManager::configure(vili::node& config)
     {
-        m_limitFPS = (config.contains(vili::NodeType::DataNode, "framerateLimit"))
-            ? config.at<vili::DataNode>("framerateLimit")
-            : true;
-        m_framerateTarget = (config.contains(vili::NodeType::DataNode, "framerateTarget"))
-            ? config.at<vili::DataNode>("framerateTarget")
-            : 60;
-        m_vsyncEnabled = (config.contains(vili::NodeType::DataNode, "vsync"))
-            ? config.at<vili::DataNode>("vsync")
-            : true;
-        m_syncUpdateRender
-            = (config.contains(vili::NodeType::DataNode, "syncUpdateToRender"))
-            ? config.at<vili::DataNode>("syncUpdateToRender")
-            : true;
+        if (!config["framerateTarget"].is_null())
+        {
+            m_limitFramerate = true;
+            m_framerateTarget = config["framerateTarget"];
+        }
+        if (!config["vsync"].is_null())
+        {
+            m_vsyncEnabled = config["vsync"];
+        }
+        if (!config["syncUpdateToRender"].is_null())
+        {
+            m_syncUpdateRender = config["syncUpdateToRender"];
+        }
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
         Debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
-            m_framerateTarget, (m_limitFPS) ? "capped" : "uncapped",
+            m_framerateTarget, (m_limitFramerate) ? "capped" : "uncapped",
             (m_vsyncEnabled) ? "enabled" : "disabled",
             (m_syncUpdateRender) ? "enabled" : "disabled");
 
@@ -44,7 +44,7 @@ namespace obe::Time
     {
         const sf::Time timeBuffer = m_deltaClock.restart();
         m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) * microseconds;
-        if (m_limitFPS)
+        if (m_limitFramerate)
         {
             if (epoch() - m_frameLimiterClock > 1)
             {
@@ -84,7 +84,7 @@ namespace obe::Time
 
     bool FramerateManager::isFramerateLimited() const
     {
-        return m_limitFPS;
+        return m_limitFramerate;
     }
 
     unsigned int FramerateManager::getFramerateTarget() const
@@ -104,7 +104,7 @@ namespace obe::Time
 
     void FramerateManager::limitFramerate(const bool state)
     {
-        m_limitFPS = state;
+        m_limitFramerate = state;
     }
 
     void FramerateManager::setFramerateTarget(const unsigned int limit)
@@ -120,6 +120,6 @@ namespace obe::Time
 
     bool FramerateManager::doRender() const
     {
-        return (!m_limitFPS || m_needToRender);
+        return (!m_limitFramerate || m_needToRender);
     }
 } // namespace obe::Time

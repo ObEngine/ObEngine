@@ -129,59 +129,57 @@ namespace obe::Input
         m_allActions.clear();
     }
 
-    void InputManager::configure(vili::ComplexNode& config)
+    void InputManager::configure(vili::node& config)
     {
         std::vector<std::string> alreadyInFile;
-        for (vili::ComplexNode* context : config.getAll<vili::ComplexNode>())
+        for (auto& [contextName, context] : config.items())
         {
-            for (vili::Node* action : context->getAll())
+            for (auto& [actionName, condition] : context.items())
             {
-                if (!this->actionExists(action->getId()))
+                if (!this->actionExists(actionName))
                 {
                     m_allActions.push_back(
-                        std::make_unique<InputAction>(t_actions.get(), action->getId()));
+                        std::make_unique<InputAction>(t_actions.get(), actionName));
                 }
-                else if (!Utils::Vector::contains(action->getId(), alreadyInFile))
+                else if (!Utils::Vector::contains(actionName, alreadyInFile))
                 {
-                    this->getAction(action->getId()).clearConditions();
+                    this->getAction(actionName).clearConditions();
                 }
-                auto inputCondition = [this](InputManager* inputManager,
-                                          vili::Node* action, vili::DataNode* condition) {
-                    InputCondition actionCondition;
-                    InputCombination combination;
-                    try
-                    {
-                        combination
-                            = this->makeCombination(condition->get<std::string>());
-                    }
-                    catch (const Exception& e)
-                    {
-                        throw Exceptions::InvalidInputCombinationCode(
-                            action->getId(), condition->get<std::string>(), EXC_INFO)
-                            .nest(e);
-                    }
+                auto inputCondition
+                    = [this](InputManager* inputManager, const std::string& action,
+                          vili::node& condition) {
+                          InputCondition actionCondition;
+                          InputCombination combination;
+                          try
+                          {
+                              combination = this->makeCombination(condition);
+                          }
+                          catch (const Exception& e)
+                          {
+                              throw Exceptions::InvalidInputCombinationCode(
+                                  action, condition, EXC_INFO)
+                                  .nest(e);
+                          }
 
-                    actionCondition.setCombination(combination);
-                    Debug::Log->debug(
-                        "<InputManager> Associated Key '{0}' for Action '{1}'",
-                        condition->get<std::string>(), action->getId());
-                    inputManager->getAction(action->getId())
-                        .addCondition(actionCondition);
-                };
-                if (action->getType() == vili::NodeType::DataNode)
+                          actionCondition.setCombination(combination);
+                          Debug::Log->debug(
+                              "<InputManager> Associated Key '{0}' for Action '{1}'",
+                              condition, action);
+                          inputManager->getAction(action).addCondition(actionCondition);
+                      };
+                if (condition.is_primitive())
                 {
-                    inputCondition(this, action, static_cast<vili::DataNode*>(action));
+                    inputCondition(this, actionName, condition);
                 }
-                else if (action->getType() == vili::NodeType::ArrayNode)
+                else if (condition.is<vili::array>())
                 {
-                    for (vili::DataNode* condition :
-                        *static_cast<vili::ArrayNode*>(action))
+                    for (vili::node& singleCondition : condition)
                     {
-                        inputCondition(this, action, condition);
+                        inputCondition(this, actionName, singleCondition);
                     }
                 }
-                this->getAction(action->getId()).addContext(context->getId());
-                alreadyInFile.push_back(action->getId());
+                this->getAction(actionName).addContext(contextName);
+                alreadyInFile.push_back(actionName);
             }
         }
         // Add Context keys in real time <REVISION>

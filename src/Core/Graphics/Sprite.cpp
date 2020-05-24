@@ -444,76 +444,75 @@ namespace obe::Graphics
         return m_sprite;
     }
 
-    void Sprite::dump(vili::ComplexNode& target) const
+    vili::node Sprite::dump() const
     {
-        vili::ComplexNode& ser = target.createComplexNode(m_id);
-        ser.createDataNode("path", m_path);
-        ser.createComplexNode("rect");
-        const Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
-        ser.at("rect").createDataNode("x", spritePositionRect.x);
-        ser.at("rect").createDataNode("y", spritePositionRect.y);
-        const Transform::UnitVector spriteSizeRect = this->getSize().to(m_unit);
-        ser.at("rect").createDataNode("w", spriteSizeRect.x);
-        ser.at("rect").createDataNode("h", spriteSizeRect.y);
-        ser.at("rect").createDataNode("unit", Transform::unitsToString(m_unit));
+        vili::node result;
+        result["path"] = m_path;
 
-        ser.createDataNode("rotation", m_angle);
-        ser.createDataNode("layer", m_layer);
-        ser.createDataNode("z-depth", m_zdepth);
-        ser.createDataNode("xTransform", m_positionTransformer.getXTransformerName());
-        ser.createDataNode("yTransform", m_positionTransformer.getYTransformerName());
+        const Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
+        const Transform::UnitVector spriteSizeRect = this->getSize().to(m_unit);
+        result["rect"]
+            = vili::object { { "x", spritePositionRect.x }, { "y", spritePositionRect.y },
+                  { "width", spriteSizeRect.x }, { "height", spriteSizeRect.y },
+                  { "unit", Transform::unitsToString(m_unit) } };
+
+        result["rotation"] = m_angle;
+        result["layer"] = m_layer;
+        result["zdepth"] = m_zdepth;
+        result["transform"]
+            = vili::object { { "x", m_positionTransformer.getXTransformerName() },
+                  { "y", m_positionTransformer.getYTransformerName() } };
+        return result;
     }
 
-    void Sprite::load(vili::ComplexNode& data)
+    void Sprite::load(vili::node& data)
     {
-        std::string spriteXTransformer;
-        std::string spriteYTransformer;
-        const std::string spriteUnits = data.contains(vili::NodeType::ComplexNode, "rect")
-            ? data.at<vili::DataNode>("rect", "unit").get<std::string>()
-            : "SceneUnits";
-        const std::string spritePath = data.contains(vili::NodeType::DataNode, "path")
-            ? data.getDataNode("path").get<std::string>()
-            : "";
+        std::string spriteXTransformer = "Position";
+        std::string spriteYTransformer = "Position";
+
+        const std::string spriteUnits
+            = data["rect"]["unit"].is_null() ? "SceneUnits" : data["rect"]["unit"];
+        std::string spritePath;
+        if (!data["path"].is_null())
+            spritePath = data["path"];
         Transform::UnitVector spritePos(0, 0);
         Transform::UnitVector spriteSize(1, 1);
-        if (data.contains(vili::NodeType::ComplexNode, "rect"))
+        if (!data["rect"].is_null())
         {
             const Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
             spritePos.unit = rectUnit;
-            spritePos.x = data.at<vili::DataNode>("rect", "x").get<double>();
-            spritePos.y = data.at<vili::DataNode>("rect", "y").get<double>();
+            spritePos.x = data["rect"]["x"];
+            spritePos.y = data["rect"]["y"];
             spriteSize.unit = rectUnit;
-            spriteSize.x = data.at<vili::DataNode>("rect", "w").get<double>();
-            spriteSize.y = data.at<vili::DataNode>("rect", "h").get<double>();
+            spriteSize.x = data["rect"]["width"];
+            spriteSize.y = data["rect"]["height"];
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
             spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
         }
-        const double spriteRot = data.contains(vili::NodeType::DataNode, "rotation")
-            ? data.getDataNode("rotation").get<double>()
-            : 0;
-        const int layer = data.contains(vili::NodeType::DataNode, "layer")
-            ? data.getDataNode("layer").get<int>()
-            : 1;
-        const int zdepth = data.contains(vili::NodeType::DataNode, "z-depth")
-            ? data.getDataNode("z-depth").get<int>()
-            : 1;
+        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"];
+        const int layer = data["layer"].is_null() ? 1 : data["layer"].as<vili::integer>();
+        const int zdepth
+            = data["zdepth"].is_null() ? 1 : data["zdepth"].as<vili::integer>();
 
-        const bool antiAliasing = data.contains(vili::NodeType::DataNode, "antiAliasing")
-            ? data.getDataNode("antiAliasing").get<bool>()
-            : m_antiAliasing;
+        const bool antiAliasing = data["antiAliasing"].is_null()
+            ? m_antiAliasing
+            : data["antiAliasing"].as<bool>();
 
-        if (data.contains(vili::NodeType::DataNode, "xTransform"))
-            spriteXTransformer = data.at<vili::DataNode>("xTransform").get<std::string>();
-        else
-            spriteXTransformer = "Position";
-        if (data.contains(vili::NodeType::DataNode, "yTransform"))
-            spriteYTransformer = data.at<vili::DataNode>("yTransform").get<std::string>();
-        else
-            spriteYTransformer = "Position";
+        if (!data["transform"].is_null())
+        {
+            if (!data["transform"]["x"].is_null())
+            {
+                spriteXTransformer = data["transform"]["x"];
+            }
+            if (!data["transform"]["y"].is_null())
+            {
+                spriteYTransformer = data["transform"]["y"];
+            }
+        }
 
         this->setAntiAliasing(antiAliasing);
 
-        if (spritePath != "")
+        if (!spritePath.empty())
             this->loadTexture(spritePath);
         this->setRotation(spriteRot);
         this->setPosition(spritePos);
