@@ -25,8 +25,8 @@ namespace obe::Component
         virtual void inject(unsigned int envIndex) = 0;
         virtual void remove() = 0;
 
-        void dump(vili::ComplexNode& target) const override = 0;
-        void load(vili::ComplexNode& data) override = 0;
+        vili::node dump() const override = 0;
+        void load(vili::node& data) override = 0;
 
         [[nodiscard]] virtual std::string_view type() const = 0;
     };
@@ -47,8 +47,8 @@ namespace obe::Component
         void remove() override;
         void inject(unsigned int envIndex) override;
 
-        void dump(vili::ComplexNode& target) const override = 0;
-        void load(vili::ComplexNode& data) override = 0;
+        vili::node dump() const override = 0;
+        void load(vili::node& data) override = 0;
 
         [[nodiscard]] std::string_view type() const override;
         using Ref = std::reference_wrapper<T>;
