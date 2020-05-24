@@ -105,7 +105,7 @@ namespace obe::Collision
          * \brief Dumps the content of the PolygonalCollider to a ComplexNode
          * \param target ComplexNode where to serialize the PolygonalCollider
          */
-        void dump(vili::ComplexNode& target) const override;
+        vili::node dump() const override;
         /**
          * \brief Gets all the Tags from one of the Lists
          * \param tagType List where you want to get all the Tags from (Tag /
@@ -143,7 +143,7 @@ namespace obe::Collision
          * \brief Loads the PolygonalCollider from a ComplexNode
          * \param data ComplexNode containing the data of the PolygonalCollider
          */
-        void load(vili::ComplexNode& data) override;
+        void load(vili::node& data) override;
         /**
          * \brief Removes a Tag of the Collider
          * \param tagType List you want to remove a Collider from (Tag /

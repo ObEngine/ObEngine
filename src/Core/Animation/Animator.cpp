@@ -5,6 +5,8 @@
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
+#include <vili2/parser/parser.hpp>
+
 using namespace std::string_literals;
 
 namespace obe::Animation
@@ -122,16 +124,12 @@ namespace obe::Animation
         m_path.loadAll(System::Loaders::dirPathLoader, listDir);
         std::vector<std::string> allFiles;
         m_path.loadAll(System::Loaders::filePathLoader, allFiles);
-        vili::ViliParser animatorCfgFile;
-        std::unordered_map<std::string, vili::ComplexNode*> animationParameters;
+        vili::node animatorCfgFile;
+        std::unordered_map<std::string, vili::node> animationParameters;
         if (Utils::Vector::contains("animator.cfg.vili"s, allFiles))
         {
-            m_path.add("animator.cfg.vili")
-                .load(System::Loaders::dataLoader, animatorCfgFile);
-            for (vili::ComplexNode* currentAnim :
-                animatorCfgFile.at("Animator").getAll<vili::ComplexNode>())
-                animationParameters[currentAnim->getId()]
-                    = &animatorCfgFile.at("Animator", currentAnim->getId());
+            animatorCfgFile
+                = vili::parser::from_file(m_path.add("animator.cfg.vili").find());
         }
         for (const auto& directory : listDir)
         {

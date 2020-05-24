@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <vili2/ComplexNode.hpp>
+#include <vili2/node.hpp>
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>
@@ -76,7 +76,7 @@ namespace obe::Input
          * \param config Reference to the vili ComplexAttribute used to
          *        configure the KeyboardManager
          */
-        void configure(vili::ComplexNode& config);
+        void configure(vili::node& config);
         /**
          * \brief Removes a context in use
          * \param context Name of the context to remove

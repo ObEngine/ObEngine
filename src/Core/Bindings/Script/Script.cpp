@@ -45,11 +45,9 @@ namespace obe::Script::Bindings
         bindGameObject["registerTrigger"] = &obe::Script::GameObject::registerTrigger;
         bindGameObject["loadGameObject"] = sol::overload(
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
-                vili::ComplexNode& obj) -> void {
-                return self->loadGameObject(scene, obj);
-            },
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
-                vili::ComplexNode& obj, obe::Engine::ResourceManager* resources) -> void {
+                vili::node& obj) -> void { return self->loadGameObject(scene, obj); },
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
+                obe::Engine::ResourceManager* resources) -> void {
                 return self->loadGameObject(scene, obj, resources);
             });
         bindGameObject["update"] = &obe::Script::GameObject::update;

@@ -318,50 +318,40 @@ namespace obe::Collision
         return false;
     }
 
-    void PolygonalCollider::dump(vili::ComplexNode& target) const
+    vili::node PolygonalCollider::dump() const
     {
-        vili::ComplexNode& ser = target.createComplexNode(m_id);
-        ser.createComplexNode("unit").createDataNode(
-            "unit", Transform::unitsToString(m_unit));
-        vili::ArrayNode& points = ser.createArrayNode("points");
+        vili::node result;
+        result["unit"] = Transform::unitsToString(m_unit);
+        result["points"] = vili::array {};
         for (auto& point : m_points)
         {
             const Transform::UnitVector pVec = point->to(m_unit);
-            points.push(pVec.x);
-            points.push(pVec.y);
+            result["points"].push(vili::object { { "x", pVec.x }, { "y", pVec.y } });
         }
     }
 
-    void PolygonalCollider::load(vili::ComplexNode& data)
+    void PolygonalCollider::load(vili::node& data)
     {
-        const std::string pointsUnit
-            = data.at<vili::DataNode>("unit", "unit").get<std::string>();
+        const std::string pointsUnit = data.at("unit");
         bool completePoint = true;
         double pointBuffer = 0;
         const Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-        for (vili::DataNode* colliderPoint : data.getArrayNode("points"))
+        for (vili::node& colliderPoint : data["points"])
         {
-            if ((completePoint = !completePoint))
-            {
-                const Transform::UnitVector pVector2 = Transform::UnitVector(
-                    pointBuffer, colliderPoint->get<double>(), pBaseUnit);
-                this->addPoint(pVector2);
-            }
-            else
-                pointBuffer = colliderPoint->get<double>();
+            const Transform::UnitVector pVector2 = Transform::UnitVector(
+                colliderPoint["x"], colliderPoint["y"], pBaseUnit);
+            this->addPoint(pVector2);
         }
         this->setWorkingUnit(pBaseUnit);
-        if (data.contains(vili::NodeType::DataNode, "tag"))
-            this->addTag(Collision::ColliderTagType::Tag,
-                data.at<vili::DataNode>("tag").get<std::string>());
-        else if (data.contains(vili::NodeType::ArrayNode, "tags"))
+        if (!data["tag"].is_null())
+            this->addTag(Collision::ColliderTagType::Tag, data.at("tag"));
+        else if (!data["tags"].is_null())
         {
-            for (vili::DataNode* cTag : data.at<vili::ArrayNode>("tags"))
-                this->addTag(Collision::ColliderTagType::Tag, cTag->get<std::string>());
+            for (vili::node& cTag : data.at("tags"))
+                this->addTag(Collision::ColliderTagType::Tag, cTag);
         }
-        if (data.contains(vili::NodeType::DataNode, "accept"))
-            this->addTag(Collision::ColliderTagType::Accepted,
-                data.at<vili::DataNode>("accept").get<std::string>());
+        if (!data["accept"].is_null())
+            this->addTag(Collision::ColliderTagType::Accepted, data.at("accept"));
         else if (data.contains(vili::NodeType::ArrayNode, "accept"))
         {
             for (vili::DataNode* aTag : data.at<vili::ArrayNode>("accept"))

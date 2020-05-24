@@ -29,7 +29,7 @@ namespace obe::Script::DataBridge
      * \param convert The Vili BaseAttribute you want to add in the
      *        Lua Table
      */
-    void dataNodeToLuaElement(sol::table target, vili::DataNode* convert);
+    void dataNodeToLuaElement(sol::table target, vili::node& convert);
     /**
      * \brief Adds a converted Vili ListAttribute to a Lua Table.
      *        Index of the List will start at 0 (unlike default Lua lists which
@@ -40,26 +40,26 @@ namespace obe::Script::DataBridge
      * \param convert The Vili ComplexAttribute you want
      *        to get the data from
      */
-    void arrayNodeToLuaTable(sol::table target, vili::ArrayNode* convert);
+    void arrayNodeToLuaTable(sol::table target, vili::node& convert);
     /**
      * \brief Converts a Lua Table to a Vili ComplexAttribute
      * \param id Id of the newly created ComplexAttribute
      * \param convert The LuaTable you want to convert to a ComplexAttribute
      * \return The converted Lua Table in ComplexAttribute form
      */
-    vili::ComplexNode* luaTableToComplexNode(const std::string& id, sol::object convert);
+    vili::node luaTableToComplexNode(const std::string& id, sol::object convert);
     /**
      * \brief Converts a Lua Variable to a Vili BaseAttribute
      * \param id Id of the newly created BaseAttribute
      * \param convert The LuaVar you want to convert to a BaseAttribute
      * \return The converted Lua Element in BaseAttribute form
      */
-    vili::DataNode* luaElementToDataNode(const std::string& id, sol::object convert);
+    vili::node luaElementToDataNode(const std::string& id, sol::object convert);
     /**
      * \brief Converts a Lua Table to a Vili ListAttribute
      * \param id Id of the newly created ListAttribute
      * \param convert The Lua Table you want to convert to a ListAttribute
      * \return The converted Lua Table in ListAttribute form
      */
-    vili::ArrayNode* luaTableToArrayNode(const std::string& id, sol::table convert);
+    vili::node luaTableToArrayNode(const std::string& id, sol::table convert);
 } // namespace obe::Script::DataBridge

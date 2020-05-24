@@ -4,7 +4,8 @@
 #include <SFML/System/Clock.hpp>
 #include <System/Window.hpp>
 #include <Time/TimeUtils.hpp>
-#include <vili/Vili.hpp>
+
+#include <vili2/node.hpp>
 
 namespace obe::Time
 {
@@ -37,7 +38,7 @@ namespace obe::Time
          * \brief Configures the FramerateManager
          * \param config Configuration of the FramerateManager
          */
-        void configure(vili::ComplexNode& config);
+        void configure(vili::node& config);
         /**
          * \brief Updates the FramerateManager (done every time in the main loop)
          */
