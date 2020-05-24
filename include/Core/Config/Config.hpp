@@ -1,17 +1,17 @@
 #pragma once
 
-#include <vili/ViliParser.hpp>
+#include <vili2/node.hpp>
 
 namespace obe::Config
 {
     class ConfigurationManager
     {
     private:
-        vili::ViliParser m_config;
+        vili::node m_config;
 
     public:
         ConfigurationManager();
         void load();
-        vili::ComplexNode& get() const;
+        vili::node& get() const;
     };
 } // namespace obe::System

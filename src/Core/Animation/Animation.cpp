@@ -6,6 +6,10 @@
 #include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
 
+#include <vili2/node.hpp>
+#include <vili2/parser/parser.hpp>
+#include <vili2/types.hpp>
+
 namespace obe::Animation
 {
     AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode)
@@ -93,27 +97,27 @@ namespace obe::Animation
         const System::Path& path, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
-        vili::ViliParser animFile;
-        path.add(path.last() + ".ani.vili").load(System::Loaders::dataLoader, animFile);
+        vili::node animationConfig
+            = vili::parser::from_file(path.add(path.last() + ".ani.vili").find());
 
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");
-        vili::ComplexNode& meta = animFile.at("Meta");
+        vili::node& meta = animationConfig.at("Meta");
         this->loadMeta(meta);
 
         // Images
         Debug::Log->trace("  <Animation> Loading Images block");
-        vili::ComplexNode& images = animFile.at("Images");
+        vili::node& images = animationConfig.at("Images");
         this->loadImages(images, path, resources);
 
         // Groups
         Debug::Log->trace("  <Animation> Loading Groups block");
-        vili::ComplexNode& groups = animFile.at("Groups");
+        vili::node& groups = animationConfig.at("Groups");
         this->loadGroups(groups);
 
         // Animation Code
         Debug::Log->trace("  <Animation> Loading Animation block");
-        vili::ComplexNode& code = animFile.at("Animation");
+        vili::node& code = animationConfig.at("Animation");
         this->loadCode(code);
     }
 
@@ -198,57 +202,54 @@ namespace obe::Animation
             m_name, groupName, this->getAllAnimationGroupName(), EXC_INFO);
     }
 
-    void Animation::loadMeta(vili::ComplexNode& meta)
+    void Animation::loadMeta(vili::node& meta)
     {
-        m_name = meta.at<vili::DataNode>("name").get<std::string>();
+        m_name = meta.at("name");
         Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
-        if (meta.contains(vili::NodeType::DataNode, "clock"))
+        if (!meta["clock"].is_null())
         {
-            m_delay = meta.at<vili::DataNode>("clock").get<double>();
+            m_delay = meta.at("clock");
             Debug::Log->trace("    <Animation> Animation clock = {}", m_delay);
         }
-        if (meta.contains(vili::NodeType::DataNode, "play-mode"))
+        if (!meta["mode"].is_null())
         {
-            m_playMode = stringToAnimationPlayMode(
-                meta.at<vili::DataNode>("play-mode").get<std::string>());
+            m_playMode = stringToAnimationPlayMode(meta.at("mode"));
             Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
         }
     }
 
-    void Animation::loadImages(vili::ComplexNode& images, const System::Path& path,
-        Engine::ResourceManager* resources)
+    void Animation::loadImages(
+        vili::node& images, const System::Path& path, Engine::ResourceManager* resources)
     {
-        vili::ArrayNode& imageList = images.at<vili::ArrayNode>("ImageList");
+        vili::node& imageList = images.at("images");
         std::string model;
-        if (images.contains(vili::NodeType::DataNode, "model"))
+        if (!images["model"].is_null())
         {
-            model = images.getDataNode("model").get<std::string>();
+            model = images.at("model");
             Debug::Log->trace(
                 "    <Animation> Using following template to load images : {}", model);
         }
         for (std::size_t i = 0; i < imageList.size(); i++)
         {
             std::string textureName;
-            if (imageList.get(i).getDataType() == vili::DataType::Int && !model.empty())
+            if (imageList.at(i).is<vili::integer>() && !model.empty())
             {
                 textureName = Utils::String::replace(
-                    model, "%s", std::to_string(imageList.get(i).get<int>()));
+                    model, "%s", std::to_string(imageList.at(i).as<vili::integer>()));
                 Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
                                   "with template[int])",
                     textureName);
             }
-            else if (imageList.get(i).getDataType() == vili::DataType::String
-                && !model.empty())
+            else if (imageList.at(i).is<vili::string>() && !model.empty())
             {
-                textureName = Utils::String::replace(
-                    model, "%s", imageList.get(i).get<std::string>());
+                textureName = Utils::String::replace(model, "%s", imageList.at(i));
                 Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
                                   "with template[str])",
                     textureName);
             }
-            else if (imageList.get(i).getDataType() == vili::DataType::String)
+            else if (imageList.at(i).is<vili::string>())
             {
-                textureName = imageList.get(i).get<std::string>();
+                textureName = imageList.at(i);
                 Debug::Log->trace("    <Animation> Loading image '{}'", textureName);
             }
 
@@ -274,43 +275,41 @@ namespace obe::Animation
         }
     }
 
-    void Animation::loadGroups(vili::ComplexNode& groups)
+    void Animation::loadGroups(vili::node& groups)
     {
-        for (vili::ComplexNode* group : groups.getAll<vili::ComplexNode>())
+        for (auto& [groupName, group] : groups.as<vili::object>())
         {
-            Debug::Log->trace(
-                "    <Animation> Loading AnimationGroup '{}'", group->getId());
-            m_groups.emplace(
-                group->getId(), std::make_unique<AnimationGroup>(group->getId()));
-            for (vili::DataNode* currentTexture : group->at<vili::ArrayNode>("content"))
+            Debug::Log->trace("    <Animation> Loading AnimationGroup '{}'", groupName);
+            m_groups.emplace(groupName, std::make_unique<AnimationGroup>(groupName));
+            for (vili::node& currentTexture : group.at("content"))
             {
                 Debug::Log->trace("      <Animation> Pushing Texture {} into group",
-                    currentTexture->get<int>());
-                m_groups[group->getId()]->pushTexture(
-                    m_textures[currentTexture->get<int>()]);
+                    currentTexture.as<vili::integer>());
+                m_groups[groupName]->pushTexture(
+                    m_textures[currentTexture.as<vili::integer>()]);
             }
 
-            if (group->contains(vili::NodeType::DataNode, "clock"))
+            if (!group["clock"].is_null())
             {
-                const unsigned int delay = group->at<vili::DataNode>("clock");
+                const unsigned int delay = group.at("clock");
                 Debug::Log->trace("      <Animation> Setting group delay to {}", delay);
-                m_groups[group->getId()]->setDelay(delay);
+                m_groups[groupName]->setDelay(delay);
             }
             else
             {
                 Debug::Log->trace(
                     "      <Animation> No delay specified, using parent delay : {}",
                     m_delay);
-                m_groups[group->getId()]->setDelay(m_delay);
+                m_groups[groupName]->setDelay(m_delay);
             }
         }
     }
 
-    void Animation::loadCode(vili::ComplexNode& code)
+    void Animation::loadCode(vili::node& code)
     {
-        for (vili::DataNode* command : code.at<vili::ArrayNode>("AnimationCode"))
+        for (vili::node& command : code.at("AnimationCode"))
         {
-            std::string currentCommand = command->get<std::string>();
+            std::string currentCommand = command;
             Debug::Log->trace(
                 "    <Animation> Parsing Animation command '{}'", currentCommand);
             Utils::String::replaceInPlace(currentCommand, " ", "");
@@ -322,11 +321,11 @@ namespace obe::Animation
         }
     }
 
-    void Animation::applyParameters(vili::ComplexNode& parameters)
+    void Animation::applyParameters(vili::node& parameters)
     {
         // TODO: Re-implement texture offset in a better way
-        if (parameters.contains(vili::NodeType::DataNode, "priority"))
-            m_priority = parameters.at<vili::DataNode>("priority").get<int>();
+        if (!parameters["priority"].is_null())
+            m_priority = parameters.at("priority");
     }
 
     void Animation::update()

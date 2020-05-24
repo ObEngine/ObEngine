@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Shader.hpp>
-#include <vili/ComplexNode.hpp>
+#include <vili2/node.hpp>
 
 #include <Types/Serializable.hpp>
 
@@ -20,15 +20,15 @@ namespace obe::Graphics
         Shader();
         explicit Shader(const std::string& path);
         /**
-         * \brief Dumps the content of the Shader to a ComplexNode
-         * \param target ComplexNode where to serialize the Shader
+         * \brief Dumps the content of the Shader to a Vili Node
+         * \param target Vili Node where to serialize the Shader
          */
-        void dump(vili::ComplexNode& target) const override;
+        vili::node dump() const override;
         /**
-         * \brief Loads the Shader from a ComplexNode
-         * \param data ComplexNode containing the data of the Shader
+         * \brief Loads the Shader from a Vili Node
+         * \param data Vili Node containing the data of the Shader
          */
-        void load(vili::ComplexNode& data) override;
+        void load(vili::node& data) override;
         void loadShader(const std::string& path);
     };
 } // namespace obe::Graphics

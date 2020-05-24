@@ -141,16 +141,16 @@ namespace obe::Animation
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
             tempAnim->loadAnimation(m_path.add(directory), resources);
-            if (animationParameters.find(directory) != animationParameters.end()
+            /*if (animationParameters.find(directory) != animationParameters.end()
                 && animationParameters.find("all") != animationParameters.end())
             {
-                tempAnim->applyParameters(*animationParameters["all"]);
-                tempAnim->applyParameters(*animationParameters[directory]);
+                // tempAnim->applyParameters(*animationParameters["all"]);
+                // tempAnim->applyParameters(*animationParameters[directory]);
             }
             else if (animationParameters.find(directory) != animationParameters.end())
-                tempAnim->applyParameters(*animationParameters[directory]);
+                //tempAnim->applyParameters(*animationParameters[directory]);
             else if (animationParameters.find("all") != animationParameters.end())
-                tempAnim->applyParameters(*animationParameters["all"]);
+                // tempAnim->applyParameters(*animationParameters["all"]);*/
             m_animations[tempAnim->getName()] = move(tempAnim);
         }
     }

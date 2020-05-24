@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vili/Vili.hpp>
+#include <vili2/node.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
@@ -30,8 +30,8 @@ namespace obe::Script
     class GameObjectDatabase
     {
     private:
-        static vili::ViliParser allRequires;
-        static vili::ViliParser allDefinitions;
+        static vili::node allRequires;
+        static vili::node allDefinitions;
 
     public:
         /**
@@ -39,13 +39,13 @@ namespace obe::Script
          * \param type Type of the GameObject to get the Requirements
          * \return A pointer to the Requires ComplexNode of the GameObject
          */
-        static vili::ComplexNode* GetRequirementsForGameObject(const std::string& type);
+        static vili::node& GetRequirementsForGameObject(const std::string& type);
         /**
          * \brief Gets the ObjectDefinition ComplexNode of the GameObject
          * \param type Type of the GameObject to get the GameObject Definition File
          * \return A pointer to the ObjectDefinition ComplexNode
          */
-        static vili::ComplexNode* GetDefinitionForGameObject(const std::string& type);
+        static vili::node& GetDefinitionForGameObject(const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
          *        ComplexNode
@@ -53,7 +53,7 @@ namespace obe::Script
          * \param requires ComplexNode containing the Requirements
          */
         static void ApplyRequirements(
-            sol::environment environment, vili::ComplexNode& requires);
+            sol::environment environment, vili::node& requires);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -216,10 +216,10 @@ namespace obe::Script
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
-         * \param obj Vili ComplexNode containing the GameObject components
+         * \param obj Vili Node containing the GameObject components
          * \param resources pointer to the ResourceManager
          */
-        void loadGameObject(Scene::Scene& scene, vili::ComplexNode& obj,
+        void loadGameObject(Scene::Scene& scene, vili::node& obj,
             Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Updates the GameObject

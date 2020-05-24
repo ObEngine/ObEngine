@@ -1,25 +1,25 @@
 #pragma once
 
 #include <sol/sol.hpp>
-#include <vili/Vili.hpp>
+#include <vili2/node.hpp>
 
 /**
  * \brief Functions that allow the conversion of Vili elements to Lua elements
  */
 namespace obe::Script::DataBridge
 {
-    void dataToLua(sol::table target, vili::Node* convert);
-    vili::Node* luaToData(sol::reference convert);
+    void dataToLua(sol::table target, vili::node& convert);
+    vili::node luaToData(sol::reference convert);
     /**
      * \brief Adds a converted Vili ComplexAttribute to a Lua Table
      *        The key of the newly converted element in the table will be the
      *        ComplexAttribute's id
      * \param target The Lua Table you want to add the
      *        converted ComplexAttribute
-     * \param convert The Vili ComplexAttribute you
+     * \param convert The Vili Node you
      *        want to get the data from
      */
-    void complexNodeToLuaTable(sol::table target, vili::ComplexNode* convert);
+    void complexNodeToLuaTable(sol::table target, vili::node& convert);
     /**
      * \brief Add a Vili BaseAttribute in a Lua Table
      *        The key of the newly converted element in the table will be the
