@@ -20,9 +20,9 @@ namespace obe::Time
         double m_deltaTime = 0.0;
         double m_speedCoefficient = 1.0;
         double m_frameLimiterClock;
-        bool m_limitFPS;
+        bool m_limitFramerate = false;
         unsigned int m_framerateTarget;
-        bool m_vsyncEnabled;
+        bool m_vsyncEnabled = true;
         double m_reqFramerateInterval;
         int m_currentFrame = 0;
         int m_frameProgression = 0;

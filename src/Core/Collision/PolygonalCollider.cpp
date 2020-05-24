@@ -328,6 +328,7 @@ namespace obe::Collision
             const Transform::UnitVector pVec = point->to(m_unit);
             result["points"].push(vili::object { { "x", pVec.x }, { "y", pVec.y } });
         }
+        return result;
     }
 
     void PolygonalCollider::load(vili::node& data)
@@ -352,20 +353,17 @@ namespace obe::Collision
         }
         if (!data["accept"].is_null())
             this->addTag(Collision::ColliderTagType::Accepted, data.at("accept"));
-        else if (data.contains(vili::NodeType::ArrayNode, "accept"))
+        else if (!data["accept"].is_null())
         {
-            for (vili::DataNode* aTag : data.at<vili::ArrayNode>("accept"))
-                this->addTag(
-                    Collision::ColliderTagType::Accepted, aTag->get<std::string>());
+            for (vili::node& aTag : data.at("accept"))
+                this->addTag(Collision::ColliderTagType::Accepted, aTag);
         }
-        if (data.contains(vili::NodeType::DataNode, "reject"))
-            this->addTag(Collision::ColliderTagType::Rejected,
-                data.at<vili::DataNode>("reject").get<std::string>());
-        else if (data.contains(vili::NodeType::ArrayNode, "reject"))
+        if (data["reject"].is_null())
+            this->addTag(Collision::ColliderTagType::Rejected, data.at("reject"));
+        else if (!data["reject"].is_null())
         {
-            for (vili::DataNode* rTag : data.at<vili::ArrayNode>("reject"))
-                this->addTag(
-                    Collision::ColliderTagType::Rejected, rTag->get<std::string>());
+            for (vili::node& rTag : data.at("reject"))
+                this->addTag(Collision::ColliderTagType::Rejected, rTag);
         }
     }
 

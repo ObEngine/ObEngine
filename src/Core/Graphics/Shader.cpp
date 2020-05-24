@@ -18,10 +18,12 @@ namespace obe::Graphics
         this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);
         m_path = path;
     }
-    void Shader::dump(vili::ComplexNode& target) const
+    vili::node Shader::dump() const
     {
+        vili::node result;
+        return result;
     }
-    void Shader::load(vili::ComplexNode& data)
+    void Shader::load(vili::node& data)
     {
     }
 } // namespace obe::Graphics
