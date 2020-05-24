@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include <vili/Vili.hpp>
+#include <vili2/node.hpp>
 
 #include <Animation/AnimationGroup.hpp>
 #include <System/Path.hpp>
@@ -105,17 +105,17 @@ namespace obe::Animation
         void updateCurrentGroup();
         void setActiveAnimationGroup(const std::string& groupName);
 
-        void loadMeta(vili::ComplexNode& meta);
-        void loadImages(vili::ComplexNode& images, const System::Path& path,
+        void loadMeta(vili::node& meta);
+        void loadImages(vili::node& images, const System::Path& path,
             Engine::ResourceManager* resources);
-        void loadGroups(vili::ComplexNode& groups);
-        void loadCode(vili::ComplexNode& code);
+        void loadGroups(vili::node& groups);
+        void loadCode(vili::node& code);
 
     public:
         /**
          * \todo Make Animation a serializable type instead of this "applyParameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)
-         * \param parameters A vili::ComplexAttribute that contains the
+         * \param parameters A vili::node that contains the
          *        following optional parameters :
          *        - spriteOffsetX : x Coordinate of the Sprite Offset in the Animation in
          *                          pixels.
@@ -125,7 +125,7 @@ namespace obe::Animation
          *                     priority can't be interrupted by an Animation with a
          *                     lower one).
          */
-        void applyParameters(vili::ComplexNode& parameters);
+        void applyParameters(vili::node& parameters);
         /**
          * \brief Get the name of all contained AnimationGroup of the Animation
          * \return An array of strings with all the names of the
