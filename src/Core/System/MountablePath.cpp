@@ -1,12 +1,12 @@
 #include <string>
 #include <vector>
 
-#include <vili/Vili.hpp>
-
 #include <System/MountablePath.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
+
+#include <vili/parser/parser.hpp>
 
 namespace obe::System
 {
@@ -29,26 +29,23 @@ namespace obe::System
     void MountablePath::LoadMountFile()
     {
         MountablePath::MountedPaths.clear();
-        vili::ViliParser mountedPaths;
+        vili::node mountedPaths;
         try
         {
-            mountedPaths.parseFile("Mount.vili", true);
+            mountedPaths = vili::parser::from_file("Mount.vili");
         }
-        catch (...)
+        catch (std::exception& e)
         {
-            Debug::Log->critical("<MountablePath> Can't find 'Mount.vili' "
-                                 "file, stopping ObEngine");
+            Debug::Log->critical(
+                "<MountablePath> Unable to load 'Mount.vili' : \n{}", e.what());
             throw Exceptions::MountFileMissing(
                 Utils::File::getCurrentDirectory(), EXC_INFO);
         }
-        for (vili::ComplexNode* path :
-            mountedPaths.at("Mount").getAll<vili::ComplexNode>())
+        for (vili::node& path : mountedPaths.at("Mount"))
         {
-            const std::string currentType
-                = path->at<vili::DataNode>("type").get<std::string>();
-            const std::string currentPath
-                = path->at<vili::DataNode>("path").get<std::string>();
-            int currentPriority = path->at<vili::DataNode>("priority").get<int>();
+            const std::string currentType = path.at("type");
+            const std::string currentPath = path.at("path");
+            int currentPriority = path.at("priority");
             if (currentType == "Path")
             {
                 MountablePath::Mount(

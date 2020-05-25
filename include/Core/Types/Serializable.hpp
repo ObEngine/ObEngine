@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 namespace obe::Types
 {
@@ -13,7 +13,6 @@ namespace obe::Types
         virtual ~Serializable() = default;
         /**
          * \brief Dumps the content of the Serializable object to a ComplexNode
-         * \param target ComplexNode where to serialize the object
          */
         virtual vili::node dump() const = 0;
         /**

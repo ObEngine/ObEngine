@@ -7,6 +7,10 @@
 #include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 
+#include <utility>
+
+#include <vili/parser/parser.hpp>
+
 namespace obe::Script
 {
     sol::table GameObject::access() const
@@ -25,72 +29,60 @@ namespace obe::Script
 
     vili::node GameObjectDatabase::allDefinitions;
     vili::node GameObjectDatabase::allRequires;
-    vili::node& GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
+    vili::node GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
     {
-        if (!allRequires.root().contains(type))
+        if (allRequires[type].is_null())
         {
-            vili::ViliParser getGameObjectFile;
-            System::Path("Data/GameObjects/")
-                .add(type)
-                .add(type + ".obj.vili")
-                .load(System::Loaders::dataLoader, getGameObjectFile);
-            if (getGameObjectFile->contains("Requires"))
+            vili::node getGameObjectFile
+                = vili::parser::from_file(System::Path("Data/GameObjects/")
+                                              .add(type)
+                                              .add(type + ".obj.vili")
+                                              .find());
+            if (!getGameObjectFile["Requires"].is_null())
             {
-                vili::ComplexNode& requiresData
-                    = getGameObjectFile.at<vili::ComplexNode>("Requires");
-                getGameObjectFile->extractElement(
-                    &getGameObjectFile.at<vili::ComplexNode>("Requires"));
-                requiresData.setId(type);
-                allRequires->pushComplexNode(&requiresData);
-                return &requiresData;
+                vili::node& requiresData = getGameObjectFile.at("Requires");
+                allRequires[type] = requiresData;
+                return requiresData;
             }
-            return nullptr;
+            return vili::node {};
         }
-        return &allRequires.at(type);
+        return allRequires.at(type);
     }
 
-    vili::ComplexNode* GameObjectDatabase::GetDefinitionForGameObject(
-        const std::string& type)
+    vili::node GameObjectDatabase::GetDefinitionForGameObject(const std::string& type)
     {
-        if (!allDefinitions.root().contains(type))
+        if (allDefinitions[type].is_null())
         {
-            vili::ViliParser getGameObjectFile;
-            auto result = System::Path("Data/GameObjects/")
-                              .add(type)
-                              .add(type + ".obj.vili")
-                              .load(System::Loaders::dataLoader, getGameObjectFile);
-            if (!result)
+            const std::string objectDefinitionPath = System::Path("Data/GameObjects/")
+                                                         .add(type)
+                                                         .add(type + ".obj.vili")
+                                                         .find();
+            if (!objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
-            if (getGameObjectFile->contains(type))
+            vili::node getGameObjectFile = vili::parser::from_file(objectDefinitionPath);
+            if (!getGameObjectFile[type].is_null())
             {
-                vili::ComplexNode& definitionData
-                    = getGameObjectFile.at<vili::ComplexNode>(type);
-                getGameObjectFile->extractElement(
-                    &getGameObjectFile.at<vili::ComplexNode>(type));
-                definitionData.setId(type);
-                allDefinitions->pushComplexNode(&definitionData);
-                return &definitionData;
+                vili::node& definitionData = getGameObjectFile.at(type);
+                allDefinitions[type] = definitionData;
+                return definitionData;
             }
             throw Exceptions::ObjectDefinitionBlockNotFound(type, EXC_INFO);
         }
-        return &allDefinitions.at(type);
+        return allDefinitions.at(type);
     }
 
     void GameObjectDatabase::ApplyRequirements(
-        sol::environment environment, vili::ComplexNode& requires)
+        sol::environment environment, vili::node& requires)
     {
-        for (vili::Node* currentRequirement : requires.getAll())
-        {
-            const sol::table requireTable
-                = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
-            DataBridge::dataToLua(requireTable, currentRequirement);
-        }
+        const sol::table requireTable
+            = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
+        // requireTable = ViliLuaBridge::viliToLua(requires);
     }
 
     void GameObjectDatabase::Clear()
     {
-        allDefinitions->clear();
-        allRequires->clear();
+        allDefinitions.clear();
+        allRequires.clear();
     }
 
     // GameObject
@@ -98,7 +90,7 @@ namespace obe::Script
         const std::string& type, const std::string& id)
         : Identifiable(id)
         , m_triggers(triggers)
-        , m_lua(lua)
+        , m_lua(std::move(lua))
     {
         m_type = type;
     }
@@ -149,15 +141,15 @@ namespace obe::Script
     }
 
     void GameObject::loadGameObject(
-        Scene::Scene& scene, vili::ComplexNode& obj, Engine::ResourceManager* resources)
+        Scene::Scene& scene, vili::node& obj, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
         // Script
-        if (obj.contains(vili::NodeType::DataNode, "permanent"))
+        if (!obj["permanent"].is_null())
         {
-            m_permanent = obj.getDataNode("permanent").get<bool>();
+            m_permanent = obj.at("permanent");
         }
-        if (obj.contains(vili::NodeType::ComplexNode, "Script"))
+        if (!obj["Script"].is_null())
         {
             m_hasScriptEngine = true;
             m_environment = sol::environment(m_lua, sol::create, m_lua.globals());
@@ -186,53 +178,38 @@ namespace obe::Script
                 }
                 m_lua.safe_script_file(fullPath, m_environment);
             };
-            if (obj.at("Script").contains("source"))
+            if (!obj.at("Script")["source"].is_null())
             {
-                const vili::Node* sourceNode = obj.at("Script").get("source");
-                if (sourceNode->getType() == vili::NodeType::DataNode
-                    && obj.at("Script").getDataNode("source").getDataType()
-                        == vili::DataType::String)
+                const vili::node& sourceNode = obj.at("Script").at("source");
+                if (sourceNode.is<vili::string>())
                 {
-                    loadSource(obj.at("Script").getDataNode("source").get<std::string>());
+                    loadSource(sourceNode);
                 }
                 else
                 {
-                    std::string nodeType
-                        = vili::Types::nodeTypeToString(sourceNode->getType());
-                    if (sourceNode->getType() == vili::NodeType::DataNode)
-                        nodeType += "::"
-                            + vili::Types::dataTypeToString(
-                                obj.at("Script").getDataNode("source").getDataType());
-                    throw Exceptions::WrongSourceAttributeType(
-                        m_type, "source", "DataNode::String", nodeType, EXC_INFO);
+                    throw Exceptions::WrongSourceAttributeType(m_type, "source",
+                        vili::string_type, vili::to_string(sourceNode.type()), EXC_INFO);
                 }
             }
-            else if (obj.at("Script").contains("sources"))
+            else if (!obj.at("Script")["sources"].is_null())
             {
-                const vili::Node* sourceNode = obj.at("Script").get("sources");
-                if (sourceNode->getType() == vili::NodeType::ArrayNode)
+                vili::node& sourceNode = obj.at("Script").at("sources");
+                if (sourceNode.is<vili::array>())
                 {
-                    const std::size_t scriptListSize
-                        = obj.at("Script").getArrayNode("sources").size();
-                    for (std::size_t i = 0; i < scriptListSize; i++)
+                    for (auto source : sourceNode)
                     {
-                        loadSource(obj.at("Script")
-                                       .getArrayNode("sources")
-                                       .get(i)
-                                       .get<std::string>());
+                        loadSource(source);
                     }
                 }
                 else
                 {
-                    const std::string nodeType
-                        = vili::Types::nodeTypeToString(sourceNode->getType());
-                    throw Exceptions::WrongSourceAttributeType(
-                        m_type, "sources", "ArrayNode", nodeType, EXC_INFO);
+                    throw Exceptions::WrongSourceAttributeType(m_type, "sources",
+                        vili::array_type, vili::to_string(sourceNode.type()), EXC_INFO);
                 }
             }
         }
         // Sprite
-        if (obj.contains(vili::NodeType::ComplexNode, "Sprite"))
+        if (!obj["Sprite"].is_null())
         {
             m_sprite = &scene.createSprite(m_id, false);
             m_objectNode.addChild(*m_sprite);
@@ -241,27 +218,25 @@ namespace obe::Script
                 m_environment["Object"]["Sprite"] = m_sprite;
             scene.reorganizeLayers();
         }
-        if (obj.contains(vili::NodeType::ComplexNode, "Animator"))
+        if (!obj["Animator"].is_null())
         {
             m_animator = std::make_unique<Animation::Animator>();
-            const std::string animatorPath
-                = obj.at("Animator").getDataNode("path").get<std::string>();
+            const std::string animatorPath = obj.at("Animator").at("path");
             if (m_sprite)
                 m_animator->setTarget(*m_sprite);
-            if (animatorPath != "")
+            if (!animatorPath.empty())
             {
                 m_animator->load(System::Path(animatorPath), resources);
             }
-            if (obj.at("Animator").contains(vili::NodeType::DataNode, "default"))
+            if (!obj.at("Animator")["default"].is_null())
             {
-                m_animator->setKey(
-                    obj.at("Animator").getDataNode("default").get<std::string>());
+                m_animator->setKey(obj.at("Animator").at("default"));
             }
             if (m_hasScriptEngine)
                 m_environment["Object"]["Animation"] = m_animator.get();
         }
         // Collider
-        if (obj.contains(vili::NodeType::ComplexNode, "Collider"))
+        if (!obj["Collider"].is_null())
         {
             m_collider = &scene.createCollider(m_id, false);
             m_objectNode.addChild(*m_collider);
@@ -464,5 +439,26 @@ namespace obe::Script
     void GameObject::setState(bool state)
     {
         m_active = state;
+    }
+
+    vili::node GameObject::dump() const
+    {
+        vili::node result;
+        result["type"] = this->getType();
+
+        if (auto dumpFunction = this->access()["Dump"]; dumpFunction.valid())
+        {
+            const sol::table saveTableRef = dumpFunction().get<sol::table>();
+            vili::node saveRequirements
+                = Script::ViliLuaBridge::luaTableToViliObject(saveTableRef);
+            result["Requires"] = saveRequirements;
+        }
+
+        return result;
+    }
+
+    void GameObject::load(vili::node& data)
+    {
+        // TODO: Do something
     }
 } // namespace obe::Script

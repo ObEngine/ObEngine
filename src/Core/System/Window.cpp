@@ -1,5 +1,4 @@
 #include <SFML/Window/WindowStyle.hpp>
-#include <vili/Vili.hpp>
 
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -9,51 +8,50 @@ namespace obe::System
 {
     Window::Window(const WindowContext context)
     {
-        vili::ViliParser windowConfig;
+        vili::node windowConfig;
         auto mountPoints = System::MountablePath::Paths();
         std::reverse(mountPoints.begin(), mountPoints.end());
         Path(mountPoints)
             .set("Data/window.cfg.vili")
             .loadAll(System::Loaders::dataLoader, windowConfig);
 
-        vili::ComplexNode* conf;
+        vili::node conf;
         if (context == WindowContext::GameWindow)
         {
-            if (windowConfig->contains("Game"))
-                conf = &windowConfig.at("Game");
+            if (!windowConfig["Game"].is_null())
+                conf = windowConfig.at("Game");
             else
-                conf = &windowConfig.root();
+                conf = windowConfig;
         }
         else if (context == WindowContext::EditorWindow)
         {
-            if (windowConfig->contains("Editor"))
-                conf = &windowConfig.at("Editor");
+            if (windowConfig["Editor"])
+                conf = windowConfig.at("Editor");
             else
-                conf = &windowConfig.root();
+                conf = windowConfig;
         }
 
-        if (conf->contains("width"))
+        if (!conf["width"].is_null())
         {
-            if (conf->getDataNode("width").getDataType() == vili::DataType::Int)
-                m_width = conf->getDataNode("width").get<int>();
-            else if (conf->getDataNode("width").getDataType() == vili::DataType::String)
+            if (conf.at("width").is<vili::integer>())
+                m_width = conf.at("width");
+            else if (conf.at("width").is<vili::string>())
             {
-                if (conf->getDataNode("width").get<std::string>() == "Fill")
+                if (conf.at("width").as<vili::string>() == "Fill")
                     m_width = Transform::UnitVector::Screen.w;
             }
         }
         else
             m_width = Transform::UnitVector::Screen.w;
-        if (conf->contains("height"))
+
+        if (!conf["height"].is_null())
         {
-            if (conf->getDataNode("height").getDataType() == vili::DataType::Int)
-                m_height = conf->getDataNode("height").get<int>();
-            else if (conf->getDataNode("height").getDataType() == vili::DataType::String)
+            if (conf.at("height").is<vili::integer>())
+                m_height = conf.at("height");
+            else if (conf.at("height").is<vili::string>())
             {
-                if (conf->getDataNode("height").get<std::string>() == "Fill")
-                {
+                if (conf.at("height").as<vili::string>() == "Fill")
                     m_height = Transform::UnitVector::Screen.h;
-                }
             }
         }
         else
@@ -64,14 +62,14 @@ namespace obe::System
         bool resizeable = true;
         bool titlebar = true;
 
-        if (conf->contains("fullscreen"))
-            fullscreen = conf->getDataNode("fullscreen").get<bool>();
-        if (conf->contains("closeable"))
-            closeable = conf->getDataNode("closeable").get<bool>();
-        if (conf->contains("resizeable"))
-            resizeable = conf->getDataNode("resizeable").get<bool>();
-        if (conf->contains("titlebar"))
-            titlebar = conf->getDataNode("titlebar").get<bool>();
+        if (!conf["fullscreen"].is_null())
+            fullscreen = conf.at("fullscreen");
+        if (!conf["closeable"].is_null())
+            closeable = conf.at("closeable");
+        if (!conf["resizeable"].is_null())
+            resizeable = conf.at("resizeable");
+        if (!conf["titlebar"].is_null())
+            titlebar = conf.at("titlebar");
 
         m_style = sf::Style::Default;
         if (fullscreen)
@@ -87,8 +85,8 @@ namespace obe::System
         }
 
         std::string title = "ObEngine";
-        if (conf->contains("title"))
-            m_title = conf->getDataNode("title").get<std::string>();
+        if (!conf["title"].is_null())
+            m_title = conf.at("title");
     }
 
     void Window::create()

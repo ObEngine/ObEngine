@@ -79,6 +79,29 @@ namespace obe::System
         return "";
     }
 
+    std::vector<std::string> Path::findAll(PathType pathType) const
+    {
+        std::vector<std::string> result;
+        for (const MountablePath& mountedPath : m_mounts)
+        {
+            if ((pathType == PathType::All || pathType == PathType::File)
+                && Utils::File::fileExists(mountedPath.basePath
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+            {
+                result.push_back(mountedPath.basePath
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path);
+            }
+            else if ((pathType == PathType::All || pathType == PathType::Directory)
+                && Utils::File::directoryExists(mountedPath.basePath
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+            {
+                result.push_back(mountedPath.basePath
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path);
+            }
+        }
+        return result;
+    }
+
     std::string Path::toString() const
     {
         return m_path;

@@ -7,6 +7,9 @@
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
+#include <vili/node.hpp>
+#include <vili/parser/parser.hpp>
+
 namespace obe::Scene
 {
     Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
@@ -120,136 +123,10 @@ namespace obe::Scene
         Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
         this->clear();
         Debug::Log->debug("<Scene> Cleared Scene");
-        if (path != m_levelFileName)
-        {
-            m_levelFile = vili::ViliParser();
-            m_baseFolder = System::Path(path)
-                               .load(System::Loaders::dataLoader, m_levelFile)
-                               .path();
-            Debug::Log->debug("Scene File base folder : {}", m_baseFolder);
-            m_levelFileName = path;
-        }
 
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "Meta"))
-        {
-            vili::ComplexNode& meta = m_levelFile.at("Meta");
-            m_levelName = meta.getDataNode("name").get<std::string>();
-        }
-        else
-            throw Exceptions::MissingSceneFileBlock(path, "Meta", EXC_INFO);
-
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "View"))
-        {
-            vili::ComplexNode& view = m_levelFile.at("View");
-            m_camera.setSize(view.at<vili::DataNode>("size").get<double>());
-            m_cameraInitialPosition
-                = Transform::UnitVector(view.at<vili::DataNode>("pos", "x").get<double>(),
-                    view.at<vili::DataNode>("pos", "y").get<double>(),
-                    Transform::stringToUnits(
-                        view.at<vili::DataNode>("pos", "unit").get<std::string>()));
-            m_cameraInitialReferential = Transform::Referential::TopLeft;
-            if (m_levelFile->at("View").contains(
-                    vili::NodeType::ComplexNode, "referential"))
-            {
-                m_cameraInitialReferential = Transform::Referential::FromString(
-                    m_levelFile->at("View", "referential")
-                        .getDataNode("referential")
-                        .get<std::string>());
-            }
-            Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
-                              "Referential {2}",
-                m_cameraInitialPosition.x, m_cameraInitialPosition.y,
-                m_cameraInitialReferential.toString());
-            m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
-        }
-        else
-            throw Exceptions::MissingSceneFileBlock(path, "View", EXC_INFO);
-
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "Sprites"))
-        {
-            vili::ComplexNode& Sprites = m_levelFile.at("Sprites");
-
-            for (vili::ComplexNode* currentSprite : Sprites.getAll<vili::ComplexNode>())
-            {
-                this->createSprite(currentSprite->getId()).load(*currentSprite);
-            }
-        }
-
-        this->reorganizeLayers();
-
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "Collisions"))
-        {
-            vili::ComplexNode& collisions = m_levelFile.at("Collisions");
-            for (vili::ComplexNode* currentCollision :
-                collisions.getAll<vili::ComplexNode>())
-            {
-                this->createCollider(currentCollision->getId()).load(*currentCollision);
-            }
-        }
-
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "GameObjects"))
-        {
-            vili::ComplexNode& gameObjects = m_levelFile.at("GameObjects");
-            for (vili::ComplexNode* currentObject :
-                gameObjects.getAll<vili::ComplexNode>())
-            {
-                if (!this->doesGameObjectExists(currentObject->getId()))
-                {
-                    const std::string gameObjectType
-                        = currentObject->getDataNode("type").get<std::string>();
-                    Script::GameObject& newObject
-                        = this->createGameObject(gameObjectType, currentObject->getId());
-                    if (currentObject->contains(vili::NodeType::ComplexNode, "Requires"))
-                    {
-                        vili::ComplexNode& objectRequirements
-                            = currentObject->at("Requires");
-                        currentObject->removeOwnership(&objectRequirements);
-                        Script::GameObjectDatabase::ApplyRequirements(
-                            newObject.getEnvironment(), objectRequirements);
-                        objectRequirements.setParent(currentObject);
-                    }
-                    newObject.exec("LuaCore.InjectInitInjectionTable()");
-                }
-                else if (!this->getGameObject(currentObject->getId()).isPermanent())
-                {
-                    throw Exceptions::GameObjectAlreadyExists(path,
-                        this->getGameObject(currentObject->getId()).getType(),
-                        currentObject->getId(), EXC_INFO);
-                }
-            }
-        }
-
-        if (m_levelFile->contains(vili::NodeType::ComplexNode, "Script"))
-        {
-            vili::ComplexNode& script = m_levelFile.at("Script");
-            if (script.contains(vili::NodeType::DataNode, "source"))
-            {
-                std::string source
-                    = System::Path(script.at<vili::DataNode>("source").get<std::string>())
-                          .find();
-                const sol::protected_function_result result
-                    = m_lua.safe_script_file(source, &sol::script_pass_on_error);
-                if (!result.valid())
-                {
-                    const auto errObj = result.get<sol::error>();
-                    const std::string errMsg = errObj.what();
-                    throw Exceptions::SceneScriptLoadingError(path, source,
-                        Utils::String::replace(errMsg, "\n", "\n        "), EXC_INFO);
-                }
-                m_scriptArray.push_back(script.at<vili::DataNode>("source"));
-            }
-            else if (script.contains(vili::NodeType::ArrayNode, "sources"))
-            {
-                for (vili::DataNode* scriptName : script.getArrayNode("sources"))
-                {
-                    m_lua.safe_script_file(
-                        System::Path(scriptName->get<std::string>()).find());
-                    m_scriptArray.push_back(*scriptName);
-                }
-            }
-        }
-        t_scene->pushParameter("Loaded", "name", path);
-        t_scene->trigger("Loaded");
+        m_levelFileName = path;
+        vili::node sceneFile = vili::parser::from_file(System::Path(path).find());
+        this->load(sceneFile);
     }
 
     void Scene::setFutureLoadFromFile(const std::string& path)
@@ -309,101 +186,173 @@ namespace obe::Scene
         Debug::Log->debug("<Scene> Scene Cleared !");
     }
 
-    vili::ViliParser Scene::dump(bool saveCameraPosition)
+    vili::node Scene::dump() const
     {
-        vili::ViliParser dataStore;
-        dataStore.addFlag("Map");
-        dataStore.addFlag("Lock");
-        dataStore.includeFile("Obe");
+        vili::node result;
 
         // Meta
-        dataStore->createComplexNode("Meta");
-        dataStore.at("Meta").createDataNode("name", m_levelName);
+        result["Meta"] = vili::object { { "name", m_levelName } };
 
         // View
-        dataStore->createComplexNode("View");
-        dataStore.at("View").createDataNode("size", m_camera.getSize().y / 2);
-        dataStore.at("View").createComplexNode("pos");
-        dataStore.at("View", "pos")
-            .createDataNode("unit", unitsToString(m_cameraInitialPosition.unit));
-        if (!saveCameraPosition)
-        {
-            dataStore.at("View", "pos").createDataNode("x", m_cameraInitialPosition.x);
-            dataStore.at("View", "pos").createDataNode("y", m_cameraInitialPosition.y);
-        }
-        else
-        {
-            dataStore.at("View", "pos").createDataNode("x", m_camera.getPosition().x);
-            dataStore.at("View", "pos").createDataNode("y", m_camera.getPosition().y);
-        }
-        dataStore->at("View", "pos")
-            .useTemplate(dataStore.getTemplate("Vector2<"
-                + Transform::unitsToString(m_cameraInitialPosition.unit) + ">"));
-        dataStore.at("View").createComplexNode("referential");
-        dataStore.at("View", "referential")
-            .createDataNode("referential", m_cameraInitialReferential.toString("{}"));
-        if (m_cameraInitialReferential.isKnown())
-            dataStore.at("View", "referential")
-                .useTemplate(
-                    dataStore.getTemplate(m_cameraInitialReferential.toString()));
+        result["View"] = vili::object {};
+        result["View"]["size"] = m_camera.getSize().y / 2;
+        result["View"]["position"] = vili::object { { "x", m_cameraInitialPosition.x },
+            { "y", m_cameraInitialPosition.y },
+            { "unit", unitsToString(m_cameraInitialPosition.unit) } };
+        result["View"]["referential"] = m_cameraInitialReferential.toString("{}");
 
         // Sprites
         if (!m_spriteArray.empty())
-            dataStore->createComplexNode("Sprites");
+            result["Sprites"] = vili::object {};
         for (auto& sprite : m_spriteArray)
         {
             if (sprite->getParentId().empty())
             {
-                sprite->dump(dataStore.at("Sprites"));
-                dataStore.at("Sprites", sprite->getId(), "rect")
-                    .useTemplate(dataStore.getTemplate(
-                        "Rect<" + unitsToString(sprite->getWorkingUnit()) + ">"));
+                result["Sprites"][sprite->getId()] = sprite->dump();
             }
         }
+
+        // Collisions
         if (!m_colliderArray.empty())
-            dataStore->createComplexNode("Collisions");
+            result["Collisions"] = vili::object {};
         for (auto& collider : m_colliderArray)
         {
             if (collider->getParentId().empty())
             {
-                collider->dump(dataStore.at("Collisions"));
+                result["Collisions"][collider->getId()] = collider->dump();
             }
         }
+
+        // GameObjects
         if (!m_gameObjectArray.empty())
-            dataStore->createComplexNode("GameObjects");
+            result["GameObjects"] = vili::object {};
         for (auto& gameObject : m_gameObjectArray)
         {
-            dataStore.at("GameObjects").createComplexNode(gameObject->getId());
-            dataStore.at("GameObjects", gameObject->getId())
-                .createDataNode("type", gameObject->getType());
-
-            if (auto dumpFunction = gameObject->access()["Dump"]; dumpFunction.valid())
-            {
-                const sol::table saveTableRef = dumpFunction().get<sol::table>();
-                vili::ComplexNode* saveRequirements
-                    = Script::DataBridge::luaTableToComplexNode("Requires", saveTableRef);
-                if (!saveRequirements->getAll().empty())
-                    dataStore->at("GameObjects", gameObject->getId())
-                        .pushComplexNode(saveRequirements);
-            }
+            result["GameObjects"][gameObject->getId()] = gameObject->dump();
         }
+
+        // Scripts
         if (!m_scriptArray.empty())
         {
-            dataStore->createComplexNode("Script");
+            result["Script"] = vili::object {};
             if (m_scriptArray.size() == 1)
             {
-                dataStore.at("Script").createDataNode("source", m_scriptArray[0]);
+                result.at("Script")["source"] = m_scriptArray[0];
             }
             else
             {
-                dataStore.at("Script").createArrayNode("sources");
-                for (const auto& script : m_scriptArray)
+                result.at("Script")["sources"]
+                    = vili::array(m_scriptArray.begin(), m_scriptArray.end());
+            }
+        }
+        return result;
+    }
+
+    void Scene::load(vili::node& data)
+    {
+        if (!data["Meta"].is_null())
+        {
+            vili::node& meta = data.at("Meta");
+            m_levelName = meta.at("name");
+        }
+        else
+            throw Exceptions::MissingSceneFileBlock(m_levelFileName, "Meta", EXC_INFO);
+
+        if (!data["View"].is_null())
+        {
+            vili::node& view = data.at("View");
+            m_camera.setSize(view.at("size"));
+            m_cameraInitialPosition
+                = Transform::UnitVector(view.at("pos").at("x"), view.at("pos").at("y"),
+                    Transform::stringToUnits(view.at("pos").at("unit")));
+            m_cameraInitialReferential = Transform::Referential::TopLeft;
+            if (!view["referential"].is_null())
+            {
+                m_cameraInitialReferential
+                    = Transform::Referential::FromString(view.at("referential"));
+            }
+            Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
+                              "Referential {2}",
+                m_cameraInitialPosition.x, m_cameraInitialPosition.y,
+                m_cameraInitialReferential.toString());
+            m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
+        }
+        else
+            throw Exceptions::MissingSceneFileBlock(m_levelFileName, "View", EXC_INFO);
+
+        if (!data["Sprites"].is_null())
+        {
+            for (auto [spriteId, sprite] : data.at("Sprites").items())
+            {
+                this->createSprite(spriteId).load(sprite);
+            }
+        }
+
+        this->reorganizeLayers();
+
+        if (!data["Collisions"].is_null())
+        {
+            for (auto [collisionId, collision] : data.at("Collisions").items())
+            {
+                this->createCollider(collisionId).load(collision);
+            }
+        }
+
+        if (!data["GameObjects"].is_null())
+        {
+            vili::node& gameObjects = data.at("GameObjects");
+            for (auto [gameObjectId, gameObject] : gameObjects.items())
+            {
+                if (!this->doesGameObjectExists(gameObjectId))
                 {
-                    dataStore.at("Script").getArrayNode("sources").push(script);
+                    const std::string gameObjectType = gameObject.at("type");
+                    Script::GameObject& newObject
+                        = this->createGameObject(gameObjectType, gameObjectId);
+                    if (!gameObject["Requires"].is_null())
+                    {
+                        vili::node& objectRequirements = gameObject.at("Requires");
+                        Script::GameObjectDatabase::ApplyRequirements(
+                            newObject.getEnvironment(), objectRequirements);
+                    }
+                    newObject.exec("LuaCore.InjectInitInjectionTable()");
+                }
+                else if (!this->getGameObject(gameObjectId).isPermanent())
+                {
+                    throw Exceptions::GameObjectAlreadyExists(m_levelFileName,
+                        this->getGameObject(gameObjectId).getType(), gameObjectId,
+                        EXC_INFO);
                 }
             }
         }
-        return dataStore;
+
+        if (!data["Script"].is_null())
+        {
+            vili::node& script = data.at("Script");
+            if (!script["source"].is_null())
+            {
+                std::string source = System::Path(script.at("source")).find();
+                const sol::protected_function_result result
+                    = m_lua.safe_script_file(source, &sol::script_pass_on_error);
+                if (!result.valid())
+                {
+                    const auto errObj = result.get<sol::error>();
+                    const std::string errMsg = errObj.what();
+                    throw Exceptions::SceneScriptLoadingError(m_levelFileName, source,
+                        Utils::String::replace(errMsg, "\n", "\n        "), EXC_INFO);
+                }
+                m_scriptArray.push_back(script.at("source"));
+            }
+            else if (!script["sources"].is_null())
+            {
+                for (vili::node& scriptName : script.at("sources"))
+                {
+                    m_lua.safe_script_file(System::Path(scriptName).find());
+                    m_scriptArray.push_back(scriptName);
+                }
+            }
+        }
+        t_scene->pushParameter("Loaded", "name", m_levelFileName);
+        t_scene->trigger("Loaded");
     }
 
     void Scene::update()
@@ -590,8 +539,8 @@ namespace obe::Scene
 
         std::unique_ptr<Script::GameObject> newGameObject
             = std::make_unique<Script::GameObject>(m_triggers, m_lua, obj, useId);
-        vili::ComplexNode& gameObjectData
-            = *Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
+        vili::node gameObjectData
+            = Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
         newGameObject->loadGameObject(*this, gameObjectData, m_resources);
 
         if (newGameObject->doesHaveSprite())

@@ -3,81 +3,80 @@
 #include <Utils/VectorUtils.hpp>
 #include <sol/sol.hpp>
 
-namespace obe::Script::DataBridge
+namespace obe::Script::ViliLuaBridge
 {
-    void dataToLua(sol::table target, vili::Node* convert)
+    sol::object viliToLua(vili::node& convert)
     {
-        if (convert->getType() == vili::NodeType::ArrayNode)
+        if (convert.is<vili::array>())
         {
-            arrayNodeToLuaTable(target, static_cast<vili::ArrayNode*>(convert));
+            return viliArrayToLuaTable(convert);
         }
-        else if (convert->getType() == vili::NodeType::ComplexNode)
+        else if (convert.is<vili::object>())
         {
-            complexNodeToLuaTable(target, static_cast<vili::ComplexNode*>(convert));
+            return viliObjectToLuaTable(convert);
         }
-        else if (convert->getType() == vili::NodeType::DataNode)
+        else if (convert.is_primitive())
         {
-            dataNodeToLuaElement(target, static_cast<vili::DataNode*>(convert));
+            // return viliPrimitiveToLuaValue(convert);
         }
     }
 
-    vili::Node* luaToData(sol::reference convert)
+    vili::node luaToVili(sol::reference convert)
     {
         // return Attribute();
         return nullptr;
     }
 
-    void complexNodeToLuaTable(sol::table target, vili::ComplexNode* convert)
+    sol::table viliObjectToLuaTable(vili::node& convert)
     {
-        sol::table injectTable = target[convert->getId()].get_or_create<sol::table>();
-        for (vili::Node* node : convert->getAll())
+        sol::table result;
+        for (auto [key, value] : convert.items())
         {
-            if (node->getType() == vili::NodeType::DataNode)
+            if (value.is_primitive())
             {
-                dataNodeToLuaElement(injectTable, &convert->getDataNode(node->getId()));
+                result[key] = viliPrimitiveToLuaValue(convert);
             }
-            else if (node->getType() == vili::NodeType::ComplexNode)
+            else if (value.is<vili::object>())
             {
-                complexNodeToLuaTable(
-                    injectTable, &convert->getComplexNode(node->getId()));
+                result[key] = viliObjectToLuaTable(value);
             }
-            else if (node->getType() == vili::NodeType::ArrayNode)
+            else if (value.is<vili::array>())
             {
-                arrayNodeToLuaTable(injectTable, &convert->getArrayNode(node->getId()));
+                result[key] = viliArrayToLuaTable(value);
             }
         }
-        target[convert->getId()] = injectTable;
+        return result;
     }
 
-    void dataNodeToLuaElement(sol::table target, vili::DataNode* convert)
+    sol::lua_value viliPrimitiveToLuaValue(vili::node& convert)
     {
-        if (convert->getDataType() == vili::DataType::Int)
-            target[convert->getId()] = convert->get<int>();
-        else if (convert->getDataType() == vili::DataType::String)
-            target[convert->getId()] = convert->get<std::string>();
-        else if (convert->getDataType() == vili::DataType::Bool)
-            target[convert->getId()] = convert->get<bool>();
-        else if (convert->getDataType() == vili::DataType::Float)
-            target[convert->getId()] = convert->get<double>();
+        if (convert.is<vili::integer>())
+            return convert.as<vili::integer>();
+        else if (convert.is<vili::string>())
+            return convert.as<vili::string>();
+        else if (convert.is<vili::boolean>())
+            return convert.as<vili::boolean>();
+        else if (convert.is<vili::number>())
+            return convert.as<vili::number>();
     }
 
-    void arrayNodeToLuaTable(sol::table target, vili::ArrayNode* convert)
+    sol::table viliArrayToLuaTable(vili::node& convert)
     {
-        sol::table mTable = target[convert->getId()].get_or_create<sol::table>();
-        for (int i = 0; i < convert->size(); i++)
+        sol::table result;
+        std::size_t index = 0;
+        for (vili::node& value : convert)
         {
-            if (convert->get(i).getDataType() == vili::DataType::Int)
-                mTable[i + 1] = convert->get(i).get<int>();
-            else if (convert->get(i).getDataType() == vili::DataType::String)
-                mTable[i + 1] = convert->get(i).get<std::string>();
-            else if (convert->get(i).getDataType() == vili::DataType::Bool)
-                mTable[i + 1] = convert->get(i).get<bool>();
-            else if (convert->get(i).getDataType() == vili::DataType::Float)
-                mTable[i + 1] = convert->get(i).get<double>();
+            if (convert.is_primitive())
+                result[++index] = viliPrimitiveToLuaValue(value);
+            else if (convert.is<vili::array>())
+                result[++index] = viliArrayToLuaTable(value);
+            else if (convert.is<vili::object>())
+                result[++index] = viliObjectToLuaTable(value);
         }
+        return result;
     }
 
-    vili::ComplexNode* luaTableToComplexNode(const std::string& id, sol::object convert)
+    vili::node luaTableToViliObject(sol::object convert)
     {
         /*if (convert.get_type() == sol::type:: || convert.type() == 5)
         {
@@ -109,9 +108,9 @@ namespace obe::Script::DataBridge
         return nullptr;
     }
 
-    vili::DataNode* luaElementToDataNode(const std::string& id, sol::object convert)
+    vili::node luaValueToViliPrimitive(sol::object convert)
     {
-        vili::DataNode* returnAttribute = nullptr;
+        /*vili::DataNode* returnAttribute = nullptr;
         if (convert.is<int>())
         {
             returnAttribute = new vili::DataNode(id, vili::DataType::Int);
@@ -133,10 +132,11 @@ namespace obe::Script::DataBridge
             returnAttribute->set(convert.as<std::string>());
         }
 
-        return returnAttribute;
+        return returnAttribute;*/
+        return 0;
     }
 
-    vili::ArrayNode* luaTableToArrayNode(const std::string& id, sol::table convert)
+    vili::node luaTableToViliArray(sol::table convert)
     {
         /*ListAttribute* returnElement = new ListAttribute(id, dataType);
         std::cout << "Table Type : " << convert.type() << std::endl;

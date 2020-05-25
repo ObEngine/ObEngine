@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 #include <Input/InputAction.hpp>
 #include <Triggers/TriggerGroup.hpp>

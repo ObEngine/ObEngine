@@ -1,4 +1,4 @@
-#include <vili/Vili.hpp>
+#include <vili/parser/parser.hpp>
 
 #include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
@@ -11,17 +11,17 @@ namespace obe::System::Workspace
     {
         if (WorkspaceExists(workspaceName))
         {
-            return (vili::ViliParser("Workspace/Workspaces.vili")
-                        ->at<vili::DataNode>(workspaceName, "path")
-                        .get<std::string>());
+            return vili::parser::from_file("Workspace/Workspaces.vili")
+                .at(workspaceName)
+                .at("path");
         }
         throw Exceptions::UnknownWorkspace(workspaceName, ListWorkspaces(), EXC_INFO);
     }
 
     bool WorkspaceExists(const std::string& workspaceName)
     {
-        return (vili::ViliParser("Workspace/Workspaces.vili")
-                    ->contains(vili::NodeType::ComplexNode, workspaceName));
+        return !vili::parser::from_file("Workspace/Workspaces.vili")[workspaceName]
+                    .is_null();
     }
 
     bool Load(const std::string& workspaceName, const unsigned int priority)
@@ -39,11 +39,12 @@ namespace obe::System::Workspace
 
     std::vector<std::string> ListWorkspaces()
     {
-        const vili::ViliParser workspaces("Workspace/Workspaces.vili");
-        auto nodes = workspaces->getAll(vili::NodeType::ComplexNode);
+        vili::node workspaces = vili::parser::from_file("Workspace/Workspaces.vili");
         std::vector<std::string> workspacesNames;
-        std::transform(nodes.begin(), nodes.end(), std::back_inserter(workspacesNames),
-            [](const vili::Node* node) { return node->getId(); });
+        for (auto [workspaceName, _] : workspaces.items())
+        {
+            workspacesNames.push_back(workspaceName);
+        }
         return workspacesNames;
     }
 } // namespace obe::System::Workspace

@@ -26,7 +26,7 @@
 #include <Bindings/Obe/obe.hpp>
 #include <Bindings/Scene/Exceptions/Exceptions.hpp>
 #include <Bindings/Scene/Scene.hpp>
-#include <Bindings/Script/DataBridge/DataBridge.hpp>
+#include <Bindings/Script/DataBridge/ViliLuaBridge.hpp>
 #include <Bindings/Script/Exceptions/Exceptions.hpp>
 #include <Bindings/Script/Script.hpp>
 #include <Bindings/System/Constraints/Constraints.hpp>
@@ -480,21 +480,21 @@ namespace obe::Bindings
 
         BindTree["obe"]["Script"]["DataBridge"]
             .add("FunctionDataToLua",
-                &obe::Script::DataBridge::Bindings::LoadFunctionDataToLua)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionDataToLua)
             .add("FunctionLuaToData",
-                &obe::Script::DataBridge::Bindings::LoadFunctionLuaToData)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaToData)
             .add("FunctionComplexNodeToLuaTable",
-                &obe::Script::DataBridge::Bindings::LoadFunctionComplexNodeToLuaTable)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionComplexNodeToLuaTable)
             .add("FunctionDataNodeToLuaElement",
-                &obe::Script::DataBridge::Bindings::LoadFunctionDataNodeToLuaElement)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionDataNodeToLuaElement)
             .add("FunctionArrayNodeToLuaTable",
-                &obe::Script::DataBridge::Bindings::LoadFunctionArrayNodeToLuaTable)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionArrayNodeToLuaTable)
             .add("FunctionLuaTableToComplexNode",
-                &obe::Script::DataBridge::Bindings::LoadFunctionLuaTableToComplexNode)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToComplexNode)
             .add("FunctionLuaElementToDataNode",
-                &obe::Script::DataBridge::Bindings::LoadFunctionLuaElementToDataNode)
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaElementToDataNode)
             .add("FunctionLuaTableToArrayNode",
-                &obe::Script::DataBridge::Bindings::LoadFunctionLuaTableToArrayNode);
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToArrayNode);
 
         BindTree["obe"]["System"]["Package"]
             .add("FunctionGetPackageLocation",

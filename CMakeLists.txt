@@ -16,7 +16,6 @@ add_subdirectory(extlibs/fmt)
 add_subdirectory(extlibs/spdlog)
 
 add_subdirectory(extlibs/vili)
-add_subdirectory(extlibs/vili2)
 
 # lua is required by sol
 add_subdirectory(extlibs/lua)

@@ -6,8 +6,8 @@
 
 #include <fmt/format.h>
 
-#include <vili2/config.hpp>
-#include <vili2/utils.hpp>
+#include <vili/config.hpp>
+#include <vili/utils.hpp>
 
 namespace vili::exceptions
 {

@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include <SFML/Window/VideoMode.hpp>
-#include <vili/Vili.hpp>
 
 #include <Config/Config.hpp>
 #include <Debug/Logger.hpp>

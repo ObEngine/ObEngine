@@ -8,6 +8,8 @@
 
 #include <sol/sol.hpp>
 
+#include <vili/node.hpp>
+
 namespace obe
 {
     namespace System
@@ -23,7 +25,7 @@ namespace obe::Scene
     /**
      * \brief The Scene class is a container of all the game elements
      */
-    class Scene
+    class Scene : public Types::Serializable
     {
     private:
         std::string m_levelName;
@@ -41,7 +43,6 @@ namespace obe::Scene
         std::vector<std::string> m_scriptArray;
         SceneNode m_sceneRoot;
 
-        vili::ViliParser m_levelFile;
         std::string m_levelFileName;
         std::map<std::string, bool> m_showElements;
         OnSceneLoadCallback m_onLoadCallback;
@@ -86,7 +87,8 @@ namespace obe::Scene
          * \brief Dumps all elements of the Scene in a vili tree
          * \return
          */
-        vili::ViliParser dump(bool saveCameraPosition);
+        [[nodiscard]] vili::node dump() const override;
+        void load(vili::node& data) override;
         /**
          * \brief Updates all elements in the Scene
          */

@@ -1,106 +1,68 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+// #include <tsl/ordered_map.h>
+// #include <tsl/fifo_map.hpp>
+#include <sstream>
+//#include <unordered_map>
+#include <tsl/fifo_map.hpp>
 
 namespace vili
 {
+    constexpr std::string_view true_value = "true";
+    constexpr std::string_view false_value = "false";
+    constexpr std::string_view bool_type = "boolean";
+    constexpr std::string_view int_type = "integer";
+    constexpr std::string_view float_type = "number";
+    constexpr std::string_view string_type = "string";
+    constexpr std::string_view object_type = "object";
+    constexpr std::string_view array_type = "array";
+
+    class node;
+
+    using null = void*;
+
+    //using object = std::unordered_map<std::string, node>;
+    /*using object = tsl::ordered_map<std::string, node, std::hash<std::string>,
+        std::equal_to<std::string>, std::allocator<std::pair<std::string, node>>,
+        std::vector<std::pair<std::string, node>>>;*/
+    using object = nlohmann::fifo_map<std::string, node>;
+    using array = std::vector<node>;
+    using integer = long long int;
+    using number = double;
+    using boolean = bool;
+    using string = std::string;
+
     /**
      * \brief An enum representing Types of existing Nodes
      */
-    enum class NodeType
+    enum class node_type
     {
-        Node,
-        ContainerNode,
-        DataNode,
-        ArrayNode,
-        ComplexNode,
-        LinkNode
+        null,
+        string,
+        integer,
+        number,
+        boolean,
+        array,
+        object,
     };
 
-    /**
-     * \brief An enum representing the DataType of the Data stored in DataNode (Or used in Parsing)
-     */
-    enum class DataType
-    {
-        /**
-         * \brief A String value
-         */
-        String,
-        /**
-         * \brief An Integer value
-         */
-        Int,
-        /**
-         * \brief A Floating-point value
-         */
-        Float,
-        /**
-         * \brief A Boolean value (can be True or False)
-         */
-        Bool,
-        /**
-         * \brief A Range Generator
-         */
-        Range,
-        /**
-         * \brief A LinkNode definition
-         */
-        Link,
-        /**
-         * \brief A NodeTemplate definition
-         */
-        Template,
-        /**
-         * \brief Unknown DataType
-         */
-        Unknown
-    };
-    /**
-     * \brief Prints a NodeType to a stream
-     * \param os stream where to print the NodeType
-     * \param m The NodeType to print
-     * \return The given stream (to chain calls)
-     */
-    std::ostream& operator<<(std::ostream& os, const NodeType& m);
-    /**
-     * \brief Prints a DataType to a stream
-     * \param os stream where to print the DataType
-     * \param m The DataType to print
-     * \return The given stream (to chain calls)
-     */
-    std::ostream& operator<<(std::ostream& os, const DataType& m);
+    // clang-format off
+    template <node_type N> struct node_helper_t;
+    template <> struct node_helper_t<node_type::null>    { static null    type; };
+    template <> struct node_helper_t<node_type::string>  { static string  type; };
+    template <> struct node_helper_t<node_type::integer> { static integer type; };
+    template <> struct node_helper_t<node_type::number>  { static number  type; };
+    template <> struct node_helper_t<node_type::boolean> { static boolean type; };
+    template <> struct node_helper_t<node_type::array>   { static array   type; };
+    template <> struct node_helper_t<node_type::object>  { static object  type; };
+    // clang-format on
 
-    namespace Types
-    {
-        /**
-         * \brief Converts a std::string to the appropriated DataType
-         * \param type The DataType in std::string form
-         * \return The converted DataType
-         */
-        DataType stringToDataType(const std::string& type);
-        /**
-         * \brief Determines the DataType of a string representation of the value
-         * \param var String representation of the value
-         * \return The DataType of the value
-         */
-        DataType getVarType(const std::string& var);
-        /**
-         * \brief Gets the default value for the given DataType
-         * \param type The DataType you want to get the default value
-         * \return The string representation of the default value for the given DataType
-         */
-        std::string getDefaultValueForType(DataType type);
-        /**
-         * \brief Converts a DataType to its name (in a std::string)
-         * \param type DataType you want the name
-         * \return A std::string containing the name of the given DataType
-         */
-        std::string dataTypeToString(DataType type);
-        /**
-        * \brief Converts a NodeType to its name (in a std::string)
-        * \param type NodeType you want the name
-        * \return A std::string containing the name of the given NodeType
-        */
-        std::string nodeTypeToString(NodeType type);
-    }
+    std::ostream& operator<<(std::ostream& os, const node_type& m);
+
+    node_type from_string(std::string_view type);
+    std::string to_string(node_type type);
+    node_type from_value(std::string_view value);
 }
