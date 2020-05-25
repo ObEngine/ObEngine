@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 namespace obe::Config
 {
@@ -12,6 +12,6 @@ namespace obe::Config
     public:
         ConfigurationManager();
         void load();
-        vili::node& get() const;
+        vili::node get() const;
     };
 } // namespace obe::System

@@ -1,4 +1,4 @@
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 namespace vili::parser
 {

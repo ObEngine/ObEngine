@@ -5,7 +5,7 @@
 #include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
-#include <vili2/parser/parser.hpp>
+#include <vili/parser/parser.hpp>
 
 using namespace std::string_literals;
 

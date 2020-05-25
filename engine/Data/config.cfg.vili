@@ -1,11 +1,9 @@
-Define Flag (Settings);
-
 GameConfig:
-    antiAliasing:True
+    antiAliasing:true
     scrollSensibility:1
-    framerateLimit:True
+    framerateLimit:true
     framerateTarget:60
-    vsync:True
+    vsync:true
 
 KeyBinding:
     mapEditor:

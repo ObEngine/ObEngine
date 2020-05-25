@@ -11,7 +11,6 @@
 #include <System/Plugin.hpp>
 
 #include <soloud/soloud.h>
-#include <vili/ViliParser.hpp>
 
 namespace obe
 {
@@ -19,7 +18,6 @@ namespace obe
     {
         Debug::InitLogger();
         Debug::Log->debug("<ObEngine> Storing Obe.vili in cache");
-        vili::ViliParser::StoreInCache("Obe.vili");
 
         Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))",
             Config::OBENGINE_VERSION, Config::OBENGINE_GIT_BRANCH,

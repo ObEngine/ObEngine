@@ -5,7 +5,7 @@
 #include <System/Window.hpp>
 #include <Time/TimeUtils.hpp>
 
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 namespace obe::Time
 {

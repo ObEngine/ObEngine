@@ -67,13 +67,12 @@ namespace obe::Engine
 
     void Engine::initResources()
     {
-        if (m_config.get().contains(vili::NodeType::ComplexNode, "GameConfig"))
+        if (!m_config.get()["GameConfig"].is_null())
         {
-            vili::ComplexNode& gameConfig = m_config.get().at("GameConfig");
-            if (gameConfig.contains(vili::NodeType::DataNode, "antiAliasing"))
+            vili::node& gameConfig = m_config.get().at("GameConfig");
+            if (!gameConfig["antiAliasing"].is_null())
             {
-                m_resources.defaultAntiAliasing
-                    = gameConfig.getDataNode("antiAliasing").get<bool>();
+                m_resources.defaultAntiAliasing = gameConfig.at("antiAliasing");
                 Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
                     m_resources.defaultAntiAliasing);
             }
@@ -119,11 +118,10 @@ namespace obe::Engine
 
     void Engine::initLogger() const
     {
-        const unsigned int logLevel
-            = m_config.get().at("Debug").getDataNode("logLevel").get<int>();
+        const unsigned int logLevel = m_config.get().at("Debug").at("logLevel");
         const auto level = static_cast<spdlog::level::level_enum>(logLevel);
-        if (m_config.get().contains("Debug")
-            && m_config.get().at("Debug").contains("logLevel"))
+        if (!m_config.get()["Debug"].is_null()
+            && !m_config.get().at("Debug")["logLevel"].is_null())
             Debug::Log->set_level(level);
         Debug::Log->info("Log Level {}", logLevel);
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
@@ -9,8 +9,11 @@
 #include <Scene/SceneNode.hpp>
 #include <Triggers/TriggerGroup.hpp>
 #include <Triggers/TriggerManager.hpp>
+#include <Types/Serializable.hpp>
 
 #include <sol/sol.hpp>
+
+#include <vili/node.hpp>
 
 namespace obe::Scene
 {
@@ -39,21 +42,20 @@ namespace obe::Script
          * \param type Type of the GameObject to get the Requirements
          * \return A pointer to the Requires ComplexNode of the GameObject
          */
-        static vili::node& GetRequirementsForGameObject(const std::string& type);
+        static vili::node GetRequirementsForGameObject(const std::string& type);
         /**
          * \brief Gets the ObjectDefinition ComplexNode of the GameObject
          * \param type Type of the GameObject to get the GameObject Definition File
          * \return A pointer to the ObjectDefinition ComplexNode
          */
-        static vili::node& GetDefinitionForGameObject(const std::string& type);
+        static vili::node GetDefinitionForGameObject(const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
          *        ComplexNode
          * \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(
-            sol::environment environment, vili::node& requires);
+        static void ApplyRequirements(sol::environment environment, vili::node& requires);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -63,7 +65,7 @@ namespace obe::Script
     /**
      * \brief A GameObject is a set of Components used in the Scene
      */
-    class GameObject final : public Types::Identifiable
+    class GameObject final : public Types::Identifiable, public Types::Serializable
     {
     private:
         Triggers::TriggerManager& m_triggers;
@@ -263,6 +265,9 @@ namespace obe::Script
 
         sol::environment getEnvironment() const;
         void setState(bool state);
+
+        [[nodiscard]] vili::node dump() const override;
+        void load(vili::node& data) override;
     };
 
     template <typename U>

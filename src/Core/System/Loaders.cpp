@@ -1,6 +1,8 @@
 #include <System/Loaders.hpp>
 #include <Utils/FileUtils.hpp>
 
+#include <vili/parser/parser.hpp>
+
 namespace obe::System
 {
     // LoaderResult Implementation
@@ -66,10 +68,11 @@ namespace obe::System::Loaders
             return obj.loadFromFile(path);
         });
 
-    Loader<vili::ViliParser> dataLoader(
-        [](vili::ViliParser& obj, const std::string& path) -> bool {
-            return obj.parseFile(path);
-        });
+    Loader<vili::node> dataLoader([](vili::node& obj, const std::string& path) -> bool {
+        vili::node data = vili::parser::from_file(path);
+        obj.merge(data);
+        return true;
+    });
 
     Loader<Graphics::Font> fontLoader(
         [](Graphics::Font& obj, const std::string& path) -> bool {

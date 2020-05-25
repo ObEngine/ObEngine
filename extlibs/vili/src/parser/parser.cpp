@@ -1,8 +1,8 @@
-#include <vili2/node.hpp>
-#include <vili2/parser/actions.hpp>
-#include <vili2/parser/grammar.hpp>
-#include <vili2/parser/parser_state.hpp>
-#include <vili2/types.hpp>
+#include <vili/node.hpp>
+#include <vili/parser/actions.hpp>
+#include <vili/parser/grammar.hpp>
+#include <vili/parser/parser_state.hpp>
+#include <vili/types.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -30,6 +30,8 @@ namespace vili::parser
             std::cerr << e.what() << '\n'
                       << input.line_at(p) << '\n'
                       << std::setw(p.byte_in_line) << ' ' << '^' << std::endl;
+            throw exceptions::parsing_error(
+                input.source(), p.line, p.byte_in_line, VILI_EXC_INFO);
         }
         /*catch (vili::exceptions::base_exception& e)
         {

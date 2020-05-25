@@ -6,9 +6,9 @@
 #include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
 
-#include <vili2/node.hpp>
-#include <vili2/parser/parser.hpp>
-#include <vili2/types.hpp>
+#include <vili/node.hpp>
+#include <vili/parser/parser.hpp>
+#include <vili/types.hpp>
 
 namespace obe::Animation
 {
@@ -277,7 +277,7 @@ namespace obe::Animation
 
     void Animation::loadGroups(vili::node& groups)
     {
-        for (auto& [groupName, group] : groups.as<vili::object>())
+        for (auto [groupName, group] : groups.items())
         {
             Debug::Log->trace("    <Animation> Loading AnimationGroup '{}'", groupName);
             m_groups.emplace(groupName, std::make_unique<AnimationGroup>(groupName));

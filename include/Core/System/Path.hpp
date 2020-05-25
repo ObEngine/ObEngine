@@ -71,6 +71,8 @@ namespace obe::System
          * \return The full path to the most prioritized file
          */
         [[nodiscard]] std::string find(PathType pathType = PathType::All) const;
+        [[nodiscard]] std::vector<std::string> findAll(
+            PathType pathType = PathType::All) const;
         /**
          * \brief Get the current path in string form
          * \return The Path in std::string form

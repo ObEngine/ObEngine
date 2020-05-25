@@ -1,6 +1,6 @@
 project(tsl)
 
-file(GLOB_RECURSE TSL_HEADERS include/tsl/*.h)
+file(GLOB_RECURSE TSL_HEADERS include/tsl/*.h include/tsl/*.hpp)
 
 add_library(tsl INTERFACE)
 

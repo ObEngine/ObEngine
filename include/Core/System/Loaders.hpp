@@ -8,7 +8,8 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <vili/Vili.hpp>
+
+#include "vili/node.hpp"
 
 namespace obe::System
 {
@@ -67,7 +68,7 @@ namespace obe::System::Loaders
     /**
      * \brief Load a vili::DataParser from a file
      */
-    extern Loader<vili::ViliParser> dataLoader;
+    extern Loader<vili::node> dataLoader;
     /**
      * \brief Load a Font from a file
      */

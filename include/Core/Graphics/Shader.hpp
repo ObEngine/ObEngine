@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Shader.hpp>
-#include <vili2/node.hpp>
+#include <vili/node.hpp>
 
 #include <Types/Serializable.hpp>
 
