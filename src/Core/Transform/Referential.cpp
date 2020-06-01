@@ -4,6 +4,7 @@
 #include <array>
 #include <cassert>
 #include <regex>
+#include <ostream> // Weird fix on latest versions of MSVC
 
 #include <fmt/format.h>
 

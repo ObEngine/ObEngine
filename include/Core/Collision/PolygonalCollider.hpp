@@ -42,7 +42,11 @@ namespace obe::Collision
     private:
         std::string m_parentId = "";
 
-        std::unordered_map<ColliderTagType, std::vector<std::string>> m_tags {};
+        std::unordered_map<ColliderTagType, std::vector<std::string>> m_tags {
+            { ColliderTagType::Tag, {} },
+            { ColliderTagType::Accepted, {} },
+            { ColliderTagType::Rejected, {} },
+        };
 
         void resetUnit(Transform::Units unit) override;
         [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;

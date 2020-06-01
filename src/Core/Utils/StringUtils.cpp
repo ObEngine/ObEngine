@@ -194,8 +194,8 @@ namespace obe::Utils::String
                     < Utils::String::distance(s2, source);
             });
         if (limit)
-            return std::vector<std::string>(
-                sortedByDistance.begin(), sortedByDistance.begin() + limit);
+            return std::vector<std::string>(sortedByDistance.begin(),
+                sortedByDistance.begin() + std::min(sortedByDistance.size() - 1, limit));
         else
             return sortedByDistance;
     }
