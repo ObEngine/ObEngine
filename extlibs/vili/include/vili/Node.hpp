@@ -13,11 +13,11 @@ namespace vili
     class node_iterator
     {
     private:
-        std::variant<array::value_type*, object::value_type*> m_ptr;
+        std::variant<array::value_type*, object::iterator> m_ptr;
 
     public:
         node_iterator(array::value_type* value);
-        node_iterator(object::value_type* value);
+        node_iterator(object::iterator value);
         node_iterator(const node_iterator& other_it);
         node_iterator& operator++();
         bool operator!=(const node_iterator& rhs) const;
@@ -73,6 +73,7 @@ namespace vili
         void insert(size_t index, const node& value);
         void insert(const std::string& key, node value);
         void merge(node& value);
+        bool contains(const std::string& key) const;
 
         void erase(size_t index);
         void erase(size_t begin, size_t end);
@@ -84,6 +85,7 @@ namespace vili
         node_iterator begin();
         node_iterator end();
         object& items();
+        const object& items() const;
 
         node& at(const std::string& key);
         node& at(size_t index);
