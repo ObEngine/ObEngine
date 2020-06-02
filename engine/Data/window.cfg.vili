@@ -1,14 +1,16 @@
+template fill: "Fill"
+
 Game:
-    fullscreen:True
-    width:"Fill"
-    height:"Fill"
+    fullscreen:true
+    width:fill
+    height:fill
     title:"MyGame"
 
 Editor:
-    fullscreen:True
-    closeable:True
-    titlebar:True
-    resizeable:True
-    width:"Fill"
-    height:"Fill"
-    docked:False
+    fullscreen:true
+    closeable:true
+    titlebar:true
+    resizeable:true
+    width:fill
+    height:fill
+    docked:false
