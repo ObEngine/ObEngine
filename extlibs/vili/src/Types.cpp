@@ -5,7 +5,6 @@ namespace vili
 {
     node_type value_type(std::string_view value)
     {
-        node_type attribute_type;
         if (value == true_value || value == false_value)
             return node_type::boolean;
         if (value.at(0) == '"' && value.at(value.size() - 1) == '"')

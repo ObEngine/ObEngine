@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 project(vili)
 
 add_subdirectory(extlibs/pegtl)
+add_subdirectory(extlibs/tsl)
 
 set(VILI_HEADERS
     include/vili/config.hpp
@@ -27,9 +28,6 @@ add_library(vili ${VILI_HEADERS} ${VILI_SOURCES})
 
 target_link_libraries(vili fmt)
 target_link_libraries(vili pegtl)
-
-
-add_subdirectory(extlibs/tsl)
 target_link_libraries(vili tsl)
 
 target_include_directories(vili
