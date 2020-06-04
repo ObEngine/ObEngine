@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include <Config/Templates/Mount.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
@@ -32,7 +33,8 @@ namespace obe::System
         vili::node mountedPaths;
         try
         {
-            mountedPaths = vili::parser::from_file("Mount.vili");
+            mountedPaths = vili::parser::from_file(
+                "Mount.vili", Config::Templates::getMountTemplates());
         }
         catch (std::exception& e)
         {

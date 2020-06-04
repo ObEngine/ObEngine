@@ -33,6 +33,8 @@ namespace vili::parser
     public:
         node root;
         state();
+        state(const state& state);
+        state(state&& state);
         void set_indent(int64_t indent);
         void use_indent();
         void set_active_identifier(std::string&& identifier);
@@ -41,6 +43,8 @@ namespace vili::parser
         void close_block();
         void push(node&& data);
         void push_template();
+        void push_template(
+            const std::string& template_name, const vili::node& node_template);
         [[nodiscard]] node get_template(const std::string& template_name) const;
     };
 }

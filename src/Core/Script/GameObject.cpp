@@ -74,9 +74,10 @@ namespace obe::Script
     void GameObjectDatabase::ApplyRequirements(
         sol::environment environment, vili::node& requires)
     {
-        const sol::table requireTable
-            = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();
-        // requireTable = ViliLuaBridge::viliToLua(requires);
+        /*const sol::table requireTable
+            = environment["LuaCore"]["ObjectInitInjectionTable"].get<sol::table>();*/
+        environment["LuaCore"]["ObjectInitInjectionTable"]
+            = ViliLuaBridge::viliToLua(requires);
     }
 
     void GameObjectDatabase::Clear()

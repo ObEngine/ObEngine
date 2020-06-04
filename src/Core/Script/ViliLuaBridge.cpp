@@ -5,7 +5,7 @@
 
 namespace obe::Script::ViliLuaBridge
 {
-    sol::object viliToLua(vili::node& convert)
+    sol::lua_value viliToLua(vili::node& convert)
     {
         if (convert.is<vili::array>())
         {
@@ -17,7 +17,7 @@ namespace obe::Script::ViliLuaBridge
         }
         else if (convert.is_primitive())
         {
-            // return viliPrimitiveToLuaValue(convert);
+            return viliPrimitiveToLuaValue(convert);
         }
     }
 
@@ -27,22 +27,22 @@ namespace obe::Script::ViliLuaBridge
         return nullptr;
     }
 
-    sol::table viliObjectToLuaTable(vili::node& convert)
+    sol::lua_value viliObjectToLuaTable(vili::node& convert)
     {
-        sol::table result;
+        std::unordered_map<std::string, sol::lua_value> result;
         for (auto [key, value] : convert.items())
         {
             if (value.is_primitive())
             {
-                result[key] = viliPrimitiveToLuaValue(convert);
+                result.emplace(key, viliPrimitiveToLuaValue(value));
             }
             else if (value.is<vili::object>())
             {
-                result[key] = viliObjectToLuaTable(value);
+                result.emplace(key, viliObjectToLuaTable(value));
             }
             else if (value.is<vili::array>())
             {
-                result[key] = viliArrayToLuaTable(value);
+                result.emplace(key, viliArrayToLuaTable(value));
             }
         }
         return result;
@@ -60,18 +60,18 @@ namespace obe::Script::ViliLuaBridge
             return convert.as<vili::number>();
     }
 
-    sol::table viliArrayToLuaTable(vili::node& convert)
+    sol::lua_value viliArrayToLuaTable(vili::node& convert)
     {
-        sol::table result;
+        std::vector<sol::lua_value> result;
         std::size_t index = 0;
         for (vili::node& value : convert)
         {
             if (convert.is_primitive())
-                result[++index] = viliPrimitiveToLuaValue(value);
+                result.push_back(viliPrimitiveToLuaValue(value));
             else if (convert.is<vili::array>())
-                result[++index] = viliArrayToLuaTable(value);
+                result.push_back(viliArrayToLuaTable(value));
             else if (convert.is<vili::object>())
-                result[++index] = viliObjectToLuaTable(value);
+                result.push_back(viliObjectToLuaTable(value));
         }
         return result;
     }

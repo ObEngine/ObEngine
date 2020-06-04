@@ -362,7 +362,9 @@ namespace obe::Scene
             const std::string futureLoadBuffer = std::move(m_futureLoad);
             this->loadFromFile(futureLoadBuffer);
             if (m_onLoadCallback)
+            {
                 m_onLoadCallback(futureLoadBuffer);
+            }
         }
         if (m_updateState)
         {

@@ -34,10 +34,10 @@ int main(int argc, char** argv)
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
-    // Modes::startGame();
+    Modes::startGame();
     try
     {
-        Modes::startGame();
+        // Modes::startGame();
     }
     catch (std::exception& e)
     {

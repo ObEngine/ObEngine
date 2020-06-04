@@ -15,9 +15,8 @@ namespace peg = tao::pegtl;
 
 namespace vili::parser
 {
-    template <class input_type> vili::node parse(input_type&& input)
+    template <class input_type> vili::node parse(input_type&& input, state parser_state)
     {
-        state parser_state;
         try
         {
             peg::parse<vili::parser::rules::grammar, vili::parser::action,
@@ -45,15 +44,15 @@ namespace vili::parser
         return parser_state.root;
     }
 
-    vili::node from_string(std::string_view data)
+    vili::node from_string(std::string_view data, state parser_state)
     {
         peg::memory_input in(data.data(), "string_source");
-        return parse(in);
+        return parse(in, parser_state);
     }
 
-    vili::node from_file(std::string_view path)
+    vili::node from_file(std::string_view path, state parser_state)
     {
         peg::file_input in(path);
-        return parse(in);
+        return parse(in, parser_state);
     }
 }
