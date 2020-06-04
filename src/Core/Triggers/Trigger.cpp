@@ -143,13 +143,14 @@ namespace obe::Triggers
                 if (!result.valid())
                 {
                     const auto errObj = result.get<sol::error>();
-                    const std::string errMsg = errObj.what();
-                    throw Exceptions::TriggerExecutionError(this->getNamespace() + "."
-                            + this->getGroup() + "." + this->getName(),
-                        rEnv.id, rEnv.callback,
-                        "\n        \""
-                            + Utils::String::replace(errMsg, "\n", "\n        ") + "\"",
-                        EXC_INFO);
+                    const std::string errMsg = "\n        \""
+                        + Utils::String::replace(errObj.what(), "\n", "\n        ")
+                        + "\"";
+                    const std::string fullName = this->getNamespace() + "."
+                        + this->getGroup() + "." + this->getName();
+                    auto e = Exceptions::TriggerExecutionError(
+                        fullName, rEnv.id, rEnv.callback, errMsg, EXC_INFO);
+                    throw e;
                 }
             }
         }
