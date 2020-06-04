@@ -8,6 +8,22 @@ namespace vili::parser
         m_stack.emplace(&root, 0);
     }
 
+    state::state(const state& state)
+    {
+        m_templates = state.m_templates;
+        m_indent_base = state.m_indent_base;
+        root = state.root;
+        m_stack.emplace(&root, 0);
+    }
+
+    state::state(state&& state)
+    {
+        m_templates = std::move(state.m_templates);
+        m_indent_base = state.m_indent_base;
+        root = state.root;
+        m_stack.emplace(&root, 0);
+    }
+
     void state::set_indent(int64_t indent)
     {
         if (m_indent_current == -1 && indent > 0)
@@ -111,6 +127,12 @@ namespace vili::parser
             top.erase(m_template_identifier);
         }
         m_template_identifier.clear();
+    }
+
+    void state::push_template(
+        const std::string& template_name, const vili::node& node_template)
+    {
+        m_templates.emplace(template_name, node_template);
     }
 
     node state::get_template(const std::string& template_name) const

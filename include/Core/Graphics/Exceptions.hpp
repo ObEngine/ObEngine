@@ -16,6 +16,16 @@ namespace obe::Graphics::Exceptions
         }
     };
 
+    class ImageFileNotFound : public Exception
+    {
+    public:
+        ImageFileNotFound(std::string_view path, DebugInfo info)
+            : Exception("ImageFileNotFound", info)
+        {
+            this->error("Image at path '{}' not found", path);
+        }
+    };
+
     class InvalidColorName : public Exception
     {
     public:
