@@ -8,7 +8,7 @@ namespace obe::System
 {
     Window::Window(const WindowContext context)
     {
-        vili::node windowConfig;
+        vili::node windowConfig = vili::object {};
         auto mountPoints = System::MountablePath::Paths();
         std::reverse(mountPoints.begin(), mountPoints.end());
         Path(mountPoints)
@@ -18,20 +18,20 @@ namespace obe::System
         vili::node conf;
         if (context == WindowContext::GameWindow)
         {
-            if (!windowConfig["Game"].is_null())
+            if (windowConfig.contains("Game"))
                 conf = windowConfig.at("Game");
             else
                 conf = windowConfig;
         }
         else if (context == WindowContext::EditorWindow)
         {
-            if (windowConfig["Editor"])
+            if (windowConfig.contains("Editor"))
                 conf = windowConfig.at("Editor");
             else
                 conf = windowConfig;
         }
 
-        if (!conf["width"].is_null())
+        if (conf.contains("width"))
         {
             if (conf.at("width").is<vili::integer>())
                 m_width = conf.at("width");
@@ -44,7 +44,7 @@ namespace obe::System
         else
             m_width = Transform::UnitVector::Screen.w;
 
-        if (!conf["height"].is_null())
+        if (conf.contains("height"))
         {
             if (conf.at("height").is<vili::integer>())
                 m_height = conf.at("height");
@@ -62,13 +62,13 @@ namespace obe::System
         bool resizeable = true;
         bool titlebar = true;
 
-        if (!conf["fullscreen"].is_null())
+        if (conf.contains("fullscreen"))
             fullscreen = conf.at("fullscreen");
-        if (!conf["closeable"].is_null())
+        if (conf.contains("closeable"))
             closeable = conf.at("closeable");
-        if (!conf["resizeable"].is_null())
+        if (conf.contains("resizeable"))
             resizeable = conf.at("resizeable");
-        if (!conf["titlebar"].is_null())
+        if (conf.contains("titlebar"))
             titlebar = conf.at("titlebar");
 
         m_style = sf::Style::Default;
@@ -85,7 +85,7 @@ namespace obe::System
         }
 
         std::string title = "ObEngine";
-        if (!conf["title"].is_null())
+        if (conf.contains("title"))
             m_title = conf.at("title");
     }
 

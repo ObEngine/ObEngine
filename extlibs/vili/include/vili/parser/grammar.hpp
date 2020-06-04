@@ -13,9 +13,18 @@ namespace vili::parser::rules
 
     // String
     struct string_delimiter : peg::one<'"'> {};
-    struct char_ : peg::not_one<'"'> {};
-    struct string_content : peg::star<char_> {};
-    struct string : peg::seq<string_delimiter, string_content, peg::must<string_delimiter>> {};
+    struct xdigit : peg::xdigit {};
+    struct unicode : peg::list<peg::seq<peg::one<'u'>, peg::rep<4, peg::must< xdigit>>>, peg::one<'\\'>> {};
+    struct escaped_char : peg::one< '"', '\\', '/', 'b', 'f', 'n', 'r', 't'> {};
+    struct escaped : peg::sor<escaped_char, unicode> {};
+    struct unescaped : peg::utf8::range< 0x20, 0x10FFFF> {};
+    struct char_ : peg::if_then_else<peg::one<'\\'>, peg::must<escaped>, unescaped> {};
+
+    struct string_content : peg::until<peg::at<string_delimiter>, peg::must<char_>> {};
+    struct string : peg::seq<string_delimiter, peg::must<string_content>, peg::any> {};
+
+    // struct string_content : peg::star<char_> {};
+    // struct string : peg::seq<string_delimiter, string_content, peg::must<string_delimiter>> {};
 
     // Booleans
     struct true_ : peg::string<'t', 'r', 'u', 'e'> {};

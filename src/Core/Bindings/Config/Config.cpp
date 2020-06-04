@@ -14,6 +14,5 @@ namespace obe::Config::Bindings
                 "ConfigurationManager", sol::call_constructor,
                 sol::constructors<obe::Config::ConfigurationManager()>());
         bindConfigurationManager["load"] = &obe::Config::ConfigurationManager::load;
-        bindConfigurationManager["get"] = &obe::Config::ConfigurationManager::get;
     }
 };

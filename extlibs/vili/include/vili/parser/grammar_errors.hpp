@@ -15,7 +15,15 @@ namespace vili::parser
     // String
     template <>
     inline constexpr auto
-        error_message<rules::string_delimiter> = "unterminated string, expected '\"'";
+        error_message<rules::xdigit> = "incomplete universal character name";
+    template <>
+    inline constexpr auto error_message<rules::escaped> = "unknown escape sequence";
+    template <>
+    inline constexpr auto
+        error_message<rules::char_> = "invalid character in vili string";
+    template <>
+    inline constexpr auto
+        error_message<rules::string_content> = "unterminated string, expected '\"'";
 
     // Data
     template <>

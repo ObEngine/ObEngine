@@ -13,15 +13,29 @@ namespace vili
     class node_iterator
     {
     private:
-        std::variant<array::value_type*, object::iterator> m_ptr;
+        std::variant<array::iterator, object::iterator> m_ptr;
 
     public:
-        node_iterator(array::value_type* value);
+        node_iterator(array::iterator value);
         node_iterator(object::iterator value);
         node_iterator(const node_iterator& other_it);
         node_iterator& operator++();
         bool operator!=(const node_iterator& rhs) const;
         node& operator*();
+    };
+
+    class const_node_iterator
+    {
+    private:
+        std::variant<array::const_iterator, object::const_iterator> m_ptr;
+
+    public:
+        const_node_iterator(array::const_iterator value);
+        const_node_iterator(object::const_iterator value);
+        const_node_iterator(const const_node_iterator& other_it);
+        const_node_iterator& operator++();
+        bool operator!=(const const_node_iterator& rhs) const;
+        const node& operator*();
     };
 
     using node_data
@@ -84,6 +98,10 @@ namespace vili
 
         node_iterator begin();
         node_iterator end();
+
+        const_node_iterator begin() const;
+        const_node_iterator end() const;
+
         object& items();
         const object& items() const;
 

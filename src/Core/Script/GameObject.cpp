@@ -27,8 +27,8 @@ namespace obe::Script
         throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
-    vili::node GameObjectDatabase::allDefinitions;
-    vili::node GameObjectDatabase::allRequires;
+    vili::node GameObjectDatabase::allDefinitions = vili::object {};
+    vili::node GameObjectDatabase::allRequires = vili::object {};
     vili::node GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
     {
         if (allRequires[type].is_null())
@@ -57,7 +57,7 @@ namespace obe::Script
                                                          .add(type)
                                                          .add(type + ".obj.vili")
                                                          .find();
-            if (!objectDefinitionPath.empty())
+            if (objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
             vili::node getGameObjectFile = vili::parser::from_file(objectDefinitionPath);
             if (!getGameObjectFile[type].is_null())

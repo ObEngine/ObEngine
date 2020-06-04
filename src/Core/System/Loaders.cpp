@@ -1,3 +1,4 @@
+#include <Debug/Logger.hpp>
 #include <System/Loaders.hpp>
 #include <Utils/FileUtils.hpp>
 
@@ -69,9 +70,17 @@ namespace obe::System::Loaders
         });
 
     Loader<vili::node> dataLoader([](vili::node& obj, const std::string& path) -> bool {
-        vili::node data = vili::parser::from_file(path);
-        obj.merge(data);
-        return true;
+        try
+        {
+            vili::node data = vili::parser::from_file(path);
+            obj.merge(data);
+            return true;
+        }
+        catch (vili::exceptions::base_exception& e)
+        {
+            Debug::Log->error(e.what());
+            return false;
+        }
     });
 
     Loader<Graphics::Font> fontLoader(
