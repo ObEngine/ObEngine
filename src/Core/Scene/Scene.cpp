@@ -262,9 +262,9 @@ namespace obe::Scene
         {
             vili::node& view = data.at("View");
             m_camera.setSize(view.at("size"));
-            m_cameraInitialPosition
-                = Transform::UnitVector(view.at("pos").at("x"), view.at("pos").at("y"),
-                    Transform::stringToUnits(view.at("pos").at("unit")));
+            m_cameraInitialPosition = Transform::UnitVector(view.at("position").at("x"),
+                view.at("position").at("y"),
+                Transform::stringToUnits(view.at("position").at("unit")));
             m_cameraInitialReferential = Transform::Referential::TopLeft;
             if (!view["referential"].is_null())
             {

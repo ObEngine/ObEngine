@@ -1,13 +1,10 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <vector>
 
-// #include <tsl/ordered_map.h>
-// #include <tsl/fifo_map.hpp>
-#include <sstream>
-//#include <unordered_map>
-#include <tsl/fifo_map.hpp>
+#include <nlohmann/fifo_map.hpp>
 
 namespace vili
 {
@@ -24,10 +21,6 @@ namespace vili
 
     using null = void*;
 
-    //using object = std::unordered_map<std::string, node>;
-    /*using object = tsl::ordered_map<std::string, node, std::hash<std::string>,
-        std::equal_to<std::string>, std::allocator<std::pair<std::string, node>>,
-        std::vector<std::pair<std::string, node>>>;*/
     using object = nlohmann::fifo_map<std::string, node>;
     using array = std::vector<node>;
     using integer = long long int;

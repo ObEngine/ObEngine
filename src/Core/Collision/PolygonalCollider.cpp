@@ -333,6 +333,24 @@ namespace obe::Collision
 
     void PolygonalCollider::load(vili::node& data)
     {
+        auto addTagHelper = [this](ColliderTagType type, vili::node& tag) {
+            if (!tag.is_null())
+            {
+                if (tag.is<vili::string>())
+                {
+                    this->addTag(type, tag);
+                }
+                else if (tag.is<vili::array>())
+                {
+                    for (vili::node& item : tag)
+                        this->addTag(Collision::ColliderTagType::Rejected, item);
+                }
+                else
+                {
+                    // TODO: Raise exception
+                }
+            }
+        };
         const std::string pointsUnit = data.at("unit");
         bool completePoint = true;
         double pointBuffer = 0;
@@ -344,27 +362,10 @@ namespace obe::Collision
             this->addPoint(pVector2);
         }
         this->setWorkingUnit(pBaseUnit);
-        if (!data["tag"].is_null())
-            this->addTag(Collision::ColliderTagType::Tag, data.at("tag"));
-        else if (!data["tags"].is_null())
-        {
-            for (vili::node& cTag : data.at("tags"))
-                this->addTag(Collision::ColliderTagType::Tag, cTag);
-        }
-        if (!data["accept"].is_null())
-            this->addTag(Collision::ColliderTagType::Accepted, data.at("accept"));
-        else if (!data["accept"].is_null())
-        {
-            for (vili::node& aTag : data.at("accept"))
-                this->addTag(Collision::ColliderTagType::Accepted, aTag);
-        }
-        if (data["reject"].is_null())
-            this->addTag(Collision::ColliderTagType::Rejected, data.at("reject"));
-        else if (!data["reject"].is_null())
-        {
-            for (vili::node& rTag : data.at("reject"))
-                this->addTag(Collision::ColliderTagType::Rejected, rTag);
-        }
+
+        addTagHelper(ColliderTagType::Tag, data["tag"]);
+        addTagHelper(ColliderTagType::Accepted, data["accept"]);
+        addTagHelper(ColliderTagType::Rejected, data["reject"]);
     }
 
     bool PolygonalCollider::checkTags(const PolygonalCollider& collider) const

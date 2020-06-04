@@ -9,6 +9,7 @@ namespace obe::Config
 {
     ConfigurationManager Config;
     ConfigurationManager::ConfigurationManager()
+        : vili::node(vili::object {})
     {
     }
     void ConfigurationManager::load()
@@ -18,16 +19,11 @@ namespace obe::Config
         std::reverse(mountPoints.begin(), mountPoints.end());
         const auto loadResult
             = System::Path(mountPoints).set("Data/config.cfg.vili").findAll();
-        m_config = vili::object {};
         for (const std::string path : loadResult)
         {
             Debug::Log->info("Loading config file from {}", path);
             vili::node conf = vili::parser::from_file(path);
-            m_config.merge(conf);
+            this->merge(conf);
         }
-    }
-    vili::node ConfigurationManager::get() const
-    {
-        return m_config;
     }
 } // namespace obe::System

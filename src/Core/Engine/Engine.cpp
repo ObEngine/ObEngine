@@ -37,14 +37,14 @@ namespace obe::Engine
     {
         m_input = std::make_unique<Input::InputManager>();
         m_input->init(*m_triggers);
-        m_input->configure(m_config.get().at("KeyBinding"));
+        m_input->configure(m_config.at("KeyBinding"));
         m_input->addContext("game");
     }
 
     void Engine::initFramerate()
     {
         m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
-        m_framerate->configure(m_config.get().at("GameConfig"));
+        m_framerate->configure(m_config.at("GameConfig"));
     }
 
     void Engine::initScript()
@@ -67,10 +67,10 @@ namespace obe::Engine
 
     void Engine::initResources()
     {
-        if (!m_config.get()["GameConfig"].is_null())
+        if (m_config.contains("GameConfig"))
         {
-            vili::node& gameConfig = m_config.get().at("GameConfig");
-            if (!gameConfig["antiAliasing"].is_null())
+            const vili::node& gameConfig = m_config.at("GameConfig");
+            if (gameConfig.contains("antiAliasing"))
             {
                 m_resources.defaultAntiAliasing = gameConfig.at("antiAliasing");
                 Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
@@ -118,12 +118,17 @@ namespace obe::Engine
 
     void Engine::initLogger() const
     {
-        const unsigned int logLevel = m_config.get().at("Debug").at("logLevel");
-        const auto level = static_cast<spdlog::level::level_enum>(logLevel);
-        if (!m_config.get()["Debug"].is_null()
-            && !m_config.get().at("Debug")["logLevel"].is_null())
-            Debug::Log->set_level(level);
-        Debug::Log->info("Log Level {}", logLevel);
+        if (m_config.contains("Debug"))
+        {
+            vili::node debug = m_config.at("Debug");
+            if (debug.contains("logLevel"))
+            {
+                const unsigned int logLevel = debug.at("logLevel");
+                const auto level = static_cast<spdlog::level::level_enum>(logLevel);
+                Debug::Log->set_level(level);
+                Debug::Log->info("Log Level {}", logLevel);
+            }
+        }
     }
 
     void Engine::clean() const

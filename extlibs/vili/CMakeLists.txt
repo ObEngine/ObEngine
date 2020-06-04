@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.6)
 
 project(vili)
 
+add_subdirectory(extlibs/fifo_map)
 add_subdirectory(extlibs/pegtl)
-add_subdirectory(extlibs/tsl)
 
 set(VILI_HEADERS
     include/vili/config.hpp
@@ -13,6 +13,7 @@ set(VILI_HEADERS
     include/vili/utils.hpp
     include/vili/parser/actions.hpp
     include/vili/parser/grammar.hpp
+    include/vili/parser/grammar_errors.hpp
     include/vili/parser/parser_state.hpp
     include/vili/parser/parser.hpp
 )
@@ -26,9 +27,9 @@ set(VILI_SOURCES
 
 add_library(vili ${VILI_HEADERS} ${VILI_SOURCES})
 
+target_link_libraries(vili fifo_map)
 target_link_libraries(vili fmt)
 target_link_libraries(vili pegtl)
-target_link_libraries(vili tsl)
 
 target_include_directories(vili
     PUBLIC
