@@ -470,8 +470,7 @@ namespace obe::Graphics
         std::string spriteXTransformer = "Position";
         std::string spriteYTransformer = "Position";
 
-        const std::string spriteUnits
-            = data["rect"]["unit"].is_null() ? "SceneUnits" : data["rect"]["unit"];
+        std::string spriteUnits = "SceneUnits";
         std::string spritePath;
         if (!data["path"].is_null())
             spritePath = data["path"];
@@ -479,13 +478,16 @@ namespace obe::Graphics
         Transform::UnitVector spriteSize(1, 1);
         if (!data["rect"].is_null())
         {
+            vili::node& rect = data.at("rect");
+            if (rect.contains("unit"))
+                spriteUnits = rect.at("unit");
             const Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
             spritePos.unit = rectUnit;
-            spritePos.x = data["rect"]["x"];
-            spritePos.y = data["rect"]["y"];
+            spritePos.x = rect.at("x");
+            spritePos.y = rect.at("y");
             spriteSize.unit = rectUnit;
-            spriteSize.x = data["rect"]["width"];
-            spriteSize.y = data["rect"]["height"];
+            spriteSize.x = rect.at("width");
+            spriteSize.y = rect.at("height");
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
             spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
         }

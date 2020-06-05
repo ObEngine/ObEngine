@@ -123,6 +123,11 @@ namespace obe::Transform::Bindings
             [](obe::Transform::PolygonPoint* self) -> const point_index_t& {
                 return self->index;
             });
+        TransformNamespace.new_enum<Transform::PolygonPoint::RelativePositionFrom>(
+            "RelativePositionFrom",
+            { { "Point0", Transform::PolygonPoint::RelativePositionFrom::Point0 },
+                { "Centroid",
+                    Transform::PolygonPoint::RelativePositionFrom::Centroid } });
     }
     void LoadClassPolygonSegment(sol::state_view state)
     {

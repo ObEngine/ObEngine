@@ -148,9 +148,8 @@ namespace obe::Triggers
                         + "\"";
                     const std::string fullName = this->getNamespace() + "."
                         + this->getGroup() + "." + this->getName();
-                    auto e = Exceptions::TriggerExecutionError(
+                    throw Exceptions::TriggerExecutionError(
                         fullName, rEnv.id, rEnv.callback, errMsg, EXC_INFO);
-                    throw e;
                 }
             }
         }
