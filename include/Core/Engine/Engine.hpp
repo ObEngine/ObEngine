@@ -23,8 +23,8 @@ namespace obe::Engine
     {
     protected:
         bool m_initialized = false;
-        sol::state m_lua;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
+        std::unique_ptr<sol::state> m_lua;
         std::unique_ptr<Scene::Scene> m_scene;
         std::unique_ptr<System::Cursor> m_cursor;
         std::unique_ptr<System::Window> m_window;
@@ -32,7 +32,7 @@ namespace obe::Engine
         // Managers
         Audio::AudioManager m_audio {};
         Config::ConfigurationManager m_config {};
-        ResourceManager m_resources {};
+        std::unique_ptr<ResourceManager> m_resources {};
         std::unique_ptr<Input::InputManager> m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
         std::unique_ptr<Triggers::TriggerManager> m_triggers;
@@ -60,7 +60,7 @@ namespace obe::Engine
 
         // Cleaning
         void clean() const;
-        void purge() noexcept;
+        void purge();
 
     public:
         Engine();

@@ -26,8 +26,8 @@ namespace obe::Engine
 
     void Engine::initTriggers()
     {
-        m_lua["__TRIGGERS"].get_or_create<sol::table>();
-        m_triggers = std::make_unique<Triggers::TriggerManager>(m_lua);
+        (*m_lua)["__TRIGGERS"].get_or_create<sol::table>();
+        m_triggers = std::make_unique<Triggers::TriggerManager>(*m_lua);
         m_triggers->createNamespace("Event");
         t_game = m_triggers->createTriggerGroup("Event", "Game");
 
@@ -49,32 +49,34 @@ namespace obe::Engine
 
     void Engine::initScript()
     {
-        m_lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,
+        m_lua = std::make_unique<sol::state>();
+        m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,
             sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
             sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
-        m_lua.safe_script_file("Lib/Internal/LuaCore.lua"_fs);
-        m_lua.safe_script_file("Lib/Internal/Environment.lua"_fs);
-        m_lua.safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
-        m_lua.safe_script_file("Lib/Internal/Triggers.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/LuaCore.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/Environment.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
 
-        Bindings::IndexAllBindings(m_lua);
-        m_lua.safe_script_file("Lib/Internal/GameInit.lua"_fs);
-        m_lua.set_exception_handler(&lua_exception_handler);
+        Bindings::IndexAllBindings(*m_lua);
+        m_lua->safe_script_file("Lib/Internal/GameInit.lua"_fs);
+        m_lua->set_exception_handler(&lua_exception_handler);
 
-        m_lua["Engine"] = this;
+        (*m_lua)["Engine"] = this;
     }
 
     void Engine::initResources()
     {
+        m_resources = std::make_unique<ResourceManager>();
         if (m_config.contains("GameConfig"))
         {
             const vili::node& gameConfig = m_config.at("GameConfig");
             if (gameConfig.contains("antiAliasing"))
             {
-                m_resources.defaultAntiAliasing = gameConfig.at("antiAliasing");
+                m_resources->defaultAntiAliasing = gameConfig.at("antiAliasing");
                 Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
-                    m_resources.defaultAntiAliasing);
+                    m_resources->defaultAntiAliasing);
             }
         }
     }
@@ -112,8 +114,8 @@ namespace obe::Engine
 
     void Engine::initScene()
     {
-        m_scene = std::make_unique<Scene::Scene>(*m_triggers, m_lua);
-        m_scene->attachResourceManager(m_resources);
+        m_scene = std::make_unique<Scene::Scene>(*m_triggers, *m_lua);
+        m_scene->attachResourceManager(*m_resources);
     }
 
     void Engine::initLogger() const
@@ -147,16 +149,23 @@ namespace obe::Engine
         Script::GameObjectDatabase::Clear();
         if (m_window)
             m_window->close();
+
+        // m_lua->clear();
     }
 
-    void Engine::purge() noexcept
+    void Engine::purge()
     {
         m_window.reset();
         m_cursor.reset();
         m_framerate.reset();
-        m_input.reset();
         m_scene.reset();
+        m_lua->collect_garbage();
+        m_lua->collect_garbage();
+        m_resources.reset();
         t_game.reset();
+        m_input.reset();
+        m_triggers.reset();
+        m_lua.reset();
     }
 
     void Engine::handleWindowEvents() const
@@ -207,6 +216,7 @@ namespace obe::Engine
             Debug::Log->error("Failed to properly clean the engine :\n{}", e.what());
         }
         this->purge();
+        Debug::Log->debug("Engine has been correctly cleaned");
     }
 
     void Engine::init()
@@ -235,7 +245,7 @@ namespace obe::Engine
             throw Exceptions::BootScriptMissing(
                 System::MountablePath::StringPaths(), EXC_INFO);
         const sol::protected_function_result loadResult
-            = m_lua.safe_script_file(bootScript);
+            = m_lua->safe_script_file(bootScript);
 
         if (!loadResult.valid())
         {
@@ -244,7 +254,7 @@ namespace obe::Engine
         }
         m_window->create();
         const sol::protected_function bootFunction
-            = m_lua["Game"]["Start"].get<sol::protected_function>();
+            = (*m_lua)["Game"]["Start"].get<sol::protected_function>();
 
         const sol::protected_function_result bootResult = bootFunction.call();
         if (!bootResult.valid())
@@ -281,7 +291,7 @@ namespace obe::Engine
 
     ResourceManager& Engine::getResourceManager()
     {
-        return m_resources;
+        return *m_resources;
     }
 
     Input::InputManager& Engine::getInputManager() const
@@ -326,7 +336,7 @@ namespace obe::Engine
 
     void Engine::render()
     {
-        m_lua.collect_garbage();
+        m_lua->collect_garbage();
         if (m_framerate->doRender())
         {
             m_window->clear();

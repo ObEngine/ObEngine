@@ -120,7 +120,7 @@ namespace obe::Script
         Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
         if (m_hasScriptEngine)
         {
-
+            m_environment = sol::nil;
             t_local.reset();
             m_triggers.removeNamespace(m_privateKey);
         }
@@ -418,6 +418,10 @@ namespace obe::Script
             {
                 m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
                     = sol::lua_nil;
+            }
+            for (auto [k, _] : m_environment)
+            {
+                m_environment[k] = sol::nil;
             }
         }
     }

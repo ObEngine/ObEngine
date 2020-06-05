@@ -715,7 +715,7 @@ obe.Canvas.Bases.Text = {
             self.shape:setFont(Engine.Resources:getFont(font));
         end,
         color = function(self, color)
-            self.text.color = obe.Graphics.Color(color);
+            self.text.color = obe.Canvas.NormalizeColor(color);
             self:refresh();
         end,
         outline = function(self, outline)
