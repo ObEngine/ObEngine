@@ -85,7 +85,7 @@ namespace obe::Animation
         Time::TimeUnit m_delay = 0;
         Time::TimeUnit m_sleep = 0;
 
-        std::vector<std::vector<std::string>> m_code;
+        std::vector<vili::node> m_code;
         std::size_t m_codeIndex = 0;
         bool m_feedInstructions = true;
 

@@ -45,6 +45,7 @@ namespace vili::parser
         void push_template();
         void push_template(
             const std::string& template_name, const vili::node& node_template);
+        void specialize_template();
         [[nodiscard]] node get_template(const std::string& template_name) const;
     };
 }

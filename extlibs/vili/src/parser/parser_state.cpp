@@ -135,6 +135,16 @@ namespace vili::parser
         m_templates.emplace(template_name, node_template);
     }
 
+    void state::specialize_template()
+    {
+        node& top = *m_stack.top().item;
+        if (top.is<vili::array>())
+        {
+            top[top.size() - 2].merge(top[top.size() - 1]);
+            top.erase(top.size() - 1);
+        }
+    }
+
     node state::get_template(const std::string& template_name) const
     {
         if (const auto it = m_templates.find(template_name); it != m_templates.end())
