@@ -512,6 +512,30 @@ namespace obe::Graphics
             }
         }
 
+        Color spriteColor = Color();
+        if (!data["color"].is_null())
+        {
+            if (data["color"].is<vili::object>() && !data["color"]["r"].is_null())
+            {
+                const double r = data["color"]["r"].as<vili::number>();
+                const double g = data["color"]["g"].as<vili::number>();
+                const double b = data["color"]["b"].as<vili::number>();
+                const double a = data["color"]["a"].is_null() ? 255 : data["color"]["a"].as<vili::number>();
+                spriteColor.fromRgb(r, g, b, a);
+            }
+            else if (data["color"].is<vili::object>()  && !data["color"]["H"].is_null())
+            {
+                const int H = data["color"]["H"].as<vili::integer>();
+                const double S = data["color"]["S"].as<vili::number>();
+                const double V = data["color"]["V"].as<vili::number>();
+                spriteColor.fromHsv(H, S, V);
+            }
+            else
+            {
+                spriteColor.fromString(data["color"]);
+            }
+        }
+
         this->setAntiAliasing(antiAliasing);
 
         if (!spritePath.empty())
@@ -525,6 +549,7 @@ namespace obe::Graphics
         this->setPositionTransformer(positionTransformer);
         this->setLayer(layer);
         this->setZDepth(zdepth);
+        this->setColor(spriteColor);
     }
 
     void Sprite::setShader(Shader* shader)
