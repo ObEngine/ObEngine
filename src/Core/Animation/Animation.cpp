@@ -1,5 +1,6 @@
 #include <Animation/Animation.hpp>
 #include <Animation/Exceptions.hpp>
+#include <Config/Templates/Animation.hpp>
 
 #include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
@@ -98,95 +99,95 @@ namespace obe::Animation
     {
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
         vili::node animationConfig
-            = vili::parser::from_file(path.add(path.last() + ".ani.vili").find());
+            = vili::parser::from_file(path.add(path.last() + ".ani.vili").find(),
+                Config::Templates::getAnimationTemplates());
 
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");
-        vili::node& meta = animationConfig.at("Meta");
-        this->loadMeta(meta);
+        this->loadMeta(animationConfig.at("Meta"));
 
         // Images
         Debug::Log->trace("  <Animation> Loading Images block");
-        vili::node& images = animationConfig.at("Images");
-        this->loadImages(images, path, resources);
+        this->loadImages(animationConfig.at("Images"), path, resources);
 
         // Groups
         Debug::Log->trace("  <Animation> Loading Groups block");
-        vili::node& groups = animationConfig.at("Groups");
-        this->loadGroups(groups);
+        this->loadGroups(animationConfig.at("Groups"));
 
         // Animation Code
         Debug::Log->trace("  <Animation> Loading Animation block");
-        vili::node& code = animationConfig.at("Animation");
-        this->loadCode(code);
+        this->loadCode(animationConfig.at("Animation"));
     }
 
     void Animation::executeInstruction()
     {
-        std::vector<std::string> currentCommand = m_code[m_codeIndex];
-        if (currentCommand[0] == "DELAY")
+        vili::node& currentCommand = m_code[m_codeIndex];
+        Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
+            m_code.size() - 1, currentCommand.dump());
+        if (currentCommand.at("command") == Config::Templates::wait_command)
         {
             m_feedInstructions = true;
-            m_sleep = stoi(currentCommand[1]);
-
-            if (m_playMode != AnimationPlayMode::OneTime
-                && !(m_codeIndex >= m_code.size() - 1))
-                m_codeIndex++;
-            else
-                m_over = true;
+            m_sleep = currentCommand.at("time");
         }
-        else if (currentCommand[0] == "PLAY_GROUP")
+        else if (currentCommand.at("command") == Config::Templates::play_group_command)
         {
             if (!m_currentGroupName.empty())
                 m_groups[m_currentGroupName]->reset();
             m_feedInstructions = false;
-            m_currentGroupName = currentCommand[1];
-            if (currentCommand.size() == 3)
-            {
-                const int loops = stoi(currentCommand[2]);
-                m_groups[m_currentGroupName]->setLoops(loops);
-            }
-            else
-                m_groups[m_currentGroupName]->setLoops(1);
+            m_currentGroupName = currentCommand.at("group");
+            m_groups[m_currentGroupName]->setLoops(currentCommand.at("repeat"));
         }
-        else if (currentCommand[0] == "CALL")
+        else if (currentCommand.at("command") == Config::Templates::set_animation_command)
         {
             m_feedInstructions = false;
-            std::string callAnimation = currentCommand[1];
-            Utils::String::replaceInPlace(callAnimation, "'", "");
             m_status = AnimationStatus::Call;
-            m_nextAnimation = callAnimation;
+            m_nextAnimation = currentCommand.at("animation");
         }
         else
         {
             throw Exceptions::UnknownAnimationCommand(
-                m_name, currentCommand[0], EXC_INFO);
+                m_name, currentCommand.at("command"), EXC_INFO);
+        }
+        m_codeIndex++;
+        if (m_feedInstructions && m_codeIndex > m_code.size() - 1 && m_playMode != AnimationPlayMode::OneTime)
+        {
+            this->reset();
         }
     }
 
     void Animation::updateCurrentGroup()
     {
+        Debug::Log->trace(
+            "    <Animation> Updating AnimationGroup '{}'", m_currentGroupName);
         m_groups[m_currentGroupName]->next();
         if (m_groups[m_currentGroupName]->isOver())
         {
-            if (m_playMode != AnimationPlayMode::OneTime)
+            Debug::Log->trace(
+                "        <Animation> AnimationGroup '{}' is over", m_currentGroupName);
+            if (m_codeIndex < m_code.size() - 1)
             {
+                Debug::Log->trace("    <Animation> Restarting code execution");
                 m_feedInstructions = true;
                 m_groups[m_currentGroupName]->reset();
-                m_codeIndex++;
             }
             else
             {
-                if (m_codeIndex < m_code.size() - 1)
+                Debug::Log->trace(
+                    "    <Animation> Animation '{}' has no more code to execute");
+                if (m_playMode == AnimationPlayMode::OneTime)
                 {
-                    m_feedInstructions = true;
-                    m_groups[m_currentGroupName]->reset();
-                    m_codeIndex++;
+                    Debug::Log->trace(
+                        "    <Animation> Animation '{}' will stay on the last texture");
+                    m_groups[m_currentGroupName]->previous(true);
+                    m_over = true;
                 }
                 else
                 {
-                    m_groups[m_currentGroupName]->previous(true);
-                    m_over = true;
+                    Debug::Log->trace(
+                        "    <Animation> Animation '{}' will reset code execution");
+                    m_feedInstructions = true;
+                    m_groups[m_currentGroupName]->reset();
+                    m_codeIndex = 0;
                 }
             }
         }
@@ -307,18 +308,13 @@ namespace obe::Animation
 
     void Animation::loadCode(vili::node& code)
     {
-        for (vili::node& command : code.at("AnimationCode"))
+        for (vili::node& command : code.at("code"))
         {
-            std::string currentCommand = command;
-            Debug::Log->trace(
-                "    <Animation> Parsing Animation command '{}'", currentCommand);
-            Utils::String::replaceInPlace(currentCommand, " ", "");
-            Utils::String::replaceInPlace(currentCommand, ")", "");
-            Utils::String::replaceInPlace(currentCommand, "(", ",");
-            const std::vector<std::string> vecCurCom
-                = Utils::String::split(currentCommand, ",");
-            m_code.push_back(vecCurCom);
+            Debug::Log->trace("    <Animation> Parsing Animation command '{}'", command);
+            m_code.push_back(command);
         }
+        if (m_code.empty())
+            m_feedInstructions = false;
     }
 
     void Animation::applyParameters(vili::node& parameters)
@@ -330,17 +326,15 @@ namespace obe::Animation
 
     void Animation::update()
     {
-        if (!m_code.empty())
+        if (!m_over)
         {
-            if (m_codeIndex > m_code.size() - 1
-                && m_playMode != AnimationPlayMode::OneTime)
-                m_codeIndex = 0;
             const Time::TimeUnit delay = (m_sleep) ? m_sleep : m_delay;
+            Debug::Log->trace("<Animation> Delay is {} seconds", delay);
             if (Time::epoch() - m_clock > delay)
             {
                 m_clock = Time::epoch();
                 m_sleep = 0;
-                Debug::Log->trace("<Animation> Updating Animation {0}", m_name);
+                Debug::Log->trace("<Animation> Updating Animation '{0}'", m_name);
 
                 if (m_feedInstructions)
                 {

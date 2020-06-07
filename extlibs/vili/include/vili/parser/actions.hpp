@@ -151,4 +151,12 @@ namespace vili::parser
             state.push_template();
         }
     };
+
+    template <> struct action<rules::template_specialization>
+    {
+        template <class ParseInput> static void apply(const ParseInput& in, state& state)
+        {
+            state.specialize_template();
+        }
+    };
 }

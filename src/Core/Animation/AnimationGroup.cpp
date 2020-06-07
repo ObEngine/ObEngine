@@ -48,6 +48,8 @@ namespace obe::Animation
 
     void AnimationGroup::reset() noexcept
     {
+        Debug::Log->trace(
+            "            <AnimationGroup> Resetting AnimationGroup '{}'", m_name);
         m_index = 0;
         m_over = false;
         m_loopIndex = 0;
@@ -60,7 +62,7 @@ namespace obe::Animation
             m_index++;
             if (m_index > m_groupList.size() - 1)
             {
-                if (m_loopIndex != m_loopAmount - 1)
+                if (m_loopIndex < m_loopAmount - 1)
                 {
                     m_index = 0;
                     m_loopIndex++;
@@ -70,6 +72,10 @@ namespace obe::Animation
                     m_over = true;
                 }
             }
+            Debug::Log->trace("            <AnimationGroup> Loading next image on group "
+                              "'{}' (image: {} / {}) "
+                              "(repeat: {} / {})",
+                m_name, m_index, m_groupList.size() - 1, m_loopIndex, m_loopAmount - 1);
         }
     }
 
@@ -84,6 +90,10 @@ namespace obe::Animation
             }
             else
                 m_index--;
+            Debug::Log->trace("            <AnimationGroup> Loading previous image on "
+                              "group '{}' (image: {} / {}) "
+                              "(repeat: {} / {})",
+                m_name, m_index, m_groupList.size() - 1, m_loopIndex, m_loopAmount - 1);
         }
     }
 
