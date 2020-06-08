@@ -536,6 +536,10 @@ namespace obe::Graphics
             }
         }
 
+        const bool visible = data["visible"].is_null()
+            ? m_visible
+            : data["visible"].as<bool>();
+
         this->setAntiAliasing(antiAliasing);
 
         if (!spritePath.empty())
@@ -550,6 +554,7 @@ namespace obe::Graphics
         this->setLayer(layer);
         this->setZDepth(zdepth);
         this->setColor(spriteColor);
+        this->setVisible(visible);
     }
 
     void Sprite::setShader(Shader* shader)
