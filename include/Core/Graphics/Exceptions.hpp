@@ -48,4 +48,14 @@ namespace obe::Graphics::Exceptions
                         "already a Canvas::{} with the same id");
         }
     };
+
+    class InvalidSpriteColorType : public Exception
+    {
+    public:
+        InvalidSpriteColorType(std::string_view type, std::string_view value, DebugInfo info)
+            : Exception("InvalidSpriteColorType ", info)
+        {
+            this->error("Invalid value for 'color' attribute, expected 'object' or 'string' and got '{}' (value: {})", type, value);
+        }
+    };
 }
