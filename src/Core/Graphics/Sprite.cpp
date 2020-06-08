@@ -1,6 +1,7 @@
 #include <Engine/ResourceManager.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/Sprite.hpp>
+#include <Graphics/Exceptions.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -503,7 +504,7 @@ namespace obe::Graphics
                 referentialPos = obe::Transform::Referential::FromString(rect.at("referential"));
 
         }
-        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"];
+        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"].as<vili::number>();
         const int layer = data["layer"].is_null() ? 1 : data["layer"].as<vili::integer>();
         const int zdepth
             = data["zdepth"].is_null() ? 1 : data["zdepth"].as<vili::integer>();
@@ -548,7 +549,8 @@ namespace obe::Graphics
             }
             else
             {
-                throw std::runtime_error("Unknown type for color");
+                throw Exceptions::InvalidSpriteColorType(
+                    vili::to_string(data["color"].type()), data["color"].dump(), EXC_INFO);
             }
         }
 
