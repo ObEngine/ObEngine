@@ -76,7 +76,7 @@ namespace vili::parser
 
     void state::open_block()
     {
-        m_stack.emplace(&m_stack.top().item->back(), 0);
+        m_stack.emplace(m_last_container, 0);
     }
 
     void state::close_block()
@@ -90,22 +90,32 @@ namespace vili::parser
         if (top.is<array>())
         {
             top.push(data);
+            if (data.is_container())
+            {
+                m_last_container = &top.back();
+            }
         }
         else if (top.is<object>())
         {
             if (m_identifier.empty())
             {
+                // Template specialization
                 top.back().merge(data);
             }
             else
             {
                 if (top.contains(m_identifier))
                 {
+                    // Object redefinition
                     top.at(m_identifier).merge(data);
                 }
                 else
                 {
                     top.insert(m_identifier, data);
+                }
+                if (data.is_container())
+                {
+                    m_last_container = &top.at(m_identifier);
                 }
             }
             m_identifier.clear();

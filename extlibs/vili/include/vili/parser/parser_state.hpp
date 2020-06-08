@@ -29,6 +29,7 @@ namespace vili::parser
         int64_t m_indent_base = 4;
         int64_t m_indent_current = -1;
         std::unordered_map<std::string, node> m_templates;
+        vili::node* m_last_container = nullptr;
 
     public:
         node root;
