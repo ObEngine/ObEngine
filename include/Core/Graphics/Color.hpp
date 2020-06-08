@@ -32,6 +32,8 @@ namespace obe::Graphics
 
         [[nodiscard]] uint32_t toInteger() const;
 
+        bool operator==(const Color& color) const;
+        bool operator!=(const Color& color) const;
         Color operator+(const Color& color) const;
         void operator+=(const Color& color);
         Color operator-(const Color& color) const;
