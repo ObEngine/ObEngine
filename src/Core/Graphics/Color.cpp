@@ -385,6 +385,16 @@ namespace obe::Graphics
         this->b = rgb[2];
     }
 
+    bool Color::operator==(const Color& color) const
+    {
+        return toInteger() == color.toInteger();
+    }
+
+    bool Color::operator!=(const Color& color) const
+    {
+        return toInteger() != color.toInteger();
+    }
+
     Color Color::operator+(const Color& color) const
     {
 
