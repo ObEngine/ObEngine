@@ -1,6 +1,7 @@
 #include <Engine/ResourceManager.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/Sprite.hpp>
+#include <Graphics/Exceptions.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -446,7 +447,7 @@ namespace obe::Graphics
 
     vili::node Sprite::dump() const
     {
-        vili::node result;
+        vili::node result = vili::object {};
         result["path"] = m_path;
 
         const Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
@@ -462,6 +463,14 @@ namespace obe::Graphics
         result["transform"]
             = vili::object { { "x", m_positionTransformer.getXTransformerName() },
                   { "y", m_positionTransformer.getYTransformerName() } };
+        if (!m_visible) {
+            result["visible"] = m_visible;
+        }
+        const Color& color = m_sprite.getColor();
+        if (color != Color::White) {
+            result["color"] = vili::object { { "r", color.r }, { "g", color.g },
+                      { "b", color.b }, { "a", color.a } };
+        }
         return result;
     }
 
@@ -476,6 +485,7 @@ namespace obe::Graphics
             spritePath = data["path"];
         Transform::UnitVector spritePos(0, 0);
         Transform::UnitVector spriteSize(1, 1);
+        obe::Transform::Referential referentialPos;
         if (!data["rect"].is_null())
         {
             vili::node& rect = data.at("rect");
@@ -490,8 +500,11 @@ namespace obe::Graphics
             spriteSize.y = rect.at("height");
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
             spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
+            if (rect.contains("referential"))
+                referentialPos = obe::Transform::Referential::FromString(rect.at("referential"));
+
         }
-        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"];
+        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"].as<vili::number>();
         const int layer = data["layer"].is_null() ? 1 : data["layer"].as<vili::integer>();
         const int zdepth
             = data["zdepth"].is_null() ? 1 : data["zdepth"].as<vili::integer>();
@@ -512,19 +525,54 @@ namespace obe::Graphics
             }
         }
 
+        Color color = Color::White;
+        if (!data["color"].is_null())
+        {
+            if (data["color"].is<vili::object>() && !data["color"]["r"].is_null())
+            {
+                const double r = data["color"]["r"].as<vili::number>();
+                const double g = data["color"]["g"].as<vili::number>();
+                const double b = data["color"]["b"].as<vili::number>();
+                const double a = data["color"]["a"].is_null() ? 255 : data["color"]["a"].as<vili::number>();
+                color.fromRgb(r, g, b, a);
+            }
+            else if (data["color"].is<vili::object>()  && !data["color"]["H"].is_null())
+            {
+                const int H = data["color"]["H"].as<vili::integer>();
+                const double S = data["color"]["S"].as<vili::number>();
+                const double V = data["color"]["V"].as<vili::number>();
+                color.fromHsv(H, S, V);
+            }
+            else if (data["color"].is<vili::string>())
+            {
+                color.fromString(data["color"]);
+            }
+            else
+            {
+                throw Exceptions::InvalidSpriteColorType(
+                    vili::to_string(data["color"].type()), data["color"].dump(), EXC_INFO);
+            }
+        }
+
+        const bool visible = data["visible"].is_null()
+            ? m_visible
+            : data["visible"].as<bool>();
+
         this->setAntiAliasing(antiAliasing);
 
         if (!spritePath.empty())
             this->loadTexture(spritePath);
         this->setRotation(spriteRot);
-        this->setPosition(spritePos);
-        this->setSize(spriteSize);
+        this->setPosition(spritePos, referentialPos);
+        this->setSize(spriteSize, referentialPos);
         this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
         const PositionTransformer positionTransformer(
             spriteXTransformer, spriteYTransformer);
         this->setPositionTransformer(positionTransformer);
         this->setLayer(layer);
         this->setZDepth(zdepth);
+        this->setColor(color);
+        this->setVisible(visible);
     }
 
     void Sprite::setShader(Shader* shader)
