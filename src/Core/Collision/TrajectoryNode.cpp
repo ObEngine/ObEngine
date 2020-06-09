@@ -59,19 +59,20 @@ namespace obe::Collision
                     currentTrajectory->setSpeed(currentTrajectory->m_speed
                         + currentTrajectory->m_acceleration * dt);
                     baseOffset = getOffset(*currentTrajectory);
-                    Transform::UnitVector realOffset = baseOffset;
+                    obe::Collision::CollisionData collData;
+                    collData.offset = baseOffset;
                     if (m_probe != nullptr)
                     {
-                        realOffset
-                            = m_probe->getMaximumDistanceBeforeCollision(realOffset);
+                        collData
+                            = m_probe->getMaximumDistanceBeforeCollision(collData.offset);
                     }
                     auto onCollideCallback = trajectory.second->getOnCollideCallback();
-                    if (realOffset != baseOffset && onCollideCallback)
+                    if (collData.offset != baseOffset && onCollideCallback)
                     {
                         onCollideCallback(
-                            *trajectory.second.get(), baseOffset, realOffset);
+                            *trajectory.second.get(), baseOffset, collData.offset, collData.colliders);
                     }
-                    m_sceneNode.move(realOffset);
+                    m_sceneNode.move(collData.offset);
                 }
             }
         }

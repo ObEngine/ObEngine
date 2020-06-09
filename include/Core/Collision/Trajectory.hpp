@@ -14,7 +14,7 @@ namespace obe::Collision
     class PolygonalCollider;
 
     using OnCollideCallback
-        = std::function<void(Trajectory&, Transform::UnitVector, Transform::UnitVector)>;
+        = std::function<void(Trajectory&, Transform::UnitVector, Transform::UnitVector, std::vector<PolygonalCollider*>&)>;
     using TrajectoryCheckFunction
         = std::function<void(Trajectory&, Transform::UnitVector&, PolygonalCollider*)>;
 
