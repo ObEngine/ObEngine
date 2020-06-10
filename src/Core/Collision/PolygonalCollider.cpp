@@ -80,10 +80,13 @@ namespace obe::Collision
     {
     }
 
-    Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(
+    CollisionData PolygonalCollider::getMaximumDistanceBeforeCollision(
         const Transform::UnitVector& offset) const
     {
         std::vector<Transform::UnitVector> limitedMaxDistances;
+        CollisionData collData;
+        collData.offset = offset;
+
         for (auto& collider : Pool)
         {
             if (checkTags(*collider))
@@ -96,6 +99,7 @@ namespace obe::Collision
                 if (maxDist != offset && collider != this)
                 {
                     limitedMaxDistances.push_back(maxDist);
+                    collData.colliders.push_back(collider);
                 }
             }
         }
@@ -115,9 +119,9 @@ namespace obe::Collision
                         = std::pair<double, Transform::UnitVector>(dist, distCoordinates);
                 }
             }
-            return minDist.second;
+            collData.offset = minDist.second;
         }
-        return offset;
+        return collData;
     }
 
     std::string PolygonalCollider::getParentId() const
@@ -145,20 +149,22 @@ namespace obe::Collision
         m_tags.at(tagType).clear();
     }
 
-    bool PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
+    CollisionData PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
     {
+        CollisionData collData;
+        collData.offset = offset;
         for (auto& collider : Pool)
         {
-            if (checkTags(*collider))
+            if (collider != this && checkTags(*collider))
             {
                 if (this->doesCollide(*collider, offset))
                 {
-                    return true;
+                    collData.colliders.push_back(collider);
                 }
             }
         }
 
-        return false;
+        return collData;
     }
 
     void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)

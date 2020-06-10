@@ -16,6 +16,14 @@ namespace obe::Collision::Bindings
                 { "Accepted", obe::Collision::ColliderTagType::Accepted },
                 { "Rejected", obe::Collision::ColliderTagType::Rejected } });
     }
+    void LoadStructCollisionData(sol::state_view state)
+    {
+        sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
+        sol::usertype<obe::Collision::CollisionData> bindCollisionData
+            = CollisionNamespace.new_usertype<obe::Collision::CollisionData>("CollisionData");
+        bindCollisionData["colliders"] = sol::readonly(&obe::Collision::CollisionData::colliders);
+        bindCollisionData["offset"] = sol::readonly(&obe::Collision::CollisionData::offset);
+    }
     void LoadClassPolygonalCollider(sol::state_view state)
     {
         sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
@@ -34,7 +42,7 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["clearTags"]
             = &obe::Collision::PolygonalCollider::clearTags;
         bindPolygonalCollider["doesCollide"]
-            = sol::overload(static_cast<bool (obe::Collision::PolygonalCollider::*)(
+            = sol::overload(static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                                 const obe::Transform::UnitVector&) const>(
                                 &obe::Collision::PolygonalCollider::doesCollide),
                 static_cast<bool (obe::Collision::PolygonalCollider::*)(
@@ -48,7 +56,7 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["getAllTags"]
             = &obe::Collision::PolygonalCollider::getAllTags;
         bindPolygonalCollider["getMaximumDistanceBeforeCollision"] = sol::overload(
-            static_cast<obe::Transform::UnitVector (obe::Collision::PolygonalCollider::*)(
+            static_cast<CollisionData (obe::Collision::PolygonalCollider::*)(
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
             static_cast<obe::Transform::UnitVector (obe::Collision::PolygonalCollider::*)(
