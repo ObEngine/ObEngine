@@ -30,6 +30,19 @@ namespace obe::Collision
         Rejected
     };
 
+    class PolygonalCollider;
+    /**
+    * \brief Struct containing data of a collision applied to a collider
+    * \bind{CollisionData}
+    */
+    struct CollisionData
+    {
+        // Colliders the collider touched during the collision (empty if no collision occurs)
+        std::vector<PolygonalCollider*> colliders;
+        // Maximum distance that can be travelled before collision
+        Transform::UnitVector offset;
+    };
+
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
@@ -76,7 +89,12 @@ namespace obe::Collision
          * \param tagType List you want to clear (Tag / Accepted /Rejected)
          */
         void clearTags(ColliderTagType tagType);
-        [[nodiscard]] bool doesCollide(const Transform::UnitVector& offset) const;
+        /**
+         * \brief Checks if the collider is intersecting other colliders
+         * \param offset The offset to apply to the source collider
+         * \return CollisionData containing intersected colliders (offset doesn't change)
+         */
+        [[nodiscard]] CollisionData doesCollide(const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test
@@ -123,10 +141,10 @@ namespace obe::Collision
          *        Colliders of the Scene
          * \param offset Distance the Collider should
          *        move to (if nothing collides)
-         * \return The maximum distance the
-         *         Collider can travel before colliding
+         * \return CollisionData struct containing the other colliders that had been
+         *         met and the maximum distance the collider can travel before colliding
          */
-        [[nodiscard]] Transform::UnitVector getMaximumDistanceBeforeCollision(
+        [[nodiscard]] CollisionData getMaximumDistanceBeforeCollision(
             const Transform::UnitVector& offset) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific

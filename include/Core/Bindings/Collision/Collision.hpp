@@ -10,4 +10,5 @@ namespace obe::Collision::Bindings
     void LoadClassTrajectory(sol::state_view state);
     void LoadClassTrajectoryNode(sol::state_view state);
     void LoadEnumColliderTagType(sol::state_view state);
+    void LoadStructCollisionData(sol::state_view state);
 };
