@@ -92,9 +92,9 @@ namespace obe::Collision
         /**
          * \brief Checks if the collider is intersecting other colliders
          * \param offset The offset to apply to the source collider
-         * \return std::vector of intersected colliders (empty if none found)
+         * \return CollisionData containing intersected colliders (offset doesn't change)
          */
-        [[nodiscard]] std::vector<PolygonalCollider*> doesCollide(const Transform::UnitVector& offset) const;
+        [[nodiscard]] CollisionData doesCollide(const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test

@@ -149,21 +149,22 @@ namespace obe::Collision
         m_tags.at(tagType).clear();
     }
 
-    std::vector<PolygonalCollider*> PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
+    CollisionData PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
     {
-        std::vector<PolygonalCollider*> touchedColliders;
+        CollisionData collData;
+        collData.offset = offset;
         for (auto& collider : Pool)
         {
             if (collider != this && checkTags(*collider))
             {
                 if (this->doesCollide(*collider, offset))
                 {
-                    touchedColliders.push_back(collider);
+                    collData.colliders.push_back(collider);
                 }
             }
         }
 
-        return touchedColliders;
+        return collData;
     }
 
     void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)

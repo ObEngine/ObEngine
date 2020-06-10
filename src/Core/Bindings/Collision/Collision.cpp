@@ -21,8 +21,8 @@ namespace obe::Collision::Bindings
         sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
         sol::usertype<obe::Collision::CollisionData> bindCollisionData
             = CollisionNamespace.new_usertype<obe::Collision::CollisionData>("CollisionData");
-        bindCollisionData["colliders"] = &obe::Collision::CollisionData::colliders;
-        bindCollisionData["offset"] = &obe::Collision::CollisionData::offset;
+        bindCollisionData["colliders"] = sol::readonly(&obe::Collision::CollisionData::colliders);
+        bindCollisionData["offset"] = sol::readonly(&obe::Collision::CollisionData::offset);
     }
     void LoadClassPolygonalCollider(sol::state_view state)
     {
@@ -42,7 +42,7 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["clearTags"]
             = &obe::Collision::PolygonalCollider::clearTags;
         bindPolygonalCollider["doesCollide"]
-            = sol::overload(static_cast<std::vector<PolygonalCollider*> (obe::Collision::PolygonalCollider::*)(
+            = sol::overload(static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                                 const obe::Transform::UnitVector&) const>(
                                 &obe::Collision::PolygonalCollider::doesCollide),
                 static_cast<bool (obe::Collision::PolygonalCollider::*)(

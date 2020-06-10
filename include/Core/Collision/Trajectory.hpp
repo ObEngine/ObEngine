@@ -6,6 +6,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
+#include <Collision/PolygonalCollider.hpp>
 
 namespace obe::Collision
 {
@@ -14,7 +15,7 @@ namespace obe::Collision
     class PolygonalCollider;
 
     using OnCollideCallback
-        = std::function<void(Trajectory&, Transform::UnitVector, Transform::UnitVector, std::vector<PolygonalCollider*>&)>;
+        = std::function<void(Trajectory&, Transform::UnitVector, Collision::CollisionData)>;
     using TrajectoryCheckFunction
         = std::function<void(Trajectory&, Transform::UnitVector&, PolygonalCollider*)>;
 

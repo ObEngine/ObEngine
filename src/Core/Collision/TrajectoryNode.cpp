@@ -70,7 +70,7 @@ namespace obe::Collision
                     if (collData.offset != baseOffset && onCollideCallback)
                     {
                         onCollideCallback(
-                            *trajectory.second.get(), baseOffset, collData.offset, collData.colliders);
+                            *trajectory.second.get(), baseOffset, collData);
                     }
                     m_sceneNode.move(collData.offset);
                 }
