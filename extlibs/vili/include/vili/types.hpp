@@ -10,6 +10,7 @@ namespace vili
 {
     constexpr std::string_view true_value = "true";
     constexpr std::string_view false_value = "false";
+    constexpr std::string_view null_type = "null";
     constexpr std::string_view bool_type = "boolean";
     constexpr std::string_view int_type = "integer";
     constexpr std::string_view float_type = "number";
@@ -57,5 +58,4 @@ namespace vili
 
     node_type from_string(std::string_view type);
     std::string to_string(node_type type);
-    node_type from_value(std::string_view value);
 }

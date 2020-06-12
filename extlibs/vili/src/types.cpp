@@ -1,3 +1,4 @@
+#include <vili/exceptions.hpp>
 #include <vili/types.hpp>
 #include <vili/utils.hpp>
 
@@ -19,19 +20,19 @@ namespace vili
     std::string to_string(node_type type)
     {
         if (type == node_type::null)
-            return "null";
+            return null_type.data();
         if (type == node_type::integer)
-            return "integer";
+            return int_type.data();
         if (type == node_type::number)
-            return "number";
+            return float_type.data();
         if (type == node_type::string)
-            return "string";
+            return string_type.data();
         if (type == node_type::boolean)
-            return "boolean";
+            return bool_type.data();
         if (type == node_type::array)
-            return "array";
+            return array_type.data();
         if (type == node_type::object)
-            return "object";
+            return object_type.data();
         return "";
     }
 
@@ -39,5 +40,41 @@ namespace vili
     {
         os << to_string(m);
         return os;
+    }
+
+    node_type from_string(std::string_view type)
+    {
+        if (type == null_type)
+        {
+            return node_type::null;
+        }
+        else if (type == bool_type)
+        {
+            return node_type::boolean;
+        }
+        else if (type == int_type)
+        {
+            return node_type::integer;
+        }
+        else if (type == float_type)
+        {
+            return node_type::number;
+        }
+        else if (type == string_type)
+        {
+            return node_type::string;
+        }
+        else if (type == array_type)
+        {
+            return node_type::array;
+        }
+        else if (type == object_type)
+        {
+            return node_type::object;
+        }
+        else
+        {
+            throw exceptions::invalid_node_type(type, VILI_EXC_INFO);
+        }
     }
 }

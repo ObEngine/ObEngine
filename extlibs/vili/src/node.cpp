@@ -271,6 +271,71 @@ namespace vili
         return true;
     }
 
+    bool node::is_integer() const
+    {
+        return is<integer>();
+    }
+
+    bool node::is_number() const
+    {
+        return is<number>();
+    }
+
+    bool node::is_numeric() const
+    {
+        return is<integer>() || is<number>();
+    }
+
+    bool node::is_boolean() const
+    {
+        return is<boolean>();
+    }
+
+    bool node::is_string() const
+    {
+        return is<string>();
+    }
+
+    bool node::is_array() const
+    {
+        return is<array>();
+    }
+
+    bool node::is_object() const
+    {
+        return is<object>();
+    }
+
+    boolean node::as_boolean() const
+    {
+        return as<boolean>();
+    }
+
+    integer node::as_integer() const
+    {
+        return as<integer>();
+    }
+
+    number node::as_number() const
+    {
+        return as<number>();
+    }
+
+    string node::as_string() const
+    {
+        return as<string>();
+    }
+
+    array node::as_array() const
+    {
+        return as<array>();
+    }
+
+    object node::as_object() const
+    {
+        return as<object>();
+    }
+
     node& node::operator[](const char* key)
     {
         return operator[](std::string(key));
