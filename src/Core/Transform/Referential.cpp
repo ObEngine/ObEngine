@@ -3,8 +3,8 @@
 
 #include <array>
 #include <cassert>
-#include <regex>
 #include <ostream> // Weird fix on latest versions of MSVC
+#include <regex>
 
 #include <fmt/format.h>
 
@@ -53,12 +53,12 @@ namespace obe::Transform
         return !((*this) == ref);
     }
 
-    Referential Referential::flip(Referential::Axis axis) const
+    Referential Referential::flip(FlipAxis axis) const
     {
         const bool bothOrHorizontal
-            = (axis == Referential::Axis::Both || axis == Referential::Axis::Horizontal);
+            = (axis == FlipAxis::Both || axis == FlipAxis::Horizontal);
         const bool bothOrVertical
-            = (axis == Referential::Axis::Both || axis == Referential::Axis::Vertical);
+            = (axis == FlipAxis::Both || axis == FlipAxis::Vertical);
         return Referential(
             bothOrHorizontal ? 1 - m_refX : m_refX, bothOrVertical ? 1 - m_refY : m_refY);
     }

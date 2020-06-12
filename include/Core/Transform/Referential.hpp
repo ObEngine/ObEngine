@@ -7,6 +7,17 @@
 namespace obe::Transform
 {
     /**
+     * \brief Enum which contains value to indicate which kind of
+     *        flip you want to perform on a Referential
+     */
+    enum class FlipAxis
+    {
+        Horizontal,
+        Vertical,
+        Both
+    };
+
+    /**
      * \brief Set or Get Position using Referentials
      */
     class Referential
@@ -16,13 +27,6 @@ namespace obe::Transform
         double m_refY;
 
     public:
-        enum class Axis
-        {
-            Horizontal,
-            Vertical,
-            Both
-        };
-
         Referential();
         Referential(double refX, double refY);
         Referential(const Referential& ref);
@@ -35,7 +39,7 @@ namespace obe::Transform
          * \return The opposite of the given Referential (BottomRight => TopLeft
          *         for example)
          */
-        [[nodiscard]] Referential flip(Axis axis = Axis::Both) const;
+        [[nodiscard]] Referential flip(FlipAxis axis = FlipAxis::Both) const;
         /**
          * \brief Get if the Referential is on the left side of a normalized
          *        Rect

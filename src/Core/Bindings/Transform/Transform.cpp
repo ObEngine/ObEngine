@@ -226,7 +226,7 @@ namespace obe::Transform::Bindings
             [](obe::Transform::Referential* self) -> obe::Transform::Referential {
                 return self->flip();
             },
-            [](obe::Transform::Referential* self, obe::Transform::Referential::Axis axis)
+            [](obe::Transform::Referential* self, obe::Transform::FlipAxis axis)
                 -> obe::Transform::Referential { return self->flip(axis); });
         bindReferential["isOnLeftSide"] = &obe::Transform::Referential::isOnLeftSide;
         bindReferential["isOnRightSide"] = &obe::Transform::Referential::isOnRightSide;

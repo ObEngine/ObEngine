@@ -6,6 +6,7 @@ namespace vili::parser
         : root(object {})
     {
         m_stack.emplace(&root, 0);
+        m_last_container = &root;
     }
 
     state::state(const state& state)
@@ -14,6 +15,7 @@ namespace vili::parser
         m_indent_base = state.m_indent_base;
         root = state.root;
         m_stack.emplace(&root, 0);
+        m_last_container = &root;
     }
 
     state::state(state&& state)
@@ -22,6 +24,7 @@ namespace vili::parser
         m_indent_base = state.m_indent_base;
         root = state.root;
         m_stack.emplace(&root, 0);
+        m_last_container = &root;
     }
 
     void state::set_indent(int64_t indent)
