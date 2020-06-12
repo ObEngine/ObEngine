@@ -168,8 +168,9 @@ namespace obe::Bindings
             .add("ClassTrajectory", &obe::Collision::Bindings::LoadClassTrajectory)
             .add(
                 "ClassTrajectoryNode", &obe::Collision::Bindings::LoadClassTrajectoryNode)
-            .add("EnumColliderTagType",
-                &obe::Collision::Bindings::LoadEnumColliderTagType);
+            .add(
+                "EnumColliderTagType", &obe::Collision::Bindings::LoadEnumColliderTagType)
+            .add("CollisionData", &obe::Collision::Bindings::LoadStructCollisionData);
 
         BindTree["obe"]["Component"].add(
             "ClassComponentBase", &obe::Component::Bindings::LoadClassComponentBase);

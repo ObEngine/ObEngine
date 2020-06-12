@@ -50,6 +50,7 @@ namespace obe::Graphics::Bindings
         bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
+        bindColor[sol::meta_function::equal_to] = &obe::Graphics::Color::operator==;
         bindColor[sol::meta_function::subtraction] = sol::overload(
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
                 const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator-),
