@@ -35,11 +35,16 @@ namespace obe::Collision
     * \brief Struct containing data of a collision applied to a collider
     * \bind{CollisionData}
     */
-    struct CollisionData
+    class CollisionData
     {
-        // Colliders the collider touched during the collision (empty if no collision occurs)
+    public:
+        /**
+         * \briefColliders the collider touched during the collision (empty if no collision occurs)
+         */
         std::vector<PolygonalCollider*> colliders;
-        // Maximum distance that can be travelled before collision
+        /**
+         * \brief Maximum distance that can be traveled before collision
+         */
         Transform::UnitVector offset;
     };
 
@@ -94,7 +99,8 @@ namespace obe::Collision
          * \param offset The offset to apply to the source collider
          * \return CollisionData containing intersected colliders (offset doesn't change)
          */
-        [[nodiscard]] CollisionData doesCollide(const Transform::UnitVector& offset) const;
+        [[nodiscard]] CollisionData doesCollide(
+            const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test

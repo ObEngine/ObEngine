@@ -1,9 +1,9 @@
-#include <Bindings/Obe/obe.hpp>
+#include <Bindings/obe/obe.hpp>
 
 #include <Exception.hpp>
 #include <ObEngineCore.hpp>
 
-#include <sol/sol.hpp>
+#include <Bindings/Config.hpp>
 
 namespace obe::Bindings
 {
@@ -25,6 +25,7 @@ namespace obe::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Exception(std::string, obe::DebugInfo)>());
         bindException["what"] = &obe::Exception::what;
+        bindException["nest"] = &obe::Exception::nest;
     }
     void LoadFunctionInitEngine(sol::state_view state)
     {
