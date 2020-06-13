@@ -9,7 +9,7 @@
 namespace obe::Script::ViliLuaBridge
 {
     sol::lua_value viliToLua(vili::node& convert);
-    vili::node luaToVili(sol::reference convert);
+    vili::node luaToVili(sol::object convert);
     /**
      * \brief Adds a converted Vili ComplexAttribute to a Lua Table
      *        The key of the newly converted element in the table will be the
@@ -47,14 +47,14 @@ namespace obe::Script::ViliLuaBridge
      * \param convert The LuaTable you want to convert to a ComplexAttribute
      * \return The converted Lua Table in ComplexAttribute form
      */
-    vili::node luaTableToViliObject(sol::object convert);
+    vili::node luaTableToViliObject(sol::table convert);
     /**
      * \brief Converts a Lua Variable to a Vili BaseAttribute
      * \param id Id of the newly created BaseAttribute
      * \param convert The LuaVar you want to convert to a BaseAttribute
      * \return The converted Lua Element in BaseAttribute form
      */
-    vili::node luaValueToViliPrimitive(sol::object convert);
+    vili::node luaValueToViliPrimitive(sol::lua_value convert);
     /**
      * \brief Converts a Lua Table to a Vili ListAttribute
      * \param id Id of the newly created ListAttribute
