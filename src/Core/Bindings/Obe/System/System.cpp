@@ -169,7 +169,7 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::Window> bindWindow
             = SystemNamespace.new_usertype<obe::System::Window>("Window",
                 sol::call_constructor,
-                sol::constructors<obe::System::Window(obe::System::WindowContext)>());
+                sol::constructors<obe::System::Window(vili::node)>());
         bindWindow["create"] = &obe::System::Window::create;
         bindWindow["clear"] = &obe::System::Window::clear;
         bindWindow["close"] = &obe::System::Window::close;

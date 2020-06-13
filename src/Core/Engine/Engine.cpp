@@ -37,14 +37,14 @@ namespace obe::Engine
     {
         m_input = std::make_unique<Input::InputManager>();
         m_input->init(*m_triggers);
-        m_input->configure(m_config.at("KeyBinding"));
+        m_input->configure(m_config.at("Input"));
         m_input->addContext("game");
     }
 
     void Engine::initFramerate()
     {
         m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
-        m_framerate->configure(m_config.at("GameConfig"));
+        m_framerate->configure(m_config.at("Framerate"));
     }
 
     void Engine::initScript()
@@ -83,7 +83,9 @@ namespace obe::Engine
 
     void Engine::initWindow()
     {
-        m_window = std::make_unique<System::Window>(System::WindowContext::GameWindow);
+        vili::node windowConfig = m_config.at("Window").at("Game");
+        Debug::Log->debug("<Engine> Window configuration : {}", windowConfig.dump());
+        m_window = std::make_unique<System::Window>(windowConfig);
     }
 
     void Engine::initCursor()

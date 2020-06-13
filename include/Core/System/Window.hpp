@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <vili/node.hpp>
 
 #include <Graphics/Color.hpp>
 #include <Graphics/RenderTarget.hpp>
@@ -28,7 +29,7 @@ namespace obe::System
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
-        explicit Window(WindowContext context);
+        explicit Window(vili::node configuration);
         void create();
         void clear();
         void close();
