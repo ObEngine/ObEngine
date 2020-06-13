@@ -508,7 +508,10 @@ namespace vili
         {
             for (auto [key, val] : value.items())
             {
-                (*this)[key] = val;
+                if (this->contains(key))
+                    this->at(key).merge(val);
+                else
+                    (*this)[key] = val;
             }
         }
         else if (is<array>() && value.is<array>())

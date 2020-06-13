@@ -1,72 +1,92 @@
 GameConfig:
-    antiAliasing:true
-    scrollSensibility:1
-    framerateLimit:true
-    framerateTarget:60
-    vsync:true
+    scrollSensibility: 1
 
-KeyBinding:
+Graphics:
+    antiAliasing: true
+
+Framerate:
+    framerateLimit: true
+    framerateTarget: 60
+    vsync: true
+
+Window:
+    Game:
+        fullscreen: true
+        width: fill
+        height: fill
+        title: "MyGame"
+
+    Editor:
+        fullscreen: true
+        closeable: true
+        titlebar: true
+        resizeable: true
+        width: fill
+        height: fill
+        docked: false
+
+Input:
     mapEditor:
-        SpriteMode:"Pressed:1"
-        CollisionMode:"Pressed:2"
-        CamMovable:"Pressed:F10"
-        CamFree:"Pressed:F11"
-        CamUp:"Hold:Z"
-        CamDown:"Hold:S + Idle:LControl"
-        CamLeft:"Hold:Q"
-        CamRight:"Hold:D"
-        CamDash:"Hold:LShift"
-        CamStopDash:"Released:LShift"
-        MagnetizeCursor:"Pressed:M"
-        MagnetizeUp:"Hold:Up"
-        MagnetizeRight:"Hold:Right"
-        MagnetizeDown:"Hold:Down"
-        MagnetizeLeft:"Hold:Left"
-        Save:"Hold:LControl + Pressed:S"
-        ToggleGrid:"Pressed:G"
-        ToggleGridSnap:"Pressed:H"
-        ToggleEditorMenu:"Pressed:E"
-        ExitEditor:"Pressed:Escape"
-        ResetCameraSize:"Pressed:R"
-        Copy:"Hold:LControl + Pressed:C"
-        Cut:"Hold:LControl + Pressed:X"
-        Paste:"Hold:LControl + Pressed:V"
+        SpriteMode: "Pressed:1"
+        CollisionMode: "Pressed:2"
+        CamMovable: "Pressed:F10"
+        CamFree: "Pressed:F11"
+        CamUp: "Hold:Z"
+        CamDown: "Hold:S + Idle:LControl"
+        CamLeft: "Hold:Q"
+        CamRight: "Hold:D"
+        CamDash: "Hold:LShift"
+        CamStopDash: "Released:LShift"
+        MagnetizeCursor: "Pressed:M"
+        MagnetizeUp: "Hold:Up"
+        MagnetizeRight: "Hold:Right"
+        MagnetizeDown: "Hold:Down"
+        MagnetizeLeft: "Hold:Left"
+        Save: "Hold:LControl + Pressed:S"
+        ToggleGrid: "Pressed:G"
+        ToggleGridSnap: "Pressed:H"
+        ToggleEditorMenu: "Pressed:E"
+        ExitEditor: "Pressed:Escape"
+        ResetCameraSize: "Pressed:R"
+        Copy: "Hold:LControl + Pressed:C"
+        Cut: "Hold:LControl + Pressed:X"
+        Paste: "Hold:LControl + Pressed:V"
     spriteEditing:
-        SpriteCancelOffset:"Hold:LMB + Pressed:O"
-        SpriteRemove:"Pressed:Delete"
-        SpriteZDepthInc:"Pressed:NumPad8"
-        SpriteZDepthDec:"Pressed:NumPad2"
-        SpriteLayerInc:"Pressed:NumPad6"
-        SpriteLayerDec:"Pressed:NumPad4"
-        SpritePick:"Pressed:LMB"
-        SpriteMove:"Hold:LMB"
-        HandlePointMove:"Hold:LMB"
-        HandlePointRelease:"Released:LMB"
-        MoveHandlePoint:"Hold:LMB"
-        ReleaseHandlePoint:"Released:LMB"
+        SpriteCancelOffset: "Hold:LMB + Pressed:O"
+        SpriteRemove: "Pressed:Delete"
+        SpriteZDepthInc: "Pressed:NumPad8"
+        SpriteZDepthDec: "Pressed:NumPad2"
+        SpriteLayerInc: "Pressed:NumPad6"
+        SpriteLayerDec: "Pressed:NumPad4"
+        SpritePick: "Pressed:LMB"
+        SpriteMove: "Hold:LMB"
+        HandlePointMove: "Hold:LMB"
+        HandlePointRelease: "Released:LMB"
+        MoveHandlePoint: "Hold:LMB"
+        ReleaseHandlePoint: "Released:LMB"
     colliderEditing:
-        ColliderPointPick:"Pressed:LMB"
-        ColliderPointMove:"Hold:LMB"
-        ColliderPointRelease:"Released:LMB"
-        ColliderMasterPick:"Pressed:LMB"
-        ColliderMasterMove:"Hold:LMB"
-        ColliderMasterRelease:"Released:LMB"
-        ColliderPointCreate:"Pressed:RMB"
-        ColliderPointRemove:"Hold:LMB + Pressed:Delete"
-        ColliderRelease:"Pressed:LMB"
-        ColliderRemove:"Hold:LMB + Pressed:Delete"
-        ColliderCreate:"Pressed:RMB"
+        ColliderPointPick: "Pressed:LMB"
+        ColliderPointMove: "Hold:LMB"
+        ColliderPointRelease: "Released:LMB"
+        ColliderMasterPick: "Pressed:LMB"
+        ColliderMasterMove: "Hold:LMB"
+        ColliderMasterRelease: "Released:LMB"
+        ColliderPointCreate: "Pressed:RMB"
+        ColliderPointRemove: "Hold:LMB + Pressed:Delete"
+        ColliderRelease: "Pressed:LMB"
+        ColliderRemove: "Hold:LMB + Pressed:Delete"
+        ColliderCreate: "Pressed:RMB"
     sceneNodeEditing:
-        SceneNodePick:"Pressed:LMB"
-        SceneNodeMove:"Hold:LMB"
-        SceneNodeRelease:"Released:LMB"
+        SceneNodePick: "Pressed:LMB"
+        SceneNodeMove: "Hold:LMB"
+        SceneNodeRelease: "Released:LMB"
     gameConsole:
-        ConsoleCursorLeft:"Pressed:Left"
-        ConsoleCursorRight:"Pressed:Right"
-        ConsoleUpHistory:"Pressed:Up"
-        ConsoleDownHistory:"Pressed:Down"
-        ConsoleToggle:"Pressed:F1"
-        ExitEditor:"Pressed:Escape"
+        ConsoleCursorLeft: "Pressed:Left"
+        ConsoleCursorRight: "Pressed:Right"
+        ConsoleUpHistory: "Pressed:Up"
+        ConsoleDownHistory: "Pressed:Down"
+        ConsoleToggle: "Pressed:F1"
+        ExitEditor: "Pressed:Escape"
 
 Debug:
-    logLevel:1
+    logLevel: debug

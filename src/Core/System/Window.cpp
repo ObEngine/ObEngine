@@ -6,51 +6,28 @@
 
 namespace obe::System
 {
-    Window::Window(const WindowContext context)
+    Window::Window(vili::node configuration)
     {
-        vili::node windowConfig = vili::object {};
-        auto mountPoints = System::MountablePath::Paths();
-        std::reverse(mountPoints.begin(), mountPoints.end());
-        Path(mountPoints)
-            .set("Data/window.cfg.vili")
-            .loadAll(System::Loaders::dataLoader, windowConfig);
-
-        vili::node conf;
-        if (context == WindowContext::GameWindow)
+        if (configuration.contains("width"))
         {
-            if (windowConfig.contains("Game"))
-                conf = windowConfig.at("Game");
-            else
-                conf = windowConfig;
-        }
-        else if (context == WindowContext::EditorWindow)
-        {
-            if (windowConfig.contains("Editor"))
-                conf = windowConfig.at("Editor");
-            else
-                conf = windowConfig;
-        }
-
-        if (conf.contains("width"))
-        {
-            if (conf.at("width").is<vili::integer>())
-                m_width = conf.at("width");
-            else if (conf.at("width").is<vili::string>())
+            if (configuration.at("width").is<vili::integer>())
+                m_width = configuration.at("width");
+            else if (configuration.at("width").is<vili::string>())
             {
-                if (conf.at("width").as<vili::string>() == "Fill")
+                if (configuration.at("width").as<vili::string>() == "Fill")
                     m_width = Transform::UnitVector::Screen.w;
             }
         }
         else
             m_width = Transform::UnitVector::Screen.w;
 
-        if (conf.contains("height"))
+        if (configuration.contains("height"))
         {
-            if (conf.at("height").is<vili::integer>())
-                m_height = conf.at("height");
-            else if (conf.at("height").is<vili::string>())
+            if (configuration.at("height").is<vili::integer>())
+                m_height = configuration.at("height");
+            else if (configuration.at("height").is<vili::string>())
             {
-                if (conf.at("height").as<vili::string>() == "Fill")
+                if (configuration.at("height").as<vili::string>() == "Fill")
                     m_height = Transform::UnitVector::Screen.h;
             }
         }
@@ -62,14 +39,14 @@ namespace obe::System
         bool resizeable = true;
         bool titlebar = true;
 
-        if (conf.contains("fullscreen"))
-            fullscreen = conf.at("fullscreen");
-        if (conf.contains("closeable"))
-            closeable = conf.at("closeable");
-        if (conf.contains("resizeable"))
-            resizeable = conf.at("resizeable");
-        if (conf.contains("titlebar"))
-            titlebar = conf.at("titlebar");
+        if (configuration.contains("fullscreen"))
+            fullscreen = configuration.at("fullscreen");
+        if (configuration.contains("closeable"))
+            closeable = configuration.at("closeable");
+        if (configuration.contains("resizeable"))
+            resizeable = configuration.at("resizeable");
+        if (configuration.contains("titlebar"))
+            titlebar = configuration.at("titlebar");
 
         m_style = sf::Style::Default;
         if (fullscreen)
@@ -85,8 +62,8 @@ namespace obe::System
         }
 
         std::string title = "ObEngine";
-        if (conf.contains("title"))
-            m_title = conf.at("title");
+        if (configuration.contains("title"))
+            m_title = configuration.at("title");
     }
 
     void Window::create()
