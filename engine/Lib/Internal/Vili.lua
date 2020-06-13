@@ -14,3 +14,11 @@ function vili.object(t)
     end
     return new_node;
 end
+
+function vili.from_lua(t)
+    return obe.Script.ViliLuaBridge.luaToVili(t);
+end
+
+function vili.to_lua(t)
+    return obe.Script.ViliLuaBridge.viliToLua(t);
+end
