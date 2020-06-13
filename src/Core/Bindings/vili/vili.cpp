@@ -1,5 +1,6 @@
 #include <Bindings/vili/vili.hpp>
 
+#include <System/Path.hpp>
 #include <vili/config.hpp>
 #include <vili/node.hpp>
 #include <vili/types.hpp>
@@ -112,6 +113,8 @@ namespace vili::Bindings
         bindnode["operator number"] = &vili::node::operator number;
         bindnode["operator boolean"] = &vili::node::operator boolean;
         bindnode["operator unsigned"] = &vili::node::operator unsigned;
+        bindnode["from_type"] = &vili::node::from_type;
+        state.script_file("Lib/Internal/Vili.lua"_fs);
     }
     void LoadClassNodeIterator(sol::state_view state)
     {
