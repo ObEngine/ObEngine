@@ -54,8 +54,7 @@ namespace obe::Engine
             sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
             sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
-        m_lua->safe_script_file("Lib/Internal/LuaCore.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/Environment.lua"_fs);
+        m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
 

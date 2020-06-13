@@ -1,3 +1,4 @@
+#include <Config/Templates/GameObject.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/Exceptions.hpp>
 #include <Script/GameObject.hpp>
@@ -59,7 +60,8 @@ namespace obe::Script
                                                          .find();
             if (objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
-            vili::node getGameObjectFile = vili::parser::from_file(objectDefinitionPath);
+            vili::node getGameObjectFile = vili::parser::from_file(
+                objectDefinitionPath, Config::Templates::getGameObjectTemplates());
             if (!getGameObjectFile[type].is_null())
             {
                 vili::node& definitionData = getGameObjectFile.at(type);

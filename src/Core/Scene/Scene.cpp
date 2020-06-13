@@ -1,3 +1,4 @@
+#include <Config/Templates/Scene.hpp>
 #include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/ViliLuaBridge.hpp>
@@ -125,7 +126,8 @@ namespace obe::Scene
         Debug::Log->debug("<Scene> Cleared Scene");
 
         m_levelFileName = path;
-        vili::node sceneFile = vili::parser::from_file(System::Path(path).find());
+        vili::node sceneFile = vili::parser::from_file(
+            System::Path(path).find(), Config::Templates::getSceneTemplates());
         this->load(sceneFile);
     }
 
