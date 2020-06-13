@@ -41,7 +41,7 @@ namespace vili
     using node_data
         = std::variant<std::monostate, object, array, integer, number, boolean, string>;
     /**
-     * \notcontainer
+     * \helper{Lib/Internal/Vili.lua}
      * \brief Base Class for every Node in the Tree
      */
     class node
@@ -52,6 +52,7 @@ namespace vili
         [[nodiscard]] std::string dump_object(bool root) const;
 
     public:
+        static node from_type(node_type type);
         /**
          * \brief Default constructor, node will have null type
          */

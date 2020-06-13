@@ -159,6 +159,34 @@ namespace vili
         return dump_value;
     }
 
+    node node::from_type(node_type type)
+    {
+        if (type == node_type::integer)
+        {
+            return vili::integer {};
+        }
+        else if (type == node_type::number)
+        {
+            return vili::number {};
+        }
+        else if (type == node_type::boolean)
+        {
+            return vili::boolean {};
+        }
+        else if (type == node_type::string)
+        {
+            return vili::string {};
+        }
+        else if (type == node_type::array)
+        {
+           return vili::array {};
+        }
+        else if (type == node_type::object)
+        {
+           return vili::object {};
+        }
+    }
+
     node::node(int value)
     {
         m_data = static_cast<integer>(value);
