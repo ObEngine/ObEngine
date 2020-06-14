@@ -366,14 +366,15 @@ namespace obe::Scene
             this->loadFromFile(futureLoadBuffer);
             if (m_onLoadCallback)
             {
-                try
+                sol::protected_function_result result
+                    = m_onLoadCallback(futureLoadBuffer);
+                if (!result.valid())
                 {
-                    m_onLoadCallback(futureLoadBuffer);
-                }
-                catch (std::exception& e)
-                {
+                    const auto error = result.get<sol::error>();
+                    const std::string errMsg = "\n        \""
+                        + Utils::String::replace(error.what(), "\n", "\n        ") + "\"";
                     throw Exceptions::SceneOnLoadCallbackError(
-                        currentScene, futureLoadBuffer, e.what(), EXC_INFO);
+                        currentScene, futureLoadBuffer, errMsg, EXC_INFO);
                 }
             }
         }

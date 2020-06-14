@@ -20,7 +20,7 @@ namespace obe
 
 namespace obe::Scene
 {
-    using OnSceneLoadCallback = std::function<void(const std::string&)>;
+    using OnSceneLoadCallback = sol::protected_function;
 
     /**
      * \brief The Scene class is a container of all the game elements

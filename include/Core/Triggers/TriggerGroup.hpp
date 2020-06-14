@@ -31,6 +31,7 @@ namespace obe::Triggers
         explicit TriggerGroup(sol::state_view lua,
             const std::string& triggerGroupNamespace,
             const std::string& triggerGroupName);
+        ~TriggerGroup();
         /**
          * \brief Sets if the TriggerGroup is joinable or not
          * \param joinable true if the TriggerGroup should be joinable, false

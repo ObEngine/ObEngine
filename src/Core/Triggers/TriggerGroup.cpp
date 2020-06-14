@@ -13,6 +13,12 @@ namespace obe::Triggers
         m_name = triggerGroupName;
     }
 
+    TriggerGroup::~TriggerGroup()
+    {
+        Debug::Log->trace(
+            "<TriggerGroup> Deleting TriggerGroup '{}.{}'", m_fromNsp, m_name);
+    }
+
     std::weak_ptr<Trigger> TriggerGroup::get(const std::string& triggerName)
     {
         if (m_triggerMap.find(triggerName) != m_triggerMap.end())

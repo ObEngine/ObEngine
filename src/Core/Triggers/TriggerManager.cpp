@@ -100,11 +100,12 @@ namespace obe::Triggers
     void TriggerManager::removeNamespace(const std::string& space)
     {
         Debug::Log->debug("<TriggerManager> Removing Trigger Namespace {0}", space);
-        if (m_allTriggers.find(space) != m_allTriggers.end())
+        if (const auto spaceItr = m_allTriggers.find(space);
+            spaceItr != m_allTriggers.end())
         {
             Debug::Log->trace(
                 "<TriggerManager> Found Trigger Namespace {0}, removing it...", space);
-            m_allTriggers.erase(m_allTriggers.find(space));
+            m_allTriggers.erase(spaceItr);
             return;
         }
         std::vector<std::string> namespaces(m_allTriggers.size());
