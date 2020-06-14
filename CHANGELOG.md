@@ -1,5 +1,50 @@
 # Changelog
 
+## 0.4.0
+
+### Notes
+
+A bit more than two months after 0.3.0 release, here comes the version 0.4 !
+
+There was plans to remove Vili support and move everything to Lua (configuration files, scenes...) but I decided to backpedal and think more about it. In the end, I kept Vili and upgraded it to version 2.0. Here are a few reasons of why I decided to do so :
+- Lua can't keep track of the order of insertion
+- Exporting Lua data can be tricky
+- Unsafe configuration files
+- I like Vili :)
+
+You will probably notice a few subtle changes in the Vili files around the engine, the Vili codebase has been massively simplified and this is why some old features are not here anymore (ranges, links, template functions) but these sacrifices are not in vain !
+
+One of this update biggest change is the introduction of a whole brand new exception system, debugging should now be easier. Exceptions now have more details and can even give a few hints on how to fix the problem !
+This task took me a lot of time to complete as I had to rewrite all existing exceptions and create new one for the whole ÖbEngine codebase. Exceptions are also handled differently than before, in v0.3.0, when an exception occured in `Event.Game.Update` for example, the GameObject would spam the log with the same exception everytime it happened, now if an exception is raised, the whole engine closes gracefully so you can properly inspect what is going on.
+
+The Canvas also have its share of changes with three new elements : Polygons, Bezier curves and textures. Textures can be applied to all existing shapes of the Canvas.
+
+For this update I was not alone, I got help from @PierrickLP @Darnagof and @Mari0nV, thanks again !
+
+### Major changes
+
+- Upgraded Vili to version 2.0, new syntax for all the engine configuration / scene files #231 #232 #263 #276 #277 #278
+- Greatly improved exception system with hints and proper traceback #156
+- Standardized time unit, every time value in the engine is now as seconds (double precision float) #255
+- Added Bezier curves, Polygons and Sprites (as Rect textures) support to the Canvas #161
+- Engine now properly closes when an exception is encountered #226
+
+### Minor changes
+
+- Possibility to import lua files from mounted paths with `require` function (thanks to @Mari0nV) #275
+- All Sprite attributes can now be modified from configuration file (thanks to @PierrickLP) #270 #273
+- Better collision checks results (thanks to @Darnagof) #271
+- It is now possible to remove a child from a SceneNode (suggestion of @PierrickLP) #256
+- More flexibility when editing Canvas.Text attributes #197
+- Improvements to the the Color class #249 #261
+- Logger now available from Lua #280
+- Removed a lot of dead code / useless resources #279
+- Optimized and fixed Input system #229
+- Optimized CallbackScheduler system #247
+- Merged window.cfg.vili into config.cfg.vili (Window section)
+- Bumped version of fmt, spdlog and catch
+- ÖbEngine now uses Lua 5.4 (with sol3:latest)
+
 ## 0.3.0
 
 ### Notes
@@ -23,7 +68,7 @@ I decided to extend the possibilities of my existing ongoing project [Obidog](ht
 
 Vili is now deprecated and its Lua bindings are not part of ÖbEngine anymore, this means, don't use Vili for serializing your data, prefer using Lua as v0.4.0 will entierely remove Vili to replace it with Lua. SFML bindings also disappeared and were replaced by similar ÖbEngine classes.
 
-The v0.3.0 version also brings more freedom when it comes to folder architecture of your project. Scenes aren't expected to be in   `Data/Maps` anymore and Sprites aren't expected to be located in `Sprites/Levelsprites`. GameObjects will probably receive the same treatment for a future update.
+The v0.3.0 version also brings more freedom when it comes to folder architecture of your project. Scenes aren't expected to be in `Data/Maps` anymore and Sprites aren't expected to be located in `Sprites/Levelsprites`. GameObjects will probably receive the same treatment for a future update.
 
 This update brings many more changes, please read the Major / Minor changes section to learn more about it !
 
@@ -73,7 +118,7 @@ This update brings many more changes, please read the Major / Minor changes sect
 
 ### Notes
 
-v0.2.0 most major change is the new Audio backend. 
+v0.2.0 most major change is the new Audio backend.
 
 Leaving SFML-Audio was not very hard as the only piece of code that used the audio were the Lua bindings.
 This means, ÖbEngine doesn't rely on OpenAL anymore and doesn't have any LGPL contraints anymore.
