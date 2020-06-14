@@ -615,8 +615,14 @@ namespace obe::Bindings
         BindTree["obe"]["Config"]["Templates"]
             .add("FunctionGetAnimationTemplates",
                 &obe::Config::Templates::Bindings::LoadFunctionGetAnimationTemplates)
+            .add("FunctionGetConfigTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetConfigTemplates)
+            .add("FunctionGetGameObjectTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetGameObjectTemplates)
             .add("FunctionGetMountTemplates",
                 &obe::Config::Templates::Bindings::LoadFunctionGetMountTemplates)
+            .add("FunctionGetSceneTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetSceneTemplates)
             .add("GlobalWaitCommand",
                 &obe::Config::Templates::Bindings::LoadGlobalWaitCommand)
             .add("GlobalPlayGroupCommand",
@@ -626,6 +632,12 @@ namespace obe::Bindings
 
         BindTree["obe"]["Debug"]
             .add("FunctionInitLogger", &obe::Debug::Bindings::LoadFunctionInitLogger)
+            .add("FunctionTrace", &obe::Debug::Bindings::LoadFunctionTrace)
+            .add("FunctionDebug", &obe::Debug::Bindings::LoadFunctionDebug)
+            .add("FunctionInfo", &obe::Debug::Bindings::LoadFunctionInfo)
+            .add("FunctionWarn", &obe::Debug::Bindings::LoadFunctionWarn)
+            .add("FunctionError", &obe::Debug::Bindings::LoadFunctionError)
+            .add("FunctionCritical", &obe::Debug::Bindings::LoadFunctionCritical)
             .add("GlobalLog", &obe::Debug::Bindings::LoadGlobalLog);
 
         BindTree["obe"]["Graphics"]["Utils"]
