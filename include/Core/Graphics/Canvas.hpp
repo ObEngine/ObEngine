@@ -41,7 +41,7 @@ namespace obe::Graphics::Canvas
     class CanvasElement : public Types::ProtectedIdentifiable
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::CanvasElement;
+        static constexpr CanvasElementType Type = CanvasElementType::CanvasElement;
 
         /**
          * \nobind
@@ -84,7 +84,7 @@ namespace obe::Graphics::Canvas
         unsigned int thickness = 1;
         Color p1color;
         Color p2color;
-        static const CanvasElementType Type = CanvasElementType::Line;
+        static constexpr CanvasElementType Type = CanvasElementType::Line;
 
         /**
          * \brief Create a new Line
@@ -116,7 +116,7 @@ namespace obe::Graphics::Canvas
     class Rectangle : public CanvasPositionable
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::Rectangle;
+        static constexpr CanvasElementType Type = CanvasElementType::Rectangle;
 
         Shapes::Rectangle shape;
         Transform::UnitVector size;
@@ -161,7 +161,7 @@ namespace obe::Graphics::Canvas
     class Text : public CanvasPositionable
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::Text;
+        static constexpr CanvasElementType Type = CanvasElementType::Text;
 
         std::string fontPath;
         Shapes::Text shape;
@@ -194,7 +194,7 @@ namespace obe::Graphics::Canvas
     class Circle : public CanvasPositionable
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::Circle;
+        static constexpr CanvasElementType Type = CanvasElementType::Circle;
 
         Shapes::Circle shape;
         /**
@@ -216,7 +216,7 @@ namespace obe::Graphics::Canvas
     class Polygon : public CanvasPositionable
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::Polygon;
+        static constexpr CanvasElementType Type = CanvasElementType::Polygon;
 
         Shapes::Polygon shape;
         // Transform::Polygon polygon;
