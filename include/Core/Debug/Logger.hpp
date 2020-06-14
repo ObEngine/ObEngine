@@ -12,4 +12,11 @@ namespace obe::Debug
      * \brief Initialize the Logger
      */
     void InitLogger();
+
+    void trace(const std::string& content);
+    void debug(const std::string& content);
+    void info(const std::string& content);
+    void warn(const std::string& content);
+    void error(const std::string& content);
+    void critical(const std::string& content);
 } // namespace obe::Debug
