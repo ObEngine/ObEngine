@@ -23,24 +23,24 @@ For this update I was not alone, I got help from @PierrickLP @Darnagof and @Mari
 
 ### Major changes
 
-- Upgraded Vili to version 2.0, new syntax for all the engine configuration / scene files #231 #232 #263 #276 #277 #278
-- Greatly improved exception system with hints and proper traceback #156
-- Standardized time unit, every time value in the engine is now as seconds (double precision float) #255
-- Added Bezier curves, Polygons and Sprites (as Rect textures) support to the Canvas #161
-- Engine now properly closes when an exception is encountered #226
+- Upgraded Vili to version 2.0, new syntax for all the engine configuration / scene files [#231](https://github.com/Sygmei/ObEngine/issues/231) [#232](https://github.com/Sygmei/ObEngine/issues/232) [#263](https://github.com/Sygmei/ObEngine/issues/263) [#276](https://github.com/Sygmei/ObEngine/issues/276) [#277](https://github.com/Sygmei/ObEngine/issues/277) [#278](https://github.com/Sygmei/ObEngine/issues/278)
+- Greatly improved exception system with hints and proper traceback [#156](https://github.com/Sygmei/ObEngine/issues/156)
+- Standardized time unit, every time value in the engine is now as seconds (double precision float) [#255](https://github.com/Sygmei/ObEngine/issues/255)
+- Added Bezier curves, Polygons and Sprites (as Rect textures) support to the Canvas [#161](https://github.com/Sygmei/ObEngine/issues/161)
+- Engine now properly closes when an exception is encountered [#226](https://github.com/Sygmei/ObEngine/issues/226)
 
 ### Minor changes
 
-- Possibility to import lua files from mounted paths with `require` function (thanks to @Mari0nV) #275
-- All Sprite attributes can now be modified from configuration file (thanks to @PierrickLP) #270 #273
-- Better collision checks results (thanks to @Darnagof) #271
-- It is now possible to remove a child from a SceneNode (suggestion of @PierrickLP) #256
-- More flexibility when editing Canvas.Text attributes #197
-- Improvements to the the Color class #249 #261
-- Logger now available from Lua #280
-- Removed a lot of dead code / useless resources #279
-- Optimized and fixed Input system #229
-- Optimized CallbackScheduler system #247
+- Possibility to import lua files from mounted paths with `require` function (thanks to @Mari0nV) [#275](https://github.com/Sygmei/ObEngine/issues/275)
+- All Sprite attributes can now be modified from configuration file (thanks to @PierrickLP) [#270](https://github.com/Sygmei/ObEngine/issues/270) [#273](https://github.com/Sygmei/ObEngine/issues/273)
+- Better collision checks results (thanks to @Darnagof) [#271](https://github.com/Sygmei/ObEngine/issues/271)
+- It is now possible to remove a child from a SceneNode (suggestion of @PierrickLP) [#256](https://github.com/Sygmei/ObEngine/issues/256)
+- More flexibility when editing Canvas.Text attributes [#197](https://github.com/Sygmei/ObEngine/issues/197)
+- Improvements to the the Color class [#249](https://github.com/Sygmei/ObEngine/issues/249) [#261](https://github.com/Sygmei/ObEngine/issues/261)
+- Logger now available from Lua [#280](https://github.com/Sygmei/ObEngine/issues/280)
+- Removed a lot of dead code / useless resources [#279](https://github.com/Sygmei/ObEngine/issues/279)
+- Optimized and fixed Input system [#229](https://github.com/Sygmei/ObEngine/issues/229)
+- Optimized CallbackScheduler system [#247](https://github.com/Sygmei/ObEngine/issues/247)
 - Merged window.cfg.vili into config.cfg.vili (Window section)
 - Bumped version of fmt, spdlog and catch
 - ÖbEngine now uses Lua 5.4 (with sol3:latest)
