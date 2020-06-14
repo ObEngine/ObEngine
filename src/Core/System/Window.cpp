@@ -14,7 +14,7 @@ namespace obe::System
                 m_width = configuration.at("width");
             else if (configuration.at("width").is<vili::string>())
             {
-                if (configuration.at("width").as<vili::string>() == "Fill")
+                if (configuration.at("width").as<vili::string>() == "fill")
                     m_width = Transform::UnitVector::Screen.w;
             }
         }
@@ -27,7 +27,7 @@ namespace obe::System
                 m_height = configuration.at("height");
             else if (configuration.at("height").is<vili::string>())
             {
-                if (configuration.at("height").as<vili::string>() == "Fill")
+                if (configuration.at("height").as<vili::string>() == "fill")
                     m_height = Transform::UnitVector::Screen.h;
             }
         }

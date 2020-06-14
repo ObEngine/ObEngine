@@ -37,7 +37,10 @@ namespace obe::Engine
     {
         m_input = std::make_unique<Input::InputManager>();
         m_input->init(*m_triggers);
-        m_input->configure(m_config.at("Input"));
+        if (m_config.contains("Input"))
+        {
+            m_input->configure(m_config.at("Input"));
+        }
         m_input->addContext("game");
     }
 

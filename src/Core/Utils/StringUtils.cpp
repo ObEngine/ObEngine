@@ -193,9 +193,11 @@ namespace obe::Utils::String
                 return Utils::String::distance(s1, source)
                     < Utils::String::distance(s2, source);
             });
-        if (limit)
+        if (limit && !sortedByDistance.empty())
+        {
             return std::vector<std::string>(sortedByDistance.begin(),
                 sortedByDistance.begin() + std::min(sortedByDistance.size() - 1, limit));
+        }
         else
             return sortedByDistance;
     }

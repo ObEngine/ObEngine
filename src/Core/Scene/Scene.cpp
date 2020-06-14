@@ -260,15 +260,32 @@ namespace obe::Scene
         else
             throw Exceptions::MissingSceneFileBlock(m_levelFileName, "Meta", EXC_INFO);
 
-        if (!data["View"].is_null())
+        if (data.contains("View"))
         {
             vili::node& view = data.at("View");
             m_camera.setSize(view.at("size"));
-            m_cameraInitialPosition = Transform::UnitVector(view.at("position").at("x"),
-                view.at("position").at("y"),
-                Transform::stringToUnits(view.at("position").at("unit")));
+            double x = 0.f;
+            double y = 0.f;
+            Transform::Units unit = Transform::Units::SceneUnits;
+            if (view.contains("position"))
+            {
+                vili::node& position = view.at("position");
+                if (position.contains("x"))
+                {
+                    x = position["x"];
+                }
+                if (position.contains("y"))
+                {
+                    y = position["y"];
+                }
+                if (position.contains("unit"))
+                {
+                    unit = Transform::stringToUnits(position.at("unit"));
+                }
+            }
+            m_cameraInitialPosition = Transform::UnitVector(x, y, unit);
             m_cameraInitialReferential = Transform::Referential::TopLeft;
-            if (!view["referential"].is_null())
+            if (view.contains("referential"))
             {
                 m_cameraInitialReferential
                     = Transform::Referential::FromString(view.at("referential"));

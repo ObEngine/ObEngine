@@ -45,6 +45,20 @@ namespace obe::Scene::Exceptions::Bindings
                           std::string_view, std::string_view, obe::DebugInfo)>(),
                       sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassSceneOnLoadCallbackError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Scene::Exceptions::SceneOnLoadCallbackError>
+            bindSceneOnLoadCallbackError
+            = ExceptionsNamespace
+                  .new_usertype<obe::Scene::Exceptions::SceneOnLoadCallbackError>(
+                      "SceneOnLoadCallbackError", sol::call_constructor,
+                      sol::constructors<obe::Scene::Exceptions::SceneOnLoadCallbackError(
+                          std::string_view, std::string_view, std::string_view,
+                          obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassSceneScriptLoadingError(sol::state_view state)
     {
         sol::table ExceptionsNamespace

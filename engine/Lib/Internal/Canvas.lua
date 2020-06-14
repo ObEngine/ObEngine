@@ -454,22 +454,22 @@ obe.Canvas.Bases.Shape = {
             setters = {
                 r = function(self, r)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.r = math.floor(r) or 0;
+                    colorBuffer.r = r or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 g = function(self, g)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.g = math.floor(g) or 0;
+                    colorBuffer.g = g or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 b = function(self, b)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.b = math.floor(b) or 0;
+                    colorBuffer.b = b or 0;
                     self.shape:setFillColor(colorBuffer);
                 end,
                 a = function(self, a)
                     local colorBuffer = self.shape:getFillColor();
-                    colorBuffer.a = math.floor(a) or 255;
+                    colorBuffer.a = a or 255;;
                     self.shape:setFillColor(colorBuffer);
                 end
             }

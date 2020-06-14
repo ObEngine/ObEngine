@@ -40,8 +40,8 @@ namespace obe::Graphics::Shapes
         void setFillColor(const Color& color);
         void setOutlineColor(const Color& color);
         void setOutlineThickness(float thickness);
-        [[nodiscard]] const Color& getFillColor() const;
-        [[nodiscard]] const Color& getOutlineColor() const;
+        [[nodiscard]] Color getFillColor() const;
+        [[nodiscard]] Color getOutlineColor() const;
         [[nodiscard]] float getOutlineThickness() const;
         [[nodiscard]] std::size_t getPointCount() const;
         [[nodiscard]] Transform::UnitVector getPoint(std::size_t index) const;
@@ -190,12 +190,12 @@ namespace obe::Graphics::Shapes
         static_cast<T&>(*this).shape.setOutlineThickness(thickness);
     }
 
-    template <class T> const Color& Shape<T>::getFillColor() const
+    template <class T> Color Shape<T>::getFillColor() const
     {
         return static_cast<const T&>(*this).shape.getFillColor();
     }
 
-    template <class T> const Color& Shape<T>::getOutlineColor() const
+    template <class T> Color Shape<T>::getOutlineColor() const
     {
         return static_cast<const T&>(*this).shape.getOutlineColor();
     }

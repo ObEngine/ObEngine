@@ -193,8 +193,15 @@ namespace obe::Bindings
         BindTree["obe"]["Component"]["Exceptions"].add("ClassComponentIdAlreadyTaken",
             &obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken);
 
-        BindTree["obe"]["Config"].add("ClassConfigurationManager",
-            &obe::Config::Bindings::LoadClassConfigurationManager);
+        BindTree["obe"]["Config"]
+            .add("ClassConfigurationManager",
+                &obe::Config::Bindings::LoadClassConfigurationManager)
+            .add("GlobalOBENGINEGITBRANCH",
+                &obe::Config::Bindings::LoadGlobalOBENGINEGITBRANCH)
+            .add("GlobalOBENGINEGITHASH",
+                &obe::Config::Bindings::LoadGlobalOBENGINEGITHASH)
+            .add("GlobalOBENGINEVERSION",
+                &obe::Config::Bindings::LoadGlobalOBENGINEVERSION);
 
         BindTree["obe"]
             .add("ClassDebugInfo", &obe::Bindings::LoadClassDebugInfo)
@@ -344,6 +351,8 @@ namespace obe::Bindings
                 &obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists)
             .add("ClassMissingSceneFileBlock",
                 &obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock)
+            .add("ClassSceneOnLoadCallbackError",
+                &obe::Scene::Exceptions::Bindings::LoadClassSceneOnLoadCallbackError)
             .add("ClassSceneScriptLoadingError",
                 &obe::Scene::Exceptions::Bindings::LoadClassSceneScriptLoadingError)
             .add("ClassUnknownCollider",
