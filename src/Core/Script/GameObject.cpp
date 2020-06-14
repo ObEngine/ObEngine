@@ -122,7 +122,7 @@ namespace obe::Script
         Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
         if (m_hasScriptEngine)
         {
-            m_environment = sol::nil;
+            m_environment = sol::lua_nil;
             t_local.reset();
             m_triggers.removeNamespace(m_privateKey);
         }
@@ -423,7 +423,7 @@ namespace obe::Script
             }
             for (auto [k, _] : m_environment)
             {
-                m_environment[k] = sol::nil;
+                m_environment[k] = sol::lua_nil;
             }
         }
     }
