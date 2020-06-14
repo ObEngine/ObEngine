@@ -109,4 +109,17 @@ namespace obe::Scene::Exceptions
                 sceneFile, scriptPath, errorMessage);
         }
     };
+
+    class SceneOnLoadCallbackError : public Exception
+    {
+    public:
+        SceneOnLoadCallbackError(std::string_view sceneFile,
+            std::string_view nextSceneFile, std::string_view errorMessage, DebugInfo info)
+            : Exception("SceneOnLoadCallbackError", info)
+        {
+            this->error("Encountered error while running OnLoadCallback to load Scene "
+                        "'{}' from Scene '{}' : '{}'",
+                nextSceneFile, sceneFile, errorMessage);
+        }
+    };
 }

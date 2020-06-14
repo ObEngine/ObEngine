@@ -362,10 +362,19 @@ namespace obe::Scene
         if (!m_futureLoad.empty())
         {
             const std::string futureLoadBuffer = std::move(m_futureLoad);
+            const std::string currentScene = m_levelFileName;
             this->loadFromFile(futureLoadBuffer);
             if (m_onLoadCallback)
             {
-                m_onLoadCallback(futureLoadBuffer);
+                try
+                {
+                    m_onLoadCallback(futureLoadBuffer);
+                }
+                catch (std::exception& e)
+                {
+                    throw Exceptions::SceneOnLoadCallbackError(
+                        currentScene, futureLoadBuffer, e.what(), EXC_INFO);
+                }
             }
         }
         if (m_updateState)

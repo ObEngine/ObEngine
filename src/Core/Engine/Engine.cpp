@@ -161,8 +161,11 @@ namespace obe::Engine
         m_cursor.reset();
         m_framerate.reset();
         m_scene.reset();
-        m_lua->collect_garbage();
-        m_lua->collect_garbage();
+        if (m_lua)
+        {
+            m_lua->collect_garbage();
+            m_lua->collect_garbage();
+        }
         m_resources.reset();
         t_game.reset();
         m_input.reset();
