@@ -19,7 +19,7 @@ This task took me a lot of time to complete as I had to rewrite all existing exc
 
 The Canvas also have its share of changes with three new elements : Polygons, Bezier curves and textures. Textures can be applied to all existing shapes of the Canvas.
 
-For this update I was not alone, I got help from @PierrickLP @Darnagof and @Mari0nV, thanks again !
+For this update I was not alone, I got help from [@PierrickLP](https://github.com/PierrickLP) [@Darnagof](https://github.com/Darnagof) and [@Mari0nV](https://github.com/Mari0nV), thanks again !
 
 ### Major changes
 
@@ -31,10 +31,10 @@ For this update I was not alone, I got help from @PierrickLP @Darnagof and @Mari
 
 ### Minor changes
 
-- Possibility to import lua files from mounted paths with `require` function (thanks to @Mari0nV) [#275](https://github.com/Sygmei/ObEngine/issues/275)
-- All Sprite attributes can now be modified from configuration file (thanks to @PierrickLP) [#270](https://github.com/Sygmei/ObEngine/issues/270) [#273](https://github.com/Sygmei/ObEngine/issues/273)
-- Better collision checks results (thanks to @Darnagof) [#271](https://github.com/Sygmei/ObEngine/issues/271)
-- It is now possible to remove a child from a SceneNode (suggestion of @PierrickLP) [#256](https://github.com/Sygmei/ObEngine/issues/256)
+- Possibility to import lua files from mounted paths with `require` function (thanks to [@Mari0nV](https://github.com/Mari0nV)) [#275](https://github.com/Sygmei/ObEngine/issues/275)
+- All Sprite attributes can now be modified from configuration file (thanks to [@PierrickLP](https://github.com/PierrickLP)) [#270](https://github.com/Sygmei/ObEngine/issues/270) [#273](https://github.com/Sygmei/ObEngine/issues/273)
+- Better collision checks results (thanks to [@Darnagof](https://github.com/Darnagof)) [#271](https://github.com/Sygmei/ObEngine/issues/271)
+- It is now possible to remove a child from a SceneNode (suggestion of [@PierrickLP](https://github.com/PierrickLP)) [#256](https://github.com/Sygmei/ObEngine/issues/256)
 - More flexibility when editing Canvas.Text attributes [#197](https://github.com/Sygmei/ObEngine/issues/197)
 - Improvements to the the Color class [#249](https://github.com/Sygmei/ObEngine/issues/249) [#261](https://github.com/Sygmei/ObEngine/issues/261)
 - Logger now available from Lua [#280](https://github.com/Sygmei/ObEngine/issues/280)
