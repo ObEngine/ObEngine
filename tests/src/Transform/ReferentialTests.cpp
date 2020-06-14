@@ -3,7 +3,6 @@
 #include <Transform/Referential.hpp>
 
 using namespace obe::Transform;
-using FlipAxis = Referential::FlipAxis;
 
 TEST_CASE("Flipping Referentials should give correct results",
     "[obe.Transform.Referential.flip]")
