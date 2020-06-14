@@ -232,7 +232,7 @@ namespace obe::Graphics::Canvas
     class Bezier : public CanvasElement
     {
     public:
-        static const CanvasElementType Type = CanvasElementType::Bezier;
+        static constexpr CanvasElementType Type = CanvasElementType::Bezier;
         std::vector<Transform::UnitVector> points;
         std::vector<Graphics::Color> colors;
         unsigned int precision = 10;
