@@ -60,6 +60,7 @@ namespace obe::Engine
         m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
+        m_lua->safe_script_file("Lib/Internal/Searcher.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
 
